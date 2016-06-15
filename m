@@ -1,40 +1,106 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	emilio@elopez.com.ar
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH 1/2] dt: bindings: sunxi: add binding for PLL2
-Date: Wed, 29 Jun 2016 22:01:13 +0800
-Message-Id: <20160629140114.58756-1-icenowy@aosc.xyz>
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH 3/5] clk: max77686: Add DT binding details for PMIC MAX77620
+Date: Wed, 15 Jun 2016 19:43:36 +0530
+Message-ID: <1466000018-16784-4-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- Documentation/devicetree/bindings/clock/sunxi.txt | 3 +++
- 1 file changed, 3 insertions(+)
+Maxim has used the same clock IP on multiple PMICs like
+MAX77686, MAX77802, MAX77620. Only differences are the
+number of clocks from these PMICs.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 8f7619d..d58f36b 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -10,6 +10,9 @@ Required properties:
- 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
- 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
- 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-+	"allwinner,sun4i-a10-pll2-clk" - for the audio PLL clock on A10
-+	"allwinner,sun5i-a13-pll2-clk" - for the audio PLL clock on A13
-+	"allwinner,sun6i-a31-pll2-clk" - for the audio PLL clock on A31
- 	"allwinner,sun4i-a10-pll3-clk" - for the video PLL clock on A10
- 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
- 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
+Add clock binding details and example for the max77620 in
+maxim,max77686.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+---
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 38 +++++++++++++++++++---
+ include/dt-bindings/mfd/max77620.h                 |  4 +++
+ 2 files changed, 38 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+index 354e5ab..24deb19 100644
+--- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
++++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+@@ -1,8 +1,11 @@
+-Binding for Maxim MAX77686/MAX77802 32k clock generator block
++Binding for Maxim MAX77686/MAX77802/MAX77620 32k clock generator block
+ 
+-This is a part of device tree bindings of MAX77686/MAX77802 multi-function
+-device. More information can be found in bindings/mfd/max77686.txt file for
+-MAX77686 and bindings/mfd/max77802.txt for MAX77802.
++This is a part of device tree bindings of MAX77686/MAX77802/MAX77620
++multi-function device. More information can be found in MFD DT binding
++doc as follows:
++	bindings/mfd/max77686.txt for MAX77686 and
++	bindings/mfd/max77802.txt for MAX77802 and
++	bindings/mfd/max77620.txt for MAX77620.
+ 
+ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+ (gated/ungated) over I2C.
+@@ -10,6 +13,9 @@ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+ The MAX77802 contains two 32.768khz clock outputs that can be controlled
+ (gated/ungated) over I2C.
+ 
++The MAX77686 contains one 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C.
++
+ Following properties should be presend in main device node of the MFD chip.
+ 
+ Required properties:
+@@ -82,3 +88,27 @@ Example:
+ 			clock-names = "my-clock";
+ 			clocks = <&max77802 MAX77802_CLK_32K_AP>;
+ 		};
++
++
++3. With MAX77620:
++
++#include <dt-bindings/mfd/max77620.h>
++:::
++
++	Node of the MFD chip
++		max77620: max77620@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			:::
++			#clock-cells = <1>;
++			:::
++		};
++
++	Clock consumer node
++
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77620 MAX77620_CLK_32K_OUT0>;
++		};
+diff --git a/include/dt-bindings/mfd/max77620.h b/include/dt-bindings/mfd/max77620.h
+index b911a07..e1bd08c 100644
+--- a/include/dt-bindings/mfd/max77620.h
++++ b/include/dt-bindings/mfd/max77620.h
+@@ -36,4 +36,8 @@
+ #define MAX77620_FPS_SRC_NONE			3
+ #define MAX77620_FPS_SRC_DEF			4
+ 
++/* MAX77686 clocks */
++#define MAX77620_CLKS_NUM			1
++#define MAX77620_CLK_32K_OUT0			0
++
+ #endif
 -- 
-2.9.0
+2.1.4
