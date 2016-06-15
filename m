@@ -1,397 +1,723 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:56366 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752534AbcFFDuz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2016 23:50:55 -0400
-Subject: Re: [RFC PATCH v1 4/6] PM / devfreq: event: support rockchip dfi
- controller
-To: Chanwoo Choi <cw00.choi@samsung.com>, heiko@sntech.de,
-	mark.yao@rock-chips.com, myungjoo.ham@samsung.com
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
- <CGME20160603095617epcas1p2ce23b253cf48783b9ebdbbbe65907670@epcas1p2.samsung.com>
- <1464947719-6245-5-git-send-email-hl@rock-chips.com>
- <57515B4F.5000309@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, airlied@linux.ie,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com, dianders@chromium.org,
-	dbasehore@chromium.org, huangtao@rock-chips.com, typ@rock-chips.com
-From: hl <hl@rock-chips.com>
-Message-ID: <5754F313.9010307@rock-chips.com>
-Date: Mon, 6 Jun 2016 11:50:43 +0800
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802 driver
+Date: Wed, 15 Jun 2016 19:43:34 +0530
+Message-ID: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <57515B4F.5000309@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+The clock IP used on the Maxim PMICs max77686 and max77802 are
+same. The configuration of clock register is also same except
+the number of clocks.
 
+Part of common code utilisation, there is 3 files for these chips
+clock driver, one for common and two files for driver registration.
 
-On 2016年06月03日 18:26, Chanwoo Choi wrote:
-> Hi Lin,
->
-> I add the some comment on below. If you modify it,
-> You can add my acked-by tag. Looks good to me.
-Thanks for you reviewing, i will update the code folloiwing your comment.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-> Also, I'd like you to add me to mail thread
-> on next version because I'm supporter of devfreq-event.
-I am sorry for missing you mail in before patch:-[ , will add you to 
-mail thread next vesion.
-> On 2016년 06월 03일 18:55, Lin Huang wrote:
->> on rk3399 platform, there is dfi conroller can monitor
->> ddr load, base on this result, we can do ddr freqency
->> scaling.
->>
->> Signed-off-by: Lin Huang <hl@rock-chips.com>
->> ---
->> Changes in v1:
->> - NOne
->>
->>   drivers/devfreq/event/Kconfig        |   7 +
->>   drivers/devfreq/event/Makefile       |   1 +
->>   drivers/devfreq/event/rockchip-dfi.c | 265 +++++++++++++++++++++++++++++++++++
->>   3 files changed, 273 insertions(+)
->>   create mode 100644 drivers/devfreq/event/rockchip-dfi.c
->>
->> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
->> index 1e8b4f4..6ebdc13 100644
->> --- a/drivers/devfreq/event/Kconfig
->> +++ b/drivers/devfreq/event/Kconfig
->> @@ -30,4 +30,11 @@ config DEVFREQ_EVENT_EXYNOS_PPMU
->>   	  (Platform Performance Monitoring Unit) counters to estimate the
->>   	  utilization of each module.
->>   
->> +config DEVFREQ_EVENT_ROCKCHIP_DFI
->> +	bool "ROCKCHIP DFI DEVFREQ event Driver"
->> +	depends on ARCH_ROCKCHIP
->> +	help
->> +	  This add the devfreq-event driver for Rockchip SoC. It provides DFI
-> You better to full name of 'DFI' abbreviation as following:
-> - DFI (Dxxx Fxxx Ixxx)
->
->> +	  driver to count ddr load.
->> +
->>   endif # PM_DEVFREQ_EVENT
->> diff --git a/drivers/devfreq/event/Makefile b/drivers/devfreq/event/Makefile
->> index 3d6afd3..dda7090 100644
->> --- a/drivers/devfreq/event/Makefile
->> +++ b/drivers/devfreq/event/Makefile
->> @@ -2,3 +2,4 @@
->>   
->>   obj-$(CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP) += exynos-nocp.o
->>   obj-$(CONFIG_DEVFREQ_EVENT_EXYNOS_PPMU) += exynos-ppmu.o
->> +obj-$(CONFIG_DEVFREQ_EVENT_ROCKCHIP_DFI) += rockchip-dfi.o
->> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
->> new file mode 100644
->> index 0000000..e3b020f9
->> --- /dev/null
->> +++ b/drivers/devfreq/event/rockchip-dfi.c
->> @@ -0,0 +1,265 @@
->> +/*
->> + * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
->> + * Author: Lin Huang <hl@rock-chips.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify it
->> + * under the terms and conditions of the GNU General Public License,
->> + * version 2, as published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope it will be useful, but WITHOUT
->> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->> + * more details.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/devfreq-event.h>
->> +#include <linux/kernel.h>
->> +#include <linux/err.h>
->> +#include <linux/init.h>
->> +#include <linux/io.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
->> +#include <linux/list.h>
->> +#include <linux/of.h>
->> +
->> +#define RK3399_DMC_NUM_CH	2
->> +
->> +/* DDRMON_CTRL */
->> +#define DDRMON_CTRL	0x04
->> +#define CLR_DDRMON_CTRL	(0x1f0000 << 0)
->> +#define LPDDR4_EN	(0x10001 << 4)
->> +#define HARDWARE_EN	(0x10001 << 3)
->> +#define LPDDR3_EN	(0x10001 << 2)
->> +#define SOFTWARE_EN	(0x10001 << 1)
->> +#define TIME_CNT_EN	(0x10001 << 0)
->> +
->> +#define DDRMON_CH0_COUNT_NUM		0x28
->> +#define DDRMON_CH0_DFI_ACCESS_NUM	0x2c
->> +#define DDRMON_CH1_COUNT_NUM		0x3c
->> +#define DDRMON_CH1_DFI_ACCESS_NUM	0x40
->> +
->> +/* pmu grf */
->> +#define PMUGRF_OS_REG2	0x308
->> +#define DDRTYPE_SHIFT	13
->> +#define DDRTYPE_MASK	7
->> +
->> +enum {
->> +	DDR3 = 3,
->> +	LPDDR3 = 6,
->> +	LPDDR4 = 7,
->> +	UNUSED = 0xFF
->> +};
->> +
->> +struct dmc_usage {
->> +	u32 access;
->> +	u32 total;
->> +};
->> +
->> +struct rockchip_dfi {
->> +	struct devfreq_event_dev *edev;
->> +	struct devfreq_event_desc *desc;
->> +	struct dmc_usage ch_usage[RK3399_DMC_NUM_CH];
->> +	struct device *dev;
->> +	void __iomem *regs;
->> +	struct regmap *regmap_pmu;
->> +	struct clk *clk;
->> +};
->> +
->> +static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
->> +{
->> +	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
->> +	void __iomem *dfi_regs = info->regs;
->> +	u32 val;
->> +	u32 ddr_type;
->> +
->> +	/* get ddr type */
->> +	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
->> +	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
->> +
->> +	/* clear DDRMON_CTRL setting */
->> +	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
->> +
->> +	/* set ddr type to dfi */
->> +	if (ddr_type == LPDDR3)
->> +		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
->> +	else if (ddr_type == LPDDR4)
->> +		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
->> +
->> +	/* enable count, use software mode */
->> +	writel_relaxed(SOFTWARE_EN, dfi_regs + DDRMON_CTRL);
->> +}
->> +
->> +static void rockchip_dfi_stop_hardware_counter(struct devfreq_event_dev *edev)
->> +{
->> +	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
->> +	void __iomem *dfi_regs = info->regs;
->> +	u32 val;
->> +
->> +	val = readl_relaxed(dfi_regs + DDRMON_CTRL);
->> +	val &= ~SOFTWARE_EN;
->> +	writel_relaxed(val, dfi_regs + DDRMON_CTRL);
->> +}
->> +
->> +static int rockchip_dfi_get_busier_ch(struct devfreq_event_dev *edev)
->> +{
->> +	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
->> +	u32 tmp, max = 0;
->> +	u32 i, busier_ch = 0;
->> +	void __iomem *dfi_regs = info->regs;
->> +
->> +	rockchip_dfi_stop_hardware_counter(edev);
->> +
->> +	/* Find out which channel is busier */
->> +	for (i = 0; i < RK3399_DMC_NUM_CH; i++) {
->> +		info->ch_usage[i].access = readl_relaxed(dfi_regs +
->> +				DDRMON_CH0_DFI_ACCESS_NUM + i * 20);
->> +		info->ch_usage[i].total = readl_relaxed(dfi_regs +
->> +				DDRMON_CH0_COUNT_NUM + i * 20);
->> +		tmp = info->ch_usage[i].access;
->> +		if (tmp > max) {
->> +			busier_ch = i;
->> +			max = tmp;
->> +		}
->> +	}
->> +	rockchip_dfi_start_hardware_counter(edev);
->> +
->> +	return busier_ch;
->> +}
->> +
->> +static int rockchip_dfi_disable(struct devfreq_event_dev *edev)
->> +{
->> +	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
->> +
->> +	rockchip_dfi_stop_hardware_counter(edev);
->> +	clk_disable(info->clk);
-> I prefer to change the function as following. I add the comment on below in probe()
-> - clk_disable -> clk_disable_unprepare()
->
->
->> +
->> +	return 0;
->> +}
->> +
->> +static int rockchip_dfi_enable(struct devfreq_event_dev *edev)
->> +{
->> +	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
->> +	int ret;
->> +
->> +	ret = clk_enable(info->clk);
-> I prefer to change the function as following. I add the comment on below in probe()
-> - clk_enable -> clk_prepare_enable()
->
->> +	if (ret)
->> +		return ret;
->> +
->> +	rockchip_dfi_start_hardware_counter(edev);
->> +	return 0;
->> +}
->> +
->> +static int rockchip_dfi_set_event(struct devfreq_event_dev *edev)
->> +{
->> +	return 0;
->> +}
->> +
->> +static int rockchip_dfi_get_event(struct devfreq_event_dev *edev,
->> +				  struct devfreq_event_data *edata)
->> +{
->> +	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
->> +	int busier_ch;
->> +
->> +	busier_ch = rockchip_dfi_get_busier_ch(edev);
->> +
->> +	edata->load_count = info->ch_usage[busier_ch].access;
->> +	edata->total_count = info->ch_usage[busier_ch].total;
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct devfreq_event_ops rockchip_dfi_ops = {
->> +	.disable = rockchip_dfi_disable,
->> +	.enable = rockchip_dfi_enable,
->> +	.get_event = rockchip_dfi_get_event,
->> +	.set_event = rockchip_dfi_set_event,
->> +};
->> +
->> +static const struct of_device_id rockchip_dfi_id_match[] = {
->> +	{ .compatible = "rockchip,rk3399-dfi" },
->> +	{ },
->> +};
->> +
->> +static int rockchip_dfi_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct rockchip_dfi *data;
->> +	struct resource *res;
->> +	struct devfreq_event_desc *desc;
->> +	int ret;
->> +	struct device_node *np = pdev->dev.of_node, *node;
->> +
->> +	data = devm_kzalloc(dev, sizeof(struct rockchip_dfi), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	data->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(data->regs))
->> +		return PTR_ERR(data->regs);
->> +
->> +	data->clk = devm_clk_get(dev, "pclk_ddr_mon");
->> +	if (IS_ERR(data->clk)) {
->> +		dev_err(dev, "Cannot get the clk dmc_clk\n");
->> +		return PTR_ERR(data->clk);
->> +	};
->> +
->> +	/* try to find the optional reference to the pmu syscon */
->> +	node = of_parse_phandle(np, "rockchip,pmu", 0);
->> +	if (node) {
->> +		data->regmap_pmu = syscon_node_to_regmap(node);
->> +		if (IS_ERR(data->regmap_pmu))
->> +			return PTR_ERR(data->regmap_pmu);
->> +	}
->> +	data->dev = dev;
->> +
->> +	desc = devm_kzalloc(dev, sizeof(*desc), GFP_KERNEL);
->> +	if (!desc)
->> +		return -ENOMEM;
->> +
->> +	desc->ops = &rockchip_dfi_ops;
->> +	desc->driver_data = data;
->> +	desc->name = np->name;
->> +	data->desc = desc;
->> +
->> +	data->edev = devm_devfreq_event_add_edev(&pdev->dev, desc);
->> +	if (IS_ERR(data->edev)) {
->> +		ret = PTR_ERR(data->edev);
->> +		dev_err(&pdev->dev,
->> +			"failed to add devfreq-event device\n");
->> +		return ret;
-> You can simply return the PTR_ERR(data->edev) without 'ret' variable as following:
->
-> 	return PTR_ERR(data->edev);
->
->
->> +	}
->> +
->> +	ret = clk_prepare_enable(data->clk);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "failed to enable clk: %d\n", ret);
->> +		clk_disable_unprepare(data->clk);
->> +		return ret;
->> +	}
-> The following two functions handle the clock. So, rockchip_dfi_probe()
-> don't need to enable the clock. Just pass the role of clock control to the following functions.
-> Because of calling the twice of enable function of clock, the usage count of clock
-> is mismatch when disabling the clock.
-> - rockchip_dfi_enable(struct devfreq_event_dev *edev) enable the clock.
-> - rockchip_dfi_disable(struct devfreq_event_dev *edev) disable the clock.
->
->
->> +
->> +	platform_set_drvdata(pdev, data);
->> +
->> +	return 0;
->> +}
->> +
->> +static int rockchip_dfi_remove(struct platform_device *pdev)
->> +{
->> +	return 0;
->> +}
-> If the rockchip_dfi_remove() don't do anything, you can remove it
->
->> +
->> +static struct platform_driver rockchip_dfi_driver = {
->> +	.probe	= rockchip_dfi_probe,
->> +	.remove	= rockchip_dfi_remove,
-> ditto.
->
->> +	.driver = {
->> +		.name	= "rockchip-dfi",
->> +		.of_match_table = rockchip_dfi_id_match,
->> +	},
->> +};
->> +module_platform_driver(rockchip_dfi_driver);
->> +
->> +MODULE_LICENSE("GPL v2");
-> You need to add MODULE_AUTHOR("").
->
->> +MODULE_DESCRIPTION("Rockchip dfi driver");
->>
-> Remove unneeded blank line
->
-> Regards,
-> Chanwoo Choi
->
->
->
->
+Combine both drivers into single file and move common code into
+same common file reduces the 2 files and make max77686 and max77802
+clock driver in single fine. This driver does not depends on the
+parent driver structure. The regmap handle is acquired through
+regmap APIs for the register access.
 
+This combination of driver helps on adding clock driver for different
+Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+---
+ drivers/clk/Kconfig        |  15 +--
+ drivers/clk/Makefile       |   2 -
+ drivers/clk/clk-max-gen.c  | 194 ------------------------------------
+ drivers/clk/clk-max-gen.h  |  32 ------
+ drivers/clk/clk-max77686.c | 241 +++++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/clk-max77802.c |  96 ------------------
+ 6 files changed, 225 insertions(+), 355 deletions(-)
+ delete mode 100644 drivers/clk/clk-max-gen.c
+ delete mode 100644 drivers/clk/clk-max-gen.h
+ delete mode 100644 drivers/clk/clk-max77802.c
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98efbfc..6afad74 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -31,22 +31,11 @@ config COMMON_CLK_WM831X
+ 
+ source "drivers/clk/versatile/Kconfig"
+ 
+-config COMMON_CLK_MAX_GEN
+-        bool
+-
+ config COMMON_CLK_MAX77686
+-	tristate "Clock driver for Maxim 77686 MFD"
+-	depends on MFD_MAX77686
+-	select COMMON_CLK_MAX_GEN
+-	---help---
+-	  This driver supports Maxim 77686 crystal oscillator clock. 
+-
+-config COMMON_CLK_MAX77802
+-	tristate "Clock driver for Maxim 77802 PMIC"
++	tristate "Clock driver for Maxim 77686/77802 MFD"
+ 	depends on MFD_MAX77686
+-	select COMMON_CLK_MAX_GEN
+ 	---help---
+-	  This driver supports Maxim 77802 crystal oscillator clock.
++	  This driver supports Maxim 77686/77802 crystal oscillator clock.
+ 
+ config COMMON_CLK_RK808
+ 	tristate "Clock driver for RK808"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dcc5e69..0a3a91b 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -26,9 +26,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+ obj-$(CONFIG_MACH_LOONGSON32)		+= clk-ls1x.o
+-obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+-obj-$(CONFIG_COMMON_CLK_MAX77802)	+= clk-max77802.o
+ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
+deleted file mode 100644
+index 35af9cb..0000000
+--- a/drivers/clk/clk-max-gen.c
++++ /dev/null
+@@ -1,194 +0,0 @@
+-/*
+- * clk-max-gen.c - Generic clock driver for Maxim PMICs clocks
+- *
+- * Copyright (C) 2014 Google, Inc
+- *
+- * Copyright (C) 2012 Samsung Electornics
+- * Jonghwa Lee <jonghwa3.lee@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * This driver is based on clk-max77686.c
+- *
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/err.h>
+-#include <linux/regmap.h>
+-#include <linux/platform_device.h>
+-#include <linux/clk-provider.h>
+-#include <linux/mutex.h>
+-#include <linux/clkdev.h>
+-#include <linux/of.h>
+-#include <linux/export.h>
+-
+-#include "clk-max-gen.h"
+-
+-struct max_gen_clk {
+-	struct regmap *regmap;
+-	u32 mask;
+-	u32 reg;
+-	struct clk_hw hw;
+-};
+-
+-static struct max_gen_clk *to_max_gen_clk(struct clk_hw *hw)
+-{
+-	return container_of(hw, struct max_gen_clk, hw);
+-}
+-
+-static int max_gen_clk_prepare(struct clk_hw *hw)
+-{
+-	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+-
+-	return regmap_update_bits(max_gen->regmap, max_gen->reg,
+-				  max_gen->mask, max_gen->mask);
+-}
+-
+-static void max_gen_clk_unprepare(struct clk_hw *hw)
+-{
+-	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+-
+-	regmap_update_bits(max_gen->regmap, max_gen->reg,
+-			   max_gen->mask, ~max_gen->mask);
+-}
+-
+-static int max_gen_clk_is_prepared(struct clk_hw *hw)
+-{
+-	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+-	int ret;
+-	u32 val;
+-
+-	ret = regmap_read(max_gen->regmap, max_gen->reg, &val);
+-
+-	if (ret < 0)
+-		return -EINVAL;
+-
+-	return val & max_gen->mask;
+-}
+-
+-static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
+-					 unsigned long parent_rate)
+-{
+-	return 32768;
+-}
+-
+-struct clk_ops max_gen_clk_ops = {
+-	.prepare	= max_gen_clk_prepare,
+-	.unprepare	= max_gen_clk_unprepare,
+-	.is_prepared	= max_gen_clk_is_prepared,
+-	.recalc_rate	= max_gen_recalc_rate,
+-};
+-EXPORT_SYMBOL_GPL(max_gen_clk_ops);
+-
+-static struct clk *max_gen_clk_register(struct device *dev,
+-					struct max_gen_clk *max_gen)
+-{
+-	struct clk *clk;
+-	struct clk_hw *hw = &max_gen->hw;
+-	int ret;
+-
+-	clk = devm_clk_register(dev, hw);
+-	if (IS_ERR(clk))
+-		return clk;
+-
+-	ret = clk_register_clkdev(clk, hw->init->name, NULL);
+-
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	return clk;
+-}
+-
+-int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+-		      u32 reg, struct clk_init_data *clks_init, int num_init)
+-{
+-	int i, ret;
+-	struct max_gen_clk *max_gen_clks;
+-	struct clk **clocks;
+-	struct device *dev = pdev->dev.parent;
+-	const char *clk_name;
+-	struct clk_init_data *init;
+-
+-	clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
+-	if (!clocks)
+-		return -ENOMEM;
+-
+-	max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
+-				    * num_init, GFP_KERNEL);
+-	if (!max_gen_clks)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < num_init; i++) {
+-		max_gen_clks[i].regmap = regmap;
+-		max_gen_clks[i].mask = 1 << i;
+-		max_gen_clks[i].reg = reg;
+-
+-		init = devm_kzalloc(dev, sizeof(*init), GFP_KERNEL);
+-		if (!init)
+-			return -ENOMEM;
+-
+-		if (dev->of_node &&
+-		    !of_property_read_string_index(dev->of_node,
+-						   "clock-output-names",
+-						   i, &clk_name))
+-			init->name = clk_name;
+-		else
+-			init->name = clks_init[i].name;
+-
+-		init->ops = clks_init[i].ops;
+-		init->flags = clks_init[i].flags;
+-
+-		max_gen_clks[i].hw.init = init;
+-
+-		clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
+-		if (IS_ERR(clocks[i])) {
+-			ret = PTR_ERR(clocks[i]);
+-			dev_err(dev, "failed to register %s\n",
+-				max_gen_clks[i].hw.init->name);
+-			return ret;
+-		}
+-	}
+-
+-	platform_set_drvdata(pdev, clocks);
+-
+-	if (dev->of_node) {
+-		struct clk_onecell_data *of_data;
+-
+-		of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
+-		if (!of_data)
+-			return -ENOMEM;
+-
+-		of_data->clks = clocks;
+-		of_data->clk_num = num_init;
+-		ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+-					  of_data);
+-
+-		if (ret) {
+-			dev_err(dev, "failed to register OF clock provider\n");
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(max_gen_clk_probe);
+-
+-int max_gen_clk_remove(struct platform_device *pdev, int num_init)
+-{
+-	struct device *dev = pdev->dev.parent;
+-
+-	if (dev->of_node)
+-		of_clk_del_provider(dev->of_node);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(max_gen_clk_remove);
+diff --git a/drivers/clk/clk-max-gen.h b/drivers/clk/clk-max-gen.h
+deleted file mode 100644
+index 997e86f..0000000
+--- a/drivers/clk/clk-max-gen.h
++++ /dev/null
+@@ -1,32 +0,0 @@
+-/*
+- * clk-max-gen.h - Generic clock driver for Maxim PMICs clocks
+- *
+- * Copyright (C) 2014 Google, Inc
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#ifndef __CLK_MAX_GEN_H__
+-#define __CLK_MAX_GEN_H__
+-
+-#include <linux/types.h>
+-#include <linux/device.h>
+-#include <linux/clkdev.h>
+-#include <linux/regmap.h>
+-#include <linux/platform_device.h>
+-
+-int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+-		      u32 reg, struct clk_init_data *clks_init, int num_init);
+-int max_gen_clk_remove(struct platform_device *pdev, int num_init);
+-extern struct clk_ops max_gen_clk_ops;
+-
+-#endif /* __CLK_MAX_GEN_H__ */
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 9b6f277..31ba726 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -1,5 +1,5 @@
+ /*
+- * clk-max77686.c - Clock driver for Maxim 77686
++ * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
+  *
+  * Copyright (C) 2012 Samsung Electornics
+  * Jonghwa Lee <jonghwa3.lee@samsung.com>
+@@ -13,13 +13,7 @@
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+  */
+-
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
+@@ -30,41 +24,252 @@
+ #include <linux/clk-provider.h>
+ #include <linux/mutex.h>
+ #include <linux/clkdev.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/mutex.h>
+ 
+ #include <dt-bindings/clock/maxim,max77686.h>
+-#include "clk-max-gen.h"
++#include <dt-bindings/clock/maxim,max77802.h>
+ 
+-static struct clk_init_data max77686_clks_init[MAX77686_CLKS_NUM] = {
++#define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
++
++enum chip_name {
++	CHIP_MAX77686,
++	CHIP_MAX77802,
++};
++
++struct max_gen_hw_clk_data {
++	const char *name;
++	u32 reg;
++	u32 mask;
++	u32 flags;
++};
++
++struct max_gen_clk_data {
++	struct regmap *regmap;
++	struct clk_init_data clk_idata;
++	struct clk_hw hw;
++	u32 reg;
++	u32 mask;
++};
++
++struct max_gen_clk_driver_info {
++	enum chip_name chip;
++	struct clk **clks;
++	struct max_gen_clk_data *max_clk_data;
++	struct clk_onecell_data of_data;
++};
++
++static struct max_gen_hw_clk_data max77686_hw_clks_info[MAX77686_CLKS_NUM] = {
+ 	[MAX77686_CLK_AP] = {
+ 		.name = "32khz_ap",
+-		.ops = &max_gen_clk_ops,
++		.reg = MAX77686_REG_32KHZ,
++		.mask = BIT(MAX77686_CLK_AP),
+ 	},
+ 	[MAX77686_CLK_CP] = {
+ 		.name = "32khz_cp",
+-		.ops = &max_gen_clk_ops,
++		.reg = MAX77686_REG_32KHZ,
++		.mask = BIT(MAX77686_CLK_CP),
+ 	},
+ 	[MAX77686_CLK_PMIC] = {
+ 		.name = "32khz_pmic",
+-		.ops = &max_gen_clk_ops,
++		.reg = MAX77686_REG_32KHZ,
++		.mask = BIT(MAX77686_CLK_PMIC),
++	},
++};
++
++static struct max_gen_hw_clk_data max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
++	[MAX77802_CLK_32K_AP] = {
++		.name = "32khz_ap",
++		.reg = MAX77802_REG_32KHZ,
++		.mask = BIT(MAX77802_CLK_32K_AP),
++	},
++	[MAX77802_CLK_32K_CP] = {
++		.name = "32khz_cp",
++		.reg = MAX77802_REG_32KHZ,
++		.mask = BIT(MAX77802_CLK_32K_CP),
+ 	},
+ };
+ 
++static struct max_gen_clk_data *to_max_gen_clk_data(struct clk_hw *hw)
++{
++	return container_of(hw, struct max_gen_clk_data, hw);
++}
++
++static int max_gen_clk_prepare(struct clk_hw *hw)
++{
++	struct max_gen_clk_data *max_gen = to_max_gen_clk_data(hw);
++
++	return regmap_update_bits(max_gen->regmap, max_gen->reg,
++				  max_gen->mask, max_gen->mask);
++}
++
++static void max_gen_clk_unprepare(struct clk_hw *hw)
++{
++	struct max_gen_clk_data *max_gen = to_max_gen_clk_data(hw);
++
++	regmap_update_bits(max_gen->regmap, max_gen->reg,
++			   max_gen->mask, ~max_gen->mask);
++}
++
++static int max_gen_clk_is_prepared(struct clk_hw *hw)
++{
++	struct max_gen_clk_data *max_gen = to_max_gen_clk_data(hw);
++	int ret;
++	u32 val;
++
++	ret = regmap_read(max_gen->regmap, max_gen->reg, &val);
++
++	if (ret < 0)
++		return -EINVAL;
++
++	return val & max_gen->mask;
++}
++
++static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	return 32768;
++}
++
++static struct clk_ops max_gen_clk_ops = {
++	.prepare	= max_gen_clk_prepare,
++	.unprepare	= max_gen_clk_unprepare,
++	.is_prepared	= max_gen_clk_is_prepared,
++	.recalc_rate	= max_gen_recalc_rate,
++};
++
+ static int max77686_clk_probe(struct platform_device *pdev)
+ {
+-	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
++	struct device *parent = pdev->dev.parent;
++	struct device *dev = &pdev->dev;
++	const struct platform_device_id *id = platform_get_device_id(pdev);
++	struct max_gen_clk_driver_info *drv_info;
++	struct max_gen_clk_data *max_clk_data;
++	const struct max_gen_hw_clk_data *hw_clks;
++	struct regmap *regmap;
++	int i, ret, num_clks;
++
++	drv_info = devm_kzalloc(dev, sizeof(*drv_info), GFP_KERNEL);
++	if (!drv_info)
++		return -ENOMEM;
++
++	regmap = dev_get_regmap(parent, NULL);
++	if (!regmap) {
++		dev_err(dev, "Failed to get rtc regmap\n");
++		return -ENODEV;
++	}
++
++	drv_info->chip = id->driver_data;
++
++	switch (drv_info->chip) {
++	case CHIP_MAX77686:
++		num_clks = MAX77686_CLKS_NUM;
++		hw_clks = max77686_hw_clks_info;
++		break;
++	case CHIP_MAX77802:
++		num_clks = MAX77802_CLKS_NUM;
++		hw_clks = max77802_hw_clks_info;
++		break;
++	default:
++		dev_err(dev, "Unknown Chip ID\n");
++		return -EINVAL;
++	};
+ 
+-	return max_gen_clk_probe(pdev, iodev->regmap, MAX77686_REG_32KHZ,
+-				 max77686_clks_init, MAX77686_CLKS_NUM);
++	drv_info->max_clk_data = devm_kcalloc(dev, num_clks,
++					      sizeof(*drv_info->max_clk_data),
++					      GFP_KERNEL);
++	if (!drv_info->max_clk_data)
++		return -ENOMEM;
++
++	drv_info->clks = devm_kcalloc(dev, num_clks,
++				      sizeof(*drv_info->clks), GFP_KERNEL);
++	if (!drv_info->clks)
++		return -ENOMEM;
++
++	for (i = 0; i < num_clks; i++) {
++		struct clk *clk;
++		const char *clk_name;
++
++		max_clk_data = &drv_info->max_clk_data[i];
++
++		max_clk_data->regmap = regmap;
++		max_clk_data->mask = hw_clks[i].mask;
++		max_clk_data->reg = hw_clks[i].reg;
++		max_clk_data->clk_idata.flags = hw_clks[i].flags;
++		max_clk_data->clk_idata.ops = &max_gen_clk_ops;
++
++		if (parent->of_node &&
++		    !of_property_read_string_index(parent->of_node,
++						   "clock-output-names",
++						   i, &clk_name))
++			max_clk_data->clk_idata.name = clk_name;
++		else
++			max_clk_data->clk_idata.name = hw_clks[i].name;
++
++		max_clk_data->hw.init = &max_clk_data->clk_idata;
++
++		clk = devm_clk_register(dev, &max_clk_data->hw);
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++			dev_err(dev, "Failed to clock register: %d\n", ret);
++			return ret;
++		}
++
++		ret = clk_register_clkdev(clk, max_clk_data->clk_idata.name,
++					  NULL);
++		if (ret < 0) {
++			dev_err(dev, "Failed to clkdev register: %d\n", ret);
++			return ret;
++		}
++		drv_info->clks[i] = clk;
++	}
++
++	platform_set_drvdata(pdev, drv_info);
++
++	if (parent->of_node) {
++		drv_info->of_data.clks = drv_info->clks;
++		drv_info->of_data.clk_num = num_clks;
++		ret = of_clk_add_provider(parent->of_node,
++					  of_clk_src_onecell_get,
++					  &drv_info->of_data);
++
++		if (ret < 0) {
++			dev_err(dev, "Failed to register OF clock provider: %d\n",
++				ret);
++			return ret;
++		}
++	}
++
++	/* MAX77802: Enable low-jitter mode on the 32khz clocks. */
++	if (drv_info->chip == CHIP_MAX77802) {
++		ret = regmap_update_bits(regmap, MAX77802_REG_32KHZ,
++					 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT,
++					 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT);
++		if (ret < 0) {
++			dev_err(dev, "Failed to set low-jitter mode: %d\n",
++				ret);
++			return ret;
++		}
++	}
++
++	return 0;
+ }
+ 
+ static int max77686_clk_remove(struct platform_device *pdev)
+ {
+-	return max_gen_clk_remove(pdev, MAX77686_CLKS_NUM);
++	struct device *parent = pdev->dev.parent;
++
++	if (parent->of_node)
++		of_clk_del_provider(parent->of_node);
++
++	return 0;
+ }
+ 
+ static const struct platform_device_id max77686_clk_id[] = {
+-	{ "max77686-clk", 0},
+-	{ },
++	{ "max77686-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77686, },
++	{ "max77802-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77802, },
++	{},
+ };
+ MODULE_DEVICE_TABLE(platform, max77686_clk_id);
+ 
+diff --git a/drivers/clk/clk-max77802.c b/drivers/clk/clk-max77802.c
+deleted file mode 100644
+index 355dd2e..0000000
+--- a/drivers/clk/clk-max77802.c
++++ /dev/null
+@@ -1,96 +0,0 @@
+-/*
+- * clk-max77802.c - Clock driver for Maxim 77802
+- *
+- * Copyright (C) 2014 Google, Inc
+- *
+- * Copyright (C) 2012 Samsung Electornics
+- * Jonghwa Lee <jonghwa3.lee@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * This driver is based on clk-max77686.c
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/err.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/mfd/max77686-private.h>
+-#include <linux/clk-provider.h>
+-#include <linux/mutex.h>
+-#include <linux/clkdev.h>
+-
+-#include <dt-bindings/clock/maxim,max77802.h>
+-#include "clk-max-gen.h"
+-
+-#define MAX77802_CLOCK_OPMODE_MASK	0x1
+-#define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
+-
+-static struct clk_init_data max77802_clks_init[MAX77802_CLKS_NUM] = {
+-	[MAX77802_CLK_32K_AP] = {
+-		.name = "32khz_ap",
+-		.ops = &max_gen_clk_ops,
+-	},
+-	[MAX77802_CLK_32K_CP] = {
+-		.name = "32khz_cp",
+-		.ops = &max_gen_clk_ops,
+-	},
+-};
+-
+-static int max77802_clk_probe(struct platform_device *pdev)
+-{
+-	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	int ret;
+-
+-	ret = max_gen_clk_probe(pdev, iodev->regmap, MAX77802_REG_32KHZ,
+-				max77802_clks_init, MAX77802_CLKS_NUM);
+-
+-	if (ret) {
+-		dev_err(&pdev->dev, "generic probe failed %d\n", ret);
+-		return ret;
+-	}
+-
+-	/* Enable low-jitter mode on the 32khz clocks. */
+-	ret = regmap_update_bits(iodev->regmap, MAX77802_REG_32KHZ,
+-				 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT,
+-				 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT);
+-	if (ret < 0)
+-		dev_err(&pdev->dev, "failed to enable low-jitter mode\n");
+-
+-	return ret;
+-}
+-
+-static int max77802_clk_remove(struct platform_device *pdev)
+-{
+-	return max_gen_clk_remove(pdev, MAX77802_CLKS_NUM);
+-}
+-
+-static const struct platform_device_id max77802_clk_id[] = {
+-	{ "max77802-clk", 0},
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(platform, max77802_clk_id);
+-
+-static struct platform_driver max77802_clk_driver = {
+-	.driver = {
+-		.name  = "max77802-clk",
+-	},
+-	.probe = max77802_clk_probe,
+-	.remove = max77802_clk_remove,
+-	.id_table = max77802_clk_id,
+-};
+-
+-module_platform_driver(max77802_clk_driver);
+-
+-MODULE_DESCRIPTION("MAXIM 77802 Clock Driver");
+-MODULE_AUTHOR("Javier Martinez Canillas <javier@osg.samsung.com");
+-MODULE_LICENSE("GPL");
 -- 
-Lin Huang
-
-
+2.1.4
