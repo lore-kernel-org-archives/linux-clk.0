@@ -1,130 +1,113 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	ykk@rock-chips.com,
-	jeffy.chen@rock-chips.com,
-	wxt@rock-chips.com
-Subject: [PATCH 5/5] clk: rockchip: rk3228: export related MAC clocks
-Date: Tue, 21 Jun 2016 12:59:47 +0800
-Message-Id: <1466485187-27081-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
-References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
+Date: Wed, 15 Jun 2016 19:43:37 +0530
+Message-ID: <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch exports related MAC clocks for dts reference.
+Maxim Max77620 has one 32KHz clock output and the clock HW
+IP used on this PMIC is same as what it is there in the MAX77686.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Add clock driver support for MAX77620 on the MAX77686 driver.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
 ---
+ drivers/clk/Kconfig        |  7 ++++---
+ drivers/clk/clk-max77686.c | 16 ++++++++++++++++
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
- drivers/clk/rockchip/clk-rk3228.c      |   22 +++++++++++-----------
- include/dt-bindings/clock/rk3228-cru.h |   11 +++++++++++
- 2 files changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 980d0da..db6e5a9 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -499,25 +499,25 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(2), 14, 1, MFLAGS, 8, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 6afad74..d75f4c5 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
+ source "drivers/clk/versatile/Kconfig"
  
--	COMPOSITE(0, "sclk_gmac_src", mux_pll_src_2plls_p, 0,
-+	COMPOSITE(SCLK_MAC_SRC, "sclk_gmac_src", mux_pll_src_2plls_p, 0,
- 			RK2928_CLKSEL_CON(5), 7, 1, MFLAGS, 0, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 7, GFLAGS),
--	MUX(0, "sclk_mac_extclk", mux_sclk_mac_extclk_p, 0,
-+	MUX(SCLK_MAC_EXTCLK, "sclk_mac_extclk", mux_sclk_mac_extclk_p, 0,
- 			RK2928_CLKSEL_CON(29), 10, 1, MFLAGS),
--	MUX(0, "sclk_gmac_pre", mux_sclk_gmac_pre_p, 0,
-+	MUX(SCLK_MAC, "sclk_gmac_pre", mux_sclk_gmac_pre_p, 0,
- 			RK2928_CLKSEL_CON(5), 5, 1, MFLAGS),
--	GATE(0, "sclk_mac_refout", "sclk_gmac_pre", 0,
-+	GATE(SCLK_MAC_REFOUT, "sclk_mac_refout", "sclk_gmac_pre", 0,
- 			RK2928_CLKGATE_CON(5), 4, GFLAGS),
--	GATE(0, "sclk_mac_ref", "sclk_gmac_pre", 0,
-+	GATE(SCLK_MAC_REF, "sclk_mac_ref", "sclk_gmac_pre", 0,
- 			RK2928_CLKGATE_CON(5), 3, GFLAGS),
--	GATE(0, "sclk_mac_rx", "sclk_gmac_pre", 0,
-+	GATE(SCLK_MAC_RX, "sclk_mac_rx", "sclk_gmac_pre", 0,
- 			RK2928_CLKGATE_CON(5), 5, GFLAGS),
--	GATE(0, "sclk_mac_tx", "sclk_gmac_pre", 0,
-+	GATE(SCLK_MAC_TX, "sclk_mac_tx", "sclk_gmac_pre", 0,
- 			RK2928_CLKGATE_CON(5), 6, GFLAGS),
--	COMPOSITE(0, "sclk_macphy", mux_sclk_macphy_p, 0,
-+	COMPOSITE(SCLK_MAC_PHY, "sclk_macphy", mux_sclk_macphy_p, 0,
- 			RK2928_CLKSEL_CON(29), 12, 1, MFLAGS, 8, 2, DFLAGS,
- 			RK2928_CLKGATE_CON(5), 7, GFLAGS),
--	COMPOSITE(0, "sclk_gmac_out", mux_pll_src_2plls_p, 0,
-+	COMPOSITE(SCLK_MAC_OUT, "sclk_gmac_out", mux_pll_src_2plls_p, 0,
- 			RK2928_CLKSEL_CON(5), 15, 1, MFLAGS, 8, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 2, GFLAGS),
+ config COMMON_CLK_MAX77686
+-	tristate "Clock driver for Maxim 77686/77802 MFD"
+-	depends on MFD_MAX77686
++	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
++	depends on MFD_MAX77686 || MFD_MAX77620
+ 	---help---
+-	  This driver supports Maxim 77686/77802 crystal oscillator clock.
++	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
++	  clock.
  
-@@ -551,7 +551,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ config COMMON_CLK_RK808
+ 	tristate "Clock driver for RK808"
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 31ba726..d2be736 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -19,6 +19,7 @@
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/mfd/max77620.h>
+ #include <linux/mfd/max77686.h>
+ #include <linux/mfd/max77686-private.h>
+ #include <linux/clk-provider.h>
+@@ -30,12 +31,14 @@
  
- 	/* PD_PERI */
- 	GATE(0, "aclk_peri_noc", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(12), 0, GFLAGS),
--	GATE(0, "aclk_gmac", "aclk_peri", 0, RK2928_CLKGATE_CON(11), 4, GFLAGS),
-+	GATE(ACLK_GMAC, "aclk_gmac", "aclk_peri", 0, RK2928_CLKGATE_CON(11), 4, GFLAGS),
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include <dt-bindings/clock/maxim,max77802.h>
++#include <dt-bindings/mfd/max77620.h>
  
- 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 0, GFLAGS),
- 	GATE(HCLK_SDIO, "hclk_sdio", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 1, GFLAGS),
-@@ -567,7 +567,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(0, "hclk_host2_arb", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 14, GFLAGS),
- 	GATE(0, "hclk_peri_noc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(12), 1, GFLAGS),
+ #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
  
--	GATE(0, "pclk_gmac", "pclk_peri", 0, RK2928_CLKGATE_CON(11), 5, GFLAGS),
-+	GATE(PCLK_GMAC, "pclk_gmac", "pclk_peri", 0, RK2928_CLKGATE_CON(11), 5, GFLAGS),
- 	GATE(0, "pclk_peri_noc", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(12), 2, GFLAGS),
+ enum chip_name {
+ 	CHIP_MAX77686,
+ 	CHIP_MAX77802,
++	CHIP_MAX77620,
+ };
  
- 	/* PD_GPU */
-diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
-index c992f3e..b27e2b1 100644
---- a/include/dt-bindings/clock/rk3228-cru.h
-+++ b/include/dt-bindings/clock/rk3228-cru.h
-@@ -52,6 +52,15 @@
- #define SCLK_EMMC_SAMPLE	121
- #define SCLK_VOP		122
- #define SCLK_HDMI_HDCP		123
-+#define SCLK_MAC_SRC		124
-+#define SCLK_MAC_EXTCLK		125
-+#define SCLK_MAC		126
-+#define SCLK_MAC_REFOUT		127
-+#define SCLK_MAC_REF		128
-+#define SCLK_MAC_RX		129
-+#define SCLK_MAC_TX		130
-+#define SCLK_MAC_PHY		131
-+#define SCLK_MAC_OUT		132
+ struct max_gen_hw_clk_data {
+@@ -91,6 +94,14 @@ static struct max_gen_hw_clk_data max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
+ 	},
+ };
  
- /* dclk gates */
- #define DCLK_VOP		190
-@@ -61,6 +70,7 @@
- #define ACLK_DMAC		194
- #define ACLK_PERI		210
- #define ACLK_VOP		211
-+#define ACLK_GMAC		212
- 
- /* pclk gates */
- #define PCLK_GPIO0		320
-@@ -82,6 +92,7 @@
- #define PCLK_PERI		363
- #define PCLK_HDMI_CTRL		364
- #define PCLK_HDMI_PHY		365
-+#define PCLK_GMAC		367
- 
- /* hclk gates */
- #define HCLK_I2S0_8CH		442
++static struct max_gen_hw_clk_data max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
++	[MAX77620_CLK_32K_OUT0] = {
++		.name = "32khz_pmic",
++		.reg = MAX77620_REG_CNFG1_32K,
++		.mask = MAX77620_CNFG1_32K_OUT0_EN,
++	},
++};
++
+ static struct max_gen_clk_data *to_max_gen_clk_data(struct clk_hw *hw)
+ {
+ 	return container_of(hw, struct max_gen_clk_data, hw);
+@@ -171,6 +182,10 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 		num_clks = MAX77802_CLKS_NUM;
+ 		hw_clks = max77802_hw_clks_info;
+ 		break;
++	case CHIP_MAX77620:
++		num_clks = MAX77620_CLKS_NUM;
++		hw_clks = max77620_hw_clks_info;
++		break;
+ 	default:
+ 		dev_err(dev, "Unknown Chip ID\n");
+ 		return -EINVAL;
+@@ -269,6 +284,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
+ static const struct platform_device_id max77686_clk_id[] = {
+ 	{ "max77686-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77686, },
+ 	{ "max77802-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77802, },
++	{ "max77620-clock", .driver_data = (kernel_ulong_t)CHIP_MAX77620, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(platform, max77686_clk_id);
 -- 
-1.7.9.5
+2.1.4
