@@ -1,125 +1,104 @@
-Return-Path: <hotran@apm.com>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUMm5BWWEmKX3xOBkMX7HWTYgD6R0xz=uggs_Uya8=3Gw@mail.gmail.com>
-References: <1466120433-30648-1-git-send-email-hotran@apm.com>
-	<1466120433-30648-3-git-send-email-hotran@apm.com>
-	<CAMuHMdUMm5BWWEmKX3xOBkMX7HWTYgD6R0xz=uggs_Uya8=3Gw@mail.gmail.com>
-Date: Fri, 17 Jun 2016 09:30:22 -0700
-Message-ID: <CAFHUOYxGqutv+Yr4sZUogVNEqRpyB0A9CcdadwJiac_Q=HQ-zw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: Add fractional scale clock support
-From: Hoan Tran <hotran@apm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
-Content-Type: text/plain; charset=UTF-8
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 09/10] ARM: dts: sun9i: a80-optimus: Order nodes by alphabetical order
+Date: Wed, 15 Jun 2016 18:27:46 +0800
+Message-Id: <1465986467-14802-10-git-send-email-wens@csie.org>
+In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Move the mmc nodes above the ohci nodes for proper ordering by name.
 
-On Thu, Jun 16, 2016 at 11:43 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Jun 17, 2016 at 1:40 AM, Hoan Tran <hotran@apm.com> wrote:
->> This patch adds fractional scale clock support.
->> Fractional scale clock is implemented for a single register field.
->>   Output rate = parent_rate * scale / denominator
->> For example, for 1 / 8 fractional scale, denominator will be 8 and scale
->> will be computed and programmed accordingly.
->>
->> Signed-off-by: Hoan Tran <hotran@apm.com>
->> Signed-off-by: Loc Ho <lho@apm.com>
->
->> --- /dev/null
->> +++ b/drivers/clk/clk-fractional-scale.c
->
->> +static long clk_fs_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                             unsigned long *parent_rate)
->> +{
->> +       struct clk_fractional_scale *fd = to_clk_sf(hw);
->> +       u64 ret, scale;
->> +
->> +       if (!rate || rate >= *parent_rate)
->> +               return *parent_rate;
->> +
->> +       /* freq = parent_rate * scaler / denom */
->> +       ret = rate * fd->denom;
->
-> Can this overflow? No, because fd->denom is u64.
-> But if fd->denom is changed to u32, it needs a cast to u64 here.
->
->> +       scale = ret / *parent_rate;
->
-> As detected by the kbuild test robot, this should use do_div().
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80-optimus.dts | 50 ++++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-Yes, my mistake. I'll fix it.
-
->
->> +
->> +       ret = (u64) *parent_rate * scale;
->> +       do_div(ret, fd->denom);
->> +
->> +       return ret;
->> +}
->> +
->> +static int clk_fs_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                          unsigned long parent_rate)
->> +{
->> +       struct clk_fractional_scale *fd = to_clk_sf(hw);
->> +       unsigned long flags = 0;
->> +       u64 scale, ret;
->> +       u32 val;
->> +
->> +       /*
->> +        * Compute the scaler:
->> +        *
->> +        * freq = parent_rate * scaler / denom, or
->> +        * scaler = freq * denom / parent_rate
->> +        */
->> +       ret = rate * fd->denom;
->
-> Can this overflow? No, because fd->denom is u64.
-> But if fd->denom is changed to u32, it needs a cast to u64 here.
->
->> +       scale = ret / (u64)parent_rate;
->
-> Don't cast the divider to u64, as this will turn a 64-by-32 division into a
-> 64-by-64 division.
-> As detected by the kbuild test robot, this should use do_div().
-
-Will fix it.
-
-Thanks
-Hoan
-
->
->> --- a/include/linux/clk-provider.h
->> +++ b/include/linux/clk-provider.h
->
->> +struct clk_fractional_scale {
->> +       struct clk_hw   hw;
->> +       void __iomem    *reg;
->> +       u8              shift;
->> +       u32             mask;
->> +       u64             denom;
->
-> u64 sounds overkill to me, but it looks like that was done to avoid overflow in
-> the multiplications?
->
->> +       u32             flags;
->> +       spinlock_t      *lock;
->> +};
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+index 24ef8e65a975..3b013dc5fef1 100644
+--- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
++++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+@@ -119,6 +119,31 @@
+ 	status = "okay";
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_optimus>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <4>;
++	cd-gpios = <&pio 7 18 GPIO_ACTIVE_HIGH>; /* PH8 */
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&mmc2_8bit_pins {
++	/* Increase drive strength for DDR modes */
++	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
++};
++
+ &ohci0 {
+ 	status = "okay";
+ };
+@@ -157,31 +182,6 @@
+ 	};
+ };
+ 
+-&mmc0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mmc0_pins>, <&mmc0_cd_pin_optimus>;
+-	vmmc-supply = <&reg_dcdc1>;
+-	bus-width = <4>;
+-	cd-gpios = <&pio 7 18 GPIO_ACTIVE_HIGH>; /* PH8 */
+-	cd-inverted;
+-	status = "okay";
+-};
+-
+-&mmc2 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mmc2_8bit_pins>;
+-	vmmc-supply = <&reg_dcdc1>;
+-	bus-width = <8>;
+-	non-removable;
+-	cap-mmc-hw-reset;
+-	status = "okay";
+-};
+-
+-&mmc2_8bit_pins {
+-	/* Increase drive strength for DDR modes */
+-	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
+-};
+-
+ &r_ir {
+ 	status = "okay";
+ };
+-- 
+2.8.1
