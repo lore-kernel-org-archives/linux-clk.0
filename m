@@ -1,52 +1,99 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 1/7] clk: meson: add peripheral gate macro
-Date: Thu,  9 Jun 2016 17:32:48 -0700
-Message-Id: <1465518774-26924-2-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
-References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20160615124943.GE4948@dell>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
+ <1465986467-14802-3-git-send-email-wens@csie.org> <20160615124943.GE4948@dell>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 15 Jun 2016 21:17:49 +0800
+Message-ID: <CAGb2v66q0h_BZ-kkRZCneOs5yxvcADXKymMskr3CRc-N8Dqm1A@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] mfd: ac100: Add device tree bindings for
+ X-Powers AC100 codec/RTC combo IC
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-There are a series of peripheral and system gate clocks that fan out
-from the clk81 signal. Add a helper macro to statically initialize these
-gate clocks.
+On Wed, Jun 15, 2016 at 8:49 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
+>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/ac100.txt | 42 ++++++++++++++++++=
++++++++
+>>  1 file changed, 42 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documenta=
+tion/devicetree/bindings/mfd/ac100.txt
+>> new file mode 100644
+>> index 000000000000..fbab623e6fba
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
+>> @@ -0,0 +1,42 @@
+>> +X-Powers AC100 Codec/RTC IC device tree bindings
+>> +
+>> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
+>> +separated, including power supplies and interrupt lines, but share
+>> +a common register address space and host interface.
+>> +
+>> +Required properties:
+>> +- compatible: "x-powers,ac100"
+>> +- reg: The I2C slave address or RSB hardware address for the chip
+>> +- sub-nodes:
+>> +  - codec
+>> +    - compatible: "x-powers,ac100-codec"
+>> +    - interrupt-parent: The parent interrupt controller
+>> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO p=
+in
+>> +  - rtc
+>> +    - compatible: "x-powers,ac100-rtc"
+>> +    - interrupt-parent: The parent interrupt controller
+>> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
+>> +    - #clock-cells: shall be 1
+>> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
+>> +    - see clock/clock-bindings.txt for common clock bindings
+>> +
+>> +Example:
+>> +
+>> +ac100: codec@e89 {
+>> +     compatible =3D "x-powers,ac100";
+>> +     reg =3D <0xe89>;
+>> +
+>> +     ac100_codec {
+>> +             compatible =3D "x-powers,ac100-codec";
+>> +             interrupt-parent =3D <&nmi_intc>;
+>> +             interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
+>> +     };
+>> +
+>> +     ac100_rtc {
+>> +             compatible =3D "x-powers,ac100-rtc";
+>> +             interrupt-parent =3D <&nmi_intc>;
+>> +             interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
+>
+> Isn't this the same interrupt as above?  Is it shared?
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
----
- drivers/clk/meson/clkc.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Copy paste error... The codec uses a different line in the design.
 
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index f3f3961..9436932 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -73,6 +73,20 @@ struct meson_clk_cpu {
- int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
- 		void *data);
- 
-+#define MESON_GATE(_name, _reg, _bit)					\
-+struct clk_gate gxbb_##_name = { 						\
-+	.reg = (void __iomem *) _reg, 					\
-+	.bit_idx = (_bit), 						\
-+	.lock = &clk_lock,						\
-+	.hw.init = &(struct clk_init_data) { 				\
-+		.name = #_name,					\
-+		.ops = &clk_gate_ops,					\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), 	\
-+	},								\
-+};
-+
- /* clk_ops */
- extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
--- 
-2.1.4
+ChenYu
+
+>
+>> +             #clock-cells =3D <1>;
+>> +             clock-output-names =3D "cko1_rtc", "cko2_rtc", "cko3_rtc";
+>> +     };
+>> +};
+>
+> --
+> Lee Jones
+> Linaro STMicroelectronics Landing Team Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
