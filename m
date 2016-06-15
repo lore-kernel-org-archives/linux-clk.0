@@ -1,69 +1,105 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <cover.1467135898.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 28 Jun 2016 19:44:58 +0200
-Subject: [PATCH 0/3] clk: sunxi: Simpler driver for Allwinner's clocks
-To: Emilio Lopez <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-    Michael Turquette <mturquette@baylibre.com>,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org,
-    devicetree@vger.kernel.org,
-    linux-sunxi@googlegroups.com
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
+ driver
+To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+Message-ID: <4ba85edd-203f-c27f-f11c-5b64f972acc0@osg.samsung.com>
+Date: Wed, 15 Jun 2016 11:12:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The 'sunxi-ng' proposal from Maxime Ripard did a great advance in
-handling the clocks of Allwinner's SoCs, but it appeared that it
-was not easy to extend its functions and handle some other SoCs as
-the A83T.
+Hello Laxman,
 
-This patch series proposes a more flexible and simpler structure.
-The basic idea is to have the same structure for all clocks.
-All parameters (multipliers, dividers, mux, gates..) may be defined
-or not in each clock. An 'extra' pointer permits to handle rare
-or specific functions.
+On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
+> The clock IP used on the Maxim PMICs max77686 and max77802 are
+> same. The configuration of clock register is also same except
+> the number of clocks.
+> 
+> Part of common code utilisation, there is 3 files for these chips
+> clock driver, one for common and two files for driver registration.
+> 
+> Combine both drivers into single file and move common code into
+> same common file reduces the 2 files and make max77686 and max77802
+> clock driver in single fine. This driver does not depends on the
+> parent driver structure. The regmap handle is acquired through
+> regmap APIs for the register access.
+> 
+> This combination of driver helps on adding clock driver for different
+> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> ---
 
-The notion of 'bus gates' appearing in previous drivers and DTs
-are of no interest outside the clock driver itself. So, this
-driver maps the bus gate and clock gate operations to the standard
-clock functions 'prepare/unprepare' and 'enable/disable'.
+[snip]
 
-The reset functions are included in this driver.
-As often, the resets occur at probe time, at the same time as the
-clock prepare calls, this driver optionally proposes to hide them
-by doing a 'reset and enable bus gate' on clock prepare (and same
-in inverse order on clock unprepare).
+> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> index 9b6f277..31ba726 100644
+> --- a/drivers/clk/clk-max77686.c
+> +++ b/drivers/clk/clk-max77686.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * clk-max77686.c - Clock driver for Maxim 77686
+> + * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
+>   *
+>   * Copyright (C) 2012 Samsung Electornics
+>   * Jonghwa Lee <jonghwa3.lee@samsung.com>
+> @@ -13,13 +13,7 @@
+>   * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+> - *
+>   */
+> -
 
-This driver has been tested on a Banana Pi M3 (A83T):
-- working: UART0, USB0, MMC0, THS, video (DE + LCD1 + HDMI)
-- not tested yet: HDMI audio (the EDID cannot be read
-				preventing audio to be enabled)
-- not working: MMC1 (wifi), MMC2 (eMMC)
+I think removing this part of the header is correct but it should be a
+separate patch.
 
-(sorry, Maxime, but I think that my implementation is easier to
- extend than yours)
+[snip]
 
-Jean-Francois Moine (3):
-  clk: sunxi: Add a driver for the CCU
-  clk: sunxi: Add the A83T clocks
-  dt: sun8i: Define the clocks of the A83T
+> +
+> +struct max_gen_hw_clk_data {
+> +	const char *name;
+> +	u32 reg;
+> +	u32 mask;
+> +	u32 flags;
+> +};
+> +
+> +struct max_gen_clk_data {
+> +	struct regmap *regmap;
+> +	struct clk_init_data clk_idata;
+> +	struct clk_hw hw;
+> +	u32 reg;
+> +	u32 mask;
+> +};
+> +
 
- Documentation/devicetree/bindings/clock/sunxi.txt |   7 +-
- arch/arm/boot/dts/sun8i-a83t.dtsi                 |  16 +-
- drivers/clk/sunxi/Makefile                        |   3 +
- drivers/clk/sunxi/ccu-sun8i-a83t.c                | 858 +++++++++++++++++++
- drivers/clk/sunxi/ccu.c                           | 980 ++++++++++++++++++++++
- drivers/clk/sunxi/ccu.h                           | 153 ++++
- include/dt-bindings/clock/sun8i-a83t.h            |  97 +++
- include/dt-bindings/reset/sun8i-a83t.h            |  62 ++
- 8 files changed, 2169 insertions(+), 7 deletions(-)
- create mode 100644 drivers/clk/sunxi/ccu-sun8i-a83t.c
- create mode 100644 drivers/clk/sunxi/ccu.c
- create mode 100644 drivers/clk/sunxi/ccu.h
- create mode 100644 include/dt-bindings/clock/sun8i-a83t.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t.h
+Probably now makes more sense to rename all the "max_gen_foo" structs and
+functions to just "max77686_foo" since now are all defined in the max77686
+so that naming is more consistent.
 
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+I also tested on an Exynos5800 Peach Pi Chromebook that has a max77802 IP:
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.9.0
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
