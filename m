@@ -1,93 +1,92 @@
-Return-Path: <moinejf@free.fr>
-Date: Sat, 11 Jun 2016 10:27:54 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
- Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
- Patekar <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, Boris Brezillon
- <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 08/15] clk: sunxi-ng: Add divider
-Message-Id: <20160611102754.394c28863c2f50d5d29b94a1@free.fr>
-In-Reply-To: <20160607204154.31967-9-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-	<20160607204154.31967-9-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 15 Jun 2016 13:49:43 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] mfd: ac100: Add device tree bindings for
+ X-Powers AC100 codec/RTC combo IC
+Message-ID: <20160615124943.GE4948@dell>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
+ <1465986467-14802-3-git-send-email-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1465986467-14802-3-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue,  7 Jun 2016 22:41:47 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
 
-> Add support for the various dividers (linear, table or pow-of-two based)
-> found in the CCU.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/clk/sunxi-ng/Makefile  |   1 +
->  drivers/clk/sunxi-ng/ccu_div.c | 136 +++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu_div.h | 135 +++++++++++++++++++++++++++++++++++=
-+++++
->  3 files changed, 272 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu_div.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu_div.h
->=20
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index c47cbd309d59..67a2559fe283 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -3,6 +3,7 @@ obj-y +=3D ccu_reset.o
-> =20
->  obj-y +=3D ccu_frac.o
-> =20
-> +obj-y +=3D ccu_div.o
->  obj-y +=3D ccu_fixed_factor.o
->  obj-y +=3D ccu_gate.o
->  obj-y +=3D ccu_mux.o
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_di=
-v.c
+>  Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
 > new file mode 100644
-> index 000000000000..8659b4cb6c20
+> index 000000000000..fbab623e6fba
 > --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> @@ -0,0 +1,136 @@
-	[snip]
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_di=
-v.h
-> new file mode 100644
-> index 000000000000..5edbdc1a98c8
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -0,0 +1,135 @@
-	[snip]
-> +#define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-> +			      _mshift, _mwidth,	_gate,			\
-> +			      _flags)					\
-> +	struct ccu_div _struct =3D {					\
-> +		.enable	=3D _gate,					\
-> +		.div	=3D _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-> +		.common	=3D {						\
-> +			.reg		=3D _reg,				\
-> +			.features	=3D CCU_FEATURE_GATE,		\
-> +			.hw.init	=3D SUNXI_HW_INIT(_name,		\
-> +							_parent,	\
-> +							&ccu_div_ops,	\
-> +							_flags),	\
-> +		},							\
-> +	}
+> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
+> @@ -0,0 +1,42 @@
+> +X-Powers AC100 Codec/RTC IC device tree bindings
 > +
-> +#define SUNXI_CCU_M(_struct, _name, _parent, _reg, _mshift, _mwidth,	\
-> +		    _flags)						\
-> +	SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-> +			      _mshift, _mwidth, 0, _flags)
-	[snip]
+> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
+> +separated, including power supplies and interrupt lines, but share
+> +a common register address space and host interface.
+> +
+> +Required properties:
+> +- compatible: "x-powers,ac100"
+> +- reg: The I2C slave address or RSB hardware address for the chip
+> +- sub-nodes:
+> +  - codec
+> +    - compatible: "x-powers,ac100-codec"
+> +    - interrupt-parent: The parent interrupt controller
+> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
+> +  - rtc
+> +    - compatible: "x-powers,ac100-rtc"
+> +    - interrupt-parent: The parent interrupt controller
+> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
+> +    - #clock-cells: shall be 1
+> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
+> +    - see clock/clock-bindings.txt for common clock bindings
+> +
+> +Example:
+> +
+> +ac100: codec@e89 {
+> +	compatible = "x-powers,ac100";
+> +	reg = <0xe89>;
+> +
+> +	ac100_codec {
+> +		compatible = "x-powers,ac100-codec";
+> +		interrupt-parent = <&nmi_intc>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	ac100_rtc {
+> +		compatible = "x-powers,ac100-rtc";
+> +		interrupt-parent = <&nmi_intc>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
 
-This shows that the flag CCU_FEATURE_GATE is perfectly useless...
+Isn't this the same interrupt as above?  Is it shared?
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+> +		#clock-cells = <1>;
+> +		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
+> +	};
+> +};
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
