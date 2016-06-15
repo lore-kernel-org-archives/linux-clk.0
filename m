@@ -1,108 +1,98 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
-Subject: [PATCH 2/8] tty: serial: fsl_lpuart: support suspend/resume
-Date: Thu, 9 Jun 2016 20:40:33 +0530
-Message-ID: <20160609151039.20817-3-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+In-Reply-To: <20160615123646.GD4948@dell>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
+ <1465986467-14802-4-git-send-email-wens@csie.org> <20160615123646.GD4948@dell>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 15 Jun 2016 20:41:35 +0800
+Message-ID: <CAGb2v669g6G4aK5UssyLLve1a-AbdVfo4CPYrt+YWmCUURz9qQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] mfd: ac100: Add driver for X-Powers AC100 audio
+ codec / RTC combo IC
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stefan Agner <stefan@agner.ch>
+On Wed, Jun 15, 2016 at 8:36 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
+>
+>> The AC100 is a multifunction device with an audio codec subsystem and
+>> an RTC subsystem. These two subsystems share a common register space
+>> and host interface.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>
+> Change log?
 
-In order to allow wake support in STOP sleep mode, clocks are
-needed. Use imx_clk_gate2_cgr to disable automatic clock gating
-in low power mode STOP. This allows to enable wake by UART using:
-echo enabled > /sys/class/tty/ttyLP0/power/wakeup
+Change log was in the cover letter. Changes were the addition of the
+codec related register macros and regmap ranges.
 
-However, if wake is not enabled, the driver should disable the
-clocks explicitly to save power.
+>>  drivers/mfd/Kconfig       |  10 +++
+>>  drivers/mfd/Makefile      |   2 +
+>>  drivers/mfd/ac100.c       | 135 +++++++++++++++++++++++++++++++++++
+>>  include/linux/mfd/ac100.h | 176 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 323 insertions(+)
+>>  create mode 100644 drivers/mfd/ac100.c
+>>  create mode 100644 include/linux/mfd/ac100.h
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>> index 1bcf601de5bc..bd83849a0c8d 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -101,6 +101,16 @@ config MFD_BCM590XX
+>>       help
+>>         Support for the BCM590xx PMUs from Broadcom
+>>
+>> +config MFD_AC100
+>> +     tristate "X-Powers AC100"
+>> +     select MFD_CORE
+>> +     depends on SUNXI_RSB
+>> +     help
+>> +       If you say Y here you get support for the X-Powers AC100 audio codec
+>> +       IC.
+>> +       This driver include only the core APIs. You have to select individual
+>> +       components like codecs or RTC under the corresponding menus.
+>> +
+>>  config MFD_AXP20X
+>>       tristate
+>>       select MFD_CORE
+>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+>> index 42a66e19e191..60f9a6b0557c 100644
+>> --- a/drivers/mfd/Makefile
+>> +++ b/drivers/mfd/Makefile
+>> @@ -113,6 +113,8 @@ obj-$(CONFIG_PMIC_DA9052) += da9052-irq.o
+>>  obj-$(CONFIG_PMIC_DA9052)    += da9052-core.o
+>>  obj-$(CONFIG_MFD_DA9052_SPI) += da9052-spi.o
+>>  obj-$(CONFIG_MFD_DA9052_I2C) += da9052-i2c.o
+>> +
+>> +obj-$(CONFIG_MFD_AC100)              += ac100.o
+>>  obj-$(CONFIG_MFD_AXP20X)     += axp20x.o
+>>  obj-$(CONFIG_MFD_AXP20X_I2C) += axp20x-i2c.o
+>>  obj-$(CONFIG_MFD_AXP20X_RSB) += axp20x-rsb.o
+>> diff --git a/drivers/mfd/ac100.c b/drivers/mfd/ac100.c
+>> new file mode 100644
+>> index 000000000000..15d24fa77771
+>> --- /dev/null
+>> +++ b/drivers/mfd/ac100.c
+>> @@ -0,0 +1,135 @@
+>> +/*
+>> + * ac100.c - MFD core driver for X-Powers' AC100 Audio Codec IC
+>
+> Nit: Drop the filename here.
+>
+> Apart from that:
+>   Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-vf610.c     | 12 ++++++------
- drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
- 2 files changed, 20 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 3a1f244..0476353 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -315,12 +315,12 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 
- 	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
- 
--	clk[VF610_CLK_UART0] = imx_clk_gate2("uart0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(7));
--	clk[VF610_CLK_UART1] = imx_clk_gate2("uart1", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(8));
--	clk[VF610_CLK_UART2] = imx_clk_gate2("uart2", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(9));
--	clk[VF610_CLK_UART3] = imx_clk_gate2("uart3", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(10));
--	clk[VF610_CLK_UART4] = imx_clk_gate2("uart4", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(9));
--	clk[VF610_CLK_UART5] = imx_clk_gate2("uart5", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(10));
-+	clk[VF610_CLK_UART0] = imx_clk_gate2_cgr("uart0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(7), 0x2);
-+	clk[VF610_CLK_UART1] = imx_clk_gate2_cgr("uart1", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(8), 0x2);
-+	clk[VF610_CLK_UART2] = imx_clk_gate2_cgr("uart2", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(9), 0x2);
-+	clk[VF610_CLK_UART3] = imx_clk_gate2_cgr("uart3", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(10), 0x2);
-+	clk[VF610_CLK_UART4] = imx_clk_gate2_cgr("uart4", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(9), 0x2);
-+	clk[VF610_CLK_UART5] = imx_clk_gate2_cgr("uart5", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(10), 0x2);
- 
- 	clk[VF610_CLK_I2C0] = imx_clk_gate2("i2c0", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(6));
- 	clk[VF610_CLK_I2C1] = imx_clk_gate2("i2c1", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(7));
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index fabfa7e..75a2098 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -483,9 +483,8 @@ static void lpuart_dma_rx_complete(void *arg)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
--static void lpuart_timer_func(unsigned long data)
-+static void lpuart_dma_rx_terminate(struct lpuart_port *sport)
- {
--	struct lpuart_port *sport = (struct lpuart_port *)data;
- 	struct tty_port *port = &sport->port.state->port;
- 	struct dma_tx_state state;
- 	unsigned long flags;
-@@ -510,6 +509,11 @@ static void lpuart_timer_func(unsigned long data)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
-+static void lpuart_timer_func(unsigned long data)
-+{
-+	lpuart_dma_rx_terminate((struct lpuart_port *)data);
-+}
-+
- static inline void lpuart_prepare_rx(struct lpuart_port *sport)
- {
- 	unsigned long flags;
-@@ -1925,7 +1929,12 @@ static int lpuart_suspend(struct device *dev)
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
-+	if (sport->dma_rx_in_progress)
-+		lpuart_dma_rx_terminate(sport);
-+
- 	uart_suspend_port(&lpuart_reg, &sport->port);
-+	if (sport->port.suspended && !sport->port.irq_wake)
-+		clk_disable_unprepare(sport->clk);
- 
- 	return 0;
- }
-@@ -1935,6 +1944,9 @@ static int lpuart_resume(struct device *dev)
- 	struct lpuart_port *sport = dev_get_drvdata(dev);
- 	unsigned long temp;
- 
-+	if (sport->port.suspended && !sport->port.irq_wake)
-+		clk_prepare_enable(sport->clk);
-+
- 	if (sport->lpuart32) {
- 		lpuart32_setup_watermark(sport);
- 		temp = lpuart32_read(sport->port.membase + UARTCTRL);
--- 
-2.8.3
+Thanks.
+ChenYu
