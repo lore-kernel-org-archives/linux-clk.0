@@ -1,65 +1,57 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Tue, 7 Jun 2016 17:13:26 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: ti: fapll: fix address space warnings
-Message-ID: <20160607161326.GZ5783@n2100.arm.linux.org.uk>
-References: <1465308337-18047-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
+Date: Wed, 15 Jun 2016 19:43:38 +0530
+Message-ID: <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465308337-18047-1-git-send-email-ben.dooks@codethink.co.uk>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 07, 2016 at 03:05:37PM +0100, Ben Dooks wrote:
-> Fix the following warnings from casting "void __iomem *" pointers
-> to u32 when using sparse:
-> 
-> drivers/clk/ti/fapll.c:583:13: warning: cast removes address space of expression
-> drivers/clk/ti/fapll.c:623:21: warning: cast removes address space of expression
+The clock driver used by Maxim PMIC MAX77802 is clk-max77686
+which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
 
-As a note of general principle, adding __force to casts is not the correct
-way to solve these sparse warnings.
+Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
 
-__force is supposed to be used in places which know that the cast is 100%
-legitimate - in other words, architecture code removing the __iomem-ness
-of the pointer so it can be dereferenced.  Sprinking the code with __force
-to shut these warnings up doesn't actually help the cause.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+---
+ arch/arm/configs/exynos_defconfig   | 1 -
+ arch/arm/configs/multi_v7_defconfig | 1 -
+ 2 files changed, 2 deletions(-)
 
-> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-> index 66a0d0e..d765f4a 100644
-> --- a/drivers/clk/ti/fapll.c
-> +++ b/drivers/clk/ti/fapll.c
-> @@ -43,14 +43,14 @@
->  #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
->  
->  /* The bypass bit is inverted on the ddr_pll.. */
-> -#define fapll_is_ddr_pll(va)	(((u32)(va) & 0xffff) == 0x0440)
-> +#define fapll_is_ddr_pll(va)	(((u32 __force)(va) & 0xffff) == 0x0440)
-
-This should be a cast to unsigned long, not u32.
-
->  
->  /*
->   * The audio_pll_clk1 input is hard wired to the 27MHz bypass clock,
->   * and the audio_pll_clk1 synthesizer is hardwared to 32KiHz output.
->   */
-> -#define is_ddr_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x044c)
-> -#define is_audio_pll_clk1(va)	(((u32)(va) & 0xffff) == 0x04a8)
-> +#define is_ddr_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x044c)
-> +#define is_audio_pll_clk1(va)	(((u32 __force)(va) & 0xffff) == 0x04a8)
-
-Ditto.
-
-A cast from an __iomem pointer to unsigned long is permitted - no need
-to use __force.
-
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index daf9762..cfd75c7 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -216,7 +216,6 @@ CONFIG_DMADEVICES=y
+ CONFIG_PL330_DMA=y
+ CONFIG_CROS_EC_CHARDEV=y
+ CONFIG_COMMON_CLK_MAX77686=y
+-CONFIG_COMMON_CLK_MAX77802=y
+ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_EXTCON=y
+ CONFIG_EXTCON_MAX14577=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index ee7c884..7cbf389 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -787,7 +787,6 @@ CONFIG_CHROME_PLATFORMS=y
+ CONFIG_STAGING_BOARD=y
+ CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_COMMON_CLK_MAX77686=y
+-CONFIG_COMMON_CLK_MAX77802=m
+ CONFIG_COMMON_CLK_RK808=m
+ CONFIG_COMMON_CLK_S2MPS11=m
+ CONFIG_APQ_MMCC_8084=y
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.1.4
