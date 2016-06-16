@@ -1,252 +1,183 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.137]:46194 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750972AbcFCBZ6 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2016 21:25:58 -0400
-Message-ID: <5750DC85.4040400@rock-chips.com>
-Date: Fri, 03 Jun 2016 09:25:25 +0800
-From: Xing Zheng <zhengxing@rock-chips.com>
-MIME-Version: 1.0
-To: Shawn Lin <shawn.lin@rock-chips.com>
-CC: Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: rockchip: remove ROCKCHIP_SOFTRST_HIWORD_MASK
- for rockchip platform
-References: <1464915288-10877-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1464915288-10877-1-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [RESEND PATCH v2 05/13] drivers: clk: st: Handle clk synchronous mode for video clocks
+Date: Thu, 16 Jun 2016 11:20:25 +0200
+Message-Id: <1466068833-5055-6-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+This patch configures the semi-synchronous mode of the video clocks
+of clkgenD2.
 
-On 2016年06月03日 08:54, Shawn Lin wrote:
-> I check all the Socs including RK2928/3000/3066/3028X/316X/312X/
-> 3190/3188/3228/3368/3399/3036, and find all of them use high 16-bit
-> as write mask. Obviously we don't need ROCKCHIP_SOFTRST_HIWORD_MASK
-> any more(actually I don't know why we need it before). This patch
-> removes it to simplify the code and save a little cpu cycle when calling
-> assert or deassert callback.
-In my opinion, this flag can be used for compatibility, we can not 
-ensure that our SoCs will not use the 32bit SOFTRST_CONs in future.
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ .../devicetree/bindings/clock/st/st,flexgen.txt    |  2 ++
+ drivers/clk/st/clk-flexgen.c                       | 37 ++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
-Thanks.
->
-> Signed-off-by: Shawn Lin<shawn.lin@rock-chips.com>
-> ---
->
->   drivers/clk/rockchip/clk-rk3036.c |  3 +--
->   drivers/clk/rockchip/clk-rk3188.c |  3 +--
->   drivers/clk/rockchip/clk-rk3228.c |  3 +--
->   drivers/clk/rockchip/clk-rk3288.c |  3 +--
->   drivers/clk/rockchip/clk-rk3368.c |  3 +--
->   drivers/clk/rockchip/clk-rk3399.c |  6 ++----
->   drivers/clk/rockchip/clk.h        |  6 ++----
->   drivers/clk/rockchip/softrst.c    | 40 +++++----------------------------------
->   8 files changed, 14 insertions(+), 53 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-> index 924f560..a13dfc2 100644
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -475,8 +475,7 @@ static void __init rk3036_clk_init(struct device_node *np)
->   			&rk3036_cpuclk_data, rk3036_cpuclk_rates,
->   			ARRAY_SIZE(rk3036_cpuclk_rates));
->
-> -	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0));
->
->   	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
->
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-> index d0e722a..4acd787 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -780,8 +780,7 @@ static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device
->   	rockchip_clk_register_branches(ctx, common_clk_branches,
->   				  ARRAY_SIZE(common_clk_branches));
->
-> -	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0));
->
->   	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
->
-> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-> index 016bdb0..8412753 100644
-> --- a/drivers/clk/rockchip/clk-rk3228.c
-> +++ b/drivers/clk/rockchip/clk-rk3228.c
-> @@ -657,8 +657,7 @@ static void __init rk3228_clk_init(struct device_node *np)
->   			&rk3228_cpuclk_data, rk3228_cpuclk_rates,
->   			ARRAY_SIZE(rk3228_cpuclk_rates));
->
-> -	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0));
->
->   	rockchip_register_restart_notifier(ctx, RK3228_GLB_SRST_FST, NULL);
->
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> index 39af05a..a779a82 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -919,8 +919,7 @@ static void __init rk3288_clk_init(struct device_node *np)
->   			ARRAY_SIZE(rk3288_cpuclk_rates));
->
->   	rockchip_register_softrst(np, 12,
-> -				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +				  rk3288_cru_base + RK3288_SOFTRST_CON(0));
->
->   	rockchip_register_restart_notifier(ctx, RK3288_GLB_SRST_FST,
->   					   rk3288_clk_shutdown);
-> diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-> index 6cb474c..e0f8c73 100644
-> --- a/drivers/clk/rockchip/clk-rk3368.c
-> +++ b/drivers/clk/rockchip/clk-rk3368.c
-> @@ -905,8 +905,7 @@ static void __init rk3368_clk_init(struct device_node *np)
->   			&rk3368_cpuclkl_data, rk3368_cpuclkl_rates,
->   			ARRAY_SIZE(rk3368_cpuclkl_rates));
->
-> -	rockchip_register_softrst(np, 15, reg_base + RK3368_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +	rockchip_register_softrst(np, 15, reg_base + RK3368_SOFTRST_CON(0));
->
->   	rockchip_register_restart_notifier(ctx, RK3368_GLB_SRST_FST, NULL);
->
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index 37c74cb..4601a5c 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -1540,8 +1540,7 @@ static void __init rk3399_clk_init(struct device_node *np)
->   			&rk3399_cpuclkb_data, rk3399_cpuclkb_rates,
->   			ARRAY_SIZE(rk3399_cpuclkb_rates));
->
-> -	rockchip_register_softrst(np, 21, reg_base + RK3399_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +	rockchip_register_softrst(np, 21, reg_base + RK3399_SOFTRST_CON(0));
->
->   	rockchip_register_restart_notifier(ctx, RK3399_GLB_SRST_FST, NULL);
->
-> @@ -1576,8 +1575,7 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
->   	rockchip_clk_protect_critical(rk3399_pmucru_critical_clocks,
->   				  ARRAY_SIZE(rk3399_pmucru_critical_clocks));
->
-> -	rockchip_register_softrst(np, 2, reg_base + RK3399_PMU_SOFTRST_CON(0),
-> -				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +	rockchip_register_softrst(np, 2, reg_base + RK3399_PMU_SOFTRST_CON(0));
->
->   	rockchip_clk_of_add_provider(np, ctx);
->   }
-> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-> index 2194ffa..51e797c 100644
-> --- a/drivers/clk/rockchip/clk.h
-> +++ b/drivers/clk/rockchip/clk.h
-> @@ -618,16 +618,14 @@ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
->   void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
->   					unsigned int reg, void (*cb)(void));
->
-> -#define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
-> -
->   #ifdef CONFIG_RESET_CONTROLLER
->   void rockchip_register_softrst(struct device_node *np,
->   			       unsigned int num_regs,
-> -			       void __iomem *base, u8 flags);
-> +			       void __iomem *base);
->   #else
->   static inline void rockchip_register_softrst(struct device_node *np,
->   			       unsigned int num_regs,
-> -			       void __iomem *base, u8 flags)
-> +			       void __iomem *base)
->   {
->   }
->   #endif
-> diff --git a/drivers/clk/rockchip/softrst.c b/drivers/clk/rockchip/softrst.c
-> index 21218987..d6b865f 100644
-> --- a/drivers/clk/rockchip/softrst.c
-> +++ b/drivers/clk/rockchip/softrst.c
-> @@ -24,8 +24,6 @@ struct rockchip_softrst {
->   	void __iomem			*reg_base;
->   	int				num_regs;
->   	int				num_per_reg;
-> -	u8				flags;
-> -	spinlock_t			lock;
->   };
->
->   static int rockchip_softrst_assert(struct reset_controller_dev *rcdev,
-> @@ -37,20 +35,8 @@ static int rockchip_softrst_assert(struct reset_controller_dev *rcdev,
->   	int bank = id / softrst->num_per_reg;
->   	int offset = id % softrst->num_per_reg;
->
-> -	if (softrst->flags&  ROCKCHIP_SOFTRST_HIWORD_MASK) {
-> -		writel(BIT(offset) | (BIT(offset)<<  16),
-> -		       softrst->reg_base + (bank * 4));
-> -	} else {
-> -		unsigned long flags;
-> -		u32 reg;
-> -
-> -		spin_lock_irqsave(&softrst->lock, flags);
-> -
-> -		reg = readl(softrst->reg_base + (bank * 4));
-> -		writel(reg | BIT(offset), softrst->reg_base + (bank * 4));
-> -
-> -		spin_unlock_irqrestore(&softrst->lock, flags);
-> -	}
-> +	writel(BIT(offset) | (BIT(offset)<<  16),
-> +	       softrst->reg_base + (bank * 4));
->
->   	return 0;
->   }
-> @@ -64,19 +50,7 @@ static int rockchip_softrst_deassert(struct reset_controller_dev *rcdev,
->   	int bank = id / softrst->num_per_reg;
->   	int offset = id % softrst->num_per_reg;
->
-> -	if (softrst->flags&  ROCKCHIP_SOFTRST_HIWORD_MASK) {
-> -		writel((BIT(offset)<<  16), softrst->reg_base + (bank * 4));
-> -	} else {
-> -		unsigned long flags;
-> -		u32 reg;
-> -
-> -		spin_lock_irqsave(&softrst->lock, flags);
-> -
-> -		reg = readl(softrst->reg_base + (bank * 4));
-> -		writel(reg&  ~BIT(offset), softrst->reg_base + (bank * 4));
-> -
-> -		spin_unlock_irqrestore(&softrst->lock, flags);
-> -	}
-> +	writel((BIT(offset)<<  16), softrst->reg_base + (bank * 4));
->
->   	return 0;
->   }
-> @@ -88,7 +62,7 @@ static const struct reset_control_ops rockchip_softrst_ops = {
->
->   void __init rockchip_register_softrst(struct device_node *np,
->   				      unsigned int num_regs,
-> -				      void __iomem *base, u8 flags)
-> +				      void __iomem *base)
->   {
->   	struct rockchip_softrst *softrst;
->   	int ret;
-> @@ -97,13 +71,9 @@ void __init rockchip_register_softrst(struct device_node *np,
->   	if (!softrst)
->   		return;
->
-> -	spin_lock_init(&softrst->lock);
-> -
->   	softrst->reg_base = base;
-> -	softrst->flags = flags;
->   	softrst->num_regs = num_regs;
-> -	softrst->num_per_reg = (flags&  ROCKCHIP_SOFTRST_HIWORD_MASK) ? 16
-> -								      : 32;
-> +	softrst->num_per_reg = 16;
->
->   	softrst->rcdev.owner = THIS_MODULE;
->   	softrst->rcdev.nr_resets =  num_regs * softrst->num_per_reg;
-
-
+diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+index d68f6a5f..7ff77fc 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+@@ -62,6 +62,8 @@ Required properties:
+   "st,flexgen"
+   "st,flexgen-audio", "st,flexgen" (enable clock propagation on parent for
+   audio use case)
++  "st,flexgen-video", "st,flexgen" (enable clock propagation on parent
++					and activate synchronous mode)
+ 
+ - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
+   outputs).
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 33d6ced..9878666 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -17,6 +17,7 @@
+ 
+ struct clkgen_data {
+ 	unsigned long flags;
++	bool mode;
+ };
+ 
+ struct flexgen {
+@@ -32,9 +33,14 @@ struct flexgen {
+ 	struct clk_gate fgate;
+ 	/* Final divisor */
+ 	struct clk_divider fdiv;
++	/* Asynchronous mode control */
++	struct clk_gate sync;
++	/* hw control flags */
++	bool control_mode;
+ };
+ 
+ #define to_flexgen(_hw) container_of(_hw, struct flexgen, hw)
++#define to_clk_gate(_hw) container_of(_hw, struct clk_gate, hw)
+ 
+ static int flexgen_enable(struct clk_hw *hw)
+ {
+@@ -143,12 +149,21 @@ static int flexgen_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct flexgen *flexgen = to_flexgen(hw);
+ 	struct clk_hw *pdiv_hw = &flexgen->pdiv.hw;
+ 	struct clk_hw *fdiv_hw = &flexgen->fdiv.hw;
++	struct clk_hw *sync_hw = &flexgen->sync.hw;
++	struct clk_gate *config = to_clk_gate(sync_hw);
+ 	unsigned long div = 0;
+ 	int ret = 0;
++	u32 reg;
+ 
+ 	__clk_hw_set_clk(pdiv_hw, hw);
+ 	__clk_hw_set_clk(fdiv_hw, hw);
+ 
++	if (flexgen->control_mode) {
++		reg = readl(config->reg);
++		reg &= ~BIT(config->bit_idx);
++		writel(reg, config->reg);
++	}
++
+ 	div = clk_best_div(parent_rate, rate);
+ 
+ 	/*
+@@ -182,7 +197,7 @@ static const struct clk_ops flexgen_ops = {
+ static struct clk *clk_register_flexgen(const char *name,
+ 				const char **parent_names, u8 num_parents,
+ 				void __iomem *reg, spinlock_t *lock, u32 idx,
+-				unsigned long flexgen_flags) {
++				unsigned long flexgen_flags, bool mode) {
+ 	struct flexgen *fgxbar;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+@@ -231,6 +246,13 @@ static struct clk *clk_register_flexgen(const char *name,
+ 	fgxbar->fdiv.reg = fdiv_reg;
+ 	fgxbar->fdiv.width = 6;
+ 
++	/* Final divider sync config */
++	fgxbar->sync.lock = lock;
++	fgxbar->sync.reg = fdiv_reg;
++	fgxbar->sync.bit_idx = 7;
++
++	fgxbar->control_mode = mode;
++
+ 	fgxbar->hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &fgxbar->hw);
+@@ -267,11 +289,20 @@ static const struct clkgen_data clkgen_audio = {
+ 	.flags = CLK_SET_RATE_PARENT,
+ };
+ 
++static const struct clkgen_data clkgen_video = {
++	.flags = CLK_SET_RATE_PARENT,
++	.mode = 1,
++};
++
+ static const struct of_device_id flexgen_of_match[] = {
+ 	{
+ 		.compatible = "st,flexgen-audio",
+ 		.data = &clkgen_audio,
+ 	},
++	{
++		.compatible = "st,flexgen-video",
++		.data = &clkgen_video,
++	},
+ 	{}
+ };
+ 
+@@ -287,6 +318,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	struct clkgen_data *data = NULL;
+ 	unsigned long flex_flags = 0;
+ 	int ret;
++	bool clk_mode = 0;
+ 
+ 	pnode = of_get_parent(np);
+ 	if (!pnode)
+@@ -304,6 +336,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	if (match) {
+ 		data = (struct clkgen_data *)match->data;
+ 		flex_flags = data->flags;
++		clk_mode = data->mode;
+ 	}
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+@@ -345,7 +378,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 			continue;
+ 
+ 		clk = clk_register_flexgen(clk_name, parents, num_parents,
+-					   reg, rlock, i, flex_flags);
++					   reg, rlock, i, flex_flags, clk_mode);
+ 
+ 		if (IS_ERR(clk))
+ 			goto err;
 -- 
-- Xing Zheng
-
-
+1.9.1
