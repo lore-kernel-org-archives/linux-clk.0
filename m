@@ -1,60 +1,62 @@
-Return-Path: <Purna.Mandal@microchip.com>
-Subject: Re: [PATCH] clk: microchip: Remove CLK_IS_ROOT
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>
-References: <20160601215521.31309-1-sboyd@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Ralf Baechle
-	<ralf@linux-mips.org>, <linux-mips@linux-mips.org>
-From: Purna Chandra Mandal <purna.mandal@microchip.com>
-Message-ID: <574FBC18.8070608@microchip.com>
-Date: Thu, 2 Jun 2016 10:24:48 +0530
-MIME-Version: 1.0
-In-Reply-To: <20160601215521.31309-1-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: purna.mandal@microchip.com
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
+ <57627757.50101@samsung.com> <576276E5.5040500@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <57627B4C.7060609@samsung.com>
+Date: Thu, 16 Jun 2016 12:11:24 +0200
+MIME-version: 1.0
+In-reply-to: <576276E5.5040500@nvidia.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02/2016 03:25 AM, Stephen Boyd wrote:
+On 06/16/2016 11:52 AM, Laxman Dewangan wrote:
+> Hi Krzysztof/Javier,
+> Thanks for review of the series.
+> 
+> I will post the V2 after taking care of all comment.
+> 
+> One query about the comment.
+> 
+> Thanks,
+> Laxman
+> 
+> On Thursday 16 June 2016 03:24 PM, Krzysztof Kozlowski wrote:
+>> On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
+>>>   enum chip_name {
+>>>       CHIP_MAX77686,
+>>>       CHIP_MAX77802,
+>>> +    CHIP_MAX77620,
+>> Now it is more obvious why it is here. However I don't like the
+>> duplication of device IDs, under different names and different values:
+>> 1. include/linux/mfd/max77686-private.h
+>> 2. include/linux/mfd/max77620.h
+>> 3. here
+>>
+>> I was thinking about way of combining it... but these headers are
+>> different. Unless there will be one header for all three devices.
+>>
+>> Anyway, please add the max77686 prefix to the enum.
+> 
+> so will it be:
+> 
+> enum max77686_chip_name {
+>     CHIP_MAX77686,
+>     CHIP_MAX77802,
+>     CHIP_MAX77620,
+> };
+> 
+> 
+> Will it be fine here?
 
-> This flag is a no-op now (see commit 47b0eeb3dc8a "clk: Deprecate
-> CLK_IS_ROOT", 2016-02-02) so remove it.
->
-> Cc: Purna Chandra Mandal <purna.mandal@microchip.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: <linux-mips@linux-mips.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->
-> I'm going to send this to Linus tomorrow or Friday so we can finally
-> remove this flag entirely.
->
->  drivers/clk/microchip/clk-pic32mzda.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/microchip/clk-pic32mzda.c b/drivers/clk/microchip/clk-pic32mzda.c
-> index 020a29acc5b0..51f54380474b 100644
-> --- a/drivers/clk/microchip/clk-pic32mzda.c
-> +++ b/drivers/clk/microchip/clk-pic32mzda.c
-> @@ -180,15 +180,15 @@ static int pic32mzda_clk_probe(struct platform_device *pdev)
->  
->  	/* register fixed rate clocks */
->  	clks[POSCCLK] = clk_register_fixed_rate(&pdev->dev, "posc_clk", NULL,
-> -						CLK_IS_ROOT, 24000000);
-> +						0, 24000000);
->  	clks[FRCCLK] =  clk_register_fixed_rate(&pdev->dev, "frc_clk", NULL,
-> -						CLK_IS_ROOT, 8000000);
-> +						0, 8000000);
->  	clks[BFRCCLK] = clk_register_fixed_rate(&pdev->dev, "bfrc_clk", NULL,
-> -						CLK_IS_ROOT, 8000000);
-> +						0, 8000000);
->  	clks[LPRCCLK] = clk_register_fixed_rate(&pdev->dev, "lprc_clk", NULL,
-> -						CLK_IS_ROOT, 32000);
-> +						0, 32000);
->  	clks[UPLLCLK] = clk_register_fixed_rate(&pdev->dev, "usbphy_clk", NULL,
-> -						CLK_IS_ROOT, 24000000);
-> +						0, 24000000);
->  	/* fixed rate (optional) clock */
->  	if (of_find_property(np, "microchip,pic32mzda-sosc", NULL)) {
->  		pr_info("pic32-clk: dt requests SOSC.\n");
+Yes, looks fine to me.
 
-Tested-by: Purna Chandra Mandal <purna.mandal@microchip.com>
+Best regards,
+Krzysztof
