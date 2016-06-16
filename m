@@ -1,64 +1,68 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [PATCH v2 11/13] ARM: DT: STiH418: Enable synchronous clock mode for video clocks
-Date: Mon,  6 Jun 2016 11:26:30 +0200
-Message-Id: <1465205192-7888-12-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 16 Jun 2016 10:14:27 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] ARM: dts: sun9i: a80-optimus: Order nodes by
+ alphabetical order
+Message-ID: <20160616081427.GG5144@lukather>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
+ <1465986467-14802-10-git-send-email-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gm5TwAJMO0F2iVRz"
+In-Reply-To: <1465986467-14802-10-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the synchronous clock mode for video clocks
-on STiH418 board.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--gm5TwAJMO0F2iVRz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 96b4d7b..2254fa5 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -271,7 +271,7 @@
- 
- 			clk_s_d2_flexgen: clk-s-d2-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-video", "st,flexgen";
- 
- 				clocks = <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>,
--- 
-1.9.1
+On Wed, Jun 15, 2016 at 06:27:46PM +0800, Chen-Yu Tsai wrote:
+> Move the mmc nodes above the ohci nodes for proper ordering by name.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Applied, thanks!
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--gm5TwAJMO0F2iVRz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXYl/jAAoJEBx+YmzsjxAgd1MP/idSUAw5syl9OYAtiKeJ7RNr
+W9AUz+wc0pHjra9Ui7Y8TDXtRYOKnw15lSpw1KCIXCSfFUV+zfc/vZH0Ed8NPeAr
+RSb2zR6D+YEMf+oOGJbD+AM/9GxzuaCqiHBh93rOeeWo0sa31ns2wIdD2DInJRU1
+MasoUVWkgGDA2F/p5cbj70UPiIjjahRgk8Tk4VRKfgBFCeLEsZMkUKi48EjqCrCn
+zibYKucH3v1qKgzI2Gd3557xzpewiO8Pdf2KHiwzDqmL9DTcfyXpoNG7bTUXJmRd
+hWj5RqZEfngNPaIr+MtmsrYZf4JV4Nbq2joHIvpBwRxLBx2l/xZxl52VI9gD1Zt1
+yap0Se+IDjVB5LQbeEFtbIEP5p1BGGkVOltHK6pj5iJu306gyNNrEueXfqXzlneT
+L9njjQvD14V+VE9gyqeytdeVkwOjWlHShUtkng8GWYnC3wSh9OB1vZjLpZvsvTqx
+O/WbxmBleUGgrvHUTJxBpXcHjZe/5UtD9ALKX9djNGCbYY4GlWZrtnR+e4nDJ9BD
+fFj29BzO5l0UOtwbmkTYx8elSJNG28lYP6Tk5i6mWnqq37uQP5+LmfhxEo7SQXR/
+z7lfEg8hCZCa0etJ2HOau7bHQ9ET32+o0oxr9unyglTUPQ0yWDx1FmFZYiSo0SlW
+jH0YPQqhQJH0khuyje0d
+=S8IS
+-----END PGP SIGNATURE-----
+
+--gm5TwAJMO0F2iVRz--
