@@ -1,60 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36670 "EHLO
-	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751816AbcFWKwj (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2016 06:52:39 -0400
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: tegra: Micro-optimize Tegra210 clock setup
-Date: Thu, 23 Jun 2016 12:52:31 +0200
-Message-Id: <20160623105231.24383-2-thierry.reding@gmail.com>
-In-Reply-To: <20160623105231.24383-1-thierry.reding@gmail.com>
-References: <20160623105231.24383-1-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [RESEND PATCH v2 08/13] ARM: DT: STiH418: Enable clock propagation for audio clocks
+Date: Thu, 16 Jun 2016 11:20:28 +0200
+Message-Id: <1466068833-5055-9-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH418
 
-sor_safe being the parent of the dpaux and dpaux1 clocks, it's not only
-natural, but also slightly more efficient, to initialize it before its
-children. This avoids orphaning the dpaux and dpaux1 clocks only to get
-them reparented when the sor_safe clock is registered.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index fe295b4102ca..b4df5c46642f 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2466,6 +2466,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					1, 2);
- 	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index ae6d997..96b4d7b 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -229,7 +229,7 @@
  
-+	clk = tegra_clk_register_periph_fixed("sor_safe", "pll_p", 0, clk_base,
-+					      1, 17, 222);
-+	clks[TEGRA210_CLK_SOR_SAFE] = clk;
-+
- 	clk = tegra_clk_register_periph_fixed("dpaux", "sor_safe", 0, clk_base,
- 					      1, 17, 181);
- 	clks[TEGRA210_CLK_DPAUX] = clk;
-@@ -2474,10 +2478,6 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					      1, 17, 207);
- 	clks[TEGRA210_CLK_DPAUX1] = clk;
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-audio", "st,flexgen";
  
--	clk = tegra_clk_register_periph_fixed("sor_safe", "pll_p", 0, clk_base,
--					      1, 17, 222);
--	clks[TEGRA210_CLK_SOR_SAFE] = clk;
--
- 	/* pll_d_dsi_out */
- 	clk = clk_register_gate(NULL, "pll_d_dsi_out", "pll_d_out0", 0,
- 				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
 -- 
-2.8.3
-
+1.9.1
