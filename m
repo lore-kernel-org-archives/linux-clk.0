@@ -1,246 +1,288 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 06/14] clk: sunxi-ng: Add phase clock support
-Date: Wed, 29 Jun 2016 21:05:27 +0200
-Message-Id: <20160629190535.11855-7-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [RESEND PATCH v2 03/13] drivers: clk: st: Add fs660c32 synthesizer algorithm
+Date: Thu, 16 Jun 2016 11:20:23 +0200
+Message-Id: <1466068833-5055-4-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the clocks in the CCU that introduce a phase shift from
-their parent clock.
+Use an algorithm instead of a table to compute clocks for fs660c32
+synthesizer.
+During a video playback we need to adjust audio & video frequencies.
+A table can't cover all HDMI resolutions and audio adjustment.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- drivers/clk/sunxi-ng/Kconfig     |   3 +
- drivers/clk/sunxi-ng/Makefile    |   1 +
- drivers/clk/sunxi-ng/ccu_phase.c | 126 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_phase.h |  50 ++++++++++++++++
- 4 files changed, 180 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_phase.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_phase.h
+ drivers/clk/st/clkgen-fsyn.c | 180 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 111 insertions(+), 69 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 4699a602e0c1..3a3bc4368a2a 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -15,4 +15,7 @@ config SUNXI_CCU_GATE
- config SUNXI_CCU_MUX
- 	bool
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index 53fd047..765f0f2 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -42,40 +42,6 @@ struct stm_fs {
+ 	unsigned long nsdiv;
+ };
  
-+config SUNXI_CCU_PHASE
-+	bool
+-static const struct stm_fs fs660c32_rtbl[] = {
+-	{ .mdiv = 0x14, .pe = 0x376b,	.sdiv = 0x4,	.nsdiv = 1 },	/* 25.175  MHz */
+-	{ .mdiv = 0x14, .pe = 0x30c3,	.sdiv = 0x4,	.nsdiv = 1 },	/* 25.200  MHz */
+-	{ .mdiv = 0x10, .pe = 0x71c7,	.sdiv = 0x4,	.nsdiv = 1 },	/* 27.000  MHz */
+-	{ .mdiv = 0x00, .pe = 0x47af,	.sdiv = 0x3,	.nsdiv = 0 },	/* 27.027  MHz */
+-	{ .mdiv = 0x0e, .pe = 0x4e1a,	.sdiv = 0x4,	.nsdiv = 1 },	/* 28.320  MHz */
+-	{ .mdiv = 0x0b, .pe = 0x534d,	.sdiv = 0x4,	.nsdiv = 1 },	/* 30.240  MHz */
+-	{ .mdiv = 0x17, .pe = 0x6fbf,	.sdiv = 0x2,	.nsdiv = 0 },	/* 31.500  MHz */
+-	{ .mdiv = 0x01, .pe = 0x0,	.sdiv = 0x4,	.nsdiv = 1 },	/* 40.000  MHz */
+-	{ .mdiv = 0x15, .pe = 0x2aab,	.sdiv = 0x3,	.nsdiv = 1 },	/* 49.500  MHz */
+-	{ .mdiv = 0x14, .pe = 0x6666,	.sdiv = 0x3,	.nsdiv = 1 },	/* 50.000  MHz */
+-	{ .mdiv = 0x1d, .pe = 0x395f,	.sdiv = 0x1,	.nsdiv = 0 },	/* 57.284  MHz */
+-	{ .mdiv = 0x08, .pe = 0x4ec5,	.sdiv = 0x3,	.nsdiv = 1 },	/* 65.000  MHz */
+-	{ .mdiv = 0x05, .pe = 0x1770,	.sdiv = 0x3,	.nsdiv = 1 },	/* 71.000  MHz */
+-	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x3,	.nsdiv = 1 },	/* 74.176  MHz */
+-	{ .mdiv = 0x0f, .pe = 0x3426,	.sdiv = 0x1,	.nsdiv = 0 },	/* 74.250  MHz */
+-	{ .mdiv = 0x0e, .pe = 0x7777,	.sdiv = 0x1,	.nsdiv = 0 },	/* 75.000  MHz */
+-	{ .mdiv = 0x01, .pe = 0x4053,	.sdiv = 0x3,	.nsdiv = 1 },	/* 78.800  MHz */
+-	{ .mdiv = 0x09, .pe = 0x15b5,	.sdiv = 0x1,	.nsdiv = 0 },	/* 85.500  MHz */
+-	{ .mdiv = 0x1b, .pe = 0x3f19,	.sdiv = 0x2,	.nsdiv = 1 },	/* 88.750  MHz */
+-	{ .mdiv = 0x10, .pe = 0x71c7,	.sdiv = 0x2,	.nsdiv = 1 },	/* 108.000 MHz */
+-	{ .mdiv = 0x00, .pe = 0x47af,	.sdiv = 0x1,	.nsdiv = 0 },	/* 108.108 MHz */
+-	{ .mdiv = 0x0c, .pe = 0x3118,	.sdiv = 0x2,	.nsdiv = 1 },	/* 118.963 MHz */
+-	{ .mdiv = 0x0c, .pe = 0x2f54,	.sdiv = 0x2,	.nsdiv = 1 },	/* 119.000 MHz */
+-	{ .mdiv = 0x07, .pe = 0xe39,	.sdiv = 0x2,	.nsdiv = 1 },	/* 135.000 MHz */
+-	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x2,	.nsdiv = 1 },	/* 148.352 MHz */
+-	{ .mdiv = 0x0f, .pe = 0x3426,	.sdiv = 0x0,	.nsdiv = 0 },	/* 148.500 MHz */
+-	{ .mdiv = 0x03, .pe = 0x4ba7,	.sdiv = 0x1,	.nsdiv = 1 },	/* 296.704 MHz */
+-	{ .mdiv = 0x03, .pe = 0x471c,	.sdiv = 0x1,	.nsdiv = 1 },	/* 297.000 MHz */
+-	{ .mdiv = 0x00, .pe = 0x295f,	.sdiv = 0x1,	.nsdiv = 1 },	/* 326.700 MHz */
+-	{ .mdiv = 0x1f, .pe = 0x3633,	.sdiv = 0x0,	.nsdiv = 1 },	/* 333.000 MHz */
+-	{ .mdiv = 0x1c, .pe = 0x0,	.sdiv = 0x0,	.nsdiv = 1 },	/* 352.000 Mhz */
+-};
+-
+ struct clkgen_quadfs_data {
+ 	bool reset_present;
+ 	bool bwfilter_present;
+@@ -99,8 +65,7 @@ struct clkgen_quadfs_data {
+ 	struct clkgen_field nsdiv[QUADFS_MAX_CHAN];
+ 
+ 	const struct clk_ops *pll_ops;
+-	const struct stm_fs *rtbl;
+-	u8 rtbl_cnt;
++	int  (*get_params)(unsigned long, unsigned long, struct stm_fs *);
+ 	int  (*get_rate)(unsigned long , const struct stm_fs *,
+ 			unsigned long *);
+ };
+@@ -108,6 +73,8 @@ struct clkgen_quadfs_data {
+ static const struct clk_ops st_quadfs_pll_c32_ops;
+ static const struct clk_ops st_quadfs_fs660c32_ops;
+ 
++static int clk_fs660c32_dig_get_params(unsigned long input,
++		unsigned long output, struct stm_fs *fs);
+ static int clk_fs660c32_dig_get_rate(unsigned long, const struct stm_fs *,
+ 		unsigned long *);
+ 
+@@ -149,8 +116,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C = {
+ 	.powerup_polarity = 1,
+ 	.standby_polarity = 1,
+ 	.pll_ops	= &st_quadfs_pll_c32_ops,
+-	.rtbl		= fs660c32_rtbl,
+-	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
++	.get_params	= clk_fs660c32_dig_get_params,
+ 	.get_rate	= clk_fs660c32_dig_get_rate,
+ };
+ 
+@@ -192,8 +158,7 @@ static const struct clkgen_quadfs_data st_fs660c32_D = {
+ 	.powerup_polarity = 1,
+ 	.standby_polarity = 1,
+ 	.pll_ops	= &st_quadfs_pll_c32_ops,
+-	.rtbl		= fs660c32_rtbl,
+-	.rtbl_cnt	= ARRAY_SIZE(fs660c32_rtbl),
++	.get_params	= clk_fs660c32_dig_get_params,
+ 	.get_rate	= clk_fs660c32_dig_get_rate,};
+ 
+ /**
+@@ -620,6 +585,107 @@ static int clk_fs660c32_dig_get_rate(unsigned long input,
+ 	return 0;
+ }
+ 
 +
- endif
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index eaa833721245..a0c53c56ebfe 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
- obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
- obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
- obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
-+obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_phase.c b/drivers/clk/sunxi-ng/ccu_phase.c
-new file mode 100644
-index 000000000000..400c58ad72fd
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_phase.c
-@@ -0,0 +1,126 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
-+
-+#include "ccu_phase.h"
-+
-+static int ccu_phase_get_phase(struct clk_hw *hw)
++static int clk_fs660c32_get_pe(int m, int si, unsigned long *deviation,
++		signed long input, unsigned long output, uint64_t *p,
++		struct stm_fs *fs)
 +{
-+	struct ccu_phase *phase = hw_to_ccu_phase(hw);
-+	struct clk_hw *parent, *grandparent;
-+	unsigned int parent_rate, grandparent_rate;
-+	u16 step, parent_div;
-+	u32 reg;
-+	u8 delay;
++	unsigned long new_freq, new_deviation;
++	struct stm_fs fs_tmp;
++	uint64_t val;
 +
-+	reg = readl(phase->common.base + phase->common.reg);
-+	delay = (reg >> phase->shift);
-+	delay &= (1 << phase->width) - 1;
++	val = (uint64_t)output << si;
 +
-+	if (!delay)
-+		return 180;
++	*p = (uint64_t)input * P20 - (32LL  + (uint64_t)m) * val * (P20 / 32LL);
 +
-+	/* Get our parent clock, it's the one that can adjust its rate */
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent)
-+		return -EINVAL;
++	*p = div64_u64(*p, val);
 +
-+	/* And its rate */
-+	parent_rate = clk_hw_get_rate(parent);
-+	if (!parent_rate)
-+		return -EINVAL;
++	if (*p > 32767LL)
++		return 1;
 +
-+	/* Now, get our parent's parent (most likely some PLL) */
-+	grandparent = clk_hw_get_parent(parent);
-+	if (!grandparent)
-+		return -EINVAL;
++	fs_tmp.mdiv = (unsigned long) m;
++	fs_tmp.pe = (unsigned long)*p;
++	fs_tmp.sdiv = si;
++	fs_tmp.nsdiv = 1;
 +
-+	/* And its rate */
-+	grandparent_rate = clk_hw_get_rate(grandparent);
-+	if (!grandparent_rate)
-+		return -EINVAL;
++	clk_fs660c32_dig_get_rate(input, &fs_tmp, &new_freq);
 +
-+	/* Get our parent clock divider */
-+	parent_div = grandparent_rate / parent_rate;
++	new_deviation = abs(output - new_freq);
 +
-+	step = DIV_ROUND_CLOSEST(360, parent_div);
-+	return delay * step;
-+}
-+
-+static int ccu_phase_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct ccu_phase *phase = hw_to_ccu_phase(hw);
-+	struct clk_hw *parent, *grandparent;
-+	unsigned int parent_rate, grandparent_rate;
-+	unsigned long flags;
-+	u32 reg;
-+	u8 delay;
-+
-+	/* Get our parent clock, it's the one that can adjust its rate */
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent)
-+		return -EINVAL;
-+
-+	/* And its rate */
-+	parent_rate = clk_hw_get_rate(parent);
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	/* Now, get our parent's parent (most likely some PLL) */
-+	grandparent = clk_hw_get_parent(parent);
-+	if (!grandparent)
-+		return -EINVAL;
-+
-+	/* And its rate */
-+	grandparent_rate = clk_hw_get_rate(grandparent);
-+	if (!grandparent_rate)
-+		return -EINVAL;
-+
-+	if (degrees != 180) {
-+		u16 step, parent_div;
-+
-+		/* Get our parent divider */
-+		parent_div = grandparent_rate / parent_rate;
-+
-+		/*
-+		 * We can only outphase the clocks by multiple of the
-+		 * PLL's period.
-+		 *
-+		 * Since our parent clock is only a divider, and the
-+		 * formula to get the outphasing in degrees is deg =
-+		 * 360 * delta / period
-+		 *
-+		 * If we simplify this formula, we can see that the
-+		 * only thing that we're concerned about is the number
-+		 * of period we want to outphase our clock from, and
-+		 * the divider set by our parent clock.
-+		 */
-+		step = DIV_ROUND_CLOSEST(360, parent_div);
-+		delay = DIV_ROUND_CLOSEST(degrees, step);
-+	} else {
-+		delay = 0;
++	if (new_deviation < *deviation) {
++		fs->mdiv = m;
++		fs->pe = (unsigned long)*p;
++		fs->sdiv = si;
++		fs->nsdiv = 1;
++		*deviation = new_deviation;
 +	}
-+
-+	spin_lock_irqsave(phase->common.lock, flags);
-+	reg = readl(phase->common.base + phase->common.reg);
-+	reg &= ~GENMASK(phase->width + phase->shift - 1, phase->shift);
-+	writel(reg | (delay << phase->shift),
-+	       phase->common.base + phase->common.reg);
-+	spin_unlock_irqrestore(phase->common.lock, flags);
-+
 +	return 0;
 +}
 +
-+const struct clk_ops ccu_phase_ops = {
-+	.get_phase	= ccu_phase_get_phase,
-+	.set_phase	= ccu_phase_set_phase,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_phase.h b/drivers/clk/sunxi-ng/ccu_phase.h
-new file mode 100644
-index 000000000000..75a091a4c565
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_phase.h
-@@ -0,0 +1,50 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++static int clk_fs660c32_dig_get_params(unsigned long input,
++		unsigned long output, struct stm_fs *fs)
++{
++	int si;	/* sdiv_reg (8 downto 0) */
++	int m; /* md value */
++	unsigned long new_freq, new_deviation;
++	/* initial condition to say: "infinite deviation" */
++	unsigned long deviation = ~0;
++	uint64_t p, p1, p2;	/* pe value */
++	int r1, r2;
 +
-+#ifndef _CCU_PHASE_H_
-+#define _CCU_PHASE_H_
++	struct stm_fs fs_tmp;
 +
-+#include <linux/clk-provider.h>
++	for (si = 0; (si <= 8) && deviation; si++) {
 +
-+#include "ccu_common.h"
++		/* Boundary test to avoid useless iteration */
++		r1 = clk_fs660c32_get_pe(0, si, &deviation,
++				input, output, &p1, fs);
++		r2 = clk_fs660c32_get_pe(31, si, &deviation,
++				input, output, &p2, fs);
 +
-+struct ccu_phase {
-+	u8			shift;
-+	u8			width;
++		/* No solution */
++		if (r1 && r2 && (p1 > p2))
++			continue;
 +
-+	struct ccu_common	common;
-+};
++		/* Try to find best deviation */
++		for (m = 1; (m < 31) && deviation; m++)
++			clk_fs660c32_get_pe(m, si, &deviation,
++					input, output, &p, fs);
 +
-+#define SUNXI_CCU_PHASE(_struct, _name, _parent, _reg, _shift, _width, _flags) \
-+	struct ccu_phase _struct = {					\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_phase_ops,	\
-+						      _flags),		\
-+		}							\
 +	}
 +
-+static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
++	if (deviation == ~0) /* No solution found */
++		return -1;
 +
-+	return container_of(common, struct ccu_phase, common);
++	/* pe fine tuning if deviation not 0: +/- 2 around computed pe value */
++	if (deviation) {
++		fs_tmp.mdiv = fs->mdiv;
++		fs_tmp.sdiv = fs->sdiv;
++		fs_tmp.nsdiv = fs->nsdiv;
++
++		if (fs->pe > 2)
++			p2 = fs->pe - 2;
++		else
++			p2 = 0;
++
++		for (; p2 < 32768ll && (p2 <= (fs->pe + 2)); p2++) {
++			fs_tmp.pe = (unsigned long)p2;
++
++			clk_fs660c32_dig_get_rate(input, &fs_tmp, &new_freq);
++
++			new_deviation = abs(output - new_freq);
++
++			/* Check if this is a better solution */
++			if (new_deviation < deviation) {
++				fs->pe = (unsigned long)p2;
++				deviation = new_deviation;
++
++			}
++		}
++	}
++	return 0;
 +}
 +
-+extern const struct clk_ops ccu_phase_ops;
-+
-+#endif /* _CCU_PHASE_H_ */
+ static int quadfs_fsynt_get_hw_value_for_recalc(struct st_clk_quadfs_fsynth *fs,
+ 		struct stm_fs *params)
+ {
+@@ -655,38 +721,14 @@ static long quadfs_find_best_rate(struct clk_hw *hw, unsigned long drate,
+ 	struct st_clk_quadfs_fsynth *fs = to_quadfs_fsynth(hw);
+ 	int (*clk_fs_get_rate)(unsigned long ,
+ 				const struct stm_fs *, unsigned long *);
+-	struct stm_fs prev_params;
+-	unsigned long prev_rate, rate = 0;
+-	unsigned long diff_rate, prev_diff_rate = ~0;
+-	int index;
++	int (*clk_fs_get_params)(unsigned long, unsigned long, struct stm_fs *);
++	unsigned long rate = 0;
+ 
+ 	clk_fs_get_rate = fs->data->get_rate;
++	clk_fs_get_params = fs->data->get_params;
+ 
+-	for (index = 0; index < fs->data->rtbl_cnt; index++) {
+-		prev_rate = rate;
+-
+-		*params = fs->data->rtbl[index];
+-		prev_params = *params;
+-
+-		clk_fs_get_rate(prate, &fs->data->rtbl[index], &rate);
+-
+-		diff_rate = abs(drate - rate);
+-
+-		if (diff_rate > prev_diff_rate) {
+-			rate = prev_rate;
+-			*params = prev_params;
+-			break;
+-		}
+-
+-		prev_diff_rate = diff_rate;
+-
+-		if (drate == rate)
+-			return rate;
+-	}
+-
+-
+-	if (index == fs->data->rtbl_cnt)
+-		*params = prev_params;
++	if (!clk_fs_get_params(prate, drate, params))
++		clk_fs_get_rate(prate, params, &rate);
+ 
+ 	return rate;
+ }
 -- 
-2.9.0
+1.9.1
