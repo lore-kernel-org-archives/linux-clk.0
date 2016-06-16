@@ -1,33 +1,121 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 12:26:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 20/34] clk: nomadik: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160630192603.GP1521@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-21-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-21-stephen.boyd@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [RESEND PATCH v2 04/13] drivers: clk: st: Add clock propagation for audio clocks
+Date: Thu, 16 Jun 2016 11:20:24 +0200
+Message-Id: <1466068833-5055-5-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+This patch allows fine tuning of the quads FS for audio clocks
+accuracy.
 
-Applied to clk-next
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ .../devicetree/bindings/clock/st/st,flexgen.txt    |  2 ++
+ drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+index b7ee5c7..d68f6a5f 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+@@ -60,6 +60,8 @@ This binding uses the common clock binding[2].
+ Required properties:
+ - compatible : shall be:
+   "st,flexgen"
++  "st,flexgen-audio", "st,flexgen" (enable clock propagation on parent for
++  audio use case)
+ 
+ - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
+   outputs).
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 627267c..33d6ced 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -15,6 +15,10 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
++struct clkgen_data {
++	unsigned long flags;
++};
++
+ struct flexgen {
+ 	struct clk_hw hw;
+ 
+@@ -259,6 +263,18 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+ 	return parents;
+ }
+ 
++static const struct clkgen_data clkgen_audio = {
++	.flags = CLK_SET_RATE_PARENT,
++};
++
++static const struct of_device_id flexgen_of_match[] = {
++	{
++		.compatible = "st,flexgen-audio",
++		.data = &clkgen_audio,
++	},
++	{}
++};
++
+ static void __init st_of_flexgen_setup(struct device_node *np)
+ {
+ 	struct device_node *pnode;
+@@ -267,6 +283,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	const char **parents;
+ 	int num_parents, i;
+ 	spinlock_t *rlock = NULL;
++	const struct of_device_id *match;
++	struct clkgen_data *data = NULL;
+ 	unsigned long flex_flags = 0;
+ 	int ret;
+ 
+@@ -282,6 +300,12 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	if (!parents)
+ 		return;
+ 
++	match = of_match_node(flexgen_of_match, np);
++	if (match) {
++		data = (struct clkgen_data *)match->data;
++		flex_flags = data->flags;
++	}
++
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+ 		goto err;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
