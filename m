@@ -1,70 +1,55 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/3] clk: samsung: exynos5410: Add WDT,
- ACLK266 and SSS clocks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
- <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <57555851.6020206@samsung.com>
-Date: Mon, 06 Jun 2016 13:02:41 +0200
-MIME-version: 1.0
-In-reply-to: <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <ldewangan@nvidia.com>
+Message-ID: <576276E5.5040500@nvidia.com>
+Date: Thu, 16 Jun 2016 15:22:37 +0530
+From: Laxman Dewangan <ldewangan@nvidia.com>
+MIME-Version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas
+	<javier@dowhile0.org>
+Subject: Re: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com> <1466000018-16784-5-git-send-email-ldewangan@nvidia.com> <57627757.50101@samsung.com>
+In-Reply-To: <57627757.50101@samsung.com>
+Return-Path: ldewangan@nvidia.com
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/2016 11:45 AM, Krzysztof Kozlowski wrote:
-> Add clock hierarchy for Security SubSystem clock and watchdog.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hi Krzysztof/Javier,
+Thanks for review of the series.
 
-A applied patches: 
+I will post the V2 after taking care of all comment.
 
-[PATCH 1/3] dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
-[PATCH 2/3] clk: samsung: exynos5410: Add WDT, ACLK266 and SSS clocks
+One query about the comment.
 
-[PATCH 1/6] dt-bindings: clock: Add TMU clock ID to Exynos5410
-[PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
+Thanks,
+Laxman
 
-And here is a subsequent tag from a stable branch including all 
-the dependency "dt-bindings" patches:
+On Thursday 16 June 2016 03:24 PM, Krzysztof Kozlowski wrote:
+> On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
+>>   enum chip_name {
+>>   	CHIP_MAX77686,
+>>   	CHIP_MAX77802,
+>> +	CHIP_MAX77620,
+> Now it is more obvious why it is here. However I don't like the
+> duplication of device IDs, under different names and different values:
+> 1. include/linux/mfd/max77686-private.h
+> 2. include/linux/mfd/max77620.h
+> 3. here
+>
+> I was thinking about way of combining it... but these headers are
+> different. Unless there will be one header for all three devices.
+>
+> Anyway, please add the max77686 prefix to the enum.
 
-------8<------
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+so will it be:
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+enum max77686_chip_name {
+     CHIP_MAX77686,
+     CHIP_MAX77802,
+     CHIP_MAX77620,
+};
 
-are available in the git repository at:
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt-2
-
-for you to fetch changes up to 4528dd8ed477bf202bd33ee48d38d656672d37f8:
-
-  dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410 (2016-06-02 11:17:55 +0200)
-
-----------------------------------------------------------------
-Adition of missing clock index definitions for exynos5410 SoC:
-PWM, USB, I2C, RTC, PMU, watchdog and the security device related
-clocks.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (5):
-      dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-      dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-      dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-      dt-bindings: clock: Add TMU clock ID to Exynos5410
-      dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
-
- include/dt-bindings/clock/exynos5410.h | 76 +++++++++++++++++++++++++++------------
- 1 file changed, 54 insertions(+), 22 deletions(-)
-------8<------
-
---
-Thanks, 
-Sylwester
+Will it be fine here?
