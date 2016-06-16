@@ -1,178 +1,122 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Sun, 12 Jun 2016 11:32:22 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Scott Wood <oss@buserror.net>
-Cc: kbuild-all@01.org, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-	leoyang.li@nxp.com, yuantian.tang@nxp.com,
-	Scott Wood <scottwood@freescale.com>, xiaofeng.ren@nxp.com,
-	linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 1/2] clk: Add consumer APIs for discovering
- possible parent clocks
-Message-ID: <201606121130.fIGYeP9B%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="VbJkn9YxBvnuCH5J"
-In-Reply-To: <1465701386-6220-1-git-send-email-oss@buserror.net>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/5] clk: max77686: Add DT binding details for PMIC MAX77620
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-4-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <57627613.2000409@samsung.com>
+Date: Thu, 16 Jun 2016 11:49:07 +0200
+MIME-version: 1.0
+In-reply-to: <1466000018-16784-4-git-send-email-ldewangan@nvidia.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
+> Maxim has used the same clock IP on multiple PMICs like
+> MAX77686, MAX77802, MAX77620. Only differences are the
+> number of clocks from these PMICs.
+> 
+> Add clock binding details and example for the max77620 in
+> maxim,max77686.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> ---
+>  .../devicetree/bindings/clock/maxim,max77686.txt   | 38 +++++++++++++++++++---
+>  include/dt-bindings/mfd/max77620.h                 |  4 +++
+>  2 files changed, 38 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+> index 354e5ab..24deb19 100644
+> --- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+> +++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+> @@ -1,8 +1,11 @@
+> -Binding for Maxim MAX77686/MAX77802 32k clock generator block
+> +Binding for Maxim MAX77686/MAX77802/MAX77620 32k clock generator block
+>  
+> -This is a part of device tree bindings of MAX77686/MAX77802 multi-function
+> -device. More information can be found in bindings/mfd/max77686.txt file for
+> -MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+> +This is a part of device tree bindings of MAX77686/MAX77802/MAX77620
+> +multi-function device. More information can be found in MFD DT binding
+> +doc as follows:
+> +	bindings/mfd/max77686.txt for MAX77686 and
+> +	bindings/mfd/max77802.txt for MAX77802 and
+> +	bindings/mfd/max77620.txt for MAX77620.
+>  
+>  The MAX77686 contains three 32.768khz clock outputs that can be controlled
+>  (gated/ungated) over I2C.
+> @@ -10,6 +13,9 @@ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+>  The MAX77802 contains two 32.768khz clock outputs that can be controlled
+>  (gated/ungated) over I2C.
+>  
+> +The MAX77686 contains one 32.768khz clock outputs that can be controlled
+> +(gated/ungated) over I2C.
+> +
+>  Following properties should be presend in main device node of the MFD chip.
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please update the information about allowed IDs.
 
-Hi,
+>  
+>  Required properties:
+> @@ -82,3 +88,27 @@ Example:
+>  			clock-names = "my-clock";
+>  			clocks = <&max77802 MAX77802_CLK_32K_AP>;
+>  		};
+> +
+> +
+> +3. With MAX77620:
+> +
+> +#include <dt-bindings/mfd/max77620.h>
+> +:::
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on v4.7-rc2]
-[cannot apply to next-20160609]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Same as before: ':::'
 
-url:    https://github.com/0day-ci/linux/commits/Scott-Wood/clk-Add-consumer-APIs-for-discovering-possible-parent-clocks/20160612-112523
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-6 (Debian 6.1.1-1) 6.1.1 20160430
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+> +
+> +	Node of the MFD chip
+> +		max77620: max77620@3c {
+> +			compatible = "maxim,max77620";
+> +			reg = <0x3c>;
+> +			:::
+> +			#clock-cells = <1>;
+> +			:::
+> +		};
+> +
+> +	Clock consumer node
+> +
+> +		foo@0 {
+> +			compatible = "bar,foo";
+> +			/* ... */
+> +			clock-names = "my-clock";
+> +			clocks = <&max77620 MAX77620_CLK_32K_OUT0>;
+> +		};
+> diff --git a/include/dt-bindings/mfd/max77620.h b/include/dt-bindings/mfd/max77620.h
+> index b911a07..e1bd08c 100644
+> --- a/include/dt-bindings/mfd/max77620.h
+> +++ b/include/dt-bindings/mfd/max77620.h
+> @@ -36,4 +36,8 @@
+>  #define MAX77620_FPS_SRC_NONE			3
+>  #define MAX77620_FPS_SRC_DEF			4
+>  
+> +/* MAX77686 clocks */
 
-All errors (new ones prefixed by >>):
+copy&paste error.
 
-   arch/x86/kernel/tsc.o: In function `clk_get_parent_by_index':
->> tsc.c:(.text+0x3e0): multiple definition of `clk_get_parent_by_index'
-   arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
-   arch/x86/kernel/tsc.o: In function `clk_get_num_parents':
->> tsc.c:(.text+0x3e3): multiple definition of `clk_get_num_parents'
-   arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+> +#define MAX77620_CLKS_NUM			1
+> +#define MAX77620_CLK_32K_OUT0			0
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+First clk ID, then NUM.
 
---VbJkn9YxBvnuCH5J
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+Best regards,
+Krzysztof
 
-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
-4D+nj66LilkAAA==
 
---VbJkn9YxBvnuCH5J--
+> +
+>  #endif
+> 
