@@ -1,41 +1,64 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        Jiancheng Xue
-	<xuejiancheng@hisilicon.com>
-Subject: [RESEND PATCH v2 0/5] clk: hisilicon: Fix some problems of clk-hi3519
-Date: Wed, 15 Jun 2016 14:26:33 +0800
-Message-ID: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [RESEND PATCH v2 07/13] ARM: DT: STiH410: Enable clock propagation for audio clocks
+Date: Thu, 16 Jun 2016 11:20:27 +0200
+Message-Id: <1466068833-5055-8-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch is base on branch clk-hi3519 in clk tree. It mainly fixes the
-following issues:
-1. Add driver remove path.
-2. Fix the ordering issue about clock provider being published.
-3. Add error checking upon registering clocks. 
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH410
 
-change log
-v2:
--Redivided patches to make sure every patch can be compiled successfully.
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jiancheng Xue (5):
-  reset: hisilicon: change the definition of hisi_reset_init
-  clk: hisilicon: add hisi_clk_alloc function.
-  clk: hisilicon: add error processing for hisi_clk_register_* functions
-  clk: hisilicon: add hisi_clk_unregister_* functions
-  clk: hisilicon: hi3519: add driver remove path and fix some issues
-
- drivers/clk/hisilicon/clk-hi3519.c | 116 ++++++++++++++++++++++++++++++++-----
- drivers/clk/hisilicon/clk.c        |  89 ++++++++++++++++++++++++----
- drivers/clk/hisilicon/clk.h        |  34 +++++++++--
- drivers/clk/hisilicon/reset.c      |  19 +++---
- drivers/clk/hisilicon/reset.h      |   5 +-
- 5 files changed, 220 insertions(+), 43 deletions(-)
-
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index d1f2aca..5a9a487 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -226,7 +226,7 @@
+ 
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-audio", "st,flexgen";
+ 
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
 -- 
 1.9.1
