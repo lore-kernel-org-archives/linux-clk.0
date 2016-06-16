@@ -1,33 +1,40 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-Subject: Re: [PATCH 30/34] clk: stm32f3: Migrate to clk_hw based OF and
- registration APIs
-To: Stephen Boyd <stephen.boyd@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-31-stephen.boyd@linaro.org>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/5] clk: Combine DT binding doc for max77686 and max77802
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>, mturquette@baylibre.com,
+ robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-3-git-send-email-ldewangan@nvidia.com>
+ <a9a4bf3b-7ece-f92f-9d49-d4745f512e3c@osg.samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <8dcaca11-b193-64d2-8fa6-7f3f031b328b@linaro.org>
-Date: Mon, 6 Jun 2016 14:48:01 +0100
-MIME-Version: 1.0
-In-Reply-To: <20160601231533.9354-31-stephen.boyd@linaro.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <576272BA.50800@samsung.com>
+Date: Thu, 16 Jun 2016 11:34:50 +0200
+MIME-version: 1.0
+In-reply-to: <a9a4bf3b-7ece-f92f-9d49-d4745f512e3c@osg.samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06/16 00:15, Stephen Boyd wrote:
+On 06/15/2016 05:19 PM, Javier Martinez Canillas wrote:
+>> Remove the separate DT binding document file for maxim,max77802 and
+>> move all information to maxim,max77686 DT binding document.
+>>
+> 
+> Now, I wonder if this is the correct approach. A system integrator is
+> probably going to search for the bindings of the chip that is present
+> in their system. For example there are different DT bindings docs for
+> both the max77686 and max77802 PMIC even when support is implemented
+> by the same driver (drivers/mfd/max77686.c).
+> 
+> But maybe I'm wrong so I'll let people with more DT experience to say
+> if merging the bindings docs in a single one is the correct approach.
 
-Minor nit but the subject is wrong [IIRC stm32f3 cannot run Linux ;-)].
+I personally prefer having one binding document for all devices because
+essentially it is almost the same device. For looking up I use git grep
+with compatible string (or device name) so it does not matter, IMHO.
 
-
-Daniel.
-
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
->
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Best regards,
+Krzysztof
