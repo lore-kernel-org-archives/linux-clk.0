@@ -1,48 +1,54 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Subject: [PATCH v6 5/5] rtc: Kconfig: Name RK818 in Kconfig for RTC_DRV_RK808
-Date: Mon, 13 Jun 2016 09:46:29 +0200
-Message-Id: <1465803989-33632-5-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
-References: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <ldewangan@nvidia.com>
+Message-ID: <5762A4BE.3010408@nvidia.com>
+Date: Thu, 16 Jun 2016 18:38:14 +0530
+From: Laxman Dewangan <ldewangan@nvidia.com>
+MIME-Version: 1.0
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski
+	<k.kozlowski@samsung.com>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas
+	<javier@dowhile0.org>
+Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com> <1466000018-16784-6-git-send-email-ldewangan@nvidia.com> <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com> <57629AB9.2090506@samsung.com> <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
+In-Reply-To: <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
+Return-Path: ldewangan@nvidia.com
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The RK808 and RK818 PMICs are using a similar register map.
-We can reuse the rtc driver for the RK818 PMIC. So let's add
-the RK818 in the Kconfig description.
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/rtc/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Thursday 16 June 2016 06:36 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+>
+> On 06/16/2016 08:25 AM, Krzysztof Kozlowski wrote:
+>> On 06/15/2016 05:39 PM, Javier Martinez Canillas wrote:
+>>> Hello Laxman,
+>>>
+>>> On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
+>>>> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
+>>>> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
+>>>>
+>>>> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
+>>>>
+>>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> CC: Javier Martinez Canillas <javier@dowhile0.org>
+>>>> ---
+>>>>   arch/arm/configs/exynos_defconfig   | 1 -
+>>>>   arch/arm/configs/multi_v7_defconfig | 1 -
+>>> Please split these two changes in separate patches, there are just
+>>> cleanups needed after 1/5 and they can be picked separately.
+>> Not entirely separately. If we do not want to loose max77802 clocks on
+>> defconfigs, then it should go with the same tree or after driver get
+>> merged. I prefer the latter, similar case to 1898994229f8 ("ARM:
+>> multi_v7_defconfig: Switch max77693 to module").
+>>
+> Agreed. Your latter example is what I tried to say (that can be picked
+> as cleanups separately once 1/5 hits mainline). I just didn't express
+> clearly.
+>   
+>
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 18639e0..2faed74 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -324,11 +324,11 @@ config RTC_DRV_MAX77686
- 	  will be called rtc-max77686.
- 
- config RTC_DRV_RK808
--	tristate "Rockchip RK808 RTC"
-+	tristate "Rockchip RK808/RK818 RTC"
- 	depends on MFD_RK808
- 	help
- 	  If you say yes here you will get support for the
--	  RTC of RK808 PMIC.
-+	  RTC of RK808 and RK818 PMIC.
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rk808-rtc.
--- 
-1.9.1
+OK, I will drop this from series when will send V2.
+The changes can be done later on once clock changes get merged.
