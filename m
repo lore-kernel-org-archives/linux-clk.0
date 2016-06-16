@@ -1,48 +1,127 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-	dianders@chromium.org, zyw@rock-chips.com
-Subject: [RESEND PATCH v5 4/5] clk: Kconfig: Name RK818 in Kconfig for COMMON_CLK_RK808
-Date: Thu, 2 Jun 2016 08:50:27 +0200
-Message-Id: <1464850228-17244-4-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
-References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <oss@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	yuantian.tang@nxp.com,
+	leoyang.li@nxp.com,
+	xiaofeng.ren@nxp.com,
+	Scott Wood <scottwood@freescale.com>
+Date: Thu, 16 Jun 2016 01:21:24 -0500
+Message-Id: <1466058085-19353-1-git-send-email-oss@buserror.net>
+Subject: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible parent clocks
 List-ID: <linux-clk.vger.kernel.org>
 
-The RK808 and RK818 PMICs are using a similar register map.
-We can reuse the clk driver for the RK818 PMIC. So let's add
-the RK818 in the Kconfig description.
+From: Scott Wood <scottwood@freescale.com>
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
+__clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
+true provider API versions that operate on struct clk_hw.
+
+qoriq-cpufreq needs these functions in order to determine the options
+it has for calling clk_set_parent() and thus populate the cpufreq
+table, so revive them as legitimate consumer APIs.
+
+Signed-off-by: Scott Wood <scottwood@freescale.com>
 ---
- drivers/clk/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: Add missing 'static inline' to stub functions.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 53ddba2..87b9fd2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -49,10 +49,10 @@ config COMMON_CLK_MAX77802
- 	  This driver supports Maxim 77802 crystal oscillator clock.
+v3: no changes
+
+ drivers/clk/clk.c   | 19 +++++++++++++++++++
+ include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d584004..d61a3fe 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_hw);
  
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK808"
-+	tristate "Clock driver for RK808/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK808 crystal oscillator clock. These
-+	  This driver supports RK808 and RK818 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
++unsigned int clk_get_num_parents(struct clk *clk)
++{
++	return !clk ? 0 : clk->core->num_parents;
++}
++EXPORT_SYMBOL_GPL(clk_get_num_parents);
++
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
+ {
+ 	return hw->core->num_parents;
+@@ -358,6 +364,19 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
+ 	return core->parents[index];
+ }
+ 
++struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int index)
++{
++	struct clk_core *parent;
++
++	if (!clk)
++		return NULL;
++
++	parent = clk_core_get_parent_by_index(clk->core, index);
++
++	return !parent ? NULL : parent->hw->clk;
++}
++EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
++
+ struct clk_hw *
+ clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..acd115f 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
+ struct clk *clk_get_parent(struct clk *clk);
+ 
+ /**
++ * clk_get_parent_by_index - get a possible parent clock by index
++ * @clk: clock source
++ * @index: index into the array of possible parents of this clock
++ *
++ * Returns struct clk corresponding to the requested possible
++ * parent clock source, or NULL.
++ */
++struct clk *clk_get_parent_by_index(struct clk *clk,
++				    unsigned int index);
++
++/**
++ * clk_get_num_parents - get number of possible parents
++ * @clk: clock source
++ *
++ * Returns the number of possible parents of this clock,
++ * which can then be enumerated using clk_get_parent_by_index().
++ */
++unsigned int clk_get_num_parents(struct clk *clk);
++
++/**
+  * clk_get_sys - get a clock based upon the device name
+  * @dev_id: device name
+  * @con_id: connection ID
+@@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk *clk)
+ 	return NULL;
+ }
+ 
++static inline struct clk *clk_get_parent_by_index(struct clk *clk,
++						  unsigned int index)
++{
++	return NULL;
++}
++
++static inline unsigned int clk_get_num_parents(struct clk *clk)
++{
++	return 0;
++}
++
+ #endif
+ 
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
 -- 
-1.9.1
+2.5.0
