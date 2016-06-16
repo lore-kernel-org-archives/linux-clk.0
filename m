@@ -1,108 +1,42 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V3 1/1] clk: imx: refine the powerdown bit of clk-pllv3
-Date: Mon, 13 Jun 2016 20:24:52 +0800
-Message-ID: <1465820692-20055-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465803434-31507-1-git-send-email-aisheng.dong@nxp.com>
-References: <1465803434-31507-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH V2 3/4] clk: max77686: Add DT binding details for PMIC
+ MAX77620
+To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <4973c738-f270-e7d1-9ac1-ab0d6eaece88@osg.samsung.com>
+Date: Thu, 16 Jun 2016 10:02:18 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The powerdown bit is a bit confused, let's change it to power_bit
-to relfect both powerdown and powerup case according to different
-plls.
+Hello Laxman,
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-Changes from v2:
-Sorry for sending the patch too quickly.
-There's a rebase error in V2, fixed it.
----
- drivers/clk/imx/clk-pllv3.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+On 06/16/2016 09:23 AM, Laxman Dewangan wrote:
+> Maxim has used the same clock IP on multiple PMICs like MAX77686,
+> MAX77802, MAX77620. Only differences are the number of clocks
+> from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
+> two clock output and MAX77620 has one clock output.
+> 
+> Add clock binding details and DT example for the MAX77620.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> 
+> ---
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index eea2b1b3791e..19f9b622981a 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -29,8 +29,8 @@
-  * struct clk_pllv3 - IMX PLL clock version 3
-  * @clk_hw:	 clock source
-  * @base:	 base address of PLL registers
-- * @powerup_set: set POWER bit to power up the PLL
-- * @powerdown:   pll powerdown offset bit
-+ * @power_bit:	 pll power bit mask
-+ * @powerup_set: set power_bit to power up the PLL
-  * @div_mask:	 mask of divider bits
-  * @div_shift:	 shift of divider bits
-  *
-@@ -40,8 +40,8 @@
- struct clk_pllv3 {
- 	struct clk_hw	hw;
- 	void __iomem	*base;
-+	u32		power_bit;
- 	bool		powerup_set;
--	u32		powerdown;
- 	u32		div_mask;
- 	u32		div_shift;
- 	unsigned long	ref_clock;
-@@ -52,7 +52,7 @@ struct clk_pllv3 {
- static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
- {
- 	unsigned long timeout = jiffies + msecs_to_jiffies(10);
--	u32 val = readl_relaxed(pll->base) & pll->powerdown;
-+	u32 val = readl_relaxed(pll->base) & pll->power_bit;
- 
- 	/* No need to wait for lock when pll is not powered up */
- 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
-@@ -77,9 +77,9 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
- 
- 	val = readl_relaxed(pll->base);
- 	if (pll->powerup_set)
--		val |= pll->powerdown;
-+		val |= pll->power_bit;
- 	else
--		val &= ~pll->powerdown;
-+		val &= ~pll->power_bit;
- 	writel_relaxed(val, pll->base);
- 
- 	return clk_pllv3_wait_lock(pll);
-@@ -92,9 +92,9 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
- 
- 	val = readl_relaxed(pll->base);
- 	if (pll->powerup_set)
--		val &= ~pll->powerdown;
-+		val &= ~pll->power_bit;
- 	else
--		val |= pll->powerdown;
-+		val |= pll->power_bit;
- 	writel_relaxed(val, pll->base);
- }
- 
-@@ -316,7 +316,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
- 
--	pll->powerdown = BM_PLL_POWER;
-+	pll->power_bit = BM_PLL_POWER;
- 
- 	switch (type) {
- 	case IMX_PLLV3_SYS:
-@@ -332,7 +332,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 		ops = &clk_pllv3_av_ops;
- 		break;
- 	case IMX_PLLV3_ENET_IMX7:
--		pll->powerdown = IMX7_ENET_PLL_POWER;
-+		pll->power_bit = IMX7_ENET_PLL_POWER;
- 		pll->ref_clock = 1000000000;
- 		ops = &clk_pllv3_enet_ops;
- 		break;
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
