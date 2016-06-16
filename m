@@ -1,59 +1,60 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kevin Hilman <khilman@kernel.org>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
- <1464429273-23457-14-git-send-email-krzk@kernel.org>
- <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
- <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
- lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:37792 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753992AbcFPNGo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 16 Jun 2016 09:06:44 -0400
+Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
+ <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com>
+ <57629AB9.2090506@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Javier Martinez Canillas <javier@dowhile0.org>
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
-Date: Wed, 1 Jun 2016 16:52:47 -0400
+Message-ID: <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
+Date: Thu, 16 Jun 2016 09:06:29 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <57629AB9.2090506@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 Hello Krzysztof,
 
-On 06/01/2016 04:06 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jun 1, 2016 at 9:57 PM, Kevin Hilman <khilman@kernel.org> wrote:
->> Hi Krzysztof,
+On 06/16/2016 08:25 AM, Krzysztof Kozlowski wrote:
+> On 06/15/2016 05:39 PM, Javier Martinez Canillas wrote:
+>> Hello Laxman,
 >>
->> On Sat, May 28, 2016 at 2:54 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> Just like other Exynos5 family SoCs, this one has four UARTs. Configure
->>> clocks for UART3 and enable it.
+>> On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
+>>> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
+>>> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
 >>>
->>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> CC: Javier Martinez Canillas <javier@dowhile0.org>
+>>> ---
+>>>  arch/arm/configs/exynos_defconfig   | 1 -
+>>>  arch/arm/configs/multi_v7_defconfig | 1 -
 >>
->> This patch landed in linux-next[1] and kernelci.org found a boot
->> regression on the exynos5410-odroidxu[2], where it looks like it's
->> faulting in clk_prepare().  Bisecting pointed to this patch.  I added
->> "status = disabled" back into the DTS on top of next-20160601[3] and
->> verified my odroid-XU to be booting fine again.
+>> Please split these two changes in separate patches, there are just
+>> cleanups needed after 1/5 and they can be picked separately.
 > 
-> Hi,
-> 
-> Thanks for report. Indeed the patch brings up to the light an issue in
-> serial driver. Fixed here:
-> https://lkml.org/lkml/2016/5/31/570
-> 
-> I left the commit in my tree as it is correct (strictly speaking).
-> Sorry for any trouble it makes.
+> Not entirely separately. If we do not want to loose max77802 clocks on
+> defconfigs, then it should go with the same tree or after driver get
+> merged. I prefer the latter, similar case to 1898994229f8 ("ARM:
+> multi_v7_defconfig: Switch max77693 to module").
 >
 
-Kevin pointed me to this issue over IRC and I was able to reproduce it in
-my Peach Pi by removing the UART3 clocks from the Exynos5420 clock driver.
-
-Your patch indeed fixes the issue, I'll add a Reviewed-by on that thread.
+Agreed. Your latter example is what I tried to say (that can be picked
+as cleanups separately once 1/5 hits mainline). I just didn't express
+clearly.
  
 > Best regards,
 > Krzysztof
