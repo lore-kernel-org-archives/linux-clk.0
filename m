@@ -1,155 +1,69 @@
-Return-Path: <dbasehore@google.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
+To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <77dde1c3-c4da-faa6-ecd4-ba318abf5ed4@osg.samsung.com>
+Date: Thu, 16 Jun 2016 10:07:52 -0400
 MIME-Version: 1.0
-Sender: dbasehore@google.com
-In-Reply-To: <1464773739-18152-5-git-send-email-hl@rock-chips.com>
-References: <1464773739-18152-1-git-send-email-hl@rock-chips.com> <1464773739-18152-5-git-send-email-hl@rock-chips.com>
-From: "dbasehore ." <dbasehore@chromium.org>
-Date: Thu, 2 Jun 2016 21:07:54 -0700
-Message-ID: <CAGAzgsrornhAYzE0q+MMZ1c7jSGzPYEL+oW-s1D+o51P-uaTWw@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/4] drm/rockchip: Add dmc notifier in vop driver
-To: Lin Huang <hl@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	=?UTF-8?B?5aea5pm65oOF?= <mark.yao@rock-chips.com>, myungjoo.ham@samsung.com,
-	mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-rockchip@lists.infradead.org,
-	David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-	linux-kernel <linux-kernel@vger.kernel.org>, kyungmin.park@samsung.com,
-	Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 2:35 AM, Lin Huang <hl@rock-chips.com> wrote:
-> when in ddr frequency scaling process, vop can not do
-> enable or disable operate, since dcf will base on vop vblank
-> time to do frequency scaling and need to get vop irq if there
-> have vop enabled. So need register to dmc notifier, and we can
-> get the dmc status.
+Hello Laxman,
+
+On 06/16/2016 09:23 AM, Laxman Dewangan wrote:
+> Maxim Max77620 has one 32KHz clock output and the clock HW
+> IP used on this PMIC is same as what it is there in the MAX77686.
+> 
+> Add clock driver support for MAX77620 on the MAX77686 driver.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
+
+I already gave you my Reviewed-by for v1 but it seems you missed:
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+ 
 > ---
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 51 +++++++++++++++++++++++++++--
->  1 file changed, 49 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index 1c4d5b5..7ee0cd0 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -31,6 +31,8 @@
->  #include <linux/reset.h>
->  #include <linux/delay.h>
->
-> +#include <soc/rockchip/rockchip_dmc.h>
-> +
->  #include "rockchip_drm_drv.h"
->  #include "rockchip_drm_gem.h"
->  #include "rockchip_drm_fb.h"
-> @@ -116,6 +118,9 @@ struct vop {
->
->         const struct vop_data *data;
->
-> +       struct notifier_block dmc_nb;
-> +       int dmc_in_process;
-> +
->         uint32_t *regsbak;
->         void __iomem *regs;
->
-> @@ -426,14 +431,41 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
->         spin_unlock_irqrestore(&vop->irq_lock, flags);
->  }
->
-> +static int dmc_notify(struct notifier_block *nb, unsigned long event,
-> +                     void *data)
-> +{
-> +       struct vop *vop = container_of(nb, struct vop, dmc_nb);
-> +
-> +       if (event == DMCFREQ_ADJUST)
-> +               vop->dmc_in_process = 1;
-> +       else if (event == DMCFREQ_FINISH)
-> +               vop->dmc_in_process = 0;
-> +
-> +       return NOTIFY_OK;
-> +}
-> +
->  static void vop_enable(struct drm_crtc *crtc)
->  {
->         struct vop *vop = to_vop(crtc);
->         int ret;
-> +       int timeout_count = 500;
-> +       int timeout_loop = 0;
->
->         if (vop->is_enabled)
->                 return;
->
-> +       /*
-> +        * if in dmc scaling frequency process, wait until it finish
-> +        * use 100ms as timeout time.
-> +        */
-> +       while (timeout_loop < timeout_count) {
-> +               if (vop->dmc_in_process == 0)
-> +                       break;
-> +
-> +               timeout_loop++;
-> +               usleep_range(150, 200);
-> +       }
+> Changes from V1:
+> - Updated based on changes done in first patch.
+> ---
+>  drivers/clk/Kconfig        |  7 ++++---
+>  drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
+>  2 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 6afad74..d75f4c5 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
+>  source "drivers/clk/versatile/Kconfig"
+>  
+>  config COMMON_CLK_MAX77686
+> -	tristate "Clock driver for Maxim 77686/77802 MFD"
+> -	depends on MFD_MAX77686
+> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
+> +	depends on MFD_MAX77686 || MFD_MAX77620
+>  	---help---
+> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
+> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
 
-wait_event with wake_up_all should work better here than using usleep_range.
+And it seems you also missed the minor nit I mentioned in v1 about using
+77620 instead of MAX77620 here for naming consistency with the other IP.
 
-> +
->         ret = pm_runtime_get_sync(vop->dev);
->         if (ret < 0) {
->                 dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
-> @@ -485,6 +517,7 @@ static void vop_enable(struct drm_crtc *crtc)
->         enable_irq(vop->irq);
->
->         drm_crtc_vblank_on(crtc);
-> +       rockchip_dmc_get(&vop->dmc_nb);
->
->         return;
->
-> @@ -500,11 +533,25 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
->  {
->         struct vop *vop = to_vop(crtc);
->         int i;
-> +       int timeout_count = 500;
-> +       int timeout_loop = 0;
->
->         if (!vop->is_enabled)
->                 return;
->
->         /*
-> +        * if in dmc scaling frequency process, wait until it finish
-> +        * use 100ms as timeout time.
-> +        */
-> +       while (timeout_loop < timeout_count) {
-> +               if (vop->dmc_in_process == 0)
-> +                       break;
-> +
-> +               timeout_loop++;
-> +               usleep_range(150, 200);
-> +       }
-> +
-> +       /*
->          * We need to make sure that all windows are disabled before we
->          * disable that crtc. Otherwise we might try to scan from a destroyed
->          * buffer later.
-> @@ -517,7 +564,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
->                 VOP_WIN_SET(vop, win, enable, 0);
->                 spin_unlock(&vop->reg_lock);
->         }
-> -
-> +       rockchip_dmc_put(&vop->dmc_nb);
->         drm_crtc_vblank_off(crtc);
->
->         /*
-> @@ -1243,7 +1290,7 @@ static int vop_create_crtc(struct vop *vop)
->                 ret = -ENOENT;
->                 goto err_cleanup_crtc;
->         }
-> -
-> +       vop->dmc_nb.notifier_call = dmc_notify;
->         init_completion(&vop->dsp_hold_completion);
->         init_completion(&vop->wait_update_complete);
->         crtc->port = port;
-> --
-> 1.9.1
->
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
