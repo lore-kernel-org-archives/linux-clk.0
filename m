@@ -1,123 +1,45 @@
-Return-Path: <s.nawrocki@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] Samsung clk updates for 4.8
-Message-id: <575EB0B2.8040001@samsung.com>
-Date: Mon, 13 Jun 2016 15:10:10 +0200
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH V2 2/4] clk: Combine DT binding doc for max77686 and
+ max77802
+To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-3-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <915cfaa2-074c-c0b4-5b5a-81857e329693@osg.samsung.com>
+Date: Thu, 16 Jun 2016 09:57:00 -0400
+MIME-Version: 1.0
+In-Reply-To: <1466083407-28793-3-git-send-email-ldewangan@nvidia.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Laxman,
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+On 06/16/2016 09:23 AM, Laxman Dewangan wrote:
+> The clock IP used on the Maxim PMICs max77686 and max77802 are
+> same. The configuration of clock register is also same except
+> the number of clocks.
+> 
+> Define the common DT binding file for the clocks of Maxim PMICs
+> MAX77686 and MAX77802. For this, remove the separate DT binding
+> document file for maxim,max77802 and move all information to
+> maxim,max77686 DT binding document.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> 
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+Looks good to me.
 
-are available in the git repository at:
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.8
-
-for you to fetch changes up to 0e4504470667d355b53ca3c9802fdd2120c9f946:
-
-  clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to PCIE device (2016-06-10 12:15:30 +0200)
-
-----------------------------------------------------------------
- - a fix for exynos7 to prevent gating some critical CMU clocks,
- - addition of CPU clocks for CPU frequency scaling on Exynos5433 SoCs,
- - additions for exynos5410 SoC required for Odroid XU board support,
- - register accessors fixes for kernels built for big endian operation
-   (mostly exynos4 SoCs),
- - Exynos5433 clock definitions fixes required for suspend to RAM and
-   the audio subsystem operation,
- - many cleanups changing attributes of the clock initializer data
-
-----------------------------------------------------------------
-Alim Akhtar (1):
-      clk: samsung: exynos7: Don't gate CMU_{CCORE, FSYS0} blocks clock
-
-Bartlomiej Zolnierkiewicz (3):
-      clk: samsung: exynos5433: prepare for adding CPU clocks
-      clk: samsung: cpu: prepare for adding Exynos5433 CPU clocks
-      clk: samsung: exynos5433: add CPU clocks configuration data and instantiate CPU clocks
-
-Beomho Seo (1):
-      clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag for AUD UART
-
-Jaehoon Chung (1):
-      clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to PCIE device
-
-Javier Martinez Canillas (1):
-      clk: samsung: exynos5420: Set ID for aclk333 gate clock
-
-Jonghwa Lee (1):
-      clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flags to avoid hang during S2R
-
-Krzysztof Kozlowski (31):
-      dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-      dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-      dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-      dt-bindings: clock: Add TMU clock ID to Exynos5410
-      dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
-      clk: samsung: Remove useless check for return value of samsung_clk_init
-      clk: samsung: clkout: Add support for Exynos5410
-      clk: samsung: Constify clock init data with clock arrays
-      clk: samsung: exynos3250: Move platform driver and of_device_id to init section
-      clk: samsung: exynos3250: Constify all clock initializers
-      clk: samsung: exynos4: Move local function to init section
-      clk: samsung: exynos4: Constify all clock initializers
-      clk: samsung: exynos4415: Constify all clock initializers
-      clk: samsung: exynos4415: Move PLL rates data to init section
-      clk: samsung: exynos5250: Constify all clock initializers
-      clk: samsung: exynos5260: Constify all clock initializers
-      clk: samsung: exynos5410: Constify all clock initializers
-      clk: samsung: exynos5420: Constify all clock initializers
-      clk: samsung: exynos5440: Constify all clock initializers
-      clk: samsung: exynos7: Constify all clock initializers
-      clk: samsung: exynos5433: Constify all clock initializers
-      clk: samsung: exynos5433: Move PLL rates data to init section
-      clk: samsung: exynos5420: Move sleep init function and PLL data to init section
-      clk: samsung: exynos5250: Move sleep init function to init section
-      clk: samsung: Fully constify mux parent names
-      clk: samsung: exynos3250: Move PLL rates data to init section
-      clk: samsung: exynos5410: Add serial3, USB and PWM clocks
-      clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
-      clk: samsung: exynos5410: Add TMU clock
-      clk: samsung: Suppress unbinding to prevent theoretical attacks
-      clk: samsung: exynos5410: Add WDT, ACLK266 and SSS clocks
-
-Matthew Leach (2):
-      clk: samsung: fixup endian in pll clk
-      clk: samsung: exynos4: fixup reg access on be
-
- drivers/clk/samsung/clk-cpu.c           | 131 +++++++++-
- drivers/clk/samsung/clk-cpu.h           |   4 +-
- drivers/clk/samsung/clk-exynos-clkout.c |   2 +
- drivers/clk/samsung/clk-exynos3250.c    |  41 +--
- drivers/clk/samsung/clk-exynos4.c       |  64 +++--
- drivers/clk/samsung/clk-exynos4415.c    |  30 +--
- drivers/clk/samsung/clk-exynos5250.c    |  27 +-
- drivers/clk/samsung/clk-exynos5260.c    | 114 ++++----
- drivers/clk/samsung/clk-exynos5410.c    |  58 ++++-
- drivers/clk/samsung/clk-exynos5420.c    |  40 ++-
- drivers/clk/samsung/clk-exynos5433.c    | 432 +++++++++++++++++++------------
- drivers/clk/samsung/clk-exynos5440.c    |  12 +-
- drivers/clk/samsung/clk-exynos7.c       | 119 ++++-----
- drivers/clk/samsung/clk-pll.c           | 122 ++++-----
- drivers/clk/samsung/clk-s3c2410-dclk.c  |   5 +-
- drivers/clk/samsung/clk-s3c2410.c       |   2 -
- drivers/clk/samsung/clk-s3c2412.c       |   2 -
- drivers/clk/samsung/clk-s3c2443.c       |   2 -
- drivers/clk/samsung/clk-s3c64xx.c       |   2 -
- drivers/clk/samsung/clk-s5pv210.c       |   2 -
- drivers/clk/samsung/clk.c               |  14 +-
- drivers/clk/samsung/clk.h               |  22 +-
- include/dt-bindings/clock/exynos5410.h  |  76 ++++--
- include/dt-bindings/clock/exynos5433.h  |   3 +-
- 24 files changed, 812 insertions(+), 514 deletions(-)
-
---
-Thanks, 
-Sylwester
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
