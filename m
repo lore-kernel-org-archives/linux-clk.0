@@ -1,46 +1,128 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: dianders@chromium.org,
-	zhangqing@rock-chips.com,
-	huangtao@rock-chips.com,
-	briannorris@chromium.org,
-	zyw@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: fix the rk3399 spdif incorrect bit for DPTX
-Date: Thu, 30 Jun 2016 10:18:59 +0800
-Message-Id: <1467253139-21112-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <57627757.50101@samsung.com>
+Date: Thu, 16 Jun 2016 11:54:31 +0200
+MIME-version: 1.0
+In-reply-to: <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The CLKSEL_CON32 bit_0 is controlled for spdif_8ch, not spdif_rec_dptx,
-it should be bit_8, let's fix it.
+On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
+> Maxim Max77620 has one 32KHz clock output and the clock HW
+> IP used on this PMIC is same as what it is there in the MAX77686.
+> 
+> Add clock driver support for MAX77620 on the MAX77686 driver.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> ---
+>  drivers/clk/Kconfig        |  7 ++++---
+>  drivers/clk/clk-max77686.c | 16 ++++++++++++++++
+>  2 files changed, 20 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 6afad74..d75f4c5 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
+>  source "drivers/clk/versatile/Kconfig"
+>  
+>  config COMMON_CLK_MAX77686
+> -	tristate "Clock driver for Maxim 77686/77802 MFD"
+> -	depends on MFD_MAX77686
+> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
+> +	depends on MFD_MAX77686 || MFD_MAX77620
+>  	---help---
+> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
+> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
+> +	  clock.
+>  
+>  config COMMON_CLK_RK808
+>  	tristate "Clock driver for RK808"
+> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> index 31ba726..d2be736 100644
+> --- a/drivers/clk/clk-max77686.c
+> +++ b/drivers/clk/clk-max77686.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/mfd/max77620.h>
+>  #include <linux/mfd/max77686.h>
+>  #include <linux/mfd/max77686-private.h>
+>  #include <linux/clk-provider.h>
+> @@ -30,12 +31,14 @@
+>  
+>  #include <dt-bindings/clock/maxim,max77686.h>
+>  #include <dt-bindings/clock/maxim,max77802.h>
+> +#include <dt-bindings/mfd/max77620.h>
+>  
+>  #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
+>  
+>  enum chip_name {
+>  	CHIP_MAX77686,
+>  	CHIP_MAX77802,
+> +	CHIP_MAX77620,
 
-Reported-by: Chris Zhong <zyw@rock-chips.com>
-Tested-by: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+Now it is more obvious why it is here. However I don't like the
+duplication of device IDs, under different names and different values:
+1. include/linux/mfd/max77686-private.h
+2. include/linux/mfd/max77620.h
+3. here
 
- drivers/clk/rockchip/clk-rk3399.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was thinking about way of combining it... but these headers are
+different. Unless there will be one header for all three devices.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index b6742fa..78e51cb 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -586,7 +586,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(8), 15, GFLAGS),
- 
- 	COMPOSITE(SCLK_SPDIF_REC_DPTX, "clk_spdif_rec_dptx", mux_pll_src_cpll_gpll_p, 0,
--			RK3399_CLKSEL_CON(32), 15, 1, MFLAGS, 0, 5, DFLAGS,
-+			RK3399_CLKSEL_CON(32), 15, 1, MFLAGS, 8, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(10), 6, GFLAGS),
- 	/* i2s */
- 	COMPOSITE(0, "clk_i2s0_div", mux_pll_src_cpll_gpll_p, 0,
--- 
-1.7.9.5
+Anyway, please add the max77686 prefix to the enum.
+
+Best regards,
+Krzysztof
+
+>  };
+>  
+>  struct max_gen_hw_clk_data {
+> @@ -91,6 +94,14 @@ static struct max_gen_hw_clk_data max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
+>  	},
+>  };
+>  
+> +static struct max_gen_hw_clk_data max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
+> +	[MAX77620_CLK_32K_OUT0] = {
+> +		.name = "32khz_pmic",
+> +		.reg = MAX77620_REG_CNFG1_32K,
+> +		.mask = MAX77620_CNFG1_32K_OUT0_EN,
+> +	},
+> +};
+> +
+>  static struct max_gen_clk_data *to_max_gen_clk_data(struct clk_hw *hw)
+>  {
+>  	return container_of(hw, struct max_gen_clk_data, hw);
+> @@ -171,6 +182,10 @@ static int max77686_clk_probe(struct platform_device *pdev)
+>  		num_clks = MAX77802_CLKS_NUM;
+>  		hw_clks = max77802_hw_clks_info;
+>  		break;
+> +	case CHIP_MAX77620:
+> +		num_clks = MAX77620_CLKS_NUM;
+> +		hw_clks = max77620_hw_clks_info;
+> +		break;
+>  	default:
+>  		dev_err(dev, "Unknown Chip ID\n");
+>  		return -EINVAL;
+> @@ -269,6 +284,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
+>  static const struct platform_device_id max77686_clk_id[] = {
+>  	{ "max77686-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77686, },
+>  	{ "max77802-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77802, },
+> +	{ "max77620-clock", .driver_data = (kernel_ulong_t)CHIP_MAX77620, },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(platform, max77686_clk_id);
+> 
