@@ -1,327 +1,200 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:60883 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752183AbcFFCYX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2016 22:24:23 -0400
-Subject: Re: [RFC PATCH v1 1/6] rockchip: rockchip: add new clock-type for the
- ddrclk
-To: Shawn Lin <shawn.lin@rock-chips.com>, heiko@sntech.de,
-	mark.yao@rock-chips.com, myungjoo.ham@samsung.com
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
- <1464947719-6245-2-git-send-email-hl@rock-chips.com>
- <67c0c728-389c-668f-4966-39e9966e1b42@rock-chips.com>
-Cc: huangtao@rock-chips.com, dbasehore@chromium.org,
-	linux-clk@vger.kernel.org, airlied@linux.ie, typ@rock-chips.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, dianders@chromium.org,
-	linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-From: hl <hl@rock-chips.com>
-Message-ID: <5754DEC9.6030800@rock-chips.com>
-Date: Mon, 6 Jun 2016 10:24:09 +0800
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH V2 2/4] clk: Combine DT binding doc for max77686 and max77802
+Date: Thu, 16 Jun 2016 18:53:25 +0530
+Message-ID: <1466083407-28793-3-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <67c0c728-389c-668f-4966-39e9966e1b42@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+The clock IP used on the Maxim PMICs max77686 and max77802 are
+same. The configuration of clock register is also same except
+the number of clocks.
 
-On 2016年06月03日 20:29, Shawn Lin wrote:
-> Hi Lin,
->
-> It looks good with only a few minor comments.
->
-> On 2016/6/3 17:55, Lin Huang wrote:
->> On new rockchip platform(rk3399 etc), there have dcf controller to
->> do ddr frequency scaling, and this controller will implement in
->> arm-trust-firmware. We add a special clock-type to handle that.
->>
->> Signed-off-by: Lin Huang <hl@rock-chips.com>
->> ---
->> Changes in v1:
->> - None
->>
->>  drivers/clk/rockchip/Makefile  |   1 +
->>  drivers/clk/rockchip/clk-ddr.c | 147 
->> +++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/rockchip/clk.c     |   9 +++
->>  drivers/clk/rockchip/clk.h     |  27 ++++++++
->>  4 files changed, 184 insertions(+)
->>  create mode 100644 drivers/clk/rockchip/clk-ddr.c
->>
->> diff --git a/drivers/clk/rockchip/Makefile 
->> b/drivers/clk/rockchip/Makefile
->> index f47a2fa..b5f2c8e 100644
->> --- a/drivers/clk/rockchip/Makefile
->> +++ b/drivers/clk/rockchip/Makefile
->> @@ -8,6 +8,7 @@ obj-y    += clk-pll.o
->>  obj-y    += clk-cpu.o
->>  obj-y    += clk-inverter.o
->>  obj-y    += clk-mmc-phase.o
->> +obj-y    += clk-ddr.o
->>  obj-$(CONFIG_RESET_CONTROLLER)    += softrst.o
->>
->>  obj-y    += clk-rk3036.o
->> diff --git a/drivers/clk/rockchip/clk-ddr.c 
->> b/drivers/clk/rockchip/clk-ddr.c
->> new file mode 100644
->> index 0000000..5b6630d
->> --- /dev/null
->> +++ b/drivers/clk/rockchip/clk-ddr.c
->> @@ -0,0 +1,147 @@
->> +/*
->> + * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
->> + * Author: Lin Huang <hl@rock-chips.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/of.h>
->> +#include <linux/slab.h>
->> +#include <linux/io.h>
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include "clk.h"
->> +
->
-> alphabetical order would be better.
-     Okay, will fix next version, thank you.
->
->> +struct rockchip_ddrclk {
->> +    struct clk_hw    hw;
->> +    void __iomem    *reg_base;
->> +    int        mux_offset;
->> +    int        mux_shift;
->> +    int        mux_width;
->> +    int        mux_flag;
->> +    int        div_shift;
->> +    int        div_width;
->> +    int        div_flag;
->> +    spinlock_t    *lock;
->> +};
->> +
->> +#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct 
->> rockchip_ddrclk, hw)
->> +#define val_mask(width)    ((1 << (width)) - 1)
->> +
->> +static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long 
->> drate,
->> +                    unsigned long prate)
->> +{
->> +    struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +    unsigned long flags;
->> +
->> +    spin_lock_irqsave(ddrclk->lock, flags);
->> +
->> +    /* TODO: set ddr rate in bl31 */
->> +
->> +    spin_unlock_irqrestore(ddrclk->lock, flags);
->> +
->
-> What do you wanna protect here?
-     I am not sure for now, when i finish this function,
-     if there nothing need protect i will remove it. Thank you.
->
->> +    return 0;
->> +}
->> +
->> +static unsigned long
->> +rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
->> +                unsigned long parent_rate)
->> +{
->> +    struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +    int val;
->> +
->> +    val = clk_readl(ddrclk->reg_base +
->> +            ddrclk->mux_offset) >> ddrclk->div_shift;
->> +    val &= val_mask(ddrclk->div_width);
->> +
->> +    return DIV_ROUND_UP_ULL((u64)parent_rate, val + 1);
->> +}
->> +
->> +static long clk_ddrclk_round_rate(struct clk_hw *hw, unsigned long 
->> rate,
->> +                  unsigned long *prate)
->> +{
->> +    return rate;
->> +}
->> +
->> +static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
->> +{
->> +    struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +    int num_parents = clk_hw_get_num_parents(hw);
->> +    u32 val;
->> +
->> +    val = clk_readl(ddrclk->reg_base +
->> +            ddrclk->mux_offset) >> ddrclk->mux_shift;
->> +    val &= val_mask(ddrclk->mux_width);
->> +
->> +    if (val >= num_parents)
->> +        return -EINVAL;
->> +
->> +    return val;
->> +}
->> +
->> +static const struct clk_ops rockchip_ddrclk_ops = {
->> +    .recalc_rate = rockchip_ddrclk_recalc_rate,
->> +    .set_rate = rockchip_ddrclk_set_rate,
->> +    .round_rate = clk_ddrclk_round_rate,
->> +    .get_parent = rockchip_ddrclk_get_parent,
->> +};
->> +
->> +struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
->> +                     const char *const *parent_names,
->> +                     u8 num_parents, int mux_offset,
->> +                     int mux_shift, int mux_width,
->> +                     int mux_flag, int div_shift,
->> +                     int div_width, int div_flag,
->> +                     void __iomem *reg_base,
->> +                     spinlock_t *lock)
->> +{
->> +    struct rockchip_ddrclk *ddrclk;
->> +    struct clk_init_data init;
->> +    struct clk *clk;
->> +    int ret;
->> +
->> +    ddrclk = kzalloc(sizeof(*ddrclk), GFP_KERNEL);
->> +    if (!ddrclk)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    init.name = name;
->> +    init.parent_names = parent_names;
->> +    init.num_parents = num_parents;
->> +    init.ops = &rockchip_ddrclk_ops;
->> +
->> +    init.flags = flags;
->> +    init.flags |= CLK_SET_RATE_NO_REPARENT;
->> +    init.flags |= CLK_GET_RATE_NOCACHE;
->
-> can we combine these two?
->
->> +
->> +    ddrclk->reg_base = reg_base;
->> +    ddrclk->lock = lock;
->> +    ddrclk->hw.init = &init;
->> +    ddrclk->mux_offset = mux_offset;
->> +    ddrclk->mux_shift = mux_shift;
->> +    ddrclk->mux_width = mux_width;
->> +    ddrclk->mux_flag = mux_flag;
->> +    ddrclk->div_shift = div_shift;
->> +    ddrclk->div_width = div_width;
->> +    ddrclk->div_flag = div_flag;
->> +
->> +    clk = clk_register(NULL, &ddrclk->hw);
->> +    if (IS_ERR(clk)) {
->> +        pr_err("%s: could not register ddrclk %s\n", __func__,    
->> name);
->> +        ret = PTR_ERR(clk);
->
-> Why do you need PTR_ERR and then convert back again.
-     Yes, there is only one error for ret value, so i can return "NULL" 
-directly, thank you.
->
->> +        goto free_ddrclk;
->> +    }
->> +
->> +    return clk;
->> +
->> +free_ddrclk:
->> +    kfree(ddrclk);
->> +    return ERR_PTR(ret);
->> +}
->> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
->> index 7ffd134..6ac1aa5 100644
->> --- a/drivers/clk/rockchip/clk.c
->> +++ b/drivers/clk/rockchip/clk.c
->> @@ -484,6 +484,15 @@ void __init rockchip_clk_register_branches(
->>                  list->gate_offset, list->gate_shift,
->>                  list->gate_flags, flags, &ctx->lock);
->>              break;
->> +        case branch_ddrc:
->> +            clk = rockchip_clk_register_ddrclk(
->> +                list->name, list->flags,
->> +                list->parent_names, list->num_parents,
->> +                list->muxdiv_offset, list->mux_shift,
->> +                list->mux_width, list->mux_flags,
->> +                list->div_shift, list->div_width,
->> +                list->div_flags, ctx->reg_base, &ctx->lock);
->> +            break;
->>          }
->>
->>          /* none of the cases above matched */
->> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
->> index 2194ffa..4033fe4 100644
->> --- a/drivers/clk/rockchip/clk.h
->> +++ b/drivers/clk/rockchip/clk.h
->> @@ -281,6 +281,13 @@ struct clk *rockchip_clk_register_mmc(const char 
->> *name,
->>                  const char *const *parent_names, u8 num_parents,
->>                  void __iomem *reg, int shift);
->>
->> +struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
->> +            const char *const *parent_names, u8 num_parents,
->> +            int mux_offset, int mux_shift, int mux_width,
->> +            int mux_flag, int div_shift, int div_width,
->> +            int div_flag, void __iomem *reg_base,
->> +            spinlock_t *lock);
->> +
->>  #define ROCKCHIP_INVERTER_HIWORD_MASK    BIT(0)
->>
->>  struct clk *rockchip_clk_register_inverter(const char *name,
->> @@ -299,6 +306,7 @@ enum rockchip_clk_branch_type {
->>      branch_mmc,
->>      branch_inverter,
->>      branch_factor,
->> +    branch_ddrc,
->>  };
->>
->>  struct rockchip_clk_branch {
->> @@ -488,6 +496,25 @@ struct rockchip_clk_branch {
->>          .child        = ch,                \
->>      }
->>
->> +#define COMPOSITE_DDRC(_id, cname, pnames, f, mo, ms, mw, mf,    \
->> +             ds, dw, df)                \
->
-> it seems a duplication exept for branch_type.
-     We just need this different branch_type, so we can add case in
-     rockchip_clk_register_branches() and call 
-rockchip_clk_register_ddrclk().
->
->> +    {                            \
->> +        .id        = _id,                \
->> +        .branch_type    = branch_ddrc,            \
->> +        .name        = cname,            \
->> +        .parent_names    = pnames,            \
->> +        .num_parents    = ARRAY_SIZE(pnames),        \
->> +        .flags        = f,                \
->> +        .muxdiv_offset    = mo,                \
->> +        .mux_shift    = ms,                \
->> +        .mux_width    = mw,                \
->> +        .mux_flags    = mf,                \
->> +        .div_shift    = ds,                \
->> +        .div_width    = dw,                \
->> +        .div_flags    = df,                \
->> +        .gate_offset    = -1,                \
->> +    }
->> +
->>  #define MUX(_id, cname, pnames, f, o, s, w, mf)            \
->>      {                            \
->>          .id        = _id,                \
->>
->
->
+Define the common DT binding file for the clocks of Maxim PMICs
+MAX77686 and MAX77802. For this, remove the separate DT binding
+document file for maxim,max77802 and move all information to
+maxim,max77686 DT binding document.
 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+
+---
+Changes from V1:
+- Rewrite description to remvoe ref to driver.
+- Taken care of comment from Krzysztof on the supported clocks and
+  DT bindings.
+---
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 82 ++++++++++++++++------
+ .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ------------
+ 2 files changed, 59 insertions(+), 67 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+index 9c40739..4d973b5 100644
+--- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
++++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+@@ -1,11 +1,15 @@
+-Binding for Maxim MAX77686 32k clock generator block
++Binding for Maxim MAX77686/MAX77802 32k clock generator block
+ 
+-This is a part of device tree bindings of MAX77686 multi-function device.
+-More information can be found in bindings/mfd/max77686.txt file.
++This is a part of device tree bindings of MAX77686/MAX77802 multi-function
++device. More information can be found in bindings/mfd/max77686.txt file for
++MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+ 
+ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+ (gated/ungated) over I2C.
+ 
++The MAX77802 contains two 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C.
++
+ Following properties should be presend in main device node of the MFD chip.
+ 
+ Required properties:
+@@ -17,30 +21,62 @@ Optional properties:
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. Following indices are allowed:
+-    - 0: 32khz_ap clock,
+-    - 1: 32khz_cp clock,
+-    - 2: 32khz_pmic clock.
++    - 0: 32khz_ap clock (max77686, max77802),
++    - 1: 32khz_cp clock (max77686, max77802),
++    - 2: 32khz_pmic clock (max77686).
+ 
+ Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
+-header and can be used in device tree sources.
++header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
++be used in device tree sources.
++
++Example:
++
++1. With MAX77686:
++
++#include <dt-bindings/clock/maxim,max77686.h>
++/* ... */
++
++	Node of the MFD chip
++		max77686: max77686@09 {
++			compatible = "maxim,max77686";
++			interrupt-parent = <&wakeup_eint>;
++			interrupts = <26 0>;
++			reg = <0x09>;
++			#clock-cells = <1>;
++
++			/* ... */
++		};
++
++	Clock consumer node
++
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77686 MAX77686_CLK_PMIC>;
++		};
++
++2. With MAX77802:
+ 
+-Example: Node of the MFD chip
++#include <dt-bindings/clock/maxim,max77802.h>
++/* ... */
+ 
+-	max77686: max77686@09 {
+-		compatible = "maxim,max77686";
+-		interrupt-parent = <&wakeup_eint>;
+-		interrupts = <26 0>;
+-		reg = <0x09>;
+-		#clock-cells = <1>;
++	Node of the MFD chip
++		max77802: max77802@09 {
++			compatible = "maxim,max77802";
++			interrupt-parent = <&wakeup_eint>;
++			interrupts = <26 0>;
++			reg = <0x09>;
++			#clock-cells = <1>;
+ 
+-		/* ... */
+-	};
++			/* ... */
++		};
+ 
+-Example: Clock consumer node
++	Clock consumer node
+ 
+-	foo@0 {
+-		compatible = "bar,foo";
+-		/* ... */
+-		clock-names = "my-clock";
+-		clocks = <&max77686 MAX77686_CLK_PMIC>;
+-	};
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77802 MAX77802_CLK_32K_AP>;
++		};
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
+deleted file mode 100644
+index c6dc783..0000000
+--- a/Documentation/devicetree/bindings/clock/maxim,max77802.txt
++++ /dev/null
+@@ -1,44 +0,0 @@
+-Binding for Maxim MAX77802 32k clock generator block
+-
+-This is a part of device tree bindings of MAX77802 multi-function device.
+-More information can be found in bindings/mfd/max77802.txt file.
+-
+-The MAX77802 contains two 32.768khz clock outputs that can be controlled
+-(gated/ungated) over I2C.
+-
+-Following properties should be present in main device node of the MFD chip.
+-
+-Required properties:
+-- #clock-cells: From common clock binding; shall be set to 1.
+-
+-Optional properties:
+-- clock-output-names: From common clock binding.
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. Following indices are allowed:
+-     - 0: 32khz_ap clock,
+-     - 1: 32khz_cp clock.
+-
+-Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
+-header and can be used in device tree sources.
+-
+-Example: Node of the MFD chip
+-
+-	max77802: max77802@09 {
+-		compatible = "maxim,max77802";
+-		interrupt-parent = <&wakeup_eint>;
+-		interrupts = <26 0>;
+-		reg = <0x09>;
+-		#clock-cells = <1>;
+-
+-		/* ... */
+-	};
+-
+-Example: Clock consumer node
+-
+-	foo@0 {
+-		compatible = "bar,foo";
+-		/* ... */
+-		clock-names = "my-clock";
+-		clocks = <&max77802 MAX77802_CLK_32K_AP>;
+-	};
 -- 
-Lin Huang
-
-
+2.1.4
