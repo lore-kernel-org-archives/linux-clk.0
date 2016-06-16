@@ -1,69 +1,46 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 16 Jun 2016 09:18:48 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: remove unused variable
-Message-ID: <20160616071848.GD5144@lukather>
-References: <20160615155537.3342366-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u65IjBhB3TIa72Vp"
-In-Reply-To: <20160615155537.3342366-1-arnd@arndb.de>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>, mturquette@baylibre.com,
+ robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
+ <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <57629AB9.2090506@samsung.com>
+Date: Thu, 16 Jun 2016 14:25:29 +0200
+MIME-version: 1.0
+In-reply-to: <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/15/2016 05:39 PM, Javier Martinez Canillas wrote:
+> Hello Laxman,
+> 
+> On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
+>> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
+>> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
+>>
+>> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> CC: Javier Martinez Canillas <javier@dowhile0.org>
+>> ---
+>>  arch/arm/configs/exynos_defconfig   | 1 -
+>>  arch/arm/configs/multi_v7_defconfig | 1 -
+> 
+> Please split these two changes in separate patches, there are just
+> cleanups needed after 1/5 and they can be picked separately.
 
---u65IjBhB3TIa72Vp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not entirely separately. If we do not want to loose max77802 clocks on
+defconfigs, then it should go with the same tree or after driver get
+merged. I prefer the latter, similar case to 1898994229f8 ("ARM:
+multi_v7_defconfig: Switch max77693 to module").
 
-On Wed, Jun 15, 2016 at 05:55:23PM +0200, Arnd Bergmann wrote:
-> The only use of the local num_parents variable was remove,
-> so we now get a warning:
->=20
-> drivers/clk/sunxi/clk-sun4i-tcon-ch1.c: In function 'tcon_ch1_get_parent':
-> drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: error: unused variable 'num_=
-parents' [-Werror=3Dunused-variable]
->=20
-> This removes the variable.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 4de2d58bc973 ("clk: sunxi: tcon-ch1: Do not return a negative erro=
-r in get_parent")
-
-Applied, thanks!
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---u65IjBhB3TIa72Vp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXYlLYAAoJEBx+YmzsjxAgTE0QAKVQXgQhw3JczEGzuWVKnIM4
-J4rVmK11XbamLU4SiTB5H2PTntxPcRlHW4rQIgk2cpEw9zP25ZPn5UAkx9p67Xtg
-wAHH5zVxl36KBxNU8StVL3PNnxsyVsau64KuuGrf2S1YKcNCtwEI5H0nEHIjOBLQ
-qqvezwaRDlzsZmt9wd2PbtCmZ2oLDrVnQ7n0E72G6+rUPX3I3SlW1KStaqo1B4t/
-UW3VTxL+cQo9Iz0ufKX1iNpVsEyeFnBX3F2asMnhdnZCFViWjfAKGSykp9EV8pug
-2Op4kYB+yiOj6CHAUFQSPWRO1ievw6kcRDBHt4e3g8yE221/xVh0jxTbXlUup/xw
-U6AfqrrEMgtyyi5zmnDF+qr++9MpjGodc2bF7ozflYieDBV53vmAQK8zXtiumNOW
-xe/4SIEjm776i5/t0tXrO9XnMIRO31G5QV7C9iA7PZAdyUQHlESfI2Ud/TQLTiDk
-gl6VTSJiR9BKSakuYSXeJd5rutAERGOBaTpVTHPeP52dGqUD/rtTtUtJnLu2Qhgx
-W60fpCW//iKN/baJJREt9k+6F8rhorCOBaZogBueIwjJlAJovHWf8nxo14xC1WWT
-egvBoZZYF4lZppQV+K2jNzfPT/17s7SrAP7Qt3rglFhEDZlVvCbv3+UxNBYAkOMV
-BMPIQ43lYv6AzS0hPneX
-=hx7M
------END PGP SIGNATURE-----
-
---u65IjBhB3TIa72Vp--
+Best regards,
+Krzysztof
