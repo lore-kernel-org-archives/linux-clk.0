@@ -1,128 +1,149 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f177.google.com ([209.85.192.177]:35791 "EHLO
-	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700AbcFAXQG (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 19:16:06 -0400
-Received: by mail-pf0-f177.google.com with SMTP id g64so23333614pfb.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2016 16:16:01 -0700 (PDT)
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Chris Zhong <zyw@rock-chips.com>
-Subject: [PATCH 24/34] clk: rk808: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:23 -0700
-Message-Id: <20160601231533.9354-25-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
+	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH V2 3/4] clk: max77686: Add DT binding details for PMIC MAX77620
+Date: Thu, 16 Jun 2016 18:53:26 +0530
+Message-ID: <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Maxim has used the same clock IP on multiple PMICs like MAX77686,
+MAX77802, MAX77620. Only differences are the number of clocks
+from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
+two clock output and MAX77620 has one clock output.
 
-Cc: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Add clock binding details and DT example for the MAX77620.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+
 ---
+Changes from V1:
+- Use proper comment for the ::::
+- Added dt binding preprocessor file as maxim,max77620.h for max77620
+  inline with the other chip.
+- Refer the dt binding header for the supported clock index.
+---
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 52 +++++++++++++++++-----
+ include/dt-bindings/clock/maxim,max77620.h         | 21 +++++++++
+ 2 files changed, 63 insertions(+), 10 deletions(-)
+ create mode 100644 include/dt-bindings/clock/maxim,max77620.h
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
-
- drivers/clk/clk-rk808.c | 42 ++++++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 74383039761e..f7e0dd181946 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -26,7 +26,6 @@
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+index 4d973b5..8398a3a 100644
+--- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
++++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+@@ -1,14 +1,24 @@
+-Binding for Maxim MAX77686/MAX77802 32k clock generator block
++Binding for Maxim MAX77686/MAX77802/MAX77620 32k clock generator block
  
- struct rk808_clkout {
- 	struct rk808 *rk808;
--	struct clk_onecell_data clk_data;
- 	struct clk_hw		clkout1_hw;
- 	struct clk_hw		clkout2_hw;
- };
-@@ -85,14 +84,28 @@ static const struct clk_ops rk808_clkout2_ops = {
- 	.recalc_rate = rk808_clkout_recalc_rate,
- };
+-This is a part of device tree bindings of MAX77686/MAX77802 multi-function
+-device. More information can be found in bindings/mfd/max77686.txt file for
+-MAX77686 and bindings/mfd/max77802.txt for MAX77802.
++This is a part of device tree bindings of MAX77686/MAX77802/MAX77620
++multi-function device. More information can be found in MFD DT binding
++doc as follows:
++	bindings/mfd/max77686.txt for MAX77686 and
++	bindings/mfd/max77802.txt for MAX77802 and
++	bindings/mfd/max77620.txt for MAX77620.
  
-+static struct clk_hw *
-+of_clk_rk808_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct rk808_clkout *rk808_clkout = data;
-+	unsigned int idx = clkspec->args[0];
+ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+-(gated/ungated) over I2C.
++(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
++dt-bindings/clock/maxim,max77686.h.
 +
-+	if (idx >= 2) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
+ 
+ The MAX77802 contains two 32.768khz clock outputs that can be controlled
+-(gated/ungated) over I2C.
++(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
++dt-bindings/clock/maxim,max77802.h.
 +
-+	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
-+}
++The MAX77686 contains one 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
++dt-bindings/clock/maxim,max77620.h.
+ 
+ Following properties should be presend in main device node of the MFD chip.
+ 
+@@ -21,13 +31,12 @@ Optional properties:
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. Following indices are allowed:
+-    - 0: 32khz_ap clock (max77686, max77802),
++    - 0: 32khz_ap clock (max77686, max77802), 32khz_out0 (max77620)
+     - 1: 32khz_cp clock (max77686, max77802),
+     - 2: 32khz_pmic clock (max77686).
+ 
+-Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
+-header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
+-be used in device tree sources.
++Clocks are defined as preprocessor macros in above dt-binding header for
++respective chips.
+ 
+ Example:
+ 
+@@ -80,3 +89,26 @@ Example:
+ 			clock-names = "my-clock";
+ 			clocks = <&max77802 MAX77802_CLK_32K_AP>;
+ 		};
 +
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
- 	struct i2c_client *client = rk808->i2c;
- 	struct device_node *node = client->dev.of_node;
- 	struct clk_init_data init = {};
--	struct clk **clk_table;
- 	struct rk808_clkout *rk808_clkout;
-+	int ret;
- 
- 	rk808_clkout = devm_kzalloc(&client->dev,
- 				    sizeof(*rk808_clkout), GFP_KERNEL);
-@@ -101,11 +114,6 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 
- 	rk808_clkout->rk808 = rk808;
- 
--	clk_table = devm_kcalloc(&client->dev, RK808_NR_OUTPUT,
--				 sizeof(struct clk *), GFP_KERNEL);
--	if (!clk_table)
--		return -ENOMEM;
--
- 	init.parent_names = NULL;
- 	init.num_parents = 0;
- 	init.name = "rk808-clkout1";
-@@ -116,10 +124,9 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 	of_property_read_string_index(node, "clock-output-names",
- 				      0, &init.name);
- 
--	clk_table[0] = devm_clk_register(&client->dev,
--					 &rk808_clkout->clkout1_hw);
--	if (IS_ERR(clk_table[0]))
--		return PTR_ERR(clk_table[0]);
-+	ret = devm_clk_hw_register(&client->dev, &rk808_clkout->clkout1_hw);
-+	if (ret)
-+		return ret;
- 
- 	init.name = "rk808-clkout2";
- 	init.ops = &rk808_clkout2_ops;
-@@ -129,16 +136,11 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 	of_property_read_string_index(node, "clock-output-names",
- 				      1, &init.name);
- 
--	clk_table[1] = devm_clk_register(&client->dev,
--					 &rk808_clkout->clkout2_hw);
--	if (IS_ERR(clk_table[1]))
--		return PTR_ERR(clk_table[1]);
--
--	rk808_clkout->clk_data.clks = clk_table;
--	rk808_clkout->clk_data.clk_num = RK808_NR_OUTPUT;
-+	ret = devm_clk_hw_register(&client->dev, &rk808_clkout->clkout2_hw);
-+	if (ret)
-+		return ret;
- 
--	return of_clk_add_provider(node, of_clk_src_onecell_get,
--				   &rk808_clkout->clk_data);
-+	return of_clk_add_hw_provider(node, of_clk_rk808_get, &rk808_clkout);
- }
- 
- static int rk808_clkout_remove(struct platform_device *pdev)
++
++3. With MAX77620:
++
++#include <dt-bindings/clock/maxim,max77620.h>
++/* ... */
++
++	Node of the MFD chip
++		max77620: max77620@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			#clock-cells = <1>;
++			/* ... */
++		};
++
++	Clock consumer node
++
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77620 MAX77620_CLK_32K_OUT0>;
++		};
+diff --git a/include/dt-bindings/clock/maxim,max77620.h b/include/dt-bindings/clock/maxim,max77620.h
+new file mode 100644
+index 0000000..82aba28
+--- /dev/null
++++ b/include/dt-bindings/clock/maxim,max77620.h
+@@ -0,0 +1,21 @@
++/*
++ * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants clocks for the Maxim 77620 PMIC.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H
++#define _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H
++
++/* Fixed rate clocks. */
++
++#define MAX77620_CLK_32K_OUT0		0
++
++/* Total number of clocks. */
++#define MAX77620_CLKS_NUM		(MAX77620_CLK_32K_OUT0 + 1)
++
++#endif /* _DT_BINDINGS_CLOCK_MAXIM_MAX77620_CLOCK_H */
 -- 
-2.7.4
-
+2.1.4
