@@ -1,59 +1,64 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Jun 2016 15:06:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Roman Volkov <v1ron@mail.ru>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Roman Volkov <rvolkov@v1ros.org>,
-	Tony Prisk <linux@prisktech.co.nz>,
-	Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/2] Rework clk/vt8500 wm8650_find_pll_bits()
-Message-ID: <20160601220601.GD28218@codeaurora.org>
-References: <1464120473-1808-1-git-send-email-v1ron@mail.ru>
- <20160531092329.53bcacdd@v1ron-s7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160531092329.53bcacdd@v1ron-s7>
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@armlinux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	 Andrzej Hajda <a.hajda@samsung.com>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Dinh Nguyen <dinguyen@opensource.altera.com>,
+	 Arnd Bergmann <arnd@arndb.de>,
+	 Thierry Reding <treding@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org,
+	 Lee Jones <lee.jones@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 <arnaud.pouliquen@st.com>,
+	 <benjamin.gaignard@st.com>,
+	 <vincent.abriou@st.com>,
+	 <gabriel.fernandez@st.com>
+Subject: [RESEND PATCH v2 11/13] ARM: DT: STiH418: Enable synchronous clock mode for video clocks
+Date: Thu, 16 Jun 2016 11:20:31 +0200
+Message-Id: <1466068833-5055-12-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/31, Roman Volkov wrote:
-> В Tue, 24 May 2016 23:07:51 +0300
-> Roman Volkov <v1ron@mail.ru> пишет:
-> 
-> > From: Roman Volkov <rvolkov@v1ros.org>
-> > 
-> > Hi Arnd and others,
-> > 
-> > This patch finally removes the warnings from GCC about possibly
-> > uninitialized variables 'best_div2', 'best_div1', and 'best_mul'.
-> > Also one of the functions is reworked, so that the algorithm is much
-> > easier. This is to continue the work started in [1].
-> > 
-> > This code is tested on WM8650. Also the testing app was used in
-> > user-mode to check possible values and performance [2].
-> > 
-> > [1] https://lkml.org/lkml/2016/2/1/149
-> > [2] https://github.com/v1ron/vt8500-clkrange
-> > 
-> > Thanks,
-> > Roman Volkov (2):
-> >   clk/vt8500: Rework wm8650_find_pll_bits()
-> >   clk/vt8500: Fix compilation warnings
-> > 
-> >  drivers/clk/clk-vt8500.c | 81
-> > +++++++++++++++++++++++------------------------- 1 file changed, 39
-> > insertions(+), 42 deletions(-)
-> > 
-> 
-> Hi Stephen,
-> 
-> Do we need this change during this merge window?
-> 
+This patch enables the synchronous clock mode for video clocks
+on STiH418 board.
 
-The warning has been there for since before this merge window, so
-if anything this is v4.8 material.
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index 96b4d7b..2254fa5 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -271,7 +271,7 @@
+ 
+ 			clk_s_d2_flexgen: clk-s-d2-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-video", "st,flexgen";
+ 
+ 				clocks = <&clk_s_d2_quadfs 0>,
+ 					 <&clk_s_d2_quadfs 1>,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
