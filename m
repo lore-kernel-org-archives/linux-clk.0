@@ -1,100 +1,114 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 12 Jun 2016 19:36:27 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
-Message-ID: <20160612113627.GC20243@tiger>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 16 Jun 2016 11:32:24 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 03/10] mfd: ac100: Add driver for X-Powers AC100 audio
+ codec / RTC combo IC
+Message-ID: <20160616103224.GQ4948@dell>
+References: <1465986467-14802-1-git-send-email-wens@csie.org>
+ <1465986467-14802-4-git-send-email-wens@csie.org>
+ <20160615123646.GD4948@dell>
+ <CAGb2v669g6G4aK5UssyLLve1a-AbdVfo4CPYrt+YWmCUURz9qQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAGb2v669g6G4aK5UssyLLve1a-AbdVfo4CPYrt+YWmCUURz9qQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 08, 2016 at 10:33:34PM +0800, Dong Aisheng wrote:
-> There's a powerdown bit already, so let's change the name of
-> powerup_set bit to power_invert to reflects the power polarity
-> to make it less confusing.
-> 
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/imx/clk-pllv3.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> index eea2b1b3791e..3fdfb6d2cc71 100644
-> --- a/drivers/clk/imx/clk-pllv3.c
-> +++ b/drivers/clk/imx/clk-pllv3.c
-> @@ -29,8 +29,8 @@
->   * struct clk_pllv3 - IMX PLL clock version 3
->   * @clk_hw:	 clock source
->   * @base:	 base address of PLL registers
-> - * @powerup_set: set POWER bit to power up the PLL
-> - * @powerdown:   pll powerdown offset bit
-> + * @powerdown:	 pll powerdown bit offset
+On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
 
-I think 'powerdown' is more confusing here.  I prefer to rename it to
-something like 'power_mask' and keep 'powerdown' as it is.
-
-Shawn
-
-> + * @power_invert: set powerdown bit to power up the PLL
->   * @div_mask:	 mask of divider bits
->   * @div_shift:	 shift of divider bits
->   *
-> @@ -40,7 +40,7 @@
->  struct clk_pllv3 {
->  	struct clk_hw	hw;
->  	void __iomem	*base;
-> -	bool		powerup_set;
-> +	bool		power_invert;
->  	u32		powerdown;
->  	u32		div_mask;
->  	u32		div_shift;
-> @@ -55,7 +55,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
->  	u32 val = readl_relaxed(pll->base) & pll->powerdown;
->  
->  	/* No need to wait for lock when pll is not powered up */
-> -	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
-> +	if ((pll->power_invert && !val) || (!pll->power_invert && val))
->  		return 0;
->  
->  	/* Wait for PLL to lock */
-> @@ -76,7 +76,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
->  	u32 val;
->  
->  	val = readl_relaxed(pll->base);
-> -	if (pll->powerup_set)
-> +	if (pll->power_invert)
->  		val |= pll->powerdown;
->  	else
->  		val &= ~pll->powerdown;
-> @@ -91,7 +91,7 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
->  	u32 val;
->  
->  	val = readl_relaxed(pll->base);
-> -	if (pll->powerup_set)
-> +	if (pll->power_invert)
->  		val &= ~pll->powerdown;
->  	else
->  		val |= pll->powerdown;
-> @@ -326,7 +326,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
->  		pll->div_shift = 1;
->  	case IMX_PLLV3_USB:
->  		ops = &clk_pllv3_ops;
-> -		pll->powerup_set = true;
-> +		pll->power_invert = true;
->  		break;
->  	case IMX_PLLV3_AV:
->  		ops = &clk_pllv3_av_ops;
-> -- 
-> 1.9.1
+> On Wed, Jun 15, 2016 at 8:36 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
+> >
+> >> The AC100 is a multifunction device with an audio codec subsystem and
+> >> an RTC subsystem. These two subsystems share a common register space
+> >> and host interface.
+> >>
+> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >> ---
+> >
+> > Change log?
 > 
+> Change log was in the cover letter. Changes were the addition of the
+> codec related register macros and regmap ranges.
+
+Patch specific change logs are more helpful.
+
+> >>  drivers/mfd/Kconfig       |  10 +++
+> >>  drivers/mfd/Makefile      |   2 +
+> >>  drivers/mfd/ac100.c       | 135 +++++++++++++++++++++++++++++++++++
+> >>  include/linux/mfd/ac100.h | 176 ++++++++++++++++++++++++++++++++++++++++++++++
+> >>  4 files changed, 323 insertions(+)
+> >>  create mode 100644 drivers/mfd/ac100.c
+> >>  create mode 100644 include/linux/mfd/ac100.h
+> >>
+> >> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> >> index 1bcf601de5bc..bd83849a0c8d 100644
+> >> --- a/drivers/mfd/Kconfig
+> >> +++ b/drivers/mfd/Kconfig
+> >> @@ -101,6 +101,16 @@ config MFD_BCM590XX
+> >>       help
+> >>         Support for the BCM590xx PMUs from Broadcom
+> >>
+> >> +config MFD_AC100
+> >> +     tristate "X-Powers AC100"
+> >> +     select MFD_CORE
+> >> +     depends on SUNXI_RSB
+> >> +     help
+> >> +       If you say Y here you get support for the X-Powers AC100 audio codec
+> >> +       IC.
+> >> +       This driver include only the core APIs. You have to select individual
+> >> +       components like codecs or RTC under the corresponding menus.
+> >> +
+> >>  config MFD_AXP20X
+> >>       tristate
+> >>       select MFD_CORE
+> >> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> >> index 42a66e19e191..60f9a6b0557c 100644
+> >> --- a/drivers/mfd/Makefile
+> >> +++ b/drivers/mfd/Makefile
+> >> @@ -113,6 +113,8 @@ obj-$(CONFIG_PMIC_DA9052) += da9052-irq.o
+> >>  obj-$(CONFIG_PMIC_DA9052)    += da9052-core.o
+> >>  obj-$(CONFIG_MFD_DA9052_SPI) += da9052-spi.o
+> >>  obj-$(CONFIG_MFD_DA9052_I2C) += da9052-i2c.o
+> >> +
+> >> +obj-$(CONFIG_MFD_AC100)              += ac100.o
+> >>  obj-$(CONFIG_MFD_AXP20X)     += axp20x.o
+> >>  obj-$(CONFIG_MFD_AXP20X_I2C) += axp20x-i2c.o
+> >>  obj-$(CONFIG_MFD_AXP20X_RSB) += axp20x-rsb.o
+> >> diff --git a/drivers/mfd/ac100.c b/drivers/mfd/ac100.c
+> >> new file mode 100644
+> >> index 000000000000..15d24fa77771
+> >> --- /dev/null
+> >> +++ b/drivers/mfd/ac100.c
+> >> @@ -0,0 +1,135 @@
+> >> +/*
+> >> + * ac100.c - MFD core driver for X-Powers' AC100 Audio Codec IC
+> >
+> > Nit: Drop the filename here.
+> >
+> > Apart from that:
+> >   Acked-by: Lee Jones <lee.jones@linaro.org>
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Thanks.
+> ChenYu
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
