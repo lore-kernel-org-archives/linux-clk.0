@@ -1,61 +1,41 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Stefan Agner
-	<stefan.agner@toradex.com>
-Subject: [PATCH 3/8] tty: serial: fsl_lpuart: fix clearing of receive flag
-Date: Thu, 9 Jun 2016 20:40:34 +0530
-Message-ID: <20160609151039.20817-4-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <hotran@apm.com>
+Return-Path: <hotran@apm.com>
+From: Hoan Tran <hotran@apm.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	lho@apm.com,
+	Duc Dang <dhdang@apm.com>,
+	Hoan Tran <hotran@apm.com>
+Subject: [PATCH 0/2] clk: Add fractional scale clock support
+Date: Thu, 16 Jun 2016 16:40:31 -0700
+Message-Id: <1466120433-30648-1-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stefan Agner <stefan.agner@toradex.com>
+This patch adds fractional scale clock support.
+Fractional scale clock is implemented for a single register field.
+  Output rate = parent_rate * scale / denominator
+For example, for 1 / 8 fractional scale, denominator will be 8 and scale
+will be computed and programmed accordingly.
 
-Commit 8e4934c6d6c6 ("tty: serial: fsl_lpuart: clear receive flag
-on FIFO flush") implemented clearing of the receive flag by reading
-the status register only. It turned out that even though we flush
-the FIFO afterwards, a explicit read of the data register is still
-required.
+Hoan Tran (2):
+  Documentation: dt: clock: Add fractional scale binding
+  clk: Add fractional scale clock support
 
-This leads to a FIFO underrun. To avoid this, follow the advice in
-the overrun "Operation section": Unconditionally clear RXUF after
-using RXFLUSH.
+ .../bindings/clock/fractional-scale-clock.txt      |  31 +++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-fractional-scale.c                 | 253 +++++++++++++++++++++
+ include/linux/clk-provider.h                       |  41 ++++
+ 4 files changed, 326 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/fractional-scale-clock.txt
+ create mode 100644 drivers/clk/clk-fractional-scale.c
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/tty/serial/fsl_lpuart.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 75a2098..97c1fda 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -935,13 +935,16 @@ static void lpuart_setup_watermark(struct lpuart_port *sport)
- 	writeb(val | UARTPFIFO_TXFE | UARTPFIFO_RXFE,
- 			sport->port.membase + UARTPFIFO);
- 
--	/* explicitly clear RDRF */
--	readb(sport->port.membase + UARTSR1);
--
- 	/* flush Tx and Rx FIFO */
- 	writeb(UARTCFIFO_TXFLUSH | UARTCFIFO_RXFLUSH,
- 			sport->port.membase + UARTCFIFO);
- 
-+	/* explicitly clear RDRF */
-+	if (readb(sport->port.membase + UARTSR1) & UARTSR1_RDRF) {
-+		readb(sport->port.membase + UARTDR);
-+		writeb(UARTSFIFO_RXUF, sport->port.membase + UARTSFIFO);
-+	}
-+
- 	writeb(0, sport->port.membase + UARTTWFIFO);
- 	writeb(1, sport->port.membase + UARTRWFIFO);
- 
 -- 
-2.8.3
+1.9.1
