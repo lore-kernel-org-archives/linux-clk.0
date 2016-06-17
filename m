@@ -1,55 +1,43 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 14 Jun 2016 07:42:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 09/10] dt-bindings: clock: add DT binding for the
- peripheral clocks on Armada 3700
-Message-ID: <20160614124236.GA2001@rob-hp-laptop>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
- <1465565018-14172-10-git-send-email-gregory.clement@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465565018-14172-10-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <ramesh.shanmugasundaram@bp.renesas.com>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	laurent.pinchart+renesas@ideasonboard.com,
+	geert+renesas@glider.be
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r8a7795: Add DRIF clock
+Date: Fri, 17 Jun 2016 13:25:14 +0100
+Message-Id: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 10, 2016 at 03:23:37PM +0200, Gregory CLEMENT wrote:
-> This commit adds the DT binding documentation for the peripheral clocks
-> used in the Marvell Armada 3700 SoCs.
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  .../bindings/clock/armada3700-periph-clock.txt     | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-> new file mode 100644
-> index 000000000000..549a5ad14031
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-> @@ -0,0 +1,70 @@
-> +* Peripheral Clock bindings for Marvell Armada 37xx SoCs
-> +
-> +Marvell Armada 37xx SoCs provide peripheral clocks which are
-> +used as clock source for the peripheral of the SoC.
-> +
-> +There are two different block associated to north bridge and south
+This patch adds DRIF module clocks for r8a7795 SoC.
 
-s/block/blocks/
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Otherwise,
-
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index ad01b0b..b9485ab 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -138,6 +138,14 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
++	DEF_MOD("drif7",		 508,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif6",		 509,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif5",		 510,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif4",		 511,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif3",		 512,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif2",		 513,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif1",		 514,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif0",		 515,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("hscif4",		 516,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("hscif3",		 517,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("hscif2",		 518,	R8A7795_CLK_S3D1),
+-- 
+1.9.1
