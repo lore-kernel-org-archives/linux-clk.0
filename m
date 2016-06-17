@@ -1,44 +1,65 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH] clk: lpc32xx: allow peripheral clock selection in
- device tree
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-In-Reply-To: <f8778993-a393-f72a-ba76-76550a9c5bbd@mleia.com>
-References: <1464982475-24738-1-git-send-email-slemieux.tyco@gmail.com>
-	 <f8778993-a393-f72a-ba76-76550a9c5bbd@mleia.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Tue, 21 Jun 2016 08:35:31 -0400
-Message-ID: <1466512531.2114.6.camel@localhost>
-Mime-Version: 1.0
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <576392B1.9040801@samsung.com>
+Date: Fri, 17 Jun 2016 08:03:29 +0200
+MIME-version: 1.0
+In-reply-to: <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vladimir,
-
-On Tue, 2016-06-21 at 07:28 +0300, Vladimir Zapolskiy wrote:
-> Hi Sylvain,
+On 06/16/2016 03:23 PM, Laxman Dewangan wrote:
+> Maxim Max77620 has one 32KHz clock output and the clock HW
+> IP used on this PMIC is same as what it is there in the MAX77686.
 > 
-> On 03.06.2016 22:34, Sylvain Lemieux wrote:
-> > From: Sylvain Lemieux <slemieux@tycoint.com>
-> > 
-> > This patch add the support to select the peripheral clock (PERIPH)
-> > as a parent clock source using the "assigned-clock-parents"
-> > parameter in the device tree.
-> > 
-> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> Add clock driver support for MAX77620 on the MAX77686 driver.
 > 
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > 
-> The change looks good, is it done to support a selection of PWM parent clocks?
-
-Yes, this is the case.
+> ---
+> Changes from V1:
+> - Updated based on changes done in first patch.
+> ---
+>  drivers/clk/Kconfig        |  7 ++++---
+>  drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
+>  2 files changed, 22 insertions(+), 3 deletions(-)
 > 
-> I think it makes sense to set PERIPH clock as a default parent for both
-> PWM controllers, please consider to send a DTS change.
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 6afad74..d75f4c5 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
+>  source "drivers/clk/versatile/Kconfig"
+>  
+>  config COMMON_CLK_MAX77686
+> -	tristate "Clock driver for Maxim 77686/77802 MFD"
+> -	depends on MFD_MAX77686
+> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
 
-I will do.
+You missed Javier's comment here. Just
+"Maxim 77686/77802/77620"
 
-Thanks for the feedback,
-Sylvain
+> +	depends on MFD_MAX77686 || MFD_MAX77620
+>  	---help---
+> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
+> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
+
+Ditto
+
+Beside that:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
