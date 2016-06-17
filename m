@@ -1,287 +1,125 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Eric Anholt <eric@anholt.net>,
-	Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 04/34] clk: bcm2835: Migrate to clk_hw based registration and OF APIs
-Date: Wed,  1 Jun 2016 16:15:03 -0700
-Message-Id: <20160601231533.9354-5-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <hotran@apm.com>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUMm5BWWEmKX3xOBkMX7HWTYgD6R0xz=uggs_Uya8=3Gw@mail.gmail.com>
+References: <1466120433-30648-1-git-send-email-hotran@apm.com>
+	<1466120433-30648-3-git-send-email-hotran@apm.com>
+	<CAMuHMdUMm5BWWEmKX3xOBkMX7HWTYgD6R0xz=uggs_Uya8=3Gw@mail.gmail.com>
+Date: Fri, 17 Jun 2016 09:30:22 -0700
+Message-ID: <CAFHUOYxGqutv+Yr4sZUogVNEqRpyB0A9CcdadwJiac_Q=HQ-zw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: Add fractional scale clock support
+From: Hoan Tran <hotran@apm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Hi Geert,
 
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
+On Thu, Jun 16, 2016 at 11:43 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Jun 17, 2016 at 1:40 AM, Hoan Tran <hotran@apm.com> wrote:
+>> This patch adds fractional scale clock support.
+>> Fractional scale clock is implemented for a single register field.
+>>   Output rate = parent_rate * scale / denominator
+>> For example, for 1 / 8 fractional scale, denominator will be 8 and scale
+>> will be computed and programmed accordingly.
+>>
+>> Signed-off-by: Hoan Tran <hotran@apm.com>
+>> Signed-off-by: Loc Ho <lho@apm.com>
+>
+>> --- /dev/null
+>> +++ b/drivers/clk/clk-fractional-scale.c
+>
+>> +static long clk_fs_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                             unsigned long *parent_rate)
+>> +{
+>> +       struct clk_fractional_scale *fd = to_clk_sf(hw);
+>> +       u64 ret, scale;
+>> +
+>> +       if (!rate || rate >= *parent_rate)
+>> +               return *parent_rate;
+>> +
+>> +       /* freq = parent_rate * scaler / denom */
+>> +       ret = rate * fd->denom;
+>
+> Can this overflow? No, because fd->denom is u64.
+> But if fd->denom is changed to u32, it needs a cast to u64 here.
+>
+>> +       scale = ret / *parent_rate;
+>
+> As detected by the kbuild test robot, this should use do_div().
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+Yes, my mistake. I'll fix it.
 
- drivers/clk/bcm/clk-bcm2835-aux.c | 28 ++++++-------
- drivers/clk/bcm/clk-bcm2835.c     | 83 +++++++++++++++++++++------------------
- 2 files changed, 57 insertions(+), 54 deletions(-)
+>
+>> +
+>> +       ret = (u64) *parent_rate * scale;
+>> +       do_div(ret, fd->denom);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +static int clk_fs_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                          unsigned long parent_rate)
+>> +{
+>> +       struct clk_fractional_scale *fd = to_clk_sf(hw);
+>> +       unsigned long flags = 0;
+>> +       u64 scale, ret;
+>> +       u32 val;
+>> +
+>> +       /*
+>> +        * Compute the scaler:
+>> +        *
+>> +        * freq = parent_rate * scaler / denom, or
+>> +        * scaler = freq * denom / parent_rate
+>> +        */
+>> +       ret = rate * fd->denom;
+>
+> Can this overflow? No, because fd->denom is u64.
+> But if fd->denom is changed to u32, it needs a cast to u64 here.
+>
+>> +       scale = ret / (u64)parent_rate;
+>
+> Don't cast the divider to u64, as this will turn a 64-by-32 division into a
+> 64-by-64 division.
+> As detected by the kbuild test robot, this should use do_div().
 
-diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-index 3a177ade6e6c..bd750cf2238d 100644
---- a/drivers/clk/bcm/clk-bcm2835-aux.c
-+++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-@@ -25,7 +25,7 @@
- static int bcm2835_aux_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct clk_onecell_data *onecell;
-+	struct clk_hw_onecell_data *onecell;
- 	const char *parent;
- 	struct clk *parent_clk;
- 	struct resource *res;
-@@ -41,28 +41,24 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(reg))
- 		return PTR_ERR(reg);
- 
--	onecell = devm_kmalloc(dev, sizeof(*onecell), GFP_KERNEL);
-+	onecell = devm_kmalloc(dev, sizeof(*onecell) + sizeof(*onecell->hws) *
-+			       BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
- 	if (!onecell)
- 		return -ENOMEM;
--	onecell->clk_num = BCM2835_AUX_CLOCK_COUNT;
--	onecell->clks = devm_kcalloc(dev, BCM2835_AUX_CLOCK_COUNT,
--				     sizeof(*onecell->clks), GFP_KERNEL);
--	if (!onecell->clks)
--		return -ENOMEM;
-+	onecell->num = BCM2835_AUX_CLOCK_COUNT;
- 
- 	gate = reg + BCM2835_AUXENB;
--	onecell->clks[BCM2835_AUX_CLOCK_UART] =
--		clk_register_gate(dev, "aux_uart", parent, 0, gate, 0, 0, NULL);
--
--	onecell->clks[BCM2835_AUX_CLOCK_SPI1] =
--		clk_register_gate(dev, "aux_spi1", parent, 0, gate, 1, 0, NULL);
-+	onecell->hws[BCM2835_AUX_CLOCK_UART] =
-+		clk_hw_register_gate(dev, "aux_uart", parent, 0, gate, 0, 0, NULL);
- 
--	onecell->clks[BCM2835_AUX_CLOCK_SPI2] =
--		clk_register_gate(dev, "aux_spi2", parent, 0, gate, 2, 0, NULL);
-+	onecell->hws[BCM2835_AUX_CLOCK_SPI1] =
-+		clk_hw_register_gate(dev, "aux_spi1", parent, 0, gate, 1, 0, NULL);
- 
--	of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get, onecell);
-+	onecell->hws[BCM2835_AUX_CLOCK_SPI2] =
-+		clk_hw_register_gate(dev, "aux_spi2", parent, 0, gate, 2, 0, NULL);
- 
--	return 0;
-+	return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
-+				      onecell);
- }
- 
- static const struct of_device_id bcm2835_aux_clk_of_match[] = {
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7a7970865c2d..0131b922d3c5 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -302,8 +302,8 @@ struct bcm2835_cprman {
- 	spinlock_t regs_lock; /* spinlock for all clocks */
- 	const char *osc_name;
- 
--	struct clk_onecell_data onecell;
--	struct clk *clks[];
-+	/* Must be last */
-+	struct clk_hw_onecell_data onecell;
- };
- 
- static inline void cprman_write(struct bcm2835_cprman *cprman, u32 reg, u32 val)
-@@ -344,24 +344,24 @@ static int bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
-  */
- void __init bcm2835_init_clocks(void)
- {
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	int ret;
- 
--	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 126000000);
--	if (IS_ERR(clk))
-+	hw = clk_hw_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 126000000);
-+	if (IS_ERR(hw))
- 		pr_err("apb_pclk not registered\n");
- 
--	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, 0, 3000000);
--	if (IS_ERR(clk))
-+	hw = clk_hw_register_fixed_rate(NULL, "uart0_pclk", NULL, 0, 3000000);
-+	if (IS_ERR(hw))
- 		pr_err("uart0_pclk not registered\n");
--	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
-+	ret = clk_hw_register_clkdev(hw, NULL, "20201000.uart");
- 	if (ret)
- 		pr_err("uart0_pclk alias not registered\n");
- 
--	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, 0, 125000000);
--	if (IS_ERR(clk))
-+	hw = clk_hw_register_fixed_rate(NULL, "uart1_pclk", NULL, 0, 125000000);
-+	if (IS_ERR(hw))
- 		pr_err("uart1_pclk not registered\n");
--	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
-+	ret = clk_hw_register_clkdev(hw, NULL, "20215000.uart");
- 	if (ret)
- 		pr_err("uart1_pclk alias not registered\n");
- }
-@@ -1121,11 +1121,12 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
- 	.debug_init = bcm2835_clock_debug_init,
- };
- 
--static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
--					const struct bcm2835_pll_data *data)
-+static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
-+					   const struct bcm2835_pll_data *data)
- {
- 	struct bcm2835_pll *pll;
- 	struct clk_init_data init;
-+	int ret;
- 
- 	memset(&init, 0, sizeof(init));
- 
-@@ -1144,17 +1145,20 @@ static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	pll->data = data;
- 	pll->hw.init = &init;
- 
--	return devm_clk_register(cprman->dev, &pll->hw);
-+	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
-+	if (ret)
-+		return NULL;
-+	return &pll->hw;
- }
- 
--static struct clk *
-+static struct clk_hw *
- bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
- 			     const struct bcm2835_pll_divider_data *data)
- {
- 	struct bcm2835_pll_divider *divider;
- 	struct clk_init_data init;
--	struct clk *clk;
- 	const char *divider_name;
-+	int ret;
- 
- 	if (data->fixed_divider != 1) {
- 		divider_name = devm_kasprintf(cprman->dev, GFP_KERNEL,
-@@ -1188,32 +1192,33 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
- 	divider->cprman = cprman;
- 	divider->data = data;
- 
--	clk = devm_clk_register(cprman->dev, &divider->div.hw);
--	if (IS_ERR(clk))
--		return clk;
-+	ret = devm_clk_hw_register(cprman->dev, &divider->div.hw);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	/*
- 	 * PLLH's channels have a fixed divide by 10 afterwards, which
- 	 * is what our consumers are actually using.
- 	 */
- 	if (data->fixed_divider != 1) {
--		return clk_register_fixed_factor(cprman->dev, data->name,
--						 divider_name,
--						 CLK_SET_RATE_PARENT,
--						 1,
--						 data->fixed_divider);
-+		return clk_hw_register_fixed_factor(cprman->dev, data->name,
-+						    divider_name,
-+						    CLK_SET_RATE_PARENT,
-+						    1,
-+						    data->fixed_divider);
- 	}
- 
--	return clk;
-+	return &divider->div.hw;
- }
- 
--static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
-+static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 					  const struct bcm2835_clock_data *data)
- {
- 	struct bcm2835_clock *clock;
- 	struct clk_init_data init;
- 	const char *parents[1 << CM_SRC_BITS];
- 	size_t i;
-+	int ret;
- 
- 	/*
- 	 * Replace our "xosc" references with the oscillator's
-@@ -1247,7 +1252,10 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	clock->data = data;
- 	clock->hw.init = &init;
- 
--	return devm_clk_register(cprman->dev, &clock->hw);
-+	ret = devm_clk_hw_register(cprman->dev, &clock->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+	return &clock->hw;
- }
- 
- static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
-@@ -1259,8 +1267,8 @@ static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
- 				 CM_GATE_BIT, 0, &cprman->regs_lock);
- }
- 
--typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
--					    const void *data);
-+typedef struct clk_hw *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
-+					       const void *data);
- struct bcm2835_clk_desc {
- 	bcm2835_clk_register clk_register;
- 	const void *data;
-@@ -1793,15 +1801,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- static int bcm2835_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct clk **clks;
-+	struct clk_hw **hws;
- 	struct bcm2835_cprman *cprman;
- 	struct resource *res;
- 	const struct bcm2835_clk_desc *desc;
- 	const size_t asize = ARRAY_SIZE(clk_desc_array);
- 	size_t i;
- 
--	cprman = devm_kzalloc(dev,
--			      sizeof(*cprman) + asize * sizeof(*clks),
-+	cprman = devm_kzalloc(dev, sizeof(*cprman) +
-+			      sizeof(*cprman->onecell.hws) * asize,
- 			      GFP_KERNEL);
- 	if (!cprman)
- 		return -ENOMEM;
-@@ -1819,18 +1827,17 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, cprman);
- 
--	cprman->onecell.clk_num = asize;
--	cprman->onecell.clks = cprman->clks;
--	clks = cprman->clks;
-+	cprman->onecell.num = asize;
-+	hws = cprman->onecell.hws;
- 
- 	for (i = 0; i < asize; i++) {
- 		desc = &clk_desc_array[i];
- 		if (desc->clk_register && desc->data)
--			clks[i] = desc->clk_register(cprman, desc->data);
-+			hws[i] = desc->clk_register(cprman, desc->data);
- 	}
- 
--	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
--				   &cprman->onecell);
-+	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+				      &cprman->onecell);
- }
- 
- static const struct of_device_id bcm2835_clk_of_match[] = {
--- 
-2.7.4
+Will fix it.
+
+Thanks
+Hoan
+
+>
+>> --- a/include/linux/clk-provider.h
+>> +++ b/include/linux/clk-provider.h
+>
+>> +struct clk_fractional_scale {
+>> +       struct clk_hw   hw;
+>> +       void __iomem    *reg;
+>> +       u8              shift;
+>> +       u32             mask;
+>> +       u64             denom;
+>
+> u64 sounds overkill to me, but it looks like that was done to avoid overflow in
+> the multiplications?
+>
+>> +       u32             flags;
+>> +       spinlock_t      *lock;
+>> +};
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
