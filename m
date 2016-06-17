@@ -1,109 +1,223 @@
-Return-Path: <moinejf@free.fr>
-Date: Tue, 21 Jun 2016 20:29:19 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
- Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
- Patekar <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, Boris Brezillon
- <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] clk: sunxi: introduce "modern" clock support
-Message-Id: <20160621202919.b9fff30f050cc00c9acb7688@free.fr>
-In-Reply-To: <20160621144752.GR26668@lukather>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-	<20160621114044.811e2136eca5c1d863d79ac6@free.fr>
-	<20160621144752.GR26668@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+CC: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5763FFF5.5000303@nvidia.com>
+Date: Fri, 17 Jun 2016 14:49:41 +0100
+MIME-Version: 1.0
+In-Reply-To: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 21 Jun 2016 16:47:52 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Hi Thierry,
 
-> > But I had some problems with some features as the 'mode select' in the
-> > A83T MMC2 clock.
-> > Also, I think that you did not go far enough in the changes.
->=20
-> At some point, you also have to support what's used out there,
-> otherwise it just becomes an un-maintainable mess. Plus, it really
-> doesn't have to be perfect from day one, it just has to works as it
-> used to, we can always add more stuff later on.
+On 26/05/16 17:41, Rhyland Klein wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+> 
+> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
+> clk-pll.c. UTMIPLL was being configured and set in HW control right
+> after registration. However, when the clock init_table is processed and
+> child clks of PLLU are enabled, it will call in and enable PLLU as
+> well, and initiate SW enabling sequence even though PLLU is already in
+> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
+> 
+> Doing the initialization once during pllu_enable means we configure it
+> properly into HW control.
+> 
+> A side effect of the commonization/localization of the UTMIPLL init
+> code, is that it corrects some errors that were present for earlier
+> generations. For instance, in clk-tegra124.c, it used to have:
+> 
+> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
+> 
+> when the correct shift to use is present in the new version:
+> 
+> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
+> 
+> which matches the Tegra124 TRM register definition.
+> 
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> 
+> [rklein: Merged in some later fixes for potential deadlocks]
+> 
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+> v5:
+>  - Initialized flags to 0 to avoid harmless spinlock warnings
+> 
+> v4:
+>  - Re-added examples in patch description
+> 
+> v3:
+>  - Flushed out description to describe this patch.
+> 
+>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
+>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
+>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
+>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
+>  drivers/clk/tegra/clk.h          |  17 ++
+>  6 files changed, 510 insertions(+), 597 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 4e194ecc8d5e..31e20110fae4 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
 
-I was not thinking about the client interface, but about the sunxi new
-clock driver itself. The way the clocks are declared may be enhanced.
-Then, the particular features of some clocks (as MMC2 mode select) ask
-for a hard re-think of your structures.
+...
 
-> At it works way better than what we had.
+> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
+> +{
+> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
+> +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
+> +	unsigned long flags = 0, input_rate;
+> +	unsigned int i;
+> +	int ret = 0;
+> +	u32 val;
+> +
+> +	if (!osc) {
+> +		pr_err("%s: failed to get OSC clock\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +	input_rate = clk_hw_get_rate(osc);
+> +
+> +	if (pll->lock)
+> +		spin_lock_irqsave(pll->lock, flags);
+> +
+> +	_clk_pll_enable(hw);
+> +	ret = clk_pll_wait_for_lock(pll);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
+> +		if (input_rate == utmi_parameters[i].osc_frequency)
+> +			break;
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(utmi_parameters)) {
+> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	val = pll_readl_base(pll);
+> +	val &= ~PLLU_BASE_OVERRIDE;
+> +	pll_writel_base(val, pll);
+> +
+> +	/* Put PLLU under HW control */
+> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
+> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
+> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
+> +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
+> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
+> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> +
+> +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
+> +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
+> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
+> +	udelay(1);
+> +
+> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> +	udelay(1);
+> +
+> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
+> +	val = pll_readl_base(pll);
+> +	val &= ~PLLU_BASE_CLKENABLE_USB;
+> +	pll_writel_base(val, pll);
+> +
+> +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
+> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
+> +		pr_debug("UTMIPLL already enabled\n");
+> +		goto out;
+> +	}
+> +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
+> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
+> +
+> +	/* Program UTMIP PLL stable and active counts */
+> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
+> +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
+> +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
+> +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
+> +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
+> +			utmi_parameters[i].active_delay_count);
+> +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
+> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
+> +
+> +	/* Program UTMIP PLL delay and oscillator frequency counts */
+> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
+> +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
+> +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
+> +		utmi_parameters[i].enable_delay_count);
+> +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
+> +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
+> +		utmi_parameters[i].xtal_freq_count);
+> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
+> +
+> +	/* Remove power downs from UTMIP PLL control bits */
+> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
+> +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
+> +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
+> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
+> +	udelay(100);
 
-Maybe for the actual drivers of the H3, but not for DDR for example.
+In next-20160617 I see that this udelay is now a usleep_range(100, 200)
+and this is causing the following splat when the clock is enabled. I
+don't think that we can use usleep here ...
 
-> The question also is: is there anyone that we depend on using it
-> (mainline u-boot)? and is it something we need? If both answers are
-> no, then it's just dead code, which shouldn't be here in the first
-> place.
+[    0.224571] BUG: scheduling while atomic: swapper/0/1/0x00000003
+[    0.224583] Modules linked in:
+[    0.224597] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 4.7.0-rc3-next-20160617+ #277
+[    0.224613] Hardware name: Google Pixel C (DT)
+[    0.224623] Call trace:
+[    0.224640] [<ffff0000080888b0>] dump_backtrace+0x0/0x1ac
+[    0.224653] [<ffff000008088a70>] show_stack+0x14/0x1c
+[    0.224669] [<ffff00000834a984>] dump_stack+0x8c/0xb0
+[    0.224683] [<ffff00000814db30>] __schedule_bug+0x3c/0x50
+[    0.224698] [<ffff0000087cd80c>] __schedule+0x470/0x56c
+[    0.224708] [<ffff0000087cd948>] schedule+0x40/0xa4
+[    0.224720] [<ffff0000087d0a14>] schedule_hrtimeout_range_clock+0x84/0xf0
+[    0.224731] [<ffff0000087d0a90>] schedule_hrtimeout_range+0x10/0x18
+[    0.224743] [<ffff0000087d05c8>] usleep_range+0x3c/0x44
+[    0.224756] [<ffff0000086b25a4>] clk_pllu_tegra210_enable+0x200/0x2a8
+[    0.224770] [<ffff000008698ef4>] clk_core_enable+0x5c/0x94
+[    0.224780] [<ffff000008698edc>] clk_core_enable+0x44/0x94
+[    0.224791] [<ffff000008698edc>] clk_core_enable+0x44/0x94
+[    0.224801] [<ffff000008698edc>] clk_core_enable+0x44/0x94
+[    0.224812] [<ffff0000086991b8>] clk_enable+0x24/0x40
+[    0.224825] [<ffff00000842dd60>] tegra_powergate_enable_clocks.isra.6+0x90/0xd0
+[    0.224840] [<ffff00000842e230>] tegra_powergate_power_up+0xa4/0x144
+[    0.224851] [<ffff00000842ec40>] tegra_pmc_probe+0x6e0/0x8ec
+[    0.224865] [<ffff0000084a72f4>] platform_drv_probe+0x50/0xbc
+[    0.224879] [<ffff0000084a56fc>] driver_probe_device+0x1fc/0x29c
+[    0.224890] [<ffff0000084a5840>] __driver_attach+0xa4/0xa8
+[    0.224902] [<ffff0000084a3824>] bus_for_each_dev+0x58/0x98
+[    0.224913] [<ffff0000084a5028>] driver_attach+0x20/0x28
+[    0.224924] [<ffff0000084a4c48>] bus_add_driver+0x1c8/0x22c
+[    0.224935] [<ffff0000084a60d8>] driver_register+0x68/0x108
+[    0.224945] [<ffff0000084a7238>] __platform_driver_register+0x48/0x50
+[    0.224960] [<ffff000008b37a30>] tegra_pmc_driver_init+0x18/0x20
+[    0.224971] [<ffff000008081a54>] do_one_initcall+0x38/0x12c
+[    0.224985] [<ffff000008b10ce0>] kernel_init_freeable+0x148/0x1ec
+[    0.224997] [<ffff0000087caf98>] kernel_init+0x10/0x100
+[    0.225008] [<ffff000008084e10>] ret_from_fork+0x10/0x40
 
-I don't understand what you mean.
+Note the above is from some testing I am doing with adding power-domains for
+XUSB in my local branch so you may not see the exact same dump in the mainline.
 
-> > For example, most clock gates as well as most resets could be removed
-> > from the DT and automatically set/de-asserted on clock prepare or clock
-> > enable.
->=20
-> No. The semantics are completely different between the bus gates, bus
-> resets and the module clocks. For example, the module clock can be
-> shut down while retaining the register state, while the gate clock
-> can't. And drivers are already using that semantic.
+Cheers
+Jon
 
-A quick look at the H3 drivers showed me that they always do
-reset-deassert, bus gate enable and clock gate enable at probe time.
-On the other side, it seems that the order of doing these settings is
-important (Programming Guidelines in the CCU section of the Allwinner's
-doc). So, it seems better to me to centralize these settings in the
-clock driver.
-
-> Some other problems arise from that as well: this would break the DT
-> ABI, and it deviates way too much from what the other SoCs are doing
-> (which is the whole reason for that rework in the first place).
-
-Defining empty reset/bus gate clocks would not imply changes in the
-DTs, nor in the drivers.
-
-> > So, I am rewriting a generic sunxi clock driver into one file (about
-> > 1000 lines) and I have the full (simpler and clearer) description of
-> > the H3 and the A863T clocks.
-> >=20
-> > Coding is not finished yet. I will submit a RFC as soon as I will have
-> > something working.
->=20
-> Please don't. I don't want to waste any more time on this, this is way
-> overdue.
-
-OK. I need such a new driver for clocks which cannot be handled with
-your structures. I will propose it later, when it will be time...
-
-<parenthesis>
-Just have a glimpse at my declaration of the A83T audio PLL.
-Isn't it easier to create and read?
-
-/* audio */
-/*	rate =3D 24MHz * n / (d1 + 1) / (d2 + 1) / (p + 1) */
-static struct ccu pll_audio_clk =3D {
-	CCU_REG(0x008),
-	CCU_HW("pll-audio", "osc24M", &ccu_pll_ops, 0),
-	CCU_GATE(0x008, 31),
-	CCU_LOCK(0x20c, 2),
-	CCU_N(8, 8), .n_min =3D 12,
-	CCU_D1(16, 1),
-	CCU_D2(18, 1),
-	CCU_M(0, 6),		/* p =3D divider */
-	.features =3D CCU_FEATURE_N0,
-};
-
-</parenthesis>
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+-- 
+nvpublic
