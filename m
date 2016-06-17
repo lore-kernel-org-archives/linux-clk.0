@@ -1,40 +1,43 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-To: Rhyland Klein <rklein@nvidia.com>, Thierry Reding
-	<thierry.reding@gmail.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
- <dc524c6236144234a341fedaa22dbacb@HQMAIL112.nvidia.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew
- Bresticker" <abrestic@chromium.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5772A618.4020207@nvidia.com>
-Date: Tue, 28 Jun 2016 17:30:16 +0100
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <dc524c6236144234a341fedaa22dbacb@HQMAIL112.nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+To: paulmck@linux.vnet.ibm.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+ tony@atomide.com, linux@roeck-us.net, sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160615211159.GA31575@linux.vnet.ibm.com>
+Cc: linux-clk@vger.kernel.org
+References: <20160615211159.GA31575@linux.vnet.ibm.com>
+Message-ID: <20160617170140.27203.76544@quark.deferred.io>
+Subject: Re: Clock-driver patches to avoid lockdep complaints
+Date: Fri, 17 Jun 2016 10:01:40 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rhyland,
+Quoting Paul E. McKenney (2016-06-15 14:11:59)
+> Hello!
+> =
 
-On 27/06/16 19:11, Rhyland Klein wrote:
-> Jonathan, can you confirm replacing usleep_range(100, 200) with udelay(2) works for you?
+> Ingo was not comfortable taking these through -tip, which is understandab=
+le,
+> given that they don't depend on each other or on anything else not already
+> in mainline, and that they don't have anything to do with -tip.
+> =
 
-Yes for me, using a udelay(2) does seem to work. I have made sure that a
-usb device is still detected on the Jetson TX1. However, I am not sure
-the best way to test this thoroughly.
+> So what would you guys like to do with these?
+> =
 
-If we do make this change it would be good to propagate downstream as
-well to get wider testing.
+> They may be pulled from f17a0dd1c2e0 (clk: Use _rcuidle suffix to allow
+> clk_core_enable() to used from idle) in my -rcu tree:
+> =
 
-Cheers
-Jon
+>         git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.g=
+it
 
--- 
-nvpublic
+Applied both patches to clk-next.
+
+Regards,
+Mike
+
+> =
+
+>                                                         Thanx, Paul
+>=20
