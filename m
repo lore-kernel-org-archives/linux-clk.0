@@ -1,119 +1,204 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-In-Reply-To: <1465870678-30128-2-git-send-email-wens@csie.org>
-Message-Id: <E1bIKXK-0005rN-JW@finisterre>
-Date: Wed, 29 Jun 2016 19:48:34 +0100
-Subject: Applied "regmap: Support bulk writes for devices without raw formatting" to the regmap tree
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas
+	<javier@dowhile0.org>
+Subject: [PATCH V3 2/4] clk: Combine DT binding doc for max77686 and max77802
+Date: Fri, 17 Jun 2016 16:21:05 +0530
+Message-ID: <1466160667-28451-3-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+The clock IP used on the Maxim PMICs max77686 and max77802 are
+same. The configuration of clock register is also same except
+the number of clocks.
 
-   regmap: Support bulk writes for devices without raw formatting
+Define the common DT binding file for the clocks of Maxim PMICs
+MAX77686 and MAX77802. For this, remove the separate DT binding
+document file for maxim,max77802 and move all information to
+maxim,max77686 DT binding document.
 
-has been applied to the regmap tree at
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 5bf75b44972a7edffa9f52cddb291d66bc16a4d6 Mon Sep 17 00:00:00 2001
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 20 Jun 2016 10:52:11 +0800
-Subject: [PATCH] regmap: Support bulk writes for devices without raw
- formatting
-
-When doing a bulk writes from a device which lacks raw I/O support we
-fall back to doing register at a time reads but we still use the raw
-formatters in order to render the data into the word size used by the
-device (since bulk reads still operate on the device word size rather
-than unsigned ints).  This means that devices without raw formatting
-such as those that provide reg_read() are not supported.  Provide
-handling for them by copying the values read into native endian values
-of the appropriate size.
-
-This complements commit d5b98eb12420 ("regmap: Support bulk reads for
-devices without raw formatting").
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/regmap.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+Changes from V1:
+- Rewrite description to remvoe ref to driver.
+- Taken care of comment from Krzysztof on the supported clocks and
+  DT bindings.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index df2d2ef5d6b3..51fa7d66a393 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1777,8 +1777,6 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 	size_t val_bytes = map->format.val_bytes;
- 	size_t total_size = val_bytes * val_count;
+Changes from V2:
+- Collected RBs.
+---
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 82 ++++++++++++++++------
+ .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ------------
+ 2 files changed, 59 insertions(+), 67 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+index 9c40739..4d973b5 100644
+--- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
++++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+@@ -1,11 +1,15 @@
+-Binding for Maxim MAX77686 32k clock generator block
++Binding for Maxim MAX77686/MAX77802 32k clock generator block
  
--	if (map->bus && !map->format.parse_inplace)
--		return -EINVAL;
- 	if (!IS_ALIGNED(reg, map->reg_stride))
- 		return -EINVAL;
+-This is a part of device tree bindings of MAX77686 multi-function device.
+-More information can be found in bindings/mfd/max77686.txt file.
++This is a part of device tree bindings of MAX77686/MAX77802 multi-function
++device. More information can be found in bindings/mfd/max77686.txt file for
++MAX77686 and bindings/mfd/max77802.txt for MAX77802.
  
-@@ -1789,7 +1787,8 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 	 *
- 	 * The first if block is used for memory mapped io. It does not allow
- 	 * val_bytes of 3 for example.
--	 * The second one is used for busses which do not have this limitation
-+	 * The second one is for busses that do not provide raw I/O.
-+	 * The third one is used for busses which do not have these limitations
- 	 * and can write arbitrary value lengths.
- 	 */
- 	if (!map->bus) {
-@@ -1825,6 +1824,32 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 		}
- out:
- 		map->unlock(map->lock_arg);
-+	} else if (map->bus && !map->format.parse_inplace) {
-+		const u8 *u8 = val;
-+		const u16 *u16 = val;
-+		const u32 *u32 = val;
-+		unsigned int ival;
+ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+ (gated/ungated) over I2C.
+ 
++The MAX77802 contains two 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C.
 +
-+		for (i = 0; i < val_count; i++) {
-+			switch (map->format.val_bytes) {
-+			case 4:
-+				ival = u32[i];
-+				break;
-+			case 2:
-+				ival = u16[i];
-+				break;
-+			case 1:
-+				ival = u8[i];
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
+ Following properties should be presend in main device node of the MFD chip.
+ 
+ Required properties:
+@@ -17,30 +21,62 @@ Optional properties:
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. Following indices are allowed:
+-    - 0: 32khz_ap clock,
+-    - 1: 32khz_cp clock,
+-    - 2: 32khz_pmic clock.
++    - 0: 32khz_ap clock (max77686, max77802),
++    - 1: 32khz_cp clock (max77686, max77802),
++    - 2: 32khz_pmic clock (max77686).
+ 
+ Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
+-header and can be used in device tree sources.
++header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
++be used in device tree sources.
 +
-+			ret = regmap_write(map, reg + (i * map->reg_stride),
-+					   ival);
-+			if (ret)
-+				return ret;
-+		}
- 	} else if (map->use_single_write ||
- 		   (map->max_raw_write && map->max_raw_write < total_size)) {
- 		int chunk_stride = map->reg_stride;
++Example:
++
++1. With MAX77686:
++
++#include <dt-bindings/clock/maxim,max77686.h>
++/* ... */
++
++	Node of the MFD chip
++		max77686: max77686@09 {
++			compatible = "maxim,max77686";
++			interrupt-parent = <&wakeup_eint>;
++			interrupts = <26 0>;
++			reg = <0x09>;
++			#clock-cells = <1>;
++
++			/* ... */
++		};
++
++	Clock consumer node
++
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77686 MAX77686_CLK_PMIC>;
++		};
++
++2. With MAX77802:
+ 
+-Example: Node of the MFD chip
++#include <dt-bindings/clock/maxim,max77802.h>
++/* ... */
+ 
+-	max77686: max77686@09 {
+-		compatible = "maxim,max77686";
+-		interrupt-parent = <&wakeup_eint>;
+-		interrupts = <26 0>;
+-		reg = <0x09>;
+-		#clock-cells = <1>;
++	Node of the MFD chip
++		max77802: max77802@09 {
++			compatible = "maxim,max77802";
++			interrupt-parent = <&wakeup_eint>;
++			interrupts = <26 0>;
++			reg = <0x09>;
++			#clock-cells = <1>;
+ 
+-		/* ... */
+-	};
++			/* ... */
++		};
+ 
+-Example: Clock consumer node
++	Clock consumer node
+ 
+-	foo@0 {
+-		compatible = "bar,foo";
+-		/* ... */
+-		clock-names = "my-clock";
+-		clocks = <&max77686 MAX77686_CLK_PMIC>;
+-	};
++		foo@0 {
++			compatible = "bar,foo";
++			/* ... */
++			clock-names = "my-clock";
++			clocks = <&max77802 MAX77802_CLK_32K_AP>;
++		};
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
+deleted file mode 100644
+index c6dc783..0000000
+--- a/Documentation/devicetree/bindings/clock/maxim,max77802.txt
++++ /dev/null
+@@ -1,44 +0,0 @@
+-Binding for Maxim MAX77802 32k clock generator block
+-
+-This is a part of device tree bindings of MAX77802 multi-function device.
+-More information can be found in bindings/mfd/max77802.txt file.
+-
+-The MAX77802 contains two 32.768khz clock outputs that can be controlled
+-(gated/ungated) over I2C.
+-
+-Following properties should be present in main device node of the MFD chip.
+-
+-Required properties:
+-- #clock-cells: From common clock binding; shall be set to 1.
+-
+-Optional properties:
+-- clock-output-names: From common clock binding.
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. Following indices are allowed:
+-     - 0: 32khz_ap clock,
+-     - 1: 32khz_cp clock.
+-
+-Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
+-header and can be used in device tree sources.
+-
+-Example: Node of the MFD chip
+-
+-	max77802: max77802@09 {
+-		compatible = "maxim,max77802";
+-		interrupt-parent = <&wakeup_eint>;
+-		interrupts = <26 0>;
+-		reg = <0x09>;
+-		#clock-cells = <1>;
+-
+-		/* ... */
+-	};
+-
+-Example: Clock consumer node
+-
+-	foo@0 {
+-		compatible = "bar,foo";
+-		/* ... */
+-		clock-names = "my-clock";
+-		clocks = <&max77802 MAX77802_CLK_32K_AP>;
+-	};
 -- 
-2.8.1
+2.1.4
