@@ -1,1077 +1,454 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <96780de5ca755a8eb59729cf9ac8aab4ec664ac6.1467135898.git.moinejf@free.fr>
-In-Reply-To: <cover.1467135898.git.moinejf@free.fr>
-References: <cover.1467135898.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 28 Jun 2016 19:20:18 +0200
-Subject: [PATCH 2/3] clk: sunxi: Add the A83T clocks
-To: Emilio Lopez <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-    Michael Turquette <mturquette@baylibre.com>,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org,
-    devicetree@vger.kernel.org,
-    linux-sunxi@googlegroups.com
+Return-Path: <fengguang.wu@intel.com>
+Date: Fri, 17 Jun 2016 09:55:52 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Hoan Tran <hotran@apm.com>
+Cc: kbuild-all@01.org, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	lho@apm.com, Duc Dang <dhdang@apm.com>, Hoan Tran <hotran@apm.com>
+Subject: Re: [PATCH 2/2] clk: Add fractional scale clock support
+Message-ID: <201606170945.b0oubUky%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="y0ulUmNC+osPPQO6"
+In-Reply-To: <1466120433-30648-3-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Define the CCU clocks of the Allwinner's A83T Soc.
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on v4.7-rc3 next-20160616]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Hoan-Tran/clk-Add-fractional-scale-clock-support/20160617-074656
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: arm-at91_dt_defconfig (attached as .config)
+compiler: arm-linux-gnueabi-gcc (Debian 5.3.1-8) 5.3.1 20160205
+reproduce:
+        wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=arm 
+
+All errors (new ones prefixed by >>):
+
+   drivers/built-in.o: In function `clk_fs_set_rate':
+>> powercap_sys.c:(.text+0x17e7cc): undefined reference to `__aeabi_uldivmod'
+   drivers/built-in.o: In function `clk_fs_round_rate':
+   powercap_sys.c:(.text+0x17e884): undefined reference to `__aeabi_uldivmod'
+
 ---
- drivers/clk/sunxi/Makefile             |   1 +
- drivers/clk/sunxi/ccu-sun8i-a83t.c     | 858 +++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/sun8i-a83t.h |  97 ++++
- include/dt-bindings/reset/sun8i-a83t.h |  62 +++
- 4 files changed, 1018 insertions(+)
- create mode 100644 drivers/clk/sunxi/ccu-sun8i-a83t.c
- create mode 100644 include/dt-bindings/clock/sun8i-a83t.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t.h
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index b8ca3e2..6eae4c2 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -28,3 +28,4 @@ obj-$(CONFIG_MFD_SUN6I_PRCM) += \
- 	clk-sun8i-apb0.o
- 
- obj-y += ccu.o
-+obj-$(CONFIG_MACH_SUN8I) += ccu-sun8i-a83t.o
-diff --git a/drivers/clk/sunxi/ccu-sun8i-a83t.c b/drivers/clk/sunxi/ccu-sun8i-a83t.c
-new file mode 100644
-index 0000000..8ee35fd
---- /dev/null
-+++ b/drivers/clk/sunxi/ccu-sun8i-a83t.c
-@@ -0,0 +1,858 @@
-+/*
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/reset-controller.h>
-+
-+#include <dt-bindings/clock/sun8i-a83t.h>
-+#include <dt-bindings/reset/sun8i-a83t.h>
-+
-+#include "ccu.h"
-+
-+/* 2 * cpux */
-+/*	rate = 24MHz * n / p */
-+static struct ccu pll_c0cpux_clk = {
-+	CCU_REG(0x000),
-+	CCU_HW("pll-c0cpux", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 0),
-+	CCU_N(8, 8), .n_min = 12,
-+/*	CCU_P(16, 1),			* only when rate < 288MHz */
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+static struct ccu pll_c1cpux_clk = {
-+	CCU_REG(0x004),
-+	CCU_HW("pll-c1cpux", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 1),
-+	CCU_N(8, 8), .n_min = 12,
-+/*	CCU_P(16, 1),			* only when rate < 288MHz */
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* audio */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) / (p + 1) */
-+static struct ccu pll_audio_clk = {
-+	CCU_REG(0x008),
-+	CCU_HW("pll-audio", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 2),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	CCU_M(0, 6),		/* p = divider */
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* video 0 */
-+/*	rate = 24MHz * n / (d1 + 1) >> p */
-+static struct ccu pll_video0_clk = {
-+	CCU_REG(0x010),
-+	CCU_HW("pll-video0", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 3),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_P(0, 2),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* video engine */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static struct ccu pll_ve_clk = {
-+	CCU_REG(0x018),
-+	CCU_HW("pll-ve", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 4),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* ddr */
-+/*	rate = 24MHz * (n + 1) / (d1 + 1) / (d2 + 1)
-+ *	bit 21: DDR_CLOCK = PLL_DDR / PLL_PERIPH (default DDR)
-+ */
-+static struct ccu pll_ddr_clk = {
-+	CCU_REG(0x020),
-+	CCU_HW("pll-ddr", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 5),
-+	CCU_N(8, 6), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	CCU_UPD(30),
-+};
-+
-+/* periph */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static struct ccu pll_periph_clk = {
-+	CCU_REG(0x028),
-+	CCU_HW("pll-periph", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 6),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* gpu */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static struct ccu pll_gpu_clk = {
-+	CCU_REG(0x038),
-+	CCU_HW("pll-gpu", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 7),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* hsic */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static struct ccu pll_hsic_clk = {
-+	CCU_REG(0x044),
-+	CCU_HW("pll-hsic", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 8),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* display engine */
-+/*	rate = 24MHz * n / (d1 + 1) / (d2 + 1) */
-+static struct ccu pll_de_clk = {
-+	CCU_REG(0x048),
-+	CCU_HW("pll-de", "osc24M", &ccu_pll_ops, 0),
-+	CCU_RESET(0x2c4, 12),
-+	CCU_BUS(0x64, 12),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 9),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_D2(18, 1),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+/* video 1 */
-+/*	rate = 24MHz * n / (d1 + 1) >> p */
-+static struct ccu pll_video1_clk = {
-+	CCU_REG(0x04c),
-+	CCU_HW("pll-video1", "osc24M", &ccu_pll_ops, 0),
-+	CCU_GATE(31),
-+	CCU_LOCK(0x20c, 10),
-+	CCU_N(8, 8), .n_min = 12,
-+	CCU_D1(16, 1),
-+	CCU_P(0, 2),
-+	.features = CCU_FEATURE_N0,
-+};
-+
-+static const char * const c0cpux_parents[] = { "osc24M", "pll-c0cpux" };
-+static struct ccu c0cpux_clk = {
-+	CCU_REG(0x050),
-+	CCU_HW_PARENTS("c0cpux", c0cpux_parents, &ccu_periph_ops,
-+							CLK_IS_CRITICAL),
-+	CCU_MUX(12, 1),
-+};
-+
-+static struct ccu axi0_clk = {
-+	CCU_REG(0x050),
-+	CCU_HW("axi0", "c0cpux", &ccu_periph_ops, 0),
-+	CCU_M(0, 2),
-+};
-+
-+static const char * const c1cpux_parents[] = { "osc24M", "pll-c1cpux" };
-+static struct ccu c1cpux_clk = {
-+	CCU_REG(0x050),
-+	CCU_HW_PARENTS("c1cpux", c1cpux_parents, &ccu_periph_ops,
-+							CLK_IS_CRITICAL),
-+	CCU_MUX(28, 1),
-+};
-+
-+static struct ccu axi1_clk = {
-+	CCU_REG(0x050),
-+	CCU_HW("axi1", "c1cpux", &ccu_periph_ops, 0),
-+	CCU_M(16, 2),
-+};
-+
-+static const char * const ahb1_parents[] = { "osc32k", "osc24M",
-+							"pll-periph" };
-+static const struct ccu_extra ahb1_extra = {
-+	.variable_prediv = { .index = 2, .shift = 6, .width = 2 },
-+};
-+static struct ccu ahb1_clk = {
-+	CCU_REG(0x054),
-+	CCU_HW_PARENTS("ahb1", ahb1_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(12, 2),
-+	CCU_P(4, 2),
-+	.features = CCU_FEATURE_MUX_VARIABLE_PREDIV,
-+	.extra = &ahb1_extra,
-+};
-+
-+static struct ccu apb1_clk = {
-+	CCU_REG(0x054),
-+	CCU_HW("apb1", "ahb1", &ccu_periph_ops, 0),
-+	CCU_M(8, 2),
-+};
-+
-+static const char * const apb2_parents[] = { "osc32k", "osc24M",
-+						"pll-periph", "pll-periph" };
-+static struct ccu apb2_clk = {
-+	CCU_REG(0x058),
-+	CCU_HW_PARENTS("apb2", apb2_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_M(0, 5),
-+	CCU_P(16, 2),
-+};
-+
-+/* from the bpi-m3 legacy driver, pll-periph is the only ahb2 parent */
-+static struct ccu ahb2_clk = {
-+	CCU_HW("ahb2", "pll-periph", &ccu_fixed_factor_ops, 0),
-+	CCU_FIXED(1, 2),
-+};
-+
-+static struct ccu bus_mipi_dsi_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-mipi-dsi", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(1),
-+};
-+static struct ccu bus_ss_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-ss", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(5),
-+};
-+static struct ccu bus_dma_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-dma", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(6),
-+};
-+/* the mmcx bus gates are handled by the mmcx clocks*/
-+static struct ccu bus_mmc0_clk = {
-+	CCU_HW("bus-mmc0", "ahb1", &ccu_periph_ops, 0),
-+};
-+static struct ccu bus_mmc1_clk = {
-+	CCU_HW("bus-mmc1", "ahb1", &ccu_periph_ops, 0),
-+};
-+static struct ccu bus_mmc2_clk = {
-+	CCU_HW("bus-mmc2", "ahb1", &ccu_periph_ops, 0),
-+};
-+static struct ccu bus_nand_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-nand", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(13),
-+};
-+static struct ccu bus_dram_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-dram", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(14),
-+};
-+static struct ccu bus_emac_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-emac", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(17),
-+};
-+static struct ccu bus_hstimer_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-hstimer", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(19),
-+};
-+static struct ccu bus_spi0_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-spi0", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(20),
-+};
-+static struct ccu bus_spi1_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-spi1", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(21),
-+};
-+static struct ccu bus_usbdrd_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-usbdrd", "ahb2", &ccu_periph_ops, 0),
-+	CCU_GATE(24),
-+};
-+static struct ccu bus_ehci0_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-ehci0", "ahb2", &ccu_periph_ops, 0),
-+	CCU_GATE(26),
-+};
-+static struct ccu bus_ehci1_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-ehci1", "ahb2", &ccu_periph_ops, 0),
-+	CCU_GATE(27),
-+};
-+static struct ccu bus_ohci0_clk = {
-+	CCU_REG(0x060),
-+	CCU_HW("bus-ohci0", "ahb2", &ccu_periph_ops, 0),
-+	CCU_GATE(29),
-+};
-+
-+static struct ccu bus_ve_clk = {
-+	CCU_REG(0x064),
-+	CCU_HW("bus-ve", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(0),
-+};
-+static struct ccu bus_csi_clk = {
-+	CCU_REG(0x064),
-+	CCU_HW("bus-csi", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(8),
-+};
-+static struct ccu bus_gpu_clk = {
-+	CCU_REG(0x064),
-+	CCU_HW("bus-gpu", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(20),
-+};
-+static struct ccu bus_msgbox_clk = {
-+	CCU_REG(0x064),
-+	CCU_HW("bus-msgbox", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(21),
-+};
-+static struct ccu bus_spinlock_clk = {
-+	CCU_REG(0x064),
-+	CCU_HW("bus-spinlock", "ahb1", &ccu_periph_ops, 0),
-+	CCU_GATE(22),
-+};
-+
-+static struct ccu bus_spdif_clk = {
-+	CCU_REG(0x068),
-+	CCU_HW("bus-spdif", "apb1", &ccu_periph_ops, 0),
-+	CCU_GATE(1),
-+};
-+static struct ccu bus_pio_clk = {
-+	CCU_REG(0x068),
-+	CCU_HW("bus-pio", "apb1", &ccu_periph_ops, 0),
-+	CCU_GATE(5),
-+};
-+static struct ccu bus_i2c0_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-i2c0", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(0),
-+};
-+static struct ccu bus_i2c1_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-i2c1", "apb", &ccu_periph_ops, 0),
-+	CCU_GATE(1),
-+};
-+static struct ccu bus_i2c2_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-i2c2", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(2),
-+};
-+static struct ccu bus_uart0_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-uart0", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(16),
-+};
-+static struct ccu bus_uart1_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-uart1", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(17),
-+};
-+static struct ccu bus_uart2_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-uart2", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(18),
-+};
-+static struct ccu bus_uart3_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-uart3", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(19),
-+};
-+static struct ccu bus_uart4_clk = {
-+	CCU_REG(0x06c),
-+	CCU_HW("bus-uart4", "apb2", &ccu_periph_ops, 0),
-+	CCU_GATE(20),
-+};
-+
-+static const char * const cci400_parents[] = { "osc24M", "pll-periph",
-+						"pll-hsic" };
-+static struct ccu cci400_clk = {
-+	CCU_REG(0x078),
-+	CCU_HW_PARENTS("cci400", cci400_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_M(0, 2),
-+};
-+
-+static const char * const mod0_default_parents[] = { "osc24M", "pll-periph" };
-+static struct ccu nand_clk = {
-+	CCU_REG(0x080),
-+	CCU_HW_PARENTS("nand", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+};
-+
-+static struct ccu mmc0_clk = {
-+	CCU_REG(0x088),
-+	CCU_HW_PARENTS("mmc0", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_RESET(0x2c0, 8),
-+	CCU_BUS(0x060, 8),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+	.features = CCU_FEATURE_SET_RATE_UNGATE,
-+};
-+static struct ccu mmc0_sample_clk = {
-+	CCU_REG(0x088),
-+	CCU_HW("mmc0_sample", "mmc0", &ccu_phase_ops, 0),
-+	CCU_PHASE(20, 3),
-+};
-+static struct ccu mmc0_output_clk = {
-+	CCU_REG(0x088),
-+	CCU_HW("mmc0_output", "mmc0", &ccu_phase_ops, 0),
-+	CCU_PHASE(8, 3),
-+};
-+
-+static struct ccu mmc1_clk = {
-+	CCU_REG(0x08c),
-+	CCU_HW_PARENTS("mmc1", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_RESET(0x2c0, 9),
-+	CCU_BUS(0x060, 9),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+	.features = CCU_FEATURE_SET_RATE_UNGATE,
-+};
-+static struct ccu mmc1_sample_clk = {
-+	CCU_REG(0x08c),
-+	CCU_HW("mmc1_sample", "mmc1", &ccu_phase_ops, 0),
-+	CCU_PHASE(20, 3),
-+};
-+static struct ccu mmc1_output_clk = {
-+	CCU_REG(0x08c),
-+	CCU_HW("mmc1_output", "mmc1", &ccu_phase_ops, 0),
-+	CCU_PHASE(8, 3),
-+};
-+
-+/* new mode */
-+static const struct ccu_extra mmc_extra = {
-+	.mode_select.rate = 100000000,
-+	.mode_select.bit = 30,
-+};
-+static struct ccu mmc2_clk = {
-+	CCU_REG(0x090),
-+	CCU_HW_PARENTS("mmc2", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_RESET(0x2c0, 10),
-+	CCU_BUS(0x060, 10),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+	CCU_GATE(31),
-+	.features = CCU_FEATURE_SET_RATE_UNGATE |
-+			CCU_FEATURE_MODE_SELECT,
-+	.extra = &mmc_extra,
-+};
-+static struct ccu mmc2_sample_clk = {
-+	CCU_REG(0x090),
-+	CCU_HW("mmc2_sample", "mmc2", &ccu_phase_ops, 0),
-+	CCU_PHASE(20, 3),
-+};
-+static struct ccu mmc2_output_clk = {
-+	CCU_REG(0x090),
-+	CCU_HW("mmc2_output", "mmc2", &ccu_phase_ops, 0),
-+	CCU_PHASE(8, 3),
-+};
-+
-+static struct ccu ss_clk = {
-+	CCU_REG(0x09c),
-+	CCU_HW_PARENTS("ss", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+};
-+
-+static struct ccu spi0_clk = {
-+	CCU_REG(0x0a0),
-+	CCU_HW_PARENTS("spi0", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+};
-+
-+static struct ccu spi1_clk = {
-+	CCU_REG(0x0a4),
-+	CCU_HW_PARENTS("spi1", mod0_default_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+	CCU_P(16, 2),
-+};
-+
-+static struct ccu daudio0_clk = {
-+	CCU_REG(0x0b0),
-+	CCU_HW("daudio0", "pll-audio", &ccu_periph_ops, 0),
-+	CCU_BUS(0x068, 12),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+static struct ccu daudio1_clk = {
-+	CCU_REG(0x0b4),
-+	CCU_HW("daudio1", "pll-audio", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_BUS(0x068, 13),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu daudio2_clk = {
-+	CCU_REG(0x0b8),
-+	CCU_HW("daudio2", "pll-audio", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_BUS(0x068, 14),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu tdm_clk = {
-+	CCU_REG(0x0bc),
-+	CCU_HW("tdm", "pll-audio", &ccu_periph_ops, 0),
-+	CCU_BUS(0x068, 15),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu spdif_clk = {
-+	CCU_REG(0x0c0),
-+	CCU_HW("spdif", "pll-audio", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu usb_phy0_clk = {
-+	CCU_REG(0x0cc),
-+	CCU_HW("usb-phy0", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(8),
-+};
-+
-+static struct ccu usb_phy1_clk = {
-+	CCU_REG(0x0cc),
-+	CCU_HW("usb-phy1", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(9),
-+};
-+
-+static struct ccu usb_hsic_clk = {
-+	CCU_REG(0x0cc),
-+	CCU_HW("usb-hsic", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(10),
-+};
-+
-+static struct ccu osc12m_clk = {
-+	CCU_REG(0x0cc),
-+	CCU_HW("osc12M", "osc24M", &ccu_fixed_factor_ops, 0),
-+	CCU_GATE(11),
-+	CCU_FIXED(1, 2),
-+};
-+
-+static struct ccu ohci0_clk = {
-+	CCU_REG(0x0cc),
-+	CCU_HW("ohci0", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(16),
-+};
-+
-+static struct ccu dram_clk = {
-+	CCU_REG(0x0f4),
-+	CCU_HW("dram", "pll-ddr", &ccu_periph_ops, 0),
-+	CCU_M(0, 4),
-+	CCU_UPD(16),
-+};
-+
-+/* pll_ddr config not done */
-+
-+static struct ccu dram_ve_clk = {
-+	CCU_REG(0x0100),
-+	CCU_HW("dram-ve", "dram", &ccu_periph_ops, 0),
-+	CCU_GATE(0),
-+};
-+
-+static struct ccu dram_csi_clk = {
-+	CCU_REG(0x0100),
-+	CCU_HW("dram-csi", "dram", &ccu_periph_ops, 0),
-+	CCU_GATE(1),
-+};
-+
-+static struct ccu tcon0_clk = {
-+	CCU_REG(0x118),
-+	CCU_HW("tcon0", "pll-video0", &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_RESET(0x2c4, 4),
-+	CCU_BUS(0x064, 4),
-+	CCU_GATE(31),
-+};
-+
-+static struct ccu tcon1_clk = {
-+	CCU_REG(0x11c),
-+	CCU_HW("tcon1", "pll-video1", &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_RESET(0x2c4, 5),
-+	CCU_BUS(0x064, 5),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu csi_misc_clk = {
-+	CCU_REG(0x0130),
-+	CCU_HW("csi-misc", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(16),
-+};
-+
-+static struct ccu mipi_csi_clk = {
-+	CCU_REG(0x0130),
-+	CCU_HW("mipi-csi", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+};
-+
-+/* hack: "osc32k" is used for no parent */
-+static const char * const csi_sclk_parents[] = { "pll-periph",
-+				"osc32k", "osc32k", "osc32k", "osc32k",
-+				"pll-ve" };
-+static struct ccu csi_sclk_clk = {
-+	CCU_REG(0x134),
-+	CCU_HW_PARENTS("csi-sclk", csi_sclk_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 3),
-+	CCU_GATE(31),
-+	CCU_M(16, 4),
-+};
-+
-+/* hack: "osc32k" is used for no parent */
-+static const char * const csi_mclk_parents[] = {"osc32k", "osc32k", "osc32k",
-+				"pll-periph", "osc32k",
-+				"osc24M"};
-+static struct ccu csi_mclk_clk = {
-+	CCU_REG(0x134),
-+	CCU_HW_PARENTS("csi-mclk", csi_mclk_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(8, 3),
-+	CCU_GATE(15),
-+	CCU_M(0, 5),
-+};
-+
-+static struct ccu ve_clk = {
-+	CCU_REG(0x13c),
-+	CCU_HW("ve", "pll-ve", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_M(16, 3),
-+};
-+
-+static struct ccu avs_clk = {
-+	CCU_REG(0x0144),
-+	CCU_HW("avs", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+};
-+
-+static struct ccu hdmi_clk = {
-+	CCU_REG(0x150),
-+	CCU_HW("hdmi", "pll-video1", &ccu_periph_ops, 0),
-+	CCU_MUX(24, 2),
-+	CCU_BUS(0x064, 11),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu hdmi_ddc_clk = {
-+	CCU_REG(0x0154),
-+	CCU_HW("hdmi-ddc", "osc24M", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+};
-+
-+static const char * const mbus_parents[] = { "osc24M", "pll-periph",
-+						"pll-ddr" };
-+static struct ccu mbus_clk = {
-+	CCU_REG(0x15c),
-+	CCU_HW_PARENTS("mbus", mbus_parents, &ccu_periph_ops, CLK_IS_CRITICAL),
-+	CCU_MUX(24, 2),
-+	CCU_GATE(31),
-+	CCU_M(0, 3),
-+};
-+
-+static struct ccu mipi_dsi0_clk = {
-+	CCU_REG(0x168),
-+	CCU_HW("mipi-dsi0", "pll-video0", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+
-+static const char * const mipi_dsi1_parents[] = { "osc24M",
-+/* hack: "osc32k" is used for "no parent" */
-+				"osc32k", "osc32k", "osc32k", "osc32k",
-+					"osc32k", "osc32k", "osc32k", "osc32k",
-+				"pll-video0" };
-+static struct ccu mipi_dsi1_clk = {
-+	CCU_REG(0x16c),
-+	CCU_HW_PARENTS("mipi-dsi1", mipi_dsi1_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 4),
-+	CCU_GATE(31),
-+	CCU_M(0, 4),
-+};
-+
-+static struct ccu gpu_core_clk = {
-+	CCU_REG(0x1a0),
-+	CCU_HW("gpu-core", "pll-gpu", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_M(0, 3),
-+};
-+
-+static const char * const gpu_mem_parents[] = { "pll-gpu", "pll-periph" };
-+static struct ccu gpu_mem_clk = {
-+	CCU_REG(0x1a4),
-+	CCU_HW_PARENTS("gpu-mem", gpu_mem_parents, &ccu_periph_ops, 0),
-+	CCU_MUX(24, 1),
-+	CCU_GATE(31),
-+	CCU_M(0, 3),
-+};
-+
-+static struct ccu gpu_hyd_clk = {
-+	CCU_REG(0x1a8),
-+	CCU_HW("gpu-hyd", "pll-gpu", &ccu_periph_ops, 0),
-+	CCU_GATE(31),
-+	CCU_M(0, 3),
-+};
-+
-+static struct clk_hw_onecell_data sun8i_a83t_ccu_data = {
-+	.num = 93,
-+	.hws = {
-+		[CLK_BUS_DMA]		= &bus_dma_clk.hw,
-+		[CLK_BUS_EHCI0]		= &bus_ehci0_clk.hw,
-+		[CLK_BUS_EHCI1]		= &bus_ehci1_clk.hw,
-+		[CLK_BUS_MMC0]		= &bus_mmc0_clk.hw,
-+		[CLK_BUS_MMC1]		= &bus_mmc1_clk.hw,
-+		[CLK_BUS_MMC2]		= &bus_mmc2_clk.hw,
-+		[CLK_BUS_OHCI0]		= &bus_ohci0_clk.hw,
-+		[CLK_BUS_PIO]		= &bus_pio_clk.hw,
-+		[CLK_BUS_UART0]		= &bus_uart0_clk.hw,
-+		[CLK_BUS_UART1]		= &bus_uart1_clk.hw,
-+		[CLK_BUS_UART2]		= &bus_uart2_clk.hw,
-+		[CLK_BUS_UART3]		= &bus_uart3_clk.hw,
-+		[CLK_BUS_UART4]		= &bus_uart4_clk.hw,
-+		[CLK_BUS_USBDRD]	= &bus_usbdrd_clk.hw,
-+		[CLK_DAUDIO0]		= &daudio0_clk.hw,
-+		[CLK_DAUDIO1]		= &daudio1_clk.hw,
-+		[CLK_DAUDIO2]		= &daudio2_clk.hw,
-+		[CLK_HDMI]		= &hdmi_clk.hw,
-+		[CLK_HDMI_DDC]		= &hdmi_ddc_clk.hw,
-+		[CLK_MMC0]		= &mmc0_clk.hw,
-+		[CLK_MMC0_SAMPLE]	= &mmc0_sample_clk.hw,
-+		[CLK_MMC0_OUTPUT]	= &mmc0_output_clk.hw,
-+		[CLK_MMC1]		= &mmc1_clk.hw,
-+		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.hw,
-+		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.hw,
-+		[CLK_MMC2]		= &mmc2_clk.hw,
-+		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.hw,
-+		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.hw,
-+		[CLK_OHCI0]		= &ohci0_clk.hw,
-+		[CLK_OSC12M]		= &osc12m_clk.hw,
-+		[CLK_PLL_AUDIO]		= &pll_audio_clk.hw,
-+		[CLK_PLL_DE]		= &pll_de_clk.hw,
-+		[CLK_PLL_GPU]		= &pll_gpu_clk.hw,
-+		[CLK_PLL_HSIC]		= &pll_hsic_clk.hw,
-+		[CLK_PLL_PERIPH]	= &pll_periph_clk.hw,
-+		[CLK_PLL_VE]		= &pll_ve_clk.hw,
-+		[CLK_PLL_VIDEO0]	= &pll_video0_clk.hw,
-+		[CLK_PLL_VIDEO1]	= &pll_video1_clk.hw,
-+		[CLK_SPDIF]		= &spdif_clk.hw,
-+		[CLK_SPI0]		= &spi0_clk.hw,
-+		[CLK_SPI1]		= &spi1_clk.hw,
-+		[CLK_TCON0]		= &tcon0_clk.hw,
-+		[CLK_TCON1]		= &tcon1_clk.hw,
-+		[CLK_TDM]		= &tdm_clk.hw,
-+		[CLK_USB_PHY0]		= &usb_phy0_clk.hw,
-+		[CLK_USB_PHY1]		= &usb_phy1_clk.hw,
-+		[CLK_USB_HSIC]		= &usb_hsic_clk.hw,
-+		[CLK_VE]		= &ve_clk.hw,
-+		&pll_c0cpux_clk.hw,
-+		&pll_c1cpux_clk.hw,
-+		&pll_ddr_clk.hw,			/* 50 */
-+		&c0cpux_clk.hw,
-+		&axi0_clk.hw,
-+		&c1cpux_clk.hw,
-+		&axi1_clk.hw,
-+		&ahb1_clk.hw,
-+		&apb1_clk.hw,
-+		&apb2_clk.hw,
-+		&ahb2_clk.hw,
-+		&bus_mipi_dsi_clk.hw,
-+		&bus_ss_clk.hw,				/* 60 */
-+		&bus_nand_clk.hw,
-+		&bus_dram_clk.hw,
-+		&bus_emac_clk.hw,
-+		&bus_hstimer_clk.hw,
-+		&bus_spi0_clk.hw,
-+		&bus_spi1_clk.hw,
-+		&bus_ve_clk.hw,
-+		&bus_csi_clk.hw,
-+		&bus_gpu_clk.hw,
-+		&bus_msgbox_clk.hw,			/* 70 */
-+		&bus_spinlock_clk.hw,
-+		&bus_spdif_clk.hw,
-+		&bus_i2c0_clk.hw,
-+		&bus_i2c1_clk.hw,
-+		&bus_i2c2_clk.hw,
-+		&cci400_clk.hw,
-+		&nand_clk.hw,
-+		&ss_clk.hw,
-+		&dram_clk.hw,
-+		&dram_ve_clk.hw,			/* 80 */
-+		&dram_csi_clk.hw,
-+		&csi_misc_clk.hw,
-+		&mipi_csi_clk.hw,
-+		&csi_sclk_clk.hw,
-+		&csi_mclk_clk.hw,
-+		&avs_clk.hw,
-+		&mbus_clk.hw,
-+		&mipi_dsi0_clk.hw,
-+		&mipi_dsi1_clk.hw,
-+		&gpu_core_clk.hw,			/* 90 */
-+		&gpu_mem_clk.hw,
-+		&gpu_hyd_clk.hw,
-+	},
-+};
-+
-+static struct ccu_reset_map sun8i_a83t_ccu_resets[] = {
-+	[RST_USB_PHY0]	=  { 0x0cc, 0 },
-+	[RST_USB_PHY1]	=  { 0x0cc, 1 },
-+	[RST_USB_HSIC]	=  { 0x0cc, 2 },
-+	[RST_DMA]	=  { 0x2c0, 6 },
-+	[RST_USBDRD]	=  { 0x2c0, 24 },
-+	[RST_EHCI0]	=  { 0x2c0, 26 },
-+	[RST_EHCI1]	=  { 0x2c0, 27 },
-+	[RST_OHCI0]	=  { 0x2c0, 29 },
-+	[RST_HDMI0]	=  { 0x2c4, 10 },
-+	[RST_HDMI1]	=  { 0x2c4, 11 },
-+	[RST_UART0]	=  { 0x2d8, 16 },
-+	[RST_UART1]	=  { 0x2d8, 17 },
-+	[RST_UART2]	=  { 0x2d8, 18 },
-+	[RST_UART3]	=  { 0x2d8, 19 },
-+	[RST_UART4]	=  { 0x2d8, 20 },
-+};
-+
-+static struct ccu_reset sun8i_a83t_resets = {
-+	.rcdev.ops = &ccu_reset_ops,
-+	.rcdev.owner = THIS_MODULE,
-+	.rcdev.nr_resets = ARRAY_SIZE(sun8i_a83t_ccu_resets),
-+	.reset_map = sun8i_a83t_ccu_resets,
-+};
-+
-+static void __init sun8i_a83t_ccu_setup(struct device_node *node)
-+{
-+	ccu_probe(node, &sun8i_a83t_ccu_data,
-+			&sun8i_a83t_resets);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_ccu, "allwinner,sun8i-a83t-ccu",
-+	       sun8i_a83t_ccu_setup);
-diff --git a/include/dt-bindings/clock/sun8i-a83t.h b/include/dt-bindings/clock/sun8i-a83t.h
-new file mode 100644
-index 0000000..c063783
---- /dev/null
-+++ b/include/dt-bindings/clock/sun8i-a83t.h
-@@ -0,0 +1,97 @@
-+/*
-+ * Copyright (C) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ * Based on the H3 version from
-+ * Copyright (C) 2016 Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SUN8I_A83T_H_
-+#define _DT_BINDINGS_CLK_SUN8I_A83T_H_
-+
-+#define CLK_BUS_DMA		0
-+#define CLK_BUS_EHCI0		1
-+#define CLK_BUS_EHCI1		2
-+#define CLK_BUS_MMC0		3
-+#define CLK_BUS_MMC1		4
-+#define CLK_BUS_MMC2		5
-+#define CLK_BUS_OHCI0		6
-+#define CLK_BUS_PIO		7
-+#define CLK_BUS_UART0		8
-+#define CLK_BUS_UART1		9
-+#define CLK_BUS_UART2		10
-+#define CLK_BUS_UART3		11
-+#define CLK_BUS_UART4		12
-+#define CLK_BUS_USBDRD		13
-+#define CLK_DAUDIO0		14
-+#define CLK_DAUDIO1		15
-+#define CLK_DAUDIO2		16
-+#define CLK_HDMI		17
-+#define CLK_HDMI_DDC		18
-+#define CLK_MMC0		19
-+#define CLK_MMC0_SAMPLE		20
-+#define CLK_MMC0_OUTPUT		21
-+#define CLK_MMC1		22
-+#define CLK_MMC1_SAMPLE		23
-+#define CLK_MMC1_OUTPUT		24
-+#define CLK_MMC2		25
-+#define CLK_MMC2_SAMPLE		26
-+#define CLK_MMC2_OUTPUT		27
-+#define CLK_OHCI0		28
-+#define CLK_OSC12M		29
-+#define CLK_PLL_AUDIO		30
-+#define CLK_PLL_DE		31
-+#define CLK_PLL_GPU		32
-+#define CLK_PLL_HSIC		33
-+#define CLK_PLL_PERIPH		34
-+#define CLK_PLL_VE		35
-+#define CLK_PLL_VIDEO0		36
-+#define CLK_PLL_VIDEO1		37
-+#define CLK_SPDIF		38
-+#define CLK_SPI0		39
-+#define CLK_SPI1		40
-+#define CLK_TCON0		41
-+#define CLK_TCON1		42
-+#define CLK_TDM			43
-+#define CLK_USB_PHY0		44
-+#define CLK_USB_PHY1		45
-+#define CLK_USB_HSIC		46
-+#define CLK_VE			47
-+
-+#endif /* _DT_BINDINGS_CLK_SUN8I_A83T_H_ */
-diff --git a/include/dt-bindings/reset/sun8i-a83t.h b/include/dt-bindings/reset/sun8i-a83t.h
-new file mode 100644
-index 0000000..174382e
---- /dev/null
-+++ b/include/dt-bindings/reset/sun8i-a83t.h
-@@ -0,0 +1,62 @@
-+/*
-+ * Copyright (c) 2016 Jean-Francois Moine <moinejf@free.fr>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifndef _DT_BINDINGS_RST_SUN8I_A83T_H_
-+#define _DT_BINDINGS_RST_SUN8I_A83T_H_
-+
-+#define RST_DMA		0
-+#define RST_EHCI0	1
-+#define RST_EHCI1	2
-+#define RST_HDMI0	3
-+#define RST_HDMI1	4
-+#define RST_OHCI0	5
-+#define RST_UART0	6
-+#define RST_UART1	7
-+#define RST_UART2	8
-+#define RST_UART3	9
-+#define RST_UART4	10
-+#define RST_USB_HSIC	11
-+#define RST_USB_PHY0	12
-+#define RST_USB_PHY1	13
-+#define RST_USBDRD	14
-+
-+#endif /* _DT_BINDINGS_RST_SUN8I_A83T_H_ */
--- 
-2.9.0
+--y0ulUmNC+osPPQO6
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--y0ulUmNC+osPPQO6--
