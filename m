@@ -1,102 +1,76 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 01/28] clk: ti: add ti_clk_get helper API
-Date: Mon, 13 Jun 2016 22:04:35 +0300
-Message-ID: <1465844702-12200-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ "Rob Herring" <robh+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Daniel Vetter" <daniel.vetter@intel.com>, "David Airlie" <airlied@linux.ie>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
+Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
+Message-ID: <20160617230533.27203.82622@quark.deferred.io>
+Subject: Re: [PATCH 01/20] clk: fixed-factor: Pass clk rates change to the parent
+Date: Fri, 17 Jun 2016 16:05:33 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The API can be used to fetch directly DT clocks based on name. Using
-this new API allows getting rid of most of the DT_CLK() entries under
-drivers/clk/ti.
+Quoting Maxime Ripard (2016-05-16 05:47:01)
+> A fixed factor clock, if it needs to change its rate, by definition do not
+> have any choice but to modify its parent rate.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk.c   | 35 +++++++++++++++++++++++++++++------
- include/linux/clk/ti.h |  2 ++
- 2 files changed, 31 insertions(+), 6 deletions(-)
+Logically it makes sense to always propagate the rate-change request up
+to the parent for a fixed-factor clock if we desire to change its rate.
+However, I wonder if doing this for all users of fixed-factor-clock in
+DT is safe? Some users may be counting on it not changing.
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 5fcf247..3dcf97e 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -68,6 +68,33 @@ static u32 clk_memmap_readl(void __iomem *reg)
- }
- 
- /**
-+ * ti_clk_get - lookup a TI clock handle
-+ * @name: clock to find
-+ *
-+ * Searches for a TI clock handle. Will first attempt to search for a
-+ * clock based on a DT node name, but if this fails, will revert to
-+ * looking up a clock alias. Returns the pointer to the clock handle,
-+ * or ERR_PTR in failure.
-+ */
-+struct clk *ti_clk_get(const char *name)
-+{
-+	struct of_phandle_args clkspec;
-+	struct device_node *node;
-+	struct clk *clk;
-+
-+	if (of_have_populated_dt()) {
-+		node = of_find_node_by_name(NULL, name);
-+		clkspec.np = node;
-+		clk = of_clk_get_from_provider(&clkspec);
-+
-+		if (!IS_ERR(clk))
-+			return clk;
-+	}
-+
-+	return clk_get(NULL, name);
-+}
-+
-+/**
-  * ti_clk_setup_ll_ops - setup low level clock operations
-  * @ops: low level clock ops descriptor
-  *
-@@ -102,14 +129,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
- void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- {
- 	struct ti_dt_clk *c;
--	struct device_node *node;
- 	struct clk *clk;
--	struct of_phandle_args clkspec;
- 
- 	for (c = oclks; c->node_name != NULL; c++) {
--		node = of_find_node_by_name(NULL, c->node_name);
--		clkspec.np = node;
--		clk = of_clk_get_from_provider(&clkspec);
-+		clk = ti_clk_get(c->node_name);
- 
- 		if (!IS_ERR(clk)) {
- 			c->lk.clk = clk;
-@@ -446,7 +469,7 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
- 	int i;
- 
- 	for (i = 0; i < num_clocks; i++) {
--		init_clk = clk_get(NULL, clk_names[i]);
-+		init_clk = ti_clk_get(clk_names[i]);
- 		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
- 			 clk_names[i]))
- 			continue;
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 6110fe0..331b81b 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -294,6 +294,8 @@ struct ti_clk_features {
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
- 
-+struct clk *ti_clk_get(const char *name);
-+
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
- 
- #ifdef CONFIG_ATAGS
--- 
-1.9.1
+There are 397 instances of fixed-factor-clock in .dts[i] today, so this
+change worries me a bit.
+
+> =
+
+> Add the CLK_SET_RATE_PARENT flag to that clock so that it can happen
+> =
+
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/clk-fixed-factor.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> =
+
+> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
+r.c
+> index 75cd6c792cb8..3363abd9b4ae 100644
+> --- a/drivers/clk/clk-fixed-factor.c
+> +++ b/drivers/clk/clk-fixed-factor.c
+> @@ -167,7 +167,8 @@ void __init of_fixed_factor_clk_setup(struct device_n=
+ode *node)
+>         of_property_read_string(node, "clock-output-names", &clk_name);
+>         parent_name =3D of_clk_get_parent_name(node, 0);
+>  =
+
+> -       clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
+> +       clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name,
+> +                                       CLK_SET_RATE_PARENT,
+
+An alternative would be to pass in the flags you want, somehow. For the
+clock you are trying to fix, is it inside of the SoC or external? If it
+is internal, and part of a larger clock controller driver, is this for
+the legacy style allwinner clock drivers that put everything in DT? If
+not, it would better to initialize it statically and shove this flag
+into the struct clk_init_data storage.
+
+Regards,
+Mike
+
+>                                         mult, div);
+>         if (!IS_ERR(clk))
+>                 of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> -- =
+
+> 2.8.2
+>=20
