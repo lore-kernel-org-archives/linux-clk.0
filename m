@@ -1,92 +1,42 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 15 Jun 2016 13:49:43 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] mfd: ac100: Add device tree bindings for
- X-Powers AC100 codec/RTC combo IC
-Message-ID: <20160615124943.GE4948@dell>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
- <1465986467-14802-3-git-send-email-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1465986467-14802-3-git-send-email-wens@csie.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Jun 2016 15:00:23 +0200
+Message-ID: <CAMuHMdUufppSHD3J_0j3z0LCXJxQ3rbhUa4+cQVdQ73EWZz-fw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add DRIF clock
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
+Hi Ramesh,
 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
-> new file mode 100644
-> index 000000000000..fbab623e6fba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
-> @@ -0,0 +1,42 @@
-> +X-Powers AC100 Codec/RTC IC device tree bindings
-> +
-> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
-> +separated, including power supplies and interrupt lines, but share
-> +a common register address space and host interface.
-> +
-> +Required properties:
-> +- compatible: "x-powers,ac100"
-> +- reg: The I2C slave address or RSB hardware address for the chip
-> +- sub-nodes:
-> +  - codec
-> +    - compatible: "x-powers,ac100-codec"
-> +    - interrupt-parent: The parent interrupt controller
-> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
-> +  - rtc
-> +    - compatible: "x-powers,ac100-rtc"
-> +    - interrupt-parent: The parent interrupt controller
-> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
-> +    - #clock-cells: shall be 1
-> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
-> +    - see clock/clock-bindings.txt for common clock bindings
-> +
-> +Example:
-> +
-> +ac100: codec@e89 {
-> +	compatible = "x-powers,ac100";
-> +	reg = <0xe89>;
-> +
-> +	ac100_codec {
-> +		compatible = "x-powers,ac100-codec";
-> +		interrupt-parent = <&nmi_intc>;
-> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	ac100_rtc {
-> +		compatible = "x-powers,ac100-rtc";
-> +		interrupt-parent = <&nmi_intc>;
-> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+On Fri, Jun 17, 2016 at 2:25 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds DRIF module clocks for r8a7795 SoC.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Isn't this the same interrupt as above?  Is it shared?
+Thanks!
 
-> +		#clock-cells = <1>;
-> +		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
-> +	};
-> +};
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+(i.e. will queue in clk-renesas-for-v4.8)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
