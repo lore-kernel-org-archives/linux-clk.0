@@ -1,48 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35561 "EHLO
-	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751816AbcFWKwg (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2016 06:52:36 -0400
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] clk: tegra: Make sor_safe the parent of dpaux and dpaux1
-Date: Thu, 23 Jun 2016 12:52:30 +0200
-Message-Id: <20160623105231.24383-1-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH V2 3/4] clk: max77686: Add DT binding details for PMIC
+ MAX77620
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <576391DE.603@samsung.com>
+Date: Fri, 17 Jun 2016 07:59:58 +0200
+MIME-version: 1.0
+In-reply-to: <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+On 06/16/2016 03:23 PM, Laxman Dewangan wrote:
+> Maxim has used the same clock IP on multiple PMICs like MAX77686,
+> MAX77802, MAX77620. Only differences are the number of clocks
+> from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
+> two clock output and MAX77620 has one clock output.
+> 
+> Add clock binding details and DT example for the MAX77620.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> 
+> ---
+> Changes from V1:
+> - Use proper comment for the ::::
+> - Added dt binding preprocessor file as maxim,max77620.h for max77620
+>   inline with the other chip.
+> - Refer the dt binding header for the supported clock index.
+> ---
+>  .../devicetree/bindings/clock/maxim,max77686.txt   | 52 +++++++++++++++++-----
+>  include/dt-bindings/clock/maxim,max77620.h         | 21 +++++++++
+>  2 files changed, 63 insertions(+), 10 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/maxim,max77620.h
 
-It turns out that sor_safe, rather than pll_p, is the parent of the
-dpaux and dpaux1 clocks.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index aab32af77aa2..fe295b4102ca 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2466,11 +2466,11 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					1, 2);
- 	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
- 
--	clk = tegra_clk_register_periph_fixed("dpaux", "pll_p", 0, clk_base,
-+	clk = tegra_clk_register_periph_fixed("dpaux", "sor_safe", 0, clk_base,
- 					      1, 17, 181);
- 	clks[TEGRA210_CLK_DPAUX] = clk;
- 
--	clk = tegra_clk_register_periph_fixed("dpaux1", "pll_p", 0, clk_base,
-+	clk = tegra_clk_register_periph_fixed("dpaux1", "sor_safe", 0, clk_base,
- 					      1, 17, 207);
- 	clks[TEGRA210_CLK_DPAUX1] = clk;
- 
--- 
-2.8.3
-
+Best regards,
+Krzysztof
