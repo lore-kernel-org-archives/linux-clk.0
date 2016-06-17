@@ -1,59 +1,47 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, 
-From: Stephen Boyd <stephen.boyd@linaro.org>
-In-Reply-To: <20160605174157.GP4594@piout.net>
-Cc: "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Jisheng Zhang" <jszhang@marvell.com>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-8-stephen.boyd@linaro.org>
- <20160605174157.GP4594@piout.net>
-Message-ID: <146528884761.28742.8093002152658120585@sboyd-linaro>
-Subject: Re: [PATCH 07/34] clk: berlin: Migrate to clk_hw based registration and OF
- APIs
-Date: Tue, 07 Jun 2016 01:40:47 -0700
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: Add MDM9615 Clock Controllers driver and bindings
+Date: Fri, 17 Jun 2016 12:04:32 +0200
+Message-Id: <1466157875-14428-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexandre Belloni (2016-06-05 10:41:57)
-> Hi,
-> =
+In order to support the Qualcomm MDM9615 in the Sierra Wireless WP8548
+Modules, add the MDM9615 Clock Controllers drivers and bindings.
 
-> The main drawback of those patches is that they break the alignment
-> (checkpatch.pl --strict complains).
+This patchset is part of a global SoC + Module + Board support for the
+Sierra Wireless mangOH Board support with the WP8548 module.
 
-Didn't checkpatch --strict already warn on these files though? I'm not
-sure I've done anything to break the alignment style here.
+Neil Armstrong (3):
+  clk: mdm9615: Add support for MDM9615 Clock Controllers
+  dt-bindings: clock: Update bindings for MDM9615 GCC and LCC
+  dt-bindings: Add MDM9615 DT bindings include files for GCC and LCC
 
-> =
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../devicetree/bindings/clock/qcom,lcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |   17 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/gcc-mdm9615.c                     | 1709 ++++++++++++++++++++
+ drivers/clk/qcom/lcc-mdm9615.c                     |  580 +++++++
+ include/dt-bindings/clock/qcom,gcc-mdm9615.h       |  327 ++++
+ include/dt-bindings/clock/qcom,lcc-mdm9615.h       |   52 +
+ include/dt-bindings/reset/qcom,gcc-mdm9615.h       |  136 ++
+ 9 files changed, 2825 insertions(+)
+ create mode 100644 drivers/clk/qcom/gcc-mdm9615.c
+ create mode 100644 drivers/clk/qcom/lcc-mdm9615.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-mdm9615.h
+ create mode 100644 include/dt-bindings/clock/qcom,lcc-mdm9615.h
+ create mode 100644 include/dt-bindings/reset/qcom,gcc-mdm9615.h
 
-> On 01/06/2016 at 16:15:06 -0700, Stephen Boyd wrote :
-> > diff --git a/drivers/clk/berlin/berlin2-avpll.h b/drivers/clk/berlin/be=
-rlin2-avpll.h
-> > index a37f5068d299..17e311153b42 100644
-> > --- a/drivers/clk/berlin/berlin2-avpll.h
-> > +++ b/drivers/clk/berlin/berlin2-avpll.h
-> > @@ -19,17 +19,13 @@
-> >  #ifndef __BERLIN2_AVPLL_H
-> >  #define __BERLIN2_AVPLL_H
-> >  =
-
-> > -struct clk;
-> > -
-> >  #define BERLIN2_AVPLL_BIT_QUIRK              BIT(0)
-> >  #define BERLIN2_AVPLL_SCRAMBLE_QUIRK BIT(1)
-> >  =
-
-> > -struct clk * __init
-> > -berlin2_avpll_vco_register(void __iomem *base, const char *name,
-> > +int berlin2_avpll_vco_register(void __iomem *base, const char *name,
-> =
-
-> This is missing __init.
-
-Ah I also removed __init in the header file here because it doesn't do
-anything. I guess I should mention that in the commit text.
+-- 
+1.9.1
