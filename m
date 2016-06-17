@@ -1,96 +1,111 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	rtc-linux@googlegroups.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/7] mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC combo IC
-Date: Thu, 30 Jun 2016 23:58:45 +0800
-Message-Id: <1467302331-9663-2-git-send-email-wens@csie.org>
-In-Reply-To: <1467302331-9663-1-git-send-email-wens@csie.org>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1466120433-30648-3-git-send-email-hotran@apm.com>
+References: <1466120433-30648-1-git-send-email-hotran@apm.com> <1466120433-30648-3-git-send-email-hotran@apm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Jun 2016 08:43:27 +0200
+Message-ID: <CAMuHMdUMm5BWWEmKX3xOBkMX7HWTYgD6R0xz=uggs_Uya8=3Gw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: Add fractional scale clock support
+To: Hoan Tran <hotran@apm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, lho@apm.com,
+	Duc Dang <dhdang@apm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes since v3:
+On Fri, Jun 17, 2016 at 1:40 AM, Hoan Tran <hotran@apm.com> wrote:
+> This patch adds fractional scale clock support.
+> Fractional scale clock is implemented for a single register field.
+>   Output rate = parent_rate * scale / denominator
+> For example, for 1 / 8 fractional scale, denominator will be 8 and scale
+> will be computed and programmed accordingly.
+>
+> Signed-off-by: Hoan Tran <hotran@apm.com>
+> Signed-off-by: Loc Ho <lho@apm.com>
 
-  - Fixed device node names and added labels.
-  - Added clock output from codec and input to rtc.
+> --- /dev/null
+> +++ b/drivers/clk/clk-fractional-scale.c
 
-Changes since v2:
+> +static long clk_fs_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                             unsigned long *parent_rate)
+> +{
+> +       struct clk_fractional_scale *fd = to_clk_sf(hw);
+> +       u64 ret, scale;
+> +
+> +       if (!rate || rate >= *parent_rate)
+> +               return *parent_rate;
+> +
+> +       /* freq = parent_rate * scaler / denom */
+> +       ret = rate * fd->denom;
 
-  - Fix interrupt line for ac100_codec in provided example.
+Can this overflow? No, because fd->denom is u64.
+But if fd->denom is changed to u32, it needs a cast to u64 here.
 
----
- Documentation/devicetree/bindings/mfd/ac100.txt | 49 +++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+> +       scale = ret / *parent_rate;
 
-diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
-new file mode 100644
-index 000000000000..31e6f9cc41bc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ac100.txt
-@@ -0,0 +1,49 @@
-+X-Powers AC100 Codec/RTC IC device tree bindings
-+
-+AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
-+separated, including power supplies and interrupt lines, but share
-+a common register address space and host interface.
-+
-+Required properties:
-+- compatible: "x-powers,ac100"
-+- reg: The I2C slave address or RSB hardware address for the chip
-+- sub-nodes:
-+  - codec
-+    - compatible: "x-powers,ac100-codec"
-+    - interrupt-parent: The parent interrupt controller
-+    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
-+    - #clock-cells: shall be 0
-+    - clock-output-names: "4M_adda"
-+    - see clock/clock-bindings.txt for common clock bindings
-+  - rtc
-+    - compatible: "x-powers,ac100-rtc"
-+    - interrupt-parent: The parent interrupt controller
-+    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
-+    - clocks: A phandle to the codec's "4M_adda" clock
-+    - #clock-cells: shall be 1
-+    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
-+    - see clock/clock-bindings.txt for common clock bindings
-+
-+Example:
-+
-+ac100: codec@e89 {
-+	compatible = "x-powers,ac100";
-+	reg = <0xe89>;
-+
-+	ac100_codec: codec {
-+		compatible = "x-powers,ac100-codec";
-+		interrupt-parent = <&r_pio>;
-+		interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
-+		#clock-cells = <0>;
-+		clock-output-names = "4M_adda";
-+	};
-+
-+	ac100_rtc: rtc {
-+		compatible = "x-powers,ac100-rtc";
-+		interrupt-parent = <&nmi_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&ac100_codec>;
-+		#clock-cells = <1>;
-+		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
-+	};
-+};
--- 
-2.8.1
+As detected by the kbuild test robot, this should use do_div().
+
+> +
+> +       ret = (u64) *parent_rate * scale;
+> +       do_div(ret, fd->denom);
+> +
+> +       return ret;
+> +}
+> +
+> +static int clk_fs_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                          unsigned long parent_rate)
+> +{
+> +       struct clk_fractional_scale *fd = to_clk_sf(hw);
+> +       unsigned long flags = 0;
+> +       u64 scale, ret;
+> +       u32 val;
+> +
+> +       /*
+> +        * Compute the scaler:
+> +        *
+> +        * freq = parent_rate * scaler / denom, or
+> +        * scaler = freq * denom / parent_rate
+> +        */
+> +       ret = rate * fd->denom;
+
+Can this overflow? No, because fd->denom is u64.
+But if fd->denom is changed to u32, it needs a cast to u64 here.
+
+> +       scale = ret / (u64)parent_rate;
+
+Don't cast the divider to u64, as this will turn a 64-by-32 division into a
+64-by-64 division.
+As detected by the kbuild test robot, this should use do_div().
+
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+
+> +struct clk_fractional_scale {
+> +       struct clk_hw   hw;
+> +       void __iomem    *reg;
+> +       u8              shift;
+> +       u32             mask;
+> +       u64             denom;
+
+u64 sounds overkill to me, but it looks like that was done to avoid overflow in
+the multiplications?
+
+> +       u32             flags;
+> +       spinlock_t      *lock;
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
