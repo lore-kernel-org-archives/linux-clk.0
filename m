@@ -1,126 +1,40 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Wed, 29 Jun 2016 21:57:09 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sboyd@codeaurora.org,
-	shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
-	anson.huang@nxp.com
-Subject: Re: [RESEND PATCH 3/8] clk: core: support clocks which requires
- parents on (part 1)
-Message-ID: <20160629135709.GA29919@shlinux2>
-References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
- <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
- <146681236249.35033.18209610320711572265@resonance>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <146681236249.35033.18209610320711572265@resonance>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
+ <576392B1.9040801@samsung.com> <5763905F.4020504@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Javier Martinez Canillas <javier@dowhile0.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <576394CC.7010101@samsung.com>
+Date: Fri, 17 Jun 2016 08:12:28 +0200
+MIME-version: 1.0
+In-reply-to: <5763905F.4020504@nvidia.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 24, 2016 at 04:52:42PM -0700, Michael Turquette wrote:
-> Quoting Dong Aisheng (2016-04-20 02:34:35)
-> > On Freescale i.MX7D platform, all clocks operations, including
-> > enable/disable, rate change and re-parent, requires its parent
-> > clock on. Current clock core can not support it well.
-> > This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
-> > special case in clock core that enable its parent clock firstly for
-> > each operation and disable it later after operation complete.
-> > 
-> > The patch part 1 fixes the possible disabling clocks while its parent
-> > is off during kernel booting phase in clk_disable_unused_subtree().
-> > 
-> > Before the completion of kernel booting, clock tree is still not built
-> > completely, there may be a case that the child clock is on but its
-> > parent is off which could be caused by either HW initial reset state
-> > or bootloader initialization.
-> > 
-> > Taking bootloader as an example, we may enable all clocks in HW by default.
-> > And during kernel booting time, the parent clock could be disabled in its
-> > driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
-> > Because it's child clock is only enabled in HW while its SW usecount
-> > in clock tree is still 0, so clk_disable of parent clock will gate
-> > the parent clock in both HW and SW usecount ultimately. Then there will
-> > be a child clock is still on in HW but its parent is already off.
-> > 
-> > Later in clk_disable_unused(), this clock disable accessing while its
-> > parent off will cause system hang due to the limitation of HW which
-> > must require its parent on.
-> > 
-> > This patch simply enables the parent clock first before disabling
-> > if flag CLK_OPS_PARENT_ON is set in clk_disable_unused_subtree().
-> > This is a simple solution and only affects booting time.
-> > 
-> > After kernel booting up the clock tree is already created, there will
-> > be no case that child is off but its parent is off.
-> > So no need do this checking for normal clk_disable() later.
-> > 
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> >  drivers/clk/clk.c            | 5 +++++
-> >  include/linux/clk-provider.h | 2 ++
-> >  2 files changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 9f944d4..1f054d1a 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
-> >         hlist_for_each_entry(child, &core->children, child_node)
-> >                 clk_disable_unused_subtree(child);
-> >  
-> > +       if (core->flags & CLK_OPS_PARENT_ON)
-> > +               clk_core_prepare_enable(core->parent);
-> > +
-> >         flags = clk_enable_lock();
-> >  
-> >         if (core->enable_count)
-> > @@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
-> >  
-> >  unlock_out:
-> >         clk_enable_unlock(flags);
-> > +       if (core->flags & CLK_OPS_PARENT_ON)
-> > +               clk_core_disable_unprepare(core->parent);
-> >  }
-> >  
-> >  static bool clk_ignore_unused;
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 15628644..c878f9c 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -33,6 +33,8 @@
-> >  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notifications */
-> >  #define CLK_SET_RATE_UNGATE    BIT(10) /* clock needs to run to set rate */
-> >  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
-> > +/* parents need on during gate/ungate, set rate and re-parent */
-> > +#define CLK_OPS_PARENT_ON      BIT(12)
+On 06/17/2016 07:53 AM, Laxman Dewangan wrote:
 > 
-> Hi Dong,
+> On Friday 17 June 2016 11:33 AM, Krzysztof Kozlowski wrote:
+>> On 06/16/2016 03:23 PM, Laxman Dewangan wrote:
+>>>   config COMMON_CLK_MAX77686
+>>> -    tristate "Clock driver for Maxim 77686/77802 MFD"
+>>> -    depends on MFD_MAX77686
+>>> +    tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
+>> You missed Javier's comment here. Just
+>> "Maxim 77686/77802/77620"
 > 
-> In the clk framework we use "enabled" instead of "on". How about
-> changing the flag to CLK_OPS_PARENT_ENABLE?
-> 
+> Sigh.. did not see this comment when going one by one.. really missed..
+> I will collect all Reviewed/ack/tested and will post V3 with fixing this.
 
-Yes, of course i'm fine with it.
-I could update the patch title too.
-Thanks for the review.
+No problem.
 
-Regards
-Dong Aisheng
+I think the device names could be in numerical order, so:
+Maxim 77620/77686/77802
 
-> Regards,
-> Mike
-> 
-> >  
-> >  struct clk;
-> >  struct clk_hw;
-> > -- 
-> > 1.9.1
-> > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
