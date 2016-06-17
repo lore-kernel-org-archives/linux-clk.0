@@ -1,61 +1,130 @@
-Return-Path: <stefan@agner.ch>
-In-Reply-To: <cdeb3e9b-92c5-77d9-78ec-3af3954e8e16@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com> <20160609151039.20817-3-bhuvanchandra.dv@toradex.com> <20160611140341.GT20243@tiger> <cdeb3e9b-92c5-77d9-78ec-3af3954e8e16@toradex.com>
+Return-Path: <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas
+	<javier@dowhile0.org>
+Subject: [PATCH V3 4/4] clk: max77686: Add support for MAX77620 clocks
+Date: Fri, 17 Jun 2016 16:21:07 +0530
+Message-ID: <1466160667-28451-5-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: ldewangan@nvidia.com
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Subject: Re: [PATCH 2/8] tty: serial: fsl_lpuart: support suspend/resume
-From: Stefan Agner <stefan@agner.ch>
-Date: Mon, 13 Jun 2016 19:42:10 -0700
-To: Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com>,Shawn Guo <shawnguo@kernel.org>
-CC: gregkh@linuxfoundation.org,linux-serial@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,linux-kernel@vger.kernel.org,kernel@pengutronix.de,jslaby@suse.com,linux-clk@vger.kernel.org,linux-arm-kernel@lists.infradead.org
-Message-ID: <AF70EE92-9B41-4ECE-AB5F-E829E611B7C6@agner.ch>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Maxim Max77620 has one 32KHz clock output and the clock HW
+IP used on this PMIC is same as what it is there in the MAX77686.
 
+Add clock driver support for MAX77620 on the MAX77686 driver.
 
-On June 13, 2016 5:18:19 PM PDT, Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com> wrote:
->Hi Shawn,
->
->On 06/11/2016 02:03 PM, Shawn Guo wrote:
->
->> On Thu, Jun 09, 2016 at 08:40:33PM +0530, Bhuvanchandra DV wrote:
->>> From: Stefan Agner <stefan@agner.ch>
->>>
->>> In order to allow wake support in STOP sleep mode, clocks are
->>> needed. Use imx_clk_gate2_cgr to disable automatic clock gating
->>> in low power mode STOP. This allows to enable wake by UART using:
->>> echo enabled > /sys/class/tty/ttyLP0/power/wakeup
->>>
->>> However, if wake is not enabled, the driver should disable the
->>> clocks explicitly to save power.
->>>
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>> ---
->>>   drivers/clk/imx/clk-vf610.c     | 12 ++++++------
->> Please send clock driver changes in a separate patch.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-The changes are dependet on each other, hence I put it in a single patch. But since it is a new feature it shouldn't really matter...
+---
+Changes from V1:
+- Updated based on changes done in first patch.
 
->
->How about splitting this patchset to two? few patches are having minor
->fixes and the few patches might need some review and discussions.
->May be some thing like DMA fixes and the other minor fixes.
+Changes from V2:
+- Collected RBs
+- Make uniformity on chip name like 77620/77686/77802 with sequences.
 
-I don't think that splitting up the patchset is necessary, with the current order it is possible to pick up the fixes independently...
+Changes from V2:
+- Collected RBs.
+- Nit fixes.
+---
+ drivers/clk/Kconfig        |  7 ++++---
+ drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
---
-Stefan
-
->
->--
->Bhuvan
->
->>
->> Shawn
->>
->>>   drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
->>>   2 files changed, 20 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 6afad74..936a443 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
+ source "drivers/clk/versatile/Kconfig"
+ 
+ config COMMON_CLK_MAX77686
+-	tristate "Clock driver for Maxim 77686/77802 MFD"
+-	depends on MFD_MAX77686
++	tristate "Clock driver for Maxim 77620/77686/77802 MFD"
++	depends on MFD_MAX77686 || MFD_MAX77620
+ 	---help---
+-	  This driver supports Maxim 77686/77802 crystal oscillator clock.
++	  This driver supports Maxim 77620/77686/77802 crystal oscillator
++	  clock.
+ 
+ config COMMON_CLK_RK808
+ 	tristate "Clock driver for RK808"
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 9aba3a8..19f6208 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -25,6 +25,7 @@
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/mfd/max77620.h>
+ #include <linux/mfd/max77686.h>
+ #include <linux/mfd/max77686-private.h>
+ #include <linux/clk-provider.h>
+@@ -35,12 +36,14 @@
+ 
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include <dt-bindings/clock/maxim,max77802.h>
++#include <dt-bindings/clock/maxim,max77620.h>
+ 
+ #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
+ 
+ enum max77686_chip_name {
+ 	CHIP_MAX77686,
+ 	CHIP_MAX77802,
++	CHIP_MAX77620,
+ };
+ 
+ struct max77686_hw_clk_info {
+@@ -97,6 +100,15 @@ max77686_hw_clk_info max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
+ 	},
+ };
+ 
++static const struct
++max77686_hw_clk_info max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
++	[MAX77620_CLK_32K_OUT0] = {
++		.name = "32khz_out0",
++		.clk_reg = MAX77620_REG_CNFG1_32K,
++		.clk_enable_mask = MAX77620_CNFG1_32K_OUT0_EN,
++	},
++};
++
+ static struct max77686_clk_init_data *to_max77686_clk_init_data(
+ 				struct clk_hw *hw)
+ {
+@@ -181,6 +193,11 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 		hw_clks = max77802_hw_clks_info;
+ 		break;
+ 
++	case CHIP_MAX77620:
++		num_clks = MAX77620_CLKS_NUM;
++		hw_clks = max77620_hw_clks_info;
++		break;
++
+ 	default:
+ 		dev_err(dev, "Unknown Chip ID\n");
+ 		return -EINVAL;
+@@ -284,6 +301,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
+ static const struct platform_device_id max77686_clk_id[] = {
+ 	{ "max77686-clk", .driver_data = CHIP_MAX77686, },
+ 	{ "max77802-clk", .driver_data = CHIP_MAX77802, },
++	{ "max77620-clock", .driver_data = CHIP_MAX77620, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(platform, max77686_clk_id);
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.1.4
