@@ -1,46 +1,32 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Thu, 30 Jun 2016 15:04:25 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, anson.huang@nxp.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, kbuild-all@01.org,
-	shawnguo@kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V2 4/8] clk: core: support clocks which requires parents
- enable (part 2)
-Message-ID: <20160630070425.GC29919@shlinux2>
-References: <1467212351-16626-5-git-send-email-aisheng.dong@nxp.com>
- <201606300015.zJJwBdRV%fengguang.wu@intel.com>
+Return-Path: <tomasz.figa@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <201606300015.zJJwBdRV%fengguang.wu@intel.com>
+In-Reply-To: <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com> <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Date: Sat, 18 Jun 2016 23:53:36 +0900
+Message-ID: <CA+Ln22FwQ_e5OHg_8WHEWGER=X8g_Yq+NpVLONgb0ZAShJLjzA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: samsung: cpu: prepare for adding Exynos5433 CPU clocks
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 12:42:21AM +0800, kbuild test robot wrote:
-> Hi,
-> 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v4.7-rc5 next-20160629]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Dong-Aisheng/clk-core-support-clocks-which-requires-parents-enable/20160629-231445
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: x86_64-randconfig-i0-201626 (attached as .config)
-> compiler: gcc-6 (Debian 6.1.1-1) 6.1.1 20160430
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    include/linux/export.h:94:25: note: in expansion of macro '___EXPORT_SYMBOL'
->     #define __EXPORT_SYMBOL ___EXPORT_SYMBOL
->                             ^~~~~~~~~~~~~~~~
+Hi Bart,
 
-Sorry, i somehow sent out a wrong re-based version.
-Will send out V3 to fix it.
+2016-05-24 22:19 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+> Exynos5433 uses different register layout for CPU clock registers
+> than earlier SoCs so add new code for handling this layout.  Also
+> add new CLK_CPU_HAS_E5433_REGS_LAYOUT flag to request using it.
 
-Regards
-Dong Aisheng
+Have you considered abstracting this? Comparing existing code with
+newly added one, the differences don't really seem to be that huge and
+it looks like there is more common code than different, except maybe
+some numeric constants that could be put into a struct.
+
+Best regards,
+Tomasz
