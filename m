@@ -1,55 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 18:48:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] clk: sunxi: introduce "modern" clock support
-Message-ID: <20160621014816.GT1521@codeaurora.org>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Sun, 19 Jun 2016 09:57:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
+	benjamin.gaignard@st.com, vincent.abriou@st.com,
+	gabriel.fernandez@st.com
+Subject: Re: [RESEND PATCH v2 01/13] drivers: clk: st: Remove stih415-416
+ clock support
+Message-ID: <20160619145704.GA25768@rob-hp-laptop>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1466068833-5055-2-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+In-Reply-To: <1466068833-5055-2-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07, Maxime Ripard wrote:
+On Thu, Jun 16, 2016 at 11:20:21AM +0200, Gabriel Fernandez wrote:
+> STiH415 and STiH416 platforms are no longer used.
+> these platforms will be deprecated for the next kernel.
 > 
-> The current code has been tested on the H3 and an Orange Pi PC,
-> including making sure that MMC still works, so the general approach
-> seems ok.
-> 
-> Let me know what you think,
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
+>  .../bindings/clock/st/st,clkgen-divmux.txt         |  49 --
+>  .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  18 +-
+>  .../devicetree/bindings/clock/st/st,clkgen-pll.txt |  26 +-
+>  .../bindings/clock/st/st,clkgen-prediv.txt         |  36 -
+>  .../devicetree/bindings/clock/st/st,clkgen-vcc.txt |  61 --
+>  .../devicetree/bindings/clock/st/st,clkgen.txt     |  54 +-
+>  .../devicetree/bindings/clock/st/st,quadfs.txt     |  27 +-
+>  drivers/clk/st/clkgen-fsyn.c                       | 260 --------
+>  drivers/clk/st/clkgen-mux.c                        | 726 +--------------------
+>  drivers/clk/st/clkgen-pll.c                        | 418 ------------
+>  10 files changed, 37 insertions(+), 1638 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-divmux.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-prediv.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-vcc.txt
 
-Overall this looks pretty good. Thanks for taking the time to
-rework the driver.
-
-The macro nesting is sort of concerning, but if you're willing to
-live with a maze of macros I'm not too worried. Also, I don't see
-why we have to use the ccu_common structure everywhere even when
-we're not gaining from it, but it's not a huge problem either
-way. The non-mmio clks could be split off from the mmio list and
-then registered in two lists, or there could be mmio list that
-sets up the base address and then a larger list of clk_hw
-pointers that we just run through and register.
-
-It would be great if we could squeeze some more code reuse out of
-the basic types too, but I'm not sure if there's much more that
-can be done. Sometimes I'm seeing the same code multiple times
-for handling muxes with parents and dividers or muxes without
-dividers, etc. But that seems like future work that isn't going
-to block anything here.
-
-Finally, can you please use the clk_hw_register() APIs that we've
-recently added. That will save us some time converting a new
-driver over to use the new style of registering clks.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
