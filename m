@@ -1,43 +1,39 @@
-Return-Path: <moinejf@free.fr>
-Date: Fri, 1 Jul 2016 07:37:10 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: =?UTF-8?B?T25kxZllag==?= Jirman <megous@megous.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Rutland
- <mark.rutland@arm.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, dev@linux-sunxi.org, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, open list
- <linux-kernel@vger.kernel.org>, Emilio =?UTF-8?B?TMOzcGV6?=
- <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>, Rob Herring
- <robh+dt@kernel.org>, "open list:COMMON CLK FRAMEWORK"
- <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
- application method
-Message-Id: <20160701073710.1a1fc684ae448577bad5b0db@free.fr>
-In-Reply-To: <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
-References: <20160625034511.7966-1-megous@megous.com>
-	<20160625034511.7966-7-megous@megous.com>
-	<20160630204001.GC5485@lukather>
-	<0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
-Mime-Version: 1.0
+Return-Path: <tomasz.figa@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160619055921.GA424@jack.zhora.eu>
+References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
+ <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com> <20160619055921.GA424@jack.zhora.eu>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Date: Sun, 19 Jun 2016 22:44:20 +0900
+Message-ID: <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag
+ for SPI3 related clocks
+To: Andi Shyti <andi@etezian.org>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 1 Jul 2016 02:50:57 +0200
-Ondřej Jirman <megous@megous.com> wrote:
+2016-06-19 14:59 GMT+09:00 Andi Shyti <andi@etezian.org>:
+> Hi Tomasz,
+>
+>> > The SPI 3 bus uses two clocks, a bus clock and an input clock.
+>> > Do not disable the clocks when unused in order to allow access to
+>> > the SPI 3 device.
+>>
+>> If unused, why would access to SPI 3 device needed?
+>
+> because next I will submit a small driver which uses the SPI3.
+> Actually in the exynos5433 boards all the SPI are used but not all
+> the drivers are ported to mainline.
 
-> > Since this is really specific, I guess you could simply make the
-> > clk_ops for the nkmp clocks public, and just re-implement set_rate
-> > using that logic.
-> 
-> I would argue that this may be necessary for other PLL clocks too, if
-> you can get out of bounds output frequency, by changing the dividers too
-> early or too late. So perhaps this code should be generalized for other
-> PLL clocks too, instead.
+Then shouldn't the driver request the clocks and enable them? Or I'm
+missing something obvious? :)
 
-The documentation says that only the CPU and DDR PLLs can be dynamically
-changed after boot.
-
--- 
-Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Best regards,
+Tomasz
