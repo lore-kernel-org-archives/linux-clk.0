@@ -1,76 +1,92 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Sun, 19 Jun 2016 10:04:58 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
+	benjamin.gaignard@st.com, vincent.abriou@st.com,
+	gabriel.fernandez@st.com
+Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding
+ of STiH4xx platforms
+Message-ID: <20160619150458.GA26824@rob-hp-laptop>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- "Rob Herring" <robh+dt@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Daniel Vetter" <daniel.vetter@intel.com>, "David Airlie" <airlied@linux.ie>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
-Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
-Message-ID: <20160617230533.27203.82622@quark.deferred.io>
-Subject: Re: [PATCH 01/20] clk: fixed-factor: Pass clk rates change to the parent
-Date: Fri, 17 Jun 2016 16:05:33 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2016-05-16 05:47:01)
-> A fixed factor clock, if it needs to change its rate, by definition do not
-> have any choice but to modify its parent rate.
+On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
+> This patch reworks the clock binding to avoid too much detail in DT.
+> Now we have only compatible string per type of clock
+> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
+>
 
-Logically it makes sense to always propagate the rate-change request up
-to the parent for a fixed-factor clock if we desire to change its rate.
-However, I wonder if doing this for all users of fixed-factor-clock in
-DT is safe? Some users may be counting on it not changing.
-
-There are 397 instances of fixed-factor-clock in .dts[i] today, so this
-change worries me a bit.
-
-> =
-
-> Add the CLK_SET_RATE_PARENT flag to that clock so that it can happen
-> =
-
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+I have no idea what the clock trees and clock controller in these chips 
+look like, so it's hard to say if the changes here are good. It still 
+looks like things are somewhat fine grained clocks in DT. I'll leave 
+it up to the platform maintainers to decide...
+ 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 > ---
->  drivers/clk/clk-fixed-factor.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> =
+>  .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  2 +-
+>  .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
+>  .../devicetree/bindings/clock/st/st,clkgen.txt     |  2 +-
+>  .../devicetree/bindings/clock/st/st,quadfs.txt     |  6 +--
+>  drivers/clk/st/clkgen-fsyn.c                       | 41 ++++++--------
+>  drivers/clk/st/clkgen-mux.c                        | 28 ++++------
+>  drivers/clk/st/clkgen-pll.c                        | 62 ++++++++++------------
+>  7 files changed, 65 insertions(+), 87 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+> index 4d277d6..9a46cb1d7 100644
+> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
+>  Required properties:
+>  
+>  - compatible : shall be:
+> -	"st,stih407-clkgen-a9-mux",	"st,clkgen-mux"
+> +	"st,stih407-clkgen-a9-mux"
+>  
+>  - #clock-cells : from common clock binding; shall be set to 0.
+>  
+> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+> index c9fd674..be0b043 100644
+> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+> @@ -9,11 +9,10 @@ Base address is located to the parent node. See clock binding[2]
+>  Required properties:
+>  
+>  - compatible : shall be:
+> -	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
+> -	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+> -	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
+> -	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
+> -	"st,stih418-plls-c28-a9",	"st,clkgen-plls-c32"
 
-> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
-r.c
-> index 75cd6c792cb8..3363abd9b4ae 100644
-> --- a/drivers/clk/clk-fixed-factor.c
-> +++ b/drivers/clk/clk-fixed-factor.c
-> @@ -167,7 +167,8 @@ void __init of_fixed_factor_clk_setup(struct device_n=
-ode *node)
->         of_property_read_string(node, "clock-output-names", &clk_name);
->         parent_name =3D of_clk_get_parent_name(node, 0);
->  =
+> +	"st,clkgen-pll0"
+> +	"st,clkgen-pll0"
 
-> -       clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
-> +       clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name,
-> +                                       CLK_SET_RATE_PARENT,
+Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
 
-An alternative would be to pass in the flags you want, somehow. For the
-clock you are trying to fix, is it inside of the SoC or external? If it
-is internal, and part of a larger clock controller driver, is this for
-the legacy style allwinner clock drivers that put everything in DT? If
-not, it would better to initialize it statically and shove this flag
-into the struct clk_init_data storage.
-
-Regards,
-Mike
-
->                                         mult, div);
->         if (!IS_ERR(clk))
->                 of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> -- =
-
-> 2.8.2
->=20
+> +	"st,stih407-clkgen-plla9"
+> +	"st,stih418-clkgen-plla9"
