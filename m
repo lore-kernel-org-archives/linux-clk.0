@@ -1,197 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH v2 3/5] clk: hisilicon: add error processing for hisi_clk_register_* functions
-Date: Wed, 15 Jun 2016 14:26:36 +0800
-Message-ID: <1465971998-29619-4-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH] clk: Fix return value check in oxnas_stdclk_probe()
+To: weiyj_lk@163.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1466184263-17890-1-git-send-email-weiyj_lk@163.com>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <5767BF8A.6080204@baylibre.com>
+Date: Mon, 20 Jun 2016 12:03:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1466184263-17890-1-git-send-email-weiyj_lk@163.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add error processing for hisi_clk_register_* functions.
+On 06/17/2016 07:24 PM, weiyj_lk@163.com wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> 
+> In case of error, the function syscon_node_to_regmap() returns
+> ERR_PTR() and never returns NULL. The NULL test in the return
+> value check should be replaced with IS_ERR().
+> 
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> ---
+>  drivers/clk/clk-oxnas.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+> index efba7d4..79bcb2e 100644
+> --- a/drivers/clk/clk-oxnas.c
+> +++ b/drivers/clk/clk-oxnas.c
+> @@ -144,9 +144,9 @@ static int oxnas_stdclk_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	regmap = syscon_node_to_regmap(of_get_parent(np));
+> -	if (!regmap) {
+> +	if (IS_ERR(regmap)) {
+>  		dev_err(&pdev->dev, "failed to have parent regmap\n");
+> -		return -EINVAL;
+> +		return PTR_ERR(regmap);
+>  	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
+> 
+> 
+> 
+Correct.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
----
- drivers/clk/hisilicon/clk.c | 60 +++++++++++++++++++++++++++++++++++++--------
- drivers/clk/hisilicon/clk.h | 10 ++++----
- 2 files changed, 55 insertions(+), 15 deletions(-)
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 78675d1..9ba2d91 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -102,7 +102,7 @@ err:
- }
- EXPORT_SYMBOL_GPL(hisi_clk_init);
- 
--void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
-+int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
- 					 int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -116,14 +116,22 @@ void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_fixed_rate(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_rate);
- 
--void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
-+int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
- 					   int nums,
- 					   struct hisi_clock_data *data)
- {
-@@ -138,14 +146,22 @@ void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_fixed_factor(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_fixed_factor);
- 
--void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
-+int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 				  int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -164,7 +180,7 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -172,10 +188,18 @@ void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_mux(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
- 
--void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
-+int hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 				      int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -194,7 +218,7 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -202,10 +226,18 @@ void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_divider(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_divider);
- 
--void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
-+int hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 				       int nums, struct hisi_clock_data *data)
- {
- 	struct clk *clk;
-@@ -223,7 +255,7 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n",
- 			       __func__, clks[i].name);
--			continue;
-+			goto err;
- 		}
- 
- 		if (clks[i].alias)
-@@ -231,6 +263,14 @@ void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
- 
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		clk_unregister_gate(data->clk_data.clks[clks[i].id]);
-+
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL_GPL(hisi_clk_register_gate);
- 
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 5fc644f..2575329 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -114,15 +114,15 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 
- struct hisi_clock_data *hisi_clk_alloc(struct platform_device *, int);
- struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
--void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
-+int hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
-+int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
-+int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
- 				struct hisi_clock_data *);
--void hisi_clk_register_divider(const struct hisi_divider_clock *,
-+int hisi_clk_register_divider(const struct hisi_divider_clock *,
- 				int, struct hisi_clock_data *);
--void hisi_clk_register_gate(const struct hisi_gate_clock *,
-+int hisi_clk_register_gate(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
--- 
-1.9.1
+Thanks,
+Neil
