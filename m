@@ -1,41 +1,83 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag
- and
-To: Chanwoo Choi <cw00.choi@samsung.com>
-References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- kgene@kernel.org, k.kozlowski@samsung.com, jh80.chung@samsung.com,
- jonghwa3.lee@samsung.com, beomho.seo@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <575A967B.9080209@samsung.com>
-Date: Fri, 10 Jun 2016 12:29:15 +0200
-MIME-version: 1.0
-In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	s.hauer@pengutronix.de,
+	jeremy.kerr@canonical.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v2 1/3] clk: Add new function of_clk_is_provider()
+Date: Mon, 20 Jun 2016 15:43:36 +0200
+Message-Id: <1466430218-6561-2-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/10/2016 06:56 AM, Chanwoo Choi wrote:
-> This patch-set add the CLK_IGNORE_UNUSED flag to the specific clocks because
-> the specific clocks should remain the enable state. This patch-set support the
-> PCIE (PCI Express), serial3(AUD Uart) device and fix the hang issue for
-> suspend-to-ram.
-> 
-> Beomho Seo (1):
->   clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag for AUD Uart
-> 
-> Jaehoon Chung (1):
->   clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to PCIE device
-> 
-> Jonghwa Lee (1):
->   clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks occurring hang at sleep
+of_clk_is_provider() checks if a device_node has already been added to
+the clk provider list. This can be used to avoid adding the same clock
+provider twice.
 
-I applied these patches, after slightly editing the descriptions.
-I also tested with the audio subsystem patches on top of 4.7-rc1 tree
-and with AUD UART enabled. Everything seems to be working fine, there
-was no any "external abort" exceptions.
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/clk.c            | 20 ++++++++++++++++++++
+ include/linux/clk-provider.h |  5 +++++
+ 2 files changed, 25 insertions(+)
 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d584004f7af7..2423c6373906 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3120,6 +3120,26 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
+ 	return hw;
+ }
+ 
++/**
++ * of_clk_is_provider() - Reports if a device node is already a clk provider
++ * @np: Device node pointer under test
++ */
++bool of_clk_is_provider(struct device_node *np)
++{
++	struct of_clk_provider *cp;
++
++	mutex_lock(&of_clk_mutex);
++	list_for_each_entry(cp, &of_clk_providers, link) {
++		if (cp->node == np) {
++			mutex_unlock(&of_clk_mutex);
++			return true;
++		}
++	}
++	mutex_unlock(&of_clk_mutex);
++	return false;
++}
++EXPORT_SYMBOL_GPL(of_clk_is_provider);
++
+ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ 				       const char *dev_id, const char *con_id)
+ {
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index fb39d5add173..a01b18797418 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -787,6 +787,7 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 						 void *data),
+ 			   void *data);
+ void of_clk_del_provider(struct device_node *np);
++bool of_clk_is_provider(struct device_node *np);
+ struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
+ 				  void *data);
+ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
+@@ -819,6 +820,10 @@ static inline int of_clk_add_hw_provider(struct device_node *np,
+ 	return 0;
+ }
+ static inline void of_clk_del_provider(struct device_node *np) {}
++static inline bool of_clk_is_provider(struct device_node *np)
++{
++	return false;
++}
+ static inline struct clk *of_clk_src_simple_get(
+ 	struct of_phandle_args *clkspec, void *data)
+ {
 -- 
-Thanks,
-Sylwester
+2.8.1
