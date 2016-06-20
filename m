@@ -1,223 +1,457 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
-CC: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, "Stephen
- Warren" <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Andrew
- Bresticker" <abrestic@chromium.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5763FFF5.5000303@nvidia.com>
-Date: Fri, 17 Jun 2016 14:49:41 +0100
-MIME-Version: 1.0
-In-Reply-To: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 4/8] rtc: ac100: Add RTC driver for X-Powers AC100
+Date: Mon, 20 Jun 2016 10:52:14 +0800
+Message-Id: <1466391138-12862-5-git-send-email-wens@csie.org>
+In-Reply-To: <1466391138-12862-1-git-send-email-wens@csie.org>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Thierry,
+X-Powers AC100 is a codec / RTC combo chip. This driver supports
+the RTC sub-device.
 
-On 26/05/16 17:41, Rhyland Klein wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
-> 
-> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
-> clk-pll.c. UTMIPLL was being configured and set in HW control right
-> after registration. However, when the clock init_table is processed and
-> child clks of PLLU are enabled, it will call in and enable PLLU as
-> well, and initiate SW enabling sequence even though PLLU is already in
-> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
-> 
-> Doing the initialization once during pllu_enable means we configure it
-> properly into HW control.
-> 
-> A side effect of the commonization/localization of the UTMIPLL init
-> code, is that it corrects some errors that were present for earlier
-> generations. For instance, in clk-tegra124.c, it used to have:
-> 
-> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
-> 
-> when the correct shift to use is present in the new version:
-> 
-> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
-> 
-> which matches the Tegra124 TRM register definition.
-> 
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> 
-> [rklein: Merged in some later fixes for potential deadlocks]
-> 
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
-> v5:
->  - Initialized flags to 0 to avoid harmless spinlock warnings
-> 
-> v4:
->  - Re-added examples in patch description
-> 
-> v3:
->  - Flushed out description to describe this patch.
-> 
->  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->  drivers/clk/tegra/clk.h          |  17 ++
->  6 files changed, 510 insertions(+), 597 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 4e194ecc8d5e..31e20110fae4 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
+The RTC block also has clock outputs and non-volatile storage.
+Non-volatile storage wthin the RTC hardware is not supported.
+Clock output support is added in the next patch.
 
-...
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+Changes since v2:
 
-> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
-> +{
-> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
-> +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
-> +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
-> +	unsigned long flags = 0, input_rate;
-> +	unsigned int i;
-> +	int ret = 0;
-> +	u32 val;
-> +
-> +	if (!osc) {
-> +		pr_err("%s: failed to get OSC clock\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +	input_rate = clk_hw_get_rate(osc);
-> +
-> +	if (pll->lock)
-> +		spin_lock_irqsave(pll->lock, flags);
-> +
-> +	_clk_pll_enable(hw);
-> +	ret = clk_pll_wait_for_lock(pll);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
-> +		if (input_rate == utmi_parameters[i].osc_frequency)
-> +			break;
-> +	}
-> +
-> +	if (i == ARRAY_SIZE(utmi_parameters)) {
-> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	val = pll_readl_base(pll);
-> +	val &= ~PLLU_BASE_OVERRIDE;
-> +	pll_writel_base(val, pll);
-> +
-> +	/* Put PLLU under HW control */
-> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
-> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
-> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
-> +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
-> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
-> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> +
-> +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
-> +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
-> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
-> +	udelay(1);
-> +
-> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
-> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> +	udelay(1);
-> +
-> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
-> +	val = pll_readl_base(pll);
-> +	val &= ~PLLU_BASE_CLKENABLE_USB;
-> +	pll_writel_base(val, pll);
-> +
-> +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
-> +		pr_debug("UTMIPLL already enabled\n");
-> +		goto out;
-> +	}
-> +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
-> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> +
-> +	/* Program UTMIP PLL stable and active counts */
-> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
-> +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
-> +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
-> +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
-> +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
-> +			utmi_parameters[i].active_delay_count);
-> +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
-> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
-> +
-> +	/* Program UTMIP PLL delay and oscillator frequency counts */
-> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
-> +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
-> +		utmi_parameters[i].enable_delay_count);
-> +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
-> +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
-> +		utmi_parameters[i].xtal_freq_count);
-> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> +
-> +	/* Remove power downs from UTMIP PLL control bits */
-> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
-> +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
-> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> +	udelay(100);
+  - Fixed off-by-1 errors in register mask macros
+  - Fixed copy-paste error in set_alarm function
+  - Drop uie_unsupported, since the alarm works now
+  - Fixed up copyright notice
+  - Changed license to GPL v2, matching mfd driver
 
-In next-20160617 I see that this udelay is now a usleep_range(100, 200)
-and this is causing the following splat when the clock is enabled. I
-don't think that we can use usleep here ...
+---
+ drivers/rtc/Kconfig     |  10 ++
+ drivers/rtc/Makefile    |   1 +
+ drivers/rtc/rtc-ac100.c | 365 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 376 insertions(+)
+ create mode 100644 drivers/rtc/rtc-ac100.c
 
-[    0.224571] BUG: scheduling while atomic: swapper/0/1/0x00000003
-[    0.224583] Modules linked in:
-[    0.224597] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 4.7.0-rc3-next-20160617+ #277
-[    0.224613] Hardware name: Google Pixel C (DT)
-[    0.224623] Call trace:
-[    0.224640] [<ffff0000080888b0>] dump_backtrace+0x0/0x1ac
-[    0.224653] [<ffff000008088a70>] show_stack+0x14/0x1c
-[    0.224669] [<ffff00000834a984>] dump_stack+0x8c/0xb0
-[    0.224683] [<ffff00000814db30>] __schedule_bug+0x3c/0x50
-[    0.224698] [<ffff0000087cd80c>] __schedule+0x470/0x56c
-[    0.224708] [<ffff0000087cd948>] schedule+0x40/0xa4
-[    0.224720] [<ffff0000087d0a14>] schedule_hrtimeout_range_clock+0x84/0xf0
-[    0.224731] [<ffff0000087d0a90>] schedule_hrtimeout_range+0x10/0x18
-[    0.224743] [<ffff0000087d05c8>] usleep_range+0x3c/0x44
-[    0.224756] [<ffff0000086b25a4>] clk_pllu_tegra210_enable+0x200/0x2a8
-[    0.224770] [<ffff000008698ef4>] clk_core_enable+0x5c/0x94
-[    0.224780] [<ffff000008698edc>] clk_core_enable+0x44/0x94
-[    0.224791] [<ffff000008698edc>] clk_core_enable+0x44/0x94
-[    0.224801] [<ffff000008698edc>] clk_core_enable+0x44/0x94
-[    0.224812] [<ffff0000086991b8>] clk_enable+0x24/0x40
-[    0.224825] [<ffff00000842dd60>] tegra_powergate_enable_clocks.isra.6+0x90/0xd0
-[    0.224840] [<ffff00000842e230>] tegra_powergate_power_up+0xa4/0x144
-[    0.224851] [<ffff00000842ec40>] tegra_pmc_probe+0x6e0/0x8ec
-[    0.224865] [<ffff0000084a72f4>] platform_drv_probe+0x50/0xbc
-[    0.224879] [<ffff0000084a56fc>] driver_probe_device+0x1fc/0x29c
-[    0.224890] [<ffff0000084a5840>] __driver_attach+0xa4/0xa8
-[    0.224902] [<ffff0000084a3824>] bus_for_each_dev+0x58/0x98
-[    0.224913] [<ffff0000084a5028>] driver_attach+0x20/0x28
-[    0.224924] [<ffff0000084a4c48>] bus_add_driver+0x1c8/0x22c
-[    0.224935] [<ffff0000084a60d8>] driver_register+0x68/0x108
-[    0.224945] [<ffff0000084a7238>] __platform_driver_register+0x48/0x50
-[    0.224960] [<ffff000008b37a30>] tegra_pmc_driver_init+0x18/0x20
-[    0.224971] [<ffff000008081a54>] do_one_initcall+0x38/0x12c
-[    0.224985] [<ffff000008b10ce0>] kernel_init_freeable+0x148/0x1ec
-[    0.224997] [<ffff0000087caf98>] kernel_init+0x10/0x100
-[    0.225008] [<ffff000008084e10>] ret_from_fork+0x10/0x40
-
-Note the above is from some testing I am doing with adding power-domains for
-XUSB in my local branch so you may not see the exact same dump in the mainline.
-
-Cheers
-Jon
-
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 18639e0cb6e2..b9d7cbb6bd76 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -183,6 +183,16 @@ config RTC_DRV_ABX80X
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rtc-abx80x.
+ 
++config RTC_DRV_AC100
++	tristate "X-Powers AC100"
++	depends on MFD_AC100
++	help
++	  If you say yes here you get support for the real-time clock found
++	  in X-Powers AC100 family peripheral ICs.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called rtc-ac100.
++
+ config RTC_DRV_AS3722
+ 	tristate "ams AS3722 RTC driver"
+ 	depends on MFD_AS3722
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index ea2833723fa9..b07c28779573 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_RTC_DRV_AB3100)	+= rtc-ab3100.o
+ obj-$(CONFIG_RTC_DRV_AB8500)	+= rtc-ab8500.o
+ obj-$(CONFIG_RTC_DRV_ABB5ZES3)	+= rtc-ab-b5ze-s3.o
+ obj-$(CONFIG_RTC_DRV_ABX80X)	+= rtc-abx80x.o
++obj-$(CONFIG_RTC_DRV_AC100)	+= rtc-ac100.o
+ obj-$(CONFIG_RTC_DRV_ARMADA38X)	+= rtc-armada38x.o
+ obj-$(CONFIG_RTC_DRV_AS3722)	+= rtc-as3722.o
+ obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
+diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+new file mode 100644
+index 000000000000..752bc0771d71
+--- /dev/null
++++ b/drivers/rtc/rtc-ac100.c
+@@ -0,0 +1,365 @@
++/*
++ * RTC Driver for X-Powers AC100
++ *
++ * Copyright (c) 2016 Chen-Yu Tsai
++ *
++ * Chen-Yu Tsai <wens@csie.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/bcd.h>
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/mfd/ac100.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/rtc.h>
++#include <linux/types.h>
++
++/* Control register */
++#define AC100_RTC_CTRL_24HOUR	BIT(0)
++
++/* RTC */
++#define AC100_RTC_SEC_MASK	GENMASK(6, 0)
++#define AC100_RTC_MIN_MASK	GENMASK(6, 0)
++#define AC100_RTC_HOU_MASK	GENMASK(5, 0)
++#define AC100_RTC_WEE_MASK	GENMASK(2, 0)
++#define AC100_RTC_DAY_MASK	GENMASK(5, 0)
++#define AC100_RTC_MON_MASK	GENMASK(4, 0)
++#define AC100_RTC_YEA_MASK	GENMASK(7, 0)
++#define AC100_RTC_YEA_LEAP	BIT(15)
++#define AC100_RTC_UPD_TRIGGER	BIT(15)
++
++/* Alarm (wall clock) */
++#define AC100_ALM_INT_ENABLE	BIT(0)
++
++#define AC100_ALM_SEC_MASK	GENMASK(6, 0)
++#define AC100_ALM_MIN_MASK	GENMASK(6, 0)
++#define AC100_ALM_HOU_MASK	GENMASK(5, 0)
++#define AC100_ALM_WEE_MASK	GENMASK(2, 0)
++#define AC100_ALM_DAY_MASK	GENMASK(5, 0)
++#define AC100_ALM_MON_MASK	GENMASK(4, 0)
++#define AC100_ALM_YEA_MASK	GENMASK(7, 0)
++#define AC100_ALM_ENABLE_FLAG	BIT(15)
++#define AC100_ALM_UPD_TRIGGER	BIT(15)
++
++/*
++ * The year parameter passed to the driver is usually an offset relative to
++ * the year 1900. This macro is used to convert this offset to another one
++ * relative to the minimum year allowed by the hardware.
++ *
++ * The year range is 1970 - 2069. This range is selected to match Allwinner's
++ * driver.
++ */
++#define AC100_YEAR_MIN				1970
++#define AC100_YEAR_MAX				2069
++#define AC100_YEAR_OFF				(AC100_YEAR_MIN - 1900)
++
++struct ac100_rtc_dev {
++	struct rtc_device *rtc;
++	struct device *dev;
++	struct regmap *regmap;
++	struct mutex mutex;
++	int irq;
++	unsigned long alarm;
++};
++
++static int ac100_rtc_get_time(struct device *dev, struct rtc_time *rtc_tm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	u16 reg[7];
++	int ret;
++
++	ret = regmap_bulk_read(regmap, AC100_RTC_SEC, reg, 7);
++	if (ret)
++		return ret;
++
++	rtc_tm->tm_sec  = bcd2bin(reg[0] & AC100_RTC_SEC_MASK);
++	rtc_tm->tm_min  = bcd2bin(reg[1] & AC100_RTC_MIN_MASK);
++	rtc_tm->tm_hour = bcd2bin(reg[2] & AC100_RTC_HOU_MASK);
++	rtc_tm->tm_wday = bcd2bin(reg[3] & AC100_RTC_WEE_MASK);
++	rtc_tm->tm_mday = bcd2bin(reg[4] & AC100_RTC_DAY_MASK);
++	rtc_tm->tm_mon  = bcd2bin(reg[5] & AC100_RTC_MON_MASK);
++	rtc_tm->tm_year = bcd2bin(reg[6] & AC100_RTC_YEA_MASK);
++
++	rtc_tm->tm_mon  -= 1;
++
++	/*
++	 * switch from (data_year->min)-relative offset to
++	 * a (1900)-relative one
++	 */
++	rtc_tm->tm_year += AC100_YEAR_OFF;
++
++	return rtc_valid_tm(rtc_tm);
++}
++
++static int ac100_rtc_set_time(struct device *dev, struct rtc_time *rtc_tm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	int year;
++	u16 reg[8];
++
++	/* our RTC has a limited year range... */
++	year = rtc_tm->tm_year + 1900;
++	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
++		dev_err(dev, "rtc only supports year in range %d - %d\n",
++			AC100_YEAR_MIN, AC100_YEAR_MAX);
++		return -EINVAL;
++	}
++
++	/* correct offsets */
++	rtc_tm->tm_year -= AC100_YEAR_OFF;
++	rtc_tm->tm_mon += 1;
++
++	/* convert to BCD */
++	reg[0] = bin2bcd(rtc_tm->tm_sec)  & AC100_RTC_SEC_MASK;
++	reg[1] = bin2bcd(rtc_tm->tm_min)  & AC100_RTC_MIN_MASK;
++	reg[2] = bin2bcd(rtc_tm->tm_hour) & AC100_RTC_HOU_MASK;
++	reg[3] = bin2bcd(rtc_tm->tm_wday) & AC100_RTC_WEE_MASK;
++	reg[4] = bin2bcd(rtc_tm->tm_mday) & AC100_RTC_DAY_MASK;
++	reg[5] = bin2bcd(rtc_tm->tm_mon)  & AC100_RTC_MON_MASK;
++	reg[6] = bin2bcd(rtc_tm->tm_year) & AC100_RTC_YEA_MASK;
++	/* trigger write */
++	reg[7] = AC100_RTC_UPD_TRIGGER;
++
++	/* Is it a leap year? */
++	if (is_leap_year(year))
++		reg[6] |= AC100_RTC_YEA_LEAP;
++
++	return regmap_bulk_write(regmap, AC100_RTC_SEC, reg, 8);
++}
++
++static int _ac100_rtc_alarm_irq_enable(struct ac100_rtc_dev *chip,
++				       unsigned int en)
++{
++	struct regmap *regmap = chip->regmap;
++	unsigned int val;
++
++	val = en ? AC100_ALM_INT_ENABLE : 0;
++
++	return regmap_write(regmap, AC100_ALM_INT_ENA, val);
++}
++
++static int ac100_rtc_alarm_irq_enable(struct device *dev, unsigned int en)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	int ret;
++
++	mutex_lock(&chip->mutex);
++	ret = _ac100_rtc_alarm_irq_enable(chip, en);
++	mutex_unlock(&chip->mutex);
++
++	return ret;
++}
++
++static int ac100_rtc_get_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	struct rtc_time *alrm_tm = &alrm->time;
++	u16 reg[7];
++	unsigned int val;
++	int ret;
++
++	mutex_lock(&chip->mutex);
++
++	ret = regmap_read(regmap, AC100_ALM_INT_ENA, &val);
++	if (ret)
++		goto out;
++
++	alrm->enabled = !!(val & AC100_ALM_INT_ENABLE);
++
++	ret = regmap_bulk_read(regmap, AC100_ALM_SEC, reg, 7);
++	if (ret)
++		goto out;
++
++	alrm_tm->tm_sec  = bcd2bin(reg[0] & AC100_ALM_SEC_MASK);
++	alrm_tm->tm_min  = bcd2bin(reg[1] & AC100_ALM_MIN_MASK);
++	alrm_tm->tm_hour = bcd2bin(reg[2] & AC100_ALM_HOU_MASK);
++	alrm_tm->tm_wday = bcd2bin(reg[3] & AC100_ALM_WEE_MASK);
++	alrm_tm->tm_mday = bcd2bin(reg[4] & AC100_ALM_DAY_MASK);
++	alrm_tm->tm_mon  = bcd2bin(reg[5] & AC100_ALM_MON_MASK);
++	alrm_tm->tm_year = bcd2bin(reg[6] & AC100_ALM_YEA_MASK);
++
++	alrm_tm->tm_mon  -= 1;
++
++	/*
++	 * switch from (data_year->min)-relative offset to
++	 * a (1900)-relative one
++	 */
++	alrm_tm->tm_year += AC100_YEAR_OFF;
++
++out:
++	mutex_unlock(&chip->mutex);
++	return ret;
++}
++
++static int ac100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	struct rtc_time *alrm_tm = &alrm->time;
++	u16 reg[8];
++	int year;
++	int ret;
++
++	/* our alarm has a limited year range... */
++	year = alrm_tm->tm_year + 1900;
++	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
++		dev_err(dev, "alarm only supports year in range %d - %d\n",
++			AC100_YEAR_MIN, AC100_YEAR_MAX);
++		return -EINVAL;
++	}
++
++	/* correct offsets */
++	alrm_tm->tm_year -= AC100_YEAR_OFF;
++	alrm_tm->tm_mon += 1;
++
++	/* convert to BCD */
++	reg[0] = (bin2bcd(alrm_tm->tm_sec)  & AC100_ALM_SEC_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[1] = (bin2bcd(alrm_tm->tm_min)  & AC100_ALM_MIN_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[2] = (bin2bcd(alrm_tm->tm_hour) & AC100_ALM_HOU_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	/* Do not enable weekday alarm */
++	reg[3] = bin2bcd(alrm_tm->tm_wday) & AC100_ALM_WEE_MASK;
++	reg[4] = (bin2bcd(alrm_tm->tm_mday) & AC100_ALM_DAY_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[5] = (bin2bcd(alrm_tm->tm_mon)  & AC100_ALM_MON_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[6] = (bin2bcd(alrm_tm->tm_year) & AC100_ALM_YEA_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	/* trigger write */
++	reg[7] = AC100_ALM_UPD_TRIGGER;
++
++	mutex_lock(&chip->mutex);
++
++	ret = regmap_bulk_write(regmap, AC100_ALM_SEC, reg, 8);
++	if (ret)
++		goto out;
++
++	ret = _ac100_rtc_alarm_irq_enable(chip, alrm->enabled);
++
++out:
++	mutex_unlock(&chip->mutex);
++	return ret;
++}
++
++static irqreturn_t ac100_rtc_irq(int irq, void *data)
++{
++	struct ac100_rtc_dev *chip = data;
++	struct regmap *regmap = chip->regmap;
++	unsigned int val = 0;
++	int ret;
++
++	mutex_lock(&chip->mutex);
++
++	/* read status */
++	ret = regmap_read(regmap, AC100_ALM_INT_STA, &val);
++	if (ret)
++		goto out;
++
++	if (val & AC100_ALM_INT_ENABLE) {
++		/* signal rtc framework */
++		rtc_update_irq(chip->rtc, 1, RTC_AF | RTC_IRQF);
++
++		/* clear status */
++		ret = regmap_write(regmap, AC100_ALM_INT_STA, val);
++		if (ret)
++			goto out;
++
++		/* disable interrupt */
++		ret = _ac100_rtc_alarm_irq_enable(chip, 0);
++		if (ret)
++			goto out;
++	}
++
++out:
++	mutex_unlock(&chip->mutex);
++	return IRQ_HANDLED;
++}
++
++static const struct rtc_class_ops ac100_rtc_ops = {
++	.read_time	  = ac100_rtc_get_time,
++	.set_time	  = ac100_rtc_set_time,
++	.read_alarm	  = ac100_rtc_get_alarm,
++	.set_alarm	  = ac100_rtc_set_alarm,
++	.alarm_irq_enable = ac100_rtc_alarm_irq_enable,
++};
++
++static int ac100_rtc_probe(struct platform_device *pdev)
++{
++	struct ac100_dev *ac100 = dev_get_drvdata(pdev->dev.parent);
++	struct ac100_rtc_dev *chip;
++	int ret;
++
++	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
++	platform_set_drvdata(pdev, chip);
++	chip->dev = &pdev->dev;
++	chip->regmap = ac100->regmap;
++	mutex_init(&chip->mutex);
++
++	chip->irq = of_irq_get(pdev->dev.of_node, 0);
++	if (chip->irq < 0) {
++		dev_err(&pdev->dev, "No IRQ resource\n");
++		return chip->irq;
++	}
++
++	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
++					ac100_rtc_irq,
++					IRQF_SHARED | IRQF_ONESHOT,
++					dev_name(&pdev->dev), chip);
++	if (ret) {
++		dev_err(&pdev->dev, "Could not request IRQ\n");
++		return ret;
++	}
++
++	/* always use 24 hour mode */
++	regmap_write_bits(chip->regmap, AC100_RTC_CTRL, AC100_RTC_CTRL_24HOUR,
++			  AC100_RTC_CTRL_24HOUR);
++
++	/* disable counter alarm interrupt */
++	regmap_write(chip->regmap, AC100_ALM_INT_ENA, 0);
++
++	/* clear counter alarm pending interrupts */
++	regmap_write(chip->regmap, AC100_ALM_INT_STA, AC100_ALM_INT_ENABLE);
++
++	chip->rtc = devm_rtc_device_register(&pdev->dev, "rtc-ac100",
++					     &ac100_rtc_ops, THIS_MODULE);
++	if (IS_ERR(chip->rtc)) {
++		dev_err(&pdev->dev, "unable to register device\n");
++		return PTR_ERR(chip->rtc);
++	}
++
++	dev_info(&pdev->dev, "RTC enabled\n");
++
++	return 0;
++}
++
++static struct platform_driver ac100_rtc_driver = {
++	.probe		= ac100_rtc_probe,
++	.driver		= {
++		.name		= "ac100-rtc",
++	},
++};
++module_platform_driver(ac100_rtc_driver);
++
++MODULE_DESCRIPTION("X-Powers AC100 RTC driver");
++MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
++MODULE_LICENSE("GPL v2");
 -- 
-nvpublic
+2.8.1
