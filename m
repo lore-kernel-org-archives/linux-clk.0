@@ -1,89 +1,62 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v9 10/10] arm: dts: mt2701: Use real clock for UARTs
-Date: Wed, 22 Jun 2016 15:40:29 +0800
-Message-ID: <1466581229-2342-11-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] clk: renesas: build clk-rcar-gen2.o for R8A7792
+To: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms+renesas@verge.net.au>,
+ Magnus Damm <damm+renesas@opensource.se>
+References: <20160620154341.2242033-1-arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <80e447e0-b220-6669-b5ea-be43f635f4d2@cogentembedded.com>
+Date: Mon, 20 Jun 2016 20:34:24 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+In-Reply-To: <20160620154341.2242033-1-arnd@arndb.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
+Hello.
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+On 06/20/2016 06:43 PM, Arnd Bergmann wrote:
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index c9a8dbf..7eab6f4 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -73,12 +73,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -186,7 +180,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -195,7 +190,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -204,7 +200,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -213,7 +210,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
--- 
-1.9.1
+> The newly added support for R8A7792 causes build failures
+> because we try to call rcar_gen2_clocks_init but that is not
+> built into the kernel:
+>
+> arch/arm/mach-shmobile/built-in.o: In function `rcar_gen2_timer_init':
+> :(.init.text+0x3b0): undefined reference to `rcar_gen2_clocks_init'
+>
+> This changes the clk Makefile to match the other platforms, though
+> I guess it would be better to find another way to do this, e.g.
+> by not requiring the external function call by relying on
+> CLK_OF_DECLARE(), or by making the ARCH_RCAR_GEN2 also control
+> the compilation of the clk driver.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 3ebee0adbfe7 ("ARM: shmobile: r8a7792: basic SoC support")
+> ---
+>  drivers/clk/renesas/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+> index ead8bb843524..3cdb9aaf8717 100644
+> --- a/drivers/clk/renesas/Makefile
+> +++ b/drivers/clk/renesas/Makefile
+> @@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+>  obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+>  obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+>  obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
+>  obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+>  obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+>  obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
+
+    It was in the very first patch that I submitted for this SoC:
+
+    http://marc.info/?t=146421262300001&r=1
+
+    It should be queued up by Geert.
+
+MBR, Sergei
