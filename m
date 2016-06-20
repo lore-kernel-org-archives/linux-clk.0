@@ -1,44 +1,50 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Thu, 30 Jun 2016 16:18:02 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v2 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-Message-id: <20160630071802.GB10787@samsunx.samsung>
-References: 
- <CGME20160627130341epcas1p23c482f5fb9e637dcda579cb874701589@epcas1p2.samsung.com>
- <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: renesas: build clk-rcar-gen2.o for R8A7792
+Date: Mon, 20 Jun 2016 17:43:10 +0200
+Message-Id: <20160620154341.2242033-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The newly added support for R8A7792 causes build failures
+because we try to call rcar_gen2_clocks_init but that is not
+built into the kernel:
 
-On Mon, Jun 27, 2016 at 10:03:13PM +0900, Andi Shyti wrote:
-> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
-> Use the CLK_IS_CRITICAL flag instead, which enables the clock line
-> during boot time.
-> 
-> While none of the SCLK_SPI need to be alive all the time as that
-> clock is handled by the SPI driver as a busclk whenever needed.
-> 
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
+arch/arm/mach-shmobile/built-in.o: In function `rcar_gen2_timer_init':
+:(.init.text+0x3b0): undefined reference to `rcar_gen2_clocks_init'
 
-sorry for spamming, please ignore this patch, some more testing
-has shown that if the SCLK_SPI1 is not kept alive, the device not
-always works.
+This changes the clk Makefile to match the other platforms, though
+I guess it would be better to find another way to do this, e.g.
+by not requiring the external function call by relying on
+CLK_OF_DECLARE(), or by making the ARCH_RCAR_GEN2 also control
+the compilation of the clk driver.
 
-Thanks and sorry again,
-Andi
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 3ebee0adbfe7 ("ARM: shmobile: r8a7792: basic SoC support")
+---
+ drivers/clk/renesas/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index ead8bb843524..3cdb9aaf8717 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
+-- 
+2.9.0
