@@ -1,51 +1,41 @@
-Return-Path: <moinejf@free.fr>
-Date: Tue, 21 Jun 2016 11:40:44 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
- Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
- Patekar <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, Boris Brezillon
- <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] clk: sunxi: introduce "modern" clock support
-Message-Id: <20160621114044.811e2136eca5c1d863d79ac6@free.fr>
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <andi.shyti@samsung.com>
+Date: Mon, 20 Jun 2016 19:13:05 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag for
+ SPI3 related clocks
+Message-id: <20160620101305.GA6783@samsunx.samsung>
+References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
+ <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com>
+ <20160619055921.GA424@jack.zhora.eu>
+ <CGME20160619134424epcas1p31493dfce45a8c817bc353702a07fa4bb@epcas1p3.samsung.com>
+ <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
+ <20160620054157.GA6498@samsunx.samsung>
+ <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: 
+ <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue,  7 Jun 2016 22:41:39 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+> Unfortunately I have to NAK this patch. Please add proper support for
+> them to the SPI driver.
 
-> The current code has been tested on the H3 and an Orange Pi PC,
-> including making sure that MMC still works, so the general approach
-> seems ok.
->=20
-> Let me know what you think,
+I agree, this is quite a lazy solution.
 
-Hi Maxime,
+But your comment is giving me more work than what I was willing
+to have, also because in this driver the SPI1 is aslo using
+CLK_IGNORE_UNUSED :)
 
-I used your code in both the H3 and A83T, and it worked fine for the
-current clocks.
-
-But I had some problems with some features as the 'mode select' in the
-A83T MMC2 clock.
-Also, I think that you did not go far enough in the changes.
-For example, most clock gates as well as most resets could be removed
-from the DT and automatically set/de-asserted on clock prepare or clock
-enable.
-
-So, I am rewriting a generic sunxi clock driver into one file (about
-1000 lines) and I have the full (simpler and clearer) description of
-the H3 and the A863T clocks.
-
-Coding is not finished yet. I will submit a RFC as soon as I will have
-something working.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Thanks for your review,
+Andi
