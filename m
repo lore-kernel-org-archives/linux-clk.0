@@ -1,69 +1,88 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
- <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <77dde1c3-c4da-faa6-ecd4-ba318abf5ed4@osg.samsung.com>
-Date: Thu, 16 Jun 2016 10:07:52 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 2/8] mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC combo IC
+Date: Mon, 20 Jun 2016 10:52:12 +0800
+Message-Id: <1466391138-12862-3-git-send-email-wens@csie.org>
+In-Reply-To: <1466391138-12862-1-git-send-email-wens@csie.org>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Laxman,
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+Changes since v2:
 
-On 06/16/2016 09:23 AM, Laxman Dewangan wrote:
-> Maxim Max77620 has one 32KHz clock output and the clock HW
-> IP used on this PMIC is same as what it is there in the MAX77686.
-> 
-> Add clock driver support for MAX77620 on the MAX77686 driver.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
+  - Fix interrupt line for ac100_codec in provided example.
 
-I already gave you my Reviewed-by for v1 but it seems you missed:
+---
+ Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
- 
-> ---
-> Changes from V1:
-> - Updated based on changes done in first patch.
-> ---
->  drivers/clk/Kconfig        |  7 ++++---
->  drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
->  2 files changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6afad74..d75f4c5 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
->  source "drivers/clk/versatile/Kconfig"
->  
->  config COMMON_CLK_MAX77686
-> -	tristate "Clock driver for Maxim 77686/77802 MFD"
-> -	depends on MFD_MAX77686
-> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-> +	depends on MFD_MAX77686 || MFD_MAX77620
->  	---help---
-> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
-
-And it seems you also missed the minor nit I mentioned in v1 about using
-77620 instead of MAX77620 here for naming consistency with the other IP.
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
+new file mode 100644
+index 000000000000..a793954bb952
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ac100.txt
+@@ -0,0 +1,42 @@
++X-Powers AC100 Codec/RTC IC device tree bindings
++
++AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
++separated, including power supplies and interrupt lines, but share
++a common register address space and host interface.
++
++Required properties:
++- compatible: "x-powers,ac100"
++- reg: The I2C slave address or RSB hardware address for the chip
++- sub-nodes:
++  - codec
++    - compatible: "x-powers,ac100-codec"
++    - interrupt-parent: The parent interrupt controller
++    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
++  - rtc
++    - compatible: "x-powers,ac100-rtc"
++    - interrupt-parent: The parent interrupt controller
++    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
++    - #clock-cells: shall be 1
++    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
++    - see clock/clock-bindings.txt for common clock bindings
++
++Example:
++
++ac100: codec@e89 {
++	compatible = "x-powers,ac100";
++	reg = <0xe89>;
++
++	ac100_codec {
++		compatible = "x-powers,ac100-codec";
++		interrupt-parent = <&r_pio>;
++		interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
++	};
++
++	ac100_rtc {
++		compatible = "x-powers,ac100-rtc";
++		interrupt-parent = <&nmi_intc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		#clock-cells = <1>;
++		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
++	};
++};
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.8.1
