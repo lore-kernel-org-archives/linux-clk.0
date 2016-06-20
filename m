@@ -1,85 +1,54 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Sun, 5 Jun 2016 19:41:57 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 07/34] clk: berlin: Migrate to clk_hw based registration
- and OF APIs
-Message-ID: <20160605174157.GP4594@piout.net>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-8-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-8-stephen.boyd@linaro.org>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] clk: samsung: cpu: prepare for adding Exynos5433 CPU
+ clocks
+Date: Mon, 20 Jun 2016 15:54:53 +0200
+Message-id: <5297672.nIMnaEh2jc@amdc1976>
+In-reply-to: 
+ <CA+Ln22FwQ_e5OHg_8WHEWGER=X8g_Yq+NpVLONgb0ZAShJLjzA@mail.gmail.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+ <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+ <CA+Ln22FwQ_e5OHg_8WHEWGER=X8g_Yq+NpVLONgb0ZAShJLjzA@mail.gmail.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-The main drawback of those patches is that they break the alignment
-(checkpatch.pl --strict complains).
+On Saturday, June 18, 2016 11:53:36 PM Tomasz Figa wrote:
+> Hi Bart,
 
-On 01/06/2016 at 16:15:06 -0700, Stephen Boyd wrote :
-> diff --git a/drivers/clk/berlin/berlin2-avpll.h b/drivers/clk/berlin/berlin2-avpll.h
-> index a37f5068d299..17e311153b42 100644
-> --- a/drivers/clk/berlin/berlin2-avpll.h
-> +++ b/drivers/clk/berlin/berlin2-avpll.h
-> @@ -19,17 +19,13 @@
->  #ifndef __BERLIN2_AVPLL_H
->  #define __BERLIN2_AVPLL_H
->  
-> -struct clk;
-> -
->  #define BERLIN2_AVPLL_BIT_QUIRK		BIT(0)
->  #define BERLIN2_AVPLL_SCRAMBLE_QUIRK	BIT(1)
->  
-> -struct clk * __init
-> -berlin2_avpll_vco_register(void __iomem *base, const char *name,
-> +int berlin2_avpll_vco_register(void __iomem *base, const char *name,
+Hi Tomek,
 
-This is missing __init.
+> 2016-05-24 22:19 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+> > Exynos5433 uses different register layout for CPU clock registers
+> > than earlier SoCs so add new code for handling this layout.  Also
+> > add new CLK_CPU_HAS_E5433_REGS_LAYOUT flag to request using it.
+> 
+> Have you considered abstracting this? Comparing existing code with
 
->  	   const char *parent_name, u8 vco_flags, unsigned long flags);
->  
-> -struct clk * __init
-> -berlin2_avpll_channel_register(void __iomem *base, const char *name,
-> +int berlin2_avpll_channel_register(void __iomem *base, const char *name,
+Yes, I have considered abstracting this but I've decided that there is
+sufficient number of differences to justify adding new code.
 
-Ditto.
+> newly added one, the differences don't really seem to be that huge and
+> it looks like there is more common code than different, except maybe
+> some numeric constants that could be put into a struct.
 
->  		       u8 index, const char *parent_name, u8 ch_flags,
->  		       unsigned long flags);
->  
-> diff --git a/drivers/clk/berlin/berlin2-pll.h b/drivers/clk/berlin/berlin2-pll.h
-> index 8831ce27ac1e..796874facc4c 100644
-> --- a/drivers/clk/berlin/berlin2-pll.h
-> +++ b/drivers/clk/berlin/berlin2-pll.h
-> @@ -19,8 +19,6 @@
->  #ifndef __BERLIN2_PLL_H
->  #define __BERLIN2_PLL_H
->  
-> -struct clk;
-> -
->  struct berlin2_pll_map {
->  	const u8 vcodiv[16];
->  	u8 mult;
-> @@ -29,8 +27,7 @@ struct berlin2_pll_map {
->  	u8 divsel_shift;
->  };
->  
-> -struct clk * __init
-> -berlin2_pll_register(const struct berlin2_pll_map *map,
-> +int berlin2_pll_register(const struct berlin2_pll_map *map,
+It is not only that, HPM clock sourcing checking would also need to be
+abstracted somehow.  Anyway there is not a lot of new code and it so
+much easier to follow by not being shared that I would prefer to keep
+it that way.
 
-Ditto.
-
->  		     void __iomem *base, const char *name,
->  		     const char *parent_name, unsigned long flags);
->  
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
