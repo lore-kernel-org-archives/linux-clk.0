@@ -1,42 +1,77 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7795: Correct lvds clock parent
-Date: Fri, 10 Jun 2016 09:44:33 +0200
-Message-Id: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 20 Jun 2016 11:39:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH V3 2/4] clk: Combine DT binding doc for max77686 and
+ max77802
+Message-ID: <20160620163947.GA27492@rob-hp-laptop>
+References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+ <1466160667-28451-3-git-send-email-ldewangan@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1466160667-28451-3-git-send-email-ldewangan@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the latest information, the parent clock of the LVDS module
-clock is the S0D4 clock, not the S2D1 clock.
+On Fri, Jun 17, 2016 at 04:21:05PM +0530, Laxman Dewangan wrote:
+> The clock IP used on the Maxim PMICs max77686 and max77802 are
+> same. The configuration of clock register is also same except
+> the number of clocks.
+> 
+> Define the common DT binding file for the clocks of Maxim PMICs
+> MAX77686 and MAX77802. For this, remove the separate DT binding
+> document file for maxim,max77802 and move all information to
+> maxim,max77686 DT binding document.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> Changes from V1:
+> - Rewrite description to remvoe ref to driver.
+> - Taken care of comment from Krzysztof on the supported clocks and
+>   DT bindings.
+> 
+> Changes from V2:
+> - Collected RBs.
+> ---
+>  .../devicetree/bindings/clock/maxim,max77686.txt   | 82 ++++++++++++++++------
+>  .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ------------
+>  2 files changed, 59 insertions(+), 67 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+> index 9c40739..4d973b5 100644
+> --- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+> +++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+> @@ -1,11 +1,15 @@
+> -Binding for Maxim MAX77686 32k clock generator block
+> +Binding for Maxim MAX77686/MAX77802 32k clock generator block
+>  
+> -This is a part of device tree bindings of MAX77686 multi-function device.
+> -More information can be found in bindings/mfd/max77686.txt file.
+> +This is a part of device tree bindings of MAX77686/MAX77802 multi-function
+> +device. More information can be found in bindings/mfd/max77686.txt file for
+> +MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+>  
+>  The MAX77686 contains three 32.768khz clock outputs that can be controlled
+>  (gated/ungated) over I2C.
+>  
+> +The MAX77802 contains two 32.768khz clock outputs that can be controlled
+> +(gated/ungated) over I2C.
+> +
+>  Following properties should be presend in main device node of the MFD chip.
+>  
+>  Required properties:
 
-Note that this change has no influence on actual operation, as the
-rcar-du LVDS encoder driver doesn't use the parent clock's rate.
+I'd expect to see compatible strings updated...
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Will queue in clk-renesas-for-v4.8.
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 8f76af6f454d0823..ad01b0b1bc5fa172 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -180,7 +180,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("du2",			 722,	R8A7795_CLK_S2D1),
- 	DEF_MOD("du1",			 723,	R8A7795_CLK_S2D1),
- 	DEF_MOD("du0",			 724,	R8A7795_CLK_S2D1),
--	DEF_MOD("lvds",			 727,	R8A7795_CLK_S2D1),
-+	DEF_MOD("lvds",			 727,	R8A7795_CLK_S0D4),
- 	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
- 	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
- 	DEF_MOD("vin7",			 804,	R8A7795_CLK_S2D1),
--- 
-1.9.1
+> @@ -17,30 +21,62 @@ Optional properties:
