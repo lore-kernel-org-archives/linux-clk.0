@@ -1,71 +1,100 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	Yakir Yang <ykk@rock-chips.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	rtc-linux@googlegroups.com,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 3/5] clk: rockchip: rk3228: export related i2s/spdif clocks
-Date: Tue, 21 Jun 2016 12:53:29 +0800
-Message-Id: <1466484811-26923-4-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
-References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 8/8] ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
+Date: Mon, 20 Jun 2016 10:52:18 +0800
+Message-Id: <1466391138-12862-9-git-send-email-wens@csie.org>
+In-Reply-To: <1466391138-12862-1-git-send-email-wens@csie.org>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch exports related i2s/spdif clocks for dts reference.
+The 32.768 kHz clock inside the A80 SoC is fed from an external source,
+typically the AC100 RTC module.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Make the osc32k placeholder a fixed-factor clock so board dts files can
+specify its source.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+Changes since v2: none
+Changes since v1: none
+---
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 5 +++++
+ arch/arm/boot/dts/sun9i-a80-optimus.dts     | 5 +++++
+ arch/arm/boot/dts/sun9i-a80.dtsi            | 9 +++------
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
- drivers/clk/rockchip/clk-rk3228.c      |    8 ++++----
- include/dt-bindings/clock/rk3228-cru.h |    4 ++++
- 2 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 72bcdba..79a3db1 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -581,10 +581,10 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(0, "aclk_bus_noc", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 1, GFLAGS),
+diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+index 65f4f32f89ad..b6299a9c14e3 100644
+--- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
++++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+@@ -103,6 +103,11 @@
+ 	allwinner,drive = <SUN4I_PINCTRL_40_MA>;
+ };
  
- 	GATE(0, "hclk_rom", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 3, GFLAGS),
--	GATE(0, "hclk_i2s0_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 7, GFLAGS),
--	GATE(0, "hclk_i2s1_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 8, GFLAGS),
--	GATE(0, "hclk_i2s2_2ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 9, GFLAGS),
--	GATE(0, "hclk_spdif_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 10, GFLAGS),
-+	GATE(HCLK_I2S0_8CH, "hclk_i2s0_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 7, GFLAGS),
-+	GATE(HCLK_I2S1_8CH, "hclk_i2s1_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 8, GFLAGS),
-+	GATE(HCLK_I2S2_2CH, "hclk_i2s2_2ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 9, GFLAGS),
-+	GATE(HCLK_SPDIF_8CH, "hclk_spdif_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 10, GFLAGS),
- 	GATE(0, "hclk_tsp", "hclk_cpu", 0, RK2928_CLKGATE_CON(10), 11, GFLAGS),
- 	GATE(0, "hclk_crypto_mst", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 11, GFLAGS),
- 	GATE(0, "hclk_crypto_slv", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 12, GFLAGS),
-diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
-index 5d43ed9..c992f3e 100644
---- a/include/dt-bindings/clock/rk3228-cru.h
-+++ b/include/dt-bindings/clock/rk3228-cru.h
-@@ -84,6 +84,10 @@
- #define PCLK_HDMI_PHY		365
++&osc32k {
++	/* osc32k input is from AC100 */
++	clocks = <&ac100_rtc 0>;
++};
++
+ &pio {
+ 	led_pins_cubieboard4: led-pins@0 {
+ 		allwinner,pins = "PH6", "PH17";
+diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+index 3b013dc5fef1..2f079cbd2025 100644
+--- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
++++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+@@ -152,6 +152,11 @@
+ 	status = "okay";
+ };
  
- /* hclk gates */
-+#define HCLK_I2S0_8CH		442
-+#define HCLK_I2S1_8CH		443
-+#define HCLK_I2S2_2CH		444
-+#define HCLK_SPDIF_8CH		445
- #define HCLK_VOP		452
- #define HCLK_NANDC		453
- #define HCLK_SDMMC		456
++&osc32k {
++	/* osc32k input is from AC100 */
++	clocks = <&ac100_rtc 0>;
++};
++
+ &pio {
+ 	led_pins_optimus: led-pins@0 {
+ 		allwinner,pins = "PH0", "PH1";
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index f68b3242b33a..dd11115ec087 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -148,15 +148,12 @@
+ 
+ 		/*
+ 		 * The 32k clock is from an external source, normally the
+-		 * AC100 codec/RTC chip. This clock is by default enabled
+-		 * and clocked at 32768 Hz, from the oscillator connected
+-		 * to the AC100. It is configurable, but no such driver or
+-		 * bindings exist yet.
++		 * AC100 codec/RTC chip. This serves as a placeholder for
++		 * board dts files to specify the source.
+ 		 */
+ 		osc32k: osc32k_clk {
+ 			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32768>;
++			compatible = "fixed-factor-clock";
+ 			clock-output-names = "osc32k";
+ 		};
+ 
 -- 
-1.7.9.5
+2.8.1
