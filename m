@@ -1,99 +1,44 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20160615124943.GE4948@dell>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
- <1465986467-14802-3-git-send-email-wens@csie.org> <20160615124943.GE4948@dell>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 15 Jun 2016 21:17:49 +0800
-Message-ID: <CAGb2v66q0h_BZ-kkRZCneOs5yxvcADXKymMskr3CRc-N8Dqm1A@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] mfd: ac100: Add device tree bindings for
- X-Powers AC100 codec/RTC combo IC
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	s.hauer@pengutronix.de,
+	jeremy.kerr@canonical.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v2 0/3] Convert clk-fixed into module platform driver
+Date: Mon, 20 Jun 2016 15:43:35 +0200
+Message-Id: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 15, 2016 at 8:49 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 15 Jun 2016, Chen-Yu Tsai wrote:
->
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  Documentation/devicetree/bindings/mfd/ac100.txt | 42 ++++++++++++++++++=
-+++++++
->>  1 file changed, 42 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documenta=
-tion/devicetree/bindings/mfd/ac100.txt
->> new file mode 100644
->> index 000000000000..fbab623e6fba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
->> @@ -0,0 +1,42 @@
->> +X-Powers AC100 Codec/RTC IC device tree bindings
->> +
->> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
->> +separated, including power supplies and interrupt lines, but share
->> +a common register address space and host interface.
->> +
->> +Required properties:
->> +- compatible: "x-powers,ac100"
->> +- reg: The I2C slave address or RSB hardware address for the chip
->> +- sub-nodes:
->> +  - codec
->> +    - compatible: "x-powers,ac100-codec"
->> +    - interrupt-parent: The parent interrupt controller
->> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO p=
-in
->> +  - rtc
->> +    - compatible: "x-powers,ac100-rtc"
->> +    - interrupt-parent: The parent interrupt controller
->> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
->> +    - #clock-cells: shall be 1
->> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
->> +    - see clock/clock-bindings.txt for common clock bindings
->> +
->> +Example:
->> +
->> +ac100: codec@e89 {
->> +     compatible =3D "x-powers,ac100";
->> +     reg =3D <0xe89>;
->> +
->> +     ac100_codec {
->> +             compatible =3D "x-powers,ac100-codec";
->> +             interrupt-parent =3D <&nmi_intc>;
->> +             interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
->> +     };
->> +
->> +     ac100_rtc {
->> +             compatible =3D "x-powers,ac100-rtc";
->> +             interrupt-parent =3D <&nmi_intc>;
->> +             interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
->
-> Isn't this the same interrupt as above?  Is it shared?
+When clock providers are added to the device tree after of_clk_init is called
+they are not added to the clock provider list. This makes that drivers such
+as i2c-xiic.c fail to init, as they may depend on the unadded clock provider.
 
-Copy paste error... The codec uses a different line in the design.
+We first introduce a new function clk.c that will check if a device_node is
+already a clock provider or not.
 
-ChenYu
+Later we add two patches, one for clk-fixed-factor and another to
+clk-fixed-rate that make us of that function and also convert both drivers
+to module platform driver, but keeping all the previous functionality intact.
 
->
->> +             #clock-cells =3D <1>;
->> +             clock-output-names =3D "cko1_rtc", "cko2_rtc", "cko3_rtc";
->> +     };
->> +};
->
-> --
-> Lee Jones
-> Linaro STMicroelectronics Landing Team Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Add error check
+-CodeStyle on of_device_ide
+-Use builtin_platform_driver()
+
+Ricardo Ribalda Delgado (3):
+  clk: Add new function of_clk_is_provider()
+  clk: fixed-factor: Convert into a module platform driver
+  clk: fixed-rate: Convert into a module platform driver
+
+ drivers/clk/clk-fixed-factor.c | 75 +++++++++++++++++++++++++++++++++++++++---
+ drivers/clk/clk-fixed-rate.c   | 71 ++++++++++++++++++++++++++++++++++++---
+ drivers/clk/clk.c              | 20 +++++++++++
+ include/linux/clk-provider.h   |  5 +++
+ 4 files changed, 162 insertions(+), 9 deletions(-)
+
+-- 
+2.8.1
