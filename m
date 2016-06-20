@@ -1,146 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15428 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932073AbcFNPBs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 11:01:48 -0400
-Date: Tue, 14 Jun 2016 18:01:42 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/3] clk: tegra: Squash sor1 safe/brick/src into a single
- mux
-Message-ID: <20160614150142.GF12863@tbergstrom-lnx.Nvidia.com>
-References: <20160614120044.30734-1-thierry.reding@gmail.com>
- <20160614120044.30734-2-thierry.reding@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 20 Jun 2016 10:54:58 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/20] clk: fixed-factor: Pass clk rates change to the
+ parent
+Message-ID: <20160620085458.GI26668@lukather>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20160617230533.27203.82622@quark.deferred.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20160614120044.30734-2-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="h22Fi9ANawrtbNPX"
+In-Reply-To: <20160617230533.27203.82622@quark.deferred.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 14, 2016 at 02:00:43PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The sor1 clock on Tegra210 is structured in the following way:
-> 
->     +-------+
->     | pllp  |---+
->     +-------+   |    +--------------+       +-----------+
->                 +----|              |       | sor_safe  |
->     +-------+        |              |       +-----------+
->     | plld  |--------|              |             |
->     +-------+        |              |       +-----------+
->                      |   sor1_src   |-------|           |
->     +-------+        |              |       +-----------+
->     | plld2 |--------|              |             |
->     +-------+        |              |             |
->                 +----|              |             |
->     +-------+   |    +--------------+             |
->     | clkm  |---+                           +-----------+
->     +-------+        +--------------+       |           |
->                      |  sor1_brick  |-------|   sor1    |
->                      +--------------+       |           |
->                                             +-----------+
-> 
-> This is impractical to represent in a clock tree, though, because there
-> is no name for the mux that has sor_safe and sor1_src as parents. It is
-> also much more cumbersome to deal with the additional mux because users
-> of these clocks (the display driver) would have to juggle with an extra
-> mux for no real reason.
-> 
-> To simply things, the above is squashed into two muxes instead, so that
-> it looks like this:
-> 
->     +-------+
->     | pllp  |---+
->     +-------+   |    +--------------+       +-----------+
->                 +----|              |       | sor_safe  |
->     +-------+        |              |       +-----------+
->     | plld  |--------|              |             |
->     +-------+        |              |       +-----------+
->                      |   sor1_src   |-------|   sor1    |
->     +-------+        |              |       +-----------+
->     | plld2 |--------|              |           |   |
->     +-------+        |              |           |   |
->                 +----|              |           |   |
->     +-------+   |    +--------------+           |   |
->     | clkm  |---+                               |   |
->     +-------+        +--------------+           |   |
->                      |  sor1_brick  |-----------+---+
->                      +--------------+
-> 
-> This still very accurately represents the hardware. Note that sor1 has
-> sor1_brick as input twice, that's because bit 1 in the mux selects the
-> sor1_brick irrespective of bit 0.
-> 
 
-Assming sor1_brick will be defined in the SOR driver,
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+--h22Fi9ANawrtbNPX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Peter.
+On Fri, Jun 17, 2016 at 04:05:33PM -0700, Michael Turquette wrote:
+> Quoting Maxime Ripard (2016-05-16 05:47:01)
+> > A fixed factor clock, if it needs to change its rate, by definition do =
+not
+> > have any choice but to modify its parent rate.
+>=20
+> Logically it makes sense to always propagate the rate-change request up
+> to the parent for a fixed-factor clock if we desire to change its rate.
+> However, I wonder if doing this for all users of fixed-factor-clock in
+> DT is safe? Some users may be counting on it not changing.
+>=20
+> There are 397 instances of fixed-factor-clock in .dts[i] today, so this
+> change worries me a bit.
 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-id.h           |  1 -
->  drivers/clk/tegra/clk-tegra-periph.c | 23 ++++++++++++-----------
->  2 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> index 36c974916d4f..5738635c5274 100644
-> --- a/drivers/clk/tegra/clk-id.h
-> +++ b/drivers/clk/tegra/clk-id.h
-> @@ -238,7 +238,6 @@ enum clk_id {
->  	tegra_clk_sor0,
->  	tegra_clk_sor0_lvds,
->  	tegra_clk_sor1,
-> -	tegra_clk_sor1_brick,
->  	tegra_clk_sor1_src,
->  	tegra_clk_spdif,
->  	tegra_clk_spdif_2x,
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index 29d04c663abf..af85c8aeaf5a 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -594,15 +594,17 @@ static u32 mux_pllp_plld_plld2_clkm_idx[] = {
->  	[0] = 0, [1] = 2, [2] = 5, [3] = 6
->  };
->  
-> -static const char *mux_plldp_sor1_src[] = {
-> -	"pll_dp", "clk_sor1_src"
-> -};
-> -#define mux_plldp_sor1_src_idx NULL
-> -
-> -static const char *mux_clkm_sor1_brick_sor1_src[] = {
-> -	"clk_m", "sor1_brick", "sor1_src", "sor1_brick"
-> -};
-> -#define mux_clkm_sor1_brick_sor1_src_idx NULL
-> +static const char *mux_sor_safe_sor1_brick_sor1_src[] = {
-> +	/*
-> +	 * Bit 0 of the mux selects sor1_brick, irrespective of bit 1, so the
-> +	 * sor1_brick parent appears twice in the list below. This is merely
-> +	 * to support clk_get_parent() if firmware happened to set these bits
-> +	 * to 0b11. While not an invalid setting, code should always set the
-> +	 * bits to 0b01 to select sor1_brick.
-> +	 */
-> +	"sor_safe", "sor1_brick", "sor1_src", "sor1_brick"
-> +};
-> +#define mux_sor_safe_sor1_brick_sor1_src_idx NULL
->  
->  static const char *mux_pllp_pllre_clkm[] = {
->  	"pll_p", "pll_re_out1", "clk_m"
-> @@ -778,8 +780,7 @@ static struct tegra_periph_init_data periph_clks[] = {
->  	MUX8("nvjpg", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVJPG, 195, 0, tegra_clk_nvjpg),
->  	MUX8("ape", mux_plla_pllc4_out0_pllc_pllc4_out1_pllp_pllc4_out2_clkm, CLK_SOURCE_APE, 198, TEGRA_PERIPH_ON_APB, tegra_clk_ape),
->  	MUX8_NOGATE_LOCK("sor1_src", mux_pllp_plld_plld2_clkm, CLK_SOURCE_SOR1, tegra_clk_sor1_src, &sor1_lock),
-> -	NODIV("sor1_brick", mux_plldp_sor1_src, CLK_SOURCE_SOR1, 14, MASK(1), 183, 0, tegra_clk_sor1_brick, &sor1_lock),
-> -	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
-> +	NODIV("sor1", mux_sor_safe_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 14, MASK(2), 183, 0, tegra_clk_sor1, &sor1_lock),
->  	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
->  	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
->  	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
-> -- 
-> 2.8.3
-> 
+Understood.
+
+>=20
+> >=20
+> > Add the CLK_SET_RATE_PARENT flag to that clock so that it can happen
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/clk-fixed-factor.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-fac=
+tor.c
+> > index 75cd6c792cb8..3363abd9b4ae 100644
+> > --- a/drivers/clk/clk-fixed-factor.c
+> > +++ b/drivers/clk/clk-fixed-factor.c
+> > @@ -167,7 +167,8 @@ void __init of_fixed_factor_clk_setup(struct device=
+_node *node)
+> >         of_property_read_string(node, "clock-output-names", &clk_name);
+> >         parent_name =3D of_clk_get_parent_name(node, 0);
+> > =20
+> > -       clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name, =
+0,
+> > +       clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name,
+> > +                                       CLK_SET_RATE_PARENT,
+>=20
+> An alternative would be to pass in the flags you want, somehow. For the
+> clock you are trying to fix, is it inside of the SoC or external? If it
+> is internal, and part of a larger clock controller driver, is this for
+> the legacy style allwinner clock drivers that put everything in DT?
+
+It is :(
+
+What we could do, is have an extra compatible for that clock (like
+"allwinner,sun4i-a10-pll3-x2" in that case), and set the flag only for
+that compatible.
+
+Would that work for you?
+
+> If not, it would better to initialize it statically and shove this
+> flag into the struct clk_init_data storage.
+
+Hopefully, yes, that should be addressed by the new framework, but I
+need reviews to get it merged ;)
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--h22Fi9ANawrtbNPX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXZ69iAAoJEBx+YmzsjxAg2nIP/jqAmrV0fPnvXUghpO55krlt
+rT4Ex4ie58emrWyyJXWfS84eOEbQl1y0GCdKfY3Q07cPMxgZFK4c64TfkGqhD53k
+F0NcIDVVi4oHqkDwhBlO7V9ZQ9LALhFhH1CD2MY0mnkCEA/cFaGiY7z/jU03QQ19
+3RYVysWPdocRB377+Yn+moTSKiMPNII0Gf3gUKitwSf5SCMegbKTbNJ8J2fcE6HF
+3E57v+YDStzMXd1rMxlmyNUgqocgshO8sxTgwLIfxsF31WOs3DL6sc7jF5IRWEFY
+K1+moF82uqX0oY6rOeSeIS7K4YwX6NG0ox5btGPLeGvdkR+SkYPvWsT3A1gyJ63x
+I8Bu40aC8sQoJvpxnDqma/TAf4jMTBPYv65SvC/Cy5yIfaNM7eEGH3isYPw64F2L
+aBbAKs8tpGRxbcfRH7t9V/582AXxpaaygJsNsnKJ2D4qocAvt8R9Fdd0/2Mu9ehT
+wnvQb6mKSALL0I7Md+ue4Yka9877sJVOblExk5Rm8lDsH1+gm5zwGcU+Ckvc6N4H
+xSrPL4+iAj1HbjT87Y3qKkokdFHEHn/Y8zM1KSTSclNVfF4XykfBbuEvVIOcEB96
+8dwgoo8BmLSa99D6LyAoBUudBgby4rxeCIFy0OCBdSKybSlK/sJbQnOJt1wvXdYf
+a49pZTIoW2IIDiw9TQSX
+=FcfY
+-----END PGP SIGNATURE-----
+
+--h22Fi9ANawrtbNPX--
