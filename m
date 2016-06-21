@@ -1,285 +1,139 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	cw00.choi@samsung.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v2 1/6] clk: rockchip: add new clock-type for the ddrclk
-Date: Mon,  6 Jun 2016 18:13:01 +0800
-Message-Id: <1465207986-17888-2-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
-References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v3 2/2] clk: fixed-rate: Convert into a module platform driver
+Date: Tue, 21 Jun 2016 11:01:28 +0200
+Message-Id: <1466499688-28625-2-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1466499688-28625-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1466499688-28625-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On new rockchip platform(rk3399 etc), there have dcf controller to
-do ddr frequency scaling, and this controller will implement in
-arm-trust-firmware. We add a special clock-type to handle that.
+Adds support for fixed-rate clock providers which have not been
+enabled via of_clk_init().
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+This is required by Device trees overlays that introduce clocks
+providers.
+
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
+v3: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Use OF_POPULATED flag
 
-Changes in v2:
-- use GENMASK instead val_mask
-- use divider_recalc_rate() instead DIV_ROUND_UP_ULL
-- cleanup code
+v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Add error check
+-CodeStyle on of_device_ide
+-Use builtin_platform_driver()
+ drivers/clk/clk-fixed-rate.c | 70 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 66 insertions(+), 4 deletions(-)
 
-Changes in v1:
-- None
-
- drivers/clk/rockchip/Makefile  |   1 +
- drivers/clk/rockchip/clk-ddr.c | 145 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c     |   9 +++
- drivers/clk/rockchip/clk.h     |  27 ++++++++
- 4 files changed, 182 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-ddr.c
-
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index f47a2fa..b5f2c8e 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
- obj-y	+= clk-cpu.o
- obj-y	+= clk-inverter.o
- obj-y	+= clk-mmc-phase.o
-+obj-y	+= clk-ddr.o
- obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 8e4453eb54e8..d5f9aa086acc 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -15,6 +15,7 @@
+ #include <linux/io.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/platform_device.h>
  
- obj-y	+= clk-rk3036.o
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-new file mode 100644
-index 0000000..b2ad57f
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -0,0 +1,145 @@
-+/*
-+ * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
-+ * Author: Lin Huang <hl@rock-chips.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+ /*
+  * DOC: basic fixed-rate clock that cannot gate
+@@ -149,15 +150,16 @@ EXPORT_SYMBOL_GPL(clk_unregister_fixed_rate);
+ /**
+  * of_fixed_clk_setup() - Setup function for simple fixed rate clock
+  */
+-void of_fixed_clk_setup(struct device_node *node)
++struct clk *_of_fixed_clk_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
+ 	const char *clk_name = node->name;
+ 	u32 rate;
+ 	u32 accuracy = 0;
++	int ret;
+ 
+ 	if (of_property_read_u32(node, "clock-frequency", &rate))
+-		return;
++		return ERR_PTR(-EIO);
+ 
+ 	of_property_read_u32(node, "clock-accuracy", &accuracy);
+ 
+@@ -165,9 +167,69 @@ void of_fixed_clk_setup(struct device_node *node)
+ 
+ 	clk = clk_register_fixed_rate_with_accuracy(NULL, clk_name, NULL,
+ 						    0, rate, accuracy);
+-	if (!IS_ERR(clk))
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (IS_ERR(clk))
++		return clk;
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+#include "clk.h"
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
 +
-+struct rockchip_ddrclk {
-+	struct clk_hw	hw;
-+	void __iomem	*reg_base;
-+	int		mux_offset;
-+	int		mux_shift;
-+	int		mux_width;
-+	int		mux_flag;
-+	int		div_shift;
-+	int		div_width;
-+	int		div_flag;
-+	spinlock_t	*lock;
-+};
++	return clk;
++}
 +
-+#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk, hw)
-+
-+static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
-+				    unsigned long prate)
++void of_fixed_clk_setup(struct device_node *node)
 +{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+	unsigned long flags;
++	if (!_of_fixed_clk_setup(node))
++		of_node_set_flag(node, OF_POPULATED);
+ }
+ EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
+ CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
 +
-+	spin_lock_irqsave(ddrclk->lock, flags);
++static int of_fixed_clk_remove(struct platform_device *pdev)
++{
++	struct clk *clk = platform_get_drvdata(pdev);
 +
-+	/* TODO: set ddr rate in bl31 */
-+
-+	spin_unlock_irqrestore(ddrclk->lock, flags);
++	if (clk)
++		clk_unregister_fixed_rate(clk);
 +
 +	return 0;
 +}
 +
-+static unsigned long
-+rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
-+			    unsigned long parent_rate)
++static int of_fixed_clk_probe(struct platform_device *pdev)
 +{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+	int val;
-+
-+	val = clk_readl(ddrclk->reg_base +
-+			ddrclk->mux_offset) >> ddrclk->div_shift;
-+	val &= GENMASK(ddrclk->div_width - 1, 0);
-+	return divider_recalc_rate(hw, parent_rate, val, NULL,
-+				   ddrclk->div_flag);
-+}
-+
-+static long clk_ddrclk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long *prate)
-+{
-+	return rate;
-+}
-+
-+static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
-+{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
-+	u32 val;
-+
-+	val = clk_readl(ddrclk->reg_base +
-+			ddrclk->mux_offset) >> ddrclk->mux_shift;
-+	val &= GENMASK(ddrclk->mux_width - 1, 0);
-+
-+	if (val >= num_parents)
-+		return -EINVAL;
-+
-+	return val;
-+}
-+
-+static const struct clk_ops rockchip_ddrclk_ops = {
-+	.recalc_rate = rockchip_ddrclk_recalc_rate,
-+	.set_rate = rockchip_ddrclk_set_rate,
-+	.round_rate = clk_ddrclk_round_rate,
-+	.get_parent = rockchip_ddrclk_get_parent,
-+};
-+
-+struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
-+					 const char *const *parent_names,
-+					 u8 num_parents, int mux_offset,
-+					 int mux_shift, int mux_width,
-+					 int mux_flag, int div_shift,
-+					 int div_width, int div_flag,
-+					 void __iomem *reg_base,
-+					 spinlock_t *lock)
-+{
-+	struct rockchip_ddrclk *ddrclk;
-+	struct clk_init_data init;
 +	struct clk *clk;
 +
-+	ddrclk = kzalloc(sizeof(*ddrclk), GFP_KERNEL);
-+	if (!ddrclk)
-+		return ERR_PTR(-ENOMEM);
++	/*
++	 * This function is not executed when of_fixed_clk_setup
++	 * succeeded.
++	 */
 +
-+	init.name = name;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+	init.ops = &rockchip_ddrclk_ops;
++	clk = _of_fixed_clk_setup(pdev->dev.of_node);
 +
-+	init.flags = flags;
-+	init.flags |= CLK_SET_RATE_NO_REPARENT;
-+	init.flags |= CLK_GET_RATE_NOCACHE;
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
 +
-+	ddrclk->reg_base = reg_base;
-+	ddrclk->lock = lock;
-+	ddrclk->hw.init = &init;
-+	ddrclk->mux_offset = mux_offset;
-+	ddrclk->mux_shift = mux_shift;
-+	ddrclk->mux_width = mux_width;
-+	ddrclk->mux_flag = mux_flag;
-+	ddrclk->div_shift = div_shift;
-+	ddrclk->div_width = div_width;
-+	ddrclk->div_flag = div_flag;
++	platform_set_drvdata(pdev, clk);
 +
-+	clk = clk_register(NULL, &ddrclk->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: could not register ddrclk %s\n", __func__,	name);
-+		goto free_ddrclk;
-+	}
-+
-+	return clk;
-+
-+free_ddrclk:
-+	kfree(ddrclk);
-+
-+	return NULL;
++	return 0;
 +}
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 7ffd134..6ac1aa5 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -484,6 +484,15 @@ void __init rockchip_clk_register_branches(
- 				list->gate_offset, list->gate_shift,
- 				list->gate_flags, flags, &ctx->lock);
- 			break;
-+		case branch_ddrc:
-+			clk = rockchip_clk_register_ddrclk(
-+				list->name, list->flags,
-+				list->parent_names, list->num_parents,
-+				list->muxdiv_offset, list->mux_shift,
-+				list->mux_width, list->mux_flags,
-+				list->div_shift, list->div_width,
-+				list->div_flags, ctx->reg_base, &ctx->lock);
-+			break;
- 		}
- 
- 		/* none of the cases above matched */
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 2194ffa..4033fe4 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -281,6 +281,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 				const char *const *parent_names, u8 num_parents,
- 				void __iomem *reg, int shift);
- 
-+struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
-+			const char *const *parent_names, u8 num_parents,
-+			int mux_offset, int mux_shift, int mux_width,
-+			int mux_flag, int div_shift, int div_width,
-+			int div_flag, void __iomem *reg_base,
-+			spinlock_t *lock);
 +
- #define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
- 
- struct clk *rockchip_clk_register_inverter(const char *name,
-@@ -299,6 +306,7 @@ enum rockchip_clk_branch_type {
- 	branch_mmc,
- 	branch_inverter,
- 	branch_factor,
-+	branch_ddrc,
- };
- 
- struct rockchip_clk_branch {
-@@ -488,6 +496,25 @@ struct rockchip_clk_branch {
- 		.child		= ch,				\
- 	}
- 
-+#define COMPOSITE_DDRC(_id, cname, pnames, f, mo, ms, mw, mf,	\
-+			 ds, dw, df)				\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_ddrc,			\
-+		.name		= cname,			\
-+		.parent_names	= pnames,			\
-+		.num_parents	= ARRAY_SIZE(pnames),		\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.mux_shift	= ms,				\
-+		.mux_width	= mw,				\
-+		.mux_flags	= mf,				\
-+		.div_shift	= ds,				\
-+		.div_width	= dw,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= -1,				\
-+	}
++static const struct of_device_id of_fixed_clk_ids[] = {
++	{ .compatible = "fixed-clock" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, of_fixed_clk_ids);
 +
- #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
- 	{							\
- 		.id		= _id,				\
++static struct platform_driver of_fixed_clk_driver = {
++	.driver = {
++		.name = "of_fixed_clk",
++		.of_match_table = of_fixed_clk_ids,
++	},
++	.probe = of_fixed_clk_probe,
++	.remove = of_fixed_clk_remove,
++};
++
++builtin_platform_driver(of_fixed_clk_driver);
+ #endif
 -- 
-1.9.1
+2.8.1
