@@ -1,141 +1,50 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com,
-	maxime.coquelin@st.com,
-	patrice.chotard@st.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	broonie@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 3/6] clk: st: clkgen-pll: Detect critical clocks
-Date: Tue,  7 Jun 2016 12:19:27 +0100
-Message-Id: <20160607111930.10375-4-lee.jones@linaro.org>
-In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
-References: <20160607111930.10375-1-lee.jones@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34125 "EHLO
+	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751380AbcFUPbA (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2016 11:31:00 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] clk: tegra: Mark timer clock as critical
+Date: Tue, 21 Jun 2016 17:30:35 +0200
+Message-Id: <20160621153035.22172-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Utilise the new Critical Clock infrastructure to mark clocks which
-much not be disabled as CRITICAL.
+From: Thierry Reding <treding@nvidia.com>
 
-Clocks are marked as CRITICAL using clk flags.  This patch also
-ensures flags are peculated through the framework in the correct
-manner.
+The timer clock feeds the timer block, which, among other things, is
+used to drive the SOR lane sequencer. Since the Tegra timer driver is
+not enabled on 64-bit ARM, nothing currently claims that clock and it
+gets disabled by the common clock framework at late_init time.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Given the non-obvious dependencies, the timer clock can be considered
+a critical part of the SoC infrastructure, requiring its clock source
+to be always on.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/st/clkgen-pll.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 38f6f3a..0b5990e 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -840,7 +840,7 @@ static const struct clk_ops stm_pll4600c28_ops = {
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index af85c8aeaf5a..4ce4e7fb1124 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -792,7 +792,7 @@ static struct tegra_periph_init_data periph_clks[] = {
  
- static struct clk * __init clkgen_pll_register(const char *parent_name,
- 				struct clkgen_pll_data	*pll_data,
--				void __iomem *reg,
-+				void __iomem *reg, unsigned long pll_flags,
- 				const char *clk_name, spinlock_t *lock)
- {
- 	struct clkgen_pll *pll;
-@@ -854,7 +854,7 @@ static struct clk * __init clkgen_pll_register(const char *parent_name,
- 	init.name = clk_name;
- 	init.ops = pll_data->ops;
- 
--	init.flags = CLK_IS_BASIC | CLK_GET_RATE_NOCACHE;
-+	init.flags = pll_flags | CLK_IS_BASIC | CLK_GET_RATE_NOCACHE;
- 	init.parent_names = &parent_name;
- 	init.num_parents  = 1;
- 
-@@ -948,7 +948,7 @@ static void __init clkgena_c65_pll_setup(struct device_node *np)
- 	 */
- 	clk_data->clks[0] = clkgen_pll_register(parent_name,
- 			(struct clkgen_pll_data *) &st_pll1600c65_ax,
--			reg + CLKGENAx_PLL0_OFFSET, clk_name, NULL);
-+			reg + CLKGENAx_PLL0_OFFSET, 0, clk_name, NULL);
- 
- 	if (IS_ERR(clk_data->clks[0]))
- 		goto err;
-@@ -977,7 +977,7 @@ static void __init clkgena_c65_pll_setup(struct device_node *np)
- 	 */
- 	clk_data->clks[2] = clkgen_pll_register(parent_name,
- 			(struct clkgen_pll_data *) &st_pll800c65_ax,
--			reg + CLKGENAx_PLL1_OFFSET, clk_name, NULL);
-+			reg + CLKGENAx_PLL1_OFFSET, 0, clk_name, NULL);
- 
- 	if (IS_ERR(clk_data->clks[2]))
- 		goto err;
-@@ -995,7 +995,7 @@ CLK_OF_DECLARE(clkgena_c65_plls,
- static struct clk * __init clkgen_odf_register(const char *parent_name,
- 					       void __iomem *reg,
- 					       struct clkgen_pll_data *pll_data,
--					       int odf,
-+					       unsigned long pll_flags, int odf,
- 					       spinlock_t *odf_lock,
- 					       const char *odf_name)
- {
-@@ -1004,7 +1004,7 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
- 	struct clk_gate *gate;
- 	struct clk_divider *div;
- 
--	flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT;
-+	flags = pll_flags | CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT;
- 
- 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
- 	if (!gate)
-@@ -1099,6 +1099,7 @@ static void __init clkgen_c32_pll_setup(struct device_node *np)
- 	int num_odfs, odf;
- 	struct clk_onecell_data *clk_data;
- 	struct clkgen_pll_data	*data;
-+	unsigned long pll_flags = 0;
- 
- 	match = of_match_node(c32_pll_of_match, np);
- 	if (!match) {
-@@ -1116,8 +1117,10 @@ static void __init clkgen_c32_pll_setup(struct device_node *np)
- 	if (!pll_base)
- 		return;
- 
--	clk = clkgen_pll_register(parent_name, data, pll_base, np->name,
--				  data->lock);
-+	of_clk_detect_critical(np, 0, &pll_flags);
-+
-+	clk = clkgen_pll_register(parent_name, data, pll_base, pll_flags,
-+				  np->name, data->lock);
- 	if (IS_ERR(clk))
- 		return;
- 
-@@ -1139,12 +1142,15 @@ static void __init clkgen_c32_pll_setup(struct device_node *np)
- 	for (odf = 0; odf < num_odfs; odf++) {
- 		struct clk *clk;
- 		const char *clk_name;
-+		unsigned long odf_flags = 0;
- 
- 		if (of_property_read_string_index(np, "clock-output-names",
- 						  odf, &clk_name))
- 			return;
- 
--		clk = clkgen_odf_register(pll_name, pll_base, data,
-+		of_clk_detect_critical(np, odf, &odf_flags);
-+
-+		clk = clkgen_odf_register(pll_name, pll_base, data, odf_flags,
- 				odf, &clkgena_c32_odf_lock, clk_name);
- 		if (IS_ERR(clk))
- 			goto err;
-@@ -1206,7 +1212,8 @@ static void __init clkgengpu_c32_pll_setup(struct device_node *np)
- 	/*
- 	 * PLL 1200MHz output
- 	 */
--	clk = clkgen_pll_register(parent_name, data, reg, clk_name, data->lock);
-+	clk = clkgen_pll_register(parent_name, data, reg,
-+				  0, clk_name, data->lock);
- 
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(np, of_clk_src_simple_get, clk);
+ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("rtc", "clk_32k", 4, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_rtc, 0),
+-	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, 0),
++	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+ 	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+ 	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+ 	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
 -- 
 2.8.3
+
