@@ -1,238 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:52990 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752688AbcFGUmW (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jun 2016 16:42:22 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 07/15] clk: sunxi-ng: Add phase clock support
-Date: Tue,  7 Jun 2016 22:41:46 +0200
-Message-Id: <20160607204154.31967-8-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 4/5] clk: qcom: ipq4019: Added the all frequencies for apps cpu
+Date: Tue, 21 Jun 2016 19:19:21 +0530
+Message-Id: <1466516962-18087-5-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the clocks in the CCU that introduce a phase shift from
-their parent clock.
+The APPS CPU clock does not contain all the frequencies in its
+frequency table so this patch adds the same.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/clk/sunxi-ng/Makefile    |   1 +
- drivers/clk/sunxi-ng/ccu_phase.c | 126 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_phase.h |  50 ++++++++++++++++
- 3 files changed, 177 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_phase.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_phase.h
+ drivers/clk/qcom/gcc-ipq4019.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 99133df3f7ab..c47cbd309d59 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -6,3 +6,4 @@ obj-y += ccu_frac.o
- obj-y += ccu_fixed_factor.o
- obj-y += ccu_gate.o
- obj-y += ccu_mux.o
-+obj-y += ccu_phase.o
-diff --git a/drivers/clk/sunxi-ng/ccu_phase.c b/drivers/clk/sunxi-ng/ccu_phase.c
-new file mode 100644
-index 000000000000..400c58ad72fd
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_phase.c
-@@ -0,0 +1,126 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
-+
-+#include "ccu_phase.h"
-+
-+static int ccu_phase_get_phase(struct clk_hw *hw)
-+{
-+	struct ccu_phase *phase = hw_to_ccu_phase(hw);
-+	struct clk_hw *parent, *grandparent;
-+	unsigned int parent_rate, grandparent_rate;
-+	u16 step, parent_div;
-+	u32 reg;
-+	u8 delay;
-+
-+	reg = readl(phase->common.base + phase->common.reg);
-+	delay = (reg >> phase->shift);
-+	delay &= (1 << phase->width) - 1;
-+
-+	if (!delay)
-+		return 180;
-+
-+	/* Get our parent clock, it's the one that can adjust its rate */
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent)
-+		return -EINVAL;
-+
-+	/* And its rate */
-+	parent_rate = clk_hw_get_rate(parent);
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	/* Now, get our parent's parent (most likely some PLL) */
-+	grandparent = clk_hw_get_parent(parent);
-+	if (!grandparent)
-+		return -EINVAL;
-+
-+	/* And its rate */
-+	grandparent_rate = clk_hw_get_rate(grandparent);
-+	if (!grandparent_rate)
-+		return -EINVAL;
-+
-+	/* Get our parent clock divider */
-+	parent_div = grandparent_rate / parent_rate;
-+
-+	step = DIV_ROUND_CLOSEST(360, parent_div);
-+	return delay * step;
-+}
-+
-+static int ccu_phase_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct ccu_phase *phase = hw_to_ccu_phase(hw);
-+	struct clk_hw *parent, *grandparent;
-+	unsigned int parent_rate, grandparent_rate;
-+	unsigned long flags;
-+	u32 reg;
-+	u8 delay;
-+
-+	/* Get our parent clock, it's the one that can adjust its rate */
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent)
-+		return -EINVAL;
-+
-+	/* And its rate */
-+	parent_rate = clk_hw_get_rate(parent);
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	/* Now, get our parent's parent (most likely some PLL) */
-+	grandparent = clk_hw_get_parent(parent);
-+	if (!grandparent)
-+		return -EINVAL;
-+
-+	/* And its rate */
-+	grandparent_rate = clk_hw_get_rate(grandparent);
-+	if (!grandparent_rate)
-+		return -EINVAL;
-+
-+	if (degrees != 180) {
-+		u16 step, parent_div;
-+
-+		/* Get our parent divider */
-+		parent_div = grandparent_rate / parent_rate;
-+
-+		/*
-+		 * We can only outphase the clocks by multiple of the
-+		 * PLL's period.
-+		 *
-+		 * Since our parent clock is only a divider, and the
-+		 * formula to get the outphasing in degrees is deg =
-+		 * 360 * delta / period
-+		 *
-+		 * If we simplify this formula, we can see that the
-+		 * only thing that we're concerned about is the number
-+		 * of period we want to outphase our clock from, and
-+		 * the divider set by our parent clock.
-+		 */
-+		step = DIV_ROUND_CLOSEST(360, parent_div);
-+		delay = DIV_ROUND_CLOSEST(degrees, step);
-+	} else {
-+		delay = 0;
-+	}
-+
-+	spin_lock_irqsave(phase->common.lock, flags);
-+	reg = readl(phase->common.base + phase->common.reg);
-+	reg &= ~GENMASK(phase->width + phase->shift - 1, phase->shift);
-+	writel(reg | (delay << phase->shift),
-+	       phase->common.base + phase->common.reg);
-+	spin_unlock_irqrestore(phase->common.lock, flags);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_phase_ops = {
-+	.get_phase	= ccu_phase_get_phase,
-+	.set_phase	= ccu_phase_set_phase,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_phase.h b/drivers/clk/sunxi-ng/ccu_phase.h
-new file mode 100644
-index 000000000000..e28b4e58a819
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_phase.h
-@@ -0,0 +1,50 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_PHASE_H_
-+#define _CCU_PHASE_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+
-+struct ccu_phase {
-+	u8			shift;
-+	u8			width;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_PHASE(_struct, _name, _parent, _reg, _shift, _width, _flags) \
-+	struct ccu_phase _struct = {					\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= SUNXI_HW_INIT(_name,		\
-+							_parent,	\
-+							&ccu_phase_ops,	\
-+							_flags),	\
-+		}							\
-+	}
-+
-+static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_phase, common);
-+}
-+
-+extern const struct clk_ops ccu_phase_ops;
-+
-+#endif /* _CCU_PHASE_H_ */
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 0bef36d..df159c2 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -554,11 +554,21 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
+ };
+ 
+ static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+-	F(48000000, P_XO,	   1, 0, 0),
+-	F(200000000, P_FEPLL200,   1, 0, 0),
+-	F(500000000, P_FEPLL500,   1, 0, 0),
+-	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
+-	{ }
++	{48000000, P_XO,          1, 0, 0},
++	{200000000, P_FEPLL200,   1, 0, 0},
++	{380000000, P_DDRPLLAPSS, 1, 0, 0},
++	{409000000, P_DDRPLLAPSS, 1, 0, 0},
++	{444000000, P_DDRPLLAPSS, 1, 0, 0},
++	{484000000, P_DDRPLLAPSS, 1, 0, 0},
++	{500000000, P_FEPLL500,   1, 0, 0},
++	{507000000, P_DDRPLLAPSS, 1, 0, 0},
++	{532000000, P_DDRPLLAPSS, 1, 0, 0},
++	{560000000, P_DDRPLLAPSS, 1, 0, 0},
++	{592000000, P_DDRPLLAPSS, 1, 0, 0},
++	{626000000, P_DDRPLLAPSS, 1, 0, 0},
++	{666000000, P_DDRPLLAPSS, 1, 0, 0},
++	{710000000, P_DDRPLLAPSS, 1, 0, 0},
++	{}
+ };
+ 
+ static struct clk_rcg2 apps_clk_src = {
 -- 
-2.8.3
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
