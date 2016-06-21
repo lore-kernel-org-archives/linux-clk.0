@@ -1,121 +1,98 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
-Date: Thu, 16 Jun 2016 18:53:27 +0530
-Message-ID: <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 21 Jun 2016 08:14:43 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] mfd: ac100: Add device tree bindings for X-Powers
+ AC100 codec/RTC combo IC
+Message-ID: <20160621131443.GA29350@rob-hp-laptop>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
+ <1466391138-12862-3-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1466391138-12862-3-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Maxim Max77620 has one 32KHz clock output and the clock HW
-IP used on this PMIC is same as what it is there in the MAX77686.
+On Mon, Jun 20, 2016 at 10:52:12AM +0800, Chen-Yu Tsai wrote:
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+> Changes since v2:
+> 
+>   - Fix interrupt line for ac100_codec in provided example.
+> 
+> ---
+>  Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
+> new file mode 100644
+> index 000000000000..a793954bb952
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
+> @@ -0,0 +1,42 @@
+> +X-Powers AC100 Codec/RTC IC device tree bindings
+> +
+> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
+> +separated, including power supplies and interrupt lines, but share
+> +a common register address space and host interface.
+> +
+> +Required properties:
+> +- compatible: "x-powers,ac100"
+> +- reg: The I2C slave address or RSB hardware address for the chip
+> +- sub-nodes:
+> +  - codec
+> +    - compatible: "x-powers,ac100-codec"
+> +    - interrupt-parent: The parent interrupt controller
+> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
+> +  - rtc
+> +    - compatible: "x-powers,ac100-rtc"
+> +    - interrupt-parent: The parent interrupt controller
+> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
+> +    - #clock-cells: shall be 1
+> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
+> +    - see clock/clock-bindings.txt for common clock bindings
+> +
+> +Example:
+> +
+> +ac100: codec@e89 {
+> +	compatible = "x-powers,ac100";
+> +	reg = <0xe89>;
+> +
+> +	ac100_codec {
 
-Add clock driver support for MAX77620 on the MAX77686 driver.
+Use generic node names and no underscores:
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+codec {
 
----
-Changes from V1:
-- Updated based on changes done in first patch.
----
- drivers/clk/Kconfig        |  7 ++++---
- drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+), 3 deletions(-)
+> +		compatible = "x-powers,ac100-codec";
+> +		interrupt-parent = <&r_pio>;
+> +		interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
+> +	};
+> +
+> +	ac100_rtc {
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 6afad74..d75f4c5 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
- source "drivers/clk/versatile/Kconfig"
- 
- config COMMON_CLK_MAX77686
--	tristate "Clock driver for Maxim 77686/77802 MFD"
--	depends on MFD_MAX77686
-+	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-+	depends on MFD_MAX77686 || MFD_MAX77620
- 	---help---
--	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-+	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
-+	  clock.
- 
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK808"
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 9aba3a8..19f6208 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -25,6 +25,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/mfd/max77620.h>
- #include <linux/mfd/max77686.h>
- #include <linux/mfd/max77686-private.h>
- #include <linux/clk-provider.h>
-@@ -35,12 +36,14 @@
- 
- #include <dt-bindings/clock/maxim,max77686.h>
- #include <dt-bindings/clock/maxim,max77802.h>
-+#include <dt-bindings/clock/maxim,max77620.h>
- 
- #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
- 
- enum max77686_chip_name {
- 	CHIP_MAX77686,
- 	CHIP_MAX77802,
-+	CHIP_MAX77620,
- };
- 
- struct max77686_hw_clk_info {
-@@ -97,6 +100,15 @@ max77686_hw_clk_info max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
- 	},
- };
- 
-+static const struct
-+max77686_hw_clk_info max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
-+	[MAX77620_CLK_32K_OUT0] = {
-+		.name = "32khz_out0",
-+		.clk_reg = MAX77620_REG_CNFG1_32K,
-+		.clk_enable_mask = MAX77620_CNFG1_32K_OUT0_EN,
-+	},
-+};
-+
- static struct max77686_clk_init_data *to_max77686_clk_init_data(
- 				struct clk_hw *hw)
- {
-@@ -181,6 +193,11 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 		hw_clks = max77802_hw_clks_info;
- 		break;
- 
-+	case CHIP_MAX77620:
-+		num_clks = MAX77620_CLKS_NUM;
-+		hw_clks = max77620_hw_clks_info;
-+		break;
-+
- 	default:
- 		dev_err(dev, "Unknown Chip ID\n");
- 		return -EINVAL;
-@@ -284,6 +301,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
- static const struct platform_device_id max77686_clk_id[] = {
- 	{ "max77686-clk", .driver_data = CHIP_MAX77686, },
- 	{ "max77802-clk", .driver_data = CHIP_MAX77802, },
-+	{ "max77620-clock", .driver_data = CHIP_MAX77620, },
- 	{},
- };
- MODULE_DEVICE_TABLE(platform, max77686_clk_id);
--- 
-2.1.4
+rtc {
+
+> +		compatible = "x-powers,ac100-rtc";
+> +		interrupt-parent = <&nmi_intc>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +		#clock-cells = <1>;
+> +		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
+> +	};
+> +};
+> -- 
+> 2.8.1
+> 
