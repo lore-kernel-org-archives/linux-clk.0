@@ -1,86 +1,59 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	huangtao@rock-chips.com,
-	typ@rock-chips.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v1 3/6] clk: rockchip: rk3399: add ddrc clock support
-Date: Fri,  3 Jun 2016 17:55:16 +0800
-Message-Id: <1464947719-6245-4-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160621005112.GM1521@codeaurora.org>
+References: <1465212804-21391-1-git-send-email-geert+renesas@glider.be> <20160621005112.GM1521@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Jun 2016 07:56:54 +0200
+Message-ID: <CAMuHMdWztj3HGVMT9Lh2Y8kU7TGqB0J4-eU4e2it2bcti2vxtQ@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Add support for R-Car M3-W
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-add ddrc clock setting, so we can do ddr frequency
-scaling on rk3399 platform in future.
+Hi Stephen,
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
-Changes in v1:
-- remove ddrc source CLK_IGNORE_UNUSED flag, Suggestion by Doug
-- move clk_ddrc and clk_ddrc_dpll_src to critical, Suggestion by Doug
+On Tue, Jun 21, 2016 at 2:51 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/06, Geert Uytterhoeven wrote:
+>>       Hi Mike, Stephen,
+>>
+>> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+>>
+>>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.8-tag1
+>>
+>> for you to fetch changes up to e4e2d7c388350eba8b1dbc2569441ac9b545a8c4:
+>>
+>>   clk: renesas: cpg-mssr: Add support for R-Car M3-W (2016-06-06 11:58:35 +0200)
+>>
+>
+> Checkpatch complains...
+>
+> ERROR: Use of const init definition must use __initconst
+> #712: FILE: drivers/clk/renesas/rcar-gen3-cpg.c:248:
+> +static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+>
+> Seems like a valid problem. Any chance it can be fixed?
 
- drivers/clk/rockchip/clk-rk3399.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+It is a false positive: the data pointed to is const, the pointer
+variable isn't.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index f1d8e44..29afb88 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)				= { "clk_core_b_lpll_src",
- 						    "clk_core_b_bpll_src",
- 						    "clk_core_b_dpll_src",
- 						    "clk_core_b_gpll_src" };
-+PNAME(mux_ddrclk_p)				= { "clk_ddrc_lpll_src",
-+						    "clk_ddrc_bpll_src",
-+						    "clk_ddrc_dpll_src",
-+						    "clk_ddrc_gpll_src" };
- PNAME(mux_aclk_cci_p)				= { "cpll_aclk_cci_src",
- 						    "gpll_aclk_cci_src",
- 						    "npll_aclk_cci_src",
-@@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
- 			RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
- 			RK3368_CLKGATE_CON(13), 11, GFLAGS),
-+
-+	/* ddrc */
-+	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
-+	     0, GFLAGS),
-+	GATE(0, "clk_ddrc_bpll_src", "bpll", 0, RK3399_CLKGATE_CON(3),
-+	     1, GFLAGS),
-+	GATE(0, "clk_ddrc_dpll_src", "dpll", 0, RK3399_CLKGATE_CON(3),
-+	     2, GFLAGS),
-+	GATE(0, "clk_ddrc_gpll_src", "gpll", 0, RK3399_CLKGATE_CON(3),
-+	     3, GFLAGS),
-+	COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p, 0,
-+		       RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3, DFLAGS),
- };
- 
- static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
-@@ -1487,6 +1503,10 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
- 	"gpll_hclk_perilp1_src",
- 	"gpll_aclk_perilp0_src",
- 	"gpll_aclk_perihp_src",
-+
-+	/* ddrc */
-+	"clk_ddrc_dpll_src",
-+	"clk_ddrc",
- };
- 
- static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
--- 
-1.9.1
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
