@@ -1,171 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-am1on0086.outbound.protection.outlook.com ([157.56.112.86]:52088
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750721AbcFWCqO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 22 Jun 2016 22:46:14 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	"Claudiu Manoil" <claudiu.manoil@freescale.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: RE: [PATCH 2/4] soc: fsl: add GUTS driver for QorIQ platforms
-Date: Thu, 23 Jun 2016 02:46:10 +0000
-Message-ID: <AM2PR04MB0883C91467E26AF0D52DC2C8F82D0@AM2PR04MB0883.eurprd04.prod.outlook.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-	 <5339448.D8rpq4ofAC@wuerfel> <1464832042.22191.23.camel@buserror.net>
-	 <3435609.s5m1DCsoNb@wuerfel> <1465609853.22191.151.camel@buserror.net>
-In-Reply-To: <1465609853.22191.151.camel@buserror.net>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] clk: rockchip: rk3228: fix incorrect clock node names
+Date: Tue, 21 Jun 2016 12:53:27 +0800
+Message-Id: <1466484811-26923-2-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgQXJuZCwNCg0KQ291bGQgeW91IGNvbW1lbnQgb24gdGhlc2U/DQpUaGFua3MuDQoNCg0KQmVz
-dCByZWdhcmRzLA0KWWFuZ2JvIEx1DQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
-PiBGcm9tOiBTY290dCBXb29kIFttYWlsdG86b3NzQGJ1c2Vycm9yLm5ldF0NCj4gU2VudDogU2F0
-dXJkYXksIEp1bmUgMTEsIDIwMTYgOTo1MSBBTQ0KPiBUbzogQXJuZCBCZXJnbWFubjsgbGludXhw
-cGMtZGV2QGxpc3RzLm96bGFicy5vcmcNCj4gQ2M6IE1hcmsgUnV0bGFuZDsgVWxmIEhhbnNzb247
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBpMmNAdmdlci5rZXJuZWwu
-b3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBRaWFuZyBaaGFvOyBSdXNzZWxsIEtpbmc7
-DQo+IEJodXBlc2ggU2hhcm1hOyBKb2VyZyBSb2VkZWw7IENsYXVkaXUgTWFub2lsOyBkZXZpY2V0
-cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gS3VtYXIgR2FsYTsgUm9iIEhlcnJpbmc7IFNhbnRvc2gg
-U2hpbGlta2FyOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBuZXRk
-ZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gbW1jQHZnZXIua2VybmVsLm9yZzsgWGlhb2Jv
-IFhpZTsgWWFuZy1MZW8gTGk7IGlvbW11QGxpc3RzLmxpbnV4LQ0KPiBmb3VuZGF0aW9uLm9yZzsg
-WWFuZ2JvIEx1DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi80XSBzb2M6IGZzbDogYWRkIEdVVFMg
-ZHJpdmVyIGZvciBRb3JJUSBwbGF0Zm9ybXMNCj4gDQo+IE9uIFRodSwgMjAxNi0wNi0wMiBhdCAx
-MDo0MyArMDIwMCwgQXJuZCBCZXJnbWFubiB3cm90ZToNCj4gPiBPbiBXZWRuZXNkYXksIEp1bmUg
-MSwgMjAxNiA4OjQ3OjIyIFBNIENFU1QgU2NvdHQgV29vZCB3cm90ZToNCj4gPiA+IE9uIE1vbiwg
-MjAxNi0wNS0zMCBhdCAxNToxNSArMDIwMCwgQXJuZCBCZXJnbWFubiB3cm90ZToNCj4gPiA+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2ZzbC9ndXRzLmMgYi9kcml2ZXJzL3NvYy9mc2wvZ3V0
-cy5jIG5ldw0KPiA+ID4gPiBmaWxlIG1vZGUgMTAwNjQ0IGluZGV4IDAwMDAwMDAwMDAwMC4uMmYz
-MDY5OGY1YmNmDQo+ID4gPiA+IC0tLSAvZGV2L251bGwNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9z
-b2MvZnNsL2d1dHMuYw0KPiA+ID4gPiBAQCAtMCwwICsxLDEzMCBAQA0KPiA+ID4gPiArLyoNCj4g
-PiA+ID4gKyAqIEZyZWVzY2FsZSBRb3JJUSBQbGF0Zm9ybXMgR1VUUyBEcml2ZXINCj4gPiA+ID4g
-KyAqDQo+ID4gPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTYgRnJlZXNjYWxlIFNlbWljb25kdWN0
-b3IsIEluYy4NCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBz
-b2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yDQo+ID4gPiA+ICttb2RpZnkN
-Cj4gPiA+ID4gKyAqIGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGlj
-IExpY2Vuc2UgYXMNCj4gPiA+ID4gK3B1Ymxpc2hlZCBieQ0KPiA+ID4gPiArICogdGhlIEZyZWUg
-U29mdHdhcmUgRm91bmRhdGlvbjsgZWl0aGVyIHZlcnNpb24gMiBvZiB0aGUgTGljZW5zZSwNCj4g
-PiA+ID4gK29yDQo+ID4gPiA+ICsgKiAoYXQgeW91ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9u
-Lg0KPiA+ID4gPiArICovDQo+ID4gPiA+ICsNCj4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9pby5o
-Pg0KPiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPiAjaW5jbHVkZSA8
-bGludXgvbW9kdWxlLmg+DQo+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgvc2xhYi5oPiAjaW5jbHVk
-ZSA8bGludXgvb2ZfYWRkcmVzcy5oPiAjaW5jbHVkZQ0KPiA+ID4gPiArPGxpbnV4L29mX3BsYXRm
-b3JtLmg+ICNpbmNsdWRlIDxsaW51eC9zeXNfc29jLmg+DQo+ID4gPiA+ICsNCj4gPiA+ID4gKyNk
-ZWZpbmUgR1VUU19QVlIJMHgwYTANCj4gPiA+ID4gKyNkZWZpbmUgR1VUU19TVlIJMHgwYTQNCj4g
-PiA+ID4gKw0KPiA+ID4gPiArc3RydWN0IGd1dHMgew0KPiA+ID4gPiArCXZvaWQgX19pb21lbSAq
-cmVnczsNCj4gPiA+DQo+ID4gPiBXZSBhbHJlYWR5IGhhdmUgYSBzdHJ1Y3QgdG8gZGVmaW5lIGd1
-dHMuICBXaHkgYXJlIHlvdSBub3QgdXNpbmcgaXQ/DQo+ID4gPiBXaHkgZG8geW91IGNvbnNpZGVy
-IHVzaW5nIGl0IHRvIGJlICJhYnVzZSI/ICBXaGF0IGlmIHdlIHdhbnQgdG8gbW92ZQ0KPiA+ID4g
-bW9yZSBndXRzIGZ1bmN0aW9uYWxpdHkgaW50byB0aGlzIGRyaXZlcj8NCj4gPg0KPiA+IFRoaXMg
-c3RydWN0dXJlIHdhcyBpbiB0aGUgb3JpZ2luYWwgcGF0Y2gsIEkgbGVmdCBpdCBpbiB0aGVyZSwg
-b25seQ0KPiA+IHJlbW92ZWQgdGhlIGluY2x1c2lvbiBvZiB0aGUgcG93ZXJwYyBoZWFkZXIgZmls
-ZSwgd2hpY2ggc2VlbWVkIHRvIGJlDQo+ID4gbWlzcGxhY2VkLg0KPiANCj4gSSdtIG5vdCByZWZl
-cmluZyAic3RydWN0IGd1dHMiLiAgSSdtIHJlZmVycmluZyB0byBjaGFuZ2luZyAic3RydWN0DQo+
-IGNjc3JfZ3V0cyBfX2lvbWVtICpyZWdzIiBpbnRvICJ2b2lkIF9faW9tZW0gKnJlZ3MiLg0KPiAN
-Cj4gQW5kIGl0J3Mgbm90IGEgcG93ZXJwYyBoZWFkZXIgZmlsZS4NCj4gDQo+ID4gPiA+ICsvKg0K
-PiA+ID4gPiArICogVGFibGUgZm9yIG1hdGNoaW5nIGNvbXBhdGlibGUgc3RyaW5ncywgZm9yIGRl
-dmljZSB0cmVlDQo+ID4gPiA+ICsgKiBndXRzIG5vZGUsIGZvciBGcmVlc2NhbGUgUW9ySVEgU09D
-cy4NCj4gPiA+ID4gKyAqLw0KPiA+ID4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2Vf
-aWQgZnNsX2d1dHNfb2ZfbWF0Y2hbXSA9IHsNCj4gPiA+ID4gKwkvKiBGb3IgVDQgJiBCNCBTZXJp
-ZXMgU09DcyAqLw0KPiA+ID4gPiArCXsgLmNvbXBhdGlibGUgPSAiZnNsLHFvcmlxLWRldmljZS1j
-b25maWctMS4wIiwgLmRhdGEgPSAiVDQvQjQNCj4gPiA+ID4gc2VyaWVzIiB9LA0KPiA+ID4gW3Nu
-aXBdDQo+ID4gPiA+ICsJeyAuY29tcGF0aWJsZSA9ICJmc2wscW9yaXEtZGV2aWNlLWNvbmZpZy0y
-LjAiLCAuZGF0YSA9ICJQDQo+ID4gPiA+IHNlcmllcyINCj4gPiA+DQo+ID4gPiBBcyBub3RlZCBp
-biBteSBjb21tZW50IG9uIHBhdGNoIDMvNCwgdGhlc2UgZGVzY3JpcHRpb25zIGFyZSByZXZlcnNl
-ZC4NCj4gPiA+DQo+ID4gPiBUaGV5J3JlIGFsc28gaW5jb21wbGV0ZS4gIHQyMDgwIGhhcyBkZXZp
-Y2UgY29uZmlnIDIuMC4gIHQxMDQwIGlzDQo+ID4gPiBkZXNjcmliZWQgYXMNCj4gPiA+IDIuMCB0
-aG91Z2ggaXQgc2hvdWxkIHByb2JhYmx5IGJlIDIuMSAob3IgYmV0dGVyLCBkcm9wIHRoZSBnZW5l
-cmljDQo+ID4gPiBjb21wYXRpYmxlIGFsdG9nZXRoZXIpLg0KPiA+DQo+ID4gT2suIElkZWFsbHkg
-SSB0aGluayB3ZSdkIGV2ZW4gbG9vayB1cCB0aGUgc3BlY2lmaWMgU29DIG5hbWVzIGZyb20gdGhl
-DQo+ID4gU1ZDIHJhdGhlciB0aGFuIHRoZSBjb21wYXRpYmxlIHN0cmluZy4gSSBqdXN0IGRpZG4n
-dCBoYXZlIGEgZ29vZCBsaXN0DQo+ID4gZm9yIHRob3NlIHRvIHB1dCBpbiB0aGUgZHJpdmVyLg0K
-PiANCj4gVGhlIGxpc3QgaXMgaW4gYXJjaC9wb3dlcnBjL2luY2x1ZGUvYXNtL21wYzg1eHguaCBi
-dXQgSSBkb24ndCBrbm93IHdoeSB3ZQ0KPiBuZWVkIHRvIGNvbnZlcnQgaXQgdG8gYSBzdHJpbmcg
-aW4gdGhlIGZpcnN0IHBsYWNlLg0KPiANCj4gPg0KPiA+ID4gPiArCS8qDQo+ID4gPiA+ICsJICog
-c3lzY29uIGRldmljZXMgZGVmYXVsdCB0byBsaXR0bGUtZW5kaWFuLCBidXQgb24gcG93ZXJwYyB3
-ZQ0KPiA+ID4gPiBoYXZlDQo+ID4gPiA+ICsJICogZXhpc3RpbmcgZGV2aWNlIHRyZWVzIHdpdGgg
-YmlnLWVuZGlhbiBtYXBzIGFuZCBhbiBhYnNlbnQNCj4gPiA+ID4gZW5kaWFuZXNzDQo+ID4gPiA+
-ICsJICogImJpZy1wcm9wZXJ0eSINCj4gPiA+ID4gKwkgKi8NCj4gPiA+ID4gKwlpZiAoIUlTX0VO
-QUJMRUQoQ09ORklHX1BPV0VSUEMpICYmDQo+ID4gPiA+ICsJICAgICFvZl9wcm9wZXJ0eV9yZWFk
-X2Jvb2woZGV2LT5vZl9ub2RlLCAiYmlnLWVuZGlhbiIpKQ0KPiA+ID4gPiArCQlndXRzLT5saXR0
-bGVfZW5kaWFuID0gdHJ1ZTsNCj4gPiA+DQo+ID4gPiBUaGlzIGlzIG5vdCBhIHN5c2NvbiBkZXZp
-Y2UgKFlhbmdibydzIHBhdGNoIHRvIGFkZCBhIGd1dHMgbm9kZSBvbg0KPiA+ID4gbHMyMDgwIGlz
-IHRoZSBvbmx5IGd1dHMgbm9kZSB0aGF0IHNheXMgInN5c2NvbiIsIGFuZCB0aGF0IHdhcyBhDQo+
-ID4gPiBsZWZ0b3ZlciBmcm9tIGVhcmxpZXIgcmV2aXNpb25zIGFuZCBzaG91bGQgcHJvYmFibHkg
-YmUgcmVtb3ZlZCkuDQo+ID4gPiBFdmVuIGlmIGl0IHdlcmUsIHdoZXJlIGlzIGl0IGRvY3VtZW50
-ZWQgdGhhdCBzeXNjb24gZGVmYXVsdHMgdG8NCj4gPiA+IGxpdHRsZS1lbmRpYW4/DQo+ID4NCj4g
-PiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVnbWFwL3JlZ21hcC50eHQNCj4g
-Pg0KPiA+IFdlIGhhZCBhIGxpdHRsZSBzY3Jld3VwIGhlcmUsIGJhc2ljYWxseSByZWdtYXAgKGFu
-ZCBieSBjb25zZXF1ZW5jZSwNCj4gPiBzeXNjb24pIGFsd2F5cyBkZWZhdWx0ZWQgdG8gbGl0dGxl
-LWVuZGlhbiB3YXkgYmVmb3JlIHRoYXQgd2FzDQo+ID4gZG9jdW1lbnRlZCwgc28gaXQncyB0b28g
-bGF0ZSB0byBjaGFuZ2UgaXQsDQo+IA0KPiBXaGF0IGNhdXNlcyBhIGRldmljZSBub2RlIHRvIGZh
-bGwgdW5kZXIgdGhlIGp1cmlzZGljdGlvbiBvZiByZWdtYXAudHh0Pw0KPiAgQWdhaW4sIHRoZXNl
-IG5vZGVzIGRvIG5vdCBjbGFpbSAic3lzY29uIiBjb21wYXRpYmlsaXR5Lg0KPiANCj4gPiBhbHRo
-b3VnaCBJIGFncmVlIGl0IHdvdWxkIGhhdmUgbWFkZSBzZW5zZSB0byBkb2N1bWVudCByZWdtYXAg
-dG8NCj4gPiBkZWZhdWx0IHRvIGJpZy1lbmRpYW4gb24gcG93ZXJwYy4NCj4gDQo+IFBsZWFzZSBk
-b24ndC4gIEl0J3MgZW5vdWdoIG9mIGEgbWVzcyBhcyBpczsgbm8gbmVlZCB0byBzdGFydCB0aHJv
-d2luZyBpbg0KPiBhcmNoaXRlY3R1cmUgaWZkZWZzLg0KPiANCj4gPiA+IERvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9jb21tb24tcHJvcGVydGllcy50eHQgc2F5cyB0aGF0DQo+ID4g
-PiB0aGUgaW5kaXZpZHVhbCBiaW5kaW5nIHNwZWNpZmllcyB0aGUgZGVmYXVsdC4gIFRoZSBkZWZh
-dWx0IGZvciB0aGlzDQo+ID4gPiBub2RlIHNob3VsZCBiZSBiaWctZW5kaWFuIGJlY2F1c2UgdGhh
-dCdzIHdoYXQgZXhpc3RlZCBiZWZvcmUgdGhlcmUNCj4gPiA+IHdhcyBhIG5lZWQgdG8gZGVzY3Jp
-YmUgdGhlIGVuZGlhbm5lc3MuICBBbmQgd2UgbmVlZCBhbiB1cGRhdGUgdG8gdGhlDQo+ID4gPiBn
-dXRzIGJpbmRpbmcgdG8gc3BlY2lmeSB0aGF0Lg0KPiA+DQo+ID4gR29vZCBwb2ludC4gVGhpcyBw
-cm9hYmx5IG1lYW5zIHRoYXQgc3BlY2lmeWluZyBib3RoIHRoZSAiZ3V0cyIgYW5kDQo+ICJzeXNj
-b24iDQo+ID4gY29tcGF0aWJsZSBzdHJpbmdzIGltcGxpZXMgaGF2aW5nIHRvIGFsc28gc3BlY2lm
-eSB0aGUgZW5kaWFuZXNzDQo+ID4gZXhwbGljaXRseSBib3RoIHdheXMsIGJlY2F1c2Ugb3RoZXJ3
-aXNlIHdlIGJyZWFrIG9uZSBvZiB0aGUgdHdvDQo+IGJpbmRpbmdzLg0KPiANCj4gWWVzLCBidXQg
-dGhlIG5vZGUgc2hvdWxkIG9ubHkgc3BlY2lmeSAiZ3V0cyIuDQo+IA0KPiA+DQo+ID4gPiA+ICsN
-Cj4gPiA+ID4gKwlndXRzLT5yZWdzID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwgMCk7DQo+
-ID4gPiA+ICsJaWYgKCFndXRzLT5yZWdzKSB7DQo+ID4gPiA+ICsJCXJldCA9IC1FTk9NRU07DQo+
-ID4gPiA+ICsJCWtmcmVlKGd1dHMpOw0KPiA+ID4gPiArCQlnb3RvIG91dDsNCj4gPiA+ID4gKwl9
-DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlmc2xfZ3V0c19pbml0KGRldiwgZ3V0cyk7DQo+ID4gPiA+
-ICsJcmV0ID0gMDsNCj4gPiA+ID4gK291dDoNCj4gPiA+ID4gKwlyZXR1cm4gcmV0Ow0KPiA+ID4g
-PiArfQ0KPiA+ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBm
-c2xfc29jX2d1dHMgPSB7DQo+ID4gPiA+ICsJLnByb2JlID0gZnNsX2d1dHNfcHJvYmUsDQo+ID4g
-PiA+ICsJLmRyaXZlci5vZl9tYXRjaF90YWJsZSA9IGZzbF9ndXRzX29mX21hdGNoLCB9Ow0KPiA+
-ID4gPiArDQo+ID4gPiA+ICttb2R1bGVfcGxhdGZvcm1fZHJpdmVyKGZzbF9zb2NfZ3V0cyk7DQo+
-ID4gPg0KPiA+ID4gQWdhaW4sIHRoaXMgbWVhbnMgdGhhdCB0aGUgaW5mb3JtYXRpb24gaXMgbm90
-IGF2YWlsYWJsZSBkdXJpbmcgZWFybHkNCj4gPiA+IGJvb3QsIHN1Y2ggYXMgaW4gdGhlIGNsb2Nr
-IGRyaXZlci4gIFRodXMgd2Ugd291bGQgbm90IGJlIGFibGUgdG8NCj4gPiA+IGNvbnZlcnQgY2xr
-IC1xb3JpcSdzIGRpcmVjdCBtZnNwcihTUFJOX1NWUikgaW50byBhbg0KPiA+ID4gc29jX2Rldmlj
-ZV9tYXRjaCgpIChvciBhbnl0aGluZyBlbHNlIHRoYXQgbWFrZXMgdXNlIG9mIHRoaXMgZmlsZSks
-DQo+ID4gPiBub3Igd291bGQgd2UgYmUgYWJsZSB0byBtb3ZlIGl0cyBhY2Nlc3Mgb2YgdGhlIGd1
-dHMgUkNXIHJlZ2lzdGVycw0KPiA+ID4gaW50byB0aGlzIGRyaXZlci4NCj4gPg0KPiA+IENvcnJl
-Y3QuIERvIHdlIGhhdmUgYSByZWFzb24gdG8gY29udmVydCB0aGUgbWZzcHIoKSB0aG91Z2g/IEkg
-ZG9uJ3QNCj4gPiByZWFsbHkgc2VlIGFuIGltcHJvdmVtZW50IG92ZXIgdGhlIGN1cnJlbnQgc3Rh
-dGUgaWYgd2UgZG8gdGhhdCwNCj4gDQo+IFRoZW4gc2hvdWxkIHdlIGRyb3AgdGhpcyBwYXRjaHNl
-dCBhbmQgcHV0IGEgc2ltaWxhciBQUEMgaWZkZWYgaW4NCj4gZHJpdmVycy9tbWMvaG9zdC9zZGhj
-aS1vZi1lc2RoYy5jPw0KPiANCj4gVGhlcmUncyBhbHNvIHRoZSBSQ1cgYWNjZXNzLiAgWW91IHNh
-aWQgaW4gdGhlIHBhdGNoIDQvNCBkaXNjdXNzaW9uIHRoYXQNCj4geW91IGRpIGRuJ3QgbGlrZSBh
-bnkgcmFuZG9tIGRyaXZlciBpb3JlbWFwcGluZyB0aGUgcmVnaXN0ZXJzLi4uDQo+IA0KPiA+IGFu
-ZCBmb3IgbmV3IGRldmljZXMNCj4gPiB0aGF0IG1pZ2h0IG5lZWQgdGhlIGVycmF0dW0gd29ya2Fy
-b3VuZCwgd2UgY291bGQgYWRkIGEgRFQgcHJvcGVydHkNCj4gPiB0aGF0IHdvdWxkIGJlIHByZWZl
-cnJlZCB0byBib3RoLg0KPiANCj4gSXQncyB1bmxpa2VseSB0aGF0IHdlIHdvdWxkIGtub3cgdGhl
-IGVycmF0dW0gZXhpc3RzIGF0IHRoZSB0aW1lIHRoZQ0KPiBkZXZpY2UgdHJlZSBpcyBjcmVhdGVk
-LiAgV2UgYWxzbyBnZW5lcmFsbHkgZG9uJ3QgaGF2ZSBzZXBhcmF0ZSBkZXZpY2UNCj4gdHJlZXMg
-Zm9yIGVhY2ggcmV2aXNpb24gb2YgYSBjaGlwIChhbmQgaWYgd2UgZGlkLCB3ZSdkIGhhdmUgdXNl
-cnMgdGhhdA0KPiB1c2UgdGhlIHdyb25nIG9uZSkuDQo+IA0KPiAtU2NvdHQNCg0K
+Due to copy and paste carelessly, RK3288_CLKxxx nodes are incorrect,
+we need to fix them.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
+
+ drivers/clk/rockchip/clk-rk3228.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 016bdb0..2f1442f 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -335,7 +335,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
+ 
+ 	GATE(0, "sclk_hsadc", "ext_hsadc", 0,
+-			RK3288_CLKGATE_CON(10), 12, GFLAGS),
++			RK2928_CLKGATE_CON(10), 12, GFLAGS),
+ 
+ 	COMPOSITE(0, "sclk_wifi", mux_pll_src_cpll_gpll_usb480m_p, 0,
+ 			RK2928_CLKSEL_CON(23), 5, 2, MFLAGS, 0, 6, DFLAGS,
+@@ -380,8 +380,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(9), 15, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 3, GFLAGS),
+ 	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_src", CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(8), 0,
+-			RK3288_CLKGATE_CON(0), 4, GFLAGS),
++			RK2928_CLKSEL_CON(8), 0,
++			RK2928_CLKGATE_CON(0), 4, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_I2S0, "sclk_i2s0", mux_i2s0_p, 0,
+ 			RK2928_CLKSEL_CON(9), 8, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(0), 5, GFLAGS),
+@@ -390,8 +390,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(3), 15, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 10, GFLAGS),
+ 	COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_src", CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(7), 0,
+-			RK3288_CLKGATE_CON(0), 11, GFLAGS),
++			RK2928_CLKSEL_CON(7), 0,
++			RK2928_CLKGATE_CON(0), 11, GFLAGS,
+ 	MUX(0, "i2s1_pre", mux_i2s1_pre_p, 0,
+ 			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
+ 	GATE(SCLK_I2S1, "sclk_i2s1", "i2s1_pre", 0,
+@@ -404,8 +404,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 15, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 7, GFLAGS),
+ 	COMPOSITE_FRAC(0, "i2s2_frac", "i2s2_src", CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(30), 0,
+-			RK3288_CLKGATE_CON(0), 8, GFLAGS),
++			RK2928_CLKSEL_CON(30), 0,
++			RK2928_CLKGATE_CON(0), 8, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_I2S2, "sclk_i2s2", mux_i2s2_p, 0,
+ 			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
+@@ -414,8 +414,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(6), 15, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
+ 	COMPOSITE_FRAC(0, "spdif_frac", "sclk_spdif_src", CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(20), 0,
+-			RK3288_CLKGATE_CON(2), 12, GFLAGS),
++			RK2928_CLKSEL_CON(20), 0,
++			RK2928_CLKGATE_CON(2), 12, GFLAGS),
+ 	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, 0,
+ 			RK2928_CLKSEL_CON(6), 8, 2, MFLAGS),
+ 
+-- 
+1.7.9.5
