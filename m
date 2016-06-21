@@ -1,71 +1,51 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160628233504.GH1521@codeaurora.org>
-References: <1466690683-28949-1-git-send-email-geert+renesas@glider.be> <20160628233504.GH1521@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Jun 2016 09:51:43 +0200
-Message-ID: <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.8 (take two)
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <moinejf@free.fr>
+Date: Tue, 21 Jun 2016 11:40:44 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andre
+ Przywara <andre.przywara@arm.com>, Rob Herring <robh+dt@kernel.org>, Vishnu
+ Patekar <vishnupatekar0510@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] clk: sunxi: introduce "modern" clock support
+Message-Id: <20160621114044.811e2136eca5c1d863d79ac6@free.fr>
+In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Tue,  7 Jun 2016 22:41:39 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-On Wed, Jun 29, 2016 at 1:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/23, Geert Uytterhoeven wrote:
->> The following changes since commit e4e2d7c388350eba8b1dbc2569441ac9b545a8c4:
->>
->>   clk: renesas: cpg-mssr: Add support for R-Car M3-W (2016-06-06 11:58:35 +0200)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.8-tag2
->>
->> for you to fetch changes up to e4c82863fd17bacb60080481c11eb0303d3f83d0:
->>
->>   clk: renesas: r8a7795: Add THS/TSC clock (2016-06-21 09:21:06 +0200)
->>
->> ----------------------------------------------------------------
->> clk: renesas: Updates for v4.8 (take two)
->>
->>   - Add support for R-Car V2H,
->>   - Add FDP1, DRIF, and thermal clocks on R-Car H3,
->>   - Correct a wrong parent clock.
->>
->> This pull request is based on my previous request "[git pull] clk:
->> renesas: Add support for R-Car M3-W".
->> For proper merge history (auto-grabbing the commit message from the
->> signed tag), you should pull tags/clk-renesas-for-v4.8-tag1 first.
->> As <dt-bindings/clock/r8a7796-cpg-mssr.h> is a hard dependency for the
->> initial r8a7796.dtsi file, I would appreciate if you could do that
->> sooner rather than later, so Simon can pull it as well, and start
->> queueing up the DT files for R-Car M3-W, which need to go through
->> arm-soc.
->
-> Thanks. Pulled into clk-next. BTW, please don't use clk_readl()
+> The current code has been tested on the H3 and an Orange Pi PC,
+> including making sure that MMC still works, so the general approach
+> seems ok.
+>=20
+> Let me know what you think,
 
-Thanks, but it seems something went wrong: commit d9cce3a8ebb871c5 is not a
-merge commit, but the combination of all 7 commits from the pull request?
+Hi Maxime,
 
-> unless you really need it. Just use readl/writel directly. I
-> should put a big fat warning over those functions that they
-> shouldn't be used.
+I used your code in both the H3 and A83T, and it worked fine for the
+current clocks.
 
-Hence all users under drivers/clk/renesas/ should be converted to readl()?
+But I had some problems with some features as the 'mode select' in the
+A83T MMC2 clock.
+Also, I think that you did not go far enough in the changes.
+For example, most clock gates as well as most resets could be removed
+from the DT and automatically set/de-asserted on clock prepare or clock
+enable.
 
-Gr{oetje,eeting}s,
+So, I am rewriting a generic sunxi clock driver into one file (about
+1000 lines) and I have the full (simpler and clearer) description of
+the H3 and the A863T clocks.
 
-                        Geert
+Coding is not finished yet. I will submit a RFC as soon as I will have
+something working.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
