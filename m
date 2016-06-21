@@ -1,23 +1,64 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Yuantian Tang <yuantian.tang@nxp.com>
-Cc: Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood <scottwood@freescale.com>
-Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible parent clocks
-Date: Thu, 30 Jun 2016 03:46:56 +0200
-Message-ID: <2091721.Cm4CVR1ptK@vostro.rjw.lan>
-In-Reply-To: <DBXPR04MB49546917495DA33834B05D7F0230@DBXPR04MB495.eurprd04.prod.outlook.com>
-References: <1466058085-19353-1-git-send-email-oss@buserror.net> <DBXPR04MB49546917495DA33834B05D7F0230@DBXPR04MB495.eurprd04.prod.outlook.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 20 Jun 2016 17:11:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com>,
+	Shawn Guo <shawnguo@kernel.org>, gregkh@linuxfoundation.org,
+	linux-serial@vger.kernel.org, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+	jslaby@suse.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/8] tty: serial: fsl_lpuart: support suspend/resume
+Message-ID: <20160621001151.GE1521@codeaurora.org>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+ <20160609151039.20817-3-bhuvanchandra.dv@toradex.com>
+ <20160611140341.GT20243@tiger>
+ <cdeb3e9b-92c5-77d9-78ec-3af3954e8e16@toradex.com>
+ <AF70EE92-9B41-4ECE-AB5F-E829E611B7C6@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AF70EE92-9B41-4ECE-AB5F-E829E611B7C6@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
-> Hi,
+On 06/13, Stefan Agner wrote:
 > 
-> This patch is acked by clock maintainer. If no comments from anyone else, we will merge it in next week.
+> 
+> On June 13, 2016 5:18:19 PM PDT, Bhhuvanchandra DV <bhuvanchandra.dv@toradex.com> wrote:
+> >Hi Shawn,
+> >
+> >On 06/11/2016 02:03 PM, Shawn Guo wrote:
+> >
+> >> On Thu, Jun 09, 2016 at 08:40:33PM +0530, Bhuvanchandra DV wrote:
+> >>> From: Stefan Agner <stefan@agner.ch>
+> >>>
+> >>> In order to allow wake support in STOP sleep mode, clocks are
+> >>> needed. Use imx_clk_gate2_cgr to disable automatic clock gating
+> >>> in low power mode STOP. This allows to enable wake by UART using:
+> >>> echo enabled > /sys/class/tty/ttyLP0/power/wakeup
+> >>>
+> >>> However, if wake is not enabled, the driver should disable the
+> >>> clocks explicitly to save power.
+> >>>
+> >>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >>> ---
+> >>>   drivers/clk/imx/clk-vf610.c     | 12 ++++++------
+> >> Please send clock driver changes in a separate patch.
+> 
+> The changes are dependet on each other, hence I put it in a single patch. But since it is a new feature it shouldn't really matter...
+> 
+> >
+> >How about splitting this patchset to two? few patches are having minor
+> >fixes and the few patches might need some review and discussions.
+> >May be some thing like DMA fixes and the other minor fixes.
+> 
+> I don't think that splitting up the patchset is necessary, with the current order it is possible to pick up the fixes independently...
+> 
 
-There is a cpufreq commit depending on it.  Are you going to handle that one too?
+I think the main problem is clk and tty subsystems are modified
+in the same patch here. Did you want an ack from clk maintainers
+here or will the patch be split so we can take the clk part
+through clk tree?
 
-Thanks,
-Rafael
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
