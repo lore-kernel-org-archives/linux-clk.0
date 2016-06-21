@@ -1,56 +1,34 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 04/28] ARM: OMAP2+: hwmod: use new ti_clk_get API to search for clock handles
-Date: Mon, 13 Jun 2016 22:04:38 +0300
-Message-ID: <1465844702-12200-5-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Yakir Yang <ykk@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Jeffy Chen <jeffy.chen@rock-chips.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Caesar Wang <wxt@rock-chips.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/5] Fix and improve clock controller for the RK322x SoCs
+Date: Wed, 22 Jun 2016 01:07:29 +0200
+Message-ID: <13345941.K3V3BNYxTY@phil>
+In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The new API avoids the need to add clock aliases for most of the clocks,
-should use of it is preferred. Many of the existing clock aliases are
-only created because of hwmod data.
+Am Dienstag, 21. Juni 2016, 12:53:26 schrieb Xing Zheng:
+> Hi,
+>   These patchset fix some clocks bugs, and improve clock configuration
+> for i2s/spdif/MAC on RK322x SoCs.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+applied to my clock-branch with the following changes:
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 83cb527..0ea869c 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -786,7 +786,7 @@ static int _init_main_clk(struct omap_hwmod *oh)
- 	if (!oh->main_clk)
- 		return 0;
- 
--	oh->_clk = clk_get(NULL, oh->main_clk);
-+	oh->_clk = ti_clk_get(oh->main_clk);
- 	if (IS_ERR(oh->_clk)) {
- 		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
- 			oh->name, oh->main_clk);
-@@ -831,7 +831,7 @@ static int _init_interface_clks(struct omap_hwmod *oh)
- 		if (!os->clk)
- 			continue;
- 
--		c = clk_get(NULL, os->clk);
-+		c = ti_clk_get(os->clk);
- 		if (IS_ERR(c)) {
- 			pr_warn("omap_hwmod: %s: cannot clk_get interface_clk %s\n",
- 				oh->name, os->clk);
-@@ -868,7 +868,7 @@ static int _init_opt_clks(struct omap_hwmod *oh)
- 	int ret = 0;
- 
- 	for (i = oh->opt_clks_cnt, oc = oh->opt_clks; i > 0; i--, oc++) {
--		c = clk_get(NULL, oc->clk);
-+		c = ti_clk_get(oc->clk);
- 		if (IS_ERR(c)) {
- 			pr_warn("omap_hwmod: %s: cannot clk_get opt_clk %s\n",
- 				oh->name, oc->clk);
--- 
-1.9.1
+- fixed the error in patch1 - missing ")" in
+      COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_src", CLK_SET_RATE_PARENT,
+-                       RK3288_CLKSEL_CON(7), 0,
+-                       RK3288_CLKGATE_CON(0), 11, GFLAGS),
++                       RK2928_CLKSEL_CON(7), 0,
++                       RK2928_CLKGATE_CON(0), 11, GFLAGS,
+
+- adapted patch2 accordingly
+- split out clock id addition into separate patches, as they need a shared 
+branch. Xing please remember to add clock-ids to the header in separate 
+patches.
+
+
+Heiko
