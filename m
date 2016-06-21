@@ -1,66 +1,76 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 07/10] ARM: dts: sun9i: cubieboard4: Add device node for AC100
-Date: Tue, 14 Jun 2016 10:17:55 +0800
-Message-Id: <1465870678-30128-9-git-send-email-wens@csie.org>
-In-Reply-To: <1465870678-30128-1-git-send-email-wens@csie.org>
-References: <1465870678-30128-1-git-send-email-wens@csie.org>
+Return-Path: <vz@mleia.com>
+Subject: Re: [PATCH] clk: lpc32xx: allow peripheral clock selection in device
+ tree
+To: Sylvain Lemieux <slemieux.tyco@gmail.com>, sboyd@codeaurora.org,
+ mturquette@baylibre.com
+References: <1464982475-24738-1-git-send-email-slemieux.tyco@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <f8778993-a393-f72a-ba76-76550a9c5bbd@mleia.com>
+Date: Tue, 21 Jun 2016 07:28:58 +0300
+MIME-Version: 1.0
+In-Reply-To: <1464982475-24738-1-git-send-email-slemieux.tyco@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Hi Sylvain,
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-index db770d06c31e..a92eeea1b222 100644
---- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
-@@ -250,6 +250,27 @@
- 			};
- 		};
- 	};
-+
-+	ac100: codec@e89 {
-+		compatible = "x-powers,ac100";
-+		reg = <0xe89>;
-+
-+		ac100_codec: codec {
-+			compatible = "x-powers,ac100-codec";
-+			interrupt-parent = <&r_pio>;
-+			interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
-+		};
-+
-+		ac100_rtc: rtc {
-+			compatible = "x-powers,ac100-rtc";
-+			interrupt-parent = <&nmi_intc>;
-+			interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+			#clock-cells = <1>;
-+			clock-output-names = "cko1_rtc",
-+					     "cko2_rtc",
-+					     "cko3_rtc";
-+		};
-+	};
- };
- 
- #include "axp809.dtsi"
--- 
-2.8.1
+On 03.06.2016 22:34, Sylvain Lemieux wrote:
+> From: Sylvain Lemieux <slemieux@tycoint.com>
+> 
+> This patch add the support to select the peripheral clock (PERIPH)
+> as a parent clock source using the "assigned-clock-parents"
+> parameter in the device tree.
+> 
+> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+
+The change looks good, is it done to support a selection of PWM parent clocks?
+
+I think it makes sense to set PERIPH clock as a default parent for both
+PWM controllers, please consider to send a DTS change.
+
+
+Best wishes,
+Vladimir
+
+> ---
+>  drivers/clk/nxp/clk-lpc32xx.c             | 3 +--
+>  include/dt-bindings/clock/lpc32xx-clock.h | 1 +
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+> index 481b264..90d740a 100644
+> --- a/drivers/clk/nxp/clk-lpc32xx.c
+> +++ b/drivers/clk/nxp/clk-lpc32xx.c
+> @@ -87,7 +87,7 @@ enum {
+>  
+>  enum {
+>  	/* Start from the last defined clock in dt bindings */
+> -	LPC32XX_CLK_ADC_DIV = LPC32XX_CLK_HCLK_PLL + 1,
+> +	LPC32XX_CLK_ADC_DIV = LPC32XX_CLK_PERIPH + 1,
+>  	LPC32XX_CLK_ADC_RTC,
+>  	LPC32XX_CLK_TEST1,
+>  	LPC32XX_CLK_TEST2,
+> @@ -99,7 +99,6 @@ enum {
+>  	LPC32XX_CLK_HCLK_DIV_PERIPH,
+>  	LPC32XX_CLK_HCLK_DIV,
+>  	LPC32XX_CLK_HCLK,
+> -	LPC32XX_CLK_PERIPH,
+>  	LPC32XX_CLK_ARM,
+>  	LPC32XX_CLK_ARM_VFP,
+>  
+> diff --git a/include/dt-bindings/clock/lpc32xx-clock.h b/include/dt-bindings/clock/lpc32xx-clock.h
+> index d41b6fe..e624d3a 100644
+> --- a/include/dt-bindings/clock/lpc32xx-clock.h
+> +++ b/include/dt-bindings/clock/lpc32xx-clock.h
+> @@ -48,6 +48,7 @@
+>  #define LPC32XX_CLK_PWM2	33
+>  #define LPC32XX_CLK_ADC		34
+>  #define LPC32XX_CLK_HCLK_PLL	35
+> +#define LPC32XX_CLK_PERIPH	36
+>  
+>  /* LPC32XX USB clocks */
+>  #define LPC32XX_USB_CLK_I2C	1
+> 
