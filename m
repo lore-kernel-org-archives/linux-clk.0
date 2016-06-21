@@ -1,53 +1,79 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a7795: Correct lvds clock parent
-Date: Fri, 10 Jun 2016 16:22:27 +0300
-Message-ID: <2566506.K23fCkD3hP@avalon>
-In-Reply-To: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
-References: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 21 Jun 2016 11:20:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/20] clk: multiplier: Prevent the multiplier from under
+ / over flowing
+Message-ID: <20160621092049.GN26668@lukather>
+References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1463402840-17062-3-git-send-email-maxime.ripard@free-electrons.com>
+ <20160620205030.24587.98159@quark.deferred.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/TUrtqMIkCP4YtJm"
+In-Reply-To: <20160620205030.24587.98159@quark.deferred.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
 
-Thank you for the patch.
+--/TUrtqMIkCP4YtJm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 10 Jun 2016 09:44:33 Geert Uytterhoeven wrote:
-> According to the latest information, the parent clock of the LVDS module
-> clock is the S0D4 clock, not the S2D1 clock.
-> 
-> Note that this change has no influence on actual operation, as the
-> rcar-du LVDS encoder driver doesn't use the parent clock's rate.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Jun 20, 2016 at 01:50:30PM -0700, Michael Turquette wrote:
+> Quoting Maxime Ripard (2016-05-16 05:47:02)
+> > In the current multiplier base clock implementation, if the
+> > CLK_SET_RATE_PARENT flag isn't set, the code will not make sure that the
+> > multiplier computed remains within the boundaries of our clock.
+> >=20
+> > This means that if the clock we want to reach is below the parent rate,
+> > or if the multiplier is above the maximum that we can reach, we will en=
+d up
+> > with a completely bogus one that the clock cannot achieve.
+> >=20
+> > Fixes: f2e0a53271a4 ("clk: Add a basic multiplier clock")
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> Applied.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thanks, but apparently you merged it in clk-next, while it should go
+in clk-fixes, shouldn't it?
 
-> ---
-> Will queue in clk-renesas-for-v4.8.
-> 
->  drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> b/drivers/clk/renesas/r8a7795-cpg-mssr.c index
-> 8f76af6f454d0823..ad01b0b1bc5fa172 100644
-> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> @@ -180,7 +180,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[]
-> __initconst = { DEF_MOD("du2",			 722,	R8A7795_CLK_S2D1),
->  	DEF_MOD("du1",			 723,	R8A7795_CLK_S2D1),
->  	DEF_MOD("du0",			 724,	R8A7795_CLK_S2D1),
-> -	DEF_MOD("lvds",			 727,	R8A7795_CLK_S2D1),
-> +	DEF_MOD("lvds",			 727,	R8A7795_CLK_S0D4),
->  	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
->  	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
->  	DEF_MOD("vin7",			 804,	R8A7795_CLK_S2D1),
+Maxime
 
--- 
-Regards,
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Laurent Pinchart
+--/TUrtqMIkCP4YtJm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXaQbxAAoJEBx+YmzsjxAgeZEP/iVHW8R27efQFN5Di8VdkEbw
+mFOBo1CJjFRtOQpQw9ty8OuEFJIKec0QcGNgxR3jxRGRbp/xVI97vlPQZ0JnzMTE
+02LOruKb17KL+yS+0SSHWQmXCmOv71nHzLzYU8wUqEhjoh0NycQRJ3uNOUxeOiBy
+fHN8ls5MdSvZTpoy14mcFNtFVZWzn1wrKAFAHKk3hylcaEF4VS0RkNWBoVvZGvQQ
+K5UhAjs42naK93TNhoz0B8lv8xlfcARfGoRli2dqHv5otatA+gSuYWmfvaP2vMjR
+woybO4tTGiuqM4nl8lwqaYo6CC55eeOeZlosFuEPNPrLP04og5gIxy5ZIJzfBlI7
+kvPi+jkoJva73bQeuMJpXvDvrJfvc/DQxmLqxDryGtgB/mdTidhmBoent3oLNK3c
+/zQXmOUtG8ijS4UI8/LvHXI4Y1YBNiLmRjq9LK6vZhiAHndBIuMakHqEvk1Xku++
+nCdY1bYMm5n49/9cB3Y8MWd/fIdDhuqLQYLXA3dzK5fxDCpiP05NuJbaLEwdCXEW
+Q2S/REmVFb1eZYpXrkmovsY2MRQbEeIkdx2F+LVgNw8JIx3S4Z68wWVF38dzeCTr
+vHAfCuMfxzIp8lf78IPFSkN1S6PRNQOwklwiZPUUttbHT2vo9eoKUT0zfDie82js
+/eU9IAlaPdoOEgnUxtyU
+=dj5b
+-----END PGP SIGNATURE-----
+
+--/TUrtqMIkCP4YtJm--
