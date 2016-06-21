@@ -1,34 +1,57 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53230 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932538AbcFCNma (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 3 Jun 2016 09:42:30 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: rockchip: release io resource when failing to init clk
-Date: Fri, 03 Jun 2016 15:42:23 +0200
-Message-ID: <1945106.rcVxzvAYk1@diego>
-In-Reply-To: <1464915258-10838-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1464915258-10838-1-git-send-email-shawn.lin@rock-chips.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16859 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752251AbcFUPsY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2016 11:48:24 -0400
+Subject: Re: [PATCH] clk: tegra: Mark timer clock as critical
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <20160621153035.22172-1-thierry.reding@gmail.com>
+CC: Alexandre Courbot <gnurou@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <846d3464-6462-91af-002f-789ca9aa56f1@nvidia.com>
+Date: Tue, 21 Jun 2016 11:48:13 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160621153035.22172-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 3. Juni 2016, 08:54:18 schrieb Shawn Lin:
-> We should call iounmap to relase reg_base since it's not going
-> to be used any more if failing to init clk.
+On 6/21/2016 11:30 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> The timer clock feeds the timer block, which, among other things, is
+> used to drive the SOR lane sequencer. Since the Tegra timer driver is
+> not enabled on 64-bit ARM, nothing currently claims that clock and it
+> gets disabled by the common clock framework at late_init time.
+> 
+> Given the non-obvious dependencies, the timer clock can be considered
+> a critical part of the SoC infrastructure, requiring its clock source
+> to be always on.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> index af85c8aeaf5a..4ce4e7fb1124 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -792,7 +792,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+>  
+>  static struct tegra_periph_init_data gate_clks[] = {
+>  	GATE("rtc", "clk_32k", 4, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_rtc, 0),
+> -	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, 0),
+> +	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+>  	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+>  	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+>  	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
+> 
 
-applied to my clk-fixes branch for 4.7, after adding a line to the patch-
-description explaining that this is really just missing on rk3399 (and after 
-checking that the iounmaps are already present on the old clock-trees)
+Acked-by: Rhyland Klein <rklein@nvidia.com>
 
-
-Thanks for catching this
-Heiko
-
+-- 
+nvpublic
