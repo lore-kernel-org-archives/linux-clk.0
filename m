@@ -1,170 +1,55 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 2/7] clk: meson: add mpll support
-Date: Thu,  9 Jun 2016 17:32:49 -0700
-Message-Id: <1465518774-26924-3-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
-References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 20 Jun 2016 18:48:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Francois Moine <moinejf@free.fr>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] clk: sunxi: introduce "modern" clock support
+Message-ID: <20160621014816.GT1521@codeaurora.org>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-MPLLs are adjustable rate clocks derived from PLLs. On both Meson8b and
-GXBB they appear to be only derived from fixed_pll.
+On 06/07, Maxime Ripard wrote:
+> 
+> The current code has been tested on the H3 and an Orange Pi PC,
+> including making sure that MMC still works, so the general approach
+> seems ok.
+> 
+> Let me know what you think,
 
-Add support for these clock types so that they can be added to their
-respective drivers.
+Overall this looks pretty good. Thanks for taking the time to
+rework the driver.
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
----
- drivers/clk/meson/Makefile   |  2 +-
- drivers/clk/meson/clk-mpll.c | 94 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h     | 10 +++++
- 3 files changed, 105 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/clk-mpll.c
+The macro nesting is sort of concerning, but if you're willing to
+live with a maze of macros I'm not too worried. Also, I don't see
+why we have to use the ccu_common structure everywhere even when
+we're not gaining from it, but it's not a huge problem either
+way. The non-mmio clks could be split off from the mmio list and
+then registered in two lists, or there could be mmio list that
+sets up the base address and then a larger list of clk_hw
+pointers that we just run through and register.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index b3d60fe..7667218 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,5 +2,5 @@
- # Makefile for Meson specific clk
- #
- 
--obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-new file mode 100644
-index 0000000..03af790
---- /dev/null
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -0,0 +1,94 @@
-+/*
-+ * This file is provided under a dual BSD/GPLv2 license.  When using or
-+ * redistributing this file, you may do so under either license.
-+ *
-+ * GPL LICENSE SUMMARY
-+ *
-+ * Copyright (c) 2016 AmLogic, Inc.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of version 2 of the GNU General Public License as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software
-+ * Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-+ * The full GNU General Public License is included in this distribution
-+ * in the file called COPYING
-+ *
-+ * BSD LICENSE
-+ *
-+ * Copyright (c) 2016 AmLogic, Inc.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ *
-+ *   * Redistributions of source code must retain the above copyright
-+ *     notice, this list of conditions and the following disclaimer.
-+ *   * Redistributions in binary form must reproduce the above copyright
-+ *     notice, this list of conditions and the following disclaimer in
-+ *     the documentation and/or other materials provided with the
-+ *     distribution.
-+ *   * Neither the name of Intel Corporation nor the names of its
-+ *     contributors may be used to endorse or promote products derived
-+ *     from this software without specific prior written permission.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+/*
-+ * MultiPhase Locked Loops are outputs from a PLL with additional frequency
-+ * scaling capabilities. MPLL rates are calculated as:
-+ *
-+ * f(N2_integer, SDM_IN ) = 2.0G/(N2_integer + SDM_IN/16384)
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include "clkc.h"
-+
-+#define SDM_MAX 16384
-+
-+#define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
-+
-+static unsigned long mpll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
-+	struct parm *p;
-+	unsigned long rate = 0;
-+	unsigned long reg, sdm, n2;
-+
-+	p = &mpll->sdm;
-+	reg = readl(mpll->base + p->reg_off);
-+	sdm = PARM_GET(p->width, p->shift, reg);
-+
-+	p = &mpll->n2;
-+	reg = readl(mpll->base + p->reg_off);
-+	n2 = PARM_GET(p->width, p->shift, reg);
-+
-+	rate = (parent_rate * SDM_MAX) / ((SDM_MAX * n2) + sdm);
-+
-+	return rate;
-+}
-+
-+const struct clk_ops meson_clk_mpll_ro_ops = {
-+	.recalc_rate = mpll_recalc_rate,
-+};
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 9436932..73f0146 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -73,6 +73,15 @@ struct meson_clk_cpu {
- int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
- 		void *data);
- 
-+struct meson_clk_mpll {
-+	struct clk_hw hw;
-+	void __iomem *base;
-+	struct parm sdm;
-+	struct parm n2;
-+	/* FIXME ssen gate control? */
-+	spinlock_t *lock;
-+};
-+
- #define MESON_GATE(_name, _reg, _bit)					\
- struct clk_gate gxbb_##_name = { 						\
- 	.reg = (void __iomem *) _reg, 					\
-@@ -91,5 +100,6 @@ struct clk_gate gxbb_##_name = { 						\
- extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
- extern const struct clk_ops meson_clk_cpu_ops;
-+extern const struct clk_ops meson_clk_mpll_ro_ops;
- 
- #endif /* __CLKC_H */
+It would be great if we could squeeze some more code reuse out of
+the basic types too, but I'm not sure if there's much more that
+can be done. Sometimes I'm seeing the same code multiple times
+for handling muxes with parents and dividers or muxes without
+dividers, etc. But that seems like future work that isn't going
+to block anything here.
+
+Finally, can you please use the clk_hw_register() APIs that we've
+recently added. That will save us some time converting a new
+driver over to use the new style of registering clks.
+
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
