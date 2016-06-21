@@ -1,653 +1,207 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
 	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	cw00.choi@samsung.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v2 5/6] PM / devfreq: rockchip: add devfreq driver for rk3399 dmc
-Date: Mon,  6 Jun 2016 18:13:05 +0800
-Message-Id: <1465207986-17888-6-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
-References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 2/5] clk: qcom: ipq4019: Added the apss cpu pll divider clock node
+Date: Tue, 21 Jun 2016 19:19:19 +0530
+Message-Id: <1466516962-18087-3-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-base on dfi result, we do ddr frequency scaling, register
-dmc driver to devfreq framework, and use simple-ondemand
-policy.
+The current ipq4019 clock driver does not have support for all
+the frequency supported by APPS CPU. APPS CPU frequency is
+provided with APSS CPU PLL divider which divides down the VCO
+frequency. This divider is nonlinear and specific to IPQ4019
+so the standard divider code cannot be used for this.
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+This patch registers new clock node and adds its clock
+operations for APPS CPU clock divider. Since, this divider
+is nonlinear, so frequency table is also added for this,
+which contains the frequency and its corresponding hardware
+divider values.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
+ drivers/clk/qcom/gcc-ipq4019.c               | 112 ++++++++++++++++++++++++++-
+ include/dt-bindings/clock/qcom,gcc-ipq4019.h |   1 +
+ 2 files changed, 112 insertions(+), 1 deletion(-)
 
-Changes in v2:
-- None
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 17ca6d3..4c8a97f 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -154,7 +154,7 @@ static const char * const gcc_xo_ddr_500_200[] = {
+ 	"xo",
+ 	"gcc_fepll200_clk",
+ 	"gcc_fepll500_clk",
+-	"ddrpllapss",
++	"gcc_apps_cpu_plldiv_clk",
+ };
  
-Changes in v1:
-- move dfi controller to event
-- fix set voltage sequence when set rate fail
-- change Kconfig type from tristate to bool
-- move unuse EXPORT_SYMBOL_GPL()
-
- drivers/devfreq/Kconfig                 |   1 +
- drivers/devfreq/Makefile                |   1 +
- drivers/devfreq/rockchip/Kconfig        |  15 ++
- drivers/devfreq/rockchip/Makefile       |   2 +
- drivers/devfreq/rockchip/rk3399_dmc.c   | 337 ++++++++++++++++++++++++++++++++
- drivers/devfreq/rockchip/rockchip_dmc.c | 143 ++++++++++++++
- include/soc/rockchip/rockchip_dmc.h     |  45 +++++
- 7 files changed, 544 insertions(+)
- create mode 100644 drivers/devfreq/rockchip/Kconfig
- create mode 100644 drivers/devfreq/rockchip/Makefile
- create mode 100644 drivers/devfreq/rockchip/rk3399_dmc.c
- create mode 100644 drivers/devfreq/rockchip/rockchip_dmc.c
- create mode 100644 include/soc/rockchip/rockchip_dmc.h
-
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 78dac0e..e57275e 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -101,5 +101,6 @@ config ARM_TEGRA_DEVFREQ
-          operating frequencies and voltages with OPP support.
+ #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+@@ -571,6 +571,7 @@ static struct clk_rcg2 apps_clk_src = {
+ 		.parent_names = gcc_xo_ddr_500_200,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
- source "drivers/devfreq/event/Kconfig"
-+source "drivers/devfreq/rockchip/Kconfig"
+@@ -1273,6 +1274,114 @@ static struct clk_pll_vco gcc_fepll_vco = {
+ 	},
+ };
  
- endif # PM_DEVFREQ
-diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-index 09f11d9..48e2ae6 100644
---- a/drivers/devfreq/Makefile
-+++ b/drivers/devfreq/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
- # DEVFREQ Drivers
- obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
- obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra-devfreq.o
-+obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
- 
- # DEVFREQ Event Drivers
- obj-$(CONFIG_PM_DEVFREQ_EVENT)		+= event/
-diff --git a/drivers/devfreq/rockchip/Kconfig b/drivers/devfreq/rockchip/Kconfig
-new file mode 100644
-index 0000000..7fb1cff
---- /dev/null
-+++ b/drivers/devfreq/rockchip/Kconfig
-@@ -0,0 +1,15 @@
-+config ARM_ROCKCHIP_DMC_DEVFREQ
-+	bool "ARM ROCKCHIP DMC DEVFREQ Driver"
-+	depends on ARCH_ROCKCHIP
-+	help
-+	  This adds the DEVFREQ driver framework for the rockchip dmc.
-+
-+config ARM_RK3399_DMC_DEVFREQ
-+	bool "ARM RK3399 DMC DEVFREQ Driver"
-+	depends on ARM_ROCKCHIP_DMC_DEVFREQ
-+	select PM_OPP
-+	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-+	help
-+          This adds the DEVFREQ driver for the RK3399 dmc. It sets the frequency
-+          for the memory controller and reads the usage counts from hardware.
-+
-diff --git a/drivers/devfreq/rockchip/Makefile b/drivers/devfreq/rockchip/Makefile
-new file mode 100644
-index 0000000..caca525
---- /dev/null
-+++ b/drivers/devfreq/rockchip/Makefile
-@@ -0,0 +1,2 @@
-+obj-$(CONFIG_ARM_ROCKCHIP_DMC_DEVFREQ)	+= rockchip_dmc.o
-+obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
-diff --git a/drivers/devfreq/rockchip/rk3399_dmc.c b/drivers/devfreq/rockchip/rk3399_dmc.c
-new file mode 100644
-index 0000000..41ff71b
---- /dev/null
-+++ b/drivers/devfreq/rockchip/rk3399_dmc.c
-@@ -0,0 +1,337 @@
 +/*
-+ * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
-+ * Author: Lin Huang <hl@rock-chips.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
++ * Round rate function for APPS CPU PLL Clock divider.
++ * It Returns the input rate without changing it. The hardware supported rate
++ * will be calculated in set function by getting the same from frequency table.
 + */
-+
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/delay.h>
-+#include <linux/devfreq.h>
-+#include <linux/devfreq-event.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/rwsem.h>
-+#include <linux/suspend.h>
-+#include <linux/syscore_ops.h>
-+
-+#include <soc/rockchip/rockchip_dmc.h>
-+
-+struct rk3399_dmcfreq {
-+	struct device *dev;
-+	struct devfreq *devfreq;
-+	struct devfreq_simple_ondemand_data ondemand_data;
-+	struct clk *dmc_clk;
-+	struct completion dcf_hold_completion;
-+	struct devfreq_event_dev *edev;
-+	struct mutex lock;
-+	struct notifier_block dmc_nb;
-+	int irq;
-+	struct regulator *vdd_center;
-+	unsigned long rate, target_rate;
-+	unsigned long volt, target_volt;
++static long clk_cpu_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *p_rate)
++{
++	return rate;
 +};
 +
-+static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
-+				 u32 flags)
++/*
++ * Clock set rate function for APPS CPU PLL Clock divider.
++ * It looks up the frequency table and updates the PLL divider to corresponding
++ * divider value.
++ */
++static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
 +{
-+	struct platform_device *pdev = container_of(dev, struct platform_device,
-+						    dev);
-+	struct rk3399_dmcfreq *dmcfreq = platform_get_drvdata(pdev);
-+	struct dev_pm_opp *opp;
-+	unsigned long old_clk_rate = dmcfreq->rate;
-+	unsigned long target_volt, target_rate;
-+	int err;
++	struct clk_pll_div *rcg = to_clk_pll_div(hw);
++	const struct freq_tbl *f;
++	u32 mask;
++	int ret;
 +
-+	rcu_read_lock();
-+	opp = devfreq_recommended_opp(dev, freq, flags);
-+	if (IS_ERR(opp)) {
-+		rcu_read_unlock();
-+		return PTR_ERR(opp);
-+	}
-+	target_rate = dev_pm_opp_get_freq(opp);
-+	target_volt = dev_pm_opp_get_voltage(opp);
-+	opp = devfreq_recommended_opp(dev, &dmcfreq->rate, flags);
-+	if (IS_ERR(opp)) {
-+		rcu_read_unlock();
-+		return PTR_ERR(opp);
-+	}
-+	dmcfreq->volt = dev_pm_opp_get_voltage(opp);
-+	rcu_read_unlock();
-+
-+	if (dmcfreq->rate == target_rate)
-+		return 0;
-+
-+	mutex_lock(&dmcfreq->lock);
-+
-+	/*
-+	 * if frequency scaling from low to high, adjust voltage first;
-+	 * if frequency scaling from high to low, adjuset frequency first;
-+	 */
-+	if (old_clk_rate < target_rate) {
-+		err = regulator_set_voltage(dmcfreq->vdd_center, target_volt,
-+					    target_volt);
-+		if (err) {
-+			dev_err(dev, "Unable to set vol %lu\n", target_volt);
-+			goto out;
-+		}
-+	}
-+
-+	dmc_event(DMCFREQ_ADJUST);
-+	reinit_completion(&dmcfreq->dcf_hold_completion);
-+	err = clk_set_rate(dmcfreq->dmc_clk, target_rate);
-+	if (err) {
-+		dev_err(dev,
-+			"Unable to set freq %lu. Current freq %lu. Error %d\n",
-+			target_rate, old_clk_rate, err);
-+		regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
-+				      dmcfreq->volt);
-+		dmc_event(DMCFREQ_FINISH);
-+		goto out;
-+	}
-+
-+	/* wait until bcf irq happen, it means freq scaling finish in bl31 */
-+	wait_for_completion(&dmcfreq->dcf_hold_completion);
-+	dmc_event(DMCFREQ_FINISH);
-+
-+	/*
-+	 * check the rate we get whether is correct
-+	 * in bl31 dcf, there only two result we will get,
-+	 * 1. ddr frequency scaling fail, we still get the old rate
-+	 * 2, ddr frequency scaling sucessful, we get the rate we set
-+	 */
-+	dmcfreq->rate = clk_get_rate(dmcfreq->dmc_clk);
-+
-+	/* do not get the right rate, set voltage to old value */
-+	if (dmcfreq->rate != target_rate) {
-+		dev_err(dev, "get wrong ddr frequency, Request freq %lu,\
-+			Current freq %lu\n", target_rate, dmcfreq->rate);
-+		regulator_set_voltage(dmcfreq->vdd_center, dmcfreq->volt,
-+				      dmcfreq->volt);
-+	} else if (old_clk_rate > target_rate)
-+		err = regulator_set_voltage(dmcfreq->vdd_center, target_volt,
-+					    target_volt);
-+	if (err)
-+		dev_err(dev, "Unable to set vol %lu\n", target_volt);
-+
-+out:
-+	mutex_unlock(&dmcfreq->lock);
-+	return err;
-+}
-+
-+static int rk3399_dmcfreq_get_dev_status(struct device *dev,
-+					 struct devfreq_dev_status *stat)
-+{
-+	struct platform_device *pdev = container_of(dev, struct platform_device,
-+						    dev);
-+	struct rk3399_dmcfreq *dmcfreq = platform_get_drvdata(pdev);
-+	struct devfreq_event_data edata;
-+
-+	devfreq_event_get_event(dmcfreq->edev, &edata);
-+
-+	stat->current_frequency = dmcfreq->rate;
-+	stat->busy_time = edata.load_count;
-+	stat->total_time = edata.total_count;
-+
-+	return 0;
-+}
-+
-+static int rk3399_dmcfreq_get_cur_freq(struct device *dev, unsigned long *freq)
-+{
-+	struct platform_device *pdev = container_of(dev, struct platform_device,
-+						    dev);
-+	struct rk3399_dmcfreq *dmcfreq = platform_get_drvdata(pdev);
-+
-+	*freq = dmcfreq->rate;
-+
-+	return 0;
-+}
-+
-+static void rk3399_dmcfreq_exit(struct device *dev)
-+{
-+	struct platform_device *pdev = container_of(dev, struct platform_device,
-+						    dev);
-+	struct rk3399_dmcfreq *dmcfreq = platform_get_drvdata(pdev);
-+
-+	devfreq_unregister_opp_notifier(dev, dmcfreq->devfreq);
-+}
-+
-+static struct devfreq_dev_profile rk3399_devfreq_dmc_profile = {
-+	.polling_ms	= 200,
-+	.target		= rk3399_dmcfreq_target,
-+	.get_dev_status	= rk3399_dmcfreq_get_dev_status,
-+	.get_cur_freq	= rk3399_dmcfreq_get_cur_freq,
-+	.exit		= rk3399_dmcfreq_exit,
-+};
-+
-+static __maybe_unused int rk3399_dmcfreq_suspend(struct device *dev)
-+{
-+	rockchip_dmc_disable();
-+	return 0;
-+}
-+
-+static __maybe_unused int rk3399_dmcfreq_resume(struct device *dev)
-+{
-+	rockchip_dmc_enable();
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rk3399_dmcfreq_pm, rk3399_dmcfreq_suspend,
-+			 rk3399_dmcfreq_resume);
-+
-+static int rk3399_dmc_enable_notify(struct notifier_block *nb,
-+				    unsigned long event, void *data)
-+{
-+	struct rk3399_dmcfreq *dmcfreq =
-+			      container_of(nb, struct rk3399_dmcfreq, dmc_nb);
-+	unsigned long freq = ULONG_MAX;
-+
-+	if (event == DMC_ENABLE) {
-+		devfreq_event_enable_edev(dmcfreq->edev);
-+		devfreq_resume_device(dmcfreq->devfreq);
-+		return NOTIFY_OK;
-+	} else if (event == DMC_DISABLE) {
-+		devfreq_event_disable_edev(dmcfreq->edev);
-+		devfreq_suspend_device(dmcfreq->devfreq);
-+
-+		/* when disable dmc, set sdram to max frequency */
-+		rk3399_dmcfreq_target(dmcfreq->dev, &freq, 0);
-+		return NOTIFY_OK;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static irqreturn_t rk3399_dmc_irq(int irq, void *dev_id)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_id;
-+
-+	complete(&dmcfreq->dcf_hold_completion);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int rk3399_dmcfreq_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rk3399_dmcfreq *data;
-+	int ret, irq;
-+	struct device_node *np = pdev->dev.of_node;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "no dmc irq resource\n");
++	f = qcom_find_freq(rcg->freq_tbl, rate);
++	if (!f)
 +		return -EINVAL;
-+	}
 +
-+	data = devm_kzalloc(dev, sizeof(struct rk3399_dmcfreq), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	mutex_init(&data->lock);
-+
-+	data->vdd_center = devm_regulator_get(dev, "center");
-+	if (IS_ERR(data->vdd_center)) {
-+		dev_err(dev, "Cannot get the regulator \"center\"\n");
-+		return PTR_ERR(data->vdd_center);
-+	}
-+
-+	data->dmc_clk = devm_clk_get(dev, "dmc_clk");
-+	if (IS_ERR(data->dmc_clk)) {
-+		dev_err(dev, "Cannot get the clk dmc_clk\n");
-+		return PTR_ERR(data->dmc_clk);
-+	};
-+
-+	data->edev = devfreq_event_get_edev_by_phandle(dev, 0);
-+	if (IS_ERR(data->edev))
-+		return -EPROBE_DEFER;
-+
-+	ret = devfreq_event_enable_edev(data->edev);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable devfreq-event devices\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * We add a devfreq driver to our parent since it has a device tree node
-+	 * with operating points.
-+	 */
-+	if (dev_pm_opp_of_add_table(dev)) {
-+		dev_err(dev, "Invalid operating-points in device tree.\n");
-+		return -EINVAL;
-+	}
-+
-+	of_property_read_u32(np, "upthreshold",
-+			     &data->ondemand_data.upthreshold);
-+
-+	of_property_read_u32(np, "downdifferential",
-+			     &data->ondemand_data.downdifferential);
-+
-+	data->devfreq = devfreq_add_device(dev,
-+					   &rk3399_devfreq_dmc_profile,
-+					   "simple_ondemand",
-+					   &data->ondemand_data);
-+	if (IS_ERR(data->devfreq))
-+		return PTR_ERR(data->devfreq);
-+
-+	devfreq_register_opp_notifier(dev, data->devfreq);
-+
-+	data->dmc_nb.notifier_call = rk3399_dmc_enable_notify;
-+	dmc_register_notifier(&data->dmc_nb);
-+
-+	init_completion(&data->dcf_hold_completion);
-+
-+	data->irq = irq;
-+	ret = devm_request_irq(dev, irq, rk3399_dmc_irq, 0,
-+			       dev_name(dev), data);
-+	if (ret) {
-+		dev_err(dev, "failed to request dmc irq: %d\n", ret);
-+		return ret;
-+	}
-+
-+	data->dev = dev;
-+	platform_set_drvdata(pdev, data);
++	mask = (BIT(rcg->cdiv.width) - 1) << rcg->cdiv.shift;
++	ret = regmap_update_bits(rcg->cdiv.clkr.regmap,
++				rcg->cdiv.reg, mask,
++				(f->pre_div << rcg->cdiv.shift) & mask);
++	udelay(1);
 +
 +	return 0;
-+}
-+
-+static int rk3399_dmcfreq_remove(struct platform_device *pdev)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = platform_get_drvdata(pdev);
-+
-+	devfreq_remove_device(dmcfreq->devfreq);
-+	regulator_put(dmcfreq->vdd_center);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rk3399dmc_devfreq_of_match[] = {
-+	{ .compatible = "rockchip,rk3399-dmc" },
-+	{ },
 +};
 +
-+static struct platform_driver rk3399_dmcfreq_driver = {
-+	.probe	= rk3399_dmcfreq_probe,
-+	.remove	= rk3399_dmcfreq_remove,
-+	.driver = {
-+		.name	= "rk3399-dmc-freq",
-+		.pm	= &rk3399_dmcfreq_pm,
-+		.of_match_table = rk3399dmc_devfreq_of_match,
++/*
++ * Clock frequency calculation function for APPS CPU PLL Clock divider.
++ * This clock divider is nonlinear so this function calculates the actual
++ * divider and returns the output frequency by dividing VCO Frequency
++ * with this actual divider value.
++ */
++static unsigned long clk_cpu_div_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pll_div *rcg = to_clk_pll_div(hw);
++	u32 cdiv, pre_div;
++
++	regmap_read(rcg->cdiv.clkr.regmap, rcg->cdiv.reg, &cdiv);
++	cdiv = (cdiv >> rcg->cdiv.shift) & (BIT(rcg->cdiv.width) - 1);
++
++	/*
++	 * Some dividers have value in 0.5 fraction so multiply both VCO
++	 * frequency(parent_rate) and pre_div with 2 to make integer
++	 * calculation.
++	 */
++	if (cdiv > 10)
++		pre_div = (cdiv + 1) * 2;
++	else
++		pre_div = cdiv + 12;
++
++	return clk_calc_divider_rate(parent_rate * 2, pre_div);
++};
++
++const struct clk_ops clk_regmap_cpu_div_ops = {
++	.round_rate = clk_cpu_div_round_rate,
++	.set_rate = clk_cpu_div_set_rate,
++	.recalc_rate = clk_cpu_div_recalc_rate,
++};
++
++static const struct freq_tbl ftbl_apps_ddr_pll[] = {
++	{380000000, P_XO, 0xD, 0},
++	{409000000, P_XO, 0xC, 0, 0},
++	{444000000, P_XO, 0xB, 0, 0},
++	{484000000, P_XO, 0xA, 0, 0},
++	{507000000, P_XO, 0x9, 0, 0},
++	{532000000, P_XO, 0x8, 0, 0},
++	{560000000, P_XO, 0x7, 0, 0},
++	{592000000, P_XO, 0x6, 0, 0},
++	{626000000, P_XO, 0x5, 0, 0},
++	{666000000, P_XO, 0x4, 0, 0},
++	{710000000, P_XO, 0x3, 0, 0},
++	{761000000, P_XO, 0x2, 0, 0},
++	{819000000, P_XO, 0x1, 0, 0},
++	{888000000, P_XO, 0x0, 0, 0},
++	{}
++};
++
++static struct clk_pll_div gcc_apps_cpu_plldiv_clk = {
++	.cdiv.reg = 0x2E020,
++	.cdiv.shift = 4,
++	.cdiv.width = 4,
++	.cdiv.clkr = {
++		.enable_reg = 0x2E000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_apps_cpu_plldiv_clk",
++			.parent_names = (const char *[]){
++				"gcc_apps_ddrpll_vco",
++			},
++			.num_parents = 1,
++			.ops = &clk_regmap_cpu_div_ops,
++		},
 +	},
++	.freq_tbl = ftbl_apps_ddr_pll,
 +};
-+module_platform_driver(rk3399_dmcfreq_driver);
 +
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("RK3399 dmcfreq driver with devfreq framework");
-diff --git a/drivers/devfreq/rockchip/rockchip_dmc.c b/drivers/devfreq/rockchip/rockchip_dmc.c
-new file mode 100644
-index 0000000..78baee5
---- /dev/null
-+++ b/drivers/devfreq/rockchip/rockchip_dmc.c
-@@ -0,0 +1,143 @@
-+/*
-+ * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
-+ * Author: Lin Huang <hl@rock-chips.com>
-+ * Base on: https://chromium-review.googlesource.com/#/c/231477/
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/mutex.h>
-+#include <soc/rockchip/rockchip_dmc.h>
-+
-+static int num_wait;
-+static int num_disable;
-+static BLOCKING_NOTIFIER_HEAD(dmc_notifier_list);
-+static DEFINE_MUTEX(dmc_en_lock);
-+static DEFINE_MUTEX(dmc_sync_lock);
-+
-+/**
-+ * rockchip_dmc_enabled - Returns true if dmc freq is enabled, false otherwise.
-+ */
-+bool rockchip_dmc_enabled(void)
-+{
-+	return num_disable <= 0 && num_wait <= 1;
-+}
-+
-+/**
-+ * rockchip_dmc_enable - Enable dmc frequency scaling. Will only enable
-+ * frequency scaling if there are 1 or fewer notifiers. Call to undo
-+ * rockchip_dmc_disable.
-+ */
-+void rockchip_dmc_enable(void)
-+{
-+	mutex_lock(&dmc_en_lock);
-+	num_disable--;
-+	WARN_ON(num_disable < 0);
-+	if (rockchip_dmc_enabled())
-+		dmc_event(DMC_ENABLE);
-+	mutex_unlock(&dmc_en_lock);
-+}
-+
-+/**
-+ * rockchip_dmc_disable - Disable dmc frequency scaling. Call when something
-+ * cannot coincide with dmc frequency scaling.
-+ */
-+void rockchip_dmc_disable(void)
-+{
-+	mutex_lock(&dmc_en_lock);
-+	if (rockchip_dmc_enabled())
-+		dmc_event(DMC_DISABLE);
-+	num_disable++;
-+	mutex_unlock(&dmc_en_lock);
-+}
-+
-+void dmc_event(int event)
-+{
-+	mutex_lock(&dmc_sync_lock);
-+	blocking_notifier_call_chain(&dmc_notifier_list, event, NULL);
-+	mutex_unlock(&dmc_sync_lock);
-+}
-+
-+/**
-+ * dmc_register_notifier - register a driver to dmc chain
-+ * @nb: notifier function to register
-+ */
-+int dmc_register_notifier(struct notifier_block *nb)
-+{
-+	int ret;
-+
-+	if (!nb)
-+		return -EINVAL;
-+
-+	ret = blocking_notifier_chain_register(&dmc_notifier_list, nb);
-+
-+	return ret;
-+}
-+
-+/**
-+ * dmc_unregister_notifier - unregister a driver from dmc chain
-+ * @nb: remove notifier function
-+ */
-+int dmc_unregister_notifier(struct notifier_block *nb)
-+{
-+	int ret;
-+
-+	if (!nb)
-+		return -EINVAL;
-+
-+	ret = blocking_notifier_chain_unregister(&dmc_notifier_list, nb);
-+
-+	return ret;
-+}
-+
-+/**
-+ * rockchip_dmc_get - Register the notifier block for the dmc chain.
-+ * @nb The dmc notifier block to register
-+ */
-+int rockchip_dmc_get(struct notifier_block *nb)
-+{
-+	if (!nb)
-+		return -EINVAL;
-+
-+	mutex_lock(&dmc_en_lock);
-+
-+	/*
-+	 * if have two notifier(enable two vop etc),
-+	 * need to disable dmc
-+	 */
-+	if (num_wait == 1 && num_disable <= 0)
-+		dmc_event(DMC_DISABLE);
-+	num_wait++;
-+	dmc_register_notifier(nb);
-+	mutex_unlock(&dmc_en_lock);
-+
-+	return 0;
-+}
-+
-+/**
-+ * rockchip_dmc_put - Remove the notifier block from the dmc chain.
-+ * @nb The dmc notifier block to unregister
-+ */
-+int rockchip_dmc_put(struct notifier_block *nb)
-+{
-+	if (!nb)
-+		return -EINVAL;
-+
-+	mutex_lock(&dmc_en_lock);
-+	num_wait--;
-+
-+	/* if notifier from 2 back to 1, enable dmc again */
-+	if (num_wait == 1 && num_disable <= 0)
-+		dmc_event(DMC_ENABLE);
-+	dmc_unregister_notifier(nb);
-+	mutex_unlock(&dmc_en_lock);
-+
-+	return 0;
-+}
-diff --git a/include/soc/rockchip/rockchip_dmc.h b/include/soc/rockchip/rockchip_dmc.h
-new file mode 100644
-index 0000000..3f69cbf
---- /dev/null
-+++ b/include/soc/rockchip/rockchip_dmc.h
-@@ -0,0 +1,45 @@
-+/*
-+ * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#ifndef __SOC_ROCKCHIP_DMC_H
-+#define __SOC_ROCKCHIP_DMC_H
-+
-+#include <linux/notifier.h>
-+
-+#define DMC_ENABLE	0
-+#define DMC_DISABLE	1
-+#define DMCFREQ_ADJUST	2
-+#define DMCFREQ_FINISH	3
-+
-+#if IS_ENABLED(CONFIG_ARM_ROCKCHIP_DMC_DEVFREQ)
-+int rockchip_dmc_get(struct notifier_block *nb);
-+int rockchip_dmc_put(struct notifier_block *nb);
-+#else
-+static inline int rockchip_dmc_get(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+
-+static inline int rockchip_dmc_put(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+#endif
-+
-+void dmc_event(int event);
-+int dmc_register_notifier(struct notifier_block *nb);
-+int dmc_unregister_notifier(struct notifier_block *nb);
-+void rockchip_dmc_enable(void);
-+void rockchip_dmc_disable(void);
-+bool rockchip_dmc_enabled(void);
-+#endif
+ /* Calculates the rate for PLL divider.
+  * If the divider value is not fixed then it gets the actual divider value
+  * from divider table. Then, it calculate the clock rate by dividing the
+@@ -1485,6 +1594,7 @@ static struct clk_regmap *gcc_ipq4019_clocks[] = {
+ 	[GCC_FEPLL500_CLK] = &gcc_fepll500_clk.cdiv.clkr,
+ 	[GCC_FEPLL_WCSS2G_CLK] = &gcc_fepllwcss2g_clk.cdiv.clkr,
+ 	[GCC_FEPLL_WCSS5G_CLK] = &gcc_fepllwcss5g_clk.cdiv.clkr,
++	[GCC_APPS_CPU_PLLDIV_CLK] = &gcc_apps_cpu_plldiv_clk.cdiv.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq4019_resets[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq4019.h b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
+index cd0cd23..921565d 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq4019.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
+@@ -90,6 +90,7 @@
+ #define GCC_FEPLL500_CLK				71
+ #define GCC_FEPLL_WCSS2G_CLK				72
+ #define GCC_FEPLL_WCSS5G_CLK				73
++#define GCC_APPS_CPU_PLLDIV_CLK				74
+ 
+ #define WIFI0_CPU_INIT_RESET				0
+ #define WIFI0_RADIO_SRIF_RESET				1
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
