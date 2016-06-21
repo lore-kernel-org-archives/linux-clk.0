@@ -1,50 +1,71 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Lin Huang <hl@rock-chips.com>, mark.yao@rock-chips.com, myungjoo.ham@samsung.com, huangtao@rock-chips.com, typ@rock-chips.com, airlied@linux.ie, mturquette@baylibre.com, dbasehore@chromium.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH v1 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for ddrc
-Date: Fri, 03 Jun 2016 14:36:53 +0200
-Message-ID: <20637963.iQzVZfJq9f@diego>
-In-Reply-To: <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com> <1464947719-6245-3-git-send-email-hl@rock-chips.com> <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Yakir Yang <ykk@rock-chips.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 3/5] clk: rockchip: rk3228: export related i2s/spdif clocks
+Date: Tue, 21 Jun 2016 12:53:29 +0800
+Message-Id: <1466484811-26923-4-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+This patch exports related i2s/spdif clocks for dts reference.
 
-Am Freitag, 3. Juni 2016, 20:34:52 schrieb Shawn Lin:
-> How about merge it into your patch#3.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-see comments from Doug and me on previous version.
+ drivers/clk/rockchip/clk-rk3228.c      |    8 ++++----
+ include/dt-bindings/clock/rk3228-cru.h |    4 ++++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-clock-ids should always be separate patches, as we will need them in both 
-clock and devicetree branches, so they must be in a separate branch shared 
-between clock and dts branches.
-
-
-Heiko
-
-> On 2016/6/3 17:55, Lin Huang wrote:
-> > Signed-off-by: Lin Huang <hl@rock-chips.com>
-> > ---
-> > Changes in v1:
-> > - None
-> > 
-> >  include/dt-bindings/clock/rk3399-cru.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/include/dt-bindings/clock/rk3399-cru.h
-> > b/include/dt-bindings/clock/rk3399-cru.h index 50a44cf..8a0f0442 100644
-> > --- a/include/dt-bindings/clock/rk3399-cru.h
-> > +++ b/include/dt-bindings/clock/rk3399-cru.h
-> > @@ -131,6 +131,7 @@
-> > 
-> >  #define SCLK_DPHY_RX0_CFG		165
-> >  #define SCLK_RMII_SRC			166
-> >  #define SCLK_PCIEPHY_REF100M		167
-> > 
-> > +#define SCLK_DDRCLK			168
-> > 
-> >  #define DCLK_VOP0			180
-> >  #define DCLK_VOP1			181
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 72bcdba..79a3db1 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -581,10 +581,10 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	GATE(0, "aclk_bus_noc", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 1, GFLAGS),
+ 
+ 	GATE(0, "hclk_rom", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 3, GFLAGS),
+-	GATE(0, "hclk_i2s0_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 7, GFLAGS),
+-	GATE(0, "hclk_i2s1_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 8, GFLAGS),
+-	GATE(0, "hclk_i2s2_2ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 9, GFLAGS),
+-	GATE(0, "hclk_spdif_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 10, GFLAGS),
++	GATE(HCLK_I2S0_8CH, "hclk_i2s0_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 7, GFLAGS),
++	GATE(HCLK_I2S1_8CH, "hclk_i2s1_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 8, GFLAGS),
++	GATE(HCLK_I2S2_2CH, "hclk_i2s2_2ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 9, GFLAGS),
++	GATE(HCLK_SPDIF_8CH, "hclk_spdif_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 10, GFLAGS),
+ 	GATE(0, "hclk_tsp", "hclk_cpu", 0, RK2928_CLKGATE_CON(10), 11, GFLAGS),
+ 	GATE(0, "hclk_crypto_mst", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 11, GFLAGS),
+ 	GATE(0, "hclk_crypto_slv", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 12, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
+index 5d43ed9..c992f3e 100644
+--- a/include/dt-bindings/clock/rk3228-cru.h
++++ b/include/dt-bindings/clock/rk3228-cru.h
+@@ -84,6 +84,10 @@
+ #define PCLK_HDMI_PHY		365
+ 
+ /* hclk gates */
++#define HCLK_I2S0_8CH		442
++#define HCLK_I2S1_8CH		443
++#define HCLK_I2S2_2CH		444
++#define HCLK_SPDIF_8CH		445
+ #define HCLK_VOP		452
+ #define HCLK_NANDC		453
+ #define HCLK_SDMMC		456
+-- 
+1.7.9.5
