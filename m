@@ -1,45 +1,41 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com,
-	maxime.coquelin@st.com,
-	patrice.chotard@st.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	broonie@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 0/6] clk: sti: Add support for critical clocks
-Date: Tue,  7 Jun 2016 12:19:24 +0100
-Message-Id: <20160607111930.10375-1-lee.jones@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 20 Jun 2016 18:15:37 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Francois Moine <moinejf@free.fr>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 04/15] clk: sunxi-ng: Add fixed factor clock support
+Message-ID: <20160621011537.GP1521@codeaurora.org>
+References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
+ <20160607204154.31967-5-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160607204154.31967-5-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Describe the platform's critical clocks in DT, then search for them
-from the framework.  This set allows us to remove the clk_ignore_unused
-kernel command line flag which has been required to achieve a successful
-boot to prompt until this point.
+On 06/07, Maxime Ripard wrote:
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "ccu_common.h"
+> +
+> +struct ccu_fixed_factor {
+> +	u16			div;
+> +	u16			mult;
+> +
+> +	struct ccu_common	common;
 
-This may not be the definitive list.  There may be other clocks which
-need to be marked as critical, but we can add those as we go along.
-
-Lee Jones (6):
-  clk: st: clk-flexgen: Detect critical clocks
-  clk: st: clkgen-fsyn: Detect critical clocks
-  clk: st: clkgen-pll: Detect critical clocks
-  ARM: sti: stih407-family: Supply defines for CLOCKGEN A0
-  ARM: sti: stih410-clocks: Identify critical clocks
-  spi: st-ssc4: Remove 'no clocking' hack
-
- arch/arm/boot/dts/stih410-clock.dtsi     |  9 ++++++++
- drivers/clk/st/clk-flexgen.c             |  4 +++-
- drivers/clk/st/clkgen-fsyn.c             | 10 ++++++---
- drivers/clk/st/clkgen-pll.c              | 27 +++++++++++++++---------
- drivers/spi/spi-st-ssc4.c                | 36 +++++---------------------------
- include/dt-bindings/clock/stih407-clks.h |  4 ++++
- 6 files changed, 45 insertions(+), 45 deletions(-)
+Does this use the common structure although we have no usage for
+the members of struct ccu_common except struct clk_hw? I suppose
+this is done so registering a bunch of clks is easy?
 
 -- 
-2.8.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
