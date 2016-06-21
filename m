@@ -1,83 +1,50 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 20 Jun 2016 17:48:44 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Roman Volkov <v1ron@mail.ru>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 02/10] mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC combo IC
-Date: Tue, 14 Jun 2016 10:17:49 +0800
-Message-Id: <1465870678-30128-3-git-send-email-wens@csie.org>
-In-Reply-To: <1465870678-30128-1-git-send-email-wens@csie.org>
-References: <1465870678-30128-1-git-send-email-wens@csie.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	Roman Volkov <rvolkov@v1ros.org>,
+	Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: [PATCH v2 1/2] clk: vt8500: fix gcc-4.9 warnings
+Message-ID: <20160621004844.GK1521@codeaurora.org>
+References: <20160607215610.8724-1-v1ron@mail.ru>
+ <20160607215610.8724-2-v1ron@mail.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160607215610.8724-2-v1ron@mail.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+On 06/08, Roman Volkov wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> This fixes some false positive warnings we get with older compiler
+> versions:
+> 
+> clk-vt8500.c: In function ‘wm8650_find_pll_bits’:
+> clk-vt8500.c:430:12: ‘best_div2’ may be used uninitialized in this function
+> clk-vt8500.c:429:12: ‘best_div1’ may be used uninitialized in this function
+> clk-vt8500.c:428:14: ‘best_mul’ may be used uninitialized in this function
+> clk-vt8500.c: In function ‘wm8750_find_pll_bits’:
+> clk-vt8500.c:509:12: ‘best_div2’ may be used uninitialized in this function
+> clk-vt8500.c:508:12: ‘best_div1’ may be used uninitialized in this function
+> clk-vt8500.c:507:14: ‘best_mul’ may be used uninitialized in this function
+> clk-vt8500.c: In function ‘wm8850_find_pll_bits’:
+> clk-vt8500.c:560:12: ‘best_div2’ may be used uninitialized in this function
+> clk-vt8500.c:559:12: ‘best_div1’ may be used uninitialized in this function
+> clk-vt8500.c:558:14: ‘best_mul’ may be used uninitialized in this function
+> 
+> As the local variables are only use for temporaries, we can just
+> as well assign the final values directly, which also makes the
+> code slightly shorter.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
-new file mode 100644
-index 000000000000..fbab623e6fba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ac100.txt
-@@ -0,0 +1,42 @@
-+X-Powers AC100 Codec/RTC IC device tree bindings
-+
-+AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
-+separated, including power supplies and interrupt lines, but share
-+a common register address space and host interface.
-+
-+Required properties:
-+- compatible: "x-powers,ac100"
-+- reg: The I2C slave address or RSB hardware address for the chip
-+- sub-nodes:
-+  - codec
-+    - compatible: "x-powers,ac100-codec"
-+    - interrupt-parent: The parent interrupt controller
-+    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
-+  - rtc
-+    - compatible: "x-powers,ac100-rtc"
-+    - interrupt-parent: The parent interrupt controller
-+    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
-+    - #clock-cells: shall be 1
-+    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
-+    - see clock/clock-bindings.txt for common clock bindings
-+
-+Example:
-+
-+ac100: codec@e89 {
-+	compatible = "x-powers,ac100";
-+	reg = <0xe89>;
-+
-+	ac100_codec {
-+		compatible = "x-powers,ac100-codec";
-+		interrupt-parent = <&nmi_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	ac100_rtc {
-+		compatible = "x-powers,ac100-rtc";
-+		interrupt-parent = <&nmi_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		#clock-cells = <1>;
-+		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
-+	};
-+};
+Applied to clk-next
+
 -- 
-2.8.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
