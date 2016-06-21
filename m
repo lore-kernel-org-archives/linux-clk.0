@@ -1,69 +1,54 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 6/8] ARM: dts: sun9i: a80-optimus: Add device node for AC100
-Date: Mon, 20 Jun 2016 10:52:16 +0800
-Message-Id: <1466391138-12862-7-git-send-email-wens@csie.org>
-In-Reply-To: <1466391138-12862-1-git-send-email-wens@csie.org>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 0/5] Patches for QCOM IPQ4019 clock driver
+Date: Tue, 21 Jun 2016 19:19:17 +0530
+Message-Id: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes since v2: none
-Changes since v1: none
----
- arch/arm/boot/dts/sun9i-a80-optimus.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+These patches are related to Qualcomm IPQ4019 GCC (Global Clock
+Controller) driver code mainly adding the nodes for clock marked
+as fixed in current IPQ4019 clock driver and support for multiple
+CPU frequencies.
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-index 7fd22e888602..3b013dc5fef1 100644
---- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-@@ -322,6 +322,27 @@
- 			};
- 		};
- 	};
-+
-+	ac100: codec@e89 {
-+		compatible = "x-powers,ac100";
-+		reg = <0xe89>;
-+
-+		ac100_codec: codec {
-+			compatible = "x-powers,ac100-codec";
-+			interrupt-parent = <&r_pio>;
-+			interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
-+		};
-+
-+		ac100_rtc: rtc {
-+			compatible = "x-powers,ac100-rtc";
-+			interrupt-parent = <&nmi_intc>;
-+			interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+			#clock-cells = <1>;
-+			clock-output-names = "cko1_rtc",
-+					     "cko2_rtc",
-+					     "cko3_rtc";
-+		};
-+	};
- };
- 
- #include "axp809.dtsi"
+[V2]
+
+   1. Removed the fixed clock references and add the same as clock nodes
+   with recalc_rate operation.
+
+   2. Added all the supported cpu frequencies in frequency table.
+
+Abhishek Sahu (5):
+  clk: qcom: ipq4019: Added the clock nodes and operations for pll
+  clk: qcom: ipq4019: Added the apss cpu pll divider clock node
+  clk: qcom: ipq4019: Added the nodes for pcnoc
+  clk: qcom: ipq4019: Added the all frequencies for apps cpu
+  clk: qcom: ipq4019: Added the cpu clock frequency change notifier
+
+ drivers/clk/qcom/gcc-ipq4019.c               | 508 +++++++++++++++++++++++++--
+ include/dt-bindings/clock/qcom,gcc-ipq4019.h |  11 +
+ 2 files changed, 486 insertions(+), 33 deletions(-)
+
 -- 
-2.8.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
