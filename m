@@ -1,136 +1,149 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34347 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751226AbcFNMAt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 08:00:49 -0400
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/3] clk: tegra: Squash sor1 safe/brick/src into a single mux
-Date: Tue, 14 Jun 2016 14:00:43 +0200
-Message-Id: <20160614120044.30734-2-thierry.reding@gmail.com>
-In-Reply-To: <20160614120044.30734-1-thierry.reding@gmail.com>
-References: <20160614120044.30734-1-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v3 1/2] clk: fixed-factor: Convert into a module platform driver
+Date: Tue, 21 Jun 2016 11:01:27 +0200
+Message-Id: <1466499688-28625-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+Adds support for fixed-factor clock providers which have not been
+enabled via of_clk_init().
 
-The sor1 clock on Tegra210 is structured in the following way:
+This is required by Device trees overlays that introduce clocks
+providers.
 
-    +-------+
-    | pllp  |---+
-    +-------+   |    +--------------+       +-----------+
-                +----|              |       | sor_safe  |
-    +-------+        |              |       +-----------+
-    | plld  |--------|              |             |
-    +-------+        |              |       +-----------+
-                     |   sor1_src   |-------|           |
-    +-------+        |              |       +-----------+
-    | plld2 |--------|              |             |
-    +-------+        |              |             |
-                +----|              |             |
-    +-------+   |    +--------------+             |
-    | clkm  |---+                           +-----------+
-    +-------+        +--------------+       |           |
-                     |  sor1_brick  |-------|   sor1    |
-                     +--------------+       |           |
-                                            +-----------+
-
-This is impractical to represent in a clock tree, though, because there
-is no name for the mux that has sor_safe and sor1_src as parents. It is
-also much more cumbersome to deal with the additional mux because users
-of these clocks (the display driver) would have to juggle with an extra
-mux for no real reason.
-
-To simply things, the above is squashed into two muxes instead, so that
-it looks like this:
-
-    +-------+
-    | pllp  |---+
-    +-------+   |    +--------------+       +-----------+
-                +----|              |       | sor_safe  |
-    +-------+        |              |       +-----------+
-    | plld  |--------|              |             |
-    +-------+        |              |       +-----------+
-                     |   sor1_src   |-------|   sor1    |
-    +-------+        |              |       +-----------+
-    | plld2 |--------|              |           |   |
-    +-------+        |              |           |   |
-                +----|              |           |   |
-    +-------+   |    +--------------+           |   |
-    | clkm  |---+                               |   |
-    +-------+        +--------------+           |   |
-                     |  sor1_brick  |-----------+---+
-                     +--------------+
-
-This still very accurately represents the hardware. Note that sor1 has
-sor1_brick as input twice, that's because bit 1 in the mux selects the
-sor1_brick irrespective of bit 0.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/clk/tegra/clk-id.h           |  1 -
- drivers/clk/tegra/clk-tegra-periph.c | 23 ++++++++++++-----------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+v3: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Use OF_POPULATED flag
 
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index 36c974916d4f..5738635c5274 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -238,7 +238,6 @@ enum clk_id {
- 	tegra_clk_sor0,
- 	tegra_clk_sor0_lvds,
- 	tegra_clk_sor1,
--	tegra_clk_sor1_brick,
- 	tegra_clk_sor1_src,
- 	tegra_clk_spdif,
- 	tegra_clk_spdif_2x,
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 29d04c663abf..af85c8aeaf5a 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -594,15 +594,17 @@ static u32 mux_pllp_plld_plld2_clkm_idx[] = {
- 	[0] = 0, [1] = 2, [2] = 5, [3] = 6
- };
+v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Add error check
+-CodeStyle on of_device_ide
+-Use builtin_platform_driver()
+
+ drivers/clk/clk-fixed-factor.c | 73 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 68 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 75cd6c792cb8..80b9e440f2c3 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/platform_device.h>
  
--static const char *mux_plldp_sor1_src[] = {
--	"pll_dp", "clk_sor1_src"
--};
--#define mux_plldp_sor1_src_idx NULL
--
--static const char *mux_clkm_sor1_brick_sor1_src[] = {
--	"clk_m", "sor1_brick", "sor1_src", "sor1_brick"
--};
--#define mux_clkm_sor1_brick_sor1_src_idx NULL
-+static const char *mux_sor_safe_sor1_brick_sor1_src[] = {
+ /*
+  * DOC: basic fixed multiplier and divider clock that cannot gate
+@@ -145,23 +146,24 @@ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
+ /**
+  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
+  */
+-void __init of_fixed_factor_clk_setup(struct device_node *node)
++struct clk *_of_fixed_factor_clk_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name;
+ 	u32 div, mult;
++	int ret;
+ 
+ 	if (of_property_read_u32(node, "clock-div", &div)) {
+ 		pr_err("%s Fixed factor clock <%s> must have a clock-div property\n",
+ 			__func__, node->name);
+-		return;
++		return ERR_PTR(-EIO);
+ 	}
+ 
+ 	if (of_property_read_u32(node, "clock-mult", &mult)) {
+ 		pr_err("%s Fixed factor clock <%s> must have a clock-mult property\n",
+ 			__func__, node->name);
+-		return;
++		return ERR_PTR(-EIO);
+ 	}
+ 
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+@@ -169,10 +171,71 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ 
+ 	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
+ 					mult, div);
+-	if (!IS_ERR(clk))
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
++
++void __init of_fixed_factor_clk_setup(struct device_node *node)
++{
++	if (!_of_fixed_factor_clk_setup(node))
++		of_node_set_flag(node, OF_POPULATED);
+ }
+ EXPORT_SYMBOL_GPL(of_fixed_factor_clk_setup);
+ CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
+ 		of_fixed_factor_clk_setup);
++
++static int of_fixed_factor_clk_remove(struct platform_device *pdev)
++{
++	struct clk *clk = platform_get_drvdata(pdev);
++
++	if (clk)
++		clk_unregister_fixed_factor(clk);
++
++	return 0;
++}
++
++static int of_fixed_factor_clk_probe(struct platform_device *pdev)
++{
++	struct clk *clk;
++
 +	/*
-+	 * Bit 0 of the mux selects sor1_brick, irrespective of bit 1, so the
-+	 * sor1_brick parent appears twice in the list below. This is merely
-+	 * to support clk_get_parent() if firmware happened to set these bits
-+	 * to 0b11. While not an invalid setting, code should always set the
-+	 * bits to 0b01 to select sor1_brick.
++	 * This function is not executed when of_fixed_factor_clk_setup
++	 * succeeded.
 +	 */
-+	"sor_safe", "sor1_brick", "sor1_src", "sor1_brick"
++
++	clk = _of_fixed_factor_clk_setup(pdev->dev.of_node);
++
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	platform_set_drvdata(pdev, clk);
++
++	return 0;
++}
++
++static const struct of_device_id of_fixed_factor_clk_ids[] = {
++	{ .compatible = "fixed-factor-clock" },
++	{ },
 +};
-+#define mux_sor_safe_sor1_brick_sor1_src_idx NULL
- 
- static const char *mux_pllp_pllre_clkm[] = {
- 	"pll_p", "pll_re_out1", "clk_m"
-@@ -778,8 +780,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	MUX8("nvjpg", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVJPG, 195, 0, tegra_clk_nvjpg),
- 	MUX8("ape", mux_plla_pllc4_out0_pllc_pllc4_out1_pllp_pllc4_out2_clkm, CLK_SOURCE_APE, 198, TEGRA_PERIPH_ON_APB, tegra_clk_ape),
- 	MUX8_NOGATE_LOCK("sor1_src", mux_pllp_plld_plld2_clkm, CLK_SOURCE_SOR1, tegra_clk_sor1_src, &sor1_lock),
--	NODIV("sor1_brick", mux_plldp_sor1_src, CLK_SOURCE_SOR1, 14, MASK(1), 183, 0, tegra_clk_sor1_brick, &sor1_lock),
--	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
-+	NODIV("sor1", mux_sor_safe_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 14, MASK(2), 183, 0, tegra_clk_sor1, &sor1_lock),
- 	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
- 	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
- 	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
++MODULE_DEVICE_TABLE(of, of_fixed_factor_clk_ids);
++
++static struct platform_driver of_fixed_factor_clk_driver = {
++	.driver = {
++		.name = "of_fixed_factor_clk",
++		.of_match_table = of_fixed_factor_clk_ids,
++	},
++	.probe = of_fixed_factor_clk_probe,
++	.remove = of_fixed_factor_clk_remove,
++};
++
++builtin_platform_driver(of_fixed_factor_clk_driver);
++
+ #endif
 -- 
-2.8.3
-
+2.8.1
