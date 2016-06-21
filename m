@@ -1,144 +1,52 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V3 4/8] clk: core: support clocks which requires parents enable (part 2)
-Date: Thu, 30 Jun 2016 17:31:14 +0800
-Message-ID: <1467279078-2330-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 4/5] clk: rockchip: rk3228: rename sclk_macphy_50m to sclk_mac_extclk
+Date: Tue, 21 Jun 2016 12:53:30 +0800
+Message-Id: <1466484811-26923-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Freescale i.MX7D platform, all clocks operations, including
-enable/disable, rate change and re-parent, requires its parent clock on.
-Current clock core can not support it well.
-This patch adding flag CLK_OPS_PARENT_ENABLE to handle this special case in
-clock core that enable its parent clock firstly for each operation and
-disable it later after operation complete.
+The sclk_macphy_50m is confusing, the sclk_mac_extclk describes
+a external clock  clearly.
 
-The patch part 2 fixes set clock rate and set parent while its parent
-is off. The most special case is for set_parent() operation which requires
-all parents including both old and new one to be enabled at the same time
-during the operation.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e3bd28c9ef28..9bac36a5fdb3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1172,7 +1172,9 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
- 	struct clk_core *old_parent = core->parent;
+ drivers/clk/rockchip/clk-rk3228.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 79a3db1..980d0da 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -151,8 +151,8 @@ PNAME(mux_uart0_p)		= { "uart0_src", "uart0_frac", "xin24m" };
+ PNAME(mux_uart1_p)		= { "uart1_src", "uart1_frac", "xin24m" };
+ PNAME(mux_uart2_p)		= { "uart2_src", "uart2_frac", "xin24m" };
  
- 	/*
--	 * Migrate prepare state between parents and prevent race with
-+	 * 1. enable parents for CLK_OPS_PARENT_ENABLE clock
-+	 *
-+	 * 2. Migrate prepare state between parents and prevent race with
- 	 * clk_enable().
- 	 *
- 	 * If the clock is not prepared, then a race with
-@@ -1188,12 +1190,17 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
- 	 *
- 	 * See also: Comment for clk_set_parent() below.
- 	 */
-+
-+	/* enable old_parent & parent if CLK_OPS_PARENT_ENABLE is set */
-+	if (core->flags & CLK_OPS_PARENT_ENABLE) {
-+		clk_core_prepare_enable(old_parent);
-+		clk_core_prepare_enable(parent);
-+	}
-+
-+	/* migrate prepare count if > 0 */
- 	if (core->prepare_count) {
--		clk_core_prepare(parent);
--		flags = clk_enable_lock();
--		clk_core_enable(parent);
--		clk_core_enable(core);
--		clk_enable_unlock(flags);
-+		clk_core_prepare_enable(parent);
-+		clk_core_enable_lock(core);
- 	}
+-PNAME(mux_sclk_macphy_50m_p)	= { "ext_gmac", "phy_50m_out" };
+-PNAME(mux_sclk_gmac_pre_p)	= { "sclk_gmac_src", "sclk_macphy_50m" };
++PNAME(mux_sclk_mac_extclk_p)	= { "ext_gmac", "phy_50m_out" };
++PNAME(mux_sclk_gmac_pre_p)	= { "sclk_gmac_src", "sclk_mac_extclk" };
+ PNAME(mux_sclk_macphy_p)	= { "sclk_gmac_src", "ext_gmac" };
  
- 	/* update the clk tree topology */
-@@ -1208,18 +1215,19 @@ static void __clk_set_parent_after(struct clk_core *core,
- 				   struct clk_core *parent,
- 				   struct clk_core *old_parent)
- {
--	unsigned long flags;
--
- 	/*
- 	 * Finish the migration of prepare state and undo the changes done
- 	 * for preventing a race with clk_enable().
- 	 */
- 	if (core->prepare_count) {
--		flags = clk_enable_lock();
--		clk_core_disable(core);
--		clk_core_disable(old_parent);
--		clk_enable_unlock(flags);
--		clk_core_unprepare(old_parent);
-+		clk_core_disable_lock(core);
-+		clk_core_disable_unprepare(old_parent);
-+	}
-+
-+	/* re-balance ref counting if CLK_OPS_PARENT_ENABLE is set */
-+	if (core->flags & CLK_OPS_PARENT_ENABLE) {
-+		clk_core_disable_unprepare(parent);
-+		clk_core_disable_unprepare(old_parent);
- 	}
- }
- 
-@@ -1466,13 +1474,17 @@ static void clk_change_rate(struct clk_core *core)
- 	unsigned long best_parent_rate = 0;
- 	bool skip_set_rate = false;
- 	struct clk_core *old_parent;
-+	struct clk_core *parent = NULL;
- 
- 	old_rate = core->rate;
- 
--	if (core->new_parent)
-+	if (core->new_parent) {
-+		parent = core->new_parent;
- 		best_parent_rate = core->new_parent->rate;
--	else if (core->parent)
-+	} else if (core->parent) {
-+		parent = core->parent;
- 		best_parent_rate = core->parent->rate;
-+	}
- 
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		unsigned long flags;
-@@ -1502,6 +1514,9 @@ static void clk_change_rate(struct clk_core *core)
- 
- 	trace_clk_set_rate(core, core->new_rate);
- 
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_prepare_enable(parent);
-+
- 	if (!skip_set_rate && core->ops->set_rate)
- 		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
- 
-@@ -1518,6 +1533,9 @@ static void clk_change_rate(struct clk_core *core)
- 		clk_core_unprepare(core);
- 	}
- 
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_disable_unprepare(parent);
-+
- 	if (core->notifier_count && old_rate != core->rate)
- 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
- 
+ static struct rockchip_pll_clock rk3228_pll_clks[] __initdata = {
+@@ -502,7 +502,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "sclk_gmac_src", mux_pll_src_2plls_p, 0,
+ 			RK2928_CLKSEL_CON(5), 7, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 7, GFLAGS),
+-	MUX(0, "sclk_macphy_50m", mux_sclk_macphy_50m_p, 0,
++	MUX(0, "sclk_mac_extclk", mux_sclk_mac_extclk_p, 0,
+ 			RK2928_CLKSEL_CON(29), 10, 1, MFLAGS),
+ 	MUX(0, "sclk_gmac_pre", mux_sclk_gmac_pre_p, 0,
+ 			RK2928_CLKSEL_CON(5), 5, 1, MFLAGS),
 -- 
-1.9.1
+1.7.9.5
