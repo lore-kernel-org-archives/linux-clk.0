@@ -1,135 +1,375 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 26/34] clk: scpi: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:25 -0700
-Message-Id: <20160601231533.9354-27-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <hl@rock-chips.com>
+Subject: Re: [RFC PATCH v2 6/6] drm/rockchip: Add dmc notifier in vop driver
+To: Chanwoo Choi <cw00.choi@samsung.com>, heiko@sntech.de,
+ mark.yao@rock-chips.com, myungjoo.ham@samsung.com
+References: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+ <CGME20160606101348epcas1p468b2019b1d69887a154b60c3afa2edce@epcas1p4.samsung.com>
+ <1465207986-17888-7-git-send-email-hl@rock-chips.com>
+ <576A3A38.3000306@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ airlied@linux.ie, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+ dianders@chromium.org, dbasehore@chromium.org
+From: hl <hl@rock-chips.com>
+Message-ID: <576A83A0.3080908@rock-chips.com>
+Date: Wed, 22 Jun 2016 20:25:04 +0800
+MIME-Version: 1.0
+In-Reply-To: <576A3A38.3000306@samsung.com>
+Content-Type: multipart/alternative;
+ boundary="------------050702050500010700080902"
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+This is a multi-part message in MIME format.
+--------------050702050500010700080902
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Hi Chanwoo Choi,
+
+On 2016年06月22日 15:11, Chanwoo Choi wrote:
+> Hi,
+>
+> On 2016년 06월 06일 19:13, Lin Huang wrote:
+>> when in ddr frequency scaling process, vop can not do
+>> enable or disable operate, since dcf will base on vop vblank
+>> time to do frequency scaling and need to get vop irq if there
+>> have vop enabled. So need register to dmc notifier, and we can
+>> get the dmc status.
+> If you want to know when ddr frequency is chanaged,
+> you can use the DEVFREQ_TRANSITION_NOTIFIER notifier[1] (merged to v4.7-rc1)
+> which includes the following notification:
+> - DEVFREQ_PRECHANGE
+> - DEVFREQ_POSTCHANGE	
+>
+> [1] "PM / devfreq: Add new DEVFREQ_TRANSITION_NOTIFIER notifier"
+> - https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=0fe3a66410a3ba96679be903f1e287d7a0a264a9
+Check the code, if the set target fail, it will not send 
+DEVFREQ_POSTCHANGE, but in our case, whether the target
+setting sucess or fail, it should send message to vop driver,  tell vop 
+driver dmc have finish frequency setting.
+>
+> Thanks,
+> Chanwoo Choi
+>
+>> Signed-off-by: Lin Huang <hl@rock-chips.com>
+>> ---
+>>
+>> Changes in v2:
+>> - None
+>>
+>> Changes in v1:
+>> - use wait_event instead usleep
+>>
+>>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 43 +++++++++++++++++++++++++++--
+>>   1 file changed, 41 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+>> index 1c4d5b5..8286048 100644
+>> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+>> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+>> @@ -31,6 +31,8 @@
+>>   #include <linux/reset.h>
+>>   #include <linux/delay.h>
+>>   
+>> +#include <soc/rockchip/rockchip_dmc.h>
+>> +
+>>   #include "rockchip_drm_drv.h"
+>>   #include "rockchip_drm_gem.h"
+>>   #include "rockchip_drm_fb.h"
+>> @@ -116,6 +118,10 @@ struct vop {
+>>   
+>>   	const struct vop_data *data;
+>>   
+>> +	struct notifier_block dmc_nb;
+>> +	int dmc_in_process;
+>> +	wait_queue_head_t	wait_dmc_queue;
+>> +
+>>   	uint32_t *regsbak;
+>>   	void __iomem *regs;
+>>   
+>> @@ -426,6 +432,21 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
+>>   	spin_unlock_irqrestore(&vop->irq_lock, flags);
+>>   }
+>>   
+>> +static int dmc_notify(struct notifier_block *nb, unsigned long event,
+>> +		      void *data)
+>> +{
+>> +	struct vop *vop = container_of(nb, struct vop, dmc_nb);
+>> +
+>> +	if (event == DMCFREQ_ADJUST) {
+>> +		vop->dmc_in_process = 1;
+>> +	} else if (event == DMCFREQ_FINISH) {
+>> +		vop->dmc_in_process = 0;
+>> +		wake_up(&vop->wait_dmc_queue);
+>> +	}
+>> +
+>> +	return NOTIFY_OK;
+>> +}
+>> +
+>>   static void vop_enable(struct drm_crtc *crtc)
+>>   {
+>>   	struct vop *vop = to_vop(crtc);
+>> @@ -434,6 +455,13 @@ static void vop_enable(struct drm_crtc *crtc)
+>>   	if (vop->is_enabled)
+>>   		return;
+>>   
+>> +	/*
+>> +	 * if in dmc scaling frequency process, wait until it finish
+>> +	 * use 100ms as timeout time.
+>> +	 */
+>> +	wait_event_timeout(vop->wait_dmc_queue,
+>> +			   !vop->dmc_in_process, HZ / 10);
+>> +
+>>   	ret = pm_runtime_get_sync(vop->dev);
+>>   	if (ret < 0) {
+>>   		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
+>> @@ -485,6 +513,7 @@ static void vop_enable(struct drm_crtc *crtc)
+>>   	enable_irq(vop->irq);
+>>   
+>>   	drm_crtc_vblank_on(crtc);
+>> +	rockchip_dmc_get(&vop->dmc_nb);
+>>   
+>>   	return;
+>>   
+>> @@ -505,6 +534,13 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+>>   		return;
+>>   
+>>   	/*
+>> +	 * if in dmc scaling frequency process, wait until it finish
+>> +	 * use 100ms as timeout time.
+>> +	 */
+>> +	wait_event_timeout(vop->wait_dmc_queue,
+>> +			   !vop->dmc_in_process, HZ / 10);
+>> +
+>> +	/*
+>>   	 * We need to make sure that all windows are disabled before we
+>>   	 * disable that crtc. Otherwise we might try to scan from a destroyed
+>>   	 * buffer later.
+>> @@ -517,7 +553,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+>>   		VOP_WIN_SET(vop, win, enable, 0);
+>>   		spin_unlock(&vop->reg_lock);
+>>   	}
+>> -
+>> +	rockchip_dmc_put(&vop->dmc_nb);
+>>   	drm_crtc_vblank_off(crtc);
+>>   
+>>   	/*
+>> @@ -1243,7 +1279,7 @@ static int vop_create_crtc(struct vop *vop)
+>>   		ret = -ENOENT;
+>>   		goto err_cleanup_crtc;
+>>   	}
+>> -
+>> +	vop->dmc_nb.notifier_call = dmc_notify;
+>>   	init_completion(&vop->dsp_hold_completion);
+>>   	init_completion(&vop->wait_update_complete);
+>>   	crtc->port = port;
+>> @@ -1465,6 +1501,9 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+>>   	/* IRQ is initially disabled; it gets enabled in power_on */
+>>   	disable_irq(vop->irq);
+>>   
+>> +	init_waitqueue_head(&vop->wait_dmc_queue);
+>> +	vop->dmc_in_process = 0;
+>> +
+>>   	ret = vop_create_crtc(vop);
+>>   	if (ret)
+>>   		return ret;
+>>
+>
+>
+>
+
+-- 
+Lin Huang
+
+
+--------------050702050500010700080902
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  </head>
+  <body bgcolor="#FFFFFF" text="#000000">
+    Hi Chanwoo Choi,<br>
+    <br>
+    <div class="moz-cite-prefix">On 2016年06月22日 15:11, Chanwoo Choi
+      wrote:<br>
+    </div>
+    <blockquote cite="mid:576A3A38.3000306@samsung.com" type="cite">
+      <pre wrap="">Hi,
+
+On 2016년 06월 06일 19:13, Lin Huang wrote:
+</pre>
+      <blockquote type="cite">
+        <pre wrap="">when in ddr frequency scaling process, vop can not do
+enable or disable operate, since dcf will base on vop vblank
+time to do frequency scaling and need to get vop irq if there
+have vop enabled. So need register to dmc notifier, and we can
+get the dmc status.
+</pre>
+      </blockquote>
+      <pre wrap="">
+If you want to know when ddr frequency is chanaged,
+you can use the DEVFREQ_TRANSITION_NOTIFIER notifier[1] (merged to v4.7-rc1)
+which includes the following notification:
+- DEVFREQ_PRECHANGE
+- DEVFREQ_POSTCHANGE	
+
+[1] "PM / devfreq: Add new DEVFREQ_TRANSITION_NOTIFIER notifier"
+- <a class="moz-txt-link-freetext" href="https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=0fe3a66410a3ba96679be903f1e287d7a0a264a9">https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=0fe3a66410a3ba96679be903f1e287d7a0a264a9</a></pre>
+    </blockquote>
+    Check the code, if the set target fail, it will not send
+    DEVFREQ_POSTCHANGE, but in our case, whether the target<br>
+    setting sucess or fail, it should send message to vop driver,  tell
+    vop driver dmc have finish frequency setting.<br>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <span style="color: rgb(0, 128, 0); font-family: monospace; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: pre; widows: 1; word-spacing: 0px; -webkit-text-stroke-width: 0px; display: inline !important; float: none; background-color: rgb(255, 255, 255);"></span>
+    <blockquote cite="mid:576A3A38.3000306@samsung.com" type="cite">
+      <pre wrap="">
+
+Thanks,
+Chanwoo Choi
+
+</pre>
+      <blockquote type="cite">
+        <pre wrap="">
+Signed-off-by: Lin Huang <a class="moz-txt-link-rfc2396E" href="mailto:hl@rock-chips.com">&lt;hl@rock-chips.com&gt;</a>
 ---
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+Changes in v2:
+- None
 
- drivers/clk/clk-scpi.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+Changes in v1:
+- use wait_event instead usleep
 
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index 6962ee5d1e9a..2a3e9d8e88b0 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -146,13 +146,13 @@ static const struct of_device_id scpi_clk_match[] = {
- 	{}
- };
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 43 +++++++++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 1c4d5b5..8286048 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -31,6 +31,8 @@
+ #include &lt;linux/reset.h&gt;
+ #include &lt;linux/delay.h&gt;
  
--static struct clk *
-+static int
- scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
- 		  struct scpi_clk *sclk, const char *name)
- {
- 	struct clk_init_data init;
--	struct clk *clk;
- 	unsigned long min = 0, max = 0;
-+	int ret;
++#include &lt;soc/rockchip/rockchip_dmc.h&gt;
++
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_fb.h"
+@@ -116,6 +118,10 @@ struct vop {
  
- 	init.name = name;
- 	init.flags = 0;
-@@ -164,18 +164,18 @@ scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
- 	if (init.ops == &scpi_dvfs_ops) {
- 		sclk->info = sclk->scpi_ops->dvfs_get_info(sclk->id);
- 		if (IS_ERR(sclk->info))
--			return NULL;
-+			return PTR_ERR(sclk->info);
- 	} else if (init.ops == &scpi_clk_ops) {
- 		if (sclk->scpi_ops->clk_get_range(sclk->id, &min, &max) || !max)
--			return NULL;
-+			return -EINVAL;
- 	} else {
--		return NULL;
-+		return -EINVAL;
- 	}
+ 	const struct vop_data *data;
  
--	clk = devm_clk_register(dev, &sclk->hw);
--	if (!IS_ERR(clk) && max)
-+	ret = devm_clk_hw_register(dev, &sclk->hw);
-+	if (!ret && max)
- 		clk_hw_set_rate_range(&sclk->hw, min, max);
--	return clk;
-+	return ret;
++	struct notifier_block dmc_nb;
++	int dmc_in_process;
++	wait_queue_head_t	wait_dmc_queue;
++
+ 	uint32_t *regsbak;
+ 	void __iomem *regs;
+ 
+@@ -426,6 +432,21 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
+ 	spin_unlock_irqrestore(&amp;vop-&gt;irq_lock, flags);
  }
  
- struct scpi_clk_data {
-@@ -183,7 +183,7 @@ struct scpi_clk_data {
- 	unsigned int clk_num;
- };
- 
--static struct clk *
-+static struct clk_hw *
- scpi_of_clk_src_get(struct of_phandle_args *clkspec, void *data)
++static int dmc_notify(struct notifier_block *nb, unsigned long event,
++		      void *data)
++{
++	struct vop *vop = container_of(nb, struct vop, dmc_nb);
++
++	if (event == DMCFREQ_ADJUST) {
++		vop-&gt;dmc_in_process = 1;
++	} else if (event == DMCFREQ_FINISH) {
++		vop-&gt;dmc_in_process = 0;
++		wake_up(&amp;vop-&gt;wait_dmc_queue);
++	}
++
++	return NOTIFY_OK;
++}
++
+ static void vop_enable(struct drm_crtc *crtc)
  {
- 	struct scpi_clk *sclk;
-@@ -193,7 +193,7 @@ scpi_of_clk_src_get(struct of_phandle_args *clkspec, void *data)
- 	for (count = 0; count < clk_data->clk_num; count++) {
- 		sclk = clk_data->clk[count];
- 		if (idx == sclk->id)
--			return sclk->hw.clk;
-+			return &sclk->hw;
+ 	struct vop *vop = to_vop(crtc);
+@@ -434,6 +455,13 @@ static void vop_enable(struct drm_crtc *crtc)
+ 	if (vop-&gt;is_enabled)
+ 		return;
+ 
++	/*
++	 * if in dmc scaling frequency process, wait until it finish
++	 * use 100ms as timeout time.
++	 */
++	wait_event_timeout(vop-&gt;wait_dmc_queue,
++			   !vop-&gt;dmc_in_process, HZ / 10);
++
+ 	ret = pm_runtime_get_sync(vop-&gt;dev);
+ 	if (ret &lt; 0) {
+ 		dev_err(vop-&gt;dev, "failed to get pm runtime: %d\n", ret);
+@@ -485,6 +513,7 @@ static void vop_enable(struct drm_crtc *crtc)
+ 	enable_irq(vop-&gt;irq);
+ 
+ 	drm_crtc_vblank_on(crtc);
++	rockchip_dmc_get(&amp;vop-&gt;dmc_nb);
+ 
+ 	return;
+ 
+@@ -505,6 +534,13 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+ 		return;
+ 
+ 	/*
++	 * if in dmc scaling frequency process, wait until it finish
++	 * use 100ms as timeout time.
++	 */
++	wait_event_timeout(vop-&gt;wait_dmc_queue,
++			   !vop-&gt;dmc_in_process, HZ / 10);
++
++	/*
+ 	 * We need to make sure that all windows are disabled before we
+ 	 * disable that crtc. Otherwise we might try to scan from a destroyed
+ 	 * buffer later.
+@@ -517,7 +553,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+ 		VOP_WIN_SET(vop, win, enable, 0);
+ 		spin_unlock(&amp;vop-&gt;reg_lock);
  	}
- 
- 	return ERR_PTR(-EINVAL);
-@@ -202,8 +202,7 @@ scpi_of_clk_src_get(struct of_phandle_args *clkspec, void *data)
- static int scpi_clk_add(struct device *dev, struct device_node *np,
- 			const struct of_device_id *match)
- {
--	struct clk **clks;
--	int idx, count;
-+	int idx, count, err;
- 	struct scpi_clk_data *clk_data;
- 
- 	count = of_property_count_strings(np, "clock-output-names");
-@@ -222,10 +221,6 @@ static int scpi_clk_add(struct device *dev, struct device_node *np,
- 	if (!clk_data->clk)
- 		return -ENOMEM;
- 
--	clks = devm_kcalloc(dev, count, sizeof(*clks), GFP_KERNEL);
--	if (!clks)
--		return -ENOMEM;
 -
- 	for (idx = 0; idx < count; idx++) {
- 		struct scpi_clk *sclk;
- 		const char *name;
-@@ -249,15 +244,15 @@ static int scpi_clk_add(struct device *dev, struct device_node *np,
++	rockchip_dmc_put(&amp;vop-&gt;dmc_nb);
+ 	drm_crtc_vblank_off(crtc);
  
- 		sclk->id = val;
- 
--		clks[idx] = scpi_clk_ops_init(dev, match, sclk, name);
--		if (IS_ERR_OR_NULL(clks[idx]))
-+		err = scpi_clk_ops_init(dev, match, sclk, name);
-+		if (err)
- 			dev_err(dev, "failed to register clock '%s'\n", name);
- 		else
- 			dev_dbg(dev, "Registered clock '%s'\n", name);
- 		clk_data->clk[idx] = sclk;
+ 	/*
+@@ -1243,7 +1279,7 @@ static int vop_create_crtc(struct vop *vop)
+ 		ret = -ENOENT;
+ 		goto err_cleanup_crtc;
  	}
+-
++	vop-&gt;dmc_nb.notifier_call = dmc_notify;
+ 	init_completion(&amp;vop-&gt;dsp_hold_completion);
+ 	init_completion(&amp;vop-&gt;wait_update_complete);
+ 	crtc-&gt;port = port;
+@@ -1465,6 +1501,9 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 	/* IRQ is initially disabled; it gets enabled in power_on */
+ 	disable_irq(vop-&gt;irq);
  
--	return of_clk_add_provider(np, scpi_of_clk_src_get, clk_data);
-+	return of_clk_add_hw_provider(np, scpi_of_clk_src_get, clk_data);
- }
- 
- static int scpi_clocks_remove(struct platform_device *pdev)
--- 
-2.7.4
++	init_waitqueue_head(&amp;vop-&gt;wait_dmc_queue);
++	vop-&gt;dmc_in_process = 0;
++
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
+ 		return ret;
+
+</pre>
+      </blockquote>
+      <pre wrap="">
+
+
+
+</pre>
+    </blockquote>
+    <br>
+    <pre class="moz-signature" cols="72">-- 
+Lin Huang</pre>
+  </body>
+</html>
+
+--------------050702050500010700080902--
