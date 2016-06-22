@@ -1,72 +1,51 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	rtc-linux@googlegroups.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/7] ARM: dts: sun9i: a80-optimus: Add device node for AC100
-Date: Thu, 30 Jun 2016 23:58:49 +0800
-Message-Id: <1467302331-9663-6-git-send-email-wens@csie.org>
-In-Reply-To: <1467302331-9663-1-git-send-email-wens@csie.org>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [PATCH 0/5] Fix and improve clock controller for the RK322x SoCs
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1466484811-26923-1-git-send-email-zhengxing@rock-chips.com>
+ <13345941.K3V3BNYxTY@phil>
+Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Yakir Yang
+ <ykk@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Rob Herring <robh+dt@kernel.org>, Jeffy Chen <jeffy.chen@rock-chips.com>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Caesar Wang <wxt@rock-chips.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <5769E581.2040903@rock-chips.com>
+Date: Wed, 22 Jun 2016 09:10:25 +0800
+MIME-Version: 1.0
+In-Reply-To: <13345941.K3V3BNYxTY@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes since v3:
+Hi Heiko,
 
-  - Moved 4M ADDA clk to codec side
+On 2016年06月22日 07:07, Heiko Stuebner wrote:
+> Am Dienstag, 21. Juni 2016, 12:53:26 schrieb Xing Zheng:
+>> Hi,
+>>    These patchset fix some clocks bugs, and improve clock configuration
+>> for i2s/spdif/MAC on RK322x SoCs.
+> applied to my clock-branch with the following changes:
+>
+> - fixed the error in patch1 - missing ")" in
+>        COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_src", CLK_SET_RATE_PARENT,
+> -                       RK3288_CLKSEL_CON(7), 0,
+> -                       RK3288_CLKGATE_CON(0), 11, GFLAGS),
+> +                       RK2928_CLKSEL_CON(7), 0,
+> +                       RK2928_CLKGATE_CON(0), 11, GFLAGS,
+>
+> - adapted patch2 accordingly
+> - split out clock id addition into separate patches, as they need a shared
+> branch. Xing please remember to add clock-ids to the header in separate
+> patches.
+>
+>
+So sorry to miss it...
+OK, I will add clock-ids to the header in separate patches.
 
-Changes since v2: none
-Changes since v1: none
----
- arch/arm/boot/dts/sun9i-a80-optimus.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Thanks.
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-index 7fd22e888602..e35c06c162a7 100644
---- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-@@ -322,6 +322,30 @@
- 			};
- 		};
- 	};
-+
-+	ac100: codec@e89 {
-+		compatible = "x-powers,ac100";
-+		reg = <0xe89>;
-+
-+		ac100_codec: codec {
-+			compatible = "x-powers,ac100-codec";
-+			interrupt-parent = <&r_pio>;
-+			interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
-+			#clock-cells = <0>;
-+			clock-output-names = "4M_adda";
-+		};
-+
-+		ac100_rtc: rtc {
-+			compatible = "x-powers,ac100-rtc";
-+			interrupt-parent = <&nmi_intc>;
-+			interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&ac100_codec>;
-+			#clock-cells = <1>;
-+			clock-output-names = "cko1_rtc",
-+					     "cko2_rtc",
-+					     "cko3_rtc";
-+		};
-+	};
- };
- 
- #include "axp809.dtsi"
 -- 
-2.8.1
+- Xing Zheng
