@@ -1,78 +1,89 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 18:42:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Francois Moine <moinejf@free.fr>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 13/15] clk: sunxi-ng: Add N-K-M-P factor clock
-Message-ID: <20160621014216.GS1521@codeaurora.org>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
- <20160607204154.31967-14-maxime.ripard@free-electrons.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v9 10/10] arm: dts: mt2701: Use real clock for UARTs
+Date: Wed, 22 Jun 2016 15:40:29 +0800
+Message-ID: <1466581229-2342-11-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160607204154.31967-14-maxime.ripard@free-electrons.com>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07, Maxime Ripard wrote:
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> new file mode 100644
-> index 000000000000..9f2b98e19dc9
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> @@ -0,0 +1,167 @@
-> +/*
-> + * Copyright (C) 2016 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/rational.h>
-> +
-> +#include "ccu_gate.h"
-> +#include "ccu_nkmp.h"
-> +
-> +struct _ccu_nkmp {
-> +	unsigned long	n, max_n;
-> +	unsigned long	k, max_k;
-> +	unsigned long	m, max_m;
-> +	unsigned long	p, max_p;
-> +};
-> +
-> +static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
-> +			       struct _ccu_nkmp *nkmp)
-> +{
-> +	unsigned long best_rate = 0;
-> +	unsigned long best_n = 0, best_k = 0, best_m = 0, best_p = 0;
-> +	unsigned long _n, _k, _m, _p;
-> +
-> +	for (_k = 1; _k <= nkmp->max_k; _k++) {
-> +		for (_p = 0; _p <= nkmp->max_p; _p++) {
-> +			unsigned long tmp_rate;
-> +
-> +			rational_best_approximation(rate / _k, parent >> _p,
-> +						    nkmp->max_n, nkmp->max_m,
-> +						    &_n, &_m);
+We used to use a fixed rate clock for the UARTs. Now that we have clock
+support we can associate the correct clocks to the UARTs and drop the
+26MHz fixed rate UART clock.
 
-Is there a select for RATIONAL somewhere? If not please add it to
-the Kconfig. I know that COMMON_CLK has it, but I think we should
-try to reduce bloat by not forcing all the basic types on drivers
-that aren't using them. Instead we should have drivers start
-selecting that code. So it's best to not rely on the common clk
-select.
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index c9a8dbf..7eab6f4 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -73,12 +73,6 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	uart_clk: dummy26m {
+-		compatible = "fixed-clock";
+-		clock-frequency = <26000000>;
+-		#clock-cells = <0>;
+-	};
+-
+ 	clk26m: oscillator@0 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -186,7 +180,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -195,7 +190,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -204,7 +200,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -213,7 +210,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
