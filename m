@@ -1,103 +1,234 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 14 Jun 2016 13:33:01 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Message-ID: <20160614113301.GB30021@ulmo.ba.sec>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin
+ Lo <erin.lo@mediatek.com>
+Subject: [PATCH v9 04/10] dt-bindings: ARM: Mediatek: Document bindings for MT2701
+Date: Wed, 22 Jun 2016 15:40:23 +0800
+Message-ID: <1466581229-2342-5-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
-In-Reply-To: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: James Liao <jamesjj.liao@mediatek.com>
 
---mxv5cy4qt+RJ9ypb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch adds the binding documentation for apmixedsys, bdpsys,
+ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+vdecsys for Mediatek MT2701.
 
-On Thu, May 26, 2016 at 12:41:31PM -0400, Rhyland Klein wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
->=20
-> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
-> clk-pll.c. UTMIPLL was being configured and set in HW control right
-> after registration. However, when the clock init_table is processed and
-> child clks of PLLU are enabled, it will call in and enable PLLU as
-> well, and initiate SW enabling sequence even though PLLU is already in
-> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
->=20
-> Doing the initialization once during pllu_enable means we configure it
-> properly into HW control.
->=20
-> A side effect of the commonization/localization of the UTMIPLL init
-> code, is that it corrects some errors that were present for earlier
-> generations. For instance, in clk-tegra124.c, it used to have:
->=20
-> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
->=20
-> when the correct shift to use is present in the new version:
->=20
-> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
->=20
-> which matches the Tegra124 TRM register definition.
->=20
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->=20
-> [rklein: Merged in some later fixes for potential deadlocks]
->=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
-> v5:
->  - Initialized flags to 0 to avoid harmless spinlock warnings
->=20
-> v4:
->  - Re-added examples in patch description
->=20
-> v3:
->  - Flushed out description to describe this patch.
->=20
->  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->  drivers/clk/tegra/clk.h          |  17 ++
->  6 files changed, 510 insertions(+), 597 deletions(-)
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
+ 10 files changed, 82 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
 
-Applied, thanks.
-
-Thierry
-
---mxv5cy4qt+RJ9ypb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXX+ttAAoJEN0jrNd/PrOhNDEP/AwhUcJRLncW3fNxoYOYwdt/
-Ogfam6N+jS1+5pndvIYDZb8WbgFAQsLg3d7XZOb02KglrXQUaycMCV08F6kIB362
-Wp3YMaLwBMqKt9NDEAFtYr1W/vVfUUUS1PJgLXDbcZj6gzfFl/acN8oCpPpGYSU2
-J/Fjaka//i8zn4eRGj6Gvh8OZzqb10wgoevj6elWVqoHhMJ2fK8VLa/yvjbcGG6L
-WcHgQf15rNUAH/2k5pXKn0nCgD9dL4sqYdJcK5EuWst6SvPwb2kjU+FgwaLY5CB3
-RkM/ykMWAmfE+6/WeKySCi1+mcB1BNPBEtRuZ9dMyLQCLSbaATtN3hUTL+kAwejp
-pV7A4N0ZjqIDfKubqcoNCqqmN6DNrcah6sfK9x6Y2kXxXG98r6B5V6fn/4cOrN+p
-0wZDlrsdyQa1nuCNM3iepFxvlUUr1vqGegeuROttdMbApj/UlGXXm7ulqvzhXJS0
-Ocrho/CT16XP3v4gd0c21hJMS4vRedi+iJ53+7MtaOCKp1xn17Sz3ZjOEEEaQ3w0
-9W15pqSBOchCF1QM/IAoQgoGnUCGGZDMNB38pCZCvkRI12Gd21kjNsPx7ILFCOts
-9weikvyiSc84j6bz2RNDzDXER3Gju7U6DzZJGh2tITumTVWx0anMkMH8NDFu3YUH
-+x8CkfemBvGjjWQMTzHf
-=po9c
------END PGP SIGNATURE-----
-
---mxv5cy4qt+RJ9ypb--
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index 936166f..cb0054a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -5,7 +5,8 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8173-apmixedsys"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+new file mode 100644
+index 0000000..4137196
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+@@ -0,0 +1,22 @@
++Mediatek bdpsys controller
++============================
++
++The Mediatek bdpsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-bdpsys", "syscon"
++- #clock-cells: Must be 1
++
++The bdpsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++bdpsys: clock-controller@1c000000 {
++	compatible = "mediatek,mt2701-bdpsys", "syscon";
++	reg = <0 0x1c000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+new file mode 100644
+index 0000000..768f3a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+@@ -0,0 +1,22 @@
++Mediatek ethsys controller
++============================
++
++The Mediatek ethsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-ethsys", "syscon"
++- #clock-cells: Must be 1
++
++The ethsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++ethsys: clock-controller@1b000000 {
++	compatible = "mediatek,mt2701-ethsys", "syscon";
++	reg = <0 0x1b000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+new file mode 100644
+index 0000000..beed7b5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+@@ -0,0 +1,24 @@
++Mediatek hifsys controller
++============================
++
++The Mediatek hifsys controller provides various clocks and reset
++outputs to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-hifsys", "syscon"
++- #clock-cells: Must be 1
++
++The hifsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++hifsys: clock-controller@1a000000 {
++	compatible = "mediatek,mt2701-hifsys", "syscon";
++	reg = <0 0x1a000000 0 0x1000>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index b1f2ce1..f6a9166 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -5,7 +5,8 @@ The Mediatek imgsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index aaf8d14..1620ec2 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -6,7 +6,8 @@ outputs to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 4385946..67dd2e4 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -5,7 +5,8 @@ The Mediatek mmsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+index 2f6ff86..e494366 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+@@ -6,7 +6,8 @@ outputs to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-pericfg", "syscon"
+ 	- "mediatek,mt8135-pericfg", "syscon"
+ 	- "mediatek,mt8173-pericfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index f9e9179..9f2fe78 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -5,7 +5,8 @@ The Mediatek topckgen controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8173-topckgen"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index 1faacf1..2440f73 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -5,7 +5,8 @@ The Mediatek vdecsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt2701-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+-- 
+1.9.1
