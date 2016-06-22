@@ -1,33 +1,82 @@
-Return-Path: <moinejf@free.fr>
-Date: Fri, 1 Jul 2016 08:01:39 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] clk: sunxi: Add a driver for the CCU
-Message-Id: <20160701080139.6cfbb779b61ba4be9b09d362@free.fr>
-In-Reply-To: <20160630211635.GE5485@lukather>
-References: <cover.1467135898.git.moinejf@free.fr>
-	<a55dc5d1a9f02dc4d71d5c21064bffebe5a7b149.1467135898.git.moinejf@free.fr>
-	<20160628204502.GG5550@lukather>
-	<20160629101256.93895e6ff9184efa340f69dd@free.fr>
-	<20160630211635.GE5485@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jongsung Kim <neidhard.kim@lge.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 1/2] clk: fixed-factor: Allow for a few clocks to change the parent rate
+Date: Wed, 22 Jun 2016 11:15:54 +0200
+Message-Id: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 30 Jun 2016 23:16:35 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+The only way for a fixed factor clock to change its rate would be to change
+its parent rate.
 
-> > - some fixed_factor clocks may have a gate.
->=20
-> Which ones?
+Since passing blindly CLK_SET_RATE_PARENT might break a lot of platforms
+that were relying on the fact that the parent rate wouldn't change,
+introduce a compatible-based whitelist that will allow clocks to opt-in
+that flag.
 
-I know only the "osc12M" in the A83T. It is used by the ehci1.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ .../devicetree/bindings/clock/fixed-factor-clock.txt          |  4 ++++
+ drivers/clk/clk-fixed-factor.c                                | 11 ++++++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt b/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
+index 1bae8527eb9b..189467a7188a 100644
+--- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
++++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
+@@ -14,6 +14,10 @@ Required properties:
+ Optional properties:
+ - clock-output-names : From common clock binding.
+ 
++Some clocks that require special treatments are also handled by that
++driver, with the compatibles:
++  - allwinner,sun4i-a10-pll3-2x-clk
++
+ Example:
+ 	clock {
+ 		compatible = "fixed-factor-clock";
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 75cd6c792cb8..4db3be214077 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -142,6 +142,11 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
+ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
+ 
+ #ifdef CONFIG_OF
++static const struct of_device_id set_rate_parent_matches[] = {
++	{ .compatible = "allwinner,sun4i-a10-pll3-2x-clk" },
++	{ /* Sentinel */ },
++};
++
+ /**
+  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
+  */
+@@ -150,6 +155,7 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ 	struct clk *clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name;
++	unsigned long flags = 0;
+ 	u32 div, mult;
+ 
+ 	if (of_property_read_u32(node, "clock-div", &div)) {
+@@ -167,7 +173,10 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 	parent_name = of_clk_get_parent_name(node, 0);
+ 
+-	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
++	if (of_match_node(set_rate_parent_matches, node))
++		flags |= CLK_SET_RATE_PARENT;
++
++	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
+ 					mult, div);
+ 	if (!IS_ERR(clk))
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-- 
+2.9.0
