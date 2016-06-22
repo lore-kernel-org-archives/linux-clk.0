@@ -1,133 +1,84 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem to
- Exynos5410
-Date: Wed, 01 Jun 2016 11:45:51 +0200
-Message-id: <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
-References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 22 Jun 2016 14:24:19 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+Message-ID: <20160622122419.GC26943@ulmo.ba.sec>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+ <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="c3bfwLpm8qysLVxt"
+In-Reply-To: <1464381494-27096-11-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
-shared with Exynos5410 and configure the clocks on the latter.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5410.dtsi | 11 +++++++++++
- arch/arm/boot/dts/exynos5420.dtsi | 28 +++++++++++-----------------
- arch/arm/boot/dts/exynos54xx.dtsi | 12 ++++++++++++
- 3 files changed, 34 insertions(+), 17 deletions(-)
+--c3bfwLpm8qysLVxt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index f1effd3f03c4..b76f56c2fe8b 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -297,6 +297,11 @@
- 	clock-names = "uart", "clk_uart_baud0";
- };
- 
-+&sss {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &sromc {
- 	#address-cells = <2>;
- 	#size-cells = <1>;
-@@ -349,4 +354,10 @@
- 	samsung,pmureg-phandle = <&pmu_system_controller>;
- };
- 
-+&watchdog {
-+	clocks = <&clock CLK_WDT>;
-+	clock-names = "watchdog";
-+	samsung,syscon-phandle = <&pmu_system_controller>;
-+};
-+
- #include "exynos5410-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 265747bb19d1..beb6f453039e 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -694,23 +694,6 @@
- 			#include "exynos4412-tmu-sensor-conf.dtsi"
- 		};
- 
--		watchdog: watchdog@101D0000 {
--			compatible = "samsung,exynos5420-wdt";
--			reg = <0x101D0000 0x100>;
--			interrupts = <0 42 0>;
--			clocks = <&clock CLK_WDT>;
--			clock-names = "watchdog";
--			samsung,syscon-phandle = <&pmu_system_controller>;
--		};
--
--		sss: sss@10830000 {
--			compatible = "samsung,exynos4210-secss";
--			reg = <0x10830000 0x300>;
--			interrupts = <0 112 0>;
--			clocks = <&clock CLK_SSS>;
--			clock-names = "secss";
--		};
--
- 		sysmmu_g2dr: sysmmu@0x10A60000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x10A60000 0x1000>;
-@@ -1030,6 +1013,11 @@
- 	clock-names = "uart", "clk_uart_baud0";
- };
- 
-+&sss {
-+	clocks = <&clock CLK_SSS>;
-+	clock-names = "secss";
-+};
-+
- &usbdrd3_0 {
- 	clocks = <&clock CLK_USBD300>;
- 	clock-names = "usbdrd30";
-@@ -1073,4 +1061,10 @@
- 	samsung,pmureg-phandle = <&pmu_system_controller>;
- };
- 
-+&watchdog {
-+	clocks = <&clock CLK_WDT>;
-+	clock-names = "watchdog";
-+	samsung,syscon-phandle = <&pmu_system_controller>;
-+};
-+
- #include "exynos5420-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index 0eb8aa31b7d9..06a604911e87 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -74,6 +74,18 @@
- 			};
- 		};
- 
-+		watchdog: watchdog@101d0000 {
-+			compatible = "samsung,exynos5420-wdt";
-+			reg = <0x101d0000 0x100>;
-+			interrupts = <0 42 0>;
-+		};
-+
-+		sss: sss@10830000 {
-+			compatible = "samsung,exynos4210-secss";
-+			reg = <0x10830000 0x300>;
-+			interrupts = <0 112 0>;
-+		};
-+
- 		/* i2c_0-3 are defined in exynos5.dtsi */
- 		hsi2c_4: i2c@12ca0000 {
- 			compatible = "samsung,exynos5250-hsi2c";
--- 
-1.9.1
+On Fri, May 27, 2016 at 04:38:13PM -0400, Rhyland Klein wrote:
+> Add a '^' character to the beginning of clk entries that are for
+> CRITICAL clks.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/clk.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 874c7dd8ef66..22dd0ca1e491 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s=
+, struct clk_core *c,
+>  	if (!c)
+>  		return;
+> =20
+> -	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+> -		   level * 3 + 1, "",
+> +	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+> +		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
+> +		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
+
+Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
+omit the second conditional.
+
+I wonder if it might be easier to read if this flag was at the end of
+the line. There's also the fact that someone may have written a script
+that expects the clock name as the first word on the line and may get
+confused by this change. If you put it at the very end of the line the
+likelihood of upsetting scripts will be reduced.
+
+Thierry
+
+--c3bfwLpm8qysLVxt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXaoNyAAoJEN0jrNd/PrOh1TMP/26DIkFgay/otqSUNTccCnDM
+SzRiq3DPV9LtqFtIL4TZQvU1jKasmutNPv9/izBdioKzK1rl7LPM9VFMU/rsoYeN
+J/6rZAriwZK4+TyvcUBADyGKga3jG6wjZb5aFxqbufoz45uZxeGt3yvNAvXd23j1
+mkpy9yXZOk1a0m47gMOSxc10X3KKaSljoyOZEPOZkcf+CyGMO0WlnTFHls7W9889
+YOHBJKKVy5dPCYifjK3KgNFd928dA/AJfrV873g4smqxigKehtFQssR/a00PtmSI
+Bsl97Z1YemJZGrYRh+SZ4f2XYpQvjbd6PCMEV/f132mzdd8UpgghNAhbPvQQLGfO
+qhWuPLcnJCTlzPIWxGEf2NxeR33G4pbAEM+OpJrJJgHOA05PHjqABWcuBxobNmjB
+UTVxookjH3gD84zUGRDcd8rVGQAqTEQdfLDUit+v0IfCtIC9glB1QWcEdSY+WNWd
+ZjibqyNbxpR43fx+RJsur9pkB+QAOpMY8r1YN3GzLbd3CBZhdVEv+/c3q4Jt1Atm
+bceJeV1J+z5Fas3GGuRxi4Aje5pdL66joY+PBsclxhWuWMMrEjKPl2AJa0b0wdx0
+SKPhPjqQ45Tkwxi5EG5MWF+QMyaUZVhgwsiCVwVdLHFocs2I4p8xgw+ibTsOEY55
+lUVrZIJLJBn8WD5I59SL
+=+O1c
+-----END PGP SIGNATURE-----
+
+--c3bfwLpm8qysLVxt--
