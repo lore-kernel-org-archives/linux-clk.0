@@ -1,26 +1,42 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 12 Jun 2016 19:31:05 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 03/11] clk: imx7d: correct dram root clk parent select
-Message-ID: <20160612113105.GA20243@tiger>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-3-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465396420-27064-3-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jongsung Kim <neidhard.kim@lge.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 2/2] ARM: sun5i: Allow PLL3 2x fixed factor clock to change PLL3 rate
+Date: Wed, 22 Jun 2016 11:15:55 +0200
+Message-Id: <20160622091555.18415-2-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
+References: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 08, 2016 at 10:33:32PM +0800, Dong Aisheng wrote:
-> From: Anson Huang <b20788@freescale.com>
-> 
-> DRAM root clk should be either from pll dram main clk
-> or dram alt root clk.
-> 
-> Signed-off-by: Anson Huang <b20788@freescale.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+In order to be able to properly generate its pixel clock, the pll3-2x fixed
+factor needs to be able to change the PLL3 rate too.
 
-Applied, thanks.
+Add the needed extra compatible so that it behaves that way.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 0840612b5ed6..e374f4fc8073 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -130,7 +130,7 @@
+ 		};
+ 
+ 		pll3x2: pll3x2_clk {
+-			compatible = "fixed-factor-clock";
++			compatible = "allwinner,sun4i-a10-pll3-2x-clk", "fixed-factor-clock";
+ 			#clock-cells = <0>;
+ 			clock-div = <1>;
+ 			clock-mult = <2>;
+-- 
+2.9.0
