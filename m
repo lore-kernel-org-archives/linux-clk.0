@@ -1,118 +1,53 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 21 Jun 2016 16:47:52 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] clk: sunxi: introduce "modern" clock support
-Message-ID: <20160621144752.GR26668@lukather>
-References: <20160607204154.31967-1-maxime.ripard@free-electrons.com>
- <20160621114044.811e2136eca5c1d863d79ac6@free.fr>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15661 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751538AbcFVIvA (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2016 04:51:00 -0400
+Date: Wed, 22 Jun 2016 11:50:36 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Mark timer clock as critical
+Message-ID: <20160622085036.GR12863@tbergstrom-lnx.Nvidia.com>
+References: <20160621153035.22172-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="foM9DbudB2CcldhH"
-In-Reply-To: <20160621114044.811e2136eca5c1d863d79ac6@free.fr>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160621153035.22172-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Jun 21, 2016 at 05:30:35PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The timer clock feeds the timer block, which, among other things, is
+> used to drive the SOR lane sequencer. Since the Tegra timer driver is
+> not enabled on 64-bit ARM, nothing currently claims that clock and it
+> gets disabled by the common clock framework at late_init time.
+> 
+> Given the non-obvious dependencies, the timer clock can be considered
+> a critical part of the SoC infrastructure, requiring its clock source
+> to be always on.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> index af85c8aeaf5a..4ce4e7fb1124 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -792,7 +792,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+>  
+>  static struct tegra_periph_init_data gate_clks[] = {
+>  	GATE("rtc", "clk_32k", 4, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_rtc, 0),
+> -	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, 0),
+> +	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+>  	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+>  	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+>  	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
 
---foM9DbudB2CcldhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jean-Francois,
-
-On Tue, Jun 21, 2016 at 11:40:44AM +0200, Jean-Francois Moine wrote:
-> On Tue,  7 Jun 2016 22:41:39 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > The current code has been tested on the H3 and an Orange Pi PC,
-> > including making sure that MMC still works, so the general approach
-> > seems ok.
-> >=20
-> > Let me know what you think,
->=20
-> Hi Maxime,
->=20
-> I used your code in both the H3 and A83T, and it worked fine for the
-> current clocks.
-
-I'm glad it works :)
-
-Your reviews have been appreciated, I'll address them in my v3.
-
-> But I had some problems with some features as the 'mode select' in the
-> A83T MMC2 clock.
-> Also, I think that you did not go far enough in the changes.
-
-At some point, you also have to support what's used out there,
-otherwise it just becomes an un-maintainable mess. Plus, it really
-doesn't have to be perfect from day one, it just has to works as it
-used to, we can always add more stuff later on.
-
-At it works way better than what we had.
-
-The question also is: is there anyone that we depend on using it
-(mainline u-boot)? and is it something we need? If both answers are
-no, then it's just dead code, which shouldn't be here in the first
-place.
-
-> For example, most clock gates as well as most resets could be removed
-> from the DT and automatically set/de-asserted on clock prepare or clock
-> enable.
-
-No. The semantics are completely different between the bus gates, bus
-resets and the module clocks. For example, the module clock can be
-shut down while retaining the register state, while the gate clock
-can't. And drivers are already using that semantic.
-
-Some other problems arise from that as well: this would break the DT
-ABI, and it deviates way too much from what the other SoCs are doing
-(which is the whole reason for that rework in the first place).
-
-> So, I am rewriting a generic sunxi clock driver into one file (about
-> 1000 lines) and I have the full (simpler and clearer) description of
-> the H3 and the A863T clocks.
->=20
-> Coding is not finished yet. I will submit a RFC as soon as I will have
-> something working.
-
-Please don't. I don't want to waste any more time on this, this is way
-overdue.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---foM9DbudB2CcldhH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXaVOYAAoJEBx+YmzsjxAgshQP/3fDwNpRAYNfZJw3hQBG1m0O
-FF87cnUSFtoxLiopwl1yRvgIIhpIynODVWbW7PlslRWfcrUWUTmPbXvCyC3mZhs4
-I1/8NP+widO6AiUqkdEp5an6uGMyvxhMOznhJZ2tT3Hy690AG8+QpCCl27YXZyZh
-GMm1EDiAyP0fb2Kyo0WEPKDpVsy1nJX7blzNyzj61fBV7uEh3Kat7s7C0qwx7Rip
-TgWAbYH95Wdxp3j6nkqkCr83a8rCWRq7vwZUvpIgsFHXJS+aMDjEO0DGoniw0TD9
-rTQWTHSMMNJwMSngAFPlDbHbFDsiQvkWQzB7zc6g4Lwkx1XUJS0hAcs0xmo/sKIA
-NLaj5ttbS7Oqfy/oq/lqnDWoVotA2d66C792AQ6vMwH3jj0HaqJyI0XMsXe6DuuM
-fum3HqScVUAFUiXO6XQT5EJ79ZOojBLQjG+Ktm1+/vXmT3G4mPgOCM4lBoaice/i
-AIaxAOmKHSRFzrkfPA7cDjuyIIJMe1kS7fa/Z1XtINRdDt8CXCA3GaLvFA+yyprI
-+gXK5COME9mjRTA9CixtuNsu5SGItj301yM9Xx71iJnFTZUsM4TyDaosfru5c7nQ
-u7GshBDZ9t22DhrDAxzkRCI/yA1Nb68r1t3DYgGaH48Rjl4LkaxLh1yr922o2aJ9
-6Smy2S6A6Rgc+Atn9fp2
-=Kws3
------END PGP SIGNATURE-----
-
---foM9DbudB2CcldhH--
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
