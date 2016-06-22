@@ -1,90 +1,66 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] clk: Provide notifier stubs when !COMMON_CLK
-Date: Tue, 28 Jun 2016 13:25:04 +0200
-Message-id: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+ <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+ <20160622122419.GC26943@ulmo.ba.sec>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Alexandre
+ Courbot" <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Stephen Warren
+	<swarren@wwwdotorg.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
+Date: Wed, 22 Jun 2016 11:31:08 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160622122419.GC26943@ulmo.ba.sec>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk notifier symbols are hidden by COMMON_CLK.  However on some
-platforms HAVE_CLK might be set while COMMON_CLK not which leads to
-compile test build errors like:
+On 6/22/2016 8:24 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, May 27, 2016 at 04:38:13PM -0400, Rhyland Klein wrote:
+>> Add a '^' character to the beginning of clk entries that are for
+>> CRITICAL clks.
+>>
+>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>> ---
+>>  drivers/clk/clk.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 874c7dd8ef66..22dd0ca1e491 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+>>  	if (!c)
+>>  		return;
+>>  
+>> -	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+>> -		   level * 3 + 1, "",
+>> +	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+>> +		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
+>> +		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
+> 
+> Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
+> omit the second conditional.
+> 
+> I wonder if it might be easier to read if this flag was at the end of
+> the line. There's also the fact that someone may have written a script
+> that expects the clock name as the first word on the line and may get
+> confused by this change. If you put it at the very end of the line the
+> likelihood of upsetting scripts will be reduced.
 
-$ make.cross ARCH=sh
-   drivers/devfreq/tegra-devfreq.c: In function 'tegra_actmon_rate_notify_cb':
->> drivers/devfreq/tegra-devfreq.c:391:16: error: 'POST_RATE_CHANGE' undeclared (first use in this function)
-     if (action != POST_RATE_CHANGE)
-                   ^
-   drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_probe':
->> drivers/devfreq/tegra-devfreq.c:654:8: error: implicit declaration of function 'clk_notifier_register' [-Werror=implicit-function-declaration]
-     err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
-           ^
+Yah we can put the mark at the end of the line. I wasn't sure if there
+was a strong motivation to avoid extending the the width of each line,
+as sometimes people prefer to try to keep it close to 80 char as
+possible. I think right now, it was close to that, but might be a little
+over already. I can switch to that though, as it is less likely to break
+any automatic parsing scripts.
 
-Export the macros and data type declarations outside of COMMON_CLK ifdef
-and provide stubs to fix the compile testing.
+-rhyland
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
----
-
-Reported when testing patch [1] on ARCH=sh. I don't have the sh cross
-compile toolchain so I cannot verify whether this fixes reported issue.
-Tested on similar configuration on MIPS (HAVE_CLK && !COMMON_CLK)
-
-[1] http://www.gossamer-threads.com/lists/linux/kernel/2471798
-
-Changes since v1:
-1. The struct clk_notifier_data also has to be visible.
----
- include/linux/clk.h | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 834179f3fa72..123c02788807 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -20,8 +20,6 @@ struct device;
- 
- struct clk;
- 
--#ifdef CONFIG_COMMON_CLK
--
- /**
-  * DOC: clk notifier callback types
-  *
-@@ -78,6 +76,8 @@ struct clk_notifier_data {
- 	unsigned long		new_rate;
- };
- 
-+#ifdef CONFIG_COMMON_CLK
-+
- /**
-  * clk_notifier_register: register a clock rate-change notifier callback
-  * @clk: clock whose rate we are interested in
-@@ -140,6 +140,18 @@ bool clk_is_match(const struct clk *p, const struct clk *q);
- 
- #else
- 
-+static inline int clk_notifier_register(struct clk *clk,
-+					struct notifier_block *nb)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int clk_notifier_unregister(struct clk *clk,
-+					  struct notifier_block *nb)
-+{
-+	return -ENOTSUPP;
-+}
-+
- static inline long clk_get_accuracy(struct clk *clk)
- {
- 	return -ENOTSUPP;
 -- 
-1.9.1
+nvpublic
