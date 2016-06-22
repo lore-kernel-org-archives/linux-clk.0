@@ -1,117 +1,129 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com,
- beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to
- clocks occurring hang at sleep
-Date: Fri, 10 Jun 2016 13:56:31 +0900
-Message-id: <1465534592-18860-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
-References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, James
+ Liao <jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v9 07/10] reset: mediatek: Add MT2701 reset controller dt-binding file
+Date: Wed, 22 Jun 2016 15:40:26 +0800
+Message-ID: <1466581229-2342-8-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Some clocks are required being unmasked during suspend-to-ram. Otherwise,
-PMU will stuck and power line never down.
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
 
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+ include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index e1a9c24079a4..852ac6a7607e 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -668,11 +668,14 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_PCM1_PERIC, "sclk_pcm1_peric", "div_sclk_pcm1",
- 			ENABLE_SCLK_TOP_PERIC, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2_PERIC, "sclk_uart2_peric", "div_sclk_uart2",
--			ENABLE_SCLK_TOP_PERIC, 5, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_TOP_PERIC, 5, CLK_SET_RATE_PARENT |
-+			CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_UART1_PERIC, "sclk_uart1_peric", "div_sclk_uart1",
--			ENABLE_SCLK_TOP_PERIC, 4, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_TOP_PERIC, 4, CLK_SET_RATE_PARENT |
-+			CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_UART0_PERIC, "sclk_uart0_peric", "div_sclk_uart0",
--			ENABLE_SCLK_TOP_PERIC, 3, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_TOP_PERIC, 3, CLK_SET_RATE_PARENT |
-+			CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_SPI2_PERIC, "sclk_spi2_peric", "div_sclk_spi2_b",
- 			ENABLE_SCLK_TOP_PERIC, 2, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1_PERIC, "sclk_spi1_peric", "div_sclk_spi1_b",
-@@ -833,7 +836,7 @@ static struct samsung_div_clock cpif_div_clks[] __initdata = {
- static struct samsung_gate_clock cpif_gate_clks[] __initdata = {
- 	/* ENABLE_SCLK_CPIF */
- 	GATE(CLK_SCLK_MPHY_PLL, "sclk_mphy_pll", "mout_mphy_pll",
--			ENABLE_SCLK_CPIF, 9, 0, 0),
-+			ENABLE_SCLK_CPIF, 9, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_UFS_MPHY, "sclk_ufs_mphy", "div_sclk_mphy",
- 			ENABLE_SCLK_CPIF, 4, 0, 0),
- };
-@@ -1440,11 +1443,13 @@ static struct samsung_gate_clock mif_gate_clks[] __initdata = {
- 
- 	/* ENABLE_PCLK_MIF_SECURE_DREX0_TZ */
- 	GATE(CLK_PCLK_DREX0_TZ, "pclk_drex0_tz", "div_aclk_mif_133",
--			ENABLE_PCLK_MIF_SECURE_DREX0_TZ, 0, 0, 0),
-+			ENABLE_PCLK_MIF_SECURE_DREX0_TZ, 0,
-+			CLK_IGNORE_UNUSED, 0),
- 
- 	/* ENABLE_PCLK_MIF_SECURE_DREX1_TZ */
- 	GATE(CLK_PCLK_DREX1_TZ, "pclk_drex1_tz", "div_aclk_mif_133",
--			ENABLE_PCLK_MIF_SECURE_DREX1_TZ, 0, 0, 0),
-+			ENABLE_PCLK_MIF_SECURE_DREX1_TZ, 0,
-+			CLK_IGNORE_UNUSED, 0),
- 
- 	/* ENABLE_PCLK_MIF_SECURE_MONOTONIC_CNT */
- 	GATE(CLK_PCLK_MONOTONIC_CNT, "pclk_monotonic_cnt", "div_aclk_mif_133",
-@@ -1674,11 +1679,14 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
- 			3, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
--			ENABLE_SCLK_PERIC, 2, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 2,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_UART1, "sclk_uart1", "sclk_uart1_peric",
--			ENABLE_SCLK_PERIC, 1, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 1,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_UART0, "sclk_uart0", "sclk_uart0_peric",
--			ENABLE_SCLK_PERIC, 0, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 0,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- };
- 
- static struct samsung_cmu_info peric_cmu_info __initdata = {
-@@ -2962,7 +2970,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
- 
- 	/* ENABLE_SCLK_AUD0 */
- 	GATE(CLK_ATCLK_AUD, "atclk_aud", "div_atclk_aud", ENABLE_SCLK_AUD0,
--			2, 0, 0),
-+			2, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_DBG_AUD, "pclk_dbg_aud", "div_pclk_dbg_aud",
- 			ENABLE_SCLK_AUD0, 1, 0, 0),
- 	GATE(CLK_SCLK_AUD_CA5, "sclk_aud_ca5", "div_aud_ca5", ENABLE_SCLK_AUD0,
-@@ -3356,9 +3364,11 @@ static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_GSCLNP_111, "aclk_gsclnp_111", "mout_aclk_gscl_111_user",
- 			ENABLE_ACLK_GSCL, 6, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_GSCLRTND_333, "aclk_gsclrtnd_333",
--			"mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 5, 0, 0),
-+			"mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 5,
-+			CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_GSCLBEND_333, "aclk_gsclbend_333",
--			"mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 4, 0, 0),
-+			"mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 4,
-+			CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_GSD, "aclk_gsd", "mout_aclk_gscl_333_user",
- 			ENABLE_ACLK_GSCL, 3, 0, 0),
- 	GATE(CLK_ACLK_GSCL2, "aclk_gscl2", "mout_aclk_gscl_333_user",
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
+new file mode 100644
+index 0000000..aaf0305
+--- /dev/null
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
++
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
++
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
++
++/* HIFSYS resets */
++#define MT2701_HIFSYS_UHOST0_RST		3
++#define MT2701_HIFSYS_UHOST1_RST		4
++#define MT2701_HIFSYS_UPHY0_RST			21
++#define MT2701_HIFSYS_UPHY1_RST			22
++#define MT2701_HIFSYS_PCIE0_RST			24
++#define MT2701_HIFSYS_PCIE1_RST			25
++#define MT2701_HIFSYS_PCIE2_RST			26
++
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
 -- 
 1.9.1
