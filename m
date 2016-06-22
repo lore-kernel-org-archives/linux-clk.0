@@ -1,48 +1,56 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 09/10] arm: meson: explicitly select clk drivers
-Date: Thu,  9 Jun 2016 17:27:46 -0700
-Message-Id: <1465518467-23939-10-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
-References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin
+ Lo <erin.lo@mediatek.com>
+Subject: [PATCH v9 01/10] clk: fix initial state of critical clock's parents
+Date: Wed, 22 Jun 2016 15:40:20 +0800
+Message-ID: <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The AmLogic clock controller code is used by both arm and arm64
-architectures. Explicitly select the core code for all Meson (32-bit
-arm) builds, and also select the Meson8b driver when that machine is
-built.
+From: James Liao <jamesjj.liao@mediatek.com>
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+This patch fixed wrong state of parent clocks if they are registered
+after critical clocks.
+
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- arch/arm/mach-meson/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/clk.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-index 31bdd91..c689219 100644
---- a/arch/arm/mach-meson/Kconfig
-+++ b/arch/arm/mach-meson/Kconfig
-@@ -7,6 +7,8 @@ menuconfig ARCH_MESON
- 	select CACHE_L2X0
- 	select PINCTRL
- 	select PINCTRL_MESON
-+	select COMMON_CLK
-+	select COMMON_CLK_AMLOGIC
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d584004..e9f5f89 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
  
- if ARCH_MESON
+-		if (parent)
++		if (parent) {
+ 			clk_core_reparent(orphan, parent);
++
++			if (orphan->prepare_count)
++				clk_core_prepare(parent);
++
++			if (orphan->enable_count)
++				clk_core_enable(parent);
++		}
+ 	}
  
-@@ -24,5 +26,6 @@ config MACH_MESON8B
- 	bool "Amlogic Meson8b SoCs support"
- 	default ARCH_MESON
- 	select MESON6_TIMER
-+	select COMMON_CLK_MESON8B
- 
- endif
+ 	/*
 -- 
-2.1.4
+1.9.1
