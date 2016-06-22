@@ -1,82 +1,102 @@
-Return-Path: <paulmck@linux.vnet.ibm.com>
-Date: Wed, 8 Jun 2016 08:16:04 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux@roeck-us.net, tony@atomide.com, linux@arm.linux.org.uk,
-        rostedt@goodmis.org, rjw@rjwysocki.net, pavel@ucw.cz,
-        mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: Re: [GIT PULL arm] Use _rcuidle tracepoints to allow tracing from
- idle
-Message-ID: <20160608151604.GA4104@linux.vnet.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20160526162606.GA20023@linux.vnet.ibm.com>
- <20160526162727.GA21784@linux.vnet.ibm.com>
- <20160608133350.GA18357@gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160608133350.GA18357@gmail.com>
+In-Reply-To: <20160621131443.GA29350@rob-hp-laptop>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
+ <1466391138-12862-3-git-send-email-wens@csie.org> <20160621131443.GA29350@rob-hp-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 22 Jun 2016 12:16:03 +0800
+Message-ID: <CAGb2v64TYTi0_thF7Z8cdBE9dkbPUq9xAhmhegqH8efVx1oCFw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] mfd: ac100: Add device tree bindings for X-Powers
+ AC100 codec/RTC combo IC
+To: Rob Herring <robh@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 08, 2016 at 03:33:50PM +0200, Ingo Molnar wrote:
-> 
-> * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > On Thu, May 26, 2016 at 09:26:06AM -0700, Paul E. McKenney wrote:
-> > > Hello, Ingo,
-> > > 
-> > > This series changes a number of event tracepoints to their _rcuidle() form
-> > > to allow use from idle without lockdep-RCU complaints, a straightforward
-> > > modification that has been successfully applied many times.  These splats
-> > > were found in testing by Guenter Roeck and Tony Lindgren, who have
-> > > both successfully tested the full series.  Tony asked that I carry these
-> > > in -rcu:
-> > > 
-> > > 	http://lkml.kernel.org/g/20160426213630.GV5995@atomide.com
-> > > 
-> > > These have been posted to LKML, CCing relevant maintainers, who have
-> > > not objected to the proposed changes:
-> > > 
-> > > 	http://lkml.kernel.org/g/20160516184844.GA20144@linux.vnet.ibm.com
-> > > 
-> > > These maintainers are also CCed on this pull request.
-> > > 
-> > > They have also been subjected to 0day Test Robot and -next testing.
-> > 
-> > And this time actually including the pull request...  :-/
-> > 
-> > 							Thanx, Paul
-> > 
-> > These changes are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-> > 
-> > for you to fetch changes up to e7c38dda94b23965a3eb46ef4656bb8cb921933d:
-> > 
-> >   arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle (2016-05-18 11:55:29 -0700)
-> > 
-> > ----------------------------------------------------------------
-> > Paul E. McKenney (6):
-> >       arm: Use _rcuidle tracepoint to allow use from idle
-> >       arm: Use _rcuidle for suspend/resume tracepoints
-> >       arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
-> >       arm: Add _rcuidle suffix to allow rpm_idle() use from idle
-> >       arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
-> >       arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle
-> > 
-> >  arch/arm/kernel/smp.c             |  2 +-
-> >  arch/arm/mach-omap2/powerdomain.c |  9 +++++----
-> >  drivers/base/power/runtime.c      | 14 +++++++-------
-> >  drivers/clk/clk.c                 |  8 ++++----
-> >  4 files changed, 17 insertions(+), 16 deletions(-)
-> 
-> Just wondering, wouldn't it be better for Russell to pull/apply, as it appears to 
-> be a mostly ARM patch-set?
+On Tue, Jun 21, 2016 at 9:14 PM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Jun 20, 2016 at 10:52:12AM +0800, Chen-Yu Tsai wrote:
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>> Changes since v2:
+>>
+>>   - Fix interrupt line for ac100_codec in provided example.
+>>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
+>>  1 file changed, 42 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
+>> new file mode 100644
+>> index 000000000000..a793954bb952
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
+>> @@ -0,0 +1,42 @@
+>> +X-Powers AC100 Codec/RTC IC device tree bindings
+>> +
+>> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
+>> +separated, including power supplies and interrupt lines, but share
+>> +a common register address space and host interface.
+>> +
+>> +Required properties:
+>> +- compatible: "x-powers,ac100"
+>> +- reg: The I2C slave address or RSB hardware address for the chip
+>> +- sub-nodes:
+>> +  - codec
+>> +    - compatible: "x-powers,ac100-codec"
+>> +    - interrupt-parent: The parent interrupt controller
+>> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
+>> +  - rtc
+>> +    - compatible: "x-powers,ac100-rtc"
+>> +    - interrupt-parent: The parent interrupt controller
+>> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
+>> +    - #clock-cells: shall be 1
+>> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
+>> +    - see clock/clock-bindings.txt for common clock bindings
+>> +
+>> +Example:
+>> +
+>> +ac100: codec@e89 {
+>> +     compatible = "x-powers,ac100";
+>> +     reg = <0xe89>;
+>> +
+>> +     ac100_codec {
+>
+> Use generic node names and no underscores:
+>
+> codec {
 
-Fair enough -- I can always repost the patches to their respective
-maintainers if you are in any way uncomfortable taking them.  The patches
-do not depend on each other.
+Right. I intended to add them as labels, not change the node names.
 
-							Thanx, Paul
+Thanks
+ChenYu
+
+>
+>> +             compatible = "x-powers,ac100-codec";
+>> +             interrupt-parent = <&r_pio>;
+>> +             interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
+>> +     };
+>> +
+>> +     ac100_rtc {
+>
+> rtc {
+>
+>> +             compatible = "x-powers,ac100-rtc";
+>> +             interrupt-parent = <&nmi_intc>;
+>> +             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>> +             #clock-cells = <1>;
+>> +             clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
+>> +     };
+>> +};
+>> --
+>> 2.8.1
+>>
