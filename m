@@ -1,32 +1,76 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [RESEND PATCHv2 01/28] clk: ti: add ti_clk_get helper API
-To: Tony Lindgren <tony@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-2-git-send-email-t-kristo@ti.com>
- <20160628064749.GB28140@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <577367FB.8070709@ti.com>
-Date: Wed, 29 Jun 2016 09:17:31 +0300
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, James
+ Liao <jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v9 08/10] reset: mediatek: Add MT2701 reset driver
+Date: Wed, 22 Jun 2016 15:40:27 +0800
+Message-ID: <1466581229-2342-9-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20160628064749.GB28140@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/06/16 09:47, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [160613 12:07]:
->> The API can be used to fetch directly DT clocks based on name. Using
->> this new API allows getting rid of most of the DT_CLK() entries under
->> drivers/clk/ti.
->
-> The description here is a bit confusing.. Rather than calling it API
-> how about say it's a helper function private to TI specific clock
-> code? Otherwise people might think it will be something more widely
-> available.
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Yea, I can drop the API part from the desc, if we are going forward with 
-this series.
+In infrasys and perifsys, there are many reset
+control bits for kinds of modules. These bits are
+used as actual reset controllers to be registered
+into kernel's generic reset controller framework.
 
--Tero
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/mediatek/clk-mt2701-hif.c | 2 ++
+ drivers/clk/mediatek/clk-mt2701.c     | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
+index 3f6cea2..28014bf 100644
+--- a/drivers/clk/mediatek/clk-mt2701-hif.c
++++ b/drivers/clk/mediatek/clk-mt2701-hif.c
+@@ -55,6 +55,8 @@ static void mtk_hifsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 1, 0x34);
+ }
+ 
+ static const struct of_device_id of_match_clk_mt2701_hif[] = {
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 08a2954..b3cde20 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -791,6 +791,8 @@ static void mtk_infrasys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x30);
+ }
+ 
+ static const struct mtk_gate_regs peri0_cg_regs = {
+@@ -911,6 +913,8 @@ static void mtk_pericfg_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x0);
+ }
+ 
+ #define MT8590_PLL_FMAX		(2000 * MHZ)
+-- 
+1.9.1
