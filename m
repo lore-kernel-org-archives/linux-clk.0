@@ -1,450 +1,287 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+Return-Path: <megous@megous.com>
+From: megous@megous.com
+To: dev@linux-sunxi.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Ondrej Jirman <megous@megous.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 04/10] rtc: ac100: Add RTC driver for X-Powers AC100
-Date: Wed, 15 Jun 2016 18:27:41 +0800
-Message-Id: <1465986467-14802-5-git-send-email-wens@csie.org>
-In-Reply-To: <1465986467-14802-1-git-send-email-wens@csie.org>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 11/14] ARM: sun8i: clk: Add clk-factor rate application method
+Date: Thu, 23 Jun 2016 21:21:01 +0200
+Message-Id: <20160623192104.18720-12-megous@megous.com>
+In-Reply-To: <20160623192104.18720-1-megous@megous.com>
+References: <20160623192104.18720-1-megous@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-X-Powers AC100 is a codec / RTC combo chip. This driver supports
-the RTC sub-device.
+From: Ondrej Jirman <megous@megous.com>
 
-The RTC block also has clock outputs and non-volatile storage.
-Non-volatile storage wthin the RTC hardware is not supported.
-Clock output support is added in the next patch.
+PLL1 on H3 requires special factors application algorithm,
+when the rate is changed. This algorithm was extracted
+from the arisc code that handles frequency scaling
+in the BSP kernel.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+This commit adds optional apply function to
+struct factors_data, that can implement non-trivial
+factors application method, when necessary.
+
+Also struct clk_factors_config is extended with position
+of the PLL lock flag.
+
+Signed-off-by: Ondrej Jirman <megous@megous.com>
 ---
- drivers/rtc/Kconfig     |  10 ++
- drivers/rtc/Makefile    |   1 +
- drivers/rtc/rtc-ac100.c | 367 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 378 insertions(+)
- create mode 100644 drivers/rtc/rtc-ac100.c
+ arch/arm/boot/dts/sun8i-h3.dtsi |  2 +-
+ drivers/clk/sunxi/clk-factors.c | 34 +++++++++----------
+ drivers/clk/sunxi/clk-factors.h | 12 +++++++
+ drivers/clk/sunxi/clk-sunxi.c   | 72 +++++++++++++++++++++++++++++++++++++++--
+ 4 files changed, 98 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 18639e0cb6e2..b9d7cbb6bd76 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -183,6 +183,16 @@ config RTC_DRV_ABX80X
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-abx80x.
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index 8d86f57..58a49db 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -114,7 +114,7 @@
  
-+config RTC_DRV_AC100
-+	tristate "X-Powers AC100"
-+	depends on MFD_AC100
-+	help
-+	  If you say yes here you get support for the real-time clock found
-+	  in X-Powers AC100 family peripheral ICs.
+ 		pll1: clk@01c20000 {
+ 			#clock-cells = <0>;
+-			compatible = "allwinner,sun8i-a23-pll1-clk";
++			compatible = "allwinner,sun8i-h3-pll1-clk";
+ 			reg = <0x01c20000 0x4>;
+ 			clocks = <&osc24M>;
+ 			clock-output-names = "pll1";
+diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+index ddefe96..7c165db 100644
+--- a/drivers/clk/sunxi/clk-factors.c
++++ b/drivers/clk/sunxi/clk-factors.c
+@@ -34,13 +34,6 @@
+ 
+ #define FACTORS_MAX_PARENTS		5
+ 
+-#define SETMASK(len, pos)		(((1U << (len)) - 1) << (pos))
+-#define CLRMASK(len, pos)		(~(SETMASK(len, pos)))
+-#define FACTOR_GET(bit, len, reg)	(((reg) & SETMASK(len, bit)) >> (bit))
+-
+-#define FACTOR_SET(bit, len, reg, val) \
+-	(((reg) & CLRMASK(len, bit)) | (val << (bit)))
+-
+ static unsigned long clk_factors_recalc_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+@@ -150,20 +143,24 @@ static int clk_factors_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (factors->lock)
+ 		spin_lock_irqsave(factors->lock, flags);
+ 
+-	/* Fetch the register value */
+-	reg = readl(factors->reg);
++	if (factors->apply) {
++		factors->apply(factors, &req);
++	} else {
++		/* Fetch the register value */
++		reg = readl(factors->reg);
+ 
+-	/* Set up the new factors - macros do not do anything if width is 0 */
+-	reg = FACTOR_SET(config->nshift, config->nwidth, reg, req.n);
+-	reg = FACTOR_SET(config->kshift, config->kwidth, reg, req.k);
+-	reg = FACTOR_SET(config->mshift, config->mwidth, reg, req.m);
+-	reg = FACTOR_SET(config->pshift, config->pwidth, reg, req.p);
++		/* Set up the new factors - macros do not do anything if width is 0 */
++		reg = FACTOR_SET(config->nshift, config->nwidth, reg, req.n);
++		reg = FACTOR_SET(config->kshift, config->kwidth, reg, req.k);
++		reg = FACTOR_SET(config->mshift, config->mwidth, reg, req.m);
++		reg = FACTOR_SET(config->pshift, config->pwidth, reg, req.p);
+ 
+-	/* Apply them now */
+-	writel(reg, factors->reg);
++		/* Apply them now */
++		writel(reg, factors->reg);
+ 
+-	/* delay 500us so pll stabilizes */
+-	__delay((rate >> 20) * 500 / 2);
++		/* delay 500us so pll stabilizes */
++		__delay((rate >> 20) * 500 / 2);
++	}
+ 
+ 	if (factors->lock)
+ 		spin_unlock_irqrestore(factors->lock, flags);
+@@ -213,6 +210,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
+ 	factors->config = data->table;
+ 	factors->get_factors = data->getter;
+ 	factors->recalc = data->recalc;
++	factors->apply = data->apply;
+ 	factors->lock = lock;
+ 
+ 	/* Add a gate if this factor clock can be gated */
+diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
+index 1e63c5b..661a45a 100644
+--- a/drivers/clk/sunxi/clk-factors.h
++++ b/drivers/clk/sunxi/clk-factors.h
+@@ -6,6 +6,13 @@
+ 
+ #define SUNXI_FACTORS_NOT_APPLICABLE	(0)
+ 
++#define SETMASK(len, pos)		(((1U << (len)) - 1) << (pos))
++#define CLRMASK(len, pos)		(~(SETMASK(len, pos)))
++#define FACTOR_GET(bit, len, reg)	(((reg) & SETMASK(len, bit)) >> (bit))
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-ac100.
++#define FACTOR_SET(bit, len, reg, val) \
++	(((reg) & CLRMASK(len, bit)) | (val << (bit)))
 +
- config RTC_DRV_AS3722
- 	tristate "ams AS3722 RTC driver"
- 	depends on MFD_AS3722
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index ea2833723fa9..b07c28779573 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_RTC_DRV_AB3100)	+= rtc-ab3100.o
- obj-$(CONFIG_RTC_DRV_AB8500)	+= rtc-ab8500.o
- obj-$(CONFIG_RTC_DRV_ABB5ZES3)	+= rtc-ab-b5ze-s3.o
- obj-$(CONFIG_RTC_DRV_ABX80X)	+= rtc-abx80x.o
-+obj-$(CONFIG_RTC_DRV_AC100)	+= rtc-ac100.o
- obj-$(CONFIG_RTC_DRV_ARMADA38X)	+= rtc-armada38x.o
- obj-$(CONFIG_RTC_DRV_AS3722)	+= rtc-as3722.o
- obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
-diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-new file mode 100644
-index 000000000000..360346792ca5
---- /dev/null
-+++ b/drivers/rtc/rtc-ac100.c
-@@ -0,0 +1,367 @@
-+/*
-+ * RTC Driver for X-Powers AC100
-+ *
-+ * Copyright (c) 2015, Chen-Yu Tsai <wens@csie.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
+ struct clk_factors_config {
+ 	u8 nshift;
+ 	u8 nwidth;
+@@ -16,6 +23,7 @@ struct clk_factors_config {
+ 	u8 pshift;
+ 	u8 pwidth;
+ 	u8 n_start;
++	u8 lock;
+ };
+ 
+ struct factors_request {
+@@ -28,6 +36,8 @@ struct factors_request {
+ 	u8 p;
+ };
+ 
++struct clk_factors;
++
+ struct factors_data {
+ 	int enable;
+ 	int mux;
+@@ -35,6 +45,7 @@ struct factors_data {
+ 	const struct clk_factors_config *table;
+ 	void (*getter)(struct factors_request *req);
+ 	void (*recalc)(struct factors_request *req);
++	void (*apply)(struct clk_factors *factors, struct factors_request *req);
+ 	const char *name;
+ };
+ 
+@@ -44,6 +55,7 @@ struct clk_factors {
+ 	const struct clk_factors_config *config;
+ 	void (*get_factors)(struct factors_request *req);
+ 	void (*recalc)(struct factors_request *req);
++	void (*apply)(struct clk_factors *factors, struct factors_request *req);
+ 	spinlock_t *lock;
+ 	/* for cleanup */
+ 	struct clk_mux *mux;
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 838b22a..e4bb908 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -23,6 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/log2.h>
++#include <linux/delay.h>
+ 
+ #include "clk-factors.h"
+ 
+@@ -200,6 +201,56 @@ static void sun8i_a23_get_pll1_factors(struct factors_request *req)
+ }
+ 
+ /**
++ * sun8i_h3_apply_pll1_factors() - applies n, k, m, p factors to the
++ * register using an algorithm that tries to reserve the PLL lock
 + */
 +
-+#include <linux/bcd.h>
-+#include <linux/device.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/ac100.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/rtc.h>
-+#include <linux/types.h>
++static void sun8i_h3_apply_pll1_factors(struct clk_factors *factors, struct factors_request *req)
++{
++	const struct clk_factors_config *config = factors->config;
++	u32 reg;
 +
-+/* Control register */
-+#define AC100_RTC_CTRL_24HOUR	BIT(0)
++	/* Fetch the register value */
++	reg = readl(factors->reg);
 +
-+/* RTC */
-+#define AC100_RTC_SEC_MASK	GENMASK(6, 0)
-+#define AC100_RTC_MIN_MASK	GENMASK(6, 0)
-+#define AC100_RTC_HOU_MASK	GENMASK(5, 0)
-+#define AC100_RTC_WEE_MASK	GENMASK(3, 0)
-+#define AC100_RTC_DAY_MASK	GENMASK(5, 0)
-+#define AC100_RTC_MON_MASK	GENMASK(4, 0)
-+#define AC100_RTC_YEA_MASK	GENMASK(7, 0)
-+#define AC100_RTC_YEA_LEAP	BIT(15)
-+#define AC100_RTC_UPD_TRIGGER	BIT(15)
++	if (FACTOR_GET(config->pshift, config->pwidth, reg) < req->p) {
++		reg = FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
 +
-+/* Alarm (wall clock) */
-+#define AC100_ALM_INT_ENABLE	BIT(0)
++		writel(reg, factors->reg);
++		__delay(2000);
++	}
 +
-+#define AC100_ALM_SEC_MASK	GENMASK(5, 0)
-+#define AC100_ALM_MIN_MASK	GENMASK(5, 0)
-+#define AC100_ALM_HOU_MASK	GENMASK(4, 0)
-+#define AC100_ALM_WEE_MASK	GENMASK(3, 0)
-+#define AC100_ALM_DAY_MASK	GENMASK(5, 0)
-+#define AC100_ALM_MON_MASK	GENMASK(4, 0)
-+#define AC100_ALM_YEA_MASK	GENMASK(7, 0)
-+#define AC100_ALM_ENABLE_FLAG	BIT(15)
-+#define AC100_ALM_UPD_TRIGGER	BIT(15)
++	if (FACTOR_GET(config->mshift, config->mwidth, reg) < req->m) {
++		reg = FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
 +
-+/*
-+ * The year parameter passed to the driver is usually an offset relative to
-+ * the year 1900. This macro is used to convert this offset to another one
-+ * relative to the minimum year allowed by the hardware.
-+ *
-+ * The year range is 1970 - 2069. This range is selected to match Allwinner's
-+ * driver.
-+ */
-+#define AC100_YEAR_MIN				1970
-+#define AC100_YEAR_MAX				2069
-+#define AC100_YEAR_OFF				(AC100_YEAR_MIN - 1900)
++		writel(reg, factors->reg);
++		__delay(2000);
++	}
 +
-+struct ac100_rtc_dev {
-+	struct rtc_device *rtc;
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct mutex mutex;
-+	int irq;
-+	unsigned long alarm;
++	reg = FACTOR_SET(config->nshift, config->nwidth, reg, req->n);
++	reg = FACTOR_SET(config->kshift, config->kwidth, reg, req->k);
++
++	writel(reg, factors->reg);
++	__delay(20);
++
++	while (!(readl(factors->reg) & (1 << config->lock)));
++
++	if (FACTOR_GET(config->mshift, config->mwidth, reg) > req->m) {
++		reg = FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
++
++		writel(reg, factors->reg);
++		__delay(2000);
++	}
++
++	if (FACTOR_GET(config->pshift, config->pwidth, reg) > req->p) {
++		reg = FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
++
++		writel(reg, factors->reg);
++		__delay(2000);
++	}
++}
++
++/**
+  * sun4i_get_pll5_factors() - calculates n, k factors for PLL5
+  * PLL5 rate is calculated as follows
+  * rate = parent_rate * n * (k + 1)
+@@ -451,6 +502,7 @@ static const struct clk_factors_config sun8i_a23_pll1_config = {
+ 	.pshift = 16,
+ 	.pwidth = 2,
+ 	.n_start = 1,
++	.lock = 28
+ };
+ 
+ static const struct clk_factors_config sun4i_pll5_config = {
+@@ -513,6 +565,13 @@ static const struct factors_data sun8i_a23_pll1_data __initconst = {
+ 	.getter = sun8i_a23_get_pll1_factors,
+ };
+ 
++static const struct factors_data sun8i_h3_pll1_data __initconst = {
++	.enable = 31,
++	.table = &sun8i_a23_pll1_config,
++	.getter = sun8i_a23_get_pll1_factors,
++	.apply = sun8i_h3_apply_pll1_factors,
 +};
 +
-+static int ac100_rtc_get_time(struct device *dev, struct rtc_time *rtc_tm)
+ static const struct factors_data sun7i_a20_pll4_data __initconst = {
+ 	.enable = 31,
+ 	.table = &sun4i_pll5_config,
+@@ -590,12 +649,19 @@ static void __init sun6i_pll1_clk_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun6i_pll1, "allwinner,sun6i-a31-pll1-clk",
+ 	       sun6i_pll1_clk_setup);
+ 
+-static void __init sun8i_pll1_clk_setup(struct device_node *node)
++static void __init sun8i_a23_pll1_clk_setup(struct device_node *node)
+ {
+ 	sunxi_factors_clk_setup(node, &sun8i_a23_pll1_data);
+ }
+-CLK_OF_DECLARE(sun8i_pll1, "allwinner,sun8i-a23-pll1-clk",
+-	       sun8i_pll1_clk_setup);
++CLK_OF_DECLARE(sun8i_a23_pll1, "allwinner,sun8i-a23-pll1-clk",
++	       sun8i_a23_pll1_clk_setup);
++
++static void __init sun8i_h3_pll1_clk_setup(struct device_node *node)
 +{
-+	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-+	struct regmap *regmap = chip->regmap;
-+	u16 reg[7];
-+	int ret;
-+
-+	ret = regmap_bulk_read(regmap, AC100_RTC_SEC, reg, 7);
-+	if (ret)
-+		return ret;
-+
-+	rtc_tm->tm_sec  = bcd2bin(reg[0] & AC100_RTC_SEC_MASK);
-+	rtc_tm->tm_min  = bcd2bin(reg[1] & AC100_RTC_MIN_MASK);
-+	rtc_tm->tm_hour = bcd2bin(reg[2] & AC100_RTC_HOU_MASK);
-+	rtc_tm->tm_wday = bcd2bin(reg[3] & AC100_RTC_WEE_MASK);
-+	rtc_tm->tm_mday = bcd2bin(reg[4] & AC100_RTC_DAY_MASK);
-+	rtc_tm->tm_mon  = bcd2bin(reg[5] & AC100_RTC_MON_MASK);
-+	rtc_tm->tm_year = bcd2bin(reg[6] & AC100_RTC_YEA_MASK);
-+
-+	rtc_tm->tm_mon  -= 1;
-+
-+	/*
-+	 * switch from (data_year->min)-relative offset to
-+	 * a (1900)-relative one
-+	 */
-+	rtc_tm->tm_year += AC100_YEAR_OFF;
-+
-+	return rtc_valid_tm(rtc_tm);
++	sunxi_factors_clk_setup(node, &sun8i_h3_pll1_data);
 +}
-+
-+static int ac100_rtc_set_time(struct device *dev, struct rtc_time *rtc_tm)
-+{
-+	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-+	struct regmap *regmap = chip->regmap;
-+	int year;
-+	u16 reg[8];
-+
-+	/* our RTC has a limited year range... */
-+	year = rtc_tm->tm_year + 1900;
-+	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
-+		dev_err(dev, "rtc only supports year in range %d - %d\n",
-+			AC100_YEAR_MIN, AC100_YEAR_MAX);
-+		return -EINVAL;
-+	}
-+
-+	/* correct offsets */
-+	rtc_tm->tm_year -= AC100_YEAR_OFF;
-+	rtc_tm->tm_mon += 1;
-+
-+	/* convert to BCD */
-+	reg[0] = bin2bcd(rtc_tm->tm_sec)  & AC100_RTC_SEC_MASK;
-+	reg[1] = bin2bcd(rtc_tm->tm_min)  & AC100_RTC_MIN_MASK;
-+	reg[2] = bin2bcd(rtc_tm->tm_hour) & AC100_RTC_HOU_MASK;
-+	reg[3] = bin2bcd(rtc_tm->tm_wday) & AC100_RTC_WEE_MASK;
-+	reg[4] = bin2bcd(rtc_tm->tm_mday) & AC100_RTC_DAY_MASK;
-+	reg[5] = bin2bcd(rtc_tm->tm_mon)  & AC100_RTC_MON_MASK;
-+	reg[6] = bin2bcd(rtc_tm->tm_year) & AC100_RTC_YEA_MASK;
-+	/* trigger write */
-+	reg[7] = AC100_RTC_UPD_TRIGGER;
-+
-+	/* Is it a leap year? */
-+	if (is_leap_year(year))
-+		reg[6] |= AC100_RTC_YEA_LEAP;
-+
-+	return regmap_bulk_write(regmap, AC100_RTC_SEC, reg, 8);
-+}
-+
-+static int _ac100_rtc_alarm_irq_enable(struct ac100_rtc_dev *chip,
-+				       unsigned int en)
-+{
-+	struct regmap *regmap = chip->regmap;
-+	unsigned int val;
-+
-+	val = en ? AC100_ALM_INT_ENABLE : 0;
-+
-+	return regmap_write(regmap, AC100_ALM_INT_ENA, val);
-+}
-+
-+static int ac100_rtc_alarm_irq_enable(struct device *dev, unsigned int en)
-+{
-+	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&chip->mutex);
-+	ret = _ac100_rtc_alarm_irq_enable(chip, en);
-+	mutex_unlock(&chip->mutex);
-+
-+	return ret;
-+}
-+
-+static int ac100_rtc_get_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-+	struct regmap *regmap = chip->regmap;
-+	struct rtc_time *alrm_tm = &alrm->time;
-+	u16 reg[7];
-+	unsigned int val;
-+	int ret;
-+
-+	mutex_lock(&chip->mutex);
-+
-+	ret = regmap_read(regmap, AC100_ALM_INT_ENA, &val);
-+	if (ret)
-+		goto out;
-+
-+	alrm->enabled = !!(val & AC100_ALM_INT_ENABLE);
-+
-+	ret = regmap_bulk_read(regmap, AC100_ALM_SEC, reg, 7);
-+	if (ret)
-+		goto out;
-+
-+	alrm_tm->tm_sec  = bcd2bin(reg[0] & AC100_ALM_SEC_MASK);
-+	alrm_tm->tm_min  = bcd2bin(reg[1] & AC100_ALM_MIN_MASK);
-+	alrm_tm->tm_hour = bcd2bin(reg[2] & AC100_ALM_HOU_MASK);
-+	alrm_tm->tm_wday = bcd2bin(reg[3] & AC100_ALM_WEE_MASK);
-+	alrm_tm->tm_mday = bcd2bin(reg[4] & AC100_ALM_DAY_MASK);
-+	alrm_tm->tm_mon  = bcd2bin(reg[5] & AC100_ALM_MON_MASK);
-+	alrm_tm->tm_year = bcd2bin(reg[6] & AC100_ALM_YEA_MASK);
-+
-+	alrm_tm->tm_mon  -= 1;
-+
-+	/*
-+	 * switch from (data_year->min)-relative offset to
-+	 * a (1900)-relative one
-+	 */
-+	alrm_tm->tm_year += AC100_YEAR_OFF;
-+
-+out:
-+	mutex_unlock(&chip->mutex);
-+	return ret;
-+}
-+
-+static int ac100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-+	struct regmap *regmap = chip->regmap;
-+	struct rtc_time *alrm_tm = &alrm->time;
-+	u16 reg[8];
-+	int year;
-+	int ret;
-+
-+	/* our alarm has a limited year range... */
-+	year = alrm_tm->tm_year + 1900;
-+	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
-+		dev_err(dev, "alarm only supports year in range %d - %d\n",
-+			AC100_YEAR_MIN, AC100_YEAR_MAX);
-+		return -EINVAL;
-+	}
-+
-+	/* correct offsets */
-+	alrm_tm->tm_year -= AC100_YEAR_OFF;
-+	alrm_tm->tm_mon += 1;
-+
-+	/* convert to BCD */
-+	reg[0] = (bin2bcd(alrm_tm->tm_sec)  & AC100_RTC_SEC_MASK) |
-+			AC100_ALM_ENABLE_FLAG;
-+	reg[1] = (bin2bcd(alrm_tm->tm_min)  & AC100_RTC_MIN_MASK) |
-+			AC100_ALM_ENABLE_FLAG;
-+	reg[2] = (bin2bcd(alrm_tm->tm_hour) & AC100_RTC_HOU_MASK) |
-+			AC100_ALM_ENABLE_FLAG;
-+	/* Do not enable weekday alarm */
-+	reg[3] = bin2bcd(alrm_tm->tm_wday) & AC100_RTC_WEE_MASK;
-+	reg[4] = (bin2bcd(alrm_tm->tm_mday) & AC100_RTC_DAY_MASK) |
-+			AC100_ALM_ENABLE_FLAG;
-+	reg[5] = (bin2bcd(alrm_tm->tm_mon)  & AC100_RTC_MON_MASK) |
-+			AC100_ALM_ENABLE_FLAG;
-+	reg[6] = (bin2bcd(alrm_tm->tm_year) & AC100_RTC_YEA_MASK) |
-+			AC100_ALM_ENABLE_FLAG;
-+	/* trigger write */
-+	reg[7] = AC100_RTC_UPD_TRIGGER;
-+
-+	mutex_lock(&chip->mutex);
-+
-+	ret = regmap_bulk_write(regmap, AC100_RTC_SEC, reg, 8);
-+	if (ret)
-+		goto out;
-+
-+	ret = _ac100_rtc_alarm_irq_enable(chip, alrm->enabled);
-+
-+out:
-+	mutex_unlock(&chip->mutex);
-+	return ret;
-+}
-+
-+static irqreturn_t ac100_rtc_irq(int irq, void *data)
-+{
-+	struct ac100_rtc_dev *chip = data;
-+	struct regmap *regmap = chip->regmap;
-+	unsigned int val = 0;
-+	int ret;
-+
-+	mutex_lock(&chip->mutex);
-+
-+	/* read status */
-+	ret = regmap_read(regmap, AC100_ALM_INT_STA, &val);
-+	if (ret)
-+		goto out;
-+
-+	if (val & AC100_ALM_INT_ENABLE) {
-+		/* signal rtc framework */
-+		rtc_update_irq(chip->rtc, 1, RTC_AF | RTC_IRQF);
-+
-+		/* clear status */
-+		ret = regmap_write(regmap, AC100_ALM_INT_STA, val);
-+		if (ret)
-+			goto out;
-+
-+		/* disable interrupt */
-+		ret = _ac100_rtc_alarm_irq_enable(chip, 0);
-+		if (ret)
-+			goto out;
-+	}
-+
-+out:
-+	mutex_unlock(&chip->mutex);
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct rtc_class_ops ac100_rtc_ops = {
-+	.read_time	  = ac100_rtc_get_time,
-+	.set_time	  = ac100_rtc_set_time,
-+	.read_alarm	  = ac100_rtc_get_alarm,
-+	.set_alarm	  = ac100_rtc_set_alarm,
-+	.alarm_irq_enable = ac100_rtc_alarm_irq_enable,
-+};
-+
-+static int ac100_rtc_probe(struct platform_device *pdev)
-+{
-+	struct ac100_dev *ac100 = dev_get_drvdata(pdev->dev.parent);
-+	struct ac100_rtc_dev *chip;
-+	int ret;
-+
-+	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-+	platform_set_drvdata(pdev, chip);
-+	chip->dev = &pdev->dev;
-+	chip->regmap = ac100->regmap;
-+	mutex_init(&chip->mutex);
-+
-+	chip->irq = of_irq_get(pdev->dev.of_node, 0);
-+	if (chip->irq < 0) {
-+		dev_err(&pdev->dev, "No IRQ resource\n");
-+		return chip->irq;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
-+					ac100_rtc_irq,
-+					IRQF_SHARED | IRQF_ONESHOT,
-+					dev_name(&pdev->dev), chip);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not request IRQ\n");
-+		return ret;
-+	}
-+
-+	/* always use 24 hour mode */
-+	regmap_write_bits(chip->regmap, AC100_RTC_CTRL, AC100_RTC_CTRL_24HOUR,
-+			  AC100_RTC_CTRL_24HOUR);
-+
-+	/* disable counter alarm interrupt */
-+	regmap_write(chip->regmap, AC100_ALM_INT_ENA, 0);
-+
-+	/* clear counter alarm pending interrupts */
-+	regmap_write(chip->regmap, AC100_ALM_INT_STA, AC100_ALM_INT_ENABLE);
-+
-+	chip->rtc = devm_rtc_device_register(&pdev->dev, "rtc-ac100",
-+					     &ac100_rtc_ops, THIS_MODULE);
-+	if (IS_ERR(chip->rtc)) {
-+		dev_err(&pdev->dev, "unable to register device\n");
-+		return PTR_ERR(chip->rtc);
-+	}
-+
-+	/* We do not support user interrupts */
-+	chip->rtc->uie_unsupported = 1;
-+
-+	dev_info(&pdev->dev, "RTC enabled\n");
-+
-+	return 0;
-+}
-+
-+static struct platform_driver ac100_rtc_driver = {
-+	.probe		= ac100_rtc_probe,
-+	.driver		= {
-+		.name		= "ac100-rtc",
-+	},
-+};
-+module_platform_driver(ac100_rtc_driver);
-+
-+MODULE_DESCRIPTION("X-Powers AC100 RTC driver");
-+MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-+MODULE_LICENSE("GPL");
++CLK_OF_DECLARE(sun8i_h3_pll1, "allwinner,sun8i-h3-pll1-clk",
++	       sun8i_h3_pll1_clk_setup);
+ 
+ static void __init sun7i_pll4_clk_setup(struct device_node *node)
+ {
 -- 
-2.8.1
+2.9.0
