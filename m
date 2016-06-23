@@ -1,41 +1,48 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Mon, 20 Jun 2016 19:13:05 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag for
- SPI3 related clocks
-Message-id: <20160620101305.GA6783@samsunx.samsung>
-References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
- <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com>
- <20160619055921.GA424@jack.zhora.eu>
- <CGME20160619134424epcas1p31493dfce45a8c817bc353702a07fa4bb@epcas1p3.samsung.com>
- <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
- <20160620054157.GA6498@samsunx.samsung>
- <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: 
- <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35561 "EHLO
+	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751816AbcFWKwg (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2016 06:52:36 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] clk: tegra: Make sor_safe the parent of dpaux and dpaux1
+Date: Thu, 23 Jun 2016 12:52:30 +0200
+Message-Id: <20160623105231.24383-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> Unfortunately I have to NAK this patch. Please add proper support for
-> them to the SPI driver.
+From: Thierry Reding <treding@nvidia.com>
 
-I agree, this is quite a lazy solution.
+It turns out that sor_safe, rather than pll_p, is the parent of the
+dpaux and dpaux1 clocks.
 
-But your comment is giving me more work than what I was willing
-to have, also because in this driver the SPI1 is aslo using
-CLK_IGNORE_UNUSED :)
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for your review,
-Andi
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index aab32af77aa2..fe295b4102ca 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2466,11 +2466,11 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					1, 2);
+ 	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
+ 
+-	clk = tegra_clk_register_periph_fixed("dpaux", "pll_p", 0, clk_base,
++	clk = tegra_clk_register_periph_fixed("dpaux", "sor_safe", 0, clk_base,
+ 					      1, 17, 181);
+ 	clks[TEGRA210_CLK_DPAUX] = clk;
+ 
+-	clk = tegra_clk_register_periph_fixed("dpaux1", "pll_p", 0, clk_base,
++	clk = tegra_clk_register_periph_fixed("dpaux1", "sor_safe", 0, clk_base,
+ 					      1, 17, 207);
+ 	clks[TEGRA210_CLK_DPAUX1] = clk;
+ 
+-- 
+2.8.3
+
