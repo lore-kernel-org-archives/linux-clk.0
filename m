@@ -1,167 +1,74 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 06/10] clk: mvebu: Add the xtal clock for Armada 3700 SoC
-Date: Fri, 10 Jun 2016 15:23:34 +0200
-Message-Id: <1465565018-14172-7-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH v2 0/6] Add support for AmLogic GXBB clock controller
+Date: Wed, 22 Jun 2016 19:01:14 -0700
+Message-Id: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is the parent of all the Armada 3700 clocks. It is a fixed
-rate clock which depends on the gpio configuration read when resetting
-the SoC.
+This series is based on the AmLogic Meson8b rewrite/cleanup[0]. The
+AmLogic GXBB is an ARMv8-based SoC, fed by a 24MHZ xtal, and it provides
+several PLLs, muxes dividers and gates to drive CPUs and peripherals.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/Kconfig            |  3 ++
- drivers/clk/mvebu/Makefile           |  1 +
- drivers/clk/mvebu/armada-37xx-xtal.c | 93 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 97 insertions(+)
- create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+The main change from v1[1] is that I have moved all of the arch/arm64
+changes to a separate patch series to be picked up by the amlogic
+maintainers. This series will go through the clk tree and everyone will
+meet up and be friends in linux-next, as usual. Additionally the last
+patch includes a fix to set the CLK_IS_CRITICAL flag for clk81,
+suggested by Kevin Hilman.
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index 3165da77d525..fddc8ac5faff 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -24,6 +24,9 @@ config ARMADA_39X_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
- 
-+config ARMADA_37XX_CLK
-+       bool
-+
- config ARMADA_XP_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 7172ef65693d..4257a36d0219 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
- obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
-+obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-xtal.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
- obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
- obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
-diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-new file mode 100644
-index 000000000000..fb051a75b2c2
---- /dev/null
-+++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-@@ -0,0 +1,93 @@
-+/*
-+ * Marvell Armada 37xx SoC xtal clocks
-+ *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Gregory CLEMENT <gregory.clement@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define NB_GPIO1_LATCH	0xC
-+#define XTAL_MODE	    BIT(31)
-+
-+static struct clk *xtal_clk;
-+
-+static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	const char *xtal_name = "xtal";
-+	struct device_node *parent;
-+	struct regmap *regmap;
-+	unsigned int rate;
-+	u32 reg;
-+	int ret;
-+
-+	parent = np->parent;
-+	if (!parent) {
-+		dev_err(&pdev->dev, "no parrent\n");
-+		return -ENODEV;
-+	}
-+
-+	regmap = syscon_node_to_regmap(parent);
-+	if (IS_ERR(regmap)) {
-+		dev_err(&pdev->dev, "cannot get regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	ret = regmap_read(regmap, NB_GPIO1_LATCH, &reg);
-+	if (ret) {
-+		dev_err(&pdev->dev, "cannot read from regmap\n");
-+		return ret;
-+	}
-+
-+	if (reg & XTAL_MODE)
-+		rate = 40000000;
-+	else
-+		rate = 25000000;
-+
-+	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
-+	xtal_clk = clk_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
-+	if (IS_ERR(xtal_clk))
-+		return PTR_ERR(xtal_clk);
-+	of_clk_add_provider(np, of_clk_src_simple_get, xtal_clk);
-+
-+	return 0;
-+}
-+
-+static int armada_3700_xtal_clock_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	clk_unregister_fixed_rate(xtal_clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id armada_3700_xtal_clock_of_match[] = {
-+	{ .compatible = "marvell,armada-3700-xtal-clock", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, armada_3700_xtal_clock_of_match);
-+
-+static struct platform_driver armada_3700_xtal_clock_driver = {
-+	.probe = armada_3700_xtal_clock_probe,
-+	.remove = armada_3700_xtal_clock_remove,
-+	.driver		= {
-+		.name	= "marvell-armada-3700-xtal-clock",
-+		.of_match_table = armada_3700_xtal_clock_of_match,
-+	},
-+};
-+
-+module_platform_driver(armada_3700_xtal_clock_driver);
-+
-+MODULE_AUTHOR("Gregory CLEMENT <gregory.clement@free-electrons.com>");
-+MODULE_DESCRIPTION("Marvell Armada 37xx SoC xtal clocks driver");
-+MODULE_LICENSE("GPL v2");
+A stable, immutable branch based on -rc1 with this series is available here:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-s905
+
+While based on the Meson8b clock controller driver, this series adds
+supports for Multi-phase Locked Loops (mpll) and support for PLLs with
+fractional rates.
+
+This series introduces support for the new clock types and the clock controller
+platform_driver. I'm not sure about the names for the gate clocks, and
+suggestions/patches are welcome.
+
+Notably missing from this driver are the branch clocks (e.g. the mess of
+muxes and dividers that come after the PLLs and MPLLs). I could have
+guessed how things were wired up from the resources available to me, but
+I'm hoping to get some improved documentation soon and then I'll go back
+and fill them in.
+
+[0] http://lkml.kernel.org/g/1465518467-23939-1-git-send-email-mturquette@baylibre.com
+[1] Link: 1465518774-26924-1-git-send-email-mturquette@baylibre.com
+
+Michael Turquette (6):
+  clk: meson: only build selected platforms
+  clk: meson: add peripheral gate macro
+  clk: meson: add mpll support
+  clk: meson: fractional pll support
+  clk: gxbb: Document bindings for the GXBB clock controller
+  clk: gxbb: add AmLogic GXBB clk controller driver
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |  36 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   2 +-
+ drivers/clk/meson/Kconfig                          |  19 +
+ drivers/clk/meson/Makefile                         |   5 +-
+ drivers/clk/meson/clk-mpll.c                       |  94 ++
+ drivers/clk/meson/clk-pll.c                        |  32 +-
+ drivers/clk/meson/clkc.h                           |  39 +
+ drivers/clk/meson/gxbb.c                           | 954 +++++++++++++++++++++
+ drivers/clk/meson/gxbb.h                           | 271 ++++++
+ include/dt-bindings/clock/gxbb-clkc.h              |  12 +
+ 11 files changed, 1460 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+ create mode 100644 drivers/clk/meson/Kconfig
+ create mode 100644 drivers/clk/meson/clk-mpll.c
+ create mode 100644 drivers/clk/meson/gxbb.c
+ create mode 100644 drivers/clk/meson/gxbb.h
+ create mode 100644 include/dt-bindings/clock/gxbb-clkc.h
+
 -- 
-2.5.0
+2.1.4
