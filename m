@@ -1,50 +1,81 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] clk: max77620: Add clock driver for MAX77620/MAX20024
-To: Laxman Dewangan <ldewangan@nvidia.com>,
- Javier Martinez Canillas <javier@dowhile0.org>
-References: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
- <1465553536-23838-2-git-send-email-ldewangan@nvidia.com>
- <CABxcv=mrmN5Mzt595ZFgGbOoHJWQMwQ1wiCvcHEiWh_79EbJqQ@mail.gmail.com>
- <575ABD10.60208@nvidia.com>
- <CABxcv==7=PZ2HDtryNZHW0CcLaCAkBBT+XWJ0TJRS4uX48k_=w@mail.gmail.com>
- <575AC14D.4080907@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Linux Kernel <linux-kernel@vger.kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <575ACA8C.4000406@samsung.com>
-Date: Fri, 10 Jun 2016 16:11:24 +0200
-MIME-version: 1.0
-In-reply-to: <575AC14D.4080907@nvidia.com>
-Content-type: text/plain; charset=utf-8
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, khilman@baylibre.com, carlo@endlessm.com,
+ victor.wan@amlogic.com, jerry.cao@amlogic.com, xing.xu@amlogic.com
+References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Message-ID: <146664765420.35033.6148572558563627206@resonance>
+Subject: Re: [PATCH 00/10] meson8b clock driver rewrite/cleanup
+Date: Wed, 22 Jun 2016 19:07:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/10/2016 03:31 PM, Laxman Dewangan wrote:
-> + Krzysztof,
-> 
-> On Friday 10 June 2016 07:02 PM, Javier Martinez Canillas wrote:
->> Hello Laxman,
->>
->> On Fri, Jun 10, 2016 at 9:13 AM, Laxman Dewangan
->> <ldewangan@nvidia.com> wrote:
->>> So until I change it too generic, it will not be possible.
->>> Also if it is require then what about all max77686/max77802 and
->>> max77620 in
->>> single file, the way we did for RTC.
->>> We dont need 4 files for the similar driver then.
->>>
->> Indeed, probably is better to have a single driver to handle all these
->> IP variants since they seem to be quite similar.
->>
->>
-> Yaah, single driver will be very clean approach. But it needs some
-> testing on max77802 and max77686 based platform as I do not have any
-> driver.
-> I will need help on this from you.
+Quoting Michael Turquette (2016-06-09 17:27:37)
+> This series came about while writing the clock driver for the AmLogic
+> GXBB clock controller. GXBB shares much of the same clock controller IP
+> as the Meson8b clock controller and the source for the drivers is very
+> similar. However, I wanted the GXBB driver to actually be a real
+> platform_driver, and not an early initcall, which led to the same
+> changes in the Meson8b driver. From there a lot of other changes came
+> about.
 
-No problems, I have both devices at work so I can provide a tested-by.
+Applied to clk-next.
 
-Best regards,
-Krzysztof
+Regards,
+Mike
+
+> =
+
+> This series improves documentation, refactors statically initialized
+> data, removes unnecessary registration functions and converts the
+> meson8b clock controller code into a proper platform_driver. It also
+> changes up the Kconfig bits to prepare for the gxbb clock controller.
+> The diffstat is -190, which is nice as well.
+> =
+
+> As a consequence of the shift to platform_driver, all of clocks are
+> registered at module_init time. If any are needed very early during boot
+> then the OF_CLK_DECLARE stuff can be added back in, but I doubt it is
+> necessary.
+> =
+
+> Additionally this series makes use of some of the nice clk_hw helper
+> introduced by Stephen, especially clk_hw_onecell_data.
+> =
+
+> Michael Turquette (10):
+>   clk: meson8b: rectify reg offsets with datasheet
+>   clk: meson8b: clean up fixed rate clocks
+>   clk: meson8b: clean up pll clocks
+>   clk: meson8b: clean up fixed factor clocks
+>   clk: meson8b: clean up cpu clocks
+>   clk: meson8b: remove mali clk
+>   clk: meson8b: clean up composite clocks
+>   clk: meson8b: convert to platform_driver
+>   arm: meson: explicitly select clk drivers
+>   clk: meson: only build selected platforms
+> =
+
+>  arch/arm/mach-meson/Kconfig              |   3 +
+>  drivers/clk/Kconfig                      |   1 +
+>  drivers/clk/Makefile                     |   2 +-
+>  drivers/clk/meson/Kconfig                |  12 +
+>  drivers/clk/meson/Makefile               |   4 +-
+>  drivers/clk/meson/clk-cpu.c              |  73 +-----
+>  drivers/clk/meson/clk-pll.c              |  72 +----
+>  drivers/clk/meson/clkc.c                 | 249 ------------------
+>  drivers/clk/meson/clkc.h                 | 150 ++---------
+>  drivers/clk/meson/meson8b-clkc.c         | 436 +++++++++++++++++++++++++=
+------
+>  include/dt-bindings/clock/meson8b-clkc.h |   4 +-
+>  11 files changed, 408 insertions(+), 598 deletions(-)
+>  create mode 100644 drivers/clk/meson/Kconfig
+>  delete mode 100644 drivers/clk/meson/clkc.c
+> =
+
+> -- =
+
+> 2.1.4
+>=20
