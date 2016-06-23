@@ -1,200 +1,157 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter
-	<jonathanh@nvidia.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <5f8aa644-27cb-457f-c7cc-e84014054272@nvidia.com>
-Date: Mon, 20 Jun 2016 13:24:07 -0400
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/3] clk: mdm9615: Add support for MDM9615 Clock
+ Controllers
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1466157875-14428-1-git-send-email-narmstrong@baylibre.com>
+ <1466157875-14428-2-git-send-email-narmstrong@baylibre.com>
+ <20160621012135.GQ1521@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <576BA676.4040208@baylibre.com>
+Date: Thu, 23 Jun 2016 11:05:58 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160617152336.GA27475@ulmo.ba.sec>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+In-Reply-To: <20160621012135.GQ1521@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 6/17/2016 11:23 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
+On 06/21/2016 03:21 AM, Stephen Boyd wrote:
+> On 06/17, Neil Armstrong wrote:
+>> In order to support the Qualcomm MDM9615 SoC, add support for
+>> the Global and LPASS Clock Controllers.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/clk/qcom/Kconfig       |   17 +
+>>  drivers/clk/qcom/Makefile      |    2 +
+>>  drivers/clk/qcom/gcc-mdm9615.c | 1709 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/qcom/lcc-mdm9615.c |  580 ++++++++++++++
+>>  4 files changed, 2308 insertions(+)
+>>  create mode 100644 drivers/clk/qcom/gcc-mdm9615.c
+>>  create mode 100644 drivers/clk/qcom/lcc-mdm9615.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 95e3b3e..1c05430 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -87,6 +87,23 @@ config MSM_LCC_8960
+>>  	  Say Y if you want to use audio devices such as i2s, pcm,
+>>  	  SLIMBus, etc.
+>>  
+>> +config MSM_GCC_9615
 > 
-> On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
->> Hi Thierry,
->>
->> On 26/05/16 17:41, Rhyland Klein wrote:
->>> From: Andrew Bresticker <abrestic@chromium.org>
->>>
->>> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
->>> clk-pll.c. UTMIPLL was being configured and set in HW control right
->>> after registration. However, when the clock init_table is processed and
->>> child clks of PLLU are enabled, it will call in and enable PLLU as
->>> well, and initiate SW enabling sequence even though PLLU is already in
->>> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
->>>
->>> Doing the initialization once during pllu_enable means we configure it
->>> properly into HW control.
->>>
->>> A side effect of the commonization/localization of the UTMIPLL init
->>> code, is that it corrects some errors that were present for earlier
->>> generations. For instance, in clk-tegra124.c, it used to have:
->>>
->>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
->>>
->>> when the correct shift to use is present in the new version:
->>>
->>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
->>>
->>> which matches the Tegra124 TRM register definition.
->>>
->>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->>>
->>> [rklein: Merged in some later fixes for potential deadlocks]
->>>
->>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->>> ---
->>> v5:
->>>  - Initialized flags to 0 to avoid harmless spinlock warnings
->>>
->>> v4:
->>>  - Re-added examples in patch description
->>>
->>> v3:
->>>  - Flushed out description to describe this patch.
->>>
->>>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
->>>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->>>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->>>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->>>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->>>  drivers/clk/tegra/clk.h          |  17 ++
->>>  6 files changed, 510 insertions(+), 597 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->>> index 4e194ecc8d5e..31e20110fae4 100644
->>> --- a/drivers/clk/tegra/clk-pll.c
->>> +++ b/drivers/clk/tegra/clk-pll.c
->>
->> ...
->>
->>> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
->>> +{
->>> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
->>> +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
->>> +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
->>> +	unsigned long flags = 0, input_rate;
->>> +	unsigned int i;
->>> +	int ret = 0;
->>> +	u32 val;
->>> +
->>> +	if (!osc) {
->>> +		pr_err("%s: failed to get OSC clock\n", __func__);
->>> +		return -EINVAL;
->>> +	}
->>> +	input_rate = clk_hw_get_rate(osc);
->>> +
->>> +	if (pll->lock)
->>> +		spin_lock_irqsave(pll->lock, flags);
->>> +
->>> +	_clk_pll_enable(hw);
->>> +	ret = clk_pll_wait_for_lock(pll);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
->>> +		if (input_rate == utmi_parameters[i].osc_frequency)
->>> +			break;
->>> +	}
->>> +
->>> +	if (i == ARRAY_SIZE(utmi_parameters)) {
->>> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
->>> +		ret = -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	val = pll_readl_base(pll);
->>> +	val &= ~PLLU_BASE_OVERRIDE;
->>> +	pll_writel_base(val, pll);
->>> +
->>> +	/* Put PLLU under HW control */
->>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
->>> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
->>> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
->>> +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
->>> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
->>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
->>> +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
->>> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
->>> +	udelay(1);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
->>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	udelay(1);
->>> +
->>> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
->>> +	val = pll_readl_base(pll);
->>> +	val &= ~PLLU_BASE_CLKENABLE_USB;
->>> +	pll_writel_base(val, pll);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
->>> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
->>> +		pr_debug("UTMIPLL already enabled\n");
->>> +		goto out;
->>> +	}
->>> +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
->>> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
->>> +
->>> +	/* Program UTMIP PLL stable and active counts */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
->>> +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
->>> +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
->>> +			utmi_parameters[i].active_delay_count);
->>> +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
->>> +
->>> +	/* Program UTMIP PLL delay and oscillator frequency counts */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
->>> +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
->>> +		utmi_parameters[i].enable_delay_count);
->>> +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
->>> +		utmi_parameters[i].xtal_freq_count);
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
->>> +
->>> +	/* Remove power downs from UTMIP PLL control bits */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
->>> +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
->>> +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
->>> +	udelay(100);
->>
->> In next-20160617 I see that this udelay is now a usleep_range(100, 200)
->> and this is causing the following splat when the clock is enabled. I
->> don't think that we can use usleep here ...
+> s/MSM/MDM/
 > 
-> Okay, I'll back out the patch. I'd really prefer to avoid busy-looping
-> for 100 microseconds here, so can we please find another way to do this?
+>> +	tristate "MDM9615 Global Clock Controller"
+>> +	depends on COMMON_CLK_QCOM
+>> +	help
+>> +	  Support for the global clock controller on mdm9615 devices.
+>> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+>> +	  i2c, USB, SD/eMMC, etc.
+>> +
+>> +config MSM_LCC_9615
 > 
+> s/MSM/MDM/
+> 
+>> +	tristate "MDM9615 LPASS Clock Controller"
+>> +	select MSM_GCC_9615
+> 
+> s/MSM/MDM/
 
-I discussed this with some people downstream, and they said we should
-never need to wait 100 microseconds, and should never need more then
-1-2us for delays to take effect.
+I was not sure about the config names, done.
 
-Therefore I would think changing this to a udelay(2) should be alright.
-I simply enabled the clock, and it seemed to be fine. I'll send a new
-version with that change if you want.
+>> +	depends on COMMON_CLK_QCOM
+>> +	help
+>> +	  Support for the LPASS clock controller on mdm9615 devices.
+>> +	  Say Y if you want to use audio devices such as i2s, pcm,
+>> +	  SLIMBus, etc.
+>> +
+>>  config MSM_MMCC_8960
+>>  	tristate "MSM8960 Multimedia Clock Controller"
+>>  	select MSM_GCC_8960
+>> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+>> new file mode 100644
+>> index 0000000..3178f6a
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-mdm9615.c
+>> @@ -0,0 +1,1709 @@
+>> +
+>> +static const struct regmap_config gcc_mdm9615_regmap_config = {
+>> +	.reg_bits	= 32,
+>> +	.reg_stride	= 4,
+>> +	.val_bits	= 32,
+>> +	.max_register	= 0x3660,
+>> +	.fast_io	= true,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc gcc_mdm9615_desc = {
+>> +	.config = &gcc_mdm9615_regmap_config,
+>> +	.clks = gcc_mdm9615_clks,
+>> +	.num_clks = ARRAY_SIZE(gcc_mdm9615_clks),
+>> +	.resets = gcc_mdm9615_resets,
+>> +	.num_resets = ARRAY_SIZE(gcc_mdm9615_resets),
+>> +};
+>> +
+>> +static const struct of_device_id gcc_mdm9615_match_table[] = {
+>> +	{ .compatible = "qcom,gcc-mdm9615", .data = &gcc_mdm9615_desc },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, gcc_mdm9615_match_table);
+>> +
+>> +static int gcc_mdm9615_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	const struct of_device_id *match;
+>> +	int ret;
+>> +
+>> +	match = of_match_device(gcc_mdm9615_match_table, &pdev->dev);
+>> +	if (!match)
+>> +		return -EINVAL;
+>> +
+>> +	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 19200000);
+> 
+> This API is there to workaround failures to put the cxo_board clk
+> in DT to begin with. Please just have cxo_board in the DT and
+> then register a fixed factor of 1 clk here that we can swap out
+> for an RPM clk later when RPM clks appear. See msm8996 for more
+> details.
 
--rhyland
+Ok, I added a DT cxo and aligned on msm8996.
 
+Thanks.
+Neil
 
--- 
-nvpublic
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return qcom_cc_probe(pdev, match->data);
+>> +}
+>> +
+>> +static struct platform_driver gcc_mdm9615_driver = {
+>> +	.probe		= gcc_mdm9615_probe,
+>> +	.driver		= {
+>> +		.name	= "gcc-mdm9615",
+>> +		.of_match_table = gcc_mdm9615_match_table,
+>> +	},
+>> +};
+>> +
+>> +static int __init gcc_mdm9615_init(void)
+>> +{
+>> +	return platform_driver_register(&gcc_mdm9615_driver);
+>> +}
+>> +core_initcall(gcc_mdm9615_init);
+>> +
+>> +static void __exit gcc_mdm9615_exit(void)
+>> +{
+>> +	platform_driver_unregister(&gcc_mdm9615_driver);
+>> +}
+>> +module_exit(gcc_mdm9615_exit);
+>> +
+>> +MODULE_DESCRIPTION("QCOM GCC MDM9615 Driver");
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_ALIAS("platform:gcc-mdm9615");
+> 
