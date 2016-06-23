@@ -1,345 +1,128 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 07/14] clk: sunxi-ng: Add divider
-Date: Wed, 29 Jun 2016 21:05:28 +0200
-Message-Id: <20160629190535.11855-8-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH v2 4/6] clk: meson: fractional pll support
+Date: Wed, 22 Jun 2016 19:01:18 -0700
+Message-Id: <1466647280-17596-5-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
+References: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the various dividers (linear, table or pow-of-two based)
-found in the CCU.
+Fractional MPLLs are a superset of the existing AmLogic MPLLs. They add
+in a couple of new bitfields for further dividing the clock rate to
+achieve rates with fractional hertz.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
- drivers/clk/sunxi-ng/Kconfig   |   4 ++
- drivers/clk/sunxi-ng/Makefile  |   1 +
- drivers/clk/sunxi-ng/ccu_div.c | 136 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_div.h | 133 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 274 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_div.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_div.h
+No change in v2.
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 3a3bc4368a2a..7e65e776e7a8 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -6,6 +6,10 @@ if SUNXI_CCU
+ drivers/clk/meson/clk-pll.c | 32 ++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h    | 15 +++++++++++++++
+ 2 files changed, 45 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 60c6b94fe9b1..4adc1e89212c 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -53,7 +53,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 	struct parm *p;
+ 	unsigned long parent_rate_mhz = parent_rate / 1000000;
+ 	unsigned long rate_mhz;
+-	u16 n, m, od;
++	u16 n, m, frac = 0, od, od2 = 0;
+ 	u32 reg;
  
- # Base clock types
+ 	p = &pll->n;
+@@ -68,7 +68,21 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 	reg = readl(pll->base + p->reg_off);
+ 	od = PARM_GET(p->width, p->shift, reg);
  
-+config SUNXI_CCU_DIV
-+	bool
-+	select SUNXI_CCU_MUX
+-	rate_mhz = (parent_rate_mhz * m / n) >> od;
++	p = &pll->od2;
++	if (p->width) {
++		reg = readl(pll->base + p->reg_off);
++		od2 = PARM_GET(p->width, p->shift, reg);
++	}
 +
- config SUNXI_CCU_FRAC
- 	bool
++	p = &pll->frac;
++	if (p->width) {
++		reg = readl(pll->base + p->reg_off);
++		frac = PARM_GET(p->width, p->shift, reg);
++		rate_mhz = (parent_rate_mhz * m + \
++				(parent_rate_mhz * frac >> 12)) * 2 / n;
++		rate_mhz = rate_mhz >> od >> od2;
++	} else
++		rate_mhz = (parent_rate_mhz * m / n) >> od >> od2;
  
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index a0c53c56ebfe..4bc5b6168560 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
- obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
+ 	return rate_mhz * 1000000;
+ }
+@@ -155,6 +169,20 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg = PARM_SET(p->width, p->shift, reg, rate_set->od);
+ 	writel(reg, pll->base + p->reg_off);
  
- # Base clock types
-+obj-$(CONFIG_SUNXI_CCU_DIV)	+= ccu_div.o
- obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
- obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
- obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-new file mode 100644
-index 000000000000..8659b4cb6c20
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -0,0 +1,136 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
++	p = &pll->od2;
++	if (p->width) {
++		reg = readl(pll->base + p->reg_off);
++		reg = PARM_SET(p->width, p->shift, reg, rate_set->od2);
++		writel(reg, pll->base + p->reg_off);
++	}
 +
-+#include <linux/clk-provider.h>
++	p = &pll->frac;
++	if (p->width) {
++		reg = readl(pll->base + p->reg_off);
++		reg = PARM_SET(p->width, p->shift, reg, rate_set->frac);
++		writel(reg, pll->base + p->reg_off);
++	}
 +
-+#include "ccu_gate.h"
-+#include "ccu_div.h"
+ 	p = &pll->n;
+ 	ret = meson_clk_pll_wait_lock(pll, p);
+ 	if (ret) {
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 73f014691240..53326c32e853 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -40,7 +40,10 @@ struct pll_rate_table {
+ 	u16		m;
+ 	u16		n;
+ 	u16		od;
++	u16		od2;
++	u16		frac;
+ };
 +
-+static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
-+					unsigned long parent_rate,
-+					unsigned long rate,
-+					void *data)
-+{
-+	struct ccu_div *cd = data;
-+	unsigned long val;
-+
-+	/*
-+	 * We can't use divider_round_rate that assumes that there's
-+	 * several parents, while we might be called to evaluate
-+	 * several different parents.
-+	 */
-+	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-+			      cd->div.flags);
-+
-+	return divider_recalc_rate(&cd->common.hw, parent_rate, val,
-+				   cd->div.table, cd->div.flags);
-+}
-+
-+static void ccu_div_disable(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_gate_helper_disable(&cd->common, cd->enable);
-+}
-+
-+static int ccu_div_enable(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_gate_helper_enable(&cd->common, cd->enable);
-+}
-+
-+static int ccu_div_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_gate_helper_is_enabled(&cd->common, cd->enable);
-+}
-+
-+static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	unsigned long val;
-+	u32 reg;
-+
-+	reg = readl(cd->common.base + cd->common.reg);
-+	val = reg >> cd->div.shift;
-+	val &= (1 << cd->div.width) - 1;
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cd->common, &cd->mux, -1,
-+						&parent_rate);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-+				   cd->div.flags);
-+}
-+
-+static int ccu_div_determine_rate(struct clk_hw *hw,
-+				struct clk_rate_request *req)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
-+					     req, ccu_div_round_rate, cd);
-+}
-+
-+static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	unsigned long flags;
-+	unsigned long val;
-+	u32 reg;
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cd->common, &cd->mux, -1,
-+						&parent_rate);
-+
-+	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-+			      cd->div.flags);
-+
-+	spin_lock_irqsave(cd->common.lock, flags);
-+
-+	reg = readl(cd->common.base + cd->common.reg);
-+	reg &= ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-+
-+	writel(reg | (val << cd->div.shift),
-+	       cd->common.base + cd->common.reg);
-+
-+	spin_unlock_irqrestore(cd->common.lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 ccu_div_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_mux_helper_get_parent(&cd->common, &cd->mux);
-+}
-+
-+static int ccu_div_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_mux_helper_set_parent(&cd->common, &cd->mux, index);
-+}
-+
-+const struct clk_ops ccu_div_ops = {
-+	.disable	= ccu_div_disable,
-+	.enable		= ccu_div_enable,
-+	.is_enabled	= ccu_div_is_enabled,
-+
-+	.get_parent	= ccu_div_get_parent,
-+	.set_parent	= ccu_div_set_parent,
-+
-+	.determine_rate	= ccu_div_determine_rate,
-+	.recalc_rate	= ccu_div_recalc_rate,
-+	.set_rate	= ccu_div_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-new file mode 100644
-index 000000000000..653ade5769b3
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -0,0 +1,133 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_DIV_H_
-+#define _CCU_DIV_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_mux.h"
-+
-+struct _ccu_div {
-+	u8			shift;
-+	u8			width;
-+
-+	u32			flags;
-+
-+	struct clk_div_table	*table;
-+};
-+
-+#define _SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, _flags)	\
+ #define PLL_RATE(_r, _m, _n, _od)					\
+ 	{								\
+ 		.rate		= (_r),					\
+@@ -49,12 +52,24 @@ struct pll_rate_table {
+ 		.od		= (_od),				\
+ 	}								\
+ 
++#define PLL_FRAC_RATE(_r, _m, _n, _od, _od2, _frac)			\
 +	{								\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.flags	= _flags,					\
-+		.table	= _table,					\
-+	}
++		.rate		= (_r),					\
++		.m		= (_m),					\
++		.n		= (_n),					\
++		.od		= (_od),				\
++		.od2		= (_od2),				\
++		.frac		= (_frac),				\
++	}								\
 +
-+#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
-+	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, _flags)
-+
-+#define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)			\
-+	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
-+
-+#define _SUNXI_CCU_DIV(_shift, _width)					\
-+	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, 0)
-+
-+struct ccu_div {
-+	u32			enable;
-+
-+	struct _ccu_div		div;
-+	struct ccu_mux_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
-+				      _shift, _width,			\
-+				      _table, _gate, _flags)		\
-+	struct ccu_div _struct = {					\
-+		.div		= _SUNXI_CCU_DIV_TABLE(_shift, _width,	\
-+						       _table),		\
-+		.enable		= _gate,				\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_div_ops,	\
-+						      _flags),		\
-+		}							\
-+	}
-+
-+
-+#define SUNXI_CCU_DIV_TABLE(_struct, _name, _parent, _reg,		\
-+			    _shift, _width,				\
-+			    _table, _flags)				\
-+	SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
-+				      _shift, _width, _table, 0,	\
-+				      _flags)
-+
-+#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  _gate, _flags)			\
-+	struct ccu_div _struct = {					\
-+		.enable	= _gate,					\
-+		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-+		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+							      _parents, \
-+							      &ccu_div_ops, \
-+							      _flags),	\
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
-+			     _mshift, _mwidth, _muxshift, _muxwidth,	\
-+			     _flags)					\
-+	SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  0, _flags)
-+
-+
-+#define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-+			      _mshift, _mwidth,	_gate,			\
-+			      _flags)					\
-+	struct ccu_div _struct = {					\
-+		.enable	= _gate,					\
-+		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_div_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
-+#define SUNXI_CCU_M(_struct, _name, _parent, _reg, _mshift, _mwidth,	\
-+		    _flags)						\
-+	SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
-+			      _mshift, _mwidth, 0, _flags)
-+
-+static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_div, common);
-+}
-+
-+extern const struct clk_ops ccu_div_ops;
-+
-+#endif /* _CCU_DIV_H_ */
+ struct meson_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+ 	struct parm m;
+ 	struct parm n;
++	struct parm frac;
+ 	struct parm od;
++	struct parm od2;
+ 	const struct pll_rate_table *rate_table;
+ 	unsigned int rate_count;
+ 	spinlock_t *lock;
 -- 
-2.9.0
+2.1.4
