@@ -1,92 +1,72 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com,
- beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 3/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to
- PCIE device
-Date: Fri, 10 Jun 2016 13:56:32 +0900
-Message-id: <1465534592-18860-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
-References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:8169 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272AbcFWM0g (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2016 08:26:36 -0400
+Subject: Re: [PATCH 2/2] clk: tegra: Micro-optimize Tegra210 clock setup
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <20160623105231.24383-1-thierry.reding@gmail.com>
+ <20160623105231.24383-2-thierry.reding@gmail.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <576BD575.8010808@nvidia.com>
+Date: Thu, 23 Jun 2016 13:26:29 +0100
+MIME-Version: 1.0
+In-Reply-To: <20160623105231.24383-2-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaehoon Chung <jh80.chung@samsung.com>
 
-This patch adds the CLK_IGNORE_UNUSED flag for PCI Express's clocks
-which need the on state and the 'pcie' gate clock.
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c   | 11 ++++++-----
- include/dt-bindings/clock/exynos5433.h |  3 ++-
- 2 files changed, 8 insertions(+), 6 deletions(-)
+On 23/06/16 11:52, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> sor_safe being the parent of the dpaux and dpaux1 clocks, it's not only
+> natural, but also slightly more efficient, to initialize it before its
+> children. This avoids orphaning the dpaux and dpaux1 clocks only to get
+> them reparented when the sor_safe clock is registered.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index fe295b4102ca..b4df5c46642f 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2466,6 +2466,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+>  					1, 2);
+>  	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
+>  
+> +	clk = tegra_clk_register_periph_fixed("sor_safe", "pll_p", 0, clk_base,
+> +					      1, 17, 222);
+> +	clks[TEGRA210_CLK_SOR_SAFE] = clk;
+> +
+>  	clk = tegra_clk_register_periph_fixed("dpaux", "sor_safe", 0, clk_base,
+>  					      1, 17, 181);
+>  	clks[TEGRA210_CLK_DPAUX] = clk;
+> @@ -2474,10 +2478,6 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+>  					      1, 17, 207);
+>  	clks[TEGRA210_CLK_DPAUX1] = clk;
+>  
+> -	clk = tegra_clk_register_periph_fixed("sor_safe", "pll_p", 0, clk_base,
+> -					      1, 17, 222);
+> -	clks[TEGRA210_CLK_SOR_SAFE] = clk;
+> -
+>  	/* pll_d_dsi_out */
+>  	clk = clk_register_gate(NULL, "pll_d_dsi_out", "pll_d_out0", 0,
+>  				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
+> 
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 852ac6a7607e..e3cc9359fb20 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -639,7 +639,7 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 
- 	/* ENABLE_SCLK_TOP_FSYS */
- 	GATE(CLK_SCLK_PCIE_100_FSYS, "sclk_pcie_100_fsys", "div_sclk_pcie_100",
--			ENABLE_SCLK_TOP_FSYS, 7, 0, 0),
-+			ENABLE_SCLK_TOP_FSYS, 7, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_MMC2_FSYS, "sclk_mmc2_fsys", "div_sclk_mmc2_b",
- 			ENABLE_SCLK_TOP_FSYS, 6, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_MMC1_FSYS, "sclk_mmc1_fsys", "div_sclk_mmc1_b",
-@@ -2146,7 +2146,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_SMMU_PDMA1, "aclk_smmu_pdma1", "mout_aclk_fsys_200_user",
- 			ENABLE_ACLK_FSYS1, 25, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_BTS_PCIE, "aclk_bts_pcie", "mout_aclk_fsys_200_user",
--			ENABLE_ACLK_FSYS1, 24, 0, 0),
-+			ENABLE_ACLK_FSYS1, 24, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_AXIUS_PDMA1, "aclk_axius_pdma1",
- 			"mout_aclk_fsys_200_user", ENABLE_ACLK_FSYS1,
- 			22, CLK_IGNORE_UNUSED, 0),
-@@ -2193,13 +2193,13 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 
- 	/* ENABLE_PCLK_FSYS */
- 	GATE(CLK_PCLK_PCIE_CTRL, "pclk_pcie_ctrl", "mout_aclk_fsys_200_user",
--			ENABLE_PCLK_FSYS, 17, 0, 0),
-+			ENABLE_PCLK_FSYS, 17, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_SMMU_PDMA1, "pclk_smmu_pdma1", "mout_aclk_fsys_200_user",
- 			ENABLE_PCLK_FSYS, 16, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_PCIE_PHY, "pclk_pcie_phy", "mout_aclk_fsys_200_user",
--			ENABLE_PCLK_FSYS, 14, 0, 0),
-+			ENABLE_PCLK_FSYS, 14, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_BTS_PCIE, "pclk_bts_pcie", "mout_aclk_fsys_200_user",
--			ENABLE_PCLK_FSYS, 13, 0, 0),
-+			ENABLE_PCLK_FSYS, 13, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_SMMU_PDMA0, "pclk_smmu_pdma0", "mout_aclk_fsys_200_user",
- 			ENABLE_PCLK_FSYS, 8, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_BTS_UFS, "pclk_bts_ufs", "mout_aclk_fsys_200_user",
-@@ -2278,6 +2278,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 			ENABLE_SCLK_FSYS, 0, 0, 0),
- 
- 	/* ENABLE_IP_FSYS0 */
-+	GATE(CLK_PCIE, "pcie", "sclk_pcie_100", ENABLE_IP_FSYS0, 17, 0, 0),
- 	GATE(CLK_PDMA1, "pdma1", "aclk_pdma1", ENABLE_IP_FSYS0, 15, 0, 0),
- 	GATE(CLK_PDMA0, "pdma0", "aclk_pdma0", ENABLE_IP_FSYS0, 0, 0, 0),
- };
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 8e024fea26e7..4fa6bb2136e3 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -622,8 +622,9 @@
- #define CLK_SCLK_UFSUNIPRO		112
- #define CLK_SCLK_USBHOST30		113
- #define CLK_SCLK_USBDRD30		114
-+#define CLK_PCIE			115
- 
--#define FSYS_NR_CLK			115
-+#define FSYS_NR_CLK			116
- 
- /* CMU_G2D */
- #define CLK_MUX_ACLK_G2D_266_USER	1
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
 -- 
-1.9.1
+nvpublic
