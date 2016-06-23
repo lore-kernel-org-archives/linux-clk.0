@@ -1,122 +1,90 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
-	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
-	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
-Subject: [PATCH RFC 2/7] clk: add set_rate_hw and set_rate_done
-Date: Wed, 29 Jun 2016 21:52:10 +0800
-Message-ID: <1467208335-29876-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@endlessm.com,
+	victor.wan@amlogic.com,
+	jerry.cao@amlogic.com,
+	xing.xu@amlogic.com
+Subject: [PATCH v2 1/6] clk: meson: only build selected platforms
+Date: Wed, 22 Jun 2016 19:01:15 -0700
+Message-Id: <1466647280-17596-2-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
+References: <1466647280-17596-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce set_rate_hw and set_rate_done to support setting rate
-in early kernel booting where we still can't schedule.
+Break the AmLogic clock code up so that only the necessary parts are
+compiled and linked. The core code is selected by both arm and arm64
+builds with COMMON_CLK_AMLOGIC. The individual drivers have their own
+config options as well.
 
-Change the rate of this clock hw. This callback is intended
-to do the hw part setting of @set_rate work. It should
-cooperate with @set_rate_done callback to do the whole
-set rate work. The clock core will check @set_rate_done in
-either sleep or polling way according to system state to
-decide whether the whole set rate work is done.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
- drivers/clk/clk.c            | 32 ++++++++++++++++++++++++++++++--
- include/linux/clk-provider.h | 15 +++++++++++++++
- 2 files changed, 45 insertions(+), 2 deletions(-)
+No change in v2.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7dcb34c75a9f..0d031b280c9a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1471,8 +1471,10 @@ static void clk_change_rate(struct clk_core *core)
- 	struct hlist_node *tmp;
- 	unsigned long old_rate;
- 	unsigned long best_parent_rate = 0;
-+	unsigned long timeout;
- 	bool skip_set_rate = false;
- 	struct clk_core *old_parent;
-+	int ret;
+ drivers/clk/Kconfig        |  1 +
+ drivers/clk/Makefile       |  2 +-
+ drivers/clk/meson/Kconfig  | 12 ++++++++++++
+ drivers/clk/meson/Makefile |  4 ++--
+ 4 files changed, 16 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/meson/Kconfig
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 53ddba26578c..30feb6b40305 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -208,6 +208,7 @@ config COMMON_CLK_OXNAS
  
- 	old_rate = core->rate;
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/meson/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/renesas/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dcc5e698ff6d..af03eb2f6c05 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -65,7 +65,7 @@ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+= mmp/
+ endif
+ obj-y					+= mvebu/
+-obj-$(CONFIG_ARCH_MESON)		+= meson/
++obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+new file mode 100644
+index 000000000000..7bb19ad7369e
+--- /dev/null
++++ b/drivers/clk/meson/Kconfig
+@@ -0,0 +1,12 @@
++config COMMON_CLK_AMLOGIC
++	bool
++	depends on OF
++	depends on ARCH_MESON || COMPILE_TEST
++
++config COMMON_CLK_MESON8B
++	bool
++	depends on COMMON_CLK_AMLOGIC
++	help
++	  Support for the clock controller on AmLogic S805 devices, aka
++	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
++	  work.
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 901b5d435812..b3d60fecd846 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,5 +2,5 @@
+ # Makefile for Meson specific clk
+ #
  
-@@ -1509,8 +1511,34 @@ static void clk_change_rate(struct clk_core *core)
- 
- 	trace_clk_set_rate(core, core->new_rate);
- 
--	if (!skip_set_rate && core->ops->set_rate)
--		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
-+	if (!skip_set_rate) {
-+		if (core->ops->set_rate) {
-+			core->ops->set_rate(core->hw, core->new_rate,
-+					    best_parent_rate);
-+		} else if (core->ops->set_rate_hw) {
-+			ret = core->ops->set_rate_hw(core->hw, core->new_rate,
-+						     best_parent_rate);
-+			if (!ret && core->ops->set_rate_done) {
-+				timeout = jiffies + msecs_to_jiffies(10);
-+				while (!core->ops->set_rate_done(core->hw)) {
-+					if (time_after(jiffies, timeout)) {
-+						pr_err("%s: clock %s set rate timeout\n",
-+							__func__, core->name);
-+						break;
-+					}
-+					if (system_state == SYSTEM_BOOTING)
-+						/*
-+						 * Busy loop as we can't
-+						 * schedule in early boot
-+						 */
-+						continue;
-+					else
-+						usleep_range(core->delay_min,
-+							     core->delay_max);
-+				}
-+			}
-+		}
-+	}
- 
- 	trace_clk_set_rate_complete(core, core->new_rate);
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index b37174360f1c..3dcb99ad6bd2 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -162,6 +162,18 @@ struct clk_rate_request {
-  *		which is likely helpful for most .set_rate implementation.
-  *		Returns 0 on success, -EERROR otherwise.
-  *
-+ * @set_rate_hw: Change the rate of this clock hw. This callback is intended
-+ *		to do the hw part setting of @set_rate work. It should
-+ *		cooperate with @set_rate_done callback to do the whole
-+ *		set rate work. The clock core will check @set_rate_done in
-+ *		either sleep or polling way according to system state to
-+ *		decide whether the whole set rate work is done. Optional
-+ *		if @set_rate is used. This function must not sleep.
-+ *
-+ * @set_rate_done: Queries the hardware to determine if the clock hw is
-+ *		prepared. Optional, if this op is not set then the set rate
-+ *		simply return. This function must not sleep.
-+ *
-  * @set_rate_and_parent: Change the rate and the parent of this clock. The
-  *		requested rate is specified by the second argument, which
-  *		should typically be the return of .round_rate call.  The
-@@ -234,6 +246,9 @@ struct clk_ops {
- 	u8		(*get_parent)(struct clk_hw *hw);
- 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long parent_rate);
-+	int		(*set_rate_hw)(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate);
-+	int		(*set_rate_done)(struct clk_hw *hw);
- 	int		(*set_rate_and_parent)(struct clk_hw *hw,
- 				    unsigned long rate,
- 				    unsigned long parent_rate, u8 index);
+-obj-y += clk-pll.o clk-cpu.o
+-obj-y += meson8b-clkc.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o
++obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
 -- 
-1.9.1
+2.1.4
