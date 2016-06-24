@@ -1,39 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 29 Jun 2016 10:57:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [git pull] clk: renesas: Updates for v4.8 (take two)
-Message-ID: <20160629175755.GK1521@codeaurora.org>
-References: <1466690683-28949-1-git-send-email-geert+renesas@glider.be>
- <20160628233504.GH1521@codeaurora.org>
- <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 24 Jun 2016 10:52:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jongsung Kim <neidhard.kim@lge.com>, devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: fixed-factor: Allow for a few clocks to change
+ the parent rate
+Message-ID: <20160624155244.GA9849@rob-hp-laptop>
+References: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
+In-Reply-To: <20160622091555.18415-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/29, Geert Uytterhoeven wrote:
+On Wed, Jun 22, 2016 at 11:15:54AM +0200, Maxime Ripard wrote:
+> The only way for a fixed factor clock to change its rate would be to change
+> its parent rate.
 > 
-> Thanks, but it seems something went wrong: commit d9cce3a8ebb871c5 is not a
-> merge commit, but the combination of all 7 commits from the pull request?
-
-Hmm... weird. I fixed it now.
-
+> Since passing blindly CLK_SET_RATE_PARENT might break a lot of platforms
+> that were relying on the fact that the parent rate wouldn't change,
+> introduce a compatible-based whitelist that will allow clocks to opt-in
+> that flag.
 > 
-> > unless you really need it. Just use readl/writel directly. I
-> > should put a big fat warning over those functions that they
-> > shouldn't be used.
-> 
-> Hence all users under drivers/clk/renesas/ should be converted to readl()?
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  .../devicetree/bindings/clock/fixed-factor-clock.txt          |  4 ++++
 
-Probably.
+I don't think we should be copying clk flags to DT as suggested.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/clk/clk-fixed-factor.c                                | 11 ++++++++++-
+>  2 files changed, 14 insertions(+), 1 deletion(-)
