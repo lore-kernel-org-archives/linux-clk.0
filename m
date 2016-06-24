@@ -1,57 +1,204 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Purna Chandra Mandal <purna.mandal@microchip.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH] clk: microchip: Remove CLK_IS_ROOT
-Date: Wed,  1 Jun 2016 14:55:21 -0700
-Message-Id: <20160601215521.31309-1-sboyd@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dong Aisheng <aisheng.dong@nxp.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1461144880-8724-5-git-send-email-aisheng.dong@nxp.com>
+Cc: linux-kernel@vger.kernel.org, sboyd@codeaurora.org, shawnguo@kernel.org,
+ linux-arm-kernel@lists.infradead.org, aisheng.dong@nxp.com,
+ anson.huang@nxp.com
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+ <1461144880-8724-5-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <146681237910.35033.15404158884510204380@resonance>
+Subject: Re: [RESEND PATCH 4/8] clk: core: support clocks which requires parents on
+ (part 2)
+Date: Fri, 24 Jun 2016 16:52:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This flag is a no-op now (see commit 47b0eeb3dc8a "clk: Deprecate
-CLK_IS_ROOT", 2016-02-02) so remove it.
+Hi Dong,
 
-Cc: Purna Chandra Mandal <purna.mandal@microchip.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: <linux-mips@linux-mips.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Quoting Dong Aisheng (2016-04-20 02:34:36)
+> On Freescale i.MX7D platform, all clocks operations, including
+> enable/disable, rate change and re-parent, requires its parent clock on.
+> Current clock core can not support it well.
+> This patch adding flag CLK_OPS_PARENT_ON to handle this special case in
+> clock core that enable its parent clock firstly for each operation and
+> disable it later after operation complete.
+> =
 
-I'm going to send this to Linus tomorrow or Friday so we can finally
-remove this flag entirely.
+> The patch part 2 fixes set clock rate and set parent while its parent
+> is off. The most special case is for set_parent() operation which requires
+> all parents including both old and new one to be enabled at the same time
+> during the operation.
+> =
 
- drivers/clk/microchip/clk-pic32mzda.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/clk/clk.c | 45 ++++++++++++++++++++++++++++-----------------
+>  1 file changed, 28 insertions(+), 17 deletions(-)
+> =
 
-diff --git a/drivers/clk/microchip/clk-pic32mzda.c b/drivers/clk/microchip/clk-pic32mzda.c
-index 020a29acc5b0..51f54380474b 100644
---- a/drivers/clk/microchip/clk-pic32mzda.c
-+++ b/drivers/clk/microchip/clk-pic32mzda.c
-@@ -180,15 +180,15 @@ static int pic32mzda_clk_probe(struct platform_device *pdev)
- 
- 	/* register fixed rate clocks */
- 	clks[POSCCLK] = clk_register_fixed_rate(&pdev->dev, "posc_clk", NULL,
--						CLK_IS_ROOT, 24000000);
-+						0, 24000000);
- 	clks[FRCCLK] =  clk_register_fixed_rate(&pdev->dev, "frc_clk", NULL,
--						CLK_IS_ROOT, 8000000);
-+						0, 8000000);
- 	clks[BFRCCLK] = clk_register_fixed_rate(&pdev->dev, "bfrc_clk", NULL,
--						CLK_IS_ROOT, 8000000);
-+						0, 8000000);
- 	clks[LPRCCLK] = clk_register_fixed_rate(&pdev->dev, "lprc_clk", NULL,
--						CLK_IS_ROOT, 32000);
-+						0, 32000);
- 	clks[UPLLCLK] = clk_register_fixed_rate(&pdev->dev, "usbphy_clk", NULL,
--						CLK_IS_ROOT, 24000000);
-+						0, 24000000);
- 	/* fixed rate (optional) clock */
- 	if (of_find_property(np, "microchip,pic32mzda-sosc", NULL)) {
- 		pr_info("pic32-clk: dt requests SOSC.\n");
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 1f054d1a..d6cef61 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1174,7 +1174,7 @@ static struct clk_core *__clk_set_parent_before(str=
+uct clk_core *core,
+>         struct clk_core *old_parent =3D core->parent;
+>  =
+
+>         /*
+> -        * Migrate prepare state between parents and prevent race with
+> +        * 1. Migrate prepare state between parents and prevent race with
+>          * clk_enable().
+>          *
+>          * If the clock is not prepared, then a race with
+> @@ -1189,13 +1189,16 @@ static struct clk_core *__clk_set_parent_before(s=
+truct clk_core *core,
+>          * hardware and software states.
+>          *
+>          * See also: Comment for clk_set_parent() below.
+> +        *
+> +        * 2. enable parent clocks for CLK_OPS_PARENT_ON clock
+>          */
+> -       if (core->prepare_count) {
+> -               clk_core_prepare(parent);
+> -               flags =3D clk_enable_lock();
+> -               clk_core_enable(parent);
+> -               clk_core_enable(core);
+> -               clk_enable_unlock(flags);
+> +       if (core->prepare_count || core->flags & CLK_OPS_PARENT_ON) {
+> +               clk_core_prepare_enable(parent);
+> +               if (core->prepare_count)
+> +                       clk_core_enable_lock(core);
+> +               else
+> +                       clk_core_prepare_enable(old_parent);
+
+It took me a few seconds to figure out what I was looking at. The
+set_parent stuff is tricky enough already ... I think we should keep the
+state machine logic very simple. How about:
+
+	/* enable old_parent & parent if CLK_OPS_PARENT_ENABLE is set */
+	if (core->flags & CLK_OPS_PARENT_ENABLE) {
+		clk_core_prepare_enable(old_parent);
+		clk_core_prepare_enable(parent);
+	}
+
+	/* migrate prepare count if > 0 */
+	if (core->prepare_count) {
+		clk_core_prepare_enable(parent);
+		clk_core_enable_lock(core);
+	}
+
+> +
+>         }
+>  =
+
+>         /* update the clk tree topology */
+> @@ -1210,18 +1213,16 @@ static void __clk_set_parent_after(struct clk_cor=
+e *core,
+>                                    struct clk_core *parent,
+>                                    struct clk_core *old_parent)
+>  {
+> -       unsigned long flags;
+> -
+>         /*
+>          * Finish the migration of prepare state and undo the changes done
+>          * for preventing a race with clk_enable().
+>          */
+> -       if (core->prepare_count) {
+> -               flags =3D clk_enable_lock();
+> -               clk_core_disable(core);
+> -               clk_core_disable(old_parent);
+> -               clk_enable_unlock(flags);
+> -               clk_core_unprepare(old_parent);
+> +       if (core->prepare_count || core->flags & CLK_OPS_PARENT_ON) {
+> +               clk_core_disable_unprepare(old_parent);
+> +               if (core->prepare_count)
+> +                       clk_core_disable_lock(core);
+> +               else
+> +                       clk_core_disable_unprepare(parent);
+
+Similarly, a more readable solution is:
+
+	/*
+	 * Finish the migration of prepare state and undo the changes done
+	 * for preventing a race with clk_enable().
+	 */
+	if (core->prepare_count) {
+		clk_core_disable_lock(core);
+		clk_core_disable_unprepare(old_parent);
+
+	/* re-balance ref counting if CLK_OPS_PARENT_ENABLE is set */
+	if (core->flags & CLK_OPS_PARENT_ENABLE) {
+		clk_core_disable_unprepare(parent);
+		clk_core_disable_unprepare(old_parent);
+	}
+
+>         }
+>  }
+>  =
+
+> @@ -1468,13 +1469,17 @@ static void clk_change_rate(struct clk_core *core)
+>         unsigned long best_parent_rate =3D 0;
+>         bool skip_set_rate =3D false;
+>         struct clk_core *old_parent;
+> +       struct clk_core *parent =3D NULL;
+>  =
+
+>         old_rate =3D core->rate;
+>  =
+
+> -       if (core->new_parent)
+> +       if (core->new_parent) {
+> +               parent =3D core->new_parent;
+>                 best_parent_rate =3D core->new_parent->rate;
+> -       else if (core->parent)
+> +       } else if (core->parent) {
+> +               parent =3D core->parent;
+>                 best_parent_rate =3D core->parent->rate;
+> +       }
+>  =
+
+>         if (core->flags & CLK_SET_RATE_UNGATE) {
+>                 unsigned long flags;
+> @@ -1504,6 +1509,9 @@ static void clk_change_rate(struct clk_core *core)
+>  =
+
+>         trace_clk_set_rate(core, core->new_rate);
+>  =
+
+> +       if (core->flags & CLK_OPS_PARENT_ON)
+> +               clk_core_prepare_enable(parent);
+> +
+>         if (!skip_set_rate && core->ops->set_rate)
+>                 core->ops->set_rate(core->hw, core->new_rate, best_parent=
+_rate);
+>  =
+
+> @@ -1520,6 +1528,9 @@ static void clk_change_rate(struct clk_core *core)
+>                 clk_core_unprepare(core);
+>         }
+>  =
+
+> +       if (core->flags & CLK_OPS_PARENT_ON)
+> +               clk_core_disable_unprepare(parent);
+> +
+
+This part looks good to me.
+
+Regards,
+Mike
+
+>         if (core->notifier_count && old_rate !=3D core->rate)
+>                 __clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate=
+);
+>  =
+
+> -- =
+
+> 1.9.1
+>=20
