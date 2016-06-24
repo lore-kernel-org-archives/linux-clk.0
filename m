@@ -1,94 +1,129 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Shunli
- Wang <shunli.wang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v9 03/10] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Wed, 22 Jun 2016 15:40:22 +0800
-Message-ID: <1466581229-2342-4-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+To: Dong Aisheng <aisheng.dong@nxp.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
+Cc: linux-kernel@vger.kernel.org, sboyd@codeaurora.org, shawnguo@kernel.org,
+ linux-arm-kernel@lists.infradead.org, aisheng.dong@nxp.com,
+ anson.huang@nxp.com
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+ <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <146681236249.35033.18209610320711572265@resonance>
+Subject: Re: [RESEND PATCH 3/8] clk: core: support clocks which requires parents on
+ (part 1)
+Date: Fri, 24 Jun 2016 16:52:42 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+Quoting Dong Aisheng (2016-04-20 02:34:35)
+> On Freescale i.MX7D platform, all clocks operations, including
+> enable/disable, rate change and re-parent, requires its parent
+> clock on. Current clock core can not support it well.
+> This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
+> special case in clock core that enable its parent clock firstly for
+> each operation and disable it later after operation complete.
+> =
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
+> The patch part 1 fixes the possible disabling clocks while its parent
+> is off during kernel booting phase in clk_disable_unused_subtree().
+> =
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+> Before the completion of kernel booting, clock tree is still not built
+> completely, there may be a case that the child clock is on but its
+> parent is off which could be caused by either HW initial reset state
+> or bootloader initialization.
+> =
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 53ddba2..665c03b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -208,6 +208,7 @@ config COMMON_CLK_OXNAS
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
-+
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
--- 
-1.9.1
+> Taking bootloader as an example, we may enable all clocks in HW by defaul=
+t.
+> And during kernel booting time, the parent clock could be disabled in its
+> driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
+> Because it's child clock is only enabled in HW while its SW usecount
+> in clock tree is still 0, so clk_disable of parent clock will gate
+> the parent clock in both HW and SW usecount ultimately. Then there will
+> be a child clock is still on in HW but its parent is already off.
+> =
+
+> Later in clk_disable_unused(), this clock disable accessing while its
+> parent off will cause system hang due to the limitation of HW which
+> must require its parent on.
+> =
+
+> This patch simply enables the parent clock first before disabling
+> if flag CLK_OPS_PARENT_ON is set in clk_disable_unused_subtree().
+> This is a simple solution and only affects booting time.
+> =
+
+> After kernel booting up the clock tree is already created, there will
+> be no case that child is off but its parent is off.
+> So no need do this checking for normal clk_disable() later.
+> =
+
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/clk/clk.c            | 5 +++++
+>  include/linux/clk-provider.h | 2 ++
+>  2 files changed, 7 insertions(+)
+> =
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 9f944d4..1f054d1a 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_cor=
+e *core)
+>         hlist_for_each_entry(child, &core->children, child_node)
+>                 clk_disable_unused_subtree(child);
+>  =
+
+> +       if (core->flags & CLK_OPS_PARENT_ON)
+> +               clk_core_prepare_enable(core->parent);
+> +
+>         flags =3D clk_enable_lock();
+>  =
+
+>         if (core->enable_count)
+> @@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_cor=
+e *core)
+>  =
+
+>  unlock_out:
+>         clk_enable_unlock(flags);
+> +       if (core->flags & CLK_OPS_PARENT_ON)
+> +               clk_core_disable_unprepare(core->parent);
+>  }
+>  =
+
+>  static bool clk_ignore_unused;
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 15628644..c878f9c 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -33,6 +33,8 @@
+>  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notification=
+s */
+>  #define CLK_SET_RATE_UNGATE    BIT(10) /* clock needs to run to set rate=
+ */
+>  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
+> +/* parents need on during gate/ungate, set rate and re-parent */
+> +#define CLK_OPS_PARENT_ON      BIT(12)
+
+Hi Dong,
+
+In the clk framework we use "enabled" instead of "on". How about
+changing the flag to CLK_OPS_PARENT_ENABLE?
+
+Regards,
+Mike
+
+>  =
+
+>  struct clk;
+>  struct clk_hw;
+> -- =
+
+> 1.9.1
+>=20
