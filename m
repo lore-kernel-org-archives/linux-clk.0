@@ -1,58 +1,45 @@
-Return-Path: <wens@csie.org>
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Sat, 25 Jun 2016 14:26:00 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Cc: stefan@agner.ch, shawnguo@kernel.org, kernel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@codeaurora.org, jslaby@suse.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 1/8] tty: serial: fsl_lpuart: consider TX FIFO too in
+ tx_empty
+Message-ID: <20160625212600.GA28726@kroah.com>
+References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
+ <20160609151039.20817-2-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-In-Reply-To: <20160627192321.GX4000@lukather>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
- <1466391138-12862-6-git-send-email-wens@csie.org> <20160622100206.GV26668@lukather>
- <CAGb2v67DVBZbRb2PWLP8WurPaNin=2Fa=HMAEK_PdBeqv1x+8Q@mail.gmail.com> <20160627192321.GX4000@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 28 Jun 2016 10:27:42 +0800
-Message-ID: <CAGb2v675+iEnKPH4zdYRA-+aQGUfHgB9K_TH_GrpmXXw4qM50w@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] rtc: ac100: Add clk output support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160609151039.20817-2-bhuvanchandra.dv@toradex.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 28, 2016 at 3:23 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Wed, Jun 22, 2016 at 06:11:55PM +0800, Chen-Yu Tsai wrote:
->> On Wed, Jun 22, 2016 at 6:02 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > Hi,
->> >
->> > On Mon, Jun 20, 2016 at 10:52:15AM +0800, Chen-Yu Tsai wrote:
->> >> +     /*
->> >> +      * The ADDA 4 MHz clock is from the codec side of the AC100,
->> >> +      * which is likely a different power domain. However, boards
->> >> +      * always have both sides powered on, so it is impossible to
->> >> +      * test this.
->> >> +      */
->> >
->> > If that ADDA clock is exposed by the codec, why are you putting it in
->> > the RTC?
->>
->> The thing is it's not entirely clear that it's from the codec side.
->> I'm just inferring this from the name. (I'll make the comment clearer.)
->> The codec parts of the datasheet don't mention this clock at all.
->>
->> Allwinner's SDK puts all the clocks under the RTC module. And the
->> are always on, so I can't really turn off the codec and see what
->> happens. That and I don't have an oscilloscope or logic analyzer.
->
-> Why not just create a separate clock driver then?
+On Thu, Jun 09, 2016 at 08:40:32PM +0530, Bhuvanchandra DV wrote:
+> From: Stefan Agner <stefan@agner.ch>
+> 
+> Currently the tx_empty callback only considers the Transmit Complete
+> Flag (TC). The reference manual is not quite clear if the TC flag
+> covers the TX FIFO too. Debug prints on real hardware have shown that
+> from time to time the TC flag is asserted (indicating Transmitter
+> idle) while there are still data in the TX FIFO. Hence, in this case
+> the serial core will call the shutdown callback even though there are
+> data remaining in the TX FIFO buffers.
+> 
+> Avoid early shutdowns by considering the TX FIFO empty flag too. Also
+> avoid theoretical race conditions between DMA and the driver by
+> checking whether the TX DMA is in progress too.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/tty/serial/fsl_lpuart.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 
-That would mean a separate device node as well. I'd like to keep
-the bindings close to how the hardware is organized.
+Why are you not signing off on patches that are flowing through you?
+Please fix this up and resend the series, after breaking up the clock
+change as asked.
 
-I can move the ADDA clock over to the codec side.
+thanks,
 
-ChenYu
+greg k-h
