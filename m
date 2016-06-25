@@ -1,91 +1,59 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [PATCH v2 13/13] ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-Date: Mon,  6 Jun 2016 11:26:32 +0200
-Message-Id: <1465205192-7888-14-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1465205192-7888-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <megous@megous.com>
+Subject: Re: [PATCH v2 01/14] ARM: clk: sunxi: Add driver for the H3 THS clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20160625034511.7966-1-megous@megous.com>
+ <20160625034511.7966-2-megous@megous.com> <20160625071338.GC4000@lukather>
+Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
+ Josef Gajdusek <atx@atx.name>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+ =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
+Message-ID: <6a37450f-35fe-3296-da4b-10f7d645e2b9@megous.com>
+Date: Sat, 25 Jun 2016 17:23:12 +0200
+MIME-Version: 1.0
+In-Reply-To: <20160625071338.GC4000@lukather>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-It is necessary to properly configure these clocks in order
-to address 720p and 1080p HDMI resolution.
+Hi Maxime,
 
-Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+I try to base everything on the torvalds's kernel.
 
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-index 18ed1ad..7eec729 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -103,7 +103,10 @@
- 			#size-cells = <1>;
- 
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
--					  <&clk_s_d2_quadfs 0>,
-+					  <&clk_s_d2_quadfs 1>,
-+					  <&clk_s_c0_pll1 0>,
-+					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
-+					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
-@@ -113,14 +116,21 @@
- 
- 			assigned-clock-parents = <0>,
- 						 <0>,
-+						 <0>,
-+						 <&clk_s_c0_pll1 0>,
-+						 <&clk_s_c0_pll1 0>,
- 						 <&clk_s_d2_quadfs 0>,
--						 <&clk_s_d2_quadfs 0>,
-+						 <&clk_s_d2_quadfs 1>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>;
- 
--			assigned-clock-rates = <297000000>, <297000000>;
-+			assigned-clock-rates = <297000000>,
-+					       <108000000>,
-+					       <0>,
-+					       <400000000>,
-+					       <400000000>;
- 
- 			ranges;
- 
--- 
-1.9.1
+I did notice the patches. Is there some main git tree/branch where this
+work is tracked in? I'd gladly use it.
+
+Also there's a PLL1 rate application patch, that would need to be ported
+to the new CCU code, in the case I would use it as a base for this work.
+Given that the new CCU code is your work and it's fresh in your mind, do
+you have suggestion how to approach it?
+
+It is [PATCH v2 06/14] in this series.
+
+regards,
+  o.
+
+On 25.6.2016 09:13, Maxime Ripard wrote:
+> Hi,
+> 
+> On Sat, Jun 25, 2016 at 05:44:58AM +0200, megous@megous.com wrote:
+>> From: Josef Gajdusek <atx@atx.name>
+>>
+>> This patch adds a driver for the THS clock which is present on the
+>> Allwinner H3.
+>>
+>> Signed-off-by: Josef Gajdusek <atx@atx.name>
+> 
+> You might not have noticed, but we are currently rewriting the whole
+> clock support for the Allwinner SoCs, targetting the H3 as the first
+> SoC to use it.
+> 
+> There's already some support for the H3 THS clock, so please use that
+> instead.
+> 
+> Thanks!
+> Maxime
+> 
