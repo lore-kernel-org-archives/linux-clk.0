@@ -1,152 +1,165 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: Yuantian Tang <yuantian.tang@nxp.com>
-To: Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J.
- Wysocki" <rjw@rjwysocki.net>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li
-	<leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood
-	<scottwood@freescale.com>
-Subject: RE: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
- parent clocks
-Date: Wed, 29 Jun 2016 05:50:26 +0000
-Message-ID: <DBXPR04MB49546917495DA33834B05D7F0230@DBXPR04MB495.eurprd04.prod.outlook.com>
-References: <1466058085-19353-1-git-send-email-oss@buserror.net>
-In-Reply-To: <1466058085-19353-1-git-send-email-oss@buserror.net>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <megous@megous.com>
+From: megous@megous.com
+To: dev@linux-sunxi.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Josef Gajdusek <atx@atx.name>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 01/14] ARM: clk: sunxi: Add driver for the H3 THS clock
+Date: Sat, 25 Jun 2016 05:44:58 +0200
+Message-Id: <20160625034511.7966-2-megous@megous.com>
+In-Reply-To: <20160625034511.7966-1-megous@megous.com>
+References: <20160625034511.7966-1-megous@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Josef Gajdusek <atx@atx.name>
 
-This patch is acked by clock maintainer. If no comments from anyone else, w=
-e will merge it in next week.
+This patch adds a driver for the THS clock which is present on the
+Allwinner H3.
 
-Thanks,
-Yuantian
+Signed-off-by: Josef Gajdusek <atx@atx.name>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/Makefile                        |  1 +
+ drivers/clk/sunxi/clk-h3-ths.c                    | 98 +++++++++++++++++++++++
+ 3 files changed, 100 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-h3-ths.c
 
-> -----Original Message-----
-> From: Scott Wood [mailto:oss@buserror.net]
-> Sent: Thursday, June 16, 2016 2:21 PM
-> To: Russell King <linux@armlinux.org.uk>; Michael Turquette
-> <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>;
-> Viresh Kumar <viresh.kumar@linaro.org>; Rafael J. Wysocki
-> <rjw@rjwysocki.net>
-> Cc: linux-clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
-> dev@lists.ozlabs.org; Yuantian Tang <yuantian.tang@nxp.com>; Yang-Leo Li
-> <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>; Scott Wood
-> <scottwood@freescale.com>
-> Subject: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
-> parent clocks
->=20
-> From: Scott Wood <scottwood@freescale.com>
->=20
-> Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
-> __clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
-> true provider API versions that operate on struct clk_hw.
->=20
-> qoriq-cpufreq needs these functions in order to determine the options it =
-has
-> for calling clk_set_parent() and thus populate the cpufreq table, so revi=
-ve
-> them as legitimate consumer APIs.
->=20
-> Signed-off-by: Scott Wood <scottwood@freescale.com>
-> ---
-> v2: Add missing 'static inline' to stub functions.
->=20
-> v3: no changes
->=20
->  drivers/clk/clk.c   | 19 +++++++++++++++++++
->  include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c index d584004..d61a3fe=
- 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)  }
-> EXPORT_SYMBOL_GPL(__clk_get_hw);
->=20
-> +unsigned int clk_get_num_parents(struct clk *clk) {
-> +	return !clk ? 0 : clk->core->num_parents; }
-> +EXPORT_SYMBOL_GPL(clk_get_num_parents);
-> +
->  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)  {
->  	return hw->core->num_parents;
-> @@ -358,6 +364,19 @@ static struct clk_core
-> *clk_core_get_parent_by_index(struct clk_core *core,
->  	return core->parents[index];
->  }
->=20
-> +struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int
-> +index) {
-> +	struct clk_core *parent;
-> +
-> +	if (!clk)
-> +		return NULL;
-> +
-> +	parent =3D clk_core_get_parent_by_index(clk->core, index);
-> +
-> +	return !parent ? NULL : parent->hw->clk; }
-> +EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
-> +
->  struct clk_hw *
->  clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
-> { diff --git a/include/linux/clk.h b/include/linux/clk.h index 0df4a51..a=
-cd115f
-> 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk *pare=
-nt);
-> struct clk *clk_get_parent(struct clk *clk);
->=20
->  /**
-> + * clk_get_parent_by_index - get a possible parent clock by index
-> + * @clk: clock source
-> + * @index: index into the array of possible parents of this clock
-> + *
-> + * Returns struct clk corresponding to the requested possible
-> + * parent clock source, or NULL.
-> + */
-> +struct clk *clk_get_parent_by_index(struct clk *clk,
-> +				    unsigned int index);
-> +
-> +/**
-> + * clk_get_num_parents - get number of possible parents
-> + * @clk: clock source
-> + *
-> + * Returns the number of possible parents of this clock,
-> + * which can then be enumerated using clk_get_parent_by_index().
-> + */
-> +unsigned int clk_get_num_parents(struct clk *clk);
-> +
-> +/**
->   * clk_get_sys - get a clock based upon the device name
->   * @dev_id: device name
->   * @con_id: connection ID
-> @@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk =
-*clk)
->  	return NULL;
->  }
->=20
-> +static inline struct clk *clk_get_parent_by_index(struct clk *clk,
-> +						  unsigned int index)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline unsigned int clk_get_num_parents(struct clk *clk) {
-> +	return 0;
-> +}
-> +
->  #endif
->=20
->  /* clk_prepare_enable helps cases using clk_enable in non-atomic context=
-.
-> */
-> --
-> 2.5.0
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 8f7619d..5faae05 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -87,6 +87,7 @@ Required properties:
+ 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
+ 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
+ 	"allwinner,sun6i-a31-display-clk" - for the display clocks
++	"allwinner,sun8i-h3-ths-clk" - for THS on H3
+ 
+ Required properties for all clocks:
+ - reg : shall be the control register address for the clock.
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 39d2044..8e245e3 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -9,6 +9,7 @@ obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a10-ve.o
+ obj-y += clk-a20-gmac.o
++obj-y += clk-h3-ths.o
+ obj-y += clk-mod0.o
+ obj-y += clk-simple-gates.o
+ obj-y += clk-sun4i-display.o
+diff --git a/drivers/clk/sunxi/clk-h3-ths.c b/drivers/clk/sunxi/clk-h3-ths.c
+new file mode 100644
+index 0000000..c1d6d32
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-h3-ths.c
+@@ -0,0 +1,98 @@
++/*
++ * sun8i THS clock driver
++ *
++ * Copyright (C) 2015 Josef Gajdusek
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define SUN8I_H3_THS_CLK_ENABLE				31
++#define SUN8I_H3_THS_CLK_DIVIDER_SHIFT		0
++#define SUN8I_H3_THS_CLK_DIVIDER_WIDTH		2
++
++static DEFINE_SPINLOCK(sun8i_h3_ths_clk_lock);
++
++static const struct clk_div_table sun8i_h3_ths_clk_table[] __initconst = {
++	{ .val = 0, .div = 1 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 6 },
++	{ } /* sentinel */
++};
++
++static void __init sun8i_h3_ths_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	struct clk_gate *gate;
++	struct clk_divider *div;
++	const char *parent;
++	const char *clk_name = node->name;
++	void __iomem *reg;
++	int err;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++
++	if (IS_ERR(reg))
++		return;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto err_unmap;
++
++	div = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!div)
++		goto err_gate_free;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent = of_clk_get_parent_name(node, 0);
++
++	gate->reg = reg;
++	gate->bit_idx = SUN8I_H3_THS_CLK_ENABLE;
++	gate->lock = &sun8i_h3_ths_clk_lock;
++
++	div->reg = reg;
++	div->shift = SUN8I_H3_THS_CLK_DIVIDER_SHIFT;
++	div->width = SUN8I_H3_THS_CLK_DIVIDER_WIDTH;
++	div->table = sun8i_h3_ths_clk_table;
++	div->lock = &sun8i_h3_ths_clk_lock;
++
++	clk = clk_register_composite(NULL, clk_name, &parent, 1,
++								 NULL, NULL,
++								 &div->hw, &clk_divider_ops,
++								 &gate->hw, &clk_gate_ops,
++								 CLK_SET_RATE_PARENT);
++
++	if (IS_ERR(clk))
++		goto err_div_free;
++
++	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (err)
++		goto err_unregister_clk;
++
++	return;
++
++err_unregister_clk:
++	clk_unregister(clk);
++err_gate_free:
++	kfree(gate);
++err_div_free:
++	kfree(div);
++err_unmap:
++	iounmap(reg);
++}
++
++CLK_OF_DECLARE(sun8i_h3_ths_clk, "allwinner,sun8i-h3-ths-clk",
++			   sun8i_h3_ths_clk_setup);
+-- 
+2.9.0
