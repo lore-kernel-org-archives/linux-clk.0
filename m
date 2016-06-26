@@ -1,81 +1,77 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.8 (take two)
-Date: Thu, 23 Jun 2016 16:04:43 +0200
-Message-Id: <1466690683-28949-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, elaine zhang <elaine.zhang@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>, Brian Norris <briannorris@chromium.org>, Yakir Yang <ykk@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, tomasz.figa@chromium.org
+Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for dclk_vop0_div on RK3399
+Date: Mon, 27 Jun 2016 00:18:57 +0200
+Message-ID: <3441187.YrMqoaIQDf@phil>
+In-Reply-To: <CAD=FV=V5UvQGtYQ26gZ+U7+TygEWuqRoHhiH8SiQSK7GcvkF5w@mail.gmail.com>
+References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com> <2376423.L1zs1HaIGm@diego> <CAD=FV=V5UvQGtYQ26gZ+U7+TygEWuqRoHhiH8SiQSK7GcvkF5w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Am Dienstag, 21. Juni 2016, 17:31:16 schrieb Doug Anderson:
+> OK, so what do we do?  Personally I can't see us coming up with a
+> one-size fits all approach, can you?  That means some type of
+> configuration.  ...and, as seen by the assigned-clocks device tree
+> binding, _some_ types of configuration is allowed in the device tree
+> presuming it is well thought out and describing how the designers of
+> the hardware "intended" it to be used.
+> 
+> So maybe:
+> 
+> i) Unless there's a counter example, I see no reason to let any clocks
+> other than the VOP display clocks parent on the "dynamic" PLL.  If we
+> later find a counter example then presumably we should add a device
+> tree property on that board.  We could have code at boot time that
+> goes through all clocks parented on "dynamic" PLL and reparents them
+> (trying to keep the rate?), they disallows future muxing to the
+> "dynamic" PLL.
 
-The following changes since commit e4e2d7c388350eba8b1dbc2569441ac9b545a8c4:
+Two problems:
+- "disallowing future muxing to the pll" feels a bit far on the "policy"-
+side on the policy<->hw-description scale, I still guess the kernel should 
+be allowed to shoot itself in the foot :-)
+- would probably include hacking up the clock parent-names, which won't work 
+at runtime, as they are init params and get memcpy'd on clk creation.
 
-  clk: renesas: cpg-mssr: Add support for R-Car M3-W (2016-06-06 11:58:35 +0200)
+But I guess this issue of depending clock maybe needing to adapt to a 
+changed pll-rate here would be solvable with my rate-reassignment I still 
+need to revisit.
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.8-tag2
+> ii) It seems sane to me to add a device tree property to the board
+> that will effectively enable CLK_SET_RATE_PARENT on one of the
+> dclk_vop clocks and forcing it to the "dynamic" PLL (no
+> auto-remuxing).  Maybe we would add something to the HDMI node, for
+> instance, like "rockchip,intended-dclk-pll = <&...>".  Then somehow
+> this would need to affect whichever VOP was assigned to HDMI.
 
-for you to fetch changes up to e4c82863fd17bacb60080481c11eb0303d3f83d0:
+Right now I see two issues:
+- can the drm reassign vops at runtime [don't know enough about drm], but 
+what would happen in such a case when hdmi jumps from one to the other vop.
+- clock-flags [CLK_SET_RATE_PARENT and friends] are clk-init data, set when 
+creating a clock, so there is no changing this at runtime - see above
 
-  clk: renesas: r8a7795: Add THS/TSC clock (2016-06-21 09:21:06 +0200)
+I guess one option to handle this could be to not have anybody getting a 
+real CLK_SET_RATE_PARENT to the vpll, but instead having the vops handle 
+this special pll if necessary. Aka check if the requested rate is possible 
+using the current sources (clk_round_rate on the dclk_vopX) and if not adapt 
+the special pll to a suitable source rate and re-check.
 
-----------------------------------------------------------------
-clk: renesas: Updates for v4.8 (take two)
+And if there is no dclk-vpll, then simply skip that step and try to get the 
+best rate possible.
 
-  - Add support for R-Car V2H,
-  - Add FDP1, DRIF, and thermal clocks on R-Car H3,
-  - Correct a wrong parent clock.
 
-This pull request is based on my previous request "[git pull] clk:
-renesas: Add support for R-Car M3-W".
-For proper merge history (auto-grabbing the commit message from the
-signed tag), you should pull tags/clk-renesas-for-v4.8-tag1 first.
-As <dt-bindings/clock/r8a7796-cpg-mssr.h> is a hard dependency for the
-initial r8a7796.dtsi file, I would appreciate if you could do that
-sooner rather than later, so Simon can pull it as well, and start
-queueing up the DT files for R-Car M3-W, which need to go through
-arm-soc.
+> iii) If later someone can propose how to handle D) above, we can
+> handle it then.  Until a solution is proposed those boards would work
+> like today.
 
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      clk: renesas: r8a7795: Correct lvds clock parent
+Having the "rockchip,dclk-pll = <&...>;" live in the display-subsystem node 
+or so (=assigned to the global display-subsystem not one special vop) the 
+available vops might even be able to work out between them who should get 
+access to it depending on connected displays / modes?
 
-Khiem Nguyen (1):
-      clk: renesas: r8a7795: Add THS/TSC clock
 
-Kieran Bingham (1):
-      clk: renesas: r8a7795: Provide FDP1 clocks
-
-Ramesh Shanmugasundaram (1):
-      clk: renesas: r8a7795: Add DRIF clock
-
-Sergei Shtylyov (3):
-      clk: renesas: rcar-gen2: Document R8A7792 support
-      clk: renesas: mstp: Document R8A7792 support
-      clk: renesas: Add R8A7792 support
-
- .../devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt  |  1 +
- .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt        |  1 +
- drivers/clk/renesas/Kconfig                                |  1 +
- drivers/clk/renesas/Makefile                               |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c                     | 14 +++++++++++++-
- 5 files changed, 17 insertions(+), 1 deletion(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Heiko
