@@ -1,69 +1,56 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 10 Jun 2016 14:30:53 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/20] clk: fixed-factor: Pass clk rates change to the
- parent
-Message-ID: <20160610123053.GW5242@lukather>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Sun, 26 Jun 2016 02:45:57 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] rtc: ac100: Add clk output support
+Message-ID: <20160626004557.GX5809@piout.net>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
+ <1466391138-12862-6-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NAuYj0K7Umiq33rm"
-In-Reply-To: <1463402840-17062-2-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1466391138-12862-6-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 20/06/2016 at 10:52:15 +0800, Chen-Yu Tsai wrote :
+> +struct ac100_clk32k {
+> +	struct clk_hw hw;
+> +	struct regmap *regmap;
+> +	u8 offset;
+> +};
+> +
+> +#define to_ac100_clk32k(_hw) container_of(_hw, struct ac100_clk32k, hw)
+> +
+> +#define AC100_RTC_32K_NAME	"ac100-rtc-32k"
+> +#define AC100_RTC_32K_RATE	32768
+> +#define AC100_ADDA_4M_NAME	"ac100-adda-4M"
+> +#define AC100_ADDA_4M_RATE	4000000
+> +#define AC100_CLK32K_NUM	3
+> +
+> +static const char * const ac100_clk32k_names[] = {
+> +	"ac100-clk32k-ap",
+> +	"ac100-clk32k-bb",
+> +	"ac100-clk32k-md",
+> +};
+> +
 
---NAuYj0K7Umiq33rm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, naming things is hard but I don't feel ac100_clk32k and
+ac100-clk32k are good prefixes for those clocks as they are actually
+dividing a 32KHz or 4MHz clock (one configuration out of 128 is 32KHz).
 
-On Mon, May 16, 2016 at 02:47:01PM +0200, Maxime Ripard wrote:
-> A fixed factor clock, if it needs to change its rate, by definition do not
-> have any choice but to modify its parent rate.
->=20
-> Add the CLK_SET_RATE_PARENT flag to that clock so that it can happen
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Else, I don't have any objection.
 
-Mike, Stephen, any comments on this one?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
+-- 
+Alexandre Belloni, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
-
---NAuYj0K7Umiq33rm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXWrL9AAoJEBx+YmzsjxAgSMMP/09jaErgQbhOHBfZeFTLm0wp
-7XXO+q9MELbI6gopUIw/NfmaGXbZXzJpyYyq0h6xr22o14niDT4p5EkzKgJ6KqHe
-EuLIyxJnlxGYjI9TQ+4YY7Q+ewMReyz3KgaUrG3DyBjVqWZzN70CHK8rje9PM5S0
-kP51zCaA6HZH9rtjPwDmlr1OAEczCPpLw2AxxEfJrVjKrxeflBQTXpEAn2aoDw0O
-xs+U4Nx4Btj/tnOq4BdQxN9R9WU34YaWw0gy2olpaZealrnlXXJtuGInGUvCaZrn
-Al4IsH3v7s6HxKJKakM9pq+EyPI0lxarNBVIuNDCp0tAcIW5B3aEqpZopovXt/tI
-hOUFxJBSW0Oyt+kXZ1XpDhMZWfV0VCqVQZboDrejFLp0ZpLpoxadusplaGODoO03
-U0swG1pHZQhfumk73RQ+rF1ZL9PxAmAAMmjH6pDYbIowSuetSWSLYSsYmLuTomYy
-iCOHv8FBnNqtiIZNrFfhtmOF/EnqiRX7NXXOAhaaJWG0pcjBaNuPi2kkhc5VGT8T
-Xc15AJZCui055Ygt1nJbP8v9WLAocMHY32u1u1Rp3wQd9bcsGpd5IbUCnJUD+C9V
-cd3/Cnw7664OL7kXwJmol/keDuJOf/aSKmL5AJECvs33EumQuVXsqq88D+XvsrJc
-c6X3NPw+MLjBbMNueEl5
-=9CBo
------END PGP SIGNATURE-----
-
---NAuYj0K7Umiq33rm--
