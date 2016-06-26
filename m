@@ -1,139 +1,226 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp5-g21.free.fr ([212.27.42.5]:37101 "EHLO smtp5-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750756AbcF2GvW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 29 Jun 2016 02:51:22 -0400
-Date: Wed, 29 Jun 2016 08:51:16 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: =?UTF-8?B?T25kxZllag==?= Jirman <megi@xff.cz>
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Sun, 26 Jun 2016 02:30:54 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH 1/3] clk: sunxi: Add a driver for the CCU
-Message-Id: <20160629085116.caf701e214440cdf4b1045c8@free.fr>
-In-Reply-To: <536aa072-d110-1b08-fa25-72c1645e2459@xff.cz>
-References: <bfb8ceb4-5445-3f43-0a16-bd0e83f2af22@xff.cz>
-	<536aa072-d110-1b08-fa25-72c1645e2459@xff.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] rtc: ac100: Add RTC driver for X-Powers AC100
+Message-ID: <20160626003054.GW5809@piout.net>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
+ <1466391138-12862-5-git-send-email-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1466391138-12862-5-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 28 Jun 2016 21:31:06 +0200
-Ondřej Jirman <megi@xff.cz> wrote:
+Hi,
 
-> 
-> On 28.6.2016 17:37, Jean-Francois Moine wrote:
-> > Most of the clocks in the Allwinner's SoCs are configured in the CCU
-> > (Clock Configuration Unit).
-> > 
-> > The PLL clocks are driven from the main clock. Their rates are controlled
-> > by a set of multiply and divide factors, named from the Allwinner's
-> > documentation:
-> > - multipliers: 'n' and 'k'
-> > - dividers: 'd1', 'd2', 'm' and 'p'
-> > 
-> > The peripheral clocks may receive their inputs from one or more parents,
-> > thanks to a mux. Their rates are controlled by a set of divide factors
-> > only, named 'm' and 'p'.
-> > 
-> > This driver also handles:
-> > - fixed clocks,
-> > - the phase delays for the MMCs,
-> > - the clock gates,
-> > - the bus gates,
-> > - and the resets.
-> > 
-> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> > ---
-> >  drivers/clk/sunxi/Makefile |   2 +
-> >  drivers/clk/sunxi/ccu.c    | 980 +++++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/sunxi/ccu.h    | 153 +++++++
-> >  3 files changed, 1135 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi/ccu.c
-> >  create mode 100644 drivers/clk/sunxi/ccu.h
-	[snip]
-> > diff --git a/drivers/clk/sunxi/ccu.c b/drivers/clk/sunxi/ccu.c
-> > new file mode 100644
-> > index 0000000..5749f9c
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi/ccu.c
-	[snip]
-> > +static void ccu_pll_set_flat_factors(struct ccu *ccu, u32 mask, u32 val)
-> > +{
-> > +	u32 reg, m_val, p_val;
-> > +	u32 m_mask = (1 << ccu->m_width) - 1;
-> > +	u32 p_mask = (1 << ccu->p_width) - 1;
-> 
-> I see you have shifted the factor values to be set in the caller of this
-> function, but then you have to shift masks too, to match. It might be
-> clearer to do both shifts in this function.
+A few comments, mostly about style.
 
-Oops, yes. Thanks. (I did not test yet your patch about the CPU
-frequency)
+On 20/06/2016 at 10:52:14 +0800, Chen-Yu Tsai wrote :
+> +struct ac100_rtc_dev {
+> +	struct rtc_device *rtc;
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +	struct mutex mutex;
 
-> > +	reg = readl(ccu->base + ccu->reg);
-> > +	m_val = reg & m_mask;
-> > +	p_val = reg & p_mask;
-> > +
-> > +	spin_lock(&ccu_lock);
-> > +
-> > +	/* increase p, then m */
-> > +	if (ccu->p_width && p_val < (val & p_mask)) {
-> > +		reg &= ~p_mask;
-> > +		reg |= val & p_mask;
-> > +		writel(reg, ccu->base + ccu->reg);
-> > +		udelay(10);
-> > +	}
-> > +	if (ccu->m_width && m_val < (val & m_mask)) {
-> > +		reg &= ~m_mask;
-> > +		reg |= val & m_mask;
-> > +		writel(reg, ccu->base + ccu->reg);
-> > +		udelay(10);
-> > +	}
-> > +
-> > +	/* set other factors */
-> > +	reg &= ~(mask & ~(p_mask | m_mask));
-> > +	reg |= val & ~(p_mask | m_mask);
-> > +	writel(reg, ccu->base + ccu->reg);
-> > +
-> > +	/* decrease m */
-> > +	if (ccu->m_width && m_val > (val & m_mask)) {
-> > +		reg &= ~m_mask;
-> > +		reg |= val & m_mask;
-> > +		writel(reg, ccu->base + ccu->reg);
-> > +		udelay(10);
-> > +	}
-> > +
-> > +	/* wait for PLL stable */
-> > +	if (ccu->lock_reg) {
-> > +		u32 lock;
-> > +
-> > +		lock = BIT(ccu->lock_bit);
-> > +		WARN_ON(readl_relaxed_poll_timeout(ccu->base + ccu->lock_reg,
-> > +							reg, !(reg & lock),
-> > +							100, 70000));
-> > +	}
-	[snip]
-> 
-> Any reason why you're waiting for the lock after decreasing m and not
-> before? PLL output may till run too fast before reducing the postdivider
-> potentially causing a crash. But I might be misunderstanding what m is
-> exactly.
+I don't think that mutex is needed. Instead, you can take rtc->ops_lock
+from the interrupt handler.
 
-I just followed what is done in the function
- sunxi_clk_factors_set_flat_facotrs() from Allwinnertech:
+> +	int irq;
+> +	unsigned long alarm;
+> +};
+> +
+> +static int ac100_rtc_get_time(struct device *dev, struct rtc_time *rtc_tm)
+> +{
+> +	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
+> +	struct regmap *regmap = chip->regmap;
+> +	u16 reg[7];
+> +	int ret;
+> +
+> +	ret = regmap_bulk_read(regmap, AC100_RTC_SEC, reg, 7);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rtc_tm->tm_sec  = bcd2bin(reg[0] & AC100_RTC_SEC_MASK);
+> +	rtc_tm->tm_min  = bcd2bin(reg[1] & AC100_RTC_MIN_MASK);
+> +	rtc_tm->tm_hour = bcd2bin(reg[2] & AC100_RTC_HOU_MASK);
+> +	rtc_tm->tm_wday = bcd2bin(reg[3] & AC100_RTC_WEE_MASK);
+> +	rtc_tm->tm_mday = bcd2bin(reg[4] & AC100_RTC_DAY_MASK);
+> +	rtc_tm->tm_mon  = bcd2bin(reg[5] & AC100_RTC_MON_MASK);
+> +	rtc_tm->tm_year = bcd2bin(reg[6] & AC100_RTC_YEA_MASK);
+> +
+> +	rtc_tm->tm_mon  -= 1;
 
-	1).try to increase factor p first
-	2).try to increase factor m first
-	3. write factor n & k
-	4. do pair things for 2). decease factor m
-	5. wait for PLL state stable
-	6.do pair things for 1).  decease factor p
+I would put the - 1 inline with the first tm_mon assignment.
 
-As this is written, it seems m is a pre-divider.
+> +
+> +	/*
+> +	 * switch from (data_year->min)-relative offset to
+> +	 * a (1900)-relative one
+> +	 */
+> +	rtc_tm->tm_year += AC100_YEAR_OFF;
+
+Unless you feel the comment is absolutely necessary, I'd also put that
+with the first tm_year assignment.
+
+BTW, is that RTC aware that 0 is actually 1970? And so 2000 (30) is not
+a leap year but 2016 is? I'd say that this is not the case, seeing
+AC100_RTC_YEA_LEAP but it is worth checking.
+
+Is this bit (AC100_RTC_YEA_LEAP) updated by the rtc? IF that is not the
+case, the time will have to be set at least once between first of
+January and 28th of February of leap years else it will fail...
+
+> +
+> +	return rtc_valid_tm(rtc_tm);
+> +}
+> +
+> +static int ac100_rtc_set_time(struct device *dev, struct rtc_time *rtc_tm)
+> +{
+> +	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
+> +	struct regmap *regmap = chip->regmap;
+> +	int year;
+> +	u16 reg[8];
+> +
+> +	/* our RTC has a limited year range... */
+> +	year = rtc_tm->tm_year + 1900;
+> +	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
+> +		dev_err(dev, "rtc only supports year in range %d - %d\n",
+> +			AC100_YEAR_MIN, AC100_YEAR_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+
+What about:
+
+year = rtc_tm->tm_year - AC100_YEAR_OFF
+if (year < 0 || year > (AC100_YEAR_MAX - 1900))
+
+It allows to reuse year for the reg[6] assignment. IT is a simple
+suggestion, maybe the compiler is smarter than I am ;).
+
+> +	/* correct offsets */
+> +	rtc_tm->tm_year -= AC100_YEAR_OFF;
+> +	rtc_tm->tm_mon += 1;
+> +
+
+Those could also got inline with their respective reg[] assignment
+
+
+> +	/* convert to BCD */
+> +	reg[0] = bin2bcd(rtc_tm->tm_sec)  & AC100_RTC_SEC_MASK;
+> +	reg[1] = bin2bcd(rtc_tm->tm_min)  & AC100_RTC_MIN_MASK;
+> +	reg[2] = bin2bcd(rtc_tm->tm_hour) & AC100_RTC_HOU_MASK;
+> +	reg[3] = bin2bcd(rtc_tm->tm_wday) & AC100_RTC_WEE_MASK;
+> +	reg[4] = bin2bcd(rtc_tm->tm_mday) & AC100_RTC_DAY_MASK;
+> +	reg[5] = bin2bcd(rtc_tm->tm_mon)  & AC100_RTC_MON_MASK;
+> +	reg[6] = bin2bcd(rtc_tm->tm_year) & AC100_RTC_YEA_MASK;
+> +	/* trigger write */
+> +	reg[7] = AC100_RTC_UPD_TRIGGER;
+> +
+> +	/* Is it a leap year? */
+> +	if (is_leap_year(year))
+> +		reg[6] |= AC100_RTC_YEA_LEAP;
+> +
+> +	return regmap_bulk_write(regmap, AC100_RTC_SEC, reg, 8);
+> +}
+> +
+> +
+
+[...]
+
+> +	alrm_tm->tm_sec  = bcd2bin(reg[0] & AC100_ALM_SEC_MASK);
+> +	alrm_tm->tm_min  = bcd2bin(reg[1] & AC100_ALM_MIN_MASK);
+> +	alrm_tm->tm_hour = bcd2bin(reg[2] & AC100_ALM_HOU_MASK);
+> +	alrm_tm->tm_wday = bcd2bin(reg[3] & AC100_ALM_WEE_MASK);
+> +	alrm_tm->tm_mday = bcd2bin(reg[4] & AC100_ALM_DAY_MASK);
+> +	alrm_tm->tm_mon  = bcd2bin(reg[5] & AC100_ALM_MON_MASK);
+> +	alrm_tm->tm_year = bcd2bin(reg[6] & AC100_ALM_YEA_MASK);
+> +
+> +	alrm_tm->tm_mon  -= 1;
+> +
+> +	/*
+> +	 * switch from (data_year->min)-relative offset to
+> +	 * a (1900)-relative one
+> +	 */
+> +	alrm_tm->tm_year += AC100_YEAR_OFF;
+> +
+
+Well, same comments as in ac100_rtc_get_time()
+
+
+> +out:
+> +	mutex_unlock(&chip->mutex);
+> +	return ret;
+> +}
+> +
+> +static int ac100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+> +{
+> +	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
+> +	struct regmap *regmap = chip->regmap;
+> +	struct rtc_time *alrm_tm = &alrm->time;
+> +	u16 reg[8];
+> +	int year;
+> +	int ret;
+> +
+> +	/* our alarm has a limited year range... */
+> +	year = alrm_tm->tm_year + 1900;
+> +	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
+> +		dev_err(dev, "alarm only supports year in range %d - %d\n",
+> +			AC100_YEAR_MIN, AC100_YEAR_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* correct offsets */
+> +	alrm_tm->tm_year -= AC100_YEAR_OFF;
+> +	alrm_tm->tm_mon += 1;
+> +
+
+Same comment as ac100_rtc_set_time()
+
+> +	/* convert to BCD */
+> +	reg[0] = (bin2bcd(alrm_tm->tm_sec)  & AC100_ALM_SEC_MASK) |
+> +			AC100_ALM_ENABLE_FLAG;
+> +	reg[1] = (bin2bcd(alrm_tm->tm_min)  & AC100_ALM_MIN_MASK) |
+> +			AC100_ALM_ENABLE_FLAG;
+> +	reg[2] = (bin2bcd(alrm_tm->tm_hour) & AC100_ALM_HOU_MASK) |
+> +			AC100_ALM_ENABLE_FLAG;
+> +	/* Do not enable weekday alarm */
+> +	reg[3] = bin2bcd(alrm_tm->tm_wday) & AC100_ALM_WEE_MASK;
+> +	reg[4] = (bin2bcd(alrm_tm->tm_mday) & AC100_ALM_DAY_MASK) |
+> +			AC100_ALM_ENABLE_FLAG;
+> +	reg[5] = (bin2bcd(alrm_tm->tm_mon)  & AC100_ALM_MON_MASK) |
+> +			AC100_ALM_ENABLE_FLAG;
+> +	reg[6] = (bin2bcd(alrm_tm->tm_year) & AC100_ALM_YEA_MASK) |
+> +			AC100_ALM_ENABLE_FLAG;
+> +	/* trigger write */
+> +	reg[7] = AC100_ALM_UPD_TRIGGER;
+> +
+> +	mutex_lock(&chip->mutex);
+> +
+> +	ret = regmap_bulk_write(regmap, AC100_ALM_SEC, reg, 8);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = _ac100_rtc_alarm_irq_enable(chip, alrm->enabled);
+> +
+> +out:
+> +	mutex_unlock(&chip->mutex);
+> +	return ret;
+> +}
+> +
 
 -- 
-Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
