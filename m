@@ -1,123 +1,62 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
-	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
-	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
-Subject: [PATCH RFC 4/7] PM: add SYSTEM_SUSPEND system_state
-Date: Wed, 29 Jun 2016 21:52:12 +0800
-Message-ID: <1467208335-29876-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160626004557.GX5809@piout.net>
+References: <1466391138-12862-1-git-send-email-wens@csie.org>
+ <1466391138-12862-6-git-send-email-wens@csie.org> <20160626004557.GX5809@piout.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 26 Jun 2016 22:58:07 +0800
+Message-ID: <CAGb2v64YnSz5MnnF==ZeeqZw4yBY2R=dNVdyi9BczVR5WCNZ3g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] rtc: ac100: Add clk output support
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	rtc-linux@googlegroups.com, linux-kernel <linux-kernel@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Sun, Jun 26, 2016 at 8:45 AM, Alexandre Belloni
+<alexandre.belloni@free-electrons.com> wrote:
+> On 20/06/2016 at 10:52:15 +0800, Chen-Yu Tsai wrote :
+>> +struct ac100_clk32k {
+>> +     struct clk_hw hw;
+>> +     struct regmap *regmap;
+>> +     u8 offset;
+>> +};
+>> +
+>> +#define to_ac100_clk32k(_hw) container_of(_hw, struct ac100_clk32k, hw)
+>> +
+>> +#define AC100_RTC_32K_NAME   "ac100-rtc-32k"
+>> +#define AC100_RTC_32K_RATE   32768
+>> +#define AC100_ADDA_4M_NAME   "ac100-adda-4M"
+>> +#define AC100_ADDA_4M_RATE   4000000
+>> +#define AC100_CLK32K_NUM     3
+>> +
+>> +static const char * const ac100_clk32k_names[] = {
+>> +     "ac100-clk32k-ap",
+>> +     "ac100-clk32k-bb",
+>> +     "ac100-clk32k-md",
+>> +};
+>> +
+>
+> Well, naming things is hard but I don't feel ac100_clk32k and
+> ac100-clk32k are good prefixes for those clocks as they are actually
+> dividing a 32KHz or 4MHz clock (one configuration out of 128 is 32KHz).
 
-During the late system suspend phase, the arch irq is disabled
-and sleeping is not allowed.
-Let's add SYSTEM_SUSPEND to represent this state. The reset of
-the system can then check this flag to do the correct work.
+I agree it's a bit misleading. There are 2 names used throughout the
+datasheet: 1) CKOn_RTC for the pin names, and 2) CLK32Kxx for the
+register names and block diagram.
 
-[ Aisheng: back ported from rt tree and did comments change ]
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- include/linux/kernel.h   | 1 +
- kernel/power/hibernate.c | 7 +++++++
- kernel/power/suspend.c   | 4 ++++
- 3 files changed, 12 insertions(+)
+I'll switch to the pin names, since this is probably what is shown on
+board schematics.
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 94aa10ffe156..92a42312b749 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -491,6 +491,7 @@ extern enum system_states {
- 	SYSTEM_HALT,
- 	SYSTEM_POWER_OFF,
- 	SYSTEM_RESTART,
-+	SYSTEM_SUSPEND,
- } system_state;
- 
- #define TAINT_PROPRIETARY_MODULE	0
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index fca9254280ee..36f420e54848 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -285,6 +285,8 @@ static int create_image(int platform_mode)
- 
- 	local_irq_disable();
- 
-+	system_state = SYSTEM_SUSPEND;
-+
- 	error = syscore_suspend();
- 	if (error) {
- 		printk(KERN_ERR "PM: Some system devices failed to power down, "
-@@ -314,6 +316,7 @@ static int create_image(int platform_mode)
- 	syscore_resume();
- 
-  Enable_irqs:
-+	system_state = SYSTEM_RUNNING;
- 	local_irq_enable();
- 
-  Enable_cpus:
-@@ -438,6 +441,7 @@ static int resume_target_kernel(bool platform_mode)
- 		goto Enable_cpus;
- 
- 	local_irq_disable();
-+	system_state = SYSTEM_SUSPEND;
- 
- 	error = syscore_suspend();
- 	if (error)
-@@ -471,6 +475,7 @@ static int resume_target_kernel(bool platform_mode)
- 	syscore_resume();
- 
-  Enable_irqs:
-+	system_state = SYSTEM_RUNNING;
- 	local_irq_enable();
- 
-  Enable_cpus:
-@@ -556,6 +561,7 @@ int hibernation_platform_enter(void)
- 		goto Enable_cpus;
- 
- 	local_irq_disable();
-+	system_state = SYSTEM_SUSPEND;
- 	syscore_suspend();
- 	if (pm_wakeup_pending()) {
- 		error = -EAGAIN;
-@@ -568,6 +574,7 @@ int hibernation_platform_enter(void)
- 
-  Power_up:
- 	syscore_resume();
-+	system_state = SYSTEM_RUNNING;
- 	local_irq_enable();
- 
-  Enable_cpus:
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 5b70d64b871e..1258d093ae48 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -359,6 +359,8 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
- 	arch_suspend_disable_irqs();
- 	BUG_ON(!irqs_disabled());
- 
-+	system_state = SYSTEM_SUSPEND;
-+
- 	error = syscore_suspend();
- 	if (!error) {
- 		*wakeup = pm_wakeup_pending();
-@@ -375,6 +377,8 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
- 		syscore_resume();
- 	}
- 
-+	system_state = SYSTEM_RUNNING;
-+
- 	arch_suspend_enable_irqs();
- 	BUG_ON(irqs_disabled());
- 
--- 
-1.9.1
+> Else, I don't have any objection.
+
+Thanks!
+ChenYu
