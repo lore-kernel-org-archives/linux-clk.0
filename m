@@ -1,50 +1,55 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	jorge.ramirez-ortiz@linaro.org,
-	xinliang.liu@linaro.org,
-	guodong.xu@linaro.org,
-	john.stultz@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] clk: hi6220: Change syspll and media_syspll clk to 1.19GHz
-Date: Tue, 28 Jun 2016 18:31:41 +0800
-Message-Id: <1467109902-17625-1-git-send-email-guodong.xu@linaro.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 27 Jun 2016 11:35:31 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Rhyland Klein <rklein@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Alexandre
+ Courbot" <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Stephen Warren
+	<swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 01/11] clk: tegra: Switch to using critical clks
+Message-ID: <20160627083531.GA12863@tbergstrom-lnx.Nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+ <1464381494-27096-2-git-send-email-rklein@nvidia.com>
+ <20160622121630.GB26943@ulmo.ba.sec>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160622121630.GB26943@ulmo.ba.sec>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Xinliang Liu <xinliang.liu@linaro.org>
+On Wed, Jun 22, 2016 at 02:16:30PM +0200, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, May 27, 2016 at 04:38:04PM -0400, Rhyland Klein wrote:
+> > Mark some of the required-to-be-enabled clks as critical clks. These
+> > need to be kept on through the disabling of unused clks during init.
+> > They may not get any reference before or after init, but are required
+> > to be on, therefore let the core enable them.
+> > 
+> > Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> > ---
+> > v2:
+> >  - Remove mention of HAND_OFF clks as they are not supported yet.
+> > 
+> >  drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++++++-------
+> >  drivers/clk/tegra/clk-tegra-super-gen4.c | 12 +++++++-----
+> >  2 files changed, 21 insertions(+), 12 deletions(-)
+> 
+> I have some difficulty to follow why some of these clocks are critical.
+> It might help if the commit message mentioned why each of these need to
+> remain enabled forever, even if never used.
+> 
+> Also, it's fairly unlikely that pll_p for example would ever get
+> disabled because a bunch of others are derived from it. I'm also not
+> quite convinced yet that it really is critical. What does it drive which
+> isn't claimed by any drivers?
+> 
 
-In the bootloader of HiKey/96boards, syspll and media_syspll clk
-was initialized to 1.19GHz. So, here changes it in kernel accordingly.
+mselect and sclk are clocked from pll_p, however we don't have drivers for
+those. Most other peripherals clocked from pll_p can be clockgated by their
+driver which can lead to pll_p being turned off causing the system to hang.
 
-1.19GHz was chosen over 1.2GHz because at 1.19GHz we get more precise
-HDMI pixel clock (1.19G/16 = 74.4MHz) for 1280x720p@60Hz HDMI
-(74.25MHz required by standards). Closer pixel clock means better
-compatibility to HDMI monitors.
+Cheers,
 
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
-Signed-off-by: Xinliang Liu <xinliang.liu@linaro.org>
----
- drivers/clk/hisilicon/clk-hi6220.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index f02cb41..a36ffcb 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -34,8 +34,8 @@ static struct hisi_fixed_rate_clock hi6220_fixed_rate_clks[] __initdata = {
- 	{ HI6220_PLL_BBP,	"bbppll0",	NULL, 0, 245760000, },
- 	{ HI6220_PLL_GPU,	"gpupll",	NULL, 0, 1000000000,},
- 	{ HI6220_PLL1_DDR,	"ddrpll1",	NULL, 0, 1066000000,},
--	{ HI6220_PLL_SYS,	"syspll",	NULL, 0, 1200000000,},
--	{ HI6220_PLL_SYS_MEDIA,	"media_syspll",	NULL, 0, 1200000000,},
-+	{ HI6220_PLL_SYS,	"syspll",	NULL, 0, 1190400000,},
-+	{ HI6220_PLL_SYS_MEDIA,	"media_syspll",	NULL, 0, 1190400000,},
- 	{ HI6220_DDR_SRC,	"ddr_sel_src",  NULL, 0, 1200000000,},
- 	{ HI6220_PLL_MEDIA,	"media_pll",    NULL, 0, 1440000000,},
- 	{ HI6220_PLL_DDR,	"ddrpll0",      NULL, 0, 1600000000,},
--- 
-1.9.1
+Peter.
