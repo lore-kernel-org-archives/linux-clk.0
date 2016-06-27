@@ -1,52 +1,59 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Sun, 26 Jun 2016 03:02:00 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] rtc: ac100: Add RTC driver for X-Powers AC100
-Message-ID: <20160626010200.GZ5809@piout.net>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
- <1466391138-12862-5-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466391138-12862-5-git-send-email-wens@csie.org>
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
+Date: Mon, 27 Jun 2016 22:03:14 +0900
+Message-id: <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+References: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/06/2016 at 10:52:14 +0800, Chen-Yu Tsai wrote :
-> +static int ac100_rtc_probe(struct platform_device *pdev)
-> +{
-> +	struct ac100_dev *ac100 = dev_get_drvdata(pdev->dev.parent);
-> +	struct ac100_rtc_dev *chip;
-> +	int ret;
-> +
-> +	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-> +	platform_set_drvdata(pdev, chip);
-> +	chip->dev = &pdev->dev;
-> +	chip->regmap = ac100->regmap;
-> +	mutex_init(&chip->mutex);
-> +
-> +	chip->irq = of_irq_get(pdev->dev.of_node, 0);
+enable SPI3 iosclk by using the CLK_IS_CRITICAL flag.
+There is no device which is supposed to enable this clock when
+needed, therefore, the only way to use the SPI bus is to enable
+it in boot time.
 
-Forgot that one, platform_get_irq() is probably more common but I don't
-care that much. I think you can then avoid including of.h and of_irq.h.
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+---
 
-> +	if (chip->irq < 0) {
-> +		dev_err(&pdev->dev, "No IRQ resource\n");
-> +		return chip->irq;
-> +	}
-> +
+Hi,
 
+V1 -> V2
+
+- the "sclk_spi3" doesn't need to be enabled in boot time as it
+  is handled by the spi driver itself.
+
+- use the CLK_IS_CRITICAL flag for the ioclk
+
+Andi
+
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index dcb4391..c33150e 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1641,7 +1641,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
+ 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
+-			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 20,
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
+ 			19, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.8.1
