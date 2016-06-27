@@ -1,79 +1,41 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-Return-Path: <mingo.kernel.org@gmail.com>
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 8 Jun 2016 15:33:50 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux@roeck-us.net, tony@atomide.com,
-	linux@arm.linux.org.uk, rostedt@goodmis.org, rjw@rjwysocki.net,
-	pavel@ucw.cz, mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: Re: [GIT PULL arm] Use _rcuidle tracepoints to allow tracing from
- idle
-Message-ID: <20160608133350.GA18357@gmail.com>
-References: <20160526162606.GA20023@linux.vnet.ibm.com>
- <20160526162727.GA21784@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160526162727.GA21784@linux.vnet.ibm.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] clk: renesas: r8a7796: Add watchdog clocks
+Date: Mon, 27 Jun 2016 19:39:23 +0200
+Message-Id: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
+	Hi,
 
-* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+This patch series adds all clocks related to the Watchdog Timer (WDT)
+controller on the Renesas R-Car M3-W (r8a7796) SoC.
 
-> On Thu, May 26, 2016 at 09:26:06AM -0700, Paul E. McKenney wrote:
-> > Hello, Ingo,
-> > 
-> > This series changes a number of event tracepoints to their _rcuidle() form
-> > to allow use from idle without lockdep-RCU complaints, a straightforward
-> > modification that has been successfully applied many times.  These splats
-> > were found in testing by Guenter Roeck and Tony Lindgren, who have
-> > both successfully tested the full series.  Tony asked that I carry these
-> > in -rcu:
-> > 
-> > 	http://lkml.kernel.org/g/20160426213630.GV5995@atomide.com
-> > 
-> > These have been posted to LKML, CCing relevant maintainers, who have
-> > not objected to the proposed changes:
-> > 
-> > 	http://lkml.kernel.org/g/20160516184844.GA20144@linux.vnet.ibm.com
-> > 
-> > These maintainers are also CCed on this pull request.
-> > 
-> > They have also been subjected to 0day Test Robot and -next testing.
-> 
-> And this time actually including the pull request...  :-/
-> 
-> 							Thanx, Paul
-> 
-> These changes are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-> 
-> for you to fetch changes up to e7c38dda94b23965a3eb46ef4656bb8cb921933d:
-> 
->   arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle (2016-05-18 11:55:29 -0700)
-> 
-> ----------------------------------------------------------------
-> Paul E. McKenney (6):
->       arm: Use _rcuidle tracepoint to allow use from idle
->       arm: Use _rcuidle for suspend/resume tracepoints
->       arm: Add _rcuidle tracepoints to allow clk_core_disable() use from idle
->       arm: Add _rcuidle suffix to allow rpm_idle() use from idle
->       arm: Add _rcuidle suffix to allow rpm_resume() to be called from idle
->       arm: Use _rcuidle suffix to allow clk_core_enable() to used from idle
-> 
->  arch/arm/kernel/smp.c             |  2 +-
->  arch/arm/mach-omap2/powerdomain.c |  9 +++++----
->  drivers/base/power/runtime.c      | 14 +++++++-------
->  drivers/clk/clk.c                 |  8 ++++----
->  4 files changed, 17 insertions(+), 16 deletions(-)
+I plan to queue this up in clk-renesas-for-v4.8.
 
-Just wondering, wouldn't it be better for Russell to pull/apply, as it appears to 
-be a mostly ARM patch-set?
+Thanks!
 
-Thanks,
+Geert Uytterhoeven (2):
+  clk: renesas: r8a7796: Add watchdog core clocks
+  clk: renesas: r8a7796: Add watchdog module clock
 
-	Ingo
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
