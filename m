@@ -1,51 +1,36 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  carlo@endlessm.com,  victor.wan@amlogic.com,  jerry.cao@amlogic.com,  xing.xu@amlogic.com
-Subject: Re: [PATCH 7/7] arm64: dts: gxbb clock controller
-References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
-	<1465518774-26924-8-git-send-email-mturquette@baylibre.com>
-Date: Tue, 14 Jun 2016 12:01:26 -0700
-In-Reply-To: <1465518774-26924-8-git-send-email-mturquette@baylibre.com>
-	(Michael Turquette's message of "Thu, 9 Jun 2016 17:32:54 -0700")
-Message-ID: <m260tbsigp.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: r8a7796: Add watchdog module clock
+Date: Mon, 27 Jun 2016 19:39:25 +0200
+Message-Id: <1467049165-7025-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
+References: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Michael Turquette <mturquette@baylibre.com> writes:
+Add the module clock for the Watchdog Timer (WDT) controller on the
+Renesas R-Car M3-W (r8a7796) SoC.
 
-> Add the clock controller node for the AmLogic GXBB machine.
->
-> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> index 832815d..3badfab 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> @@ -174,5 +174,12 @@
->  			#size-cells = <2>;
->  			ranges = <0x0 0x0 0x0 0xd0000000 0x0 0x200000>;
->  		};
-> +
-> +		clkc: clock-controller@c883c000 {
-> +			compatible = "amlogic,gxbb-clkc";
-> +			#clock-cells = <1>;
-> +			reg = <0x0 0xc883c000 0x0 0x3db>;
-> +		};
-> +
->  	};
->  };
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-minor nit: could you put this under the (recently added) hibus node (at
-offset 0).  See the DT in my for-next branch for reference:
-
-https://git.kernel.org/cgit/linux/kernel/git/khilman/linux-amlogic.git/log/?h=for-next
-
-Thanks,
-
-Kevin
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index ea9ed38943a3969c..c0dee762ed23bfc4 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -104,6 +104,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 
+ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
++	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
+ };
+ 
+-- 
+1.9.1
