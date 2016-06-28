@@ -1,50 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 17:48:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Roman Volkov <v1ron@mail.ru>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Roman Volkov <rvolkov@v1ros.org>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: Re: [PATCH v2 1/2] clk: vt8500: fix gcc-4.9 warnings
-Message-ID: <20160621004844.GK1521@codeaurora.org>
-References: <20160607215610.8724-1-v1ron@mail.ru>
- <20160607215610.8724-2-v1ron@mail.ru>
+Return-Path: <cwchoi00@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160607215610.8724-2-v1ron@mail.ru>
+Reply-To: cw00.choi@samsung.com
+In-Reply-To: <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
+References: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com> <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Tue, 28 Jun 2016 22:12:16 +0900
+Message-ID: <CAGTfZH0jv0C0VTjDr8ZWEaokyapTHHsHEUeRUSyeHgdBT_dW3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andi Shyti <andi@etezian.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>,
+	Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/08, Roman Volkov wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> This fixes some false positive warnings we get with older compiler
-> versions:
-> 
-> clk-vt8500.c: In function ‘wm8650_find_pll_bits’:
-> clk-vt8500.c:430:12: ‘best_div2’ may be used uninitialized in this function
-> clk-vt8500.c:429:12: ‘best_div1’ may be used uninitialized in this function
-> clk-vt8500.c:428:14: ‘best_mul’ may be used uninitialized in this function
-> clk-vt8500.c: In function ‘wm8750_find_pll_bits’:
-> clk-vt8500.c:509:12: ‘best_div2’ may be used uninitialized in this function
-> clk-vt8500.c:508:12: ‘best_div1’ may be used uninitialized in this function
-> clk-vt8500.c:507:14: ‘best_mul’ may be used uninitialized in this function
-> clk-vt8500.c: In function ‘wm8850_find_pll_bits’:
-> clk-vt8500.c:560:12: ‘best_div2’ may be used uninitialized in this function
-> clk-vt8500.c:559:12: ‘best_div1’ may be used uninitialized in this function
-> clk-vt8500.c:558:14: ‘best_mul’ may be used uninitialized in this function
-> 
-> As the local variables are only use for temporaries, we can just
-> as well assign the final values directly, which also makes the
-> code slightly shorter.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Roman Volkov <rvolkov@v1ros.org>
+Hi Andi,
+
+2016-06-27 22:03 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
+> enable SPI3 iosclk by using the CLK_IS_CRITICAL flag.
+
+s/iosclk/ioclk
+
+> There is no device which is supposed to enable this clock when
+> needed, therefore, the only way to use the SPI bus is to enable
+> it in boot time.
+>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
+>
+> Hi,
+>
+> V1 -> V2
+>
+> - the "sclk_spi3" doesn't need to be enabled in boot time as it
+>   is handled by the spi driver itself.
+>
+> - use the CLK_IS_CRITICAL flag for the ioclk
+>
+> Andi
+>
+>  drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index dcb4391..c33150e 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -1641,7 +1641,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>         GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
+>                         ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
+> -                       ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
+> +                       ENABLE_SCLK_PERIC, 20,
+> +                       CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
+>                         19, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
 
-Applied to clk-next
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Chanwoo Choi
