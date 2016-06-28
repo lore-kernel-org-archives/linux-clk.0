@@ -1,91 +1,54 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andi Shyti <andi.shyti@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 25/34] clk: s2mps11: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:24 -0700
-Message-Id: <20160601231533.9354-26-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"edubezval@gmail.com" <edubezval@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"wens@csie.org" <wens@csie.org>,
+	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20160628114640.GE5550@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
+	 <20160628101325.2522-3-icenowy@aosc.xyz> <20160628114640.GE5550@lukather>
+Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
+MIME-Version: 1.0
+Message-Id: <203181467122590@web5g.yandex.ru>
+Date: Tue, 28 Jun 2016 22:03:10 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
 
-Cc: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+28.06.2016, 19:46, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> Hi,
+>
+> Thanks for working on this.
+>
+> On Tue, Jun 28, 2016 at 06:13:23PM +0800, Icenowy Zheng wrote:
+>>  This patch adds support for the sun8iw3 thermal sensor on
+>>  Allwinner A23/33 SoCs.
+>>
+>>  Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+>
+> The IP is awfully similar to the A31's, which already has a driver
+> (drivers/input/touchscreen/sun4i-ts.c).
+>
+> There's no reason to add a new one here.
+>
+> Thanks,
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
- drivers/clk/clk-s2mps11.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index f8c83977c7fa..fbaa84a33c46 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -137,7 +137,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct s2mps11_clk *s2mps11_clks;
--	struct clk_onecell_data *clk_data;
-+	struct clk_hw_onecell_data *clk_data;
- 	unsigned int s2mps11_reg;
- 	int i, ret = 0;
- 	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
-@@ -147,15 +147,12 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (!s2mps11_clks)
- 		return -ENOMEM;
- 
--	clk_data = devm_kzalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
-+	clk_data = devm_kzalloc(&pdev->dev, sizeof(*clk_data) +
-+				sizeof(*clk_data->hws) * S2MPS11_CLKS_NUM,
-+				GFP_KERNEL);
- 	if (!clk_data)
- 		return -ENOMEM;
- 
--	clk_data->clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
--				sizeof(struct clk *), GFP_KERNEL);
--	if (!clk_data->clks)
--		return -ENOMEM;
--
- 	switch (hwid) {
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
-@@ -196,18 +193,18 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 			goto err_reg;
- 		}
- 
--		s2mps11_clks[i].lookup = clkdev_create(s2mps11_clks[i].clk,
-+		s2mps11_clks[i].lookup = clkdev_hw_create(&s2mps11_clks[i].hw,
- 					s2mps11_clks_init[i].name, NULL);
- 		if (!s2mps11_clks[i].lookup) {
- 			ret = -ENOMEM;
- 			goto err_reg;
- 		}
--		clk_data->clks[i] = s2mps11_clks[i].clk;
-+		clk_data->hws[i] = &s2mps11_clks[i].hw;
- 	}
- 
--	clk_data->clk_num = S2MPS11_CLKS_NUM;
--	of_clk_add_provider(s2mps11_clks->clk_np, of_clk_src_onecell_get,
--			clk_data);
-+	clk_data->num = S2MPS11_CLKS_NUM;
-+	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
-+			       clk_data);
- 
- 	platform_set_drvdata(pdev, s2mps11_clks);
- 
--- 
-2.7.4
+Or... should I split the PLL2 driver into another patch set?
