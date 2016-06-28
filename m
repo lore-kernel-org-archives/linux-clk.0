@@ -1,33 +1,42 @@
-Return-Path: <tglx@linutronix.de>
-Date: Thu, 9 Jun 2016 22:08:01 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Dong Aisheng <dongas86@gmail.com>
-cc: Shawn Guo <shawnguo@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    Stefan Agner <stefan@agner.ch>, mingo@redhat.com,
-    "kernel@pengutronix.de" <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
-    "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-In-Reply-To: <20160607070440.GA32573@shlinux2>
-Message-ID: <alpine.DEB.2.11.1606092204590.28031@nanos>
-References: <20160426012341.GB8870@tiger> <CAA+hA=QTNEAaMfjJoMMO5gPR8VPYBWYx=HZgjngUFJK4LxMp=g@mail.gmail.com> <1461663072.7839.17.camel@pengutronix.de> <CAA+hA=SSQJPbzbhCY7O8JaxiUgMDjG2ATQXsCW-X5zc2inC6kw@mail.gmail.com> <CAA+hA=Q5Un7Sib5QEvK4H2PH5qrySAkRR+=ofuaKxX_PCuT-Yw@mail.gmail.com>
- <20160427015835.GE30692@tiger> <CAA+hA=REqJ8JhmKt5_jCAaRTUy2E14ww_MqWSSLpNBKgnf=U9A@mail.gmail.com> <alpine.DEB.2.11.1604271212290.3941@nanos> <20160602145915.GA31124@shlinux2> <alpine.DEB.2.11.1606061448010.28031@nanos> <20160607070440.GA32573@shlinux2>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andi Shyti <andi@etezian.org>, Michael Turquette <mturquette@baylibre.com>
+Cc: andi.shyti@gmail.com, Jeffy Chen <jeffy.chen@rock-chips.com>, Xing Zheng <zhengxing@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: clk-rk3*: set CLK_IS_CRITICAL flag to critical clocks
+Date: Tue, 28 Jun 2016 18:32:30 +0200
+Message-ID: <2136865.gUkObTo8M5@phil>
+In-Reply-To: <20160628160922.GN424@jack.zhora.eu>
+References: <1467125137-25999-1-git-send-email-andi@etezian.org> <29356205.Gk5k6xKH6K@phil> <20160628160922.GN424@jack.zhora.eu>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 7 Jun 2016, Dong Aisheng wrote:
-> Then it may need introduce a lot changes and increase many new core APIs.
-> Is that a problem?
+Hi Andi,
 
-No. That's all better than each driver having broken workarounds. It's a
-common problem so it wants to be addressed at the core level. There you have a
-central point to do this and you can still catch abusers which call stuff from
-the wrong context. The hacks in the drivers don't allow that because they look
-at the context, i.e. irq disabled, instead of checking the system state.
+Am Mittwoch, 29. Juni 2016, 01:09:22 schrieb Andi Shyti:
+> > >  			RK2928_CLKSEL_CON(0), 14, 2, MFLAGS, 8, 5, DFLAGS),
+> > > 
+> > > -	GATE(ACLK_CPU, "aclk_cpu", "aclk_cpu_src", CLK_IGNORE_UNUSED,
+> > > +	GATE(ACLK_CPU, "aclk_cpu", "aclk_cpu_src",
+> > > +			CLK_IS_CRITICAL | CLK_IGNORE_UNUSED,
+> > 
+> > - you'll never need both critical and ignore_unused
+> 
+> Indeed I was unsure whether I should remove the
+> CLK_IGNORE_UNUSED, but then I decided to leave it because that's
+> basically what the driver is currently doing. Thanks!
+> 
+> > Happens in some more cases below, but otherwise looks ok ... as written
+> > in the cover-letter I'm just still trying to make up my mind if it's
+> > worth waiting for the handoff mechanism.
+> 
+> You mean something similar (*)?
 
-Thanks,
+I actually mean 
+https://lkml.org/lkml/2016/2/11/694
 
-	tglx
+which received additional comments somewhere and Mike said he wanted to 
+repost.
+
+
+Heiko
