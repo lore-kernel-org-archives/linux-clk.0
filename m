@@ -1,72 +1,51 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <andi.shyti@gmail.com>
+Return-Path: <andi.shyti@gmail.com>
+From: andi.shyti@gmail.com
+To: Heiko Stuebner <heiko@sntech.de>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 4/5] clk: qcom: ipq4019: Added the all frequencies for apps cpu
-Date: Tue, 21 Jun 2016 19:19:21 +0530
-Message-Id: <1466516962-18087-5-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
-References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+	Andi Shyti <andi@etezian.org>
+Subject: [PATCH 0/2] use the CLK_IS_CRITICAL flag for critical clocks
+Date: Tue, 28 Jun 2016 17:45:35 +0300
+Message-Id: <1467125137-25999-1-git-send-email-andi@etezian.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The APPS CPU clock does not contain all the frequencies in its
-frequency table so this patch adds the same.
+From: Andi Shyti <andi@etezian.org>
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq4019.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+Hi,
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 0bef36d..df159c2 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -554,11 +554,21 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
- };
- 
- static const struct freq_tbl ftbl_gcc_apps_clk[] = {
--	F(48000000, P_XO,	   1, 0, 0),
--	F(200000000, P_FEPLL200,   1, 0, 0),
--	F(500000000, P_FEPLL500,   1, 0, 0),
--	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
--	{ }
-+	{48000000, P_XO,          1, 0, 0},
-+	{200000000, P_FEPLL200,   1, 0, 0},
-+	{380000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{409000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{444000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{484000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{500000000, P_FEPLL500,   1, 0, 0},
-+	{507000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{532000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{560000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{592000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{626000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{666000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{710000000, P_DDRPLLAPSS, 1, 0, 0},
-+	{}
- };
- 
- static struct clk_rcg2 apps_clk_src = {
+this patchset is the first of a series and it aims to remove
+the handling of critical clock on the rockchip clock drivers.
+
+Patch 32b9b10961860860268961d9aad0c56a73018c37 has added a
+generic clock critical handling that can be used from the
+drivers.
+
+Because I'm not expert in the clock framework, I want to check if
+this is fine and, if so, I will fire the other patches.
+
+Thanks,
+Andi
+
+Andi Shyti (2):
+  clk: clk-rk3*: set CLK_IS_CRITICAL flag to critical clocks
+  clk: rockchip: remove unused rockchip_clk_protect_critical function
+
+ drivers/clk/rockchip/clk-rk3036.c |  18 ++-----
+ drivers/clk/rockchip/clk-rk3188.c |  25 +++-------
+ drivers/clk/rockchip/clk-rk3228.c |  17 ++-----
+ drivers/clk/rockchip/clk-rk3288.c |  21 +++-----
+ drivers/clk/rockchip/clk-rk3368.c |  22 ++-------
+ drivers/clk/rockchip/clk-rk3399.c | 101 ++++++++++++++++----------------------
+ drivers/clk/rockchip/clk.c        |  14 ------
+ drivers/clk/rockchip/clk.h        |   1 -
+ 8 files changed, 69 insertions(+), 150 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
