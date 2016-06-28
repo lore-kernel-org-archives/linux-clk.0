@@ -1,40 +1,36 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
-To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
- <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
- <576392B1.9040801@samsung.com> <5763905F.4020504@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <576394CC.7010101@samsung.com>
-Date: Fri, 17 Jun 2016 08:12:28 +0200
-MIME-version: 1.0
-In-reply-to: <5763905F.4020504@nvidia.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 28 Jun 2016 16:27:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Joe Perches <joe@perches.com>
+Subject: Re: [git pull] clk: renesas: Add support for R-Car M3-W
+Message-ID: <20160628232720.GG1521@codeaurora.org>
+References: <1465212804-21391-1-git-send-email-geert+renesas@glider.be>
+ <20160621005112.GM1521@codeaurora.org>
+ <CAMuHMdWztj3HGVMT9Lh2Y8kU7TGqB0J4-eU4e2it2bcti2vxtQ@mail.gmail.com>
+ <20160628171318.GX1521@codeaurora.org>
+ <CAMuHMdWp_x3s+vE8kAnJem1PJY9h325XOBefV2RQhN=gQod8uA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdWp_x3s+vE8kAnJem1PJY9h325XOBefV2RQhN=gQod8uA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/17/2016 07:53 AM, Laxman Dewangan wrote:
+On 06/28, Geert Uytterhoeven wrote:
+> It is not; there's just a second pull request with more commits on top.
 > 
-> On Friday 17 June 2016 11:33 AM, Krzysztof Kozlowski wrote:
->> On 06/16/2016 03:23 PM, Laxman Dewangan wrote:
->>>   config COMMON_CLK_MAX77686
->>> -    tristate "Clock driver for Maxim 77686/77802 MFD"
->>> -    depends on MFD_MAX77686
->>> +    tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
->> You missed Javier's comment here. Just
->> "Maxim 77686/77802/77620"
+> I think you best pull this one first, as git will use the summary from the
+> signed tag. The signed tag of the second pull request only summarizes
+> the additions, compared to the first tag.
 > 
-> Sigh.. did not see this comment when going one by one.. really missed..
-> I will collect all Reviewed/ack/tested and will post V3 with fixing this.
 
-No problem.
+Ok. Pulled into clk-next. Thanks.
 
-I think the device names could be in numerical order, so:
-Maxim 77620/77686/77802
-
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
