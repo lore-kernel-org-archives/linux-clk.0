@@ -1,157 +1,73 @@
-Return-Path: <wens@csie.org>
+Return-Path: <jorge.ramirez-ortiz@linaro.org>
+Return-Path: <jorge.ramirez-ortiz@linaro.org>
+Subject: Re: [PATCH 2/2] clk: hi6220: initialize UART1 clock to 150MHz
+To: Guodong Xu <guodong.xu@linaro.org>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, xinliang.liu@linaro.org, john.stultz@linaro.org
+References: <1467109902-17625-1-git-send-email-guodong.xu@linaro.org>
+ <1467109902-17625-2-git-send-email-guodong.xu@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <57726602.1060505@linaro.org>
+Date: Tue, 28 Jun 2016 13:56:50 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160601191932.GD4908@lukather>
-References: <1462737711-10017-1-git-send-email-maxime.ripard@free-electrons.com>
- <1462737711-10017-16-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v67RUCZfFaXnM2LxomV5DBSVApXHHs0noiNEbReOh_3W9w@mail.gmail.com> <20160601191932.GD4908@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 3 Jun 2016 14:42:12 +0800
-Message-ID: <CAGb2v66JDrEDLmTKS6CLojuKzd7W15GcPd7O+hKRkrdT7E7UQA@mail.gmail.com>
-Subject: Re: [PATCH 15/16] clk: sunxi-ng: Add H3 clocks
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1467109902-17625-2-git-send-email-guodong.xu@linaro.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On Thu, Jun 2, 2016 at 3:19 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Chen-Yu,
+On 06/28/2016 12:31 PM, Guodong Xu wrote:
+> From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 >
-> On Tue, May 31, 2016 at 12:15:28AM +0800, Chen-Yu Tsai wrote:
->> On Mon, May 9, 2016 at 4:01 AM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > Add the list of clocks and resets found in the H3 CCU.
->> >
->> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> > ---
->> >  drivers/clk/sunxi-ng/Makefile        |   2 +
->> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 757 +++++++++++++++++++++++++++++++++++
->> >  include/dt-bindings/clock/sun8i-h3.h | 162 ++++++++
->> >  include/dt-bindings/reset/sun8i-h3.h | 103 +++++
->> >  4 files changed, 1024 insertions(+)
->> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> >  create mode 100644 include/dt-bindings/clock/sun8i-h3.h
->> >  create mode 100644 include/dt-bindings/reset/sun8i-h3.h
->> >
->> > diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
->> > index c794f57b6fb1..67ff6a92f124 100644
->> > --- a/drivers/clk/sunxi-ng/Makefile
->> > +++ b/drivers/clk/sunxi-ng/Makefile
->> > @@ -13,3 +13,5 @@ obj-y += ccu_nkmp.o
->> >  obj-y += ccu_nm.o
->> >  obj-y += ccu_p.o
->> >  obj-y += ccu_phase.o
->> > +
->> > +obj-y += ccu-sun8i-h3.o
->> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> > new file mode 100644
->> > index 000000000000..5ce699e95c32
->> > --- /dev/null
->> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> > @@ -0,0 +1,757 @@
->> > +/*
->> > + * Copyright (c) 2016 Maxime Ripard. All rights reserved.
->> > + *
->> > + * This software is licensed under the terms of the GNU General Public
->> > + * License version 2, as published by the Free Software Foundation, and
->> > + * may be copied, distributed, and modified under those terms.
->> > + *
->> > + * This program is distributed in the hope that it will be useful,
->> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> > + * GNU General Public License for more details.
->> > + */
->> > +
->> > +#include <linux/clk-provider.h>
->> > +
->> > +#include <dt-bindings/clock/sun8i-h3.h>
->> > +#include <dt-bindings/reset/sun8i-h3.h>
->> > +
->> > +#include "ccu_common.h"
->> > +#include "ccu_reset.h"
->> > +
->> > +#include "ccu_div_table.h"
->> > +#include "ccu_factor.h"
->> > +#include "ccu_fixed_factor.h"
->> > +#include "ccu_gate.h"
->> > +#include "ccu_m.h"
->> > +#include "ccu_mp.h"
->> > +#include "ccu_nk.h"
->> > +#include "ccu_nkm.h"
->> > +#include "ccu_nkmp.h"
->> > +#include "ccu_nm.h"
->> > +#include "ccu_p.h"
->> > +#include "ccu_phase.h"
->> > +
->> > +static struct ccu_nkmp pll_cpux_clk = {
->> > +       .enable         = BIT(31),
->> > +       .lock           = BIT(28),
->> > +
->> > +       .m              = SUNXI_CLK_FACTOR(0, 2),
->> > +       .k              = SUNXI_CLK_FACTOR(4, 2),
->> > +       .n              = SUNXI_CLK_FACTOR(8, 5),
->> > +       .p              = SUNXI_CLK_FACTOR(16, 2),
->>
->> We should find a way to specify a table for p.
+> Early at boot, during the sys_clk initialization, make sure UART1 uses
+> the higher frequency clock.
 >
-> A table for P? Why?
+> This enables support for higher baud rates (up to 3Mbps) required to
+> support faster bluetooth transfers.
 >
->> > +
->> > +       .common         = {
->> > +               .reg            = 0x000,
->> > +               .features       = CCU_FEATURE_GATE | CCU_FEATURE_LOCK,
->> > +               .hw.init        = SUNXI_HW_INIT("pll-cpux",
->> > +                                               "osc24M",
->>
->> osc24M is an outside reference. Shouldn't we use put it in a "clocks"
->> property in the DT, and use of_clk_get_parent_name()?
->>
->> osc24M can be controlled from the PRCM on other chips. I suspect the
->> same with the H3. osc32k might also be from the PRCM.
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+> ---
+>   drivers/clk/hisilicon/clk-hi6220.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
 >
-> I was discussing exactly this the other day with Mike. He has a bunch
-> of patches to address exactly that issue. He plans on posting it and
-> merge it by 4.8. Until then, we should rely on the hardcoded clock
-> string like it's done there, and we should obviously add the clocks in
-> the DT node for when we will actually use them.
+> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+> index a36ffcb..55bd9bb 100644
+> --- a/drivers/clk/hisilicon/clk-hi6220.c
+> +++ b/drivers/clk/hisilicon/clk-hi6220.c
+> @@ -11,6 +11,7 @@
+>    */
+>   
+>   #include <linux/kernel.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/clkdev.h>
+>   #include <linux/io.h>
+> @@ -70,10 +71,10 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_ao[] __initdata = {
+>   	{ HI6220_UART0_PCLK,  "uart0_pclk",  "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 24, 0, },
+>   };
+>   
+> +static struct hisi_clock_data *clk_data_ao;
+> +
+>   static void __init hi6220_clk_ao_init(struct device_node *np)
+>   {
+> -	struct hisi_clock_data *clk_data_ao;
+> -
+>   	clk_data_ao = hisi_clk_init(np, HI6220_AO_NR_CLKS);
+>   	if (!clk_data_ao)
+>   		return;
+> @@ -192,6 +193,13 @@ static void __init hi6220_clk_sys_init(struct device_node *np)
+>   
+>   	hi6220_clk_register_divider(hi6220_div_clks_sys,
+>   			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
+> +
+> +	if (!clk_data_ao)
+> +		return;
+> +
+> +	/* enable high speed clock on UART1 mux */
+> +	clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
+> +			clk_data_ao->clk_data.clks[HI6220_150M]);
+>   }
+>   CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
+>   
 
-OK. Let's wait and see.
-
->
->> > +                                               &ccu_nkmp_ops,
->> > +                                               0),
->> > +       },
->> > +};
->> > +
-
-[...]
-
->> > +static struct ccu_nkm pll_ddr_clk = {
->> > +       .enable         = BIT(31),
->> > +       .lock           = BIT(28),
->> > +
->> > +       .n              = SUNXI_CLK_FACTOR(8, 5),
->> > +       .k              = SUNXI_CLK_FACTOR(4, 2),
->> > +       .m              = SUNXI_CLK_FACTOR(0, 2),
->>
->> We need a special "update" bit (bit 20) for this clock, otherwise changes
->> don't really take effect.
->
-> Yeah, I know, but I feel like it's a feature here, since Linux should
-> never modify that clock anyway.
->
-> I can add a comment though.
-
-Maybe we should do a read-only variant, or a feature flag?
-
-[...]
-
-Thanks
-ChenYu
+please bear with me on this. it does need rework.
