@@ -1,69 +1,53 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v2 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI
- clocks
-Date: Mon, 27 Jun 2016 22:03:13 +0900
-Message-id: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 27 Jun 2016 23:57:12 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCHv2 04/28] ARM: OMAP2+: hwmod: use new ti_clk_get
+ API to search for clock handles
+Message-ID: <20160628065712.GC28140@atomide.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+ <1465844702-12200-5-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1465844702-12200-5-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
-
-The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
-Use the CLK_IS_CRITICAL flag instead, which enables the clock line
-during boot time.
-
-While none of the SCLK_SPI need to be alive all the time as that
-clock is handled by the SPI driver as a busclk whenever needed.
-
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
 
 Hi,
 
-this patch comes after Tomasz's review where he discouraged from
-using the CLK_IGNORE_UNUSED flag. Therefore I added one more
-patch to the original where I remove that flag for the SPI1
-whenever not necessary while I replace it with the
-CLK_IS_CRITICAL for the ioclk.
+* Tero Kristo <t-kristo@ti.com> [160613 12:07]:
+> The new API avoids the need to add clock aliases for most of the clocks,
+> should use of it is preferred. Many of the existing clock aliases are
+> only created because of hwmod data.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+> index 83cb527..0ea869c 100644
+> --- a/arch/arm/mach-omap2/omap_hwmod.c
+> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+> @@ -786,7 +786,7 @@ static int _init_main_clk(struct omap_hwmod *oh)
+>  	if (!oh->main_clk)
+>  		return 0;
+>  
+> -	oh->_clk = clk_get(NULL, oh->main_clk);
+> +	oh->_clk = ti_clk_get(oh->main_clk);
+>  	if (IS_ERR(oh->_clk)) {
+>  		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
+>  			oh->name, oh->main_clk);
 
-This patch makes this driver the first using the "critical"
-functionality :)
+After thinking about this for a while I think code outside TI specific
+clock implementation should use just clk_get(). Otherwise we create more
+dependencies to move code to live under drivers subdirectory.
 
-Andi
+Can't we have clk_get() call a SoC specific helper function if clock
+is not found?
 
- drivers/clk/samsung/clk-exynos5433.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Regards,
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 128527b..dcb4391 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1655,7 +1655,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
- 			ENABLE_SCLK_PERIC, 12,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
- 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-@@ -1670,7 +1670,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
--			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
- 			3, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
--- 
-2.8.1
+Tony
