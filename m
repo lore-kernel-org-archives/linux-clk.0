@@ -1,83 +1,48 @@
-Return-Path: <tomasz.figa@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 28 Jun 2016 10:26:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] clk: Provide notifier stubs when !COMMON_CLK
+Message-ID: <20160628172653.GB1521@codeaurora.org>
+References: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20160620054157.GA6498@samsunx.samsung>
-References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
- <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com>
- <20160619055921.GA424@jack.zhora.eu> <CGME20160619134424epcas1p31493dfce45a8c817bc353702a07fa4bb@epcas1p3.samsung.com>
- <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com> <20160620054157.GA6498@samsunx.samsung>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Mon, 20 Jun 2016 18:00:56 +0900
-Message-ID: <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag
- for SPI3 related clocks
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-06-20 14:41 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
-> Hi Tomasz,
->
->> >> > The SPI 3 bus uses two clocks, a bus clock and an input clock.
->> >> > Do not disable the clocks when unused in order to allow access to
->> >> > the SPI 3 device.
->> >>
->> >> If unused, why would access to SPI 3 device needed?
->> >
->> > because next I will submit a small driver which uses the SPI3.
->> > Actually in the exynos5433 boards all the SPI are used but not all
->> > the drivers are ported to mainline.
->>
->> Then shouldn't the driver request the clocks and enable them? Or I'm
->> missing something obvious? :)
->
-> the reason is that...
->
-> [ from the patch ]
->
->>         GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
->> -                       ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
->> +                       ENABLE_SCLK_PERIC, 20,
->> +                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
->
-> ... the sclk_ioclk_spi3 is new in exynos5433 and there is no
-> implementation for enabling/disabling that particular clock...
+On 06/28, Krzysztof Kozlowski wrote:
+> The clk notifier symbols are hidden by COMMON_CLK.  However on some
+> platforms HAVE_CLK might be set while COMMON_CLK not which leads to
+> compile test build errors like:
+> 
+> $ make.cross ARCH=sh
+>    drivers/devfreq/tegra-devfreq.c: In function 'tegra_actmon_rate_notify_cb':
+> >> drivers/devfreq/tegra-devfreq.c:391:16: error: 'POST_RATE_CHANGE' undeclared (first use in this function)
+>      if (action != POST_RATE_CHANGE)
+>                    ^
+>    drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_probe':
+> >> drivers/devfreq/tegra-devfreq.c:654:8: error: implicit declaration of function 'clk_notifier_register' [-Werror=implicit-function-declaration]
+>      err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
+>            ^
+> 
+> Export the macros and data type declarations outside of COMMON_CLK ifdef
+> and provide stubs to fix the compile testing.
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
 
-I'm not convinced that it's a good reason to make boards on which SPI3
-is unused not gate the clock by default, then. The correct solution
-would be to make the SPI driver request this clock and enable it.
+Ok. Did you want some stable branch to pull this in and base your
+use case on?
 
->
->>         GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
->> -                       18, CLK_SET_RATE_PARENT, 0),
->> +                       18, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
->
-> ... while in this case your question makes sense, but it depends
-> on which clock the device (s3c64xx) is requesting (from the DTS).
-> In any case, I kept it consistent with the SPI1, which falls in
-> the same case, as in mainline we don't have any DTS for
-> exynos5433 (yet!).
-
-Same here.
-
-In general CLK_IGNORE_UNUSED should be avoided, because the semantics
-of CLK_IGNORE_UNUSED are really weak and protect only from
-clk_disable_unused(). It doesn't cause the clock to be enabled if it
-was disabled at boot-up and it doesn't cause its parents to be enabled
-(not even stay enabled if they don't have CLK_IGNORE_UNUSED, but have
-gating capability). The only reasonable use case for it that I can
-think of now is a display controller that needs certain clocks to
-remain running to keep showing something on the screen until the
-proper driver is loaded and takes over.
-
-Unfortunately I have to NAK this patch. Please add proper support for
-them to the SPI driver.
-
-Best regards,
-Tomasz
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
