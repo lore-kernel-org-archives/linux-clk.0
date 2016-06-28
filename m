@@ -1,57 +1,53 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH 08/11] clk: imx6q: fix pll clock parents
-Date: Wed, 8 Jun 2016 22:33:37 +0800
-Message-ID: <1465396420-27064-8-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ "Jean-Francois Moine" <moinejf@free.fr>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160628204502.GG5550@lukather>
+Cc: "Emilio Lopez" <emilio@elopez.com.ar>, "Chen-Yu Tsai" <wens@csie.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sunxi@googlegroups.com
+References: <cover.1467135898.git.moinejf@free.fr>
+ <a55dc5d1a9f02dc4d71d5c21064bffebe5a7b149.1467135898.git.moinejf@free.fr>
+ <20160628204502.GG5550@lukather>
+Message-ID: <146715247912.89261.8162176265913264908@resonance>
+Subject: Re: [PATCH 1/3] clk: sunxi: Add a driver for the CCU
+Date: Tue, 28 Jun 2016 15:21:19 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-pllx_bypass_src mux shouldn't be the parent of pllx clock
-since it's only valid when when pllx BYPASS bit is set.
-Thus it is actually one parent of pllx_bypass only.
+Quoting Maxime Ripard (2016-06-28 13:45:02)
+> What's the point of this, if we're not using (or exposing for that
+> matter) any of it?
+> =
 
-Instead, pllx parent should be fixed to osc according to
-reference manual.
-Other plls have the same issue.
+> I'm sorry, but the whole point of the initial serie was to rework and
+> simplify things, precisely because dealing with the clk_factors code
+> was just too difficult nowadays. And this doesn't solve anything on
+> that aspect.
+> =
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx6q.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> We came with an approach that have all the maintainers involved
+> agreeing on it, I don't see why we should start over. There's some
+> useful features there (like tracing). But it's something that can be
+> added, and should be done differently anyway.
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 02e18182fcb5..89bbfc1be476 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -192,13 +192,13 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	clk[IMX6QDL_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 2, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 
- 	/*                                    type               name    parent_name        base         div_mask */
--	clk[IMX6QDL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
--	clk[IMX6QDL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
--	clk[IMX6QDL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "pll3_bypass_src", base + 0x10, 0x3);
--	clk[IMX6QDL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
--	clk[IMX6QDL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
--	clk[IMX6QDL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
--	clk[IMX6QDL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "pll7_bypass_src", base + 0x20, 0x3);
-+	clk[IMX6QDL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-+	clk[IMX6QDL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-+	clk[IMX6QDL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-+	clk[IMX6QDL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-+	clk[IMX6QDL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-+	clk[IMX6QDL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-+	clk[IMX6QDL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
- 
- 	clk[IMX6QDL_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
- 	clk[IMX6QDL_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
--- 
-1.9.1
+Yes, let's not delay Maxime's work any longer. Stephen and I have
+requested these changes to the sunxi clock drivers for a long time and
+now we have them. I intend to merge Maxime's v3 once it addresses the
+last round of review questions.
+
+Regards,
+Mike
+
+> =
+
+> Maxime
+> =
+
+> -- =
+
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
