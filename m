@@ -1,62 +1,61 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 0/5] clk: Combine MAX77686 and MAX77802 driver and extend for MAX77620
-Date: Wed, 15 Jun 2016 19:43:33 +0530
-Message-ID: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: rui.zhang@intel.com,
+	edubezval@gmail.com,
+	robh+dt@kernel.org,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	emilio@elopez.com.ar
+Cc: mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [RFC PATCH 2/5] dt: bindings: add bindings for allwinner a23/33 ths
+Date: Tue, 28 Jun 2016 18:13:22 +0800
+Message-Id: <20160628101325.2522-2-icenowy@aosc.xyz>
+In-Reply-To: <20160628101325.2522-1-icenowy@aosc.xyz>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock IP used on the Maxim PMICs max77686 and max77802 are
-same. The configuration of clock register is also same except
-the number of clocks.
-    
-Part of common code utilisation, there is 3 files for these chips
-clock driver, one for common and two files for driver registration.
-    
-Combine both drivers into single file and move common code into
-same common file reduces the 2 files and make max77686 and max77802
-clock driver in single fine. This driver does not depends on the
-parent driver structure. The regmap handle is acquired through
-regmap APIs for the register access.
+Document the THS on A23/33 SoCs.
 
-After comining the driver and DT files, extend the support to MAX77620.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ .../devicetree/bindings/thermal/sun8iw3-thermal.txt  | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt
 
-
-This series is based on discussion from the series
-	clk: max77620: Add clock driver for MAX77620/MAX20024
-On this series, it is proposed to combine all files together.
-
-
-Laxman Dewangan (5):
-  clk: max77686: Combine Maxim max77686 and max77802 driver
-  clk: Combine DT binding doc for max77686 and max77802
-  clk: max77686: Add DT binding details for PMIC MAX77620
-  clk: max77686: Add support for MAX77620 clocks
-  ARM: config: Get rid of config COMMON_CLK_MAX77802
-
- .../devicetree/bindings/clock/maxim,max77686.txt   | 108 +++++++--
- .../devicetree/bindings/clock/maxim,max77802.txt   |  44 ----
- arch/arm/configs/exynos_defconfig                  |   1 -
- arch/arm/configs/multi_v7_defconfig                |   1 -
- drivers/clk/Kconfig                                |  18 +-
- drivers/clk/Makefile                               |   2 -
- drivers/clk/clk-max-gen.c                          | 194 ----------------
- drivers/clk/clk-max-gen.h                          |  32 ---
- drivers/clk/clk-max77686.c                         | 257 +++++++++++++++++++--
- drivers/clk/clk-max77802.c                         |  96 --------
- include/dt-bindings/mfd/max77620.h                 |   4 +
- 11 files changed, 335 insertions(+), 422 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
- delete mode 100644 drivers/clk/clk-max-gen.c
- delete mode 100644 drivers/clk/clk-max-gen.h
- delete mode 100644 drivers/clk/clk-max77802.c
-
+diff --git a/Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt b/Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt
+new file mode 100644
+index 0000000..0cdcb9a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/sun8iw3-thermal.txt
+@@ -0,0 +1,20 @@
++* Thermal Sensor (THS) on Allwinner sun8i A23/33 SoCs
++
++Required properties:
++- compatible : should be "allwinner,sun8i-<name>-ths"
++   "allwinner,sun8i-a23-ths": found on A23 SoCs
++   "allwinner,sun8i-a33-ths": found on A33 SoCs
++- reg : physical base address of the controller and length of memory mapped
++	region.
++- clocks : Must contain an entry for each entry in clock-names.
++- clock-names : Shall be "pll2", since the THS on A23/33 is using audio PLL (PLL2).
++- #thermal-sensor-cells : Should be 0. See ./thermal.txt for a description.
++
++Example:
++ths: ths@01c25000 {
++	#thermal-sensor-cells = <0>;
++	compatible = "allwinner,sun8i-a23-ths";
++	reg = <0x01c25000 0x44>;
++	clocks = <&pll2 0>;
++	clock-names = "pll2";
++};
 -- 
-2.1.4
+2.9.0
