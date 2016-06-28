@@ -1,47 +1,118 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 3/7] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Thu, 30 Jun 2016 17:13:34 +0300
-Message-ID: <1467296018-25086-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
-References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <moinejf@free.fr>
+Message-Id: <96c1b4e0bb74e3c8a543975f0beb6f057d034323.1467135898.git.moinejf@free.fr>
+In-Reply-To: <cover.1467135898.git.moinejf@free.fr>
+References: <cover.1467135898.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Tue, 28 Jun 2016 19:22:50 +0200
+Subject: [PATCH 3/3] dt: sun8i: Define the clocks of the A83T
+To: Emilio Lopez <emilio@elopez.com.ar>,
+    Maxime Ripard <maxime.ripard@free-electrons.com>,
+    Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+    Michael Turquette <mturquette@baylibre.com>,
+    linux-arm-kernel@lists.infradead.org,
+    linux-clk@vger.kernel.org,
+    devicetree@vger.kernel.org,
+    linux-sunxi@googlegroups.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
+Change the clock definition using the CCU.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
 ---
- include/linux/clk/ti.h | 4 ----
- 1 file changed, 4 deletions(-)
+ Documentation/devicetree/bindings/clock/sunxi.txt |  7 ++++---
+ arch/arm/boot/dts/sun8i-a83t.dtsi                 | 16 ++++++++++++----
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 6110fe0..07308db 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -145,8 +143,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 8f7619d..8e1f832 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -61,7 +61,6 @@ Required properties:
+ 	"allwinner,sun9i-a80-apb1-gates-clk" - for the APB1 gates on A80
+ 	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
+ 	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
+-	"allwinner,sun8i-a83t-bus-gates-clk" - for the bus gates on A83T
+ 	"allwinner,sun8i-h3-bus-gates-clk" - for the bus gates on H3
+ 	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
+ 	"allwinner,sun4i-a10-display-clk" - for the display clocks on the A10
+@@ -87,6 +86,7 @@ Required properties:
+ 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
+ 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
+ 	"allwinner,sun6i-a31-display-clk" - for the display clocks
++	"allwinner,sun8i-a83t-ccu" - for the CCU clocks/resets on A83T
+ 
+ Required properties for all clocks:
+ - reg : shall be the control register address for the clock.
+@@ -98,12 +98,13 @@ Required properties for all clocks:
+ 	"allwinner,*-gates-clk", "allwinner,sun4i-pll5-clk",
+ 	"allwinner,sun4i-pll6-clk", "allwinner,sun6i-a31-pll6-clk",
+ 	"allwinner,*-usb-clk", "allwinner,*-mmc-clk",
+-	"allwinner,*-mmc-config-clk"
++	"allwinner,*-mmc-config-clk",
++	"allwinner,*-ccu"
+ - clock-output-names : shall be the corresponding names of the outputs.
+ 	If the clock module only has one output, the name shall be the
+ 	module name.
+ 
+-And "allwinner,*-usb-clk" clocks also require:
++"allwinner,*-usb-clk" and "allwinner,*-ccu" clocks also require:
+ - reset-cells : shall be set to 1
+ 
+ The "allwinner,sun4i-a10-ve-clk" clock also requires:
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index d3473f8..6e0acca 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -45,9 +45,10 @@
+ 
+ #include "skeleton.dtsi"
+ 
++#include <dt-bindings/clock/sun8i-a83t.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+-
+ #include <dt-bindings/pinctrl/sun4i-a10.h>
++#include <dt-bindings/reset/sun8i-a83t.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -138,13 +139,13 @@
+ 			clock-output-names = "osc16M";
+ 		};
+ 
+-		osc16Md512: osc16Md512_clk {
++		osc32k: osc32k_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-factor-clock";
+ 			clock-div = <512>;
+ 			clock-mult = <1>;
+ 			clocks = <&osc16M>;
+-			clock-output-names = "osc16M-d512";
++			clock-output-names = "osc32k";
+ 		};
+ 	};
+ 
+@@ -154,13 +155,20 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		ccu: clock@01c20000 {
++			compatible = "allwinner,sun8i-a83t-ccu";
++			reg = <0x01c20000 0x400>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		pio: pinctrl@01c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu CLK_BUS_PIO>;
+ 			gpio-controller;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
 -- 
-1.9.1
+2.9.0
