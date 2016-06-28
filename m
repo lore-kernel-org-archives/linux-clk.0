@@ -1,49 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34330 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751140AbcFNMAs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2016 08:00:48 -0400
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/3] clk: tegra: Disable spread spectrum on pll_d2
-Date: Tue, 14 Jun 2016 14:00:42 +0200
-Message-Id: <20160614120044.30734-1-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"edubezval@gmail.com" <edubezval@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"wens@csie.org" <wens@csie.org>,
+	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20160628114640.GE5550@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
+	 <20160628101325.2522-3-icenowy@aosc.xyz> <20160628114640.GE5550@lukather>
+Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
+MIME-Version: 1.0
+Message-Id: <60021467122182@web19j.yandex.ru>
+Date: Tue, 28 Jun 2016 21:56:22 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
 
-Enabling spread spectrum on pll_d2 can lead to issues with display
-modes. HDMI monitors, for example, would report "Signal Error" and
-some modes driven over DisplayPort would generate fuzzy horizontal
-bands.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+28.06.2016, 19:46, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> Hi,
+>
+> Thanks for working on this.
+>
+> On Tue, Jun 28, 2016 at 06:13:23PM +0800, Icenowy Zheng wrote:
+>>  This patch adds support for the sun8iw3 thermal sensor on
+>>  Allwinner A23/33 SoCs.
+>>
+>>  Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+>
+> The IP is awfully similar to the A31's, which already has a driver
+> (drivers/input/touchscreen/sun4i-ts.c).
+>
+> There's no reason to add a new one here.
+>
+> Thanks,
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 6bd1235d09b1..cd141a364c9d 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1914,8 +1914,9 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.sdm_din_mask = PLLA_SDM_DIN_MASK,
- 	.sdm_ctrl_reg = PLLD2_MISC1,
- 	.sdm_ctrl_en_mask = PLLD2_SDM_EN_MASK,
--	.ssc_ctrl_reg = PLLD2_MISC1,
--	.ssc_ctrl_en_mask = PLLD2_SSC_EN_MASK,
-+	/* disable spread-spectrum for pll_d2 */
-+	.ssc_ctrl_reg = 0,
-+	.ssc_ctrl_en_mask = 0,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllss_nmp,
--- 
-2.8.3
-
+The reason for a dedicate driver is:
+1. This IP have only thermal function, so it's not suitable to use a driver at drivers/input/touchscreen/.
+2. Control Register are quite different.
+3. This IP uses AUDIO PLL (PLL2) as its clock!
