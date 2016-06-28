@@ -1,64 +1,86 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/2] clk: max77620: Add DT binding doc for MAX77620 clock
-Date: Fri, 10 Jun 2016 15:42:15 +0530
-Message-ID: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: Provide notifier stubs when !COMMON_CLK
+Date: Tue, 28 Jun 2016 08:20:33 +0200
+Message-id: <1467094833-7553-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-MAXIM MAX77620 is the power management IC with multiple DCDC/LDO
-regulators, RTC, GPIOs, Watchdog, 32KHz clock source etc.
+The clk notifier symbols are hidden by COMMON_CLK.  However on some
+platforms HAVE_CLK might be set while COMMON_CLK not which leads to
+compile test build errors like:
 
-Add DT binding doc for the details of the properties for MAX76620
-clocks.
+$ make.cross ARCH=sh
+   drivers/devfreq/tegra-devfreq.c: In function 'tegra_actmon_rate_notify_cb':
+>> drivers/devfreq/tegra-devfreq.c:391:16: error: 'POST_RATE_CHANGE' undeclared (first use in this function)
+     if (action != POST_RATE_CHANGE)
+                   ^
+   drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_probe':
+>> drivers/devfreq/tegra-devfreq.c:654:8: error: implicit declaration of function 'clk_notifier_register' [-Werror=implicit-function-declaration]
+     err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
+           ^
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Export the macros and data type declarations outside of COMMON_CLK ifdef
+and provide stubs to fix the compile testing.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
 ---
- .../devicetree/bindings/clock/clk-max77620.txt     | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/clk-max77620.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-max77620.txt b/Documentation/devicetree/bindings/clock/clk-max77620.txt
-new file mode 100644
-index 0000000..cda6ef7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/clk-max77620.txt
-@@ -0,0 +1,31 @@
-+* Maxim MAX77620 32KHz clocks *
+Reported when testing patch [1] on ARCH=sh. I don't have the sh cross
+compile toolchain so I cannot verify whether this fixes reported issue.
+
+[1] http://www.gossamer-threads.com/lists/linux/kernel/2471798
+---
+ include/linux/clk.h | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 834179f3fa72..c83b8a9ffc14 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -20,8 +20,6 @@ struct device;
+ 
+ struct clk;
+ 
+-#ifdef CONFIG_COMMON_CLK
+-
+ /**
+  * DOC: clk notifier callback types
+  *
+@@ -61,6 +59,8 @@ struct clk_notifier {
+ 	struct list_head		node;
+ };
+ 
++#ifdef CONFIG_COMMON_CLK
 +
-+Maxim Power Management IC (PMIC) has clock output pins for 32KHz.
+ /**
+  * struct clk_notifier_data - rate data to pass to the notifier callback
+  * @clk: struct clk * being changed
+@@ -140,6 +140,18 @@ bool clk_is_match(const struct clk *p, const struct clk *q);
+ 
+ #else
+ 
++static inline int clk_notifier_register(struct clk *clk,
++					struct notifier_block *nb)
++{
++	return -ENOTSUPP;
++}
 +
-+This binding uses the common clock binding ./clock-bindings.txt.
++static inline int clk_notifier_unregister(struct clk *clk,
++					  struct notifier_block *nb)
++{
++	return -ENOTSUPP;
++}
 +
-+Required Properties:
-+--------------------
-+
-+-#clock-cells : shall be set to 0.
-+
-+Example:
-+
-+#include <dt-bindings/mfd/max77620.h>
-+...
-+
-+i2c@7000d000 {
-+	spmic: max77620@3c {
-+		compatible = "maxim,max77620";
-+		:::::
-+		#clock-cells = <0>;
-+		:::
-+       };
-+};
-+
-+bluetooth {
-+	compatible = "bcom,bluuetooth-device";
-+	clocks = <&smic>;
-+	clock-names = "in-32k";
-+	:::
-+};
+ static inline long clk_get_accuracy(struct clk *clk)
+ {
+ 	return -ENOTSUPP;
 -- 
-2.1.4
+1.9.1
