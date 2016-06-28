@@ -1,56 +1,38 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
- driver
-To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5762A34A.3060309@samsung.com>
-Date: Thu, 16 Jun 2016 15:02:02 +0200
-MIME-version: 1.0
-In-reply-to: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 28 Jun 2016 16:02:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@veger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/19] sh: SH7750/51 CPG Driver
+Message-ID: <20160628210253.GA8004@rob-hp-laptop>
+References: <1467095795-5082-1-git-send-email-ysato@users.sourceforge.jp>
+ <1467095795-5082-11-git-send-email-ysato@users.sourceforge.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467095795-5082-11-git-send-email-ysato@users.sourceforge.jp>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
-> The clock IP used on the Maxim PMICs max77686 and max77802 are
-> same. The configuration of clock register is also same except
-> the number of clocks.
+On Tue, Jun 28, 2016 at 03:36:26PM +0900, Yoshinori Sato wrote:
+> Convert SH specific clock framework to CCF.
 > 
-> Part of common code utilisation, there is 3 files for these chips
-> clock driver, one for common and two files for driver registration.
-> 
-> Combine both drivers into single file and move common code into
-> same common file reduces the 2 files and make max77686 and max77802
-> clock driver in single fine. This driver does not depends on the
-> parent driver structure. The regmap handle is acquired through
-> regmap APIs for the register access.
-> 
-> This combination of driver helps on adding clock driver for different
-> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 > ---
->  drivers/clk/Kconfig        |  15 +--
->  drivers/clk/Makefile       |   2 -
->  drivers/clk/clk-max-gen.c  | 194 ------------------------------------
->  drivers/clk/clk-max-gen.h  |  32 ------
->  drivers/clk/clk-max77686.c | 241 +++++++++++++++++++++++++++++++++++++++++----
->  drivers/clk/clk-max77802.c |  96 ------------------
->  6 files changed, 225 insertions(+), 355 deletions(-)
->  delete mode 100644 drivers/clk/clk-max-gen.c
->  delete mode 100644 drivers/clk/clk-max-gen.h
->  delete mode 100644 drivers/clk/clk-max77802.c
+>  .../bindings/clock/renesas,sh7750-cpg.txt          |  25 ++
 
-Tested on max77686 and max77802:
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Best regards,
-Krzysztof
+>  arch/sh/boards/Kconfig                             |   1 +
+>  arch/sh/kernel/cpu/Makefile                        |   8 +-
+>  arch/sh/kernel/cpu/clock.c                         |   6 +-
+>  drivers/clk/Kconfig                                |   1 +
+>  drivers/clk/Makefile                               |   3 +-
+>  drivers/clk/sh/Kconfig                             |   2 +
+>  drivers/clk/sh/Makefile                            |   1 +
+>  drivers/clk/sh/clk-sh7750cpg.c                     | 344 +++++++++++++++++++++
+>  9 files changed, 387 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.txt
+>  create mode 100644 drivers/clk/sh/Kconfig
+>  create mode 100644 drivers/clk/sh/Makefile
+>  create mode 100644 drivers/clk/sh/clk-sh7750cpg.c
