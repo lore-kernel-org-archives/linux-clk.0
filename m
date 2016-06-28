@@ -1,40 +1,38 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/5] clk: Combine DT binding doc for max77686 and max77802
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- Laxman Dewangan <ldewangan@nvidia.com>, mturquette@baylibre.com,
- robh+dt@kernel.org, linux@armlinux.org.uk
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-3-git-send-email-ldewangan@nvidia.com>
- <a9a4bf3b-7ece-f92f-9d49-d4745f512e3c@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Javier Martinez Canillas <javier@dowhile0.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <576272BA.50800@samsung.com>
-Date: Thu, 16 Jun 2016 11:34:50 +0200
-MIME-version: 1.0
-In-reply-to: <a9a4bf3b-7ece-f92f-9d49-d4745f512e3c@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH v2 0/9] Improve Rx/Tx DMA implementation
+Date: Tue, 28 Jun 2016 11:02:26 +0530
+Message-ID: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/15/2016 05:19 PM, Javier Martinez Canillas wrote:
->> Remove the separate DT binding document file for maxim,max77802 and
->> move all information to maxim,max77686 DT binding document.
->>
-> 
-> Now, I wonder if this is the correct approach. A system integrator is
-> probably going to search for the bindings of the chip that is present
-> in their system. For example there are different DT bindings docs for
-> both the max77686 and max77802 PMIC even when support is implemented
-> by the same driver (drivers/mfd/max77686.c).
-> 
-> But maybe I'm wrong so I'll let people with more DT experience to say
-> if merging the bindings docs in a single one is the correct approach.
+Changes since v1:
+Split suspend/resume patch.
 
-I personally prefer having one binding document for all devices because
-essentially it is almost the same device. For looking up I use git grep
-with compatible string (or device name) so it does not matter, IMHO.
+Bhuvanchandra DV (5):
+  tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+  tty: serial: fsl-lpuart: Use cyclic DMA for Rx
+  tty: serial: fsl-lpuart: Use scatter/gather DMA for Tx
+  tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
+  tty: serial: fsl_lpuart: Add support for RS-485
 
-Best regards,
-Krzysztof
+Stefan Agner (4):
+  tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+  clk: imx: vf610: Disable automatic clock gating for lpuart in LPSTOP mode
+  tty: serial: fsl_lpuart: support suspend/resume
+  tty: serial: fsl_lpuart: fix clearing of receive flag
+
+ drivers/clk/imx/clk-vf610.c     |  12 +-
+ drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
+ 2 files changed, 482 insertions(+), 340 deletions(-)
+
+-- 
+2.9.0
