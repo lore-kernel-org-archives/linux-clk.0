@@ -1,163 +1,63 @@
-Return-Path: <hl@rock-chips.com>
-Subject: Re: [RFC PATCH v1 1/6] rockchip: rockchip: add new clock-type for the
- ddrclk
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, mturquette@baylibre.com
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
- <1464947719-6245-2-git-send-email-hl@rock-chips.com>
- <1663829.Hlc2xmNrOy@diego>
-Cc: mark.yao@rock-chips.com, myungjoo.ham@samsung.com, sboyd@codeaurora.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, airlied@linux.ie,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kyungmin.park@samsung.com, dianders@chromium.org, dbasehore@chromium.org,
- huangtao@rock-chips.com, typ@rock-chips.com
-From: hl <hl@rock-chips.com>
-Message-ID: <5754EC03.9000809@rock-chips.com>
-Date: Mon, 6 Jun 2016 11:20:35 +0800
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: andi.shyti@gmail.com
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH 1/2] clk: clk-rk3*: set CLK_IS_CRITICAL flag to critical clocks
+Date: Tue, 28 Jun 2016 17:17:05 +0200
+Message-ID: <29356205.Gk5k6xKH6K@phil>
+In-Reply-To: <1467125137-25999-2-git-send-email-andi@etezian.org>
+References: <1467125137-25999-1-git-send-email-andi@etezian.org> <1467125137-25999-2-git-send-email-andi@etezian.org>
 MIME-Version: 1.0
-In-Reply-To: <1663829.Hlc2xmNrOy@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+Hi Andi,
 
-On 2016年06月03日 20:51, Heiko Stübner wrote:
-> Am Freitag, 3. Juni 2016, 17:55:14 schrieb Lin Huang:
->> On new rockchip platform(rk3399 etc), there have dcf controller to
->> do ddr frequency scaling, and this controller will implement in
->> arm-trust-firmware. We add a special clock-type to handle that.
->>
->> Signed-off-by: Lin Huang <hl@rock-chips.com>
->> ---
->> Changes in v1:
->> - None
->>
->>   drivers/clk/rockchip/Makefile  |   1 +
->>   drivers/clk/rockchip/clk-ddr.c | 147
->> +++++++++++++++++++++++++++++++++++++++++ drivers/clk/rockchip/clk.c     |
->>   9 +++
->>   drivers/clk/rockchip/clk.h     |  27 ++++++++
->>   4 files changed, 184 insertions(+)
->>   create mode 100644 drivers/clk/rockchip/clk-ddr.c
->>
->> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
->> index f47a2fa..b5f2c8e 100644
->> --- a/drivers/clk/rockchip/Makefile
->> +++ b/drivers/clk/rockchip/Makefile
->> @@ -8,6 +8,7 @@ obj-y	+= clk-pll.o
->>   obj-y	+= clk-cpu.o
->>   obj-y	+= clk-inverter.o
->>   obj-y	+= clk-mmc-phase.o
->> +obj-y	+= clk-ddr.o
->>   obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
->>
->>   obj-y	+= clk-rk3036.o
->> diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
->> new file mode 100644
->> index 0000000..5b6630d
->> --- /dev/null
->> +++ b/drivers/clk/rockchip/clk-ddr.c
->> @@ -0,0 +1,147 @@
->> +/*
->> + * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
->> + * Author: Lin Huang <hl@rock-chips.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/of.h>
->> +#include <linux/slab.h>
->> +#include <linux/io.h>
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include "clk.h"
->> +
->> +struct rockchip_ddrclk {
->> +	struct clk_hw	hw;
->> +	void __iomem	*reg_base;
->> +	int		mux_offset;
->> +	int		mux_shift;
->> +	int		mux_width;
->> +	int		mux_flag;
->> +	int		div_shift;
->> +	int		div_width;
->> +	int		div_flag;
->> +	spinlock_t	*lock;
->> +};
->> +
->> +#define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk,
->> hw)
->> +#define val_mask(width)	((1 << (width)) - 1)
-> maybe use GENMASK?
-     Oh, yes, we can use it. Will fix next version.
->
->> +
->> +static int rockchip_ddrclk_set_rate(struct clk_hw *hw, unsigned long drate,
->> +				    unsigned long prate)
->> +{
->> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(ddrclk->lock, flags);
->> +
->> +	/* TODO: set ddr rate in bl31 */
-> I expect this interface to be in existence and merged into the main ATF first.
->
-> Right now the whole clock-type does nothing more than a simple COMPOSITE with
-> added CLK_DIVIDER_READ_ONLY | CLK_MUX_READ_ONLY.
->
-> Also Mike is propably still working in the so called coordinated rate change
-> for clocks needing special handling on rate changes, which might provide a
-> second approach to this.
-     You mean there is a patch set can handle it now? Can you tell me 
-the ID,
-     I want to check it.
->
-> So please, first of all get the ATF-interface merged and meanwhile if you need
-> to read the clock-rate, just use a regular composite, with the read-only flags.
->
-     My colleague are wroking on ATF code now, I agree with you, We can 
-not merge
-     this patch set before ATF-interface merged. And we do not need to 
-add a new code
-     if we only want to read ddr clock rate(we can get the ddr rate to 
-read dpll), so i prefer
-     to keep this function for now, and do review first, once the ATF 
-code ready, we can merge
-     soon it(i hope :-P ) .
->> +	spin_unlock_irqrestore(ddrclk->lock, flags);
->> +
->> +	return 0;
->> +}
->> +
->> +static unsigned long
->> +rockchip_ddrclk_recalc_rate(struct clk_hw *hw,
->> +			    unsigned long parent_rate)
->> +{
->> +	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
->> +	int val;
->> +
->> +	val = clk_readl(ddrclk->reg_base +
->> +			ddrclk->mux_offset) >> ddrclk->div_shift;
->> +	val &= val_mask(ddrclk->div_width);
->> +
->> +	return DIV_ROUND_UP_ULL((u64)parent_rate, val + 1);
-> return divider_recalc_rate(...)
-     got it , thank you.
->
->
-> Heiko
->
->
->
+Am Dienstag, 28. Juni 2016, 17:45:36 schrieb andi.shyti@gmail.com:
+> From: Andi Shyti <andi@etezian.org>
+> 
+> Patch 32b9b1096 has introduced a generalized concept of critical
+> clock. Clocks are marked with the CLK_IS_CRITICAL, enabled during
+> boot and never gated.
+> 
+> Use the CLK_IS_CRITICAL instead of declaring a local array of
+> critical clock enabled during boot.
+> 
+> CC: Heiko Stuebner <heiko@sntech.de>
+> CC: Jeffy Chen <jeffy.chen@rock-chips.com>
+> CC: Xing Zheng <zhengxing@rock-chips.com>
+> Signed-off-by: Andi Shyti <andi@etezian.org>
+> ---
+>  drivers/clk/rockchip/clk-rk3036.c |  18 ++-----
+>  drivers/clk/rockchip/clk-rk3188.c |  25 +++-------
+>  drivers/clk/rockchip/clk-rk3228.c |  17 ++-----
+>  drivers/clk/rockchip/clk-rk3288.c |  21 +++-----
+>  drivers/clk/rockchip/clk-rk3368.c |  22 ++-------
+>  drivers/clk/rockchip/clk-rk3399.c | 101
+> ++++++++++++++++---------------------- 6 files changed, 69 insertions(+),
+> 135 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3036.c
+> b/drivers/clk/rockchip/clk-rk3036.c index 924f560..5734f8c 100644
+> --- a/drivers/clk/rockchip/clk-rk3036.c
+> +++ b/drivers/clk/rockchip/clk-rk3036.c
+> @@ -205,7 +205,8 @@ static struct rockchip_clk_branch
+> rk3036_clk_branches[] __initdata = { GATE(0, "gpll_cpu", "gpll", 0,
+> RK2928_CLKGATE_CON(0), 1, GFLAGS), COMPOSITE_NOGATE(0, "aclk_cpu_src",
+> mux_busclk_p, 0,
+>  			RK2928_CLKSEL_CON(0), 14, 2, MFLAGS, 8, 5, DFLAGS),
+> -	GATE(ACLK_CPU, "aclk_cpu", "aclk_cpu_src", CLK_IGNORE_UNUSED,
+> +	GATE(ACLK_CPU, "aclk_cpu", "aclk_cpu_src",
+> +			CLK_IS_CRITICAL | CLK_IGNORE_UNUSED,
 
--- 
-Lin Huang
+- you'll never need both critical and ignore_unused
+- please keep the lines intact and do not introduce new line-breaks ... as 
+it makes reading the clock-tree way easier if the blocks share the same 
+format
+
+Happens in some more cases below, but otherwise looks ok ... as written in 
+the cover-letter I'm just still trying to make up my mind if it's worth 
+waiting for the handoff mechanism.
+
+
+Heiko
