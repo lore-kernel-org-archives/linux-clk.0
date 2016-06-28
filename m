@@ -1,43 +1,64 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 00/28] clk: ti: hwmod clock type support
-Date: Mon, 13 Jun 2016 22:04:34 +0300
-Message-ID: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH v2 1/9] tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+Date: Tue, 28 Jun 2016 11:02:27 +0530
+Message-ID: <20160628053235.5114-2-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Stefan Agner <stefan@agner.ch>
 
-Resending the series as it didn't get that much attention last time.
-This has just been rebased on top of 4.7-rc1, no other changes.
+Currently the tx_empty callback only considers the Transmit Complete Flag (TC).
+The reference manual is not quite clear if the TC flag covers the TX FIFO too.
+Debug prints on real hardware have shown that from time to time the TC flag is
+asserted (indicating Transmitter idle) while there are still data in the
+TX FIFO. Hence, in this case the serial core will call the shutdown callback
+even though there are data remaining in the TX FIFO buffers.
 
-This series adds support for hwmod module clocks, which are currently
-directly handled by hwmod core. This addresses following issues:
+Avoid early shutdowns by considering the TX FIFO empty flag too. Also avoid
+theoretical race conditions between DMA and the driver by checking whether the
+TX DMA is in progress too.
 
- * one step closer of removing hwmod core / data from kernel
- * unblock Tony's interconnect driver work (this is also required
-   for removing hwmod codebase)
- * add proper clock support for the hardware modules currently handled
-   by hwmod core; use counting for clocks, ability to share clocks
-   between multiple modules, etc.
- * add helper clock APIs for removing most of the clock aliases under
-   drivers/clk/ti/clk-xyz.c files
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-Test branch available:
-tree: https://github.com/t-kristo/linux-pm.git
-branch: 4.7-rc1-hwmod-clks
-
-Testing done:
-
-boot: am335x-evm, am335x-evmsk, am3517-evm, am37x-evm, am437x-sk,
-am437x-gp-evm, am57xx-evm, omap3-beagle-xm, am335x-boneblack, am335x-bone,
-dra7xx-evm, omap3-n900, omap5-uevm, omap4-panda, omap3430-sdp,
-omap4-sdp-es23plus
-
-suspend-resume: omap3-beagle, omap4-panda-es
-
--Tero
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 3d79003..fabfa7e 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -810,8 +810,18 @@ static irqreturn_t lpuart32_int(int irq, void *dev_id)
+ /* return TIOCSER_TEMT when transmitter is not busy */
+ static unsigned int lpuart_tx_empty(struct uart_port *port)
+ {
+-	return (readb(port->membase + UARTSR1) & UARTSR1_TC) ?
+-		TIOCSER_TEMT : 0;
++	struct lpuart_port *sport = container_of(port,
++			struct lpuart_port, port);
++	unsigned char sr1 = readb(port->membase + UARTSR1);
++	unsigned char sfifo = readb(port->membase + UARTSFIFO);
++
++	if (sport->dma_tx_in_progress)
++		return 0;
++
++	if (sr1 & UARTSR1_TC && sfifo & UARTSFIFO_TXEMPT)
++		return TIOCSER_TEMT;
++
++	return 0;
+ }
+ 
+ static unsigned int lpuart32_tx_empty(struct uart_port *port)
+-- 
+2.9.0
