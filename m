@@ -1,129 +1,58 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 10 Jun 2016 11:50:31 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 04/20] clk: sunxi: display: Add per-clock flags
-Message-ID: <20160610095031.GT5242@lukather>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
- <1463402840-17062-5-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v66-GzV=1wrJnHBObLVPVHPk87o0PaJtNyYasp2wFsZabw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Wlbg71WMOPzcvmIn"
-In-Reply-To: <CAGb2v66-GzV=1wrJnHBObLVPVHPk87o0PaJtNyYasp2wFsZabw@mail.gmail.com>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] clk: Provide notifier stubs when !COMMON_CLK
+Date: Tue, 28 Jun 2016 13:58:49 +0200
+Message-id: <14387179.nnNuRe7g05@amdc1976>
+In-reply-to: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
+References: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
 
---Wlbg71WMOPzcvmIn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Mon, May 16, 2016 at 11:21:41PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Mon, May 16, 2016 at 8:47 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The TCON channel 0 clock that is the parent clock of our pixel clock is
-> > expected to change its rate depending on the resolution we want to outp=
-ut
-> > in our display engine.
-> >
-> > However, since it's only a mux, the only way it can do that is by chang=
-ing
-> > its parents rate.
-> >
-> > Allow to give flags in our display clocks description, and add the
-> > CLK_SET_RATE_PARENT flag for the TCON channel 0 flag.
-> >
-> > Fixes: a3b4956ee6d9 ("clk: sunxi: display: Add per-clock flags")
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi/clk-sun4i-display.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/=
-clk-sun4i-display.c
-> > index 445a7498d6df..9780fac6d029 100644
-> > --- a/drivers/clk/sunxi/clk-sun4i-display.c
-> > +++ b/drivers/clk/sunxi/clk-sun4i-display.c
-> > @@ -33,6 +33,8 @@ struct sun4i_a10_display_clk_data {
-> >
-> >         u8      width_div;
-> >         u8      width_mux;
-> > +
->=20
-> Don't really need this separator, but I'm ok either way.
->=20
-> > +       u32     flags;
-> >  };
-> >
-> >  struct reset_data {
-> > @@ -166,7 +168,7 @@ static void __init sun4i_a10_display_init(struct de=
-vice_node *node,
-> >                                      data->has_div ? &div->hw : NULL,
-> >                                      data->has_div ? &clk_divider_ops :=
- NULL,
-> >                                      &gate->hw, &clk_gate_ops,
-> > -                                    0);
-> > +                                    data->flags);
-> >         if (IS_ERR(clk)) {
-> >                 pr_err("%s: Couldn't register the clock\n", clk_name);
-> >                 goto free_div;
-> > @@ -232,6 +234,7 @@ static const struct sun4i_a10_display_clk_data sun4=
-i_a10_tcon_ch0_data __initcon
-> >         .offset_rst     =3D 29,
-> >         .offset_mux     =3D 24,
-> >         .width_mux      =3D 2,
-> > +       .flags          =3D CLK_SET_RATE_PARENT,
-> >  };
-> >
-> >  static void __init sun4i_a10_tcon_ch0_setup(struct device_node *node)
-> > --
-> > 2.8.2
-> >
->=20
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+On Tuesday, June 28, 2016 01:25:04 PM Krzysztof Kozlowski wrote:
+> The clk notifier symbols are hidden by COMMON_CLK.  However on some
+> platforms HAVE_CLK might be set while COMMON_CLK not which leads to
+> compile test build errors like:
+> 
+> $ make.cross ARCH=sh
+>    drivers/devfreq/tegra-devfreq.c: In function 'tegra_actmon_rate_notify_cb':
+> >> drivers/devfreq/tegra-devfreq.c:391:16: error: 'POST_RATE_CHANGE' undeclared (first use in this function)
+>      if (action != POST_RATE_CHANGE)
+>                    ^
+>    drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_probe':
+> >> drivers/devfreq/tegra-devfreq.c:654:8: error: implicit declaration of function 'clk_notifier_register' [-Werror=implicit-function-declaration]
+>      err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
+>            ^
+> 
+> Export the macros and data type declarations outside of COMMON_CLK ifdef
+> and provide stubs to fix the compile testing.
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
+> Reported when testing patch [1] on ARCH=sh. I don't have the sh cross
+> compile toolchain so I cannot verify whether this fixes reported issue.
 
-Applied,
+FWIW I've verified with sh cross-compiler.
 
-Maxime
+Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> Tested on similar configuration on MIPS (HAVE_CLK && !COMMON_CLK)
+> 
+> [1] http://www.gossamer-threads.com/lists/linux/kernel/2471798
 
---Wlbg71WMOPzcvmIn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXWo1nAAoJEBx+YmzsjxAgl/oQAIvxRhLSQW10AvucyHjV2Kjx
-Ta3aw8e3Muy/AFR5cpEXa7s3VxemymQTL9/UKp8hutBMG9znmiQTxT00+ySyA/PV
-8OVxDr5IsNZrZc+U5fgOQtcwqDwkTFYfQKFp2PzRt925xEFluBwn70UvN287rj2D
-mpuLccd4UmLBDtuQykwoZPYRTtw1PfqaaBmEfggxrnmo6BGUKLbu2Bx9kXXHPK0t
-m619vzodQlx6NrO9IqY3dbbNUhDLDd1fhY0n+UJMxgwAki4RNqmFbHsZQaO5cCEI
-ltetA1rVCtJz/cJk1NXTK5i0IV9rTzpwvVirDl6Cs2jNmYTpypbIcclxl9CnOWFA
-qw8LoyGPcaOqVnl/31MP5rZYHkfV/3bAVAAUREZBTIQnouFSN7rBPL++HMjb+aBG
-SzlXfPGZOWDeycekig1mJ1XBSYUhaBykCyhMQk+fKDp3h9/A4JlDwHHJeRvyh9ij
-kKy6r5erBivvXg1/L7xJuyrC4PrOcPvW9lS3xkCVqN6ZCBTMm9TA0rx8LUfjQcX2
-sD878ChmlR5nQOAS4HioqCUyHBZ168rIP87yt81hSBBKa9VJ0GgBdg/ocoshhI0X
-YR6yeiki2Mhk3E4ZLlGghiWj1J9H3PVe+/QcSMPuidtF0ePYQnzyp4jlmKCsf+nw
-h9bO6JNRltZ3g6nDxdWa
-=889b
------END PGP SIGNATURE-----
-
---Wlbg71WMOPzcvmIn--
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
