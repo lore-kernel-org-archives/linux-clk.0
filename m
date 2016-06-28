@@ -1,54 +1,70 @@
-Return-Path: <ldewangan@nvidia.com>
-Message-ID: <5762A4BE.3010408@nvidia.com>
-Date: Thu, 16 Jun 2016 18:38:14 +0530
-From: Laxman Dewangan <ldewangan@nvidia.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski
-	<k.kozlowski@samsung.com>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas
-	<javier@dowhile0.org>
-Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com> <1466000018-16784-6-git-send-email-ldewangan@nvidia.com> <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com> <57629AB9.2090506@samsung.com> <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
-In-Reply-To: <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
-Return-Path: ldewangan@nvidia.com
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160628171318.GX1521@codeaurora.org>
+References: <1465212804-21391-1-git-send-email-geert+renesas@glider.be>
+ <20160621005112.GM1521@codeaurora.org> <CAMuHMdWztj3HGVMT9Lh2Y8kU7TGqB0J4-eU4e2it2bcti2vxtQ@mail.gmail.com>
+ <20160628171318.GX1521@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Jun 2016 19:25:10 +0200
+Message-ID: <CAMuHMdWp_x3s+vE8kAnJem1PJY9h325XOBefV2RQhN=gQod8uA@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Add support for R-Car M3-W
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Stephen,
 
-On Thursday 16 June 2016 06:36 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
->
-> On 06/16/2016 08:25 AM, Krzysztof Kozlowski wrote:
->> On 06/15/2016 05:39 PM, Javier Martinez Canillas wrote:
->>> Hello Laxman,
->>>
->>> On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
->>>> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
->>>> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
->>>>
->>>> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
->>>>
->>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> CC: Javier Martinez Canillas <javier@dowhile0.org>
->>>> ---
->>>>   arch/arm/configs/exynos_defconfig   | 1 -
->>>>   arch/arm/configs/multi_v7_defconfig | 1 -
->>> Please split these two changes in separate patches, there are just
->>> cleanups needed after 1/5 and they can be picked separately.
->> Not entirely separately. If we do not want to loose max77802 clocks on
->> defconfigs, then it should go with the same tree or after driver get
->> merged. I prefer the latter, similar case to 1898994229f8 ("ARM:
->> multi_v7_defconfig: Switch max77693 to module").
+On Tue, Jun 28, 2016 at 7:13 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/21, Geert Uytterhoeven wrote:
+>> On Tue, Jun 21, 2016 at 2:51 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 06/06, Geert Uytterhoeven wrote:
+>> >> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+>> >>
+>> >>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+>> >>
+>> >> are available in the git repository at:
+>> >>
+>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.8-tag1
+>> >>
+>> >> for you to fetch changes up to e4e2d7c388350eba8b1dbc2569441ac9b545a8c4:
+>> >>
+>> >>   clk: renesas: cpg-mssr: Add support for R-Car M3-W (2016-06-06 11:58:35 +0200)
+>> >>
+>> >
+>> > Checkpatch complains...
+>> >
+>> > ERROR: Use of const init definition must use __initconst
+>> > #712: FILE: drivers/clk/renesas/rcar-gen3-cpg.c:248:
+>> > +static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+>> >
+>> > Seems like a valid problem. Any chance it can be fixed?
 >>
-> Agreed. Your latter example is what I tried to say (that can be picked
-> as cleanups separately once 1/5 hits mainline). I just didn't express
-> clearly.
->   
+>> It is a false positive: the data pointed to is const, the pointer
+>> variable isn't.
 >
+> Argh thanks. It would be nice if sparse complained about that
+> instead of checkpatch so that we got a better parse on the actual
+> type that is marked initdata. Anyway, I see this pull is
+> superseded now.
 
-OK, I will drop this from series when will send V2.
-The changes can be done later on once clock changes get merged.
+It is not; there's just a second pull request with more commits on top.
+
+I think you best pull this one first, as git will use the summary from the
+signed tag. The signed tag of the second pull request only summarizes
+the additions, compared to the first tag.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
