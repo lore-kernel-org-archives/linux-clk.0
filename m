@@ -1,74 +1,63 @@
-Return-Path: <dianders@google.com>
+Return-Path: <ldewangan@nvidia.com>
+Message-ID: <57725F64.4030903@nvidia.com>
+Date: Tue, 28 Jun 2016 16:58:36 +0530
+From: Laxman Dewangan <ldewangan@nvidia.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <2376423.L1zs1HaIGm@diego>
-References: <1465724928-14611-1-git-send-email-zhengxing@rock-chips.com> <2376423.L1zs1HaIGm@diego>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 14 Jun 2016 09:04:43 -0700
-Message-ID: <CAD=FV=Vk9Lb8DD7dWD7eW_xhMFFwh1o=XKx38wObTOmmi94CGw@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: add flag CLK_SET_RATE_PARENT for
- dclk_vop0_div on RK3399
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Xing Zheng <zhengxing@rock-chips.com>, elaine zhang <elaine.zhang@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>, Brian Norris <briannorris@chromium.org>,
-	Yakir Yang <ykk@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Rob Herring <robh@kernel.org>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Krzysztof Kozlowski
+	<k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH V3 2/4] clk: Combine DT binding doc for max77686 and max77802
+References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com> <1466160667-28451-3-git-send-email-ldewangan@nvidia.com> <20160620163947.GA27492@rob-hp-laptop> <5768E2AD.8070004@nvidia.com>
+In-Reply-To: <5768E2AD.8070004@nvidia.com>
+Return-Path: ldewangan@nvidia.com
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Heiko,
+Hi Rob,
 
-On Mon, Jun 13, 2016 at 3:46 PM, Heiko St=C3=BCbner <heiko@sntech.de> wrote=
-:
-> Am Sonntag, 12. Juni 2016, 17:48:48 schrieb Xing Zheng:
->> The functions and features VOP0 more complete than VOP1's, we need to
->> use it dclk_vop0_div operate VPLLI, and let VOP0 as the default primary
->> screen.
->>
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> ---
->>
->>  drivers/clk/rockchip/clk-rk3399.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3399.c
->> b/drivers/clk/rockchip/clk-rk3399.c index 7ecb12c3..6affa75 100644
->> --- a/drivers/clk/rockchip/clk-rk3399.c
->> +++ b/drivers/clk/rockchip/clk-rk3399.c
->> @@ -1157,7 +1157,7 @@ static struct rockchip_clk_branch
->> rk3399_clk_branches[] __initdata =3D { GATE(HCLK_VOP0_NOC, "hclk_vop0_no=
-c",
->> "hclk_vop0_pre", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(28), 0, GFLAGS),
->>
->> -     COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gp=
-ll_p, 0,
->> +     COMPOSITE(DCLK_VOP0_DIV, "dclk_vop0_div", mux_pll_src_vpll_cpll_gp=
-ll_p,
->> CLK_SET_RATE_PARENT, RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
->>                       RK3399_CLKGATE_CON(10), 12, GFLAGS),
+On Tuesday 21 June 2016 12:16 PM, Laxman Dewangan wrote:
 >
-> The vpll is a possible source for multiple clocks (cci, aclk_vop0, dclk_v=
-op0,
-> clk_vop0_pwm, aclk_vop1, dclk_vop1, clk_vop1_pwm), so allowing one clock =
-to
-> hog the rate setting, might influence the other consumers of the vpll as =
-well.
+> On Monday 20 June 2016 10:09 PM, Rob Herring wrote:
+>> On Fri, Jun 17, 2016 at 04:21:05PM +0530, Laxman Dewangan wrote:
+>>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/clock/maxim,max77686.txt 
+>>> b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+>>> index 9c40739..4d973b5 100644
+>>> --- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+>>> @@ -1,11 +1,15 @@
+>>> -Binding for Maxim MAX77686 32k clock generator block
+>>> +Binding for Maxim MAX77686/MAX77802 32k clock generator block
+>>>   -This is a part of device tree bindings of MAX77686 multi-function 
+>>> device.
+>>> -More information can be found in bindings/mfd/max77686.txt file.
+>>> +This is a part of device tree bindings of MAX77686/MAX77802 
+>>> multi-function
+>>> +device. More information can be found in bindings/mfd/max77686.txt 
+>>> file for
+>>> +MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+>>>     The MAX77686 contains three 32.768khz clock outputs that can be 
+>>> controlled
+>>>   (gated/ungated) over I2C.
+>>>   +The MAX77802 contains two 32.768khz clock outputs that can be 
+>>> controlled
+>>> +(gated/ungated) over I2C.
+>>> +
+>>>   Following properties should be presend in main device node of the 
+>>> MFD chip.
+>>>     Required properties:
+>> I'd expect to see compatible strings updated...
+>>
+>
+> There is no separate compatible string for clock. The clock nodes is 
+> the parent node only and the compatible described in the parent DT 
+> binding doc.
+>
+>
+> Do we also need to add same thing here?
 
-Ah, right.  I think this gets back to your series:
-
-  8993791 [RFC,1/3] clk: fix inconsistent use of req_rate
-  8993801 [RFC,2/3] clk: adjust clocks to their requested rate after
-parent changes
-  8993811 [RFC,3/3] clk: rockchip: make rk3399 vop dclks keep their
-rate on parent rate changes
-
-Did you ever have any more ideas about that?  I think the last thing
-in that series was a comment from me on patch #2/3.  If we can't come
-up with a general CCF solution for this problem, perhaps we need to
-register for notifications for all the relevant clocks that might
-change?
-
--Doug
+Are you fine with the above? As there is no compatible string for clock 
+(clock does not have separate node), do I still need to add explicitly here?
