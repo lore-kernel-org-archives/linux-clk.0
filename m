@@ -1,200 +1,68 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: [PATCH V2 2/4] clk: Combine DT binding doc for max77686 and max77802
-Date: Thu, 16 Jun 2016 18:53:25 +0530
-Message-ID: <1466083407-28793-3-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH v2 5/9] tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+Date: Tue, 28 Jun 2016 11:02:31 +0530
+Message-ID: <20160628053235.5114-6-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock IP used on the Maxim PMICs max77686 and max77802 are
-same. The configuration of clock register is also same except
-the number of clocks.
+By default the driver always configure the mode as 8s1 even when 8m1 mode is
+selected. Fix this by adding support to control the space/mark bit.
 
-Define the common DT binding file for the clocks of Maxim PMICs
-MAX77686 and MAX77802. For this, remove the separate DT binding
-document file for maxim,max77802 and move all information to
-maxim,max77686 DT binding document.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
-
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
 ---
-Changes from V1:
-- Rewrite description to remvoe ref to driver.
-- Taken care of comment from Krzysztof on the supported clocks and
-  DT bindings.
----
- .../devicetree/bindings/clock/maxim,max77686.txt   | 82 ++++++++++++++++------
- .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ------------
- 2 files changed, 59 insertions(+), 67 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ drivers/tty/serial/fsl_lpuart.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-index 9c40739..4d973b5 100644
---- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-@@ -1,11 +1,15 @@
--Binding for Maxim MAX77686 32k clock generator block
-+Binding for Maxim MAX77686/MAX77802 32k clock generator block
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 97c1fda..615f191 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1220,13 +1220,14 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ {
+ 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
+ 	unsigned long flags;
+-	unsigned char cr1, old_cr1, old_cr2, cr4, bdh, modem;
++	unsigned char cr1, old_cr1, old_cr2, cr3, cr4, bdh, modem;
+ 	unsigned int  baud;
+ 	unsigned int old_csize = old ? old->c_cflag & CSIZE : CS8;
+ 	unsigned int sbr, brfa;
  
--This is a part of device tree bindings of MAX77686 multi-function device.
--More information can be found in bindings/mfd/max77686.txt file.
-+This is a part of device tree bindings of MAX77686/MAX77802 multi-function
-+device. More information can be found in bindings/mfd/max77686.txt file for
-+MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+ 	cr1 = old_cr1 = readb(sport->port.membase + UARTCR1);
+ 	old_cr2 = readb(sport->port.membase + UARTCR2);
++	cr3 = readb(sport->port.membase + UARTCR3);
+ 	cr4 = readb(sport->port.membase + UARTCR4);
+ 	bdh = readb(sport->port.membase + UARTBDH);
+ 	modem = readb(sport->port.membase + UARTMODEM);
+@@ -1274,7 +1275,10 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if ((termios->c_cflag & PARENB)) {
+ 		if (termios->c_cflag & CMSPAR) {
+ 			cr1 &= ~UARTCR1_PE;
+-			cr1 |= UARTCR1_M;
++			if (termios->c_cflag & PARODD)
++				cr3 |= UARTCR3_T8;
++			else
++				cr3 &= ~UARTCR3_T8;
+ 		} else {
+ 			cr1 |= UARTCR1_PE;
+ 			if ((termios->c_cflag & CSIZE) == CS8)
+@@ -1342,6 +1346,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	writeb(cr4 | brfa, sport->port.membase + UARTCR4);
+ 	writeb(bdh, sport->port.membase + UARTBDH);
+ 	writeb(sbr & 0xFF, sport->port.membase + UARTBDL);
++	writeb(cr3, sport->port.membase + UARTCR3);
+ 	writeb(cr1, sport->port.membase + UARTCR1);
+ 	writeb(modem, sport->port.membase + UARTMODEM);
  
- The MAX77686 contains three 32.768khz clock outputs that can be controlled
- (gated/ungated) over I2C.
- 
-+The MAX77802 contains two 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C.
-+
- Following properties should be presend in main device node of the MFD chip.
- 
- Required properties:
-@@ -17,30 +21,62 @@ Optional properties:
- 
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. Following indices are allowed:
--    - 0: 32khz_ap clock,
--    - 1: 32khz_cp clock,
--    - 2: 32khz_pmic clock.
-+    - 0: 32khz_ap clock (max77686, max77802),
-+    - 1: 32khz_cp clock (max77686, max77802),
-+    - 2: 32khz_pmic clock (max77686).
- 
- Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
--header and can be used in device tree sources.
-+header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
-+be used in device tree sources.
-+
-+Example:
-+
-+1. With MAX77686:
-+
-+#include <dt-bindings/clock/maxim,max77686.h>
-+/* ... */
-+
-+	Node of the MFD chip
-+		max77686: max77686@09 {
-+			compatible = "maxim,max77686";
-+			interrupt-parent = <&wakeup_eint>;
-+			interrupts = <26 0>;
-+			reg = <0x09>;
-+			#clock-cells = <1>;
-+
-+			/* ... */
-+		};
-+
-+	Clock consumer node
-+
-+		foo@0 {
-+			compatible = "bar,foo";
-+			/* ... */
-+			clock-names = "my-clock";
-+			clocks = <&max77686 MAX77686_CLK_PMIC>;
-+		};
-+
-+2. With MAX77802:
- 
--Example: Node of the MFD chip
-+#include <dt-bindings/clock/maxim,max77802.h>
-+/* ... */
- 
--	max77686: max77686@09 {
--		compatible = "maxim,max77686";
--		interrupt-parent = <&wakeup_eint>;
--		interrupts = <26 0>;
--		reg = <0x09>;
--		#clock-cells = <1>;
-+	Node of the MFD chip
-+		max77802: max77802@09 {
-+			compatible = "maxim,max77802";
-+			interrupt-parent = <&wakeup_eint>;
-+			interrupts = <26 0>;
-+			reg = <0x09>;
-+			#clock-cells = <1>;
- 
--		/* ... */
--	};
-+			/* ... */
-+		};
- 
--Example: Clock consumer node
-+	Clock consumer node
- 
--	foo@0 {
--		compatible = "bar,foo";
--		/* ... */
--		clock-names = "my-clock";
--		clocks = <&max77686 MAX77686_CLK_PMIC>;
--	};
-+		foo@0 {
-+			compatible = "bar,foo";
-+			/* ... */
-+			clock-names = "my-clock";
-+			clocks = <&max77802 MAX77802_CLK_32K_AP>;
-+		};
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
-deleted file mode 100644
-index c6dc783..0000000
---- a/Documentation/devicetree/bindings/clock/maxim,max77802.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--Binding for Maxim MAX77802 32k clock generator block
--
--This is a part of device tree bindings of MAX77802 multi-function device.
--More information can be found in bindings/mfd/max77802.txt file.
--
--The MAX77802 contains two 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C.
--
--Following properties should be present in main device node of the MFD chip.
--
--Required properties:
--- #clock-cells: From common clock binding; shall be set to 1.
--
--Optional properties:
--- clock-output-names: From common clock binding.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. Following indices are allowed:
--     - 0: 32khz_ap clock,
--     - 1: 32khz_cp clock.
--
--Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
--header and can be used in device tree sources.
--
--Example: Node of the MFD chip
--
--	max77802: max77802@09 {
--		compatible = "maxim,max77802";
--		interrupt-parent = <&wakeup_eint>;
--		interrupts = <26 0>;
--		reg = <0x09>;
--		#clock-cells = <1>;
--
--		/* ... */
--	};
--
--Example: Clock consumer node
--
--	foo@0 {
--		compatible = "bar,foo";
--		/* ... */
--		clock-names = "my-clock";
--		clocks = <&max77802 MAX77802_CLK_32K_AP>;
--	};
 -- 
-2.1.4
+2.9.0
