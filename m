@@ -1,116 +1,93 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [PATCH] clk: rockchip: add pclk_vio_grf to critical clock on the
- RK3399
-To: Doug Anderson <dianders@chromium.org>
-References: <1465724913-14553-1-git-send-email-zhengxing@rock-chips.com>
- <CAD=FV=XSSPMOnMD3mqFyqM3wWLShbRc2cXVdN0PYcUxpaDnsTw@mail.gmail.com>
- <575E240C.9060502@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- elaine zhang <elaine.zhang@rock-chips.com>,
- Tao Huang <huangtao@rock-chips.com>, Brian Norris
- <briannorris@chromium.org>, Yakir Yang <ykk@rock-chips.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <575E28CE.2020808@rock-chips.com>
-Date: Mon, 13 Jun 2016 11:30:22 +0800
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH v2 8/9] tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
+Date: Tue, 28 Jun 2016 11:02:34 +0530
+Message-ID: <20160628053235.5114-9-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-In-Reply-To: <575E240C.9060502@rock-chips.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Doug,
+When DMA mode is enabled one need to make sure the DMA channels are idle before
+entering suspend mode especially when UART ports which are set as wakeup source
+and console port with no_console_suspend is set. This patch takes care of
+gracefully releasing DMA channels for the above two cases and start the DMA at
+resume.
 
-On 2016年06月13日 11:10, Xing Zheng wrote:
-> Hi Doug,
->
-> On 2016年06月13日 05:32, Doug Anderson wrote:
->> Xing,
->>
->> On Sun, Jun 12, 2016 at 2:48 AM, Xing 
->> Zheng<zhengxing@rock-chips.com>  wrote:
->>> The pclk_vio_grf supply power for GRF IOs, if it is disabled, will
->>> cause abnormal operation of the GRF.
->>>
->>> The clock tree of the pclk_vio like this:
->>>               | --> pclk_vio_grf
->>> ... pclk_vio | --> pclk_mipi_dsi1
->>>               | --> pclk_mipi_dsi0
->>>
->>> and the pclk_mipi_dsi0 and pclk_mipi_dsi1 don't have the flag
->>> CLK_IGNORE_UNUSED, and they will be disabled by clk_disable_unused
->>> when startup:
->>> clk_disable_unused
->>>    --> clk_disable_unprepare
->>>      --> clk_disable
->>>        --> clk_core_disable(core->parent)
->>>
->>> then, the pclk_vio_grf also is disabled. Therefore, we need to add
->>> pclk_vio_grf to critical clock and avoid to disable pclk_vio and
->>> pclk_vio_grf.
->>>
->>> Tested-by: Yakir Yang<ykk@rock-chips.com>
->>> Signed-off-by: Yakir Yang<ykk@rock-chips.com>
->>> Signed-off-by: Brian Norris<briannorris@chromium.org>
->>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
->>> ---
->>>
->>>   drivers/clk/rockchip/clk-rk3399.c |    1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/clk/rockchip/clk-rk3399.c 
->>> b/drivers/clk/rockchip/clk-rk3399.c
->>> index b6742fa..7ecb12c3 100644
->>> --- a/drivers/clk/rockchip/clk-rk3399.c
->>> +++ b/drivers/clk/rockchip/clk-rk3399.c
->>> @@ -1485,6 +1485,7 @@ static const char *const 
->>> rk3399_cru_critical_clocks[] __initconst = {
->>>          "gpll_hclk_perilp1_src",
->>>          "gpll_aclk_perilp0_src",
->>>          "gpll_aclk_perihp_src",
->>> +       "pclk_vio_grf",
->> This clock is only needed when doing video output (like eDP), right?
->> That means it is not really a critical clock.  Critical clocks are
->> supposed to be ones that are needed for the basic functioning of the
->> system and that can never be turned off in any circumstances. In this
->> case, if someone were running a rk3399 device and didn't have any
->> video output they would want this clock off.
->>
->> Can you figure out in exactly which circumstances this clock needs to
->> be on and then add a proper consumer of this clock?  For instance, if
->> this clock is needed whenever the VOP is outputting data, then the VOP
->> should be a client and should turn this clock on and off when video is
->> being output.  If this clock is needed whenever you access VOP
->> registers, then the VOP should be a client and turn this clock on
->> around register accesses.
->>
->>
-Additional, we are discussing that we should turn the "pclk_vio" on and 
-off in
-video drivers when the video consumer needs to this clock.
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 44 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Thanks.
-
->>
-> Yes, the pclk_vio_grf is needed for doing video output.
-> andpclk_vio_grf supply for: grf_soc_con9, 20~26, grf_hdcp
->
-> From our design folks, we have many GRF registers in different power 
-> domains,
-> and these GRF gates should be always enabled. In this case, we can 
-> avoid some
-> of the operations GRF registers exception problems, and it is only a 
-> very small
-> increase in  power consumption (aboult <=1ma).
->
-> I will refer the latest TRM to update a new patch for always enable 
-> these GRFs.
->
-> Please drop this patch.
-
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 27687d5..134090a 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1943,6 +1943,30 @@ static int lpuart_suspend(struct device *dev)
+ 	}
+ 
+ 	uart_suspend_port(&lpuart_reg, &sport->port);
++
++	if (sport->lpuart_dma_rx_use) {
++		/*
++		 * EDMA driver during suspend will forcefully release any
++		 * non-idle DMA channels. If port wakeup is enabled or if port
++		 * is console port or 'no_console_suspend' is set the Rx DMA
++		 * cannot resume as as expected, hence gracefully release the
++		 * Rx DMA path before suspend and start Rx DMA path on resume.
++		 */
++		if (sport->port.irq_wake) {
++			del_timer_sync(&sport->lpuart_timer);
++			lpuart_dma_rx_free(&sport->port);
++		}
++
++		/* Disable Rx DMA to use UART port as wakeup source */
++		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_RDMAS,
++					sport->port.membase + UARTCR5);
++	}
++
++	if (sport->lpuart_dma_tx_use) {
++		sport->dma_tx_in_progress = false;
++		dmaengine_terminate_all(sport->dma_tx_chan);
++	}
++
+ 	if (sport->port.suspended && !sport->port.irq_wake)
+ 		clk_disable_unprepare(sport->clk);
+ 
+@@ -1970,6 +1994,26 @@ static int lpuart_resume(struct device *dev)
+ 		writeb(temp, sport->port.membase + UARTCR2);
+ 	}
+ 
++	if (sport->lpuart_dma_rx_use) {
++		if (sport->port.irq_wake) {
++			if (!lpuart_start_rx_dma(sport)) {
++				sport->lpuart_dma_rx_use = true;
++				rx_dma_timer_init(sport);
++			} else {
++				sport->lpuart_dma_rx_use = false;
++			}
++		}
++	}
++
++	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
++			init_waitqueue_head(&sport->dma_wait);
++			sport->lpuart_dma_tx_use = true;
++			writeb(readb(sport->port.membase + UARTCR5) |
++				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
++	} else {
++		sport->lpuart_dma_tx_use = false;
++	}
++
+ 	uart_resume_port(&lpuart_reg, &sport->port);
+ 
+ 	return 0;
 -- 
-- Xing Zheng
+2.9.0
