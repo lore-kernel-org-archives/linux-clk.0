@@ -1,52 +1,42 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Subject: Re: [RFC PATCH v1 2/6] clk: rockchip: rk3399: add SCLK_DDRCLK ID for
- ddrc
-To: Lin Huang <hl@rock-chips.com>, heiko@sntech.de, mark.yao@rock-chips.com,
- myungjoo.ham@samsung.com
-References: <1464947719-6245-1-git-send-email-hl@rock-chips.com>
- <1464947719-6245-3-git-send-email-hl@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, huangtao@rock-chips.com, typ@rock-chips.com,
- airlied@linux.ie, mturquette@baylibre.com, dbasehore@chromium.org,
- sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, dianders@chromium.org,
- linux-rockchip@lists.infradead.org, kyungmin.park@samsung.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <9d392979-0a20-ca74-9699-2440d07dddd3@rock-chips.com>
-Date: Fri, 3 Jun 2016 20:34:52 +0800
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1464947719-6245-3-git-send-email-hl@rock-chips.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+To: Rob Herring <robh@kernel.org>, "Jongsung Kim" <neidhard.kim@lge.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160628205518.GF3737@rob-hp-laptop>
+Cc: "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Chanho Min" <chanho.min@lge.com>
+References: <20160621005910.GN1521@codeaurora.org>
+ <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
+ <20160628205518.GF3737@rob-hp-laptop>
+Message-ID: <146714872010.89261.1969853552594659808@resonance>
+Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
+Date: Tue, 28 Jun 2016 14:18:40 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Lin
+Quoting Rob Herring (2016-06-28 13:55:18)
+> On Fri, Jun 24, 2016 at 01:12:52PM +0900, Jongsung Kim wrote:
+> > There is no way to set additional flags for a DT-initialized fixed-
+> > factor-clock, and it can be problematic i.e., when the clock rate
+> > needs to be changed. [1][2]
+> > =
 
-How about merge it into your patch#3.
+> > This patch introduces an optional dt-binding named "clock-flags" to
+> > be used for passing any needed flags from dts.
+> =
 
-On 2016/6/3 17:55, Lin Huang wrote:
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> ---
-> Changes in v1:
-> - None
->
->  include/dt-bindings/clock/rk3399-cru.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
-> index 50a44cf..8a0f0442 100644
-> --- a/include/dt-bindings/clock/rk3399-cru.h
-> +++ b/include/dt-bindings/clock/rk3399-cru.h
-> @@ -131,6 +131,7 @@
->  #define SCLK_DPHY_RX0_CFG		165
->  #define SCLK_RMII_SRC			166
->  #define SCLK_PCIEPHY_REF100M		167
-> +#define SCLK_DDRCLK			168
->
->  #define DCLK_VOP0			180
->  #define DCLK_VOP1			181
->
+> I don't think we want this in DT. If we did, the flags would need some =
 
+> documentation about what the flags mean.
 
--- 
-Best Regards
-Shawn Lin
+Flags are specific to Linux implementation, so I agree with Rob. Better
+to create a compatible string for your hardware that bakes in the flags.
+
+Regards,
+Mike
+
+> =
+
+> Rob
