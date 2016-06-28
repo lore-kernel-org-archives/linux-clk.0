@@ -1,148 +1,61 @@
-Return-Path: <hl@rock-chips.com>
-Subject: Re: [RFC PATCH 2/4] clk: rockchip: rk3399: add ddrc clock support
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- Doug Anderson <dianders@chromium.org>
-References: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
- <1464773739-18152-3-git-send-email-hl@rock-chips.com>
- <CAD=FV=UQoWe7DcPe3sZrocXLmX4JNpBBF1rr+-+T_q3FttihEQ@mail.gmail.com>
- <7336973.nHpy8GhqcO@diego>
-Cc: David Airlie <airlied@linux.ie>,
- Michael Turquette <mturquette@baylibre.com>,
- Derek Basehore <dbasehore@chromium.org>, Stephen Boyd
- <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@samsung.com,
- linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?5aea5pm65oOF?=
- <mark.yao@rock-chips.com>
-From: hl <hl@rock-chips.com>
-Message-ID: <574F8CBA.2040203@rock-chips.com>
-Date: Thu, 2 Jun 2016 09:32:42 +0800
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: andi.shyti@gmail.com
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, Xing Zheng <zhengxing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH 0/2] use the CLK_IS_CRITICAL flag for critical clocks
+Date: Tue, 28 Jun 2016 17:11:40 +0200
+Message-ID: <2143021.IyFNGTj97L@phil>
+In-Reply-To: <1467125137-25999-1-git-send-email-andi@etezian.org>
+References: <1467125137-25999-1-git-send-email-andi@etezian.org>
 MIME-Version: 1.0
-In-Reply-To: <7336973.nHpy8GhqcO@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Doug&Heiko,
+Hi Andi,
 
-On 2016年06月01日 23:46, Heiko Stübner wrote:
-> Am Mittwoch, 1. Juni 2016, 08:24:48 schrieb Doug Anderson:
->> Lin Huang,
->>
->> On Wed, Jun 1, 2016 at 2:35 AM, Lin Huang <hl@rock-chips.com> wrote:
->>> add ddrc clock setting, so we can do ddr frequency
->>> scaling on rk3399 platform in future.
->>>
->>> Signed-off-by: Lin Huang <hl@rock-chips.com>
->>> ---
->>>
->>>   drivers/clk/rockchip/clk-rk3399.c      | 16 ++++++++++++++++
->>>   include/dt-bindings/clock/rk3399-cru.h |  1 +
->>>   2 files changed, 17 insertions(+)
->>>
->>> diff --git a/drivers/clk/rockchip/clk-rk3399.c
->>> b/drivers/clk/rockchip/clk-rk3399.c index f1d8e44..749ea59 100644
->>> --- a/drivers/clk/rockchip/clk-rk3399.c
->>> +++ b/drivers/clk/rockchip/clk-rk3399.c
->>> @@ -118,6 +118,10 @@ PNAME(mux_armclkb_p)                               =
->>> { "clk_core_b_lpll_src",>
->>>                                                      "clk_core_b_bpll_src",
->>>                                                      "clk_core_b_dpll_src",
->>>                                                      "clk_core_b_gpll_src"
->>>                                                      };
->>>
->>> +PNAME(mux_ddrclk_p)                            = { "clk_ddrc_lpll_src",
->>> +                                                   "clk_ddrc_bpll_src",
->>> +                                                   "clk_ddrc_dpll_src",
->>> +                                                   "clk_ddrc_gpll_src" };
->>>
->>>   PNAME(mux_aclk_cci_p)                          = { "cpll_aclk_cci_src",
->>>   
->>>                                                      "gpll_aclk_cci_src",
->>>                                                      "npll_aclk_cci_src",
->>>
->>> @@ -1377,6 +1381,18 @@ static struct rockchip_clk_branch
->>> rk3399_clk_branches[] __initdata = {>
->>>          COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
->>>          
->>>                          RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
->>>                          RK3368_CLKGATE_CON(13), 11, GFLAGS),
->>>
->>> +
->>> +       /* ddrc */
->>> +       GATE(0, "clk_ddrc_lpll_src", "lpll", CLK_IGNORE_UNUSED,
->>> +            RK3399_CLKGATE_CON(3), 0, GFLAGS),
->>> +       GATE(0, "clk_ddrc_bpll_src", "bpll", CLK_IGNORE_UNUSED,
->>> +            RK3399_CLKGATE_CON(3), 1, GFLAGS),
->>> +       GATE(0, "clk_ddrc_dpll_src", "dpll", CLK_IGNORE_UNUSED,
->>> +            RK3399_CLKGATE_CON(3), 2, GFLAGS),
->>> +       GATE(0, "clk_ddrc_gpll_src", "gpll", CLK_IGNORE_UNUSED,
->>> +            RK3399_CLKGATE_CON(3), 3, GFLAGS),
->>> +       COMPOSITE_DDRC(SCLK_DDRCLK, "clk_ddrc", mux_ddrclk_p,
->>> CLK_IGNORE_UNUSED, +                      RK3399_CLKSEL_CON(6), 4, 2,
->>> MFLAGS, 0, 3, DFLAGS),
->> It seems slightly unfortunate that we need CLK_IGNORE_UNUSED on these.
->> Only one of these will ever be used at once and it would be awfully
->> nice if the others could get gated, right?
->>
->> ...presumably this is needed because we might not have an actual
->> driver for DDR Freq and we definitely want to make sure that clk_ddrc
->> is enabled in that case.  I guess what we really want is something
->> like CLK_ENABLE_HAND_OFF eventually, but until then I think you might
->> get slightly better behavior by getting rid of all of these
->> CLK_IGNORE_UNUSED and setting "clk_ddrc" as a critical clock, either
->> using the table in this file or the new flag.
-> My current feeling is that staying with the homegrown solution for critical
-> clocks might be preferable until the clk-handoff mechanism lands as well, as
-> our critical clocks fall into both categories and I'd like to not touch
-> everything twice.
->
-> The clock above should be controlled by the dcf, so falls into the handoff
-> category (critical until a driver picks up the clock).
->
-> Also mixing both new and old approach might get confusing.
->
-> But I'm definitly open to counter-arguments :-)
-     I will remove CLK_IGNORE_UNUSED flag  and set
-     "clk_ddrc"  as critical clock in next version. Besides, i think we 
-should also
-     set "clk_ddrc_dpll_src" as critical clock, since we always use dpll 
-as ddr clock source,
-     and it should always on.
->
->>>   };
->>>   
->>>   static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata =
->>>   {
->>>
->>> diff --git a/include/dt-bindings/clock/rk3399-cru.h
->>> b/include/dt-bindings/clock/rk3399-cru.h index 50a44cf..8a0f0442 100644
->>> --- a/include/dt-bindings/clock/rk3399-cru.h
->>> +++ b/include/dt-bindings/clock/rk3399-cru.h
->>> @@ -131,6 +131,7 @@
->>>
->>>   #define SCLK_DPHY_RX0_CFG              165
->>>   #define SCLK_RMII_SRC                  166
->>>   #define SCLK_PCIEPHY_REF100M           167
->>>
->>> +#define SCLK_DDRCLK                    168
->> Almost certainly you'll want to create a separate patch for the
->> dt-bindings change since it will need to land in a different tree so
->> it can be pulled into both Heiko's clock topic branch and dts64 topic
->> branch.
-> correct.
-     will fix next version, thanks.
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->
->
->
+Am Dienstag, 28. Juni 2016, 17:45:35 schrieb andi.shyti@gmail.com:
+> From: Andi Shyti <andi@etezian.org>
+> this patchset is the first of a series and it aims to remove
+> the handling of critical clock on the rockchip clock drivers.
 
--- 
-Lin Huang
+I'm actually waiting on the second part of that to land.
+
+The series introducing critical clocks also wanted to provide so called 
+hand-off clocks (clocks being critical until a driver takes possession of 
+them).
+
+What are currently critical clocks in Rockchip drivers are essentially a mix 
+of those two types, and I was somehow hoping that the handoff type also 
+lands soonish so that we can limit ourselfs to one conversion step.
+
+
+Heiko
+
+
+> Patch 32b9b10961860860268961d9aad0c56a73018c37 has added a
+> generic clock critical handling that can be used from the
+> drivers.
+> 
+> Because I'm not expert in the clock framework, I want to check if
+> this is fine and, if so, I will fire the other patches.
+> 
+> Thanks,
+> Andi
+> 
+> Andi Shyti (2):
+>   clk: clk-rk3*: set CLK_IS_CRITICAL flag to critical clocks
+>   clk: rockchip: remove unused rockchip_clk_protect_critical function
+> 
+>  drivers/clk/rockchip/clk-rk3036.c |  18 ++-----
+>  drivers/clk/rockchip/clk-rk3188.c |  25 +++-------
+>  drivers/clk/rockchip/clk-rk3228.c |  17 ++-----
+>  drivers/clk/rockchip/clk-rk3288.c |  21 +++-----
+>  drivers/clk/rockchip/clk-rk3368.c |  22 ++-------
+>  drivers/clk/rockchip/clk-rk3399.c | 101
+> ++++++++++++++++---------------------- drivers/clk/rockchip/clk.c       
+> |  14 ------
+>  drivers/clk/rockchip/clk.h        |   1 -
+>  8 files changed, 69 insertions(+), 150 deletions(-)
+> 
+> --
+> 2.8.1
