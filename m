@@ -1,73 +1,59 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH V2 8/8] clk: imx7d: only enable minimum required clocks
-Date: Wed, 29 Jun 2016 22:59:11 +0800
-Message-ID: <1467212351-16626-9-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH v2 2/9] clk: imx: vf610: Disable automatic clock gating for lpuart in LPSTOP mode
+Date: Tue, 28 Jun 2016 11:02:28 +0530
+Message-ID: <20160628053235.5114-3-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Formerly clk core does not support imx7d clock type well that all
-its clock operations requires the parent clock on.
-Therefore we enabled all clocks by default in clock driver
-initialization for other module clocks operate well.
+From: Stefan Agner <stefan@agner.ch>
 
-After patch 'clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE',
-clk core can handle such clock type well, so we don't have to enable
-them all by default anymore. Instead, we only enable a minimum required
-set of clocks.
+In order to allow wake support in STOP sleep mode, clocks are needed. Use
+imx_clk_gate2_cgr to disable automatic clock gating in low power mode STOP.
+This allows to enable wake by UART using:
+echo enabled > /sys/class/tty/ttyLP0/power/wakeup
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+However, if wake is not enabled, the driver should disable the clocks explicitly
+to save power.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
 ---
- drivers/clk/imx/clk-imx7d.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/clk/imx/clk-vf610.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index bb5affae0850..7b46ed0677a5 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -361,6 +361,14 @@ static const char *pll_enet_bypass_sel[] = { "pll_enet_main", "pll_enet_main_src
- static const char *pll_audio_bypass_sel[] = { "pll_audio_main", "pll_audio_main_src", };
- static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_src", };
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 3a1f244..0476353 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -315,12 +315,12 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
  
-+static int const clks_init_on[] __initconst = {
-+	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
-+	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
-+	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
-+	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
-+	IMX7D_AHB_CHANNEL_ROOT_CLK,
-+};
-+
- static struct clk_onecell_data clk_data;
+ 	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
  
- static struct clk ** const uart_clks[] __initconst = {
-@@ -846,14 +854,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_data.clk_num = ARRAY_SIZE(clks);
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+-	clk[VF610_CLK_UART0] = imx_clk_gate2("uart0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(7));
+-	clk[VF610_CLK_UART1] = imx_clk_gate2("uart1", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(8));
+-	clk[VF610_CLK_UART2] = imx_clk_gate2("uart2", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(9));
+-	clk[VF610_CLK_UART3] = imx_clk_gate2("uart3", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(10));
+-	clk[VF610_CLK_UART4] = imx_clk_gate2("uart4", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(9));
+-	clk[VF610_CLK_UART5] = imx_clk_gate2("uart5", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(10));
++	clk[VF610_CLK_UART0] = imx_clk_gate2_cgr("uart0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(7), 0x2);
++	clk[VF610_CLK_UART1] = imx_clk_gate2_cgr("uart1", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(8), 0x2);
++	clk[VF610_CLK_UART2] = imx_clk_gate2_cgr("uart2", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(9), 0x2);
++	clk[VF610_CLK_UART3] = imx_clk_gate2_cgr("uart3", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(10), 0x2);
++	clk[VF610_CLK_UART4] = imx_clk_gate2_cgr("uart4", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(9), 0x2);
++	clk[VF610_CLK_UART5] = imx_clk_gate2_cgr("uart5", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(10), 0x2);
  
--	/* TO BE FIXED LATER
--	 * Enable all clock to bring up imx7, otherwise system will be halt and block
--	 * the other part upstream Because imx7d clock design changed, clock framework
--	 * need do a little modify.
--	 * Dong Aisheng is working on this. After that, this part need be changed.
--	 */
--	for (i = 0; i < IMX7D_CLK_END; i++)
--		clk_prepare_enable(clks[i]);
-+	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
-+		clk_prepare_enable(clks[clks_init_on[i]]);
- 
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 	clk[VF610_CLK_I2C0] = imx_clk_gate2("i2c0", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(6));
+ 	clk[VF610_CLK_I2C1] = imx_clk_gate2("i2c1", "ipg_bus", CCM_CCGR4, CCM_CCGRx_CGn(7));
 -- 
-1.9.1
+2.9.0
