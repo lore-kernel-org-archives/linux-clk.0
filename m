@@ -1,115 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Jun 2016 12:43:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 06/10] clk: mvebu: Add the xtal clock for Armada 3700 SoC
-Message-ID: <20160630194334.GZ1521@codeaurora.org>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
- <1465565018-14172-7-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Date: Tue, 28 Jun 2016 21:01:00 +0200
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] clk: Provide notifier stubs when !COMMON_CLK
+Message-ID: <20160628190100.GA11586@kozik-lap>
+References: <1467113104-8650-1-git-send-email-k.kozlowski@samsung.com>
+ <20160628172653.GB1521@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465565018-14172-7-git-send-email-gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160628172653.GB1521@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/10, Gregory CLEMENT wrote:
-> diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-> new file mode 100644
-> index 000000000000..fb051a75b2c2
-> --- /dev/null
-> +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-> @@ -0,0 +1,93 @@
-> +/*
-> + * Marvell Armada 37xx SoC xtal clocks
-> + *
-> + * Copyright (C) 2016 Marvell
-> + *
-> + * Gregory CLEMENT <gregory.clement@free-electrons.com>
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2.  This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#define NB_GPIO1_LATCH	0xC
-> +#define XTAL_MODE	    BIT(31)
-> +
-> +static struct clk *xtal_clk;
+On Tue, Jun 28, 2016 at 10:26:53AM -0700, Stephen Boyd wrote:
+> On 06/28, Krzysztof Kozlowski wrote:
+> > The clk notifier symbols are hidden by COMMON_CLK.  However on some
+> > platforms HAVE_CLK might be set while COMMON_CLK not which leads to
+> > compile test build errors like:
+> > 
+> > $ make.cross ARCH=sh
+> >    drivers/devfreq/tegra-devfreq.c: In function 'tegra_actmon_rate_notify_cb':
+> > >> drivers/devfreq/tegra-devfreq.c:391:16: error: 'POST_RATE_CHANGE' undeclared (first use in this function)
+> >      if (action != POST_RATE_CHANGE)
+> >                    ^
+> >    drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_probe':
+> > >> drivers/devfreq/tegra-devfreq.c:654:8: error: implicit declaration of function 'clk_notifier_register' [-Werror=implicit-function-declaration]
+> >      err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
+> >            ^
+> > 
+> > Export the macros and data type declarations outside of COMMON_CLK ifdef
+> > and provide stubs to fix the compile testing.
+> > 
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > 
+> > ---
+> > 
+> 
+> Ok. Did you want some stable branch to pull this in and base your
+> use case on?
 
-Please allocate this at driver probe time instead, or even just
-assign it to be the platform driver's drvdata.
+It is only one patch but indeed without the branch my patches would have
+to wait for next release. If you would be so kind, could you prepare
+the stable branch? I hope MyungJoo Ham will use it.
 
-> +
-> +static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	const char *xtal_name = "xtal";
-> +	struct device_node *parent;
-> +	struct regmap *regmap;
-> +	unsigned int rate;
-> +	u32 reg;
-> +	int ret;
-> +
-> +	parent = np->parent;
-> +	if (!parent) {
-> +		dev_err(&pdev->dev, "no parrent\n");
+Anyway I encountered more linkage errors for clk API (like clk_get_rate()).
+They happen for various compile-tested drivers in case of MIPS (and
+maybe others like SH). I will investigate it more but I think it is not
+related strictly to this issue.
 
-s/parrent/parent/
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	regmap = syscon_node_to_regmap(parent);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(&pdev->dev, "cannot get regmap\n");
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	ret = regmap_read(regmap, NB_GPIO1_LATCH, &reg);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "cannot read from regmap\n");
-> +		return ret;
-> +	}
-> +
-> +	if (reg & XTAL_MODE)
-> +		rate = 40000000;
-> +	else
-> +		rate = 25000000;
-> +
-> +	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
-> +	xtal_clk = clk_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
-
-Please move this to use the clk_hw_register_fixed_rate() function
-instead and update of_clk_add_provider to register a clk_hw
-instead of clk pointer.
-
-> +	if (IS_ERR(xtal_clk))
-> +		return PTR_ERR(xtal_clk);
-> +	of_clk_add_provider(np, of_clk_src_simple_get, xtal_clk);
-
-What if this fails?
-
-> +
-> +	return 0;
-> +}
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
