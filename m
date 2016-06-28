@@ -1,241 +1,32 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 30 Jun 2016 17:37:04 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Message-ID: <20160630153704.GA4279@ulmo.ba.sec>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com>
- <20160617152336.GA27475@ulmo.ba.sec>
- <943f14f1-1c7c-055d-8dc6-f30f1196430f@nvidia.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 28 Jun 2016 00:08:04 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCHv2 09/28] ARM: AM33xx: fix module_wait_ready
+ without clkctrl register
+Message-ID: <20160628070803.GH28140@atomide.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+ <1465844702-12200-10-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-In-Reply-To: <943f14f1-1c7c-055d-8dc6-f30f1196430f@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1465844702-12200-10-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+* Tero Kristo <t-kristo@ti.com> [160613 12:08]:
+> If the module has no clkctrl register defined, module_wait_ready should
+> not try to access this. This can potentially cause an illegal register
+> access, and result in bad idle reporting also.
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Tony Lindgren <tony@atomide.com>
 
-On Thu, Jun 30, 2016 at 11:32:14AM -0400, Rhyland Klein wrote:
-> On 6/17/2016 11:23 AM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
-> >> Hi Thierry,
-> >>
-> >> On 26/05/16 17:41, Rhyland Klein wrote:
-> >>> From: Andrew Bresticker <abrestic@chromium.org>
-> >>>
-> >>> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
-> >>> clk-pll.c. UTMIPLL was being configured and set in HW control right
-> >>> after registration. However, when the clock init_table is processed a=
-nd
-> >>> child clks of PLLU are enabled, it will call in and enable PLLU as
-> >>> well, and initiate SW enabling sequence even though PLLU is already in
-> >>> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY statu=
-s.
-> >>>
-> >>> Doing the initialization once during pllu_enable means we configure it
-> >>> properly into HW control.
-> >>>
-> >>> A side effect of the commonization/localization of the UTMIPLL init
-> >>> code, is that it corrects some errors that were present for earlier
-> >>> generations. For instance, in clk-tegra124.c, it used to have:
-> >>>
-> >>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
-> >>>
-> >>> when the correct shift to use is present in the new version:
-> >>>
-> >>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
-> >>>
-> >>> which matches the Tegra124 TRM register definition.
-> >>>
-> >>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >>>
-> >>> [rklein: Merged in some later fixes for potential deadlocks]
-> >>>
-> >>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> >>> ---
-> >>> v5:
-> >>>  - Initialized flags to 0 to avoid harmless spinlock warnings
-> >>>
-> >>> v4:
-> >>>  - Re-added examples in patch description
-> >>>
-> >>> v3:
-> >>>  - Flushed out description to describe this patch.
-> >>>
-> >>>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++=
-++++++++++
-> >>>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
-> >>>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
-> >>>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
-> >>>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
-> >>>  drivers/clk/tegra/clk.h          |  17 ++
-> >>>  6 files changed, 510 insertions(+), 597 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> >>> index 4e194ecc8d5e..31e20110fae4 100644
-> >>> --- a/drivers/clk/tegra/clk-pll.c
-> >>> +++ b/drivers/clk/tegra/clk-pll.c
-> >>
-> >> ...
-> >>
-> >>> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
-> >>> +{
-> >>> +	struct tegra_clk_pll *pll =3D to_clk_pll(hw);
-> >>> +	struct clk_hw *pll_ref =3D clk_hw_get_parent(hw);
-> >>> +	struct clk_hw *osc =3D clk_hw_get_parent(pll_ref);
-> >>> +	unsigned long flags =3D 0, input_rate;
-> >>> +	unsigned int i;
-> >>> +	int ret =3D 0;
-> >>> +	u32 val;
-> >>> +
-> >>> +	if (!osc) {
-> >>> +		pr_err("%s: failed to get OSC clock\n", __func__);
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +	input_rate =3D clk_hw_get_rate(osc);
-> >>> +
-> >>> +	if (pll->lock)
-> >>> +		spin_lock_irqsave(pll->lock, flags);
-> >>> +
-> >>> +	_clk_pll_enable(hw);
-> >>> +	ret =3D clk_pll_wait_for_lock(pll);
-> >>> +	if (ret < 0)
-> >>> +		goto out;
-> >>> +
-> >>> +	for (i =3D 0; i < ARRAY_SIZE(utmi_parameters); i++) {
-> >>> +		if (input_rate =3D=3D utmi_parameters[i].osc_frequency)
-> >>> +			break;
-> >>> +	}
-> >>> +
-> >>> +	if (i =3D=3D ARRAY_SIZE(utmi_parameters)) {
-> >>> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
-> >>> +		ret =3D -EINVAL;
-> >>> +		goto out;
-> >>> +	}
-> >>> +
-> >>> +	val =3D pll_readl_base(pll);
-> >>> +	val &=3D ~PLLU_BASE_OVERRIDE;
-> >>> +	pll_writel_base(val, pll);
-> >>> +
-> >>> +	/* Put PLLU under HW control */
-> >>> +	val =3D readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +	val |=3D PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
-> >>> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
-> >>> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
-> >>> +	val &=3D ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
-> >>> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
-> >>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +
-> >>> +	val =3D readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
-> >>> +	val &=3D ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
-> >>> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
-> >>> +	udelay(1);
-> >>> +
-> >>> +	val =3D readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +	val |=3D PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
-> >>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +	udelay(1);
-> >>> +
-> >>> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
-> >>> +	val =3D pll_readl_base(pll);
-> >>> +	val &=3D ~PLLU_BASE_CLKENABLE_USB;
-> >>> +	pll_writel_base(val, pll);
-> >>> +
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> >>> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
-> >>> +		pr_debug("UTMIPLL already enabled\n");
-> >>> +		goto out;
-> >>> +	}
-> >>> +	val &=3D ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> >>> +
-> >>> +	/* Program UTMIP PLL stable and active counts */
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
-> >>> +	val &=3D ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_coun=
-t);
-> >>> +	val &=3D ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
-> >>> +			utmi_parameters[i].active_delay_count);
-> >>> +	val |=3D UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
-> >>> +
-> >>> +	/* Program UTMIP PLL delay and oscillator frequency counts */
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +	val &=3D ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
-> >>> +		utmi_parameters[i].enable_delay_count);
-> >>> +	val &=3D ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
-> >>> +		utmi_parameters[i].xtal_freq_count);
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +
-> >>> +	/* Remove power downs from UTMIP PLL control bits */
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +	val &=3D ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
-> >>> +	val |=3D UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +	udelay(100);
-> >>
-> >> In next-20160617 I see that this udelay is now a usleep_range(100, 200)
-> >> and this is causing the following splat when the clock is enabled. I
-> >> don't think that we can use usleep here ...
-> >=20
-> > Okay, I'll back out the patch. I'd really prefer to avoid busy-looping
-> > for 100 microseconds here, so can we please find another way to do this?
-> >=20
->=20
-> It looks like we should be able to use a short udelay of 1-2us. I
-> believe the original code had udelay(1) and I know Jon and I tested
-> udelay(2) and it was ok.
+Seems at least this one I could take separately. Probably best
+that we merge the arch/arm/mach-omap2 changes first that can be
+done until there's some conclusion to the ti_clk_get() comments
+I made.
 
-What original code? The downstream driver? If so I'd be leaning towards
-simply adopting that. Everything else in this functions seems to want to
-wait for 1 us, seems natural for this to do as well.
+Regards,
 
-> Do you want me to send another patch rev with just the udelay change or
-> are you going to just modify it locally yourself?
-
-No need to resend, I'll cherry-pick the patch from next-20160617 and
-make this into udelay(1).
-
-Thierry
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXdTycAAoJEN0jrNd/PrOhPIEP/RbMpyy0xP2FO9Mt3QZHiSBA
-45j4pPtsbTTEj4dk3iAYralGRvgKqQklOobZVazJ8nMKkSmPA/GnIYRgiDIu0qme
-ts4FOJQ5JBKeyhKa/HE9qbnF99YyGRy36noktuNP68Ysj1zwUnrdsR1JJt3PEQ5a
-4A7PDWhNPS8pR/2ziltTNZMgBVRZ+R+QwJnhZNifEvE7z5ttxmJkjbOCw3mOqwgv
-sDOdZidgzMIPwtB1MLPUujgrckZzLc7hmRN4gJFCgAdOL67wG3KdPcNJBxkVfRkt
-WlImTNjDoymlflxFEjC4MOjM+frOD+c0Fpgkvh25WIeZYzEHlA/3cVJRKnG/4CVY
-OCviNo8+SLf7zpvz+fFuArh937DsV3wyoWhHeEFc6eIIv9Um54nuVHV2nFU3tR/5
-CWeSvVMUAcAMRDiO3sl5QPE+7ctHn9VBQ2oo2ToZcnyf41j7ZdT3J3wbRG5UojZz
-t5+ntoJc/4W6dYk66PEVfPGjVxTcocUU89vslZArNsA7d8RYE4kw+lq3/E8XJtCM
-NOWdqnz6yyC7MtJHMcySGf0VvoQugjYhTPpzZAhOcoEeTT5QR1HAqwLJ9ibn2rLs
-v8ktiqh0bkwe76rFsEesktJkFRrh2NZdp/8YkEC1oyRul+kbnEqPkUScVjx6cfJj
-X2zDQ1YBAoWmYSLayxjO
-=6CZF
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+Tony
