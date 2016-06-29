@@ -1,24 +1,247 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 20 Jun 2016 17:47:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] clk: Remove unused variable
-Message-ID: <20160621004713.GJ1521@codeaurora.org>
-References: <20160607122502.32168-1-lee.jones@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 2/8] clk: move clk_disable_unused after clk_core_disable_unprepare function
+Date: Wed, 29 Jun 2016 22:59:05 +0800
+Message-ID: <1467212351-16626-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160607122502.32168-1-lee.jones@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07, Lee Jones wrote:
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
+No function level change, just moving code place.
+clk_disable_unused function will need to call clk_core_prepare_enable/
+clk_core_disable_unprepare when adding CLK_OPS_PARENT_ENABLE features.
+So move it after clk_core_disable_unprepare to avoid adding forward
+declared functions later.
 
-Applied to clk-next
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c | 196 +++++++++++++++++++++++++++---------------------------
+ 1 file changed, 98 insertions(+), 98 deletions(-)
 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 55e62bac0fb4..e2e8f0c9f20a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -172,104 +172,6 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	return core->ops->is_enabled(core->hw);
+ }
+ 
+-static void clk_unprepare_unused_subtree(struct clk_core *core)
+-{
+-	struct clk_core *child;
+-
+-	lockdep_assert_held(&prepare_lock);
+-
+-	hlist_for_each_entry(child, &core->children, child_node)
+-		clk_unprepare_unused_subtree(child);
+-
+-	if (core->prepare_count)
+-		return;
+-
+-	if (core->flags & CLK_IGNORE_UNUSED)
+-		return;
+-
+-	if (clk_core_is_prepared(core)) {
+-		trace_clk_unprepare(core);
+-		if (core->ops->unprepare_unused)
+-			core->ops->unprepare_unused(core->hw);
+-		else if (core->ops->unprepare)
+-			core->ops->unprepare(core->hw);
+-		trace_clk_unprepare_complete(core);
+-	}
+-}
+-
+-static void clk_disable_unused_subtree(struct clk_core *core)
+-{
+-	struct clk_core *child;
+-	unsigned long flags;
+-
+-	lockdep_assert_held(&prepare_lock);
+-
+-	hlist_for_each_entry(child, &core->children, child_node)
+-		clk_disable_unused_subtree(child);
+-
+-	flags = clk_enable_lock();
+-
+-	if (core->enable_count)
+-		goto unlock_out;
+-
+-	if (core->flags & CLK_IGNORE_UNUSED)
+-		goto unlock_out;
+-
+-	/*
+-	 * some gate clocks have special needs during the disable-unused
+-	 * sequence.  call .disable_unused if available, otherwise fall
+-	 * back to .disable
+-	 */
+-	if (clk_core_is_enabled(core)) {
+-		trace_clk_disable(core);
+-		if (core->ops->disable_unused)
+-			core->ops->disable_unused(core->hw);
+-		else if (core->ops->disable)
+-			core->ops->disable(core->hw);
+-		trace_clk_disable_complete(core);
+-	}
+-
+-unlock_out:
+-	clk_enable_unlock(flags);
+-}
+-
+-static bool clk_ignore_unused;
+-static int __init clk_ignore_unused_setup(char *__unused)
+-{
+-	clk_ignore_unused = true;
+-	return 1;
+-}
+-__setup("clk_ignore_unused", clk_ignore_unused_setup);
+-
+-static int clk_disable_unused(void)
+-{
+-	struct clk_core *core;
+-
+-	if (clk_ignore_unused) {
+-		pr_warn("clk: Not disabling unused clocks\n");
+-		return 0;
+-	}
+-
+-	clk_prepare_lock();
+-
+-	hlist_for_each_entry(core, &clk_root_list, child_node)
+-		clk_disable_unused_subtree(core);
+-
+-	hlist_for_each_entry(core, &clk_orphan_list, child_node)
+-		clk_disable_unused_subtree(core);
+-
+-	hlist_for_each_entry(core, &clk_root_list, child_node)
+-		clk_unprepare_unused_subtree(core);
+-
+-	hlist_for_each_entry(core, &clk_orphan_list, child_node)
+-		clk_unprepare_unused_subtree(core);
+-
+-	clk_prepare_unlock();
+-
+-	return 0;
+-}
+-late_initcall_sync(clk_disable_unused);
+-
+ /***    helper functions   ***/
+ 
+ const char *__clk_get_name(const struct clk *clk)
+@@ -828,6 +730,104 @@ static void clk_core_disable_unprepare(struct clk_core *core)
+ 	clk_core_unprepare_lock(core);
+ }
+ 
++static void clk_unprepare_unused_subtree(struct clk_core *core)
++{
++	struct clk_core *child;
++
++	lockdep_assert_held(&prepare_lock);
++
++	hlist_for_each_entry(child, &core->children, child_node)
++		clk_unprepare_unused_subtree(child);
++
++	if (core->prepare_count)
++		return;
++
++	if (core->flags & CLK_IGNORE_UNUSED)
++		return;
++
++	if (clk_core_is_prepared(core)) {
++		trace_clk_unprepare(core);
++		if (core->ops->unprepare_unused)
++			core->ops->unprepare_unused(core->hw);
++		else if (core->ops->unprepare)
++			core->ops->unprepare(core->hw);
++		trace_clk_unprepare_complete(core);
++	}
++}
++
++static void clk_disable_unused_subtree(struct clk_core *core)
++{
++	struct clk_core *child;
++	unsigned long flags;
++
++	lockdep_assert_held(&prepare_lock);
++
++	hlist_for_each_entry(child, &core->children, child_node)
++		clk_disable_unused_subtree(child);
++
++	flags = clk_enable_lock();
++
++	if (core->enable_count)
++		goto unlock_out;
++
++	if (core->flags & CLK_IGNORE_UNUSED)
++		goto unlock_out;
++
++	/*
++	 * some gate clocks have special needs during the disable-unused
++	 * sequence.  call .disable_unused if available, otherwise fall
++	 * back to .disable
++	 */
++	if (clk_core_is_enabled(core)) {
++		trace_clk_disable(core);
++		if (core->ops->disable_unused)
++			core->ops->disable_unused(core->hw);
++		else if (core->ops->disable)
++			core->ops->disable(core->hw);
++		trace_clk_disable_complete(core);
++	}
++
++unlock_out:
++	clk_enable_unlock(flags);
++}
++
++static bool clk_ignore_unused;
++static int __init clk_ignore_unused_setup(char *__unused)
++{
++	clk_ignore_unused = true;
++	return 1;
++}
++__setup("clk_ignore_unused", clk_ignore_unused_setup);
++
++static int clk_disable_unused(void)
++{
++	struct clk_core *core;
++
++	if (clk_ignore_unused) {
++		pr_warn("clk: Not disabling unused clocks\n");
++		return 0;
++	}
++
++	clk_prepare_lock();
++
++	hlist_for_each_entry(core, &clk_root_list, child_node)
++		clk_disable_unused_subtree(core);
++
++	hlist_for_each_entry(core, &clk_orphan_list, child_node)
++		clk_disable_unused_subtree(core);
++
++	hlist_for_each_entry(core, &clk_root_list, child_node)
++		clk_unprepare_unused_subtree(core);
++
++	hlist_for_each_entry(core, &clk_orphan_list, child_node)
++		clk_unprepare_unused_subtree(core);
++
++	clk_prepare_unlock();
++
++	return 0;
++}
++late_initcall_sync(clk_disable_unused);
++
+ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 				      struct clk_rate_request *req)
+ {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
