@@ -1,144 +1,353 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock
- Definitions
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
- <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
- <574C6C16.3020703@gmail.com>
- <6b57d59f-d17b-a6c3-41d5-e975db544adc@de.bosch.com>
- <CAMuHMdWByGTDcG62qTg5N69FACx4FiuVuRrF_woyFAoNOpbjSw@mail.gmail.com>
- <77a45dc7-59f0-23fc-f30d-b3daab34d689@de.bosch.com>
- <CAMuHMdW6kTMQoVO15Eve2Er5pfSiEc4LkwvQ72WU1LmdSK+CxQ@mail.gmail.com>
- <94042cf8-5364-8426-a5de-b83fe291fee1@de.bosch.com>
- <CAMuHMdVBu-ecbisZWfx0uKMx=M0zjT+u=j-uF=85_gaDt2u7Jg@mail.gmail.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Simon Horman
-	<horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk
-	<linux-clk@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <743e32de-037b-de4d-98c3-ea7a2738343a@de.bosch.com>
-Date: Fri, 10 Jun 2016 08:34:23 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVBu-ecbisZWfx0uKMx=M0zjT+u=j-uF=85_gaDt2u7Jg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 05/14] clk: sunxi-ng: Add mux clock support
+Date: Wed, 29 Jun 2016 21:05:26 +0200
+Message-Id: <20160629190535.11855-6-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Some clocks in the Allwinner SoCs clocks unit are just muxes.
 
-On 09.06.2016 10:54, Geert Uytterhoeven wrote:
-> Hi Dirk,
->
-> On Thu, Jun 9, 2016 at 10:31 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->> On 07.06.2016 10:17, Geert Uytterhoeven wrote:
->>> On Tue, Jun 7, 2016 at 9:53 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>> wrote:
->>>>
->>>> I think I just want to discuss if we have a clever idea to further
->>>> improve
->>>> one detail. That is, if we have a clever idea to avoid the copy & paste
->>>> between the family members using anything like a hierarchical way of
->>>> defining the clocks in r8a779x-cpg-mssr.h.
->>>>
->>>>> Given the small amount of work needed to bootstrap r8a7796, I
->>>>> think they still hold on their promises.
->>>>
->>>> Well, regarding the r8a779x-cpg-mssr.h the small amount of work needed
->>>> isn't
->>>> a really good argument if you are good with cp & sed for the copy & paste
->>>> done ;)
->>>
->>> They're not really created by cp & sed, as they must match the table in
->>> the
->>> datasheet (the latter may have been created by copy & paste though :-)
->>>
->>>> What I fear we end up the way we are doing the copy & paste
->>>> r8a779x-cpg-mssr.h is having 5 or 6 or even more of these files, all >
->>>> 90%
->>>> identical. And once you have to change anything, you either have to
->>>> change
->>>> all these files. Or you miss anything, ending up with subtle bugs when
->>>> one
->>>> SoC does behave differently than an other one.
->>>
->>> The point is these files are stable ABI: no single value can be changed.
->>> No value can be reused. Only new values can be appended at the bottom
->>> (if a newer revision of the datasheet documents more clocks than the old
->>>  version, which happens from time to time).
->>>
->>> IMHO a hierarchical way of defining the clocks has more opportunity of
->>> accidentally referring to a clock that doesn't exist on a particular SoC.
->>>
->>> Furthermore, r8a779x-cpg-mssr.h is not a good name to be part of a DT
->>> binding,
->>> due to the wildcard.
->>> A future SoC may will match r8a779x and even be called (R-Car
->>> <something>3?),
->>> while using a completely different CPG block.
->>
->> Just to give an example about what we are talking, I've done [1] below. This
->> should just be an *example*, though. I'm sure that we might need a more
->> clever way.
->
-> Thanks, it matches with what I had in mind what you wanted to do ;-)
->
->> --- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
->> +++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
->
->> +#include <dt-bindings/clock/rcar3-cpg-mssr.h>
->
->> +#define R8A7796_CLK_ZB3D4              47
->> +#define R8A7796_CLK_S0D2               48
->> +#define R8A7796_CLK_S0D3               49
->> +#define R8A7796_CLK_S0D6               50
->> +#define R8A7796_CLK_S0D8               51
->> +#define R8A7796_CLK_S0D12              53
->
-> This means on M3-W, clocks may have different prefixes:
->   - RCAR3_CLK_* if they are defined as common R-Car Gen3 clocks,
->   - R8A7796_CLK_* if they are defined as M3-W-specific clocks.
->
-> Not such a big issue, it that can be worked around using
->
->     #define R8A7796_CLK_Z RCAR3_CLK_Z
->     [...]
->
->> +++ b/include/dt-bindings/clock/rcar3-cpg-mssr.h
->> @@ -0,0 +1,63 @@
->> +/*
->> + * Copyright (C) 2015 Renesas Electronics Corp.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + */
->> +#ifndef __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
->> +#define __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
->> +
->> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
->> +
->> +/* RCar3 CPG Core Clocks */
->> +#define RCAR3_CLK_Z            0
->> +#define RCAR3_CLK_Z2           1
->> +#define RCAR3_CLK_ZR           2
->> +#define RCAR3_CLK_ZG           3
->> +#define RCAR3_CLK_ZTR          4
->> +#define RCAR3_CLK_ZTRD2                5
->
-> While this approach allows to add SoC-specific clocks to the family-specific
-> base list, it does not allow to remove family-specific clocks that are not
-> present on unknown future species of the family.
+However, those muxes might also be found in some other complicated clocks
+that would benefit from the code in there to deal with "advanced" features,
+like pre-dividers.
 
+Introduce a set of helpers to reduce the code duplication in such cases.
 
-If I answer with
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Kconfig   |   3 +
+ drivers/clk/sunxi-ng/Makefile  |   1 +
+ drivers/clk/sunxi-ng/ccu_mux.c | 187 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_mux.h |  91 ++++++++++++++++++++
+ 4 files changed, 282 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mux.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mux.h
 
-#undef
-
-that would be too easy? ;)
-
-
-Best regards
-
-Dirk
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 2f135c8a61b6..4699a602e0c1 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -12,4 +12,7 @@ config SUNXI_CCU_FRAC
+ config SUNXI_CCU_GATE
+ 	bool
+ 
++config SUNXI_CCU_MUX
++	bool
++
+ endif
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 48b885f2d8ff..eaa833721245 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -5,3 +5,4 @@ obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
+ # Base clock types
+ obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
+ obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
++obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+new file mode 100644
+index 000000000000..58fc36e7dcce
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -0,0 +1,187 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_gate.h"
++#include "ccu_mux.h"
++
++void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
++					     struct ccu_mux_internal *cm,
++					     int parent_index,
++					     unsigned long *parent_rate)
++{
++	u8 prediv = 1;
++	u32 reg;
++
++	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
++	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
++		return;
++
++	reg = readl(common->base + common->reg);
++	if (parent_index < 0) {
++		parent_index = reg >> cm->shift;
++		parent_index &= (1 << cm->width) - 1;
++	}
++
++	if (common->features & CCU_FEATURE_FIXED_PREDIV)
++		if (parent_index == cm->fixed_prediv.index)
++			prediv = cm->fixed_prediv.div;
++
++	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
++		if (parent_index == cm->variable_prediv.index) {
++			u8 div;
++
++			div = reg >> cm->variable_prediv.shift;
++			div &= (1 << cm->variable_prediv.width) - 1;
++			prediv = div + 1;
++		}
++
++	*parent_rate = *parent_rate / prediv;
++}
++
++int ccu_mux_helper_determine_rate(struct ccu_common *common,
++				  struct ccu_mux_internal *cm,
++				  struct clk_rate_request *req,
++				  unsigned long (*round)(struct ccu_mux_internal *,
++							 unsigned long,
++							 unsigned long,
++							 void *),
++				  void *data)
++{
++	unsigned long best_parent_rate = 0, best_rate = 0;
++	struct clk_hw *best_parent, *hw = &common->hw;
++	unsigned int i;
++
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		unsigned long tmp_rate, parent_rate;
++		struct clk_hw *parent;
++
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (!parent)
++			continue;
++
++		parent_rate = clk_hw_get_rate(parent);
++		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
++							&parent_rate);
++
++		tmp_rate = round(cm, clk_hw_get_rate(parent), req->rate, data);
++		if (tmp_rate == req->rate) {
++			best_parent = parent;
++			best_parent_rate = parent_rate;
++			best_rate = tmp_rate;
++			goto out;
++		}
++
++		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
++			best_rate = tmp_rate;
++			best_parent_rate = parent_rate;
++			best_parent = parent;
++		}
++	}
++
++	if (best_rate == 0)
++		return -EINVAL;
++
++out:
++	req->best_parent_hw = best_parent;
++	req->best_parent_rate = best_parent_rate;
++	req->rate = best_rate;
++	return 0;
++}
++
++u8 ccu_mux_helper_get_parent(struct ccu_common *common,
++			     struct ccu_mux_internal *cm)
++{
++	u32 reg;
++	u8 parent;
++
++	reg = readl(common->base + common->reg);
++	parent = reg >> cm->shift;
++	parent &= (1 << cm->width) - 1;
++
++	return parent;
++}
++
++int ccu_mux_helper_set_parent(struct ccu_common *common,
++			      struct ccu_mux_internal *cm,
++			      u8 index)
++{
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + common->reg);
++	reg &= ~GENMASK(cm->width + cm->shift - 1, cm->shift);
++	writel(reg | (index << cm->shift), common->base + common->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
++
++static void ccu_mux_disable(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_gate_helper_disable(&cm->common, cm->enable);
++}
++
++static int ccu_mux_enable(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_gate_helper_enable(&cm->common, cm->enable);
++}
++
++static int ccu_mux_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_gate_helper_is_enabled(&cm->common, cm->enable);
++}
++
++static u8 ccu_mux_get_parent(struct clk_hw *hw)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_mux_helper_get_parent(&cm->common, &cm->mux);
++}
++
++static int ccu_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	return ccu_mux_helper_set_parent(&cm->common, &cm->mux, index);
++}
++
++static unsigned long ccu_mux_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct ccu_mux *cm = hw_to_ccu_mux(hw);
++
++	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
++						&parent_rate);
++
++	return parent_rate;
++}
++
++const struct clk_ops ccu_mux_ops = {
++	.disable	= ccu_mux_disable,
++	.enable		= ccu_mux_enable,
++	.is_enabled	= ccu_mux_is_enabled,
++
++	.get_parent	= ccu_mux_get_parent,
++	.set_parent	= ccu_mux_set_parent,
++
++	.determine_rate	= __clk_mux_determine_rate,
++	.recalc_rate	= ccu_mux_recalc_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+new file mode 100644
+index 000000000000..945082631e7d
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -0,0 +1,91 @@
++#ifndef _CCU_MUX_H_
++#define _CCU_MUX_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++
++struct ccu_mux_internal {
++	u8	shift;
++	u8	width;
++
++	struct {
++		u8	index;
++		u8	div;
++	} fixed_prediv;
++
++	struct {
++		u8	index;
++		u8	shift;
++		u8	width;
++	} variable_prediv;
++};
++
++#define SUNXI_CLK_MUX(_shift, _width)	\
++	{					\
++		.shift	= _shift,		\
++		.width	= _width,		\
++	}
++
++struct ccu_mux {
++	u16			reg;
++	u32			enable;
++
++	struct ccu_mux_internal	mux;
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
++	struct ccu_mux _struct = {					\
++		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++							      _parents, \
++							      &ccu_mux_ops, \
++							      _flags),	\
++		}							\
++	}
++
++#define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
++				_shift, _width, _gate, _flags)		\
++	struct ccu_mux _struct = {					\
++		.enable	= _gate,					\
++		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++							      _parents, \
++							      &ccu_mux_ops, \
++							      _flags),	\
++		}							\
++	}
++
++static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_mux, common);
++}
++
++extern const struct clk_ops ccu_mux_ops;
++
++void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
++					     struct ccu_mux_internal *cm,
++					     int parent_index,
++					     unsigned long *parent_rate);
++int ccu_mux_helper_determine_rate(struct ccu_common *common,
++				  struct ccu_mux_internal *cm,
++				  struct clk_rate_request *req,
++				  unsigned long (*round)(struct ccu_mux_internal *,
++							 unsigned long,
++							 unsigned long,
++							 void *),
++				  void *data);
++u8 ccu_mux_helper_get_parent(struct ccu_common *common,
++			     struct ccu_mux_internal *cm);
++int ccu_mux_helper_set_parent(struct ccu_common *common,
++			      struct ccu_mux_internal *cm,
++			      u8 index);
++
++#endif /* _CCU_MUX_H_ */
+-- 
+2.9.0
