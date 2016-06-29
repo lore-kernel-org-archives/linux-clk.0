@@ -1,292 +1,118 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 09/14] clk: sunxi-ng: Add N-K-factor clock support
-Date: Wed, 29 Jun 2016 21:05:30 +0200
-Message-Id: <20160629190535.11855-10-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 5/8] clk: imx: re-order and concentrate the same type of clk api
+Date: Wed, 29 Jun 2016 22:59:08 +0800
+Message-ID: <1467212351-16626-6-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce support for clocks that use a combination of two linear
-multipliers.
+Re-order and concentrate the same type of clk api for better
+code maintenance.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/sunxi-ng/Kconfig  |   4 ++
- drivers/clk/sunxi-ng/Makefile |   1 +
- drivers/clk/sunxi-ng/ccu_nk.c | 147 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nk.h |  71 ++++++++++++++++++++
- 4 files changed, 223 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_nk.h
+ drivers/clk/imx/clk.h | 58 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index fc970b5a28c6..2eb0fc6b41d5 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -24,6 +24,10 @@ config SUNXI_CCU_PHASE
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 508d0fad84cf..df87d8888d80 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -51,28 +51,6 @@ struct clk * imx_obtain_fixed_clock(
+ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
  
- # Multi-factor clocks
+-static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0x3, 0, &imx_ccm_lock, NULL);
+-}
+-
+-static inline struct clk *imx_clk_gate2_shared(const char *name,
+-		const char *parent, void __iomem *reg, u8 shift,
+-		unsigned int *share_count)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0x3, 0, &imx_ccm_lock, share_count);
+-}
+-
+-static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift, u8 cgr_val)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, cgr_val, 0, &imx_ccm_lock, NULL);
+-}
+-
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
  
-+config SUNXI_CCU_NK
-+	bool
-+	select SUNXI_CCU_GATE
-+
- config SUNXI_CCU_MP
- 	bool
- 	select SUNXI_CCU_GATE
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 501dec9451f4..22951e60f876 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -10,4 +10,5 @@ obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
- obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
+@@ -97,6 +75,13 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
  
- # Multi-factor clocks
-+obj-$(CONFIG_SUNXI_CCU_NK)	+= ccu_nk.o
- obj-$(CONFIG_SUNXI_CCU_MP)	+= ccu_mp.o
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-new file mode 100644
-index 000000000000..4470ffc8cf0d
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -0,0 +1,147 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/rational.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_nk.h"
-+
-+void ccu_nk_find_best(unsigned long parent, unsigned long rate,
-+		      unsigned int max_n, unsigned int max_k,
-+		      unsigned int *n, unsigned int *k)
++static inline struct clk *imx_clk_fixed_factor(const char *name,
++		const char *parent, unsigned int mult, unsigned int div)
 +{
-+	unsigned long best_rate = 0;
-+	unsigned int best_k = 0, best_n = 0;
-+	unsigned int _k, _n;
-+
-+	for (_k = 1; _k <= max_k; _k++) {
-+		for (_n = 1; _n <= max_n; _n++) {
-+			unsigned long tmp_rate = parent * _n * _k;
-+
-+			if (tmp_rate > rate)
-+				continue;
-+
-+			if ((rate - tmp_rate) < (rate - best_rate)) {
-+				best_rate = tmp_rate;
-+				best_k = _k;
-+				best_n = _n;
-+			}
-+		}
-+	}
-+
-+	*k = best_k;
-+	*n = best_n;
++	return clk_register_fixed_factor(NULL, name, parent,
++			CLK_SET_RATE_PARENT, mult, div);
 +}
 +
-+static void ccu_nk_disable(struct clk_hw *hw)
+ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift, u8 width)
+ {
+@@ -126,6 +111,28 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
 +{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_disable(&nk->common, nk->enable);
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, NULL);
 +}
 +
-+static int ccu_nk_enable(struct clk_hw *hw)
++static inline struct clk *imx_clk_gate2_shared(const char *name,
++		const char *parent, void __iomem *reg, u8 shift,
++		unsigned int *share_count)
 +{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_enable(&nk->common, nk->enable);
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, share_count);
 +}
 +
-+static int ccu_nk_is_enabled(struct clk_hw *hw)
++static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, u8 cgr_val)
 +{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+
-+	return ccu_gate_helper_is_enabled(&nk->common, nk->enable);
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, cgr_val, 0, &imx_ccm_lock, NULL);
 +}
 +
-+static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned long rate, n, k;
-+	u32 reg;
-+
-+	reg = readl(nk->common.base + nk->common.reg);
-+
-+	n = reg >> nk->n.shift;
-+	n &= (1 << nk->n.width) - 1;
-+
-+	k = reg >> nk->k.shift;
-+	k &= (1 << nk->k.width) - 1;
-+
-+	rate = parent_rate * (n + 1) * (k + 1);
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= nk->fixed_post_div;
-+
-+	return rate;
-+}
-+
-+static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned int n, k;
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= nk->fixed_post_div;
-+
-+	ccu_nk_find_best(*parent_rate, rate,
-+			 1 << nk->n.width, 1 << nk->k.width,
-+			 &n, &k);
-+
-+	rate = *parent_rate * n * k;
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nk->fixed_post_div;
-+
-+	return rate;
-+}
-+
-+static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_nk *nk = hw_to_ccu_nk(hw);
-+	unsigned long flags;
-+	unsigned int n, k;
-+	u32 reg;
-+
-+	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate * nk->fixed_post_div;
-+
-+	ccu_nk_find_best(parent_rate, rate,
-+			 1 << nk->n.width, 1 << nk->k.width,
-+			 &n, &k);
-+
-+	spin_lock_irqsave(nk->common.lock, flags);
-+
-+	reg = readl(nk->common.base + nk->common.reg);
-+	reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
-+	reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
-+
-+	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
-+	       nk->common.base + nk->common.reg);
-+
-+	spin_unlock_irqrestore(nk->common.lock, flags);
-+
-+	ccu_helper_wait_for_lock(&nk->common, nk->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops ccu_nk_ops = {
-+	.disable	= ccu_nk_disable,
-+	.enable		= ccu_nk_enable,
-+	.is_enabled	= ccu_nk_is_enabled,
-+
-+	.recalc_rate	= ccu_nk_recalc_rate,
-+	.round_rate	= ccu_nk_round_rate,
-+	.set_rate	= ccu_nk_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.h b/drivers/clk/sunxi-ng/ccu_nk.h
-new file mode 100644
-index 000000000000..4b52da0c29fe
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_nk.h
-@@ -0,0 +1,71 @@
-+/*
-+ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _CCU_NK_H_
-+#define _CCU_NK_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_div.h"
-+#include "ccu_mult.h"
-+
-+/*
-+ * struct ccu_nk - Definition of an N-K clock
-+ *
-+ * Clocks based on the formula parent * N * K
-+ */
-+struct ccu_nk {
-+	u16			reg;
-+	u32			enable;
-+	u32			lock;
-+
-+	struct _ccu_mult	n;
-+	struct _ccu_mult	k;
-+
-+	unsigned int		fixed_post_div;
-+
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(_struct, _name, _parent, _reg, \
-+					    _nshift, _nwidth,		\
-+					    _kshift, _kwidth,		\
-+					    _gate, _lock, _postdiv,	\
-+					    _flags)			\
-+	struct ccu_nk _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.k		= _SUNXI_CCU_MULT(_kshift, _kwidth),	\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.fixed_post_div	= _postdiv,				\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_FIXED_POSTDIV,	\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_nk_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
-+static inline struct ccu_nk *hw_to_ccu_nk(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_nk, common);
-+}
-+
-+extern const struct clk_ops ccu_nk_ops;
-+
-+#endif /* _CCU_NK_H_ */
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+@@ -143,13 +150,6 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			&imx_ccm_lock);
+ }
+ 
+-static inline struct clk *imx_clk_fixed_factor(const char *name,
+-		const char *parent, unsigned int mult, unsigned int div)
+-{
+-	return clk_register_fixed_factor(NULL, name, parent,
+-			CLK_SET_RATE_PARENT, mult, div);
+-}
+-
+ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
 -- 
-2.9.0
+1.9.1
