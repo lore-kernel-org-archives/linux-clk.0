@@ -1,125 +1,64 @@
-Return-Path: <oss@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	yuantian.tang@nxp.com,
-	leoyang.li@nxp.com,
-	xiaofeng.ren@nxp.com,
-	Scott Wood <scottwood@freescale.com>
-Date: Sat, 11 Jun 2016 22:57:14 -0500
-Message-Id: <1465703835-2777-1-git-send-email-oss@buserror.net>
-Subject: [PATCH v2 1/2] clk: Add consumer APIs for discovering possible parent clocks
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"edubezval@gmail.com" <edubezval@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"wens@csie.org" <wens@csie.org>,
+	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20160629121021.GD6095@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
+	 <20160628101325.2522-3-icenowy@aosc.xyz>
+	 <20160628114640.GE5550@lukather>
+	 <60021467122182@web19j.yandex.ru> <20160629121021.GD6095@lukather>
+Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
+MIME-Version: 1.0
+Message-Id: <1209771467207211@web22j.yandex.ru>
+Date: Wed, 29 Jun 2016 21:33:31 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Scott Wood <scottwood@freescale.com>
 
-Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
-__clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
-true provider API versions that operate on struct clk_hw.
 
-qoriq-cpufreq needs these functions in order to determine the options
-it has for calling clk_set_parent() and thus populate the cpufreq
-table, so revive them as legitimate consumer APIs.
+29.06.2016, 20:10, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> Hi,
+>
+> On Tue, Jun 28, 2016 at 09:56:22PM +0800, Icenowy Zheng wrote:
+>>  The reason for a dedicate driver is:
+>>  1. This IP have only thermal function, so it's not suitable to use a
+>>  driver at drivers/input/touchscreen/.
+>
+> That's not a problem, and it's being worked on [1].
+>
+>>  2. Control Register are quite different.
+>
+> That's not a problem either, there's just a bit that you don't need to
+> set in the control 1 register, and that's pretty much it. It doesn't
+> justify a whole new driver.
+>
+>>  3. This IP uses AUDIO PLL (PLL2) as its clock!
+>
+> It's listed as the input, but all the rest of the documentation refers
+> only to 24MHz, which seems to indicate that it's only running on the
+> oscillator, which would make much more sense.
+>
+> Thanks,
+> Maxime
+>
+> 1: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/439487.html
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-Signed-off-by: Scott Wood <scottwood@freescale.com>
----
-v2: Add missing 'static inline' to stub functions.
-
- drivers/clk/clk.c   | 19 +++++++++++++++++++
- include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d584004..d61a3fe 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_hw);
- 
-+unsigned int clk_get_num_parents(struct clk *clk)
-+{
-+	return !clk ? 0 : clk->core->num_parents;
-+}
-+EXPORT_SYMBOL_GPL(clk_get_num_parents);
-+
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
- {
- 	return hw->core->num_parents;
-@@ -358,6 +364,19 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
- 	return core->parents[index];
- }
- 
-+struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int index)
-+{
-+	struct clk_core *parent;
-+
-+	if (!clk)
-+		return NULL;
-+
-+	parent = clk_core_get_parent_by_index(clk->core, index);
-+
-+	return !parent ? NULL : parent->hw->clk;
-+}
-+EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
-+
- struct clk_hw *
- clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0df4a51..acd115f 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
- struct clk *clk_get_parent(struct clk *clk);
- 
- /**
-+ * clk_get_parent_by_index - get a possible parent clock by index
-+ * @clk: clock source
-+ * @index: index into the array of possible parents of this clock
-+ *
-+ * Returns struct clk corresponding to the requested possible
-+ * parent clock source, or NULL.
-+ */
-+struct clk *clk_get_parent_by_index(struct clk *clk,
-+				    unsigned int index);
-+
-+/**
-+ * clk_get_num_parents - get number of possible parents
-+ * @clk: clock source
-+ *
-+ * Returns the number of possible parents of this clock,
-+ * which can then be enumerated using clk_get_parent_by_index().
-+ */
-+unsigned int clk_get_num_parents(struct clk *clk);
-+
-+/**
-  * clk_get_sys - get a clock based upon the device name
-  * @dev_id: device name
-  * @con_id: connection ID
-@@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk *clk)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_parent_by_index(struct clk *clk,
-+						  unsigned int index)
-+{
-+	return NULL;
-+}
-+
-+static inline unsigned int clk_get_num_parents(struct clk *clk)
-+{
-+	return 0;
-+}
-+
- #endif
- 
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
--- 
-2.5.0
+I will try to use it without pll2 enabled.
