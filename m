@@ -1,59 +1,48 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v2 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
-Date: Mon, 27 Jun 2016 22:03:14 +0900
-Message-id: <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
-References: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"edubezval@gmail.com" <edubezval@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"wens@csie.org" <wens@csie.org>,
+	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20160629134209.GE6095@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
+	 <20160628101325.2522-3-icenowy@aosc.xyz>
+	 <20160628114640.GE5550@lukather>
+	 <60021467122182@web19j.yandex.ru>
+	 <20160629121021.GD6095@lukather>
+	 <1112501467207099@web30g.yandex.ru> <20160629134209.GE6095@lukather>
+Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
+MIME-Version: 1.0
+Message-Id: <1216731467208359@web29g.yandex.ru>
+Date: Wed, 29 Jun 2016 21:52:39 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-enable SPI3 iosclk by using the CLK_IS_CRITICAL flag.
-There is no device which is supposed to enable this clock when
-needed, therefore, the only way to use the SPI bus is to enable
-it in boot time.
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
----
 
-Hi,
+29.06.2016, 21:42, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> On Wed, Jun 29, 2016 at 09:31:39PM +0800, Icenowy Zheng wrote:
+>>  However, sun8iw3/5 ths is not even a GPADC... It's a specified IP,
+>>  only used as an ADC suitable for temperature sensor.
+>
+> It doesn't matter. It's the same IP, labelled differently.
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-V1 -> V2
-
-- the "sclk_spi3" doesn't need to be enabled in boot time as it
-  is handled by the spi driver itself.
-
-- use the CLK_IS_CRITICAL flag for the ioclk
-
-Andi
-
- drivers/clk/samsung/clk-exynos5433.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index dcb4391..c33150e 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1641,7 +1641,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
- 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
--			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 20,
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
- 			19, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
--- 
-2.8.1
+OK, now I will send only PLL2 driver.
