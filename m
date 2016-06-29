@@ -1,121 +1,126 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@armlinux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	 Andrzej Hajda <a.hajda@samsung.com>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Dinh Nguyen <dinguyen@opensource.altera.com>,
-	 Arnd Bergmann <arnd@arndb.de>,
-	 Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org,
-	 Lee Jones <lee.jones@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 <arnaud.pouliquen@st.com>,
-	 <benjamin.gaignard@st.com>,
-	 <vincent.abriou@st.com>,
-	 <gabriel.fernandez@st.com>
-Subject: [RESEND PATCH v2 04/13] drivers: clk: st: Add clock propagation for audio clocks
-Date: Thu, 16 Jun 2016 11:20:24 +0200
-Message-Id: <1466068833-5055-5-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Wed, 29 Jun 2016 21:57:09 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sboyd@codeaurora.org,
+	shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
+	anson.huang@nxp.com
+Subject: Re: [RESEND PATCH 3/8] clk: core: support clocks which requires
+ parents on (part 1)
+Message-ID: <20160629135709.GA29919@shlinux2>
+References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com>
+ <1461144880-8724-4-git-send-email-aisheng.dong@nxp.com>
+ <146681236249.35033.18209610320711572265@resonance>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <146681236249.35033.18209610320711572265@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch allows fine tuning of the quads FS for audio clocks
-accuracy.
+On Fri, Jun 24, 2016 at 04:52:42PM -0700, Michael Turquette wrote:
+> Quoting Dong Aisheng (2016-04-20 02:34:35)
+> > On Freescale i.MX7D platform, all clocks operations, including
+> > enable/disable, rate change and re-parent, requires its parent
+> > clock on. Current clock core can not support it well.
+> > This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
+> > special case in clock core that enable its parent clock firstly for
+> > each operation and disable it later after operation complete.
+> > 
+> > The patch part 1 fixes the possible disabling clocks while its parent
+> > is off during kernel booting phase in clk_disable_unused_subtree().
+> > 
+> > Before the completion of kernel booting, clock tree is still not built
+> > completely, there may be a case that the child clock is on but its
+> > parent is off which could be caused by either HW initial reset state
+> > or bootloader initialization.
+> > 
+> > Taking bootloader as an example, we may enable all clocks in HW by default.
+> > And during kernel booting time, the parent clock could be disabled in its
+> > driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
+> > Because it's child clock is only enabled in HW while its SW usecount
+> > in clock tree is still 0, so clk_disable of parent clock will gate
+> > the parent clock in both HW and SW usecount ultimately. Then there will
+> > be a child clock is still on in HW but its parent is already off.
+> > 
+> > Later in clk_disable_unused(), this clock disable accessing while its
+> > parent off will cause system hang due to the limitation of HW which
+> > must require its parent on.
+> > 
+> > This patch simply enables the parent clock first before disabling
+> > if flag CLK_OPS_PARENT_ON is set in clk_disable_unused_subtree().
+> > This is a simple solution and only affects booting time.
+> > 
+> > After kernel booting up the clock tree is already created, there will
+> > be no case that child is off but its parent is off.
+> > So no need do this checking for normal clk_disable() later.
+> > 
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> >  drivers/clk/clk.c            | 5 +++++
+> >  include/linux/clk-provider.h | 2 ++
+> >  2 files changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 9f944d4..1f054d1a 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+> >         hlist_for_each_entry(child, &core->children, child_node)
+> >                 clk_disable_unused_subtree(child);
+> >  
+> > +       if (core->flags & CLK_OPS_PARENT_ON)
+> > +               clk_core_prepare_enable(core->parent);
+> > +
+> >         flags = clk_enable_lock();
+> >  
+> >         if (core->enable_count)
+> > @@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+> >  
+> >  unlock_out:
+> >         clk_enable_unlock(flags);
+> > +       if (core->flags & CLK_OPS_PARENT_ON)
+> > +               clk_core_disable_unprepare(core->parent);
+> >  }
+> >  
+> >  static bool clk_ignore_unused;
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 15628644..c878f9c 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -33,6 +33,8 @@
+> >  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notifications */
+> >  #define CLK_SET_RATE_UNGATE    BIT(10) /* clock needs to run to set rate */
+> >  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
+> > +/* parents need on during gate/ungate, set rate and re-parent */
+> > +#define CLK_OPS_PARENT_ON      BIT(12)
+> 
+> Hi Dong,
+> 
+> In the clk framework we use "enabled" instead of "on". How about
+> changing the flag to CLK_OPS_PARENT_ENABLE?
+> 
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- .../devicetree/bindings/clock/st/st,flexgen.txt    |  2 ++
- drivers/clk/st/clk-flexgen.c                       | 24 ++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+Yes, of course i'm fine with it.
+I could update the patch title too.
+Thanks for the review.
 
-diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-index b7ee5c7..d68f6a5f 100644
---- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-@@ -60,6 +60,8 @@ This binding uses the common clock binding[2].
- Required properties:
- - compatible : shall be:
-   "st,flexgen"
-+  "st,flexgen-audio", "st,flexgen" (enable clock propagation on parent for
-+  audio use case)
- 
- - #clock-cells : from common clock binding; shall be set to 1 (multiple clock
-   outputs).
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 627267c..33d6ced 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -15,6 +15,10 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
-+struct clkgen_data {
-+	unsigned long flags;
-+};
-+
- struct flexgen {
- 	struct clk_hw hw;
- 
-@@ -259,6 +263,18 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
- 	return parents;
- }
- 
-+static const struct clkgen_data clkgen_audio = {
-+	.flags = CLK_SET_RATE_PARENT,
-+};
-+
-+static const struct of_device_id flexgen_of_match[] = {
-+	{
-+		.compatible = "st,flexgen-audio",
-+		.data = &clkgen_audio,
-+	},
-+	{}
-+};
-+
- static void __init st_of_flexgen_setup(struct device_node *np)
- {
- 	struct device_node *pnode;
-@@ -267,6 +283,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	const char **parents;
- 	int num_parents, i;
- 	spinlock_t *rlock = NULL;
-+	const struct of_device_id *match;
-+	struct clkgen_data *data = NULL;
- 	unsigned long flex_flags = 0;
- 	int ret;
- 
-@@ -282,6 +300,12 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 	if (!parents)
- 		return;
- 
-+	match = of_match_node(flexgen_of_match, np);
-+	if (match) {
-+		data = (struct clkgen_data *)match->data;
-+		flex_flags = data->flags;
-+	}
-+
- 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
- 		goto err;
--- 
-1.9.1
+Regards
+Dong Aisheng
+
+> Regards,
+> Mike
+> 
+> >  
+> >  struct clk;
+> >  struct clk_hw;
+> > -- 
+> > 1.9.1
+> > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
