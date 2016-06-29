@@ -1,101 +1,152 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 18/34] clk: mb86s7x: Migrate to clk_hw based OF and
- registration APIs
-Date: Wed,  1 Jun 2016 16:15:17 -0700
-Message-Id: <20160601231533.9354-19-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-MIME-Version: 1.0
+Return-Path: <yuantian.tang@nxp.com>
+From: Yuantian Tang <yuantian.tang@nxp.com>
+To: Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li
+	<leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood
+	<scottwood@freescale.com>
+Subject: RE: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+ parent clocks
+Date: Wed, 29 Jun 2016 05:50:26 +0000
+Message-ID: <DBXPR04MB49546917495DA33834B05D7F0230@DBXPR04MB495.eurprd04.prod.outlook.com>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+In-Reply-To: <1466058085-19353-1-git-send-email-oss@buserror.net>
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Hi,
 
-Cc: Jassi Brar <jaswinder.singh@linaro.org>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
+This patch is acked by clock maintainer. If no comments from anyone else, w=
+e will merge it in next week.
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+Thanks,
+Yuantian
 
- drivers/clk/clk-mb86s7x.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/clk-mb86s7x.c b/drivers/clk/clk-mb86s7x.c
-index e0817754ca3e..2a83a3ff1d09 100644
---- a/drivers/clk/clk-mb86s7x.c
-+++ b/drivers/clk/clk-mb86s7x.c
-@@ -327,10 +327,11 @@ static struct clk_ops clk_clc_ops = {
- 	.set_rate = clc_set_rate,
- };
- 
--struct clk *mb86s7x_clclk_register(struct device *cpu_dev)
-+static struct clk_hw *mb86s7x_clclk_register(struct device *cpu_dev)
- {
- 	struct clk_init_data init;
- 	struct cl_clk *clc;
-+	int ret;
- 
- 	clc = kzalloc(sizeof(*clc), GFP_KERNEL);
- 	if (!clc)
-@@ -344,14 +345,17 @@ struct clk *mb86s7x_clclk_register(struct device *cpu_dev)
- 	init.flags = CLK_GET_RATE_NOCACHE;
- 	init.num_parents = 0;
- 
--	return devm_clk_register(cpu_dev, &clc->hw);
-+	ret = devm_clk_hw_register(cpu_dev, &clc->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+	return &clc->hw;
- }
- 
- static int mb86s7x_clclk_of_init(void)
- {
- 	int cpu, ret = -ENODEV;
- 	struct device_node *np;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fujitsu,mb86s70-scb-1.0");
- 	if (!np || !of_device_is_available(np))
-@@ -365,12 +369,12 @@ static int mb86s7x_clclk_of_init(void)
- 			continue;
- 		}
- 
--		clk = mb86s7x_clclk_register(cpu_dev);
--		if (IS_ERR(clk)) {
-+		hw = mb86s7x_clclk_register(cpu_dev);
-+		if (IS_ERR(hw)) {
- 			pr_err("failed to register cpu%d clock\n", cpu);
- 			continue;
- 		}
--		if (clk_register_clkdev(clk, NULL, dev_name(cpu_dev))) {
-+		if (clk_hw_register_clkdev(hw, NULL, dev_name(cpu_dev))) {
- 			pr_err("failed to register cpu%d clock lookup\n", cpu);
- 			continue;
- 		}
--- 
-2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> -----Original Message-----
+> From: Scott Wood [mailto:oss@buserror.net]
+> Sent: Thursday, June 16, 2016 2:21 PM
+> To: Russell King <linux@armlinux.org.uk>; Michael Turquette
+> <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>;
+> Viresh Kumar <viresh.kumar@linaro.org>; Rafael J. Wysocki
+> <rjw@rjwysocki.net>
+> Cc: linux-clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
+> dev@lists.ozlabs.org; Yuantian Tang <yuantian.tang@nxp.com>; Yang-Leo Li
+> <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>; Scott Wood
+> <scottwood@freescale.com>
+> Subject: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+> parent clocks
+>=20
+> From: Scott Wood <scottwood@freescale.com>
+>=20
+> Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
+> __clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
+> true provider API versions that operate on struct clk_hw.
+>=20
+> qoriq-cpufreq needs these functions in order to determine the options it =
+has
+> for calling clk_set_parent() and thus populate the cpufreq table, so revi=
+ve
+> them as legitimate consumer APIs.
+>=20
+> Signed-off-by: Scott Wood <scottwood@freescale.com>
+> ---
+> v2: Add missing 'static inline' to stub functions.
+>=20
+> v3: no changes
+>=20
+>  drivers/clk/clk.c   | 19 +++++++++++++++++++
+>  include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
+>  2 files changed, 50 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c index d584004..d61a3fe=
+ 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)  }
+> EXPORT_SYMBOL_GPL(__clk_get_hw);
+>=20
+> +unsigned int clk_get_num_parents(struct clk *clk) {
+> +	return !clk ? 0 : clk->core->num_parents; }
+> +EXPORT_SYMBOL_GPL(clk_get_num_parents);
+> +
+>  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)  {
+>  	return hw->core->num_parents;
+> @@ -358,6 +364,19 @@ static struct clk_core
+> *clk_core_get_parent_by_index(struct clk_core *core,
+>  	return core->parents[index];
+>  }
+>=20
+> +struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int
+> +index) {
+> +	struct clk_core *parent;
+> +
+> +	if (!clk)
+> +		return NULL;
+> +
+> +	parent =3D clk_core_get_parent_by_index(clk->core, index);
+> +
+> +	return !parent ? NULL : parent->hw->clk; }
+> +EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
+> +
+>  struct clk_hw *
+>  clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
+> { diff --git a/include/linux/clk.h b/include/linux/clk.h index 0df4a51..a=
+cd115f
+> 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk *pare=
+nt);
+> struct clk *clk_get_parent(struct clk *clk);
+>=20
+>  /**
+> + * clk_get_parent_by_index - get a possible parent clock by index
+> + * @clk: clock source
+> + * @index: index into the array of possible parents of this clock
+> + *
+> + * Returns struct clk corresponding to the requested possible
+> + * parent clock source, or NULL.
+> + */
+> +struct clk *clk_get_parent_by_index(struct clk *clk,
+> +				    unsigned int index);
+> +
+> +/**
+> + * clk_get_num_parents - get number of possible parents
+> + * @clk: clock source
+> + *
+> + * Returns the number of possible parents of this clock,
+> + * which can then be enumerated using clk_get_parent_by_index().
+> + */
+> +unsigned int clk_get_num_parents(struct clk *clk);
+> +
+> +/**
+>   * clk_get_sys - get a clock based upon the device name
+>   * @dev_id: device name
+>   * @con_id: connection ID
+> @@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk =
+*clk)
+>  	return NULL;
+>  }
+>=20
+> +static inline struct clk *clk_get_parent_by_index(struct clk *clk,
+> +						  unsigned int index)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline unsigned int clk_get_num_parents(struct clk *clk) {
+> +	return 0;
+> +}
+> +
+>  #endif
+>=20
+>  /* clk_prepare_enable helps cases using clk_enable in non-atomic context=
+.
+> */
+> --
+> 2.5.0
