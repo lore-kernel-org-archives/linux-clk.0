@@ -1,65 +1,49 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 00/10] meson8b clock driver rewrite/cleanup
-Date: Thu,  9 Jun 2016 17:27:37 -0700
-Message-Id: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [RESEND PATCHv2 03/28] ARM: OMAP2+: omap_device: create clock
+ alias purely from DT data
+To: Tony Lindgren <tony@atomide.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+ <1465844702-12200-4-git-send-email-t-kristo@ti.com>
+ <20160628070011.GD28140@atomide.com> <577373F0.5080700@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <5773745A.6020307@ti.com>
+Date: Wed, 29 Jun 2016 10:10:18 +0300
+MIME-Version: 1.0
+In-Reply-To: <577373F0.5080700@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This series came about while writing the clock driver for the AmLogic
-GXBB clock controller. GXBB shares much of the same clock controller IP
-as the Meson8b clock controller and the source for the drivers is very
-similar. However, I wanted the GXBB driver to actually be a real
-platform_driver, and not an early initcall, which led to the same
-changes in the Meson8b driver. From there a lot of other changes came
-about.
+On 29/06/16 10:08, Tero Kristo wrote:
+> On 28/06/16 10:00, Tony Lindgren wrote:
+>> * Tero Kristo <t-kristo@ti.com> [160613 12:07]:
+>>> This avoids the need to add most of the clock aliases under
+>>> drivers/clk/ti/clk-xyz.c files.
+>>
+>> This is a nice improvment, probably best to queu this along
+>> with the rest of the series via the clock tree:
+>>
+>> Acked-by: Tony Lindgren <tony@atomide.com>
+>>
+>> Or please let me know if you want me to pick this separately.
+>>
+>> Regards,
+>>
+>> Tony
+>>
+>
+> Patches #3, #6, #7, #8 you can pick up separately (but you will have
+> some conflicts due to missing ti_clk_get implementation.) These patches
+> are required for this series to work properly though.
 
-This series improves documentation, refactors statically initialized
-data, removes unnecessary registration functions and converts the
-meson8b clock controller code into a proper platform_driver. It also
-changes up the Kconfig bits to prepare for the gxbb clock controller.
-The diffstat is -190, which is nice as well.
+And patch #9 you can pick up also obviously...
 
-As a consequence of the shift to platform_driver, all of clocks are
-registered at module_init time. If any are needed very early during boot
-then the OF_CLK_DECLARE stuff can be added back in, but I doubt it is
-necessary.
-
-Additionally this series makes use of some of the nice clk_hw helper
-introduced by Stephen, especially clk_hw_onecell_data.
-
-Michael Turquette (10):
-  clk: meson8b: rectify reg offsets with datasheet
-  clk: meson8b: clean up fixed rate clocks
-  clk: meson8b: clean up pll clocks
-  clk: meson8b: clean up fixed factor clocks
-  clk: meson8b: clean up cpu clocks
-  clk: meson8b: remove mali clk
-  clk: meson8b: clean up composite clocks
-  clk: meson8b: convert to platform_driver
-  arm: meson: explicitly select clk drivers
-  clk: meson: only build selected platforms
-
- arch/arm/mach-meson/Kconfig              |   3 +
- drivers/clk/Kconfig                      |   1 +
- drivers/clk/Makefile                     |   2 +-
- drivers/clk/meson/Kconfig                |  12 +
- drivers/clk/meson/Makefile               |   4 +-
- drivers/clk/meson/clk-cpu.c              |  73 +-----
- drivers/clk/meson/clk-pll.c              |  72 +----
- drivers/clk/meson/clkc.c                 | 249 ------------------
- drivers/clk/meson/clkc.h                 | 150 ++---------
- drivers/clk/meson/meson8b-clkc.c         | 436 +++++++++++++++++++++++++------
- include/dt-bindings/clock/meson8b-clkc.h |   4 +-
- 11 files changed, 408 insertions(+), 598 deletions(-)
- create mode 100644 drivers/clk/meson/Kconfig
- delete mode 100644 drivers/clk/meson/clkc.c
-
--- 
-2.1.4
+>
+> If we want to re-work the clk_get / ti_clk_get implementation, we should
+> probably postpone it to 4.8, and that would push this series forward
+> also. In that case, you can pick up the above patches for merge
+> yourself, and we would handle the rest separately.
+>
+> -Tero
