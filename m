@@ -1,69 +1,66 @@
-Return-Path: <cwchoi00@gmail.com>
-MIME-Version: 1.0
-Reply-To: cw00.choi@samsung.com
-In-Reply-To: <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
-References: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com> <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Tue, 28 Jun 2016 22:12:16 +0900
-Message-ID: <CAGTfZH0jv0C0VTjDr8ZWEaokyapTHHsHEUeRUSyeHgdBT_dW3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andi Shyti <andi@etezian.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:48520 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932097AbcF2TGG (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2016 15:06:06 -0400
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 01/14] dt-bindings: sunxi: Add CCU binding documentation
+Date: Wed, 29 Jun 2016 21:05:22 +0200
+Message-Id: <20160629190535.11855-2-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andi,
+Introduce a new binding with its documentation for the brand new clock
+sub-framework.
 
-2016-06-27 22:03 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
-> enable SPI3 iosclk by using the CLK_IS_CRITICAL flag.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ .../devicetree/bindings/clock/sunxi-ccu.txt        | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sunxi-ccu.txt
 
-s/iosclk/ioclk
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+new file mode 100644
+index 000000000000..cb91507ffb1e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -0,0 +1,24 @@
++Allwinner Clock Control Unit Binding
++------------------------------------
++
++Required properties :
++- compatible: must contain one of the following compatible:
++		- "allwinner,sun8i-h3-ccu"
++
++- reg: Must contain the registers base address and length
++- clocks: phandle to the oscillators feeding the CCU. Two are needed:
++  - "hosc": the high frequency oscillator (usually at 24MHz)
++  - "losc": the low frequency oscillator (usually at 32kHz)
++- clock-names: Must contain the clock names described just above
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
++
++Example:
++ccu: clock@01c20000 {
++	compatible = "allwinner,sun8i-h3-ccu";
++	reg = <0x01c20000 0x400>;
++	clocks = <&osc24M>, <&osc32k>;
++	clock-names = "hosc", "losc";
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+-- 
+2.9.0
 
-> There is no device which is supposed to enable this clock when
-> needed, therefore, the only way to use the SPI bus is to enable
-> it in boot time.
->
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
->
-> Hi,
->
-> V1 -> V2
->
-> - the "sclk_spi3" doesn't need to be enabled in boot time as it
->   is handled by the spi driver itself.
->
-> - use the CLK_IS_CRITICAL flag for the ioclk
->
-> Andi
->
->  drivers/clk/samsung/clk-exynos5433.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index dcb4391..c33150e 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1641,7 +1641,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
->         GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
->                         ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
-> -                       ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_PERIC, 20,
-> +                       CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
->                         19, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
