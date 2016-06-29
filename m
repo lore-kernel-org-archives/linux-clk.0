@@ -1,132 +1,66 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"edubezval@gmail.com" <edubezval@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"wens@csie.org" <wens@csie.org>,
+	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20160629121021.GD6095@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
+	 <20160628101325.2522-3-icenowy@aosc.xyz>
+	 <20160628114640.GE5550@lukather>
+	 <60021467122182@web19j.yandex.ru> <20160629121021.GD6095@lukather>
+Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
 MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <m2d1njsikh.fsf@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- carlo@endlessm.com, victor.wan@amlogic.com, jerry.cao@amlogic.com,
- xing.xu@amlogic.com
-References: <1465518774-26924-1-git-send-email-mturquette@baylibre.com>
- <m2d1njsikh.fsf@baylibre.com>
-Message-ID: <20160615014103.5467.86678@quark.deferred.io>
-Subject: Re: [PATCH 0/7] Add support for AmLogic GXBB clock controller
-Date: Tue, 14 Jun 2016 18:41:03 -0700
+Message-Id: <1264761467207761@web22j.yandex.ru>
+Date: Wed, 29 Jun 2016 21:42:41 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kevin,
 
-Quoting Kevin Hilman (2016-06-14 11:59:10)
-> Hi Mike,
-> =
 
-> Michael Turquette <mturquette@baylibre.com> writes:
-> =
+29.06.2016, 20:10, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> Hi,
+>
+> On Tue, Jun 28, 2016 at 09:56:22PM +0800, Icenowy Zheng wrote:
+>>  The reason for a dedicate driver is:
+>>  1. This IP have only thermal function, so it's not suitable to use a
+>>  driver at drivers/input/touchscreen/.
+>
+> That's not a problem, and it's being worked on [1].
+>
+>>  2. Control Register are quite different.
+>
+> That's not a problem either, there's just a bit that you don't need to
+> set in the control 1 register, and that's pretty much it. It doesn't
+> justify a whole new driver.
+>
+>>  3. This IP uses AUDIO PLL (PLL2) as its clock!
+>
+> It's listed as the input, but all the rest of the documentation refers
+> only to 24MHz, which seems to indicate that it's only running on the
+> oscillator, which would make much more sense.
+>
+> Thanks,
+> Maxime
+>
+> 1: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/439487.html
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-> > This series is based on the AmLogic Meson8b rewrite/cleanup[0]. The
-> > AmLogic GXBB is an ARMv8-based SoC, fed by a 24MHZ xtal, and it provides
-> > several PLLs, muxes dividers and gates to drive CPUs and peripherals.
-> >
-> > While based on the Meson8b clock controller driver, this series adds
-> > supports for Multi-phase Locked Loops (mpll) and support for PLLs with
-> > fractional rates.
-> >
-> > This series introduces the clock controller driver for the gxbb,
-> > including the DT binding description and accompanying change in the gxbb
-> > dtsi. Only three clocks are exposed via the headers in the dt-bindings
-> > include-chroot. More can be added later, but since these values
-> > represent an ABI I wanted to start small. I'm not sure about the names
-> > for the gate clocks, so I especially tried to avoid putting those in the
-> > binding (with the exception of the Ethernet gate, which Kevin has needed
-> > for a while).
-> =
+Oh it works properly with PLL2 set as a dummy pll.
 
-> I tested this on top of my integration branch for v4.7-rc[1] along with
-> the ethernet driver.
-> =
-
-> First, I modified the ethernet node to use the new clock[2], and then I
-> added the ethernet driver to the build as modules[3] since
-> unloading/reloading the module is testing the clock API[3].
-> =
-
-> Then, I tested unloading/reloading the dwmac-meson module on
-> meson-gxbb-p200 and meson-gxbb-odroidc2 and found that the system hung
-> on module reload.
-> =
-
-> As you suggested off-list, this might be because it's walking up the
-> tree and disabling clk81, which would cause such a problem, so I added
-> CLK_IS_CRITICAL to clk81, and that got things working just fine.
-
-Great! I'm glad that fixed the problem.
-
-> =
-
-> With that change, I can now unload/reload the ethernet module (which is
-> prepare/enable'ing and unprepare/disable'ing the clocks.
-> =
-
-> Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-Cool, thanks for testing. I'll fold your change to set the
-CLK_IS_CRITICAL flag in below on v2, which I'll push to the list early
-next week after I return from travel.
-
-Regards,
-Mike
-
-> =
-
-> Kevin
-> =
-
-> [1] https://git.kernel.org/cgit/linux/kernel/git/khilman/linux-amlogic.gi=
-t/log/?h=3Dv4.7/integ
-> [2]
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boo=
-t/dts/amlogic/meson-gxbb.dtsi
-> index e3210eb89bc8..834258a36cfb 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> @@ -45,6 +45,7 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/gpio/meson-gxbb-gpio.h>
->  #include <dt-bindings/reset/amlogic,meson-gxbb-reset.h>
-> +#include <dt-bindings/clock/gxbb-clkc.h>
->  =
-
->  / {
->         compatible =3D "amlogic,meson-gxbb";
-> @@ -332,7 +333,7 @@
->                                0x0 0xc8834540 0x0 0x4>;
->                         interrupts =3D <0 8 1>;
->                         interrupt-names =3D "macirq";
-> -                       clocks =3D <&xtal>;
-> +                       clocks =3D <&clkc CLKID_ETH>;
->                         clock-names =3D "stmmaceth";
->                         phy-mode =3D "rgmii";
->                         status =3D "disabled";
-> =
-
-> [3]
-> CONFIG_STMMAC_ETH=3Dm
-> CONFIG_PHYLIB=3Dm
-> CONFIG_MICREL_PHY=3Dm
-> CONFIG_REALTEK_PHY=3Dm
-> =
-
-> [4]
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 26c78a2a614d..007b7157cf4b 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -558,7 +558,7 @@ static struct clk_gate gxbb_clk81 =3D {
->                 .ops =3D &clk_gate_ops,
->                 .parent_names =3D (const char *[]){ "mpeg_clk_div" },
->                 .num_parents =3D 1,
-> -               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-> +               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED | CLK=
-_IS_CRITICAL),
->         },
->  };
+Maybe only osc24M is required...
