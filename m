@@ -1,130 +1,32 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas
-	<javier@dowhile0.org>
-Subject: [PATCH V3 4/4] clk: max77686: Add support for MAX77620 clocks
-Date: Fri, 17 Jun 2016 16:21:07 +0530
-Message-ID: <1466160667-28451-5-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [RESEND PATCHv2 01/28] clk: ti: add ti_clk_get helper API
+To: Tony Lindgren <tony@atomide.com>
+References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+ <1465844702-12200-2-git-send-email-t-kristo@ti.com>
+ <20160628064749.GB28140@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <577367FB.8070709@ti.com>
+Date: Wed, 29 Jun 2016 09:17:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160628064749.GB28140@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Maxim Max77620 has one 32KHz clock output and the clock HW
-IP used on this PMIC is same as what it is there in the MAX77686.
+On 28/06/16 09:47, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [160613 12:07]:
+>> The API can be used to fetch directly DT clocks based on name. Using
+>> this new API allows getting rid of most of the DT_CLK() entries under
+>> drivers/clk/ti.
+>
+> The description here is a bit confusing.. Rather than calling it API
+> how about say it's a helper function private to TI specific clock
+> code? Otherwise people might think it will be something more widely
+> available.
 
-Add clock driver support for MAX77620 on the MAX77686 driver.
+Yea, I can drop the API part from the desc, if we are going forward with 
+this series.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-Changes from V1:
-- Updated based on changes done in first patch.
-
-Changes from V2:
-- Collected RBs
-- Make uniformity on chip name like 77620/77686/77802 with sequences.
-
-Changes from V2:
-- Collected RBs.
-- Nit fixes.
----
- drivers/clk/Kconfig        |  7 ++++---
- drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 6afad74..936a443 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
- source "drivers/clk/versatile/Kconfig"
- 
- config COMMON_CLK_MAX77686
--	tristate "Clock driver for Maxim 77686/77802 MFD"
--	depends on MFD_MAX77686
-+	tristate "Clock driver for Maxim 77620/77686/77802 MFD"
-+	depends on MFD_MAX77686 || MFD_MAX77620
- 	---help---
--	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-+	  This driver supports Maxim 77620/77686/77802 crystal oscillator
-+	  clock.
- 
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK808"
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 9aba3a8..19f6208 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -25,6 +25,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/mfd/max77620.h>
- #include <linux/mfd/max77686.h>
- #include <linux/mfd/max77686-private.h>
- #include <linux/clk-provider.h>
-@@ -35,12 +36,14 @@
- 
- #include <dt-bindings/clock/maxim,max77686.h>
- #include <dt-bindings/clock/maxim,max77802.h>
-+#include <dt-bindings/clock/maxim,max77620.h>
- 
- #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
- 
- enum max77686_chip_name {
- 	CHIP_MAX77686,
- 	CHIP_MAX77802,
-+	CHIP_MAX77620,
- };
- 
- struct max77686_hw_clk_info {
-@@ -97,6 +100,15 @@ max77686_hw_clk_info max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
- 	},
- };
- 
-+static const struct
-+max77686_hw_clk_info max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
-+	[MAX77620_CLK_32K_OUT0] = {
-+		.name = "32khz_out0",
-+		.clk_reg = MAX77620_REG_CNFG1_32K,
-+		.clk_enable_mask = MAX77620_CNFG1_32K_OUT0_EN,
-+	},
-+};
-+
- static struct max77686_clk_init_data *to_max77686_clk_init_data(
- 				struct clk_hw *hw)
- {
-@@ -181,6 +193,11 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 		hw_clks = max77802_hw_clks_info;
- 		break;
- 
-+	case CHIP_MAX77620:
-+		num_clks = MAX77620_CLKS_NUM;
-+		hw_clks = max77620_hw_clks_info;
-+		break;
-+
- 	default:
- 		dev_err(dev, "Unknown Chip ID\n");
- 		return -EINVAL;
-@@ -284,6 +301,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
- static const struct platform_device_id max77686_clk_id[] = {
- 	{ "max77686-clk", .driver_data = CHIP_MAX77686, },
- 	{ "max77802-clk", .driver_data = CHIP_MAX77802, },
-+	{ "max77620-clock", .driver_data = CHIP_MAX77620, },
- 	{},
- };
- MODULE_DEVICE_TABLE(platform, max77686_clk_id);
--- 
-2.1.4
+-Tero
