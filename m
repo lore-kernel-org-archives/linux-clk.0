@@ -1,100 +1,148 @@
-Return-Path: <dongas86@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 4/8] clk: core: support clocks which requires parents enable (part 2)
+Date: Wed, 29 Jun 2016 22:59:07 +0800
+Message-ID: <1467212351-16626-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <20160602152059.GC31124@shlinux2>
-References: <1461144880-8724-1-git-send-email-aisheng.dong@nxp.com> <20160602152059.GC31124@shlinux2>
-From: Dong Aisheng <dongas86@gmail.com>
-Date: Sun, 12 Jun 2016 22:58:10 +0800
-Message-ID: <CAA+hA=ST4PMFJxECec29SYQ1wuhNbWBrP4eB3b6aG9wcYZjhJA@mail.gmail.com>
-Subject: Re: [RESEND PATCH 0/8] clk: core: support clocks which requires
- parents on
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 2, 2016 at 11:20 PM, Dong Aisheng <dongas86@gmail.com> wrote:
-> On Wed, Apr 20, 2016 at 05:34:32PM +0800, Dong Aisheng wrote:
->> This is a RESEND patch series.
->> The original one can be found at here:
->> http://www.spinics.net/lists/arm-kernel/msg435136.html
->> It has no functional changes but improve the commit message and
->> comments a bit.
->>
->> This patch series adds support in clock framework for clocks which all the
->> operations like gate/ungate, set_rate, set_parent must require its parent
->> clock on.
->>
->> This special HW requirement can be found on Freescale i.MX7D platform.
->> Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
->> (see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
->> And there may be other SoCs in the same situation.
->>
->> Current clock core can not support such type of clock well.
->>
->> This patch introduce a new flag CLK_SET_PARENT_ON to handle this special
->> case in clock core that enable its parent clock firstly for each operation
->> and disable it later after operation complete.
->>
->> There're two special cases for handling this issue:
->>
->> One is fixing the possible disabling clocks while its parent is already off
->> during kernel booting phase in clk_disable_unused_subtree()
->> Since this state misalign only happens during booting time,
->> so we simply enable the parent clocks before disable it if flag is set.
->> For normal clk_disable after kernel booting, there's no such issue
->> since the clock tree is already created which makes sure no such issue exist.
->>
->> Another special case is for set_parent() operation.
->> It requires both parent, old one and new one, to be enabled at the same
->> time during the operation.
->>
->> Patch 1~4 does this work.
->>
->> After clk core supports mx7d type clocks, we don't have to enable all clock
->> by default anymore, then we remove the enable of all clocks code and instead
->> only enable set of minimum required clocks.
->>
->> Patch 5~8 does this work.
->>
->> The whole patch series is based on for-next branch of clock tree:
->> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
->>
->
-> Hi Stephen,
->
-> Could you give some comments about this patch series?
->
+On Freescale i.MX7D platform, all clocks operations, including
+enable/disable, rate change and re-parent, requires its parent clock on.
+Current clock core can not support it well.
+This patch adding flag CLK_OPS_PARENT_ENABLE to handle this special case in
+clock core that enable its parent clock firstly for each operation and
+disable it later after operation complete.
 
-Ping...
+The patch part 2 fixes set clock rate and set parent while its parent
+is off. The most special case is for set_parent() operation which requires
+all parents including both old and new one to be enabled at the same time
+during the operation.
 
-> Regards
-> Dong Aisheng
->
->> Dong Aisheng (8):
->>   clk: introduce clk_core_enable_lock and clk_core_disable_lock
->>     functions
->>   clk: move clk_disable_unused after clk_core_disable_unprepare function
->>   clk: core: support clocks which requires parents on (part 1)
->>   clk: core: support clocks which requires parents on (part 2)
->>   clk: imx: re-order and concentrate the same type of clk api
->>   clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
->>   clk: imx7d: using api with flag CLK_OPS_PARENT_ON
->>   clk: imx7d: only enable minimum required clocks
->>
->>  drivers/clk/clk.c            | 329 +++++++++++--------
->>  drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
->>  drivers/clk/imx/clk.h        |  90 ++++--
->>  include/linux/clk-provider.h |   2 +
->>  4 files changed, 623 insertions(+), 530 deletions(-)
->>
->> --
->> 1.9.1
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c | 52 +++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 35 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e3bd28c9ef28..f1f56158b8c7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1172,7 +1172,7 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	struct clk_core *old_parent = core->parent;
+ 
+ 	/*
+-	 * Migrate prepare state between parents and prevent race with
++	 * 1. Migrate prepare state between parents and prevent race with
+ 	 * clk_enable().
+ 	 *
+ 	 * If the clock is not prepared, then a race with
+@@ -1187,13 +1187,20 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	 * hardware and software states.
+ 	 *
+ 	 * See also: Comment for clk_set_parent() below.
++	 *
++	 * 2. enable parent clocks for CLK_OPS_PARENT_ENABLE clock
+ 	 */
++
++	/* enable old_parent & parent if CLK_OPS_PARENT_ENABLE is set */
++	if (core->flags & CLK_OPS_PARENT_ENABLE) {
++		clk_core_prepare_enable(old_parent);
++		clk_core_prepare_enable(parent);
++	}
++
++	/* migrate prepare count if > 0 */
+ 	if (core->prepare_count) {
+-		clk_core_prepare(parent);
+-		flags = clk_enable_lock();
+-		clk_core_enable(parent);
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
++		clk_core_prepare_enable(parent);
++		clk_core_enable_lock(core);
+ 	}
+ 
+ 	/* update the clk tree topology */
+@@ -1208,19 +1215,20 @@ static void __clk_set_parent_after(struct clk_core *core,
+ 				   struct clk_core *parent,
+ 				   struct clk_core *old_parent)
+ {
+-	unsigned long flags;
+-
+ 	/*
+ 	 * Finish the migration of prepare state and undo the changes done
+ 	 * for preventing a race with clk_enable().
+ 	 */
+-	if (core->prepare_count) {
+-		flags = clk_enable_lock();
+-		clk_core_disable(core);
+-		clk_core_disable(old_parent);
+-		clk_enable_unlock(flags);
+-		clk_core_unprepare(old_parent);
+-	}
++        if (core->prepare_count) {
++                clk_core_disable_lock(core);
++                clk_core_disable_unprepare(old_parent);
++
++        /* re-balance ref counting if CLK_OPS_PARENT_ENABLE is set */
++        if (core->flags & CLK_OPS_PARENT_ENABLE) {
++                clk_core_disable_unprepare(parent);
++                clk_core_disable_unprepare(old_parent);
++        }
++
+ }
+ 
+ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+@@ -1466,13 +1474,17 @@ static void clk_change_rate(struct clk_core *core)
+ 	unsigned long best_parent_rate = 0;
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
++	struct clk_core *parent = NULL;
+ 
+ 	old_rate = core->rate;
+ 
+-	if (core->new_parent)
++	if (core->new_parent) {
++		parent = core->new_parent;
+ 		best_parent_rate = core->new_parent->rate;
+-	else if (core->parent)
++	} else if (core->parent) {
++		parent = core->parent;
+ 		best_parent_rate = core->parent->rate;
++	}
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+ 		unsigned long flags;
+@@ -1502,6 +1514,9 @@ static void clk_change_rate(struct clk_core *core)
+ 
+ 	trace_clk_set_rate(core, core->new_rate);
+ 
++	if (core->flags & CLK_OPS_PARENT_ON)
++		clk_core_prepare_enable(parent);
++
+ 	if (!skip_set_rate && core->ops->set_rate)
+ 		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
+ 
+@@ -1518,6 +1533,9 @@ static void clk_change_rate(struct clk_core *core)
+ 		clk_core_unprepare(core);
+ 	}
+ 
++	if (core->flags & CLK_OPS_PARENT_ON)
++		clk_core_disable_unprepare(parent);
++
+ 	if (core->notifier_count && old_rate != core->rate)
+ 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
+ 
+-- 
+1.9.1
