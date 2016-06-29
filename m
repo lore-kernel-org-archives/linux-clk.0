@@ -1,61 +1,207 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
- <1464381494-27096-11-git-send-email-rklein@nvidia.com>
- <20160622122419.GC26943@ulmo.ba.sec>
- <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
- <20160628174028.GC1521@codeaurora.org>
-CC: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Stephen Warren
-	<swarren@wwwdotorg.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <9d520158-ecb7-566b-38f6-8ab01a12ff39@nvidia.com>
-Date: Thu, 30 Jun 2016 16:13:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160628174028.GC1521@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 04/14] clk: sunxi-ng: Add gate clock support
+Date: Wed, 29 Jun 2016 21:05:25 +0200
+Message-Id: <20160629190535.11855-5-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 6/28/2016 1:40 PM, Stephen Boyd wrote:
-> On 06/22, Rhyland Klein wrote:
->> On 6/22/2016 8:24 AM, Thierry Reding wrote:
->>>
->>> Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
->>> omit the second conditional.
->>>
->>> I wonder if it might be easier to read if this flag was at the end of
->>> the line. There's also the fact that someone may have written a script
->>> that expects the clock name as the first word on the line and may get
->>> confused by this change. If you put it at the very end of the line the
->>> likelihood of upsetting scripts will be reduced.
->>
->> Yah we can put the mark at the end of the line. I wasn't sure if there
->> was a strong motivation to avoid extending the the width of each line,
->> as sometimes people prefer to try to keep it close to 80 char as
->> possible. I think right now, it was close to that, but might be a little
->> over already. I can switch to that though, as it is less likely to break
->> any automatic parsing scripts.
->>
-> 
-> Nak. clk_summary is about taking a snapshot of the system state
-> for things that may be changing rapidly, like consumers (which
-> sounds fun to add!), rates, enable/prepare state. Flags are not
-> changing. If you want to add flag info into some summary then a
-> script should be able to augment clk_summary info (really should
-> use the clk_dump in this case though) with whatever flags can be
-> read through debugfs already.
-> 
+Some clocks in the Allwinner SoCs clocks unit are just simple gates. Add
+support for those clocks.
 
-That is fine with me. This was more of something I was using locally to
-verify things and thought it might be useful in some manner upstream.
-However, a script which read the clk_flags from debugfs for each clk
-could do the same thing without changing the summary.
+Since it's a feature that can also be found in more complex clocks, provide
+a bunch of helpers that can be reused later on.
 
--rhyland
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Kconfig    |  3 ++
+ drivers/clk/sunxi-ng/Makefile   |  1 +
+ drivers/clk/sunxi-ng/ccu_gate.c | 82 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_gate.h | 52 ++++++++++++++++++++++++++
+ 4 files changed, 138 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_gate.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_gate.h
 
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 3d117d7a3621..2f135c8a61b6 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -9,4 +9,7 @@ if SUNXI_CCU
+ config SUNXI_CCU_FRAC
+ 	bool
+ 
++config SUNXI_CCU_GATE
++	bool
++
+ endif
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 46f417cb682a..48b885f2d8ff 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -4,3 +4,4 @@ obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
+ 
+ # Base clock types
+ obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
++obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
+diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu_gate.c
+new file mode 100644
+index 000000000000..8a81f9d4a89f
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_gate.c
+@@ -0,0 +1,82 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_gate.h"
++
++void ccu_gate_helper_disable(struct ccu_common *common, u32 gate)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (!gate)
++		return;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + common->reg);
++	writel(reg & ~gate, common->base + common->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++}
++
++static void ccu_gate_disable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	return ccu_gate_helper_disable(&cg->common, cg->enable);
++}
++
++int ccu_gate_helper_enable(struct ccu_common *common, u32 gate)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (!gate)
++		return 0;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + common->reg);
++	writel(reg | gate, common->base + common->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
++
++static int ccu_gate_enable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	return ccu_gate_helper_enable(&cg->common, cg->enable);
++}
++
++int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate)
++{
++	if (!gate)
++		return 1;
++
++	return readl(common->base + common->reg) & gate;
++}
++
++static int ccu_gate_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	return ccu_gate_helper_is_enabled(&cg->common, cg->enable);
++}
++
++const struct clk_ops ccu_gate_ops = {
++	.disable	= ccu_gate_disable,
++	.enable		= ccu_gate_enable,
++	.is_enabled	= ccu_gate_is_enabled,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_gate.h b/drivers/clk/sunxi-ng/ccu_gate.h
+new file mode 100644
+index 000000000000..4466169bd2d7
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_gate.h
+@@ -0,0 +1,52 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_GATE_H_
++#define _CCU_GATE_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++
++struct ccu_gate {
++	u32			enable;
++
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_GATE(_struct, _name, _parent, _reg, _gate, _flags)	\
++	struct ccu_gate _struct = {					\
++		.enable	= _gate,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_gate_ops,	\
++						      _flags),		\
++		}							\
++	}
++
++static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_gate, common);
++}
++
++void ccu_gate_helper_disable(struct ccu_common *common, u32 gate);
++int ccu_gate_helper_enable(struct ccu_common *common, u32 gate);
++int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate);
++
++extern const struct clk_ops ccu_gate_ops;
++
++#endif /* _CCU_GATE_H_ */
 -- 
-nvpublic
+2.9.0
