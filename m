@@ -1,43 +1,404 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 30 Jun 2016 21:48:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, rtc-linux@googlegroups.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] mfd: ac100: Add device tree bindings for X-Powers
- AC100 codec/RTC combo IC
-Message-ID: <20160701024847.GA1444@rob-hp-laptop>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
- <1467302331-9663-2-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467302331-9663-2-git-send-email-wens@csie.org>
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 02/14] clk: sunxi-ng: Add common infrastructure
+Date: Wed, 29 Jun 2016 21:05:23 +0200
+Message-Id: <20160629190535.11855-3-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 11:58:45PM +0800, Chen-Yu Tsai wrote:
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> Changes since v3:
-> 
->   - Fixed device node names and added labels.
->   - Added clock output from codec and input to rtc.
-> 
-> Changes since v2:
-> 
->   - Fix interrupt line for ac100_codec in provided example.
-> 
-> ---
->  Documentation/devicetree/bindings/mfd/ac100.txt | 49 +++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+Start our new clock infrastructure by adding the registration code, common
+structure and common code.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/Kconfig               |  1 +
+ drivers/clk/Makefile              |  1 +
+ drivers/clk/sunxi-ng/Kconfig      |  3 ++
+ drivers/clk/sunxi-ng/Makefile     |  3 ++
+ drivers/clk/sunxi-ng/ccu_common.c | 90 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_common.h | 85 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_mult.h   | 15 +++++++
+ drivers/clk/sunxi-ng/ccu_reset.c  | 55 ++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_reset.h  | 40 +++++++++++++++++
+ 9 files changed, 293 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/Kconfig
+ create mode 100644 drivers/clk/sunxi-ng/Makefile
+ create mode 100644 drivers/clk/sunxi-ng/ccu_common.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_common.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mult.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu_reset.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_reset.h
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 53ddba26578c..8216f47ac37d 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -212,6 +212,7 @@ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
++source "drivers/clk/sunxi-ng/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
+ source "drivers/clk/ti/Kconfig"
+ 
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dcc5e698ff6d..7a44a1526d60 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -79,6 +79,7 @@ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
++obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
+ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+ obj-y					+= ti/
+ obj-$(CONFIG_ARCH_U8500)		+= ux500/
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+new file mode 100644
+index 000000000000..df5b2768d8b4
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -0,0 +1,3 @@
++config SUNXI_CCU
++	bool "Clock support for Allwinner SoCs"
++	default ARCH_SUNXI
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+new file mode 100644
+index 000000000000..886d0786ca51
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -0,0 +1,3 @@
++# Common objects
++obj-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
++obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+new file mode 100644
+index 000000000000..fc17b5295e16
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -0,0 +1,90 @@
++/*
++ * Copyright 2016 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++#include "ccu_common.h"
++#include "ccu_reset.h"
++
++static DEFINE_SPINLOCK(ccu_lock);
++
++void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
++{
++	u32 reg;
++
++	if (!lock)
++		return;
++
++	WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg, reg,
++					   !(reg & lock), 100, 70000));
++}
++
++int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
++		    const struct sunxi_ccu_desc *desc)
++{
++	struct ccu_reset *reset;
++	int i, ret;
++
++	for (i = 0; i < desc->num_ccu_clks; i++) {
++		struct ccu_common *cclk = desc->ccu_clks[i];
++
++		if (!cclk)
++			continue;
++
++		cclk->base = reg;
++		cclk->lock = &ccu_lock;
++	}
++
++	for (i = 0; i < desc->hw_clks->num ; i++) {
++		struct clk_hw *hw = desc->hw_clks->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = clk_hw_register(NULL, hw);
++		if (ret) {
++			pr_err("Couldn't register clock %s\n",
++			       clk_hw_get_name(hw));
++			goto err_clk_unreg;
++		}
++	}
++
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
++				     desc->hw_clks);
++	if (ret)
++		goto err_clk_unreg;
++
++	reset = kzalloc(sizeof(*reset), GFP_KERNEL);
++	reset->rcdev.of_node = node;
++	reset->rcdev.ops = &ccu_reset_ops;
++	reset->rcdev.owner = THIS_MODULE;
++	reset->rcdev.nr_resets = desc->num_resets;
++	reset->base = reg;
++	reset->lock = &ccu_lock;
++	reset->reset_map = desc->resets;
++
++	ret = reset_controller_register(&reset->rcdev);
++	if (ret)
++		goto err_of_clk_unreg;
++
++	return 0;
++
++err_of_clk_unreg:
++err_clk_unreg:
++	return ret;
++}
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+new file mode 100644
+index 000000000000..b3d9abfbd721
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -0,0 +1,85 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _COMMON_H_
++#define _COMMON_H_
++
++#include <linux/compiler.h>
++#include <linux/clk-provider.h>
++
++#define CCU_FEATURE_FRACTIONAL		BIT(0)
++#define CCU_FEATURE_VARIABLE_PREDIV	BIT(1)
++#define CCU_FEATURE_FIXED_PREDIV	BIT(2)
++#define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
++
++struct device_node;
++
++#define CLK_HW_INIT(_name, _parent, _ops, _flags)			\
++	&(struct clk_init_data) {					\
++		.flags		= _flags,				\
++		.name		= _name,				\
++		.parent_names	= (const char *[]) { _parent },		\
++		.num_parents	= 1,					\
++		.ops 		= _ops,					\
++	}
++
++#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)		\
++	&(struct clk_init_data) {					\
++		.flags		= _flags,				\
++		.name		= _name,				\
++		.parent_names	= _parents,				\
++		.num_parents	= ARRAY_SIZE(_parents),			\
++		.ops 		= _ops,					\
++	}
++
++#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
++			_div, _mult, _flags)				\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
++struct ccu_common {
++	void __iomem	*base;
++	u16		reg;
++
++	unsigned long	features;
++	spinlock_t	*lock;
++	struct clk_hw	hw;
++};
++
++static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
++{
++	return container_of(hw, struct ccu_common, hw);
++}
++
++struct sunxi_ccu_desc {
++	struct ccu_common		**ccu_clks;
++	unsigned long			num_ccu_clks;
++
++	struct clk_hw_onecell_data	*hw_clks;
++
++	struct ccu_reset_map		*resets;
++	unsigned long			num_resets;
++};
++
++void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock);
++
++int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
++		    const struct sunxi_ccu_desc *desc);
++
++#endif /* _COMMON_H_ */
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+new file mode 100644
+index 000000000000..609db6610880
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -0,0 +1,15 @@
++#ifndef _CCU_MULT_H_
++#define _CCU_MULT_H_
++
++struct _ccu_mult {
++	u8	shift;
++	u8	width;
++};
++
++#define _SUNXI_CCU_MULT(_shift, _width)		\
++	{					\
++		.shift	= _shift,		\
++		.width	= _width,		\
++	}
++
++#endif /* _CCU_MULT_H_ */
+diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
+new file mode 100644
+index 000000000000..6c31d48783a7
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_reset.c
+@@ -0,0 +1,55 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/io.h>
++#include <linux/reset-controller.h>
++
++#include "ccu_reset.h"
++
++static int ccu_reset_assert(struct reset_controller_dev *rcdev,
++			    unsigned long id)
++{
++	struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
++	const struct ccu_reset_map *map = &ccu->reset_map[id];
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(ccu->lock, flags);
++
++	reg = readl(ccu->base + map->reg);
++	writel(reg & ~map->bit, ccu->base + map->reg);
++
++	spin_unlock_irqrestore(ccu->lock, flags);
++
++	return 0;
++}
++
++static int ccu_reset_deassert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
++	const struct ccu_reset_map *map = &ccu->reset_map[id];
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(ccu->lock, flags);
++
++	reg = readl(ccu->base + map->reg);
++	writel(reg | map->bit, ccu->base + map->reg);
++
++	spin_unlock_irqrestore(ccu->lock, flags);
++
++	return 0;
++}
++
++const struct reset_control_ops ccu_reset_ops = {
++	.assert		= ccu_reset_assert,
++	.deassert	= ccu_reset_deassert,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_reset.h b/drivers/clk/sunxi-ng/ccu_reset.h
+new file mode 100644
+index 000000000000..36a4679210bd
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_reset.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_RESET_H_
++#define _CCU_RESET_H_
++
++#include <linux/reset-controller.h>
++
++struct ccu_reset_map {
++	u16	reg;
++	u32	bit;
++};
++
++
++struct ccu_reset {
++	void __iomem			*base;
++	struct ccu_reset_map		*reset_map;
++	spinlock_t			*lock;
++
++	struct reset_controller_dev	rcdev;
++};
++
++static inline struct ccu_reset *rcdev_to_ccu_reset(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct ccu_reset, rcdev);
++}
++
++extern const struct reset_control_ops ccu_reset_ops;
++
++#endif /* _CCU_RESET_H_ */
+-- 
+2.9.0
