@@ -1,207 +1,119 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 2/5] clk: qcom: ipq4019: Added the apss cpu pll divider clock node
-Date: Tue, 21 Jun 2016 19:19:19 +0530
-Message-Id: <1466516962-18087-3-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
-References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <1465870678-30128-2-git-send-email-wens@csie.org>
+Message-Id: <E1bIKXK-0005rN-JW@finisterre>
+Date: Wed, 29 Jun 2016 19:48:34 +0100
+Subject: Applied "regmap: Support bulk writes for devices without raw formatting" to the regmap tree
 List-ID: <linux-clk.vger.kernel.org>
 
-The current ipq4019 clock driver does not have support for all
-the frequency supported by APPS CPU. APPS CPU frequency is
-provided with APSS CPU PLL divider which divides down the VCO
-frequency. This divider is nonlinear and specific to IPQ4019
-so the standard divider code cannot be used for this.
+The patch
 
-This patch registers new clock node and adds its clock
-operations for APPS CPU clock divider. Since, this divider
-is nonlinear, so frequency table is also added for this,
-which contains the frequency and its corresponding hardware
-divider values.
+   regmap: Support bulk writes for devices without raw formatting
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+has been applied to the regmap tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 5bf75b44972a7edffa9f52cddb291d66bc16a4d6 Mon Sep 17 00:00:00 2001
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 20 Jun 2016 10:52:11 +0800
+Subject: [PATCH] regmap: Support bulk writes for devices without raw
+ formatting
+
+When doing a bulk writes from a device which lacks raw I/O support we
+fall back to doing register at a time reads but we still use the raw
+formatters in order to render the data into the word size used by the
+device (since bulk reads still operate on the device word size rather
+than unsigned ints).  This means that devices without raw formatting
+such as those that provide reg_read() are not supported.  Provide
+handling for them by copying the values read into native endian values
+of the appropriate size.
+
+This complements commit d5b98eb12420 ("regmap: Support bulk reads for
+devices without raw formatting").
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/qcom/gcc-ipq4019.c               | 112 ++++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-ipq4019.h |   1 +
- 2 files changed, 112 insertions(+), 1 deletion(-)
+ drivers/base/regmap/regmap.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 17ca6d3..4c8a97f 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -154,7 +154,7 @@ static const char * const gcc_xo_ddr_500_200[] = {
- 	"xo",
- 	"gcc_fepll200_clk",
- 	"gcc_fepll500_clk",
--	"ddrpllapss",
-+	"gcc_apps_cpu_plldiv_clk",
- };
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index df2d2ef5d6b3..51fa7d66a393 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1777,8 +1777,6 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 	size_t val_bytes = map->format.val_bytes;
+ 	size_t total_size = val_bytes * val_count;
  
- #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-@@ -571,6 +571,7 @@ static struct clk_rcg2 apps_clk_src = {
- 		.parent_names = gcc_xo_ddr_500_200,
- 		.num_parents = 4,
- 		.ops = &clk_rcg2_ops,
-+		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
+-	if (map->bus && !map->format.parse_inplace)
+-		return -EINVAL;
+ 	if (!IS_ALIGNED(reg, map->reg_stride))
+ 		return -EINVAL;
  
-@@ -1273,6 +1274,114 @@ static struct clk_pll_vco gcc_fepll_vco = {
- 	},
- };
- 
-+/*
-+ * Round rate function for APPS CPU PLL Clock divider.
-+ * It Returns the input rate without changing it. The hardware supported rate
-+ * will be calculated in set function by getting the same from frequency table.
-+ */
-+static long clk_cpu_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *p_rate)
-+{
-+	return rate;
-+};
+@@ -1789,7 +1787,8 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 	 *
+ 	 * The first if block is used for memory mapped io. It does not allow
+ 	 * val_bytes of 3 for example.
+-	 * The second one is used for busses which do not have this limitation
++	 * The second one is for busses that do not provide raw I/O.
++	 * The third one is used for busses which do not have these limitations
+ 	 * and can write arbitrary value lengths.
+ 	 */
+ 	if (!map->bus) {
+@@ -1825,6 +1824,32 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 		}
+ out:
+ 		map->unlock(map->lock_arg);
++	} else if (map->bus && !map->format.parse_inplace) {
++		const u8 *u8 = val;
++		const u16 *u16 = val;
++		const u32 *u32 = val;
++		unsigned int ival;
 +
-+/*
-+ * Clock set rate function for APPS CPU PLL Clock divider.
-+ * It looks up the frequency table and updates the PLL divider to corresponding
-+ * divider value.
-+ */
-+static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pll_div *rcg = to_clk_pll_div(hw);
-+	const struct freq_tbl *f;
-+	u32 mask;
-+	int ret;
++		for (i = 0; i < val_count; i++) {
++			switch (map->format.val_bytes) {
++			case 4:
++				ival = u32[i];
++				break;
++			case 2:
++				ival = u16[i];
++				break;
++			case 1:
++				ival = u8[i];
++				break;
++			default:
++				return -EINVAL;
++			}
 +
-+	f = qcom_find_freq(rcg->freq_tbl, rate);
-+	if (!f)
-+		return -EINVAL;
-+
-+	mask = (BIT(rcg->cdiv.width) - 1) << rcg->cdiv.shift;
-+	ret = regmap_update_bits(rcg->cdiv.clkr.regmap,
-+				rcg->cdiv.reg, mask,
-+				(f->pre_div << rcg->cdiv.shift) & mask);
-+	udelay(1);
-+
-+	return 0;
-+};
-+
-+/*
-+ * Clock frequency calculation function for APPS CPU PLL Clock divider.
-+ * This clock divider is nonlinear so this function calculates the actual
-+ * divider and returns the output frequency by dividing VCO Frequency
-+ * with this actual divider value.
-+ */
-+static unsigned long clk_cpu_div_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pll_div *rcg = to_clk_pll_div(hw);
-+	u32 cdiv, pre_div;
-+
-+	regmap_read(rcg->cdiv.clkr.regmap, rcg->cdiv.reg, &cdiv);
-+	cdiv = (cdiv >> rcg->cdiv.shift) & (BIT(rcg->cdiv.width) - 1);
-+
-+	/*
-+	 * Some dividers have value in 0.5 fraction so multiply both VCO
-+	 * frequency(parent_rate) and pre_div with 2 to make integer
-+	 * calculation.
-+	 */
-+	if (cdiv > 10)
-+		pre_div = (cdiv + 1) * 2;
-+	else
-+		pre_div = cdiv + 12;
-+
-+	return clk_calc_divider_rate(parent_rate * 2, pre_div);
-+};
-+
-+const struct clk_ops clk_regmap_cpu_div_ops = {
-+	.round_rate = clk_cpu_div_round_rate,
-+	.set_rate = clk_cpu_div_set_rate,
-+	.recalc_rate = clk_cpu_div_recalc_rate,
-+};
-+
-+static const struct freq_tbl ftbl_apps_ddr_pll[] = {
-+	{380000000, P_XO, 0xD, 0},
-+	{409000000, P_XO, 0xC, 0, 0},
-+	{444000000, P_XO, 0xB, 0, 0},
-+	{484000000, P_XO, 0xA, 0, 0},
-+	{507000000, P_XO, 0x9, 0, 0},
-+	{532000000, P_XO, 0x8, 0, 0},
-+	{560000000, P_XO, 0x7, 0, 0},
-+	{592000000, P_XO, 0x6, 0, 0},
-+	{626000000, P_XO, 0x5, 0, 0},
-+	{666000000, P_XO, 0x4, 0, 0},
-+	{710000000, P_XO, 0x3, 0, 0},
-+	{761000000, P_XO, 0x2, 0, 0},
-+	{819000000, P_XO, 0x1, 0, 0},
-+	{888000000, P_XO, 0x0, 0, 0},
-+	{}
-+};
-+
-+static struct clk_pll_div gcc_apps_cpu_plldiv_clk = {
-+	.cdiv.reg = 0x2E020,
-+	.cdiv.shift = 4,
-+	.cdiv.width = 4,
-+	.cdiv.clkr = {
-+		.enable_reg = 0x2E000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_apps_cpu_plldiv_clk",
-+			.parent_names = (const char *[]){
-+				"gcc_apps_ddrpll_vco",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_regmap_cpu_div_ops,
-+		},
-+	},
-+	.freq_tbl = ftbl_apps_ddr_pll,
-+};
-+
- /* Calculates the rate for PLL divider.
-  * If the divider value is not fixed then it gets the actual divider value
-  * from divider table. Then, it calculate the clock rate by dividing the
-@@ -1485,6 +1594,7 @@ static struct clk_regmap *gcc_ipq4019_clocks[] = {
- 	[GCC_FEPLL500_CLK] = &gcc_fepll500_clk.cdiv.clkr,
- 	[GCC_FEPLL_WCSS2G_CLK] = &gcc_fepllwcss2g_clk.cdiv.clkr,
- 	[GCC_FEPLL_WCSS5G_CLK] = &gcc_fepllwcss5g_clk.cdiv.clkr,
-+	[GCC_APPS_CPU_PLLDIV_CLK] = &gcc_apps_cpu_plldiv_clk.cdiv.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq4019_resets[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq4019.h b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
-index cd0cd23..921565d 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq4019.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
-@@ -90,6 +90,7 @@
- #define GCC_FEPLL500_CLK				71
- #define GCC_FEPLL_WCSS2G_CLK				72
- #define GCC_FEPLL_WCSS5G_CLK				73
-+#define GCC_APPS_CPU_PLLDIV_CLK				74
- 
- #define WIFI0_CPU_INIT_RESET				0
- #define WIFI0_RADIO_SRIF_RESET				1
++			ret = regmap_write(map, reg + (i * map->reg_stride),
++					   ival);
++			if (ret)
++				return ret;
++		}
+ 	} else if (map->use_single_write ||
+ 		   (map->max_raw_write && map->max_raw_write < total_size)) {
+ 		int chunk_stride = map->reg_stride;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
