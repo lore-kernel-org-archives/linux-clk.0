@@ -1,75 +1,66 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH 02/11] clk: imx: correct AV PLL rate formula
-Date: Wed, 8 Jun 2016 22:33:31 +0800
-Message-ID: <1465396420-27064-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"edubezval@gmail.com" <edubezval@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"wens@csie.org" <wens@csie.org>,
+	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20160629121021.GD6095@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
+	 <20160628101325.2522-3-icenowy@aosc.xyz>
+	 <20160628114640.GE5550@lukather>
+	 <60021467122182@web19j.yandex.ru> <20160629121021.GD6095@lukather>
+Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-Id: <1112501467207099@web30g.yandex.ru>
+Date: Wed, 29 Jun 2016 21:31:39 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Anson Huang <b20788@freescale.com>
 
-The audio/video PLL's rate calculation is as below in RM:
 
-Fref * (DIV_SELECT + NUM / DENOM), in origin clk-pllv3's
-code, below code is used:
+29.06.2016, 20:10, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> Hi,
+>
+> On Tue, Jun 28, 2016 at 09:56:22PM +0800, Icenowy Zheng wrote:
+>>  The reason for a dedicate driver is:
+>>  1. This IP have only thermal function, so it's not suitable to use a
+>>  driver at drivers/input/touchscreen/.
+>
+> That's not a problem, and it's being worked on [1].
+>
+>>  2. Control Register are quite different.
+>
+> That's not a problem either, there's just a bit that you don't need to
+> set in the control 1 register, and that's pretty much it. It doesn't
+> justify a whole new driver.
+>
+>>  3. This IP uses AUDIO PLL (PLL2) as its clock!
+>
+> It's listed as the input, but all the rest of the documentation refers
+> only to 24MHz, which seems to indicate that it's only running on the
+> oscillator, which would make much more sense.
+>
+> Thanks,
+> Maxime
+>
+> 1: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/439487.html
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-(parent_rate * div) + ((parent_rate / mfd) * mfn
+Thanks.
 
-as it does NOT consider the float data using div, so below
-formula should be used as a decent method:
-
-(parent_rate * div) + ((parent_rate * mfn) / mfd)
-
-and we also need to consider parent_rate * mfd may overflow
-a 32 bit value, 64 bit value should be used.
-
-After updating this formula, the dram PLL's rate is
-1066MHz, which is correct, while the old formula gets
-1056MHz.
-
-[Aisheng: fix clk_pllv3_av_round_rate too]
-
-Signed-off-by: Anson Huang <b20788@freescale.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-pllv3.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 44d294a336f0..eea2b1b3791e 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -218,8 +218,12 @@ static unsigned long clk_pllv3_av_recalc_rate(struct clk_hw *hw,
- 	u32 mfn = readl_relaxed(pll->base + PLL_NUM_OFFSET);
- 	u32 mfd = readl_relaxed(pll->base + PLL_DENOM_OFFSET);
- 	u32 div = readl_relaxed(pll->base) & pll->div_mask;
-+	u64 temp64 = (u64)parent_rate;
- 
--	return (parent_rate * div) + ((parent_rate / mfd) * mfn);
-+	temp64 *= mfn;
-+	do_div(temp64, mfd);
-+
-+	return (parent_rate * div) + (u32)temp64;
- }
- 
- static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -243,7 +247,7 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
- 	do_div(temp64, parent_rate);
- 	mfn = temp64;
- 
--	return parent_rate * div + parent_rate / mfd * mfn;
-+	return parent_rate * div + parent_rate * mfn / mfd;
- }
- 
- static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
--- 
-1.9.1
+However, sun8iw3/5 ths is not even a GPADC... It's a specified IP, only used as an ADC suitable for temperature sensor.
