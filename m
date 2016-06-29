@@ -1,93 +1,72 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	"Bhuvanchandra DV" <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH 7/8] tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
-Date: Thu, 9 Jun 2016 20:40:38 +0530
-Message-ID: <20160609151039.20817-8-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-References: <20160609151039.20817-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <andi.shyti@gmail.com>
+Return-Path: <andi.shyti@gmail.com>
+From: andi.shyti@gmail.com
+To: Heiko Stuebner <heiko@sntech.de>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 2/2] clk: rockchip: remove unused rockchip_clk_protect_critical function
+Date: Wed, 29 Jun 2016 17:45:10 +0300
+Message-Id: <1467211510-3485-3-git-send-email-andi@etezian.org>
+In-Reply-To: <1467211510-3485-1-git-send-email-andi@etezian.org>
+References: <1467211510-3485-1-git-send-email-andi@etezian.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-When DMA mode is enabled one need to make sure the DMA channels are
-idle before entering suspend mode especially when UART ports which
-are set as wakeup source and console port with no_console_suspend
-is set. This patch takes care of gracefully releasing DMA channels
-for the above two cases and start the DMA at resume.
+From: Andi Shyti <andi@etezian.org>
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+because there is no need anymore to enable critical clocks in
+each driver, this function is not necessary anymore.
+
+The drivers having critical clocks use the CLK_IS_CRITICAL flag.
+
+Signed-off-by: Andi Shyti <andi@etezian.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 44 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/clk/rockchip/clk.c | 14 --------------
+ drivers/clk/rockchip/clk.h |  1 -
+ 2 files changed, 15 deletions(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 27687d5..134090a 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1943,6 +1943,30 @@ static int lpuart_suspend(struct device *dev)
- 	}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 7ffd134..d9bc61b 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -525,20 +525,6 @@ void __init rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 	rockchip_clk_add_lookup(ctx, clk, lookup_id);
+ }
  
- 	uart_suspend_port(&lpuart_reg, &sport->port);
-+
-+	if (sport->lpuart_dma_rx_use) {
-+		/*
-+		 * EDMA driver during suspend will forcefully release any
-+		 * non-idle DMA channels. If port wakeup is enabled or if port
-+		 * is console port or 'no_console_suspend' is set the Rx DMA
-+		 * cannot resume as as expected, hence gracefully release the
-+		 * Rx DMA path before suspend and start Rx DMA path on resume.
-+		 */
-+		if (sport->port.irq_wake) {
-+			del_timer_sync(&sport->lpuart_timer);
-+			lpuart_dma_rx_free(&sport->port);
-+		}
-+
-+		/* Disable Rx DMA to use UART port as wakeup source */
-+		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_RDMAS,
-+					sport->port.membase + UARTCR5);
-+	}
-+
-+	if (sport->lpuart_dma_tx_use) {
-+		sport->dma_tx_in_progress = false;
-+		dmaengine_terminate_all(sport->dma_tx_chan);
-+	}
-+
- 	if (sport->port.suspended && !sport->port.irq_wake)
- 		clk_disable_unprepare(sport->clk);
+-void __init rockchip_clk_protect_critical(const char *const clocks[],
+-					  int nclocks)
+-{
+-	int i;
+-
+-	/* Protect the clocks that needs to stay on */
+-	for (i = 0; i < nclocks; i++) {
+-		struct clk *clk = __clk_lookup(clocks[i]);
+-
+-		if (clk)
+-			clk_prepare_enable(clk);
+-	}
+-}
+-
+ static void __iomem *rst_base;
+ static unsigned int reg_restart;
+ static void (*cb_restart)(void);
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 2194ffa..2fb7acb 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -614,7 +614,6 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
+-void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 					unsigned int reg, void (*cb)(void));
  
-@@ -1970,6 +1994,26 @@ static int lpuart_resume(struct device *dev)
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
-+	if (sport->lpuart_dma_rx_use) {
-+		if (sport->port.irq_wake) {
-+			if (!lpuart_start_rx_dma(sport)) {
-+				sport->lpuart_dma_rx_use = true;
-+				rx_dma_timer_init(sport);
-+			} else {
-+				sport->lpuart_dma_rx_use = false;
-+			}
-+		}
-+	}
-+
-+	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
-+			init_waitqueue_head(&sport->dma_wait);
-+			sport->lpuart_dma_tx_use = true;
-+			writeb(readb(sport->port.membase + UARTCR5) |
-+				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
-+	} else {
-+		sport->lpuart_dma_tx_use = false;
-+	}
-+
- 	uart_resume_port(&lpuart_reg, &sport->port);
- 
- 	return 0;
 -- 
-2.8.3
+2.8.1
