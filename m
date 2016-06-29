@@ -1,70 +1,85 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<anson.huang@nxp.com>
-Subject: [PATCH 07/11] clk: imx6ul: fix pll clock parents
-Date: Wed, 8 Jun 2016 22:33:36 +0800
-Message-ID: <1465396420-27064-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <guodong.xu@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <57726602.1060505@linaro.org>
+References: <1467109902-17625-1-git-send-email-guodong.xu@linaro.org>
+ <1467109902-17625-2-git-send-email-guodong.xu@linaro.org> <57726602.1060505@linaro.org>
+From: Guodong Xu <guodong.xu@linaro.org>
+Date: Wed, 29 Jun 2016 16:51:45 +0800
+Message-ID: <CAFGCpxxVmFGphtxZ=wJF2S75OQ5PyMucfOHCWMK51nrCJN0rkw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: hi6220: initialize UART1 clock to 150MHz
+To: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Xinliang Liu <xinliang.liu@linaro.org>, John Stultz <john.stultz@linaro.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-pllx_bypass_src mux shouldn't be the parent of pllx clock
-since it's only valid when when pllx BYPASS bit is set.
-Thus it is actually one parent of pllx_bypass only.
+On 28 June 2016 at 19:56, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org> wrote:
+> On 06/28/2016 12:31 PM, Guodong Xu wrote:
+>>
+>> From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>>
+>> Early at boot, during the sys_clk initialization, make sure UART1 uses
+>> the higher frequency clock.
+>>
+>> This enables support for higher baud rates (up to 3Mbps) required to
+>> support faster bluetooth transfers.
+>>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+>> ---
+>>   drivers/clk/hisilicon/clk-hi6220.c | 12 ++++++++++--
+>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/hisilicon/clk-hi6220.c
+>> b/drivers/clk/hisilicon/clk-hi6220.c
+>> index a36ffcb..55bd9bb 100644
+>> --- a/drivers/clk/hisilicon/clk-hi6220.c
+>> +++ b/drivers/clk/hisilicon/clk-hi6220.c
+>> @@ -11,6 +11,7 @@
+>>    */
+>>     #include <linux/kernel.h>
+>> +#include <linux/clk.h>
+>>   #include <linux/clk-provider.h>
+>>   #include <linux/clkdev.h>
+>>   #include <linux/io.h>
+>> @@ -70,10 +71,10 @@ static struct hisi_gate_clock
+>> hi6220_separated_gate_clks_ao[] __initdata = {
+>>         { HI6220_UART0_PCLK,  "uart0_pclk",  "clk_tcxo",
+>> CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 24, 0, },
+>>   };
+>>   +static struct hisi_clock_data *clk_data_ao;
+>> +
+>>   static void __init hi6220_clk_ao_init(struct device_node *np)
+>>   {
+>> -       struct hisi_clock_data *clk_data_ao;
+>> -
+>>         clk_data_ao = hisi_clk_init(np, HI6220_AO_NR_CLKS);
+>>         if (!clk_data_ao)
+>>                 return;
+>> @@ -192,6 +193,13 @@ static void __init hi6220_clk_sys_init(struct
+>> device_node *np)
+>>         hi6220_clk_register_divider(hi6220_div_clks_sys,
+>>                         ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
+>> +
+>> +       if (!clk_data_ao)
+>> +               return;
+>> +
+>> +       /* enable high speed clock on UART1 mux */
+>> +       clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
+>> +                       clk_data_ao->clk_data.clks[HI6220_150M]);
+>>   }
+>>   CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl",
+>> hi6220_clk_sys_init);
+>>
+>
+>
+> please bear with me on this. it does need rework.
+>
 
-Instead, pllx parent should be fixed to osc according to
-reference manual.
-Other plls have the same issue.
+V2 was sent. Thanks Jorge.
 
-e.g. before fix, the pll tree is:
-osc                                      6            6    24000000          0 0
-   pll1_bypass_src                       0            0    24000000          0 0
-      pll1                               0            0   792000000          0 0
-         pll1_bypass                     0            0   792000000          0 0
-            pll1_sys                     0            0   792000000          0 0
+-Guodong
 
-After the fix, it's:
-osc                                      6            6    24000000          0 0
-   pll1                                  0            0   792000000          0 0
-      pll1_bypass                        0            0   792000000          0 0
-         pll1_sys                        0            0   792000000          0 0
-
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx6ul.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 67ae3465dd37..bdf4cf807b78 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -130,13 +130,13 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", base + 0xe0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 	clks[IMX6UL_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 
--	clks[IMX6UL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
--	clks[IMX6UL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
--	clks[IMX6UL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3", "pll3_bypass_src", base + 0x10, 0x3);
--	clks[IMX6UL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
--	clks[IMX6UL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
--	clks[IMX6UL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
--	clks[IMX6UL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7", "pll7_bypass_src", base + 0x20, 0x3);
-+	clks[IMX6UL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1", "osc", base + 0x00, 0x7f);
-+	clks[IMX6UL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-+	clks[IMX6UL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3", "osc", base + 0x10, 0x3);
-+	clks[IMX6UL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4", "osc", base + 0x70, 0x7f);
-+	clks[IMX6UL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5", "osc", base + 0xa0, 0x7f);
-+	clks[IMX6UL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6", "osc", base + 0xe0, 0x3);
-+	clks[IMX6UL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7", "osc", base + 0x20, 0x3);
- 
- 	clks[IMX6UL_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
- 	clks[IMX6UL_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
--- 
-1.9.1
+>
