@@ -1,118 +1,280 @@
-Return-Path: <dianders@google.com>
-MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <575E240C.9060502@rock-chips.com>
-References: <1465724913-14553-1-git-send-email-zhengxing@rock-chips.com>
- <CAD=FV=XSSPMOnMD3mqFyqM3wWLShbRc2cXVdN0PYcUxpaDnsTw@mail.gmail.com> <575E240C.9060502@rock-chips.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 13 Jun 2016 16:46:14 -0700
-Message-ID: <CAD=FV=WhaN__psCV_hYoc67gZMpCt_9yp5=vR-C4uc8i39RAaA@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: add pclk_vio_grf to critical clock on the RK3399
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	elaine zhang <elaine.zhang@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>,
-	Brian Norris <briannorris@chromium.org>, Yakir Yang <ykk@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 10/14] clk: sunxi-ng: Add N-M-factor clock support
+Date: Wed, 29 Jun 2016 21:05:31 +0200
+Message-Id: <20160629190535.11855-11-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Xing,
+Introduce support for clocks that multiply and divide using linear factors.
 
-On Sun, Jun 12, 2016 at 8:10 PM, Xing Zheng <zhengxing@rock-chips.com> wrot=
-e:
-> Hi Doug,
->
->
-> On 2016=E5=B9=B406=E6=9C=8813=E6=97=A5 05:32, Doug Anderson wrote:
->>
->> Xing,
->>
->> On Sun, Jun 12, 2016 at 2:48 AM, Xing Zheng<zhengxing@rock-chips.com>
->> wrote:
->>>
->>> The pclk_vio_grf supply power for GRF IOs, if it is disabled, will
->>> cause abnormal operation of the GRF.
->>>
->>> The clock tree of the pclk_vio like this:
->>>               | --> pclk_vio_grf
->>> ... pclk_vio | --> pclk_mipi_dsi1
->>>               | --> pclk_mipi_dsi0
->>>
->>> and the pclk_mipi_dsi0 and pclk_mipi_dsi1 don't have the flag
->>> CLK_IGNORE_UNUSED, and they will be disabled by clk_disable_unused
->>> when startup:
->>> clk_disable_unused
->>>    --> clk_disable_unprepare
->>>      --> clk_disable
->>>        --> clk_core_disable(core->parent)
->>>
->>> then, the pclk_vio_grf also is disabled. Therefore, we need to add
->>> pclk_vio_grf to critical clock and avoid to disable pclk_vio and
->>> pclk_vio_grf.
->>>
->>> Tested-by: Yakir Yang<ykk@rock-chips.com>
->>> Signed-off-by: Yakir Yang<ykk@rock-chips.com>
->>> Signed-off-by: Brian Norris<briannorris@chromium.org>
->>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
->>> ---
->>>
->>>   drivers/clk/rockchip/clk-rk3399.c |    1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/clk/rockchip/clk-rk3399.c
->>> b/drivers/clk/rockchip/clk-rk3399.c
->>> index b6742fa..7ecb12c3 100644
->>> --- a/drivers/clk/rockchip/clk-rk3399.c
->>> +++ b/drivers/clk/rockchip/clk-rk3399.c
->>> @@ -1485,6 +1485,7 @@ static const char *const
->>> rk3399_cru_critical_clocks[] __initconst =3D {
->>>          "gpll_hclk_perilp1_src",
->>>          "gpll_aclk_perilp0_src",
->>>          "gpll_aclk_perihp_src",
->>> +       "pclk_vio_grf",
->>
->> This clock is only needed when doing video output (like eDP), right?
->> That means it is not really a critical clock.  Critical clocks are
->> supposed to be ones that are needed for the basic functioning of the
->> system and that can never be turned off in any circumstances.  In this
->> case, if someone were running a rk3399 device and didn't have any
->> video output they would want this clock off.
->>
->> Can you figure out in exactly which circumstances this clock needs to
->> be on and then add a proper consumer of this clock?  For instance, if
->> this clock is needed whenever the VOP is outputting data, then the VOP
->> should be a client and should turn this clock on and off when video is
->> being output.  If this clock is needed whenever you access VOP
->> registers, then the VOP should be a client and turn this clock on
->> around register accesses.
->>
->> -Doug
->>
-> Yes, the pclk_vio_grf is needed for doing video output.
-> andpclk_vio_grf supply for: grf_soc_con9, 20~26, grf_hdcp
->
-> From our design folks, we have many GRF registers in different power
-> domains,
-> and these GRF gates should be always enabled. In this case, we can avoid
-> some
-> of the operations GRF registers exception problems, and it is only a very
-> small
-> increase in  power consumption (aboult <=3D1ma).
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/Kconfig  |   6 +++
+ drivers/clk/sunxi-ng/Makefile |   1 +
+ drivers/clk/sunxi-ng/ccu_nm.c | 114 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_nm.h |  91 +++++++++++++++++++++++++++++++++
+ 4 files changed, 212 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_nm.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_nm.h
 
-Even if it's not much power, it seems like we should still turn it off
-and on in the right place.  Unless I'm mistaken it should be such a
-simple patch provide the clock to the right driver and then get the
-clock when appropriate.
-
-
-> I will refer the latest TRM to update a new patch for always enable these
-> GRFs.
-
-Does that mean you're going to make these all critical clocks?  That
-doesn't sound so great...
-
--Doug
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 2eb0fc6b41d5..d8a5da270778 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -28,6 +28,12 @@ config SUNXI_CCU_NK
+ 	bool
+ 	select SUNXI_CCU_GATE
+ 
++config SUNXI_CCU_NM
++	bool
++	select RATIONAL
++	select SUNXI_CCU_FRAC
++	select SUNXI_CCU_GATE
++
+ config SUNXI_CCU_MP
+ 	bool
+ 	select SUNXI_CCU_GATE
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 22951e60f876..7d2cd2a47a39 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -11,4 +11,5 @@ obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
+ 
+ # Multi-factor clocks
+ obj-$(CONFIG_SUNXI_CCU_NK)	+= ccu_nk.o
++obj-$(CONFIG_SUNXI_CCU_NM)	+= ccu_nm.o
+ obj-$(CONFIG_SUNXI_CCU_MP)	+= ccu_mp.o
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+new file mode 100644
+index 000000000000..e35ddd8eec8b
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -0,0 +1,114 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/rational.h>
++
++#include "ccu_frac.h"
++#include "ccu_gate.h"
++#include "ccu_nm.h"
++
++static void ccu_nm_disable(struct clk_hw *hw)
++{
++	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++
++	return ccu_gate_helper_disable(&nm->common, nm->enable);
++}
++
++static int ccu_nm_enable(struct clk_hw *hw)
++{
++	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++
++	return ccu_gate_helper_enable(&nm->common, nm->enable);
++}
++
++static int ccu_nm_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++
++	return ccu_gate_helper_is_enabled(&nm->common, nm->enable);
++}
++
++static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++	unsigned long n, m;
++	u32 reg;
++
++	if (ccu_frac_helper_is_enabled(&nm->common, &nm->frac))
++		return ccu_frac_helper_read_rate(&nm->common, &nm->frac);
++
++	reg = readl(nm->common.base + nm->common.reg);
++
++	n = reg >> nm->n.shift;
++	n &= (1 << nm->n.width) - 1;
++
++	m = reg >> nm->m.shift;
++	m &= (1 << nm->m.width) - 1;
++
++	return parent_rate * (n + 1) / (m + 1);
++}
++
++static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long *parent_rate)
++{
++	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++	unsigned long n, m;
++
++	rational_best_approximation(rate, *parent_rate,
++				    1 << nm->n.width, 1 << nm->m.width,
++				    &n, &m);
++
++	return *parent_rate * n / m;
++}
++
++static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
++			   unsigned long parent_rate)
++{
++	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++	unsigned long flags;
++	unsigned long n, m;
++	u32 reg;
++
++	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate))
++		return ccu_frac_helper_set_rate(&nm->common, &nm->frac, rate);
++	else
++		ccu_frac_helper_disable(&nm->common, &nm->frac);
++
++	rational_best_approximation(rate, parent_rate,
++				    1 << nm->n.width, 1 << nm->m.width,
++				    &n, &m);
++
++	spin_lock_irqsave(nm->common.lock, flags);
++
++	reg = readl(nm->common.base + nm->common.reg);
++	reg &= ~GENMASK(nm->n.width + nm->n.shift - 1, nm->n.shift);
++	reg &= ~GENMASK(nm->m.width + nm->m.shift - 1, nm->m.shift);
++
++	writel(reg | ((m - 1) << nm->m.shift) | ((n - 1) << nm->n.shift),
++	       nm->common.base + nm->common.reg);
++
++	spin_unlock_irqrestore(nm->common.lock, flags);
++
++	ccu_helper_wait_for_lock(&nm->common, nm->lock);
++
++	return 0;
++}
++
++const struct clk_ops ccu_nm_ops = {
++	.disable	= ccu_nm_disable,
++	.enable		= ccu_nm_enable,
++	.is_enabled	= ccu_nm_is_enabled,
++
++	.recalc_rate	= ccu_nm_recalc_rate,
++	.round_rate	= ccu_nm_round_rate,
++	.set_rate	= ccu_nm_set_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+new file mode 100644
+index 000000000000..0b7bcd33a2df
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -0,0 +1,91 @@
++/*
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_NM_H_
++#define _CCU_NM_H_
++
++#include <linux/clk-provider.h>
++
++#include "ccu_common.h"
++#include "ccu_div.h"
++#include "ccu_frac.h"
++#include "ccu_mult.h"
++
++/*
++ * struct ccu_nm - Definition of an N-M clock
++ *
++ * Clocks based on the formula parent * N / M
++ */
++struct ccu_nm {
++	u32			enable;
++	u32			lock;
++
++	struct _ccu_mult	n;
++	struct _ccu_div		m;
++	struct _ccu_frac	frac;
++
++	struct ccu_common	common;
++};
++
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(_struct, _name, _parent, _reg,	\
++					 _nshift, _nwidth,		\
++					 _mshift, _mwidth,		\
++					 _frac_en, _frac_sel,		\
++					 _frac_rate_0, _frac_rate_1,	\
++					 _gate, _lock, _flags)		\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
++#define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
++				    _nshift, _nwidth,			\
++				    _mshift, _mwidth,			\
++				    _gate, _lock, _flags)		\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.common		= {					\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
++static inline struct ccu_nm *hw_to_ccu_nm(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_nm, common);
++}
++
++extern const struct clk_ops ccu_nm_ops;
++
++#endif /* _CCU_NM_H_ */
+-- 
+2.9.0
