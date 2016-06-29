@@ -1,54 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:36256 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1423728AbcFMPYV (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2016 11:24:21 -0400
-Date: Mon, 13 Jun 2016 17:24:09 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <andi.shyti@gmail.com>
+Return-Path: <andi.shyti@gmail.com>
+From: andi.shyti@gmail.com
+To: Heiko Stuebner <heiko@sntech.de>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/48] clk: at91: replace usleep() by udelay() calls
-Message-ID: <20160613152409.GD3240@piout.net>
-References: <1465596231-21766-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1465596231-21766-2-git-send-email-alexandre.belloni@free-electrons.com>
- <11395561.bQatt85IOg@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <11395561.bQatt85IOg@wuerfel>
-Sender: linux-clk-owner@vger.kernel.org
+	Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 0/2] use the CLK_IS_CRITICAL flag for critical clocks
+Date: Wed, 29 Jun 2016 17:45:08 +0300
+Message-Id: <1467211510-3485-1-git-send-email-andi@etezian.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/06/2016 at 00:30:36 +0200, Arnd Bergmann wrote :
-> On Saturday, June 11, 2016 12:03:04 AM CEST Alexandre Belloni wrote:
-> > From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-> > 
-> > Fix the main and slow clock .prepare() implementations which used to call
-> > usleep() when the scheduler wasn't ready yet.
-> > 
-> 
-> Does this have to be called that early? It seems wasteful to always
-> call udelay() here, when these are functions that are normally
-> allowed to sleep.
-> 
+From: Andi Shyti <andi@etezian.org>
 
-So I've tested it and something like that would work:
+Hi,
 
-	if (system_state < SYSTEM_RUNNING)
-		udelay(osc->startup_usec);
-	else
-		usleep_range(osc->startup_usec, osc->startup_usec + 1);
+this patchset is the first of a series and it aims to remove
+the handling of critical clock on the rockchip clock drivers.
 
-But I'm afraid it would be the first driver to actually do something
-like that (however, it is already the only driver trying to sleep). 
+Patch 32b9b10961860860268961d9aad0c56a73018c37 has added a
+generic clock critical handling that can be used from the
+drivers.
+
+After a discussion with Heiko, the clock rockchip would need a
+hand-off functionality, but this is getting delayed. Anyway,
+because I have the patches ready I'll send them anyway, if the
+hand-off property is going to come soon, then please feel free to
+reject the patchset.
+
+Thanks,
+Andi
+
+Andi Shyti (2):
+  clk: clk-rk3*: set CLK_IS_CRITICAL flag to critical clocks
+  clk: rockchip: remove unused rockchip_clk_protect_critical function
+
+ drivers/clk/rockchip/clk-rk3036.c | 17 ++-------
+ drivers/clk/rockchip/clk-rk3188.c | 25 +++---------
+ drivers/clk/rockchip/clk-rk3228.c | 17 ++-------
+ drivers/clk/rockchip/clk-rk3288.c | 17 ++-------
+ drivers/clk/rockchip/clk-rk3368.c | 21 ++--------
+ drivers/clk/rockchip/clk-rk3399.c | 80 +++++++++++----------------------------
+ drivers/clk/rockchip/clk.c        | 14 -------
+ drivers/clk/rockchip/clk.h        |  1 -
+ 8 files changed, 44 insertions(+), 148 deletions(-)
 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.8.1
