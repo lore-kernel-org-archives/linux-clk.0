@@ -1,59 +1,85 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 0/8] clk: core: support clocks which requires parents enable
+Date: Wed, 29 Jun 2016 22:59:03 +0800
+Message-ID: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160621005112.GM1521@codeaurora.org>
-References: <1465212804-21391-1-git-send-email-geert+renesas@glider.be> <20160621005112.GM1521@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Jun 2016 07:56:54 +0200
-Message-ID: <CAMuHMdWztj3HGVMT9Lh2Y8kU7TGqB0J4-eU4e2it2bcti2vxtQ@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Add support for R-Car M3-W
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+This patch series adds support in clock framework for clocks which all the
+operations like gate/ungate, set_rate, set_parent must require its parent
+clock on.
 
-On Tue, Jun 21, 2016 at 2:51 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/06, Geert Uytterhoeven wrote:
->>       Hi Mike, Stephen,
->>
->> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
->>
->>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.8-tag1
->>
->> for you to fetch changes up to e4e2d7c388350eba8b1dbc2569441ac9b545a8c4:
->>
->>   clk: renesas: cpg-mssr: Add support for R-Car M3-W (2016-06-06 11:58:35 +0200)
->>
->
-> Checkpatch complains...
->
-> ERROR: Use of const init definition must use __initconst
-> #712: FILE: drivers/clk/renesas/rcar-gen3-cpg.c:248:
-> +static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
->
-> Seems like a valid problem. Any chance it can be fixed?
+This special HW requirement can be found on Freescale i.MX7D platform.
+Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
+(see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
+And there may be other SoCs in the same situation.
 
-It is a false positive: the data pointed to is const, the pointer
-variable isn't.
+Current clock core can not support such type of clock well.
 
-Thanks!
+This patch introduce a new flag CLK_SET_PARENT_ENABLE to handle this special
+case in clock core that enable its parent clock firstly for each operation
+and disable it later after operation complete.
 
-Gr{oetje,eeting}s,
+There're two special cases for handling this issue:
 
-                        Geert
+One is fixing the possible disabling clocks while its parent is already off
+during kernel booting phase in clk_disable_unused_subtree()
+Since this state misalign only happens during booting time,
+so we simply enable the parent clocks before disable it if flag is set.
+For normal clk_disable after kernel booting, there's no such issue
+since the clock tree is already created which makes sure no such issue exist.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Another special case is for set_parent() operation.
+It requires both parent, old one and new one, to be enabled at the same
+time during the operation.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Patch 1~4 does this work.
+
+After clk core supports mx7d type clocks, we don't have to enable all clock
+by default anymore, then we remove the enable of all clocks code and instead
+only enable set of minimum required clocks.
+
+Patch 5~8 does this work.
+
+The whole patch series is based on for-next branch of clock tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+Change log:
+v1-> v2:
+ * Addressed Mike's comments to make code more clearer
+
+V1:
+https://lkml.org/lkml/2016/4/20/199
+
+The original one can be found at here:
+http://www.spinics.net/lists/arm-kernel/msg435136.html
+It has no functional changes but improve the commit message and
+comments a bit.
+
+Dong Aisheng (8):
+  clk: introduce clk_core_enable_lock and clk_core_disable_lock
+    functions
+  clk: move clk_disable_unused after clk_core_disable_unprepare function
+  clk: core: support clocks which requires parents enable (part 1)
+  clk: core: support clocks which requires parents enable (part 2)
+  clk: imx: re-order and concentrate the same type of clk api
+  clk: imx: add clk api for supporting CLK_OPS_PARENT_ENABLE clocks
+  clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE
+  clk: imx7d: only enable minimum required clocks
+
+ drivers/clk/clk.c            | 336 ++++++++++++--------
+ drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
+ drivers/clk/imx/clk.h        |  90 ++++--
+ include/linux/clk-provider.h |   2 +
+ 4 files changed, 630 insertions(+), 530 deletions(-)
+
+-- 
+1.9.1
