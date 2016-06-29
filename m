@@ -1,113 +1,87 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <k.kozlowski@samsung.com>, <javier@osg.samsung.com>,
-	<mturquette@baylibre.com>, <robh+dt@kernel.org>, <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
-Date: Wed, 15 Jun 2016 19:43:37 +0530
-Message-ID: <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 6/8] clk: imx: add clk api for supporting CLK_OPS_PARENT_ENABLE clocks
+Date: Wed, 29 Jun 2016 22:59:09 +0800
+Message-ID: <1467212351-16626-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Maxim Max77620 has one 32KHz clock output and the clock HW
-IP used on this PMIC is same as what it is there in the MAX77686.
+IMX SoCs like i.MX7D requires using CLK_OPS_PARENT_ENABLE flags,
+adding the corresponding clock APIs variants for easily to use.
 
-Add clock driver support for MAX77620 on the MAX77686 driver.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/Kconfig        |  7 ++++---
- drivers/clk/clk-max77686.c | 16 ++++++++++++++++
- 2 files changed, 20 insertions(+), 3 deletions(-)
+ drivers/clk/imx/clk.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 6afad74..d75f4c5 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
- source "drivers/clk/versatile/Kconfig"
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index df87d8888d80..6736e858b8f0 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -97,6 +97,14 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
  
- config COMMON_CLK_MAX77686
--	tristate "Clock driver for Maxim 77686/77802 MFD"
--	depends on MFD_MAX77686
-+	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-+	depends on MFD_MAX77686 || MFD_MAX77620
- 	---help---
--	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-+	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
-+	  clock.
- 
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK808"
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 31ba726..d2be736 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -19,6 +19,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/mfd/max77620.h>
- #include <linux/mfd/max77686.h>
- #include <linux/mfd/max77686-private.h>
- #include <linux/clk-provider.h>
-@@ -30,12 +31,14 @@
- 
- #include <dt-bindings/clock/maxim,max77686.h>
- #include <dt-bindings/clock/maxim,max77802.h>
-+#include <dt-bindings/mfd/max77620.h>
- 
- #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
- 
- enum chip_name {
- 	CHIP_MAX77686,
- 	CHIP_MAX77802,
-+	CHIP_MAX77620,
- };
- 
- struct max_gen_hw_clk_data {
-@@ -91,6 +94,14 @@ static struct max_gen_hw_clk_data max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
- 	},
- };
- 
-+static struct max_gen_hw_clk_data max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
-+	[MAX77620_CLK_32K_OUT0] = {
-+		.name = "32khz_pmic",
-+		.reg = MAX77620_REG_CNFG1_32K,
-+		.mask = MAX77620_CNFG1_32K_OUT0_EN,
-+	},
-+};
++static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, u8 width)
++{
++	return clk_register_divider(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
++			reg, shift, width, 0, &imx_ccm_lock);
++}
 +
- static struct max_gen_clk_data *to_max_gen_clk_data(struct clk_hw *hw)
+ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
  {
- 	return container_of(hw, struct max_gen_clk_data, hw);
-@@ -171,6 +182,10 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 		num_clks = MAX77802_CLKS_NUM;
- 		hw_clks = max77802_hw_clks_info;
- 		break;
-+	case CHIP_MAX77620:
-+		num_clks = MAX77620_CLKS_NUM;
-+		hw_clks = max77620_hw_clks_info;
-+		break;
- 	default:
- 		dev_err(dev, "Unknown Chip ID\n");
- 		return -EINVAL;
-@@ -269,6 +284,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
- static const struct platform_device_id max77686_clk_id[] = {
- 	{ "max77686-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77686, },
- 	{ "max77802-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77802, },
-+	{ "max77620-clock", .driver_data = (kernel_ulong_t)CHIP_MAX77620, },
- 	{},
- };
- MODULE_DEVICE_TABLE(platform, max77686_clk_id);
+@@ -133,6 +141,22 @@ static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent
+ 			shift, cgr_val, 0, &imx_ccm_lock, NULL);
+ }
+ 
++static inline struct clk *imx_clk_gate3(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
++			reg, shift, 0, &imx_ccm_lock);
++}
++
++static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate2(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
++			reg, shift, 0x3, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+@@ -141,6 +165,14 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 			width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
++		u8 shift, u8 width, const char **parents, int num_parents)
++{
++	return clk_register_mux(NULL, name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ON,
++			reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 		void __iomem *reg, u8 shift, u8 width, const char **parents,
+ 		int num_parents, unsigned long flags)
 -- 
-2.1.4
+1.9.1
