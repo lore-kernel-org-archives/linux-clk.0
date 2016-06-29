@@ -1,83 +1,173 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:34164 "EHLO
-	mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752343AbcFAXQL (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 19:16:11 -0400
-Received: by mail-pf0-f174.google.com with SMTP id 62so23303531pfd.1
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2016 16:16:06 -0700 (PDT)
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
-Subject: [PATCH 29/34] clk: si570: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:28 -0700
-Message-Id: <20160601231533.9354-30-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
+	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
+	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
+Subject: [PATCH RFC 6/7] clk: imx: pllv3: convert to prepare_hw and set_rate_hw
+Date: Wed, 29 Jun 2016 21:52:14 +0800
+Message-ID: <1467208335-29876-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Convert to prepare_hw and set_rate_hw and let the clk core
+to handle the polling process automatically.
 
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
+ drivers/clk/imx/clk-pllv3.c | 64 ++++++++++++++++++++++-----------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
-
- drivers/clk/clk-si570.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
-index d56648521a95..646af1d1898d 100644
---- a/drivers/clk/clk-si570.c
-+++ b/drivers/clk/clk-si570.c
-@@ -408,7 +408,6 @@ static int si570_probe(struct i2c_client *client,
- {
- 	struct clk_si570 *data;
- 	struct clk_init_data init;
--	struct clk *clk;
- 	u32 initial_fout, factory_fout, stability;
- 	int err;
- 	enum clk_si570_variant variant = id->driver_data;
-@@ -462,13 +461,13 @@ static int si570_probe(struct i2c_client *client,
- 	if (err)
- 		return err;
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 4826b3c9e19e..78184310ad35 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -49,27 +49,6 @@ struct clk_pllv3 {
  
--	clk = devm_clk_register(&client->dev, &data->hw);
--	if (IS_ERR(clk)) {
-+	err = devm_clk_hw_register(&client->dev, &data->hw);
-+	if (err) {
- 		dev_err(&client->dev, "clock registration failed\n");
--		return PTR_ERR(clk);
-+		return err;
- 	}
--	err = of_clk_add_provider(client->dev.of_node, of_clk_src_simple_get,
--			clk);
-+	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
-+				     &data->hw);
- 	if (err) {
- 		dev_err(&client->dev, "unable to add clk provider\n");
- 		return err;
-@@ -477,7 +476,7 @@ static int si570_probe(struct i2c_client *client,
- 	/* Read the requested initial output frequency from device tree */
- 	if (!of_property_read_u32(client->dev.of_node, "clock-frequency",
- 				&initial_fout)) {
--		err = clk_set_rate(clk, initial_fout);
-+		err = clk_set_rate(data->hw.clk, initial_fout);
- 		if (err) {
- 			of_clk_del_provider(client->dev.of_node);
- 			return err;
+ #define to_clk_pllv3(_hw) container_of(_hw, struct clk_pllv3, hw)
+ 
+-static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+-{
+-	unsigned long timeout = jiffies + msecs_to_jiffies(10);
+-	u32 val = readl_relaxed(pll->base) & pll->powerdown;
+-
+-	/* No need to wait for lock when pll is not powered up */
+-	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+-		return 0;
+-
+-	/* Wait for PLL to lock */
+-	do {
+-		if (readl_relaxed(pll->base) & BM_PLL_LOCK)
+-			break;
+-		if (time_after(jiffies, timeout))
+-			break;
+-		usleep_range(50, 500);
+-	} while (1);
+-
+-	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
+-}
+-
+ static int clk_pllv3_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+@@ -82,7 +61,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
+ 		val &= ~BM_PLL_POWER;
+ 	writel_relaxed(val, pll->base);
+ 
+-	return clk_pllv3_wait_lock(pll);
++	return 0;
+ }
+ 
+ static void clk_pllv3_unprepare(struct clk_hw *hw)
+@@ -126,6 +105,18 @@ static long clk_pllv3_round_rate(struct clk_hw *hw, unsigned long rate,
+ 					    parent_rate * 20;
+ }
+ 
++static int clk_pllv3_set_rate_done(struct clk_hw *hw)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	u32 val = readl_relaxed(pll->base) & pll->powerdown;
++
++	/* always return true if pll is not powered up */
++	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
++		return 1;
++
++	return readl_relaxed(pll->base) & BM_PLL_LOCK;
++}
++
+ static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		unsigned long parent_rate)
+ {
+@@ -144,16 +135,18 @@ static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	val |= (div << pll->div_shift);
+ 	writel_relaxed(val, pll->base);
+ 
+-	return clk_pllv3_wait_lock(pll);
++	return 0;
+ }
+ 
+ static const struct clk_ops clk_pllv3_ops = {
+-	.prepare	= clk_pllv3_prepare,
++	.prepare_hw	= clk_pllv3_prepare,
++	.prepare_done	= clk_pllv3_is_prepared,
+ 	.unprepare	= clk_pllv3_unprepare,
+ 	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_recalc_rate,
+ 	.round_rate	= clk_pllv3_round_rate,
+-	.set_rate	= clk_pllv3_set_rate,
++	.set_rate_hw	= clk_pllv3_set_rate,
++	.set_rate_done	= clk_pllv3_set_rate_done,
+ };
+ 
+ static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
+@@ -199,16 +192,18 @@ static int clk_pllv3_sys_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	val |= div;
+ 	writel_relaxed(val, pll->base);
+ 
+-	return clk_pllv3_wait_lock(pll);
++	return 0;
+ }
+ 
+ static const struct clk_ops clk_pllv3_sys_ops = {
+-	.prepare	= clk_pllv3_prepare,
++	.prepare_hw	= clk_pllv3_prepare,
++	.prepare_done	= clk_pllv3_is_prepared,
+ 	.unprepare	= clk_pllv3_unprepare,
+ 	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_sys_recalc_rate,
+ 	.round_rate	= clk_pllv3_sys_round_rate,
+-	.set_rate	= clk_pllv3_sys_set_rate,
++	.set_rate_hw	= clk_pllv3_sys_set_rate,
++	.set_rate_done	= clk_pllv3_set_rate_done,
+ };
+ 
+ static unsigned long clk_pllv3_av_recalc_rate(struct clk_hw *hw,
+@@ -272,16 +267,18 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	writel_relaxed(mfn, pll->base + PLL_NUM_OFFSET);
+ 	writel_relaxed(mfd, pll->base + PLL_DENOM_OFFSET);
+ 
+-	return clk_pllv3_wait_lock(pll);
++	return 0;
+ }
+ 
+ static const struct clk_ops clk_pllv3_av_ops = {
+-	.prepare	= clk_pllv3_prepare,
++	.prepare_hw	= clk_pllv3_prepare,
++	.prepare_done	= clk_pllv3_is_prepared,
+ 	.unprepare	= clk_pllv3_unprepare,
+ 	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_av_recalc_rate,
+ 	.round_rate	= clk_pllv3_av_round_rate,
+-	.set_rate	= clk_pllv3_av_set_rate,
++	.set_rate_hw	= clk_pllv3_av_set_rate,
++	.set_rate_done	= clk_pllv3_set_rate_done,
+ };
+ 
+ static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
+@@ -293,7 +290,8 @@ static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static const struct clk_ops clk_pllv3_enet_ops = {
+-	.prepare	= clk_pllv3_prepare,
++	.prepare_hw	= clk_pllv3_prepare,
++	.prepare_done	= clk_pllv3_is_prepared,
+ 	.unprepare	= clk_pllv3_unprepare,
+ 	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+@@ -347,6 +345,8 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 	init.flags = 0;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
++	init.delay_min = 50;
++	init.delay_max = 500;
+ 
+ 	pll->hw.init = &init;
+ 
 -- 
-2.7.4
-
+1.9.1
