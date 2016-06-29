@@ -1,116 +1,113 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Sun, 12 Jun 2016 20:13:03 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	anson.huang@nxp.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
-Message-ID: <20160612121303.GE32690@shlinux2>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
- <20160612113627.GC20243@tiger>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
+	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
+	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
+Subject: [PATCH RFC 3/7] clk: add set_parent_hw and set_parent_done
+Date: Wed, 29 Jun 2016 21:52:11 +0800
+Message-ID: <1467208335-29876-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160612113627.GC20243@tiger>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 12, 2016 at 07:36:27PM +0800, Shawn Guo wrote:
-> On Wed, Jun 08, 2016 at 10:33:34PM +0800, Dong Aisheng wrote:
-> > There's a powerdown bit already, so let's change the name of
-> > powerup_set bit to power_invert to reflects the power polarity
-> > to make it less confusing.
-> > 
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-pllv3.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> > index eea2b1b3791e..3fdfb6d2cc71 100644
-> > --- a/drivers/clk/imx/clk-pllv3.c
-> > +++ b/drivers/clk/imx/clk-pllv3.c
-> > @@ -29,8 +29,8 @@
-> >   * struct clk_pllv3 - IMX PLL clock version 3
-> >   * @clk_hw:	 clock source
-> >   * @base:	 base address of PLL registers
-> > - * @powerup_set: set POWER bit to power up the PLL
-> > - * @powerdown:   pll powerdown offset bit
-> > + * @powerdown:	 pll powerdown bit offset
-> 
-> I think 'powerdown' is more confusing here.  I prefer to rename it to
-> something like 'power_mask' and keep 'powerdown' as it is.
-> 
+Introduce set_parent_hw and set_parent_done to support setting
+parent in early kernel booting where we still can't schedule.
 
-I understand your point.
-How about using power_bit and powerup_set?
-* @power_bit:   pll power bit offset
-* @powerup_set: set power_bit to power up the PLL
+Change the input source of this clock hw; This callback
+is intended to do the hw part setting of @set_parent work. It
+should cooperate with @set_parent_done callback to do the whole
+set parent work. The clock core will check @set_parent_done
+in either sleep or polling way according to system state to
+decide whether the whole set rate work is done.
 
-Regards
-Dong Aisheng
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c            | 26 +++++++++++++++++++++++++-
+ include/linux/clk-provider.h | 14 ++++++++++++++
+ 2 files changed, 39 insertions(+), 1 deletion(-)
 
-> Shawn
-> 
-> > + * @power_invert: set powerdown bit to power up the PLL
-> >   * @div_mask:	 mask of divider bits
-> >   * @div_shift:	 shift of divider bits
-> >   *
-> > @@ -40,7 +40,7 @@
-> >  struct clk_pllv3 {
-> >  	struct clk_hw	hw;
-> >  	void __iomem	*base;
-> > -	bool		powerup_set;
-> > +	bool		power_invert;
-> >  	u32		powerdown;
-> >  	u32		div_mask;
-> >  	u32		div_shift;
-> > @@ -55,7 +55,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
-> >  	u32 val = readl_relaxed(pll->base) & pll->powerdown;
-> >  
-> >  	/* No need to wait for lock when pll is not powered up */
-> > -	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
-> > +	if ((pll->power_invert && !val) || (!pll->power_invert && val))
-> >  		return 0;
-> >  
-> >  	/* Wait for PLL to lock */
-> > @@ -76,7 +76,7 @@ static int clk_pllv3_prepare(struct clk_hw *hw)
-> >  	u32 val;
-> >  
-> >  	val = readl_relaxed(pll->base);
-> > -	if (pll->powerup_set)
-> > +	if (pll->power_invert)
-> >  		val |= pll->powerdown;
-> >  	else
-> >  		val &= ~pll->powerdown;
-> > @@ -91,7 +91,7 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
-> >  	u32 val;
-> >  
-> >  	val = readl_relaxed(pll->base);
-> > -	if (pll->powerup_set)
-> > +	if (pll->power_invert)
-> >  		val &= ~pll->powerdown;
-> >  	else
-> >  		val |= pll->powerdown;
-> > @@ -326,7 +326,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
-> >  		pll->div_shift = 1;
-> >  	case IMX_PLLV3_USB:
-> >  		ops = &clk_pllv3_ops;
-> > -		pll->powerup_set = true;
-> > +		pll->power_invert = true;
-> >  		break;
-> >  	case IMX_PLLV3_AV:
-> >  		ops = &clk_pllv3_av_ops;
-> > -- 
-> > 1.9.1
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0d031b280c9a..9369dbb71118 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1236,14 +1236,38 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+ 	unsigned long flags;
+ 	int ret = 0;
+ 	struct clk_core *old_parent;
++	unsigned long timeout;
+ 
+ 	old_parent = __clk_set_parent_before(core, parent);
+ 
+ 	trace_clk_set_parent(core, parent);
+ 
+ 	/* change clock input source */
+-	if (parent && core->ops->set_parent)
++	if (parent && core->ops->set_parent) {
+ 		ret = core->ops->set_parent(core->hw, p_index);
++	} else if (parent && core->ops->set_parent_hw) {
++		ret = core->ops->set_parent_hw(core->hw, p_index);
++		if (!ret && core->ops->set_parent_done) {
++			timeout = jiffies + msecs_to_jiffies(10);
++			while (!core->ops->set_parent_done(core->hw)) {
++				if (time_after(jiffies, timeout)) {
++					pr_err("%s: clock %s set parent timeout\n",
++						__func__, core->name);
++					ret = -ETIMEDOUT;
++					break;
++				}
++				if (system_state == SYSTEM_BOOTING)
++					/*
++					 * Busy loop as we can't
++					 * schedule in early boot
++					 */
++					continue;
++				else
++					usleep_range(core->delay_min,
++						     core->delay_max);
++			}
++		}
++	}
+ 
+ 	trace_clk_set_parent_complete(core, parent);
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 3dcb99ad6bd2..16fa75cdd656 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -146,6 +146,18 @@ struct clk_rate_request {
+  *		array index into the value programmed into the hardware.
+  *		Returns 0 on success, -EERROR otherwise.
+  *
++ * @set_parent_hw: Change the input source of this clock hw;  This callback
++ *		is intended to do the hw part setting of @set_parent work. It
++ *		should cooperate with @set_parent_done callback to do the whole
++ *		set parent work. The clock core will check @set_parent_done
++ *		in either sleep or polling way according to system state to
++ *		decide whether the whole set rate work is done. Optional
++ *		if @set_parent is used. This function must not sleep.
++ *
++ * @set_parent_done: Queries the hardware to determine if the set parent is
++ *		done. Optional, if this op is not set then the set parent
++ *		simply return. This function must not sleep.
++ *
+  * @get_parent:	Queries the hardware to determine the parent of a clock.  The
+  *		return value is a u8 which specifies the index corresponding to
+  *		the parent clock.  This index can be applied to either the
+@@ -243,6 +255,8 @@ struct clk_ops {
+ 	int		(*determine_rate)(struct clk_hw *hw,
+ 					  struct clk_rate_request *req);
+ 	int		(*set_parent)(struct clk_hw *hw, u8 index);
++	int		(*set_parent_hw)(struct clk_hw *hw, u8 index);
++	int		(*set_parent_done)(struct clk_hw *hw);
+ 	u8		(*get_parent)(struct clk_hw *hw);
+ 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long parent_rate);
+-- 
+1.9.1
