@@ -1,204 +1,122 @@
-Return-Path: <ldewangan@nvidia.com>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas
-	<javier@dowhile0.org>
-Subject: [PATCH V3 2/4] clk: Combine DT binding doc for max77686 and max77802
-Date: Fri, 17 Jun 2016 16:21:05 +0530
-Message-ID: <1466160667-28451-3-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
-Return-Path: ldewangan@nvidia.com
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <tglx@linutronix.de>,
+	<aisheng.dong@nxp.com>, <stefan@agner.ch>, <l.stach@pengutronix.de>,
+	<cyrille.pitchen@atmel.com>, <manabian@gmail.com>, <anson.huang@nxp.com>
+Subject: [PATCH RFC 2/7] clk: add set_rate_hw and set_rate_done
+Date: Wed, 29 Jun 2016 21:52:10 +0800
+Message-ID: <1467208335-29876-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock IP used on the Maxim PMICs max77686 and max77802 are
-same. The configuration of clock register is also same except
-the number of clocks.
+Introduce set_rate_hw and set_rate_done to support setting rate
+in early kernel booting where we still can't schedule.
 
-Define the common DT binding file for the clocks of Maxim PMICs
-MAX77686 and MAX77802. For this, remove the separate DT binding
-document file for maxim,max77802 and move all information to
-maxim,max77686 DT binding document.
+Change the rate of this clock hw. This callback is intended
+to do the hw part setting of @set_rate work. It should
+cooperate with @set_rate_done callback to do the whole
+set rate work. The clock core will check @set_rate_done in
+either sleep or polling way according to system state to
+decide whether the whole set rate work is done.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
-Changes from V1:
-- Rewrite description to remvoe ref to driver.
-- Taken care of comment from Krzysztof on the supported clocks and
-  DT bindings.
+ drivers/clk/clk.c            | 32 ++++++++++++++++++++++++++++++--
+ include/linux/clk-provider.h | 15 +++++++++++++++
+ 2 files changed, 45 insertions(+), 2 deletions(-)
 
-Changes from V2:
-- Collected RBs.
----
- .../devicetree/bindings/clock/maxim,max77686.txt   | 82 ++++++++++++++++------
- .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ------------
- 2 files changed, 59 insertions(+), 67 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-index 9c40739..4d973b5 100644
---- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-@@ -1,11 +1,15 @@
--Binding for Maxim MAX77686 32k clock generator block
-+Binding for Maxim MAX77686/MAX77802 32k clock generator block
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7dcb34c75a9f..0d031b280c9a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1471,8 +1471,10 @@ static void clk_change_rate(struct clk_core *core)
+ 	struct hlist_node *tmp;
+ 	unsigned long old_rate;
+ 	unsigned long best_parent_rate = 0;
++	unsigned long timeout;
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
++	int ret;
  
--This is a part of device tree bindings of MAX77686 multi-function device.
--More information can be found in bindings/mfd/max77686.txt file.
-+This is a part of device tree bindings of MAX77686/MAX77802 multi-function
-+device. More information can be found in bindings/mfd/max77686.txt file for
-+MAX77686 and bindings/mfd/max77802.txt for MAX77802.
+ 	old_rate = core->rate;
  
- The MAX77686 contains three 32.768khz clock outputs that can be controlled
- (gated/ungated) over I2C.
+@@ -1509,8 +1511,34 @@ static void clk_change_rate(struct clk_core *core)
  
-+The MAX77802 contains two 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C.
-+
- Following properties should be presend in main device node of the MFD chip.
+ 	trace_clk_set_rate(core, core->new_rate);
  
- Required properties:
-@@ -17,30 +21,62 @@ Optional properties:
+-	if (!skip_set_rate && core->ops->set_rate)
+-		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
++	if (!skip_set_rate) {
++		if (core->ops->set_rate) {
++			core->ops->set_rate(core->hw, core->new_rate,
++					    best_parent_rate);
++		} else if (core->ops->set_rate_hw) {
++			ret = core->ops->set_rate_hw(core->hw, core->new_rate,
++						     best_parent_rate);
++			if (!ret && core->ops->set_rate_done) {
++				timeout = jiffies + msecs_to_jiffies(10);
++				while (!core->ops->set_rate_done(core->hw)) {
++					if (time_after(jiffies, timeout)) {
++						pr_err("%s: clock %s set rate timeout\n",
++							__func__, core->name);
++						break;
++					}
++					if (system_state == SYSTEM_BOOTING)
++						/*
++						 * Busy loop as we can't
++						 * schedule in early boot
++						 */
++						continue;
++					else
++						usleep_range(core->delay_min,
++							     core->delay_max);
++				}
++			}
++		}
++	}
  
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. Following indices are allowed:
--    - 0: 32khz_ap clock,
--    - 1: 32khz_cp clock,
--    - 2: 32khz_pmic clock.
-+    - 0: 32khz_ap clock (max77686, max77802),
-+    - 1: 32khz_cp clock (max77686, max77802),
-+    - 2: 32khz_pmic clock (max77686).
+ 	trace_clk_set_rate_complete(core, core->new_rate);
  
- Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
--header and can be used in device tree sources.
-+header for MAX77686 and dt-bindings/clock/maxim,max77802.h for MAX77802 and can
-+be used in device tree sources.
-+
-+Example:
-+
-+1. With MAX77686:
-+
-+#include <dt-bindings/clock/maxim,max77686.h>
-+/* ... */
-+
-+	Node of the MFD chip
-+		max77686: max77686@09 {
-+			compatible = "maxim,max77686";
-+			interrupt-parent = <&wakeup_eint>;
-+			interrupts = <26 0>;
-+			reg = <0x09>;
-+			#clock-cells = <1>;
-+
-+			/* ... */
-+		};
-+
-+	Clock consumer node
-+
-+		foo@0 {
-+			compatible = "bar,foo";
-+			/* ... */
-+			clock-names = "my-clock";
-+			clocks = <&max77686 MAX77686_CLK_PMIC>;
-+		};
-+
-+2. With MAX77802:
- 
--Example: Node of the MFD chip
-+#include <dt-bindings/clock/maxim,max77802.h>
-+/* ... */
- 
--	max77686: max77686@09 {
--		compatible = "maxim,max77686";
--		interrupt-parent = <&wakeup_eint>;
--		interrupts = <26 0>;
--		reg = <0x09>;
--		#clock-cells = <1>;
-+	Node of the MFD chip
-+		max77802: max77802@09 {
-+			compatible = "maxim,max77802";
-+			interrupt-parent = <&wakeup_eint>;
-+			interrupts = <26 0>;
-+			reg = <0x09>;
-+			#clock-cells = <1>;
- 
--		/* ... */
--	};
-+			/* ... */
-+		};
- 
--Example: Clock consumer node
-+	Clock consumer node
- 
--	foo@0 {
--		compatible = "bar,foo";
--		/* ... */
--		clock-names = "my-clock";
--		clocks = <&max77686 MAX77686_CLK_PMIC>;
--	};
-+		foo@0 {
-+			compatible = "bar,foo";
-+			/* ... */
-+			clock-names = "my-clock";
-+			clocks = <&max77802 MAX77802_CLK_32K_AP>;
-+		};
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
-deleted file mode 100644
-index c6dc783..0000000
---- a/Documentation/devicetree/bindings/clock/maxim,max77802.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--Binding for Maxim MAX77802 32k clock generator block
--
--This is a part of device tree bindings of MAX77802 multi-function device.
--More information can be found in bindings/mfd/max77802.txt file.
--
--The MAX77802 contains two 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C.
--
--Following properties should be present in main device node of the MFD chip.
--
--Required properties:
--- #clock-cells: From common clock binding; shall be set to 1.
--
--Optional properties:
--- clock-output-names: From common clock binding.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. Following indices are allowed:
--     - 0: 32khz_ap clock,
--     - 1: 32khz_cp clock.
--
--Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
--header and can be used in device tree sources.
--
--Example: Node of the MFD chip
--
--	max77802: max77802@09 {
--		compatible = "maxim,max77802";
--		interrupt-parent = <&wakeup_eint>;
--		interrupts = <26 0>;
--		reg = <0x09>;
--		#clock-cells = <1>;
--
--		/* ... */
--	};
--
--Example: Clock consumer node
--
--	foo@0 {
--		compatible = "bar,foo";
--		/* ... */
--		clock-names = "my-clock";
--		clocks = <&max77802 MAX77802_CLK_32K_AP>;
--	};
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index b37174360f1c..3dcb99ad6bd2 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -162,6 +162,18 @@ struct clk_rate_request {
+  *		which is likely helpful for most .set_rate implementation.
+  *		Returns 0 on success, -EERROR otherwise.
+  *
++ * @set_rate_hw: Change the rate of this clock hw. This callback is intended
++ *		to do the hw part setting of @set_rate work. It should
++ *		cooperate with @set_rate_done callback to do the whole
++ *		set rate work. The clock core will check @set_rate_done in
++ *		either sleep or polling way according to system state to
++ *		decide whether the whole set rate work is done. Optional
++ *		if @set_rate is used. This function must not sleep.
++ *
++ * @set_rate_done: Queries the hardware to determine if the clock hw is
++ *		prepared. Optional, if this op is not set then the set rate
++ *		simply return. This function must not sleep.
++ *
+  * @set_rate_and_parent: Change the rate and the parent of this clock. The
+  *		requested rate is specified by the second argument, which
+  *		should typically be the return of .round_rate call.  The
+@@ -234,6 +246,9 @@ struct clk_ops {
+ 	u8		(*get_parent)(struct clk_hw *hw);
+ 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long parent_rate);
++	int		(*set_rate_hw)(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate);
++	int		(*set_rate_done)(struct clk_hw *hw);
+ 	int		(*set_rate_and_parent)(struct clk_hw *hw,
+ 				    unsigned long rate,
+ 				    unsigned long parent_rate, u8 index);
 -- 
-2.1.4
+1.9.1
