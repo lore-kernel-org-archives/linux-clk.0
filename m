@@ -1,88 +1,139 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <m2ziqnr3d9.fsf@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- carlo@endlessm.com, victor.wan@amlogic.com, jerry.cao@amlogic.com,
- xing.xu@amlogic.com
-References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
- <m2ziqnr3d9.fsf@baylibre.com>
-Message-ID: <20160617044856.27203.7659@quark.deferred.io>
-Subject: Re: [PATCH 00/10] meson8b clock driver rewrite/cleanup
-Date: Thu, 16 Jun 2016 21:48:56 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:37101 "EHLO smtp5-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750756AbcF2GvW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 29 Jun 2016 02:51:22 -0400
+Date: Wed, 29 Jun 2016 08:51:16 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: =?UTF-8?B?T25kxZllag==?= Jirman <megi@xff.cz>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH 1/3] clk: sunxi: Add a driver for the CCU
+Message-Id: <20160629085116.caf701e214440cdf4b1045c8@free.fr>
+In-Reply-To: <536aa072-d110-1b08-fa25-72c1645e2459@xff.cz>
+References: <bfb8ceb4-5445-3f43-0a16-bd0e83f2af22@xff.cz>
+	<536aa072-d110-1b08-fa25-72c1645e2459@xff.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kevin Hilman (2016-06-14 12:12:50)
-> Michael Turquette <mturquette@baylibre.com> writes:
-> =
+On Tue, 28 Jun 2016 21:31:06 +0200
+Ondřej Jirman <megi@xff.cz> wrote:
 
-> > This series came about while writing the clock driver for the AmLogic
-> > GXBB clock controller. GXBB shares much of the same clock controller IP
-> > as the Meson8b clock controller and the source for the drivers is very
-> > similar. However, I wanted the GXBB driver to actually be a real
-> > platform_driver, and not an early initcall, which led to the same
-> > changes in the Meson8b driver. From there a lot of other changes came
-> > about.
-> >
-> > This series improves documentation, refactors statically initialized
-> > data, removes unnecessary registration functions and converts the
-> > meson8b clock controller code into a proper platform_driver. It also
-> > changes up the Kconfig bits to prepare for the gxbb clock controller.
-> > The diffstat is -190, which is nice as well.
-> >
-> > As a consequence of the shift to platform_driver, all of clocks are
-> > registered at module_init time. If any are needed very early during boot
-> > then the OF_CLK_DECLARE stuff can be added back in, but I doubt it is
-> > necessary.
-> >
-> > Additionally this series makes use of some of the nice clk_hw helper
-> > introduced by Stephen, especially clk_hw_onecell_data.
-> =
+> 
+> On 28.6.2016 17:37, Jean-Francois Moine wrote:
+> > Most of the clocks in the Allwinner's SoCs are configured in the CCU
+> > (Clock Configuration Unit).
+> > 
+> > The PLL clocks are driven from the main clock. Their rates are controlled
+> > by a set of multiply and divide factors, named from the Allwinner's
+> > documentation:
+> > - multipliers: 'n' and 'k'
+> > - dividers: 'd1', 'd2', 'm' and 'p'
+> > 
+> > The peripheral clocks may receive their inputs from one or more parents,
+> > thanks to a mux. Their rates are controlled by a set of divide factors
+> > only, named 'm' and 'p'.
+> > 
+> > This driver also handles:
+> > - fixed clocks,
+> > - the phase delays for the MMCs,
+> > - the clock gates,
+> > - the bus gates,
+> > - and the resets.
+> > 
+> > Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> > ---
+> >  drivers/clk/sunxi/Makefile |   2 +
+> >  drivers/clk/sunxi/ccu.c    | 980 +++++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/sunxi/ccu.h    | 153 +++++++
+> >  3 files changed, 1135 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi/ccu.c
+> >  create mode 100644 drivers/clk/sunxi/ccu.h
+	[snip]
+> > diff --git a/drivers/clk/sunxi/ccu.c b/drivers/clk/sunxi/ccu.c
+> > new file mode 100644
+> > index 0000000..5749f9c
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi/ccu.c
+	[snip]
+> > +static void ccu_pll_set_flat_factors(struct ccu *ccu, u32 mask, u32 val)
+> > +{
+> > +	u32 reg, m_val, p_val;
+> > +	u32 m_mask = (1 << ccu->m_width) - 1;
+> > +	u32 p_mask = (1 << ccu->p_width) - 1;
+> 
+> I see you have shifted the factor values to be set in the caller of this
+> function, but then you have to shift masks too, to match. It might be
+> clearer to do both shifts in this function.
 
-> Not sure if it qualifies as much of a clock test, but I at least boot
-> tested this on meson8b-odroidc1 and nothing exploded, and the
-> clk_summary looks sane:
-> =
+Oops, yes. Thanks. (I did not test yet your patch about the CPU
+frequency)
 
-> / # cat /debug/clk/clk_summary
->    clock                         enable_cnt  prepare_cnt        rate   ac=
-curacy   phase
->    ----------------------------------------------------------------------=
-------------------
->     xtal                                     0            0    24000000  =
- 0 0
->        sys_pll                               0            0  1200000000  =
- 0 0
->           cpu_clk                            0            0  1200000000  =
- 0 0
->        vid_pll                               0            0   732000000  =
- 0 0
->        fixed_pll                             0            0  2550000000  =
- 0 0
->           fclk_div7                          0            0   364285714  =
- 0 0
->           fclk_div5                          0            0   510000000  =
- 0 0
->           fclk_div4                          0            0   637500000  =
- 0 0
->              mpeg_clk_sel                    0            0   637500000  =
- 0 0
->                 mpeg_clk_div                 0            0   159375000  =
- 0 0
->                    clk81                     0            0   159375000  =
- 0 0
->           fclk_div3                          0            0   850000000  =
- 0 0
->           fclk_div2                          0            0  1275000000  =
- 0 0
+> > +	reg = readl(ccu->base + ccu->reg);
+> > +	m_val = reg & m_mask;
+> > +	p_val = reg & p_mask;
+> > +
+> > +	spin_lock(&ccu_lock);
+> > +
+> > +	/* increase p, then m */
+> > +	if (ccu->p_width && p_val < (val & p_mask)) {
+> > +		reg &= ~p_mask;
+> > +		reg |= val & p_mask;
+> > +		writel(reg, ccu->base + ccu->reg);
+> > +		udelay(10);
+> > +	}
+> > +	if (ccu->m_width && m_val < (val & m_mask)) {
+> > +		reg &= ~m_mask;
+> > +		reg |= val & m_mask;
+> > +		writel(reg, ccu->base + ccu->reg);
+> > +		udelay(10);
+> > +	}
+> > +
+> > +	/* set other factors */
+> > +	reg &= ~(mask & ~(p_mask | m_mask));
+> > +	reg |= val & ~(p_mask | m_mask);
+> > +	writel(reg, ccu->base + ccu->reg);
+> > +
+> > +	/* decrease m */
+> > +	if (ccu->m_width && m_val > (val & m_mask)) {
+> > +		reg &= ~m_mask;
+> > +		reg |= val & m_mask;
+> > +		writel(reg, ccu->base + ccu->reg);
+> > +		udelay(10);
+> > +	}
+> > +
+> > +	/* wait for PLL stable */
+> > +	if (ccu->lock_reg) {
+> > +		u32 lock;
+> > +
+> > +		lock = BIT(ccu->lock_bit);
+> > +		WARN_ON(readl_relaxed_poll_timeout(ccu->base + ccu->lock_reg,
+> > +							reg, !(reg & lock),
+> > +							100, 70000));
+> > +	}
+	[snip]
+> 
+> Any reason why you're waiting for the lock after decreasing m and not
+> before? PLL output may till run too fast before reducing the postdivider
+> potentially causing a crash. But I might be misunderstanding what m is
+> exactly.
 
-Thanks Kevin. I'll take that as a Tested-by.
+I just followed what is done in the function
+ sunxi_clk_factors_set_flat_facotrs() from Allwinnertech:
 
-Regards,
-Mike
+	1).try to increase factor p first
+	2).try to increase factor m first
+	3. write factor n & k
+	4. do pair things for 2). decease factor m
+	5. wait for PLL state stable
+	6.do pair things for 1).  decease factor p
 
-> =
+As this is written, it seems m is a pre-divider.
 
-> Kevin
+-- 
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
