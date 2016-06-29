@@ -1,237 +1,73 @@
-Return-Path: <javier@dowhile0.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V2 8/8] clk: imx7d: only enable minimum required clocks
+Date: Wed, 29 Jun 2016 22:59:11 +0800
+Message-ID: <1467212351-16626-9-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467212351-16626-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <1465553536-23838-2-git-send-email-ldewangan@nvidia.com>
-References: <1465553536-23838-1-git-send-email-ldewangan@nvidia.com>
-	<1465553536-23838-2-git-send-email-ldewangan@nvidia.com>
-Date: Fri, 10 Jun 2016 09:20:44 -0400
-Message-ID: <CABxcv=mrmN5Mzt595ZFgGbOoHJWQMwQ1wiCvcHEiWh_79EbJqQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: max77620: Add clock driver for MAX77620/MAX20024
-From: Javier Martinez Canillas <javier@dowhile0.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Laxman,
+Formerly clk core does not support imx7d clock type well that all
+its clock operations requires the parent clock on.
+Therefore we enabled all clocks by default in clock driver
+initialization for other module clocks operate well.
 
-On Fri, Jun 10, 2016 at 6:12 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> MAXIM MAX77620 is the power management IC with multiple DCDC/LDO(
-> regulators, RTC, GPIOs, Watchdog, 32KHz clock source etc.
->
-> Add support for controlling the 32KHz clock source via clock
-> framework.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
+After patch 'clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE',
+clk core can handle such clock type well, so we don't have to enable
+them all by default anymore. Instead, we only enable a minimum required
+set of clocks.
 
-It looks very similar to the max77686 and max77802 drivers (with only
-the difference in number of clock outputs), can you use the helpers in
-drivers/clk/clk-max-gen.c ?
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
->  drivers/clk/Kconfig        |   9 +++
->  drivers/clk/Makefile       |   1 +
->  drivers/clk/clk-max77620.c | 143 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 153 insertions(+)
->  create mode 100644 drivers/clk/clk-max77620.c
->
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 98efbfc..149f813 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -34,6 +34,15 @@ source "drivers/clk/versatile/Kconfig"
->  config COMMON_CLK_MAX_GEN
->          bool
->
-> +config COMMON_CLK_MAX77620
-> +       tristate "Clock driver for Maxim 77620/MAX20024 MFD"
-> +       depends on MFD_MAX77620
-> +       ---help---
-> +         This driver supports Maxim MAX77620/MAX20024 32KHz crystal
-> +         oscillator. These multi-function devices have one fixed rate.
-> +         The clock can be ON and OFF. Say y to make this driver as
-> +         built-in and m to make it as module.
-> +
->  config COMMON_CLK_MAX77686
->         tristate "Clock driver for Maxim 77686 MFD"
->         depends on MFD_MAX77686
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index dcc5e69..8c2de43 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -26,6 +26,7 @@ obj-$(CONFIG_ARCH_CLPS711X)           += clk-clps711x.o
->  obj-$(CONFIG_ARCH_EFM32)               += clk-efm32gg.o
->  obj-$(CONFIG_ARCH_HIGHBANK)            += clk-highbank.o
->  obj-$(CONFIG_MACH_LOONGSON32)          += clk-ls1x.o
-> +obj-$(CONFIG_COMMON_CLK_MAX77620)      += clk-max77620.o
->  obj-$(CONFIG_COMMON_CLK_MAX_GEN)       += clk-max-gen.o
->  obj-$(CONFIG_COMMON_CLK_MAX77686)      += clk-max77686.o
->  obj-$(CONFIG_COMMON_CLK_MAX77802)      += clk-max77802.o
-> diff --git a/drivers/clk/clk-max77620.c b/drivers/clk/clk-max77620.c
-> new file mode 100644
-> index 0000000..615cf2e
-> --- /dev/null
-> +++ b/drivers/clk/clk-max77620.c
-> @@ -0,0 +1,143 @@
-> +/*
-> + * Clock driver for Maxim Max77620 device.
-> + *
-> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/max77620.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +struct max77620_clks_info {
-> +       struct device *dev;
-> +       struct regmap *rmap;
-> +       struct clk *clk;
-> +       struct clk_hw hw;
-> +};
-> +
-> +static struct max77620_clks_info *to_max77620_clks_info(struct clk_hw *hw)
-> +{
-> +       return container_of(hw, struct max77620_clks_info, hw);
-> +}
-> +
-> +static unsigned long max77620_clks_recalc_rate(struct clk_hw *hw,
-> +                                              unsigned long parent_rate)
-> +{
-> +       return 32768;
-> +}
-> +
-> +static int max77620_clks_prepare(struct clk_hw *hw)
-> +{
-> +       struct max77620_clks_info *mci = to_max77620_clks_info(hw);
-> +
-> +       return regmap_update_bits(mci->rmap, MAX77620_REG_CNFG1_32K,
-> +                                 MAX77620_CNFG1_32K_OUT0_EN,
-> +                                 MAX77620_CNFG1_32K_OUT0_EN);
-> +}
-> +
-> +static void max77620_clks_unprepare(struct clk_hw *hw)
-> +{
-> +       struct max77620_clks_info *mci = to_max77620_clks_info(hw);
-> +
-> +       regmap_update_bits(mci->rmap, MAX77620_REG_CNFG1_32K,
-> +                          MAX77620_CNFG1_32K_OUT0_EN, 0);
-> +}
-> +
-> +static int max77620_clks_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct max77620_clks_info *mci = to_max77620_clks_info(hw);
-> +       unsigned int rval;
-> +       int ret;
-> +
-> +       ret = regmap_read(mci->rmap, MAX77620_REG_CNFG1_32K, &rval);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return !!(rval & MAX77620_CNFG1_32K_OUT0_EN);
-> +}
-> +
-> +static struct clk_ops max77620_clks_ops = {
-> +       .prepare        = max77620_clks_prepare,
-> +       .unprepare      = max77620_clks_unprepare,
-> +       .is_prepared    = max77620_clks_is_prepared,
-> +       .recalc_rate    = max77620_clks_recalc_rate,
-> +};
-> +
-> +struct clk_init_data max77620_clk_init_data = {
-> +       .name = "clk-32k",
-> +       .ops = &max77620_clks_ops,
-> +       .flags = CLK_IGNORE_UNUSED,
-> +};
-> +
-
-Is really needed to ignore this clock if unused? Consumers should
-define this clock and enable if needed.
-
-> +static int max77620_clks_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *np = pdev->dev.parent->of_node;
-> +       struct max77620_clks_info *mci;
-> +       struct clk *clk;
-> +       int ret;
-> +
-> +       mci = devm_kzalloc(&pdev->dev, sizeof(*mci), GFP_KERNEL);
-> +       if (!mci)
-> +               return -ENOMEM;
-> +
-> +       platform_set_drvdata(pdev, mci);
-> +
-> +       mci->dev = &pdev->dev;
-> +       mci->rmap = dev_get_regmap(pdev->dev.parent, NULL);
-> +       if (!mci->rmap) {
-> +               dev_err(mci->dev, "Failed to get parent regmap\n");
-> +               return -ENODEV;
-> +       }
-> +       mci->hw.init = &max77620_clk_init_data;
-> +
-> +       clk = devm_clk_register(&pdev->dev, &mci->hw);
-> +       if (IS_ERR(clk)) {
-> +               ret = PTR_ERR(clk);
-> +               dev_err(mci->dev, "Fail to register clock: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       mci->clk = clk;
-> +       ret = of_clk_add_provider(np, of_clk_src_simple_get, mci->clk);
-> +       if (ret < 0)
-> +               dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret);
-> +
-> +       return ret;
-> +}
-> +
-> +static int max77620_clks_remove(struct platform_device *pdev)
-> +{
-> +       of_clk_del_provider(pdev->dev.parent->of_node);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_device_id max77620_clks_devtype[] = {
-> +       { .name = "max77620-clock", },
-> +       {},
-> +};
-> +
-
-Your Kconfig symbol is tristate so the driver can be built as a module
-but autoload will not work because the driver is not exporting a
-module alias.
-
-IOW, you need MODULE_DEVICE_TABLE(platform, max77620_clks_devtype) here.
-
-> +static struct platform_driver max77620_clks_driver = {
-> +       .driver = {
-> +               .name = "max77620-clock",
-> +       },
-> +       .probe = max77620_clks_probe,
-> +       .remove = max77620_clks_remove,
-> +       .id_table = max77620_clks_devtype,
-> +};
-> +
-> +module_platform_driver(max77620_clks_driver);
-> +
-> +MODULE_DESCRIPTION("Clock driver for Maxim max77620 PMIC Device");
-> +MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.1.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index bb5affae0850..7b46ed0677a5 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -361,6 +361,14 @@ static const char *pll_enet_bypass_sel[] = { "pll_enet_main", "pll_enet_main_src
+ static const char *pll_audio_bypass_sel[] = { "pll_audio_main", "pll_audio_main_src", };
+ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_src", };
+ 
++static int const clks_init_on[] __initconst = {
++	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
++	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
++	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
++	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
++	IMX7D_AHB_CHANNEL_ROOT_CLK,
++};
++
+ static struct clk_onecell_data clk_data;
+ 
+ static struct clk ** const uart_clks[] __initconst = {
+@@ -846,14 +854,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+-	/* TO BE FIXED LATER
+-	 * Enable all clock to bring up imx7, otherwise system will be halt and block
+-	 * the other part upstream Because imx7d clock design changed, clock framework
+-	 * need do a little modify.
+-	 * Dong Aisheng is working on this. After that, this part need be changed.
+-	 */
+-	for (i = 0; i < IMX7D_CLK_END; i++)
+-		clk_prepare_enable(clks[i]);
++	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
++		clk_prepare_enable(clks[clks_init_on[i]]);
+ 
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+-- 
+1.9.1
