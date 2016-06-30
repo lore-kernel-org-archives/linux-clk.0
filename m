@@ -1,59 +1,46 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	jorge.ramirez-ortiz@linaro.org,
-	xinliang.liu@linaro.org,
-	guodong.xu@linaro.org,
-	john.stultz@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: hi6220: initialize UART1 clock to 150MHz
-Date: Wed, 29 Jun 2016 16:45:55 +0800
-Message-Id: <1467189955-21694-2-git-send-email-guodong.xu@linaro.org>
-In-Reply-To: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
-References: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: dianders@chromium.org,
+	zhangqing@rock-chips.com,
+	huangtao@rock-chips.com,
+	briannorris@chromium.org,
+	zyw@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: fix the rk3399 spdif incorrect bit for DPTX
+Date: Thu, 30 Jun 2016 10:18:59 +0800
+Message-Id: <1467253139-21112-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+The CLKSEL_CON32 bit_0 is controlled for spdif_8ch, not spdif_rec_dptx,
+it should be bit_8, let's fix it.
 
-Early at boot, during the sys_clk initialization, make sure UART1 uses
-the higher frequency clock, 150MHz.
-
-This enables support for higher baud rates (up to 3Mbps) in UART1, which
-is required by faster bluetooth transfers.
-
-v2: use clk_set_rate() to propergate clock settings.
-
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+Reported-by: Chris Zhong <zyw@rock-chips.com>
+Tested-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/hisilicon/clk-hi6220.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index a36ffcb..631c56f 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -12,6 +12,7 @@
+ drivers/clk/rockchip/clk-rk3399.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index b6742fa..78e51cb 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -586,7 +586,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(8), 15, GFLAGS),
  
- #include <linux/kernel.h>
- #include <linux/clk-provider.h>
-+#include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -192,6 +193,9 @@ static void __init hi6220_clk_sys_init(struct device_node *np)
- 
- 	hi6220_clk_register_divider(hi6220_div_clks_sys,
- 			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
-+
-+	if (clk_set_rate(clk_data->clk_data.clks[HI6220_UART1_SRC], 150000000))
-+		pr_err("failed to set uart1 clock rate\n");
- }
- CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
- 
+ 	COMPOSITE(SCLK_SPDIF_REC_DPTX, "clk_spdif_rec_dptx", mux_pll_src_cpll_gpll_p, 0,
+-			RK3399_CLKSEL_CON(32), 15, 1, MFLAGS, 0, 5, DFLAGS,
++			RK3399_CLKSEL_CON(32), 15, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(10), 6, GFLAGS),
+ 	/* i2s */
+ 	COMPOSITE(0, "clk_i2s0_div", mux_pll_src_cpll_gpll_p, 0,
 -- 
-1.9.1
+1.7.9.5
