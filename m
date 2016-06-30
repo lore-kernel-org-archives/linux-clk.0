@@ -1,454 +1,421 @@
-Return-Path: <mturquette@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@endlessm.com,
-	victor.wan@amlogic.com,
-	jerry.cao@amlogic.com,
-	xing.xu@amlogic.com
-Subject: [PATCH 03/10] clk: meson8b: clean up pll clocks
-Date: Thu,  9 Jun 2016 17:27:40 -0700
-Message-Id: <1465518467-23939-4-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
-References: <1465518467-23939-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	rtc-linux@googlegroups.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 3/7] rtc: ac100: Add RTC driver for X-Powers AC100
+Date: Thu, 30 Jun 2016 23:58:47 +0800
+Message-Id: <1467302331-9663-4-git-send-email-wens@csie.org>
+In-Reply-To: <1467302331-9663-1-git-send-email-wens@csie.org>
+References: <1467302331-9663-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove the pll registration function and helpers. Replace unnecessary
-configuration struct with static initialization of the desired clock
-type.
+X-Powers AC100 is a codec / RTC combo chip. This driver supports
+the RTC sub-device.
 
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+The RTC block also has clock outputs and non-volatile storage.
+Non-volatile storage wthin the RTC hardware is not supported.
+Clock output support is added in the next patch.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/meson/clk-pll.c      |  72 ++++--------------------
- drivers/clk/meson/clkc.c         |   6 +-
- drivers/clk/meson/clkc.h         |  52 +++++++++---------
- drivers/clk/meson/meson8b-clkc.c | 115 ++++++++++++++++++++++++++++++++-------
- 4 files changed, 131 insertions(+), 114 deletions(-)
+Changes since v3:
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 664edf0..60c6b94 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -44,13 +44,6 @@
- #define MESON_PLL_RESET				BIT(29)
- #define MESON_PLL_LOCK				BIT(31)
+  - Moved month/year conversion offsets inline with reg[] assignments
+  - Used platform_get_irq instead of of_get_irq
+  - Dropped separate mutex and use rtc->ops_lock in interrupt handler
+  - Dropped of_irq.h from includes
+  - Added of_device_id and .of_match_table
+
+Changes since v2:
+
+  - Fixed off-by-1 errors in register mask macros
+  - Fixed copy-paste error in set_alarm function
+  - Drop uie_unsupported, since the alarm works now
+  - Fixed up copyright notice
+  - Changed license to GPL v2, matching mfd driver
+
+---
+ drivers/rtc/Kconfig     |  10 ++
+ drivers/rtc/Makefile    |   1 +
+ drivers/rtc/rtc-ac100.c | 325 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 336 insertions(+)
+ create mode 100644 drivers/rtc/rtc-ac100.c
+
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 18639e0cb6e2..b9d7cbb6bd76 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -183,6 +183,16 @@ config RTC_DRV_ABX80X
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rtc-abx80x.
  
--struct meson_clk_pll {
--	struct clk_hw	hw;
--	void __iomem	*base;
--	struct pll_conf	*conf;
--	unsigned int	rate_count;
--	spinlock_t	*lock;
--};
- #define to_meson_clk_pll(_hw) container_of(_hw, struct meson_clk_pll, hw)
- 
- static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
-@@ -63,15 +56,15 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	u16 n, m, od;
- 	u32 reg;
- 
--	p = &pll->conf->n;
-+	p = &pll->n;
- 	reg = readl(pll->base + p->reg_off);
- 	n = PARM_GET(p->width, p->shift, reg);
- 
--	p = &pll->conf->m;
-+	p = &pll->m;
- 	reg = readl(pll->base + p->reg_off);
- 	m = PARM_GET(p->width, p->shift, reg);
- 
--	p = &pll->conf->od;
-+	p = &pll->od;
- 	reg = readl(pll->base + p->reg_off);
- 	od = PARM_GET(p->width, p->shift, reg);
- 
-@@ -84,7 +77,7 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				     unsigned long *parent_rate)
- {
- 	struct meson_clk_pll *pll = to_meson_clk_pll(hw);
--	const struct pll_rate_table *rate_table = pll->conf->rate_table;
-+	const struct pll_rate_table *rate_table = pll->rate_table;
- 	int i;
- 
- 	for (i = 0; i < pll->rate_count; i++) {
-@@ -99,7 +92,7 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_pll *pll,
- 							       unsigned long rate)
- {
--	const struct pll_rate_table *rate_table = pll->conf->rate_table;
-+	const struct pll_rate_table *rate_table = pll->rate_table;
- 	int i;
- 
- 	for (i = 0; i < pll->rate_count; i++) {
-@@ -145,24 +138,24 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		return -EINVAL;
- 
- 	/* PLL reset */
--	p = &pll->conf->n;
-+	p = &pll->n;
- 	reg = readl(pll->base + p->reg_off);
- 	writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
- 
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
- 	writel(reg, pll->base + p->reg_off);
- 
--	p = &pll->conf->m;
-+	p = &pll->m;
- 	reg = readl(pll->base + p->reg_off);
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->m);
- 	writel(reg, pll->base + p->reg_off);
- 
--	p = &pll->conf->od;
-+	p = &pll->od;
- 	reg = readl(pll->base + p->reg_off);
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->od);
- 	writel(reg, pll->base + p->reg_off);
- 
--	p = &pll->conf->n;
-+	p = &pll->n;
- 	ret = meson_clk_pll_wait_lock(pll, p);
- 	if (ret) {
- 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
-@@ -173,55 +166,12 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
--static const struct clk_ops meson_clk_pll_ops = {
-+const struct clk_ops meson_clk_pll_ops = {
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
- 	.round_rate	= meson_clk_pll_round_rate,
- 	.set_rate	= meson_clk_pll_set_rate,
- };
- 
--static const struct clk_ops meson_clk_pll_ro_ops = {
-+const struct clk_ops meson_clk_pll_ro_ops = {
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
- };
--
--struct clk *meson_clk_register_pll(const struct clk_conf *clk_conf,
--				   void __iomem *reg_base,
--				   spinlock_t *lock)
--{
--	struct clk *clk;
--	struct meson_clk_pll *clk_pll;
--	struct clk_init_data init;
--
--	clk_pll = kzalloc(sizeof(*clk_pll), GFP_KERNEL);
--	if (!clk_pll)
--		return ERR_PTR(-ENOMEM);
--
--	clk_pll->base = reg_base + clk_conf->reg_off;
--	clk_pll->lock = lock;
--	clk_pll->conf = clk_conf->conf.pll;
--
--	init.name = clk_conf->clk_name;
--	init.flags = clk_conf->flags | CLK_GET_RATE_NOCACHE;
--
--	init.parent_names = &clk_conf->clks_parent[0];
--	init.num_parents = 1;
--	init.ops = &meson_clk_pll_ro_ops;
--
--	/* If no rate_table is specified we assume the PLL is read-only */
--	if (clk_pll->conf->rate_table) {
--		int len;
--
--		for (len = 0; clk_pll->conf->rate_table[len].rate != 0; )
--			len++;
--
--		 clk_pll->rate_count = len;
--		 init.ops = &meson_clk_pll_ops;
--	}
--
--	clk_pll->hw.init = &init;
--
--	clk = clk_register(NULL, &clk_pll->hw);
--	if (IS_ERR(clk))
--		kfree(clk_pll);
--
--	return clk;
--}
-diff --git a/drivers/clk/meson/clkc.c b/drivers/clk/meson/clkc.c
-index c6802fd..2161ea3 100644
---- a/drivers/clk/meson/clkc.c
-+++ b/drivers/clk/meson/clkc.c
-@@ -21,7 +21,7 @@
- 
- #include "clkc.h"
- 
--static DEFINE_SPINLOCK(clk_lock);
-+DEFINE_SPINLOCK(clk_lock);
- 
- static struct clk **clks;
- static struct clk_onecell_data clk_data;
-@@ -190,10 +190,6 @@ void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
- 			clk = meson_clk_register_cpu(clk_conf, clk_base,
- 						     &clk_lock);
- 			break;
--		case CLK_PLL:
--			clk = meson_clk_register_pll(clk_conf, clk_base,
--						     &clk_lock);
--			break;
- 		default:
- 			clk = NULL;
- 		}
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index b23b057..0bb4fb8 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -34,12 +34,13 @@ struct parm {
- 	u8	shift;
- 	u8	width;
- };
--#define PARM(_r, _s, _w)						\
--	{								\
--		.reg_off	= (_r),					\
--		.shift		= (_s),					\
--		.width		= (_w),					\
--	}								\
++config RTC_DRV_AC100
++	tristate "X-Powers AC100"
++	depends on MFD_AC100
++	help
++	  If you say yes here you get support for the real-time clock found
++	  in X-Powers AC100 family peripheral ICs.
 +
-+#define PARM(_r, _s, _w)                                               \
-+{                                                                      \
-+	.reg_off        = (_r),                                        \
-+	.shift          = (_s),                                        \
-+	.width          = (_w),                                        \
-+}                                                                      \
- 
- struct pll_rate_table {
- 	unsigned long	rate;
-@@ -55,13 +56,19 @@ struct pll_rate_table {
- 		.od		= (_od),				\
- 	}								\
- 
--struct pll_conf {
--	const struct pll_rate_table	*rate_table;
--	struct parm			m;
--	struct parm			n;
--	struct parm			od;
-+struct meson_clk_pll {
-+	struct clk_hw hw;
-+	void __iomem *base;
-+	struct parm m;
-+	struct parm n;
-+	struct parm od;
-+	const struct pll_rate_table *rate_table;
-+	unsigned int rate_count;
-+	spinlock_t *lock;
- };
- 
-+#define to_meson_clk_pll(_hw) container_of(_hw, struct meson_clk_pll, hw)
++	  This driver can also be built as a module. If so, the module
++	  will be called rtc-ac100.
 +
- struct fixed_fact_conf {
- 	unsigned int	div;
- 	unsigned int	mult;
-@@ -86,7 +93,6 @@ enum clk_type {
- 	CLK_FIXED_FACTOR,
- 	CLK_COMPOSITE,
- 	CLK_CPU,
--	CLK_PLL,
- };
- 
- struct clk_conf {
-@@ -100,23 +106,10 @@ struct clk_conf {
- 	union {
- 		struct fixed_fact_conf		fixed_fact;
- 		const struct composite_conf		*composite;
--		struct pll_conf			*pll;
- 		const struct clk_div_table	*div_table;
- 	} conf;
- };
- 
--#define PLL(_ro, _ci, _cn, _cp, _f, _c)					\
--	{								\
--		.reg_off			= (_ro),		\
--		.clk_type			= CLK_PLL,		\
--		.clk_id				= (_ci),		\
--		.clk_name			= (_cn),		\
--		.clks_parent			= (_cp),		\
--		.num_parents			= ARRAY_SIZE(_cp),	\
--		.flags				= (_f),			\
--		.conf.pll			= (_c),			\
--	}								\
--
- #define FIXED_FACTOR_DIV(_ci, _cn, _cp, _f, _d)				\
- 	{								\
- 		.clk_type			= CLK_FIXED_FACTOR,	\
-@@ -155,7 +148,12 @@ void meson_clk_register_clks(const struct clk_conf *clk_confs,
- 			     unsigned int nr_confs, void __iomem *clk_base);
- struct clk *meson_clk_register_cpu(const struct clk_conf *clk_conf,
- 				   void __iomem *reg_base, spinlock_t *lock);
--struct clk *meson_clk_register_pll(const struct clk_conf *clk_conf,
--				   void __iomem *reg_base, spinlock_t *lock);
+ config RTC_DRV_AS3722
+ 	tristate "ams AS3722 RTC driver"
+ 	depends on MFD_AS3722
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index ea2833723fa9..b07c28779573 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_RTC_DRV_AB3100)	+= rtc-ab3100.o
+ obj-$(CONFIG_RTC_DRV_AB8500)	+= rtc-ab8500.o
+ obj-$(CONFIG_RTC_DRV_ABB5ZES3)	+= rtc-ab-b5ze-s3.o
+ obj-$(CONFIG_RTC_DRV_ABX80X)	+= rtc-abx80x.o
++obj-$(CONFIG_RTC_DRV_AC100)	+= rtc-ac100.o
+ obj-$(CONFIG_RTC_DRV_ARMADA38X)	+= rtc-armada38x.o
+ obj-$(CONFIG_RTC_DRV_AS3722)	+= rtc-as3722.o
+ obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
+diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+new file mode 100644
+index 000000000000..5a9ca89d04c7
+--- /dev/null
++++ b/drivers/rtc/rtc-ac100.c
+@@ -0,0 +1,325 @@
++/*
++ * RTC Driver for X-Powers AC100
++ *
++ * Copyright (c) 2016 Chen-Yu Tsai
++ *
++ * Chen-Yu Tsai <wens@csie.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
 +
-+/* shared data */
-+extern spinlock_t clk_lock;
++#include <linux/bcd.h>
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/mfd/ac100.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/rtc.h>
++#include <linux/types.h>
 +
-+/* clk_ops */
-+extern const struct clk_ops meson_clk_pll_ro_ops;
-+extern const struct clk_ops meson_clk_pll_ops;
- 
- #endif /* __CLKC_H */
-diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
-index 9afd480..a3d8e66 100644
---- a/drivers/clk/meson/meson8b-clkc.c
-+++ b/drivers/clk/meson/meson8b-clkc.c
-@@ -110,7 +110,6 @@ static const struct clk_div_table cpu_div_table[] = {
- 	{ /* sentinel */ },
- };
- 
--PNAME(p_xtal)		= { "xtal" };
- PNAME(p_fclk_div)	= { "fixed_pll" };
- PNAME(p_cpu_clk)	= { "sys_pll" };
- PNAME(p_clk81)		= { "fclk_div3", "fclk_div4", "fclk_div5" };
-@@ -120,19 +119,6 @@ PNAME(p_mali)		= { "fclk_div3", "fclk_div4", "fclk_div5",
- static u32 mux_table_clk81[]	= { 6, 5, 7 };
- static u32 mux_table_mali[]	= { 6, 5, 7, 4, 0 };
- 
--static struct pll_conf pll_confs = {
--	.m		= PARM(0x00, 0,  9),
--	.n		= PARM(0x00, 9,  5),
--	.od		= PARM(0x00, 16, 2),
--};
--
--static struct pll_conf sys_pll_conf = {
--	.m		= PARM(0x00, 0,  9),
--	.n		= PARM(0x00, 9,  5),
--	.od		= PARM(0x00, 16, 2),
--	.rate_table	= sys_pll_rate_table,
--};
--
- static const struct composite_conf clk81_conf __initconst = {
- 	.mux_table		= mux_table_clk81,
- 	.mux_flags		= CLK_MUX_READ_ONLY,
-@@ -166,13 +152,87 @@ static struct clk_fixed_rate meson8b_zero = {
- 	},
- };
- 
-+static struct meson_clk_pll meson8b_fixed_pll = {
-+	.m = {
-+		.reg_off = MESON8B_REG_PLL_FIXED,
-+		.shift   = 0,
-+		.width   = 9,
-+	},
-+	.n = {
-+		.reg_off = MESON8B_REG_PLL_FIXED,
-+		.shift   = 9,
-+		.width   = 5,
-+	},
-+	.od = {
-+		.reg_off = MESON8B_REG_PLL_FIXED,
-+		.shift   = 16,
-+		.width   = 2,
-+	},
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fixed_pll",
-+		.ops = &meson_clk_pll_ro_ops,
-+		.parent_names = (const char *[]){ "xtal" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
++/* Control register */
++#define AC100_RTC_CTRL_24HOUR	BIT(0)
++
++/* RTC */
++#define AC100_RTC_SEC_MASK	GENMASK(6, 0)
++#define AC100_RTC_MIN_MASK	GENMASK(6, 0)
++#define AC100_RTC_HOU_MASK	GENMASK(5, 0)
++#define AC100_RTC_WEE_MASK	GENMASK(2, 0)
++#define AC100_RTC_DAY_MASK	GENMASK(5, 0)
++#define AC100_RTC_MON_MASK	GENMASK(4, 0)
++#define AC100_RTC_YEA_MASK	GENMASK(7, 0)
++#define AC100_RTC_YEA_LEAP	BIT(15)
++#define AC100_RTC_UPD_TRIGGER	BIT(15)
++
++/* Alarm (wall clock) */
++#define AC100_ALM_INT_ENABLE	BIT(0)
++
++#define AC100_ALM_SEC_MASK	GENMASK(6, 0)
++#define AC100_ALM_MIN_MASK	GENMASK(6, 0)
++#define AC100_ALM_HOU_MASK	GENMASK(5, 0)
++#define AC100_ALM_WEE_MASK	GENMASK(2, 0)
++#define AC100_ALM_DAY_MASK	GENMASK(5, 0)
++#define AC100_ALM_MON_MASK	GENMASK(4, 0)
++#define AC100_ALM_YEA_MASK	GENMASK(7, 0)
++#define AC100_ALM_ENABLE_FLAG	BIT(15)
++#define AC100_ALM_UPD_TRIGGER	BIT(15)
++
++/*
++ * The year parameter passed to the driver is usually an offset relative to
++ * the year 1900. This macro is used to convert this offset to another one
++ * relative to the minimum year allowed by the hardware.
++ *
++ * The year range is 1970 - 2069. This range is selected to match Allwinner's
++ * driver.
++ */
++#define AC100_YEAR_MIN				1970
++#define AC100_YEAR_MAX				2069
++#define AC100_YEAR_OFF				(AC100_YEAR_MIN - 1900)
++
++struct ac100_rtc_dev {
++	struct rtc_device *rtc;
++	struct device *dev;
++	struct regmap *regmap;
++	int irq;
++	unsigned long alarm;
 +};
 +
-+static struct meson_clk_pll meson8b_vid_pll = {
-+	.m = {
-+		.reg_off = MESON8B_REG_PLL_VID,
-+		.shift   = 0,
-+		.width   = 9,
-+	},
-+	.n = {
-+		.reg_off = MESON8B_REG_PLL_VID,
-+		.shift   = 9,
-+		.width   = 5,
-+	},
-+	.od = {
-+		.reg_off = MESON8B_REG_PLL_VID,
-+		.shift   = 16,
-+		.width   = 2,
-+	},
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vid_pll",
-+		.ops = &meson_clk_pll_ro_ops,
-+		.parent_names = (const char *[]){ "xtal" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
++static int ac100_rtc_get_time(struct device *dev, struct rtc_time *rtc_tm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	u16 reg[7];
++	int ret;
++
++	ret = regmap_bulk_read(regmap, AC100_RTC_SEC, reg, 7);
++	if (ret)
++		return ret;
++
++	rtc_tm->tm_sec  = bcd2bin(reg[0] & AC100_RTC_SEC_MASK);
++	rtc_tm->tm_min  = bcd2bin(reg[1] & AC100_RTC_MIN_MASK);
++	rtc_tm->tm_hour = bcd2bin(reg[2] & AC100_RTC_HOU_MASK);
++	rtc_tm->tm_wday = bcd2bin(reg[3] & AC100_RTC_WEE_MASK);
++	rtc_tm->tm_mday = bcd2bin(reg[4] & AC100_RTC_DAY_MASK);
++	rtc_tm->tm_mon  = bcd2bin(reg[5] & AC100_RTC_MON_MASK) - 1;
++	rtc_tm->tm_year = bcd2bin(reg[6] & AC100_RTC_YEA_MASK) +
++			  AC100_YEAR_OFF;
++
++	return rtc_valid_tm(rtc_tm);
++}
++
++static int ac100_rtc_set_time(struct device *dev, struct rtc_time *rtc_tm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	int year;
++	u16 reg[8];
++
++	/* our RTC has a limited year range... */
++	year = rtc_tm->tm_year - AC100_YEAR_OFF;
++	if (year < 0 || year > (AC100_YEAR_MAX - 1900)) {
++		dev_err(dev, "rtc only supports year in range %d - %d\n",
++			AC100_YEAR_MIN, AC100_YEAR_MAX);
++		return -EINVAL;
++	}
++
++	/* convert to BCD */
++	reg[0] = bin2bcd(rtc_tm->tm_sec)     & AC100_RTC_SEC_MASK;
++	reg[1] = bin2bcd(rtc_tm->tm_min)     & AC100_RTC_MIN_MASK;
++	reg[2] = bin2bcd(rtc_tm->tm_hour)    & AC100_RTC_HOU_MASK;
++	reg[3] = bin2bcd(rtc_tm->tm_wday)    & AC100_RTC_WEE_MASK;
++	reg[4] = bin2bcd(rtc_tm->tm_mday)    & AC100_RTC_DAY_MASK;
++	reg[5] = bin2bcd(rtc_tm->tm_mon + 1) & AC100_RTC_MON_MASK;
++	reg[6] = bin2bcd(year)		     & AC100_RTC_YEA_MASK;
++	/* trigger write */
++	reg[7] = AC100_RTC_UPD_TRIGGER;
++
++	/* Is it a leap year? */
++	if (is_leap_year(year + AC100_YEAR_OFF + 1900))
++		reg[6] |= AC100_RTC_YEA_LEAP;
++
++	return regmap_bulk_write(regmap, AC100_RTC_SEC, reg, 8);
++}
++
++static int ac100_rtc_alarm_irq_enable(struct device *dev, unsigned int en)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	unsigned int val;
++
++	val = en ? AC100_ALM_INT_ENABLE : 0;
++
++	return regmap_write(regmap, AC100_ALM_INT_ENA, val);
++}
++
++static int ac100_rtc_get_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	struct rtc_time *alrm_tm = &alrm->time;
++	u16 reg[7];
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(regmap, AC100_ALM_INT_ENA, &val);
++	if (ret)
++		return ret;
++
++	alrm->enabled = !!(val & AC100_ALM_INT_ENABLE);
++
++	ret = regmap_bulk_read(regmap, AC100_ALM_SEC, reg, 7);
++	if (ret)
++		return ret;
++
++	alrm_tm->tm_sec  = bcd2bin(reg[0] & AC100_ALM_SEC_MASK);
++	alrm_tm->tm_min  = bcd2bin(reg[1] & AC100_ALM_MIN_MASK);
++	alrm_tm->tm_hour = bcd2bin(reg[2] & AC100_ALM_HOU_MASK);
++	alrm_tm->tm_wday = bcd2bin(reg[3] & AC100_ALM_WEE_MASK);
++	alrm_tm->tm_mday = bcd2bin(reg[4] & AC100_ALM_DAY_MASK);
++	alrm_tm->tm_mon  = bcd2bin(reg[5] & AC100_ALM_MON_MASK) - 1;
++	alrm_tm->tm_year = bcd2bin(reg[6] & AC100_ALM_YEA_MASK) +
++			   AC100_YEAR_OFF;
++
++	return 0;
++}
++
++static int ac100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
++	struct regmap *regmap = chip->regmap;
++	struct rtc_time *alrm_tm = &alrm->time;
++	u16 reg[8];
++	int year;
++	int ret;
++
++	/* our alarm has a limited year range... */
++	year = alrm_tm->tm_year - AC100_YEAR_OFF;
++	if (year < 0 || year > (AC100_YEAR_MAX - 1900)) {
++		dev_err(dev, "alarm only supports year in range %d - %d\n",
++			AC100_YEAR_MIN, AC100_YEAR_MAX);
++		return -EINVAL;
++	}
++
++	/* convert to BCD */
++	reg[0] = (bin2bcd(alrm_tm->tm_sec)  & AC100_ALM_SEC_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[1] = (bin2bcd(alrm_tm->tm_min)  & AC100_ALM_MIN_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[2] = (bin2bcd(alrm_tm->tm_hour) & AC100_ALM_HOU_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	/* Do not enable weekday alarm */
++	reg[3] = bin2bcd(alrm_tm->tm_wday) & AC100_ALM_WEE_MASK;
++	reg[4] = (bin2bcd(alrm_tm->tm_mday) & AC100_ALM_DAY_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[5] = (bin2bcd(alrm_tm->tm_mon + 1)  & AC100_ALM_MON_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	reg[6] = (bin2bcd(year) & AC100_ALM_YEA_MASK) |
++			AC100_ALM_ENABLE_FLAG;
++	/* trigger write */
++	reg[7] = AC100_ALM_UPD_TRIGGER;
++
++	ret = regmap_bulk_write(regmap, AC100_ALM_SEC, reg, 8);
++	if (ret)
++		return ret;
++
++	return ac100_rtc_alarm_irq_enable(dev, alrm->enabled);
++}
++
++static irqreturn_t ac100_rtc_irq(int irq, void *data)
++{
++	struct ac100_rtc_dev *chip = data;
++	struct regmap *regmap = chip->regmap;
++	unsigned int val = 0;
++	int ret;
++
++	mutex_lock(&chip->rtc->ops_lock);
++
++	/* read status */
++	ret = regmap_read(regmap, AC100_ALM_INT_STA, &val);
++	if (ret)
++		goto out;
++
++	if (val & AC100_ALM_INT_ENABLE) {
++		/* signal rtc framework */
++		rtc_update_irq(chip->rtc, 1, RTC_AF | RTC_IRQF);
++
++		/* clear status */
++		ret = regmap_write(regmap, AC100_ALM_INT_STA, val);
++		if (ret)
++			goto out;
++
++		/* disable interrupt */
++		ret = ac100_rtc_alarm_irq_enable(chip->dev, 0);
++		if (ret)
++			goto out;
++	}
++
++out:
++	mutex_unlock(&chip->rtc->ops_lock);
++	return IRQ_HANDLED;
++}
++
++static const struct rtc_class_ops ac100_rtc_ops = {
++	.read_time	  = ac100_rtc_get_time,
++	.set_time	  = ac100_rtc_set_time,
++	.read_alarm	  = ac100_rtc_get_alarm,
++	.set_alarm	  = ac100_rtc_set_alarm,
++	.alarm_irq_enable = ac100_rtc_alarm_irq_enable,
 +};
 +
-+static struct meson_clk_pll meson8b_sys_pll = {
-+	.m = {
-+		.reg_off = MESON8B_REG_PLL_SYS,
-+		.shift   = 0,
-+		.width   = 9,
-+	},
-+	.n = {
-+		.reg_off = MESON8B_REG_PLL_SYS,
-+		.shift   = 9,
-+		.width   = 5,
-+	},
-+	.od = {
-+		.reg_off = MESON8B_REG_PLL_SYS,
-+		.shift   = 16,
-+		.width   = 2,
-+	},
-+	.rate_table = sys_pll_rate_table,
-+	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sys_pll",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_names = (const char *[]){ "xtal" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
++static int ac100_rtc_probe(struct platform_device *pdev)
++{
++	struct ac100_dev *ac100 = dev_get_drvdata(pdev->dev.parent);
++	struct ac100_rtc_dev *chip;
++	int ret;
++
++	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
++	platform_set_drvdata(pdev, chip);
++	chip->dev = &pdev->dev;
++	chip->regmap = ac100->regmap;
++
++	chip->irq = platform_get_irq(pdev, 0);
++	if (chip->irq < 0) {
++		dev_err(&pdev->dev, "No IRQ resource\n");
++		return chip->irq;
++	}
++
++	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
++					ac100_rtc_irq,
++					IRQF_SHARED | IRQF_ONESHOT,
++					dev_name(&pdev->dev), chip);
++	if (ret) {
++		dev_err(&pdev->dev, "Could not request IRQ\n");
++		return ret;
++	}
++
++	/* always use 24 hour mode */
++	regmap_write_bits(chip->regmap, AC100_RTC_CTRL, AC100_RTC_CTRL_24HOUR,
++			  AC100_RTC_CTRL_24HOUR);
++
++	/* disable counter alarm interrupt */
++	regmap_write(chip->regmap, AC100_ALM_INT_ENA, 0);
++
++	/* clear counter alarm pending interrupts */
++	regmap_write(chip->regmap, AC100_ALM_INT_STA, AC100_ALM_INT_ENABLE);
++
++	chip->rtc = devm_rtc_device_register(&pdev->dev, "rtc-ac100",
++					     &ac100_rtc_ops, THIS_MODULE);
++	if (IS_ERR(chip->rtc)) {
++		dev_err(&pdev->dev, "unable to register device\n");
++		return PTR_ERR(chip->rtc);
++	}
++
++	dev_info(&pdev->dev, "RTC enabled\n");
++
++	return 0;
++}
++
++static const struct of_device_id ac100_rtc_match[] = {
++	{ .compatible = "x-powers,ac100-rtc" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ac100_rtc_match);
++
++static struct platform_driver ac100_rtc_driver = {
++	.probe		= ac100_rtc_probe,
++	.driver		= {
++		.name		= "ac100-rtc",
++		.of_match_table	= of_match_ptr(ac100_rtc_match),
 +	},
 +};
++module_platform_driver(ac100_rtc_driver);
 +
- static const struct clk_conf meson8b_clk_confs[] __initconst = {
--	PLL(MESON8B_REG_PLL_FIXED, CLKID_PLL_FIXED, "fixed_pll",
--	    p_xtal, 0, &pll_confs),
--	PLL(MESON8B_REG_PLL_VID, CLKID_PLL_VID, "vid_pll",
--	    p_xtal, 0, &pll_confs),
--	PLL(MESON8B_REG_PLL_SYS, CLKID_PLL_SYS, "sys_pll",
--	    p_xtal, 0, &sys_pll_conf),
- 	FIXED_FACTOR_DIV(CLKID_FCLK_DIV2, "fclk_div2", p_fclk_div, 0, 2),
- 	FIXED_FACTOR_DIV(CLKID_FCLK_DIV3, "fclk_div3", p_fclk_div, 0, 3),
- 	FIXED_FACTOR_DIV(CLKID_FCLK_DIV4, "fclk_div4", p_fclk_div, 0, 4),
-@@ -197,14 +257,23 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 	.hws = {
- 		[CLKID_XTAL] = &meson8b_xtal.hw,
- 		[CLKID_ZERO] = &meson8b_zero.hw,
-+		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
-+		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
-+		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
- 	},
- 	.num = CLK_NR_CLKS,
- };
- 
-+static struct meson_clk_pll *const meson8b_clk_plls[] = {
-+	&meson8b_fixed_pll,
-+	&meson8b_vid_pll,
-+	&meson8b_sys_pll,
-+};
-+
- static void __init meson8b_clkc_init(struct device_node *np)
- {
- 	void __iomem *clk_base;
--	int ret, clkid;
-+	int ret, clkid, i;
- 
- 	if (!meson_clk_init(np, CLK_NR_CLKS))
- 		return;
-@@ -216,6 +285,10 @@ static void __init meson8b_clkc_init(struct device_node *np)
- 		return;
- 	}
- 
-+	/* Populate base address for PLLs */
-+	for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
-+		meson8b_clk_plls[i]->base = clk_base;
-+
- 	/*
- 	 * register all clks
- 	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
++MODULE_DESCRIPTION("X-Powers AC100 RTC driver");
++MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
++MODULE_LICENSE("GPL v2");
 -- 
-2.1.4
+2.8.1
