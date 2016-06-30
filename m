@@ -1,80 +1,48 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH v2 3/9] tty: serial: fsl_lpuart: support suspend/resume
-Date: Tue, 28 Jun 2016 11:02:29 +0530
-Message-ID: <20160628053235.5114-4-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
-References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Yuantian Tang <yuantian.tang@nxp.com>
+Cc: Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood <scottwood@freescale.com>
+Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible parent clocks
+Date: Thu, 30 Jun 2016 04:24:29 +0200
+Message-ID: <2040199.AxgevOCPID@vostro.rjw.lan>
+In-Reply-To: <DBXPR04MB4958B5147DAA4F05BED4884F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net> <2091721.Cm4CVR1ptK@vostro.rjw.lan> <DBXPR04MB4958B5147DAA4F05BED4884F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stefan Agner <stefan@agner.ch>
+On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:
+> > -----Original Message-----
+> > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > Sent: Thursday, June 30, 2016 9:47 AM
+> > To: Yuantian Tang <yuantian.tang@nxp.com>
+> > Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.org.uk>;
+> > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> > <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>; linux-
+> > clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
+> > dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng Ren
+> > <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>
+> > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+> > parent clocks
+> > 
+> > On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
+> > > Hi,
+> > >
+> > > This patch is acked by clock maintainer. If no comments from anyone else,
+> > we will merge it in next week.
+> > 
+> > There is a cpufreq commit depending on it.  Are you going to handle that one
+> > too?
+> > 
+> That one has been acked by cpufreq maintainer. You can get this from patch comments.
 
-Add suspend/resume support.
+I know that it has been ACKed.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
----
- drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+My question is whether or not you are going to apply it along the [1/2].
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index fabfa7e..75a2098 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -483,9 +483,8 @@ static void lpuart_dma_rx_complete(void *arg)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
--static void lpuart_timer_func(unsigned long data)
-+static void lpuart_dma_rx_terminate(struct lpuart_port *sport)
- {
--	struct lpuart_port *sport = (struct lpuart_port *)data;
- 	struct tty_port *port = &sport->port.state->port;
- 	struct dma_tx_state state;
- 	unsigned long flags;
-@@ -510,6 +509,11 @@ static void lpuart_timer_func(unsigned long data)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
-+static void lpuart_timer_func(unsigned long data)
-+{
-+	lpuart_dma_rx_terminate((struct lpuart_port *)data);
-+}
-+
- static inline void lpuart_prepare_rx(struct lpuart_port *sport)
- {
- 	unsigned long flags;
-@@ -1925,7 +1929,12 @@ static int lpuart_suspend(struct device *dev)
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
-+	if (sport->dma_rx_in_progress)
-+		lpuart_dma_rx_terminate(sport);
-+
- 	uart_suspend_port(&lpuart_reg, &sport->port);
-+	if (sport->port.suspended && !sport->port.irq_wake)
-+		clk_disable_unprepare(sport->clk);
- 
- 	return 0;
- }
-@@ -1935,6 +1944,9 @@ static int lpuart_resume(struct device *dev)
- 	struct lpuart_port *sport = dev_get_drvdata(dev);
- 	unsigned long temp;
- 
-+	if (sport->port.suspended && !sport->port.irq_wake)
-+		clk_prepare_enable(sport->clk);
-+
- 	if (sport->lpuart32) {
- 		lpuart32_setup_watermark(sport);
- 		temp = lpuart32_read(sport->port.membase + UARTCTRL);
--- 
-2.9.0
+If not, it will have to be deferred until the [1/2] is merged and then applied
+which may not be desirable.
+
+Thanks,
+Rafael
