@@ -1,122 +1,118 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 06/28] ARM: OMAP2+: hwmod: fetch main_clk based on hwmod name
-Date: Mon, 13 Jun 2016 22:04:40 +0300
-Message-ID: <1465844702-12200-7-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 5/8] clk: imx: re-order and concentrate the same type of clk api
+Date: Thu, 30 Jun 2016 17:31:15 +0800
+Message-ID: <1467279078-2330-6-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-With the transition to hwmod module clocks, all hwmods will have
-their main clocks named <hwmod_name>_mod_ck. Use this info to
-fetch main_clk, and use it if found.
+Re-order and concentrate the same type of clk api for better
+code maintenance.
 
-Also, if a main_clk is found based on the hwmod name, disable
-the direct PRCM modulemode access from hwmod.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm/mach-omap2/omap_hwmod.c | 49 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 44 insertions(+), 5 deletions(-)
+ drivers/clk/imx/clk.h | 58 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 0ea869c..0c85f91 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -200,6 +200,7 @@ struct omap_hwmod_soc_ops {
- 	int (*init_clkdm)(struct omap_hwmod *oh);
- 	void (*update_context_lost)(struct omap_hwmod *oh);
- 	int (*get_context_lost)(struct omap_hwmod *oh);
-+	int (*disable_direct_prcm)(struct omap_hwmod *oh);
- };
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 508d0fad84cf..936e235f7c04 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -51,28 +51,6 @@ struct clk * imx_obtain_fixed_clock(
+ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
  
- /* soc_ops: adapts the omap_hwmod code to the currently-booted SoC */
-@@ -776,17 +777,34 @@ static int _del_initiator_dep(struct omap_hwmod *oh, struct omap_hwmod *init_oh)
-  * @oh: struct omap_hwmod *
-  *
-  * Called from _init_clocks().  Populates the @oh _clk (main
-- * functional clock pointer) if a main_clk is present.  Returns 0 on
-- * success or -EINVAL on error.
-+ * functional clock pointer) if a clock matching the hwmod name is found,
-+ * or a main_clk is present.  Returns 0 on success or -EINVAL on error.
-  */
- static int _init_main_clk(struct omap_hwmod *oh)
- {
- 	int ret = 0;
-+	char name[32];
-+	static int max_len;
-+	struct clk *clk;
+-static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0x3, 0, &imx_ccm_lock, NULL);
+-}
+-
+-static inline struct clk *imx_clk_gate2_shared(const char *name,
+-		const char *parent, void __iomem *reg, u8 shift,
+-		unsigned int *share_count)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0x3, 0, &imx_ccm_lock, share_count);
+-}
+-
+-static inline struct clk *imx_clk_gate2_cgr(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift, u8 cgr_val)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, cgr_val, 0, &imx_ccm_lock, NULL);
+-}
+-
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
  
--	if (!oh->main_clk)
--		return 0;
-+	strcpy(name, oh->name);
-+	strcat(name, "_mod_ck");
-+
-+	if (strlen(name) > max_len)
-+		max_len = strlen(name);
-+
-+	clk = ti_clk_get(name);
-+	if (!IS_ERR(clk)) {
-+		oh->_clk = clk;
-+		soc_ops.disable_direct_prcm(oh);
-+		oh->main_clk = kstrdup(name, GFP_KERNEL);
-+	} else {
-+		if (!oh->main_clk)
-+			return 0;
-+
-+		oh->_clk = ti_clk_get(oh->main_clk);
-+	}
- 
--	oh->_clk = ti_clk_get(oh->main_clk);
- 	if (IS_ERR(oh->_clk)) {
- 		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
- 			oh->name, oh->main_clk);
-@@ -3091,6 +3109,25 @@ static int _omap4_is_hardreset_asserted(struct omap_hwmod *oh,
+@@ -97,6 +75,13 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
  }
  
- /**
-+ * _omap4_disable_direct_prcm - disable direct PRCM control for hwmod
-+ * @oh: struct omap_hwmod * to disable control for
-+ *
-+ * Disables direct PRCM clkctrl done by hwmod core. Instead, the hwmod
-+ * will be using its main_clk to enable/disable the module. Returns
-+ * 0 if successful.
-+ */
-+static int _omap4_disable_direct_prcm(struct omap_hwmod *oh)
++static inline struct clk *imx_clk_fixed_factor(const char *name,
++		const char *parent, unsigned int mult, unsigned int div)
 +{
-+	if (!oh)
-+		return -EINVAL;
-+
-+	oh->prcm.omap4.clkctrl_offs = 0;
-+	oh->prcm.omap4.modulemode = 0;
-+
-+	return 0;
++	return clk_register_fixed_factor(NULL, name, parent,
++			CLK_SET_RATE_PARENT, mult, div);
 +}
 +
-+/**
-  * _am33xx_deassert_hardreset - call AM33XX PRM hardreset fn with hwmod args
-  * @oh: struct omap_hwmod * to deassert hardreset
-  * @ohri: hardreset line data
-@@ -3913,6 +3950,7 @@ void __init omap_hwmod_init(void)
- 		soc_ops.init_clkdm = _init_clkdm;
- 		soc_ops.update_context_lost = _omap4_update_context_lost;
- 		soc_ops.get_context_lost = _omap4_get_context_lost;
-+		soc_ops.disable_direct_prcm = _omap4_disable_direct_prcm;
- 	} else if (cpu_is_ti814x() || cpu_is_ti816x() || soc_is_am33xx() ||
- 		   soc_is_am43xx()) {
- 		soc_ops.enable_module = _omap4_enable_module;
-@@ -3922,6 +3960,7 @@ void __init omap_hwmod_init(void)
- 		soc_ops.deassert_hardreset = _am33xx_deassert_hardreset;
- 		soc_ops.is_hardreset_asserted = _omap4_is_hardreset_asserted;
- 		soc_ops.init_clkdm = _init_clkdm;
-+		soc_ops.disable_direct_prcm = _omap4_disable_direct_prcm;
- 	} else {
- 		WARN(1, "omap_hwmod: unknown SoC type\n");
- 	}
+ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift, u8 width)
+ {
+@@ -126,6 +111,28 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, NULL);
++}
++
++static inline struct clk *imx_clk_gate2_shared(const char *name,
++		const char *parent, void __iomem *reg, u8 shift,
++		unsigned int *share_count)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, share_count);
++}
++
++static inline struct clk *imx_clk_gate2_cgr(const char *name,
++		const char *parent, void __iomem *reg, u8 shift, u8 cgr_val)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, cgr_val, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+@@ -143,13 +150,6 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			&imx_ccm_lock);
+ }
+ 
+-static inline struct clk *imx_clk_fixed_factor(const char *name,
+-		const char *parent, unsigned int mult, unsigned int div)
+-{
+-	return clk_register_fixed_factor(NULL, name, parent,
+-			CLK_SET_RATE_PARENT, mult, div);
+-}
+-
+ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
 -- 
 1.9.1
