@@ -1,72 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 28 Jun 2016 13:46:40 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
-	wens@csie.org, emilio@elopez.com.ar, mark.rutland@arm.com,
-	linux@armlinux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on
- A23/33
-Message-ID: <20160628114640.GE5550@lukather>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
- <20160628101325.2522-3-icenowy@aosc.xyz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
-In-Reply-To: <20160628101325.2522-3-icenowy@aosc.xyz>
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3 0/2] mark spi clocks as critical and enable spi3 clocks
+Date: Thu, 30 Jun 2016 16:15:09 +0900
+Message-id: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
-
-
---2qXFWqzzG3v1+95a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-Thanks for working on this.
+This patchset enables spi3 clocks by marking critical clocks as
+CLK_IS_CRITICAL and in the meantime replaces the use of
+CLK_IGNORE_UNUSED for spi1 clocks.
 
-On Tue, Jun 28, 2016 at 06:13:23PM +0800, Icenowy Zheng wrote:
-> This patch adds support for the sun8iw3 thermal sensor on
-> Allwinner A23/33 SoCs.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+The sclk needs to be considered critical as well.
 
-The IP is awfully similar to the A31's, which already has a driver
-(drivers/input/touchscreen/sun4i-ts.c).
+The SPI3 in the tm2/tm2e boards will control an irled for remote
+controlling.
 
-There's no reason to add a new one here.
+Changelog:
+
+V1 -> V2
+ - the "sclk_spi3" doesn't need to be enabled in boot time as it
+  is handled by the spi driver itself.
+
+ - use the CLK_IS_CRITICAL flag for the ioclk
+
+V2 -> V3
+ - some more tests has confirmed taht "sclk_spi1,3" need to be
+   enabled as critical!
+
+ - added Chanwoo's review in the second commit.
 
 Thanks,
-Maxime
+Andi
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Andi Shyti (2):
+  clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI clocks
+  clk: exynos5433: enable sclk_ioclk for SPI3
 
---2qXFWqzzG3v1+95a
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/clk/samsung/clk-exynos5433.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXcmOgAAoJEBx+YmzsjxAgCloP/RDSvYyA518FR5v7//CArHXA
-lnT7ifb8uLBI1mCT+zGOOcjf21yY4R7Jms+OEhqMAMfhk/LLuFcK6naK6pCRBbdc
-7c9uIjcYlDyQCuUWEae5pUJLpHV1oLydZ6oLKh+nQ6YRBgV5r//7z7utP4Efap11
-TzHwe6P9OLYkqLcRt5m8ofHF+jeSMXmaCPiEgPeVJvaBuSi4bIc1rBXPQypri8Y0
-tcbvktoVsbjJ9WVLhnk+KZQuR9O28bc0Mb6iscUEX1CV89T1O+zOCj+WE5xkc/cD
-xjXL9L+wUdRx6KuH1x4F9kMi0fbmAg78vdXfRbf0SDfTCxPCt6xDZOhhOnO23MwQ
-nr4Te9lMZUAjAHo+r4qxeLWCg5RORE10BfpGLgOMRRaESKqBZIgN36XoSK3aF/2D
-nVpxgOBISlH0eFkAsQSMlIucFKWMj2vm0YpRL1FW51o7/fc0dzWGMSxN17xSmyhV
-8I46kFehqH4rcYAJBnmt7ByhXC7JQOKzv5lnEgK1lpc9DLqVJdZyimOQNUkSdF6b
-uYOnL6wPvCX1RkuIPq2j9R6wV/00jQrGT5m2kFnuyGhogX/0fV3/imdHISKDXCjU
-g3osaLOxk4KMpzDEViU//5ykTi8M7943zNIXboVJxUAM5l4J72LZH1ERz8NnyP1F
-MJl9wkGzjOx/h92stazQ
-=wERd
------END PGP SIGNATURE-----
-
---2qXFWqzzG3v1+95a--
+-- 
+2.8.1
