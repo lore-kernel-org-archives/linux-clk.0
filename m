@@ -1,57 +1,90 @@
-Return-Path: <tomasz.figa@gmail.com>
+Return-Path: <scott.wood@nxp.com>
+From: Scott Wood <scott.wood@nxp.com>
+To: Yuantian Tang <yuantian.tang@nxp.com>, "Rafael J. Wysocki"
+	<rjw@rjwysocki.net>
+CC: Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li
+	<leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood
+	<scottwood@freescale.com>
+Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+ parent clocks
+Date: Thu, 30 Jun 2016 05:46:42 +0000
+Message-ID: <DB5PR0401MB1928B6A4F1049592292D348C91240@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+ <2091721.Cm4CVR1ptK@vostro.rjw.lan>
+ <DBXPR04MB4958B5147DAA4F05BED4884F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
+ <2040199.AxgevOCPID@vostro.rjw.lan>
+ <DBXPR04MB4951CA4EFB4FB5A2BDE7542F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
-References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com> <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Sat, 18 Jun 2016 23:57:30 +0900
-Message-ID: <CA+Ln22GZu9GEyCzkywkeQz8v-dq5cpVkeGRxk15spUo=JqvgTA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: samsung: exynos5433: add CPU clocks
- configuration data and instantiate CPU clocks
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bart,
-
-2016-05-24 22:19 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
-> Add the CPU clocks configuration data and instantiate the CPU clocks
-> type for Exynos5433.
->
-> Cc: Kukjin Kim <kgene@kernel.org>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 72 ++++++++++++++++++++++++++++++++----
->  1 file changed, 64 insertions(+), 8 deletions(-)
-
-Please see my comments inline.
-
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 6dd81ed..9ff6160 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-[snip]
->  static void __init exynos5433_cmu_apollo_init(struct device_node *np)
-> @@ -3620,6 +3640,12 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
->                                  ARRAY_SIZE(apollo_div_clks));
->         samsung_clk_register_gate(ctx, apollo_gate_clks,
->                                   ARRAY_SIZE(apollo_gate_clks));
-> +
-> +       exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
-> +               mout_apollo_p[0], mout_apollo_p[1], 0x200,
-> +               exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
-> +               CLK_CPU_HAS_E5433_REGS_LAYOUT);
-
-Hmm, I guess the reason for patch 1/3 was that
-exynos_register_cpu_clock() has to be called with the ctx pointer.
-However samsung_cmu_register_one() returns the ctx pointer, so I guess
-you could use that to avoid open-coding?
-
-Best regards,
-Tomasz
+On 06/29/2016 10:02 PM, Yuantian Tang wrote:=0A=
+>> -----Original Message-----=0A=
+>> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]=0A=
+>> Sent: Thursday, June 30, 2016 10:24 AM=0A=
+>> To: Yuantian Tang <yuantian.tang@nxp.com>=0A=
+>> Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.org.uk>;=
+=0A=
+>> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd=0A=
+>> <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>; linux-=
+=0A=
+>> clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-=0A=
+>> dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng Ren=0A=
+>> <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>=0A=
+>> Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possi=
+ble=0A=
+>> parent clocks=0A=
+>>=0A=
+>> On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:=0A=
+>>>> -----Original Message-----=0A=
+>>>> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]=0A=
+>>>> Sent: Thursday, June 30, 2016 9:47 AM=0A=
+>>>> To: Yuantian Tang <yuantian.tang@nxp.com>=0A=
+>>>> Cc: Scott Wood <oss@buserror.net>; Russell King=0A=
+>>>> <linux@armlinux.org.uk>; Michael Turquette=0A=
+>>>> <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>;=0A=
+>>>> Viresh Kumar <viresh.kumar@linaro.org>; linux- clk@vger.kernel.org;=0A=
+>>>> linux-pm@vger.kernel.org; linuxppc- dev@lists.ozlabs.org; Yang-Leo=0A=
+>>>> Li <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>; Scott=0A=
+>>>> Wood <scottwood@freescale.com>=0A=
+>>>> Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering=0A=
+>>>> possible parent clocks=0A=
+>>>>=0A=
+>>>> On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:=0A=
+>>>>> Hi,=0A=
+>>>>>=0A=
+>>>>> This patch is acked by clock maintainer. If no comments from=0A=
+>>>>> anyone else,=0A=
+>>>> we will merge it in next week.=0A=
+>>>>=0A=
+>>>> There is a cpufreq commit depending on it.  Are you going to handle=0A=
+>>>> that one too?=0A=
+>>>>=0A=
+>>> That one has been acked by cpufreq maintainer. You can get this from=0A=
+>> patch comments.=0A=
+>>=0A=
+>> I know that it has been ACKed.=0A=
+>>=0A=
+>> My question is whether or not you are going to apply it along the [1/2].=
+=0A=
+>>=0A=
+>> If not, it will have to be deferred until the [1/2] is merged and then a=
+pplied=0A=
+>> which may not be desirable.=0A=
+>>=0A=
+> I hope we can apply both at same time. Seems Scott has a few concerns.=0A=
+> =0A=
+> What you think about this patch? Can you apply it?=0A=
+> If you have applied this patch, then I can push CPUfreq maintainer to app=
+ly another one which will be delayed.=0A=
+=0A=
+My only concern was getting an ack for this patch (1/2) -- did I miss it=0A=
+somewhere?=0A=
+=0A=
+-Scott=0A=
+=0A=
