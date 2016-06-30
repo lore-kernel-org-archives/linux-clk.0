@@ -1,353 +1,164 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 05/14] clk: sunxi-ng: Add mux clock support
-Date: Wed, 29 Jun 2016 21:05:26 +0200
-Message-Id: <20160629190535.11855-6-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+Return-Path: <mark.rutland@arm.com>
+Date: Thu, 30 Jun 2016 15:21:36 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Julien Grall <julien.grall@arm.com>, devicetree@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+Message-ID: <20160630142136.GE20363@leverpostej>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks in the Allwinner SoCs clocks unit are just muxes.
+On Thu, Jun 30, 2016 at 12:32:32PM +0200, Dirk Behme wrote:
+> Some clocks might be used by the Xen hypervisor and not by the Linux
+> kernel. If these are not registered by the Linux kernel, they might be
+> disabled by clk_disable_unused() as the kernel doesn't know that they
+> are used. The clock of the serial console handled by Xen is one
+> example for this. It might be disabled by clk_disable_unused() which
+> stops the whole serial output, even from Xen, then.
+> 
+> Up to now, the workaround for this has been to use the Linux kernel
+> command line parameter 'clk_ignore_unused'. See Xen bug
+> 
+> http://bugs.xenproject.org/xen/bug/45
+> 
+> too.
+> 
+> To fix this, we will add the "unused" clocks in Xen to the hypervisor
+> node. The Linux kernel has to register the clocks from the hypervisor
+> node, then.
+> 
+> Therefore, check if there is a "clocks" entry in the hypervisor node
+> and if so register the given clocks to the Linux kernel clock
+> framework and with this mark them as used. This prevents the clocks
+> from being disabled.
+> 
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+> Changes in v2:
+>  - Rebase against git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.8
+>  - Add changes to Documentation/devicetree/bindings/arm/xen.txt
+> 
+>  Documentation/devicetree/bindings/arm/xen.txt | 11 +++++++
+>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+>  2 files changed, 58 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+> index c9b9321..55dfd3b 100644
+> --- a/Documentation/devicetree/bindings/arm/xen.txt
+> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> @@ -17,6 +17,17 @@ the following properties:
+>    A GIC node is also required.
+>    This property is unnecessary when booting Dom0 using ACPI.
+>  
+> +Optional properties:
+> +
+> +- clocks: one or more clocks to be registered.
+> +  Xen hypervisor drivers might replace native drivers, resulting in
+> +  clocks not registered by these native drivers. To avoid that these
+> +  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
+> +  register them in the hypervisor node.
+> +  An example for this are the clocks of the serial driver. If the clocks
+> +  used by the serial hardware interface are not registered by the serial
+> +  driver the serial output might stop once clk_disable_unused() is called.
 
-However, those muxes might also be found in some other complicated clocks
-that would benefit from the code in there to deal with "advanced" features,
-like pre-dividers.
+This shouldn't be described in terms of the Linux implementation details
+like clk_disable_unused. Those can change at any time, and don't define
+the contract as such.
 
-Introduce a set of helpers to reduce the code duplication in such cases.
+What exactly is the contract here? I assume that you don't want the
+kernel to alter the state of these clocks in any way, e.g. the rate
+cannot be changed, they must be left always on, parent clocks cannot be
+altered if that would result in momentary jitter.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Kconfig   |   3 +
- drivers/clk/sunxi-ng/Makefile  |   1 +
- drivers/clk/sunxi-ng/ccu_mux.c | 187 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_mux.h |  91 ++++++++++++++++++++
- 4 files changed, 282 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_mux.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_mux.h
+I suspect it may be necessary to do more to ensure that, but I'm not
+familiar enough with the clocks subsystem to say.
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 2f135c8a61b6..4699a602e0c1 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -12,4 +12,7 @@ config SUNXI_CCU_FRAC
- config SUNXI_CCU_GATE
- 	bool
- 
-+config SUNXI_CCU_MUX
-+	bool
-+
- endif
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 48b885f2d8ff..eaa833721245 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -5,3 +5,4 @@ obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
- # Base clock types
- obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
- obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
-+obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-new file mode 100644
-index 000000000000..58fc36e7dcce
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -0,0 +1,187 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_mux.h"
-+
-+void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
-+					     struct ccu_mux_internal *cm,
-+					     int parent_index,
-+					     unsigned long *parent_rate)
-+{
-+	u8 prediv = 1;
-+	u32 reg;
-+
-+	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
-+	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
-+		return;
-+
-+	reg = readl(common->base + common->reg);
-+	if (parent_index < 0) {
-+		parent_index = reg >> cm->shift;
-+		parent_index &= (1 << cm->width) - 1;
-+	}
-+
-+	if (common->features & CCU_FEATURE_FIXED_PREDIV)
-+		if (parent_index == cm->fixed_prediv.index)
-+			prediv = cm->fixed_prediv.div;
-+
-+	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
-+		if (parent_index == cm->variable_prediv.index) {
-+			u8 div;
-+
-+			div = reg >> cm->variable_prediv.shift;
-+			div &= (1 << cm->variable_prediv.width) - 1;
-+			prediv = div + 1;
-+		}
-+
-+	*parent_rate = *parent_rate / prediv;
-+}
-+
-+int ccu_mux_helper_determine_rate(struct ccu_common *common,
-+				  struct ccu_mux_internal *cm,
-+				  struct clk_rate_request *req,
-+				  unsigned long (*round)(struct ccu_mux_internal *,
-+							 unsigned long,
-+							 unsigned long,
-+							 void *),
-+				  void *data)
-+{
-+	unsigned long best_parent_rate = 0, best_rate = 0;
-+	struct clk_hw *best_parent, *hw = &common->hw;
-+	unsigned int i;
-+
-+	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-+		unsigned long tmp_rate, parent_rate;
-+		struct clk_hw *parent;
-+
-+		parent = clk_hw_get_parent_by_index(hw, i);
-+		if (!parent)
-+			continue;
-+
-+		parent_rate = clk_hw_get_rate(parent);
-+		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
-+							&parent_rate);
-+
-+		tmp_rate = round(cm, clk_hw_get_rate(parent), req->rate, data);
-+		if (tmp_rate == req->rate) {
-+			best_parent = parent;
-+			best_parent_rate = parent_rate;
-+			best_rate = tmp_rate;
-+			goto out;
-+		}
-+
-+		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
-+			best_rate = tmp_rate;
-+			best_parent_rate = parent_rate;
-+			best_parent = parent;
-+		}
-+	}
-+
-+	if (best_rate == 0)
-+		return -EINVAL;
-+
-+out:
-+	req->best_parent_hw = best_parent;
-+	req->best_parent_rate = best_parent_rate;
-+	req->rate = best_rate;
-+	return 0;
-+}
-+
-+u8 ccu_mux_helper_get_parent(struct ccu_common *common,
-+			     struct ccu_mux_internal *cm)
-+{
-+	u32 reg;
-+	u8 parent;
-+
-+	reg = readl(common->base + common->reg);
-+	parent = reg >> cm->shift;
-+	parent &= (1 << cm->width) - 1;
-+
-+	return parent;
-+}
-+
-+int ccu_mux_helper_set_parent(struct ccu_common *common,
-+			      struct ccu_mux_internal *cm,
-+			      u8 index)
-+{
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	reg = readl(common->base + common->reg);
-+	reg &= ~GENMASK(cm->width + cm->shift - 1, cm->shift);
-+	writel(reg | (index << cm->shift), common->base + common->reg);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void ccu_mux_disable(struct clk_hw *hw)
-+{
-+	struct ccu_mux *cm = hw_to_ccu_mux(hw);
-+
-+	return ccu_gate_helper_disable(&cm->common, cm->enable);
-+}
-+
-+static int ccu_mux_enable(struct clk_hw *hw)
-+{
-+	struct ccu_mux *cm = hw_to_ccu_mux(hw);
-+
-+	return ccu_gate_helper_enable(&cm->common, cm->enable);
-+}
-+
-+static int ccu_mux_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_mux *cm = hw_to_ccu_mux(hw);
-+
-+	return ccu_gate_helper_is_enabled(&cm->common, cm->enable);
-+}
-+
-+static u8 ccu_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_mux *cm = hw_to_ccu_mux(hw);
-+
-+	return ccu_mux_helper_get_parent(&cm->common, &cm->mux);
-+}
-+
-+static int ccu_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_mux *cm = hw_to_ccu_mux(hw);
-+
-+	return ccu_mux_helper_set_parent(&cm->common, &cm->mux, index);
-+}
-+
-+static unsigned long ccu_mux_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct ccu_mux *cm = hw_to_ccu_mux(hw);
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
-+						&parent_rate);
-+
-+	return parent_rate;
-+}
-+
-+const struct clk_ops ccu_mux_ops = {
-+	.disable	= ccu_mux_disable,
-+	.enable		= ccu_mux_enable,
-+	.is_enabled	= ccu_mux_is_enabled,
-+
-+	.get_parent	= ccu_mux_get_parent,
-+	.set_parent	= ccu_mux_set_parent,
-+
-+	.determine_rate	= __clk_mux_determine_rate,
-+	.recalc_rate	= ccu_mux_recalc_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-new file mode 100644
-index 000000000000..945082631e7d
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -0,0 +1,91 @@
-+#ifndef _CCU_MUX_H_
-+#define _CCU_MUX_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_common.h"
-+
-+struct ccu_mux_internal {
-+	u8	shift;
-+	u8	width;
-+
-+	struct {
-+		u8	index;
-+		u8	div;
-+	} fixed_prediv;
-+
-+	struct {
-+		u8	index;
-+		u8	shift;
-+		u8	width;
-+	} variable_prediv;
-+};
-+
-+#define SUNXI_CLK_MUX(_shift, _width)	\
-+	{					\
-+		.shift	= _shift,		\
-+		.width	= _width,		\
-+	}
-+
-+struct ccu_mux {
-+	u16			reg;
-+	u32			enable;
-+
-+	struct ccu_mux_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
-+	struct ccu_mux _struct = {					\
-+		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+							      _parents, \
-+							      &ccu_mux_ops, \
-+							      _flags),	\
-+		}							\
-+	}
-+
-+#define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
-+				_shift, _width, _gate, _flags)		\
-+	struct ccu_mux _struct = {					\
-+		.enable	= _gate,					\
-+		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+							      _parents, \
-+							      &ccu_mux_ops, \
-+							      _flags),	\
-+		}							\
-+	}
-+
-+static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_mux, common);
-+}
-+
-+extern const struct clk_ops ccu_mux_ops;
-+
-+void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
-+					     struct ccu_mux_internal *cm,
-+					     int parent_index,
-+					     unsigned long *parent_rate);
-+int ccu_mux_helper_determine_rate(struct ccu_common *common,
-+				  struct ccu_mux_internal *cm,
-+				  struct clk_rate_request *req,
-+				  unsigned long (*round)(struct ccu_mux_internal *,
-+							 unsigned long,
-+							 unsigned long,
-+							 void *),
-+				  void *data);
-+u8 ccu_mux_helper_get_parent(struct ccu_common *common,
-+			     struct ccu_mux_internal *cm);
-+int ccu_mux_helper_set_parent(struct ccu_common *common,
-+			      struct ccu_mux_internal *cm,
-+			      u8 index);
-+
-+#endif /* _CCU_MUX_H_ */
--- 
-2.9.0
+Are we likely to need to care about regulators, GPIOs, resets, etc? I
+worry that this may be the tip of hte iceberg, and we might need a
+better way of catering for the general case of resources Xen wants to
+own.
+
+Thanks,
+Mark.
+
+> +
+>  To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
+>  under /hypervisor with following parameters:
+>  
+> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+> index 47acb36..5c546d0 100644
+> --- a/arch/arm/xen/enlighten.c
+> +++ b/arch/arm/xen/enlighten.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/of_fdt.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/of_address.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/cpuidle.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpu.h>
+> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+>  }
+>  late_initcall(xen_pm_init);
+>  
+> +/*
+> + * Check if we want to register some clocks, that they
+> + * are not freed because unused by clk_disable_unused().
+> + * E.g. the serial console clock.
+> + */
+> +static int __init xen_arm_register_clks(void)
+> +{
+> +	struct clk *clk;
+> +	struct device_node *xen_node;
+> +	unsigned int i, count;
+> +	int ret = 0;
+> +
+> +	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+> +	if (!xen_node) {
+> +		pr_err("Xen support was detected before, but it has disappeared\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	count = of_clk_get_parent_count(xen_node);
+> +	if (!count)
+> +		goto out;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		clk = of_clk_get(xen_node, i);
+> +		if (IS_ERR(clk)) {
+> +			pr_err("Xen failed to register clock %i. Error: %li\n",
+> +			       i, PTR_ERR(clk));
+> +			ret = PTR_ERR(clk);
+> +			goto out;
+> +		}
+> +
+> +		ret = clk_prepare_enable(clk);
+> +		if (ret < 0) {
+> +			pr_err("Xen failed to enable clock %i. Error: %i\n",
+> +			       i, ret);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	ret = 0;
+> +
+> +out:
+> +	of_node_put(xen_node);
+> +	return ret;
+> +}
+> +late_initcall(xen_arm_register_clks);
+>  
+>  /* empty stubs */
+>  void xen_arch_pre_suspend(void) { }
+> -- 
+> 2.8.0
+> 
