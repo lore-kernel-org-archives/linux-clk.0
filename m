@@ -1,155 +1,87 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH 4/4] drm/rockchip: Add dmc notifier in vop driver
-Date: Wed,  1 Jun 2016 17:35:39 +0800
-Message-Id: <1464773739-18152-5-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
-References: <1464773739-18152-1-git-send-email-hl@rock-chips.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 0/8] clk: core: support clocks which requires parents enable
+Date: Thu, 30 Jun 2016 17:31:10 +0800
+Message-ID: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-when in ddr frequency scaling process, vop can not do
-enable or disable operate, since dcf will base on vop vblank
-time to do frequency scaling and need to get vop irq if there
-have vop enabled. So need register to dmc notifier, and we can
-get the dmc status.
+This patch series adds support in clock framework for clocks which all the
+operations like gate/ungate, set_rate, set_parent must require its parent
+clock on.
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 51 +++++++++++++++++++++++++++--
- 1 file changed, 49 insertions(+), 2 deletions(-)
+This special HW requirement can be found on Freescale i.MX7D platform.
+Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
+(see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
+And there may be other SoCs in the same situation.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 1c4d5b5..7ee0cd0 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -31,6 +31,8 @@
- #include <linux/reset.h>
- #include <linux/delay.h>
- 
-+#include <soc/rockchip/rockchip_dmc.h>
-+
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_gem.h"
- #include "rockchip_drm_fb.h"
-@@ -116,6 +118,9 @@ struct vop {
- 
- 	const struct vop_data *data;
- 
-+	struct notifier_block dmc_nb;
-+	int dmc_in_process;
-+
- 	uint32_t *regsbak;
- 	void __iomem *regs;
- 
-@@ -426,14 +431,41 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
- 	spin_unlock_irqrestore(&vop->irq_lock, flags);
- }
- 
-+static int dmc_notify(struct notifier_block *nb, unsigned long event,
-+		      void *data)
-+{
-+	struct vop *vop = container_of(nb, struct vop, dmc_nb);
-+
-+	if (event == DMCFREQ_ADJUST)
-+		vop->dmc_in_process = 1;
-+	else if (event == DMCFREQ_FINISH)
-+		vop->dmc_in_process = 0;
-+
-+	return NOTIFY_OK;
-+}
-+
- static void vop_enable(struct drm_crtc *crtc)
- {
- 	struct vop *vop = to_vop(crtc);
- 	int ret;
-+	int timeout_count = 500;
-+	int timeout_loop = 0;
- 
- 	if (vop->is_enabled)
- 		return;
- 
-+	/*
-+	 * if in dmc scaling frequency process, wait until it finish
-+	 * use 100ms as timeout time.
-+	 */
-+	while (timeout_loop < timeout_count) {
-+		if (vop->dmc_in_process == 0)
-+			break;
-+
-+		timeout_loop++;
-+		usleep_range(150, 200);
-+	}
-+
- 	ret = pm_runtime_get_sync(vop->dev);
- 	if (ret < 0) {
- 		dev_err(vop->dev, "failed to get pm runtime: %d\n", ret);
-@@ -485,6 +517,7 @@ static void vop_enable(struct drm_crtc *crtc)
- 	enable_irq(vop->irq);
- 
- 	drm_crtc_vblank_on(crtc);
-+	rockchip_dmc_get(&vop->dmc_nb);
- 
- 	return;
- 
-@@ -500,11 +533,25 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
- {
- 	struct vop *vop = to_vop(crtc);
- 	int i;
-+	int timeout_count = 500;
-+	int timeout_loop = 0;
- 
- 	if (!vop->is_enabled)
- 		return;
- 
- 	/*
-+	 * if in dmc scaling frequency process, wait until it finish
-+	 * use 100ms as timeout time.
-+	 */
-+	while (timeout_loop < timeout_count) {
-+		if (vop->dmc_in_process == 0)
-+			break;
-+
-+		timeout_loop++;
-+		usleep_range(150, 200);
-+	}
-+
-+	/*
- 	 * We need to make sure that all windows are disabled before we
- 	 * disable that crtc. Otherwise we might try to scan from a destroyed
- 	 * buffer later.
-@@ -517,7 +564,7 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
- 		VOP_WIN_SET(vop, win, enable, 0);
- 		spin_unlock(&vop->reg_lock);
- 	}
--
-+	rockchip_dmc_put(&vop->dmc_nb);
- 	drm_crtc_vblank_off(crtc);
- 
- 	/*
-@@ -1243,7 +1290,7 @@ static int vop_create_crtc(struct vop *vop)
- 		ret = -ENOENT;
- 		goto err_cleanup_crtc;
- 	}
--
-+	vop->dmc_nb.notifier_call = dmc_notify;
- 	init_completion(&vop->dsp_hold_completion);
- 	init_completion(&vop->wait_update_complete);
- 	crtc->port = port;
+Current clock core can not support such type of clock well.
+
+This patch introduce a new flag CLK_SET_PARENT_ENABLE to handle this special
+case in clock core that enable its parent clock firstly for each operation
+and disable it later after operation complete.
+
+There're two special cases for handling this issue:
+
+One is fixing the possible disabling clocks while its parent is already off
+during kernel booting phase in clk_disable_unused_subtree()
+Since this state misalign only happens during booting time,
+so we simply enable the parent clocks before disable it if flag is set.
+For normal clk_disable after kernel booting, there's no such issue
+since the clock tree is already created which makes sure no such issue exist.
+
+Another special case is for set_parent() operation.
+It requires both parent, old one and new one, to be enabled at the same
+time during the operation.
+
+Patch 1~4 does this work.
+
+After clk core supports mx7d type clocks, we don't have to enable all clock
+by default anymore, then we remove the enable of all clocks code and instead
+only enable set of minimum required clocks.
+
+Patch 5~8 does this work.
+
+The whole patch series is based on for-next branch of clock tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+Change log:
+v2-> v3:
+ * fix rebase error
+v1-> v2:
+ * Addressed Mike's comments to make code more clearer
+
+V1:
+https://lkml.org/lkml/2016/4/20/199
+
+The original one can be found at here:
+http://www.spinics.net/lists/arm-kernel/msg435136.html
+It has no functional changes but improve the commit message and
+comments a bit.
+
+Dong Aisheng (8):
+  clk: introduce clk_core_enable_lock and clk_core_disable_lock
+    functions
+  clk: move clk_disable_unused after clk_core_disable_unprepare function
+  clk: core: support clocks which requires parents enable (part 1)
+  clk: core: support clocks which requires parents enable (part 2)
+  clk: imx: re-order and concentrate the same type of clk api
+  clk: imx: add clk api for supporting CLK_OPS_PARENT_ENABLE clocks
+  clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE
+  clk: imx7d: only enable minimum required clocks
+
+ drivers/clk/clk.c            | 332 ++++++++++++--------
+ drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
+ drivers/clk/imx/clk.h        |  90 ++++--
+ include/linux/clk-provider.h |   2 +
+ 4 files changed, 628 insertions(+), 528 deletions(-)
+
 -- 
 1.9.1
