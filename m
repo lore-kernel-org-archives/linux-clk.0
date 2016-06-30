@@ -1,82 +1,61 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	mark.yao@rock-chips.com,
-	myungjoo.ham@samsung.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	airlied@linux.ie,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kyungmin.park@samsung.com,
-	dianders@chromium.org,
-	dbasehore@chromium.org,
-	cw00.choi@samsung.com,
-	Lin Huang <hl@rock-chips.com>
-Subject: [RFC PATCH v2 0/6] rk3399 support ddr frequency scaling
-Date: Mon,  6 Jun 2016 18:13:00 +0800
-Message-Id: <1465207986-17888-1-git-send-email-hl@rock-chips.com>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+ <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+ <20160622122419.GC26943@ulmo.ba.sec>
+ <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
+ <20160628174028.GC1521@codeaurora.org>
+CC: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Stephen Warren
+	<swarren@wwwdotorg.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <9d520158-ecb7-566b-38f6-8ab01a12ff39@nvidia.com>
+Date: Thu, 30 Jun 2016 16:13:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160628174028.GC1521@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-rk3399 platform have dfi controller can monitor ddr load,
-and dcf controller to handle ddr register so we can get the
-right ddr frequency and make ddr controller happy work(which
-will implement in bl31). So we do ddr frequency scaling with
-following flow:
+On 6/28/2016 1:40 PM, Stephen Boyd wrote:
+> On 06/22, Rhyland Klein wrote:
+>> On 6/22/2016 8:24 AM, Thierry Reding wrote:
+>>>
+>>> Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
+>>> omit the second conditional.
+>>>
+>>> I wonder if it might be easier to read if this flag was at the end of
+>>> the line. There's also the fact that someone may have written a script
+>>> that expects the clock name as the first word on the line and may get
+>>> confused by this change. If you put it at the very end of the line the
+>>> likelihood of upsetting scripts will be reduced.
+>>
+>> Yah we can put the mark at the end of the line. I wasn't sure if there
+>> was a strong motivation to avoid extending the the width of each line,
+>> as sometimes people prefer to try to keep it close to 80 char as
+>> possible. I think right now, it was close to that, but might be a little
+>> over already. I can switch to that though, as it is less likely to break
+>> any automatic parsing scripts.
+>>
+> 
+> Nak. clk_summary is about taking a snapshot of the system state
+> for things that may be changing rapidly, like consumers (which
+> sounds fun to add!), rates, enable/prepare state. Flags are not
+> changing. If you want to add flag info into some summary then a
+> script should be able to augment clk_summary info (really should
+> use the clk_dump in this case though) with whatever flags can be
+> read through debugfs already.
+> 
 
-	     kernel                                bl31
+That is fine with me. This was more of something I was using locally to
+verify things and thought it might be useful in some manner upstream.
+However, a script which read the clk_flags from debugfs for each clk
+could do the same thing without changing the summary.
 
-	monitor ddr load
-		|
-		|
-	get_target_rate
-		|
-		|           pass rate to bl31
-	clk_set_rate(ddr) --------------------->run dcf flow
-		|                                   |
-		|                                   |
-	wait dcf interrupt<-------------------trigger dcf interrupt  
-		|
-		|
-	      return
-
-Lin Huang (6):
-  clk: rockchip: add new clock-type for the ddrclk
-  clk: rockchip: rk3399: add SCLK_DDRCLK ID for ddrc
-  clk: rockchip: rk3399: add ddrc clock support
-  PM / devfreq: event: support rockchip dfi controller
-  PM / devfreq: rockchip: add devfreq driver for rk3399 dmc
-  drm/rockchip: Add dmc notifier in vop driver
-
- drivers/clk/rockchip/Makefile               |   1 +
- drivers/clk/rockchip/clk-ddr.c              | 145 ++++++++++++
- drivers/clk/rockchip/clk-rk3399.c           |  18 ++
- drivers/clk/rockchip/clk.c                  |   9 +
- drivers/clk/rockchip/clk.h                  |  27 +++
- drivers/devfreq/Kconfig                     |   1 +
- drivers/devfreq/Makefile                    |   1 +
- drivers/devfreq/event/Kconfig               |   7 +
- drivers/devfreq/event/Makefile              |   1 +
- drivers/devfreq/event/rockchip-dfi.c        | 253 +++++++++++++++++++++
- drivers/devfreq/rockchip/Kconfig            |  15 ++
- drivers/devfreq/rockchip/Makefile           |   2 +
- drivers/devfreq/rockchip/rk3399_dmc.c       | 337 ++++++++++++++++++++++++++++
- drivers/devfreq/rockchip/rockchip_dmc.c     | 143 ++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  43 +++-
- include/dt-bindings/clock/rk3399-cru.h      |   1 +
- include/soc/rockchip/rockchip_dmc.h         |  45 ++++
- 17 files changed, 1047 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/rockchip/clk-ddr.c
- create mode 100644 drivers/devfreq/event/rockchip-dfi.c
- create mode 100644 drivers/devfreq/rockchip/Kconfig
- create mode 100644 drivers/devfreq/rockchip/Makefile
- create mode 100644 drivers/devfreq/rockchip/rk3399_dmc.c
- create mode 100644 drivers/devfreq/rockchip/rockchip_dmc.c
- create mode 100644 include/soc/rockchip/rockchip_dmc.h
+-rhyland
 
 -- 
-1.9.1
+nvpublic
