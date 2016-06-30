@@ -1,38 +1,93 @@
 Return-Path: <t-kristo@ti.com>
 From: Tero Kristo <t-kristo@ti.com>
 To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
 CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCHv2 02/28] clk: ti: dpll: use ti_clk_get to fetch ref/bypass clocks
-Date: Mon, 13 Jun 2016 22:04:36 +0300
-Message-ID: <1465844702-12200-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
+Subject: [PATCHv3 2/7] clk: ti: add clkdev get helper
+Date: Thu, 30 Jun 2016 17:13:33 +0300
+Message-ID: <1467296018-25086-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This allows getting rid of the DT_CLK() aliases under drivers/clk/ti.
+TI clocks can be found based on a simple query against the clock name,
+thus add a clkdev helper functionality for this. Using this new helper
+implementation  allows getting rid of most of the DT_CLK() entries under
+drivers/clk/ti.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/ti/dpll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/ti/clk.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 9fc8754..39ba010 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -220,8 +220,8 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
- 	if (dpll->num_parents < 2)
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 5fcf247..17554c3 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -68,6 +68,36 @@ static u32 clk_memmap_readl(void __iomem *reg)
+ }
  
--	clk_ref = clk_get_sys(NULL, dpll->parents[0]);
--	clk_bypass = clk_get_sys(NULL, dpll->parents[1]);
-+	clk_ref = ti_clk_get(dpll->parents[0]);
-+	clk_bypass = ti_clk_get(dpll->parents[1]);
+ /**
++ * ti_clk_get - lookup a TI clock handle
++ * @dev_id: device to lookup clock for
++ * @con_id: connection ID to find
++ *
++ * Searches for a TI clock handle based on the DT node name.
++ * Returns the pointer to the clock handle, or ERR_PTR in failure.
++ */
++static struct clk *ti_clk_get(const char *dev_id, const char *con_id)
++{
++	struct of_phandle_args clkspec;
++	struct device_node *node;
++	struct clk *clk;
++
++	/* Only check for cases of type clk_get_sys(NULL, "xyz") */
++	if (dev_id || !con_id)
++		return ERR_PTR(-ENOENT);
++
++	if (of_have_populated_dt()) {
++		node = of_find_node_by_name(NULL, con_id);
++		clkspec.np = node;
++		clk = of_clk_get_from_provider(&clkspec);
++
++		if (!IS_ERR(clk))
++			return clk;
++	}
++
++	return ERR_PTR(-ENOENT);
++}
++
++/**
+  * ti_clk_setup_ll_ops - setup low level clock operations
+  * @ops: low level clock ops descriptor
+  *
+@@ -87,6 +117,8 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ 	ops->clk_readl = clk_memmap_readl;
+ 	ops->clk_writel = clk_memmap_writel;
  
- 	if (IS_ERR_OR_NULL(clk_ref) || IS_ERR_OR_NULL(clk_bypass))
- 		return ERR_PTR(-EAGAIN);
++	clkdev_helper_register(ti_clk_get);
++
+ 	return 0;
+ }
+ 
+@@ -102,14 +134,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ {
+ 	struct ti_dt_clk *c;
+-	struct device_node *node;
+ 	struct clk *clk;
+-	struct of_phandle_args clkspec;
+ 
+ 	for (c = oclks; c->node_name != NULL; c++) {
+-		node = of_find_node_by_name(NULL, c->node_name);
+-		clkspec.np = node;
+-		clk = of_clk_get_from_provider(&clkspec);
++		clk = ti_clk_get(NULL, c->node_name);
+ 
+ 		if (!IS_ERR(clk)) {
+ 			c->lk.clk = clk;
 -- 
 1.9.1
