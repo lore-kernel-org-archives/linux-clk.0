@@ -1,78 +1,138 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:33198 "EHLO
-	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752162AbcFAXQE (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2016 19:16:04 -0400
-Received: by mail-pf0-f173.google.com with SMTP id b124so23338636pfb.0
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2016 16:16:04 -0700 (PDT)
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH 27/34] clk: si514: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:26 -0700
-Message-Id: <20160601231533.9354-28-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <Dirk.Behme@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: <linux-arm-kernel@lists.infradead.org>, Julien Grall
+	<julien.grall@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>
+CC: <xen-devel@lists.xenproject.org>, Stefano Stabellini
+	<sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Dirk Behme
+	<dirk.behme@de.bosch.com>
+Subject: [PATCH v2] xen/arm: register clocks used by the hypervisor
+Date: Thu, 30 Jun 2016 12:32:32 +0200
+Message-ID: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Some clocks might be used by the Xen hypervisor and not by the Linux
+kernel. If these are not registered by the Linux kernel, they might be
+disabled by clk_disable_unused() as the kernel doesn't know that they
+are used. The clock of the serial console handled by Xen is one
+example for this. It might be disabled by clk_disable_unused() which
+stops the whole serial output, even from Xen, then.
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Mike Looijmans <mike.looijmans@topic.nl>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Up to now, the workaround for this has been to use the Linux kernel
+command line parameter 'clk_ignore_unused'. See Xen bug
+
+http://bugs.xenproject.org/xen/bug/45
+
+too.
+
+To fix this, we will add the "unused" clocks in Xen to the hypervisor
+node. The Linux kernel has to register the clocks from the hypervisor
+node, then.
+
+Therefore, check if there is a "clocks" entry in the hypervisor node
+and if so register the given clocks to the Linux kernel clock
+framework and with this mark them as used. This prevents the clocks
+from being disabled.
+
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
+Changes in v2:
+ - Rebase against git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.8
+ - Add changes to Documentation/devicetree/bindings/arm/xen.txt
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+ Documentation/devicetree/bindings/arm/xen.txt | 11 +++++++
+ arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+)
 
- drivers/clk/clk-si514.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index ceef25b0990b..09b6718956bd 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -305,7 +305,6 @@ static int si514_probe(struct i2c_client *client,
- {
- 	struct clk_si514 *data;
- 	struct clk_init_data init;
--	struct clk *clk;
- 	int err;
+diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+index c9b9321..55dfd3b 100644
+--- a/Documentation/devicetree/bindings/arm/xen.txt
++++ b/Documentation/devicetree/bindings/arm/xen.txt
+@@ -17,6 +17,17 @@ the following properties:
+   A GIC node is also required.
+   This property is unnecessary when booting Dom0 using ACPI.
  
- 	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-@@ -330,13 +329,13 @@ static int si514_probe(struct i2c_client *client,
++Optional properties:
++
++- clocks: one or more clocks to be registered.
++  Xen hypervisor drivers might replace native drivers, resulting in
++  clocks not registered by these native drivers. To avoid that these
++  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
++  register them in the hypervisor node.
++  An example for this are the clocks of the serial driver. If the clocks
++  used by the serial hardware interface are not registered by the serial
++  driver the serial output might stop once clk_disable_unused() is called.
++
+ To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
+ under /hypervisor with following parameters:
  
- 	i2c_set_clientdata(client, data);
+diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+index 47acb36..5c546d0 100644
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -24,6 +24,7 @@
+ #include <linux/of_fdt.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
++#include <linux/clk-provider.h>
+ #include <linux/cpuidle.h>
+ #include <linux/cpufreq.h>
+ #include <linux/cpu.h>
+@@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+ }
+ late_initcall(xen_pm_init);
  
--	clk = devm_clk_register(&client->dev, &data->hw);
--	if (IS_ERR(clk)) {
-+	err = devm_clk_hw_register(&client->dev, &data->hw);
-+	if (err) {
- 		dev_err(&client->dev, "clock registration failed\n");
--		return PTR_ERR(clk);
-+		return err;
- 	}
--	err = of_clk_add_provider(client->dev.of_node, of_clk_src_simple_get,
--			clk);
-+	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
-+				     &data->hw);
- 	if (err) {
- 		dev_err(&client->dev, "unable to add clk provider\n");
- 		return err;
++/*
++ * Check if we want to register some clocks, that they
++ * are not freed because unused by clk_disable_unused().
++ * E.g. the serial console clock.
++ */
++static int __init xen_arm_register_clks(void)
++{
++	struct clk *clk;
++	struct device_node *xen_node;
++	unsigned int i, count;
++	int ret = 0;
++
++	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
++	if (!xen_node) {
++		pr_err("Xen support was detected before, but it has disappeared\n");
++		return -EINVAL;
++	}
++
++	count = of_clk_get_parent_count(xen_node);
++	if (!count)
++		goto out;
++
++	for (i = 0; i < count; i++) {
++		clk = of_clk_get(xen_node, i);
++		if (IS_ERR(clk)) {
++			pr_err("Xen failed to register clock %i. Error: %li\n",
++			       i, PTR_ERR(clk));
++			ret = PTR_ERR(clk);
++			goto out;
++		}
++
++		ret = clk_prepare_enable(clk);
++		if (ret < 0) {
++			pr_err("Xen failed to enable clock %i. Error: %i\n",
++			       i, ret);
++			goto out;
++		}
++	}
++
++	ret = 0;
++
++out:
++	of_node_put(xen_node);
++	return ret;
++}
++late_initcall(xen_arm_register_clks);
+ 
+ /* empty stubs */
+ void xen_arch_pre_suspend(void) { }
 -- 
-2.7.4
-
+2.8.0
