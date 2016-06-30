@@ -1,46 +1,76 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 5/7] clk: ti: am33xx: fix timer3/6 init time setup for module clocks
-Date: Thu, 30 Jun 2016 17:13:36 +0300
-Message-ID: <1467296018-25086-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
-References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Scott Wood <scott.wood@nxp.com>
+Cc: Yuantian Tang <yuantian.tang@nxp.com>, Scott Wood <oss@buserror.net>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>, Scott Wood <scottwood@freescale.com>
+Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible parent clocks
+Date: Thu, 30 Jun 2016 15:29:06 +0200
+Message-ID: <3794032.AoZL3DhM7U@vostro.rjw.lan>
+In-Reply-To: <DB5PR0401MB1928B6A4F1049592292D348C91240@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net> <DBXPR04MB4951CA4EFB4FB5A2BDE7542F0240@DBXPR04MB495.eurprd04.prod.outlook.com> <DB5PR0401MB1928B6A4F1049592292D348C91240@DB5PR0401MB1928.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-timer*_fck are going to be renamed as timer*_mod_ck:s. Fix the init
-time configuration of timer3/timer6 to take this into account, and
-lookup for the module clock in case the lookup for fck fails.
+On Thursday, June 30, 2016 05:46:42 AM Scott Wood wrote:
+> On 06/29/2016 10:02 PM, Yuantian Tang wrote:
+> >> -----Original Message-----
+> >> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> >> Sent: Thursday, June 30, 2016 10:24 AM
+> >> To: Yuantian Tang <yuantian.tang@nxp.com>
+> >> Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.org.uk>;
+> >> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> >> <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>; linux-
+> >> clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
+> >> dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng Ren
+> >> <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>
+> >> Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+> >> parent clocks
+> >>
+> >> On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:
+> >>>> -----Original Message-----
+> >>>> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> >>>> Sent: Thursday, June 30, 2016 9:47 AM
+> >>>> To: Yuantian Tang <yuantian.tang@nxp.com>
+> >>>> Cc: Scott Wood <oss@buserror.net>; Russell King
+> >>>> <linux@armlinux.org.uk>; Michael Turquette
+> >>>> <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>;
+> >>>> Viresh Kumar <viresh.kumar@linaro.org>; linux- clk@vger.kernel.org;
+> >>>> linux-pm@vger.kernel.org; linuxppc- dev@lists.ozlabs.org; Yang-Leo
+> >>>> Li <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>; Scott
+> >>>> Wood <scottwood@freescale.com>
+> >>>> Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
+> >>>> possible parent clocks
+> >>>>
+> >>>> On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> This patch is acked by clock maintainer. If no comments from
+> >>>>> anyone else,
+> >>>> we will merge it in next week.
+> >>>>
+> >>>> There is a cpufreq commit depending on it.  Are you going to handle
+> >>>> that one too?
+> >>>>
+> >>> That one has been acked by cpufreq maintainer. You can get this from
+> >> patch comments.
+> >>
+> >> I know that it has been ACKed.
+> >>
+> >> My question is whether or not you are going to apply it along the [1/2].
+> >>
+> >> If not, it will have to be deferred until the [1/2] is merged and then applied
+> >> which may not be desirable.
+> >>
+> > I hope we can apply both at same time. Seems Scott has a few concerns.
+> > 
+> > What you think about this patch? Can you apply it?
+> > If you have applied this patch, then I can push CPUfreq maintainer to apply another one which will be delayed.
+> 
+> My only concern was getting an ack for this patch (1/2) -- did I miss it
+> somewhere?
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-33xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+OK, so who's going to apply the series?
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index ef2ec64..c69fed5 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -144,9 +144,15 @@ int __init am33xx_dt_clk_init(void)
- 
- 	clk1 = clk_get_sys(NULL, "sys_clkin_ck");
- 	clk2 = clk_get_sys(NULL, "timer3_fck");
-+	if (IS_ERR(clk2))
-+		clk2 = clk_get_sys(NULL, "timer3_mod_ck");
-+
- 	clk_set_parent(clk2, clk1);
- 
- 	clk2 = clk_get_sys(NULL, "timer6_fck");
-+	if (IS_ERR(clk2))
-+		clk2 = clk_get_sys(NULL, "timer6_mod_ck");
-+
- 	clk_set_parent(clk2, clk1);
- 	/*
- 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
--- 
-1.9.1
+Thanks,
+Rafael
