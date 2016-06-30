@@ -1,51 +1,93 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 28 Jun 2016 16:28:27 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX clock update for 4.8
-Message-ID: <20160628082827.GG21328@tiger>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 6/7] dt-bindings: clk: ti: Document module clock type
+Date: Thu, 30 Jun 2016 17:13:37 +0300
+Message-ID: <1467296018-25086-7-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+Document the new TI module clock type, which is intended to replace the
+internal clock control handling within omap_hwmod. Module clock is
+effectively a gate clock controlling both interface and functional
+clocks for a single hardware IP block.
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ .../devicetree/bindings/clock/ti/module.txt        | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/module.txt
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.8
-
-for you to fetch changes up to bfa10f7d9ae2a6d1e615bf6841887fd9adb056be:
-
-  clk: imx6ul: fix gpt2 clock names (2016-06-16 09:05:55 +0800)
-
-----------------------------------------------------------------
-The i.MX clock updates for 4.8:
- - A few correction and improvements on pllv3 driver around AV pll clock
-   rate calculation, parent setting and power bit handling
- - Correct i.MX6UL GPT2 clock names
- - A couple of minor fixes on i.MX7D clock driver on DRAM clocks
-
-----------------------------------------------------------------
-Anson Huang (3):
-      clk: imx: correct AV PLL rate formula
-      clk: imx7d: correct dram root clk parent select
-      clk: imx7d: correct dram pll type
-
-Dong Aisheng (4):
-      clk: imx: fix pll clock parents
-      clk: imx: clk-pllv3: fix incorrect handle of enet powerdown bit
-      clk: imx: refine the powerdown bit of clk-pllv3
-      clk: imx6ul: fix gpt2 clock names
-
- drivers/clk/imx/clk-imx6q.c  | 14 +++++++-------
- drivers/clk/imx/clk-imx6sl.c | 14 +++++++-------
- drivers/clk/imx/clk-imx6sx.c | 14 +++++++-------
- drivers/clk/imx/clk-imx6ul.c | 18 +++++++++---------
- drivers/clk/imx/clk-imx7d.c  | 14 +++++++-------
- drivers/clk/imx/clk-pllv3.c  | 28 ++++++++++++++++------------
- 6 files changed, 53 insertions(+), 49 deletions(-)
+diff --git a/Documentation/devicetree/bindings/clock/ti/module.txt b/Documentation/devicetree/bindings/clock/ti/module.txt
+new file mode 100644
+index 0000000..0329667
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/module.txt
+@@ -0,0 +1,59 @@
++Binding for Texas Instruments module clock.
++
++Binding status: Unstable - ABI compatibility may be broken in the future
++
++This binding uses the common clock binding[1]. This clock is
++quite much similar to the basic gate-clock [2], however, internally
++it controls an OMAP module clock, which effectively handles
++both interface and functional clocks for a single module. In some
++cases, support for mux clock [3] is composited to the same clock node,
++currently only needed for proper support of timer module clocks.
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++[2] Documentation/devicetree/bindings/clock/ti/gate.txt
++[3] Documentation/devicetree/bindings/clock/ti/mux.txt
++
++Required properties:
++- compatible : shall be one of:
++  "ti,omap4-mod-clock" - basic module clock, no gating supported
++  "ti,omap4-hw-mod-clock" - module clock with hardware gating support
++  "ti,omap4-sw-mod-clock" - module clock with software forced gating support
++  "ti,omap4-sw-no-idlest-mod-clock" - module clock with software forced gating
++				      support, misses idlest
++  "ti,omap4-mux-mod-clock" - composite clock with mux and module clocks, no
++			     gating supported
++  "ti,omap4-hw-mux-mod-clock" - composite clock with mux and module clocks,
++				with hardware gating
++  "ti,omap4-sw-mux-mod-clock" - composite clock with mux and module clocks,
++				with software forced gating
++
++- #clock-cells : from common clock binding; shall be set to 0
++- clocks : link to phandle of parent clock(s)
++- reg : offset for register controlling adjustable gate and optional mux
++
++Optional properties:
++- ti,bit-shift : bit shift for programming the clock mux, only needed for
++		 the nodes of the mux variant
++
++Examples:
++	timer6_mod_ck: timer6_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mux-mod-clock";
++		reg = <0x0570>;
++		clocks = <&syc_clk_div_ck>, <&sys_32k_ck>;
++		ti,bit-shift = <24>;
++	};
++
++	i2c1_mod_ck: i2c1_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-sw-mod-clock";
++		reg = <0x14a0>;
++		clocks = <&func_96m_fclk>;
++	};
++
++	hsi_mod_ck: hsi_mod_ck {
++		#clock-cells = <0>;
++		compatible = "ti,omap4-hw-mod-clock";
++		reg = <0x1338>;
++		clocks = <&hsi_fck>;
++	};
+-- 
+1.9.1
