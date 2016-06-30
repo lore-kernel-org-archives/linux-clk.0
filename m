@@ -1,105 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.phycore.de ([217.6.246.34]:34500 "EHLO root.phytec.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964788AbcFMHsX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 13 Jun 2016 03:48:23 -0400
-From: Wadim Egorov <w.egorov@phytec.de>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, a.zummo@towertech.it,
-	alexandre.belloni@free-electrons.com, dianders@chromium.org,
-	zyw@rock-chips.com
-Subject: [PATCH v6 3/5] mfd: dt-bindings: Add RK818 device tree bindings document
-Date: Mon, 13 Jun 2016 09:46:27 +0200
-Message-Id: <1465803989-33632-3-git-send-email-w.egorov@phytec.de>
-In-Reply-To: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
-References: <1465803989-33632-1-git-send-email-w.egorov@phytec.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <andi.shyti@samsung.com>
+Date: Thu, 30 Jun 2016 16:18:02 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v2 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Message-id: <20160630071802.GB10787@samsunx.samsung>
+References: 
+ <CGME20160627130341epcas1p23c482f5fb9e637dcda579cb874701589@epcas1p2.samsung.com>
+ <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings documentation for Rockchip's RK818 PMIC.
+Hi,
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-Changes since v5:
-- Added Acked-by from Lee Jones
----
- Documentation/devicetree/bindings/mfd/rk808.txt | 37 +++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 3 deletions(-)
+On Mon, Jun 27, 2016 at 10:03:13PM +0900, Andi Shyti wrote:
+> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+> Use the CLK_IS_CRITICAL flag instead, which enables the clock line
+> during boot time.
+> 
+> While none of the SCLK_SPI need to be alive all the time as that
+> clock is handled by the SPI driver as a busclk whenever needed.
+> 
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 4ca6aab..9636ae8 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -1,7 +1,11 @@
--RK808 Power Management Integrated Circuit
-+RK8XX Power Management Integrated Circuit
-+
-+The rk8xx family current members:
-+rk808
-+rk818
- 
- Required properties:
--- compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk808", "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
- - interrupts: the interrupt outputs of the controller.
-@@ -13,6 +17,8 @@ Optional properties:
-   default output clock name
- - rockchip,system-power-controller: Telling whether or not this pmic is controlling
-   the system power.
-+
-+Optional RK808 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
- - vcc3-supply:  The input supply for DCDC_REG3
-@@ -29,7 +35,20 @@ Optional properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
--Regulators: All the regulators of RK808 to be instantiated shall be
-+Optional RK818 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- boost-supply: The input supply for DCDC_BOOST
-+- vcc6-supply:  The input supply for LDO_REG1 and LDO_REG2
-+- vcc7-supply:  The input supply for LDO_REG3, LDO_REG5 and LDO_REG7
-+- vcc8-supply:  The input supply for LDO_REG4, LDO_REG6 and LDO_REG8
-+- vcc9-supply:  The input supply for LDO_REG9 and SWITCH_REG
-+- h_5v-supply:  The input supply for HDMI_SWITCH
-+- usb-supply:   The input supply for OTG_SWITCH
-+
-+Regulators: All the regulators of RK8XX to be instantiated shall be
- listed in a child node named 'regulators'. Each regulator is represented
- by a child node of the 'regulators' node.
- 
-@@ -48,6 +67,18 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK818 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK818 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 4.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- SWITCH_REG
-+	- HDMI_SWITCH
-+	- OTG_SWITCH
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
--- 
-1.9.1
+sorry for spamming, please ignore this patch, some more testing
+has shown that if the SCLK_SPI1 is not kept alive, the device not
+always works.
 
+Thanks and sorry again,
+Andi
