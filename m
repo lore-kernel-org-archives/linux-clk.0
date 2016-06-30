@@ -1,76 +1,133 @@
-Return-Path: <vz@mleia.com>
-Subject: Re: [PATCH] clk: lpc32xx: allow peripheral clock selection in device
- tree
-To: Sylvain Lemieux <slemieux.tyco@gmail.com>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1464982475-24738-1-git-send-email-slemieux.tyco@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <f8778993-a393-f72a-ba76-76550a9c5bbd@mleia.com>
-Date: Tue, 21 Jun 2016 07:28:58 +0300
-MIME-Version: 1.0
-In-Reply-To: <1464982475-24738-1-git-send-email-slemieux.tyco@gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	rtc-linux@googlegroups.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/7] mfd: ac100: Add support for X-Powers AC100 audio codec / RTC combo IC
+Date: Thu, 30 Jun 2016 23:58:44 +0800
+Message-Id: <1467302331-9663-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylvain,
+Hi everyone,
 
-On 03.06.2016 22:34, Sylvain Lemieux wrote:
-> From: Sylvain Lemieux <slemieux@tycoint.com>
-> 
-> This patch add the support to select the peripheral clock (PERIPH)
-> as a parent clock source using the "assigned-clock-parents"
-> parameter in the device tree.
-> 
-> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+This series adds support for X-Powers' AC100 audio codec / RTC combo IC.
+This chip is found on Allwinner A80 SoC based boards, and is also part
+of the AXP813/AXP818 PMIC found with Allwinner A83T SoCs.
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+The series focuses on the RTC side of the chip. The audio codec will
+be done later, once the digital audio interface of the SoC is supported.
 
-The change looks good, is it done to support a selection of PWM parent clocks?
+Changes since v3:
 
-I think it makes sense to set PERIPH clock as a default parent for both
-PWM controllers, please consider to send a DTS change.
+  - bulk write support for regmaps without raw formatting patch merged
+    and thus dropped from series.
+
+  - sun9i device node re-ordering patches merged and thus dropped from
+    series.
+
+  - Fixed device node name and added labels to device tree binding example.
+
+  - Moved 4M_adda clock to codec side, and added clock bindings to codec
+    node.
+
+  - Rename RTC clock output related prefixes from clk32k to clkout.
+
+  - Rename default clock output names to cko{1,2,3}-rtc.
+
+  - Move struct tm to/from RTC conversion offsets inline with reg[]
+    assignments
+
+  - Drop separate mutex and use rtc->ops_lock in interrupt handler.
+
+  - Use platform_get_irq instead of of_get_irq.
+
+  - Add struct of_device_id and .of_match_table to RTC driver.
+
+Changes since v2:
+
+  - Fix ac100_codec interrupt line in DT binding example.
+
+  - Fix copy-paste errors in RTC set_alarm. Alarm now works.
+
+  - Drop file name from MFD driver.
+
+  - Add / update copyright notices.
+
+  - Change license of RTC driver to GPL v2, matching MFD driver.
+
+  - Fix MFD driver MODULE_LICENSE to match license declaration in header.
+
+Changes since v1:
+
+  - Complete register definitions and regmap regions.
+
+v1 was actually a working version that wasn't updated with the codec
+register definitions.
+
+Patch 1 adds device tree bindings for the AC100.
+
+Patch 2 adds the mfd driver for the AC100.
+
+Patch 3 adds the RTC driver for the AC100.
+
+Patch 4 adds RTC clk output support to the RTC driver.
+This is a separate patch as the clk code is over 300 LoC. Having a
+separate patch should make it easier for the clk maintainers to review.
+
+Patch 5 adds the AC100 device nodes to the A80 Optimus board dts.
+
+Patch 6 adds the AC100 device nodes to the Cubieboard4 board dts.
+
+Patch 7 changes the fixed osc_32k clk to a fixed factor clk,
+representing the 32k clk input pin on the SoC, and also hooks up the
+ac100 rtc clk output to this clk in the board dts files.
+
+I'm hoping we can merge the driver bits (patches 1~4) through the
+mfd tree, with acks from the rtc and clk maintainers for patches
+3 and 4.
 
 
-Best wishes,
-Vladimir
+Regards
+ChenYu
 
-> ---
->  drivers/clk/nxp/clk-lpc32xx.c             | 3 +--
->  include/dt-bindings/clock/lpc32xx-clock.h | 1 +
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-> index 481b264..90d740a 100644
-> --- a/drivers/clk/nxp/clk-lpc32xx.c
-> +++ b/drivers/clk/nxp/clk-lpc32xx.c
-> @@ -87,7 +87,7 @@ enum {
->  
->  enum {
->  	/* Start from the last defined clock in dt bindings */
-> -	LPC32XX_CLK_ADC_DIV = LPC32XX_CLK_HCLK_PLL + 1,
-> +	LPC32XX_CLK_ADC_DIV = LPC32XX_CLK_PERIPH + 1,
->  	LPC32XX_CLK_ADC_RTC,
->  	LPC32XX_CLK_TEST1,
->  	LPC32XX_CLK_TEST2,
-> @@ -99,7 +99,6 @@ enum {
->  	LPC32XX_CLK_HCLK_DIV_PERIPH,
->  	LPC32XX_CLK_HCLK_DIV,
->  	LPC32XX_CLK_HCLK,
-> -	LPC32XX_CLK_PERIPH,
->  	LPC32XX_CLK_ARM,
->  	LPC32XX_CLK_ARM_VFP,
->  
-> diff --git a/include/dt-bindings/clock/lpc32xx-clock.h b/include/dt-bindings/clock/lpc32xx-clock.h
-> index d41b6fe..e624d3a 100644
-> --- a/include/dt-bindings/clock/lpc32xx-clock.h
-> +++ b/include/dt-bindings/clock/lpc32xx-clock.h
-> @@ -48,6 +48,7 @@
->  #define LPC32XX_CLK_PWM2	33
->  #define LPC32XX_CLK_ADC		34
->  #define LPC32XX_CLK_HCLK_PLL	35
-> +#define LPC32XX_CLK_PERIPH	36
->  
->  /* LPC32XX USB clocks */
->  #define LPC32XX_USB_CLK_I2C	1
-> 
+
+Chen-Yu Tsai (7):
+  mfd: ac100: Add device tree bindings for X-Powers AC100 codec/RTC
+    combo IC
+  mfd: ac100: Add driver for X-Powers AC100 audio codec / RTC combo IC
+  rtc: ac100: Add RTC driver for X-Powers AC100
+  rtc: ac100: Add clk output support
+  ARM: dts: sun9i: a80-optimus: Add device node for AC100
+  ARM: dts: sun9i: cubieboard4: Add device node for AC100
+  ARM: dts: sun9i: Switch to the AC100 RTC clock outputs for osc32k
+
+ Documentation/devicetree/bindings/mfd/ac100.txt |  49 ++
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts     |  29 ++
+ arch/arm/boot/dts/sun9i-a80-optimus.dts         |  29 ++
+ arch/arm/boot/dts/sun9i-a80.dtsi                |   9 +-
+ drivers/mfd/Kconfig                             |  10 +
+ drivers/mfd/Makefile                            |   2 +
+ drivers/mfd/ac100.c                             | 137 ++++++
+ drivers/rtc/Kconfig                             |  10 +
+ drivers/rtc/Makefile                            |   1 +
+ drivers/rtc/rtc-ac100.c                         | 627 ++++++++++++++++++++++++
+ include/linux/mfd/ac100.h                       | 178 +++++++
+ 11 files changed, 1075 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+ create mode 100644 drivers/mfd/ac100.c
+ create mode 100644 drivers/rtc/rtc-ac100.c
+ create mode 100644 include/linux/mfd/ac100.h
+
+-- 
+2.8.1
