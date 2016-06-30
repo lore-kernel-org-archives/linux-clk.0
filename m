@@ -1,33 +1,33 @@
-Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 30 Jun 2016 13:18:03 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, kernel@pengutronix.de,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL] i.MX clock update for 4.8
+Message-ID: <20160630201803.GB27880@codeaurora.org>
+References: <20160628082827.GG21328@tiger>
 MIME-Version: 1.0
-In-Reply-To: <CAPybu_19ZUtRWrZos8rVavxpUUdw4ichE0Azv8nZmCyzdcqXAw@mail.gmail.com>
-References: <1466499688-28625-1-git-send-email-ricardo.ribalda@gmail.com>
- <20160628180438.GD1521@codeaurora.org> <CAPybu_19ZUtRWrZos8rVavxpUUdw4ichE0Azv8nZmCyzdcqXAw@mail.gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Wed, 29 Jun 2016 10:32:59 +0200
-Message-ID: <CAPybu_0=ywvXSUYsnB1sUc8YGRFYKyD80F-6MxRGTSMkeUVu+Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: fixed-factor: Convert into a module platform driver
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160628082827.GG21328@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi again
+On 06/28, Shawn Guo wrote:
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> 
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.8
+> 
+> for you to fetch changes up to bfa10f7d9ae2a6d1e615bf6841887fd9adb056be:
+> 
+>   clk: imx6ul: fix gpt2 clock names (2016-06-16 09:05:55 +0800)
+> 
 
-On Wed, Jun 29, 2016 at 10:07 AM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> - I can send it as a proper patch if you prefer tat.
-
-
-Just realised how bad the code is treated by gmail.
-
-You can navigate more easily through the code here:
-
-https://github.com/ribalda/linux/tree/clk-platform-v4
-
-Regards!
-
+Thanks. Pulled.
 
 -- 
-Ricardo Ribalda
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
