@@ -1,74 +1,87 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 22 Jun 2016 12:02:06 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] rtc: ac100: Add clk output support
-Message-ID: <20160622100206.GV26668@lukather>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
- <1466391138-12862-6-git-send-email-wens@csie.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 0/8] clk: core: support clocks which requires parents enable
+Date: Thu, 30 Jun 2016 16:25:24 +0800
+Message-ID: <1467275132-31026-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="buDNgeHiu+HCsDEc"
-In-Reply-To: <1466391138-12862-6-git-send-email-wens@csie.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch series adds support in clock framework for clocks which all the
+operations like gate/ungate, set_rate, set_parent must require its parent
+clock on.
 
---buDNgeHiu+HCsDEc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This special HW requirement can be found on Freescale i.MX7D platform.
+Besides i.MX7D, it seems lpc18xx clock has a similar requirement.
+(see: http://www.spinics.net/lists/arm-kernel/msg439307.html)
+And there may be other SoCs in the same situation.
 
-Hi,
+Current clock core can not support such type of clock well.
 
-On Mon, Jun 20, 2016 at 10:52:15AM +0800, Chen-Yu Tsai wrote:
-> +	/*
-> +	 * The ADDA 4 MHz clock is from the codec side of the AC100,
-> +	 * which is likely a different power domain. However, boards
-> +	 * always have both sides powered on, so it is impossible to
-> +	 * test this.
-> +	 */
+This patch introduce a new flag CLK_SET_PARENT_ENABLE to handle this special
+case in clock core that enable its parent clock firstly for each operation
+and disable it later after operation complete.
 
-If that ADDA clock is exposed by the codec, why are you putting it in
-the RTC?
+There're two special cases for handling this issue:
 
-Thanks,
-Maxime
+One is fixing the possible disabling clocks while its parent is already off
+during kernel booting phase in clk_disable_unused_subtree()
+Since this state misalign only happens during booting time,
+so we simply enable the parent clocks before disable it if flag is set.
+For normal clk_disable after kernel booting, there's no such issue
+since the clock tree is already created which makes sure no such issue exist.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Another special case is for set_parent() operation.
+It requires both parent, old one and new one, to be enabled at the same
+time during the operation.
 
---buDNgeHiu+HCsDEc
-Content-Type: application/pgp-signature; name="signature.asc"
+Patch 1~4 does this work.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+After clk core supports mx7d type clocks, we don't have to enable all clock
+by default anymore, then we remove the enable of all clocks code and instead
+only enable set of minimum required clocks.
 
-iQIcBAEBAgAGBQJXamIeAAoJEBx+YmzsjxAgep8QALb4QiyE0axUbD8L9KkpG7V0
-dOsu/m7Qg+xvaQRGz5AUkytzp3EggzTyyaDQdwL9FaPQEzkxsq275QRu81jfcW28
-pYi02XaSUpvAeMIlcAil4xKRzR9M7pWrL8/d/GBwMn/5Znw4nc2cosR4iwfMOH6i
-aKSw9pJYjWRqqjaT6QZn+iny3v+diTETG4IAcPqBnljpXCuUHjYYEOJS+PNLYQvL
-c09lui5fc9t7ZLIJgQsrJ7hSiNu5XL/qErRWNYxXQqwX4QJnURRW0S+q4z0wysWT
-+Z77rMsKo6KKRqDDJRlnVtYwTiyrXnWgCKKI8m23e21biTdCEC1mKdDZciX26v2F
-TgTo5+htGKknjpo5qeg+qukL+8aK0kHnLLSaHRLtXScIXYQEMFcY74+RlNcsnNPM
-tMQSXcKbGm3HvLediuU4ldUGwQblu6aIDNBPcnetDGH1ehh/ocIfuCH2YSiBQF0g
-Po8Yybgn4+kcpIjwIHoWEF4WvjeWY+EbX0/LuSbwl/L6CwzFe2u9HKK76rqPWwlp
-E6uG57uWFFzwXtvMem9PKsC8McUU9571GYlSCUxN5ThmhH+cmbeshwN5U5RA7otp
-RewA+kwqB0JYzzVdj89gFbaYfIcaXM93uImBinkoCxWMpLxHdtQ9EIcumTcO8zjg
-Tuc3OrdLvJzf9H8ybHdv
-=Z3pe
------END PGP SIGNATURE-----
+Patch 5~8 does this work.
 
---buDNgeHiu+HCsDEc--
+The whole patch series is based on for-next branch of clock tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+Change log:
+v2-> v3:
+ * fix rebase error
+v1-> v2:
+ * Addressed Mike's comments to make code more clearer
+
+V1:
+https://lkml.org/lkml/2016/4/20/199
+
+The original one can be found at here:
+http://www.spinics.net/lists/arm-kernel/msg435136.html
+It has no functional changes but improve the commit message and
+comments a bit.
+
+Dong Aisheng (8):
+  clk: introduce clk_core_enable_lock and clk_core_disable_lock
+    functions
+  clk: move clk_disable_unused after clk_core_disable_unprepare function
+  clk: core: support clocks which requires parents enable (part 1)
+  clk: core: support clocks which requires parents enable (part 2)
+  clk: imx: re-order and concentrate the same type of clk api
+  clk: imx: add clk api for supporting CLK_OPS_PARENT_ENABLE clocks
+  clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE
+  clk: imx7d: only enable minimum required clocks
+
+ drivers/clk/clk.c            | 332 ++++++++++++--------
+ drivers/clk/imx/clk-imx7d.c  | 732 ++++++++++++++++++++++---------------------
+ drivers/clk/imx/clk.h        |  90 ++++--
+ include/linux/clk-provider.h |   2 +
+ 4 files changed, 628 insertions(+), 528 deletions(-)
+
+-- 
+1.9.1
