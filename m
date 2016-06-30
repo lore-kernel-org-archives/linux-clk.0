@@ -1,226 +1,144 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Sun, 26 Jun 2016 02:30:54 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] rtc: ac100: Add RTC driver for X-Powers AC100
-Message-ID: <20160626003054.GW5809@piout.net>
-References: <1466391138-12862-1-git-send-email-wens@csie.org>
- <1466391138-12862-5-git-send-email-wens@csie.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 4/8] clk: core: support clocks which requires parents enable (part 2)
+Date: Thu, 30 Jun 2016 17:31:14 +0800
+Message-ID: <1467279078-2330-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466391138-12862-5-git-send-email-wens@csie.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Freescale i.MX7D platform, all clocks operations, including
+enable/disable, rate change and re-parent, requires its parent clock on.
+Current clock core can not support it well.
+This patch adding flag CLK_OPS_PARENT_ENABLE to handle this special case in
+clock core that enable its parent clock firstly for each operation and
+disable it later after operation complete.
 
-A few comments, mostly about style.
+The patch part 2 fixes set clock rate and set parent while its parent
+is off. The most special case is for set_parent() operation which requires
+all parents including both old and new one to be enabled at the same time
+during the operation.
 
-On 20/06/2016 at 10:52:14 +0800, Chen-Yu Tsai wrote :
-> +struct ac100_rtc_dev {
-> +	struct rtc_device *rtc;
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +	struct mutex mutex;
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
 
-I don't think that mutex is needed. Instead, you can take rtc->ops_lock
-from the interrupt handler.
-
-> +	int irq;
-> +	unsigned long alarm;
-> +};
-> +
-> +static int ac100_rtc_get_time(struct device *dev, struct rtc_time *rtc_tm)
-> +{
-> +	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-> +	struct regmap *regmap = chip->regmap;
-> +	u16 reg[7];
-> +	int ret;
-> +
-> +	ret = regmap_bulk_read(regmap, AC100_RTC_SEC, reg, 7);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rtc_tm->tm_sec  = bcd2bin(reg[0] & AC100_RTC_SEC_MASK);
-> +	rtc_tm->tm_min  = bcd2bin(reg[1] & AC100_RTC_MIN_MASK);
-> +	rtc_tm->tm_hour = bcd2bin(reg[2] & AC100_RTC_HOU_MASK);
-> +	rtc_tm->tm_wday = bcd2bin(reg[3] & AC100_RTC_WEE_MASK);
-> +	rtc_tm->tm_mday = bcd2bin(reg[4] & AC100_RTC_DAY_MASK);
-> +	rtc_tm->tm_mon  = bcd2bin(reg[5] & AC100_RTC_MON_MASK);
-> +	rtc_tm->tm_year = bcd2bin(reg[6] & AC100_RTC_YEA_MASK);
-> +
-> +	rtc_tm->tm_mon  -= 1;
-
-I would put the - 1 inline with the first tm_mon assignment.
-
-> +
-> +	/*
-> +	 * switch from (data_year->min)-relative offset to
-> +	 * a (1900)-relative one
-> +	 */
-> +	rtc_tm->tm_year += AC100_YEAR_OFF;
-
-Unless you feel the comment is absolutely necessary, I'd also put that
-with the first tm_year assignment.
-
-BTW, is that RTC aware that 0 is actually 1970? And so 2000 (30) is not
-a leap year but 2016 is? I'd say that this is not the case, seeing
-AC100_RTC_YEA_LEAP but it is worth checking.
-
-Is this bit (AC100_RTC_YEA_LEAP) updated by the rtc? IF that is not the
-case, the time will have to be set at least once between first of
-January and 28th of February of leap years else it will fail...
-
-> +
-> +	return rtc_valid_tm(rtc_tm);
-> +}
-> +
-> +static int ac100_rtc_set_time(struct device *dev, struct rtc_time *rtc_tm)
-> +{
-> +	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-> +	struct regmap *regmap = chip->regmap;
-> +	int year;
-> +	u16 reg[8];
-> +
-> +	/* our RTC has a limited year range... */
-> +	year = rtc_tm->tm_year + 1900;
-> +	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
-> +		dev_err(dev, "rtc only supports year in range %d - %d\n",
-> +			AC100_YEAR_MIN, AC100_YEAR_MAX);
-> +		return -EINVAL;
-> +	}
-> +
-
-What about:
-
-year = rtc_tm->tm_year - AC100_YEAR_OFF
-if (year < 0 || year > (AC100_YEAR_MAX - 1900))
-
-It allows to reuse year for the reg[6] assignment. IT is a simple
-suggestion, maybe the compiler is smarter than I am ;).
-
-> +	/* correct offsets */
-> +	rtc_tm->tm_year -= AC100_YEAR_OFF;
-> +	rtc_tm->tm_mon += 1;
-> +
-
-Those could also got inline with their respective reg[] assignment
-
-
-> +	/* convert to BCD */
-> +	reg[0] = bin2bcd(rtc_tm->tm_sec)  & AC100_RTC_SEC_MASK;
-> +	reg[1] = bin2bcd(rtc_tm->tm_min)  & AC100_RTC_MIN_MASK;
-> +	reg[2] = bin2bcd(rtc_tm->tm_hour) & AC100_RTC_HOU_MASK;
-> +	reg[3] = bin2bcd(rtc_tm->tm_wday) & AC100_RTC_WEE_MASK;
-> +	reg[4] = bin2bcd(rtc_tm->tm_mday) & AC100_RTC_DAY_MASK;
-> +	reg[5] = bin2bcd(rtc_tm->tm_mon)  & AC100_RTC_MON_MASK;
-> +	reg[6] = bin2bcd(rtc_tm->tm_year) & AC100_RTC_YEA_MASK;
-> +	/* trigger write */
-> +	reg[7] = AC100_RTC_UPD_TRIGGER;
-> +
-> +	/* Is it a leap year? */
-> +	if (is_leap_year(year))
-> +		reg[6] |= AC100_RTC_YEA_LEAP;
-> +
-> +	return regmap_bulk_write(regmap, AC100_RTC_SEC, reg, 8);
-> +}
-> +
-> +
-
-[...]
-
-> +	alrm_tm->tm_sec  = bcd2bin(reg[0] & AC100_ALM_SEC_MASK);
-> +	alrm_tm->tm_min  = bcd2bin(reg[1] & AC100_ALM_MIN_MASK);
-> +	alrm_tm->tm_hour = bcd2bin(reg[2] & AC100_ALM_HOU_MASK);
-> +	alrm_tm->tm_wday = bcd2bin(reg[3] & AC100_ALM_WEE_MASK);
-> +	alrm_tm->tm_mday = bcd2bin(reg[4] & AC100_ALM_DAY_MASK);
-> +	alrm_tm->tm_mon  = bcd2bin(reg[5] & AC100_ALM_MON_MASK);
-> +	alrm_tm->tm_year = bcd2bin(reg[6] & AC100_ALM_YEA_MASK);
-> +
-> +	alrm_tm->tm_mon  -= 1;
-> +
-> +	/*
-> +	 * switch from (data_year->min)-relative offset to
-> +	 * a (1900)-relative one
-> +	 */
-> +	alrm_tm->tm_year += AC100_YEAR_OFF;
-> +
-
-Well, same comments as in ac100_rtc_get_time()
-
-
-> +out:
-> +	mutex_unlock(&chip->mutex);
-> +	return ret;
-> +}
-> +
-> +static int ac100_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-> +{
-> +	struct ac100_rtc_dev *chip = dev_get_drvdata(dev);
-> +	struct regmap *regmap = chip->regmap;
-> +	struct rtc_time *alrm_tm = &alrm->time;
-> +	u16 reg[8];
-> +	int year;
-> +	int ret;
-> +
-> +	/* our alarm has a limited year range... */
-> +	year = alrm_tm->tm_year + 1900;
-> +	if (year < AC100_YEAR_MIN || year > AC100_YEAR_MAX) {
-> +		dev_err(dev, "alarm only supports year in range %d - %d\n",
-> +			AC100_YEAR_MIN, AC100_YEAR_MAX);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* correct offsets */
-> +	alrm_tm->tm_year -= AC100_YEAR_OFF;
-> +	alrm_tm->tm_mon += 1;
-> +
-
-Same comment as ac100_rtc_set_time()
-
-> +	/* convert to BCD */
-> +	reg[0] = (bin2bcd(alrm_tm->tm_sec)  & AC100_ALM_SEC_MASK) |
-> +			AC100_ALM_ENABLE_FLAG;
-> +	reg[1] = (bin2bcd(alrm_tm->tm_min)  & AC100_ALM_MIN_MASK) |
-> +			AC100_ALM_ENABLE_FLAG;
-> +	reg[2] = (bin2bcd(alrm_tm->tm_hour) & AC100_ALM_HOU_MASK) |
-> +			AC100_ALM_ENABLE_FLAG;
-> +	/* Do not enable weekday alarm */
-> +	reg[3] = bin2bcd(alrm_tm->tm_wday) & AC100_ALM_WEE_MASK;
-> +	reg[4] = (bin2bcd(alrm_tm->tm_mday) & AC100_ALM_DAY_MASK) |
-> +			AC100_ALM_ENABLE_FLAG;
-> +	reg[5] = (bin2bcd(alrm_tm->tm_mon)  & AC100_ALM_MON_MASK) |
-> +			AC100_ALM_ENABLE_FLAG;
-> +	reg[6] = (bin2bcd(alrm_tm->tm_year) & AC100_ALM_YEA_MASK) |
-> +			AC100_ALM_ENABLE_FLAG;
-> +	/* trigger write */
-> +	reg[7] = AC100_ALM_UPD_TRIGGER;
-> +
-> +	mutex_lock(&chip->mutex);
-> +
-> +	ret = regmap_bulk_write(regmap, AC100_ALM_SEC, reg, 8);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = _ac100_rtc_alarm_irq_enable(chip, alrm->enabled);
-> +
-> +out:
-> +	mutex_unlock(&chip->mutex);
-> +	return ret;
-> +}
-> +
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e3bd28c9ef28..9bac36a5fdb3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1172,7 +1172,9 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	struct clk_core *old_parent = core->parent;
+ 
+ 	/*
+-	 * Migrate prepare state between parents and prevent race with
++	 * 1. enable parents for CLK_OPS_PARENT_ENABLE clock
++	 *
++	 * 2. Migrate prepare state between parents and prevent race with
+ 	 * clk_enable().
+ 	 *
+ 	 * If the clock is not prepared, then a race with
+@@ -1188,12 +1190,17 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+ 	 *
+ 	 * See also: Comment for clk_set_parent() below.
+ 	 */
++
++	/* enable old_parent & parent if CLK_OPS_PARENT_ENABLE is set */
++	if (core->flags & CLK_OPS_PARENT_ENABLE) {
++		clk_core_prepare_enable(old_parent);
++		clk_core_prepare_enable(parent);
++	}
++
++	/* migrate prepare count if > 0 */
+ 	if (core->prepare_count) {
+-		clk_core_prepare(parent);
+-		flags = clk_enable_lock();
+-		clk_core_enable(parent);
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
++		clk_core_prepare_enable(parent);
++		clk_core_enable_lock(core);
+ 	}
+ 
+ 	/* update the clk tree topology */
+@@ -1208,18 +1215,19 @@ static void __clk_set_parent_after(struct clk_core *core,
+ 				   struct clk_core *parent,
+ 				   struct clk_core *old_parent)
+ {
+-	unsigned long flags;
+-
+ 	/*
+ 	 * Finish the migration of prepare state and undo the changes done
+ 	 * for preventing a race with clk_enable().
+ 	 */
+ 	if (core->prepare_count) {
+-		flags = clk_enable_lock();
+-		clk_core_disable(core);
+-		clk_core_disable(old_parent);
+-		clk_enable_unlock(flags);
+-		clk_core_unprepare(old_parent);
++		clk_core_disable_lock(core);
++		clk_core_disable_unprepare(old_parent);
++	}
++
++	/* re-balance ref counting if CLK_OPS_PARENT_ENABLE is set */
++	if (core->flags & CLK_OPS_PARENT_ENABLE) {
++		clk_core_disable_unprepare(parent);
++		clk_core_disable_unprepare(old_parent);
+ 	}
+ }
+ 
+@@ -1466,13 +1474,17 @@ static void clk_change_rate(struct clk_core *core)
+ 	unsigned long best_parent_rate = 0;
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
++	struct clk_core *parent = NULL;
+ 
+ 	old_rate = core->rate;
+ 
+-	if (core->new_parent)
++	if (core->new_parent) {
++		parent = core->new_parent;
+ 		best_parent_rate = core->new_parent->rate;
+-	else if (core->parent)
++	} else if (core->parent) {
++		parent = core->parent;
+ 		best_parent_rate = core->parent->rate;
++	}
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+ 		unsigned long flags;
+@@ -1502,6 +1514,9 @@ static void clk_change_rate(struct clk_core *core)
+ 
+ 	trace_clk_set_rate(core, core->new_rate);
+ 
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_prepare_enable(parent);
++
+ 	if (!skip_set_rate && core->ops->set_rate)
+ 		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
+ 
+@@ -1518,6 +1533,9 @@ static void clk_change_rate(struct clk_core *core)
+ 		clk_core_unprepare(core);
+ 	}
+ 
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_unprepare(parent);
++
+ 	if (core->notifier_count && old_rate != core->rate)
+ 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
+ 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
