@@ -1,35 +1,36 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 19 Jun 2016 09:34:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] mfd: ac100: Add device tree bindings for
- X-Powers AC100 codec/RTC combo IC
-Message-ID: <20160619143420.GA14554@rob-hp-laptop>
-References: <1465986467-14802-1-git-send-email-wens@csie.org>
- <1465986467-14802-3-git-send-email-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 30 Jun 2016 12:27:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Ray Jui <rjui@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Simran Rai <ssimran@broadcom.com>
+Subject: Re: [PATCH 05/34] clk: bcm: iproc: Migrate to clk_hw based
+ registration and OF APIs
+Message-ID: <20160630192739.GR1521@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-6-stephen.boyd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465986467-14802-3-git-send-email-wens@csie.org>
+In-Reply-To: <20160601231533.9354-6-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 15, 2016 at 06:27:39PM +0800, Chen-Yu Tsai wrote:
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Jon Mason <jonmason@broadcom.com>
+> Cc: Simran Rai <ssimran@broadcom.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 > ---
->  Documentation/devicetree/bindings/mfd/ac100.txt | 42 +++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
