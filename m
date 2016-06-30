@@ -1,64 +1,99 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "rui.zhang@intel.com" <rui.zhang@intel.com>,
-	"edubezval@gmail.com" <edubezval@gmail.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"wens@csie.org" <wens@csie.org>,
-	"emilio@elopez.com.ar" <emilio@elopez.com.ar>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-In-Reply-To: <20160629121021.GD6095@lukather>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
-	 <20160628101325.2522-3-icenowy@aosc.xyz>
-	 <20160628114640.GE5550@lukather>
-	 <60021467122182@web19j.yandex.ru> <20160629121021.GD6095@lukather>
-Subject: Re: [RFC PATCH 3/5] thermal: Add support for the thermal sensor on A23/33
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 3/8] clk: core: support clocks which requires parents enable (part 1)
+Date: Thu, 30 Jun 2016 17:31:13 +0800
+Message-ID: <1467279078-2330-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Message-Id: <1209771467207211@web22j.yandex.ru>
-Date: Wed, 29 Jun 2016 21:33:31 +0800
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+On Freescale i.MX7D platform, all clocks operations, including
+enable/disable, rate change and re-parent, requires its parent
+clock enable. Current clock core can not support it well.
+This patch introduce a new flag CLK_OPS_PARENT_ENABLE to handle this
+special case in clock core that enable its parent clock firstly for
+each operation and disable it later after operation complete.
 
+The patch part 1 fixes the possible disabling clocks while its parent
+is off during kernel booting phase in clk_disable_unused_subtree().
 
-29.06.2016, 20:10, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
-> Hi,
->
-> On Tue, Jun 28, 2016 at 09:56:22PM +0800, Icenowy Zheng wrote:
->>  The reason for a dedicate driver is:
->>  1. This IP have only thermal function, so it's not suitable to use a
->>  driver at drivers/input/touchscreen/.
->
-> That's not a problem, and it's being worked on [1].
->
->>  2. Control Register are quite different.
->
-> That's not a problem either, there's just a bit that you don't need to
-> set in the control 1 register, and that's pretty much it. It doesn't
-> justify a whole new driver.
->
->>  3. This IP uses AUDIO PLL (PLL2) as its clock!
->
-> It's listed as the input, but all the rest of the documentation refers
-> only to 24MHz, which seems to indicate that it's only running on the
-> oscillator, which would make much more sense.
->
-> Thanks,
-> Maxime
->
-> 1: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/439487.html
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+Before the completion of kernel booting, clock tree is still not built
+completely, there may be a case that the child clock is on but its
+parent is off which could be caused by either HW initial reset state
+or bootloader initialization.
 
-I will try to use it without pll2 enabled.
+Taking bootloader as an example, we may enable all clocks in HW by default.
+And during kernel booting time, the parent clock could be disabled in its
+driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
+Because it's child clock is only enabled in HW while its SW usecount
+in clock tree is still 0, so clk_disable of parent clock will gate
+the parent clock in both HW and SW usecount ultimately. Then there will
+be a child clock is still on in HW but its parent is already off.
+
+Later in clk_disable_unused(), this clock disable accessing while its
+parent off will cause system hang due to the limitation of HW which
+must require its parent on.
+
+This patch simply enables the parent clock first before disabling
+if flag CLK_OPS_PARENT_ENABLE is set in clk_disable_unused_subtree().
+This is a simple solution and only affects booting time.
+
+After kernel booting up the clock tree is already created, there will
+be no case that child is off but its parent is off.
+So no need do this checking for normal clk_disable() later.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c            | 5 +++++
+ include/linux/clk-provider.h | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e2e8f0c9f20a..e3bd28c9ef28 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -765,6 +765,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 	hlist_for_each_entry(child, &core->children, child_node)
+ 		clk_disable_unused_subtree(child);
+ 
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_prepare_enable(core->parent);
++
+ 	flags = clk_enable_lock();
+ 
+ 	if (core->enable_count)
+@@ -789,6 +792,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 
+ unlock_out:
+ 	clk_enable_unlock(flags);
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_unprepare(core->parent);
+ }
+ 
+ static bool clk_ignore_unused;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index fb39d5add173..d87837360254 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -33,6 +33,8 @@
+ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
+ #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
+ #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
++/* parents need enable during gate/ungate, set rate and re-parent */
++#define CLK_OPS_PARENT_ENABLE	BIT(12)
+ 
+ struct clk;
+ struct clk_hw;
+-- 
+1.9.1
