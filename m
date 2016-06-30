@@ -1,52 +1,73 @@
-Return-Path: <nm@ti.com>
-Subject: Re: [RESEND PATCHv2 08/28] ARM: OMAP2+: clockdomain: add usecounting
- support to autoidle APIs
-To: Tero Kristo <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <tony@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-9-git-send-email-t-kristo@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-From: Nishanth Menon <nm@ti.com>
-Message-ID: <575F4257.3010108@ti.com>
-Date: Mon, 13 Jun 2016 18:31:35 -0500
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<anson.huang@nxp.com>
+Subject: [PATCH V3 8/8] clk: imx7d: only enable minimum required clocks
+Date: Thu, 30 Jun 2016 17:31:18 +0800
+Message-ID: <1467279078-2330-9-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <1465844702-12200-9-git-send-email-t-kristo@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/13/2016 02:04 PM, Tero Kristo wrote:
-[..]
-> diff --git a/arch/arm/mach-omap2/omap_hwmod.c
-b/arch/arm/mach-omap2/omap_hwmod.c
-> index 0c85f91..635a563 100644
-> --- a/arch/arm/mach-omap2/omap_hwmod.c
-> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+Formerly clk core does not support imx7d clock type well that all
+its clock operations requires the parent clock on.
+Therefore we enabled all clocks by default in clock driver
+initialization for other module clocks operate well.
 
-[...]
+After patch 'clk: imx7d: using api with flag CLK_OPS_PARENT_ENABLE',
+clk core can handle such clock type well, so we don't have to enable
+them all by default anymore. Instead, we only enable a minimum required
+set of clocks.
 
-> @@ -2177,14 +2173,10 @@ static int _enable(struct omap_hwmod *oh)
->  
->  	r = (soc_ops.wait_target_ready) ? soc_ops.wait_target_ready(oh) :
->  		-EINVAL;
-> -	if (!r) {
-> -		/*
-> -		 * Set the clockdomain to HW_AUTO only if the target is ready,
-> -		 * assuming that the previous state was HW_AUTO
-> -		 */
-> -		if (oh->clkdm && hwsup)
-> -			clkdm_allow_idle(oh->clkdm);
-> +	if (oh->clkdm)
-> +		clkdm_allow_idle(oh->clkdm);
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-Should'nt this be under if (!r) ?
-
->  
-> +	if (!r) {
-
-here?
-
-
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index bb5affae0850..7b46ed0677a5 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -361,6 +361,14 @@ static const char *pll_enet_bypass_sel[] = { "pll_enet_main", "pll_enet_main_src
+ static const char *pll_audio_bypass_sel[] = { "pll_audio_main", "pll_audio_main_src", };
+ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_src", };
+ 
++static int const clks_init_on[] __initconst = {
++	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
++	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
++	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
++	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
++	IMX7D_AHB_CHANNEL_ROOT_CLK,
++};
++
+ static struct clk_onecell_data clk_data;
+ 
+ static struct clk ** const uart_clks[] __initconst = {
+@@ -846,14 +854,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+-	/* TO BE FIXED LATER
+-	 * Enable all clock to bring up imx7, otherwise system will be halt and block
+-	 * the other part upstream Because imx7d clock design changed, clock framework
+-	 * need do a little modify.
+-	 * Dong Aisheng is working on this. After that, this part need be changed.
+-	 */
+-	for (i = 0; i < IMX7D_CLK_END; i++)
+-		clk_prepare_enable(clks[i]);
++	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
++		clk_prepare_enable(clks[clks_init_on[i]]);
+ 
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
 -- 
-Regards,
-Nishanth Menon
+1.9.1
