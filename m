@@ -1,35 +1,28 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 28 Jun 2016 00:03:54 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCHv2 06/28] ARM: OMAP2+: hwmod: fetch main_clk based
- on hwmod name
-Message-ID: <20160628070354.GE28140@atomide.com>
-References: <1465844702-12200-1-git-send-email-t-kristo@ti.com>
- <1465844702-12200-7-git-send-email-t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 30 Jun 2016 12:36:22 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: mturquette@baylibre.com, p.zabel@pengutronix.de,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com
+Subject: Re: [PATCH v2 3/5] clk: hisilicon: add error processing for
+ hisi_clk_register_* functions
+Message-ID: <20160630193622.GW1521@codeaurora.org>
+References: <1465971998-29619-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1465971998-29619-4-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465844702-12200-7-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1465971998-29619-4-git-send-email-xuejiancheng@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160613 12:07]:
-> With the transition to hwmod module clocks, all hwmods will have
-> their main clocks named <hwmod_name>_mod_ck. Use this info to
-> fetch main_clk, and use it if found.
+On 06/15, Jiancheng Xue wrote:
+> Add error processing for hisi_clk_register_* functions.
 > 
-> Also, if a main_clk is found based on the hwmod name, disable
-> the direct PRCM modulemode access from hwmod.
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> ---
 
-Makes sense, otherwise unknown number of things will break before
-we have the clock phandles available in the dts files for these:
+Applied to clk-next
 
-Acked-by: Tony Lindgren <tony@atomide.com>
-
-Or let me know if you want me to queue this separately.
-
-Regards,
-
-Tony
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
