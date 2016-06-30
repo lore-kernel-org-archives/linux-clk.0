@@ -1,60 +1,61 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-Subject: Re: [PATCH] clk: iproc: fix missing include of clk-iproc.h
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-kernel@lists.codethink.co.uk
-References: <1465317150-12704-1-git-send-email-ben.dooks@codethink.co.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Ray Jui <rjui@broadcom.com>,
- Jon Mason <jonmason@broadcom.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <70201ca4-acf3-2473-f770-b105a60b2840@broadcom.com>
-Date: Tue, 7 Jun 2016 09:36:42 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 30 Jun 2016 12:23:37 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com,
+	mturquette@baylibre.com, broonie@kernel.org,
+	linux-clk@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 0/6] clk: sti: Add support for critical clocks
+Message-ID: <20160630192337.GN1521@codeaurora.org>
+References: <20160607111930.10375-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1465317150-12704-1-git-send-email-ben.dooks@codethink.co.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160607111930.10375-1-lee.jones@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ben,
+On 06/07, Lee Jones wrote:
+> Describe the platform's critical clocks in DT, then search for them
+> from the framework.  This set allows us to remove the clk_ignore_unused
+> kernel command line flag which has been required to achieve a successful
+> boot to prompt until this point.
+> 
+> This may not be the definitive list.  There may be other clocks which
+> need to be marked as critical, but we can add those as we go along.
+> 
 
-On 6/7/2016 9:32 AM, Ben Dooks wrote:
-> Fix the implicit declaration of iproc_armpll_setup() by
-> including clk-iproc.h which defines it. Fixes the warning:
->
-> drivers/clk/bcm/clk-iproc-armpll.c:242:13: warning: symbol 'iproc_armpll_setup' was not declared. Should it be static?
->
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Jon Mason <jonmason@broadcom.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> ---
->  drivers/clk/bcm/clk-iproc-armpll.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-iproc-armpll.c b/drivers/clk/bcm/clk-iproc-armpll.c
-> index a196ee2..698c507 100644
-> --- a/drivers/clk/bcm/clk-iproc-armpll.c
-> +++ b/drivers/clk/bcm/clk-iproc-armpll.c
-> @@ -20,6 +20,8 @@
->  #include <linux/clkdev.h>
->  #include <linux/of_address.h>
->
-> +#include "clk-iproc.h"
-> +
->  #define IPROC_CLK_MAX_FREQ_POLICY                    0x3
->  #define IPROC_CLK_POLICY_FREQ_OFFSET                 0x008
->  #define IPROC_CLK_POLICY_FREQ_POLICY_FREQ_SHIFT      8
->
+I applied the three clk ones to an immutable branch named
+'clk-st-critical' in the clk tree and merged this into clk-next.
+I'm not comfortable taking the spi patch as I suspect that will
+break something unless the dts patches are applied.
 
-Looks good.
+Please use this branch to base your dts and spi patches on so it
+can be merged through arm-soc without introducing some bisection
+hole.
 
-Acked-by: Ray Jui <ray.jui@broadcom.com>
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
-Thanks,
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
 
-Ray
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-st-critical
+
+for you to fetch changes up to 6ca59e6e1fc3a8d7ccbf85ff036bd6ff40847c1a:
+
+  clk: st: clkgen-pll: Detect critical clocks (2016-06-30 12:17:11 -0700)
+
+----------------------------------------------------------------
+Lee Jones (3):
+      clk: st: clk-flexgen: Detect critical clocks
+      clk: st: clkgen-fsyn: Detect critical clocks
+      clk: st: clkgen-pll: Detect critical clocks
+
+ drivers/clk/st/clk-flexgen.c |  4 +++-
+ drivers/clk/st/clkgen-fsyn.c | 10 +++++++---
+ drivers/clk/st/clkgen-pll.c  | 27 +++++++++++++++++----------
+ 3 files changed, 27 insertions(+), 14 deletions(-)
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
