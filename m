@@ -1,62 +1,35 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 30 Jun 2016 12:29:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 02/10] arm64: dts: marvell: Add xtal clock support for Armada 3700
-Date: Fri, 10 Jun 2016 15:23:30 +0200
-Message-Id: <1465565018-14172-3-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+	Andi Shyti <andi.shyti@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 25/34] clk: s2mps11: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160630192932.GT1521@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-26-stephen.boyd@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160601231533.9354-26-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The configuration of the clock depend of the gpio latch. This information
-is stored in the gpio block registers. That's why the block is shared
-using a syscon node.
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Andi Shyti <andi.shyti@samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Applied to clk-next
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-index 9e2efb882983..7c61e13a16f3 100644
---- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-@@ -105,6 +105,18 @@
- 				status = "disabled";
- 			};
- 
-+			gpio1: gpio@13800 {
-+				compatible = "marvell,mvebu-gpio-3700",
-+				"syscon", "simple-mfd";
-+				reg = <0x13800 0x500>;
-+
-+				xtalclk: xtal-clk {
-+					compatible = "marvell,armada-3700-xtal-clock";
-+					clock-output-names = "xtal";
-+					#clock-cells = <0>;
-+				};
-+			};
-+
- 			usb3: usb@58000 {
- 				compatible = "marvell,armada3700-xhci",
- 				"generic-xhci";
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
