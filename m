@@ -1,11 +1,10 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 14 Jun 2016 07:37:40 -0500
-From: Rob Herring <robh@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 30 Jun 2016 12:43:34 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	linux-arm-kernel@lists.infradead.org,
 	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
@@ -15,24 +14,102 @@ Cc: Mike Turquette <mturquette@baylibre.com>,
 	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
 	Wilson Ding <dingwei@marvell.com>,
 	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 05/10] dt-bindings: clock: add DT binding for the Xtal
- clock on Armada 3700
-Message-ID: <20160614123740.GA31855@rob-hp-laptop>
+Subject: Re: [PATCH 06/10] clk: mvebu: Add the xtal clock for Armada 3700 SoC
+Message-ID: <20160630194334.GZ1521@codeaurora.org>
 References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
- <1465565018-14172-6-git-send-email-gregory.clement@free-electrons.com>
+ <1465565018-14172-7-git-send-email-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465565018-14172-6-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1465565018-14172-7-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 10, 2016 at 03:23:33PM +0200, Gregory CLEMENT wrote:
-> This commit adds the DT binding documentation for the the Xtal clock on
-> Armada 3700 used in the Marvell Armada 3700 SoCs.
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  .../bindings/clock/armada3700-xtal-clock.txt       | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+On 06/10, Gregory CLEMENT wrote:
+> diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+> new file mode 100644
+> index 000000000000..fb051a75b2c2
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+> @@ -0,0 +1,93 @@
+> +/*
+> + * Marvell Armada 37xx SoC xtal clocks
+> + *
+> + * Copyright (C) 2016 Marvell
+> + *
+> + * Gregory CLEMENT <gregory.clement@free-electrons.com>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2.  This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define NB_GPIO1_LATCH	0xC
+> +#define XTAL_MODE	    BIT(31)
+> +
+> +static struct clk *xtal_clk;
 
-Acked-by: Rob Herring <robh@kernel.org>
+Please allocate this at driver probe time instead, or even just
+assign it to be the platform driver's drvdata.
+
+> +
+> +static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	const char *xtal_name = "xtal";
+> +	struct device_node *parent;
+> +	struct regmap *regmap;
+> +	unsigned int rate;
+> +	u32 reg;
+> +	int ret;
+> +
+> +	parent = np->parent;
+> +	if (!parent) {
+> +		dev_err(&pdev->dev, "no parrent\n");
+
+s/parrent/parent/
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	regmap = syscon_node_to_regmap(parent);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(&pdev->dev, "cannot get regmap\n");
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	ret = regmap_read(regmap, NB_GPIO1_LATCH, &reg);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "cannot read from regmap\n");
+> +		return ret;
+> +	}
+> +
+> +	if (reg & XTAL_MODE)
+> +		rate = 40000000;
+> +	else
+> +		rate = 25000000;
+> +
+> +	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
+> +	xtal_clk = clk_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
+
+Please move this to use the clk_hw_register_fixed_rate() function
+instead and update of_clk_add_provider to register a clk_hw
+instead of clk pointer.
+
+> +	if (IS_ERR(xtal_clk))
+> +		return PTR_ERR(xtal_clk);
+> +	of_clk_add_provider(np, of_clk_src_simple_get, xtal_clk);
+
+What if this fails?
+
+> +
+> +	return 0;
+> +}
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
