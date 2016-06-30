@@ -1,64 +1,47 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Sun, 12 Jun 2016 19:56:22 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Lothar Wa??mann <LW@KARO-electronics.de>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, anson.huang@nxp.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, shawnguo@kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/11] clk: imx: refine the powerup_set bit of clk-pllv3
-Message-ID: <20160612115622.GD32690@shlinux2>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-5-git-send-email-aisheng.dong@nxp.com>
- <20160609094328.136b7bf8@ipc1.ka-ro>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 3/7] clk: ti: remove un-used definitions from public clk_hw_omap struct
+Date: Thu, 30 Jun 2016 17:13:34 +0300
+Message-ID: <1467296018-25086-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160609094328.136b7bf8@ipc1.ka-ro>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 09, 2016 at 09:43:28AM +0200, Lothar Wa??mann wrote:
-> Hi,
-> 
-> On Wed, 8 Jun 2016 22:33:34 +0800 Dong Aisheng wrote:
-> > There's a powerdown bit already, so let's change the name of
-> > powerup_set bit to power_invert to reflects the power polarity
-> > to make it less confusing.
-> > 
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-pllv3.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> > index eea2b1b3791e..3fdfb6d2cc71 100644
-> > --- a/drivers/clk/imx/clk-pllv3.c
-> > +++ b/drivers/clk/imx/clk-pllv3.c
-> > @@ -29,8 +29,8 @@
-> >   * struct clk_pllv3 - IMX PLL clock version 3
-> >   * @clk_hw:	 clock source
-> >   * @base:	 base address of PLL registers
-> > - * @powerup_set: set POWER bit to power up the PLL
-> > - * @powerdown:   pll powerdown offset bit
-> > + * @powerdown:	 pll powerdown bit offset
-> > + * @power_invert: set powerdown bit to power up the PLL
-> s/set/clear/ ?
-> 
+Clksel support has been deprecated a while back, so remove these from
+the struct also.
 
-It is set.
-By default set the powerdown bit will powerdown the PLL according
-to spec.
-However, for IMX_PLLV3_USB, it's actually power up the PLL,
-so the power_invert reflect such using.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/linux/clk/ti.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Regards
-Dong Aisheng
-
-> 
-> 
-> Lothar Wa??mann
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 6110fe0..07308db 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
+  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
+  * @flags: see "struct clk.flags possibilities" above
+  * @clksel_reg: for clksel clks, register va containing src/divisor select
+- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
+- * @clksel: for clksel clks, pointer to struct clksel for this clock
+  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
+  * @clkdm_name: clockdomain name that this clock is contained in
+  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
+@@ -145,8 +143,6 @@ struct clk_hw_omap {
+ 	u8			enable_bit;
+ 	u8			flags;
+ 	void __iomem		*clksel_reg;
+-	u32			clksel_mask;
+-	const struct clksel	*clksel;
+ 	struct dpll_data	*dpll_data;
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+-- 
+1.9.1
