@@ -1,83 +1,43 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	s.hauer@pengutronix.de,
-	jeremy.kerr@canonical.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v2 1/3] clk: Add new function of_clk_is_provider()
-Date: Mon, 20 Jun 2016 15:43:36 +0200
-Message-Id: <1466430218-6561-2-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1466430218-6561-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <moinejf@free.fr>
+Date: Fri, 1 Jul 2016 07:37:10 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: =?UTF-8?B?T25kxZllag==?= Jirman <megous@megous.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Rutland
+ <mark.rutland@arm.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, dev@linux-sunxi.org, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, open list
+ <linux-kernel@vger.kernel.org>, Emilio =?UTF-8?B?TMOzcGV6?=
+ <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>, Rob Herring
+ <robh+dt@kernel.org>, "open list:COMMON CLK FRAMEWORK"
+ <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
+ application method
+Message-Id: <20160701073710.1a1fc684ae448577bad5b0db@free.fr>
+In-Reply-To: <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+References: <20160625034511.7966-1-megous@megous.com>
+	<20160625034511.7966-7-megous@megous.com>
+	<20160630204001.GC5485@lukather>
+	<0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-of_clk_is_provider() checks if a device_node has already been added to
-the clk provider list. This can be used to avoid adding the same clock
-provider twice.
+On Fri, 1 Jul 2016 02:50:57 +0200
+Ondřej Jirman <megous@megous.com> wrote:
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/clk.c            | 20 ++++++++++++++++++++
- include/linux/clk-provider.h |  5 +++++
- 2 files changed, 25 insertions(+)
+> > Since this is really specific, I guess you could simply make the
+> > clk_ops for the nkmp clocks public, and just re-implement set_rate
+> > using that logic.
+> 
+> I would argue that this may be necessary for other PLL clocks too, if
+> you can get out of bounds output frequency, by changing the dividers too
+> early or too late. So perhaps this code should be generalized for other
+> PLL clocks too, instead.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d584004f7af7..2423c6373906 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3120,6 +3120,26 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
- 	return hw;
- }
- 
-+/**
-+ * of_clk_is_provider() - Reports if a device node is already a clk provider
-+ * @np: Device node pointer under test
-+ */
-+bool of_clk_is_provider(struct device_node *np)
-+{
-+	struct of_clk_provider *cp;
-+
-+	mutex_lock(&of_clk_mutex);
-+	list_for_each_entry(cp, &of_clk_providers, link) {
-+		if (cp->node == np) {
-+			mutex_unlock(&of_clk_mutex);
-+			return true;
-+		}
-+	}
-+	mutex_unlock(&of_clk_mutex);
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(of_clk_is_provider);
-+
- struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 				       const char *dev_id, const char *con_id)
- {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index fb39d5add173..a01b18797418 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -787,6 +787,7 @@ int of_clk_add_hw_provider(struct device_node *np,
- 						 void *data),
- 			   void *data);
- void of_clk_del_provider(struct device_node *np);
-+bool of_clk_is_provider(struct device_node *np);
- struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
- 				  void *data);
- struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
-@@ -819,6 +820,10 @@ static inline int of_clk_add_hw_provider(struct device_node *np,
- 	return 0;
- }
- static inline void of_clk_del_provider(struct device_node *np) {}
-+static inline bool of_clk_is_provider(struct device_node *np)
-+{
-+	return false;
-+}
- static inline struct clk *of_clk_src_simple_get(
- 	struct of_phandle_args *clkspec, void *data)
- {
+The documentation says that only the CPU and DDR PLLs can be dynamically
+changed after boot.
+
 -- 
-2.8.1
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
