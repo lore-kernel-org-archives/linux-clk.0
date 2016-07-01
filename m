@@ -1,132 +1,129 @@
-Return-Path: <sstabellini@kernel.org>
-Date: Thu, 21 Jul 2016 18:16:02 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>,
-    Dirk Behme <dirk.behme@de.bosch.com>, Dirk Behme <dirk.behme@gmail.com>,
-    Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-    Stephen Boyd <sboyd@codeaurora.org>, Julien Grall <julien.grall@arm.com>,
-    xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
-    linux-arm-kernel@lists.infradead.org
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-In-Reply-To: <146914607316.8780.7961396342647226841@resonance>
-Message-ID: <alpine.DEB.2.10.1607211804000.6667@sstabellini-ThinkPad-X260>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <146836236759.73491.11707389619985827497@resonance> <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com> <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260> <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance> <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com> <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260> <146914607316.8780.7961396342647226841@resonance>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-Path: <oss@buserror.net>
+Message-ID: <1467406642.32358.39.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Russell King
+	 <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Scott Wood <scott.wood@nxp.com>, Yuantian Tang <yuantian.tang@nxp.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>,  "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng
+ Ren <xiaofeng.ren@nxp.com>
+Date: Fri, 01 Jul 2016 15:57:22 -0500
+In-Reply-To: <1736057.IZk9ncTkZk@vostro.rjw.lan>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+	 <3794032.AoZL3DhM7U@vostro.rjw.lan>
+	 <1467356146.32358.32.camel@buserror.net>
+	 <1736057.IZk9ncTkZk@vostro.rjw.lan>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+ parent clocks
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 21 Jul 2016, Michael Turquette wrote:
-> Quoting Stefano Stabellini (2016-07-14 03:38:04)
-> > On Thu, 14 Jul 2016, Dirk Behme wrote:
-> > > On 13.07.2016 23:03, Michael Turquette wrote:
-> > > > Quoting Dirk Behme (2016-07-13 11:56:30)
-> > > > > On 13.07.2016 20:43, Stefano Stabellini wrote:
-> > > > > > On Wed, 13 Jul 2016, Dirk Behme wrote:
-> > > > > > > On 13.07.2016 00:26, Michael Turquette wrote:
-> > > > > > > > Quoting Dirk Behme (2016-07-12 00:46:45)
-> > > > > > > > > Clocks described by this property are reserved for use by Xen, and
-> > > > > > > > > the OS
-> > > > > > > > > must not alter their state any way, such as disabling or gating a
-> > > > > > > > > clock,
-> > > > > > > > > or modifying its rate. Ensuring this may impose constraints on
-> > > > > > > > > parent
-> > > > > > > > > clocks or other resources used by the clock tree.
-> > > > > > > > 
-> > > > > > > > Note that clk_prepare_enable will not prevent the rate from changing
-> > > > > > > > (clk_set_rate) or a parent from changing (clk_set_parent). The only
-> > > > > > > > way
-> > > > > > > > to do this currently would be to set the following flags on the
-> > > > > > > > effected
-> > > > > > > > clocks:
-> > > > > > > > 
-> > > > > > > >     CLK_SET_RATE_GATE
-> > > > > > > >     CLK_SET_PARENT_GATE
-> > > > > > > 
-> > > > > > > 
-> > > > > > > 
-> > > > > > > Regarding setting flags, I think we already talked about that. I think
-> > > > > > > the
-> > > > > > > conclusion was that in our case its not possible to manipulate the
-> > > > > > > flags in
-> > > > > > > the OS as this isn't intended to be done in cases like ours. Therefore
-> > > > > > > no API
-> > > > > > > is exported for this.
-> > > > > > > 
-> > > > > > > I.e. if we need to set these flags, we have to do that in Xen where we
-> > > > > > > add the
-> > > > > > > clocks to the hypervisor node in the device tree. And not in the
-> > > > > > > kernel patch
-> > > > > > > discussed here.
-> > > > > > 
-> > > > > > These are internal Linux flags, aren't they?
-> > > > > 
-> > > > > 
-> > > > > I've been under the impression that you can set clock "flags" via the
-> > > > > device tree. Seems I need to re-check that ;)
+On Fri, 2016-07-01 at 22:53 +0200, Rafael J. Wysocki wrote:
+> On Friday, July 01, 2016 01:55:46 AM Scott Wood wrote:
+> > 
+> > On Thu, 2016-06-30 at 15:29 +0200, Rafael J. Wysocki wrote:
+> > > 
+> > > On Thursday, June 30, 2016 05:46:42 AM Scott Wood wrote:
 > > > > 
-> > > > Right, you cannot set flags from the device tree. Also, setting these
-> > > > flags is done by the clock provider driver, not a consumer. Xen is the
-> > > > consumer.
-> > > 
-> > > 
-> > > Ok, thanks, then I think we can forget about using flags for the issue we are
-> > > discussing here.
-> > > 
-> > > Best regards
-> > > 
-> > > Dirk
-> > > 
-> > > P.S.: Would it be an option to merge the v4 patch we are discussing here,
-> > > then? From the discussion until here, it sounds to me that it's the best
-> > > option we have at the moment. Maybe improving it in the future, then.
-> > 
-> > It might be a step in the right direction, but it doesn't really prevent
-> > clk_set_rate from changing properties of a clock owned by Xen.  This
-> > patch is incomplete. We need to understand at least what it would take
-> > to have a complete solution.
-> > 
-> > Michael, do you have any suggestions on how it would be possible to set
-> > CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
-> > way?
+> > > > 
+> > > > On 06/29/2016 10:02 PM, Yuantian Tang wrote:
+> > > > > 
+> > > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > -----Original Message-----
+> > > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > > > > > Sent: Thursday, June 30, 2016 10:24 AM
+> > > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
+> > > > > > Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.or
+> > > > > > g.uk
+> > > > > > > 
+> > > > > > > ;
+> > > > > > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> > > > > > <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>;
+> > > > > > linux-
+> > > > > > clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
+> > > > > > dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng
+> > > > > > Ren
+> > > > > > <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>
+> > > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
+> > > > > > possible
+> > > > > > parent clocks
+> > > > > > 
+> > > > > > On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:
+> > > > > > > 
+> > > > > > > 
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > -----Original Message-----
+> > > > > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > > > > > > > Sent: Thursday, June 30, 2016 9:47 AM
+> > > > > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
+> > > > > > > > Cc: Scott Wood <oss@buserror.net>; Russell King
+> > > > > > > > <linux@armlinux.org.uk>; Michael Turquette
+> > > > > > > > <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>
+> > > > > > > > ;
+> > > > > > > > Viresh Kumar <viresh.kumar@linaro.org>; linux- clk@vger.kernel
+> > > > > > > > .org
+> > > > > > > > ;
+> > > > > > > > linux-pm@vger.kernel.org; linuxppc- dev@lists.ozlabs.org;
+> > > > > > > > Yang-Leo
+> > > > > > > > Li <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>;
+> > > > > > > > Scott
+> > > > > > > > Wood <scottwood@freescale.com>
+> > > > > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for
+> > > > > > > > discovering
+> > > > > > > > possible parent clocks
+> > > > > > > > 
+> > > > > > > > On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
+> > > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > > Hi,
+> > > > > > > > > 
+> > > > > > > > > This patch is acked by clock maintainer. If no comments from
+> > > > > > > > > anyone else,
+> > > > > > > > we will merge it in next week.
+> > > > > > > > 
+> > > > > > > > There is a cpufreq commit depending on it.  Are you going to
+> > > > > > > > handle
+> > > > > > > > that one too?
+> > > > > > > > 
+> > > > > > > That one has been acked by cpufreq maintainer. You can get this
+> > > > > > > from
+> > > > > > patch comments.
+> > > > > > 
+> > > > > > I know that it has been ACKed.
+> > > > > > 
+> > > > > > My question is whether or not you are going to apply it along the
+> > > > > > [1/2].
+> > > > > > 
+> > > > > > If not, it will have to be deferred until the [1/2] is merged and
+> > > > > > then
+> > > > > > applied
+> > > > > > which may not be desirable.
+> > > > > > 
+> > > > > I hope we can apply both at same time. Seems Scott has a few
+> > > > > concerns.
+> > > > > 
+> > > > > What you think about this patch? Can you apply it?
+> > > > > If you have applied this patch, then I can push CPUfreq maintainer
+> > > > > to
+> > > > > apply another one which will be delayed.
+> > > > My only concern was getting an ack for this patch (1/2) -- did I miss
+> > > > it
+> > > > somewhere?
+> > > OK, so who's going to apply the series?
+> > Ideally it should go via the cpufreq tree.
+> OK, I'll apply both, then.
 > 
-> No, there is no way for a consumer to do that. The provider must do it.
+> Who exactly has ACKed the [1/2] from the clk side?
 
-All right. But could we design a new device tree binding which the Xen
-hypervisor would use to politely ask the clock provider in Linux to set
-CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for a given clock?
+That's the problem.  I'm not sure what ACK Yuantian is referring to.  The last
+I've heard from a clock maintainer was https://lkml.org/lkml/2015/9/18/816 des
+pite repeated attempts to get Russell King to respond as clock API maintainer.
 
-Xen would have to modify the DTB before booting Linux with the new
-binding.
-
-
-> > Like you wrote, I would imagine it needs to be done by the clock
-> > provider driver. Maybe to do that, it would be easier to have a new
-> > device tree property on the clock node, rather than listing phandle and
-> > clock-specifier pairs under the Xen node?
-> 
-> Upon further reflection, I think that your clock consumer can probably
-> use clk_set_rate_range() to "lock" in a rate. This is good because it is
-> exactly what a clock consumer should do:
-> 
-> 1) get the clk
-> 2) enable the clk
-> 3) set the required rate for the clock
-> 4) set rate range constraints, or conversely,
-> 5) lock in an exact rate; set the min/max rate to the same value
-> 
-> The problem with this solution is that it requires the consumer to have
-> knowledge of the rates that it wants for that clock, which I guess is
-> something that Linux kernels in a Xen setup do not want/need?
-
-Who is usually the component with knowledge of the clock rate to set? If
-it's a device driver, then neither the Xen hypervisor, nor the Xen core
-drivers in Linux would know anything about it. (Unless the clock rate is
-specified on device tree via assigned-clock-rates of course.)
-
-
-> Is it correct that you would prefer some sort of never_touch_this_clk()
-> api?
-
->From my understading, yes, never_touch_this_clk() would make things easier.
+-Scott
