@@ -1,47 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:38137 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753646AbcEPMrf (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2016 08:47:35 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 17/20] ARM: multi_v7: Enable sun4i DRM driver
-Date: Mon, 16 May 2016 14:47:17 +0200
-Message-Id: <1463402840-17062-18-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1463402840-17062-1-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <moinejf@free.fr>
+Date: Fri, 1 Jul 2016 08:04:00 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/3] clk: sunxi: Add a driver for the CCU
+Message-Id: <20160701080400.fc6070646ce7c98fe0e63bb5@free.fr>
+In-Reply-To: <20160630211635.GE5485@lukather>
+References: <cover.1467135898.git.moinejf@free.fr>
+	<a55dc5d1a9f02dc4d71d5c21064bffebe5a7b149.1467135898.git.moinejf@free.fr>
+	<20160628204502.GG5550@lukather>
+	<20160629101256.93895e6ff9184efa340f69dd@free.fr>
+	<20160630211635.GE5485@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the new DRM driver in the multi_v7 defconfig
+On Thu, 30 Jun 2016 23:16:35 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> > - in case a driver requests a reset, this last one should exist.
+> >   But, this reset may point to a void one (reg =3D null) when the real
+> >   reset has been moved to the prepare/unprepare of the associated clock.
+>=20
+> And what if this driver wants to be reset, by calling
+> reset_control_reset? You realize you're going against the semantics of
+> the reset and clock APIs, and what the hardware expose here right?
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f7e0d49b515a..80591f3e867e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -552,6 +552,7 @@ CONFIG_DRM_ATMEL_HLCDC=m
- CONFIG_DRM_RCAR_DU=m
- CONFIG_DRM_RCAR_HDMI=y
- CONFIG_DRM_RCAR_LVDS=y
-+CONFIG_DRM_SUN4I=m
- CONFIG_DRM_TEGRA=y
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
- CONFIG_DRM_PANEL_SIMPLE=y
--- 
-2.8.2
+If a driver really wants a reset, the reset stuff is not included in
+the clock prepare.
 
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
