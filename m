@@ -1,47 +1,46 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	songjun.wu@microchip.com,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: at91: fix clk_programmable_set_parent()
-Date: Mon, 18 Jul 2016 09:49:12 +0200
-Message-Id: <1468828152-18389-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 11:38:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Hoan Tran <hotran@apm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Duc Dang <dhdang@apm.com>, lho@apm.com
+Subject: Re: [PATCH v2] clk: Add fractional scale clock support
+Message-ID: <20160701183845.GD27880@codeaurora.org>
+References: <1466458269-460-1-git-send-email-hotran@apm.com>
+ <20160630202358.GC27880@codeaurora.org>
+ <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since commit 1bdf02326b71e ("clk: at91: make use of syscon/regmap
-internally"), clk_programmable_set_parent() is always selecting the
-first parent (AKA slow_clk), no matter what's passed in the 'index'
-parameter.
+Sorry I replied offlist before. Pressed the wrong key.
 
-Fix that by initializing the pckr variable to the index value.
+On 06/30, Hoan Tran wrote:
+> On Thu, Jun 30, 2016 at 1:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> >
+> > How is this different from clk-fractional-divider.c?
+> >
+> 
+> This is a driver which clock output is multiplied with a fixed fractional
+> scale (denominator).
+> A field inside a register is used to configure the multiplier.
+> 
+> Example: With fractional scale is 1/8.
+> Freq_out = Freq_parent * multiplier * (1/8)
+> 
+> For fractional-divider, there are 2 fields of a register are used which
+>  - A field for numerator
+>  - A field for denominator
+> Freq_out = Freq_parent * numerator / denominator
+> 
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Reported-by: Hans Verkuil <hans.verkuil@cisco.com>
-Fixes: 1bdf02326b71e ("clk: at91: make use of syscon/regmap internally")
-Cc: <stable@vger.kernel.org>
----
- drivers/clk/at91/clk-programmable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok so the difference is that the denominator is a fixed value?
+Perhaps that can be modeled as a clk-multiplier that is used as
+the only parent of a fixed divider? Or we can add a flag to the
+clk-fractional-divider code to handle this minor difference.
 
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 10f846cc8db1..25d5906640c3 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -99,7 +99,7 @@ static int clk_programmable_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_programmable *prog = to_clk_programmable(hw);
- 	const struct clk_programmable_layout *layout = prog->layout;
- 	unsigned int mask = layout->css_mask;
--	unsigned int pckr = 0;
-+	unsigned int pckr = index;
- 
- 	if (layout->have_slck_mck)
- 		mask |= AT91_PMC_CSSMCK_MCK;
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
