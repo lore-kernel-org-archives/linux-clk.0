@@ -1,73 +1,84 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
-Date: Wed, 27 Jul 2016 02:53:06 +0900
-Message-Id: <1469555588-9114-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] clk: qcom: add EBI2 clocks to the MSM8660 GCC
+Date: Fri,  1 Jul 2016 17:54:01 +0200
+Message-Id: <1467388441-22352-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds the EBI2 2X and EBI2 clocks to the MSM8660/APQ8060
+GCC. This is necessary to enable clocking of the external bus
+interface so that peripherals on it can be mounted. These two
+clocks are simple gated branch clocks.
 
-I split into two patches to make review easier.
+In the vendor tree clock-8x60, these clocks have some kind of
+dependency, the EBI2 clock has .depends = &ebi2_2x_clk.c,
+what this means is undocumented, it doesn't seem like there
+is a parent/child relationship, so the solution I chose was to
+just have the EBI2 driver get and enable both clocks.
 
- 1/2: core support code
- 2/2: data arrays
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Any comments or documenation welcome, after googling around
+it seems that the EBI2 found in the MSM8x60 is basically
+undocumented and the code contains cryptic hex values with
+little or no explanation.
+---
+ drivers/clk/qcom/gcc-msm8660.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-
-Changes in v4:
-  - Unify module_platform_driver() boilerplate into a single place
-  - Add binding document
-  - Add USB3 clocks
-
-Changes in v3:
-  - Change to platform drivers instead of OF_CLK_DECLARE
-  - Split into a core part + SoC drivers
-    SoC drivers just consist of tables of SoC-specific data.
-    This allows reviewer to concentrate on the core-part
-  - Hard-code parent clock names for cascading
-
-Changes in v2:
-  - split emmc_hw_reset
-  - make SD clock rate-controllable
-  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
-
-Masahiro Yamada (2):
-  clk: uniphier: add core support code for UniPhier clock drivers
-  clk: uniphier: add clock data for UniPhier SoCs
-
- .../devicetree/bindings/clock/uniphier-clock.txt   | 123 ++++
- MAINTAINERS                                        |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/uniphier/Kconfig                       |   9 +
- drivers/clk/uniphier/Makefile                      |   9 +
- drivers/clk/uniphier/clk-uniphier-core.c           | 216 +++++++
- drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 ++
- drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 ++
- drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++
- drivers/clk/uniphier/clk-uniphier-mio.c            | 195 +++++++
- drivers/clk/uniphier/clk-uniphier-mux.c            |  95 ++++
- drivers/clk/uniphier/clk-uniphier-peri.c           |  95 ++++
- drivers/clk/uniphier/clk-uniphier-sys.c            | 626 +++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h                |  96 ++++
- 15 files changed, 1661 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
- create mode 100644 drivers/clk/uniphier/Kconfig
- create mode 100644 drivers/clk/uniphier/Makefile
- create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier.h
-
+diff --git a/drivers/clk/qcom/gcc-msm8660.c b/drivers/clk/qcom/gcc-msm8660.c
+index 6dc55864979c..c347a0d44bc8 100644
+--- a/drivers/clk/qcom/gcc-msm8660.c
++++ b/drivers/clk/qcom/gcc-msm8660.c
+@@ -2290,6 +2290,32 @@ static struct clk_branch sdc5_h_clk = {
+ 	},
+ };
+ 
++static struct clk_branch ebi2_2x_clk = {
++	.halt_reg = 0x2fcc,
++	.halt_bit = 18,
++	.clkr = {
++		.enable_reg = 0x2660,
++		.enable_mask = BIT(4),
++		.hw.init = &(struct clk_init_data){
++			.name = "ebi2_2x_clk",
++			.ops = &clk_branch_ops,
++		},
++	},
++};
++
++static struct clk_branch ebi2_clk = {
++	.halt_reg = 0x2fcc,
++	.halt_bit = 19,
++	.clkr = {
++		.enable_reg = 0x2664,
++		.enable_mask = BIT(4),
++		.hw.init = &(struct clk_init_data){
++			.name = "ebi2_clk",
++			.ops = &clk_branch_ops,
++		},
++	},
++};
++
+ static struct clk_branch adm0_clk = {
+ 	.halt_reg = 0x2fdc,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -2533,6 +2559,8 @@ static struct clk_regmap *gcc_msm8660_clks[] = {
+ 	[SDC3_H_CLK] = &sdc3_h_clk.clkr,
+ 	[SDC4_H_CLK] = &sdc4_h_clk.clkr,
+ 	[SDC5_H_CLK] = &sdc5_h_clk.clkr,
++	[EBI2_2X_CLK] = &ebi2_2x_clk.clkr,
++	[EBI2_CLK] = &ebi2_clk.clkr,
+ 	[ADM0_CLK] = &adm0_clk.clkr,
+ 	[ADM0_PBUS_CLK] = &adm0_pbus_clk.clkr,
+ 	[ADM1_CLK] = &adm1_clk.clkr,
 -- 
-1.9.1
+2.4.11
