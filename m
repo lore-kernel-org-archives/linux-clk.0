@@ -1,91 +1,125 @@
-Return-Path: <zajec5@gmail.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Fri, 1 Jul 2016 09:40:50 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, rtc-linux@googlegroups.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] mfd: ac100: Add device tree bindings for X-Powers
+ AC100 codec/RTC combo IC
+Message-ID: <20160701084050.GI1707@dell>
+References: <1467302331-9663-1-git-send-email-wens@csie.org>
+ <1467302331-9663-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <23e2aa2f-a0ff-f72e-5e98-ea539c6fb69d@gmail.com>
-References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
- <de0ba9d2-8b2b-b1e8-9235-1b402f0ffec0@broadcom.com> <CACna6rwj=ordfzTri1_iTOK162VjS+1bNVBSKo8p3AshGZun=Q@mail.gmail.com>
- <1e7e8319-d6d5-d952-634d-1ee9b9f2b1a3@broadcom.com> <CACna6ryOndBTzLL_H+3S01YmWg1Te7T5t2J4tVsxoUtat2xAiw@mail.gmail.com>
- <23e2aa2f-a0ff-f72e-5e98-ea539c6fb69d@gmail.com>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 29 Jul 2016 22:59:18 +0200
-Message-ID: <CACna6rzVWSTPTvp+jMq63PEtshNEH0vyOU10Q+UmzT+sVWuPgA@mail.gmail.com>
-Subject: Re: [PATCH] clk: bcm: Add driver for Northstar ILP clock
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <ray.jui@broadcom.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Jon Mason <jonmason@broadcom.com>,
-	Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1467302331-9663-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29 July 2016 at 22:55, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> On 07/29/2016 01:52 PM, Rafa=C5=82 Mi=C5=82ecki wrote:
->> On 29 July 2016 at 22:49, Ray Jui <ray.jui@broadcom.com> wrote:
->>> On 7/29/2016 1:46 PM, Rafa=C5=82 Mi=C5=82ecki wrote:
->>>> On 29 July 2016 at 22:44, Ray Jui <ray.jui@broadcom.com> wrote:
->>>>>
->>>>> On 7/29/2016 5:58 AM, Rafa=C5=82 Mi=C5=82ecki wrote:
->>>>>>
->>>>>>
->>>>>> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
->>>>>>
->>>>>> This clock is present on cheaper Northstar devices like BCM53573 or
->>>>>> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit=
-)
->>>>>> to calculate clock rate and allows using it in a generic (clk_*) way=
-.
->>>>>>
->>>>>
->>>>> I thought Northstar uses Cortex A9 instead of A7?
->>>>
->>>>
->>>> [    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
->>>> cr=3D10c5387d
->>>> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
->>>> instruction cache
->>>> [    0.000000] Machine model: Tenda AC9
->>>>
->>>
->>> Yeah ARMv7 instruction set but the core is Cortex A7. Both Cortex A7 an=
-d A9
->>> use ARMv7 instructions.
->>
->> OK, sorry for irrelevant part then :)
->>
->> This is from BCM4709C0:
->> bcma: bus0: Core 10 found: ARM Cortex A9 core (ihost) (manuf 0x4BF, id
->> 0x510, rev 0x07, class 0x0)
->>
->> This is from BCM47189B0::
->> bcma: bus0: Core 3 found: ARM CA7 (manuf 0x4BF, id 0x847, rev 0x00, clas=
-s 0x0)
->>
->
-> This is indeed a Cortex A7-based chip, not clear if putting this chip in
-> the Northstar family is accurate here because it really seems to have a
-> different architecture from the NS/NSP family here...
+On Thu, 30 Jun 2016, Chen-Yu Tsai wrote:
 
-Broadcom claims it is a Northstar, at least according to their SDKs:
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+> Changes since v3:
+> 
+>   - Fixed device node names and added labels.
+>   - Added clock output from codec and input to rtc.
+> 
+> Changes since v2:
+> 
+>   - Fix interrupt line for ac100_codec in provided example.
+> 
+> ---
+>  Documentation/devicetree/bindings/mfd/ac100.txt | 49 +++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ac100.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ac100.txt b/Documentation/devicetree/bindings/mfd/ac100.txt
+> new file mode 100644
+> index 000000000000..31e6f9cc41bc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ac100.txt
+> @@ -0,0 +1,49 @@
+> +X-Powers AC100 Codec/RTC IC device tree bindings
 
-Asus RT-AC1200G+
+Nit: Device Tree
 
-# cat /proc/cpuinfo
-Processor : ARMv7 Processor rev 5 (v7l)
-BogoMIPS : 1795.68
-Features : swp half thumb fastmult edsp
-CPU implementer : 0x41
-CPU architecture: 7
-CPU variant : 0x0
-CPU part : 0xc07
-CPU revision : 5
+> +AC100 is a audio codec and RTC subsystem combo IC. The 2 parts are
+> +separated, including power supplies and interrupt lines, but share
+> +a common register address space and host interface.
+> +
+> +Required properties:
+> +- compatible: "x-powers,ac100"
+> +- reg: The I2C slave address or RSB hardware address for the chip
+> +- sub-nodes:
+> +  - codec
+> +    - compatible: "x-powers,ac100-codec"
+> +    - interrupt-parent: The parent interrupt controller
+> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
+> +    - #clock-cells: shall be 0
 
-Hardware : Northstar Prototype
-Revision : 0000
-Serial : 0000000000000000
+Nit: Shall
 
---=20
-Rafa=C5=82
+> +    - clock-output-names: "4M_adda"
+> +    - see clock/clock-bindings.txt for common clock bindings
+
+    - compatible:           "x-powers,ac100-codec"
+    - interrupt-parent:	    The parent interrupt controller
+    - interrupts: 	    SoC NMI / GPIO interrupt connected to the IRQ_AUDIO pin
+    - #clock-cells:   	    shall be 0
+    - clock-output-names:   "4M_adda"
+
+    - see clock/clock-bindings.txt for common clock bindings
+
+Don't you think these are easier to read when they're separated?
+
+> +  - rtc
+> +    - compatible: "x-powers,ac100-rtc"
+> +    - interrupt-parent: The parent interrupt controller
+> +    - interrupts: SoC NMI / GPIO interrupt connected to the IRQ_RTC pin
+> +    - clocks: A phandle to the codec's "4M_adda" clock
+> +    - #clock-cells: shall be 1
+
+Nit: Shall
+
+> +    - clock-output-names: "cko1_rtc", "cko2_rtc", "cko3_rtc"
+> +    - see clock/clock-bindings.txt for common clock bindings
+
+Same here.
+
+> +Example:
+> +
+> +ac100: codec@e89 {
+> +	compatible = "x-powers,ac100";
+> +	reg = <0xe89>;
+> +
+> +	ac100_codec: codec {
+> +		compatible = "x-powers,ac100-codec";
+> +		interrupt-parent = <&r_pio>;
+> +		interrupts = <0 9 IRQ_TYPE_LEVEL_LOW>; /* PL9 */
+> +		#clock-cells = <0>;
+> +		clock-output-names = "4M_adda";
+> +	};
+> +
+> +	ac100_rtc: rtc {
+> +		compatible = "x-powers,ac100-rtc";
+> +		interrupt-parent = <&nmi_intc>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&ac100_codec>;
+> +		#clock-cells = <1>;
+> +		clock-output-names = "cko1_rtc", "cko2_rtc", "cko3_rtc";
+> +	};
+> +};
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
