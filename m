@@ -1,52 +1,100 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 12 Jun 2016 19:41:11 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, anson.huang@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/11] clk: imx6ul: fix gpt2 clock names
-Message-ID: <20160612114111.GD20243@tiger>
-References: <1465396420-27064-1-git-send-email-aisheng.dong@nxp.com>
- <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1465396420-27064-6-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <oss@buserror.net>
+Message-ID: <1467356146.32358.32.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Scott Wood <scott.wood@nxp.com>
+Cc: Yuantian Tang <yuantian.tang@nxp.com>, Russell King
+ <linux@armlinux.org.uk>,  Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>,  "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng
+ Ren <xiaofeng.ren@nxp.com>
+Date: Fri, 01 Jul 2016 01:55:46 -0500
+In-Reply-To: <3794032.AoZL3DhM7U@vostro.rjw.lan>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+	 <DBXPR04MB4951CA4EFB4FB5A2BDE7542F0240@DBXPR04MB495.eurprd04.prod.outlook.com>
+	 <DB5PR0401MB1928B6A4F1049592292D348C91240@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+	 <3794032.AoZL3DhM7U@vostro.rjw.lan>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
+ parent clocks
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 08, 2016 at 10:33:35PM +0800, Dong Aisheng wrote:
-> fix gpt2 clock names
-> 
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx6ul.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> index 0f1f17a8f3ed..67ae3465dd37 100644
-> --- a/drivers/clk/imx/clk-imx6ul.c
-> +++ b/drivers/clk/imx/clk-imx6ul.c
-> @@ -305,8 +305,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
->  	clks[IMX6UL_CLK_CAN1_SERIAL]	= imx_clk_gate2("can1_serial",	"can_podf",	base + 0x68,	16);
->  	clks[IMX6UL_CLK_CAN2_IPG]	= imx_clk_gate2("can2_ipg",	"ipg",		base + 0x68,	18);
->  	clks[IMX6UL_CLK_CAN2_SERIAL]	= imx_clk_gate2("can2_serial",	"can_podf",	base + 0x68,	20);
-> -	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus",	"perclk",	base + 0x68,	24);
-> -	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial",	"perclk",	base + 0x68,	26);
-> +	clks[IMX6UL_CLK_GPT2_BUS]	= imx_clk_gate2("gpt_bus2",	"perclk",	base + 0x68,	24);
-> +	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt_serial2",	"perclk",	base + 0x68,	26);
+On Thu, 2016-06-30 at 15:29 +0200, Rafael J. Wysocki wrote:
+> On Thursday, June 30, 2016 05:46:42 AM Scott Wood wrote:
+> > 
+> > On 06/29/2016 10:02 PM, Yuantian Tang wrote:
+> > > 
+> > > > 
+> > > > -----Original Message-----
+> > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > > > Sent: Thursday, June 30, 2016 10:24 AM
+> > > > To: Yuantian Tang <yuantian.tang@nxp.com>
+> > > > Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.org.uk
+> > > > >;
+> > > > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> > > > <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>; linux-
+> > > > clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
+> > > > dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng Ren
+> > > > <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>
+> > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
+> > > > possible
+> > > > parent clocks
+> > > > 
+> > > > On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:
+> > > > > 
+> > > > > > 
+> > > > > > -----Original Message-----
+> > > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > > > > > Sent: Thursday, June 30, 2016 9:47 AM
+> > > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
+> > > > > > Cc: Scott Wood <oss@buserror.net>; Russell King
+> > > > > > <linux@armlinux.org.uk>; Michael Turquette
+> > > > > > <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>;
+> > > > > > Viresh Kumar <viresh.kumar@linaro.org>; linux- clk@vger.kernel.org
+> > > > > > ;
+> > > > > > linux-pm@vger.kernel.org; linuxppc- dev@lists.ozlabs.org; Yang-Leo
+> > > > > > Li <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>;
+> > > > > > Scott
+> > > > > > Wood <scottwood@freescale.com>
+> > > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
+> > > > > > possible parent clocks
+> > > > > > 
+> > > > > > On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
+> > > > > > > 
+> > > > > > > Hi,
+> > > > > > > 
+> > > > > > > This patch is acked by clock maintainer. If no comments from
+> > > > > > > anyone else,
+> > > > > > we will merge it in next week.
+> > > > > > 
+> > > > > > There is a cpufreq commit depending on it.  Are you going to
+> > > > > > handle
+> > > > > > that one too?
+> > > > > > 
+> > > > > That one has been acked by cpufreq maintainer. You can get this from
+> > > > patch comments.
+> > > > 
+> > > > I know that it has been ACKed.
+> > > > 
+> > > > My question is whether or not you are going to apply it along the
+> > > > [1/2].
+> > > > 
+> > > > If not, it will have to be deferred until the [1/2] is merged and then
+> > > > applied
+> > > > which may not be desirable.
+> > > > 
+> > > I hope we can apply both at same time. Seems Scott has a few concerns.
+> > > 
+> > > What you think about this patch? Can you apply it?
+> > > If you have applied this patch, then I can push CPUfreq maintainer to
+> > > apply another one which will be delayed.
+> > My only concern was getting an ack for this patch (1/2) -- did I miss it
+> > somewhere?
+> OK, so who's going to apply the series?
 
-gpt2_bus and gpt2_serial, please.
+Ideally it should go via the cpufreq tree.
 
-Shawn
-
->  	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
->  	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
->  	clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-Scott
