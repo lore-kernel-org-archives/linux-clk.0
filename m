@@ -1,63 +1,64 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Janusz Uzycki <j.uzycki@elproma.com.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 23/34] clk: pwm: Migrate to clk_hw based OF and registration APIs
-Date: Wed,  1 Jun 2016 16:15:22 -0700
-Message-Id: <20160601231533.9354-24-stephen.boyd@linaro.org>
-In-Reply-To: <20160601231533.9354-1-stephen.boyd@linaro.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clk changes for 4.8
+Date: Fri, 01 Jul 2016 02:14:53 +0200
+Message-ID: <112903792.EQ89smGoay@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Hi Mike, Stephen,
 
-Cc: Janusz Uzycki <j.uzycki@elproma.com.pl>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
----
+please find below clock changes for 4.8.
 
-See commit 58657d189a2f and it's children for details on this
-new registration API.
+Apart from some new clock ids there is the addition of a placeholder clock
+for the rk3399 watchdog pclk - as explained in the code, this gate is not
+controlled through the clock controller but through the general register
+files, yet the watchdog is unhappy if can't see the clock. And finally some
+small fixes for clock mistakes that do not affect any currently support
+board ip blocks like spdif-DPTX clock on the rk3399.
 
- drivers/clk/clk-pwm.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+So if this looks ok, please pull
 
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index 1630a1f085f7..8cb9d117fdbf 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -61,7 +61,6 @@ static int clk_pwm_probe(struct platform_device *pdev)
- 	struct pwm_device *pwm;
- 	struct pwm_args pargs;
- 	const char *clk_name;
--	struct clk *clk;
- 	int ret;
- 
- 	clk_pwm = devm_kzalloc(&pdev->dev, sizeof(*clk_pwm), GFP_KERNEL);
-@@ -107,11 +106,11 @@ static int clk_pwm_probe(struct platform_device *pdev)
- 
- 	clk_pwm->pwm = pwm;
- 	clk_pwm->hw.init = &init;
--	clk = devm_clk_register(&pdev->dev, &clk_pwm->hw);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = devm_clk_hw_register(&pdev->dev, &clk_pwm->hw);
-+	if (ret)
-+		return ret;
- 
--	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	return of_clk_add_hw_provider(node, of_clk_hw_simple_get, &clk_pwm->hw);
- }
- 
- static int clk_pwm_remove(struct platform_device *pdev)
--- 
-2.7.4
+Thanks
+Heiko
+
+
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.8-rockchip-clk1
+
+for you to fetch changes up to 3770821fa360525e6c726cd562a2438a0aa5d566:
+
+  clk: rockchip: fix incorrect rk3399 spdif-DPTX divider bits (2016-07-01 01:50:17 +0200)
+
+----------------------------------------------------------------
+Placeholder for the rk3399 watchdog pclk, some newly exported
+rk3228 clockids and a small fix for the not yet used spdif to
+displayport clock on the rk3399.
+
+----------------------------------------------------------------
+Heiko Stuebner (1):
+      Merge branch 'v4.8-shared/clkids' into v4.8-clk/next
+
+Xing Zheng (9):
+      clk: rockchip: add a dummy clock for the watchdog pclk on rk3399
+      clk: rockchip: add clock-ids for rk3228 audio clocks
+      clk: rockchip: add clock-ids for rk3228 MAC clocks
+      clk: rockchip: fix incorrect rk3228 clock registers
+      clk: rockchip: include rk3228 downstream muxes into fractional dividers
+      clk: rockchip: export rk3228 audio clocks
+      clk: rockchip: rename rk3228 sclk_macphy_50m to sclk_mac_extclk
+      clk: rockchip: export rk3228 MAC clocks
+      clk: rockchip: fix incorrect rk3399 spdif-DPTX divider bits
+
+ drivers/clk/rockchip/clk-rk3228.c      | 125 +++++++++++++++++++--------------
+ drivers/clk/rockchip/clk-rk3399.c      |  11 ++-
+ include/dt-bindings/clock/rk3228-cru.h |  15 ++++
+ 3 files changed, 99 insertions(+), 52 deletions(-)
