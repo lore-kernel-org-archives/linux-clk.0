@@ -1,54 +1,35 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 17:44:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com, shawnguo@kernel.org,
+	linux-arm-kernel@lists.infradead.org, anson.huang@nxp.com
+Subject: Re: [PATCH V3 2/8] clk: move clk_disable_unused after
+ clk_core_disable_unprepare function
+Message-ID: <20160702004416.GK27880@codeaurora.org>
+References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+ <1467279078-2330-3-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: Jean Delvare <jdelvare@suse.de>, linux-clk@vger.kernel.org,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Neil Armstrong" <narmstrong@baylibre.com>
-References: <20160707091844.196a7930@endymion>
-In-Reply-To: <20160707091844.196a7930@endymion>
-Message-ID: <146836271590.73491.14582071169637437157@resonance>
-Subject: Re: [PATCH] clk: oxnas: Add hardware dependencies
-Date: Tue, 12 Jul 2016 15:31:55 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467279078-2330-3-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jean Delvare (2016-07-07 00:18:44)
-> The clk-oxnas driver is specific to its architecture, so do not
-> propose it on other architectures, unless build-testing.
-> =
-
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
+On 06/30, Dong Aisheng wrote:
+> No function level change, just moving code place.
+> clk_disable_unused function will need to call clk_core_prepare_enable/
+> clk_core_disable_unprepare when adding CLK_OPS_PARENT_ENABLE features.
+> So move it after clk_core_disable_unprepare to avoid adding forward
+> declared functions later.
+> 
+> Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@codeaurora.org>
-
-Applied.
-
-Regards,
-Mike
-
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
->  drivers/clk/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> =
 
-> --- linux-4.7-rc6.orig/drivers/clk/Kconfig      2016-07-04 08:01:00.00000=
-0000 +0200
-> +++ linux-4.7-rc6/drivers/clk/Kconfig   2016-07-07 09:12:17.723329794 +02=
-00
-> @@ -203,6 +203,7 @@ config COMMON_CLK_PIC32
->  =
+Applied to clk-next
 
->  config COMMON_CLK_OXNAS
->         bool "Clock driver for the OXNAS SoC Family"
-> +       depends on ARCH_OXNAS || COMPILE_TEST
->         select MFD_SYSCON
->         ---help---
->           Support for the OXNAS SoC Family clocks.
-> =
-
-> =
-
-> -- =
-
-> Jean Delvare
-> SUSE L3 Support
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
