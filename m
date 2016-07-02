@@ -1,67 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from m199-177.yeah.net ([123.58.177.199]:12601 "EHLO
-	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750897AbcGLHO5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 03:14:57 -0400
-Subject: Re: [PATCH v2 01/10] ARM: NUC900: Add nuc970 machine support
-To: Arnd Bergmann <arnd@arndb.de>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-2-git-send-email-vw@iommu.org>
- <18260150.aRRy8ybKlm@wuerfel> <57847278.8000408@iommu.org>
-Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
-	Wan Zongshun <mcuos.com@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <578498E7.4080709@iommu.org>
-Date: Tue, 12 Jul 2016 15:14:47 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 18:13:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] clk: qcom: add EBI2 clocks to the MSM8660 GCC
+Message-ID: <20160702011348.GS27880@codeaurora.org>
+References: <1467388441-22352-1-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <57847278.8000408@iommu.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467388441-22352-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/01, Linus Walleij wrote:
+> This adds the EBI2 2X and EBI2 clocks to the MSM8660/APQ8060
+> GCC. This is necessary to enable clocking of the external bus
+> interface so that peripherals on it can be mounted. These two
+> clocks are simple gated branch clocks.
+> 
+> In the vendor tree clock-8x60, these clocks have some kind of
+> dependency, the EBI2 clock has .depends = &ebi2_2x_clk.c,
+> what this means is undocumented, it doesn't seem like there
+> is a parent/child relationship, so the solution I chose was to
+> just have the EBI2 driver get and enable both clocks.
+> 
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
+Applied to clk-next
 
-On 2016年07月12日 12:30, Wan Zongshun wrote:
->
->
-> On 2016年07月12日 00:04, Arnd Bergmann wrote:
->> On Sunday, July 10, 2016 3:27:21 PM CEST Wan Zongshun wrote:
->>> +ifeq ($(CONFIG_SOC_NUC970),)
->>>   obj-y                          := irq.o time.o mfp.o gpio.o clock.o
->>>   obj-y                          += clksel.o dev.o cpu.o
->>> +endif
->>>   # W90X900 CPU support files
->>
->> When mfp.o is disabled like this, I get a link error in two drivers
->> using the exported interface:
->>
->> ERROR: "mfp_set_groupg" [drivers/spi/spi-nuc900.ko] undefined!
->> ERROR: "mfp_set_groupi" [drivers/input/keyboard/w90p910_keypad.ko]
->> undefined!
->
-> Why remove mfp modules? this multifunction pin driver should be used for
-> those two drivers, if no mfp_set_groupX, I don't think driver can work.
->
-> Now mfp has standard driver subsystem?
->
->>
->> Any idea for a better migration strategy?
-
-Arnd, If you still think the mfp should be removed, we can send a series 
-patches to instead of using mfp interface quickly, and do mfp set in 
-local driver. Do you think it is ok?
-
->>
->>     Arnd
->>
->>
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
