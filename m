@@ -1,107 +1,73 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 18:21:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
+	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, James Liao <jamesjj.liao@mediatek.com>
+Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
+ parents
+Message-ID: <20160702012140.GB17071@codeaurora.org>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+ <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
-Cc: b.zolnierkie@samsung.com, "Sylwester Nawrocki" <s.nawrocki@samsung.com>
-References: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
-Message-ID: <146799700614.73491.6564650478987470074@resonance>
-Subject: Re: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem CLKCON
- driver
-Date: Fri, 08 Jul 2016 09:56:46 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sylwester Nawrocki (2016-07-08 07:15:00)
-> Any clock dependencies can be properly handled with deferred probing
-> so we can remove core_initcall and switch to a proper loadable platform
-> driver module.
-> This change has been tested on Exynos4412 Odroid U3 based board.
-> =
+(Resending to everyone)
 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On 06/22, Erin Lo wrote:
+> From: James Liao <jamesjj.liao@mediatek.com>
+> 
+> This patch fixed wrong state of parent clocks if they are registered
+> after critical clocks.
+> 
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 
-Looks good to me.
-
-Regards,
-Mike
+It would be nice if you included the information about the
+problem from James' previous mail. This says what it does, but
+doesn't explain what the problem is and how it is fixing it.
 
 > ---
->  drivers/clk/samsung/Kconfig            |  9 +++++++++
->  drivers/clk/samsung/Makefile           |  2 +-
->  drivers/clk/samsung/clk-exynos-audss.c | 12 +-----------
->  3 files changed, 11 insertions(+), 12 deletions(-)
-> =
-
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 20c5fe9..addc652 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -9,6 +9,15 @@ config EXYNOS_ARM64_COMMON_CLK
->         bool "Samsung Exynos ARMv8-family clock controller support" if CO=
-MPILE_TEST
->         depends on COMMON_CLK_SAMSUNG
->  =
-
-> +config EXYNOS_AUDSS_CLK_CON
-> +       tristate "Samsung Exynos AUDSS clock controller support"
-> +       depends on COMMON_CLK_SAMSUNG
-> +       default y if ARCH_EXYNOS
-> +       help
-> +         Support for the Audio Subsystem CLKCON clock controller present
-> +         on some Exynos SoC variants. Choose M or Y here if you want to
-> +         use audio devices such as I2S, PCM, etc.
+>  drivers/clk/clk.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d584004..e9f5f89 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
+>  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+>  		struct clk_core *parent = __clk_init_parent(orphan);
+>  
+> -		if (parent)
+> +		if (parent) {
+>  			clk_core_reparent(orphan, parent);
 > +
->  # For S3C24XX platforms, select following symbols:
->  config S3C2410_COMMON_CLK
->         bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index fc367d4..57f4dc6 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -12,7 +12,7 @@ obj-$(CONFIG_SOC_EXYNOS5410)  +=3D clk-exynos5410.o
->  obj-$(CONFIG_SOC_EXYNOS5420)   +=3D clk-exynos5420.o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos5433.o
->  obj-$(CONFIG_SOC_EXYNOS5440)   +=3D clk-exynos5440.o
-> -obj-$(CONFIG_ARCH_EXYNOS)      +=3D clk-exynos-audss.o
-> +obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) +=3D clk-exynos-audss.o
->  obj-$(CONFIG_ARCH_EXYNOS)      +=3D clk-exynos-clkout.o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  +=3D clk-exynos7.o
->  obj-$(CONFIG_S3C2410_COMMON_CLK)+=3D clk-s3c2410.o
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung=
-/clk-exynos-audss.c
-> index 4e9584d..bdf8b97 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -273,17 +273,7 @@ static struct platform_driver exynos_audss_clk_drive=
-r =3D {
->         .remove =3D exynos_audss_clk_remove,
->  };
->  =
+> +			if (orphan->prepare_count)
+> +				clk_core_prepare(parent);
+> +
+> +			if (orphan->enable_count)
+> +				clk_core_enable(parent);
+> +		}
+>  	}
 
-> -static int __init exynos_audss_clk_init(void)
-> -{
-> -       return platform_driver_register(&exynos_audss_clk_driver);
-> -}
-> -core_initcall(exynos_audss_clk_init);
-> -
-> -static void __exit exynos_audss_clk_exit(void)
-> -{
-> -       platform_driver_unregister(&exynos_audss_clk_driver);
-> -}
-> -module_exit(exynos_audss_clk_exit);
-> +module_platform_driver(exynos_audss_clk_driver);
->  =
+I'm pretty sure I pointed this problem out to Mike when the
+critical clk patches were being pushed. I can't recall what the
+plan was though to fix the problem. I'm pretty sure he said that
+clk_core_reparent() would take care of it, but obviously it is
+not doing that. Or perhaps it was that clk handoff should figure
+out that the parents of a critical clk are also on and thus keep
+them on.
 
->  MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
->  MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
-> -- =
-
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
