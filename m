@@ -1,109 +1,64 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
-To: Dirk Behme <dirk.behme@de.bosch.com>,
- linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
-Cc: xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
- Stefano Stabellini <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <577F73B3.8090807@arm.com>
-Date: Fri, 8 Jul 2016 10:34:43 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 17:44:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com, shawnguo@kernel.org,
+	linux-arm-kernel@lists.infradead.org, anson.huang@nxp.com
+Subject: Re: [PATCH V3 3/8] clk: core: support clocks which requires parents
+ enable (part 1)
+Message-ID: <20160702004426.GL27880@codeaurora.org>
+References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
+ <1467279078-2330-4-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467279078-2330-4-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dirk,
-
-On 08/07/16 08:44, Dirk Behme wrote:
-> Xen hypervisor drivers might replace native OS drivers. The result is
-> that some important clocks that are enabled by the OS in the non-Xen
-> case are not properly enabled in the presence of Xen. The clocks
-> property enumerates the clocks that must be enabled by the Xen clock
-> consumer.
->
-> An example is a serial driver enabled by the hypervisor. Xen must
-
-I would say "An example is the UART used by the hypervisor."
-
-> consume and enable these clocks in the OS to ensure behavior continues
-> after firmware configures the UART hardware and corresponding clock
-> harder.
-
-What do you mean by "harder"?
-
-Also, relying on DOM0 to enable the clock looks very wrong to me and you 
-give an example which prove that. The UART will be used before hand by 
-Xen, however it will not be possible to use it if you expect DOM0 to 
-enable the clock (or even modify the clock frequency).
-
-The clock should be enabled either by the firmware or Xen. But not DOM0. 
-DOM0 should not touch this clock at all.
-
-Furthermore, this property could be used for clock associated to device 
-that will be passthrough-ed to a guest. In this case, the clock would be 
-enabled even if the device is not in use which will result more power 
-consumption.
-
->
-> Up to now, the workaround for this has been to use the Linux kernel
-> command line parameter 'clk_ignore_unused'. See Xen bug
->
-> http://bugs.xenproject.org/xen/bug/45
->
-> too.
->
-> To fix this, we will add the "unused" clocks in Xen to the hypervisor
-> node. The OS has to consume and enable the clocks from the hypervisor
-> node, then.
->
-> Therefore, check if there is a "clocks" entry in the hypervisor node
-> and if so consume and enable the given clocks. This prevents the clocks
-> from being disabled by the OS.
->
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+On 06/30, Dong Aisheng wrote:
+> On Freescale i.MX7D platform, all clocks operations, including
+> enable/disable, rate change and re-parent, requires its parent
+> clock enable. Current clock core can not support it well.
+> This patch introduce a new flag CLK_OPS_PARENT_ENABLE to handle this
+> special case in clock core that enable its parent clock firstly for
+> each operation and disable it later after operation complete.
+> 
+> The patch part 1 fixes the possible disabling clocks while its parent
+> is off during kernel booting phase in clk_disable_unused_subtree().
+> 
+> Before the completion of kernel booting, clock tree is still not built
+> completely, there may be a case that the child clock is on but its
+> parent is off which could be caused by either HW initial reset state
+> or bootloader initialization.
+> 
+> Taking bootloader as an example, we may enable all clocks in HW by default.
+> And during kernel booting time, the parent clock could be disabled in its
+> driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
+> Because it's child clock is only enabled in HW while its SW usecount
+> in clock tree is still 0, so clk_disable of parent clock will gate
+> the parent clock in both HW and SW usecount ultimately. Then there will
+> be a child clock is still on in HW but its parent is already off.
+> 
+> Later in clk_disable_unused(), this clock disable accessing while its
+> parent off will cause system hang due to the limitation of HW which
+> must require its parent on.
+> 
+> This patch simply enables the parent clock first before disabling
+> if flag CLK_OPS_PARENT_ENABLE is set in clk_disable_unused_subtree().
+> This is a simple solution and only affects booting time.
+> 
+> After kernel booting up the clock tree is already created, there will
+> be no case that child is off but its parent is off.
+> So no need do this checking for normal clk_disable() later.
+> 
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
-> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
->
-> Changes in v2: Drop the Linux implementation details like clk_disable_unused
-> 	       in xen.txt.
->
->   Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
->   arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
->   2 files changed, 60 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
-> index c9b9321..00f2165 100644
-> --- a/Documentation/devicetree/bindings/arm/xen.txt
-> +++ b/Documentation/devicetree/bindings/arm/xen.txt
-> @@ -17,6 +17,19 @@ the following properties:
->     A GIC node is also required.
->     This property is unnecessary when booting Dom0 using ACPI.
->
-> +Optional properties:
-> +
-> +clocks: one or more clocks to be enabled
-> +  Xen hypervisor drivers might replace native OS drivers. The result is
 
-"native OS" has no meaning on Xen. This seems to be a cumbersome way to 
-say that the device will be used by the hypervisor and hidden to DOM0 
-(aka hardware domain).
-
-> +  that some important clocks that are enabled by the OS in the non-Xen
-> +  case are not properly enabled in the presence of Xen. The clocks
-> +  property enumerates the clocks that must be enabled by the Xen clock
-> +  consumer.
-> +  An example is a serial driver enabled by the hypervisor. Xen must
-> +  consume and enable these clocks in the OS to ensure behavior continues
-> +  after firmware configures the UART hardware and corresponding clock
-> +  harder.
-> +
->   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
->   under /hypervisor with following parameters:
-
-Regards,
+Applied to clk-next
 
 -- 
-Julien Grall
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
