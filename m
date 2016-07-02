@@ -1,77 +1,43 @@
-Return-Path: <kesavan.abhilash@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 17:30:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.8-rc1
+Message-ID: <20160702003020.GH27880@codeaurora.org>
+References: <20160701150056.26537-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2318982.ZLuIVQzhgE@amdc1976>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <1467750561-13957-2-git-send-email-a.kesavan@samsung.com> <577E32E5.4010902@samsung.com>
- <2318982.ZLuIVQzhgE@amdc1976>
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Date: Mon, 11 Jul 2016 16:44:30 +0200
-Message-ID: <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for
- Exynos7 CPU clocks
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160701150056.26537-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bartlomiej,
+On 07/01, Thierry Reding wrote:
+> Hi Michael, Stephen,
+> 
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> 
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-clk
+> 
+> for you to fetch changes up to 15d68e8c2e95e8b62465c7cb3bc642784365ee1b:
+> 
+>   clk: tegra: Initialize UTMI PLL when enabling PLLU (2016-06-30 17:43:17 +0200)
+> 
 
-Thanks for the comments.
+Pulled but please fix these types of errors next time.
 
-On Thu, Jul 7, 2016 at 1:17 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Hi
->
-> On Thursday, July 07, 2016 12:45:57 PM Sylwester Nawrocki wrote:
->> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
->> > Exynos7 has the same CPU clock registers layout as that present
->
-> Please precise for which Exynos7 SoC this change is needed
-> (all three of them?).
+ERROR: code indent should use tabs where possible
+#470: FILE: drivers/clk/tegra/clk-pll.c:2568:
++^I         PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |$
 
-As mentioned in my recently posted PMU series, the exynos7 is a quad
-core A57 based SoC and not meant to be a SoC family.
-I have reviewed various exynos7xxx UMs in terms of the CPU CMU. Both
-exynos7580 and exynos7420 have a similar CMU register layout along
-with the same mux stat bits as exynos7. Exynos7870 on the other hand
-is quite different.
+ERROR: code indent should use tabs where possible
+#471: FILE: drivers/clk/tegra/clk-pll.c:2569:
++^I         PLLU_HW_PWRDN_CFG0_USE_LOCKDET;$
 
-Please let me know what naming convention you would prefer that I use
-E7/E7420/E7580 ?
-
->
->> > in Exynos5433 except for the bits in the MUX_STAT* registers.
->> > Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
->>
->> > --- a/drivers/clk/samsung/clk-cpu.h
->> > +++ b/drivers/clk/samsung/clk-cpu.h
->> > @@ -63,6 +63,8 @@ struct exynos_cpuclk {
->> >  /* The CPU clock registers have Exynos5433-compatible layout */
->> >  #define CLK_CPU_HAS_E5433_REGS_LAYOUT      (1 << 2)
->>
->> > +/* Exynos5433-compatible layout with different MUX_STAT register bits */
->> > +#define CLK_CPU_HAS_MODIFIED_MUX_STAT      (1 << 3)
->>
->> It's getting a bit messy, what if there comes another SoC version
->> which has some other modification of exynos5433 registers structure?
->> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
->> could easily get lost while trying to determine which modification
->> is which. How about indicating explicitly it's an exynos7 bits
->> layout and renaming the flag to something like
->>
->> #define CLK_CPU_HAS_E7_MUX_STAT       (1 << 16) ?
->
-> ditto
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
