@@ -1,41 +1,46 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Jul 2016 17:20:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jongsung Kim <neidhard.kim@lge.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chanho Min <chanho.min@lge.com>
+Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
+Message-ID: <20160702002030.GF27880@codeaurora.org>
+References: <20160621005910.GN1521@codeaurora.org>
+ <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
+ <20160628205518.GF3737@rob-hp-laptop>
+ <146714872010.89261.1969853552594659808@resonance>
+ <5773736D.3060405@lge.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160629175755.GK1521@codeaurora.org>
-References: <1466690683-28949-1-git-send-email-geert+renesas@glider.be>
- <20160628233504.GH1521@codeaurora.org> <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
- <20160629175755.GK1521@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jul 2016 09:09:38 +0200
-Message-ID: <CAMuHMdV3-6edQ84B_-rcXaAEuZj1NX__c+NpG5Tbct=P4J2jWw@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.8 (take two)
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>, Magnus Damm <damm+renesas@opensource.se>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5773736D.3060405@lge.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 06/29, Jongsung Kim wrote:
+> On 2016년 06월 29일 06:18, Michael Turquette wrote:
+> > Quoting Rob Herring (2016-06-28 13:55:18)
+> >> On Fri, Jun 24, 2016 at 01:12:52PM +0900, Jongsung Kim wrote:
+> >>> There is no way to set additional flags for a DT-initialized fixed-
+> >>> factor-clock, and it can be problematic i.e., when the clock rate
+> >>> needs to be changed. [1][2]
+> >>>
+> >>> This patch introduces an optional dt-binding named "clock-flags" to
+> >>> be used for passing any needed flags from dts.
+> >> I don't think we want this in DT. If we did, the flags would need some 
+> >> documentation about what the flags mean.
+> > Flags are specific to Linux implementation, so I agree with Rob. Better
+> > to create a compatible string for your hardware that bakes in the flags.
+> 
+> Thank you for your comment, Mike. This conversation starts from lacking method to set CLK_SET_RATE_PARENT from DT. I understand compatible string can be a solution. But.. if someone starts talking about lacking method to set another flag, i.e., CLK_SET_PARENT_GATE, then we'll need another compatible string list.
+> How do you think about defining possible required subset of the flags and using some more neutral flag-names acceptable in DT?
 
-On Wed, Jun 29, 2016 at 7:57 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/29, Geert Uytterhoeven wrote:
->>
->> Thanks, but it seems something went wrong: commit d9cce3a8ebb871c5 is not a
->> merge commit, but the combination of all 7 commits from the pull request?
->
-> Hmm... weird. I fixed it now.
+Do you actually have an IC on the board that is doing some fixed
+factor calculation? Or is this a clk driver design where we are
+listing out each piece of an SoC's clk controller in DT?
 
-Thanks, much better now.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
