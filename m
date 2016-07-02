@@ -1,53 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Wan Zongshun <vw@iommu.org>,
-	devicetree@vger.kernel.org, jason@lakedaemon.net,
-	Wan Zongshun <mcuos.com@gmail.com>,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] Clocksource: add nuc970 clocksource driver
-Date: Thu, 21 Jul 2016 14:54:42 +0200
-Message-ID: <6378088.D2hhHiJIV0@wuerfel>
-In-Reply-To: <20160721125224.GA10047@linaro.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <26830152.1oBSpuVOM0@wuerfel> <20160721125224.GA10047@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.7-rc5
+Date: Fri,  1 Jul 2016 17:13:50 -0700
+Message-Id: <20160702001350.16344-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, July 21, 2016 2:52:24 PM CEST Daniel Lezcano wrote:
-> On Tue, Jul 12, 2016 at 10:28:35AM +0200, Arnd Bergmann wrote:
-> 
-> [ ... ]
-> 
-> > > > Also the init function has changed its return type in linux-next:
-> > > >
-> > > >> +static void __init nuc970_timer_of_init(struct device_node *node)
-> > > >
-> > > > This now needs to return an error code or we get:
-> > > >
-> > > > ../include/linux/of.h:1004:20: error: comparison of distinct pointer types lacks a cast [-Werror]
-> > > >          .data = (fn == (fn_type)NULL) ? fn : fn  }
-> > > >
-> > > > Daniel Lezcano seems to have implemented a migration strategy, but I
-> > > > can't see what you are supposed to do here, since the
-> > > > CLOCKSOURCE_OF_DECLARE_RET macro is no longer part of linux-next.
-> > > 
-> > > Wait for Daniel's comments? or what should I do now?
-> > 
-> > Yes, let's see what he says. I guess from the timing, this will probably
-> > have to wait for linux-4.9 anyway, and then we have no problem because the
-> > API change will make it into 4.8.
-> 
-> CLOCKSOURCE_OF_DECLARE_RET was renamed back to CLOCKSOURCE_OF_DECLARE but it 
-> expects now an init function returning an 'int'.
-> 
-> These changes are now in tip/timers/core, so in linux-next.
+The following changes since commit 72ad679aa7182d23d269cbe4d655f7e129d3b057:
 
-Ok, so the driver could be merged on top of that, but it's really
-late for 4.8 now, so we'd just wait until after the merge window
-anyway.
+  clk: nxp: Select MFD_SYSCON for creg driver (2016-06-01 15:14:06 -0700)
 
-	Arnd
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 086347705be7530feabb6274a3ad81dd545e7914:
+
+  Merge tag 'v4.7-rockchip-clk-fixes1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-fixes (2016-06-20 17:01:45 -0700)
+
+----------------------------------------------------------------
+A small fix for the newly added oxnas clk driver and a handful of
+rockchip clk driver fixes for newly added rk3399 support.
+
+----------------------------------------------------------------
+Brian Norris (1):
+      clk: rockchip: mark rk3399 GIC clocks as critical
+
+Douglas Anderson (1):
+      clk: rockchip: Revert "clk: rockchip: reset init state before mmc card initialization"
+
+Heiko Stuebner (1):
+      clk: rockchip: initialize flags of clk_init_data in mmc-phase clock
+
+Shawn Lin (1):
+      clk: rockchip: release io resource when failing to init clk on rk3399
+
+Stephen Boyd (1):
+      Merge tag 'v4.7-rockchip-clk-fixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
+
+Wei Yongjun (1):
+      clk: Fix return value check in oxnas_stdclk_probe()
+
+Xing Zheng (2):
+      clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src
+      clk: rockchip: fix cpuclk registration error handling
+
+ drivers/clk/clk-oxnas.c              |  4 ++--
+ drivers/clk/rockchip/clk-cpu.c       |  4 ++--
+ drivers/clk/rockchip/clk-mmc-phase.c | 12 +-----------
+ drivers/clk/rockchip/clk-rk3399.c    |  8 ++++++--
+ 4 files changed, 11 insertions(+), 17 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
