@@ -1,47 +1,116 @@
-Return-Path: <kesavan.abhilash@gmail.com>
-Return-Path: <kesavan.abhilash@gmail.com>
-Sender: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-To: s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com
-Cc: kgene.kim@samsung.com,
-	k.kozlowski@samsung.com,
-	b.zolnierkie@samsung.com,
-	mturquette@baylibre.com,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: festevam@gmail.com,
+	aisheng.dong@nxp.com,
+	shawnguo@kernel.org,
+	kernel@pengutronix.de
+Cc: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	grinberg@compulab.co.il,
+	gary.bisson@boundarydevices.com,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] Add CPU clock support for Exynos7
-Date: Wed,  6 Jul 2016 01:59:19 +0530
-Message-Id: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
+Date: Sun,  3 Jul 2016 10:48:13 -0700
+Message-Id: <20160703174813.13970-1-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds the atlas clock hierarchy on Exynos7. It also
-modifies the existing cpu clock infrastructure to handle exynos7
-differences. These patches are a pre-requisite for enabling CPUFreq
-on Exynos7. This patchset has been tested on next-20160704. The
-opp device tree changes, cpufreq-dt platform addition and defconfig
-enablement will be sent separately.
+All device trees currently in mainline specify the time clock parent
+using the assigned-clocks/assigned-clock-parents method, there is no
+need to statically assign the parent in the core clock driver.
+Also all current boards provide an Ethernet reference clock for the
+PHY externally, hence configuring the internal PHY reference clock.
 
-Previous version of this patchset can be found here:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/322499.html
+Furthermore, and the actual driver of this patch, specify ethernet
+related parents at that early point in boot leads to a warning:
+bad: scheduling from the idle thread!
 
-Changes since v2:
-	- All the dependencies have been merged
-	- Code is now based on exynos5433 cpu clock support
+The reason for the warning is that setting the parent enables the ENET
+PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
+cause clk_pllv3_wait_lock to sleep. See also:
+commit fc8726a2c021 ("clk: core: support clocks which requires parents
+enable (part 2)").
 
-Abhilash Kesavan (2):
-  clk: samsung: cpu: Prepare for addition for Exynos7 CPU clocks
-  clk: samsung: exynos7: Add clocks for atlas block
+Note that setting the ENET AXI root clock parent also requires ENET
+PLL to be enabled. However, U-Boot typically leaves the ENET PLL on,
+hence when the framework sets the parent of the first clock, it does
+not need to wait for the PLL to come up. But because there is currently
+no user of that clock, the PLL gets disabled after setting the parent.
+Therefore, subsequent reparenting calls of any clock which somehow rely
+on the ENET PLL, need to reenable the ENET PLL which leads to a sleep.
+Removing those subsequent reparenting calls works around this issue.
 
- .../devicetree/bindings/clock/exynos7-clock.txt    |   6 +
- drivers/clk/samsung/clk-cpu.c                      |  10 +-
- drivers/clk/samsung/clk-cpu.h                      |   2 +
- drivers/clk/samsung/clk-exynos7.c                  | 183 +++++++++++++++++++++
- include/dt-bindings/clock/exynos7-clk.h            |  21 ++-
- 5 files changed, 219 insertions(+), 3 deletions(-)
+Also remove comments. The code is really verbose enough.
 
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+Changes since v1:
+- Also remove PHY REF clock
+
+Hi All,
+
+Fabio, thanks for testing v1.
+
+With v2, the warnings should definitly be gone. However, that might
+break some boards...
+
+What is the IMX7D_ENET_PHY_REF_ROOT_SRC clock for anyway? It sounds
+like it should provide a clock for the PHY. However, there is also
+IMX7D_ENET1_REF_ROOT_CLK and IMX7D_ENET2_REF_ROOT_CLK...
+
+Our first design used to use a clock provided by the SoC, by muxing
+a pad to CCM_ENET1_REF_CLK and enabling IMX7D_ENET1_REF_ROOT_CLK
+it seemd to work just fine, there was no need for
+IMX7D_ENET_PHY_REF_ROOT_SRC.
+
+Dong, can you shed some light on this?
+
+Otherwise, in case a board does not work with that change, something
+like this should do the same using device tree. You probably would
+have to add this to all FEC instances since this seems to be a shared
+clock.
+
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_enet1>;
+        assigned-clocks = <&clks IMX7D_ENET1_TIME_ROOT_SRC>,
+-                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>;
+-       assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
++                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>,
++                         <&clks IMX7D_ENET_PHY_REF_ROOT_SRC>;
++       assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>, <0>,
++                                <&clks IMX7D_PLL_ENET_MAIN_25M_CLK>;
+        assigned-clock-rates = <0>, <100000000>;
+        phy-mode = "rgmii";
+        phy-handle = <&ethphy0>;
+
+--
+Stefan
+
+ drivers/clk/imx/clk-imx7d.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 79293ed..6ed4f8f 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -860,16 +860,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 
+-	/*
+-	 * init enet clock source:
+-	 * 	AXI clock source is 250MHz
+-	 *	Phy refrence clock is 25MHz
+-	 *	1588 time clock source is 100MHz
+-	 */
+ 	clk_set_parent(clks[IMX7D_ENET_AXI_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_250M_CLK]);
+-	clk_set_parent(clks[IMX7D_ENET_PHY_REF_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_25M_CLK]);
+-	clk_set_parent(clks[IMX7D_ENET1_TIME_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_100M_CLK]);
+-	clk_set_parent(clks[IMX7D_ENET2_TIME_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_100M_CLK]);
+ 
+ 	/* set uart module clock's parent clock source that must be great then 80MHz */
+ 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
 -- 
-1.9.1
+2.9.0
