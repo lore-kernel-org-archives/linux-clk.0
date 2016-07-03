@@ -1,250 +1,34 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-To: Dirk Behme <dirk.behme@gmail.com>,
- "Stefano Stabellini" <sstabellini@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <57868EDE.6060406@gmail.com>
-Cc: "Dirk Behme" <dirk.behme@de.bosch.com>, "Mark Rutland" <mark.rutland@arm.com>,
- devicetree@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Julien Grall" <julien.grall@arm.com>, xen-devel@lists.xenproject.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
-Message-ID: <146844380895.73491.4867379517577413421@resonance>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-Date: Wed, 13 Jul 2016 14:03:29 -0700
+In-Reply-To: <bab9b9bacc16a42cf9ca93973ea5de68@agner.ch>
+References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+ <20160702011216.GR27880@codeaurora.org> <bab9b9bacc16a42cf9ca93973ea5de68@agner.ch>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sun, 3 Jul 2016 09:05:16 -0300
+Message-ID: <CAOMZO5D+D3HSPJ+6mpnsBt+NsZ=zubBZHunBGTYhkSgZyegaGA@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/7] support clk setting during kernel early boot
+To: Stefan Agner <stefan@agner.ch>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Shawn Guo <shawnguo@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Lucas Stach <l.stach@pengutronix.de>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, manabian@gmail.com,
+	Yongcai Huang <anson.huang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dirk Behme (2016-07-13 11:56:30)
-> On 13.07.2016 20:43, Stefano Stabellini wrote:
-> > On Wed, 13 Jul 2016, Dirk Behme wrote:
-> >> On 13.07.2016 00:26, Michael Turquette wrote:
-> >>> Quoting Dirk Behme (2016-07-12 00:46:45)
-> >>>> Clocks described by this property are reserved for use by Xen, and t=
-he OS
-> >>>> must not alter their state any way, such as disabling or gating a cl=
-ock,
-> >>>> or modifying its rate. Ensuring this may impose constraints on parent
-> >>>> clocks or other resources used by the clock tree.
-> >>>
-> >>> Note that clk_prepare_enable will not prevent the rate from changing
-> >>> (clk_set_rate) or a parent from changing (clk_set_parent). The only w=
-ay
-> >>> to do this currently would be to set the following flags on the effec=
-ted
-> >>> clocks:
-> >>>
-> >>>     CLK_SET_RATE_GATE
-> >>>     CLK_SET_PARENT_GATE
-> >>
-> >>
-> >>
-> >> Regarding setting flags, I think we already talked about that. I think=
- the
-> >> conclusion was that in our case its not possible to manipulate the fla=
-gs in
-> >> the OS as this isn't intended to be done in cases like ours. Therefore=
- no API
-> >> is exported for this.
-> >>
-> >> I.e. if we need to set these flags, we have to do that in Xen where we=
- add the
-> >> clocks to the hypervisor node in the device tree. And not in the kerne=
-l patch
-> >> discussed here.
-> >
-> > These are internal Linux flags, aren't they?
-> =
+Hi Stefan,
 
-> =
+On Sat, Jul 2, 2016 at 8:12 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-> I've been under the impression that you can set clock "flags" via the =
+> I found that remark interesting, and agree here with Stephen, critical
+> clks should be already on and everything else should be controlled from
+> drivers.
+>
+> With that in mind I went on and looked again what is currently (after
+> the parents enable patchset) still wrong on i.MX 7. Turned out to be not
+> that much, and I think it should be fixable with that:
+> https://lkml.org/lkml/2016/7/2/138
 
-> device tree. Seems I need to re-check that ;)
-
-Right, you cannot set flags from the device tree. Also, setting these
-flags is done by the clock provider driver, not a consumer. Xen is the
-consumer.
-
-Regards,
-Mike
-
-> =
-
-> Best regards
-> =
-
-> Dirk
-> =
-
-> =
-
-> > They cannot be set in Xen.
-> >
-> > If the only way to make sure that clk_set_rate and clk_set_parent fail
-> > on one of the clocks "owned" by Xen is to set CLK_SET_RATE_GATE and
-> > CLK_SET_PARENT_GATE, we'll have to do that. Even if it means introducing
-> > a new internal Linux API.
-> >
-> >
-> >>> And then enable the clocks. All calls to clk_set_parent and clk_set_r=
-ate
-> >>> with those clocks in the path will fail, so long as they are prepared
-> >>> and enabled. This implementation detail is specific to Linux and
-> >>> definitely should not go into the binding.
-> >>>
-> >>>>
-> >>>> This property is used to proxy clocks for devices Xen has taken owne=
-rship
-> >>>> of, such as UARTs, for which the associated clock controller(s) rema=
-in
-> >>>> under the control of Dom0.
-> >>>
-> >>> I'm still not completely sure about this type of layering and whether=
- or
-> >>> not it is sane. If you want Xen to manage the clock controller, AND y=
-ou
-> >>> want Linux guests or dom0 to consume those clocks and manipulate them=
- in
-> >>> other drivers, then this solution won't work.
-> >>>
-> >>> Regards,
-> >>> Mike
-> >>>
-> >>>>
-> >>>> Up to now, the workaround for this has been to use the Linux kernel
-> >>>> command line parameter 'clk_ignore_unused'. See Xen bug
-> >>>>
-> >>>> http://bugs.xenproject.org/xen/bug/45
-> >>>>
-> >>>> too.
-> >>>>
-> >>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> >>>> ---
-> >>>> Changes in v4: Switch to the xen.txt description proposed by Mark:
-> >>>>                 https://www.spinics.net/lists/arm-kernel/msg516158.h=
-tml
-> >>>>
-> >>>> Changes in v3: Use the xen.txt description proposed by Michael. Than=
-ks!
-> >>>>
-> >>>> Changes in v2: Drop the Linux implementation details like
-> >>>> clk_disable_unused
-> >>>>                 in xen.txt.
-> >>>>
-> >>>>   Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
-> >>>>   arch/arm/xen/enlighten.c                      | 47
-> >>>> +++++++++++++++++++++++++++
-> >>>>   2 files changed, 59 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/arm/xen.txt
-> >>>> b/Documentation/devicetree/bindings/arm/xen.txt
-> >>>> index c9b9321..437e50b 100644
-> >>>> --- a/Documentation/devicetree/bindings/arm/xen.txt
-> >>>> +++ b/Documentation/devicetree/bindings/arm/xen.txt
-> >>>> @@ -17,6 +17,18 @@ the following properties:
-> >>>>     A GIC node is also required.
-> >>>>     This property is unnecessary when booting Dom0 using ACPI.
-> >>>>
-> >>>> +Optional properties:
-> >>>> +
-> >>>> +- clocks: a list of phandle + clock-specifier pairs
-> >>>> +  Clocks described by this property are reserved for use by Xen, an=
-d the
-> >>>> +  OS must not alter their state any way, such as disabling or gatin=
-g a
-> >>>> +  clock, or modifying its rate. Ensuring this may impose constraint=
-s on
-> >>>> +  parent clocks or other resources used by the clock tree.
-> >>>> +
-> >>>> +  Note: this property is used to proxy clocks for devices Xen has t=
-aken
-> >>>> +  ownership of, such as UARTs, for which the associated clock
-> >>>> +  controller(s) remain under the control of Dom0.
-> >>>> +
-> >>>>   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
-> >>>> "uefi" node
-> >>>>   under /hypervisor with following parameters:
-> >>>>
-> >>>> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-> >>>> index 47acb36..5c546d0 100644
-> >>>> --- a/arch/arm/xen/enlighten.c
-> >>>> +++ b/arch/arm/xen/enlighten.c
-> >>>> @@ -24,6 +24,7 @@
-> >>>>   #include <linux/of_fdt.h>
-> >>>>   #include <linux/of_irq.h>
-> >>>>   #include <linux/of_address.h>
-> >>>> +#include <linux/clk-provider.h>
-> >>>>   #include <linux/cpuidle.h>
-> >>>>   #include <linux/cpufreq.h>
-> >>>>   #include <linux/cpu.h>
-> >>>> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
-> >>>>   }
-> >>>>   late_initcall(xen_pm_init);
-> >>>>
-> >>>> +/*
-> >>>> + * Check if we want to register some clocks, that they
-> >>>> + * are not freed because unused by clk_disable_unused().
-> >>>> + * E.g. the serial console clock.
-> >>>> + */
-> >>>> +static int __init xen_arm_register_clks(void)
-> >>>> +{
-> >>>> +       struct clk *clk;
-> >>>> +       struct device_node *xen_node;
-> >>>> +       unsigned int i, count;
-> >>>> +       int ret =3D 0;
-> >>>> +
-> >>>> +       xen_node =3D of_find_compatible_node(NULL, NULL, "xen,xen");
-> >>>> +       if (!xen_node) {
-> >>>> +               pr_err("Xen support was detected before, but it has
-> >>>> disappeared\n");
-> >>>> +               return -EINVAL;
-> >>>> +       }
-> >>>> +
-> >>>> +       count =3D of_clk_get_parent_count(xen_node);
-> >>>> +       if (!count)
-> >>>> +               goto out;
-> >>>> +
-> >>>> +       for (i =3D 0; i < count; i++) {
-> >>>> +               clk =3D of_clk_get(xen_node, i);
-> >>>> +               if (IS_ERR(clk)) {
-> >>>> +                       pr_err("Xen failed to register clock %i. Err=
-or:
-> >>>> %li\n",
-> >>>> +                              i, PTR_ERR(clk));
-> >>>> +                       ret =3D PTR_ERR(clk);
-> >>>> +                       goto out;
-> >>>> +               }
-> >>>> +
-> >>>> +               ret =3D clk_prepare_enable(clk);
-> >>>> +               if (ret < 0) {
-> >>>> +                       pr_err("Xen failed to enable clock %i. Error:
-> >>>> %i\n",
-> >>>> +                              i, ret);
-> >>>> +                       goto out;
-> >>>> +               }
-> >>>> +       }
-> >>>> +
-> >>>> +       ret =3D 0;
-> >>>> +
-> >>>> +out:
-> >>>> +       of_node_put(xen_node);
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +late_initcall(xen_arm_register_clks);
-> >>>>
-> >>>>   /* empty stubs */
-> >>>>   void xen_arch_pre_suspend(void) { }
-> >>>> --
-> >>
-> >
-> > _______________________________________________
-> > Xen-devel mailing list
-> > Xen-devel@lists.xen.org
-> > https://lists.xen.org/xen-devel
-> >
->=20
+If I only applied your patch against linux-next I still get:
+http://pastebin.com/zx7kAzfd
