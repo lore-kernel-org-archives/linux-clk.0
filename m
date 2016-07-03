@@ -1,34 +1,34 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: gxbb: expose CLKID_MMC_PCLK
-Date: Wed,  6 Jul 2016 16:07:49 -0700
-Message-Id: <20160706230749.9620-1-khilman@baylibre.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
+In-Reply-To: <d5ff8c157bf6108afe2b14ae887c7b71@agner.ch>
+References: <20160703174813.13970-1-stefan@agner.ch> <CAOMZO5AghMZ0iV0=0hBrFhhhAAfPpyxH0oj8UT7TqZr9N0+y9A@mail.gmail.com>
+ <d5ff8c157bf6108afe2b14ae887c7b71@agner.ch>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sun, 3 Jul 2016 16:55:49 -0300
+Message-ID: <CAOMZO5AFEGfP+n-TAY-9+BMR7=FKGXkLYxNvFfDk6Hxd9EXL1Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
+To: Stefan Agner <stefan@agner.ch>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Igor Grinberg <grinberg@compulab.co.il>,
+	Gary Bisson <gary.bisson@boundarydevices.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMC_PCLK is needed for the SD/eMMC driver.
+On Sun, Jul 3, 2016 at 3:25 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
----
- include/dt-bindings/clock/gxbb-clkc.h | 1 +
- 1 file changed, 1 insertion(+)
+> Hm, just checked again, that is really not the case here. On what base
+> do you test? I tested on clk-next. Dong's clock changes are a
+> prerequisite for that.
 
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index f889d80246cb..5eb69ec74f6b 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -8,5 +8,6 @@
- #define CLKID_CPUCLK		1
- #define CLKID_CLK81		12
- #define CLKID_ETH		36
-+#define CLKID_MMC_PCLK		66
- 
- #endif /* __GXBB_CLKC_H */
--- 
-2.9.0
+Thanks for the clarification. I was testing against linux-next.
+
+After manually applying Dong's clock changes from clk-next + your
+patch the warnings go away,
+so:
+
+Tested-by: Fabio Estevam <festevam@gmail.com>
+
+Thanks
