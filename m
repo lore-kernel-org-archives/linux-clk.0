@@ -1,40 +1,41 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Thu, 21 Jul 2016 13:50:44 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Grzegorz Jaszczyk <jaz@semihalf.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, mturquette@baylibre.com,
- sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
- gregory.clement@free-electrons.com, mw@semihalf.com, alior@marvell.com
-Subject: Re: [PATCH] clk: mvebu: armada-39x: add clk description for
- supported interfaces
-Message-ID: <20160721135044.5f573741@free-electrons.com>
-In-Reply-To: <1469098090-17836-1-git-send-email-jaz@semihalf.com>
-References: <1469098090-17836-1-git-send-email-jaz@semihalf.com>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+Subject: Re: [PATCH v2 0/9] Improve Rx/Tx DMA implementation
+To: <gregkh@linuxfoundation.org>
+References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Message-ID: <00c09dc2-da73-1415-9f9f-5dc6c56034c0@toradex.com>
+Date: Mon, 4 Jul 2016 11:54:13 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Ping!
 
-On Thu, 21 Jul 2016 12:48:10 +0200, Grzegorz Jaszczyk wrote:
-> Both SATA and second USB3.0 interface are supported in Armada-39x SoC
-> family. Add necessary clk description, so both xhci and sata drivers
-> can be correctly initialized.
-> 
-> The binding documentation has also been updated accordingly.
-> 
-> Signed-off-by: Grzegorz Jaszczyk <jaz@semihalf.com>
+On 06/28/16 11:02, Bhuvanchandra DV wrote:
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-
-(I verified in the datasheet that those bits indeed control the usb3h1
-and sata0 clocks).
-
-Thanks!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> Changes since v1:
+> Split suspend/resume patch.
+>
+> Bhuvanchandra DV (5):
+>    tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+>    tty: serial: fsl-lpuart: Use cyclic DMA for Rx
+>    tty: serial: fsl-lpuart: Use scatter/gather DMA for Tx
+>    tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
+>    tty: serial: fsl_lpuart: Add support for RS-485
+>
+> Stefan Agner (4):
+>    tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+>    clk: imx: vf610: Disable automatic clock gating for lpuart in LPSTOP mode
+>    tty: serial: fsl_lpuart: support suspend/resume
+>    tty: serial: fsl_lpuart: fix clearing of receive flag
+>
+>   drivers/clk/imx/clk-vf610.c     |  12 +-
+>   drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
+>   2 files changed, 482 insertions(+), 340 deletions(-)
+>
