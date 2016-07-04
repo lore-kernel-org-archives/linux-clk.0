@@ -1,55 +1,38 @@
-Return-Path: <moinejf@free.fr>
-Date: Fri, 15 Jul 2016 15:27:56 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: =?UTF-8?B?T25kxZllag==?= Jirman <megous@megous.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Rutland
- <mark.rutland@arm.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, dev@linux-sunxi.org, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, open list
- <linux-kernel@vger.kernel.org>, Emilio =?UTF-8?B?TMOzcGV6?=
- <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>, Rob Herring
- <robh+dt@kernel.org>, "open list:COMMON CLK FRAMEWORK"
- <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
- application method
-Message-Id: <20160715152756.db7375a7109fed18c2fbf43a@free.fr>
-In-Reply-To: <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
-References: <20160625034511.7966-1-megous@megous.com>
-	<20160625034511.7966-7-megous@megous.com>
-	<20160630204001.GC5485@lukather>
-	<0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
-	<20160715085356.GR4761@lukather>
-	<085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: clk: Per controller locks (prepare & enable)
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <57737761.2020708@samsung.com>
+ <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
+ <577A1D54.9010203@samsung.com>
+ <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <a.hajda@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <cc2169a4-725a-a22e-b40d-f6d3a765c9b0@osg.samsung.com>
+Date: Mon, 4 Jul 2016 11:21:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 15 Jul 2016 12:38:54 +0200
-Ondřej Jirman <megous@megous.com> wrote:
-
-> > If so, then yes, trying to switch to the 24MHz oscillator before
-> > applying the factors, and then switching back when the PLL is stable
-> > would be a nice solution.
-> > 
-> > I just checked, and all the SoCs we've had so far have that
-> > possibility, so if it works, for now, I'd like to stick to that.
+On 07/04/2016 11:15 AM, Javier Martinez Canillas wrote:
 > 
-> It would need to be tested. U-boot does the change only once, while the
-> kernel would be doing it all the time and between various frequencies
-> and PLL settings. So the issues may show up with this solution too.
+> But I'm very far from being a lock expert so maybe my assumptions are wrong,
 
-I don't think this is a good idea: the CPU clock may be changed at any
-time with the CPUFreq governor. I don't see the system moving from
-1008MHz to 24MHz and then to 1200MHz when some computation is needed!
+I meant *clock* here, sorry for the typo.
 
-BTW, Ondřej, in my BPi M2+, I tried to change the CPU clock with your
-code at kernel start time from 792MHz to 1008MHz, but the hardware
-(arisc?) set an other value, and the system speed was lower than before
-(the PLL-CPUx register is 0x90031521 on boot, I want to set it to
-xxxx1410 and I read 0x91031f33 - sorry, I did not have a look at the
-CPU SD pattern). Do you know why?
+> I'll let Stephen and Mike to comment on this.
+> 
 
+Best regards,
 -- 
-Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
