@@ -1,88 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 01/13] clk: sunxi-ng: mux: Rename mux macro to be consistent
-Date: Tue, 26 Jul 2016 22:30:29 +0200
-Message-Id: <20160726203041.29366-2-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Subject: Re: [PATCH] clk: lpc32xx: allow peripheral clock selection in
+ device tree
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+To: sboyd@codeaurora.org
+Cc: Vladimir Zapolskiy <vz@mleia.com>, mturquette@baylibre.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <1466512531.2114.6.camel@localhost>
+References: <1464982475-24738-1-git-send-email-slemieux.tyco@gmail.com>
+	 <f8778993-a393-f72a-ba76-76550a9c5bbd@mleia.com>
+	 <1466512531.2114.6.camel@localhost>
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 04 Jul 2016 09:43:35 -0400
+Message-ID: <1467639815.9582.3.camel@localhost>
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Rename the internal mux macro to be consistent with the other internal
-structure macros.
+Hi Stephan,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_div.h | 2 +-
- drivers/clk/sunxi-ng/ccu_mp.h  | 2 +-
- drivers/clk/sunxi-ng/ccu_mux.h | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+On Tue, 2016-06-21 at 08:35 -0400, Sylvain Lemieux wrote:
+> Hi Vladimir,
+> 
+> On Tue, 2016-06-21 at 07:28 +0300, Vladimir Zapolskiy wrote:
+> > Hi Sylvain,
+> > 
+> > On 03.06.2016 22:34, Sylvain Lemieux wrote:
+> > > From: Sylvain Lemieux <slemieux@tycoint.com>
+> > > 
+> > > This patch add the support to select the peripheral clock (PERIPH)
+> > > as a parent clock source using the "assigned-clock-parents"
+> > > parameter in the device tree.
+> > > 
+> > > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> > 
+> > Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> > 
+> > The change looks good, is it done to support a selection of PWM parent clocks?
+> 
+> Yes, this is the case.
+> > 
+> > I think it makes sense to set PERIPH clock as a default parent for both
+> > PWM controllers, please consider to send a DTS change.
+> 
+> I will do.
+> 
+> Thanks for the feedback,
+> Sylvain
+> 
+do you think you can take this change for 4.8?
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 653ade5769b3..5d98549e23a6 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -83,7 +83,7 @@ struct ccu_div {
- 	struct ccu_div _struct = {					\
- 		.enable	= _gate,					\
- 		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
--		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
-+		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
-index 3cf12bf95962..edf9215ea8cc 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.h
-+++ b/drivers/clk/sunxi-ng/ccu_mp.h
-@@ -44,7 +44,7 @@ struct ccu_mp {
- 		.enable	= _gate,					\
- 		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
- 		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
--		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
-+		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 945082631e7d..95cfecec3c39 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -21,7 +21,7 @@ struct ccu_mux_internal {
- 	} variable_prediv;
- };
- 
--#define SUNXI_CLK_MUX(_shift, _width)	\
-+#define _SUNXI_CCU_MUX(_shift, _width)		\
- 	{					\
- 		.shift	= _shift,		\
- 		.width	= _width,		\
-@@ -37,7 +37,7 @@ struct ccu_mux {
- 
- #define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
- 	struct ccu_mux _struct = {					\
--		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
-+		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-@@ -51,7 +51,7 @@ struct ccu_mux {
- 				_shift, _width, _gate, _flags)		\
- 	struct ccu_mux _struct = {					\
- 		.enable	= _gate,					\
--		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
-+		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
--- 
-2.9.2
+
+Regards,
+Sylvain
