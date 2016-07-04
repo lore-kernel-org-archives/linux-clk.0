@@ -1,52 +1,43 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Subject: Re: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem
- CLKCON driver
-To: =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski.k+lkml@gmail.com>
-References: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
- <146799700614.73491.6564650478987470074@resonance>
- <578616AE.7010805@samsung.com>
- <CAJKOXPc3NqsLjEdbs3o1vwaKWCsxK5HxH9G1pRKpMKLD0QXQGw@mail.gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <578DF91D.8050800@samsung.com>
-Date: Tue, 19 Jul 2016 11:55:41 +0200
-In-reply-to: 
- <CAJKOXPc3NqsLjEdbs3o1vwaKWCsxK5HxH9G1pRKpMKLD0QXQGw@mail.gmail.com>
+Return-Path: <neidhard.kim@lge.com>
+Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20160621005910.GN1521@codeaurora.org>
+ <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
+ <20160628205518.GF3737@rob-hp-laptop>
+ <146714872010.89261.1969853552594659808@resonance> <5773736D.3060405@lge.com>
+ <20160702002030.GF27880@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
+ <robh@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Chanho Min <chanho.min@lge.com>
+From: Jongsung Kim <neidhard.kim@lge.com>
+Message-ID: <5779C056.3020209@lge.com>
+Date: Mon, 4 Jul 2016 10:48:06 +0900
+MIME-Version: 1.0
+In-Reply-To: <20160702002030.GF27880@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/19/2016 11:26 AM, Krzysztof Kozłowski wrote:
-> On Wed, Jul 13, 2016 at 12:23 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> > On 07/08/2016 06:56 PM, Michael Turquette wrote:
->>> >> Quoting Sylwester Nawrocki (2016-07-08 07:15:00)
->>>>> >>> > Any clock dependencies can be properly handled with deferred probing
->>>>> >>> > so we can remove core_initcall and switch to a proper loadable platform
->>>>> >>> > driver module.
->>>>> >>> > This change has been tested on Exynos4412 Odroid U3 based board.
->>>>> >>> >
->>>>> >>> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> >>
->>> >> Looks good to me.
->> >
->> > Thanks, I have added this patch to my tree, however at the moment
->> > I have only two patches queued there. Please feel free to apply
->> > this patch directly to clk-next.
-> 
-> Unfortunately this breaks the audio on Odroid XU3 (simple-card). There
-> is no sound from:
-> $ aplay /usr/share/sounds/alsa/Front_Right.wav
-> and the command does not exit.
-> 
-> Sylwester,
-> Are you going to look at this?
-
-Thanks for the bug report, I will check what's the problem here.
-Odroid U3 also uses simple card and same codec and it all works there.
-
---
-Regards,
-Sylwester
+On 2016년 07월 02일 09:20, Stephen Boyd wrote:
+> On 06/29, Jongsung Kim wrote:
+>> On 2016년 06월 29일 06:18, Michael Turquette wrote:
+>>> Quoting Rob Herring (2016-06-28 13:55:18)
+>>>> On Fri, Jun 24, 2016 at 01:12:52PM +0900, Jongsung Kim wrote:
+>>>>> There is no way to set additional flags for a DT-initialized fixed-
+>>>>> factor-clock, and it can be problematic i.e., when the clock rate
+>>>>> needs to be changed. [1][2]
+>>>>>
+>>>>> This patch introduces an optional dt-binding named "clock-flags" to
+>>>>> be used for passing any needed flags from dts.
+>>>> I don't think we want this in DT. If we did, the flags would need some 
+>>>> documentation about what the flags mean.
+>>> Flags are specific to Linux implementation, so I agree with Rob. Better
+>>> to create a compatible string for your hardware that bakes in the flags.
+>> Thank you for your comment, Mike. This conversation starts from lacking method to set CLK_SET_RATE_PARENT from DT. I understand compatible string can be a solution. But.. if someone starts talking about lacking method to set another flag, i.e., CLK_SET_PARENT_GATE, then we'll need another compatible string list.
+>> How do you think about defining possible required subset of the flags and using some more neutral flag-names acceptable in DT?
+> Do you actually have an IC on the board that is doing some fixed
+> factor calculation? Or is this a clk driver design where we are
+> listing out each piece of an SoC's clk controller in DT?
+>
+The SoC has several PLLs of identical design, and one of them is divided
+to half and used for CPUs. The fixed-factor-clock represents the divider.
