@@ -1,118 +1,98 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Paul.Gortmaker@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione
+	<carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>
+Subject: [PATCH 01/10] clk: meson8b: make it explicitly non-modular
+Date: Mon, 4 Jul 2016 17:12:11 -0400
+Message-ID: <20160704211220.5685-2-paul.gortmaker@windriver.com>
+In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-To: Mark Rutland <mark.rutland@arm.com>, "Dirk Behme" <dirk.behme@de.bosch.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160705110736.GD20478@leverpostej>
-Cc: linux-arm-kernel@lists.infradead.org, "Julien Grall" <julien.grall@arm.com>,
- devicetree@vger.kernel.org, xen-devel@lists.xenproject.org,
- "Stefano Stabellini" <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
- "Stephen Boyd" <sboyd@codeaurora.org>
-References: <1467701423-31138-1-git-send-email-dirk.behme@de.bosch.com>
- <20160705103917.GC20478@leverpostej>
- <b2431af6-f415-41db-5651-8cb8d3b08822@de.bosch.com>
- <20160705110736.GD20478@leverpostej>
-Message-ID: <146784829627.73491.14666334054563702543@resonance>
-Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
-Date: Wed, 06 Jul 2016 16:38:16 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mark Rutland (2016-07-05 04:07:37)
-> Hi,
-> =
+The Kconfig currently controlling compilation of this code is:
 
-> On Tue, Jul 05, 2016 at 12:45:34PM +0200, Dirk Behme wrote:
-> > On 05.07.2016 12:39, Mark Rutland wrote:
-> > >On Tue, Jul 05, 2016 at 08:50:23AM +0200, Dirk Behme wrote:
-> > >>+- clocks: one or more clocks to be registered.
-> > >>+  Xen hypervisor drivers might replace native drivers, resulting in
-> > >>+  clocks not registered by these native drivers. To avoid that these
-> > >>+  unregistered clocks are disabled by the Linux kernel initialization
-> > >>+  register them in the hypervisor node.
-> > >>+  An example for this are the clocks of a serial driver already enab=
-led
-> > >>+  by the firmware. If the clocks used by the serial hardware interfa=
-ce
-> > >>+  are not registered by the serial driver itself the serial output
-> > >>+  might stop once the Linux kernel initialization disables the 'unus=
-ed'
-> > >>+  clocks.
-> > >
-> > >The above describes the set of problems, but doesn't set out the actual
-> > >contract. It also covers a number of Linux implementation details in
-> > >abstract.
-> > =
+drivers/clk/meson/Kconfig:config COMMON_CLK_MESON8B
+drivers/clk/meson/Kconfig:      bool
 
-> > Could you kindly be a little more specific which 'implementation
-> > details' you don't like?
-> =
+...meaning that it currently is not being built as a module by anyone.
+However a recent commit added a bunch of modular boilerplate to this
+driver.
 
-> The fact that we disable some clocks at init time is a driver model
-> thing that depends on various factors (e.g. cmdline options), and it's
-> something that could be moved around. We only mention disabling, and not
-> rate change (which could happen, even if it doesn't today).
-> =
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-> I don't think that we need to describe the Linux behaviour at all.
-> =
+Since module_init translates to device_initcall in the non-modular
+case, the init ordering remains unchanged with this commit.
 
-> > E.g. to my understanding, the 'implementation detail' that Linux
-> > disables unregistered clocks is needed for the description.
-> > =
+Also note that MODULE DEVICE_TABLE/ALIAS are no-op when non-modular.
 
-> > If you have a different wording in mind, could you kindly share that?
-> =
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
 
-> Something like:
-> =
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/clk/meson/meson8b-clkc.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-> - clocks: a list of phandle + clock-specifier pairs =
-
->   Clocks described by this property are reserved for use by Xen, and the
->   OS must not alter their state any way, such as disabling or gating a
->   clock, or modifying its rate. Ensuring this may impose constraints on
->   parent clocks or other resources used by the clock tree.
-> =
-
->   Note: this property is used to proxy clocks for devices Xen has taken
->   ownership of, such as UARTs, for which the associated clock
->   controller(s) remain under the control of Dom0.
-
-Fully agree that we should forget the clk_disable_unused stuff entirely.
-Mark's copy above is good, and just for the fun of it I have provided an
-alternative version. Feel free to pick and choose what you want:
-
-- clocks: one or more clocks to be enabled.
-  Xen hypervisor drivers might replace native OS drivers. The result is
-  that some important clocks that are enabled by the OS in the non-Xen
-  case are not properly enabled in the presence of Xen. The clocks
-  property enumerates the clocks that must be enabled by the Xen clock
-  consumer.
-  An example is a serial driver enabled by the hypervisor. Xen must
-  consume and enable these clocks in the OS to ensure behavior continues
-  after firmware configures the UART hardware and corresponding clock
-  harder.
-
-Regards,
-Mike
-
-> =
-
-> > >As I commented previously [1], the binding should describe the set of
-> > >guarantees that you rewquire (e.g. that the clocks must be left as-is,
-> > >not gated, and their rates left unchanged).
-> > >
-> > >Please describe the specific set of guarantees that you require.
-> > =
-
-> > To my understanding this is done, already: "avoid that these ...
-> > clocks are disabled"
-> =
-
-> My point of contention here is that while this might tell a dts author
-> what to place in this property, it doesn't specify what the OS should
-> do.
-> =
-
-> Thanks,
-> Mark.
+diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
+index b1902e91213d..4c9413cdf373 100644
+--- a/drivers/clk/meson/meson8b-clkc.c
++++ b/drivers/clk/meson/meson8b-clkc.c
+@@ -1,4 +1,6 @@
+ /*
++ * AmLogic S805 / Meson8b Clock Controller Driver
++ *
+  * Copyright (c) 2015 Endless Mobile, Inc.
+  * Author: Carlo Caione <carlo@endlessm.com>
+  *
+@@ -23,7 +25,7 @@
+ #include <linux/of_address.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <linux/platform_device.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ 
+ #include "clkc.h"
+ 
+@@ -429,7 +431,6 @@ static const struct of_device_id meson8b_clkc_match_table[] = {
+ 	{ .compatible = "amlogic,meson8b-clkc" },
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(of, meson8b_match_table);
+ 
+ static struct platform_driver meson8b_driver = {
+ 	.probe		= meson8b_clkc_probe,
+@@ -443,16 +444,4 @@ static int __init meson8b_clkc_init(void)
+ {
+ 	return platform_driver_register(&meson8b_driver);
+ }
+-module_init(meson8b_clkc_init);
+-
+-static void __exit meson8b_clkc_exit(void)
+-{
+-	platform_driver_unregister(&meson8b_driver);
+-}
+-module_exit(meson8b_clkc_exit);
+-
+-MODULE_DESCRIPTION("AmLogic S805 / Meson8b Clock Controller Driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("platform:meson8b-clkc");
+-MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
+-MODULE_AUTHOR("Carlo Caione <carlo@endlessm.com>");
++device_initcall(meson8b_clkc_init);
+-- 
+2.8.4
