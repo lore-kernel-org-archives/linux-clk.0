@@ -1,52 +1,60 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 6/7] meson: clk: Add support for clock gates
-To: Michael Turquette <mturquette@baylibre.com>,
- =?UTF-8?Q?Alexander_M=c3=bcller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
- <1467741391-60534-7-git-send-email-serveralex@gmail.com>
- <b42e2bb3-2cd0-3115-9be4-16e3a48b46fd@codethink.co.uk>
- <146776626852.35356.9847034661606022714@resonance>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Message-ID: <07f37b8b-cfd2-ebc6-a693-4372d6c34293@codethink.co.uk>
-Date: Wed, 6 Jul 2016 08:35:28 +0100
+Return-Path: <andi@etezian.org>
+Date: Mon, 4 Jul 2016 19:26:14 +0900
+From: Andi Shyti <andi@etezian.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v3 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Message-ID: <20160704102614.GD1257@jack.zhora.eu>
+References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+ <1467270911-10971-2-git-send-email-andi.shyti@samsung.com>
+ <577A2EFF.2010306@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <146776626852.35356.9847034661606022714@resonance>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <577A2EFF.2010306@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07/16 01:51, Michael Turquette wrote:
-> Hi Ben,
+Hi Sylwester,
+
+> >  	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+> > -			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> > +			4, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
 > 
-> Quoting Ben Dooks (2016-07-05 11:01:14)
->> On 05/07/16 18:56, Alexander Müller wrote:
->>> This patch adds support for the meson8b clock gates. Most of
->>> them are disabled by Amlogic U-Boot, but need to be enabled
->>> for ethernet, USB and many other components.
->>>
->>> Signed-off-by: Alexander Müller <serveralex@gmail.com>
->>> ---
->>
->> This seems to be a lot of structures for clocks that may
->> never be use. I think it would be better to provide a custom
->> lookup function that creates these as needed and use the ID
->> in the dt as a offset+bit id.
-> 
-> We want the real clocks registered so that we can disable spuriously
-> enabled at late_initcall time with clk_disable_unused.
-> 
-> Furthermore, I'd like to not represent all of these gates in the DT
-> binding description (see my response to the earlier patches in this
-> series), since it becomes ABI (and a maintenance nightmare).
+> As Tomasz pointed out, this should be addressed in the driver/dts,
+> we shouldn't be patching board configurations into a per-SoC driver.
+> Other boards may want to keep this clock disabled.
 
-Erm, so writing /more/ code and having them defined in /two/ places
-is a nightmare? Sounds more of a nightmare of having the ID in the DT
-represent the register/bit offset and then having them created at
-lookup time.
+The single clock lines are not configured in the exynos5433 dts,
+but in the drivers/clk/samsung/clk-exynos5433.c file and it's the
+only place where we can set the flags.
 
+> What is an exact problem here, are you perhaps testing suspend to RAM?
+> I tested my sound support patches on top of v4.7-rc1 and everything
+> seemed to work well, I didn't notice any issues with the audio codec
+> which was the only slave on the SPI 1 bus.
 
+Yes, because the audio codec is on SPI1 and its bus line
+(spi_busclk0) is CLK_SCLK_SPI1_PERIC while the CLK_SCLK_SPI1 is
+set as CLK_IGNORE_UNUSED.
 
+> Doesn't it help when you specify CLK_SCLK_SPI1 as the second clock
+> ("spi_busclk0") of the spi_1 bus controller instead of
+> CLK_SCLK_SPI0_PERIC? CLK_SCLK_SPI0_PERIC seem to be parent of
+> CLK_SCLK_SPI1 so the enable state would be propagated.
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+nope! :(
+
+For some reasons, if you set in the DTS as spi_busclk0 the
+CLK_SCLK_SPI1 from cmu_peric you get a synchronus abort in the
+s3c64xx_spi_config (the first read performed on the device).
+
+Andi
