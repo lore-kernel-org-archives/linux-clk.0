@@ -1,41 +1,101 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-Subject: Re: [PATCH v2 0/9] Improve Rx/Tx DMA implementation
-To: <gregkh@linuxfoundation.org>
-References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-Message-ID: <00c09dc2-da73-1415-9f9f-5dc6c56034c0@toradex.com>
-Date: Mon, 4 Jul 2016 11:54:13 +0530
+Return-Path: <Paul.Gortmaker@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Peter De Schrijver
+	<pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        Aleksandr
+ Frid <afrid@nvidia.com>,
+        Paul Walmsley <pwalmsley@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: [PATCH 09/10] clk: tegra: make clk-tegra124-dfll-fcpu explicitly non-modular
+Date: Mon, 4 Jul 2016 17:12:19 -0400
+Message-ID: <20160704211220.5685-10-paul.gortmaker@windriver.com>
+In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: bhuvanchandra.dv@toradex.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Ping!
+The Kconfig currently controlling compilation of this code is:
 
-On 06/28/16 11:02, Bhuvanchandra DV wrote:
+arch/arm/mach-tegra/Kconfig:config ARCH_TEGRA_124_SOC
+arch/arm/mach-tegra/Kconfig:    bool "Enable support for Tegra124 family"
 
-> Changes since v1:
-> Split suspend/resume patch.
->
-> Bhuvanchandra DV (5):
->    tty: serial: fsl_lpuart: Fix broken 8m/s1 support
->    tty: serial: fsl-lpuart: Use cyclic DMA for Rx
->    tty: serial: fsl-lpuart: Use scatter/gather DMA for Tx
->    tty: serial: fsl-lpuart: Update suspend/resume for DMA mode
->    tty: serial: fsl_lpuart: Add support for RS-485
->
-> Stefan Agner (4):
->    tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
->    clk: imx: vf610: Disable automatic clock gating for lpuart in LPSTOP mode
->    tty: serial: fsl_lpuart: support suspend/resume
->    tty: serial: fsl_lpuart: fix clearing of receive flag
->
->   drivers/clk/imx/clk-vf610.c     |  12 +-
->   drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
->   2 files changed, 482 insertions(+), 340 deletions(-)
->
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+Since module_init translates to device_initcall in the non-modular
+case, the init ordering remains unchanged with this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tags etc. since all that information
+is already contained at the top of the file in the comments.
+
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Aleksandr Frid <afrid@nvidia.com>
+Cc: Paul Walmsley <pwalmsley@nvidia.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index c205809ba580..4301569d072a 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -20,7 +20,7 @@
+ #include <linux/cpu.h>
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <soc/tegra/fuse.h>
+ 
+@@ -148,7 +148,6 @@ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-dfll", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra124_dfll_fcpu_of_match);
+ 
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+@@ -169,15 +168,4 @@ static int __init tegra124_dfll_fcpu_init(void)
+ {
+ 	return platform_driver_register(&tegra124_dfll_fcpu_driver);
+ }
+-module_init(tegra124_dfll_fcpu_init);
+-
+-static void __exit tegra124_dfll_fcpu_exit(void)
+-{
+-	platform_driver_unregister(&tegra124_dfll_fcpu_driver);
+-}
+-module_exit(tegra124_dfll_fcpu_exit);
+-
+-MODULE_DESCRIPTION("Tegra124 DFLL clock source driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Aleksandr Frid <afrid@nvidia.com>");
+-MODULE_AUTHOR("Paul Walmsley <pwalmsley@nvidia.com>");
++device_initcall(tegra124_dfll_fcpu_init);
+-- 
+2.8.4
