@@ -1,87 +1,296 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v2 4/7] clk: meson: Copy meson8b CLKID defines to private header file
-Date: Wed, 13 Jul 2016 19:49:38 +0200
-Message-Id: <1468432181-9550-5-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
-References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 4 Jul 2016 23:36:53 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Emilio
+ =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Maxime
+ Ripard <maxime.ripard@free-electrons.com>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 08/10] clk: sunxi: make clk-* explicitly non-modular
+Message-ID: <20160704233653.2f3d878a@bbrezillon>
+In-Reply-To: <20160704211220.5685-9-paul.gortmaker@windriver.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+	<20160704211220.5685-9-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Only expose future CLKID constants if necessary. This patch
-removes CLK_NR_CLKS from the DT bindings but leaves all previously
-defined CLKIDs there to keep backward compatibility.
+On Mon, 4 Jul 2016 17:12:18 -0400
+Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/meson8b.c              |  1 -
- drivers/clk/meson/meson8b.h              | 27 +++++++++++++++++++++++++++
- include/dt-bindings/clock/meson8b-clkc.h |  2 --
- 3 files changed, 27 insertions(+), 3 deletions(-)
+> We have the following file --> Kconfig mapping:
+>=20
+> sunxi/clk-factors.c              obj-y
+> sunxi/clk-sun6i-apb0-gates.c     CONFIG_MFD_SUN6I_PRCM (bool)
+> sunxi/clk-sun6i-apb0.c           CONFIG_MFD_SUN6I_PRCM
+> sunxi/clk-sun6i-ar100.c          CONFIG_MFD_SUN6I_PRCM
+> sunxi/clk-sun8i-apb0.c           CONFIG_MFD_SUN6I_PRCM
+> sunxi/clk-sun9i-mmc.c            obj-y
+>=20
+> Hence none of these are being built as a module by anyone.
+>=20
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the drivers there is no doubt they are builtin-only.  All
+> drivers get mostly the same changes, so they are handled in batch.
+>=20
+> Changes are (1) convert to builtin_platform_register, (2) use the
+> init.h header, (3) delete the MODULE_LICENCE/MODULE_AUTHOR and
+> associated tags, and (4) delete any ".remove" functions.
+>=20
+> There was a stray module.h in a file not using any init.h or
+> module.h stuff, so we simply removed that one.
+>=20
+> In two cases, we explicitly disallow a driver unbind, since that
+> doesn't have a sensible use case anyway, and it allows us to drop
+> the ".remove" code for non-modular drivers.
+>=20
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+>=20
+> We delete the MODULE_LICENSE etc. tags since all that information
+> is already contained at the top of each file in the comments.
+>=20
+> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 0c6e26f..9a656d9 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -21,7 +21,6 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
--#include <dt-bindings/clock/meson8b-clkc.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
- 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index b2f29f7..f8c6942 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -36,4 +36,31 @@
- #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
- #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
- 
-+/*
-+ * CLKID index values
-+ *
-+ * These indices are entirely contrived and do not map onto the hardware.
-+ * Migrate them out of this header and into the DT header file when they need
-+ * to be exposed to client nodes in DT: include/dt-bindings/clock/meson8b-clkc.h
-+ */
-+
-+#define CLKID_UNUSED		0
-+#define CLKID_XTAL		1
-+#define CLKID_PLL_FIXED		2
-+#define CLKID_PLL_VID		3
-+#define CLKID_PLL_SYS		4
-+#define CLKID_FCLK_DIV2		5
-+#define CLKID_FCLK_DIV3		6
-+#define CLKID_FCLK_DIV4		7
-+#define CLKID_FCLK_DIV5		8
-+#define CLKID_FCLK_DIV7		9
-+#define CLKID_CLK81		10
-+#define CLKID_MALI		11
-+#define CLKID_CPUCLK		12
-+#define CLKID_ZERO		13
-+#define CLKID_MPEG_SEL		14
-+#define CLKID_MPEG_DIV		15
-+
-+#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
-+
- #endif /* __MESON8B_H */
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index 595a58d..a55ff8c 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -22,6 +22,4 @@
- #define CLKID_MPEG_SEL		14
- #define CLKID_MPEG_DIV		15
- 
--#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
--
- #endif /* __MESON8B_CLKC_H */
--- 
-2.5.0
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: "Emilio L=C3=B3pez" <emilio@elopez.com.ar>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>  drivers/clk/sunxi/clk-factors.c          |  1 -
+>  drivers/clk/sunxi/clk-sun6i-apb0-gates.c |  9 ++-------
+>  drivers/clk/sunxi/clk-sun6i-apb0.c       |  9 ++-------
+>  drivers/clk/sunxi/clk-sun6i-ar100.c      | 21 +++------------------
+>  drivers/clk/sunxi/clk-sun8i-apb0.c       |  9 ++-------
+>  drivers/clk/sunxi/clk-sun9i-mmc.c        | 28 +++-----------------------=
+--
+>  6 files changed, 12 insertions(+), 65 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-fact=
+ors.c
+> index ddefe9668863..dfe5e3e32d28 100644
+> --- a/drivers/clk/sunxi/clk-factors.c
+> +++ b/drivers/clk/sunxi/clk-factors.c
+> @@ -12,7 +12,6 @@
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> -#include <linux/module.h>
+>  #include <linux/of_address.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi=
+/clk-sun6i-apb0-gates.c
+> index 68021fa5ecd9..09cdb9874636 100644
+> --- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+> +++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+> @@ -9,7 +9,7 @@
+>   */
+> =20
+>  #include <linux/clk-provider.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> @@ -33,7 +33,6 @@ static const struct of_device_id sun6i_a31_apb0_gates_c=
+lk_dt_ids[] =3D {
+>  	{ .compatible =3D "allwinner,sun8i-a23-apb0-gates-clk", .data =3D &sun8=
+i_a23_apb0_gates },
+>  	{ /* sentinel */ }
+>  };
+> -MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_gates_clk_dt_ids);
+> =20
+>  static int sun6i_a31_apb0_gates_clk_probe(struct platform_device *pdev)
+>  {
+> @@ -102,8 +101,4 @@ static struct platform_driver sun6i_a31_apb0_gates_cl=
+k_driver =3D {
+>  	},
+>  	.probe =3D sun6i_a31_apb0_gates_clk_probe,
+>  };
+> -module_platform_driver(sun6i_a31_apb0_gates_clk_driver);
+> -
+> -MODULE_AUTHOR("Boris BREZILLON <boris.brezillon@free-electrons.com>");
+> -MODULE_DESCRIPTION("Allwinner A31 APB0 gate clocks driver");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(sun6i_a31_apb0_gates_clk_driver);
+> diff --git a/drivers/clk/sunxi/clk-sun6i-apb0.c b/drivers/clk/sunxi/clk-s=
+un6i-apb0.c
+> index e703e1895b76..b9c8d359288c 100644
+> --- a/drivers/clk/sunxi/clk-sun6i-apb0.c
+> +++ b/drivers/clk/sunxi/clk-sun6i-apb0.c
+> @@ -9,7 +9,7 @@
+>   */
+> =20
+>  #include <linux/clk-provider.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> =20
+> @@ -61,7 +61,6 @@ static const struct of_device_id sun6i_a31_apb0_clk_dt_=
+ids[] =3D {
+>  	{ .compatible =3D "allwinner,sun6i-a31-apb0-clk" },
+>  	{ /* sentinel */ }
+>  };
+> -MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_clk_dt_ids);
+> =20
+>  static struct platform_driver sun6i_a31_apb0_clk_driver =3D {
+>  	.driver =3D {
+> @@ -70,8 +69,4 @@ static struct platform_driver sun6i_a31_apb0_clk_driver=
+ =3D {
+>  	},
+>  	.probe =3D sun6i_a31_apb0_clk_probe,
+>  };
+> -module_platform_driver(sun6i_a31_apb0_clk_driver);
+> -
+> -MODULE_AUTHOR("Boris BREZILLON <boris.brezillon@free-electrons.com>");
+> -MODULE_DESCRIPTION("Allwinner A31 APB0 clock Driver");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(sun6i_a31_apb0_clk_driver);
+> diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-=
+sun6i-ar100.c
+> index 84a187e55360..64ca3e9e38e6 100644
+> --- a/drivers/clk/sunxi/clk-sun6i-ar100.c
+> +++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+> @@ -10,7 +10,7 @@
+> =20
+>  #include <linux/bitops.h>
+>  #include <linux/clk-provider.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/spinlock.h>
+> @@ -91,32 +91,17 @@ static int sun6i_a31_ar100_clk_probe(struct platform_=
+device *pdev)
+>  	return 0;
+>  }
+> =20
+> -static int sun6i_a31_ar100_clk_remove(struct platform_device *pdev)
+> -{
+> -	struct device_node *np =3D pdev->dev.of_node;
+> -	struct clk *clk =3D platform_get_drvdata(pdev);
+> -
+> -	sunxi_factors_unregister(np, clk);
+> -
+> -	return 0;
+> -}
+> -
+>  static const struct of_device_id sun6i_a31_ar100_clk_dt_ids[] =3D {
+>  	{ .compatible =3D "allwinner,sun6i-a31-ar100-clk" },
+>  	{ /* sentinel */ }
+>  };
+> -MODULE_DEVICE_TABLE(of, sun6i_a31_ar100_clk_dt_ids);
+> =20
+>  static struct platform_driver sun6i_a31_ar100_clk_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "sun6i-a31-ar100-clk",
+>  		.of_match_table =3D sun6i_a31_ar100_clk_dt_ids,
+> +		.suppress_bind_attrs =3D true,
+>  	},
+>  	.probe =3D sun6i_a31_ar100_clk_probe,
+> -	.remove =3D sun6i_a31_ar100_clk_remove,
+>  };
+> -module_platform_driver(sun6i_a31_ar100_clk_driver);
+> -
+> -MODULE_AUTHOR("Boris BREZILLON <boris.brezillon@free-electrons.com>");
+> -MODULE_DESCRIPTION("Allwinner A31 AR100 clock Driver");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(sun6i_a31_ar100_clk_driver);
+> diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-s=
+un8i-apb0.c
+> index 2ea61debffc1..a5666e1d0ce7 100644
+> --- a/drivers/clk/sunxi/clk-sun8i-apb0.c
+> +++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+> @@ -15,7 +15,7 @@
+>   */
+> =20
+>  #include <linux/clk-provider.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> @@ -108,7 +108,6 @@ static const struct of_device_id sun8i_a23_apb0_clk_d=
+t_ids[] =3D {
+>  	{ .compatible =3D "allwinner,sun8i-a23-apb0-clk" },
+>  	{ /* sentinel */ }
+>  };
+> -MODULE_DEVICE_TABLE(of, sun8i_a23_apb0_clk_dt_ids);
+> =20
+>  static struct platform_driver sun8i_a23_apb0_clk_driver =3D {
+>  	.driver =3D {
+> @@ -117,8 +116,4 @@ static struct platform_driver sun8i_a23_apb0_clk_driv=
+er =3D {
+>  	},
+>  	.probe =3D sun8i_a23_apb0_clk_probe,
+>  };
+> -module_platform_driver(sun8i_a23_apb0_clk_driver);
+> -
+> -MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
+> -MODULE_DESCRIPTION("Allwinner A23 APB0 clock Driver");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(sun8i_a23_apb0_clk_driver);
+> diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-su=
+n9i-mmc.c
+> index 716737388b7d..6041bdba2e97 100644
+> --- a/drivers/clk/sunxi/clk-sun9i-mmc.c
+> +++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+> @@ -16,7 +16,7 @@
+> =20
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/reset.h>
+> @@ -183,39 +183,17 @@ err_clk_register:
+>  	return ret;
+>  }
+> =20
+> -static int sun9i_a80_mmc_config_clk_remove(struct platform_device *pdev)
+> -{
+> -	struct device_node *np =3D pdev->dev.of_node;
+> -	struct sun9i_mmc_clk_data *data =3D platform_get_drvdata(pdev);
+> -	struct clk_onecell_data *clk_data =3D &data->clk_data;
+> -	int i;
+> -
+> -	reset_controller_unregister(&data->rcdev);
+> -	of_clk_del_provider(np);
+> -	for (i =3D 0; i < clk_data->clk_num; i++)
+> -		clk_unregister(clk_data->clks[i]);
+> -
+> -	reset_control_assert(data->reset);
+> -
+> -	return 0;
+> -}
+> -
+>  static const struct of_device_id sun9i_a80_mmc_config_clk_dt_ids[] =3D {
+>  	{ .compatible =3D "allwinner,sun9i-a80-mmc-config-clk" },
+>  	{ /* sentinel */ }
+>  };
+> -MODULE_DEVICE_TABLE(of, sun9i_a80_mmc_config_clk_dt_ids);
+> =20
+>  static struct platform_driver sun9i_a80_mmc_config_clk_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "sun9i-a80-mmc-config-clk",
+> +		.suppress_bind_attrs =3D true,
+>  		.of_match_table =3D sun9i_a80_mmc_config_clk_dt_ids,
+>  	},
+>  	.probe =3D sun9i_a80_mmc_config_clk_probe,
+> -	.remove =3D sun9i_a80_mmc_config_clk_remove,
+>  };
+> -module_platform_driver(sun9i_a80_mmc_config_clk_driver);
+> -
+> -MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
+> -MODULE_DESCRIPTION("Allwinner A80 MMC clock/reset Driver");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(sun9i_a80_mmc_config_clk_driver);
