@@ -1,98 +1,52 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Mirza Krak <mirza.krak@gmail.com>, Rob Herring <robh@kernel.org>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <20160720124408.GA19113@rob-hp-laptop>
- <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
- Turquette" <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	<linux@armlinux.org.uk>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1f280c99-156f-59d3-308f-b4c8ff0f8f7c@nvidia.com>
-Date: Thu, 21 Jul 2016 11:26:09 +0100
+Return-Path: <tomasz.figa@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Date: Mon, 4 Jul 2016 12:59:54 +0900
+Message-ID: <CA+Ln22HuCdDr=g06ynK7mqjDfUVrQgG-NRkfTP_zE6h-wZk6Gw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] mark spi clocks as critical and enable spi3 clocks
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Andi,
 
-On 20/07/16 20:28, Mirza Krak wrote:
-> 2016-07-20 14:44 GMT+02:00 Rob Herring <robh@kernel.org>:
->> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
->>> From: Mirza Krak <mirza.krak@gmail.com>
->>>
->>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
->>> Tegra30 SOCs
->>>
->>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->>> ---
->>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
->>>  1 file changed, 73 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>> new file mode 100644
->>> index 0000000..9ee4a66
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>> @@ -0,0 +1,73 @@
->>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
->>> +
->>> +The NOR controller supports a number of memory types, including synchronous NOR,
->>> +asynchronous NOR, and other flash memories with similar interfaces, such as
->>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
->>> +CAN chips, Wi-Fi chips etc.
->>> +
->>> +The actual devices are instantiated from the child nodes of a NOR node.
->>> +
->>> +Required properties:
->>> +
->>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
->>> + - reg: Should contain NOR controller registers location and length.
->>> + - clocks: Must contain one entry, for the module clock.
->>> +   See ../clocks/clock-bindings.txt for details.
->>> + - resets : Must contain an entry for each entry in reset-names.
->>> +   See ../reset/reset.txt for details.
->>> + - reset-names : Must include the following entries:
->>> +  - nor
->>> + - #address-cells: Must be set to 2 to allow memory address translation
->>> + - #size-cells:      Must be set to 1 to allow CS address passing
->>> + - ranges: Must be set up to reflect the memory layout with four integer
->>> +             values for each chip-select line in use.
->>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
->>> +
->>> +Note that the NOR controller does not have any internal chip-select address
->>> +decoding and if you want to access multiple devices external chip-select
->>> +decoding must be provided.
->>
->> Then what are the 2 chip selects in ranges?
->>
->> Rob
-> 
-> Those two chip selects are actually a representation of a external
-> decoding logic based on what we use on our board. Even though it the
-> NOR controller only supports one single chip select I wanted to give
-> an example on how one could create more chip-selects with an external
-> logic and what it would look like in the device tree representation.
+2016-06-30 16:15 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
+> Hi,
+>
+> This patchset enables spi3 clocks by marking critical clocks as
+> CLK_IS_CRITICAL and in the meantime replaces the use of
+> CLK_IGNORE_UNUSED for spi1 clocks.
+>
+> The sclk needs to be considered critical as well.
+>
+> The SPI3 in the tm2/tm2e boards will control an irled for remote
+> controlling.
+>
+> Changelog:
+>
+> V1 -> V2
+>  - the "sclk_spi3" doesn't need to be enabled in boot time as it
+>   is handled by the spi driver itself.
+>
+>  - use the CLK_IS_CRITICAL flag for the ioclk
+>
+> V2 -> V3
+>  - some more tests has confirmed taht "sclk_spi1,3" need to be
+>    enabled as critical!
 
-Technically, the GMI/SNOR controller supports 8 chip-selects, however,
-unlike some devices, it appears that software has to select the active
-chip-select. Although this sounds odd, I believe that the idea is that
-in order to support devices greater than 256MB (external address space
-for available NOR/async devices) you can use the chip-selects to page
-through memory greater than this 256MB range. At least that it my
-(limited) understanding!
+This sounds like a DTS and/or SPI and/or clock driver bug then. I'm
+pretty much convinced that it might also cause other problems and this
+workaround will only mask them making things even more difficult to
+debug in the future. Let's not introduce more technical debt.
 
-Cheers
-Jon
-
--- 
-nvpublic
+Best regards,
+Tomasz
