@@ -1,137 +1,172 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:40658 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757302AbcGKC7T (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 22:59:19 -0400
-Date: Sun, 10 Jul 2016 22:58:04 -0400
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: Wan Zongshun <vw@iommu.org>
-CC: <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	LKML <linux-kernel@vger.kernel.org>, <p.zabel@pengutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wan Zongshun <mcuos.com@gmail.com>,
-	<linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
-Message-ID: <20160711025804.GG30853@windriver.com>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-6-git-send-email-vw@iommu.org>
- <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
- <578304CB.8050604@iommu.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: clk: Per controller locks (prepare & enable)
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <57737761.2020708@samsung.com>
+ <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
+ <577A1D54.9010203@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
+Date: Mon, 4 Jul 2016 11:15:22 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <578304CB.8050604@iommu.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <577A1D54.9010203@samsung.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-[Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900] On 11/07/2016 (Mon 10:30) Wan Zongshun wrote:
+Hello Krzysztof,
 
+On 07/04/2016 04:24 AM, Krzysztof Kozlowski wrote:
+> On 06/30/2016 06:22 PM, Javier Martinez Canillas wrote:
+>>> Question:
+>>> What do you think about it? I know that talk is cheap and code looks
+>>> better but before starting the work I would like to hear some
+>>> comments/opinions/ideas.
+>>>
+>>
+>> The problem is that the enable and prepare operations are propagated to
+>> the parents, so what the locks want to protecting is really a sub-tree
+>> of the clock tree. They currently protect the whole clock hierarchy to
+>> make sure that the changes in the clock tree are atomically.
 > 
-> 
-> On 2016年07月11日 05:56, Paul Gortmaker wrote:
-> >On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote
-> >>This driver is to add reset support for nuc900 series,
-> >>currently, it only supports nuc970 SoC reset.
-> >>
-> >>Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
-> >>---
-> >>  drivers/power/reset/Kconfig        |  7 +++
-> >>  drivers/power/reset/Makefile       |  1 +
-> >>  drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
-> >>  3 files changed, 101 insertions(+)
-> >>  create mode 100644 drivers/power/reset/nuc900-reset.c
-> >>
-> >>diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> >>index 9bb2622..8c84892 100644
-> >>--- a/drivers/power/reset/Kconfig
-> >>+++ b/drivers/power/reset/Kconfig
-> >>@@ -94,6 +94,13 @@ config POWER_RESET_MSM
-> >>         help
-> >>           Power off and restart support for Qualcomm boards.
-> >>
-> >>+config POWER_RESET_NUC900
-> >>+       bool "Nuc900 restart driver"
-> >
-> >If this driver is bool and not tristate, then please remove all references
-> >to MODULE_<xyz> and then the module.h include as well.
-> 
-> I will remove the following codes in my reset.c driver.
-> 
-> MODULE_DEVICE_TABLE(of, of_nuc900_reset_match);
-> #include <linux/module.h>
+> Although there is a hierarchy between clocks from different controllers
+> but still these are all clocks controllers coming from one hardware
+> device (like SoC). At least on Exynos, I think there is no real
+> inter-device dependencies. The deadlock you mentioned (and which I want
+> to fix) is between:
 
-Thanks -- it is not a specific criticism of your driver, but just a
-mistake that we have consistently copied from one driver to the next,
-and I hope we can stop doing that with the right reviews.
+Yes, my point was that this may not be the case in all systems. IOW the
+framework should be generic enough to allow hierarchies where a parent
+clock is a clock provided by a different controller from a different HW.
 
-P.
---
+> 1. clock in PMIC (the one needed by s3c_rtc_probe()),
+> 2. clock for I2C in SoC (the one needed by regmap_write()),
+> 3. and regmap lock:
+> 
+> What I want to say is that the relationship between clocks even when
+> crossing clock controller boundaries is still self-contained. It is
+> simple parent-child relationship so acquiring both
+> clock-controller-level locks is safe.
+>
 
+Is safe if the clock controllers are always aquired in the same order but
+I'm not sure if that will always be the case. I.e: you have controllers A
+and B that have clocks A{1,2} and B{1,2} respectively. So you could have
+something like this:
+
+A1 with parent B1
+B2 with parent A2
+
+That can cause a deadlock since in the first case, the controller A will be
+aquired and then the controller B but in the other case, the opposite order
+will be attempted.
+
+> Current dead lock looks like, simplifying your code:
+> A:                            B:
+> lock(regmap)
+>                               lock(prepare)
+> lock(prepare) - wait
+>                               lock(regmap) - wait
 > 
 > 
-> >
-> >Thanks,
-> >Paul.
-> >--
-> >
-> >>+       depends on ARCH_W90X900
-> >>+       help
-> >>+         Power off and restart support for Nuvoton NUC900 family of
-> >>+         reference boards.
-> >>+
-> >>  config POWER_RESET_LTC2952
-> >>         bool "LTC2952 PowerPath power-off driver"
-> >>         depends on OF_GPIO
-> >>diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> >>index ab7aa86..d4df889 100644
-> >>--- a/drivers/power/reset/Makefile
-> >>+++ b/drivers/power/reset/Makefile
-> >>@@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
-> >>  obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
-> >>  obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
-> >>  obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
-> >>+obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
-> >>  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
-> >>  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
-> >>  obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
-> >>diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
-> >>new file mode 100644
-> >>index 0000000..49986b7
-> >>--- /dev/null
-> >>+++ b/drivers/power/reset/nuc900-reset.c
-> >>@@ -0,0 +1,93 @@
-> >>+/*
-> >>+ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
-> >>+ *
-> >>+ * The code contained herein is licensed under the GNU General Public
-> >>+ * License. You may obtain a copy of the GNU General Public License
-> >>+ * Version 2 or later at the following locations:
-> >>+ *
-> >>+ * http://www.opensource.org/licenses/gpl-license.html
-> >>+ * http://www.gnu.org/copyleft/gpl.html
-> >>+ */
-> >>+#include <linux/init.h>
-> >>+#include <linux/err.h>
-> >>+#include <linux/io.h>
-> >>+#include <linux/kernel.h>
-> >>+#include <linux/mfd/syscon.h>
-> >>+#include <linux/module.h>
-> >>+#include <linux/notifier.h>
-> >>+#include <linux/of.h>
-> >>+#include <linux/platform_device.h>
-> >>+#include <linux/reboot.h>
-> >>+#include <linux/regmap.h>
-> >>
-> >
-> >[...]
-> >
-> >_______________________________________________
-> >linux-arm-kernel mailing list
-> >linux-arm-kernel@lists.infradead.org
-> >http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >
-> >
+> When split locks per clock controller this would be:
+> A:                            B:
+> lock(regmap)
+>                               lock(s2mps11)
+> lock(i2c/exynos)
+>                               lock(regmap) - wait
+> do the transfer
+> unlock(i2c/exynos)
+> unlock(regmap)
+>                               lock(regmap) - acquired
+>                               lock(i2c/exynos)
+>                               do the transfer
+>                               unlock(i2c/exynos)
+>                               unlock(regmap)
+>                               unlock(s2mps11)
+>
+
+Yes, splitting the lock per controller will fix the possible deadlock in
+this case but I think we need an approach that is safe for all possible
+scenarios. Otherwise it will work more by coincidence than due a design.
+
+> I still have to figure out how to properly protect the entire tree
+> hierarchy. Maybe the global prepare_lock should be used only for that -
+> for traversing the hierarchy.
+>
+
+Other thing to figure out is how to determine when a parent belongs to a
+different controller to get its lock in clk_{prepare,enable}(), at least
+part of the hierarchy has to be traversed on prepare/enable to propagate
+the operations to the parents clocks.
+
+>>
+>> So a clock per controller won't suffice since you can have a parent for
+>> a clock provided by a different controller and that won't be protected.
+>>
+>> Another option is to have a prepare and enable locks per clock. Since
+>> the operations are always propagated in the same direction, I think is
+>> safe to do it.
+>>
+>> But even in the case of a more fine-grained locking, I believe the
+>> mentioned deadlocks can still happen. For example in 10ff4c5239a1 the
+>> issue was that the s2mps11 PMIC has both regulators and clocks that are
+>> controlled via I2C so the regulator and clocks drivers shares the same
+>> I2C regmap.
+>>
+>> What happened was something like this:
+>>
+>>          CPU0                                   CPU1
+>>          ----                                   ----
+>>   regulator_set_voltage()                s3c_rtc_probe()
+>>   regmap_write()                         clk_prepare()
+>>   /* regmap->lock was aquired */         /* prepare_lock was aquired */
+>>   regmap_i2c_write()                     s2mps11_clk_prepare()
+>>   i2c_transfer()                         regmap_write()
+>>   exynos5_i2c_xfer()                     /* deadlock due regmap->lock */
+>>   clk_prepare_enable()
+>>   clk_prepare_lock()
+>>   /* prepare_lock was aquired */
+>>
+>> So if for example a per clock lock is used, the deadlock can still happen
+>> if both the I2C clock and S3C RTC source clock share the same parent in a
+>> part of the hierarchy. But as you said this is less likely in practice so
+>> probably is not an issue.
+> 
+> I think these clocks do not share the parent.
+>
+
+Yes, I meant the issue of having a shared parent in general and not in this
+particular case that no parent is shared. Sorry for the ambiguous sentence.
+
+> Best regards,
+> Krzysztof
+>
+
+So in summary, my point is that we should first define what these locks are
+protecting. The good practice in the kernel is to protect data structures
+instead of code, but the prepare and enable locks are not doing the former.
+
+My understanding is that what the locks are protecting is a sub-tree of the
+hierarchy but there isn't a data structure to represent a sub-tree so global
+locks are used to protect the whole tree instead.
+
+Moving the lock to a per controller/provider seems like an arbitrary thing
+to me since what's important AFAIU is the clock hierarchy and not from where
+these clocks come from.
+
+But I'm very far from being a lock expert so maybe my assumptions are wrong,
+I'll let Stephen and Mike to comment on this.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
