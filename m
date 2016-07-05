@@ -1,79 +1,122 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: clk: Per controller locks (prepare & enable)
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
  Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 0/7] spi s3c64xx ioclk handling
-Date: Tue, 12 Jul 2016 19:02:09 +0900
-Message-id: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <57737761.2020708@samsung.com>
+ <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
+ <577A1D54.9010203@samsung.com>
+ <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <a.hajda@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <577B54CE.90004@samsung.com>
+Date: Tue, 05 Jul 2016 08:33:50 +0200
+MIME-version: 1.0
+In-reply-to: <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 07/04/2016 05:15 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 07/04/2016 04:24 AM, Krzysztof Kozlowski wrote:
+>> On 06/30/2016 06:22 PM, Javier Martinez Canillas wrote:
+>>>> Question:
+>>>> What do you think about it? I know that talk is cheap and code looks
+>>>> better but before starting the work I would like to hear some
+>>>> comments/opinions/ideas.
+>>>>
+>>>
+>>> The problem is that the enable and prepare operations are propagated to
+>>> the parents, so what the locks want to protecting is really a sub-tree
+>>> of the clock tree. They currently protect the whole clock hierarchy to
+>>> make sure that the changes in the clock tree are atomically.
+>>
+>> Although there is a hierarchy between clocks from different controllers
+>> but still these are all clocks controllers coming from one hardware
+>> device (like SoC). At least on Exynos, I think there is no real
+>> inter-device dependencies. The deadlock you mentioned (and which I want
+>> to fix) is between:
+> 
+> Yes, my point was that this may not be the case in all systems. IOW the
+> framework should be generic enough to allow hierarchies where a parent
+> clock is a clock provided by a different controller from a different HW.
 
-this patchset improves the compatibility between the s3c64xx
-driver and the exynos5433. One point of incompatibility, indeed,
-was that the SPI controller in exynos5433 is fed by three clocks
-which need to be handled by the driver. The third clock is the
-ioclk which support is the main purpose of this patchset.
-  
-The last patch was first sent on its own and it was its 5th
-version, it has been queued to this patchset as there is a
-dependency with it.
+Is there such configuration?
 
-Changelog V1 -> V2:
+> 
+>> 1. clock in PMIC (the one needed by s3c_rtc_probe()),
+>> 2. clock for I2C in SoC (the one needed by regmap_write()),
+>> 3. and regmap lock:
+>>
+>> What I want to say is that the relationship between clocks even when
+>> crossing clock controller boundaries is still self-contained. It is
+>> simple parent-child relationship so acquiring both
+>> clock-controller-level locks is safe.
+>>
+> 
+> Is safe if the clock controllers are always aquired in the same order but
+> I'm not sure if that will always be the case. I.e: you have controllers A
+> and B that have clocks A{1,2} and B{1,2} respectively. So you could have
+> something like this:
+> 
+> A1 with parent B1
+> B2 with parent A2
 
- - patch 1: the exynos5433-spi compatible is placed in
-   alphabetical order compared to exynos7-spi
+Again, is there such configuration? We thought here about it and at
+least it is not known to us. Of course this is not a proof that such
+configuration does not exist...
 
- - patch 1: deprecates exynos7-spi
+> 
+> That can cause a deadlock since in the first case, the controller A will be
+> aquired and then the controller B but in the other case, the opposite order
+> will be attempted.
 
- - patch 2: [new] added the clocks and clock-name documentation
-   in the bindings
+Yes.
 
- - patch 3: fixed some typos, renamed the goto label from
-   err_power_off to err_pm_put add the reviewd-by Krzysztof
+> 
+>> Current dead lock looks like, simplifying your code:
+>> A:                            B:
+>> lock(regmap)
+>>                               lock(prepare)
+>> lock(prepare) - wait
+>>                               lock(regmap) - wait
+>>
+>>
+>> When split locks per clock controller this would be:
+>> A:                            B:
+>> lock(regmap)
+>>                               lock(s2mps11)
+>> lock(i2c/exynos)
+>>                               lock(regmap) - wait
+>> do the transfer
+>> unlock(i2c/exynos)
+>> unlock(regmap)
+>>                               lock(regmap) - acquired
+>>                               lock(i2c/exynos)
+>>                               do the transfer
+>>                               unlock(i2c/exynos)
+>>                               unlock(regmap)
+>>                               unlock(s2mps11)
+>>
+> 
+> Yes, splitting the lock per controller will fix the possible deadlock in
+> this case but I think we need an approach that is safe for all possible
+> scenarios. Otherwise it will work more by coincidence than due a design.
 
- - patch 4: new patch
+This is not a coincidence. This design is meant to fix this deadlock.
+Not by coincidence. By design.
 
- - patch 5: fixed typos in commit message and use low letters for
-   hex numbers
+You are talking about theoretical different configurations... without
+even real bug reports. I am providing an idea to fix a real deadlock and
+your argument is that it might not fix other (non-reported) deadlocks.
+These other deadlocks happen now as well probably...
 
- - patch 6: removed one line of comment
-
- - patch 7: added to ensure sequentiality.
-
-Changelog V2 -> V3
-
- - patch 2: reworded the property descriptions
-
- - patch 6: reworded the added comment
-
- - added on all the patches the proper reviewed and acks
-
-Thanks,
-Andi
-
-Andi Shyti (7):
-  bindings: spi-samsung: add exynos5433 spi compatible
-  bindings: spi-samsung: document the clocks and the clock-name property
-  spi: s3c64xx: rename goto labels to meaningful names
-  spi: s3c64xx: use error code from clk_prepare_enable()
-  spi: s3c64xx: add Exynos5433 compatible for ioclk handling
-  spi: s3c64xx: restore removed comments
-  clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI clocks
-
- .../devicetree/bindings/spi/spi-samsung.txt        | 12 ++-
- drivers/clk/samsung/clk-exynos5433.c               |  5 +-
- drivers/spi/spi-s3c64xx.c                          | 90 +++++++++++++++++-----
- 3 files changed, 82 insertions(+), 25 deletions(-)
-
--- 
-2.8.1
+Best regards,
+Krzysztof
