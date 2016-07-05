@@ -1,68 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:51072 "EHLO
-	pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751292AbcGLKWl (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 06:22:41 -0400
-Date: Tue, 12 Jul 2016 11:22:28 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	tony@atomide.com, paul@pwsan.com, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv3 2/7] clk: ti: add clkdev get helper
-Message-ID: <20160712102228.GE5783@n2100.arm.linux.org.uk>
-References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
- <1467296018-25086-3-git-send-email-t-kristo@ti.com>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH 0/7] Add Amlogic meson8b clock gates
+Date: Tue,  5 Jul 2016 19:56:24 +0200
+Message-Id: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467296018-25086-3-git-send-email-t-kristo@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 05:13:33PM +0300, Tero Kristo wrote:
->  /**
-> + * ti_clk_get - lookup a TI clock handle
-> + * @dev_id: device to lookup clock for
-> + * @con_id: connection ID to find
-> + *
-> + * Searches for a TI clock handle based on the DT node name.
-> + * Returns the pointer to the clock handle, or ERR_PTR in failure.
-> + */
-> +static struct clk *ti_clk_get(const char *dev_id, const char *con_id)
-> +{
-> +	struct of_phandle_args clkspec;
-> +	struct device_node *node;
-> +	struct clk *clk;
-> +
-> +	/* Only check for cases of type clk_get_sys(NULL, "xyz") */
-> +	if (dev_id || !con_id)
-> +		return ERR_PTR(-ENOENT);
-> +
-> +	if (of_have_populated_dt()) {
-> +		node = of_find_node_by_name(NULL, con_id);
-> +		clkspec.np = node;
-> +		clk = of_clk_get_from_provider(&clkspec);
-> +
-> +		if (!IS_ERR(clk))
-> +			return clk;
-> +	}
-> +
-> +	return ERR_PTR(-ENOENT);
-> +}
+This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
+U-Boot disables most of them at boot. In order to enable ethernet, USB and other
+components it's mandatory to enable the clock gates when loading the corresponding
+drivers.
 
-I _really_ don't like this.  This takes us back to the totally broken
-idea, that's already been proven to be greatly harmful in OMAP land,
-that the "con_id" is not a _DEVICE SPECIFIC CONNECTION NAME_ but is a
-CLOCK NAME.  The connection ID is supposed to be a static string in
-the requestor of the clock, not some random string picked out from
-DT.
+The meson8b clock gate support is based on the previous work done for Amlogic gxbb
+currently available in clk-next.
 
-This series started out with the assertion that the new clkdev hook
-was to avoid registering lots of clock aliases, but it seems with
-this patch we're going to end up with lots of specifically named
-nodes in DT instead.  It's just moving the problem to somewhere else.
+Alexander Müller (7):
+  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
+  meson: clk: Move register definitions to meson8b.h
+  meson: clk: Rename register names according to Amlogic datasheet
+  meson: clk: Add CLKIDs for DT binding
+  gxbb: clk: Move MESON_GATE macro to gxbb
+  meson: clk: Add support for clock gates
+  arm: amlogic: select meson8b clk driver
+
+ arch/arm/mach-meson/Kconfig              |   2 +
+ drivers/clk/meson/Makefile               |   2 +-
+ drivers/clk/meson/clkc.h                 |  14 -
+ drivers/clk/meson/gxbb.c                 | 176 ++++----
+ drivers/clk/meson/meson8b-clkc.c         | 458 --------------------
+ drivers/clk/meson/meson8b.c              | 706 +++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h              |  44 ++
+ include/dt-bindings/clock/meson8b-clkc.h |  79 +++-
+ 8 files changed, 926 insertions(+), 555 deletions(-)
+ delete mode 100644 drivers/clk/meson/meson8b-clkc.c
+ create mode 100644 drivers/clk/meson/meson8b.c
+ create mode 100644 drivers/clk/meson/meson8b.h
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.5.0
