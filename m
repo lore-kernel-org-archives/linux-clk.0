@@ -1,151 +1,67 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding
- of STiH4xx platforms
-To: Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
- <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
- <20160619150458.GA26824@rob-hp-laptop>
- <146794221378.73491.2803164814485320331@resonance> <577F6E83.3080006@st.com>
- <146799410307.73491.9408637761157902031@resonance>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas
- Kandagatla <srinivas.kandagatla@gmail.com>,
-        Maxime Coquelin
-	<maxime.coquelin@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Russell
- King <linux@armlinux.org.uk>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier
- Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda
-	<a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen
-	<dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry
- Reding <treding@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones
-	<lee.jones@linaro.org>,
-        Peter Griffin <peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <578343A2.6090801@st.com>
-Date: Mon, 11 Jul 2016 08:58:42 +0200
+Return-Path: <julien.grall@arm.com>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+To: Stefano Stabellini <sstabellini@kernel.org>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
+ <alpine.DEB.2.10.1607051449370.2575@sstabellini-ThinkPad-X260>
+ <577BBC1A.8020209@arm.com>
+ <alpine.DEB.2.10.1607051456410.2575@sstabellini-ThinkPad-X260>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
+ devicetree@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <577BBF69.8010809@arm.com>
+Date: Tue, 5 Jul 2016 15:08:41 +0100
 MIME-Version: 1.0
-In-Reply-To: <146799410307.73491.9408637761157902031@resonance>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <alpine.DEB.2.10.1607051456410.2575@sstabellini-ThinkPad-X260>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
 
-On 07/08/2016 06:08 PM, Michael Turquette wrote:
-> Quoting Gabriel Fernandez (2016-07-08 02:12:35)
->> Hi Mike,
->>
->> On 07/08/2016 03:43 AM, Michael Turquette wrote:
->>> Quoting Rob Herring (2016-06-19 08:04:58)
->>>> On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
->>>>> This patch reworks the clock binding to avoid too much detail in DT.
->>>>> Now we have only compatible string per type of clock
->>>>> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
->>>>>
->>>> I have no idea what the clock trees and clock controller in these chips
->>>> look like, so it's hard to say if the changes here are good. It still
->>>> looks like things are somewhat fine grained clocks in DT. I'll leave
->>>> it up to the platform maintainers to decide...
->>> Is this series breaking ABI? If yes, why not do what Maxime did for the
->>> Allwinner/sunxi clocks and just fully convert over to a
->>> one-node-per-clock-controller binding? This one-node-per-clock stuff is
->>> pretty unfortunate, and if we're deprecating platforms (patch #1) then
->>> now might be a good time to re-evaluate the whole thing.
->> The goal of my patchset was to be aligned with DRM / KMS development and
->> to offer
->> the possibility to make a correct video playback on STiH407/STiH410
->> platform.
->> Our milestone is the 4.8 for that.
->>
->> Currently people need these patches to work.
->> I'm not sure it's a good time to re-evaluate the whole thing.
->>
->> Is it possible to re-evaluate later ?
-> Are you OK to break ABI later? Or at a minimum, deprecate the current
-> binding (maintain it forever for legacy platforms) and create a new
-> clock controller binding description that supersedes the legacy binding
-> for all new platforms?
->
-> If the answer to either question is "yes", then I'm OK to put it aside
-> for now. But if the answer to both is "no", and this patch series is
-> breaking ABI, then we really should fix it now.
-
-Hi Mike,
-i m ok to break ABI later.
-
-Many Thanks !
-
-Best Regards
-
-Gabriel.
-
-> Regards,
-> Mike
->
->> Best regards,
->> Gabriel
->>
->>> Regards,
->>> Mike
+On 05/07/16 15:04, Stefano Stabellini wrote:
+> On Tue, 5 Jul 2016, Julien Grall wrote:
+>> On 05/07/16 14:53, Stefano Stabellini wrote:
+>>> On Thu, 30 Jun 2016, Dirk Behme wrote:
+>>>> +- clocks: one or more clocks to be registered.
+>>>> +  Xen hypervisor drivers might replace native drivers, resulting in
+>>>> +  clocks not registered by these native drivers. To avoid that these
+>>>> +  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
+>>>> +  register them in the hypervisor node.
+>>>> +  An example for this are the clocks of the serial driver. If the clocks
+>>>> +  used by the serial hardware interface are not registered by the serial
+>>>> +  driver the serial output might stop once clk_disable_unused() is
+>>>> called.
 >>>
->>>>    
->>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
->>>>> ---
->>>>>    .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  2 +-
->>>>>    .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
->>>>>    .../devicetree/bindings/clock/st/st,clkgen.txt     |  2 +-
->>>>>    .../devicetree/bindings/clock/st/st,quadfs.txt     |  6 +--
->>>>>    drivers/clk/st/clkgen-fsyn.c                       | 41 ++++++--------
->>>>>    drivers/clk/st/clkgen-mux.c                        | 28 ++++------
->>>>>    drivers/clk/st/clkgen-pll.c                        | 62 ++++++++++------------
->>>>>    7 files changed, 65 insertions(+), 87 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
->>>>> index 4d277d6..9a46cb1d7 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
->>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
->>>>> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
->>>>>    Required properties:
->>>>>    
->>>>>    - compatible : shall be:
->>>>> -     "st,stih407-clkgen-a9-mux",     "st,clkgen-mux"
->>>>> +     "st,stih407-clkgen-a9-mux"
->>>>>    
->>>>>    - #clock-cells : from common clock binding; shall be set to 0.
->>>>>    
->>>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
->>>>> index c9fd674..be0b043 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
->>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
->>>>> @@ -9,11 +9,10 @@ Base address is located to the parent node. See clock binding[2]
->>>>>    Required properties:
->>>>>    
->>>>>    - compatible : shall be:
->>>>> -     "st,stih407-plls-c32-a0",       "st,clkgen-plls-c32"
->>>>> -     "st,stih407-plls-c32-a9",       "st,clkgen-plls-c32"
->>>>> -     "sst,plls-c32-cx_0",            "st,clkgen-plls-c32"
->>>>> -     "sst,plls-c32-cx_1",            "st,clkgen-plls-c32"
->>>>> -     "st,stih418-plls-c28-a9",       "st,clkgen-plls-c32"
->>>>> +     "st,clkgen-pll0"
->>>>> +     "st,clkgen-pll0"
->>>> Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
->>>>
->>>>> +     "st,stih407-clkgen-plla9"
->>>>> +     "st,stih418-clkgen-plla9"
+>>> What if we use the "status" property of the clocks? Could we set it to
+>>> "disabled" in Xen? Would that be enough for Linux to leave them alone?
+>>
+>> clocks could be shared between multiple devices. So it is not possible to
+>> disable the clock.
+>
+> To clarify my suggestion: I am not saying we should disable the clock, I
+> am saying we should set the "status" property to "disabled" in Xen for
+> the clock used by the serial or passthrough devices (for which the
+> "status" property is already set to "disabled"). That should work for
+> cases where the clock is not shared among multiple devices.
+
+How would you be able to differentiate in Xen between a clock shared and 
+a non-shared one? The only way I can think it going through all the 
+device tree which sounds really expensive.
+
+> If the clock is shared, then I don't think we would run into the issue
+> described by Dirk because I wouldn't imagine clk_disable_unused would
+> try to disable the clock anymore, because it would actually be in use
+> from Linux POV.
+
+We also want to prevent Linux changing the rate of the clock (see Mark's 
+mail [1]).
+
+Regards,
+
+[1] 
+https://lists.xenproject.org/archives/html/xen-devel/2016-07/msg00335.html
+
+-- 
+Julien Grall
