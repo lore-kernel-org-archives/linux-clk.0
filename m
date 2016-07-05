@@ -1,44 +1,106 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH 7/7] arm: amlogic: select meson8b clk driver
-Date: Tue,  5 Jul 2016 19:56:31 +0200
-Message-Id: <1467741391-60534-8-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+Return-Path: <Dirk.Behme@de.bosch.com>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+To: Mark Rutland <mark.rutland@arm.com>
+References: <1467701423-31138-1-git-send-email-dirk.behme@de.bosch.com>
+ <20160705103917.GC20478@leverpostej>
+CC: <linux-arm-kernel@lists.infradead.org>, Julien Grall
+	<julien.grall@arm.com>, <devicetree@vger.kernel.org>,
+	<xen-devel@lists.xenproject.org>, Stefano Stabellini
+	<sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <b2431af6-f415-41db-5651-8cb8d3b08822@de.bosch.com>
+Date: Tue, 5 Jul 2016 12:45:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160705103917.GC20478@leverpostej>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Select the Amlogic clk code for meson SoCs and the more specific meson8b clk
-driver for Amlogic meson8b.
+Hi Mark,
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- arch/arm/mach-meson/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+On 05.07.2016 12:39, Mark Rutland wrote:
+> Hi,
+>
+> On Tue, Jul 05, 2016 at 08:50:23AM +0200, Dirk Behme wrote:
+>> Some clocks might be used by the Xen hypervisor and not by the Linux
+>> kernel. If these are not registered by the Linux kernel, they might be
+>> disabled by clk_disable_unused() as the kernel doesn't know that they
+>> are used. The clock of the serial console handled by Xen is one
+>> example for this. It might be disabled by clk_disable_unused() which
+>> stops the whole serial output, even from Xen, then.
+>>
+>> Up to now, the workaround for this has been to use the Linux kernel
+>> command line parameter 'clk_ignore_unused'. See Xen bug
+>>
+>> http://bugs.xenproject.org/xen/bug/45
+>>
+>> too.
+>>
+>> To fix this, we will add the "unused" clocks in Xen to the hypervisor
+>> node. The Linux kernel has to register the clocks from the hypervisor
+>> node, then.
+>>
+>> Therefore, check if there is a "clocks" entry in the hypervisor node
+>> and if so register the given clocks to the Linux kernel clock
+>> framework and with this mark them as used. This prevents the clocks
+>> from being disabled.
+>>
+>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>> ---
+>> Changes in v2: Drop the Linux implementation details like clk_disable_unused
+>> 	       in xen.txt.
+>
+> Thanks for doing this.
+>
+>>  Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
+>>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+>>  2 files changed, 60 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+>> index c9b9321..21fd469 100644
+>> --- a/Documentation/devicetree/bindings/arm/xen.txt
+>> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+>> @@ -17,6 +17,19 @@ the following properties:
+>>    A GIC node is also required.
+>>    This property is unnecessary when booting Dom0 using ACPI.
+>>
+>> +Optional properties:
+>> +
+>> +- clocks: one or more clocks to be registered.
+>> +  Xen hypervisor drivers might replace native drivers, resulting in
+>> +  clocks not registered by these native drivers. To avoid that these
+>> +  unregistered clocks are disabled by the Linux kernel initialization
+>> +  register them in the hypervisor node.
+>> +  An example for this are the clocks of a serial driver already enabled
+>> +  by the firmware. If the clocks used by the serial hardware interface
+>> +  are not registered by the serial driver itself the serial output
+>> +  might stop once the Linux kernel initialization disables the 'unused'
+>> +  clocks.
+>
+> The above describes the set of problems, but doesn't set out the actual
+> contract. It also covers a number of Linux implementation details in
+> abstract.
 
-diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-index 31bdd91..b3add39 100644
---- a/arch/arm/mach-meson/Kconfig
-+++ b/arch/arm/mach-meson/Kconfig
-@@ -7,6 +7,7 @@ menuconfig ARCH_MESON
- 	select CACHE_L2X0
- 	select PINCTRL
- 	select PINCTRL_MESON
-+	select COMMON_CLK_AMLOGIC
- 
- if ARCH_MESON
- 
-@@ -24,5 +25,6 @@ config MACH_MESON8B
- 	bool "Amlogic Meson8b SoCs support"
- 	default ARCH_MESON
- 	select MESON6_TIMER
-+	select COMMON_CLK_MESON8B
- 
- endif
--- 
-2.5.0
+
+Could you kindly be a little more specific which 'implementation 
+details' you don't like?
+
+E.g. to my understanding, the 'implementation detail' that Linux 
+disables unregistered clocks is needed for the description.
+
+If you have a different wording in mind, could you kindly share that?
+
+
+> As I commented previously [1], the binding should describe the set of
+> guarantees that you rewquire (e.g. that the clocks must be left as-is,
+> not gated, and their rates left unchanged).
+>
+> Please describe the specific set of guarantees that you require.
+
+
+To my understanding this is done, already: "avoid that these ... clocks 
+are disabled"
+
+Best regards
+
+Dirk
