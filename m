@@ -1,110 +1,107 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 15:23:06 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Message-ID: <20160725132306.GH21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-2-git-send-email-mirza.krak@gmail.com>
- <20160725111735.GC21170@ulmo.ba.sec>
- <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, tomeu.vizoso@collabora.com, dianders@chromium.org
+Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after parent changes
+Date: Wed, 06 Jul 2016 00:24:09 +0200
+Message-ID: <1601887.i7XxTCUQZu@phil>
+In-Reply-To: <577B6162.3020609@rock-chips.com>
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de> <1462206982-10444-3-git-send-email-heiko@sntech.de> <577B6162.3020609@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TKYYegg/GYAC5JIZ"
-In-Reply-To: <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Elaine,
 
---TKYYegg/GYAC5JIZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am Dienstag, 5. Juli 2016, 15:27:30 schrieb Elaine Zhang:
+> On 05/03/2016 12:36 AM, Heiko Stuebner wrote:
+> > Given a hirarchy of clk1 -> [div] -> clk2, when the rate of clk1 gets
+> > changed, clk2 changes as well as the divider stays the same. There may
+> > be cases where a user of clk2 needs it at a specific rate, so clk2
+> > needs to be readjusted for the changed rate of clk1.
+> > 
+> > So if a rate was requested for the clock, and its rate changed during
+> > the underlying rate-change, with this change the clock framework now
+> > tries to readjust the rate back to/near the requested one.
+> > 
+> > The whole process is protected by a new clock-flag to not force this
+> > behaviour change onto every clock defined in the ccf.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> > 
+> >   drivers/clk/clk.c            | 13 +++++++++++--
+> >   include/linux/clk-provider.h |  1 +
+> >   2 files changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 65e0aad..22be369 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1410,6 +1410,9 @@ static struct clk_core
+> > *clk_propagate_rate_change(struct clk_core *core,> 
+> >   	return fail_clk;
+> >   
+> >   }
+> > 
+> > +static int clk_core_set_rate_nolock(struct clk_core *core,
+> > +				    unsigned long req_rate);
+> > +
+> > 
+> >   /*
+> >   
+> >    * walk down a subtree and set the new rates notifying the rate
+> >    * change on the way
+> > 
+> > @@ -1494,6 +1497,12 @@ static void clk_change_rate(struct clk_core
+> > *core)
+> > 
+> >   	/* handle the new child who might not be in core->children yet */
+> >   	if (core->new_child)
+> >   	
+> >   		clk_change_rate(core->new_child);
+> > 
+> > +
+> > +	/* handle a changed clock that needs to readjust its rate */
+> > +	if (core->flags & CLK_KEEP_REQ_RATE && core->req_rate
+> > +					    && core->new_rate != old_rate
+> > +					    && core->new_rate != core-
+>req_rate)
+> > +		clk_core_set_rate_nolock(core, core->req_rate);
+> > 
+> >   }
+> 
+> I tests found a problem, about set the freq order.
+> e.p:
+> [VPLL]
+> 
+>      ------ [div] ----- dclk_vop
+> If I change VPLL freq 148.5M to 594M, dclk_vop freq will changed as:
+> 148.5M->24M->594M->1485.5M.
+> But we not hope the dclk_vop have a high freq,it will make the system
+> crash or make vop not work well.
+> 
+> So if the VPLL is improve the freq, we need to set dclk_vop div first,
+> and than set VPLL freq.
+> If VPLL is reduce the freq, we need to set vpll first,and set dclk_vop
+> div.
+> 
+> This is just a example,for all change parent freq, we need follow this
+> operation.
+> Do you have a better idea for this problem?
 
-On Mon, Jul 25, 2016 at 02:28:48PM +0200, Mirza Krak wrote:
-> 2016-07-25 13:17 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> > On Tue, Jul 19, 2016 at 03:36:32PM +0200, Mirza Krak wrote:
-> >> From: Mirza Krak <mirza.krak@gmail.com>
-> >>
-> >> Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
-> >>
-> >> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> >> ---
-> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-t=
-egra20.c
-> >> index 837e5cb..aefc044 100644
-> >> --- a/drivers/clk/tegra/clk-tegra20.c
-> >> +++ b/drivers/clk/tegra/clk-tegra20.c
-> >> @@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] =
-__initdata =3D {
-> >>       { TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> >>       { TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> >>       { TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-> >> +     { TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
-> >
-> > Yay for inconsistent naming in the hardware. It would've been nice if
-> > this clock was called GMI. Oh well...
->=20
-> I am allowed to change clk name? Can do that when I re-spin this series.
+In general it seems my simplicistic approach only really works for really 
+simple clock-setups and thus is likely not really usable for general things. 
 
-No, leave it as-is. The clock is referred to as NOR in the clock and
-reset controller. I was just saying that it would've been nice if it had
-been named GMI consistently.
+For the VPLL on the rk3399 we were discussion a different approach in [0], 
+as VPLL usage (aka which vop gets to control it) is likely to complicated to 
+have this done in the clock-framework-
 
-> > Could you perhaps explain in the commit message why 86.5 MHz is a sane
-> > default? I'm totally unfamiliar with this controller, so maybe it's
-> > self-explanatory, but it seems a rather odd value for a clock frequency.
->=20
-> I used a value that I have in a downstream kernel based on the L4T.
-> This frequency is well tested and has worked for me, and wanted to
-> avoid setting it to maximum rate. My guess is that they used 86.5 MHz
-> because 92 MHz is max rate on Tegra2 and they put it slightly below
-> that.
->=20
-> What is otherwise recommended when initializing clocks? The rate could
-> depend on the chip that is attached but otherwise I would like to set
-> it close to max (or max) rate for performance.
+Doug wanted to take a look and add some thoughts and I guess he'll just do 
+that after the 4th of july celebrations.
 
-I think we usually set the default rate to the maximum and let drivers
-clock them down as they see fit. This is so that things run fast by
-default and we often don't have much in the way of power management, at
-least not when drivers are first merged. Maximum clock rate ensure that
-we get good performance by default, rather than having to rely on
-drivers to kick it up a notch.
 
-Thierry
+Heiko
 
---TKYYegg/GYAC5JIZ
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXlhK3AAoJEN0jrNd/PrOhEsMP/i4bUMyxfX6xpWXIiPqehu4k
-vc6sH7rpKjSmR95gYLNoXdgfh8w6FmBBvjZt7+qvbDJMbBt6/2LMRXwwSAL+knXJ
-QwX0tnfV2z5YF5hm+V48MwHxrdCa3EFOvV6xjn9bZcD9RRPxjVY0pj5O1IsMVEWm
-mgzhgysUazl7QQT7JHdheSs6/MV7T7mz3wkzU3/XU2d/UKqyjG6XJIF2WCUSVkoy
-2ZiArc3xfUZCrpzo4Ook8qsEfqHelK0hfkDBcFq2pts9maLU8K9v393zhmAuUZxC
-Jab8h2lnjzXOP02+sOoUpuwIglLnI9y4DDgZc/NtnxVqk2z11Ea5SJaWQmBZkDlF
-4RSfgC3Wme1MkV+DPbQVBtUezw2I0QCrhZTNECVw8Y/o/CWuAQ7QikDfo9PW4qhI
-o83ww66q8U8CqrH1euzsyxByTSlUThojA9OpEYwItWTISEd0hoZ6O51HjPbImTt8
-bsLxROuljxOqA14J4m/BKa1NfNs7Q/laCkpyV3AUyNJZhAk/EXWHKsNlOJkcZrkv
-CTLgSxgRbabcnbNjjhQmQ4+f/LkTyxHz4grXmediXJEA6zOrC8T9Bb/y1hJ/ZmIf
-GvxbR66Wynfkq2XvHMkju+ssH+/2CfznaKhlAWs64v5S01BTOJ3k1gC+QIfbM5Jp
-b8ZlY1xDsz3e6pqYSgCa
-=fDkY
------END PGP SIGNATURE-----
-
---TKYYegg/GYAC5JIZ--
+[0] http://lists.infradead.org/pipermail/linux-rockchip/2016-June/010400.html
