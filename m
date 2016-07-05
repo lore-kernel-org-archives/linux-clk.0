@@ -1,114 +1,71 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v2 5/7] meson: clk: Add CLKIDs for clock gates
-Date: Wed, 13 Jul 2016 19:49:39 +0200
-Message-Id: <1468432181-9550-6-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
-References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 0/8] clk: Don't duplicate initialization on platform_dev
+Date: Tue,  5 Jul 2016 18:23:24 +0200
+Message-Id: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock ids for the clock gates to private meson8b header file.
+Clock providers can be probed as a normal platform device, or via
+of_clk_init() before the rest of the platform devices are initialized
+using the CLK_OF_DECLARE() macro.
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/meson8b.h | 79 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+If a driver required both initialization methodologies, the core would call
+both probe/init functions.
 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index f8c6942..4ba8be5 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -60,7 +60,84 @@
- #define CLKID_ZERO		13
- #define CLKID_MPEG_SEL		14
- #define CLKID_MPEG_DIV		15
-+#define CLKID_DDR		16
-+#define CLKID_DOS		17
-+#define CLKID_ISA		18
-+#define CLKID_PL301		19
-+#define CLKID_PERIPHS		20
-+#define CLKID_SPICC		21
-+#define CLKID_I2C		22
-+#define CLKID_SAR_ADC		23
-+#define CLKID_SMART_CARD	24
-+#define CLKID_RNG0		25
-+#define CLKID_UART0		26
-+#define CLKID_SDHC		27
-+#define CLKID_STREAM		28
-+#define CLKID_ASYNC_FIFO	29
-+#define CLKID_SDIO		30
-+#define CLKID_ABUF		31
-+#define CLKID_HIU_IFACE		32
-+#define CLKID_ASSIST_MISC	33
-+#define CLKID_SPI		34
-+#define CLKID_I2S_SPDIF		35
-+#define CLKID_ETH		36
-+#define CLKID_DEMUX		37
-+#define CLKID_AIU_GLUE		38
-+#define CLKID_IEC958		39
-+#define CLKID_I2S_OUT		40
-+#define CLKID_AMCLK		41
-+#define CLKID_AIFIFO2		42
-+#define CLKID_MIXER		43
-+#define CLKID_MIXER_IFACE	44
-+#define CLKID_ADC		45
-+#define CLKID_BLKMV		46
-+#define CLKID_AIU		47
-+#define CLKID_UART1		48
-+#define CLKID_G2D		49
-+#define CLKID_USB0		50
-+#define CLKID_USB1		51
-+#define CLKID_RESET		52
-+#define CLKID_NAND		53
-+#define CLKID_DOS_PARSER	54
-+#define CLKID_USB		55
-+#define CLKID_VDIN1		56
-+#define CLKID_AHB_ARB0		57
-+#define CLKID_EFUSE		58
-+#define CLKID_BOOT_ROM		59
-+#define CLKID_AHB_DATA_BUS	60
-+#define CLKID_AHB_CTRL_BUS	61
-+#define CLKID_HDMI_INTR_SYNC	62
-+#define CLKID_HDMI_PCLK		63
-+#define CLKID_USB1_DDR_BRIDGE	64
-+#define CLKID_USB0_DDR_BRIDGE	65
-+#define CLKID_MMC_PCLK		66
-+#define CLKID_DVIN		67
-+#define CLKID_UART2		68
-+#define CLKID_SANA		69
-+#define CLKID_VPU_INTR		70
-+#define CLKID_SEC_AHB_AHB3_BRIDGE	71
-+#define CLKID_CLK81_A9		72
-+#define CLKID_VCLK2_VENCI0	73
-+#define CLKID_VCLK2_VENCI1	74
-+#define CLKID_VCLK2_VENCP0	75
-+#define CLKID_VCLK2_VENCP1	76
-+#define CLKID_GCLK_VENCI_INT	77
-+#define CLKID_GCLK_VENCP_INT	78
-+#define CLKID_DAC_CLK		79
-+#define CLKID_AOCLK_GATE	80
-+#define CLKID_IEC958_GATE	81
-+#define CLKID_ENC480P		82
-+#define CLKID_RNG1		83
-+#define CLKID_GCLK_VENCL_INT	84
-+#define CLKID_VCLK2_VENCLMCC	85
-+#define CLKID_VCLK2_VENCL	86
-+#define CLKID_VCLK2_OTHER	87
-+#define CLKID_EDP		88
-+#define CLKID_AO_MEDIA_CPU	89
-+#define CLKID_AO_AHB_SRAM	90
-+#define CLKID_AO_AHB_BUS	91
-+#define CLKID_AO_IFACE		92
- 
--#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
-+#define CLK_NR_CLKS		(CLKID_AO_IFACE + 1)
- 
- #endif /* __MESON8B_H */
+This changeset prevent the dual initialization using the OF_POPULATE flag.
+
+It also creates a new macro, CLK_OF_DECLARE_DRIVER, used by drivers that
+require double initialization.
+
+Finally, it adds module platform driver initialization to fixed-factor
+and fixed-rate, enabling its use in dt overlays.
+
+The order of the patches allows future bisects of the change. This explains
+why  Avoid double initialization of clocks() is done almost at the end.
+
+v5: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Create CLK_OF_DECLARE_DRIVER() macro
+-use it in clk-artpec6, sunxi,nxp
+
+v4: Huge MACRO(), not posted to the list
+
+v3: Use OF_POPULATE flag inside fixed-rate and fixed-factor
+
+v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+-Add error check
+-CodeStyle on of_device_ide
+-Use builtin_platform_driver()
+
+When clock providers are added to the device tree after of_clk_init is called
+they are not added to the clock provider list. This makes that drivers such
+as i2c-xiic.c fail to init, as they may depend on the unadded clock provider.
+
+Ricardo Ribalda Delgado (8):
+  clk: core: New macro CLK_OF_DECLARE_DRIVER
+  clk: axis: Use new macro CLK_OF_DECLARE_DRIVER
+  clk: npx: Use new macro CLK_OF_DECLARE_DRIVER
+  clk: sunxi: mod0: Use new macro CLK_OF_DECLARE_DRIVER
+  clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER
+  clk: core: Avoid double initialization of clocks
+  clk: fixed-factor: Convert into a module platform driver
+  clk: fixed-rate: Convert into a module platform driver
+
+ drivers/clk/axis/clk-artpec6.c     |  4 +--
+ drivers/clk/clk-fixed-factor.c     | 72 +++++++++++++++++++++++++++++++++++---
+ drivers/clk/clk-fixed-rate.c       | 69 +++++++++++++++++++++++++++++++++---
+ drivers/clk/clk.c                  |  4 +++
+ drivers/clk/nxp/clk-lpc18xx-creg.c |  3 +-
+ drivers/clk/sunxi/clk-mod0.c       |  3 +-
+ drivers/clk/sunxi/clk-sun8i-apb0.c |  4 +--
+ include/linux/clk-provider.h       | 12 +++++++
+ 8 files changed, 156 insertions(+), 15 deletions(-)
+
 -- 
-2.5.0
+2.8.1
