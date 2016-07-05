@@ -1,66 +1,114 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jul 2016 09:27:55 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] clk: sunxi-ng: nkm: Add mux to support multiple
- parents
-Message-ID: <20160727072755.GF6560@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-7-git-send-email-wens@csie.org>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH 4/7] meson: clk: Add CLKIDs for DT binding
+Date: Tue,  5 Jul 2016 19:56:28 +0200
+Message-Id: <1467741391-60534-5-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="m1UC1K4AOz1Ywdkx"
-In-Reply-To: <1469516671-19377-7-git-send-email-wens@csie.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Add clock ids for the clock gates to be used for DT bindings.
 
---m1UC1K4AOz1Ywdkx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ include/dt-bindings/clock/meson8b-clkc.h | 79 +++++++++++++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
 
-On Tue, Jul 26, 2016 at 03:04:28PM +0800, Chen-Yu Tsai wrote:
-> The MIPI mode of the MIPI-PLL on A31 is an NKM-style PLL with 2
-> selectable parents.
->=20
-> Add mux support to the NKM clock.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---m1UC1K4AOz1Ywdkx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXmGJ7AAoJEBx+YmzsjxAg1c8P/3GVAkmofxpghWq+4a+PL+gQ
-6YumrP5oYm9tRgbEtBfnv8ZjswxYPRgnFpqY1UpaEmuEezzoenjAffFuQbVNFRAf
-qeGCxPP+Iaw8XhOKR9fMpGjmPUZpQlemv9RKDA1KaZnsOt9X/JzNL6d3cls1Nrtu
-JvfXibLyj1uNt509kfDXunDV9zDLnDgPcy4aP/si7XcL3mwLIkWTeb1taGdvcjIU
-jsFdbRPeehFiT1Zsd+o262HEo+kjwJ+opVoBaf+ltN32ATGejujcCPTZb7kGGxxw
-9N44HJCs9Rwg/7r9R44pv7W43RrCuSvdbnSWpLNRho6gs18waE/b8a+u9GLs4Ggp
-K8HnggUdCzhmIcbE7cJgGXmdsGfjJ20gKqkC/fiK8U7tiFKg0LmNRf7ifhSzcjwP
-OP2Ly6S0Cb1psfQgAv/KejPB0hEoO6/Do4f0U40dDV7jrYQfW4BJkmynbPqu1/vr
-yRtZXJFoeVJXT3Z+myDd8squliO+Udv5L3pvHnYZTicEj2R6X5r8UbLeW1nZ+JEy
-/AnaMvMgl09vAo7gFUomRv1VMwFeXpK0SAmy9rCFCdSk9dSLRC2JEWMErHilJFzE
-twMoW0Pi3zZRvH36E/9c/ibxEd+woyaKNGguYe09BYYvzLt5p7yAxDjg0ULgsblv
-/6EGM164ds9fDz50SV4k
-=3QFU
------END PGP SIGNATURE-----
-
---m1UC1K4AOz1Ywdkx--
+diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+index 595a58d..d8a9d53 100644
+--- a/include/dt-bindings/clock/meson8b-clkc.h
++++ b/include/dt-bindings/clock/meson8b-clkc.h
+@@ -21,7 +21,84 @@
+ #define CLKID_ZERO		13
+ #define CLKID_MPEG_SEL		14
+ #define CLKID_MPEG_DIV		15
++#define CLKID_DDR		16
++#define CLKID_DOS		17
++#define CLKID_ISA		18
++#define CLKID_PL301		19
++#define CLKID_PERIPHS		20
++#define CLKID_SPICC		21
++#define CLKID_I2C		22
++#define CLKID_SAR_ADC		23
++#define CLKID_SMART_CARD	24
++#define CLKID_RNG0		25
++#define CLKID_UART0		26
++#define CLKID_SDHC		27
++#define CLKID_STREAM		28
++#define CLKID_ASYNC_FIFO	29
++#define CLKID_SDIO		30
++#define CLKID_ABUF		31
++#define CLKID_HIU_IFACE		32
++#define CLKID_ASSIST_MISC	33
++#define CLKID_SPI		34
++#define CLKID_I2S_SPDIF		35
++#define CLKID_ETH		36
++#define CLKID_DEMUX		37
++#define CLKID_AIU_GLUE		38
++#define CLKID_IEC958		39
++#define CLKID_I2S_OUT		40
++#define CLKID_AMCLK		41
++#define CLKID_AIFIFO2		42
++#define CLKID_MIXER		43
++#define CLKID_MIXER_IFACE	44
++#define CLKID_ADC		45
++#define CLKID_BLKMV		46
++#define CLKID_AIU		47
++#define CLKID_UART1		48
++#define CLKID_G2D		49
++#define CLKID_USB0		50
++#define CLKID_USB1		51
++#define CLKID_RESET		52
++#define CLKID_NAND		53
++#define CLKID_DOS_PARSER	54
++#define CLKID_USB		55
++#define CLKID_VDIN1		56
++#define CLKID_AHB_ARB0		57
++#define CLKID_EFUSE		58
++#define CLKID_BOOT_ROM		59
++#define CLKID_AHB_DATA_BUS	60
++#define CLKID_AHB_CTRL_BUS	61
++#define CLKID_HDMI_INTR_SYNC	62
++#define CLKID_HDMI_PCLK		63
++#define CLKID_USB1_DDR_BRIDGE	64
++#define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_MMC_PCLK		66
++#define CLKID_DVIN		67
++#define CLKID_UART2		68
++#define CLKID_SANA		69
++#define CLKID_VPU_INTR		70
++#define CLKID_SEC_AHB_AHB3_BRIDGE	71
++#define CLKID_CLK81_A9		72
++#define CLKID_VCLK2_VENCI0	73
++#define CLKID_VCLK2_VENCI1	74
++#define CLKID_VCLK2_VENCP0	75
++#define CLKID_VCLK2_VENCP1	76
++#define CLKID_GCLK_VENCI_INT	77
++#define CLKID_GCLK_VENCP_INT	78
++#define CLKID_DAC_CLK		79
++#define CLKID_AOCLK_GATE	80
++#define CLKID_IEC958_GATE	81
++#define CLKID_ENC480P		82
++#define CLKID_RNG1		83
++#define CLKID_GCLK_VENCL_INT	84
++#define CLKID_VCLK2_VENCLMCC	85
++#define CLKID_VCLK2_VENCL	86
++#define CLKID_VCLK2_OTHER	87
++#define CLKID_EDP		88
++#define CLKID_AO_MEDIA_CPU	89
++#define CLKID_AO_AHB_SRAM	90
++#define CLKID_AO_AHB_BUS	91
++#define CLKID_AO_IFACE		92
+ 
+-#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
++#define CLK_NR_CLKS		(CLKID_AO_IFACE + 1)
+ 
+ #endif /* __MESON8B_CLKC_H */
+-- 
+2.5.0
