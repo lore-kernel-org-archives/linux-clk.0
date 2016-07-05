@@ -1,39 +1,42 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 27 Jul 2016 10:46:23 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mike
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
-Message-Id: <20160727104623.e9ca7b708e5c6462f44a5d01@free.fr>
-In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 4/8] clk: sunxi: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Tue,  5 Jul 2016 18:23:29 +0200
+Message-Id: <1467735814-23518-6-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 26 Jul 2016 22:30:28 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+This driver initializes a clock provider via sun4i_a10_mod0_setup
+and then continues the initialization on sun4i_a10_mod0_clk_probe.
 
-> ere is the previous A64 patches made by Andre [1], reworked to use
-> the new sunxi-ng clock framework.
->=20
-> This uses the current H3 clock code, as both are really similar. The
-> first patches are just meant to rework slightly the H3 code, before
-> introducing the A64-related patches.
->=20
-> Some WiP stuff have been removed, such as the MMC part, but this serie
-> already has a decent amount of devices supported: uart, i2c, rsb, etc.
->=20
-> Let me know what you think,
+Use the new macro to notify the clk subsystem about this behaviour.
 
-I don't see the interest to have common code for 32bits and 64bits.
-The clock driver of a SoC will never evolve, so, it is simpler to
-copy the source common with the H3 into a clean A64 clock driver.
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/sunxi/clk-mod0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+index b38d71cec74c..e54266cc1c51 100644
+--- a/drivers/clk/sunxi/clk-mod0.c
++++ b/drivers/clk/sunxi/clk-mod0.c
+@@ -91,7 +91,8 @@ static void __init sun4i_a10_mod0_setup(struct device_node *node)
+ 	sunxi_factors_register(node, &sun4i_a10_mod0_data,
+ 			       &sun4i_a10_mod0_lock, reg);
+ }
+-CLK_OF_DECLARE(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk", sun4i_a10_mod0_setup);
++CLK_OF_DECLARE_DRIVER(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk",
++		      sun4i_a10_mod0_setup);
+ 
+ static int sun4i_a10_mod0_clk_probe(struct platform_device *pdev)
+ {
+-- 
+2.8.1
