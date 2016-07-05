@@ -1,85 +1,143 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Andi Shyti <andi.shyti@samsung.com>, "Rob Herring" <robh+dt@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Kukjin Kim" <kgene@kernel.org>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
- "Mark Brown" <broonie@kernel.org>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Tomasz Figa" <tomasz.figa@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
-Cc: "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- "Andi Shyti" <andi.shyti@samsung.com>, "Andi Shyti" <andi@etezian.org>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
- <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
-Message-ID: <146844700397.73491.13145116929743702472@resonance>
-Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Date: Wed, 13 Jul 2016 14:56:43 -0700
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 7/8] clk: fixed-factor: Convert into a module platform driver
+Date: Tue,  5 Jul 2016 18:23:33 +0200
+Message-Id: <1467735814-23518-10-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Andi Shyti (2016-07-12 03:02:16)
-> Because the Exynos5433 SPI driver supports the ioclk handling and
-> the following patch:
-> =
+Adds support for fixed-factor clock providers which have not been
+enabled via of_clk_init().
 
->   http://marc.info/?l=3Dlinux-kernel&m=3D146787645626318&w=3D2
-> =
+This is required by Device trees overlays that introduce clocks
+providers.
 
-> fixes a synchronus abort issue, none of the SPI clocks require
-> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-> for the SPI related clocks.
-> =
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/clk-fixed-factor.c | 72 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 67 insertions(+), 5 deletions(-)
 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Applied towards v4.8.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> =
-
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/c=
-lk-exynos5433.c
-> index c3a5318..fb19525 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] =
-__initdata =3D {
->         GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
->                         ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
-> -                       ENABLE_SCLK_PERIC, 12,
-> -                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
->                         ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-> @@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] =
-__initdata =3D {
->         GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_P=
-ERIC,
->                         5, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_P=
-ERIC,
-> -                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +                       4, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_P=
-ERIC,
->                         3, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
-> -- =
-
-> 2.8.1
->=20
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 4db3be214077..3fc14d425fba 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/platform_device.h>
+ 
+ /*
+  * DOC: basic fixed multiplier and divider clock that cannot gate
+@@ -150,24 +151,25 @@ static const struct of_device_id set_rate_parent_matches[] = {
+ /**
+  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
+  */
+-void __init of_fixed_factor_clk_setup(struct device_node *node)
++struct clk *_of_fixed_factor_clk_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name;
+ 	unsigned long flags = 0;
+ 	u32 div, mult;
++	int ret;
+ 
+ 	if (of_property_read_u32(node, "clock-div", &div)) {
+ 		pr_err("%s Fixed factor clock <%s> must have a clock-div property\n",
+ 			__func__, node->name);
+-		return;
++		return ERR_PTR(-EIO);
+ 	}
+ 
+ 	if (of_property_read_u32(node, "clock-mult", &mult)) {
+ 		pr_err("%s Fixed factor clock <%s> must have a clock-mult property\n",
+ 			__func__, node->name);
+-		return;
++		return ERR_PTR(-EIO);
+ 	}
+ 
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+@@ -178,10 +180,70 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ 
+ 	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
+ 					mult, div);
+-	if (!IS_ERR(clk))
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
++
++void __init of_fixed_factor_clk_setup(struct device_node *node)
++{
++	_of_fixed_factor_clk_setup(node);
+ }
+ EXPORT_SYMBOL_GPL(of_fixed_factor_clk_setup);
+ CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
+ 		of_fixed_factor_clk_setup);
++
++static int of_fixed_factor_clk_remove(struct platform_device *pdev)
++{
++	struct clk *clk = platform_get_drvdata(pdev);
++
++	if (clk)
++		clk_unregister_fixed_factor(clk);
++
++	return 0;
++}
++
++static int of_fixed_factor_clk_probe(struct platform_device *pdev)
++{
++	struct clk *clk;
++
++	/*
++	 * This function is not executed when of_fixed_factor_clk_setup
++	 * succeeded.
++	 */
++
++	clk = _of_fixed_factor_clk_setup(pdev->dev.of_node);
++
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	platform_set_drvdata(pdev, clk);
++
++	return 0;
++}
++
++static const struct of_device_id of_fixed_factor_clk_ids[] = {
++	{ .compatible = "fixed-factor-clock" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, of_fixed_factor_clk_ids);
++
++static struct platform_driver of_fixed_factor_clk_driver = {
++	.driver = {
++		.name = "of_fixed_factor_clk",
++		.of_match_table = of_fixed_factor_clk_ids,
++	},
++	.probe = of_fixed_factor_clk_probe,
++	.remove = of_fixed_factor_clk_remove,
++};
++
++builtin_platform_driver(of_fixed_factor_clk_driver);
++
+ #endif
+-- 
+2.8.1
