@@ -1,42 +1,42 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	stephen.boyd@linaro.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 0/6] clk: qcom: PLL updates
-Date: Mon, 11 Jul 2016 16:20:33 +0530
-Message-Id: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 4/8] clk: sunxi: mod0: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Tue,  5 Jul 2016 18:23:28 +0200
+Message-Id: <1467735814-23518-5-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+This driver initializes a clock provider via sun4i_a10_mod0_setup
+and then continues the initialization on sun4i_a10_mod0_clk_probe.
 
-This series adds some additional support to the clk-alpha-pll and the
-clk-pll drivers in preperation to add the CPU clock driver support
-on msm8996
+Use the new macro to notify the clk subsystem about this behaviour.
 
-regards,
-Rajendra
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/sunxi/clk-mod0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Rajendra Nayak (6):
-  clk: Fix inconsistencies in usage of data types
-  clk: qcom: Add support for alpha pll hwfsm ops
-  clk: qcom: Add support to initialize alpha plls
-  clk: qcom: Add support for PLLs with alpha mode
-  clk: qcom: Add support for PLLs with early output
-  clk: qcom: Add support for PLLs supporting dynamic reprogramming
-
- drivers/clk/clk.c                |   4 +-
- drivers/clk/qcom/clk-alpha-pll.c | 132 +++++++++++++++++++++++++++++++++++----
- drivers/clk/qcom/clk-alpha-pll.h |  14 +++++
- drivers/clk/qcom/clk-pll.c       | 116 +++++++++++++++++++++++++++++++++-
- drivers/clk/qcom/clk-pll.h       |  12 +++-
- include/linux/clk-provider.h     |   5 +-
- 6 files changed, 263 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+index b38d71cec74c..e54266cc1c51 100644
+--- a/drivers/clk/sunxi/clk-mod0.c
++++ b/drivers/clk/sunxi/clk-mod0.c
+@@ -91,7 +91,8 @@ static void __init sun4i_a10_mod0_setup(struct device_node *node)
+ 	sunxi_factors_register(node, &sun4i_a10_mod0_data,
+ 			       &sun4i_a10_mod0_lock, reg);
+ }
+-CLK_OF_DECLARE(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk", sun4i_a10_mod0_setup);
++CLK_OF_DECLARE_DRIVER(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk",
++		      sun4i_a10_mod0_setup);
+ 
+ static int sun4i_a10_mod0_clk_probe(struct platform_device *pdev)
+ {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.8.1
