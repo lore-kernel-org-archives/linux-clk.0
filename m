@@ -1,152 +1,43 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1467604308.26485.4.camel@mtksdaap41>
-Cc: "Erin Lo" <erin.lo@mediatek.com>, "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Rob Herring" <robh@kernel.org>, "John Crispin" <blogic@openwrt.org>,
- "Arnd Bergmann" <arnd@arndb.de>, "Sascha Hauer" <kernel@pengutronix.de>,
- "Daniel Kurtz" <djkurtz@chromium.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- srv_heupstream@mediatek.com
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
- <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
- <20160702012140.GB17071@codeaurora.org> <1467604308.26485.4.camel@mtksdaap41>
-Message-ID: <146802073038.73491.6675612765998057903@resonance>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's parents
-Date: Fri, 08 Jul 2016 16:32:10 -0700
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 5/8] clk: sunxi: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Tue,  5 Jul 2016 18:23:31 +0200
+Message-Id: <1467735814-23518-8-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+This driver initializes a clock provider via sun8i_a23_apb0_setup
+and then continues the initialization on sun8i_a23_apb0_clk_probe.
 
-Quoting James Liao (2016-07-03 20:51:48)
-> On Fri, 2016-07-01 at 18:21 -0700, Stephen Boyd wrote:
-> > (Resending to everyone)
-> > =
+Use the new macro to notify the clk subsystem about this behaviour.
 
-> > On 06/22, Erin Lo wrote:
-> > > From: James Liao <jamesjj.liao@mediatek.com>
-> > > =
-
-> > > This patch fixed wrong state of parent clocks if they are registered
-> > > after critical clocks.
-> > > =
-
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > =
-
-> > It would be nice if you included the information about the
-> > problem from James' previous mail. This says what it does, but
-> > doesn't explain what the problem is and how it is fixing it.
-> > =
-
-> > > ---
-> > >  drivers/clk/clk.c | 9 ++++++++-
-> > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > =
-
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index d584004..e9f5f89 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *co=
-re)
-> > >     hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_n=
-ode) {
-> > >             struct clk_core *parent =3D __clk_init_parent(orphan);
-> > >  =
-
-> > > -           if (parent)
-> > > +           if (parent) {
-> > >                     clk_core_reparent(orphan, parent);
-> > > +
-> > > +                   if (orphan->prepare_count)
-> > > +                           clk_core_prepare(parent);
-> > > +
-> > > +                   if (orphan->enable_count)
-> > > +                           clk_core_enable(parent);
-> > > +           }
-> > >     }
-> > =
-
-> > I'm pretty sure I pointed this problem out to Mike when the
-> > critical clk patches were being pushed. I can't recall what the
-> > plan was though to fix the problem. I'm pretty sure he said that
-> > clk_core_reparent() would take care of it, but obviously it is
-> > not doing that. Or perhaps it was that clk handoff should figure
-> > out that the parents of a critical clk are also on and thus keep
-> > them on.
-> =
-
-> Hi Mike
-> =
-
-> Is there any other patch to fix this issue? Or did I misuse critical
-> clock flag?
-
-There is no fix yes. Your fix is basically correct. I was mistaken back
-when I told you and Stephen that the framework already took care of
-this.
-
-However, instead of "open coding" this solution, I would rather re-use
-the __clk_set_parent_{before,after} helpers instead. Can you review/test
-the following patch and let me know what you think?
-
-Thanks,
-Mike
-
-
-
-From=20c0163b3f719b1e219b28ad425f94f9ef54a25a8f Mon Sep 17 00:00:00 2001
-From: Michael Turquette <mturquette@baylibre.com>
-Date: Fri, 8 Jul 2016 16:05:22 -0700
-Subject: [PATCH] clk: migrate ref counts when orphans are reunited
-
-It's always nice to see families reunited, and this is equally true when
-talking about parent clocks and their children. However, if the orphan
-clk had a positive prepare_count or enable_count, then we would not
-migrate those counts up the parent chain correctly.
-
-This has manifested with the recent critical clocks feature, which often
-enables clocks very early, before their parents have been registered.
-
-Fixed by replacing the call to clk_core_reparent with calls to
-__clk_set_parent_{before,after}.
-
-Cc: James Liao <jamesjj.liao@mediatek.com>
-Cc: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/clk/clk.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi/clk-sun8i-apb0.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939fb6bb..70efe4c4e0cc 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2449,8 +2449,14 @@ static int __clk_core_init(struct clk_core *core)
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
- 		struct clk_core *parent =3D __clk_init_parent(orphan);
- =
-
--		if (parent)
--			clk_core_reparent(orphan, parent);
-+		/*
-+		 * we could call __clk_set_parent, but that would result in a
-+		 * reducant call to the .set_rate op, if it exists
-+		 */
-+		if (parent) {
-+			__clk_set_parent_before(orphan, parent);
-+			__clk_set_parent_after(orphan, parent, NULL);
-+		}
- 	}
- =
-
- 	/*
--- =
-
-2.7.4 (Apple Git-66)
+diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-sun8i-apb0.c
+index 2ea61debffc1..b6be5d2d9440 100644
+--- a/drivers/clk/sunxi/clk-sun8i-apb0.c
++++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+@@ -82,8 +82,8 @@ err_unmap:
+ 	of_address_to_resource(node, 0, &res);
+ 	release_mem_region(res.start, resource_size(&res));
+ }
+-CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
+-	       sun8i_a23_apb0_setup);
++CLK_OF_DECLARE_DRIVER(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
++		      sun8i_a23_apb0_setup);
+ 
+ static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
+ {
+-- 
+2.8.1
