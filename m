@@ -1,144 +1,47 @@
 Return-Path: <sstabellini@kernel.org>
-Date: Thu, 14 Jul 2016 11:28:31 +0100 (BST)
+Date: Tue, 5 Jul 2016 15:04:40 +0100 (BST)
 From: Stefano Stabellini <sstabellini@kernel.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
+To: Julien Grall <julien.grall@arm.com>
 cc: Stefano Stabellini <sstabellini@kernel.org>,
-    Dirk Behme <dirk.behme@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-    devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>, Julien Grall <julien.grall@arm.com>,
+    Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
+    Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
     xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
-    linux-arm-kernel@lists.infradead.org
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-In-Reply-To: <094be367-ff91-aec7-cbd6-cfb8dc711c54@de.bosch.com>
-Message-ID: <alpine.DEB.2.10.1607141128010.26575@sstabellini-ThinkPad-X260>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <alpine.DEB.2.10.1607131932530.26575@sstabellini-ThinkPad-X260> <57868CB4.1090504@gmail.com> <alpine.DEB.2.10.1607132002000.26575@sstabellini-ThinkPad-X260>
- <094be367-ff91-aec7-cbd6-cfb8dc711c54@de.bosch.com>
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+In-Reply-To: <577BBC1A.8020209@arm.com>
+Message-ID: <alpine.DEB.2.10.1607051456410.2575@sstabellini-ThinkPad-X260>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com> <alpine.DEB.2.10.1607051449370.2575@sstabellini-ThinkPad-X260> <577BBC1A.8020209@arm.com>
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 14 Jul 2016, Dirk Behme wrote:
-> On 13.07.2016 21:07, Stefano Stabellini wrote:
-> > On Wed, 13 Jul 2016, Dirk Behme wrote:
-> > > On 13.07.2016 20:35, Stefano Stabellini wrote:
-> > > > On Tue, 12 Jul 2016, Dirk Behme wrote:
-> > > > > Clocks described by this property are reserved for use by Xen, and the
-> > > > > OS
-> > > > > must not alter their state any way, such as disabling or gating a
-> > > > > clock,
-> > > > > or modifying its rate. Ensuring this may impose constraints on parent
-> > > > > clocks or other resources used by the clock tree.
-> > > > > 
-> > > > > This property is used to proxy clocks for devices Xen has taken
-> > > > > ownership
-> > > > > of, such as UARTs, for which the associated clock controller(s) remain
-> > > > > under the control of Dom0.
-> > > > > 
-> > > > > Up to now, the workaround for this has been to use the Linux kernel
-> > > > > command line parameter 'clk_ignore_unused'. See Xen bug
-> > > > > 
-> > > > > http://bugs.xenproject.org/xen/bug/45
-> > > > > 
-> > > > > too.
-> > > > > 
-> > > > > Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> > > > > ---
-> > > > > Changes in v4: Switch to the xen.txt description proposed by Mark:
-> > > > >                 https://www.spinics.net/lists/arm-kernel/msg516158.html
-> > > > > 
-> > > > > Changes in v3: Use the xen.txt description proposed by Michael.
-> > > > > Thanks!
-> > > > > 
-> > > > > Changes in v2: Drop the Linux implementation details like
-> > > > > clk_disable_unused
-> > > > > 	       in xen.txt.
-> > > > > 
-> > > > >   Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
-> > > > >   arch/arm/xen/enlighten.c                      | 47
-> > > > > +++++++++++++++++++++++++++
-> > > > >   2 files changed, 59 insertions(+)
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/arm/xen.txt
-> > > > > b/Documentation/devicetree/bindings/arm/xen.txt
-> > > > > index c9b9321..437e50b 100644
-> > > > > --- a/Documentation/devicetree/bindings/arm/xen.txt
-> > > > > +++ b/Documentation/devicetree/bindings/arm/xen.txt
-> > > > > @@ -17,6 +17,18 @@ the following properties:
-> > > > >     A GIC node is also required.
-> > > > >     This property is unnecessary when booting Dom0 using ACPI.
-> > > > > 
-> > > > > +Optional properties:
-> > > > > +
-> > > > > +- clocks: a list of phandle + clock-specifier pairs
-> > > > > +  Clocks described by this property are reserved for use by Xen, and
-> > > > > the
-> > > > > +  OS must not alter their state any way, such as disabling or gating
-> > > > > a
-> > > > > +  clock, or modifying its rate. Ensuring this may impose constraints
-> > > > > on
-> > > > > +  parent clocks or other resources used by the clock tree.
-> > > > > +
-> > > > > +  Note: this property is used to proxy clocks for devices Xen has
-> > > > > taken
-> > > > > +  ownership of, such as UARTs, for which the associated clock
-> > > > > +  controller(s) remain under the control of Dom0.
-> > > > > +
-> > > > >   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
-> > > > > "uefi" node
-> > > > >   under /hypervisor with following parameters:
-> > > > > 
-> > > > > diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-> > > > > index 47acb36..5c546d0 100644
-> > > > > --- a/arch/arm/xen/enlighten.c
-> > > > > +++ b/arch/arm/xen/enlighten.c
-> > > > > @@ -24,6 +24,7 @@
-> > > > >   #include <linux/of_fdt.h>
-> > > > >   #include <linux/of_irq.h>
-> > > > >   #include <linux/of_address.h>
-> > > > > +#include <linux/clk-provider.h>
-> > > > >   #include <linux/cpuidle.h>
-> > > > >   #include <linux/cpufreq.h>
-> > > > >   #include <linux/cpu.h>
-> > > > > @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
-> > > > >   }
-> > > > >   late_initcall(xen_pm_init);
-> > > > > 
-> > > > > +/*
-> > > > > + * Check if we want to register some clocks, that they
-> > > > > + * are not freed because unused by clk_disable_unused().
-> > > > > + * E.g. the serial console clock.
-> > > > > + */
-> > > > > +static int __init xen_arm_register_clks(void)
-> > > > > +{
-> > > > > +	struct clk *clk;
-> > > > > +	struct device_node *xen_node;
-> > > > > +	unsigned int i, count;
-> > > > > +	int ret = 0;
-> > > > > +
-> > > > > +	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
-> > > > > +	if (!xen_node) {
-> > > > > +		pr_err("Xen support was detected before, but it has
-> > > > > disappeared\n");
-> > > > > +		return -EINVAL;
-> > > > > +	}
-> > > > 
-> > > > Given that this is a late initcall, the following should work:
-> > > > 
-> > > >      if (!xen_domain())
-> > > >          return -ENODEV;
-> > > 
-> > > 
-> > > Hmm, sorry, "should work" for what?
+On Tue, 5 Jul 2016, Julien Grall wrote:
+> On 05/07/16 14:53, Stefano Stabellini wrote:
+> > On Thu, 30 Jun 2016, Dirk Behme wrote:
+> > > +- clocks: one or more clocks to be registered.
+> > > +  Xen hypervisor drivers might replace native drivers, resulting in
+> > > +  clocks not registered by these native drivers. To avoid that these
+> > > +  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
+> > > +  register them in the hypervisor node.
+> > > +  An example for this are the clocks of the serial driver. If the clocks
+> > > +  used by the serial hardware interface are not registered by the serial
+> > > +  driver the serial output might stop once clk_disable_unused() is
+> > > called.
 > > 
-> > As a Xen check, if (!xen_domain()) is the common pattern.
-> > 
-> > > We need the xen_node from device tree, anyway.
-> > 
-> > In that case, what don't you just use the global xen_node in this file?
+> > What if we use the "status" property of the clocks? Could we set it to
+> > "disabled" in Xen? Would that be enough for Linux to leave them alone?
 > 
-> 
-> With the recent code there is no global xen_node any more:
-> 
-> https://lists.xen.org/archives/html/xen-devel/2016-06/msg02878.html
+> clocks could be shared between multiple devices. So it is not possible to
+> disable the clock.
 
-Ops, I was looking at upstream. I forgot about those.
+To clarify my suggestion: I am not saying we should disable the clock, I
+am saying we should set the "status" property to "disabled" in Xen for
+the clock used by the serial or passthrough devices (for which the
+"status" property is already set to "disabled"). That should work for
+cases where the clock is not shared among multiple devices.
+
+If the clock is shared, then I don't think we would run into the issue
+described by Dirk because I wouldn't imagine clk_disable_unused would
+try to disable the clock anymore, because it would actually be in use
+from Linux POV.
