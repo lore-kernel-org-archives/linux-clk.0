@@ -1,144 +1,62 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <julien.grall@arm.com>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+To: Stefano Stabellini <sstabellini@kernel.org>,
+ Dirk Behme <dirk.behme@de.bosch.com>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
+ <alpine.DEB.2.10.1607051449370.2575@sstabellini-ThinkPad-X260>
+ <577BBC1A.8020209@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, Mark Rutland
+ <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <577BBDEB.7000305@arm.com>
+Date: Tue, 5 Jul 2016 15:02:19 +0100
 MIME-Version: 1.0
-In-Reply-To: <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com> <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Thu, 21 Jul 2016 22:42:51 +0200
-Message-ID: <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <577BBC1A.8020209@arm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-21 12:15 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+
+
+On 05/07/16 14:54, Julien Grall wrote:
 >
-> On 19/07/16 14:36, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak@gmail.com>
->> +config TEGRA_NOR
->> +     tristate "Nvidia Tegra NOR flash bus driver a.k.a GMI/SNOR"
->> +             depends on ARCH_TEGRA_2x_SOC || ARCH_TEGRA_3x_SOC
->> +             depends on OF
->> +             help
->> +                     Driver for NOR flash bus found on Tegra30/20 SOC`s.
 >
-> It is actually present on all Tegra's and so I would drop the 30/20.
-
-ACK.
-
->> +++ b/drivers/bus/tegra-nor.c
->> @@ -0,0 +1,118 @@
->> +/*
->> + * Driver for Nvidia NOR Flash bus a.k.a SNOR/GMI.
->> + *
->> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
->> + *
->> + * This file is licensed under the terms of the GNU General Public
->> + * License version 2. This program is licensed "as is" without any
->> + * warranty of any kind, whether express or implied.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/io.h>
->> +#include <linux/mfd/syscon.h>
+> On 05/07/16 14:53, Stefano Stabellini wrote:
+>> On Thu, 30 Jun 2016, Dirk Behme wrote:
+>>> +- clocks: one or more clocks to be registered.
+>>> +  Xen hypervisor drivers might replace native drivers, resulting in
+>>> +  clocks not registered by these native drivers. To avoid that these
+>>> +  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
+>>> +  register them in the hypervisor node.
+>>> +  An example for this are the clocks of the serial driver. If the
+>>> clocks
+>>> +  used by the serial hardware interface are not registered by the
+>>> serial
+>>> +  driver the serial output might stop once clk_disable_unused() is
+>>> called.
+>>
+>> What if we use the "status" property of the clocks? Could we set it to
+>> "disabled" in Xen? Would that be enough for Linux to leave them alone?
 >
-> Is this needed?
+> clocks could be shared between multiple devices. So it is not possible
+> to disable the clock.
 
-It is not. ACK.
+To give an example, below the UART node for juno 
+(arch/arm64/boot/dts/arm/juno-base.dtsi):
 
->
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/regmap.h>
->
-> Or this?
+         soc_uart0: uart@7ff80000 {
+                 compatible = "arm,pl011", "arm,primecell";
+                 reg = <0x0 0x7ff80000 0x0 0x1000>;
+                 interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+                 clocks = <&soc_uartclk>, <&soc_refclk100mhz>;
+                 clock-names = "uartclk", "apb_pclk";
+         };
 
-It is not. ACK.
+The clock soc_refclk100mhz is shared with the mailbox.
 
->
->> +
->> +#define TEGRA_NOR_TIMING_REG_COUNT   2
->> +
->> +#define TEGRA_NOR_CONFIG                     0x00
->> +#define TEGRA_NOR_STATUS                     0x04
->> +#define TEGRA_NOR_ADDR_PTR                   0x08
->> +#define TEGRA_NOR_AHB_ADDR_PTR               0x0c
->> +#define TEGRA_NOR_TIMING0                    0x10
->> +#define TEGRA_NOR_TIMING1                    0x14
->> +#define TEGRA_NOR_MIO_CONFIG         0x18
->> +#define TEGRA_NOR_MIO_TIMING         0x1c
->> +#define TEGRA_NOR_DMA_CONFIG         0x20
->> +#define TEGRA_NOR_CS_MUX_CONFIG              0x24
->
-> Not all of these are used. It is good to define them and I wonder if we
-> should add support for MIO while are at it :-)
+Regards,
 
-We can come back to this once I have all SNOR stuff in order.
-
->
->> +
->> +#define TEGRA_NOR_CONFIG_GO                          BIT(31)
->> +
->> +static const struct of_device_id nor_id_table[] = {
->> +     /* Tegra30 */
->
-> I don't think this comment is needed.
-
-ACK.
-
->
->> +     { .compatible = "nvidia,tegra30-nor", .data = NULL, },
->
-> You don't need to set data to NULL.
-
-ACK.
-
->
->> +     /* Tegra20 */
->> +     { .compatible = "nvidia,tegra20-nor", .data = NULL, },
->
-> Same here.
-
-ACK
-
->> +static int __init nor_probe(struct platform_device *pdev)
->> +{
->
-> I would drop the __init.
-
-ACK.
-
->> +static struct platform_driver nor_driver = {
->> +     .driver = {
->> +             .name           = "tegra-nor",
->> +             .of_match_table = nor_id_table,
->> +     },
->> +};
->
-> The driver should have a remove function given that we can build as a
-> module.
-
-At the moment I do not know what we would do in a remove function and
-hence me not adding one.
-
->
->> +module_platform_driver_probe(nor_driver, nor_probe);
->
-> I would use "tegra_nor" namespace for all the structs, functions, etc.
-> However, we may prefer to go with GMI and in which case tegra_gmi_probe,
-> etc.
-
-ACK. Who gets the last call on what we should call the driver? It
-seems that we both think GMI is a better name, do we need a third? :).
-
-Thank you Jonathan for your feedback.
-
-Best Regards,
-Mirza
+-- 
+Julien Grall
