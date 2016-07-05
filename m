@@ -1,200 +1,47 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-To: Dirk Behme <dirk.behme@gmail.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
- <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
- <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
- <86951b96-0a3e-79b1-1a2f-88dfeba9b76b@de.bosch.com>
- <alpine.DEB.2.10.1607141647350.22290@sstabellini-ThinkPad-X260>
- <5787BE0B.8060504@gmail.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>, xen-devel@lists.xenproject.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <5787C88A.8030103@arm.com>
-Date: Thu, 14 Jul 2016 18:14:50 +0100
-MIME-Version: 1.0
-In-Reply-To: <5787BE0B.8060504@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <kesavan.abhilash@gmail.com>
+Return-Path: <kesavan.abhilash@gmail.com>
+Sender: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+To: s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com
+Cc: kgene.kim@samsung.com,
+	k.kozlowski@samsung.com,
+	b.zolnierkie@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Add CPU clock support for Exynos7
+Date: Wed,  6 Jul 2016 01:59:19 +0530
+Message-Id: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+This patch set adds the atlas clock hierarchy on Exynos7. It also
+modifies the existing cpu clock infrastructure to handle exynos7
+differences. These patches are a pre-requisite for enabling CPUFreq
+on Exynos7. This patchset has been tested on next-20160704. The
+opp device tree changes, cpufreq-dt platform addition and defconfig
+enablement will be sent separately.
 
-On 14/07/16 17:30, Dirk Behme wrote:
-> On 14.07.2016 17:55, Stefano Stabellini wrote:
->> On Thu, 14 Jul 2016, Dirk Behme wrote:
->>> On 14.07.2016 12:38, Stefano Stabellini wrote:
->>>> On Thu, 14 Jul 2016, Dirk Behme wrote:
->>>>> On 13.07.2016 23:03, Michael Turquette wrote:
->>>>>> Quoting Dirk Behme (2016-07-13 11:56:30)
->>>>>>> On 13.07.2016 20:43, Stefano Stabellini wrote:
->>>>>>>> On Wed, 13 Jul 2016, Dirk Behme wrote:
->>>>>>>>> On 13.07.2016 00:26, Michael Turquette wrote:
->>>>>>>>>> Quoting Dirk Behme (2016-07-12 00:46:45)
->>>>>>>>>>> Clocks described by this property are reserved for use by Xen,
->>>>>>>>>>> and
->>>>>>>>>>> the OS
->>>>>>>>>>> must not alter their state any way, such as disabling or
->>>>>>>>>>> gating a
->>>>>>>>>>> clock,
->>>>>>>>>>> or modifying its rate. Ensuring this may impose constraints on
->>>>>>>>>>> parent
->>>>>>>>>>> clocks or other resources used by the clock tree.
->>>>>>>>>>
->>>>>>>>>> Note that clk_prepare_enable will not prevent the rate from
->>>>>>>>>> changing
->>>>>>>>>> (clk_set_rate) or a parent from changing (clk_set_parent). The
->>>>>>>>>> only
->>>>>>>>>> way
->>>>>>>>>> to do this currently would be to set the following flags on the
->>>>>>>>>> effected
->>>>>>>>>> clocks:
->>>>>>>>>>
->>>>>>>>>>      CLK_SET_RATE_GATE
->>>>>>>>>>      CLK_SET_PARENT_GATE
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Regarding setting flags, I think we already talked about that. I
->>>>>>>>> think
->>>>>>>>> the
->>>>>>>>> conclusion was that in our case its not possible to manipulate the
->>>>>>>>> flags in
->>>>>>>>> the OS as this isn't intended to be done in cases like ours.
->>>>>>>>> Therefore
->>>>>>>>> no API
->>>>>>>>> is exported for this.
->>>>>>>>>
->>>>>>>>> I.e. if we need to set these flags, we have to do that in Xen
->>>>>>>>> where we
->>>>>>>>> add the
->>>>>>>>> clocks to the hypervisor node in the device tree. And not in the
->>>>>>>>> kernel patch
->>>>>>>>> discussed here.
->>>>>>>>
->>>>>>>> These are internal Linux flags, aren't they?
->>>>>>>
->>>>>>>
->>>>>>> I've been under the impression that you can set clock "flags" via
->>>>>>> the
->>>>>>> device tree. Seems I need to re-check that ;)
->>>>>>
->>>>>> Right, you cannot set flags from the device tree. Also, setting these
->>>>>> flags is done by the clock provider driver, not a consumer. Xen is
->>>>>> the
->>>>>> consumer.
->>>>>
->>>>>
->>>>> Ok, thanks, then I think we can forget about using flags for the
->>>>> issue we
->>>>> are
->>>>> discussing here.
->>>>>
->>>>> Best regards
->>>>>
->>>>> Dirk
->>>>>
->>>>> P.S.: Would it be an option to merge the v4 patch we are discussing
->>>>> here,
->>>>> then? From the discussion until here, it sounds to me that it's the
->>>>> best
->>>>> option we have at the moment. Maybe improving it in the future, then.
->>>>
->>>> It might be a step in the right direction, but it doesn't really
->>>> prevent
->>>> clk_set_rate from changing properties of a clock owned by Xen.  This
->>>> patch is incomplete.
->>>
->>>
->>> Let me ask then: Do we have a practical example where it's not
->>> sufficient
->>> practically?
->>>
->>> To my understanding, Xen people have been happy with the
->>> "clk_ignore_unused"
->>> workaround since ~2 years, now [1]. And I think the "clk_ignore_unused"
->>> workaround does mainly the same like the patch discussed here. It
->>> doesn't care
->>> regarding clk_set_rate from changing properties, too?
->>
->> Let me premise that I appreciate what you are trying to achieve with
->> this patch and I don't want to feature-creep it.
->>
->> However we are defining a new Device Tree binding,
->
->
-> I don't think so.
->
-> We are just using the existing one
->
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/clock-bindings.txt#n66
->
->
-> , pick it from other device tree nodes (e.g. serial, timer etc) and add
-> it to the hypervisor node. And then use this existing one with the
-> existing well defined clock API.
->
->
->> one which will have
->> to be supported for a long time by both Xen and Linux, so at the very
->> least we need to have the full picture. We need to understand if the
->> binding if sufficient
->
->
-> Even if it's not sufficient, you can't change it.
+Previous version of this patchset can be found here:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/322499.html
 
-I think you misunderstood Stefano's comment. Whilst the clock bindings 
-is set in stone, the binding you are adding in this patch is not yet 
-fixed. There is no requirement to follow what was defined in 
-clock-bindings.txt. I agree it would be convenient, but as mentioned by 
-Stefano this will need to be supported for a long time by Xen, Linux, 
-and any other consumer (i.e BSD kernels). So we have to be careful on 
-how it has been defined.
+Changes since v2:
+	- All the dependencies have been merged
+	- Code is now based on exynos5433 cpu clock support
 
-I would wait the answer of Michael on Stefano's question before taking 
-any decision here.
+Abhilash Kesavan (2):
+  clk: samsung: cpu: Prepare for addition for Exynos7 CPU clocks
+  clk: samsung: exynos7: Add clocks for atlas block
 
-
->
->
->> or if we need something different to solve the
->> problem completely.
->
->
-> You might need anything additionally. E.g. an extension of the Linux
-> kernel clock API to be able to modify the flags was proposed.
-
-The Linux kernel is not the only consumer of the device tree bindings. 
-This is also used by other OS such as FreeBSD where you might already be 
-able (I have not actually checked) to forbid a user to change the clock 
-rate.
-
->
-> Best regards
->
-> Dirk
->
-> P.S.: I still would be interested if we do have a practical example
-> where it's not sufficient practically?
-
-Very easy. What does prevent a driver to change the clock rate? Nothing 
-but the flags mentioned by Michael. There are already drivers which 
-modify the clock rate, thankfully those clocks are not shared with the 
-UART for now.
-
-But we cannot rule out that it will not be possible in the future. Think 
-about a clock that would be used by another guest (I know it is still 
-theoretical as we have not yet solved the problem).
-
-Regards,
+ .../devicetree/bindings/clock/exynos7-clock.txt    |   6 +
+ drivers/clk/samsung/clk-cpu.c                      |  10 +-
+ drivers/clk/samsung/clk-cpu.h                      |   2 +
+ drivers/clk/samsung/clk-exynos7.c                  | 183 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h            |  21 ++-
+ 5 files changed, 219 insertions(+), 3 deletions(-)
 
 -- 
-Julien Grall
+1.9.1
