@@ -1,62 +1,72 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 5 Jul 2016 08:12:11 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
+	wens@csie.org, emilio@elopez.com.ar, mark.rutland@arm.com,
+	linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH 1/5] clk: sunxi: Add a driver for the PLL2 on
+ A31/23/33
+Message-ID: <20160705061211.GA7643@lukather>
+References: <20160628101325.2522-1-icenowy@aosc.xyz>
 MIME-Version: 1.0
-In-Reply-To: <20160725111735.GC21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-2-git-send-email-mirza.krak@gmail.com> <20160725111735.GC21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 25 Jul 2016 14:28:48 +0200
-Message-ID: <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
-Subject: Re: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+In-Reply-To: <20160628101325.2522-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 13:17 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Tue, Jul 19, 2016 at 03:36:32PM +0200, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak@gmail.com>
->>
->> Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
->>
->> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->> ---
->>  drivers/clk/tegra/clk-tegra20.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
->> index 837e5cb..aefc044 100644
->> --- a/drivers/clk/tegra/clk-tegra20.c
->> +++ b/drivers/clk/tegra/clk-tegra20.c
->> @@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->>       { TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
->>       { TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
->>       { TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
->> +     { TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
->
-> Yay for inconsistent naming in the hardware. It would've been nice if
-> this clock was called GMI. Oh well...
 
-I am allowed to change clk name? Can do that when I re-spin this series.
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Could you perhaps explain in the commit message why 86.5 MHz is a sane
-> default? I'm totally unfamiliar with this controller, so maybe it's
-> self-explanatory, but it seems a rather odd value for a clock frequency.
+Hi,
 
-I used a value that I have in a downstream kernel based on the L4T.
-This frequency is well tested and has worked for me, and wanted to
-avoid setting it to maximum rate. My guess is that they used 86.5 MHz
-because 92 MHz is max rate on Tegra2 and they put it slightly below
-that.
+On Tue, Jun 28, 2016 at 06:13:21PM +0800, Icenowy Zheng wrote:
+> This is based on the PLL2 driver for A10/20.
 
-What is otherwise recommended when initializing clocks? The rate could
-depend on the chip that is attached but otherwise I would like to set
-it close to max (or max) rate for performance.
+Thanks for this patch.
 
-Best Regards,
-Mirza
+However, as you might have seen, we're switching to a new clock code
+base, so it would be great if you could use that instead.
+
+http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/440077.html
+
+While we declared all the clocks for the H3, nothing really mandates
+that for the existing platforms we don't introduce a few clocks as
+they are needed. That will probably even smoothen the transition.
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXe0+7AAoJEBx+YmzsjxAg0SQP/12GR1O+kAiQdkVMdqw0u8we
+udCmpgX504kQ02GuGXsPQz9BJ4xd2Rjhi0ljVcBLgle3xt/m2kA2qeMYPUwagQLT
+6NZR1t/yHGrQIspokXVQNlH4hLz9Bi3/5ja8uxUmZOEF+oSrRBmJWQ2sQgtvkIT6
+wvJecu3cPobojjZg1eYWlO6SY6HBMe1I4k+7PlkO4QE56LB9VAbJ+C8zMZJo6CZn
+c5V8NRnD68zNjgVcq3Cu6HEHvRMM9dWUc4CJIm4HsqNHOK4xMUq4MObti/waSAZn
+qn5W+ObE7Ov/fSBbmQg93l37z5ldLqGZqYO0vbVuRIWwHcgGx3SNiJCloZenznH1
+Xgkj/Ik38CJh6sy7G1ujurFW+oazmOHDs4x6D4YRAPkpJEUp6A7ceKocxDOBz32l
+oOc4tixqpl/QbcyyVNQAVw6G33Kd2AIILHug8iiNdpxgd5xg1j4gTNaM2en9A/KK
+0Om7WwWbpLWcU9E4fxccqnVlRrNxKKc3POjYIKGbThlh9HvE/oPntGpfU+Utcc4d
+TfIoS4fMK4/QlXBpKfMn5N2xbsx6j8HzBAngVh8pac7GhRCG6OBo+DgoLlhoc9Mi
+TTWoHoFQQxWmWHvu+/Dy+nC3+NQh8bKcPUKTiw2KPht2lsVitHHIoc+7ZDHQPNrE
+cLZYpvwQ6l+vioP26u/y
+=rIEg
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
