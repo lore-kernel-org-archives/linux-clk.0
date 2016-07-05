@@ -1,189 +1,96 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wan Zongshun <vw@iommu.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	jason@lakedaemon.net, p.zabel@pengutronix.de,
-	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
-Subject: [PATCH v2 09/10] Documentation: devicetree: Add dts description for nuc900
-Date: Sun, 10 Jul 2016 15:42:21 +0800
-Message-Id: <1468136542-2656-2-git-send-email-vw@iommu.org>
-In-Reply-To: <1468136542-2656-1-git-send-email-vw@iommu.org>
-References: <1468136542-2656-1-git-send-email-vw@iommu.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:51990 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752566AbcGEKj1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 5 Jul 2016 06:39:27 -0400
+Date: Tue, 5 Jul 2016 11:39:17 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Julien Grall <julien.grall@arm.com>,
+	devicetree@vger.kernel.org, xen-devel@lists.xenproject.org,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+Message-ID: <20160705103917.GC20478@leverpostej>
+References: <1467701423-31138-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467701423-31138-1-git-send-email-dirk.behme@de.bosch.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch is to add dts description for nuc900 platform.
+Hi,
 
-Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
----
- .../devicetree/bindings/arm/nuvoton/nuc970.txt     | 12 ++++++++++++
- .../bindings/clock/nuvoton,nuc970-clk.txt          | 13 +++++++++++++
- .../interrupt-controller/nuvoton,nuc900-aic.txt    | 15 +++++++++++++++
- .../bindings/reset/nuvoton,nuc900-reset.txt        | 12 ++++++++++++
- .../devicetree/bindings/serial/nuc970-uart.txt     | 22 ++++++++++++++++++++++
- .../bindings/soc/nuvoton/nuvoton,nuc900-soc.txt    | 12 ++++++++++++
- .../bindings/timer/nuvoton,nuc970-tmr.txt          | 20 ++++++++++++++++++++
- 7 files changed, 106 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuc970.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,nuc970-clk.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nuvoton,nuc900-aic.txt
- create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,nuc900-reset.txt
- create mode 100644 Documentation/devicetree/bindings/serial/nuc970-uart.txt
- create mode 100644 Documentation/devicetree/bindings/soc/nuvoton/nuvoton,nuc900-soc.txt
- create mode 100644 Documentation/devicetree/bindings/timer/nuvoton,nuc970-tmr.txt
+On Tue, Jul 05, 2016 at 08:50:23AM +0200, Dirk Behme wrote:
+> Some clocks might be used by the Xen hypervisor and not by the Linux
+> kernel. If these are not registered by the Linux kernel, they might be
+> disabled by clk_disable_unused() as the kernel doesn't know that they
+> are used. The clock of the serial console handled by Xen is one
+> example for this. It might be disabled by clk_disable_unused() which
+> stops the whole serial output, even from Xen, then.
+> 
+> Up to now, the workaround for this has been to use the Linux kernel
+> command line parameter 'clk_ignore_unused'. See Xen bug
+> 
+> http://bugs.xenproject.org/xen/bug/45
+> 
+> too.
+> 
+> To fix this, we will add the "unused" clocks in Xen to the hypervisor
+> node. The Linux kernel has to register the clocks from the hypervisor
+> node, then.
+> 
+> Therefore, check if there is a "clocks" entry in the hypervisor node
+> and if so register the given clocks to the Linux kernel clock
+> framework and with this mark them as used. This prevents the clocks
+> from being disabled.
+> 
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+> Changes in v2: Drop the Linux implementation details like clk_disable_unused
+> 	       in xen.txt.
 
-diff --git a/Documentation/devicetree/bindings/arm/nuvoton/nuc970.txt b/Documentation/devicetree/bindings/arm/nuvoton/nuc970.txt
-new file mode 100644
-index 0000000..0872f6f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/nuvoton/nuc970.txt
-@@ -0,0 +1,12 @@
-+Nuvoton NUC970 SoC platform Device Tree Bindings
-+------------------------------------------
-+
-+Boards with the NUC970 SoC shall have the following properties:
-+
-+Root node required properties:
-+- compatible: Should be "syscon" or "nuvoton,nuc970-gcr"
-+
-+GCR register required properties:
-+- compatible: Should be "nuvoton,nuc970-gcr"
-+- reg: Should contain registers location and length
-+
-diff --git a/Documentation/devicetree/bindings/clock/nuvoton,nuc970-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,nuc970-clk.txt
-new file mode 100644
-index 0000000..82fcf32
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nuvoton,nuc970-clk.txt
-@@ -0,0 +1,13 @@
-+NUC970 Clock Controller
-+
-+Clock required properties:
-+- compatible: Should be "nuvoton,nuc970-clk"
-+- reg: Should contain registers location and length
-+
-+Examples:
-+
-+clks: clk@b0000200 {
-+	compatible = "nuvoton,nuc970-clk";
-+	reg = <0xb0000200 0x200>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/nuvoton,nuc900-aic.txt b/Documentation/devicetree/bindings/interrupt-controller/nuvoton,nuc900-aic.txt
-new file mode 100644
-index 0000000..f265095
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/nuvoton,nuc900-aic.txt
-@@ -0,0 +1,15 @@
-+NUC900 interrupt Controller
-+
-+Interrupt-controller required properties
-+- compatible: Should be "nuvoton,nuc900-aic"
-+- reg: Should contain registers location and length
-+- interrupt-cells: set to 1
-+
-+Examples:
-+
-+aic: interrupt-controller@b8002000 {
-+	compatible = "nuvoton,nuc900-aic";
-+	interrupt-controller;
-+	#interrupt-cells = <1>;
-+	reg = <0xb8002000 0x1000>;
-+};
-diff --git a/Documentation/devicetree/bindings/reset/nuvoton,nuc900-reset.txt b/Documentation/devicetree/bindings/reset/nuvoton,nuc900-reset.txt
-new file mode 100644
-index 0000000..ab6056a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/nuvoton,nuc900-reset.txt
-@@ -0,0 +1,12 @@
-+. Nuvoton NUC900 series, reset controller binding.
-+
-+Required properties:
-+- compatible : Should be "nuvoton,nuc900-reset"
-+- syscon : Reference to gcr controller.
-+
-+Example:
-+
-+reset {
-+	compatible = "nuvoton,nuc900-reset";
-+	syscon = <&gcr>;
-+};
-diff --git a/Documentation/devicetree/bindings/serial/nuc970-uart.txt b/Documentation/devicetree/bindings/serial/nuc970-uart.txt
-new file mode 100644
-index 0000000..a143a5e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/nuc970-uart.txt
-@@ -0,0 +1,22 @@
-+NUC970 UART Controller
-+
-+Uart required properties:
-+- compatible: Should be "nuvoton,nuc970-uart"
-+- reg: Should contain registers location and length
-+
-+Examples:
-+
-+aliases {
-+	serial0 = &uart0;
-+};
-+
-+uart0: serial@b8000000 {
-+	compatible = "nuvoton,nuc970-uart";
-+	reg = <0xb8000000 0x1000>;
-+	interrupts = <36>;
-+	clocks = <&clks UART0_GATE>,
-+		 <&clks UART0_ECLK_GATE>;
-+	clock-names = "uart0", "uart0_eclk";
-+	clock-frequency = <12000000>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/soc/nuvoton/nuvoton,nuc900-soc.txt b/Documentation/devicetree/bindings/soc/nuvoton/nuvoton,nuc900-soc.txt
-new file mode 100644
-index 0000000..0284edf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/nuvoton/nuvoton,nuc900-soc.txt
-@@ -0,0 +1,12 @@
-+. Nuvoton NUC900 series, Soc specific driver binding.
-+
-+Required properties:
-+- compatible : Should be "nuvoton,nuc900-soc"
-+- syscon : Reference to gcr controller.
-+
-+Example:
-+
-+reset {
-+	compatible = "nuvoton,nuc900-soc";
-+	syscon = <&gcr>;
-+};
-diff --git a/Documentation/devicetree/bindings/timer/nuvoton,nuc970-tmr.txt b/Documentation/devicetree/bindings/timer/nuvoton,nuc970-tmr.txt
-new file mode 100644
-index 0000000..4d74615
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nuvoton,nuc970-tmr.txt
-@@ -0,0 +1,20 @@
-+. Nuvoton NUC900 series, NUC970 SoC timer
-+
-+The NUC900 family has several general-purpose 32 bits timers.
-+
-+Required properties:
-+- compatible : Should be "nuvoton,nuc970-tmr"
-+- reg : Address and length of the register set
-+- clocks : Reference on the timer input clock
-+- interrupts : Reference to the timer interrupt
-+
-+Example:
-+
-+tmr@0xb8001000 {
-+	compatible = "nuvoton,nuc970-tmr";
-+	reg = <0xb8001000 0x1000>;
-+	interrupts = <16>;
-+	clocks = <&clks TIMER0_GATE>,
-+	<&clks TIMER1_GATE>;
-+	clock-names = "timer0", "timer1";
-+};
--- 
-2.7.4
+Thanks for doing this.
+
+>  Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
+>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+>  2 files changed, 60 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+> index c9b9321..21fd469 100644
+> --- a/Documentation/devicetree/bindings/arm/xen.txt
+> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> @@ -17,6 +17,19 @@ the following properties:
+>    A GIC node is also required.
+>    This property is unnecessary when booting Dom0 using ACPI.
+>  
+> +Optional properties:
+> +
+> +- clocks: one or more clocks to be registered.
+> +  Xen hypervisor drivers might replace native drivers, resulting in
+> +  clocks not registered by these native drivers. To avoid that these
+> +  unregistered clocks are disabled by the Linux kernel initialization
+> +  register them in the hypervisor node.
+> +  An example for this are the clocks of a serial driver already enabled
+> +  by the firmware. If the clocks used by the serial hardware interface
+> +  are not registered by the serial driver itself the serial output
+> +  might stop once the Linux kernel initialization disables the 'unused'
+> +  clocks.
+
+The above describes the set of problems, but doesn't set out the actual
+contract. It also covers a number of Linux implementation details in
+abstract.
+
+As I commented previously [1], the binding should describe the set of
+guarantees that you rewquire (e.g. that the clocks must be left as-is,
+not gated, and their rates left unchanged).
+
+Please describe the specific set of guarantees that you require.
+
+Thanks,
+Mark.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/440434.html
