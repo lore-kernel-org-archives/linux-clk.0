@@ -1,81 +1,66 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@armlinux.org.uk>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <222d4179-a72f-56d1-246b-ab66af3057d9@nvidia.com>
-Date: Thu, 21 Jul 2016 16:12:05 +0100
+Return-Path: <sstabellini@kernel.org>
+Date: Tue, 5 Jul 2016 15:37:48 +0100 (BST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+To: Julien Grall <julien.grall@arm.com>
+cc: Stefano Stabellini <sstabellini@kernel.org>,
+    Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
+    Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+    xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+In-Reply-To: <577BBF69.8010809@arm.com>
+Message-ID: <alpine.DEB.2.10.1607051534411.2575@sstabellini-ThinkPad-X260>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com> <alpine.DEB.2.10.1607051449370.2575@sstabellini-ThinkPad-X260> <577BBC1A.8020209@arm.com> <alpine.DEB.2.10.1607051456410.2575@sstabellini-ThinkPad-X260> <577BBF69.8010809@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 19/07/16 14:36, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+On Tue, 5 Jul 2016, Julien Grall wrote:
+> On 05/07/16 15:04, Stefano Stabellini wrote:
+> > On Tue, 5 Jul 2016, Julien Grall wrote:
+> > > On 05/07/16 14:53, Stefano Stabellini wrote:
+> > > > On Thu, 30 Jun 2016, Dirk Behme wrote:
+> > > > > +- clocks: one or more clocks to be registered.
+> > > > > +  Xen hypervisor drivers might replace native drivers, resulting in
+> > > > > +  clocks not registered by these native drivers. To avoid that these
+> > > > > +  unregistered clocks are disabled, then, e.g. by
+> > > > > clk_disable_unused(),
+> > > > > +  register them in the hypervisor node.
+> > > > > +  An example for this are the clocks of the serial driver. If the
+> > > > > clocks
+> > > > > +  used by the serial hardware interface are not registered by the
+> > > > > serial
+> > > > > +  driver the serial output might stop once clk_disable_unused() is
+> > > > > called.
+> > > > 
+> > > > What if we use the "status" property of the clocks? Could we set it to
+> > > > "disabled" in Xen? Would that be enough for Linux to leave them alone?
+> > > 
+> > > clocks could be shared between multiple devices. So it is not possible to
+> > > disable the clock.
+> > 
+> > To clarify my suggestion: I am not saying we should disable the clock, I
+> > am saying we should set the "status" property to "disabled" in Xen for
+> > the clock used by the serial or passthrough devices (for which the
+> > "status" property is already set to "disabled"). That should work for
+> > cases where the clock is not shared among multiple devices.
 > 
-> The NOR bus can be used to connect high-speed devices such as NOR flash,
-> FPGAs, DSPs, CAN chips, Wi-Fi chips etc.
+> How would you be able to differentiate in Xen between a clock shared and a
+> non-shared one? The only way I can think it going through all the device tree
+> which sounds really expensive.
+
+Yes, but it is only done once and we only need to do the search for
+clocks of "disabled" devices.
+
+
+> > If the clock is shared, then I don't think we would run into the issue
+> > described by Dirk because I wouldn't imagine clk_disable_unused would
+> > try to disable the clock anymore, because it would actually be in use
+> > from Linux POV.
 > 
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> ---
->  drivers/bus/Kconfig     |   7 +++
->  drivers/bus/Makefile    |   1 +
->  drivers/bus/tegra-nor.c | 118 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 126 insertions(+)
->  create mode 100644 drivers/bus/tegra-nor.c
+> We also want to prevent Linux changing the rate of the clock (see Mark's mail
+> [1]).
 
-...
-
-> +static int __init nor_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res;
-> +	struct clk *clk;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	/* get the resource */
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	/* get the clock */
-> +	clk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	ret = clk_prepare_enable(clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* parse the device node */
-> +	ret = nor_parse_dt(pdev, base);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "%s fail to create devices.\n",
-> +			pdev->dev.of_node->full_name);
-> +		clk_disable_unprepare(clk);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(&pdev->dev, "Driver registered.\n");
-> +	return 0;
-> +}
-
-The reset is defined in the binding, but never used. Should we make sure
-the reset is de-asserted in the probe?
-
-Jon
-
--- 
-nvpublic
+I am not sure what's the best way to achieve that for clocks shared
+across multiple devices. Let's see what the clock maintainers suggest.
