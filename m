@@ -1,57 +1,43 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <m28tx23l0h.fsf@baylibre.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20160707033837.20029-1-khilman@baylibre.com>
- <146794722863.73491.474750140948566962@resonance>
- <m28tx23l0h.fsf@baylibre.com>
-Message-ID: <146863549703.73491.15445512744188633959@resonance>
-Subject: Re: [PATCH v2] clk: gxbb: expose CLKID_MMC_PCLK
-Date: Fri, 15 Jul 2016 19:18:17 -0700
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 2/8] clk: axis: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Tue,  5 Jul 2016 18:23:26 +0200
+Message-Id: <1467735814-23518-3-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kevin Hilman (2016-07-15 09:48:30)
-> Michael Turquette <mturquette@baylibre.com> writes:
-> =
+This driver initializes a clock provider via of_artpec6_clkctrl_setup
+and then continues the initialization on artpec6_clkctrl_probe.
 
-> > Quoting Kevin Hilman (2016-07-06 20:38:37)
-> >> The MMC_PCLK is needed for the SD/eMMC driver, expose to DT (and comme=
-nt
-> >> out in clk driver)
-> >> =
+Use the new macro to notify the clk subsystem about this behaviour.
 
-> >> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> >
-> > Applied to the same clk-s905 branch if you need to re-pull it as a
-> > dependency.
-> =
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/axis/clk-artpec6.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Ugh.  Just received some updated documentation, and turns out this clock
-> is not used at all. :(
-> =
-
-> Feel free to revert now before it becomes ABI.
-
-Reverted.
-
-> =
-
-> Now that I have actual docs, I'll have a new series coming that will
-> have the right clock details.
-
-No problem. I did a git revert b/c I don't want to rebase this late in
-the cycle.
-
-Regards,
-Mike
-
-> =
-
-> Thanks, and sorry for the noise,
-> =
-
-> Kevin
+diff --git a/drivers/clk/axis/clk-artpec6.c b/drivers/clk/axis/clk-artpec6.c
+index ffc988b098e4..da1a073c2236 100644
+--- a/drivers/clk/axis/clk-artpec6.c
++++ b/drivers/clk/axis/clk-artpec6.c
+@@ -113,8 +113,8 @@ static void of_artpec6_clkctrl_setup(struct device_node *np)
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clkdata->clk_data);
+ }
+ 
+-CLK_OF_DECLARE(artpec6_clkctrl, "axis,artpec6-clkctrl",
+-	       of_artpec6_clkctrl_setup);
++CLK_OF_DECLARE_DRIVER(artpec6_clkctrl, "axis,artpec6-clkctrl",
++		      of_artpec6_clkctrl_setup);
+ 
+ static int artpec6_clkctrl_probe(struct platform_device *pdev)
+ {
+-- 
+2.8.1
