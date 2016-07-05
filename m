@@ -1,58 +1,31 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com,
- kgene.kim@samsung.com, k.kozlowski@samsung.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for Exynos7
- CPU clocks
-Date: Thu, 07 Jul 2016 13:17:40 +0200
-Message-id: <2318982.ZLuIVQzhgE@amdc1976>
-In-reply-to: <577E32E5.4010902@samsung.com>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <1467750561-13957-2-git-send-email-a.kesavan@samsung.com>
- <577E32E5.4010902@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 6/7] meson: clk: Add support for clock gates
+To: =?UTF-8?Q?Alexander_M=c3=bcller?= <serveralex@gmail.com>,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+ <1467741391-60534-7-git-send-email-serveralex@gmail.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Message-ID: <b42e2bb3-2cd0-3115-9be4-16e3a48b46fd@codethink.co.uk>
+Date: Tue, 5 Jul 2016 19:01:14 +0100
+MIME-Version: 1.0
+In-Reply-To: <1467741391-60534-7-git-send-email-serveralex@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Hi
-
-On Thursday, July 07, 2016 12:45:57 PM Sylwester Nawrocki wrote:
-> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
-> > Exynos7 has the same CPU clock registers layout as that present
-
-Please precise for which Exynos7 SoC this change is needed
-(all three of them?).
-
-> > in Exynos5433 except for the bits in the MUX_STAT* registers.
-> > Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
+On 05/07/16 18:56, Alexander Müller wrote:
+> This patch adds support for the meson8b clock gates. Most of
+> them are disabled by Amlogic U-Boot, but need to be enabled
+> for ethernet, USB and many other components.
 > 
-> > --- a/drivers/clk/samsung/clk-cpu.h
-> > +++ b/drivers/clk/samsung/clk-cpu.h
-> > @@ -63,6 +63,8 @@ struct exynos_cpuclk {
-> >  /* The CPU clock registers have Exynos5433-compatible layout */
-> >  #define CLK_CPU_HAS_E5433_REGS_LAYOUT	(1 << 2)
-> 
-> > +/* Exynos5433-compatible layout with different MUX_STAT register bits */
-> > +#define CLK_CPU_HAS_MODIFIED_MUX_STAT	(1 << 3)
-> 
-> It's getting a bit messy, what if there comes another SoC version
-> which has some other modification of exynos5433 registers structure?
-> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
-> could easily get lost while trying to determine which modification
-> is which. How about indicating explicitly it's an exynos7 bits
-> layout and renaming the flag to something like
-> 
-> #define CLK_CPU_HAS_E7_MUX_STAT	(1 << 16) ?
+> Signed-off-by: Alexander Müller <serveralex@gmail.com>
+> ---
 
-ditto
+This seems to be a lot of structures for clocks that may
+never be use. I think it would be better to provide a custom
+lookup function that creates these as needed and use the ID
+in the dt as a offset+bit id.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
