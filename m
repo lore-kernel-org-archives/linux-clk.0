@@ -1,75 +1,131 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
- <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com> <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
- <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Jul 2016 14:46:43 +0200
-Message-ID: <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
-Subject: Re: [PATCH v4] xen/arm: Add a clock property
-To: Julien Grall <julien.grall@arm.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stefano Stabellini <sstabellini@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 8/8] clk: fixed-rate: Convert into a module platform driver
+Date: Tue,  5 Jul 2016 18:23:34 +0200
+Message-Id: <1467735814-23518-11-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Julien,
+Adds support for fixed-rate clock providers which have not been
+enabled via of_clk_init().
 
-On Wed, Jul 20, 2016 at 2:10 PM, Julien Grall <julien.grall@arm.com> wrote:
-> On 20/07/16 12:49, Geert Uytterhoeven wrote:
->> On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com>
->> wrote:
->>> On 20/07/16 10:43, Geert Uytterhoeven wrote:
->>>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>>> wrote:
->>>>> Clocks described by this property are reserved for use by Xen, and the
->>>>> OS
->>>>> must not alter their state any way, such as disabling or gating a
->>>>> clock,
->>>>> or modifying its rate. Ensuring this may impose constraints on parent
->>>>> clocks or other resources used by the clock tree.
->>>>>
->>>>> This property is used to proxy clocks for devices Xen has taken
->>>>> ownership
->>>>> of, such as UARTs, for which the associated clock controller(s) remain
->>>>> under the control of Dom0.
->>>>
->>>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
->>>>
->>>> Can't you just add a clocks property to the (virtual) serial device node
->>>> in DT?
->>>> Then the (virtual) serial device driver can get and enable the clock?
->>>
->>> There is no DT node for the Xen console (hvc). The UART used by Xen will
->>> be
->>> completely removed from the Device tree.
->>
->> Why is it removed?
->
-> Because the device is used exclusively by Xen and DOM0 should not touch it
-> at all (IRQs and MMIOs are not mapped).
+This is required by Device trees overlays that introduce clocks
+providers.
 
-IMHO then it's Xen's responsability to make sure not to disable the clock(s).
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/clk-fixed-rate.c | 69 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 65 insertions(+), 4 deletions(-)
 
-Who removes the device node from the DT? If Xen, can't it just remember
-which clocks were present in removed device nodes?
-
-What to do on SoCs where the serial device is part of a power area (e.g.
-Renesas SH/R-Mobile)? Who will make sure it is not powered down?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 2edb39342a02..e64ba2315880 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -15,6 +15,7 @@
+ #include <linux/io.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/platform_device.h>
+ 
+ /*
+  * DOC: basic fixed-rate clock that cannot gate
+@@ -160,15 +161,16 @@ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_rate);
+ /**
+  * of_fixed_clk_setup() - Setup function for simple fixed rate clock
+  */
+-void of_fixed_clk_setup(struct device_node *node)
++struct clk *_of_fixed_clk_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
+ 	const char *clk_name = node->name;
+ 	u32 rate;
+ 	u32 accuracy = 0;
++	int ret;
+ 
+ 	if (of_property_read_u32(node, "clock-frequency", &rate))
+-		return;
++		return ERR_PTR(-EIO);
+ 
+ 	of_property_read_u32(node, "clock-accuracy", &accuracy);
+ 
+@@ -176,9 +178,68 @@ void of_fixed_clk_setup(struct device_node *node)
+ 
+ 	clk = clk_register_fixed_rate_with_accuracy(NULL, clk_name, NULL,
+ 						    0, rate, accuracy);
+-	if (!IS_ERR(clk))
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
++
++void of_fixed_clk_setup(struct device_node *node)
++{
++	_of_fixed_clk_setup(node);
+ }
+ EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
+ CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
++
++static int of_fixed_clk_remove(struct platform_device *pdev)
++{
++	struct clk *clk = platform_get_drvdata(pdev);
++
++	if (clk)
++		clk_unregister_fixed_rate(clk);
++
++	return 0;
++}
++
++static int of_fixed_clk_probe(struct platform_device *pdev)
++{
++	struct clk *clk;
++
++	/*
++	 * This function is not executed when of_fixed_clk_setup
++	 * succeeded.
++	 */
++
++	clk = _of_fixed_clk_setup(pdev->dev.of_node);
++
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	platform_set_drvdata(pdev, clk);
++
++	return 0;
++}
++
++static const struct of_device_id of_fixed_clk_ids[] = {
++	{ .compatible = "fixed-clock" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, of_fixed_clk_ids);
++
++static struct platform_driver of_fixed_clk_driver = {
++	.driver = {
++		.name = "of_fixed_clk",
++		.of_match_table = of_fixed_clk_ids,
++	},
++	.probe = of_fixed_clk_probe,
++	.remove = of_fixed_clk_remove,
++};
++
++builtin_platform_driver(of_fixed_clk_driver);
+ #endif
+-- 
+2.8.1
