@@ -1,51 +1,42 @@
-Return-Path: <kesavan.abhilash@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <577E32E5.4010902@samsung.com>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <1467750561-13957-2-git-send-email-a.kesavan@samsung.com> <577E32E5.4010902@samsung.com>
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Date: Mon, 11 Jul 2016 16:44:21 +0200
-Message-ID: <CAM4voamJsK7aotk7WP64-64L4EAtDsxkEQW+b1VVTHNDYxq9GA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for
- Exynos7 CPU clocks
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>,
-	=?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <ricardo.ribalda@gmail.com>
+Return-Path: <ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 3/8] clk: npx: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Tue,  5 Jul 2016 18:23:27 +0200
+Message-Id: <1467735814-23518-4-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+This driver initializes a clock provider via lpc18xx_creg_clk_init
+and then continues the initialization on lpc18xx_creg_clk_probe.
 
-On Thu, Jul 7, 2016 at 12:45 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
->> Exynos7 has the same CPU clock registers layout as that present
->> in Exynos5433 except for the bits in the MUX_STAT* registers.
->> Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
->
->> --- a/drivers/clk/samsung/clk-cpu.h
->> +++ b/drivers/clk/samsung/clk-cpu.h
->> @@ -63,6 +63,8 @@ struct exynos_cpuclk {
->>  /* The CPU clock registers have Exynos5433-compatible layout */
->>  #define CLK_CPU_HAS_E5433_REGS_LAYOUT        (1 << 2)
->
->> +/* Exynos5433-compatible layout with different MUX_STAT register bits */
->> +#define CLK_CPU_HAS_MODIFIED_MUX_STAT        (1 << 3)
->
-> It's getting a bit messy, what if there comes another SoC version
-> which has some other modification of exynos5433 registers structure?
-> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
-> could easily get lost while trying to determine which modification
-> is which. How about indicating explicitly it's an exynos7 bits
-> layout and renaming the flag to something like
->
-> #define CLK_CPU_HAS_E7_MUX_STAT (1 << 16) ?
-Will rename the flag to make it SoC specific as per your suggestion.
+Use the new macro to notify the clk subsystem about this behaviour.
 
-Regards,
-Abhilash
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/nxp/clk-lpc18xx-creg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
+index 9e35749dafdf..c6e802e7e6ec 100644
+--- a/drivers/clk/nxp/clk-lpc18xx-creg.c
++++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
+@@ -184,7 +184,8 @@ static void __init lpc18xx_creg_clk_init(struct device_node *np)
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_creg_early_data);
+ }
+-CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
++CLK_OF_DECLARE_DRIVER(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk",
++		      lpc18xx_creg_clk_init);
+ 
+ static struct clk *clk_creg[CREG_CLK_MAX];
+ static struct clk_onecell_data clk_creg_data = {
+-- 
+2.8.1
