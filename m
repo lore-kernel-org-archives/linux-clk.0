@@ -1,58 +1,57 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 15 Jul 2016 12:15:15 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: njaigane@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	twp@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@armlinux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org,
-	bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, varada@codeaurora.org,
-	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	alsa-devel@alsa-project.org, bselvara@codeaurora.org
-Subject: Re: [PATCH 3/4] qcom: ipq4019: ASoC tlmm/pinctrl support
-Message-ID: <20160715191515.GC13516@tuxbot>
-References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
- <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
+Return-Path: <Paul.Gortmaker@windriver.com>
+Date: Tue, 5 Jul 2016 09:17:37 -0400
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sylwester
+ Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski
+	<k.kozlowski@samsung.com>,
+        Padmavathi Venna <padma.v@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
+ non-modular
+Message-ID: <20160705131737.GB26134@windriver.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-7-paul.gortmaker@windriver.com>
+ <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 15 Jul 00:07 PDT 2016, njaigane@codeaurora.org wrote:
+[Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular] On 05/07/2016 (Tue 13:02) Geert Uytterhoeven wrote:
 
-> From: Jaiganesh Narayanan <njaigane@codeaurora.org>
+> Hi Paul,
 > 
-> This patch adds the tlmm/pinctrl support for IPQ4019 ASoC.
+> On Mon, Jul 4, 2016 at 11:12 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> > We also delete the MODULE_LICENSE tags etc. since all that information
+> > is already contained at the top of the file in the comments.
 > 
-> Signed-off-by: Jaiganesh Narayanan <njaigane@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-ipq4019.c | 116 +++++++++++++++++++++++++--------
->  1 file changed, 88 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-[..]
-> +	qca_mux_i2s_rx_mclk,
-> +	qca_mux_i2s_rx_bclk,
-> +	qca_mux_i2s_rx_fsync,
-> +	qca_mux_i2s_rxd,
-> +	qca_mux_i2s_tx_mclk,
-> +	qca_mux_i2s_tx_bclk,
-> +	qca_mux_i2s_tx_fsync,
-> +	qca_mux_i2s_txd1,
-> +	qca_mux_i2s_txd2,
-> +	qca_mux_i2s_txd3,
-> +	qca_mux_i2s_spdif_out,
-> +	qca_mux_i2s_spdif_in,
+> But the unstructured information at the top of the file is much more difficult
+> to grep for...
 
-I would recommend reducing this to "i2s_rx", "i2s_tx", "spdif_rx"
-and "spdif_tx", as this will make the dts cleaner.
+...which IMHO is largely a moot point, since the MODULE_<xyz> tags
+aren't universally deployed and largely don't exist at all once you are
+outside of the driver space.
 
-Regards,
-Bjorn
+Paul.
+--
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
