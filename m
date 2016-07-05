@@ -1,137 +1,98 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH 2/7] meson: clk: Move register definitions to meson8b.h
+Date: Tue,  5 Jul 2016 19:56:26 +0200
+Message-Id: <1467741391-60534-3-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160725132711.GI21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160720124408.GA19113@rob-hp-laptop>
- <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
- <1f280c99-156f-59d3-308f-b4c8ff0f8f7c@nvidia.com> <20160725113638.GE21170@ulmo.ba.sec>
- <CALw8SCUxbpWGz0Mrp-Wf=jxa84Frk6mubeL9+KAYFAbq+-9CZQ@mail.gmail.com> <20160725132711.GI21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 25 Jul 2016 15:33:32 +0200
-Message-ID: <CALw8SCU2Pi2zEyf87qJKGosNSOSz6Br14BzS7DftJ9dhpJs50g@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 15:27 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Mon, Jul 25, 2016 at 03:20:44PM +0200, Mirza Krak wrote:
->> 2016-07-25 13:36 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
->> > On Thu, Jul 21, 2016 at 11:26:09AM +0100, Jon Hunter wrote:
->> >>
->> >> On 20/07/16 20:28, Mirza Krak wrote:
->> >> > 2016-07-20 14:44 GMT+02:00 Rob Herring <robh@kernel.org>:
->> >> >> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
->> >> >>> From: Mirza Krak <mirza.krak@gmail.com>
->> >> >>>
->> >> >>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
->> >> >>> Tegra30 SOCs
->> >> >>>
->> >> >>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->> >> >>> ---
->> >> >>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
->> >> >>>  1 file changed, 73 insertions(+)
->> >> >>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> >> >>>
->> >> >>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> >> >>> new file mode 100644
->> >> >>> index 0000000..9ee4a66
->> >> >>> --- /dev/null
->> >> >>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> >> >>> @@ -0,0 +1,73 @@
->> >> >>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
->> >> >>> +
->> >> >>> +The NOR controller supports a number of memory types, including synchronous NOR,
->> >> >>> +asynchronous NOR, and other flash memories with similar interfaces, such as
->> >> >>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
->> >> >>> +CAN chips, Wi-Fi chips etc.
->> >> >>> +
->> >> >>> +The actual devices are instantiated from the child nodes of a NOR node.
->> >> >>> +
->> >> >>> +Required properties:
->> >> >>> +
->> >> >>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
->> >> >>> + - reg: Should contain NOR controller registers location and length.
->> >> >>> + - clocks: Must contain one entry, for the module clock.
->> >> >>> +   See ../clocks/clock-bindings.txt for details.
->> >> >>> + - resets : Must contain an entry for each entry in reset-names.
->> >> >>> +   See ../reset/reset.txt for details.
->> >> >>> + - reset-names : Must include the following entries:
->> >> >>> +  - nor
->> >> >>> + - #address-cells: Must be set to 2 to allow memory address translation
->> >> >>> + - #size-cells:      Must be set to 1 to allow CS address passing
->> >> >>> + - ranges: Must be set up to reflect the memory layout with four integer
->> >> >>> +             values for each chip-select line in use.
->> >> >>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
->> >> >>> +
->> >> >>> +Note that the NOR controller does not have any internal chip-select address
->> >> >>> +decoding and if you want to access multiple devices external chip-select
->> >> >>> +decoding must be provided.
->> >> >>
->> >> >> Then what are the 2 chip selects in ranges?
->> >> >>
->> >> >> Rob
->> >> >
->> >> > Those two chip selects are actually a representation of a external
->> >> > decoding logic based on what we use on our board. Even though it the
->> >> > NOR controller only supports one single chip select I wanted to give
->> >> > an example on how one could create more chip-selects with an external
->> >> > logic and what it would look like in the device tree representation.
->> >>
->> >> Technically, the GMI/SNOR controller supports 8 chip-selects, however,
->> >> unlike some devices, it appears that software has to select the active
->> >> chip-select. Although this sounds odd, I believe that the idea is that
->> >> in order to support devices greater than 256MB (external address space
->> >> for available NOR/async devices) you can use the chip-selects to page
->> >> through memory greater than this 256MB range. At least that it my
->> >> (limited) understanding!
->> >
->> > Actually I had assumed that software would at some point need to select
->> > the active chip to switch between multiple connected chips. I suppose it
->> > could be possible to have multiple chips share the same chip-select and
->> > decode the address lines to determine whether they're being accessed or
->> > not.
->> >
->> > What I don't understand, and it's further complicated by the fact that
->> > external chip-selects are being used, is how does the controller get
->> > told what chip to select? It seems to me like it would always access the
->> > same chips because the SNOR_CONFIG_0 register is only ever written on
->> > ->probe().
->> >
->> > For external chip selects, how do they tie in with all this? Who gets to
->> > implement this logic? Wouldn't we need to abstract this away somehow so
->> > that we can support whatever board designers will come up with?
->> >
->> > Thierry
->>
->> You answered it your self :).
->>
->> >I suppose it
->> > could be possible to have multiple chips share the same chip-select and
->> > decode the address lines to determine whether they're being accessed or
->> > not.
->>
->> That is what we do and is what I refer to as external chip-selects.
->
-> Okay, so there aren't actually chips or pins that serve as external chip
-> selects, but rather the GMI address lines are used to select the chip? I
-> guess that's more like traditional address decoding rather than chip
-> select. Anyway, understanding how your board design works helps devising
-> a device tree binding that is flexible enough to support production
-> devices.
->
-> Thierry
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/meson8b.c | 17 +----------------
+ drivers/clk/meson/meson8b.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/clk/meson/meson8b.h
 
-This is the most accurate descriptor.
-
-> GMI address lines are used to select the chip
-
-Best Regards
-Mirza
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index b1902e9..537cc53 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -26,22 +26,7 @@
+ #include <linux/module.h>
+ 
+ #include "clkc.h"
+-
+-/*
+- * Clock controller register offsets
+- *
+- * Register offsets from the HardKernel[0] data sheet are listed in comment
+- * blocks below. Those offsets must be multiplied by 4 before adding them to
+- * the base address to get the right value
+- *
+- * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+- */
+-#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
+-#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
+-#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
+-#define MESON8B_REG_PLL_FIXED		0x0280
+-#define MESON8B_REG_PLL_SYS		0x0300
+-#define MESON8B_REG_PLL_VID		0x0320
++#include "meson8b.h"
+ 
+ static DEFINE_SPINLOCK(clk_lock);
+ 
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+new file mode 100644
+index 0000000..5b9cb9f
+--- /dev/null
++++ b/drivers/clk/meson/meson8b.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2015 Endless Mobile, Inc.
++ * Author: Carlo Caione <carlo@endlessm.com>
++ *
++ * Copyright (c) 2016 BayLibre, Inc.
++ * Michael Turquette <mturquette@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __MESON8B_H
++#define __MESON8B_H
++
++/*
++ * Clock controller register offsets
++ *
++ * Register offsets from the HardKernel[0] data sheet are listed in comment
++ * blocks below. Those offsets must be multiplied by 4 before adding them to
++ * the base address to get the right value
++ *
++ * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
++ */
++#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
++#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
++#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
++#define MESON8B_REG_PLL_FIXED		0x0280
++#define MESON8B_REG_PLL_SYS		0x0300
++#define MESON8B_REG_PLL_VID		0x0320
++
++#endif /* __MESON8B_H */
+-- 
+2.5.0
