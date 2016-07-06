@@ -1,69 +1,64 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2 6/7] gxbb: clk: Move MESON_GATE macro to gxbb
-From: =?utf-8?Q?Alexander_M=C3=BCller?= <serveralex@gmail.com>
-In-Reply-To: <146844555421.73491.17534974282265619018@resonance>
-Date: Thu, 14 Jul 2016 19:09:33 +0200
-Cc: linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-Message-Id: <0F4FC964-B9DE-4880-AF38-469A52FE24D2@gmail.com>
-References: <1468432181-9550-1-git-send-email-serveralex@gmail.com> <1468432181-9550-7-git-send-email-serveralex@gmail.com> <146844555421.73491.17534974282265619018@resonance>
-To: Michael Turquette <mturquette@baylibre.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Guodong Xu <guodong.xu@linaro.org>, sboyd@codeaurora.org,
+ jorge.ramirez-ortiz@linaro.org, xinliang.liu@linaro.org,
+ guodong.xu@linaro.org, john.stultz@linaro.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
+Message-ID: <146784380027.73491.17727471600536823074@resonance>
+Subject: Re: [PATCH v2 1/2] clk: hi6220: Change syspll and media_syspll clk to 1.19GHz
+Date: Wed, 06 Jul 2016 15:23:20 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,=20
+Quoting Guodong Xu (2016-06-29 01:45:54)
+> From: Xinliang Liu <xinliang.liu@linaro.org>
+> =
 
-What about the clk name set by the macro MESON_GATE (#_name)? That would =
-change too and I guess that's not desired here.
+> In the bootloader of HiKey/96boards, syspll and media_syspll clk
+> was initialized to 1.19GHz. So, here changes it in kernel accordingly.
+> =
 
-Regards,=20
-Alex
+> 1.19GHz was chosen over 1.2GHz because at 1.19GHz we get more precise
+> HDMI pixel clock (1.19G/16 =3D 74.4MHz) for 1280x720p@60Hz HDMI
+> (74.25MHz required by standards). Closer pixel clock means better
+> compatibility to HDMI monitors.
+> =
 
-> On 13 Jul 2016, at 23:32, Michael Turquette <mturquette@baylibre.com> =
-wrote:
+> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+> Signed-off-by: Xinliang Liu <xinliang.liu@linaro.org>
+
+Applied.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/hisilicon/clk-hi6220.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/c=
+lk-hi6220.c
+> index f02cb41..a36ffcb 100644
+> --- a/drivers/clk/hisilicon/clk-hi6220.c
+> +++ b/drivers/clk/hisilicon/clk-hi6220.c
+> @@ -34,8 +34,8 @@ static struct hisi_fixed_rate_clock hi6220_fixed_rate_c=
+lks[] __initdata =3D {
+>         { HI6220_PLL_BBP,       "bbppll0",      NULL, 0, 245760000, },
+>         { HI6220_PLL_GPU,       "gpupll",       NULL, 0, 1000000000,},
+>         { HI6220_PLL1_DDR,      "ddrpll1",      NULL, 0, 1066000000,},
+> -       { HI6220_PLL_SYS,       "syspll",       NULL, 0, 1200000000,},
+> -       { HI6220_PLL_SYS_MEDIA, "media_syspll", NULL, 0, 1200000000,},
+> +       { HI6220_PLL_SYS,       "syspll",       NULL, 0, 1190400000,},
+> +       { HI6220_PLL_SYS_MEDIA, "media_syspll", NULL, 0, 1190400000,},
+>         { HI6220_DDR_SRC,       "ddr_sel_src",  NULL, 0, 1200000000,},
+>         { HI6220_PLL_MEDIA,     "media_pll",    NULL, 0, 1440000000,},
+>         { HI6220_PLL_DDR,       "ddrpll0",      NULL, 0, 1600000000,},
+> -- =
+
+> 1.9.1
 >=20
-> Hi Alexander,
->=20
-> Quoting Alexander M=C3=BCller (2016-07-13 10:49:40)
->> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
->> ---
->> drivers/clk/meson/clkc.h |  14 ----
->> drivers/clk/meson/gxbb.c | 176 =
-+++++++++++++++++++++++++----------------------
->> 2 files changed, 95 insertions(+), 95 deletions(-)
->>=20
->> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
->> index 53326c3..061a01e 100644
->> --- a/drivers/clk/meson/clkc.h
->> +++ b/drivers/clk/meson/clkc.h
->> @@ -97,20 +97,6 @@ struct meson_clk_mpll {
->>        spinlock_t *lock;
->> };
->>=20
->> -#define MESON_GATE(_name, _reg, _bit)                                =
-  \
->> -struct clk_gate gxbb_##_name =3D {                                   =
-            \
->=20
-> Please leave this macro in clkc.h, but change the above line to:
->=20
-> 	#define MESON_GATE(_name, _reg, _bit)	\
-> 	struct clk_gate _name =3D {		\
->=20
-> Note that gxbb_##_name is replaced with _name. I should have done it
-> like this from the beginning but it's a bit of a brain fart.
->=20
->> /* Everything Else (EE) domain gates */
->> -static MESON_GATE(ddr, HHI_GCLK_MPEG0, 0);
->=20
-> Then reflow the above gxbb gate clock like so:
->=20
-> 	static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
->=20
-> Then you can re-use the same macro in your meson8b driver by prefixing
-> all of your gate clocks with "meson8b_".
->=20
-> Regards,
-> Mike
