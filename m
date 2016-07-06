@@ -1,127 +1,113 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding
- of STiH4xx platforms
-To: Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
- <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
- <20160619150458.GA26824@rob-hp-laptop>
- <146794221378.73491.2803164814485320331@resonance>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas
- Kandagatla <srinivas.kandagatla@gmail.com>,
-        Maxime Coquelin
-	<maxime.coquelin@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Russell
- King <linux@armlinux.org.uk>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier
- Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda
-	<a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen
-	<dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry
- Reding <treding@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones
-	<lee.jones@linaro.org>,
-        Peter Griffin <peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <577F6E83.3080006@st.com>
-Date: Fri, 8 Jul 2016 11:12:35 +0200
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <146794221378.73491.2803164814485320331@resonance>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160704211220.5685-3-paul.gortmaker@windriver.com>
+Cc: "Paul Gortmaker" <paul.gortmaker@windriver.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Carlo Caione" <carlo@caione.org>,
+ "Kevin Hilman" <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-3-paul.gortmaker@windriver.com>
+Message-ID: <146784369681.73491.7863077914302443664@resonance>
+Subject: Re: [PATCH 02/10] clk: meson: make gxbb explicitly non-modular
+Date: Wed, 06 Jul 2016 15:21:37 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Quoting Paul Gortmaker (2016-07-04 14:12:12)
+> The Kconfig currently controlling compilation of this code is:
+> =
 
-On 07/08/2016 03:43 AM, Michael Turquette wrote:
-> Quoting Rob Herring (2016-06-19 08:04:58)
->> On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
->>> This patch reworks the clock binding to avoid too much detail in DT.
->>> Now we have only compatible string per type of clock
->>> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
->>>
->> I have no idea what the clock trees and clock controller in these chips
->> look like, so it's hard to say if the changes here are good. It still
->> looks like things are somewhat fine grained clocks in DT. I'll leave
->> it up to the platform maintainers to decide...
-> Is this series breaking ABI? If yes, why not do what Maxime did for the
-> Allwinner/sunxi clocks and just fully convert over to a
-> one-node-per-clock-controller binding? This one-node-per-clock stuff is
-> pretty unfortunate, and if we're deprecating platforms (patch #1) then
-> now might be a good time to re-evaluate the whole thing.
+> drivers/clk/meson/Kconfig:config COMMON_CLK_GXBB
+> drivers/clk/meson/Kconfig:      bool
+> =
 
-The goal of my patchset was to be aligned with DRM / KMS development and 
-to offer
-the possibility to make a correct video playback on STiH407/STiH410 
-platform.
-Our milestone is the 4.8 for that.
+> ...meaning that it currently is not being built as a module by anyone.
+> =
 
-Currently people need these patches to work.
-I'm not sure it's a good time to re-evaluate the whole thing.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> =
 
-Is it possible to re-evaluate later ?
+> Since module_init translates to device_initcall in the non-modular
+> case, the init ordering remains unchanged with this commit.
+> =
 
-Best regards,
-Gabriel
+> Also note that MODULE_DEVICE_TABLE and ALIAS are no-op for non-modules.
+> =
 
-> Regards,
-> Mike
->
->>   
->>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
->>> ---
->>>   .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  2 +-
->>>   .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
->>>   .../devicetree/bindings/clock/st/st,clkgen.txt     |  2 +-
->>>   .../devicetree/bindings/clock/st/st,quadfs.txt     |  6 +--
->>>   drivers/clk/st/clkgen-fsyn.c                       | 41 ++++++--------
->>>   drivers/clk/st/clkgen-mux.c                        | 28 ++++------
->>>   drivers/clk/st/clkgen-pll.c                        | 62 ++++++++++------------
->>>   7 files changed, 65 insertions(+), 87 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
->>> index 4d277d6..9a46cb1d7 100644
->>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
->>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
->>> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
->>>   Required properties:
->>>   
->>>   - compatible : shall be:
->>> -     "st,stih407-clkgen-a9-mux",     "st,clkgen-mux"
->>> +     "st,stih407-clkgen-a9-mux"
->>>   
->>>   - #clock-cells : from common clock binding; shall be set to 0.
->>>   
->>> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
->>> index c9fd674..be0b043 100644
->>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
->>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
->>> @@ -9,11 +9,10 @@ Base address is located to the parent node. See clock binding[2]
->>>   Required properties:
->>>   
->>>   - compatible : shall be:
->>> -     "st,stih407-plls-c32-a0",       "st,clkgen-plls-c32"
->>> -     "st,stih407-plls-c32-a9",       "st,clkgen-plls-c32"
->>> -     "sst,plls-c32-cx_0",            "st,clkgen-plls-c32"
->>> -     "sst,plls-c32-cx_1",            "st,clkgen-plls-c32"
->>> -     "st,stih418-plls-c28-a9",       "st,clkgen-plls-c32"
->>> +     "st,clkgen-pll0"
->>> +     "st,clkgen-pll0"
->> Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
->>
->>> +     "st,stih407-clkgen-plla9"
->>> +     "st,stih418-clkgen-plla9"
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+> =
+
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Carlo Caione <carlo@caione.org>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-amlogic@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+Applied.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/meson/gxbb.c | 18 ++++--------------
+>  1 file changed, 4 insertions(+), 14 deletions(-)
+> =
+
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 007b7157cf4b..a4c6684b3019 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1,4 +1,6 @@
+>  /*
+> + * AmLogic S905 / GXBB Clock Controller Driver
+> + *
+>   * Copyright (c) 2016 AmLogic, Inc.
+>   * Michael Turquette <mturquette@baylibre.com>
+>   *
+> @@ -19,7 +21,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  =
+
+>  #include "clkc.h"
+>  #include "gxbb.h"
+> @@ -926,7 +928,6 @@ static const struct of_device_id gxbb_clkc_match_tabl=
+e[] =3D {
+>         { .compatible =3D "amlogic,gxbb-clkc" },
+>         { }
+>  };
+> -MODULE_DEVICE_TABLE(of, gxbb_match_table);
+>  =
+
+>  static struct platform_driver gxbb_driver =3D {
+>         .probe          =3D gxbb_clkc_probe,
+> @@ -940,15 +941,4 @@ static int __init gxbb_clkc_init(void)
+>  {
+>         return platform_driver_register(&gxbb_driver);
+>  }
+> -module_init(gxbb_clkc_init);
+> -
+> -static void __exit gxbb_clkc_exit(void)
+> -{
+> -       platform_driver_unregister(&gxbb_driver);
+> -}
+> -module_exit(gxbb_clkc_exit);
+> -
+> -MODULE_DESCRIPTION("AmLogic S905 / GXBB Clock Controller Driver");
+> -MODULE_LICENSE("GPL v2");
+> -MODULE_ALIAS("platform:gxbb-clkc");
+> -MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
+> +device_initcall(gxbb_clkc_init);
+> -- =
+
+> 2.8.4
+>=20
