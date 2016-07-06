@@ -1,71 +1,52 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-To: Andi Shyti <andi.shyti@samsung.com>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
- <1467270911-10971-2-git-send-email-andi.shyti@samsung.com>
- <577A2EFF.2010306@samsung.com> <20160704102614.GD1257@jack.zhora.eu>
- <CGME20160704151537epcas1p42a74c53ebb4227da9a30c25e250f0c5a@epcas1p4.samsung.com>
- <577A7D8D.8070004@samsung.com> <20160706045108.GD23620@samsunx.samsung>
-Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andrzej Hajda <a.hajda@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <577CE03A.3090603@samsung.com>
-Date: Wed, 06 Jul 2016 12:40:58 +0200
-MIME-version: 1.0
-In-reply-to: <20160706045108.GD23620@samsunx.samsung>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 6/7] meson: clk: Add support for clock gates
+To: Michael Turquette <mturquette@baylibre.com>,
+ =?UTF-8?Q?Alexander_M=c3=bcller?= <serveralex@gmail.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+ <1467741391-60534-7-git-send-email-serveralex@gmail.com>
+ <b42e2bb3-2cd0-3115-9be4-16e3a48b46fd@codethink.co.uk>
+ <146776626852.35356.9847034661606022714@resonance>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Message-ID: <07f37b8b-cfd2-ebc6-a693-4372d6c34293@codethink.co.uk>
+Date: Wed, 6 Jul 2016 08:35:28 +0100
+MIME-Version: 1.0
+In-Reply-To: <146776626852.35356.9847034661606022714@resonance>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06/2016 06:51 AM, Andi Shyti wrote:
+On 06/07/16 01:51, Michael Turquette wrote:
+> Hi Ben,
 > 
-> I don't see anything wrong on the above. We could make it as:
-
-> @@ -640,13 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
->  
->         writel(val, regs + S3C64XX_SPI_MODE_CFG);
->  
-> -       if (sdd->port_conf->clk_from_cmu) {
-> -               /* Configure Clock */
-> -               /* There is half-multiplier before the SPI */
-> -               clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
-> -               /* Enable Clock */
-> -               clk_prepare_enable(sdd->src_clk);
-
-clk_set_rate() call needs to stay, we can only remove clk_prepare_enable().
-
-> -       } else {
-> +       if (!sdd->port_conf->clk_from_cmu) {
->                 /* Configure Clock */
->                 val = readl(regs + S3C64XX_SPI_CLK_CFG);
->                 val &= ~S3C64XX_SPI_PSR_MASK;
+> Quoting Ben Dooks (2016-07-05 11:01:14)
+>> On 05/07/16 18:56, Alexander Müller wrote:
+>>> This patch adds support for the meson8b clock gates. Most of
+>>> them are disabled by Amlogic U-Boot, but need to be enabled
+>>> for ethernet, USB and many other components.
+>>>
+>>> Signed-off-by: Alexander Müller <serveralex@gmail.com>
+>>> ---
+>>
+>> This seems to be a lot of structures for clocks that may
+>> never be use. I think it would be better to provide a custom
+>> lookup function that creates these as needed and use the ID
+>> in the dt as a offset+bit id.
 > 
->> I meant we could amend which clocks are specified at the SPI bus device
->> DT nodes and change handling of clocks in the spi-s3c64xx driver to model
->> everything properly and get it all working.
+> We want the real clocks registered so that we can disable spuriously
+> enabled at late_initcall time with clk_disable_unused.
 > 
-> I think that if the clock comes from the cmu it's not necessary
-> to disable it. I would like to avoid adding DTS properties
-> because we have the clock disabling inherited from old code which
-> it might not be required at all (in our tests, indeed it works).
+> Furthermore, I'd like to not represent all of these gates in the DT
+> binding description (see my response to the earlier patches in this
+> series), since it becomes ABI (and a maintenance nightmare).
 
-OK, anyway we already need to amend exynos5433.dtsi file to change
-the "spi_busclk0" clock specifier.
+Erm, so writing /more/ code and having them defined in /two/ places
+is a nightmare? Sounds more of a nightmare of having the ID in the DT
+represent the register/bit offset and then having them created at
+lookup time.
 
-I agree we can get rid of the clock gating in s3c64xx_spi_config() 
-function, it should not do any harm and will help in getting rid 
-of the bus access exceptions.
 
-In general PCLK should be enough for accessing register of the controller,
-one hypothesis is that automatic clock gating may be disabling PCLK
-when it sees SCLK inactive.
 
-I tested on exynos4412 trats2 board a large firmware file upload over 
-SPI and didn't notice any bad side effects with above 
-clk_disable_unprepare()/clk_prepare_enable() calls commented out.
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
