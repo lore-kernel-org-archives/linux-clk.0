@@ -1,71 +1,66 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 28 Jul 2016 15:31:45 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] clk: sunxi-ng: Add A31/A31s clocks
-Message-ID: <20160728133145.GB6682@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-9-git-send-email-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
-In-Reply-To: <1469516671-19377-9-git-send-email-wens@csie.org>
+From: Michael Turquette <mturquette@baylibre.com>
+To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+ <1467741391-60534-8-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1467741391-60534-8-git-send-email-serveralex@gmail.com>
+Message-ID: <146776648028.35356.7816151912503029258@resonance>
+Subject: Re: [PATCH 7/7] arm: amlogic: select meson8b clk driver
+Date: Tue, 05 Jul 2016 17:54:40 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Alex,
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Alexander M=C3=BCller (2016-07-05 10:56:31)
+> Select the Amlogic clk code for meson SoCs and the more specific meson8b =
+clk
+> driver for Amlogic meson8b.
+> =
 
-On Tue, Jul 26, 2016 at 03:04:30PM +0800, Chen-Yu Tsai wrote:
-> Add a new style driver for the clock control unit in Allwinner A31/A31s.
+> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+
+This patch isn't necessary as an alternative is already queued. See:
+https://git.kernel.org/cgit/linux/kernel/git/mturquette/linux.git/commit/?h=
+=3Dgxbb-dt-clk&id=3Dbae5d70ba6f8726ea6306aa07b7d2eb4357d3c81
+
+However, if you're basing on top of clk-next (or clk-s905) then you
+won't see the three patches linked above because they are queued through
+Kevin & Carlo via the amlogic tree.
+
+Regards,
+Mike
+
+> ---
+>  arch/arm/mach-meson/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> =
+
+> diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
+> index 31bdd91..b3add39 100644
+> --- a/arch/arm/mach-meson/Kconfig
+> +++ b/arch/arm/mach-meson/Kconfig
+> @@ -7,6 +7,7 @@ menuconfig ARCH_MESON
+>         select CACHE_L2X0
+>         select PINCTRL
+>         select PINCTRL_MESON
+> +       select COMMON_CLK_AMLOGIC
+>  =
+
+>  if ARCH_MESON
+>  =
+
+> @@ -24,5 +25,6 @@ config MACH_MESON8B
+>         bool "Amlogic Meson8b SoCs support"
+>         default ARCH_MESON
+>         select MESON6_TIMER
+> +       select COMMON_CLK_MESON8B
+>  =
+
+>  endif
+> -- =
+
+> 2.5.0
 >=20
-> A few clocks are still missing:
->=20
->     - EMAC clock
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Looks good to me, aside from the comment made by Jean-Francois.
-
-I guess I'd prefer to have the SoC names in the define, just in case
-we need to introduce support for another SoC, but this can always be
-done later.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXmglBAAoJEBx+YmzsjxAgFc0P/iNgLZshtE7s3k62EH60E+5i
-7og05mhhIItkXR0omNlpZIhDv0S7K+noH/2k1sUzmhWyHgvSPAnv9utV6UEgtcjX
-qxnR6r3fjWsf+Yus7axxxbZIbvqFt6jpJYip2kGaTAN9diUoDPeNPjaw1TMOIJ7m
-pX15mK623kcRTfy5iiuKlKAYHyNsd9DRpAucURd7OFBs32mXsnxsbIHiY8dUP/Ge
-/85R+wrCg7BUHSW5Y0OBCRoR0F9OP8bW/LxeEotmuCf7IgW3PMh94nnqFrSIUu96
-xcOIH6FQFOE59f5L+k7IHFzq6ddTowkBtEBmum5B0r2VmBttsw+X+tLF0t4jTGKB
-EBhnJYL3/rUkuwB3RXqN1VgXLhOKAubSufOoxaP01WU0IlTsJIknrWHygdujrFgp
-JOb51atlSghnf94EWoB76aaeRXCrzwlmIVgSlGEJzaK181wLtLFIAymJN1gv4hmL
-574mgYFSW11j+E3Gu5BJSm5Afl/eZy7RTOh3OeE4U/XA6TYVExW57LHyS5prMgA0
-fMLbENkJzaoxBe2iCgNm7XlL1+dxvwrnBgVfK3pwWB7kQglBMxGvtUn0DYr1bPXY
-a1Lkkl4ZFlnUCk6MISP985fElD+8jve3rCqxbPOwYL8e9uSGCnb8GnH/I9KVtB/i
-pHP0ln2pi/0scAqaMSKr
-=7Xn3
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
