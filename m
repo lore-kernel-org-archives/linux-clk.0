@@ -1,64 +1,34 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-To: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <1467982058-14339-1-git-send-email-andi.shyti@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <577FA99C.9020600@samsung.com>
-Date: Fri, 08 Jul 2016 15:24:44 +0200
-MIME-version: 1.0
-In-reply-to: <1467982058-14339-1-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: gxbb: expose CLKID_MMC_PCLK
+Date: Wed,  6 Jul 2016 16:07:49 -0700
+Message-Id: <20160706230749.9620-1-khilman@baylibre.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08/2016 02:47 PM, Andi Shyti wrote:
-> Commit b82ec4e and a9e93e8 have added support in the spi device
-> driver for the three clock lines required by the SPI controller
-> and handles the dependency between the three (by not disabling
-> any after resume).
-> 
-> This way none of the SPI clocks require any criticality: remove,
-> then the CLK_IGNORE_UNUSED flag for the SPI related clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
-> 
-> Hi,
-> 
-> With this, I hope to have reached the end of this patch series :)
-> 
-> After some discussions with Tomasz first and Sylwester later, we
-> agreed to move all the clock management to the spi driver, here
-> are the patches that do that:
-> 
->   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
->   http://marc.info/?l=linux-kernel&m=146798033221943&w=2
-> 
-> With the above modifications to the spi driver we don't need any
-> of the SPI related clocks to be marked either as critical or as
-> ignore unused.
-> 
-> Thanks,
-> Andi
-> 
->  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
+The MMC_PCLK is needed for the SD/eMMC driver.
 
-Patch is okay:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ include/dt-bindings/clock/gxbb-clkc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-but I think this should not go in separately. This should be part of
-SPI-related changes which add proper ioclk consumer to the SPI driver.
-Without these changes, as you said to me, synchronous abort will happen.
-
-Best regards,
-Krzysztof
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index f889d80246cb..5eb69ec74f6b 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -8,5 +8,6 @@
+ #define CLKID_CPUCLK		1
+ #define CLKID_CLK81		12
+ #define CLKID_ETH		36
++#define CLKID_MMC_PCLK		66
+ 
+ #endif /* __GXBB_CLKC_H */
+-- 
+2.9.0
