@@ -1,75 +1,374 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] clk: fix false positive EPROBE_DEFER of __of_clk_get_hw_from_provider()
-Date: Tue, 19 Jul 2016 18:21:37 +0900
-Message-Id: <1468920098-8553-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <andy.yan@rock-chips.com>
+Subject: Re: [RESEND PATCH v5 1/5] mfd: RK808: Add RK818 support
+To: Wadim Egorov <w.egorov@phytec.de>, Lee Jones <lee.jones@linaro.org>
+References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
+ <20160608141735.GE14888@dell> <5759277D.7090101@phytec.de>
+ <577C77DF.9060706@rock-chips.com> <577CBB62.8080806@phytec.de>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, a.zummo@towertech.it,
+ pawel.moll@arm.com, rtc-linux@googlegroups.com,
+ ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+ linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+ alexandre.belloni@free-electrons.com, broonie@kernel.org,
+ dianders@chromium.org, galak@codeaurora.org, zyw@rock-chips.com,
+ linux-clk@vger.kernel.org
+From: Andy Yan <andy.yan@rock-chips.com>
+Message-ID: <577CC7D0.2040402@rock-chips.com>
+Date: Wed, 6 Jul 2016 16:56:48 +0800
+MIME-Version: 1.0
+In-Reply-To: <577CBB62.8080806@phytec.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, this function iterates over the whole list of OF clock
-providers.  If the given node is found and __of_clk_get_hw_provider()
-fails, it continues to search for the next node.  In the end, it will
-reach the end of the list and return -EPROBE_DEFER.  This is odd.
-An OF clock provider is already registered for the given node, so it
-is not deferred probe at all.
+Hi Wadim:
 
-Actually, I was hit by this case when a clock is queried with a too
-large index against an already registered OF clock provider.  In this
-case, of_clk_src_onecell_get() returns -EINVAL (this is correct), but
-clk_get() returns -EPROBE_DEFER, so the driver is visited later,
-where it never succeeds in getting the clock.
+On 2016年07月06日 16:03, Wadim Egorov wrote:
+> Hi Andy,
+>
+> On 06.07.2016 05:15, Andy Yan wrote:
+>> Hi Wadim:
+>>
+>> On 2016年06月09日 16:23, Wadim Egorov wrote:
+>>> Hi,
+>>>
+>>> On 08.06.2016 16:17, Lee Jones wrote:
+>>>> On Thu, 02 Jun 2016, Wadim Egorov wrote:
+>>>>
+>>>>> The RK818 chip is a power management IC for multimedia and handheld
+>>>> "Power Management IC (PMIC)"
+>>>>
+>>>>> devices. It contains the following components:
+>>>>>
+>>>>> - Regulators
+>>>>> - RTC
+>>>>> - Clkout
+>>>> Clocking
+>>>>
+>>>>> - battery support
+>>>> Battery support
+>>>>
+>>>>> Both chips RK808 and RK818 are using a similar register map.
+>>>> "Both RK808 ad RK818 chips"
+>>>>
+>>>>> So we can reuse the RTC and Clkout functionality.
+>>>> Swap '.' for ','.
+>>>>
+>>>>> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+>>>>> ---
+>>>>>    drivers/mfd/Kconfig       |   4 +-
+>>>>>    drivers/mfd/rk808.c       | 231
+>>>>> ++++++++++++++++++++++++++++++++++++++--------
+>>>>>    include/linux/mfd/rk808.h | 162 ++++++++++++++++++++++++++++++--
+>>>>>    3 files changed, 350 insertions(+), 47 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>>>>> index 1bcf601..7ba464b 100644
+>>>>> --- a/drivers/mfd/Kconfig
+>>>>> +++ b/drivers/mfd/Kconfig
+>>>>> @@ -839,13 +839,13 @@ config MFD_RC5T583
+>>>>>          different functionality of the device.
+>>>>>      config MFD_RK808
+>>>>> -    tristate "Rockchip RK808 Power Management chip"
+>>>>> +    tristate "Rockchip RK808/RK818 Power Management chip"
+>>>> "Chip"
+>>>>
+>>>>>        depends on I2C && OF
+>>>>>        select MFD_CORE
+>>>>>        select REGMAP_I2C
+>>>>>        select REGMAP_IRQ
+>>>>>        help
+>>>>> -      If you say yes here you get support for the RK808
+>>>>> +      If you say yes here you get support for the RK808 and RK818
+>>>>>          Power Management chips.
+>>>>>          This driver provides common support for accessing the device
+>>>>>          through I2C interface. The device supports multiple
+>>>>> sub-devices
+>>>>> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+>>>>> index 49d7f62..3cf9724 100644
+>>>>> --- a/drivers/mfd/rk808.c
+>>>>> +++ b/drivers/mfd/rk808.c
+>>>>> @@ -1,11 +1,15 @@
+>>>>>    /*
+>>>>> - * MFD core driver for Rockchip RK808
+>>>>> + * MFD core driver for Rockchip RK808/RK818
+>>>>>     *
+>>>>>     * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
+>>>>>     *
+>>>>>     * Author: Chris Zhong <zyw@rock-chips.com>
+>>>>>     * Author: Zhang Qing <zhangqing@rock-chips.com>
+>>>>>     *
+>>>>> + * Copyright (C) 2016 PHYTEC Messtechnik GmbH
+>>>>> + *
+>>>>> + * Author: Wadim Egorov <w.egorov@phytec.de>
+>>>>> + *
+>>>>>     * This program is free software; you can redistribute it and/or
+>>>>> modify it
+>>>>>     * under the terms and conditions of the GNU General Public License,
+>>>>>     * version 2, as published by the Free Software Foundation.
+>>>>> @@ -22,12 +26,7 @@
+>>>>>    #include <linux/mfd/core.h>
+>>>>>    #include <linux/module.h>
+>>>>>    #include <linux/regmap.h>
+>>>>> -
+>>>>> -struct rk808_reg_data {
+>>>>> -    int addr;
+>>>>> -    int mask;
+>>>>> -    int value;
+>>>>> -};
+>>>> Why are you moving this to the header?
+>>> It is now part of the rk808 struct.
+>>>
+>>>>> +#include <linux/of_device.h>
+>>>>>      static bool rk808_is_volatile_reg(struct device *dev, unsigned
+>>>>> int reg)
+>>>>>    {
+>>>>> @@ -57,6 +56,14 @@ static bool rk808_is_volatile_reg(struct device
+>>>>> *dev, unsigned int reg)
+>>>>>        return false;
+>>>>>    }
+>>>>>    +static const struct regmap_config rk818_regmap_config = {
+>>>>> +    .reg_bits = 8,
+>>>>> +    .val_bits = 8,
+>>>>> +    .max_register = RK818_USB_CTRL_REG,
+>>>>> +    .cache_type = REGCACHE_RBTREE,
+>>>>> +    .volatile_reg = rk808_is_volatile_reg,
+>>>>> +};
+>>>>> +
+>>>>>    static const struct regmap_config rk808_regmap_config = {
+>>>>>        .reg_bits = 8,
+>>>>>        .val_bits = 8,
+>>>>> @@ -83,7 +90,17 @@ static const struct mfd_cell rk808s[] = {
+>>>>>        },
+>>>>>    };
+>>>>>    -static const struct rk808_reg_data pre_init_reg[] = {
+>>>>> +static const struct mfd_cell rk818s[] = {
+>>>>> +    { .name = "rk808-clkout", },
+>>>> How does this differ to a normal -clock driver?
+>>> I don't know. It is a normal clock driver.
+>>>
+>>>>> +    { .name = "rk808-regulator", },
+>>>>> +    {
+>>>>> +        .name = "rk808-rtc",
+>>>>> +        .num_resources = ARRAY_SIZE(rtc_resources),
+>>>>> +        .resources = &rtc_resources[0],
+>>>> .resources = rtc_resources,  ?
+>>>>
+>>>>> +    },
+>>>>> +};
+>>>>> +
+>>>>> +static const struct rk8xx_reg_data rk808_pre_init_reg[] = {
+>>>>>        { RK808_BUCK3_CONFIG_REG, BUCK_ILMIN_MASK,  BUCK_ILMIN_150MA },
+>>>>>        { RK808_BUCK4_CONFIG_REG, BUCK_ILMIN_MASK,  BUCK_ILMIN_200MA },
+>>>>>        { RK808_BOOST_CONFIG_REG, BOOST_ILMIN_MASK, BOOST_ILMIN_100MA },
+>>>>> @@ -94,6 +111,22 @@ static const struct rk808_reg_data
+>>>>> pre_init_reg[] = {
+>>>>>                                VB_LO_SEL_3500MV },
+>>>>>    };
+>>>>>    +static const struct rk8xx_reg_data rk818_pre_init_reg[] = {
+>>>>> +    { RK818_USB_CTRL_REG,    RK818_USB_ILIM_SEL_MASK,
+>>>>> +                        RK818_USB_ILMIN_2000MA },
+>>>>> +    /* close charger when usb lower then 3.4V */
+>>>>> +    { RK818_USB_CTRL_REG,    RK818_USB_CHG_SD_VSEL_MASK, (0x7 <<
+>>>>> 4) },
+>>>>> +    /* no action when vref */
+>>>>> +    { RK818_H5V_EN_REG,    BIT(1),        RK818_REF_RDY_CTRL },
+>>>>> +    /* enable HDMI 5V */
+>>>>> +    { RK818_H5V_EN_REG,    BIT(0),        RK818_H5V_EN },
+>>>>> +    /* improve efficiency */
+>>>>> +    { RK818_BUCK2_CONFIG_REG, BUCK2_RATE_MASK,    BUCK_ILMIN_250MA },
+>>>>> +    { RK818_BUCK4_CONFIG_REG, BUCK_ILMIN_MASK,    BUCK_ILMIN_250MA },
+>>>>> +    { RK818_BOOST_CONFIG_REG, BOOST_ILMIN_MASK,
+>>>>> BOOST_ILMIN_100MA },
+>>>>> +    { RK808_VB_MON_REG,    MASK_ALL,    VB_LO_ACT |
+>>>>> VB_LO_SEL_3500MV },
+>>>>> +};
+>>>> The alignment here looks odd.
+>>> I will fix it in the next version.
+>>>
+>>>>>    static const struct regmap_irq rk808_irqs[] = {
+>>>>>        /* INT_STS */
+>>>>>        [RK808_IRQ_VOUT_LO] = {
+>>>>> @@ -136,6 +169,76 @@ static const struct regmap_irq rk808_irqs[] = {
+>>>>>        },
+>>>>>    };
+>>>>>    +static const struct regmap_irq rk818_irqs[] = {
+>>>>> +    /* INT_STS */
+>>>>> +    [RK818_IRQ_VOUT_LO] = {
+>>>>> +        .mask = RK818_IRQ_VOUT_LO_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_VB_LO] = {
+>>>>> +        .mask = RK818_IRQ_VB_LO_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_PWRON] = {
+>>>>> +        .mask = RK818_IRQ_PWRON_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_PWRON_LP] = {
+>>>>> +        .mask = RK818_IRQ_PWRON_LP_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_HOTDIE] = {
+>>>>> +        .mask = RK818_IRQ_HOTDIE_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_RTC_ALARM] = {
+>>>>> +        .mask = RK818_IRQ_RTC_ALARM_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_RTC_PERIOD] = {
+>>>>> +        .mask = RK818_IRQ_RTC_PERIOD_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_USB_OV] = {
+>>>>> +        .mask = RK818_IRQ_USB_OV_MSK,
+>>>>> +        .reg_offset = 0,
+>>>>> +    },
+>>>>> +
+>>>>> +    /* INT_STS2 */
+>>>>> +    [RK818_IRQ_PLUG_IN] = {
+>>>>> +        .mask = RK818_IRQ_PLUG_IN_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_PLUG_OUT] = {
+>>>>> +        .mask = RK818_IRQ_PLUG_OUT_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_CHG_OK] = {
+>>>>> +        .mask = RK818_IRQ_CHG_OK_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_CHG_TE] = {
+>>>>> +        .mask = RK818_IRQ_CHG_TE_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_CHG_TS1] = {
+>>>>> +        .mask = RK818_IRQ_CHG_TS1_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_TS2] = {
+>>>>> +        .mask = RK818_IRQ_TS2_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_CHG_CVTLIM] = {
+>>>>> +        .mask = RK818_IRQ_CHG_CVTLIM_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +    [RK818_IRQ_DISCHG_ILIM] = {
+>>>>> +        .mask = RK818_IRQ_DISCHG_ILIM_MSK,
+>>>>> +        .reg_offset = 1,
+>>>>> +    },
+>>>>> +};
+>>>>> +
+>>>>>    static struct regmap_irq_chip rk808_irq_chip = {
+>>>>>        .name = "rk808",
+>>>>>        .irqs = rk808_irqs,
+>>>>> @@ -148,6 +251,18 @@ static struct regmap_irq_chip rk808_irq_chip = {
+>>>>>        .init_ack_masked = true,
+>>>>>    };
+>>>>>    +static struct regmap_irq_chip rk818_irq_chip = {
+>>>>> +    .name = "rk818",
+>>>>> +    .irqs = rk818_irqs,
+>>>>> +    .num_irqs = ARRAY_SIZE(rk818_irqs),
+>>>>> +    .num_regs = 2,
+>>>>> +    .irq_reg_stride = 2,
+>>>>> +    .status_base = RK818_INT_STS_REG1,
+>>>>> +    .mask_base = RK818_INT_STS_MSK_REG1,
+>>>>> +    .ack_base = RK818_INT_STS_REG1,
+>>>>> +    .init_ack_masked = true,
+>>>>> +};
+>>>>> +
+>>>>>    static struct i2c_client *rk808_i2c_client;
+>>>>>    static void rk808_device_shutdown(void)
+>>>>>    {
+>>>>> @@ -167,6 +282,48 @@ static void rk808_device_shutdown(void)
+>>>>>            dev_err(&rk808_i2c_client->dev, "power off error!\n");
+>>>>>    }
+>>>>>    +static const struct of_device_id rk808_of_match[] = {
+>>>>> +    { .compatible = "rockchip,rk808", .data = (void *) RK808_ID },
+>>>>> +    { .compatible = "rockchip,rk818", .data = (void *) RK818_ID },
+>>>>> +    { },
+>>>>> +};
+>>>>> +MODULE_DEVICE_TABLE(of, rk808_of_match);
+>>>>> +
+>>>>> +static int rk8xx_match_device(struct rk808 *rk808, struct device
+>>>>> *dev)
+>>>> If you're going to do it this way, please switch these parameters.
+>>>>
+>>>> It's more common to return the pointer however.
+>>> If it's more common I will return a pointer to rk808.
+>>>
+>>>>> +{
+>>>>> +    const struct of_device_id *of_id;
+>>>>> +
+>>>>> +    of_id = of_match_device(rk808_of_match, dev);
+>>>>> +    if (!of_id) {
+>>>>> +        dev_err(dev, "Unable to match OF ID\n");
+>>>>> +        return -ENODEV;
+>>>>> +    }
+>>>>> +    rk808->variant = (long) of_id->data;
+>>>>> +
+>>>>> +    switch (rk808->variant) {
+>>>>> +    case RK808_ID:
+>>>>> +        rk808->nr_cells = ARRAY_SIZE(rk808s);
+>>>>> +        rk808->cells = rk808s;
+>>>>> +        rk808->regmap_cfg = &rk808_regmap_config;
+>>>>> +        rk808->regmap_irq_chip = &rk808_irq_chip;
+>>>>> +        rk808->pre_init_reg = rk808_pre_init_reg;
+>>>>> +        rk808->nr_pre_init_regs = ARRAY_SIZE(rk808_pre_init_reg);
+>>>>> +        break;
+>>>>> +    case RK818_ID:
+>>>>> +        rk808->nr_cells = ARRAY_SIZE(rk818s);
+>>>>> +        rk808->cells = rk818s;
+>>>>> +        rk808->regmap_cfg = &rk818_regmap_config;
+>>>>> +        rk808->regmap_irq_chip = &rk818_irq_chip;
+>>>>> +        rk808->pre_init_reg = rk818_pre_init_reg;
+>>>>> +        rk808->nr_pre_init_regs = ARRAY_SIZE(rk818_pre_init_reg);
+>>>>> +        break;
+>>>>> +    default:
+>>>>> +        dev_err(dev, "unsupported RK8XX ID %lu\n", rk808->variant);
+>>>>> +        return -EINVAL;
+>>>>> +    }
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>>    static int rk808_probe(struct i2c_client *client,
+>>>>>                   const struct i2c_device_id *id)
+>>>>>    {
+>>>>> @@ -176,46 +333,52 @@ static int rk808_probe(struct i2c_client
+>>>>> *client,
+>>>>>        int ret;
+>>>>>        int i;
+>>>>>    -    if (!client->irq) {
+>>>>> -        dev_err(&client->dev, "No interrupt support, no core IRQ\n");
+>>>>> -        return -EINVAL;
+>>>>> -    }
+>>>>> -
+>>>>>        rk808 = devm_kzalloc(&client->dev, sizeof(*rk808), GFP_KERNEL);
+>>>>>        if (!rk808)
+>>>>>            return -ENOMEM;
+>>>>>    -    rk808->regmap = devm_regmap_init_i2c(client,
+>>>>> &rk808_regmap_config);
+>>>>> +    ret = rk8xx_match_device(rk808, &client->dev);
+>>>> Is there a way to dynamically probe the device?  No device ID you can
+>>>> read directly from the silicon?
+>>> AFAIK there is no device ID register. At least it is not documented in
+>>> the manual.
+>> register 0x17 and 0x18 is the ID register, 0x17 is the MSB, 0x18 is LSB
+>>
+>> for RK818, register 0x17 is 0x81, 0x18 is 0x81
+> thank you for sharing this information. I have no RK808 PMIC device
+> here, so I would also need the IDs for RK808.
 
-Another good thing is this function is much more readable now.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/clk/clk.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 60daf60..2207098 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3156,25 +3156,19 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- {
- 	struct of_clk_provider *provider;
- 	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
--	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
-+	struct clk_hw *hw;
- 
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
- 
--	/* Check if we have such a provider in our array */
- 	mutex_lock(&of_clk_mutex);
--	list_for_each_entry(provider, &of_clk_providers, link) {
--		if (provider->node == clkspec->np)
--			hw = __of_clk_get_hw_from_provider(provider, clkspec);
--		if (!IS_ERR(hw)) {
--			clk = __clk_create_clk(hw, dev_id, con_id);
--
--			if (!IS_ERR(clk) && !__clk_get(clk)) {
--				__clk_free_clk(clk);
--				clk = ERR_PTR(-ENOENT);
--			}
--
--			break;
-+	provider = __of_clk_find_provider(clkspec->np);
-+	if (provider) {
-+		hw = __of_clk_get_hw_from_provider(provider, clkspec);
-+		clk = __clk_create_clk(hw, dev_id, con_id);
-+		if (!IS_ERR(clk) && !__clk_get(clk)) {
-+			__clk_free_clk(clk);
-+			clk = ERR_PTR(-ENOENT);
- 		}
- 	}
- 	mutex_unlock(&of_clk_mutex);
--- 
-1.9.1
+    I have checked with the RK808 IC designer, the values of register 
+0x17 and 0x18 are both 0x00.
+>
+> Lee, you have already applied this series. But I can't find the patches
+> in your kernel tree.
+> I would like to read the device ID from the register in the probe function.
+> Do you want me to base my changes on top of this series or send a new
+> version?
+>
+>
+>
