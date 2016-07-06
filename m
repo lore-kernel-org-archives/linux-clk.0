@@ -1,45 +1,81 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH 0/7] Add Amlogic meson8b clock gates
-Date: Tue,  5 Jul 2016 19:56:24 +0200
-Message-Id: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+Return-Path: <mark.rutland@arm.com>
+Date: Wed, 6 Jul 2016 14:48:58 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Julien Grall <julien.grall@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+Message-ID: <20160706134858.GA475@leverpostej>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
+ <146776885213.35356.11565744417822933094@resonance>
+ <577D035C.7090504@arm.com>
+ <alpine.DEB.2.10.1607061412370.26575@sstabellini-ThinkPad-X260>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.10.1607061412370.26575@sstabellini-ThinkPad-X260>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
-U-Boot disables most of them at boot. In order to enable ethernet, USB and other
-components it's mandatory to enable the clock gates when loading the corresponding
-drivers.
+On Wed, Jul 06, 2016 at 02:16:18PM +0100, Stefano Stabellini wrote:
+> On Wed, 6 Jul 2016, Julien Grall wrote:
+> > On 06/07/16 02:34, Michael Turquette wrote:
+> > > Hi!
+> > 
+> > Hello Michael,
+> > 
+> > > Quoting Dirk Behme (2016-06-30 03:32:32)
+> > > > Some clocks might be used by the Xen hypervisor and not by the Linux
+> > > > kernel. If these are not registered by the Linux kernel, they might be
+> > > > disabled by clk_disable_unused() as the kernel doesn't know that they
+> > > > are used. The clock of the serial console handled by Xen is one
+> > > > example for this. It might be disabled by clk_disable_unused() which
+> > > > stops the whole serial output, even from Xen, then.
+> > > 
+> > > This whole thread had me confused until I realized that it all boiled
+> > > down to some nomenclature issues (for me).
+> > > 
+> > > This code does not _register_ any clocks. It simply gets them and
+> > > enables them, which is what every other clk consumer in the Linux kernel
+> > > does. More details below.
+> > > 
+> > > > 
+> > > > Up to now, the workaround for this has been to use the Linux kernel
+> > > > command line parameter 'clk_ignore_unused'. See Xen bug
+> > > > 
+> > > > http://bugs.xenproject.org/xen/bug/45
+> > > 
+> > > clk_ignore_unused is a band-aid, not a proper medical solution. Setting
+> > > that flag will not turn clocks on for you, nor will it guarantee that
+> > > those clocks are never turned off in the future. It looks like you
+> > > figured this out correctly in the patch below but it is worth repeating.
+> > > 
+> > > Also the new CLK_IS_CRITICAL flag might be of interest to you, but that
+> > > flag only exists as a way to enable clocks that must be enabled for the
+> > > system to function (hence, "critical") AND when those same clocks do not
+> > > have an accompanying Linux driver to consume them and enable them.
+> > 
+> > I don't think we want the kernel to enable the clock for the hypervisor. We
+> > want to tell the kernel "don't touch at all to this clock, it does not belong
+> > to you".
+> 
+> Right, and that's why I was suggesting that another way to do this would
+> be to set the "status" to "disabled" in Xen: so that Linux would leave
+> the clock alone. But in that case Linux would not be happy to see
+> disabled clocks which are actually supposed to be used by some devices.
 
-The meson8b clock gate support is based on the previous work done for Amlogic gxbb
-currently available in clk-next.
+If you were to do that, that would cover the entire clock-controller,
+not necessarily for the individual clock line (as this does not
+necessarily have a node of its own). So you'd prevent the use of other
+clocks owned by that controller.
 
-Alexander Müller (7):
-  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
-  meson: clk: Move register definitions to meson8b.h
-  meson: clk: Rename register names according to Amlogic datasheet
-  meson: clk: Add CLKIDs for DT binding
-  gxbb: clk: Move MESON_GATE macro to gxbb
-  meson: clk: Add support for clock gates
-  arm: amlogic: select meson8b clk driver
+That's also not sufficient, as you'd have to do the same for resources
+required to keep that clock active (parent clocks from different
+controllers, regulators, GPIOs, etc).
 
- arch/arm/mach-meson/Kconfig              |   2 +
- drivers/clk/meson/Makefile               |   2 +-
- drivers/clk/meson/clkc.h                 |  14 -
- drivers/clk/meson/gxbb.c                 | 176 ++++----
- drivers/clk/meson/meson8b-clkc.c         | 458 --------------------
- drivers/clk/meson/meson8b.c              | 706 +++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h              |  44 ++
- include/dt-bindings/clock/meson8b-clkc.h |  79 +++-
- 8 files changed, 926 insertions(+), 555 deletions(-)
- delete mode 100644 drivers/clk/meson/meson8b-clkc.c
- create mode 100644 drivers/clk/meson/meson8b.c
- create mode 100644 drivers/clk/meson/meson8b.h
+I don't think that will work other than in very basic cases.
 
--- 
-2.5.0
+Thanks,
+Mark.
