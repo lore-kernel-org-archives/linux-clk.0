@@ -1,76 +1,141 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-In-Reply-To: <1468204581-16873-1-git-send-email-andi.shyti@samsung.com>
-Message-Id: <E1bNjZK-0001oy-Pz@debutante>
-Date: Thu, 14 Jul 2016 17:32:58 +0100
-Subject: Applied "spi: s3c64xx: document the clocks and the clock-name property" to the spi tree
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.137]:32922 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751076AbcGFBlS (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2016 21:41:18 -0400
+Message-ID: <577C6152.4010702@rock-chips.com>
+Date: Wed, 06 Jul 2016 09:39:30 +0800
+From: Elaine Zhang <zhangqing@rock-chips.com>
+MIME-Version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>
+CC: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com, tomeu.vizoso@collabora.com,
+	dianders@chromium.org
+Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
+ parent changes
+References: <1462206982-10444-1-git-send-email-heiko@sntech.de> <1462206982-10444-3-git-send-email-heiko@sntech.de> <577B6162.3020609@rock-chips.com> <1601887.i7XxTCUQZu@phil>
+In-Reply-To: <1601887.i7XxTCUQZu@phil>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
 
-   spi: s3c64xx: document the clocks and the clock-name property
 
-has been applied to the spi tree at
+On 07/06/2016 06:24 AM, Heiko Stuebner wrote:
+> Hi Elaine,
+>
+> Am Dienstag, 5. Juli 2016, 15:27:30 schrieb Elaine Zhang:
+>> On 05/03/2016 12:36 AM, Heiko Stuebner wrote:
+>>> Given a hirarchy of clk1 -> [div] -> clk2, when the rate of clk1 gets
+>>> changed, clk2 changes as well as the divider stays the same. There may
+>>> be cases where a user of clk2 needs it at a specific rate, so clk2
+>>> needs to be readjusted for the changed rate of clk1.
+>>>
+>>> So if a rate was requested for the clock, and its rate changed during
+>>> the underlying rate-change, with this change the clock framework now
+>>> tries to readjust the rate back to/near the requested one.
+>>>
+>>> The whole process is protected by a new clock-flag to not force this
+>>> behaviour change onto every clock defined in the ccf.
+>>>
+>>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>>> ---
+>>>
+>>>    drivers/clk/clk.c            | 13 +++++++++++--
+>>>    include/linux/clk-provider.h |  1 +
+>>>    2 files changed, 12 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>> index 65e0aad..22be369 100644
+>>> --- a/drivers/clk/clk.c
+>>> +++ b/drivers/clk/clk.c
+>>> @@ -1410,6 +1410,9 @@ static struct clk_core
+>>> *clk_propagate_rate_change(struct clk_core *core,>
+>>>    	return fail_clk;
+>>>
+>>>    }
+>>>
+>>> +static int clk_core_set_rate_nolock(struct clk_core *core,
+>>> +				    unsigned long req_rate);
+>>> +
+>>>
+>>>    /*
+>>>
+>>>     * walk down a subtree and set the new rates notifying the rate
+>>>     * change on the way
+>>>
+>>> @@ -1494,6 +1497,12 @@ static void clk_change_rate(struct clk_core
+>>> *core)
+>>>
+>>>    	/* handle the new child who might not be in core->children yet */
+>>>    	if (core->new_child)
+>>>    	
+>>>    		clk_change_rate(core->new_child);
+>>>
+>>> +
+>>> +	/* handle a changed clock that needs to readjust its rate */
+>>> +	if (core->flags & CLK_KEEP_REQ_RATE && core->req_rate
+>>> +					    && core->new_rate != old_rate
+>>> +					    && core->new_rate != core-
+>> req_rate)
+>>> +		clk_core_set_rate_nolock(core, core->req_rate);
+>>>
+>>>    }
+>>
+>> I tests found a problem, about set the freq order.
+>> e.p:
+>> [VPLL]
+>>
+>>       ------ [div] ----- dclk_vop
+>> If I change VPLL freq 148.5M to 594M, dclk_vop freq will changed as:
+>> 148.5M->24M->594M->1485.5M.
+>> But we not hope the dclk_vop have a high freq,it will make the system
+>> crash or make vop not work well.
+>>
+>> So if the VPLL is improve the freq, we need to set dclk_vop div first,
+>> and than set VPLL freq.
+>> If VPLL is reduce the freq, we need to set vpll first,and set dclk_vop
+>> div.
+>>
+>> This is just a example,for all change parent freq, we need follow this
+>> operation.
+>> Do you have a better idea for this problem?
+>
+> In general it seems my simplicistic approach only really works for really
+> simple clock-setups and thus is likely not really usable for general things.
+>
+> For the VPLL on the rk3399 we were discussion a different approach in [0],
+> as VPLL usage (aka which vop gets to control it) is likely to complicated to
+> have this done in the clock-framework-
+>
+> Doug wanted to take a look and add some thoughts and I guess he'll just do
+> that after the 4th of july celebrations.
+>
+OK, Regardless of the VPLL and vop.
+The current software of clock, there are some problems.
+e.p:
+[GPLL]
+        ------ [div] ----- aclk_perilp
+If I set GPLL 1200M use "assigned-clock-rate".My be the default div of 
+aclk_perilp is 2, GPLL default freq is 600M.
+If I set GPLL first,the aclk_perilp freq will changed as 
+300M->600M->300M.But aclk_perilp 600M is a unsafety.It will make the 
+system crash.
+Aclk_perilp is sizeoff at 300M.It not allowed over frequency.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+So if I init the PLL freq use "assigned-clock-rate", I need to list it's 
+child clk, make sure it's child clk div is enough,make sure the child 
+clk freq is below the  sizeoff freq.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Do you have a better idea for this problem?
+>
+> Heiko
+>
+>
+> [0] http://lists.infradead.org/pipermail/linux-rockchip/2016-June/010400.html
+>
+>
+>
+>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 1ada32ede94fc91ff0f3236fcc70ae74dd0c2cb0 Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Tue, 12 Jul 2016 19:02:11 +0900
-Subject: [PATCH] spi: s3c64xx: document the clocks and the clock-name property
-
-These two properties were not documented but used in the spi
-dts. Add the related documentation.
-
-Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index ab4f0a46e859..49028a4f5df1 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -24,6 +24,15 @@ Required SoC Specific Properties:
- - dma-names: Names for the dma channels. There must be at least one channel
-   named "tx" for transmit and named "rx" for receive.
- 
-+- clocks: specifies the clock IDs provided to the SPI controller; they are
-+  required for interacting with the controller itself, for synchronizing the bus
-+  and as I/O clock (the latter is required by exynos5433 and exynos7).
-+
-+- clock-names: string names of the clocks in the 'clocks' property; for all the
-+  the devices the names must be "spi", "spi_busclkN" (where N is determined by
-+  "samsung,spi-src-clk"), while Exynos5433 should specify a third clock
-+  "spi_ioclk" for the I/O clock.
-+
- Required Board Specific Properties:
- 
- - #address-cells: should be 1.
--- 
-2.8.1
