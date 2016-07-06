@@ -1,99 +1,80 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 5 Jul 2016 08:13:39 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/10] clk: sunxi: make clk-* explicitly non-modular
-Message-ID: <20160705061339.GB7643@lukather>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-9-paul.gortmaker@windriver.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
-In-Reply-To: <20160704211220.5685-9-paul.gortmaker@windriver.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>,
+ =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
+ <1467741391-60534-7-git-send-email-serveralex@gmail.com>
+ <b42e2bb3-2cd0-3115-9be4-16e3a48b46fd@codethink.co.uk>
+ <146776626852.35356.9847034661606022714@resonance>
+ <07f37b8b-cfd2-ebc6-a693-4372d6c34293@codethink.co.uk>
+In-Reply-To: <07f37b8b-cfd2-ebc6-a693-4372d6c34293@codethink.co.uk>
+Message-ID: <146779266886.35356.2727828069246665428@resonance>
+Subject: Re: [PATCH 6/7] meson: clk: Add support for clock gates
+Date: Wed, 06 Jul 2016 01:11:09 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Ben Dooks (2016-07-06 00:35:28)
+> On 06/07/16 01:51, Michael Turquette wrote:
+> > Hi Ben,
+> > =
 
---FkmkrVfFsRoUs1wW
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > Quoting Ben Dooks (2016-07-05 11:01:14)
+> >> On 05/07/16 18:56, Alexander M=C3=BCller wrote:
+> >>> This patch adds support for the meson8b clock gates. Most of
+> >>> them are disabled by Amlogic U-Boot, but need to be enabled
+> >>> for ethernet, USB and many other components.
+> >>>
+> >>> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+> >>> ---
+> >>
+> >> This seems to be a lot of structures for clocks that may
+> >> never be use. I think it would be better to provide a custom
+> >> lookup function that creates these as needed and use the ID
+> >> in the dt as a offset+bit id.
+> > =
 
-On Mon, Jul 04, 2016 at 05:12:18PM -0400, Paul Gortmaker wrote:
-> We have the following file --> Kconfig mapping:
->=20
-> sunxi/clk-factors.c              obj-y
-> sunxi/clk-sun6i-apb0-gates.c     CONFIG_MFD_SUN6I_PRCM (bool)
-> sunxi/clk-sun6i-apb0.c           CONFIG_MFD_SUN6I_PRCM
-> sunxi/clk-sun6i-ar100.c          CONFIG_MFD_SUN6I_PRCM
-> sunxi/clk-sun8i-apb0.c           CONFIG_MFD_SUN6I_PRCM
-> sunxi/clk-sun9i-mmc.c            obj-y
->=20
-> Hence none of these are being built as a module by anyone.
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the drivers there is no doubt they are builtin-only.  All
-> drivers get mostly the same changes, so they are handled in batch.
->=20
-> Changes are (1) convert to builtin_platform_register, (2) use the
-> init.h header, (3) delete the MODULE_LICENCE/MODULE_AUTHOR and
-> associated tags, and (4) delete any ".remove" functions.
->=20
-> There was a stray module.h in a file not using any init.h or
-> module.h stuff, so we simply removed that one.
->=20
-> In two cases, we explicitly disallow a driver unbind, since that
-> doesn't have a sensible use case anyway, and it allows us to drop
-> the ".remove" code for non-modular drivers.
->=20
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> We delete the MODULE_LICENSE etc. tags since all that information
-> is already contained at the top of each file in the comments.
->=20
-> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > We want the real clocks registered so that we can disable spuriously
+> > enabled at late_initcall time with clk_disable_unused.
+> > =
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > Furthermore, I'd like to not represent all of these gates in the DT
+> > binding description (see my response to the earlier patches in this
+> > series), since it becomes ABI (and a maintenance nightmare).
+> =
 
-Thanks!
-Maxime
+> Erm, so writing /more/ code and having them defined in /two/ places
+> is a nightmare? Sounds more of a nightmare of having the ID in the DT
+> represent the register/bit offset and then having them created at
+> lookup time.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+I apologize, but I really don't understand what side of the argument
+that you are pushing for based on the above text. Something is a
+nightmare, but I'm not sure which design pattern you are attributing
+nightmare status too.
 
---FkmkrVfFsRoUs1wW
-Content-Type: application/pgp-signature; name="signature.asc"
+Anyways, clock string name is required always, so even if you encode
+register and bitfield in DT cleverly, you've still got data in C,
+assuming your point was to remove stuff from C. That might change some
+day, but not today. Memory footprint should remain the same with either
+implementation.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+If you have an alternative implementation, patches are always welcome.
 
-iQIcBAEBAgAGBQJXe1ATAAoJEBx+YmzsjxAgNO4P+gJHrc4HngSfIN9yusPi+EEn
-bRdp78Uj08H1yk/FTf4Yvo+Sy3D3VnVqzrJEe+CaFEb+17tKOt0O6G9Zk88ZdoyC
-53Cq7Nxc/EfsaOZLPiRtmdvzWFBc49acmz63sl1fDZbK6w98iDOg6rwCu9e2+6ez
-o5YF+U1xIlehXiGooYdTzcLfVyR1Zr21M6GmWZ8ZXd77kWhT270QMflDvKocowkk
-2GvpASHicIDIzxWuoKHSlPmxegrRWDaY0c1W5Qw4HFyI5Ak6wpmqLA0GcbIy08OO
-m5+OvR+Qmu57aYP2wxwhcr+eB3n+A5XeMfF1jWimbx0pJwBY0I29/WhtcNQ5I6Aa
-7F5c1OcfFyWSALdkwhYWqVc8oJ2u4GyNkrH9jTRYhy0z8FiSosDDoVD0YWVTOpbK
-BKr5eimjczMJmUa+m54JThWSY0RZAQ6OBiBRJGsmDaqq0zxSm6WzkGvCTD+aUTS9
-WopzANLB6ZOPGHwbzd1xYeUqIazJu3eTe41GG+AforlNUa1SWwsSICFDwv1/lcMZ
-R/LFT+GWkR/qXPdYEm/odyx6WrOOEQkaTvXpUo/UqO6d1sCprvFKFZ32hELDhdzl
-qxEweE8075/XP0LYuaCWkOIo5zQgb7/0bqEayqrFhREFm3TCEH271brMtEpK5KJ/
-9UWZowRjKr4odJzJzu99
-=mCln
------END PGP SIGNATURE-----
+Best regards,
+Mike
 
---FkmkrVfFsRoUs1wW--
+> =
+
+> =
+
+> =
+
+> =
+
+> -- =
+
+> Ben Dooks                               http://www.codethink.co.uk/
+> Senior Engineer                         Codethink - Providing Genius
