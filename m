@@ -1,38 +1,110 @@
 Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
 From: Michael Turquette <mturquette@baylibre.com>
-To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
- <1467741391-60534-5-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1467741391-60534-5-git-send-email-serveralex@gmail.com>
-Message-ID: <146776520074.35356.1068171268289036149@resonance>
-Subject: Re: [PATCH 4/7] meson: clk: Add CLKIDs for DT binding
-Date: Tue, 05 Jul 2016 17:33:20 -0700
+In-Reply-To: <20160704211220.5685-6-paul.gortmaker@windriver.com>
+Cc: "Paul Gortmaker" <paul.gortmaker@windriver.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Neil Armstrong" <narmstrong@baylibre.com>, linux-clk@vger.kernel.org
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-6-paul.gortmaker@windriver.com>
+Message-ID: <146784371082.73491.17366463716814926247@resonance>
+Subject: Re: [PATCH 05/10] clk: oxnas: make it explicitly non-modular
+Date: Wed, 06 Jul 2016 15:21:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexander,
+Quoting Paul Gortmaker (2016-07-04 14:12:15)
+> The Kconfig currently controlling compilation of this code is:
+> =
 
-Quoting Alexander M=C3=BCller (2016-07-05 10:56:28)
-> +#define CLKID_AO_AHB_BUS       91
-> +#define CLKID_AO_IFACE         92
->  =
+> drivers/clk/Kconfig:config COMMON_CLK_OXNAS
+> drivers/clk/Kconfig:    bool "Clock driver for the OXNAS SoC Family"
+> =
 
-> -#define CLK_NR_CLKS            (CLKID_MPEG_DIV + 1)
-> +#define CLK_NR_CLKS            (CLKID_AO_IFACE + 1)
+> ...meaning that it currently is not being built as a module by anyone.
+> =
 
-Did you take a look at how I did this for gxbb? I like to limit the
-number of clocks exposed in DT as much as possible. This is because a DT
-binding (of which this header is a part) constitutes an immutable ABI
-which shall only be relinquished when the Sun burns out and our solar
-system dies.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> =
 
-Also, putting NR_CLKS inside of the binding is kind of gross, since the
-binding doesn't care about that value, but the driver does. The GXBB clk
-driver has two headers: one internal to Linux with the bulk of the
-clks and NR_CLKS, and a second one in the shared DT header chroot that
-only exposes the bare minimum necessary.
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+> =
+
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+> =
+
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> =
+
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+Applied.
 
 Regards,
 Mike
+
+> ---
+>  drivers/clk/clk-oxnas.c | 15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+> index 79bcb2e42060..47649ac5d399 100644
+> --- a/drivers/clk/clk-oxnas.c
+> +++ b/drivers/clk/clk-oxnas.c
+> @@ -18,7 +18,7 @@
+>  =
+
+>  #include <linux/clk-provider.h>
+>  #include <linux/kernel.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/stringify.h>
+> @@ -170,26 +170,17 @@ static int oxnas_stdclk_probe(struct platform_devic=
+e *pdev)
+>                                    clk_oxnas->onecell_data);
+>  }
+>  =
+
+> -static int oxnas_stdclk_remove(struct platform_device *pdev)
+> -{
+> -       of_clk_del_provider(pdev->dev.of_node);
+> -
+> -       return 0;
+> -}
+> -
+>  static const struct of_device_id oxnas_stdclk_dt_ids[] =3D {
+>         { .compatible =3D "oxsemi,ox810se-stdclk" },
+>         { }
+>  };
+> -MODULE_DEVICE_TABLE(of, oxnas_stdclk_dt_ids);
+>  =
+
+>  static struct platform_driver oxnas_stdclk_driver =3D {
+>         .probe =3D oxnas_stdclk_probe,
+> -       .remove =3D oxnas_stdclk_remove,
+>         .driver =3D {
+>                 .name =3D "oxnas-stdclk",
+> +               .suppress_bind_attrs =3D true,
+>                 .of_match_table =3D oxnas_stdclk_dt_ids,
+>         },
+>  };
+> -
+> -module_platform_driver(oxnas_stdclk_driver);
+> +builtin_platform_driver(oxnas_stdclk_driver);
+> -- =
+
+> 2.8.4
+>=20
