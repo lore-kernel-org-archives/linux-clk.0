@@ -1,60 +1,203 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 9 Jul 2016 02:23:29 +0900
-Message-ID: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
-Subject: of_clk_add_(hw_)providers multipule times for one node?
-To: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
+ "Julien Grall" <julien.grall@arm.com>, "Mark Rutland" <mark.rutland@arm.com>,
+ devicetree@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
+Cc: xen-devel@lists.xenproject.org, "Stefano Stabellini" <sstabellini@kernel.org>,
+ linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Dirk Behme" <dirk.behme@de.bosch.com>
+References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
+Message-ID: <146776885213.35356.11565744417822933094@resonance>
+Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
+Date: Tue, 05 Jul 2016 18:34:12 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi.
+Hi!
 
-I think the current code allows to add
-clk_providers multiple times against one DT node.
+Quoting Dirk Behme (2016-06-30 03:32:32)
+> Some clocks might be used by the Xen hypervisor and not by the Linux
+> kernel. If these are not registered by the Linux kernel, they might be
+> disabled by clk_disable_unused() as the kernel doesn't know that they
+> are used. The clock of the serial console handled by Xen is one
+> example for this. It might be disabled by clk_disable_unused() which
+> stops the whole serial output, even from Xen, then.
 
-Are there cases that really need to do so?
+This whole thread had me confused until I realized that it all boiled
+down to some nomenclature issues (for me).
 
+This code does not _register_ any clocks. It simply gets them and
+enables them, which is what every other clk consumer in the Linux kernel
+does. More details below.
 
-I am thinking the behavior of __of_clk_get_from_provider() is strange.
+> =
 
+> Up to now, the workaround for this has been to use the Linux kernel
+> command line parameter 'clk_ignore_unused'. See Xen bug
+> =
 
-The result of __of_clk_get_from_provider() has three patterns:
+> http://bugs.xenproject.org/xen/bug/45
 
-[1] success
-[2] return -EPROBE_DEFER
-[3] return -EINVAL  (if clkspec == NULL)
+clk_ignore_unused is a band-aid, not a proper medical solution. Setting
+that flag will not turn clocks on for you, nor will it guarantee that
+those clocks are never turned off in the future. It looks like you
+figured this out correctly in the patch below but it is worth repeating.
 
+Also the new CLK_IS_CRITICAL flag might be of interest to you, but that
+flag only exists as a way to enable clocks that must be enabled for the
+system to function (hence, "critical") AND when those same clocks do not
+have an accompanying Linux driver to consume them and enable them.
 
-[3] is a rare case.
-So, almost all error cases are treated as -EPROBE_DEFER.
+> =
 
+> too.
+> =
 
+> To fix this, we will add the "unused" clocks in Xen to the hypervisor
+> node. The Linux kernel has to register the clocks from the hypervisor
+> node, then.
+> =
 
-A strange scenario
-------------------
+> Therefore, check if there is a "clocks" entry in the hypervisor node
+> and if so register the given clocks to the Linux kernel clock
+> framework and with this mark them as used. This prevents the clocks
+> from being disabled.
+> =
 
-If a too big clock index is passed in clkspec,
-of_clk_src_onecell_get() returns -EINVAL. This is reasonable.
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+> Changes in v2:
+>  - Rebase against git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.g=
+it for-linus-4.8
+>  - Add changes to Documentation/devicetree/bindings/arm/xen.txt
+> =
 
+>  Documentation/devicetree/bindings/arm/xen.txt | 11 +++++++
+>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++=
+++++++
+>  2 files changed, 58 insertions(+)
+> =
 
-But, __of_clk_get_from_provider() tries to search next nodes despite
-that it has already failed to get a clk.
+> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentatio=
+n/devicetree/bindings/arm/xen.txt
+> index c9b9321..55dfd3b 100644
+> --- a/Documentation/devicetree/bindings/arm/xen.txt
+> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> @@ -17,6 +17,17 @@ the following properties:
+>    A GIC node is also required.
+>    This property is unnecessary when booting Dom0 using ACPI.
+>  =
 
-Then, it reaches the end of list_for_each_entry() loop, and returns
--EPROBE_DEFER.  This is not deferred probe at all!  In this case,
-__of_clk_get_from_provider() should return -EINVAL.
+> +Optional properties:
+> +
+> +- clocks: one or more clocks to be registered.
 
+s/registered/consumed/
 
-If this is a bug, I am happy to volunteer to fix it.
+For appropriate DT binding script to steal I picked one at random:
 
+Documentation/devicetree/bindings/clock/ti/clockdomain.txt
 
-Thanks.
+> +  Xen hypervisor drivers might replace native drivers, resulting in
+> +  clocks not registered by these native drivers. To avoid that these
+> +  unregistered clocks are disabled, then, e.g. by clk_disable_unused(),
+> +  register them in the hypervisor node.
+> +  An example for this are the clocks of the serial driver. If the clocks
+> +  used by the serial hardware interface are not registered by the serial
+> +  driver the serial output might stop once clk_disable_unused() is calle=
+d.
+> +
+>  To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uef=
+i" node
+>  under /hypervisor with following parameters:
+>  =
 
+> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+> index 47acb36..5c546d0 100644
+> --- a/arch/arm/xen/enlighten.c
+> +++ b/arch/arm/xen/enlighten.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/of_fdt.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/of_address.h>
+> +#include <linux/clk-provider.h>
 
+s/clk-provider.h/clk.h/
 
--- 
-Best Regards
-Masahiro Yamada
+clk-provider.h is only used for providers and this bit of code is a
+consumer.
+
+>  #include <linux/cpuidle.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpu.h>
+> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+>  }
+>  late_initcall(xen_pm_init);
+>  =
+
+> +/*
+> + * Check if we want to register some clocks, that they
+> + * are not freed because unused by clk_disable_unused().
+> + * E.g. the serial console clock.
+> + */
+> +static int __init xen_arm_register_clks(void)
+> +{
+> +       struct clk *clk;
+> +       struct device_node *xen_node;
+> +       unsigned int i, count;
+> +       int ret =3D 0;
+> +
+> +       xen_node =3D of_find_compatible_node(NULL, NULL, "xen,xen");
+> +       if (!xen_node) {
+> +               pr_err("Xen support was detected before, but it has disap=
+peared\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       count =3D of_clk_get_parent_count(xen_node);
+> +       if (!count)
+> +               goto out;
+> +
+> +       for (i =3D 0; i < count; i++) {
+> +               clk =3D of_clk_get(xen_node, i);
+
+Is there a struct device we can use here? It would be better to use
+devm_clk_get if possible.
+
+Regards,
+Mike
+
+> +               if (IS_ERR(clk)) {
+> +                       pr_err("Xen failed to register clock %i. Error: %=
+li\n",
+> +                              i, PTR_ERR(clk));
+> +                       ret =3D PTR_ERR(clk);
+> +                       goto out;
+> +               }
+> +
+> +               ret =3D clk_prepare_enable(clk);
+> +               if (ret < 0) {
+> +                       pr_err("Xen failed to enable clock %i. Error: %i\=
+n",
+> +                              i, ret);
+> +                       goto out;
+> +               }
+> +       }
+> +
+> +       ret =3D 0;
+> +
+> +out:
+> +       of_node_put(xen_node);
+> +       return ret;
+> +}
+> +late_initcall(xen_arm_register_clks);
+>  =
+
+>  /* empty stubs */
+>  void xen_arch_pre_suspend(void) { }
+> -- =
+
+> 2.8.0
+>=20
