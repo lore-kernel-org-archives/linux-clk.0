@@ -1,73 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 18:21:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, James Liao <jamesjj.liao@mediatek.com>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-Message-ID: <20160702012140.GB17071@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
- <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 0/2] mark spi clocks as critical and enable spi3 clocks
+To: Andi Shyti <andi.shyti@samsung.com>
+References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+ <577E56A6.6010301@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <577E7495.2010904@samsung.com>
+Date: Thu, 07 Jul 2016 17:26:13 +0200
+MIME-version: 1.0
+In-reply-to: <577E56A6.6010301@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-(Resending to everyone)
+On 07/07/2016 03:18 PM, Sylwester Nawrocki wrote:
+> On 07/07/2016 02:13 PM, Andi Shyti wrote:
+>> > Andi Shyti (2):
+>> >   clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI clocks
+>> >   clk: exynos5433: enable sclk_ioclk for SPI3
+>
+> Applied both patches, thanks.
 
-On 06/22, Erin Lo wrote:
-> From: James Liao <jamesjj.liao@mediatek.com>
-> 
-> This patch fixed wrong state of parent clocks if they are registered
-> after critical clocks.
-> 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-
-It would be nice if you included the information about the
-problem from James' previous mail. This says what it does, but
-doesn't explain what the problem is and how it is fixing it.
-
-> ---
->  drivers/clk/clk.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d584004..e9f5f89 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
->  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
->  		struct clk_core *parent = __clk_init_parent(orphan);
->  
-> -		if (parent)
-> +		if (parent) {
->  			clk_core_reparent(orphan, parent);
-> +
-> +			if (orphan->prepare_count)
-> +				clk_core_prepare(parent);
-> +
-> +			if (orphan->enable_count)
-> +				clk_core_enable(parent);
-> +		}
->  	}
-
-I'm pretty sure I pointed this problem out to Mike when the
-critical clk patches were being pushed. I can't recall what the
-plan was though to fix the problem. I'm pretty sure he said that
-clk_core_reparent() would take care of it, but obviously it is
-not doing that. Or perhaps it was that clk handoff should figure
-out that the parents of a critical clk are also on and thus keep
-them on.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Apologies for the confusion, I had to drop these patches for reasons
+explained in the other thread. We just need to simply drop
+CLK_IGNORE_UNUSED flags and get the driver controlling clocks which
+belong to the peripheral IP block.
