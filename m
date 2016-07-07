@@ -1,180 +1,227 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v2 5/7] spi: s3c64xx: add exynos5433 compatible for ioclk
- handling
-Date: Fri, 08 Jul 2016 23:46:39 +0900
-Message-id: <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v2 4/6] clk: mvebu Add the time base generator clocks for Armada 3700
+Date: Fri,  8 Jul 2016 00:37:49 +0200
+Message-Id: <1467931071-31004-5-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The new compatible is related to the Samsung Exynos5433 SoC. The
-difference between the previous is that in the exynos5433 the SPI
-controller is driven by three clocks instead of only one.
+These clocks are children of the xtal clock and each one can be selected
+as a source for the peripheral clocks.
 
-The new clock (ioclk) is controlling the input/output clock
-whenever the controller is slave or master.
+According to the datasheet it should be possible to modify their rate,
+but currently it is not supported.
 
-The presence of the clock line is detected from the compatibility
-structure (exynos5433_spi_port_config) as a boolean value.
-
-The probe function checks whether the ioclk is present and if so,
-it acquires.
-
-The runtime suspend and resume functions will handle the clock
-enabling and disabling as well.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 52 insertions(+), 5 deletions(-)
+ drivers/clk/mvebu/Makefile          |   1 +
+ drivers/clk/mvebu/armada-37xx-tbg.c | 165 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 166 insertions(+)
+ create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 3a65adf..6da663f 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -156,12 +156,14 @@ struct s3c64xx_spi_port_config {
- 	int	quirks;
- 	bool	high_speed;
- 	bool	clk_from_cmu;
-+	bool	clk_ioclk;
- };
- 
- /**
-  * struct s3c64xx_spi_driver_data - Runtime info holder for SPI driver.
-  * @clk: Pointer to the spi clock.
-  * @src_clk: Pointer to the clock used to generate SPI signals.
-+ * @ioclk: Pointer to the i/o clock between master and slave
-  * @master: Pointer to the SPI Protocol master.
-  * @cntrlr_info: Platform specific data for the controller this driver manages.
-  * @tgl_spi: Pointer to the last CS left untoggled by the cs_change hint.
-@@ -181,6 +183,7 @@ struct s3c64xx_spi_driver_data {
- 	void __iomem                    *regs;
- 	struct clk                      *clk;
- 	struct clk                      *src_clk;
-+	struct clk                      *ioclk;
- 	struct platform_device          *pdev;
- 	struct spi_master               *master;
- 	struct s3c64xx_spi_info  *cntrlr_info;
-@@ -1147,6 +1150,21 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err_disable_clk;
- 	}
- 
-+	if (sdd->port_conf->clk_ioclk) {
-+		sdd->ioclk = devm_clk_get(&pdev->dev, "spi_ioclk");
-+		if (IS_ERR(sdd->ioclk)) {
-+			dev_err(&pdev->dev, "Unable to acquire 'ioclk'\n");
-+			ret = PTR_ERR(sdd->ioclk);
-+			goto err_disable_src_clk;
-+		}
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 4257a36d0219..72e3512a9d4a 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
+ obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-xtal.o
++obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-tbg.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
+ obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+new file mode 100644
+index 000000000000..f4af12593afa
+--- /dev/null
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -0,0 +1,165 @@
++/*
++ * Marvell Armada 37xx SoC Time Base Generator clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Gregory CLEMENT <gregory.clement@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
 +
-+		ret = clk_prepare_enable(sdd->ioclk);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Couldn't enable clock 'ioclk'\n");
-+			goto err_disable_src_clk;
-+		}
-+	}
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
 +
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
-@@ -1193,6 +1211,8 @@ err_pm_put:
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
-+	clk_disable_unprepare(sdd->ioclk);
-+err_disable_src_clk:
- 	clk_disable_unprepare(sdd->src_clk);
- err_disable_clk:
- 	clk_disable_unprepare(sdd->clk);
-@@ -1211,6 +1231,8 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 
- 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
- 
-+	clk_disable_unprepare(sdd->ioclk);
++#define NUM_TBG	    4
 +
- 	clk_disable_unprepare(sdd->src_clk);
- 
- 	clk_disable_unprepare(sdd->clk);
-@@ -1269,6 +1291,7 @@ static int s3c64xx_spi_runtime_suspend(struct device *dev)
- 
- 	clk_disable_unprepare(sdd->clk);
- 	clk_disable_unprepare(sdd->src_clk);
-+	clk_disable_unprepare(sdd->ioclk);
- 
- 	return 0;
- }
-@@ -1279,17 +1302,28 @@ static int s3c64xx_spi_runtime_resume(struct device *dev)
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 	int ret;
- 
-+	if (sdd->port_conf->clk_ioclk) {
-+		ret = clk_prepare_enable(sdd->ioclk);
-+		if (ret != 0)
-+			return ret;
-+	}
++#define TBG_CTRL0		0x4
++#define TBG_CTRL1		0x8
++#define TBG_CTRL7		0x20
++#define TBG_CTRL8		0x30
 +
- 	ret = clk_prepare_enable(sdd->src_clk);
- 	if (ret != 0)
--		return ret;
-+		goto err_disable_ioclk;
- 
- 	ret = clk_prepare_enable(sdd->clk);
--	if (ret != 0) {
--		clk_disable_unprepare(sdd->src_clk);
--		return ret;
--	}
-+	if (ret != 0)
-+		goto err_disable_src_clk;
- 
- 	return 0;
++#define TBG_DIV_MASK		0x1FF
 +
-+err_disable_src_clk:
-+	clk_disable_unprepare(sdd->src_clk);
-+err_disable_ioclk:
-+	clk_disable_unprepare(sdd->ioclk);
++#define TBG_A_REFDIV		0
++#define TBG_B_REFDIV		16
 +
-+	return ret;
- }
- #endif /* CONFIG_PM */
- 
-@@ -1345,6 +1379,16 @@ static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
- 	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
- };
- 
-+static struct s3c64xx_spi_port_config exynos5433_spi_port_config = {
-+	.fifo_lvl_mask	= { 0x1ff, 0x7f, 0x7f, 0x7f, 0x7f, 0x1ff},
-+	.rx_lvl_offset	= 15,
-+	.tx_st_done	= 25,
-+	.high_speed	= true,
-+	.clk_from_cmu	= true,
-+	.clk_ioclk	= true,
-+	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
++#define TBG_A_FBDIV		2
++#define TBG_B_FBDIV		18
++
++#define TBG_A_VCODIV_SE		0
++#define TBG_B_VCODIV_SE		16
++
++#define TBG_A_VCODIV_DIFF	1
++#define TBG_B_VCODIV_DIFF	17
++
++struct tbg_def {
++	char *name;
++	u32 refdiv_offset;
++	u32 fbdiv_offset;
++	u32 vcodiv_reg;
++	u32 vcodiv_offset;
 +};
 +
- static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
- 	{
- 		.name		= "s3c2443-spi",
-@@ -1375,6 +1419,9 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
- 	{ .compatible = "samsung,exynos7-spi",
- 			.data = (void *)&exynos7_spi_port_config,
- 	},
-+	{ .compatible = "samsung,exynos5433-spi",
-+			.data = (void *)&exynos5433_spi_port_config,
++const struct tbg_def tbg[NUM_TBG] = {
++	{"TBG-A-P", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL8, TBG_A_VCODIV_DIFF},
++	{"TBG-B-P", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL8, TBG_B_VCODIV_DIFF},
++	{"TBG-A-S", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL1, TBG_A_VCODIV_SE},
++	{"TBG-B-S", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL1, TBG_B_VCODIV_SE},
++};
++
++unsigned int tbg_get_mult(void __iomem *reg, const struct tbg_def *ptbg)
++{
++	u32 val;
++
++	val = readl(reg + TBG_CTRL0);
++
++	return ((val >> ptbg->fbdiv_offset) & TBG_DIV_MASK) << 2;
++}
++
++unsigned int tbg_get_div(void __iomem *reg, const struct tbg_def *ptbg)
++{
++	u32 val;
++	unsigned int div;
++
++	val = readl(reg + TBG_CTRL7);
++
++	div = (val >> ptbg->refdiv_offset) & TBG_DIV_MASK;
++	if (div == 0)
++		div = 1;
++	val = readl(reg + ptbg->vcodiv_reg);
++
++	div *= 1 << ((val >>  ptbg->vcodiv_offset) & TBG_DIV_MASK);
++
++	return div;
++}
++
++
++static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct clk_hw_onecell_data *hw_tbg_data;
++	struct device *dev = &pdev->dev;
++	const char *parent_name;
++	struct resource *res;
++	struct clk *parent;
++	void __iomem *reg;
++	int i, ret;
++
++	hw_tbg_data = devm_kzalloc(&pdev->dev, sizeof(*hw_tbg_data)
++				   + sizeof(*hw_tbg_data->hws) * NUM_TBG,
++				   GFP_KERNEL);
++	if (!hw_tbg_data)
++		return -ENOMEM;
++	hw_tbg_data->num = NUM_TBG;
++	platform_set_drvdata(pdev, hw_tbg_data);
++
++	parent = devm_clk_get(dev, 0);
++	if (IS_ERR(parent)) {
++		dev_err(dev, "Could get the clock parent\n");
++		return -EINVAL;
++	}
++	parent_name = __clk_get_name(parent);
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(dev, res);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
++
++	for (i = 0; i < NUM_TBG; i++) {
++		const char *name;
++		unsigned int mult, div;
++
++		name = tbg[i].name;
++		mult = tbg_get_mult(reg, &tbg[i]);
++		div = tbg_get_div(reg, &tbg[i]);
++		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(NULL, name,
++						parent_name, 0, mult, div);
++		if (IS_ERR(hw_tbg_data->hws[i]))
++			dev_err(dev, "Can't register TBG clock %s\n", name);
++	}
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, hw_tbg_data);
++
++	return ret;
++}
++
++static int armada_3700_tbg_clock_remove(struct platform_device *pdev)
++{
++	int i;
++	struct clk_hw_onecell_data *hw_tbg_data = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++	for (i = 0; i < hw_tbg_data->num; i++)
++		clk_hw_unregister_fixed_factor(hw_tbg_data->hws[i]);
++
++	return 0;
++}
++
++static const struct of_device_id armada_3700_tbg_clock_of_match[] = {
++	{ .compatible = "marvell,armada-3700-tbg-clock", },
++	{ }
++};
++
++MODULE_DEVICE_TABLE(of, armada_3700_tbg_clock_of_match);
++
++static struct platform_driver armada_3700_tbg_clock_driver = {
++	.probe = armada_3700_tbg_clock_probe,
++	.remove = armada_3700_tbg_clock_remove,
++	.driver		= {
++		.name	= "marvell-armada-3700-tbg-clock",
++		.of_match_table = armada_3700_tbg_clock_of_match,
 +	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, s3c64xx_spi_dt_match);
++};
++
++module_platform_driver(armada_3700_tbg_clock_driver);
++
++MODULE_AUTHOR("Gregory CLEMENT <gregory.clement@free-electrons.com>");
++MODULE_DESCRIPTION("Marvell Armada 37xx SoC Time Base Generator driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.8.1
+2.5.0
