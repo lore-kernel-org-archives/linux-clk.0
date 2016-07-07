@@ -1,39 +1,56 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160704211220.5685-7-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com> <20160704211220.5685-7-paul.gortmaker@windriver.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jul 2016 13:02:06 +0200
-Message-ID: <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
-Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Padmavathi Venna <padma.v@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Chen-Yu Tsai" <wens@csie.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160629190535.11855-14-maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org, "Hans de Goede" <hdegoede@redhat.com>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ "Rob Herring" <robh+dt@kernel.org>,
+ "Vishnu Patekar" <vishnupatekar0510@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, "Jean-Francois Moine" <moinejf@free.fr>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+ <20160629190535.11855-14-maxime.ripard@free-electrons.com>
+Message-ID: <146785878822.73491.15164592643568518865@resonance>
+Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
+Date: Wed, 06 Jul 2016 19:33:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
+Hi Maxime,
 
-On Mon, Jul 4, 2016 at 11:12 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> We also delete the MODULE_LICENSE tags etc. since all that information
-> is already contained at the top of the file in the comments.
+Quoting Maxime Ripard (2016-06-29 12:05:34)
+> +static void __init sun8i_h3_ccu_setup(struct device_node *node)
+> +{
+> +       void __iomem *reg;
+> +       u32 val;
+> +
+> +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
+> +       if (IS_ERR(reg)) {
+> +               pr_err("%s: Could not map the clock registers\n",
+> +                      of_node_full_name(node));
+> +               return;
+> +       }
+> +
+> +       /* Force the PLL-Audio-1x divider to 4 */
+> +       val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
+> +       val &=3D ~GENMASK(4, 0);
+> +       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
+> +
+> +       sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
+> +}
+> +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
+> +              sun8i_h3_ccu_setup);
 
-But the unstructured information at the top of the file is much more difficult
-to grep for...
+There are several examples of drivers that split the clocks between
+"early" CLK_OF_DECLARE clocks and "late" module clocks. If you really
+need early clocks (which is less likely on a 64-bit platform with
+architected timers), it would be nice to pair that with a proper
+platform_driver (using builtin_platform_driver most likely).
 
-Gr{oetje,eeting}s,
+Otherwise that is my only nitpick with this series. Looks good!
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Mike
