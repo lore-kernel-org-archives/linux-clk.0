@@ -1,67 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 09/10] Documentation: devicetree: Add dts description
- for nuc900
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-References: <1468136542-2656-1-git-send-email-vw@iommu.org>
- <1468136542-2656-2-git-send-email-vw@iommu.org> <1850749.ap1S8Xq0fA@wuerfel>
-Cc: Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, jason@lakedaemon.net,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wan Zongshun <mcuos.com@gmail.com>
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <578300E2.5000405@iommu.org>
-Date: Mon, 11 Jul 2016 10:13:54 +0800
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1850749.ap1S8Xq0fA@wuerfel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160706230749.9620-1-khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20160706230749.9620-1-khilman@baylibre.com>
+Message-ID: <146784996534.73491.14217049599437131929@resonance>
+Subject: Re: [PATCH] clk: gxbb: expose CLKID_MMC_PCLK
+Date: Wed, 06 Jul 2016 17:06:05 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Kevin,
+
+Quoting Kevin Hilman (2016-07-06 16:07:49)
+> The MMC_PCLK is needed for the SD/eMMC driver.
+> =
+
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> ---
+>  include/dt-bindings/clock/gxbb-clkc.h | 1 +
+>  1 file changed, 1 insertion(+)
+> =
+
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/=
+clock/gxbb-clkc.h
+> index f889d80246cb..5eb69ec74f6b 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -8,5 +8,6 @@
+>  #define CLKID_CPUCLK           1
+>  #define CLKID_CLK81            12
+>  #define CLKID_ETH              36
+> +#define CLKID_MMC_PCLK         66
+
+I think you're missing removal of the duplicate macro as well:
 
 
-On 2016年07月11日 06:17, Arnd Bergmann wrote:
-> On Sunday, July 10, 2016 3:42:21 PM CEST Wan Zongshun wrote:
->> +
->> +Required properties:
->> +- compatible : Should be "nuvoton,nuc970-tmr"
->> +- reg : Address and length of the register set
->> +- clocks : Reference on the timer input clock
->> +- interrupts : Reference to the timer interrupt
->> +
->> +Example:
->> +
->> +tmr@0xb8001000 {
->
-> The name should be "timer", not "tmr", and the address should
-> not contain a leading "0x".
 
-Ok, so all dts addresses has no need contain a leading "0x"?
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index a2adf3448b59..f0fab2286c18 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -234,7 +234,7 @@
+ #define CLKID_HDMI_PCLK		  63
+ #define CLKID_USB1_DDR_BRIDGE	  64
+ #define CLKID_USB0_DDR_BRIDGE	  65
+-#define CLKID_MMC_PCLK		  66
++/* CLKID_MMC_PCLK */
+ #define CLKID_DVIN		  67
+ #define CLKID_UART2		  68
+ #define CLKID_SANA		  69
 
->
->> +       compatible = "nuvoton,nuc970-tmr";
->> +       reg = <0xb8001000 0x1000>;
->> +       interrupts = <16>;
->> +       clocks = <&clks TIMER0_GATE>,
->> +       <&clks TIMER1_GATE>;
->> +       clock-names = "timer0", "timer1";
->> +};
->
-> The clocks/clock-names description does not match the example:
-> you only define a single clock in the required properties, but
-> have two separate inputs in the example. Please fix one or the
-> other.
 
-Two clocks are necessary, so I only need modify this description like?
 
-Required properties:
-   clocks : Reference on the timer input clock, This list should be 2
-	   clocks, the order is timer0 , timer1.
-
-Is it ok?
-
->
-> 	Arnd
->
->
+Regards,
+Mike
