@@ -1,41 +1,39 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: clk-conf: Fix error message when clock isn't found
-Date: Fri,  8 Jul 2016 09:14:38 +0200
-Message-Id: <1467962078-30405-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: tglx@linutronix.de, daniel.lezcano@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 73/93] clk: Add missing clk_get_sys() stub
+Date: Thu,  7 Jul 2016 10:01:46 +0200
+Message-Id: <1467878526-1238-73-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <1467878526-1238-1-git-send-email-daniel.lezcano@linaro.org>
+References: <577E0BED.3020608@linaro.org>
+ <1467878526-1238-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When failing to lookup the assigned clock for setting its parents, we
-were previously printing a misleading error message that lead to think
-that it was the parent clock what couldn't be found.
+When compiling with the COMPILE_TEST option set, the clps711x does not
+compile because of the clk_get_sys() noop stub missing.
 
-Change error message to make clear that it's the assigned clock what
-couldn't be found in this case.
-
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
 ---
- drivers/clk/clk-conf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/clk.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 43a218f35b19..674785d968a3 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -55,7 +55,7 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 		}
- 		clk = of_clk_get_from_provider(&clkspec);
- 		if (IS_ERR(clk)) {
--			pr_warn("clk: couldn't get parent clock %d for %s\n",
-+			pr_warn("clk: couldn't get assigned clock %d for %s\n",
- 				index, node->full_name);
- 			rc = PTR_ERR(clk);
- 			goto err;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..834179f 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -461,6 +461,10 @@ static inline struct clk *clk_get_parent(struct clk *clk)
+ 	return NULL;
+ }
+ 
++static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
++{
++	return NULL;
++}
+ #endif
+ 
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
 -- 
-2.5.5
+1.9.1
