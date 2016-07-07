@@ -1,63 +1,59 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-Date: Tue, 5 Jul 2016 09:32:16 -0400
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: <linux-kernel@vger.kernel.org>,
-        Sylwester Nawrocki
-	<s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
- non-modular
-Message-ID: <20160705133216.GC26134@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-7-paul.gortmaker@windriver.com>
- <577B782E.9090203@samsung.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH 10/10] clk: mvebu: Add the peripheral clock driver for Armada 3700
+References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
+	<1465565018-14172-11-git-send-email-gregory.clement@free-electrons.com>
+	<20160630200007.GB1521@codeaurora.org>
+Date: Fri, 08 Jul 2016 01:12:42 +0200
+In-Reply-To: <20160630200007.GB1521@codeaurora.org> (Stephen Boyd's message of
+	"Thu, 30 Jun 2016 13:00:07 -0700")
+Message-ID: <87shvlujo5.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <577B782E.9090203@samsung.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-[Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular] On 05/07/2016 (Tue 11:04) Krzysztof Kozlowski wrote:
+Hi Stephen,
+ 
+ On jeu., juin 30 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-> On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
-> > The Kconfig currently controlling compilation of this code is:
-> > 
-> > arch/arm/mach-exynos/Kconfig:menuconfig ARCH_EXYNOS
-> > arch/arm/mach-exynos/Kconfig:   bool "Samsung EXYNOS" if ARCH_MULTI_V7
-> > 
-> > ...meaning that it currently is not being built as a module by anyone.
-> > 
-> > Lets remove the couple traces of modularity so that when reading the
-> > driver there is no doubt it is builtin-only.
-> > 
-> > Lets remove the modular code that is essentially orphaned, so that
-> > when reading the driver there is no doubt it is builtin-only.
-> > 
+>> +
+>> +	spin_lock_init(&driver_data->lock);
+>> +
+>> +	for (i = 0; i < num_periph; i++) {
+>> +		struct clk *clk = driver_data->clk_data.clks[i];
+>> +
+>> +		if (armada_3700_add_composite_clk(&data[i], parent_name, reg,
+>> +						  &driver_data->lock, dev, clk))
+>> +			dev_err(dev, "Can't register periph clock %s\n",
+>> +			       data[i].name);
+>> +	}
+>> +
+>> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
+>> +				  &driver_data->clk_data);
+>> +	if (ret) {
+>> +		for (i = 0; i < num_periph; i++)
+>> +			clk_unregister(driver_data->clk_data.clks[i]);
+>
+> It would be nice if we had devm_* registration in composite
+> clks
+>
 
-[...]
+This comment is the only one I didn't take into account in the second
+version I've just sent. I agree it would be nice and I am willing to add
+it. However these last days I was very busy with the birth of my last
+child: I managed to find time to write this second version in time to be
+merged for 4.8 but not enough to add these new function. I will try to
+send a patch for it next week.
 
-> > -MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
-> > -MODULE_LICENSE("GPL v2");
-> > -MODULE_ALIAS("platform:exynos-audss-clk");
-> 
-> Why not removing .remove() callback as well?
-> 
-> I don't find sysfs unbind hook useful except testing the exit paths...
-> which in that case do not exist anymore (there is no "modprobe -r" for
-> it anyway).
+Thanks for your review,
 
-Yes, I normally delete the .remove callbacks as indicated in the 0/10,
-but somehow I overlooked this one.   Thanks for spotting it.  I'll
-delete it and disable the sysfs bind in v2.
+Gregory
 
-Paul.
---
 
-> 
-> Best regards,
-> Krzysztof
-> 
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
