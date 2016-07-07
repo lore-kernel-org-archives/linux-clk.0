@@ -1,68 +1,75 @@
-Return-Path: <mirza.krak@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com> <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Fri, 22 Jul 2016 21:07:02 +0200
-Message-ID: <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v2 1/6] dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+Date: Fri,  8 Jul 2016 00:37:46 +0200
+Message-Id: <1467931071-31004-2-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-22 11:32 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->
-> On 21/07/16 21:10, Mirza Krak wrote:
->> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>>
->>> I wonder if it is worth mentioning that the chip-select specified in the
->>> "nvidia,config" prop should match that in the "ranges" prop unless you
->>> have some external decoding logic to provide an external chip-select.
->>> Which raises a question, what does the chip-select in the ranges
->>> actually represent? I am not sure if there is a common practice here for
->>> device tree when boards have external logic to provide additional
->>> chip-selects. I am sure this is quite common.
->>
->> I do not understand why CS pin setting in nvidia,config need to match
->> the "ranges" prop? Other then maybe cosmetics.
->
-> Yes it would be cosmetic. That said, I even wonder if CS needs to be
-> exposed at all given that they all map to the same CPU address space.
-> Couldn't your binding for the CAN devices be as follows?
->
-> nor@70009000 {
->         ...
->
->         can@48000000 {
->                 ...
->         };
->
->         can@48040000 {
->                 ...
->         };
-> };
+This commit adds the DT binding documentation for the the Xtal clock on
+Armada 3700 used in the Marvell Armada 3700 SoCs.
 
-This has also crossed my mind, maybe just get rid of the "ranges" prop
-and do like you have above. But then again I do not know what is
-preferred so I went with "ranges" prop initially.
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/armada3700-xtal-clock.txt       | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
 
-
->
-> Problem is if you did have devices on different chip-selects then how
-> would these be handled? They could not point to the same physical
-> address. I am not sure if there is a way to do that in DT?
-
-Having trouble following your though here. We do not have "different"
-chip-selects?
-
-Best Regards
-Mirza
+diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+new file mode 100644
+index 000000000000..176c4fe6f0e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+@@ -0,0 +1,28 @@
++* Xtal Clock bindings for Marvell Armada 37xx SoCs
++
++Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
++reading the gpio latch register.
++
++This node must be a subnode of the node exposing the register address
++of the GPIO block where the gpio latch is located.
++
++Required properties:
++- compatible : shall be one of the following:
++	"marvell,armada-3700-xtal-clock"
++- #clock-cells : from common clock binding; shall be set to 0
++
++Optional properties:
++- clock-output-names : from common clock binding; allows overwrite default clock
++	output names ("xtal")
++
++Example:
++gpio1: gpio@13800 {
++	compatible = "marvell,mvebu-gpio-3700",	"syscon", "simple-mfd";
++	reg = <0x13800 0x1000>;
++
++	xtalclk: xtal-clk {
++		compatible = "marvell,armada-3700-xtal-clock";
++		clock-output-names = "xtal";
++		#clock-cells = <0>;
++	};
++};
+-- 
+2.5.0
