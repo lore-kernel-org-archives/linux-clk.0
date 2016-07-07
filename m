@@ -1,40 +1,52 @@
-Return-Path: <wsa@the-dreams.de>
-Date: Thu, 21 Jul 2016 18:57:45 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] clk: renesas: r8a7795: Fix SD clocks
-Message-ID: <20160721165744.GB1911@katana>
-References: <1468380049-5712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdWkD96cVe14ps8B0BbRUzA7pQuMogat25PehnDaoqhS=w@mail.gmail.com>
- <20160720120623.GA1601@katana>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160720120623.GA1601@katana>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, sboyd@codeaurora.org,
+ mcoquelin.stm32@gmail.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467526003-13318-1-git-send-email-christophe.jaillet@wanadoo.fr>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
+References: <1467526003-13318-1-git-send-email-christophe.jaillet@wanadoo.fr>
+Message-ID: <146785294442.73491.14204638951540057623@resonance>
+Subject: Re: [PATCH] clk: stm32f4: fix error handling
+Date: Wed, 06 Jul 2016 17:55:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 20, 2016 at 02:06:24PM +0200, Wolfram Sang wrote:
-> 
-> > Wolfram, Dirk: any comments?
-> 
-> Looks proper.
-> 
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> 
-> I couldn't really test it, though, since I still have problems with the
-> Gen3 DMA series.
+Quoting Christophe JAILLET (2016-07-02 23:06:43)
+> This is likely that checking 'clks[idx]' instead of 'clks[n]' is
+> expected here.
+> =
 
-... which are gone now since this series landed in renesas-drivers.
-Dunno why but DMA works now, so I can see Shimoda-san's patch makes a
-difference if we apply a missing fix which I will send in a second. Long
-story short:
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Applied.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/clk-stm32f4.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
+
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index b6ca33f..02d6810 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -364,7 +364,7 @@ static void __init stm32f4_rcc_init(struct device_nod=
+e *np)
+>                     NULL, gd->name, gd->parent_name, gd->flags,
+>                     base + gd->offset, gd->bit_idx, 0, &stm32f4_clk_lock);
+>  =
+
+> -               if (IS_ERR(clks[n])) {
+> +               if (IS_ERR(clks[idx])) {
+>                         pr_err("%s: Unable to register leaf clock %s\n",
+>                                np->full_name, gd->name);
+>                         goto fail;
+> -- =
+
+> 2.7.4
+>=20
