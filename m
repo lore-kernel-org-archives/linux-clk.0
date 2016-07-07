@@ -1,50 +1,126 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v2 0/7] Add Amlogic meson8b clock gates
-Date: Wed, 13 Jul 2016 19:49:34 +0200
-Message-Id: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Thu, 7 Jul 2016 17:00:23 +0100
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Javier Martinez Canillas <javier@osg.samsung.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Andrzej Hajda
+	<a.hajda@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: clk: Per controller locks (prepare & enable)
+Message-ID: <20160707160023.GF1835@localhost.localdomain>
+References: <57737761.2020708@samsung.com>
+ <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
+ <577A1D54.9010203@samsung.com>
+ <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
+ <577B54CE.90004@samsung.com>
+ <913d98f6-0d7c-63e3-8748-961eafd776f4@osg.samsung.com>
+ <20160707120626.GE1835@localhost.localdomain>
+ <577E4E29.5080103@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <577E4E29.5080103@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
-U-Boot disables most of them at boot. In order to enable ethernet, USB and other
-components it's mandatory to enable the clock gates when loading the corresponding
-drivers.
+On Thu, Jul 07, 2016 at 02:42:17PM +0200, Krzysztof Kozlowski wrote:
+> On 07/07/2016 02:06 PM, Charles Keepax wrote:
+> > On Tue, Jul 05, 2016 at 09:48:34AM -0400, Javier Martinez Canillas wrote:
+> >> Hello Krzysztof,
+> >>
+> >> On 07/05/2016 02:33 AM, Krzysztof Kozlowski wrote:
+> >>> On 07/04/2016 05:15 PM, Javier Martinez Canillas wrote:
+> > I have also been have a brief look at this as we have been
+> > encountering issues attempting to move some of the clocking on
+> > our audio CODECs to the clock framework. The problems are even
+> > worse when the device can be controlled over SPI as well, as the
+> > SPI framework may occasionally defer the transfer to a worker
+> > thread rather than doing it in the same thread which causes the
+> > re-enterant behaviour of the clock locking to no longer function.
+> 
+> As you mentioned later, in such case per-controller-lock won't help.
+> 
 
-The meson8b clock gate support is based on the previous work done for Amlogic gxbb
-currently available in clk-next.
+It should help as the SPI clocks and the (in this case) CODEC
+clocks are unlikely to be on the same controller.
 
-Changes since v1:
-  - Fixed GXBB spelling
-  - Moved newly introduced CLKID defines to private header
-  - Moved CLK_NR_CLKS define from DT binding to private header
-  - Rebased to linux-amlogic/v4.7/integ making Kconfig select obsolete
+> > I could perhaps imagine a situation where one device is passing
+> > a clock to second device and that device is doing some FLL/PLL
+> > and passing the resulting clock back. For example supplying a
+> > non-audio rate clock to a CODEC which then supplies back a clock
+> > at an audio rate, which is used for audio functions on the first
+> > device.
+> 
+> What do you think by "passing" here? Pass the pointer to struct?
+> 
 
-Alexander Müller (7):
-  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
-  meson: clk: Move register definitions to meson8b.h
-  meson: clk: Rename register names according to Amlogic datasheet
-  clk: meson: Copy meson8b CLKID defines to private header file
-  meson: clk: Add CLKIDs for clock gates
-  gxbb: clk: Move MESON_GATE macro to gxbb
-  meson: clk: Add support for clock gates
+Apologies for being unclear there, I was really just referring to
+where the source for each clock is coming from. Given controllers
+C1 and C2, and putting the clock in brackets afterwards:
 
- drivers/clk/meson/Makefile               |   2 +-
- drivers/clk/meson/clkc.h                 |  14 -
- drivers/clk/meson/gxbb.c                 | 176 ++++----
- drivers/clk/meson/meson8b-clkc.c         | 458 --------------------
- drivers/clk/meson/meson8b.c              | 705 +++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h              | 148 +++++++
- include/dt-bindings/clock/meson8b-clkc.h |   2 -
- 7 files changed, 949 insertions(+), 556 deletions(-)
- delete mode 100644 drivers/clk/meson/meson8b-clkc.c
- create mode 100644 drivers/clk/meson/meson8b.c
- create mode 100644 drivers/clk/meson/meson8b.h
+C1(MCLK@26MHz) is the parent of C2(FLL@24.576MHz) which is the parent
+of C1(AUDIO@24.576MHz). Which makes C2 both a parent and child of
+C1. Its probably not that likely but I could see it happening.
 
--- 
-2.5.0
+> > I had also been leaning more towards a lock per clock rather
+> > than a lock per controller. But one other issue that needs to be
+> > kept in mind (with both the controller or clock based locking)
+> > through is that the enable and prepare operations propagate down
+> > the clock tree, where as the set rate operations propagate up the
+> > clock tree.  This makes things a rather furtile breeding ground
+> > for mutex inversions as well.
+> > 
+> 
+> Yeah, that is the problem we were thinking about just a sec ago. :) The
+> set rate (and reparent which might cause set rate) is complicating the
+> design.
+> 
+> Idea I have is (simplifying only to prepare lock... leave away the enable):
+
+Certainly I think only worrying about prepare makes sense.
+
+> 1. Hava a global lock which will protect:
+> a. traversing clock controller hierarchy,
+> b. acquiring per clock controller locks,
+> 2. Add struct for clock controller.
+> 3. Add lock per clock controller.
+> 
+> The basic locking in case of prepare for a simplified case one clock per
+> clock controller:
+> 
+> A (top controller = top clock)
+> \-B
+>   \-C
+> 
+> clk_prepare(C) {
+>   global_lock();
+>   for (clk_ctrl = C) {
+>     lock(clk_ctrl);
+>     clk_ctrl = get_parent_controller(C);
+>   }
+>   global_unlock();
+> 
+>   prepare_cnt++;
+>   // do the same for hierarchy
+> 
+>   for (clk_ctrl = C) {
+>     unlock(clk_ctrl)
+>     clock = get_parent_controller(C);
+>   }
+> }
+
+I think this fixes the issues I have been having at my side. I
+will try to find some time in the next few days to go through and
+refresh my memory.
+
+I guess lets wait and see if the clock guys have any thoughts.
+
+Thanks,
+Charles
