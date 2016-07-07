@@ -1,68 +1,43 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3] bindings: spi-samsung: document the clocks and the
- clock-name property
-Date: Mon, 11 Jul 2016 11:36:21 +0900
-Message-id: <1468204581-16873-1-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <20160708203207.GB25980@kozik-lap>
-References: <20160708203207.GB25980@kozik-lap>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Thu, 7 Jul 2016 13:26:36 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clkdev: add devm_of_clk_get()
+Message-ID: <20160707122636.GP1041@n2100.armlinux.org.uk>
+References: <87wpl2yyuw.wl%kuninori.morimoto.gx@renesas.com>
+ <146785219147.73491.2827268663638530377@resonance>
+ <87ziptixv7.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87ziptixv7.wl%kuninori.morimoto.gx@renesas.com>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-These two properties were not documented but used in the spi
-dts. Add the related documentation.
+On Thu, Jul 07, 2016 at 09:54:03AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Michael
+> 
+> > > +struct clk *devm_of_clk_get(struct device *dev,
+> > > +                           struct device_node *np, int index)
+> > 
+> > Any reason not to use devm_clk_get? Why do we need this helper?
+> 
+> Because of_clk_get() can parse "clocks", "#clock-cells" on DT.
 
-Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-Hi,
+clk_get() should also work just fine.  clk_get() uses
+__of_clk_get_by_name() internally, which uses "clock-names" to
+locate the index if a connection id is given.  of_clk_get() allows
+lookup of a clock by index only, omitting the name, which means
+you need to coordinate the order of clocks in DT with the order
+that the driver wants... which sounds error prone to me.
 
-Changelog related only to this patch:
-
-V1 -> V2: [new] added the clocks and clock-name documentation
-   in the bindings
-
-V2 -> V3: reworded the 'clock-names' as suggested by Krzysztof,
-   added Mike's and Krzysztof's review and Krzysztof's
-   suggested-by.
-
-Thanks,
-Andi
-
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 57d5539..f45c6eb 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -24,6 +24,15 @@ Required SoC Specific Properties:
- - dma-names: Names for the dma channels. There must be at least one channel
-   named "tx" for transmit and named "rx" for receive.
- 
-+- clocks: specifies the clock IDs provided to the SPI controller; they are
-+  required for interacting with the controller itself, for synchronizing the bus
-+  and as I/O clock (the latter is required by exynos5433 and exynos7).
-+
-+- clock-names: string names of the clocks in the 'clocks' property; for all the
-+  the devices the names must be "spi", "spi_busclkN" (where N is determined by
-+  "samsung,spi-src-clk"), while Exynos5433 should specify a third clock
-+  "spi_ioclk" for the I/O clock.
-+
- Required Board Specific Properties:
- 
- - #address-cells: should be 1.
 -- 
-2.8.1
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
