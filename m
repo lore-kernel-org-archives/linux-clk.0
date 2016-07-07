@@ -1,82 +1,130 @@
-Return-Path: <huanglin821201@gmail.com>
-Return-Path: <huanglin821201@gmail.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Lin Huang <hl@rock-chips.com>
-Subject: [PATCH] clk: rockchip: add clock flag parameter when register pll
-Date: Fri, 22 Jul 2016 14:37:45 +0800
-Message-Id: <1469169465-5892-1-git-send-email-hl@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=y
+Return-Path: <oss@buserror.net>
+Message-ID: <1467864803.32358.63.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Michael Turquette <mturquette@baylibre.com>, Russell King
+	 <linux@armlinux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar
+	 <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, yuantian.tang@nxp.com, leoyang.li@nxp.com,
+	xiaofeng.ren@nxp.com
+Date: Wed, 06 Jul 2016 23:13:23 -0500
+In-Reply-To: <146785501714.73491.8643317356949121718@resonance>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+	 <1466058085-19353-2-git-send-email-oss@buserror.net>
+	 <146785501714.73491.8643317356949121718@resonance>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock
+ implementation details
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Heiko Stübner <heiko@sntech.de>
+On Wed, 2016-07-06 at 18:30 -0700, Michael Turquette wrote:
+> Quoting Scott Wood (2016-06-15 23:21:25)
+> > 
+> > -static struct device_node *cpu_to_clk_node(int cpu)
+> > +static struct clk *cpu_to_clk(int cpu)
+> >  {
+> > -       struct device_node *np, *clk_np;
+> > +       struct device_node *np;
+> > +       struct clk *clk;
+> >  
+> >         if (!cpu_present(cpu))
+> >                 return NULL;
+> > @@ -112,37 +80,28 @@ static struct device_node *cpu_to_clk_node(int cpu)
+> >         if (!np)
+> >                 return NULL;
+> >  
+> > -       clk_np = of_parse_phandle(np, "clocks", 0);
+> > -       if (!clk_np)
+> > -               return NULL;
+> > -
+> > +       clk = of_clk_get(np, 0);
+> Why not use devm_clk_get here?
 
-add clock flag parameter so we can pass specific clock flag
-(like CLK_GET_RATE_NOCACHE etc..)to pll driver.
+devm_clk_get() is a wrapper around clk_get() which is not the same as
+of_clk_get().  What device would you pass to devm_clk_get(), and what name
+would you pass?
 
-Change-Id: I1e076b3efa6b5da082b6e68e2e2a4c9dfd93e3d4
-Signed-off-by: Heiko Stübner <heiko@sntech.de>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
- drivers/clk/rockchip/clk-pll.c | 4 ++--
- drivers/clk/rockchip/clk.c     | 2 +-
- drivers/clk/rockchip/clk.h     | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > @@ -221,17 +180,12 @@ static int qoriq_cpufreq_cpu_init(struct
+> > cpufreq_policy *policy)
+> >                 goto err_nomem2;
+> >         }
+> >  
+> > -       pnode = of_parse_phandle(np, "clocks", 0);
+> > -       if (!pnode) {
+> > -               pr_err("%s: could not get clock information\n", __func__);
+> > -               goto err_nomem2;
+> > -       }
+> > +       count = clk_get_num_parents(policy->clk);
+> We already have of_clk_get_parent_count. This is found in
+> clk-provider.h, which doesn't fit perfectly here since the cpufreq
+> driver is not a clock provider, but instead a consumer.
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index db81e45..9c1373e 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -837,7 +837,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 		u8 num_parents, int con_offset, int grf_lock_offset,
- 		int lock_shift, int mode_offset, int mode_shift,
- 		struct rockchip_pll_rate_table *rate_table,
--		u8 clk_pll_flags)
-+		unsigned long flags, u8 clk_pll_flags)
- {
- 	const char *pll_parents[3];
- 	struct clk_init_data init;
-@@ -892,7 +892,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 	init.name = pll_name;
- 
- 	/* keep all plls untouched for now */
--	init.flags = CLK_IGNORE_UNUSED;
-+	init.flags = flags | CLK_IGNORE_UNUSED;
- 
- 	init.parent_names = &parent_names[0];
- 	init.num_parents = 1;
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 7ffd134..1f1c74f 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -385,7 +385,7 @@ void __init rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
- 				list->con_offset, grf_lock_offset,
- 				list->lock_shift, list->mode_offset,
- 				list->mode_shift, list->rate_table,
--				list->pll_flags);
-+				list->flags, list->pll_flags);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
- 				list->name);
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 2194ffa..3747de5 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -238,7 +238,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 		u8 num_parents, int con_offset, int grf_lock_offset,
- 		int lock_shift, int mode_offset, int mode_shift,
- 		struct rockchip_pll_rate_table *rate_table,
--		u8 clk_pll_flags);
-+		unsigned long flags, u8 clk_pll_flags);
- 
- struct rockchip_cpuclk_clksel {
- 	int reg;
--- 
-2.6.6
+It's also a device tree function, and the clock parents in question aren't in
+the device tree.
+
+> > @@ -240,23 +194,11 @@ static int qoriq_cpufreq_cpu_init(struct
+> > cpufreq_policy *policy)
+> >                 goto err_pclk;
+> >         }
+> >  
+> > -       if (fmask)
+> > -               mask = fmask[get_cpu_physical_id(cpu)];
+> > -       else
+> > -               mask = 0x0;
+> > -
+> >         for (i = 0; i < count; i++) {
+> > -               clk = of_clk_get(pnode, i);
+> > +               clk = clk_get_parent_by_index(policy->clk, i);
+> >                 data->pclk[i] = clk;
+> >                 freq = clk_get_rate(clk);
+> > -               /*
+> > -                * the clock is valid if its frequency is not masked
+> > -                * and large than minimum allowed frequency.
+> > -                */
+> > -               if (freq < min_cpufreq || (mask & (1 << i)))
+> > -                       table[i].frequency = CPUFREQ_ENTRY_INVALID;
+> > -               else
+> > -                       table[i].frequency = freq / 1000;
+> > +               table[i].frequency = freq / 1000;
+> Hmm, so you change cpu clock rate by selecting different clock sources
+> from a cpu clock mux, right?
+
+Yes.  You'd think such a simple thing would be more straightforward.
+
+>  I wonder if you can just have a child mux
+> clock that selects parents from .set_rate (via a .determine_rate
+> callback)? Then you could just call clk_set_rate() on your cpu mux clock
+> and maybe skip most of the stuff this driver does?
+
+"Most of the stuff this driver does" is dealing with the cpufreq subsystem
+(ask the cpufreq maintainers why it requires so much boilerplate), associating
+clock muxes with cpus, etc.  It is also not obvious to me how to use
+determine_rate() or that the end result would be any simpler or better.  It
+seems like the implementation would just be reimplementing logic that already
+exists in cpufreq, and the cpufreq driver would still need to be able to get a
+list of possible frequencies, because cpufreq wants a table of them.
+
+After nearly a year of non-response to these patches[1], a request to
+completely rearchitect this driver[2] just to avoid exposing a couple
+straightforward informational functions to clock consumers[3] was not quite
+what I was hoping for.  What is wrong with clock consumers being able to query
+the parent list, given that clock consumers have the ability to request a
+particular parent?
+
+-Scott
+
+[1] Original versions:
+http://www.spinics.net/lists/linux-clk/msg03069.html
+http://www.spinics.net/lists/linux-clk/msg03070.html
+
+
+[2] The only reason I'm touching this driver at all is because it currently
+makes bad assumptions about clock provider internals (and clock provider
+device tree structure) that are broken by the new bindings enabled by
+commit 0dfc86b3173fee ("clk: qoriq: Move chip-specific knowledge into
+driver").
+
+[3] I initially discussed adding consumer APIs for this patchset in 
+http://lkml.iu.edu/hypermail/linux/kernel/1509.2/02728.html
