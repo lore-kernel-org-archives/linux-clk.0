@@ -1,70 +1,48 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 11 Jul 2016 12:06:29 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
-	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to
- use proper unit address
-Message-ID: <20160711100629.GJ5823@ulmo.ba.sec>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
- <1462291015-1919-5-git-send-email-fcooper@ti.com>
- <20160711095623.GI5823@ulmo.ba.sec>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ed/6oDxOLijJh8b0"
-In-Reply-To: <20160711095623.GI5823@ulmo.ba.sec>
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v4 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
+Date: Thu, 07 Jul 2016 21:13:57 +0900
+Message-id: <1467893637-12573-3-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+enable SPI3 critical clocks by using the CLK_IS_CRITICAL flag.
+There is no device which is supposed to enable this clock when
+needed, therefore, the only way to use the SPI bus is to enable
+it in boot time.
 
---ed/6oDxOLijJh8b0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On Mon, Jul 11, 2016 at 11:56:23AM +0200, Thierry Reding wrote:
-> On Tue, May 03, 2016 at 10:56:50AM -0500, Franklin S Cooper Jr wrote:
-> > Replace unit address from 0 to the proper physical address. Also insure
-> > that the unit address matches the reg property address.
-> >=20
-> > Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> > ---
-> >  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> I applied this long ago but never let you know: Applied, thanks.
-
-Actually I didn't. And it seems the reason is that it doesn't apply
-cleanly. For some reason my tree doesn't have an entry for the ecap
-example on am437x. Am I missing a patch? Can you resend whatever is
-not in linux-next yet?
-
-Thierry
-
---ed/6oDxOLijJh8b0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXg2+jAAoJEN0jrNd/PrOh5JsP/i0T3/m0XUoP5hAgP9iz4fEz
-+dFTXJChc/J0DklRURH1d0UAM6GQU1TpBon9hY4GKU9A00DNNemxo+hyDCix0ETE
-H90PtwWoIsD3kbd+sFpbZFqLNTRM3r9oI18He6OAyy0Gvbx6G1aakqF78V14xxfc
-w5sLmrJQDHNY6PqoNTks7ZgNxRLm+zQbl2NvbRDXSh1WS+5smj44W1RfkaLCq6jt
-ewfEpV4dvFJR6/bX+PiFerDndG98pCeZIQjgLDT2gcabbaPzo8C2pq9kti3kmeXi
-ubDLo17vK/DsZCgO3LyyRVUiadHs0z5DgtCbVbg7MVziFKduZZuEzP5X9tzB01zk
-ja6v2Bibra2YL93KOc6erNsrzLfPuPtkp3bqraZpcGf3u4TpIl9niLrRNPKeM16+
-FOk3oJtn+ROKeOfHBgEPHNsDSWF2aBBCjrahZqWHPJUui7XkSEq3prL88fEJPIPn
-4JShghxqXdbtsyNgbFv3wLnAUrobQBFlDGAFIlIotiJKP9m2xR6L6vnxkaL048iX
-Bbgnhaz5UzsG+t4XNDQxt2orG7V2NnQLOV6ha67e57NNmYrrrCJFgx8bozIZ1ycv
-AAB2iQBt7mOGlzKr+e90hBAKCyT0CXTjeRzeHOgEqRXfkP8qbLs1YAQZL759TrA6
-29zFvSmIXuSPc2pdTP2N
-=T0aR
------END PGP SIGNATURE-----
-
---ed/6oDxOLijJh8b0--
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 337387b..fb8d330 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1648,7 +1648,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
+ 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
+-			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 20,
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
+ 			19, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
+-- 
+2.8.1
