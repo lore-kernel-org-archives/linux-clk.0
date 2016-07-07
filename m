@@ -1,43 +1,117 @@
-Return-Path: <neidhard.kim@lge.com>
-Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20160621005910.GN1521@codeaurora.org>
- <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
- <20160628205518.GF3737@rob-hp-laptop>
- <146714872010.89261.1969853552594659808@resonance> <5773736D.3060405@lge.com>
- <20160702002030.GF27880@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chanho Min <chanho.min@lge.com>
-From: Jongsung Kim <neidhard.kim@lge.com>
-Message-ID: <5779C056.3020209@lge.com>
-Date: Mon, 4 Jul 2016 10:48:06 +0900
-MIME-Version: 1.0
-In-Reply-To: <20160702002030.GF27880@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v2 5/6] dt-bindings: clock: add DT binding for the peripheral clocks on Armada 3700
+Date: Fri,  8 Jul 2016 00:37:50 +0200
+Message-Id: <1467931071-31004-6-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016년 07월 02일 09:20, Stephen Boyd wrote:
-> On 06/29, Jongsung Kim wrote:
->> On 2016년 06월 29일 06:18, Michael Turquette wrote:
->>> Quoting Rob Herring (2016-06-28 13:55:18)
->>>> On Fri, Jun 24, 2016 at 01:12:52PM +0900, Jongsung Kim wrote:
->>>>> There is no way to set additional flags for a DT-initialized fixed-
->>>>> factor-clock, and it can be problematic i.e., when the clock rate
->>>>> needs to be changed. [1][2]
->>>>>
->>>>> This patch introduces an optional dt-binding named "clock-flags" to
->>>>> be used for passing any needed flags from dts.
->>>> I don't think we want this in DT. If we did, the flags would need some 
->>>> documentation about what the flags mean.
->>> Flags are specific to Linux implementation, so I agree with Rob. Better
->>> to create a compatible string for your hardware that bakes in the flags.
->> Thank you for your comment, Mike. This conversation starts from lacking method to set CLK_SET_RATE_PARENT from DT. I understand compatible string can be a solution. But.. if someone starts talking about lacking method to set another flag, i.e., CLK_SET_PARENT_GATE, then we'll need another compatible string list.
->> How do you think about defining possible required subset of the flags and using some more neutral flag-names acceptable in DT?
-> Do you actually have an IC on the board that is doing some fixed
-> factor calculation? Or is this a clk driver design where we are
-> listing out each piece of an SoC's clk controller in DT?
->
-The SoC has several PLLs of identical design, and one of them is divided
-to half and used for CPUs. The fixed-factor-clock represents the divider.
+This commit adds the DT binding documentation for the peripheral clocks
+used in the Marvell Armada 3700 SoCs.
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/armada3700-periph-clock.txt     | 70 ++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+new file mode 100644
+index 000000000000..1e3370ba189f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+@@ -0,0 +1,70 @@
++* Peripheral Clock bindings for Marvell Armada 37xx SoCs
++
++Marvell Armada 37xx SoCs provide peripheral clocks which are
++used as clock source for the peripheral of the SoC.
++
++There are two different blocks associated to north bridge and south
++bridge.
++
++The peripheral clock consumer should specify the desired clock by
++having the clock ID in its "clocks" phandle cell.
++
++The following is a list of provided IDs for Armada 370 North bridge clocks:
++ID	Clock name	Description
++-----------------------------------
++0	mmc		MMC controller
++1	sata_host	Sata Host
++2	sec_at		Security AT
++3	sac_dap		Security DAP
++4	tsecm		Security Engine
++5	setm_tmx	Serial Embedded Trace Module
++6	avs		Adaptive Voltage Scaling
++7	sqf		SPI
++8	pwm		PWM
++9	i2c_2		I2C 2
++10	i2c_1		I2C 1
++11	ddr_phy		DDR PHY
++12	ddr_fclk	DDR F clock
++13	trace		Trace
++14	counter		Counter
++15	eip97		EIP 97
++16	cpu		CPU
++
++The following is a list of provided IDs for Armada 370 South bridge clocks:
++ID	Clock name	Description
++-----------------------------------
++0	gbe-50		50 MHz parent clock for Gigabit Ethernet
++1	gbe-core	parent clock for Gigabit Ethernet core
++2	gbe-125		125 MHz parent clock for Gigabit Ethernet
++3	gbe1-50		50 MHz clock for Gigabit Ethernet port 1
++4	gbe0-50		50 MHz clock for Gigabit Ethernet port 0
++5	gbe1-125	125 MHz clock for Gigabit Ethernet port 1
++6	gbe0-125	125 MHz clock for Gigabit Ethernet port 0
++7	gbe1-core	Gigabit Ethernet core port 1
++8	gbe0-core	Gigabit Ethernet core port 0
++9	gbe-bm		Gigabit Ethernet Buffer Manager
++10	sdio		SDIO
++11	usb32-sub2-sys	USB 2 clock
++12	usb32-ss-sys	USB 3 clock
++
++Required properties:
++
++- compatible : shall be "marvell,armada-3700-periph-clock-nb" for the
++  north bridge block, or
++  "marvell,armada-3700-periph-clock-sb" for the south bridge block
++- reg : must be the register address of North/South Bridge Clock register
++- #clock-cells : from common clock binding; shall be set to 1
++
++- clocks : list of the parent clock phandle in the following order:
++  TBG-A P, TBG-B P, TBG-A S, TBG-B S and finally the xtal clock.
++
++
++Example:
++
++nb_perih_clk: nb-periph-clk@13000{
++	compatible = "marvell,armada-3700-periph-clock-nb";
++	reg = <0x13000 0x1000>;
++	clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
++	<&tbg 3>, <&xtalclk>;
++	#clock-cells = <1>;
++};
+-- 
+2.5.0
