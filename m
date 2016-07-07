@@ -1,69 +1,91 @@
-Return-Path: <mirza.krak@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160725115923.GF21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <20160725115923.GF21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 25 Jul 2016 15:30:34 +0200
-Message-ID: <CALw8SCU6vWeDyoy+t53k2+tmnrZd+ieBV88Vc6FSL9x3FzSm5g@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v2 0/6] Add clock support for Armada 37xx SoCs
+Date: Fri,  8 Jul 2016 00:37:45 +0200
+Message-Id: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 13:59 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
->>
->
->> > +Note that the NOR controller does not have any internal chip-select address
->> > +decoding and if you want to access multiple devices external chip-select
->> > +decoding must be provided.
->>
->> Although it is true, you do have the MIO address space and so you could
->> support two devices via the SNOR address space and MIO address space
->> (assuming that the MIO can be used for the 2nd device).
->
-> Now I'm even more confused. If the GMI controller itself can't select a
-> chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
-> that not select a specific chip?
->
->> Furthermore, if you do have external logic to support multiple devices
->> this would assume that the devices use the same timing and so are
->> probably the same type. It also assumes both can fit in the 256MB
->> address range. May be worth mentioning.
->
-> Similarly if you switch between different devices, wouldn't you have to
-> reprogram the timing registers if they are different?
->
-> The way I remember this kind of interface to work (it's been a long time
-> since I used one) is that in order to operate on a chip you need to
-> acquire the bus first. Typically that would be an API exposed by the bus
-> driver or some framework that the bus driver registers with. That API
-> arbitrates between multiple devices on the bus and makes sure that the
-> proper chip select is asserted and timing is programmed when you're
-> granted access. A driver that has acquired the bus can then perform what
-> operations they need and release the bus when done.
->
-> SPI uses a mechanism like this, for example.
->
-> Thierry
+Hi,
 
->From my experience (maybe not as long as yours :)) but these kind of
-things would be handled by the controller. At least with previous SOCs
-that I have used, PXA270, PXA300 and i.MX SOCs.
+eventually this is the second version of the series adding clock
+support for the Armada 37xx SoCs.
 
-That it has an address range per chip-select PIN and timing registers
-per chip-select. And thus eliminating a need for a infrastructure or
-framework.
+The design of the drivers is as close as possible as the hardware is,
+with some clocks made of several layers: muxing, divider and gating.
 
+The device tree binding was written in a way that even if we discover
+some change inside the clocks, the binding should not be
+affected. Especially, there are some holes in the clocks, but we
+should be able to add them seamless.
 
-Best regards,
-Mirza
+Since the firs version the main change is the use of clk_hw instead of
+clk for the registration. I also removed the dt related patches as they
+were already applied.
+
+However the full series is available on the branch
+Armada-3700-Clocks-v2 at
+git@github.com:MISL-EBU-System-SW/mainline-public.git
+
+Thanks,
+
+Changelog:
+
+v1 -> v2
+
+- Move to clk_hw based registration for the 3 clock driver as
+  requested by Stephen Boyd
+- Fixed typo noticed by Stephen Boyd
+- Added const and static when they were missing: suggested by Stephen
+  Boyd
+- Allocated the driver variable during probe instead of using a global
+  one as requested by Stephen Boyd
+- Managed the failure of the of_clk_add_hw_provider call
+- Added the Acked-by from Rob Herring on the dt binding patchs
+
+Gregory CLEMENT (6):
+  dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+  clk: mvebu: Add the xtal clock for Armada 3700 SoC
+  dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
+  clk: mvebu Add the time base generator clocks for Armada 3700
+  dt-bindings: clock: add DT binding for the peripheral clocks on Armada
+    3700
+  clk: mvebu: Add the peripheral clock driver for Armada 3700
+
+ .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
+ .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
+ .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
+ drivers/clk/mvebu/Kconfig                          |   3 +
+ drivers/clk/mvebu/Makefile                         |   3 +
+ drivers/clk/mvebu/armada-37xx-periph.c             | 457 +++++++++++++++++++++
+ drivers/clk/mvebu/armada-37xx-tbg.c                | 165 ++++++++
+ drivers/clk/mvebu/armada-37xx-xtal.c               |  98 +++++
+ 8 files changed, 851 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+ create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
+ create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
+ create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+
+-- 
+2.5.0
