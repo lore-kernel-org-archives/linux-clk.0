@@ -1,52 +1,151 @@
-Return-Path: <tomasz.figa@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Mon, 4 Jul 2016 12:59:54 +0900
-Message-ID: <CA+Ln22HuCdDr=g06ynK7mqjDfUVrQgG-NRkfTP_zE6h-wZk6Gw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mark spi clocks as critical and enable spi3 clocks
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, Andi Shyti <andi@etezian.org>
-Content-Type: text/plain; charset=UTF-8
+To: Stefan Agner <stefan@agner.ch>, festevam@gmail.com, aisheng.dong@nxp.com,
+ shawnguo@kernel.org, kernel@pengutronix.de
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160703174813.13970-1-stefan@agner.ch>
+Cc: sboyd@codeaurora.org, grinberg@compulab.co.il,
+ gary.bisson@boundarydevices.com, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Stefan Agner" <stefan@agner.ch>
+References: <20160703174813.13970-1-stefan@agner.ch>
+Message-ID: <146785281774.73491.10999943518898018619@resonance>
+Subject: Re: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
+Date: Wed, 06 Jul 2016 17:53:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andi,
+Quoting Stefan Agner (2016-07-03 10:48:13)
+> All device trees currently in mainline specify the time clock parent
+> using the assigned-clocks/assigned-clock-parents method, there is no
+> need to statically assign the parent in the core clock driver.
+> Also all current boards provide an Ethernet reference clock for the
+> PHY externally, hence configuring the internal PHY reference clock.
+> =
 
-2016-06-30 16:15 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
-> Hi,
->
-> This patchset enables spi3 clocks by marking critical clocks as
-> CLK_IS_CRITICAL and in the meantime replaces the use of
-> CLK_IGNORE_UNUSED for spi1 clocks.
->
-> The sclk needs to be considered critical as well.
->
-> The SPI3 in the tm2/tm2e boards will control an irled for remote
-> controlling.
->
-> Changelog:
->
-> V1 -> V2
->  - the "sclk_spi3" doesn't need to be enabled in boot time as it
->   is handled by the spi driver itself.
->
->  - use the CLK_IS_CRITICAL flag for the ioclk
->
-> V2 -> V3
->  - some more tests has confirmed taht "sclk_spi1,3" need to be
->    enabled as critical!
+> Furthermore, and the actual driver of this patch, specify ethernet
+> related parents at that early point in boot leads to a warning:
+> bad: scheduling from the idle thread!
+> =
 
-This sounds like a DTS and/or SPI and/or clock driver bug then. I'm
-pretty much convinced that it might also cause other problems and this
-workaround will only mask them making things even more difficult to
-debug in the future. Let's not introduce more technical debt.
+> The reason for the warning is that setting the parent enables the ENET
+> PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
+> cause clk_pllv3_wait_lock to sleep. See also:
+> commit fc8726a2c021 ("clk: core: support clocks which requires parents
+> enable (part 2)").
+> =
 
-Best regards,
-Tomasz
+> Note that setting the ENET AXI root clock parent also requires ENET
+> PLL to be enabled. However, U-Boot typically leaves the ENET PLL on,
+> hence when the framework sets the parent of the first clock, it does
+> not need to wait for the PLL to come up. But because there is currently
+> no user of that clock, the PLL gets disabled after setting the parent.
+> Therefore, subsequent reparenting calls of any clock which somehow rely
+> on the ENET PLL, need to reenable the ENET PLL which leads to a sleep.
+> Removing those subsequent reparenting calls works around this issue.
+> =
+
+> Also remove comments. The code is really verbose enough.
+> =
+
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+Applied.
+
+Regards,
+Mike
+
+> ---
+> Changes since v1:
+> - Also remove PHY REF clock
+> =
+
+> Hi All,
+> =
+
+> Fabio, thanks for testing v1.
+> =
+
+> With v2, the warnings should definitly be gone. However, that might
+> break some boards...
+> =
+
+> What is the IMX7D_ENET_PHY_REF_ROOT_SRC clock for anyway? It sounds
+> like it should provide a clock for the PHY. However, there is also
+> IMX7D_ENET1_REF_ROOT_CLK and IMX7D_ENET2_REF_ROOT_CLK...
+> =
+
+> Our first design used to use a clock provided by the SoC, by muxing
+> a pad to CCM_ENET1_REF_CLK and enabling IMX7D_ENET1_REF_ROOT_CLK
+> it seemd to work just fine, there was no need for
+> IMX7D_ENET_PHY_REF_ROOT_SRC.
+> =
+
+> Dong, can you shed some light on this?
+> =
+
+> Otherwise, in case a board does not work with that change, something
+> like this should do the same using device tree. You probably would
+> have to add this to all FEC instances since this seems to be a shared
+> clock.
+> =
+
+>         pinctrl-names =3D "default";
+>         pinctrl-0 =3D <&pinctrl_enet1>;
+>         assigned-clocks =3D <&clks IMX7D_ENET1_TIME_ROOT_SRC>,
+> -                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>;
+> -       assigned-clock-parents =3D <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
+> +                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>,
+> +                         <&clks IMX7D_ENET_PHY_REF_ROOT_SRC>;
+> +       assigned-clock-parents =3D <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>, =
+<0>,
+> +                                <&clks IMX7D_PLL_ENET_MAIN_25M_CLK>;
+>         assigned-clock-rates =3D <0>, <100000000>;
+>         phy-mode =3D "rgmii";
+>         phy-handle =3D <&ethphy0>;
+> =
+
+> --
+> Stefan
+> =
+
+>  drivers/clk/imx/clk-imx7d.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> =
+
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 79293ed..6ed4f8f 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -860,16 +860,7 @@ static void __init imx7d_clocks_init(struct device_n=
+ode *ccm_node)
+>         /* use old gpt clk setting, gpt1 root clk must be twice as gpt co=
+unter freq */
+>         clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]=
+);
+>  =
+
+> -       /*
+> -        * init enet clock source:
+> -        *      AXI clock source is 250MHz
+> -        *      Phy refrence clock is 25MHz
+> -        *      1588 time clock source is 100MHz
+> -        */
+>         clk_set_parent(clks[IMX7D_ENET_AXI_ROOT_SRC], clks[IMX7D_PLL_ENET=
+_MAIN_250M_CLK]);
+> -       clk_set_parent(clks[IMX7D_ENET_PHY_REF_ROOT_SRC], clks[IMX7D_PLL_=
+ENET_MAIN_25M_CLK]);
+> -       clk_set_parent(clks[IMX7D_ENET1_TIME_ROOT_SRC], clks[IMX7D_PLL_EN=
+ET_MAIN_100M_CLK]);
+> -       clk_set_parent(clks[IMX7D_ENET2_TIME_ROOT_SRC], clks[IMX7D_PLL_EN=
+ET_MAIN_100M_CLK]);
+>  =
+
+>         /* set uart module clock's parent clock source that must be great=
+ then 80MHz */
+>         clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK=
+]);
+> -- =
+
+> 2.9.0
+>=20
