@@ -1,140 +1,67 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 14:10:45 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Message-ID: <20160725121045.GG21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xs+9IvWevLaxKUtW"
-In-Reply-To: <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+To: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+ <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <577E4F1C.8070004@samsung.com>
+Date: Thu, 07 Jul 2016 14:46:20 +0200
+MIME-version: 1.0
+In-reply-to: <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/07/2016 02:13 PM, Andi Shyti wrote:
+> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+> Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
+> which enables the clock line during boot time.
 
---xs+9IvWevLaxKUtW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't agree. Both flags should be avoided. Clk is critical does not
+solve the problem. It is just a better workaround for lack of proper
+clock consumers.
 
-On Thu, Jul 21, 2016 at 10:10:49PM +0200, Mirza Krak wrote:
-> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
-> >> +
-> >> +The NOR controller supports a number of memory types, including synch=
-ronous NOR,
-> >> +asynchronous NOR, and other flash memories with similar interfaces, s=
-uch as
-> >> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSP=
-s,
-> >> +CAN chips, Wi-Fi chips etc.
-> >
-> > Nit-pick ... the Tegra documentation refers to this controller as the
-> > GMI (general memory interface) or SNOR (sync-NOR) controller because it
-> > is not just limited to NOR as you mentioned. I see references to GMI in
-> > the Tegra pinctrl driver and so may be we should use this name.
->=20
-> ACK.
->=20
->=20
-> >> +Required properties:
-> >> +
-> >> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
-> >
-> > I see at least one difference at the register level between Tegra20 and
-> > Tegra30 and so I think this should be something like ...
-> >
-> >  - compatible : Should contain one of the following:
-> >         For Tegra20 must contain "nvidia,tegra20-gmi".
-> >         For Tegra30 must contain "nvidia,tegra30-gmi".
->=20
-> ACK. Just curious, which register was it? I only checked that they
-> have the same count of registers.
->=20
-> >> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
-> >
-> > There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
-> > that this should be nvidia,snor-config to be explicit. It might be nice
-> > to also add a "nvidia,mio-config" while you are at it as well, however,
-> > that could always be done later. If you do, then the
-> > "nvidia,snor-config" becomes optional depending on whether you are using
-> > the SNOR or MIO address space.
->=20
-> ACK the nvidia,snor-config part, will though wait for further comments
-> regarding what to do with the config registers, break-out or keep it
-> is a one property / register.
->=20
-> Regarding mio-config, not sure about if I would like to include that
-> part in this stage. If you feel strongly about this we can do it. If
-> it only comes to down to replicate the same configurations that we do
-> for SNOR to MIO then I do not see much of a problem, but would like
-> SNOR to be accepted and would not like the MIO part to halt this. But
-> then again this up to you guys.
+The IOCLK is not a critical clock. It can be disabled (e.g. when SoC is
+used on a board without any SPI device connected).
 
-What's the difference between SNOR and MIO? Sorry if I'm being dense but
-a quick look around the internet didn't yield anything related. I'd be
-happy to read up if somebody can provide a link.
+Best regards,
+Krzysztof
 
-> > I wonder if it is worth mentioning that the chip-select specified in the
-> > "nvidia,config" prop should match that in the "ranges" prop unless you
-> > have some external decoding logic to provide an external chip-select.
-> > Which raises a question, what does the chip-select in the ranges
-> > actually represent? I am not sure if there is a common practice here for
-> > device tree when boards have external logic to provide additional
-> > chip-selects. I am sure this is quite common.
->=20
-> I do not understand why CS pin setting in nvidia,config need to match
-> the "ranges" prop? Other then maybe cosmetics.
->=20
-> If we do not have any external decoding logic to create more
-> chip-selects we only have ONE chip-select, and that one should always
-> be indexed as 0? Regardless of which CS pin is used. Because
-> ultimately what we configure in SNOR_CONFIG is which PIN(function) to
-> use as chip-select. The address space remains the same.
-
-Is that really so? Looking at the list of pins there are 8 CS outputs
-=66rom the GMI controller. That and the presence of the SNOR_SEL field in
-the SNOR_CONFIG_0 register indicate to me that you can use software to
-assert any of the CS outputs (though only one at the same time, which
-makes sense since you want to avoid writing to multiple chips at once).
-
-Of course the documentation is to blame here, it doesn't go into any
-detail at all about how to use the GMI controller.
-
-Thierry
-
---xs+9IvWevLaxKUtW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXlgHDAAoJEN0jrNd/PrOhI38P/ifxFgrt222EXA6DucwYQCY3
-OezwQw8bSMXDls+WC/FDRZuwgCKxeM6maEHWmkKWIuGzdt3W4mxCOAIkhF3x5AMK
-mFyU6GRYLEjrztP2vP4s+GW/3XPx0Mcz3tF4Q865G7ghTuz0lx0t4m1Kg3VAi1ha
-bzJNFk7q9JLR76i51BC0+zy6ekfnfwt6smOCh8xATbuqU/M/HMrmGD4exQlHiAMQ
-8kZmuQhy339Qy8wEhDaOhrrr9aMjAIhu7P7s94ayV9IsSoe2UOujNRHTTFNTOWZY
-yiPT3fpuDR/MiVvvhkDqPGcD5VG/wNfI9KnwlFiZD+RfsNm5pwkdium8yVgffOPu
-jpIie62khANjA5Bxd+voXNNjjCYVUbqGrFrmlQ0wEK1+l39Ni/uHLZmazFTrEC33
-bxAiLomB1cu+jGqXsp/qvXfrH2vRAEZQp7w94+wqTAlxu0mYDvlWfeHC9bplX6EI
-8cuNXSHbglpoktmF8etyzyPhKTQsKpKYLuwqDpzWs3iWptmO+t36Pyy1A6PiEFgw
-Jm1ksTiuiW6Hf6tPVjsPfYiNrX6X9afcE4cND6fess+xcaNK2vda2wSSI2aYQm8N
-X1OByw/Rg10mm3Hj4rw2IwZrOWkyjVGclJASb8wOBfIDWlOb4evRsYCcnSCWs3/O
-vmnUwD5PfLs2f32eJEKc
-=HN5s
------END PGP SIGNATURE-----
-
---xs+9IvWevLaxKUtW--
+> 
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index c3a5318..337387b 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -1662,7 +1662,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>  			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+>  			ENABLE_SCLK_PERIC, 12,
+> -			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+>  			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+> @@ -1677,7 +1677,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>  	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+>  			5, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+> -			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +			4, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+>  			3, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+> 
