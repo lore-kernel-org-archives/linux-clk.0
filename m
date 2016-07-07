@@ -1,147 +1,65 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v3 3/6] meson: clk: Rename register names according to Amlogic datasheet
-Date: Sun, 17 Jul 2016 20:44:48 +0200
-Message-Id: <1468781091-39119-4-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1468781091-39119-1-git-send-email-serveralex@gmail.com>
-References: <1468781091-39119-1-git-send-email-serveralex@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from host.buserror.net ([209.198.135.123]:40921 "EHLO
+	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751243AbcGGUnP (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2016 16:43:15 -0400
+Message-ID: <1467924174.32358.69.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	Xiaobo Xie <xiaobo.xie@nxp.com>,
+	Yang-Leo Li <leoyang.li@nxp.com>,
+	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Date: Thu, 07 Jul 2016 15:42:54 -0500
+In-Reply-To: <4094106.qfxJu3tJbO@wuerfel>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
+	 <1465609853.22191.151.camel@buserror.net>
+	 <HE1PR04MB0889646206BFAD68046F3473F83B0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+	 <4094106.qfxJu3tJbO@wuerfel>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH 2/4] soc: fsl: add GUTS driver for QorIQ platforms
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/meson8b.c | 26 +++++++++++++-------------
- drivers/clk/meson/meson8b.h | 11 +++++------
- 2 files changed, 18 insertions(+), 19 deletions(-)
+On Thu, 2016-07-07 at 10:30 +0200, Arnd Bergmann wrote:
+> On Thursday, July 7, 2016 2:35:33 AM CEST Yangbo Lu wrote:
+> > 
+> > Hi Arnd,
+> > 
+> > Could you reply when you see the email?
+> > If your method doesn’t resolve the problem, we still want to use our old
+> > patchset.
+> > 
+> > This guts driver had been discussed about one year and blocked many
+> > workaround upstream.
+> > So please help to review and comment soon.
+> > 
+> I don't really see how more discussion is going to help us here. I think
+> I've made it pretty clear that I don't want to see another platform
+> specific way to read an SoC revision and I've even sent a proof-of-concept
+> patch to show how the interface can work, now it's up to you to fit the
+> guts hardware into that and send a new patch series.
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 537cc53..0c6e26f 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -111,17 +111,17 @@ static struct clk_fixed_rate meson8b_xtal = {
- 
- static struct meson_clk_pll meson8b_fixed_pll = {
- 	.m = {
--		.reg_off = MESON8B_REG_PLL_FIXED,
-+		.reg_off = HHI_MPLL_CNTL,
- 		.shift   = 0,
- 		.width   = 9,
- 	},
- 	.n = {
--		.reg_off = MESON8B_REG_PLL_FIXED,
-+		.reg_off = HHI_MPLL_CNTL,
- 		.shift   = 9,
- 		.width   = 5,
- 	},
- 	.od = {
--		.reg_off = MESON8B_REG_PLL_FIXED,
-+		.reg_off = HHI_MPLL_CNTL,
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-@@ -137,17 +137,17 @@ static struct meson_clk_pll meson8b_fixed_pll = {
- 
- static struct meson_clk_pll meson8b_vid_pll = {
- 	.m = {
--		.reg_off = MESON8B_REG_PLL_VID,
-+		.reg_off = HHI_VID_PLL_CNTL,
- 		.shift   = 0,
- 		.width   = 9,
- 	},
- 	.n = {
--		.reg_off = MESON8B_REG_PLL_VID,
-+		.reg_off = HHI_VID_PLL_CNTL,
- 		.shift   = 9,
- 		.width   = 5,
- 	},
- 	.od = {
--		.reg_off = MESON8B_REG_PLL_VID,
-+		.reg_off = HHI_VID_PLL_CNTL,
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-@@ -163,17 +163,17 @@ static struct meson_clk_pll meson8b_vid_pll = {
- 
- static struct meson_clk_pll meson8b_sys_pll = {
- 	.m = {
--		.reg_off = MESON8B_REG_PLL_SYS,
-+		.reg_off = HHI_SYS_PLL_CNTL,
- 		.shift   = 0,
- 		.width   = 9,
- 	},
- 	.n = {
--		.reg_off = MESON8B_REG_PLL_SYS,
-+		.reg_off = HHI_SYS_PLL_CNTL,
- 		.shift   = 9,
- 		.width   = 5,
- 	},
- 	.od = {
--		.reg_off = MESON8B_REG_PLL_SYS,
-+		.reg_off = HHI_SYS_PLL_CNTL,
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-@@ -250,7 +250,7 @@ static struct clk_fixed_factor meson8b_fclk_div7 = {
-  * forthcoming coordinated clock rates feature
-  */
- static struct meson_clk_cpu meson8b_cpu_clk = {
--	.reg_off = MESON8B_REG_SYS_CPU_CNTL1,
-+	.reg_off = HHI_SYS_CPU_CLK_CNTL1,
- 	.div_table = cpu_div_table,
- 	.clk_nb.notifier_call = meson_clk_cpu_notifier_cb,
- 	.hw.init = &(struct clk_init_data){
-@@ -264,7 +264,7 @@ static struct meson_clk_cpu meson8b_cpu_clk = {
- static u32 mux_table_clk81[]	= { 6, 5, 7 };
- 
- struct clk_mux meson8b_mpeg_clk_sel = {
--	.reg = (void *)MESON8B_REG_HHI_MPEG,
-+	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.mask = 0x7,
- 	.shift = 12,
- 	.flags = CLK_MUX_READ_ONLY,
-@@ -286,7 +286,7 @@ struct clk_mux meson8b_mpeg_clk_sel = {
- };
- 
- struct clk_divider meson8b_mpeg_clk_div = {
--	.reg = (void *)MESON8B_REG_HHI_MPEG,
-+	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
- 	.lock = &clk_lock,
-@@ -300,7 +300,7 @@ struct clk_divider meson8b_mpeg_clk_div = {
- };
- 
- struct clk_gate meson8b_clk81 = {
--	.reg = (void *)MESON8B_REG_HHI_MPEG,
-+	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.bit_idx = 7,
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index 5b9cb9f..b2f29f7 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -30,11 +30,10 @@
-  *
-  * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-  */
--#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
--#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
--#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
--#define MESON8B_REG_PLL_FIXED		0x0280
--#define MESON8B_REG_PLL_SYS		0x0300
--#define MESON8B_REG_PLL_VID		0x0320
-+#define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data sheet */
-+#define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet */
-+#define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
-+#define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
-+#define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
- 
- #endif /* __MESON8B_H */
--- 
-2.5.0
+In which relevant maintainership capacity are you NACKing it?
+
+-Scott
+
