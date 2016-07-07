@@ -1,91 +1,54 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
-To: Michael Turquette <mturquette@baylibre.com>, Julien Grall
-	<julien.grall@arm.com>, <linux-arm-kernel@lists.infradead.org>, Mark Rutland
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>
-References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
- <146776885213.35356.11565744417822933094@resonance>
- <577D035C.7090504@arm.com> <146783774807.35356.6362595927321996311@resonance>
-CC: <xen-devel@lists.xenproject.org>, Stefano Stabellini
-	<sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <dad950db-4c02-e5a2-0ce9-682a40cd12d7@de.bosch.com>
-Date: Thu, 7 Jul 2016 09:32:34 +0200
-MIME-Version: 1.0
-In-Reply-To: <146783774807.35356.6362595927321996311@resonance>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI
+ clocks
+Date: Thu, 07 Jul 2016 21:13:56 +0900
+Message-id: <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael,
+The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
+which enables the clock line during boot time.
 
-On 06.07.2016 22:42, Michael Turquette wrote:
-> Hi Julien,
->
-> Quoting Julien Grall (2016-07-06 06:10:52)
->> On 06/07/16 02:34, Michael Turquette wrote:
->>> Hi!
->>
->> Hello Michael,
->>
->>> Quoting Dirk Behme (2016-06-30 03:32:32)
->>>> Some clocks might be used by the Xen hypervisor and not by the Linux
->>>> kernel. If these are not registered by the Linux kernel, they might be
->>>> disabled by clk_disable_unused() as the kernel doesn't know that they
->>>> are used. The clock of the serial console handled by Xen is one
->>>> example for this. It might be disabled by clk_disable_unused() which
->>>> stops the whole serial output, even from Xen, then.
->>>
->>> This whole thread had me confused until I realized that it all boiled
->>> down to some nomenclature issues (for me).
->>>
->>> This code does not _register_ any clocks. It simply gets them and
->>> enables them, which is what every other clk consumer in the Linux kernel
->>> does. More details below.
->>>
->>>>
->>>> Up to now, the workaround for this has been to use the Linux kernel
->>>> command line parameter 'clk_ignore_unused'. See Xen bug
->>>>
->>>> http://bugs.xenproject.org/xen/bug/45
->>>
->>> clk_ignore_unused is a band-aid, not a proper medical solution. Setting
->>> that flag will not turn clocks on for you, nor will it guarantee that
->>> those clocks are never turned off in the future. It looks like you
->>> figured this out correctly in the patch below but it is worth repeating.
->>>
->>> Also the new CLK_IS_CRITICAL flag might be of interest to you, but that
->>> flag only exists as a way to enable clocks that must be enabled for the
->>> system to function (hence, "critical") AND when those same clocks do not
->>> have an accompanying Linux driver to consume them and enable them.
->>
->> I don't think we want the kernel to enable the clock for the hypervisor.
->> We want to tell the kernel "don't touch at all to this clock, it does
->> not belong to you".
->
-> But the patch *does* touch the clock from the kernel. It enables the
-> clock via a call clk_prepare_enable. I'm utterly confused.
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Maybe we need some advice here :)
-
-
-I've used clk_prepare_enable() 'just' to get the enable count incremented
-
-http://lxr.free-electrons.com/source/drivers/clk/clk.c#L751
-
-Because it's my understanding that enable_count is needed to prevent 
-clk_disable_unused() from disabling the clock.
-
-
-If there is an other / better / correct way to achieve that, please let 
-us know.
-
-
-I've had a look to use the CLK_IGNORE_UNUSED flag, too. But couldn't 
-find a function exported by the clock framework to set that flag (?)
-
-
-Best regards
-
-Dirk
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index c3a5318..337387b 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1662,7 +1662,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+ 			ENABLE_SCLK_PERIC, 12,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+ 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+@@ -1677,7 +1677,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+-			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			4, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+ 			3, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+-- 
+2.8.1
