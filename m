@@ -1,35 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:35543 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754830AbcGLPj0 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 11:39:26 -0400
-Date: Tue, 12 Jul 2016 21:09:10 +0530
-From: Afzal Mohammed <afzal.mohd.ma@gmail.com>
-To: Wan Zongshun <vw@iommu.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	jason@lakedaemon.net, p.zabel@pengutronix.de,
-	Wan Zongshun <mcuos.com@gmail.com>
-Subject: Re: [PATCH v2 08/10] ARM: dts: nuc900: Add nuc970 dts files
-Message-ID: <20160712153910.GA3507@afzalpc>
-References: <1468136542-2656-1-git-send-email-vw@iommu.org>
+Return-Path: <jorge.ramirez-ortiz@linaro.org>
+Return-Path: <jorge.ramirez-ortiz@linaro.org>
+Subject: Re: [PATCH v2 2/2] clk: hi6220: initialize UART1 clock to 150MHz
+To: Michael Turquette <mturquette@baylibre.com>,
+ Guodong Xu <guodong.xu@linaro.org>, sboyd@codeaurora.org,
+ xinliang.liu@linaro.org, john.stultz@linaro.org
+References: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
+ <1467189955-21694-2-git-send-email-guodong.xu@linaro.org>
+ <146784139106.73491.6417383579004254897@resonance>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <577DF73A.1030701@linaro.org>
+Date: Thu, 7 Jul 2016 08:31:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1468136542-2656-1-git-send-email-vw@iommu.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <146784139106.73491.6417383579004254897@resonance>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 07/06/2016 11:43 PM, Michael Turquette wrote:
+> Quoting Guodong Xu (2016-06-29 01:45:55)
+>> >From: Jorge Ramirez-Ortiz<jorge.ramirez-ortiz@linaro.org>
+>> >
+>> >Early at boot, during the sys_clk initialization, make sure UART1 uses
+>> >the higher frequency clock, 150MHz.
+>> >
+>> >This enables support for higher baud rates (up to 3Mbps) in UART1, which
+>> >is required by faster bluetooth transfers.
+>> >
+>> >v2: use clk_set_rate() to propergate clock settings.
+>> >
+>> >Signed-off-by: Jorge Ramirez-Ortiz<jorge.ramirez-ortiz@linaro.org>
+>> >Signed-off-by: Guodong Xu<guodong.xu@linaro.org>
+>> >---
+>> >  drivers/clk/hisilicon/clk-hi6220.c | 4 ++++
+>> >  1 file changed, 4 insertions(+)
+>> >
+>> >diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+>> >index a36ffcb..631c56f 100644
+>> >--- a/drivers/clk/hisilicon/clk-hi6220.c
+>> >+++ b/drivers/clk/hisilicon/clk-hi6220.c
+>> >@@ -12,6 +12,7 @@
+>> >  
+>> >  #include <linux/kernel.h>
+>> >  #include <linux/clk-provider.h>
+>> >+#include <linux/clk.h>
+>> >  #include <linux/clkdev.h>
+>> >  #include <linux/io.h>
+>> >  #include <linux/of.h>
+>> >@@ -192,6 +193,9 @@ static void __init hi6220_clk_sys_init(struct device_node *np)
+>> >  
+>> >         hi6220_clk_register_divider(hi6220_div_clks_sys,
+>> >                         ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
+>> >+
+>> >+       if (clk_set_rate(clk_data->clk_data.clks[HI6220_UART1_SRC], 150000000))
+>> >+               pr_err("failed to set uart1 clock rate\n");
+> Why doesn't the UART driver call clk_get and then clk_set_rate on this
+> clock? Why do it in the clk provider driver?
 
-On Sun, Jul 10, 2016 at 03:42:20PM +0800, Wan Zongshun wrote:
-> This patch is to add dts support for nuc970 platform.
-
-cpu ! in soc ? lost in fab ? ;)
-
-Regards
-afzal
+yes that was my initial choice as well; in the end I opted to do it in 
+the clock driver because of it being a value that will not have to ever 
+change for the SoC and - maybe more importantly- because of not having a 
+DT property available for the primecell pl011 uart where to  specify the 
+value (so I thought this was a less intrusive implementation).
