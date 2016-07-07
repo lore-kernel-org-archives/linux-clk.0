@@ -1,53 +1,48 @@
 Return-Path: <andi.shyti@samsung.com>
+Date: Thu, 07 Jul 2016 22:27:38 +0900
 From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Tomasz Figa <tomasz.figa@gmail.com>,
  Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 1/7] bindings: spi-samsung: add exynos5433 spi compatible
-Date: Tue, 12 Jul 2016 19:02:10 +0900
-Message-id: <1468317736-18841-2-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Message-id: <20160707132738.GI23620@samsunx.samsung>
+References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+ <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
+ <CGME20160707124623epcas1p2452001bf48f03cb47c7f7db437130e6d@epcas1p2.samsung.com>
+ <577E4F1C.8070004@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <577E4F1C.8070004@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The samsung,exynos5433-spi has some peculiarities that bring the
-need of creating a new compatible in the binding.
+Hi Krzysztof,
 
-One of those is the 3-clocks controller management where the spi
-is fed with three clocks: "spi", "busclkN" and "ioclk".
+> > The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+> > Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
+> > which enables the clock line during boot time.
+> 
+> I don't agree. Both flags should be avoided. Clk is critical does not
+> solve the problem. It is just a better workaround for lack of proper
+> clock consumers.
+> 
+> The IOCLK is not a critical clock. It can be disabled (e.g. when SoC is
+> used on a board without any SPI device connected).
 
-By adding the exynos5433-spi, we deprecate the exynos7 compatible
-and discourage its use.
+As we discussed offline there is no driver which is requesting
+this clock. We cannot ask to the spi driver to handle three
+clocks because the exynos5433 has its own peculiarities.
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If we want this on the spi driver's side, we need to add a new
+compatible and check it everytime. To me it looks uglier than
+just keep it alive.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 6dbdeb3..57d5539 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -9,7 +9,8 @@ Required SoC Specific Properties:
-     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
-     - samsung,s3c6410-spi: for s3c6410 platforms
-     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
--    - samsung,exynos7-spi: for exynos7 platforms
-+    - samsung,exynos5433-spi: for exynos5433 compatible controllers
-+    - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
--- 
-2.8.1
+Thanks,
+Andi
