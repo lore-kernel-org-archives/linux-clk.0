@@ -1,205 +1,94 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 21 Jul 2016 11:48:52 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
- application method
-Message-ID: <20160721094852.GI5993@lukather>
-References: <20160625034511.7966-1-megous@megous.com>
- <20160625034511.7966-7-megous@megous.com>
- <20160630204001.GC5485@lukather>
- <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
- <20160715085356.GR4761@lukather>
- <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="h22Fi9ANawrtbNPX"
-In-Reply-To: <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+To: Scott Wood <oss@buserror.net>, "Russell King" <linux@armlinux.org.uk>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1466058085-19353-2-git-send-email-oss@buserror.net>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, yuantian.tang@nxp.com, leoyang.li@nxp.com,
+ xiaofeng.ren@nxp.com, "Scott Wood" <scottwood@freescale.com>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+ <1466058085-19353-2-git-send-email-oss@buserror.net>
+Message-ID: <146785501714.73491.8643317356949121718@resonance>
+Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock implementation details
+Date: Wed, 06 Jul 2016 18:30:17 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Scott Wood (2016-06-15 23:21:25)
+> -static struct device_node *cpu_to_clk_node(int cpu)
+> +static struct clk *cpu_to_clk(int cpu)
+>  {
+> -       struct device_node *np, *clk_np;
+> +       struct device_node *np;
+> +       struct clk *clk;
+>  =
 
---h22Fi9ANawrtbNPX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>         if (!cpu_present(cpu))
+>                 return NULL;
+> @@ -112,37 +80,28 @@ static struct device_node *cpu_to_clk_node(int cpu)
+>         if (!np)
+>                 return NULL;
+>  =
 
-On Fri, Jul 15, 2016 at 12:38:54PM +0200, Ond=C5=99ej Jirman wrote:
-> On 15.7.2016 10:53, Maxime Ripard wrote:
-> > On Fri, Jul 01, 2016 at 02:50:57AM +0200, Ond=C5=99ej Jirman wrote:
-> >>>>  /**
-> >>>> + * sun8i_h3_apply_pll1_factors() - applies n, k, m, p factors to the
-> >>>> + * register using an algorithm that tries to reserve the PLL lock
-> >>>> + */
-> >>>> +
-> >>>> +static void sun8i_h3_apply_pll1_factors(struct clk_factors *factors=
-, struct factors_request *req)
-> >>>> +{
-> >>>> +	const struct clk_factors_config *config =3D factors->config;
-> >>>> +	u32 reg;
-> >>>> +
-> >>>> +	/* Fetch the register value */
-> >>>> +	reg =3D readl(factors->reg);
-> >>>> +
-> >>>> +	if (FACTOR_GET(config->pshift, config->pwidth, reg) < req->p) {
-> >>>> +		reg =3D FACTOR_SET(config->pshift, config->pwidth, reg, req->p);
-> >>>> +
-> >>>> +		writel(reg, factors->reg);
-> >>>> +		__delay(2000);
-> >>>> +	}
-> >>>
-> >>> So there was some doubts about the fact that P was being used, or at
-> >>> least that it was useful.
-> >>
-> >> p is necessary to reduce frequencies below 288 MHz according to the
-> >> datasheet.
-> >=20
-> > Yes, but you could reach those frequencies without P, too, and it's
-> > not part of any OPP provided by Allwinner.
->=20
-> The arisc firmware for H3 contains table of factors for frequences from
-> 0 to 2GHz and, P is used below 240MHz. M is never used, BTW. (other
-> datasheets specify M as for testing use only, whatever that means - not
-> H3, but it seems it's the same PLL block)
+> -       clk_np =3D of_parse_phandle(np, "clocks", 0);
+> -       if (!clk_np)
+> -               return NULL;
+> -
+> +       clk =3D of_clk_get(np, 0);
 
-Interesting. Which SoCs in particular?
+Why not use devm_clk_get here?
 
-> >>>> +	if (FACTOR_GET(config->mshift, config->mwidth, reg) < req->m) {
-> >>>> +		reg =3D FACTOR_SET(config->mshift, config->mwidth, reg, req->m);
-> >>>> +
-> >>>> +		writel(reg, factors->reg);
-> >>>> +		__delay(2000);
-> >>>> +	}
-> >>>> +
-> >>>> +	reg =3D FACTOR_SET(config->nshift, config->nwidth, reg, req->n);
-> >>>> +	reg =3D FACTOR_SET(config->kshift, config->kwidth, reg, req->k);
-> >>>> +
-> >>>> +	writel(reg, factors->reg);
-> >>>> +	__delay(20);
-> >>>> +
-> >>>> +	while (!(readl(factors->reg) & (1 << config->lock)));
-> >>>
-> >>> So, they are applying the dividers first, and then applying the
-> >>> multipliers, and then wait for the PLL to stabilize.
-> >>
-> >> Not exactly, first we are increasing dividers if the new dividers are
-> >> higher that that what's already set. This ensures that because
-> >> application of dividers is immediate by the design of the PLL, the
-> >> application of multipliers isn't. So the VCO would still run at the sa=
-me
-> >> frequency for a while gradually rising to a new value for example,
-> >> while the dividers would be reduced immediately. Leading to crash.
-> >>
-> >> PLL
-> >> --------------------------
-> >> PRE DIV(f0) -> VCO(f1) -> POST DIV(f2)
-> >>    P             K,N           M
-> >>
-> >> Example: (we set all factors at once, reducing dividers and multipliers
-> >> at the same time at 0ms - this should lead to no change in the output
-> >> frequency, but...)
-> >>
-> >> -1ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 1GHz
-> >>  0ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 2GHz       - boom
-> >>  1ms: f0 =3D 24MHz, f1 =3D 1.5GHz, f2 =3D 1.5GHz
-> >>  2ms: f0 =3D 24MHz, f1 =3D 1GHz,   f2 =3D 1GHz
-> >>
-> >> The current code crashes exactly at boom, you don't get any more
-> >> instructions to execute.
-> >>
-> >> See.
-> >>
-> >> So this patch first increases dividers (only if necessary), changes
-> >> multipliers and waits for change to happen (takes around 2000 cycles),
-> >> and then decreases dividers (only if necessary).
-> >>
-> >> So we get:
-> >>
-> >> -1ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 1GHz
-> >>  0ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 1GHz   - no boom, multiplier
-> >>                                              reduced
-> >>  1ms: f0 =3D 24MHz, f1 =3D 1.5GHz, f2 =3D 0.75GHz
-> >> 1.9ms: f0 =3D 24MHz, f1 =3D 1GHz,   f2 =3D 0.5GHz - we got PLL sync
-> >>  2ms: f0 =3D 24MHz, f1 =3D 1GHz,   f2 =3D 1GHz   - and here we reduce =
-divider
-> >> at last
-> >=20
-> > Awesome explanation, thanks!
-> >=20
-> > So I guess it really all boils down to the fact that the CPU is
-> > clocked way outside of it's operating frequency while the PLL
-> > stabilizes, right?
->=20
-> It may be, depending on the factors before and after change. I haven't
-> tested what factors the mainline kernel calculates for each frequency.
-> The arisc never uses M, and only uses P at frequencies that would not
-> allow for this behavior.
->=20
-> I created a test program for arisc that runs a loop on the main CPU
-> using msgbox to send pings to the arisc CPU, and the vary the PLL1
-> randomly from the arisc, and haven't been able to lockup the main CPU
-> yet with either method.
->=20
-> There's also AXI clock, that depends on PLL1. Arisc firmware uses the
-> same method to change it while changing CPUX clock. If the clock would
-> rise above certain frequency, AXI divider is increased before the PLL1
-> change. If it would fall below certain frequency it is decreased after
-> the PLL1 change.
+> @@ -221,17 +180,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_po=
+licy *policy)
+>                 goto err_nomem2;
+>         }
+>  =
 
-If we ever need to change that, we can always rely on a clock notifier
-to adjust the divider before the change happen (and support all the
-scenarios, like the clock change has been aborted).
+> -       pnode =3D of_parse_phandle(np, "clocks", 0);
+> -       if (!pnode) {
+> -               pr_err("%s: could not get clock information\n", __func__);
+> -               goto err_nomem2;
+> -       }
+> +       count =3D clk_get_num_parents(policy->clk);
 
-> > If so, then yes, trying to switch to the 24MHz oscillator before
-> > applying the factors, and then switching back when the PLL is stable
-> > would be a nice solution.
-> >=20
-> > I just checked, and all the SoCs we've had so far have that
-> > possibility, so if it works, for now, I'd like to stick to that.
->=20
-> It would need to be tested. U-boot does the change only once, while the
-> kernel would be doing it all the time and between various frequencies
-> and PLL settings. So the issues may show up with this solution too.
+We already have of_clk_get_parent_count. This is found in
+clk-provider.h, which doesn't fit perfectly here since the cpufreq
+driver is not a clock provider, but instead a consumer.
 
-That would have the benefit of being quite easy to document, not be a
-huge amount of code and it would work on all the CPUs PLLs we have so
-far, so still, a pretty big win. If it doesn't, of course, we don't
-really have the choice.
+> @@ -240,23 +194,11 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_po=
+licy *policy)
+>                 goto err_pclk;
+>         }
+>  =
 
-Maxime
+> -       if (fmask)
+> -               mask =3D fmask[get_cpu_physical_id(cpu)];
+> -       else
+> -               mask =3D 0x0;
+> -
+>         for (i =3D 0; i < count; i++) {
+> -               clk =3D of_clk_get(pnode, i);
+> +               clk =3D clk_get_parent_by_index(policy->clk, i);
+>                 data->pclk[i] =3D clk;
+>                 freq =3D clk_get_rate(clk);
+> -               /*
+> -                * the clock is valid if its frequency is not masked
+> -                * and large than minimum allowed frequency.
+> -                */
+> -               if (freq < min_cpufreq || (mask & (1 << i)))
+> -                       table[i].frequency =3D CPUFREQ_ENTRY_INVALID;
+> -               else
+> -                       table[i].frequency =3D freq / 1000;
+> +               table[i].frequency =3D freq / 1000;
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Hmm, so you change cpu clock rate by selecting different clock sources
+from a cpu clock mux, right? I wonder if you can just have a child mux
+clock that selects parents from .set_rate (via a .determine_rate
+callback)? Then you could just call clk_set_rate() on your cpu mux clock
+and maybe skip most of the stuff this driver does?
 
---h22Fi9ANawrtbNPX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXkJqEAAoJEBx+YmzsjxAg5Y0QALJUsJ4QDat3R0NBh3nzYJoR
-E7iX8jbziJiUG3p5aDTPmulFkA4+dsVnXyO3UuzrCHCuQjx2Qe3UrF4vE5Op2vFn
-APNvdd39Os8pOm5/vheXqIawTaqushQ/G3HmP7xiPPZEU/fY03vpJbDciAxO6VPq
-0IdnA6+/q5Rk7D7QqXV47z5arEZO2/Mjy2xsNqHWCB79k/ZqUifX4dueCgkpSSVy
-GqOFe8ywR6lk/SmhLH9qDctI7SbBEuZMVAbfflfYfbsSLPGHaYPDnXZyp/i/kvUZ
-cSHJ1cy04DHmj6QFzSM3WMJ8+AHcAHFyP+yUGcBz1mLnFvowgQyQjJfrQIigPYlO
-K+zruBSSSPLavh1O2FNEFUjGqgTTj+UrCUg5hla6/o55HOQn+4NuZMFO6SvgJz/W
-OsRC2swKWl098soJmlAh8375+4bxT3XI3DojicGMmET/1lJhVV6fcDXAqrZqCFDr
-SSpVRSlCHtTP3gvdwWRV4FSUqSl1Y+eXY14hFOy0N2tWV80TRutzDYFw8D/5YFXr
-mF/j3r/JMaZ+Dun3z2NA8wVqhqrMfbxgaA2gp/BPseoxOnBTb7y8pNgky9gZo69a
-tYiL+tJWLdMNgzhZxOZ3PTDf3u22a+/Atc8iOPhAFjJXk+wkP16XeMUHEvOJ+b9l
-lkvVdJ5sXa34YUB/raMk
-=eYEg
------END PGP SIGNATURE-----
-
---h22Fi9ANawrtbNPX--
+Regards,
+Mike
