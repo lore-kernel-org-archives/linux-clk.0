@@ -1,37 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Wan Zongshun <vw@iommu.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	jason@lakedaemon.net, p.zabel@pengutronix.de,
-	Wan Zongshun <mcuos.com@gmail.com>
-Subject: Re: [PATCH v2 01/10] ARM: NUC900: Add nuc970 machine support
-Date: Mon, 11 Jul 2016 18:04:35 +0200
-Message-ID: <18260150.aRRy8ybKlm@wuerfel>
-In-Reply-To: <1468135649-19980-2-git-send-email-vw@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-2-git-send-email-vw@iommu.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
+Date: Fri, 08 Jul 2016 23:46:40 +0900
+Message-id: <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sunday, July 10, 2016 3:27:21 PM CEST Wan Zongshun wrote:
-> +ifeq ($(CONFIG_SOC_NUC970),)
->  obj-y                          := irq.o time.o mfp.o gpio.o clock.o
->  obj-y                          += clksel.o dev.o cpu.o
-> +endif
->  # W90X900 CPU support files
+Patch a9e93e8 has erroneously removed some comments which are
+important to understand why the bus frequency is multiplied by
+two during the spi transfer.
 
-When mfp.o is disabled like this, I get a link error in two drivers
-using the exported interface:
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-ERROR: "mfp_set_groupg" [drivers/spi/spi-nuc900.ko] undefined!
-ERROR: "mfp_set_groupi" [drivers/input/keyboard/w90p910_keypad.ko] undefined!
-
-Any idea for a better migration strategy?
-
-	Arnd
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 6da663f..32b66f0 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+ 
+ 	if (sdd->port_conf->clk_from_cmu) {
++		/* There is half-multiplier before the SPI */
+ 		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+ 	} else {
+ 		/* Configure Clock */
+-- 
+2.8.1
