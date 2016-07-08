@@ -1,51 +1,87 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Wed, 13 Jul 2016 11:08:52 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from
- SPI clocks
-Message-id: <20160713020852.GH18237@samsunx.samsung>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
- <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
- <CGME20160712221734epcas1p2e2069af657e3afa912bea5bf7217e08a@epcas1p2.samsung.com>
- <146836184696.73491.9452469757415968654@resonance>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <146836184696.73491.9452469757415968654@resonance>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57185 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754746AbcGHOPo (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2016 10:15:44 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem
+ CLKCON driver
+Date: Fri, 08 Jul 2016 16:15:00 +0200
+Message-id: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Any clock dependencies can be properly handled with deferred probing
+so we can remove core_initcall and switch to a proper loadable platform
+driver module.
+This change has been tested on Exynos4412 Odroid U3 based board.
 
-> > Because the Exynos5433 SPI driver supports the ioclk handling and
-> > the following patch:
-> > 
-> >   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
-> > 
-> > fixes a synchronus abort issue, none of the SPI clocks require
-> > any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-> > for the SPI related clocks.
-> > 
-> > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-> > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> Do you want these patches to go through same tree? If not, I can take
-> this patch into clk-next.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/Kconfig            |  9 +++++++++
+ drivers/clk/samsung/Makefile           |  2 +-
+ drivers/clk/samsung/clk-exynos-audss.c | 12 +-----------
+ 3 files changed, 11 insertions(+), 12 deletions(-)
 
-I think this patchset doesn't apply in your repository, but in
-Mark Brown's spi/topic/s3c64xx branch. So that I guess Mark
-should take this patchset.
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index 20c5fe9..addc652 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -9,6 +9,15 @@ config EXYNOS_ARM64_COMMON_CLK
+ 	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
+ 	depends on COMMON_CLK_SAMSUNG
+ 
++config EXYNOS_AUDSS_CLK_CON
++	tristate "Samsung Exynos AUDSS clock controller support"
++	depends on COMMON_CLK_SAMSUNG
++	default y if ARCH_EXYNOS
++	help
++	  Support for the Audio Subsystem CLKCON clock controller present
++	  on some Exynos SoC variants. Choose M or Y here if you want to
++	  use audio devices such as I2S, PCM, etc.
++
+ # For S3C24XX platforms, select following symbols:
+ config S3C2410_COMMON_CLK
+ 	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index fc367d4..57f4dc6 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -12,7 +12,7 @@ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+ obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+-obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
++obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
+ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+ obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 4e9584d..bdf8b97 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -273,17 +273,7 @@ static struct platform_driver exynos_audss_clk_driver = {
+ 	.remove = exynos_audss_clk_remove,
+ };
+ 
+-static int __init exynos_audss_clk_init(void)
+-{
+-	return platform_driver_register(&exynos_audss_clk_driver);
+-}
+-core_initcall(exynos_audss_clk_init);
+-
+-static void __exit exynos_audss_clk_exit(void)
+-{
+-	platform_driver_unregister(&exynos_audss_clk_driver);
+-}
+-module_exit(exynos_audss_clk_exit);
++module_platform_driver(exynos_audss_clk_driver);
+ 
+ MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
+ MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
+-- 
+1.9.1
 
-Sorry, I should have specified it in the cover letter.
-
-Thanks,
-Andi
