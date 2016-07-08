@@ -1,86 +1,57 @@
-Return-Path: <Jiada_Wang@mentor.com>
-Message-ID: <57871FF3.2030306@mentor.com>
-Date: Thu, 14 Jul 2016 14:15:31 +0900
-From: Jiada Wang <jiada_wang@mentor.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Date: Fri, 8 Jul 2016 22:35:28 +0200
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
+Message-ID: <20160708203528.GA26626@kozik-lap>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
-	<vladimir_zapolskiy@mentor.com>
-Subject: Re: [RFC PATCH v2] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
-References: <1468215208-14576-1-git-send-email-jiada_wang@mentor.com> <146836257017.73491.10485892804134671614@resonance>
-In-Reply-To: <146836257017.73491.10485892804134671614@resonance>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Michael
+On Fri, Jul 08, 2016 at 11:46:40PM +0900, Andi Shyti wrote:
+> Patch a9e93e8 has erroneously removed some comments which are
+> important to understand why the bus frequency is multiplied by
+> two during the spi transfer.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  drivers/spi/spi-s3c64xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 6da663f..32b66f0 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+>  	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+>  
+>  	if (sdd->port_conf->clk_from_cmu) {
+> +		/* There is half-multiplier before the SPI */
+>  		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+>  	} else {
+>  		/* Configure Clock */
 
-On 07/13/2016 07:29 AM, Michael Turquette wrote:
-> Quoting jiada_wang@mentor.com (2016-07-10 22:33:28)
->> From: Jiada Wang <jiada_wang@mentor.com>
->>
->> Previously CLK_SET_RATE_GATE flag is only checked in clk_set_rate()
->> which only ensures the clock being called by clk_set_rate() won't
->> change rate when it has been prepared if CLK_SET_RATE_GATE flag is set.
->> But a clk_set_rate() request may propagate rate change to these clocks
->> from the requested clock's topmost parent clock to all its offsprings,
->> when any one of these clocks has CLK_SET_RATE_GATE flag set
->> and it has been prepared, the clk_set_rate() request should fail.
->>
->> This patch moves check of CLK_SET_RATE_GATE flag to
->> clk_propagate_rate_change() to ensure all affected clocks will
->> be checked if their rate will be changed after clk_set_rate().
->>
->> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
->> ---
->
-> What's different in version 2? It's tradition to put a little version
-> changelog here, below the "---" line and above the "diff --git a/..."
-> line.
->
-version 2 resolves the following kernel warning
-"
-    drivers/clk/clk.c: In function 'clk_propagate_rate_change':
- >> drivers/clk/clk.c:1441:3: warning: return makes pointer from integer 
-without a cast
-       return -EBUSY;
-       ^
-"
-I forgot to add a changelog in v2 patch, sorry for the confusion caused.
+Regardless of possible followup after Michael's comments:
 
-Thanks,
-Jiada
-> Regards,
-> Mike
->
->>   drivers/clk/clk.c |    6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 820a939..2f930c8 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1437,6 +1437,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
->>          if (core->rate == core->new_rate)
->>                  return NULL;
->>
->> +       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
->> +               return core;
->> +
->>          if (core->notifier_count) {
->>                  ret = __clk_notify(core, event, core->rate, core->new_rate);
->>                  if (ret & NOTIFY_STOP_MASK)
->> @@ -1571,9 +1574,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->>          if (rate == clk_core_get_rate_nolock(core))
->>                  return 0;
->>
->> -       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
->> -               return -EBUSY;
->> -
->>          /* calculate new rates and get the topmost changed clock */
->>          top = clk_calc_new_rates(core, rate);
->>          if (!top)
->> --
->> 1.7.9.5
->>
->>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
