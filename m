@@ -1,33 +1,42 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 0/2] mark spi clocks as critical and enable spi3 clocks
-To: Andi Shyti <andi.shyti@samsung.com>
-References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
- <577E56A6.6010301@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <577E7495.2010904@samsung.com>
-Date: Thu, 07 Jul 2016 17:26:13 +0200
-MIME-version: 1.0
-In-reply-to: <577E56A6.6010301@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <andi@etezian.org>
+Date: Sat, 9 Jul 2016 01:35:09 +0900
+From: Andi Shyti <andi@etezian.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
+Message-ID: <20160708163509.GE1256@jack.zhora.eu>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
+ <146799464881.73491.7507792367941552864@resonance>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <146799464881.73491.7507792367941552864@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/07/2016 03:18 PM, Sylwester Nawrocki wrote:
-> On 07/07/2016 02:13 PM, Andi Shyti wrote:
->> > Andi Shyti (2):
->> >   clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI clocks
->> >   clk: exynos5433: enable sclk_ioclk for SPI3
->
-> Applied both patches, thanks.
+Hi Mike,
 
-Apologies for the confusion, I had to drop these patches for reasons
-explained in the other thread. We just need to simply drop
-CLK_IGNORE_UNUSED flags and get the driver controlling clocks which
-belong to the peripheral IP block.
+> >         if (sdd->port_conf->clk_from_cmu) {
+> > +               /* There is half-multiplier before the SPI */
+> >                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+> 
+> Just a small comment, but if the fixed-factor divide-by-two clock was
+> modeled in Linux, then this driver could call clk_set_rate on that clock
+> with the "correct" rate.
+> 
+> I guess that this driver would be the provider of that clock?
+
+Makes sense, I will check it.
+
+Thanks again,
+Andi
