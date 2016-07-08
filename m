@@ -1,50 +1,143 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v2 2/7] bindings: spi-samsung: document the clocks and the
- clock-name property
-Date: Fri, 08 Jul 2016 23:46:36 +0900
-Message-id: <1467989201-14661-3-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <Dirk.Behme@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: <linux-arm-kernel@lists.infradead.org>, Julien Grall
+	<julien.grall@arm.com>, Mark Rutland <mark.rutland@arm.com>, Michael
+ Turquette <mturquette@baylibre.com>
+CC: <xen-devel@lists.xenproject.org>, <devicetree@vger.kernel.org>, Stefano
+ Stabellini <sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Stephen
+ Boyd <sboyd@codeaurora.org>, Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH v3] xen/arm: enable clocks used by the hypervisor
+Date: Fri, 8 Jul 2016 09:44:31 +0200
+Message-ID: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-These two properties were not documented but used in the spi
-dts. Add the related documentation.
+Xen hypervisor drivers might replace native OS drivers. The result is
+that some important clocks that are enabled by the OS in the non-Xen
+case are not properly enabled in the presence of Xen. The clocks
+property enumerates the clocks that must be enabled by the Xen clock
+consumer.
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+An example is a serial driver enabled by the hypervisor. Xen must
+consume and enable these clocks in the OS to ensure behavior continues
+after firmware configures the UART hardware and corresponding clock
+harder.
+
+Up to now, the workaround for this has been to use the Linux kernel
+command line parameter 'clk_ignore_unused'. See Xen bug
+
+http://bugs.xenproject.org/xen/bug/45
+
+too.
+
+To fix this, we will add the "unused" clocks in Xen to the hypervisor
+node. The OS has to consume and enable the clocks from the hypervisor
+node, then.
+
+Therefore, check if there is a "clocks" entry in the hypervisor node
+and if so consume and enable the given clocks. This prevents the clocks
+from being disabled by the OS.
+
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 57d5539..2b7167e 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -24,6 +24,14 @@ Required SoC Specific Properties:
- - dma-names: Names for the dma channels. There must be at least one channel
-   named "tx" for transmit and named "rx" for receive.
+Changes in v2: Drop the Linux implementation details like clk_disable_unused
+	       in xen.txt.
+
+ Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
+ arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+index c9b9321..00f2165 100644
+--- a/Documentation/devicetree/bindings/arm/xen.txt
++++ b/Documentation/devicetree/bindings/arm/xen.txt
+@@ -17,6 +17,19 @@ the following properties:
+   A GIC node is also required.
+   This property is unnecessary when booting Dom0 using ACPI.
  
-+- clocks: specifies the clock IDs provided to the SPI controller; they are
-+  required for interacting with the controller itself, for synchronizing the bus
-+  and as I/O clock (the latter is required by exynos5433 and exynos7).
++Optional properties:
 +
-+- clock-names: string names of the clocks in the 'clocks' property; the names
-+  mut be "spi", "spi_busclkN" and "spi_ioclk", where N is determined by
-+  "samsung,spi-src-clk".
++clocks: one or more clocks to be enabled
++  Xen hypervisor drivers might replace native OS drivers. The result is
++  that some important clocks that are enabled by the OS in the non-Xen
++  case are not properly enabled in the presence of Xen. The clocks
++  property enumerates the clocks that must be enabled by the Xen clock
++  consumer.
++  An example is a serial driver enabled by the hypervisor. Xen must
++  consume and enable these clocks in the OS to ensure behavior continues
++  after firmware configures the UART hardware and corresponding clock
++  harder.
 +
- Required Board Specific Properties:
+ To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
+ under /hypervisor with following parameters:
  
- - #address-cells: should be 1.
+diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+index 47acb36..5c546d0 100644
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -24,6 +24,7 @@
+ #include <linux/of_fdt.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
++#include <linux/clk-provider.h>
+ #include <linux/cpuidle.h>
+ #include <linux/cpufreq.h>
+ #include <linux/cpu.h>
+@@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+ }
+ late_initcall(xen_pm_init);
+ 
++/*
++ * Check if we want to register some clocks, that they
++ * are not freed because unused by clk_disable_unused().
++ * E.g. the serial console clock.
++ */
++static int __init xen_arm_register_clks(void)
++{
++	struct clk *clk;
++	struct device_node *xen_node;
++	unsigned int i, count;
++	int ret = 0;
++
++	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
++	if (!xen_node) {
++		pr_err("Xen support was detected before, but it has disappeared\n");
++		return -EINVAL;
++	}
++
++	count = of_clk_get_parent_count(xen_node);
++	if (!count)
++		goto out;
++
++	for (i = 0; i < count; i++) {
++		clk = of_clk_get(xen_node, i);
++		if (IS_ERR(clk)) {
++			pr_err("Xen failed to register clock %i. Error: %li\n",
++			       i, PTR_ERR(clk));
++			ret = PTR_ERR(clk);
++			goto out;
++		}
++
++		ret = clk_prepare_enable(clk);
++		if (ret < 0) {
++			pr_err("Xen failed to enable clock %i. Error: %i\n",
++			       i, ret);
++			goto out;
++		}
++	}
++
++	ret = 0;
++
++out:
++	of_node_put(xen_node);
++	return ret;
++}
++late_initcall(xen_arm_register_clks);
+ 
+ /* empty stubs */
+ void xen_arch_pre_suspend(void) { }
 -- 
-2.8.1
+2.8.0
