@@ -1,87 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57185 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754746AbcGHOPo (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2016 10:15:44 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem
- CLKCON driver
-Date: Fri, 08 Jul 2016 16:15:00 +0200
-Message-id: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Chen-Yu Tsai <wens@csie.org>, "Lee Jones" <lee.jones@linaro.org>,
+ "Alessandro Zummo" <a.zummo@towertech.it>,
+ "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
+ "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467302331-9663-5-git-send-email-wens@csie.org>
+Cc: "Chen-Yu Tsai" <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+ rtc-linux@googlegroups.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1467302331-9663-1-git-send-email-wens@csie.org>
+ <1467302331-9663-5-git-send-email-wens@csie.org>
+Message-ID: <146800297598.73491.13472152266331488346@resonance>
+Subject: Re: [PATCH v4 4/7] rtc: ac100: Add clk output support
+Date: Fri, 08 Jul 2016 11:36:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Any clock dependencies can be properly handled with deferred probing
-so we can remove core_initcall and switch to a proper loadable platform
-driver module.
-This change has been tested on Exynos4412 Odroid U3 based board.
+Quoting Chen-Yu Tsai (2016-06-30 08:58:48)
+> +static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> +                                   unsigned long prate)
+> +{
+> +       unsigned long best_rate =3D 0, tmp_rate, tmp_prate;
+> +       int i;
+> +
+> +       if (prate =3D=3D AC100_RTC_32K_RATE)
+> +               return divider_round_rate(hw, rate, &prate, NULL,
+> +                                         AC100_CLKOUT_DIV_WIDTH,
+> +                                         CLK_DIVIDER_POWER_OF_TWO);
+> +
+> +       for (i =3D 0; ac100_clkout_prediv[i].div; i++) {
+> +               tmp_prate =3D DIV_ROUND_UP(prate, ac100_clkout_prediv[i].=
+val);
+> +               tmp_rate =3D divider_round_rate(hw, rate, &tmp_prate, NUL=
+L,
+> +                                             AC100_CLKOUT_DIV_WIDTH,
+> +                                             CLK_DIVIDER_POWER_OF_TWO);
+> +
+> +               if (tmp_rate > rate)
+> +                       continue;
+> +               if (rate - tmp_rate < best_rate - tmp_rate)
+> +                       best_rate =3D tmp_rate;
+> +       }
+> +
+> +       return best_rate;
+> +}
+> +
+> +static int ac100_clkout_determine_rate(struct clk_hw *hw,
+> +                                      struct clk_rate_request *req)
+> +{
+> +       struct clk_hw *best_parent;
+> +       unsigned long best =3D 0;
+> +       int i, num_parents =3D clk_hw_get_num_parents(hw);
+> +
+> +       for (i =3D 0; i < num_parents; i++) {
+> +               struct clk_hw *parent =3D clk_hw_get_parent_by_index(hw, =
+i);
+> +               unsigned long tmp, prate =3D clk_hw_get_rate(parent);
+> +
+> +               tmp =3D ac100_clkout_round_rate(hw, req->rate, prate);
+> +
+> +               if (tmp > req->rate)
+> +                       continue;
+> +               if (req->rate - tmp < req->rate - best) {
+> +                       best =3D tmp;
+> +                       best_parent =3D parent;
+> +               }
+> +       }
+> +
+> +       if (!best)
+> +               return -EINVAL;
+> +
+> +       req->best_parent_hw =3D best_parent;
+> +       req->best_parent_rate =3D best;
+> +       req->rate =3D best;
+> +
+> +       return 0;
+> +}
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/Kconfig            |  9 +++++++++
- drivers/clk/samsung/Makefile           |  2 +-
- drivers/clk/samsung/clk-exynos-audss.c | 12 +-----------
- 3 files changed, 11 insertions(+), 12 deletions(-)
+You only need one of the two functions above. Keep the .determine_rate
+callback and drop .round_rate.
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 20c5fe9..addc652 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -9,6 +9,15 @@ config EXYNOS_ARM64_COMMON_CLK
- 	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
- 	depends on COMMON_CLK_SAMSUNG
- 
-+config EXYNOS_AUDSS_CLK_CON
-+	tristate "Samsung Exynos AUDSS clock controller support"
-+	depends on COMMON_CLK_SAMSUNG
-+	default y if ARCH_EXYNOS
-+	help
-+	  Support for the Audio Subsystem CLKCON clock controller present
-+	  on some Exynos SoC variants. Choose M or Y here if you want to
-+	  use audio devices such as I2S, PCM, etc.
-+
- # For S3C24XX platforms, select following symbols:
- config S3C2410_COMMON_CLK
- 	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index fc367d4..57f4dc6 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -12,7 +12,7 @@ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
- obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
--obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
-+obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 4e9584d..bdf8b97 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -273,17 +273,7 @@ static struct platform_driver exynos_audss_clk_driver = {
- 	.remove = exynos_audss_clk_remove,
- };
- 
--static int __init exynos_audss_clk_init(void)
--{
--	return platform_driver_register(&exynos_audss_clk_driver);
--}
--core_initcall(exynos_audss_clk_init);
--
--static void __exit exynos_audss_clk_exit(void)
--{
--	platform_driver_unregister(&exynos_audss_clk_driver);
--}
--module_exit(exynos_audss_clk_exit);
-+module_platform_driver(exynos_audss_clk_driver);
- 
- MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
- MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
--- 
-1.9.1
+Otherwise the rest of the clk support looks great to me. Feel free to
+add:
 
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+
+Regards,
+Mike
