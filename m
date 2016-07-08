@@ -1,59 +1,109 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 10/10] clk: mvebu: Add the peripheral clock driver for Armada 3700
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-	<1465565018-14172-11-git-send-email-gregory.clement@free-electrons.com>
-	<20160630200007.GB1521@codeaurora.org>
-Date: Fri, 08 Jul 2016 01:12:42 +0200
-In-Reply-To: <20160630200007.GB1521@codeaurora.org> (Stephen Boyd's message of
-	"Thu, 30 Jun 2016 13:00:07 -0700")
-Message-ID: <87shvlujo5.fsf@free-electrons.com>
+Return-Path: <julien.grall@arm.com>
+Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
+To: Dirk Behme <dirk.behme@de.bosch.com>,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
+Cc: xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
+ Stefano Stabellini <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <577F73B3.8090807@arm.com>
+Date: Fri, 8 Jul 2016 10:34:43 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
- 
- On jeu., juin 30 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
+Hi Dirk,
 
->> +
->> +	spin_lock_init(&driver_data->lock);
->> +
->> +	for (i = 0; i < num_periph; i++) {
->> +		struct clk *clk = driver_data->clk_data.clks[i];
->> +
->> +		if (armada_3700_add_composite_clk(&data[i], parent_name, reg,
->> +						  &driver_data->lock, dev, clk))
->> +			dev_err(dev, "Can't register periph clock %s\n",
->> +			       data[i].name);
->> +	}
->> +
->> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
->> +				  &driver_data->clk_data);
->> +	if (ret) {
->> +		for (i = 0; i < num_periph; i++)
->> +			clk_unregister(driver_data->clk_data.clks[i]);
+On 08/07/16 08:44, Dirk Behme wrote:
+> Xen hypervisor drivers might replace native OS drivers. The result is
+> that some important clocks that are enabled by the OS in the non-Xen
+> case are not properly enabled in the presence of Xen. The clocks
+> property enumerates the clocks that must be enabled by the Xen clock
+> consumer.
 >
-> It would be nice if we had devm_* registration in composite
-> clks
+> An example is a serial driver enabled by the hypervisor. Xen must
+
+I would say "An example is the UART used by the hypervisor."
+
+> consume and enable these clocks in the OS to ensure behavior continues
+> after firmware configures the UART hardware and corresponding clock
+> harder.
+
+What do you mean by "harder"?
+
+Also, relying on DOM0 to enable the clock looks very wrong to me and you 
+give an example which prove that. The UART will be used before hand by 
+Xen, however it will not be possible to use it if you expect DOM0 to 
+enable the clock (or even modify the clock frequency).
+
+The clock should be enabled either by the firmware or Xen. But not DOM0. 
+DOM0 should not touch this clock at all.
+
+Furthermore, this property could be used for clock associated to device 
+that will be passthrough-ed to a guest. In this case, the clock would be 
+enabled even if the device is not in use which will result more power 
+consumption.
+
 >
+> Up to now, the workaround for this has been to use the Linux kernel
+> command line parameter 'clk_ignore_unused'. See Xen bug
+>
+> http://bugs.xenproject.org/xen/bug/45
+>
+> too.
+>
+> To fix this, we will add the "unused" clocks in Xen to the hypervisor
+> node. The OS has to consume and enable the clocks from the hypervisor
+> node, then.
+>
+> Therefore, check if there is a "clocks" entry in the hypervisor node
+> and if so consume and enable the given clocks. This prevents the clocks
+> from being disabled by the OS.
+>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+>
+> Changes in v2: Drop the Linux implementation details like clk_disable_unused
+> 	       in xen.txt.
+>
+>   Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
+>   arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+>   2 files changed, 60 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+> index c9b9321..00f2165 100644
+> --- a/Documentation/devicetree/bindings/arm/xen.txt
+> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> @@ -17,6 +17,19 @@ the following properties:
+>     A GIC node is also required.
+>     This property is unnecessary when booting Dom0 using ACPI.
+>
+> +Optional properties:
+> +
+> +clocks: one or more clocks to be enabled
+> +  Xen hypervisor drivers might replace native OS drivers. The result is
 
-This comment is the only one I didn't take into account in the second
-version I've just sent. I agree it would be nice and I am willing to add
-it. However these last days I was very busy with the birth of my last
-child: I managed to find time to write this second version in time to be
-merged for 4.8 but not enough to add these new function. I will try to
-send a patch for it next week.
+"native OS" has no meaning on Xen. This seems to be a cumbersome way to 
+say that the device will be used by the hypervisor and hidden to DOM0 
+(aka hardware domain).
 
-Thanks for your review,
+> +  that some important clocks that are enabled by the OS in the non-Xen
+> +  case are not properly enabled in the presence of Xen. The clocks
+> +  property enumerates the clocks that must be enabled by the Xen clock
+> +  consumer.
+> +  An example is a serial driver enabled by the hypervisor. Xen must
+> +  consume and enable these clocks in the OS to ensure behavior continues
+> +  after firmware configures the UART hardware and corresponding clock
+> +  harder.
+> +
+>   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
+>   under /hypervisor with following parameters:
 
-Gregory
-
+Regards,
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Julien Grall
