@@ -1,65 +1,180 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:40921 "EHLO
-	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751243AbcGGUnP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2016 16:43:15 -0400
-Message-ID: <1467924174.32358.69.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>
-Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	Xiaobo Xie <xiaobo.xie@nxp.com>,
-	Yang-Leo Li <leoyang.li@nxp.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Date: Thu, 07 Jul 2016 15:42:54 -0500
-In-Reply-To: <4094106.qfxJu3tJbO@wuerfel>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-	 <1465609853.22191.151.camel@buserror.net>
-	 <HE1PR04MB0889646206BFAD68046F3473F83B0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-	 <4094106.qfxJu3tJbO@wuerfel>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH 2/4] soc: fsl: add GUTS driver for QorIQ platforms
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 5/7] spi: s3c64xx: add exynos5433 compatible for ioclk
+ handling
+Date: Fri, 08 Jul 2016 23:46:39 +0900
+Message-id: <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2016-07-07 at 10:30 +0200, Arnd Bergmann wrote:
-> On Thursday, July 7, 2016 2:35:33 AM CEST Yangbo Lu wrote:
-> > 
-> > Hi Arnd,
-> > 
-> > Could you reply when you see the email?
-> > If your method doesn’t resolve the problem, we still want to use our old
-> > patchset.
-> > 
-> > This guts driver had been discussed about one year and blocked many
-> > workaround upstream.
-> > So please help to review and comment soon.
-> > 
-> I don't really see how more discussion is going to help us here. I think
-> I've made it pretty clear that I don't want to see another platform
-> specific way to read an SoC revision and I've even sent a proof-of-concept
-> patch to show how the interface can work, now it's up to you to fit the
-> guts hardware into that and send a new patch series.
+The new compatible is related to the Samsung Exynos5433 SoC. The
+difference between the previous is that in the exynos5433 the SPI
+controller is driven by three clocks instead of only one.
 
-In which relevant maintainership capacity are you NACKing it?
+The new clock (ioclk) is controlling the input/output clock
+whenever the controller is slave or master.
 
--Scott
+The presence of the clock line is detected from the compatibility
+structure (exynos5433_spi_port_config) as a boolean value.
 
+The probe function checks whether the ioclk is present and if so,
+it acquires.
+
+The runtime suspend and resume functions will handle the clock
+enabling and disabling as well.
+
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 52 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 3a65adf..6da663f 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -156,12 +156,14 @@ struct s3c64xx_spi_port_config {
+ 	int	quirks;
+ 	bool	high_speed;
+ 	bool	clk_from_cmu;
++	bool	clk_ioclk;
+ };
+ 
+ /**
+  * struct s3c64xx_spi_driver_data - Runtime info holder for SPI driver.
+  * @clk: Pointer to the spi clock.
+  * @src_clk: Pointer to the clock used to generate SPI signals.
++ * @ioclk: Pointer to the i/o clock between master and slave
+  * @master: Pointer to the SPI Protocol master.
+  * @cntrlr_info: Platform specific data for the controller this driver manages.
+  * @tgl_spi: Pointer to the last CS left untoggled by the cs_change hint.
+@@ -181,6 +183,7 @@ struct s3c64xx_spi_driver_data {
+ 	void __iomem                    *regs;
+ 	struct clk                      *clk;
+ 	struct clk                      *src_clk;
++	struct clk                      *ioclk;
+ 	struct platform_device          *pdev;
+ 	struct spi_master               *master;
+ 	struct s3c64xx_spi_info  *cntrlr_info;
+@@ -1147,6 +1150,21 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
++	if (sdd->port_conf->clk_ioclk) {
++		sdd->ioclk = devm_clk_get(&pdev->dev, "spi_ioclk");
++		if (IS_ERR(sdd->ioclk)) {
++			dev_err(&pdev->dev, "Unable to acquire 'ioclk'\n");
++			ret = PTR_ERR(sdd->ioclk);
++			goto err_disable_src_clk;
++		}
++
++		ret = clk_prepare_enable(sdd->ioclk);
++		if (ret) {
++			dev_err(&pdev->dev, "Couldn't enable clock 'ioclk'\n");
++			goto err_disable_src_clk;
++		}
++	}
++
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+@@ -1193,6 +1211,8 @@ err_pm_put:
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
++	clk_disable_unprepare(sdd->ioclk);
++err_disable_src_clk:
+ 	clk_disable_unprepare(sdd->src_clk);
+ err_disable_clk:
+ 	clk_disable_unprepare(sdd->clk);
+@@ -1211,6 +1231,8 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
+ 
++	clk_disable_unprepare(sdd->ioclk);
++
+ 	clk_disable_unprepare(sdd->src_clk);
+ 
+ 	clk_disable_unprepare(sdd->clk);
+@@ -1269,6 +1291,7 @@ static int s3c64xx_spi_runtime_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(sdd->clk);
+ 	clk_disable_unprepare(sdd->src_clk);
++	clk_disable_unprepare(sdd->ioclk);
+ 
+ 	return 0;
+ }
+@@ -1279,17 +1302,28 @@ static int s3c64xx_spi_runtime_resume(struct device *dev)
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	int ret;
+ 
++	if (sdd->port_conf->clk_ioclk) {
++		ret = clk_prepare_enable(sdd->ioclk);
++		if (ret != 0)
++			return ret;
++	}
++
+ 	ret = clk_prepare_enable(sdd->src_clk);
+ 	if (ret != 0)
+-		return ret;
++		goto err_disable_ioclk;
+ 
+ 	ret = clk_prepare_enable(sdd->clk);
+-	if (ret != 0) {
+-		clk_disable_unprepare(sdd->src_clk);
+-		return ret;
+-	}
++	if (ret != 0)
++		goto err_disable_src_clk;
+ 
+ 	return 0;
++
++err_disable_src_clk:
++	clk_disable_unprepare(sdd->src_clk);
++err_disable_ioclk:
++	clk_disable_unprepare(sdd->ioclk);
++
++	return ret;
+ }
+ #endif /* CONFIG_PM */
+ 
+@@ -1345,6 +1379,16 @@ static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
+ 	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
+ };
+ 
++static struct s3c64xx_spi_port_config exynos5433_spi_port_config = {
++	.fifo_lvl_mask	= { 0x1ff, 0x7f, 0x7f, 0x7f, 0x7f, 0x1ff},
++	.rx_lvl_offset	= 15,
++	.tx_st_done	= 25,
++	.high_speed	= true,
++	.clk_from_cmu	= true,
++	.clk_ioclk	= true,
++	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
++};
++
+ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
+ 	{
+ 		.name		= "s3c2443-spi",
+@@ -1375,6 +1419,9 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
+ 	{ .compatible = "samsung,exynos7-spi",
+ 			.data = (void *)&exynos7_spi_port_config,
+ 	},
++	{ .compatible = "samsung,exynos5433-spi",
++			.data = (void *)&exynos5433_spi_port_config,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, s3c64xx_spi_dt_match);
+-- 
+2.8.1
