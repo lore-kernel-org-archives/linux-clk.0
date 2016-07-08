@@ -1,69 +1,50 @@
-Return-Path: <hotran@apm.com>
-MIME-Version: 1.0
-In-Reply-To: <20160701183845.GD27880@codeaurora.org>
-References: <1466458269-460-1-git-send-email-hotran@apm.com>
- <20160630202358.GC27880@codeaurora.org> <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
- <20160701183845.GD27880@codeaurora.org>
-From: Hoan Tran <hotran@apm.com>
-Date: Fri, 1 Jul 2016 17:09:22 -0700
-Message-ID: <CAFHUOYz82wyLPJjoG8V9QvXmF10qnQkioe9-oxUR0-aiho-Pjw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Add fractional scale clock support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, lkml <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Duc Dang <dhdang@apm.com>, Loc Ho <lho@apm.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 1/7] bindings: spi-samsung: add exynos5433 spi compatible
+Date: Fri, 08 Jul 2016 23:46:35 +0900
+Message-id: <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+The samsung,exynos5433-spi has some peculiarities that bring the
+need of creating a new compatible in the binding.
 
-On Fri, Jul 1, 2016 at 11:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Sorry I replied offlist before. Pressed the wrong key.
->
-> On 06/30, Hoan Tran wrote:
->> On Thu, Jun 30, 2016 at 1:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> >
->> > How is this different from clk-fractional-divider.c?
->> >
->>
->> This is a driver which clock output is multiplied with a fixed fractional
->> scale (denominator).
->> A field inside a register is used to configure the multiplier.
->>
->> Example: With fractional scale is 1/8.
->> Freq_out = Freq_parent * multiplier * (1/8)
->>
->> For fractional-divider, there are 2 fields of a register are used which
->>  - A field for numerator
->>  - A field for denominator
->> Freq_out = Freq_parent * numerator / denominator
->>
->
-> Ok so the difference is that the denominator is a fixed value?
+One of those is the 3-clocks controller management where the spi
+is fed with three clocks: "spi", "busclkN" and "ioclk".
 
-The major difference is a fixed denominator.
-Another difference is:
-In case CLK_FRACTIONAL_SCALE_INVERTED=1, the freq_out is calculated as below
+By adding the exynos5433-spi, we deprecate the exynos7 compatible
+and discourage its use.
 
-Freq_out = Freq_parent * (fixed_denominator - multiplier) / fixed_denominator.
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Perhaps that can be modeled as a clk-multiplier that is used as
-> the only parent of a fixed divider?
-
-Because of CLK_FRACTIONAL_SCALE_INVERTED flag, I don't know how to
-model as a clk-multiplier. And how to pass the fixed denominator into
-a clk-multiplier.
-
-> Or we can add a flag to the
-> clk-fractional-divider code to handle this minor difference.
-
-This driver is used 2 register fields for numerator, denominator and
-calculates both of them.
-Do you think I can integrate this fractional scale into it ?
-
-Thanks
-Hoan
-
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index 6dbdeb3..57d5539 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -9,7 +9,8 @@ Required SoC Specific Properties:
+     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
+     - samsung,s3c6410-spi: for s3c6410 platforms
+     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
+-    - samsung,exynos7-spi: for exynos7 platforms
++    - samsung,exynos5433-spi: for exynos5433 compatible controllers
++    - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
+ 
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+-- 
+2.8.1
