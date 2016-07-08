@@ -1,86 +1,198 @@
 Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Andi Shyti <andi.shyti@samsung.com>, "Rob Herring" <robh+dt@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Kukjin Kim" <kgene@kernel.org>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
- "Mark Brown" <broonie@kernel.org>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Tomasz Figa" <tomasz.figa@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+To: Scott Wood <oss@buserror.net>, "Russell King" <linux@armlinux.org.uk>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
-Cc: "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- "Andi Shyti" <andi.shyti@samsung.com>, "Andi Shyti" <andi@etezian.org>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
- <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
-Message-ID: <146836184696.73491.9452469757415968654@resonance>
-Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Date: Tue, 12 Jul 2016 15:17:27 -0700
+In-Reply-To: <1467864803.32358.63.camel@buserror.net>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, yuantian.tang@nxp.com, leoyang.li@nxp.com,
+ xiaofeng.ren@nxp.com
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+ <1466058085-19353-2-git-send-email-oss@buserror.net>
+ <146785501714.73491.8643317356949121718@resonance>
+ <1467864803.32358.63.camel@buserror.net>
+Message-ID: <146794477678.73491.8244253339435407853@resonance>
+Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock implementation details
+Date: Thu, 07 Jul 2016 19:26:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Andi Shyti (2016-07-12 03:02:16)
-> Because the Exynos5433 SPI driver supports the ioclk handling and
-> the following patch:
+Quoting Scott Wood (2016-07-06 21:13:23)
+> On Wed, 2016-07-06 at 18:30 -0700, Michael Turquette wrote:
+> > Quoting Scott Wood (2016-06-15 23:21:25)
+> > > =
+
+> > > -static struct device_node *cpu_to_clk_node(int cpu)
+> > > +static struct clk *cpu_to_clk(int cpu)
+> > > =C2=A0{
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device_node *np, *c=
+lk_np;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device_node *np;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct clk *clk;
+> > > =C2=A0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!cpu_present(cpu))
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return NULL;
+> > > @@ -112,37 +80,28 @@ static struct device_node *cpu_to_clk_node(int c=
+pu)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!np)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return NULL;
+> > > =C2=A0
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk_np =3D of_parse_phandl=
+e(np, "clocks", 0);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!clk_np)
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0return NULL;
+> > > -
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk =3D of_clk_get(np, 0);
+> > Why not use devm_clk_get here?
 > =
 
->   http://marc.info/?l=3Dlinux-kernel&m=3D146787645626318&w=3D2
-> =
+> devm_clk_get() is a wrapper around clk_get() which is not the same as
+> of_clk_get(). =C2=A0What device would you pass to devm_clk_get(), and wha=
+t name
+> would you pass?
 
-> fixes a synchronus abort issue, none of the SPI clocks require
-> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-> for the SPI related clocks.
-> =
-
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Do you want these patches to go through same tree? If not, I can take
-this patch into clk-next.
+I'm fuzzy on whether or not you get a struct device from a cpufreq
+driver. If so, then that would be the one to use. I would hope that
+cpufreq drivers model cpus as devices, but I'm really not sure without
+looking into the code.
 
 Regards,
 Mike
 
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
 > =
 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/c=
-lk-exynos5433.c
-> index c3a5318..fb19525 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] =
-__initdata =3D {
->         GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
->                         ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
-> -                       ENABLE_SCLK_PERIC, 12,
-> -                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
->                         ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-> @@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] =
-__initdata =3D {
->         GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_P=
-ERIC,
->                         5, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_P=
-ERIC,
-> -                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +                       4, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_P=
-ERIC,
->                         3, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
-> -- =
+> > > =
 
-> 2.8.1
+> > > @@ -221,17 +180,12 @@ static int qoriq_cpufreq_cpu_init(struct
+> > > cpufreq_policy *policy)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0goto err_nomem2;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > =C2=A0
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pnode =3D of_parse_phandle=
+(np, "clocks", 0);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!pnode) {
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0pr_err("%s: could not get clock information\n", __f=
+unc__);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0goto err_nomem2;
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0count =3D clk_get_num_pare=
+nts(policy->clk);
+> > We already have of_clk_get_parent_count. This is found in
+> > clk-provider.h, which doesn't fit perfectly here since the cpufreq
+> > driver is not a clock provider, but instead a consumer.
+> =
+
+> It's also a device tree function, and the clock parents in question aren'=
+t in
+> the device tree.
+> =
+
+> > > @@ -240,23 +194,11 @@ static int qoriq_cpufreq_cpu_init(struct
+> > > cpufreq_policy *policy)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0goto err_pclk;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > =C2=A0
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (fmask)
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0mask =3D fmask[get_cpu_physical_id(cpu)];
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0mask =3D 0x0;
+> > > -
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (i =3D 0; i < cou=
+nt; i++) {
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0clk =3D of_clk_get(pnode, i);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0clk =3D clk_get_parent_by_index(policy->clk, i);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0data->pclk[i] =3D clk;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0freq =3D clk_get_rate(clk);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0/*
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* the clock is valid if its frequency is not =
+masked
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* and large than minimum allowed frequency.
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*/
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (freq < min_cpufreq || (mask & (1 << i)))
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tab=
+le[i].frequency =3D CPUFREQ_ENTRY_INVALID;
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0else
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tab=
+le[i].frequency =3D freq / 1000;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0table[i].frequency =3D freq / 1000;
+> > Hmm, so you change cpu clock rate by selecting different clock sources
+> > from a cpu clock mux, right?
+> =
+
+> Yes. =C2=A0You'd think such a simple thing would be more straightforward.
+> =
+
+> >  I wonder if you can just have a child mux
+> > clock that selects parents from .set_rate (via a .determine_rate
+> > callback)? Then you could just call clk_set_rate() on your cpu mux clock
+> > and maybe skip most of the stuff this driver does?
+> =
+
+> "Most of the stuff this driver does" is dealing with the cpufreq subsystem
+> (ask the cpufreq maintainers why it requires so much boilerplate), associ=
+ating
+> clock muxes with cpus, etc. =C2=A0It is also not obvious to me how to use
+> determine_rate() or that the end result would be any simpler or better. =
+=C2=A0It
+> seems like the implementation would just be reimplementing logic that alr=
+eady
+> exists in cpufreq, and the cpufreq driver would still need to be able to =
+get a
+> list of possible frequencies, because cpufreq wants a table of them.
+> =
+
+> After nearly a year of non-response to these patches[1], a request to
+> completely rearchitect this driver[2] just to avoid exposing a couple
+> straightforward informational functions to clock consumers[3] was not qui=
+te
+> what I was hoping for. =C2=A0What is wrong with clock consumers being abl=
+e to query
+> the parent list, given that clock consumers have the ability to request a
+> particular parent?
+> =
+
+> -Scott
+> =
+
+> [1] Original versions:
+> http://www.spinics.net/lists/linux-clk/msg03069.html
+> http://www.spinics.net/lists/linux-clk/msg03070.html
+> =
+
+> =
+
+> [2] The only reason I'm touching this driver at all is because it current=
+ly
+> makes bad assumptions about clock provider internals (and clock provider
+> device tree structure) that are broken by the new bindings enabled by
+> commit=C2=A00dfc86b3173fee ("clk: qoriq: Move chip-specific knowledge into
+> driver").
+> =
+
+> [3] I initially discussed adding consumer APIs for this patchset in=C2=A0
+> http://lkml.iu.edu/hypermail/linux/kernel/1509.2/02728.html
 >=20
