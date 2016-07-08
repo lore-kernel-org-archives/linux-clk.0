@@ -1,46 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 11:38:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Hoan Tran <hotran@apm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Duc Dang <dhdang@apm.com>, lho@apm.com
-Subject: Re: [PATCH v2] clk: Add fractional scale clock support
-Message-ID: <20160701183845.GD27880@codeaurora.org>
-References: <1466458269-460-1-git-send-email-hotran@apm.com>
- <20160630202358.GC27880@codeaurora.org>
- <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
+ clocks
+Date: Fri, 08 Jul 2016 23:46:41 +0900
+Message-id: <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry I replied offlist before. Pressed the wrong key.
+Because the Exynos5433 SPI driver supports the ioclk handling and
+the following patch:
 
-On 06/30, Hoan Tran wrote:
-> On Thu, Jun 30, 2016 at 1:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> >
-> > How is this different from clk-fractional-divider.c?
-> >
-> 
-> This is a driver which clock output is multiplied with a fixed fractional
-> scale (denominator).
-> A field inside a register is used to configure the multiplier.
-> 
-> Example: With fractional scale is 1/8.
-> Freq_out = Freq_parent * multiplier * (1/8)
-> 
-> For fractional-divider, there are 2 fields of a register are used which
->  - A field for numerator
->  - A field for denominator
-> Freq_out = Freq_parent * numerator / denominator
-> 
+  http://marc.info/?l=linux-kernel&m=146787645626318&w=2
 
-Ok so the difference is that the denominator is a fixed value?
-Perhaps that can be modeled as a clk-multiplier that is used as
-the only parent of a fixed divider? Or we can add a flag to the
-clk-fractional-divider code to handle this minor difference.
+fixes a synchronus abort issue, none of the SPI clocks require
+any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+for the SPI related clocks.
 
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index c3a5318..fb19525 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
+ 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+-			ENABLE_SCLK_PERIC, 12,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+ 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+@@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+-			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			4, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+ 			3, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
