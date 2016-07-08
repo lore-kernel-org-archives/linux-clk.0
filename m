@@ -1,40 +1,60 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Fri, 08 Jul 2016 23:27:48 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v5] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Message-id: <20160708142748.GL23620@samsunx.samsung>
-References: <1467982058-14339-1-git-send-email-andi.shyti@samsung.com>
- <CGME20160708132447epcas1p34cafe41f04b10ffa54bbd66813e656f6@epcas1p3.samsung.com>
- <577FA99C.9020600@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <577FA99C.9020600@samsung.com>
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 9 Jul 2016 02:23:29 +0900
+Message-ID: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
+Subject: of_clk_add_(hw_)providers multipule times for one node?
+To: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-> >  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> 
-> Patch is okay:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> but I think this should not go in separately. This should be part of
-> SPI-related changes which add proper ioclk consumer to the SPI driver.
-> Without these changes, as you said to me, synchronous abort will happen.
+Hi.
 
-OK, I will send this patch with the SPI patchset.
+I think the current code allows to add
+clk_providers multiple times against one DT node.
 
-Please ignore.
+Are there cases that really need to do so?
 
-Thanks,
-Andi
+
+I am thinking the behavior of __of_clk_get_from_provider() is strange.
+
+
+The result of __of_clk_get_from_provider() has three patterns:
+
+[1] success
+[2] return -EPROBE_DEFER
+[3] return -EINVAL  (if clkspec == NULL)
+
+
+[3] is a rare case.
+So, almost all error cases are treated as -EPROBE_DEFER.
+
+
+
+A strange scenario
+------------------
+
+If a too big clock index is passed in clkspec,
+of_clk_src_onecell_get() returns -EINVAL. This is reasonable.
+
+
+But, __of_clk_get_from_provider() tries to search next nodes despite
+that it has already failed to get a clk.
+
+Then, it reaches the end of list_for_each_entry() loop, and returns
+-EPROBE_DEFER.  This is not deferred probe at all!  In this case,
+__of_clk_get_from_provider() should return -EINVAL.
+
+
+If this is a bug, I am happy to volunteer to fix it.
+
+
+Thanks.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
