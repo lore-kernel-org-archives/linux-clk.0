@@ -1,111 +1,78 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <146914709427.8780.16475894348537760808@resonance>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
- <1467302331-9663-5-git-send-email-wens@csie.org> <146800297598.73491.13472152266331488346@resonance>
- <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com> <146914709427.8780.16475894348537760808@resonance>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 22 Jul 2016 09:22:25 +0800
-Message-ID: <CAGb2v65x_3b84mRJMkt2e7-rbbyYQ3Zz05hS3GuH=P9v8ecwpA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] rtc: ac100: Add clk output support
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Date: Fri, 8 Jul 2016 22:32:07 +0200
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, rtc-linux@googlegroups.com,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v2 2/7] bindings: spi-samsung: document the clocks and
+ the clock-name property
+Message-ID: <20160708203207.GB25980@kozik-lap>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-3-git-send-email-andi.shyti@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1467989201-14661-3-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 22, 2016 at 8:24 AM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Chen-Yu Tsai (2016-07-13 20:34:34)
->> On Sat, Jul 9, 2016 at 2:36 AM, Michael Turquette
->> <mturquette@baylibre.com> wrote:
->> > Quoting Chen-Yu Tsai (2016-06-30 08:58:48)
->> >> +static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
->> >> +                                   unsigned long prate)
->> >> +{
->> >> +       unsigned long best_rate = 0, tmp_rate, tmp_prate;
->> >> +       int i;
->> >> +
->> >> +       if (prate == AC100_RTC_32K_RATE)
->> >> +               return divider_round_rate(hw, rate, &prate, NULL,
->> >> +                                         AC100_CLKOUT_DIV_WIDTH,
->> >> +                                         CLK_DIVIDER_POWER_OF_TWO);
->> >> +
->> >> +       for (i = 0; ac100_clkout_prediv[i].div; i++) {
->> >> +               tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[i].val);
->> >> +               tmp_rate = divider_round_rate(hw, rate, &tmp_prate, NULL,
->> >> +                                             AC100_CLKOUT_DIV_WIDTH,
->> >> +                                             CLK_DIVIDER_POWER_OF_TWO);
->> >> +
->> >> +               if (tmp_rate > rate)
->> >> +                       continue;
->> >> +               if (rate - tmp_rate < best_rate - tmp_rate)
->> >> +                       best_rate = tmp_rate;
->> >> +       }
->> >> +
->> >> +       return best_rate;
->> >> +}
->> >> +
->> >> +static int ac100_clkout_determine_rate(struct clk_hw *hw,
->> >> +                                      struct clk_rate_request *req)
->> >> +{
->> >> +       struct clk_hw *best_parent;
->> >> +       unsigned long best = 0;
->> >> +       int i, num_parents = clk_hw_get_num_parents(hw);
->> >> +
->> >> +       for (i = 0; i < num_parents; i++) {
->> >> +               struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
->> >> +               unsigned long tmp, prate = clk_hw_get_rate(parent);
->> >> +
->> >> +               tmp = ac100_clkout_round_rate(hw, req->rate, prate);
->> >> +
->> >> +               if (tmp > req->rate)
->> >> +                       continue;
->> >> +               if (req->rate - tmp < req->rate - best) {
->> >> +                       best = tmp;
->> >> +                       best_parent = parent;
->> >> +               }
->> >> +       }
->> >> +
->> >> +       if (!best)
->> >> +               return -EINVAL;
->> >> +
->> >> +       req->best_parent_hw = best_parent;
->> >> +       req->best_parent_rate = best;
->> >> +       req->rate = best;
->> >> +
->> >> +       return 0;
->> >> +}
->> >
->> > You only need one of the two functions above. Keep the .determine_rate
->> > callback and drop .round_rate.
->>
->> Only .round_rate is set in the clk_ops. ac100_clkout_round_rate just
->> serves to split out some of the calculations done per parent.
->
-> If you only use .round_rate, shouldn't you drop .determine_rate then?
+On Fri, Jul 08, 2016 at 11:46:36PM +0900, Andi Shyti wrote:
+> These two properties were not documented but used in the spi
+> dts. Add the related documentation.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/spi/spi-samsung.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> index 57d5539..2b7167e 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> @@ -24,6 +24,14 @@ Required SoC Specific Properties:
+>  - dma-names: Names for the dma channels. There must be at least one channel
+>    named "tx" for transmit and named "rx" for receive.
+>  
+> +- clocks: specifies the clock IDs provided to the SPI controller; they are
+> +  required for interacting with the controller itself, for synchronizing the bus
+> +  and as I/O clock (the latter is required by exynos5433 and exynos7).
+> +
+> +- clock-names: string names of the clocks in the 'clocks' property; the names
+> +  mut be "spi", "spi_busclkN" and "spi_ioclk", where N is determined by
 
-Oops! I meant we only set .determine_rate. ac100_clkout_round_rate is
-called in the per parent loop in .determine_rate.
+s/mut/must/
 
-ChenYu
+> +  "samsung,spi-src-clk".
 
->
-> Regards,
-> Mike
->
->>
->> > Otherwise the rest of the clk support looks great to me. Feel free to
->> > add:
->> >
->> > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
->>
->> Thanks!
->>
->> ChenYu
+Thanks for taking care of this! Older SoCs (like s3c-s5p) even though
+they do not set clk_from_cmu, it seems they required them as well...
+this is a little bit strange but at least now the documentation matches
+the driver.
+
+I would only describe the difference in number of clocks in more
+specific way, e.g.:
+
+ - clock-names: string names of the clocks in the 'clocks' property; for all
+   devices the names must be "spi", "spi_busclkN" (where N is determined by
+   "samsung,spi-src-clk"); for Exynos5433 it must contain third clock
+   named "spi_ioclk"
+
+... or something similar.
+
+Anyway in general:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
