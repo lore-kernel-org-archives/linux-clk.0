@@ -1,71 +1,41 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <578618CA.8090808@samsung.com>
-Cc: "Paul Gortmaker" <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org,
- "Tomasz Figa" <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-8-paul.gortmaker@windriver.com>
- <578618CA.8090808@samsung.com>
-Message-ID: <146844714723.73491.8115500341908237496@resonance>
-Subject: Re: [PATCH 07/10] clk: samsung: make clk-s5pv210-audss explicitly non-modular
-Date: Wed, 13 Jul 2016 14:59:07 -0700
+Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <tomeu.vizoso@gmail.com>
+Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: clk-conf: Fix error message when clock isn't found
+Date: Fri,  8 Jul 2016 09:14:38 +0200
+Message-Id: <1467962078-30405-1-git-send-email-tomeu.vizoso@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sylwester Nawrocki (2016-07-13 03:32:42)
-> On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
-> > The Kconfig currently controlling compilation of this code is:
-> > =
+When failing to lookup the assigned clock for setting its parents, we
+were previously printing a misleading error message that lead to think
+that it was the parent clock what couldn't be found.
 
-> > arch/arm/mach-s5pv210/Kconfig:config ARCH_S5PV210
-> > arch/arm/mach-s5pv210/Kconfig:  bool "Samsung S5PV210/S5PC110" if ARCH_=
-MULTI_V7
-> > =
+Change error message to make clear that it's the assigned clock what
+couldn't be found in this case.
 
-> > ...meaning that it currently is not being built as a module by anyone.
-> > =
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+---
+ drivers/clk/clk-conf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Lets remove the modular code that is essentially orphaned, so that
-> > when reading the driver there is no doubt it is builtin-only.
-> > =
-
-> > We explicitly disallow a driver unbind, since that doesn't have a
-> > sensible use case anyway, and it allows us to drop the ".remove"
-> > code for non-modular drivers.
-> > =
-
-> > Since this code is already not using module_init, case, the init
-> > ordering remains unchanged with this commit.
-> > =
-
-> > We also delete the MODULE_LICENSE tags etc. since all that information
-> > is already contained at the top of the file in the comments.
-> > =
-
-> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> =
-
-> In case this is going to be applied directly to current clk-next:
-> =
-
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> =
-
-
-Applied to clk-next.
-
-I know that we normally take PRs for the samsung clk stuff, but this
-late in the cycle I'm OK to simply pick individual patches.
-
-Thanks,
-Mike
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 43a218f35b19..674785d968a3 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -55,7 +55,7 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
+ 		if (IS_ERR(clk)) {
+-			pr_warn("clk: couldn't get parent clock %d for %s\n",
++			pr_warn("clk: couldn't get assigned clock %d for %s\n",
+ 				index, node->full_name);
+ 			rc = PTR_ERR(clk);
+ 			goto err;
+-- 
+2.5.5
