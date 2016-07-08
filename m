@@ -1,60 +1,127 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding
+ of STiH4xx platforms
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dev@linux-sunxi.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] clk: sunxi-ng: mux: Increase fixed pre-divider div size
-Date: Tue, 26 Jul 2016 15:04:25 +0800
-Message-Id: <1469516671-19377-4-git-send-email-wens@csie.org>
-In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
+        Rob Herring
+	<robh@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20160619150458.GA26824@rob-hp-laptop>
+ <146794221378.73491.2803164814485320331@resonance>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas
+ Kandagatla <srinivas.kandagatla@gmail.com>,
+        Maxime Coquelin
+	<maxime.coquelin@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Russell
+ King <linux@armlinux.org.uk>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier
+ Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda
+	<a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen
+	<dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry
+ Reding <treding@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones
+	<lee.jones@linaro.org>,
+        Peter Griffin <peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <577F6E83.3080006@st.com>
+Date: Fri, 8 Jul 2016 11:12:35 +0200
+MIME-Version: 1.0
+In-Reply-To: <146794221378.73491.2803164814485320331@resonance>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks have a predivider value that is larger than what u8 can
-store. One such example is the OUT clk found on A20/A31, which has
-a /750 pre-divider on one of the osc24M parents.
+Hi Mike,
 
-Increase the size of the div field to u16.
+On 07/08/2016 03:43 AM, Michael Turquette wrote:
+> Quoting Rob Herring (2016-06-19 08:04:58)
+>> On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
+>>> This patch reworks the clock binding to avoid too much detail in DT.
+>>> Now we have only compatible string per type of clock
+>>> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
+>>>
+>> I have no idea what the clock trees and clock controller in these chips
+>> look like, so it's hard to say if the changes here are good. It still
+>> looks like things are somewhat fine grained clocks in DT. I'll leave
+>> it up to the platform maintainers to decide...
+> Is this series breaking ABI? If yes, why not do what Maxime did for the
+> Allwinner/sunxi clocks and just fully convert over to a
+> one-node-per-clock-controller binding? This one-node-per-clock stuff is
+> pretty unfortunate, and if we're deprecating platforms (patch #1) then
+> now might be a good time to re-evaluate the whole thing.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 2 +-
- drivers/clk/sunxi-ng/ccu_mux.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The goal of my patchset was to be aligned with DRM / KMS development and 
+to offer
+the possibility to make a correct video playback on STiH407/STiH410 
+platform.
+Our milestone is the 4.8 for that.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 58fc36e7dcce..1329b9ab481e 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -18,7 +18,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 					     int parent_index,
- 					     unsigned long *parent_rate)
- {
--	u8 prediv = 1;
-+	u16 prediv = 1;
- 	u32 reg;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 945082631e7d..d35ce5e93840 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -11,7 +11,7 @@ struct ccu_mux_internal {
- 
- 	struct {
- 		u8	index;
--		u8	div;
-+		u16	div;
- 	} fixed_prediv;
- 
- 	struct {
--- 
-2.8.1
+Currently people need these patches to work.
+I'm not sure it's a good time to re-evaluate the whole thing.
+
+Is it possible to re-evaluate later ?
+
+Best regards,
+Gabriel
+
+> Regards,
+> Mike
+>
+>>   
+>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>>> ---
+>>>   .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  2 +-
+>>>   .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
+>>>   .../devicetree/bindings/clock/st/st,clkgen.txt     |  2 +-
+>>>   .../devicetree/bindings/clock/st/st,quadfs.txt     |  6 +--
+>>>   drivers/clk/st/clkgen-fsyn.c                       | 41 ++++++--------
+>>>   drivers/clk/st/clkgen-mux.c                        | 28 ++++------
+>>>   drivers/clk/st/clkgen-pll.c                        | 62 ++++++++++------------
+>>>   7 files changed, 65 insertions(+), 87 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+>>> index 4d277d6..9a46cb1d7 100644
+>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+>>> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
+>>>   Required properties:
+>>>   
+>>>   - compatible : shall be:
+>>> -     "st,stih407-clkgen-a9-mux",     "st,clkgen-mux"
+>>> +     "st,stih407-clkgen-a9-mux"
+>>>   
+>>>   - #clock-cells : from common clock binding; shall be set to 0.
+>>>   
+>>> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+>>> index c9fd674..be0b043 100644
+>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+>>> @@ -9,11 +9,10 @@ Base address is located to the parent node. See clock binding[2]
+>>>   Required properties:
+>>>   
+>>>   - compatible : shall be:
+>>> -     "st,stih407-plls-c32-a0",       "st,clkgen-plls-c32"
+>>> -     "st,stih407-plls-c32-a9",       "st,clkgen-plls-c32"
+>>> -     "sst,plls-c32-cx_0",            "st,clkgen-plls-c32"
+>>> -     "sst,plls-c32-cx_1",            "st,clkgen-plls-c32"
+>>> -     "st,stih418-plls-c28-a9",       "st,clkgen-plls-c32"
+>>> +     "st,clkgen-pll0"
+>>> +     "st,clkgen-pll0"
+>> Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
+>>
+>>> +     "st,stih407-clkgen-plla9"
+>>> +     "st,stih418-clkgen-plla9"
