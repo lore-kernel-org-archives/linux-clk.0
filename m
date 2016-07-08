@@ -1,101 +1,94 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Peter De Schrijver
-	<pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        Aleksandr
- Frid <afrid@nvidia.com>,
-        Paul Walmsley <pwalmsley@nvidia.com>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: [PATCH 09/10] clk: tegra: make clk-tegra124-dfll-fcpu explicitly non-modular
-Date: Mon, 4 Jul 2016 17:12:19 -0400
-Message-ID: <20160704211220.5685-10-paul.gortmaker@windriver.com>
-In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Julien Grall <julien.grall@arm.com>, "Dirk Behme" <dirk.behme@de.bosch.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <577F853D.405@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, "Mark Rutland" <mark.rutland@arm.com>,
+ xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
+ "Stefano Stabellini" <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
+ <577F73B3.8090807@arm.com>
+ <437b5eff-4294-3493-b1b2-0ff2c10525e3@de.bosch.com> <577F853D.405@arm.com>
+Message-ID: <146799721881.73491.4744041405633385644@resonance>
+Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
+Date: Fri, 08 Jul 2016 10:00:18 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The Kconfig currently controlling compilation of this code is:
+Quoting Julien Grall (2016-07-08 03:49:33)
+> =
 
-arch/arm/mach-tegra/Kconfig:config ARCH_TEGRA_124_SOC
-arch/arm/mach-tegra/Kconfig:    bool "Enable support for Tegra124 family"
+> =
 
-...meaning that it currently is not being built as a module by anyone.
+> On 08/07/16 11:40, Dirk Behme wrote:
+> > Hi Michael and Julien,
+> >
+> > On 08.07.2016 11:34, Julien Grall wrote:
+> >> Hi Dirk,
+> >>
+> >> On 08/07/16 08:44, Dirk Behme wrote:
+> >>> Xen hypervisor drivers might replace native OS drivers. The result is
+> >>> that some important clocks that are enabled by the OS in the non-Xen
+> >>> case are not properly enabled in the presence of Xen. The clocks
+> >>> property enumerates the clocks that must be enabled by the Xen clock
+> >>> consumer.
+> >>>
+> >>> An example is a serial driver enabled by the hypervisor. Xen must
+> >>
+> >> I would say "An example is the UART used by the hypervisor."
+> >>
+> >>> consume and enable these clocks in the OS to ensure behavior continues
+> >>> after firmware configures the UART hardware and corresponding clock
+> >>> harder.
+> >>
+> >> What do you mean by "harder"?
+> >>
+> >> Also, relying on DOM0 to enable the clock looks very wrong to me and y=
+ou
+> >> give an example which prove that. The UART will be used before hand by
+> >> Xen, however it will not be possible to use it if you expect DOM0 to
+> >> enable the clock (or even modify the clock frequency).
+> >>
+> >> The clock should be enabled either by the firmware or Xen. But not DOM=
+0.
+> >> DOM0 should not touch this clock at all.
+> >>
+> >> Furthermore, this property could be used for clock associated to device
+> >> that will be passthrough-ed to a guest. In this case, the clock would =
+be
+> >> enabled even if the device is not in use which will result more power
+> >> consumption.
+> >
+> >
+> > I took the description directly from Michael's proposal
+> >
+> > http://www.spinics.net/lists/arm-kernel/msg516576.html
+> >
+> > Would it be possible that you two experts agree on the exact wording you
+> > like to see?
+> =
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+> I think the wording suggested by Mark in [1] represents better what we =
 
-Since module_init translates to device_initcall in the non-modular
-case, the init ordering remains unchanged with this commit.
+> would like to achieve with this property.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+Mark's copy is fine by me. The main thing is to avoid talking about
+"unused" clocks being disabled by the OS. If you have need clocks to be
+enabled, then you simply claim them and enable them. All of the other
+stuff is just noise.
 
-We also delete the MODULE_LICENSE tags etc. since all that information
-is already contained at the top of the file in the comments.
+Regards,
+Mike
 
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Aleksandr Frid <afrid@nvidia.com>
-Cc: Paul Walmsley <pwalmsley@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+> =
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index c205809ba580..4301569d072a 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -20,7 +20,7 @@
- #include <linux/cpu.h>
- #include <linux/err.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <soc/tegra/fuse.h>
- 
-@@ -148,7 +148,6 @@ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-dfll", },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, tegra124_dfll_fcpu_of_match);
- 
- static const struct dev_pm_ops tegra124_dfll_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
-@@ -169,15 +168,4 @@ static int __init tegra124_dfll_fcpu_init(void)
- {
- 	return platform_driver_register(&tegra124_dfll_fcpu_driver);
- }
--module_init(tegra124_dfll_fcpu_init);
--
--static void __exit tegra124_dfll_fcpu_exit(void)
--{
--	platform_driver_unregister(&tegra124_dfll_fcpu_driver);
--}
--module_exit(tegra124_dfll_fcpu_exit);
--
--MODULE_DESCRIPTION("Tegra124 DFLL clock source driver");
--MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Aleksandr Frid <afrid@nvidia.com>");
--MODULE_AUTHOR("Paul Walmsley <pwalmsley@nvidia.com>");
-+device_initcall(tegra124_dfll_fcpu_init);
--- 
-2.8.4
+> Regards,
+> =
+
+> [1] https://www.spinics.net/lists/arm-kernel/msg516158.html
+> =
+
+> -- =
+
+> Julien Grall
