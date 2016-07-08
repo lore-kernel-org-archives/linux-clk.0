@@ -1,44 +1,56 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Date: Fri, 8 Jul 2016 22:33:28 +0200
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v2 4/7] spi: s3c64xx: use error code from
- clk_prepare_enable()
-Message-ID: <20160708203328.GC25980@kozik-lap>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-5-git-send-email-andi.shyti@samsung.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1467989201-14661-5-git-send-email-andi.shyti@samsung.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>,  linux-kernel@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467962078-30405-1-git-send-email-tomeu.vizoso@collabora.com>
+Cc: "Tomeu Vizoso" <tomeu.vizoso@collabora.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+References: <1467962078-30405-1-git-send-email-tomeu.vizoso@collabora.com>
+Message-ID: <146800249405.73491.14502711083969229734@resonance>
+Subject: Re: [PATCH] clk: clk-conf: Fix error message when clock isn't found
+Date: Fri, 08 Jul 2016 11:28:14 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 08, 2016 at 11:46:38PM +0900, Andi Shyti wrote:
-> If clk_prepare_enable() fails do not return -EBUSY but use the
-> value provided by the function itself.
-> 
-> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Quoting Tomeu Vizoso (2016-07-08 00:14:38)
+> When failing to lookup the assigned clock for setting its parents, we
+> were previously printing a misleading error message that lead to think
+> that it was the parent clock what couldn't be found.
+> =
+
+> Change error message to make clear that it's the assigned clock what
+> couldn't be found in this case.
+> =
+
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+
+Applied.
+
+Regards,
+Mike
+
 > ---
->  drivers/spi/spi-s3c64xx.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/clk/clk-conf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
 
-Cool, thanks for fixing existing pattern:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+> index 43a218f35b19..674785d968a3 100644
+> --- a/drivers/clk/clk-conf.c
+> +++ b/drivers/clk/clk-conf.c
+> @@ -55,7 +55,7 @@ static int __set_clk_parents(struct device_node *node, =
+bool clk_supplier)
+>                 }
+>                 clk =3D of_clk_get_from_provider(&clkspec);
+>                 if (IS_ERR(clk)) {
+> -                       pr_warn("clk: couldn't get parent clock %d for %s=
+\n",
+> +                       pr_warn("clk: couldn't get assigned clock %d for =
+%s\n",
+>                                 index, node->full_name);
+>                         rc =3D PTR_ERR(clk);
+>                         goto err;
+> -- =
 
-Best regards,
-Krzysztof
+> 2.5.5
+>=20
