@@ -1,110 +1,96 @@
-Return-Path: <julien.grall@arm.com>
-From: Julien Grall <julien.grall@arm.com>
-Subject: Re: [PATCH v4] xen/arm: Add a clock property
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
- <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
- <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
- <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
- <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Stefano Stabellini <sstabellini@kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <457c61fd-4a64-b050-cd87-845b7e22ec39@arm.com>
-Date: Wed, 20 Jul 2016 14:21:45 +0100
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 8 Jul 2016 23:35:06 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>
+Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
+Message-ID: <20160708213506.GD4522@lukather>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+ <20160629190535.11855-14-maxime.ripard@free-electrons.com>
+ <146785878822.73491.15164592643568518865@resonance>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
+In-Reply-To: <146785878822.73491.15164592643568518865@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--jq0ap7NbKX2Kqbes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 20/07/2016 13:46, Geert Uytterhoeven wrote:
-> Hi Julien,
+Hi Mike,
 
-Hello Geert,
+On Wed, Jul 06, 2016 at 07:33:08PM -0700, Michael Turquette wrote:
+> Hi Maxime,
+>=20
+> Quoting Maxime Ripard (2016-06-29 12:05:34)
+> > +static void __init sun8i_h3_ccu_setup(struct device_node *node)
+> > +{
+> > +       void __iomem *reg;
+> > +       u32 val;
+> > +
+> > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
+> > +       if (IS_ERR(reg)) {
+> > +               pr_err("%s: Could not map the clock registers\n",
+> > +                      of_node_full_name(node));
+> > +               return;
+> > +       }
+> > +
+> > +       /* Force the PLL-Audio-1x divider to 4 */
+> > +       val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
+> > +       val &=3D ~GENMASK(4, 0);
+> > +       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
+> > +
+> > +       sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
+> > +}
+> > +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
+> > +              sun8i_h3_ccu_setup);
+>=20
+> There are several examples of drivers that split the clocks between
+> "early" CLK_OF_DECLARE clocks and "late" module clocks. If you really
+> need early clocks (which is less likely on a 64-bit platform with
+> architected timers), it would be nice to pair that with a proper
+> platform_driver (using builtin_platform_driver most likely).
 
-> On Wed, Jul 20, 2016 at 2:10 PM, Julien Grall <julien.grall@arm.com> wrote:
->> On 20/07/16 12:49, Geert Uytterhoeven wrote:
->>> On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com>
->>> wrote:
->>>> On 20/07/16 10:43, Geert Uytterhoeven wrote:
->>>>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>>>> wrote:
->>>>>> Clocks described by this property are reserved for use by Xen, and the
->>>>>> OS
->>>>>> must not alter their state any way, such as disabling or gating a
->>>>>> clock,
->>>>>> or modifying its rate. Ensuring this may impose constraints on parent
->>>>>> clocks or other resources used by the clock tree.
->>>>>>
->>>>>> This property is used to proxy clocks for devices Xen has taken
->>>>>> ownership
->>>>>> of, such as UARTs, for which the associated clock controller(s) remain
->>>>>> under the control of Dom0.
->>>>>
->>>>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
->>>>>
->>>>> Can't you just add a clocks property to the (virtual) serial device node
->>>>> in DT?
->>>>> Then the (virtual) serial device driver can get and enable the clock?
->>>>
->>>> There is no DT node for the Xen console (hvc). The UART used by Xen will
->>>> be
->>>> completely removed from the Device tree.
->>>
->>> Why is it removed?
->>
->> Because the device is used exclusively by Xen and DOM0 should not touch it
->> at all (IRQs and MMIOs are not mapped).
->
-> IMHO then it's Xen's responsability to make sure not to disable the clock(s).
+I think we discussed that already, but yeah, we do have timers that
+are not the architected ones (and this is a ARMv7 platform). I have
+the feeling that splitting the two doesn't really bring any benefit,
+but complexify a lot the driver.
 
-Xen does not disable the clock(s). The problem is Linux thinks the clock 
-is not used and therefore will disable the clock.
+Maxime
 
-Actually Xen does not have any knowledge how to handle clocks (i.e 
-setting rate, enabling/disabling). I would recommend you to read the 
-binding description in the patch and not the implementation which is 
-IHMO misleading.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
->
-> Who removes the device node from the DT? If Xen, can't it just remember
-> which clocks were present in removed device nodes?
+--jq0ap7NbKX2Kqbes
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Xen is removing the node from the DT. Not removing the node will not 
-change the problem. Linux is disabling the clock because there is no 
-driver which used those clocks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-As the clock subsystem will disable any unused clocks (from Linux point 
-of view), the UART will get disabled and the console will be lost.
+iQIcBAEBAgAGBQJXgByKAAoJEBx+YmzsjxAguFgP/2WpKChtDyTQ5tgd1pxBaP6P
+kGkKQNOdBOc3wXQf3G59+Ph76lgpkQiJNTMMN3zh4p4vF1p/UvyIhoAr1ct5a+bA
+nrIFs/EMRHi1UkqbrzTEpA6ZWBXlJnV+XLF0AOlFak/IfjXSVbsax933RN7j62ph
+BkZCIJ1zdPvumszQwTz06xnVSZ1pXfgahirYpXqZ2a7dpBGW43GCvdcZlPX4fG0v
+LHPjGXXx/mBC4LQfLZv3HK5kHwktdfvR5vGGm87Thugaalm30InWmimjnfyTmsmT
+xXWeEcbLxeUEJVr7Z1ozrLk+rimhBmqJWcKRaDXLs6TrWMvELSi72mGBLnbuLEfU
+eEJ9lyOR4TVMk8tKXUHQGrC6OVqarS0H3HDk2hFzJNZ+NLluDtZUnwW9z/UHzR0G
+5ckIfyEOFRkrPGWBYqgn/ArTBnUPrFFv0PXHmeS4360OiQnZ9/ei8hGuoqzuU88L
+DNxDS8TVYO5fj3k5HxPtTeQ9g/mt52Q5mz+is/9nyRvkAvaKHvykXcTc/V9WSzq9
+qZuGmSe1po852wtwJEnHV1X2GpsyCCLcUcaxiHaPyydPqluSqyUW2JuDNnNZRLsr
+nhNcaOTOsD/01IH0EcjfiLh6XylJCpbDWwjj/C+rTal6Bm56PdZ5xNiCBVznIJXm
+2kQdnLoWGbpHEDdk5/sw
+=0m3t
+-----END PGP SIGNATURE-----
 
-What we want to achieve with this patch is to let Linux knows that this 
-clock is in use by someone else (hypervisor or guest) and:
-     * If the clock is not shared: don't disable it
-     * If the clock is shared: don't change the rate
-
->
-> What to do on SoCs where the serial device is part of a power area (e.g.
-> Renesas SH/R-Mobile)? Who will make sure it is not powered down?
-
-I don't have any knowledge on the Renesas SH/R-Mobile. However, we 
-expect some cooperation between DOM0 and Xen to handle the power.
-
-For instance managing the clocks in Xen would require to implement clock 
-driver for each SOC because it does not seem to have a generic way to do it.
-
-Given that Linux already knows a lot about the clock, we want to hand 
-over the clock control to the hardware domain (i.e dom0). This means 
-that we have to find a way to cooperate with it to keep enable clocks 
-that we care about.
-
-Regards,
-
--- 
-Julien Grall
+--jq0ap7NbKX2Kqbes--
