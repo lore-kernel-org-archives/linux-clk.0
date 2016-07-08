@@ -1,55 +1,152 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v4 0/6] Add Amlogic meson8b clock gates
-Date: Fri, 29 Jul 2016 16:00:58 +0200
-Message-Id: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: James Liao <jamesjj.liao@mediatek.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467604308.26485.4.camel@mtksdaap41>
+Cc: "Erin Lo" <erin.lo@mediatek.com>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Rob Herring" <robh@kernel.org>, "John Crispin" <blogic@openwrt.org>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Sascha Hauer" <kernel@pengutronix.de>,
+ "Daniel Kurtz" <djkurtz@chromium.org>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+ srv_heupstream@mediatek.com
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+ <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+ <20160702012140.GB17071@codeaurora.org> <1467604308.26485.4.camel@mtksdaap41>
+Message-ID: <146802073038.73491.6675612765998057903@resonance>
+Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's parents
+Date: Fri, 08 Jul 2016 16:32:10 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
-U-Boot disables most of them at boot. In order to enable ethernet, USB and other
-components it's mandatory to enable the clock gates when loading the corresponding
-drivers.
+Hi James,
 
-The meson8b clock gate support is based on the previous work done for Amlogic gxbb
-currently available in clk-next.
+Quoting James Liao (2016-07-03 20:51:48)
+> On Fri, 2016-07-01 at 18:21 -0700, Stephen Boyd wrote:
+> > (Resending to everyone)
+> > =
 
-Changes since v3:
-  - Include include/dt-bindings/clock/meson8b-clkc.h to prevent code duplicates
+> > On 06/22, Erin Lo wrote:
+> > > From: James Liao <jamesjj.liao@mediatek.com>
+> > > =
 
-Changes since v2:
-  - Added commit description for patch 2
-  - Changed CLK_NR_CLOCKS macro to constant int
-  - Moved back MESON_GATE macro to share it between gxbb and meson8b
+> > > This patch fixed wrong state of parent clocks if they are registered
+> > > after critical clocks.
+> > > =
 
-Changes since v1:
-  - Fixed GXBB spelling
-  - Moved newly introduced CLKID defines to private header
-  - Moved CLK_NR_CLKS define from DT binding to private header
-  - Rebased to linux-amlogic/v4.7/integ making Kconfig select obsolete
+> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > =
 
-Alexander Müller (6):
-  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
-  meson: clk: Move register definitions to meson8b.h
-  meson: clk: Rename register names according to Amlogic datasheet
-  clk: meson: Copy meson8b CLKID defines to private header file
-  gxbb: clk: Adjust MESON_GATE macro to be shared with meson8b
-  meson: clk: Add support for clock gates
+> > It would be nice if you included the information about the
+> > problem from James' previous mail. This says what it does, but
+> > doesn't explain what the problem is and how it is fixing it.
+> > =
 
- drivers/clk/meson/Makefile                      |   2 +-
- drivers/clk/meson/clkc.h                        |   2 +-
- drivers/clk/meson/gxbb.c                        | 162 ++++++-------
- drivers/clk/meson/{meson8b-clkc.c => meson8b.c} | 293 +++++++++++++++++++++---
- drivers/clk/meson/meson8b.h                     | 151 ++++++++++++
- include/dt-bindings/clock/meson8b-clkc.h        |   2 -
- 6 files changed, 497 insertions(+), 115 deletions(-)
- rename drivers/clk/meson/{meson8b-clkc.c => meson8b.c} (52%)
- create mode 100644 drivers/clk/meson/meson8b.h
+> > > ---
+> > >  drivers/clk/clk.c | 9 ++++++++-
+> > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > > =
 
--- 
-2.5.0
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index d584004..e9f5f89 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *co=
+re)
+> > >     hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_n=
+ode) {
+> > >             struct clk_core *parent =3D __clk_init_parent(orphan);
+> > >  =
+
+> > > -           if (parent)
+> > > +           if (parent) {
+> > >                     clk_core_reparent(orphan, parent);
+> > > +
+> > > +                   if (orphan->prepare_count)
+> > > +                           clk_core_prepare(parent);
+> > > +
+> > > +                   if (orphan->enable_count)
+> > > +                           clk_core_enable(parent);
+> > > +           }
+> > >     }
+> > =
+
+> > I'm pretty sure I pointed this problem out to Mike when the
+> > critical clk patches were being pushed. I can't recall what the
+> > plan was though to fix the problem. I'm pretty sure he said that
+> > clk_core_reparent() would take care of it, but obviously it is
+> > not doing that. Or perhaps it was that clk handoff should figure
+> > out that the parents of a critical clk are also on and thus keep
+> > them on.
+> =
+
+> Hi Mike
+> =
+
+> Is there any other patch to fix this issue? Or did I misuse critical
+> clock flag?
+
+There is no fix yes. Your fix is basically correct. I was mistaken back
+when I told you and Stephen that the framework already took care of
+this.
+
+However, instead of "open coding" this solution, I would rather re-use
+the __clk_set_parent_{before,after} helpers instead. Can you review/test
+the following patch and let me know what you think?
+
+Thanks,
+Mike
+
+
+
+From=20c0163b3f719b1e219b28ad425f94f9ef54a25a8f Mon Sep 17 00:00:00 2001
+From: Michael Turquette <mturquette@baylibre.com>
+Date: Fri, 8 Jul 2016 16:05:22 -0700
+Subject: [PATCH] clk: migrate ref counts when orphans are reunited
+
+It's always nice to see families reunited, and this is equally true when
+talking about parent clocks and their children. However, if the orphan
+clk had a positive prepare_count or enable_count, then we would not
+migrate those counts up the parent chain correctly.
+
+This has manifested with the recent critical clocks feature, which often
+enables clocks very early, before their parents have been registered.
+
+Fixed by replacing the call to clk_core_reparent with calls to
+__clk_set_parent_{before,after}.
+
+Cc: James Liao <jamesjj.liao@mediatek.com>
+Cc: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+---
+ drivers/clk/clk.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 820a939fb6bb..70efe4c4e0cc 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2449,8 +2449,14 @@ static int __clk_core_init(struct clk_core *core)
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent =3D __clk_init_parent(orphan);
+ =
+
+-		if (parent)
+-			clk_core_reparent(orphan, parent);
++		/*
++		 * we could call __clk_set_parent, but that would result in a
++		 * reducant call to the .set_rate op, if it exists
++		 */
++		if (parent) {
++			__clk_set_parent_before(orphan, parent);
++			__clk_set_parent_after(orphan, parent, NULL);
++		}
+ 	}
+ =
+
+ 	/*
+-- =
+
+2.7.4 (Apple Git-66)
