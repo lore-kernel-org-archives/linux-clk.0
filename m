@@ -1,30 +1,108 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 17:45:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, shawnguo@kernel.org,
-	linux-arm-kernel@lists.infradead.org, anson.huang@nxp.com
-Subject: Re: [PATCH V3 5/8] clk: imx: re-order and concentrate the same type
- of clk api
-Message-ID: <20160702004506.GN27880@codeaurora.org>
-References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
- <1467279078-2330-6-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467279078-2330-6-git-send-email-aisheng.dong@nxp.com>
+To: Andi Shyti <andi.shyti@samsung.com>, "Rob Herring" <robh+dt@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Kukjin Kim" <kgene@kernel.org>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+Cc: "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ "Andi Shyti" <andi.shyti@samsung.com>, "Andi Shyti" <andi@etezian.org>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+Message-ID: <146799490260.73491.12050912045304218863@resonance>
+Subject: Re: [PATCH v2 0/7] spi s3c64xx ioclk handling
+Date: Fri, 08 Jul 2016 09:21:42 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/30, Dong Aisheng wrote:
-> Re-order and concentrate the same type of clk api for better
-> code maintenance.
-> 
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
+Quoting Andi Shyti (2016-07-08 07:46:34)
+> Hi,
+> =
 
-Applied to clk-next
+> this patchset improves the compatibility between the s3c64xx
+> driver and the exynos5433. One point of incompatibility, indeed,
+> was that the SPI controller in exynos5433 is fed by three clocks
+> which need to be handled by the driver. The third clock is the
+> ioclk which support is the main purpose of this patchset.
+>   =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Patch 6 is a bit unrelated with the rest, it restores a
+> comment that has been removed earlier by mistake.
+> =
+
+> The last patch was first sent on its own and it was its 5th
+> version, it has been queued to this patchset as there is a
+> dependency with it.
+
+Feel free to add the following to all of the patches:
+
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+
+Regards,
+Mike
+
+> =
+
+> Changelog V1 -> V2:
+> =
+
+>  - patch 1: the exynos5433-spi compatible is placed in
+>    alphabetical order compared to exynos7-spi
+> =
+
+>  - patch 1: deprecates exynos7-spi
+> =
+
+>  - patch 2: [new] added the clocks and clock-name documentation
+>    in the bindings
+> =
+
+>  - patch 3: fixed some typos, renamed the goto label from
+>    err_power_off to err_pm_put add the reviewd-by Krzysztof
+> =
+
+>  - patch 4: new patch
+> =
+
+>  - patch 5: fixed typos in commit message and use low letters for
+>    hex numbers
+> =
+
+>  - patch 6: removed one line of comment
+> =
+
+>  - patch 7: added to ensure sequentiality.
+> =
+
+> Thanks,
+> Andi
+> =
+
+> =
+
+> Andi Shyti (7):
+>   bindings: spi-samsung: add exynos5433 spi compatible
+>   bindings: spi-samsung: document the clocks and the clock-name property
+>   spi: s3c64xx: rename goto labels to meaningful names
+>   spi: s3c64xx: use error code from clk_prepare_enable()
+>   spi: s3c64xx: add exynos5433 compatible for ioclk handling
+>   spi: s3c64xx: restore removed comments
+>   clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI clocks
+> =
+
+>  .../devicetree/bindings/spi/spi-samsung.txt        | 11 ++-
+>  drivers/clk/samsung/clk-exynos5433.c               |  5 +-
+>  drivers/spi/spi-s3c64xx.c                          | 90 ++++++++++++++++=
++-----
+>  3 files changed, 81 insertions(+), 25 deletions(-)
+> =
+
+> -- =
+
+> 2.8.1
+>=20
