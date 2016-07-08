@@ -1,37 +1,49 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 2/2] clk: sunxi-ng: h3: Fix Kconfig symbol typo
-Date: Mon, 11 Jul 2016 22:34:48 +0200
-Message-Id: <20160711203448.18062-2-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160711203448.18062-1-maxime.ripard@free-electrons.com>
-References: <20160711203448.18062-1-maxime.ripard@free-electrons.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Fri, 8 Jul 2016 09:31:56 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew
+ Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Romain
+ Perier <romain.perier@free-electrons.com>, Omri Itach <omrii@marvell.com>,
+ Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua
+ Jing <jinghua@marvell.com>, Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: add DT binding for the Xtal
+ clock on Armada 3700
+Message-ID: <20160708093156.4f235b85@free-electrons.com>
+In-Reply-To: <1467931071-31004-2-git-send-email-gregory.clement@free-electrons.com>
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+	<1467931071-31004-2-git-send-email-gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The Kconfig symbol for the sun8i SoC family was mistyped. Fix that.
+Hello,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri,  8 Jul 2016 00:37:46 +0200, Gregory CLEMENT wrote:
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 41e53e8d4d41..2afcbd39e41e 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -60,6 +60,6 @@ config SUN8I_H3_CCU
- 	select SUNXI_CCU_NM
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
--	default ARCH_SUN8I
-+	default MACH_SUN8I
- 
- endif
+> +gpio1: gpio@13800 {
+> +	compatible = "marvell,mvebu-gpio-3700",	"syscon", "simple-mfd";
+
+I find this compatible string not very consistent with what we do for
+other drivers, it should have been:
+
+	marvell,armada-3700-gpio
+
+or something like that.
+
+
+> +	xtalclk: xtal-clk {
+> +		compatible = "marvell,armada-3700-xtal-clock";
+
+See here for example.
+
+Thomas
 -- 
-2.9.0
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
