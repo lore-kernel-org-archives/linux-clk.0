@@ -1,67 +1,64 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 15 Jul 2016 13:56:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: njaigane@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	twp@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@armlinux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org,
-	bgoswami@codeaurora.org, lgirdwood@gmail.com, perex@perex.cz,
-	tiwai@suse.com, bjorn.andersson@linaro.org, varada@codeaurora.org,
-	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	alsa-devel@alsa-project.org, bselvara@codeaurora.org
-Message-ID: <20160715125643.GK30372@sirena.org.uk>
-References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rwbb4r/vLufKlfJs"
-In-Reply-To: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
-Subject: Re: [PATCH 0/4] Qualcomm IPQ4019 Audio driver addition
+To: Kevin Hilman <khilman@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160707033837.20029-1-khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20160707033837.20029-1-khilman@baylibre.com>
+Message-ID: <146794722863.73491.474750140948566962@resonance>
+Subject: Re: [PATCH v2] clk: gxbb: expose CLKID_MMC_PCLK
+Date: Thu, 07 Jul 2016 20:07:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Kevin Hilman (2016-07-06 20:38:37)
+> The MMC_PCLK is needed for the SD/eMMC driver, expose to DT (and comment
+> out in clk driver)
+> =
 
---rwbb4r/vLufKlfJs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 
-On Fri, Jul 15, 2016 at 12:37:02PM +0530, njaigane@codeaurora.org wrote:
-> From: Jaiganesh Narayanan <njaigane@codeaurora.org>
+Applied to the same clk-s905 branch if you need to re-pull it as a
+dependency.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/meson/gxbb.h              | 2 +-
+>  include/dt-bindings/clock/gxbb-clkc.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> =
+
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index a2adf3448b59..8355ecd27b81 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -234,7 +234,7 @@
+>  #define CLKID_HDMI_PCLK                  63
+>  #define CLKID_USB1_DDR_BRIDGE    64
+>  #define CLKID_USB0_DDR_BRIDGE    65
+> -#define CLKID_MMC_PCLK           66
+> +/* CLKID_MMC_PCLK */          =
+
+>  #define CLKID_DVIN               67
+>  #define CLKID_UART2              68
+>  #define CLKID_SANA               69
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/=
+clock/gxbb-clkc.h
+> index f889d80246cb..5eb69ec74f6b 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -8,5 +8,6 @@
+>  #define CLKID_CPUCLK           1
+>  #define CLKID_CLK81            12
+>  #define CLKID_ETH              36
+> +#define CLKID_MMC_PCLK         66
+>  =
+
+>  #endif /* __GXBB_CLKC_H */
+> -- =
+
+> 2.9.0
 >=20
-> These patches add the support for Qualcomm IPQ4019 ASoC
-> with the ALSA based audio drivers. The patches are broken
->=20
-> 1. Device Tree support
-> 2. Audio clock driver support
-> 3. TLMM / Pinctrl support
-> 4. ALSA based audio drivers
-
-You need to completely rework how you're posting this so it can be
-reviewed, probably splitting it into separate patch serieses - please
-see SubmittingPatches for an overview of what people are expecting, and
-as I said in reply to one of the patches looking at git can also be
-helpful.  I'd suggest sending the drivers for each subsystem as a
-separate patch series, there will be some interdependency in terms of
-getting things running but not in terms of getting the patches applied.
-
---rwbb4r/vLufKlfJs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXiN2LAAoJECTWi3JdVIfQ3JIH/37/lIH1kHbO9kE/nWm3km1l
-nvCEq8vPeuzcb09Q7knbhU16bcLq2UMmCwsjWBON+RGdr6QI+JNVIEt2Perk3KZF
-cxZb3ULPRxMOetxrVfngyhTWWmiyvHEqXpV2zqUTU7ed4B3KvITPvIh4AOqUIhYT
-HDURwkORAzl6VFVtmQ7NlqvODlEWIMTZJBzmO/3acavW5GQ55W93G/AR8zCYSWQZ
-62khTWrCG4Hz/KBq/ROYMv22Tk+o9Tv2V1V+q9SjMWrWBFlbHKr8p0eVrAqG3M1q
-1HxJnwHfrYu1ktJfQc75PIHgwtVP7wqDjpE4vcp528TfeNj8Z0Q+y5MiYCbo+HA=
-=kxnM
------END PGP SIGNATURE-----
-
---rwbb4r/vLufKlfJs--
