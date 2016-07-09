@@ -1,118 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from m199-177.yeah.net ([123.58.177.199]:63901 "EHLO
-	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757265AbcGKCTJ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 22:19:09 -0400
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-3-git-send-email-vw@iommu.org>
- <CAP=VYLoAQ-0bNAHZFU0Bu9+1to6QFojyEY8YFoHxyP9QZgE5LQ@mail.gmail.com>
-Cc: devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	LKML <linux-kernel@vger.kernel.org>, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wan Zongshun <mcuos.com@gmail.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <57830217.3030800@iommu.org>
-Date: Mon, 11 Jul 2016 10:19:03 +0800
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
+ parents
+To: Michael Turquette <mturquette@baylibre.com>,
+ James Liao <jamesjj.liao@mediatek.com>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+ <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+ <20160702012140.GB17071@codeaurora.org> <1467604308.26485.4.camel@mtksdaap41>
+ <146802073038.73491.6675612765998057903@resonance>
+Cc: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>,
+ Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+ srv_heupstream@mediatek.com
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <57804973.4050306@codeaurora.org>
+Date: Fri, 8 Jul 2016 17:46:43 -0700
 MIME-Version: 1.0
-In-Reply-To: <CAP=VYLoAQ-0bNAHZFU0Bu9+1to6QFojyEY8YFoHxyP9QZgE5LQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <146802073038.73491.6675612765998057903@resonance>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/08/2016 04:32 PM, Michael Turquette wrote:
+> ---
+>  drivers/clk/clk.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 820a939fb6bb..70efe4c4e0cc 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2449,8 +2449,14 @@ static int __clk_core_init(struct clk_core *core)
+>  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+>  		struct clk_core *parent = __clk_init_parent(orphan);
+>  
+> -		if (parent)
+> -			clk_core_reparent(orphan, parent);
+> +		/*
+> +		 * we could call __clk_set_parent, but that would result in a
+> +		 * reducant call to the .set_rate op, if it exists
+
+Did you mean .set_parent op?
+
+> +		 */
+> +		if (parent) {
+> +			__clk_set_parent_before(orphan, parent);
+> +			__clk_set_parent_after(orphan, parent, NULL);
+> +		}
+>  	}
+>  
+>  	/*
 
 
-On 2016年07月11日 05:51, Paul Gortmaker wrote:
-> On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote:
->> This patch is to add irqchip driver support for nuc900 plat,
->> current this driver only supports nuc970 SoC.
->>
->> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
->> ---
->>   arch/arm/mach-w90x900/include/mach/irqs.h |   5 +
->>   drivers/irqchip/Makefile                  |   1 +
->>   drivers/irqchip/irq-nuc900.c              | 150 ++++++++++++++++++++++++++++++
->>   3 files changed, 156 insertions(+)
->>   create mode 100644 drivers/irqchip/irq-nuc900.c
->>
->> diff --git a/arch/arm/mach-w90x900/include/mach/irqs.h b/arch/arm/mach-w90x900/include/mach/irqs.h
->> index 9d5cba3..3b035c6 100644
->> --- a/arch/arm/mach-w90x900/include/mach/irqs.h
->> +++ b/arch/arm/mach-w90x900/include/mach/irqs.h
->> @@ -59,7 +59,12 @@
->>   #define IRQ_KPI                W90X900_IRQ(29)
->>   #define IRQ_P2SGROUP   W90X900_IRQ(30)
->>   #define IRQ_ADC                W90X900_IRQ(31)
->> +
->> +#if !defined(CONFIG_SOC_NUC900)
->>   #define NR_IRQS                (IRQ_ADC+1)
->> +#else
->> +#define NR_IRQS                62
->> +#endif
->>
->>   /*for irq group*/
->>
->> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->> index 38853a1..9ccd5af8a 100644
->> --- a/drivers/irqchip/Makefile
->> +++ b/drivers/irqchip/Makefile
->> @@ -69,3 +69,4 @@ obj-$(CONFIG_PIC32_EVIC)              += irq-pic32-evic.o
->>   obj-$(CONFIG_MVEBU_ODMI)               += irq-mvebu-odmi.o
->>   obj-$(CONFIG_LS_SCFG_MSI)              += irq-ls-scfg-msi.o
->>   obj-$(CONFIG_EZNPS_GIC)                        += irq-eznps.o
->> +obj-$(CONFIG_SOC_NUC970)               += irq-nuc900.o
->> diff --git a/drivers/irqchip/irq-nuc900.c b/drivers/irqchip/irq-nuc900.c
->> new file mode 100644
->> index 0000000..c4b2e39
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-nuc900.c
->> @@ -0,0 +1,150 @@
->> +/*
->> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
->> + *
->> + * The code contained herein is licensed under the GNU General Public
->> + * License. You may obtain a copy of the GNU General Public License
->> + * Version 2 or later at the following locations:
->> + *
->> + * http://www.opensource.org/licenses/gpl-license.html
->> + * http://www.gnu.org/copyleft/gpl.html
->> + */
->> +
->> +#include <linux/module.h>
->
-> Why do you include module.h when I don't see anything modular in
-> this driver?
-
-Okay, I can delete it.
-
->
-> Paul.
-> --
->
->> +#include <linux/init.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/irqdomain.h>
->> +#include <linux/io.h>
->> +#include <linux/ioport.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +
->> +#include <asm/exception.h>
->> +#include <asm/hardirq.h>
->> +
->
-> [...]
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
