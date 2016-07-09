@@ -1,66 +1,69 @@
-Return-Path: <dianders@google.com>
+Return-Path: <narmstrong@baylibre.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <577C6152.4010702@rock-chips.com>
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
- <1462206982-10444-3-git-send-email-heiko@sntech.de> <577B6162.3020609@rock-chips.com>
- <1601887.i7XxTCUQZu@phil> <577C6152.4010702@rock-chips.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 6 Jul 2016 16:01:42 -0700
-Message-ID: <CAD=FV=WAZ125yjG0rAEodSL3LLdBAEx24k+uWYbYYqNCpnYByQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
- parent changes
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Xing Zheng <zhengxing@rock-chips.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160707091844.196a7930@endymion>
+References: <20160707091844.196a7930@endymion>
+Date: Sat, 9 Jul 2016 23:08:34 +0200
+Message-ID: <CAA3gFWvv7U_Q3W2LdnFnyq+V0ciSRuaFxDLGjMrgFJQHgfseQQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: oxnas: Add hardware dependencies
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: multipart/alternative; boundary=001a11406d2a75112805373a52e6
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+--001a11406d2a75112805373a52e6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 5, 2016 at 6:39 PM, Elaine Zhang <zhangqing@rock-chips.com> wrote:
-> OK, Regardless of the VPLL and vop.
-> The current software of clock, there are some problems.
-> e.p:
-> [GPLL]
->        ------ [div] ----- aclk_perilp
-> If I set GPLL 1200M use "assigned-clock-rate".My be the default div of
-> aclk_perilp is 2, GPLL default freq is 600M.
-> If I set GPLL first,the aclk_perilp freq will changed as
-> 300M->600M->300M.But aclk_perilp 600M is a unsafety.It will make the system
-> crash.
-> Aclk_perilp is sizeoff at 300M.It not allowed over frequency.
+Le jeudi 7 juillet 2016, Jean Delvare <jdelvare@suse.de> a =C3=A9crit :
+
+> The clk-oxnas driver is specific to its architecture, so do not
+> propose it on other architectures, unless build-testing.
 >
-> So if I init the PLL freq use "assigned-clock-rate", I need to list it's
-> child clk, make sure it's child clk div is enough,make sure the child clk
-> freq is below the  sizeoff freq.
+> Signed-off-by: Jean Delvare <jdelvare@suse.de <javascript:;>>
+> Cc: Neil Armstrong <narmstrong@baylibre.com <javascript:;>>
+> Cc: Stephen Boyd <sboyd@codeaurora.org <javascript:;>>
+> ---
+>  drivers/clk/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+
+--=20
+Neil Armstrong
+Embedded Linux Software Engineer
+BayLibre - At the Heart of Embedded Linux
+www.baylibre.com
+
+--001a11406d2a75112805373a52e6
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Le=C2=A0jeudi 7 juillet 2016, Jean Delvare &lt;<a href=3D"mailto:jdelvare@s=
+use.de">jdelvare@suse.de</a>&gt; a =C3=A9crit=C2=A0:<br><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex">The clk-oxnas driver is specific to its architecture, so do n=
+ot<br>
+propose it on other architectures, unless build-testing.<br>
+<br>
+Signed-off-by: Jean Delvare &lt;<a href=3D"javascript:;" onclick=3D"_e(even=
+t, &#39;cvml&#39;, &#39;jdelvare@suse.de&#39;)">jdelvare@suse.de</a>&gt;<br=
 >
-> Do you have a better idea for this problem?
+Cc: Neil Armstrong &lt;<a href=3D"javascript:;" onclick=3D"_e(event, &#39;c=
+vml&#39;, &#39;narmstrong@baylibre.com&#39;)">narmstrong@baylibre.com</a>&g=
+t;<br>
+Cc: Stephen Boyd &lt;<a href=3D"javascript:;" onclick=3D"_e(event, &#39;cvm=
+l&#39;, &#39;sboyd@codeaurora.org&#39;)">sboyd@codeaurora.org</a>&gt;<br>
+---<br>
+=C2=A0drivers/clk/Kconfig |=C2=A0 =C2=A0 1 +<br>
+=C2=A01 file changed, 1 insertion(+)</blockquote><div><br></div><div>Acked-=
+by: Neil Armstrong &lt;<a href=3D"mailto:narmstrong@baylibre.com">narmstron=
+g@baylibre.com</a>&gt;</div><br><br>-- <br><div dir=3D"ltr"><div><div>Neil =
+Armstrong<br></div><div>Embedded Linux Software Engineer<br></div>BayLibre =
+- At the Heart of Embedded Linux<br></div><a href=3D"http://www.baylibre.co=
+m" target=3D"_blank">www.baylibre.com</a><br></div><br>
 
-As I understand it, this is a problem that the CCF has had for a long
-time.  I'll probably get shot if our firmware guy ever reads this, but
-I could suggest that one sane way to "solve" this is to say that
-firmware should prepare the clock tree in such a way that the kernel
-doesn't happen to run into this issue.  Honestly I think that's why
-we've never happened to run into this before.  ...but even I think
-that's pretty ugly.
-
-Another very ugly (and non-landable) way to solve this is to do this
-in device tree:
-
-* Set GPLL to something known slow, like 300M
-* Set aclk_perilp to 300M / 4 = 75M
-* Set GPLL to 1200M
-* Poof, aclk_perilp is now magically the rate you want.
-
-
-Presumably one nice way to "solve" this cleanly is to somehow add the
-max clock rate into the code and adjust the divider (or parent) of a
-clock to always make sure that it was under the max.  I'm not sure if
-you could do this somehow using PRE_RATE_CHANGE notifiers or if you'd
-need to touch the CCF itself.  I suspect the later.
-
-
--Doug
+--001a11406d2a75112805373a52e6--
