@@ -1,161 +1,63 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-In-Reply-To: <1467989201-14661-4-git-send-email-andi.shyti@samsung.com>
-Message-Id: <E1bNjZH-0001ni-TY@debutante>
-Date: Thu, 14 Jul 2016 17:32:55 +0100
-Subject: Applied "spi: s3c64xx: rename goto labels to meaningful names" to the spi tree
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sat, 9 Jul 2016 10:26:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: weiyj_lk@163.com
+Cc: emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@codeaurora.org,
+	wens@csie.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next] clk: sunxi: Fix return value check in
+ sun8i_a23_mbus_setup()
+Message-ID: <20160709082649.GH4522@lukather>
+References: <1467807707-32039-1-git-send-email-weiyj_lk@163.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="twz1s1Hj1O0rHoT0"
+In-Reply-To: <1467807707-32039-1-git-send-email-weiyj_lk@163.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
 
-   spi: s3c64xx: rename goto labels to meaningful names
+--twz1s1Hj1O0rHoT0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the spi tree at
+On Wed, Jul 06, 2016 at 12:21:47PM +0000, weiyj_lk@163.com wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>=20
+> In case of error, the function of_io_request_and_map() returns ERR_PTR()
+> and never returns NULL. The NULL test in the return value check should be
+> replaced with IS_ERR().
+>=20
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Applied, thanks
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Maxime
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--twz1s1Hj1O0rHoT0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Thanks,
-Mark
+iQIcBAEBAgAGBQJXgLVJAAoJEBx+YmzsjxAgaSoQALoQYvGINhSC1wyQ7qw9T9lI
+BNfQZ9dIRz8wk4mIeCBxC6ro/tRFtInnGtKwJho89hDl5YHuBR4Wdvma9NLpC66p
+G2zakiRcYXy0Z0d7jkBDS+YylFyFGO22HCTCH0IrYMR2ZM+DtxcE3G8wU0L0GY7y
+sJgEEvap/T5ptOGctxCEpKIGsURzfhTY0IV8IKwOjvW998TDYDQYPIDwPSDYv4NY
+vUnW+keI2HDfDwUNV94B3/l38Cxo5+sgJl1mE6ZqjidWnwQbOEDcxrCkzGYGTfpn
+/gjvS6+BDeKnjtEm4bf4+y8/7+Agcdr6rEUJDYaCID02FXUG5zpb3SNR4HrctY41
+6DPIBd6ukeXL7Gns4Onko0ebV+XutCqPqYlmW93MgriOtrnMHspkVkhIGxUA53It
+Fhgto7aXck4CcURqe0kXTRdynre1Xb0L2goa9A/kZ/KgxVKdpvTjd92KpDLRv9lc
+uSuHLQt5R25jX0TolfyVijQefgoPHPyowTq1+7Lc+V1xZtQchJATABsNheLnUfBv
+aRZ9Kflqfgv3HJAFGyf722POXKZ1iZjj3SSBpvbbvAu3NrlMPWa/I02iNdCrZUb+
+a5t5GsuCIBY47aLQ4RRQIfsfoIUavpASyx5CHFaV4rYY33S7tHLN4kaM9XNUDF21
+YUZOvYKpdfNgc50ZD6/A
+=2E9n
+-----END PGP SIGNATURE-----
 
->From 60a9a964420912a4c4b66efd210d98006177695a Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Tue, 12 Jul 2016 19:02:12 +0900
-Subject: [PATCH] spi: s3c64xx: rename goto labels to meaningful names
-
-The goto labels of the style of
-
-  err4:
-  err3:
-  err2:
-  err1:
-
-are complex to insert in between new errors without renaming all
-the goto statements. Replace the errX naming style to meaningful
-names in order to make it easier to insert new goto exit points.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-s3c64xx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 001c9ebf884d..0a93eb98c2b6 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1078,7 +1078,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
- 				ret);
--			goto err0;
-+			goto err_deref_master;
- 		}
- 		sdd->port_id = ret;
- 	} else {
-@@ -1116,13 +1116,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(sdd->regs)) {
- 		ret = PTR_ERR(sdd->regs);
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	if (sci->cfg_gpio && sci->cfg_gpio()) {
- 		dev_err(&pdev->dev, "Unable to config gpio\n");
- 		ret = -EBUSY;
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	/* Setup clocks */
-@@ -1130,13 +1130,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (IS_ERR(sdd->clk)) {
- 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
- 		ret = PTR_ERR(sdd->clk);
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	if (clk_prepare_enable(sdd->clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
- 		ret = -EBUSY;
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-@@ -1145,13 +1145,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Unable to acquire clock '%s'\n", clk_name);
- 		ret = PTR_ERR(sdd->src_clk);
--		goto err2;
-+		goto err_disable_clk;
- 	}
- 
- 	if (clk_prepare_enable(sdd->src_clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
- 		ret = -EBUSY;
--		goto err2;
-+		goto err_disable_clk;
- 	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
-@@ -1171,7 +1171,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "Failed to request IRQ %d: %d\n",
- 			irq, ret);
--		goto err3;
-+		goto err_pm_put;
- 	}
- 
- 	writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
-@@ -1181,7 +1181,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
--		goto err3;
-+		goto err_pm_put;
- 	}
- 
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
-@@ -1195,15 +1195,15 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--err3:
-+err_pm_put:
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	clk_disable_unprepare(sdd->src_clk);
--err2:
-+err_disable_clk:
- 	clk_disable_unprepare(sdd->clk);
--err0:
-+err_deref_master:
- 	spi_master_put(master);
- 
- 	return ret;
--- 
-2.8.1
+--twz1s1Hj1O0rHoT0--
