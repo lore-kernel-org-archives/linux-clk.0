@@ -1,68 +1,107 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH RESEND v2 4/8] tty: serial: fsl_lpuart: Fix broken 8m/s1 support
-Date: Tue, 19 Jul 2016 13:13:06 +0530
-Message-ID: <20160719074310.16872-5-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33487 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757207AbcGJV4x (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 17:56:53 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+In-Reply-To: <1468135649-19980-6-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-6-git-send-email-vw@iommu.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Sun, 10 Jul 2016 17:56:22 -0400
+Message-ID: <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
+To: Wan Zongshun <vw@iommu.org>
+Cc: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>, robh@kernel.org,
+	Jason Cooper <jason@lakedaemon.net>, p.zabel@pengutronix.de,
+	Wan Zongshun <mcuos.com@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-By default the driver always configure the mode as 8s1 even when 8m1 mode is
-selected. Fix this by adding support to control the space/mark bit.
+On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote
+> This driver is to add reset support for nuc900 series,
+> currently, it only supports nuc970 SoC reset.
+>
+> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+> ---
+>  drivers/power/reset/Kconfig        |  7 +++
+>  drivers/power/reset/Makefile       |  1 +
+>  drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 drivers/power/reset/nuc900-reset.c
+>
+> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> index 9bb2622..8c84892 100644
+> --- a/drivers/power/reset/Kconfig
+> +++ b/drivers/power/reset/Kconfig
+> @@ -94,6 +94,13 @@ config POWER_RESET_MSM
+>         help
+>           Power off and restart support for Qualcomm boards.
+>
+> +config POWER_RESET_NUC900
+> +       bool "Nuc900 restart driver"
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
----
- drivers/tty/serial/fsl_lpuart.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+If this driver is bool and not tristate, then please remove all references
+to MODULE_<xyz> and then the module.h include as well.
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 97c1fda..615f191 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1220,13 +1220,14 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- {
- 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
- 	unsigned long flags;
--	unsigned char cr1, old_cr1, old_cr2, cr4, bdh, modem;
-+	unsigned char cr1, old_cr1, old_cr2, cr3, cr4, bdh, modem;
- 	unsigned int  baud;
- 	unsigned int old_csize = old ? old->c_cflag & CSIZE : CS8;
- 	unsigned int sbr, brfa;
- 
- 	cr1 = old_cr1 = readb(sport->port.membase + UARTCR1);
- 	old_cr2 = readb(sport->port.membase + UARTCR2);
-+	cr3 = readb(sport->port.membase + UARTCR3);
- 	cr4 = readb(sport->port.membase + UARTCR4);
- 	bdh = readb(sport->port.membase + UARTBDH);
- 	modem = readb(sport->port.membase + UARTMODEM);
-@@ -1274,7 +1275,10 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 	if ((termios->c_cflag & PARENB)) {
- 		if (termios->c_cflag & CMSPAR) {
- 			cr1 &= ~UARTCR1_PE;
--			cr1 |= UARTCR1_M;
-+			if (termios->c_cflag & PARODD)
-+				cr3 |= UARTCR3_T8;
-+			else
-+				cr3 &= ~UARTCR3_T8;
- 		} else {
- 			cr1 |= UARTCR1_PE;
- 			if ((termios->c_cflag & CSIZE) == CS8)
-@@ -1342,6 +1346,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 	writeb(cr4 | brfa, sport->port.membase + UARTCR4);
- 	writeb(bdh, sport->port.membase + UARTBDH);
- 	writeb(sbr & 0xFF, sport->port.membase + UARTBDL);
-+	writeb(cr3, sport->port.membase + UARTCR3);
- 	writeb(cr1, sport->port.membase + UARTCR1);
- 	writeb(modem, sport->port.membase + UARTMODEM);
- 
--- 
-2.9.0
+Thanks,
+Paul.
+--
+
+> +       depends on ARCH_W90X900
+> +       help
+> +         Power off and restart support for Nuvoton NUC900 family of
+> +         reference boards.
+> +
+>  config POWER_RESET_LTC2952
+>         bool "LTC2952 PowerPath power-off driver"
+>         depends on OF_GPIO
+> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> index ab7aa86..d4df889 100644
+> --- a/drivers/power/reset/Makefile
+> +++ b/drivers/power/reset/Makefile
+> @@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+>  obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+>  obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+> +obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
+>  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+> diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
+> new file mode 100644
+> index 0000000..49986b7
+> --- /dev/null
+> +++ b/drivers/power/reset/nuc900-reset.c
+> @@ -0,0 +1,93 @@
+> +/*
+> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
+> + *
+> + * The code contained herein is licensed under the GNU General Public
+> + * License. You may obtain a copy of the GNU General Public License
+> + * Version 2 or later at the following locations:
+> + *
+> + * http://www.opensource.org/licenses/gpl-license.html
+> + * http://www.gnu.org/copyleft/gpl.html
+> + */
+> +#include <linux/init.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+> +#include <linux/regmap.h>
+>
+
+[...]
