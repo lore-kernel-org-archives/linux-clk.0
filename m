@@ -1,117 +1,108 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: [PATCH v2 5/6] dt-bindings: clock: add DT binding for the peripheral clocks on Armada 3700
-Date: Fri,  8 Jul 2016 00:37:50 +0200
-Message-Id: <1467931071-31004-6-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wan Zongshun <vw@iommu.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <vw@iommu.org>
+Subject: [PATCH v2 00/10] ARM: NUC900: Add NUC970 SoC support
+Date: Sun, 10 Jul 2016 15:27:20 +0800
+Message-Id: <1468135649-19980-1-git-send-email-vw@iommu.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the peripheral clocks
-used in the Marvell Armada 3700 SoCs.
+Hi,
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/clock/armada3700-periph-clock.txt     | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+This patch series added Nuvoton new SoC NUC970 development board
+support, this nuc970 belongs to nuc900 series, but many features are
+not compatible with old nuc900 SoCs like nuc910, nuc920.
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-new file mode 100644
-index 000000000000..1e3370ba189f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-@@ -0,0 +1,70 @@
-+* Peripheral Clock bindings for Marvell Armada 37xx SoCs
-+
-+Marvell Armada 37xx SoCs provide peripheral clocks which are
-+used as clock source for the peripheral of the SoC.
-+
-+There are two different blocks associated to north bridge and south
-+bridge.
-+
-+The peripheral clock consumer should specify the desired clock by
-+having the clock ID in its "clocks" phandle cell.
-+
-+The following is a list of provided IDs for Armada 370 North bridge clocks:
-+ID	Clock name	Description
-+-----------------------------------
-+0	mmc		MMC controller
-+1	sata_host	Sata Host
-+2	sec_at		Security AT
-+3	sac_dap		Security DAP
-+4	tsecm		Security Engine
-+5	setm_tmx	Serial Embedded Trace Module
-+6	avs		Adaptive Voltage Scaling
-+7	sqf		SPI
-+8	pwm		PWM
-+9	i2c_2		I2C 2
-+10	i2c_1		I2C 1
-+11	ddr_phy		DDR PHY
-+12	ddr_fclk	DDR F clock
-+13	trace		Trace
-+14	counter		Counter
-+15	eip97		EIP 97
-+16	cpu		CPU
-+
-+The following is a list of provided IDs for Armada 370 South bridge clocks:
-+ID	Clock name	Description
-+-----------------------------------
-+0	gbe-50		50 MHz parent clock for Gigabit Ethernet
-+1	gbe-core	parent clock for Gigabit Ethernet core
-+2	gbe-125		125 MHz parent clock for Gigabit Ethernet
-+3	gbe1-50		50 MHz clock for Gigabit Ethernet port 1
-+4	gbe0-50		50 MHz clock for Gigabit Ethernet port 0
-+5	gbe1-125	125 MHz clock for Gigabit Ethernet port 1
-+6	gbe0-125	125 MHz clock for Gigabit Ethernet port 0
-+7	gbe1-core	Gigabit Ethernet core port 1
-+8	gbe0-core	Gigabit Ethernet core port 0
-+9	gbe-bm		Gigabit Ethernet Buffer Manager
-+10	sdio		SDIO
-+11	usb32-sub2-sys	USB 2 clock
-+12	usb32-ss-sys	USB 3 clock
-+
-+Required properties:
-+
-+- compatible : shall be "marvell,armada-3700-periph-clock-nb" for the
-+  north bridge block, or
-+  "marvell,armada-3700-periph-clock-sb" for the south bridge block
-+- reg : must be the register address of North/South Bridge Clock register
-+- #clock-cells : from common clock binding; shall be set to 1
-+
-+- clocks : list of the parent clock phandle in the following order:
-+  TBG-A P, TBG-B P, TBG-A S, TBG-B S and finally the xtal clock.
-+
-+
-+Example:
-+
-+nb_perih_clk: nb-periph-clk@13000{
-+	compatible = "marvell,armada-3700-periph-clock-nb";
-+	reg = <0x13000 0x1000>;
-+	clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
-+	<&tbg 3>, <&xtalclk>;
-+	#clock-cells = <1>;
-+};
+Those patches are basing on old w90x900 codes, and are using standard
+linux subsystem interface, such as dts, driver/clk, driver/clocksource
+, driver/irqchip drivers.
+
+The old w90x900 plat such as nuc910,nuc960 codes will also be changed
+to new style according to nuc970 codes after those patches was accepted.
+
+PATCH V2:
+The V2 patches change some code style, re-archtect some drivers and add reset
+and soc drivers, split some dts patches according to maillist's comments.
+
+Wan Zongshun (10):
+  ARM: NUC900: Add nuc970 machine support
+  irqchip: add irqchip driver for nuc900
+  Clocksource: add nuc970 clocksource driver
+  clk: add Clock driver for nuc970
+  power/reset: Add reset driver support for nuc900
+  soc: Add SoC specific driver support for nuc900
+  ARM: dts: Add clock header file into dt-bindings
+  ARM: dts: nuc900: Add nuc970 dts files
+  Documentation: devicetree: Add dts description for nuc900
+  nuc900: add nuc970 platform defconfig file
+
+ .../devicetree/bindings/arm/nuvoton/nuc970.txt     |  12 +
+ .../bindings/clock/nuvoton,nuc970-clk.txt          |  13 +
+ .../interrupt-controller/nuvoton,nuc900-aic.txt    |  15 +
+ .../bindings/reset/nuvoton,nuc900-reset.txt        |  12 +
+ .../devicetree/bindings/serial/nuc970-uart.txt     |  22 +
+ .../bindings/soc/nuvoton/nuvoton,nuc900-soc.txt    |  12 +
+ .../bindings/timer/nuvoton,nuc970-tmr.txt          |  20 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/nuc970-evb.dts                   |  34 +
+ arch/arm/boot/dts/nuc970.dtsi                      |  88 ++
+ arch/arm/configs/nuc970_defconfig                  |  76 ++
+ arch/arm/mach-w90x900/Kconfig                      |  20 +
+ arch/arm/mach-w90x900/Makefile                     |   3 +
+ arch/arm/mach-w90x900/include/mach/irqs.h          |   5 +
+ arch/arm/mach-w90x900/nuc900.c                     |  41 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/nuc900/Makefile                        |   6 +
+ drivers/clk/nuc900/clk-apll.c                      | 168 ++++
+ drivers/clk/nuc900/clk-ccf.h                       |  53 ++
+ drivers/clk/nuc900/clk-nuc970.c                    | 925 +++++++++++++++++++++
+ drivers/clk/nuc900/clk-upll.c                      |  83 ++
+ drivers/clocksource/Kconfig                        |   8 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-nuc900.c                 | 305 +++++++
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-nuc900.c                       | 150 ++++
+ drivers/power/reset/Kconfig                        |   7 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/nuc900-reset.c                 |  93 +++
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/nuvoton/Kconfig                        |  10 +
+ drivers/soc/nuvoton/Makefile                       |   1 +
+ drivers/soc/nuvoton/soc-nuc900.c                   | 100 +++
+ include/dt-bindings/clock/nuc970-clock.h           | 233 ++++++
+ 35 files changed, 2522 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuc970.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,nuc970-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nuvoton,nuc900-aic.txt
+ create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,nuc900-reset.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/nuc970-uart.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/nuvoton/nuvoton,nuc900-soc.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/nuvoton,nuc970-tmr.txt
+ create mode 100644 arch/arm/boot/dts/nuc970-evb.dts
+ create mode 100644 arch/arm/boot/dts/nuc970.dtsi
+ create mode 100644 arch/arm/configs/nuc970_defconfig
+ create mode 100644 arch/arm/mach-w90x900/nuc900.c
+ create mode 100644 drivers/clk/nuc900/Makefile
+ create mode 100644 drivers/clk/nuc900/clk-apll.c
+ create mode 100644 drivers/clk/nuc900/clk-ccf.h
+ create mode 100644 drivers/clk/nuc900/clk-nuc970.c
+ create mode 100644 drivers/clk/nuc900/clk-upll.c
+ create mode 100644 drivers/clocksource/timer-nuc900.c
+ create mode 100644 drivers/irqchip/irq-nuc900.c
+ create mode 100644 drivers/power/reset/nuc900-reset.c
+ create mode 100644 drivers/soc/nuvoton/Kconfig
+ create mode 100644 drivers/soc/nuvoton/Makefile
+ create mode 100644 drivers/soc/nuvoton/soc-nuc900.c
+ create mode 100644 include/dt-bindings/clock/nuc970-clock.h
+
 -- 
-2.5.0
+2.7.4
