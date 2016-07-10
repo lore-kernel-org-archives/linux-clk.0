@@ -1,87 +1,52 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	stephen.boyd@linaro.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 3/6] clk: qcom: Add support to initialize alpha plls
-Date: Mon, 11 Jul 2016 16:20:36 +0530
-Message-Id: <1468234239-28693-4-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
-References: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:54033 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757207AbcGJWPK (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 18:15:10 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wan Zongshun <vw@iommu.org>, Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	jason@lakedaemon.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 09/10] Documentation: devicetree: Add dts description for nuc900
+Date: Mon, 11 Jul 2016 00:17:52 +0200
+Message-ID: <1850749.ap1S8Xq0fA@wuerfel>
+In-Reply-To: <1468136542-2656-2-git-send-email-vw@iommu.org>
+References: <1468136542-2656-1-git-send-email-vw@iommu.org> <1468136542-2656-2-git-send-email-vw@iommu.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a function to do initial configuration of the alpha plls
+On Sunday, July 10, 2016 3:42:21 PM CEST Wan Zongshun wrote:
+> +
+> +Required properties:
+> +- compatible : Should be "nuvoton,nuc970-tmr"
+> +- reg : Address and length of the register set
+> +- clocks : Reference on the timer input clock
+> +- interrupts : Reference to the timer interrupt
+> +
+> +Example:
+> +
+> +tmr@0xb8001000 {
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 23 +++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h | 13 +++++++++++++
- 2 files changed, 36 insertions(+)
+The name should be "timer", not "tmr", and the address should
+not contain a leading "0x".
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index bae31f9..8b8710f 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -112,6 +112,29 @@ static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
- #define PLL_OFFLINE_ACK		BIT(28)
- #define PLL_ACTIVE_FLAG		BIT(30)
- 
-+void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+			     const struct alpha_pll_config *config)
-+{
-+	u32 val, mask;
-+
-+	regmap_write(regmap, pll->offset + PLL_CONFIG_CTL,
-+		     config->config_ctl_val);
-+
-+	val = config->main_output_mask;
-+	val |= config->aux_output_mask;
-+	val |= config->aux2_output_mask;
-+	val |= config->early_output_mask;
-+	val |= config->post_div_val;
-+
-+	mask = config->main_output_mask;
-+	mask |= config->aux_output_mask;
-+	mask |= config->aux2_output_mask;
-+	mask |= config->early_output_mask;
-+	mask |= config->post_div_mask;
-+
-+	regmap_update_bits(regmap, pll->offset + PLL_USER_CTL, mask, val);
-+}
-+
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
- {
- 	int ret;
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index f78bf4c..12a349e 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -51,8 +51,21 @@ struct clk_alpha_pll_postdiv {
- 	struct clk_regmap clkr;
- };
- 
-+struct alpha_pll_config {
-+	u32 config_ctl_val;
-+	u32 main_output_mask;
-+	u32 aux_output_mask;
-+	u32 aux2_output_mask;
-+	u32 early_output_mask;
-+	u32 post_div_val;
-+	u32 post_div_mask;
-+};
-+
- extern const struct clk_ops clk_alpha_pll_ops;
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
- 
-+void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+			     const struct alpha_pll_config *config);
-+
- #endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> +       compatible = "nuvoton,nuc970-tmr";
+> +       reg = <0xb8001000 0x1000>;
+> +       interrupts = <16>;
+> +       clocks = <&clks TIMER0_GATE>,
+> +       <&clks TIMER1_GATE>;
+> +       clock-names = "timer0", "timer1";
+> +};
+
+The clocks/clock-names description does not match the example:
+you only define a single clock in the required properties, but
+have two separate inputs in the example. Please fix one or the
+other.
+
+	Arnd
