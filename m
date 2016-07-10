@@ -1,98 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:61193 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751327AbcGOWlN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jul 2016 18:41:13 -0400
-Date: Fri, 15 Jul 2016 18:39:33 -0400
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: Scott Wood <oss@buserror.net>
-CC: Yangbo Lu <yangbo.lu@nxp.com>, <linux-mmc@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	<devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-	netdev <netdev@vger.kernel.org>, <ulf.hansson@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, <leoyang.li@nxp.com>,
-	<xiaobo.xie@nxp.com>
-Subject: Re: [v10, 3/7] soc: fsl: add GUTS driver for QorIQ platforms
-Message-ID: <20160715223932.GC10758@windriver.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
- <1462417950-46796-4-git-send-email-yangbo.lu@nxp.com>
- <CAP=VYLqsV_M=8CM47k4kzdULCp_y0yP9t8Sq9=jFp6W593QJgw@mail.gmail.com>
- <1468609977.25630.5.camel@buserror.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-In-Reply-To: <1468609977.25630.5.camel@buserror.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wan Zongshun <vw@iommu.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
+Subject: [PATCH v2 10/10] nuc900: add nuc970 platform defconfig file
+Date: Sun, 10 Jul 2016 15:42:22 +0800
+Message-Id: <1468136542-2656-3-git-send-email-vw@iommu.org>
+In-Reply-To: <1468136542-2656-1-git-send-email-vw@iommu.org>
+References: <1468136542-2656-1-git-send-email-vw@iommu.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-[Re: [v10, 3/7] soc: fsl: add GUTS driver for QorIQ platforms] On 15/07/2016 (Fri 14:12) Scott Wood wrote:
+Add nuc970_defconfig file support.
 
-> On Fri, 2016-07-15 at 12:43 -0400, Paul Gortmaker wrote:
-> > > +source "drivers/soc/fsl/qe/Kconfig"
+Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+---
+ arch/arm/configs/nuc970_defconfig | 76 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 arch/arm/configs/nuc970_defconfig
 
-[...]
-
-> > > +
-> > > +config FSL_GUTS
-> > > +       bool
-> > > diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
-> > > index 203307f..02afb7f 100644
-> > > --- a/drivers/soc/fsl/Makefile
-> > > +++ b/drivers/soc/fsl/Makefile
-> > > @@ -4,3 +4,4 @@
-> > > 
-> > >  obj-$(CONFIG_QUICC_ENGINE)             += qe/
-> > >  obj-$(CONFIG_CPM)                      += qe/
-> > > +obj-$(CONFIG_FSL_GUTS)                 += guts.o
-> > > diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> > > new file mode 100644
-> > > index 0000000..fa155e6
-> > > --- /dev/null
-> > > +++ b/drivers/soc/fsl/guts.c
-> > > @@ -0,0 +1,119 @@
-> > > +/*
-> > > + * Freescale QorIQ Platforms GUTS Driver
-> > > + *
-> > > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > > + *
-> > > + * This program is free software; you can redistribute it and/or modify
-> > > + * it under the terms of the GNU General Public License as published by
-> > > + * the Free Software Foundation; either version 2 of the License, or
-> > > + * (at your option) any later version.
-> > > + */
-> > > +
-> > > +#include <linux/io.h>
-> > > +#include <linux/module.h>
-> > Seems there was lots of discussion on this.  If it does end up being
-> > resent, it would be nice to get the module.h and other modular stuff
-> > gone since it is a bool Kconfig.
-> 
-> I plan to resend just the GUTS driver portion and send it through the PPC
-> tree.
-> 
-> I don't see any modular stuff in there besides the linux/module.h include.
-
-Great.  Normally I'm seeing the MODULE_DEVICE_TABLE and MODULE_AUTHOR
-and MODULE_LICENSE etc, so it has (unfortunately) become a knee jerk
-reaction to assume the latter follows a module.h presence...  thanks for
-removing the extraneous include.
-
-Paul.
---
-
-> 
-> -Scott
-> 
-> 
+diff --git a/arch/arm/configs/nuc970_defconfig b/arch/arm/configs/nuc970_defconfig
+new file mode 100644
+index 0000000..b39a406
+--- /dev/null
++++ b/arch/arm/configs/nuc970_defconfig
+@@ -0,0 +1,76 @@
++# CONFIG_LOCALVERSION_AUTO is not set
++CONFIG_SYSVIPC=y
++# CONFIG_CROSS_MEMORY_ATTACH is not set
++CONFIG_NO_HZ=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BSD_PROCESS_ACCT=y
++CONFIG_BSD_PROCESS_ACCT_V3=y
++CONFIG_CGROUPS=y
++CONFIG_CGROUP_SCHED=y
++CONFIG_RT_GROUP_SCHED=y
++CONFIG_CGROUP_FREEZER=y
++CONFIG_CPUSETS=y
++CONFIG_CGROUP_DEVICE=y
++CONFIG_CGROUP_CPUACCT=y
++CONFIG_CGROUP_PERF=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_INITRAMFS_SOURCE="../rootfs"
++CONFIG_PERF_EVENTS=y
++# CONFIG_COMPAT_BRK is not set
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_ARCH_W90X900=y
++CONFIG_SOC_NUC970=y
++# CONFIG_MACH_W90P910EVB is not set
++CONFIG_PREEMPT=y
++CONFIG_AEABI=y
++CONFIG_OABI_COMPAT=y
++CONFIG_ARM_APPENDED_DTB=y
++CONFIG_CMDLINE="root=/dev/ram0 console=ttyS0,115200n8 rdinit=/sbin/init mem=64M"
++CONFIG_KEXEC=y
++CONFIG_FPE_NWFPE=y
++# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
++# CONFIG_SUSPEND is not set
++CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++# CONFIG_STANDALONE is not set
++# CONFIG_PREVENT_FIRMWARE_BUILD is not set
++# CONFIG_FIRMWARE_IN_KERNEL is not set
++CONFIG_BLK_DEV_RAM=y
++CONFIG_BLK_DEV_RAM_SIZE=16384
++CONFIG_SCSI=y
++# CONFIG_SCSI_PROC_FS is not set
++CONFIG_BLK_DEV_SD=y
++# CONFIG_SCSI_LOWLEVEL is not set
++# CONFIG_INPUT_MOUSEDEV is not set
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
++CONFIG_VT_HW_CONSOLE_BINDING=y
++# CONFIG_LEGACY_PTYS is not set
++CONFIG_SERIAL_NUC970=y
++CONFIG_SERIAL_NUC970_CONSOLE=y
++# CONFIG_HW_RANDOM is not set
++CONFIG_POWER_RESET=y
++CONFIG_POWER_RESET_NUC900=y
++# CONFIG_HWMON is not set
++# CONFIG_HID is not set
++# CONFIG_USB_SUPPORT is not set
++# CONFIG_IOMMU_SUPPORT is not set
++# CONFIG_DNOTIFY is not set
++# CONFIG_INOTIFY_USER is not set
++CONFIG_MSDOS_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_ROMFS_FS=y
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
++# CONFIG_ENABLE_WARN_DEPRECATED is not set
++# CONFIG_ENABLE_MUST_CHECK is not set
++CONFIG_DEBUG_FS=y
++CONFIG_RCU_CPU_STALL_TIMEOUT=300
++CONFIG_STRICT_DEVMEM=y
++# CONFIG_ARM_UNWIND is not set
+-- 
+2.7.4
