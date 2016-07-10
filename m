@@ -1,107 +1,58 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dev@linux-sunxi.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/9] clk: sunxi-ng: mux: support fixed pre-dividers on multiple parents
-Date: Tue, 26 Jul 2016 15:04:27 +0800
-Message-Id: <1469516671-19377-6-git-send-email-wens@csie.org>
-In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
+Return-Path: <hao5781286@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160404212450.GP4227@lukather>
+References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
+ <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
+ <20160319235905.GA16539@rob-hp-laptop> <20160402011436.GA18567@codeaurora.org>
+ <20160404212450.GP4227@lukather>
+From: Hao Zhang <hao5781286@gmail.com>
+Date: Mon, 11 Jul 2016 01:07:26 +0800
+Message-ID: <CAJeuY78Mt-286pWvCVqPFnPixp3cQ+C=SHekCkMfAd7Lf_t1+w@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
+ clock driver for sun[457]i
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, yassinjaffer@gmail.com,
+	dev@linux-sunxi.org, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Hans de Goede <hdegoede@redhat.com>,
+	Reinder de Haan <patchesrdh@mveas.com>, Jens Kuske <jenskuske@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: multipart/alternative; boundary=001a114e31f6f1620105374b1112
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on the A31 have fixed pre-dividers on multiple parents.
-Add support for them.
+--001a114e31f6f1620105374b1112
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c |  9 +++++----
- drivers/clk/sunxi-ng/ccu_mux.c      |  6 ++++--
- drivers/clk/sunxi-ng/ccu_mux.h      | 10 ++++++----
- 3 files changed, 15 insertions(+), 10 deletions(-)
+Hi all
+I am developing a media codec driver(using bt656) for cubieboard
+one(allwinner a10 processor), i want to use DT to banding csi. after i get
+some reference on
+Documentation/devicetree/bindings/media/video-interfaces.txt, i have some
+question about whether the csi driver for cubieboard one support to parse
+the DT node just like in the reference document? if not, whether someone
+is developing it or should i necessary to complete it together (What's the
+progress of it) ?
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 9af359544110..5f5c900c235b 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -184,15 +184,16 @@ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
- 			     0);
- 
- static const char * const ahb2_parents[] = { "ahb1" , "pll-periph0" };
-+static const struct ccu_mux_fixed_prediv ahb2_fixed_predivs[] = {
-+	{ .index = 1, .div = 2},
-+	{ },
-+};
- static struct ccu_mux ahb2_clk = {
- 	.mux		= {
- 		.shift	= 0,
- 		.width	= 1,
- 
--		.fixed_prediv	= {
--			.index	= 1,
--			.div	= 2,
--		},
-+		.fixed_predivs	= ahb2_fixed_predivs,
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 68b32f168a74..f96eabb5d1f3 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -20,6 +20,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- {
- 	u16 prediv = 1;
- 	u32 reg;
-+	int i;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
- 	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
-@@ -32,8 +33,9 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 	}
- 
- 	if (common->features & CCU_FEATURE_FIXED_PREDIV)
--		if (parent_index == cm->fixed_prediv.index)
--			prediv = cm->fixed_prediv.div;
-+		for (i = 0; cm->fixed_predivs[i].div; i++)
-+			if (parent_index == cm->fixed_predivs[i].index)
-+				prediv = cm->fixed_predivs[i].div;
- 
- 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
- 		if (parent_index == cm->variable_prediv.index) {
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index f0078de78712..28d16ec18d55 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -5,15 +5,17 @@
- 
- #include "ccu_common.h"
- 
-+struct ccu_mux_fixed_prediv {
-+	u8	index;
-+	u16	div;
-+};
-+
- struct ccu_mux_internal {
- 	u8		shift;
- 	u8		width;
- 	const u8	*table;
- 
--	struct {
--		u8	index;
--		u16	div;
--	} fixed_prediv;
-+	const struct ccu_mux_fixed_prediv	*fixed_predivs;
- 
- 	struct {
- 		u8	index;
--- 
-2.8.1
+Best regards :)
+Hao Zhang
+
+--001a114e31f6f1620105374b1112
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi all<br>I am developing a media codec driver(using bt656=
+) for cubieboard one(allwinner a10 processor), i want to use DT to banding =
+csi. after i get some reference on Documentation/devicetree/bindings/media/=
+video-interfaces.txt, i have some question about whether the csi driver=C2=
+=A0for cubieboard one=C2=A0support to parse the DT node just like in the re=
+ference document? if not, whether someone is=C2=A0developing it or should i=
+ necessary to complete it together (<span style=3D"color:rgb(51,51,51);font=
+-family:arial;font-size:13px;line-height:20.02px">What&#39;s the progress o=
+f=C2=A0it</span>) ?=C2=A0<br><br>Best regards :)<br>Hao Zhang</div>
+
+--001a114e31f6f1620105374b1112--
