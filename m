@@ -1,52 +1,176 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	shawn.lin@rock-chips.com
-Subject: [RESEND PATCH 5/6] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
-Date: Mon,  1 Aug 2016 12:24:45 +0800
-Message-Id: <1470025485-4218-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wan Zongshun <vw@iommu.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
+Subject: [PATCH v2 08/10] ARM: dts: nuc900: Add nuc970 dts files
+Date: Sun, 10 Jul 2016 15:42:20 +0800
+Message-Id: <1468136542-2656-1-git-send-email-vw@iommu.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+This patch is to add dts support for nuc970 platform.
 
-allow aclk_pcie and aclk_perf_pcie disabled when unused.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-
+Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
 ---
+ arch/arm/boot/dts/Makefile       |  1 +
+ arch/arm/boot/dts/nuc970-evb.dts | 34 ++++++++++++++++
+ arch/arm/boot/dts/nuc970.dtsi    | 88 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 123 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nuc970-evb.dts
+ create mode 100644 arch/arm/boot/dts/nuc970.dtsi
 
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 74afec0..4a15ce5b 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 414b427..557477d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -892,6 +892,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
+ dtb-$(CONFIG_ARCH_ZX) += zx296702-ad1.dtb
+ dtb-$(CONFIG_ARCH_ASPEED) += aspeed-bmc-opp-palmetto.dtb \
+ 	aspeed-ast2500-evb.dtb
++dtb-$(CONFIG_SOC_NUC970) += nuc970-evb.dtb
+ endif
  
--	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
--	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
- 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+ dtstree		:= $(srctree)/$(src)
+diff --git a/arch/arm/boot/dts/nuc970-evb.dts b/arch/arm/boot/dts/nuc970-evb.dts
+new file mode 100644
+index 0000000..ae3fe90
+--- /dev/null
++++ b/arch/arm/boot/dts/nuc970-evb.dts
+@@ -0,0 +1,34 @@
++/*
++ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++/dts-v1/;
++#include "nuc970.dtsi"
++
++/ {
++	model = "Nuvoton NUC970 Development Board";
++	compatible = "nuvoton,nuc970";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	memory {
++		reg = <0x00000000 0x04000000>;
++	};
++
++	soc {
++		apb@b8000000 {
++			uart0: serial@b8000000 {
++				status = "okay";
++			};
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/nuc970.dtsi b/arch/arm/boot/dts/nuc970.dtsi
+new file mode 100644
+index 0000000..d476abd
+--- /dev/null
++++ b/arch/arm/boot/dts/nuc970.dtsi
+@@ -0,0 +1,88 @@
++/*
++ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include "skeleton.dtsi"
++#include <dt-bindings/clock/nuc970-clock.h>
++
++/ {
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&aic>;
++		ranges;
++
++		ahb@b0000000 {
++			compatible = "simple-bus";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			gcr: syscon@b0000000 {
++				compatible = "syscon", "nuvoton,nuc970-gcr";
++				reg = <0xb0000000 0x200>;
++			};
++
++			soc {
++				compatible = "nuvoton,nuc900-soc";
++				syscon = <&gcr>;
++			};
++
++			reset {
++				compatible = "nuvoton,nuc900-reset";
++				syscon = <&gcr>;
++			};
++
++			clks: clk@b0000200 {
++				compatible = "nuvoton,nuc970-clk";
++				reg = <0xb0000200 0x200>;
++				#clock-cells = <1>;
++			};
++
++		};
++
++		apb@b8000000 {
++			compatible = "simple-bus";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			aic: interrupt-controller@b8002000 {
++				compatible = "nuvoton,nuc900-aic";
++				interrupt-controller;
++				#interrupt-cells = <1>;
++				reg = <0xb8002000 0x1000>;
++			};
++
++
++			tmr@0xb8001000 {
++				compatible = "nuvoton,nuc970-tmr";
++				reg = <0xb8001000 0x1000>;
++				interrupts = <16>;
++				clocks = <&clks TIMER0_GATE>,
++					 <&clks TIMER1_GATE>;
++				clock-names = "timer0", "timer1";
++
++			};
++
++			uart0: serial@b8000000 {
++				compatible = "nuvoton,nuc970-uart";
++				reg = <0xb8000000 0x1000>;
++				interrupts = <36>;
++				clocks = <&clks UART0_GATE>,
++					 <&clks UART0_ECLK_GATE>;
++				clock-names = "uart0", "uart0_eclk";
++				clock-frequency = <12000000>;
++				status = "disabled";
++			};
++		};
++	};
++};
 -- 
-1.7.9.5
+2.7.4
