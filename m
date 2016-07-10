@@ -1,74 +1,135 @@
-Return-Path: <andy.gross@linaro.org>
-Return-Path: <andy.gross@linaro.org>
-Date: Fri, 15 Jul 2016 15:23:13 -0500
-From: Andy Gross <andy.gross@linaro.org>
-To: njaigane@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	twp@codeaurora.org, david.brown@linaro.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@armlinux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org,
-	bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, bjorn.andersson@linaro.org,
-	varada@codeaurora.org, pradeepb@codeaurora.org,
-	snlakshm@codeaurora.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org,
-	bselvara@codeaurora.org
-Subject: Re: [PATCH 3/4] qcom: ipq4019: ASoC tlmm/pinctrl support
-Message-ID: <20160715202313.GA3509@hector.attlocal.net>
-References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
- <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from m199-177.yeah.net ([123.58.177.199]:54981 "EHLO
+	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932946AbcGJH1t (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 03:27:49 -0400
+From: Wan Zongshun <vw@iommu.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
+Subject: [PATCH v2 01/10] ARM: NUC900: Add nuc970 machine support
+Date: Sun, 10 Jul 2016 15:27:21 +0800
+Message-Id: <1468135649-19980-2-git-send-email-vw@iommu.org>
+In-Reply-To: <1468135649-19980-1-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 15, 2016 at 12:37:05PM +0530, njaigane@codeaurora.org wrote:
-> From: Jaiganesh Narayanan <njaigane@codeaurora.org>
-> 
-> This patch adds the tlmm/pinctrl support for IPQ4019 ASoC.
-> 
-> Signed-off-by: Jaiganesh Narayanan <njaigane@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-ipq4019.c | 116 +++++++++++++++++++++++++--------
->  1 file changed, 88 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> index b68ae42..bc22597 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 and
-> @@ -283,6 +283,18 @@ enum ipq4019_functions {
->  	qca_mux_blsp_uart0,
->  	qca_mux_blsp_spi1,
->  	qca_mux_blsp_spi0,
-> +	qca_mux_i2s_rx_mclk,
-> +	qca_mux_i2s_rx_bclk,
-> +	qca_mux_i2s_rx_fsync,
-> +	qca_mux_i2s_rxd,
-> +	qca_mux_i2s_tx_mclk,
-> +	qca_mux_i2s_tx_bclk,
-> +	qca_mux_i2s_tx_fsync,
-> +	qca_mux_i2s_txd1,
-> +	qca_mux_i2s_txd2,
-> +	qca_mux_i2s_txd3,
-> +	qca_mux_i2s_spdif_out,
-> +	qca_mux_i2s_spdif_in,
+NUC970 is a new SoC of Nuvoton nuc900 series, this patch is
+to add machine file support for it.
 
-You'll also need to add all of these to the
-Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+---
+ arch/arm/mach-w90x900/Kconfig  | 20 ++++++++++++++++++++
+ arch/arm/mach-w90x900/Makefile |  3 +++
+ arch/arm/mach-w90x900/nuc900.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 64 insertions(+)
+ create mode 100644 arch/arm/mach-w90x900/nuc900.c
 
-I was also going to suggest just using qca_i2s and having a single function, but
-it seems like there is at least 1 pin that supports more than one i2s mode.
+diff --git a/arch/arm/mach-w90x900/Kconfig b/arch/arm/mach-w90x900/Kconfig
+index 69bab32..80ab00c 100644
+--- a/arch/arm/mach-w90x900/Kconfig
++++ b/arch/arm/mach-w90x900/Kconfig
+@@ -15,6 +15,26 @@ config CPU_NUC960
+ 	help
+ 	  Support for NUCP960 of Nuvoton NUC900 CPUs.
+ 
++config SOC_NUC970
++	bool "Nuvoton NUC970 SoC support"
++	select COMMON_CLK
++	select GENERIC_IRQ_CHIP
++	select HAVE_CLK_PREPARE
++	select IRQ_DOMAIN
++	select MULTI_IRQ_HANDLER
++	select MFD_SYSCON
++	select NUC900_TIMER
++	select SOC_NUC900
++	select USE_OF
++	help
++	  Support for NUC970 of Nuvoton NUC900 SoCs.
++	  The NUC970 series runs up to 300 MHz, with 16 KB I-cache,
++	  16 KB D-cache and MMU, 56KB embedded SRAM and 16 KB Internal
++	  Boot ROM for booting from USB, NAND and SPI FLASH.
++	  Detailed information please check the following link:
++	  https://github.com/zswan/nuc900-document/blob/master/
++	  NUC970_TechnicalReferenceManual_EN_Rev1.30.pdf
++
+ menu "W90P910 Machines"
+ 
+ config MACH_W90P910EVB
+diff --git a/arch/arm/mach-w90x900/Makefile b/arch/arm/mach-w90x900/Makefile
+index 828c032..d13ba5a 100644
+--- a/arch/arm/mach-w90x900/Makefile
++++ b/arch/arm/mach-w90x900/Makefile
+@@ -4,8 +4,10 @@
+ 
+ # Object file lists.
+ 
++ifeq ($(CONFIG_SOC_NUC970),)
+ obj-y				:= irq.o time.o mfp.o gpio.o clock.o
+ obj-y				+= clksel.o dev.o cpu.o
++endif
+ # W90X900 CPU support files
+ 
+ obj-$(CONFIG_CPU_W90P910)	+= nuc910.o
+@@ -17,3 +19,4 @@ obj-$(CONFIG_CPU_NUC960)	+= nuc960.o
+ obj-$(CONFIG_MACH_W90P910EVB)	+= mach-nuc910evb.o
+ obj-$(CONFIG_MACH_W90P950EVB)	+= mach-nuc950evb.o
+ obj-$(CONFIG_MACH_W90N960EVB)	+= mach-nuc960evb.o
++obj-$(CONFIG_SOC_NUC970)	+= nuc900.o
+diff --git a/arch/arm/mach-w90x900/nuc900.c b/arch/arm/mach-w90x900/nuc900.c
+new file mode 100644
+index 0000000..309c332
+--- /dev/null
++++ b/arch/arm/mach-w90x900/nuc900.c
+@@ -0,0 +1,41 @@
++/*
++ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/platform_device.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/init.h>
++#include <linux/reboot.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/sys_soc.h>
++#include <linux/semaphore.h>
++
++#include <asm/system_misc.h>
++#include <asm/mach/arch.h>
++
++static void __init nuc900_machine_init(void)
++{
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
++}
++
++static const char *nuc900_dt_compat[] __initconst = {
++	"nuvoton,nuc970",
++	NULL,
++};
++
++DT_MACHINE_START(nuc900_dt, "Nuvoton NUC900 (Device Tree Support)")
++	.init_machine	= nuc900_machine_init,
++	.dt_compat	= nuc900_dt_compat,
++MACHINE_END
+-- 
+2.7.4
 
-Regards,
-Andy
