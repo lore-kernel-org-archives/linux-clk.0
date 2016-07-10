@@ -1,109 +1,161 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 03/13] clk: sunxi-ng: sun8i: Rename DDR and video plls
-Date: Tue, 26 Jul 2016 22:30:31 +0200
-Message-Id: <20160726203041.29366-4-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wan Zongshun <vw@iommu.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
+Subject: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
+Date: Sun, 10 Jul 2016 15:27:25 +0800
+Message-Id: <1468135649-19980-6-git-send-email-vw@iommu.org>
+In-Reply-To: <1468135649-19980-1-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to deal with the A64 that will have several video and ddr plls,
-rename the first ones to add an index.
+This driver is to add reset support for nuc900 series,
+currently, it only supports nuc970 SoC reset.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/power/reset/Kconfig        |  7 +++
+ drivers/power/reset/Makefile       |  1 +
+ drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+)
+ create mode 100644 drivers/power/reset/nuc900-reset.c
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 9af359544110..68492808e5fc 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -57,8 +57,8 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   0);
+diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+index 9bb2622..8c84892 100644
+--- a/drivers/power/reset/Kconfig
++++ b/drivers/power/reset/Kconfig
+@@ -94,6 +94,13 @@ config POWER_RESET_MSM
+ 	help
+ 	  Power off and restart support for Qualcomm boards.
  
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
--					"osc24M", 0x0010,
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
-+					"osc24M", 0x010,
- 					8, 7,		/* N */
- 					0, 4,		/* M */
- 					BIT(24),	/* frac enable */
-@@ -81,7 +81,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					BIT(28),	/* lock */
- 					0);
- 
--static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
-+static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr0_clk, "pll-ddr0",
- 				    "osc24M", 0x020,
- 				    8, 5,	/* N */
- 				    4, 2,	/* K */
-@@ -422,7 +422,7 @@ static SUNXI_CCU_GATE(usb_ohci2_clk,	"usb-ohci2",	"osc24M",
- static SUNXI_CCU_GATE(usb_ohci3_clk,	"usb-ohci3",	"osc24M",
- 		      0x0cc, BIT(19), 0);
- 
--static const char * const dram_parents[] = { "pll-ddr", "pll-periph0-2x" };
-+static const char * const dram_parents[] = { "pll-ddr0", "pll-periph0-2x" };
- static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
- 			    0x0f4, 0, 4, 20, 2, CLK_IS_CRITICAL);
- 
-@@ -439,7 +439,7 @@ static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
- 				 0x104, 0, 4, 24, 3, BIT(31), 0);
- 
--static const char * const tcon_parents[] = { "pll-video" };
-+static const char * const tcon_parents[] = { "pll-video0" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
- 				 0x118, 0, 4, 24, 3, BIT(31), 0);
- 
-@@ -458,7 +458,7 @@ static const char * const csi_sclk_parents[] = { "pll-periph0", "pll-periph1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
- 				 0x134, 16, 4, 24, 3, BIT(31), 0);
- 
--static const char * const csi_mclk_parents[] = { "osc24M", "pll-video", "pll-periph0" };
-+static const char * const csi_mclk_parents[] = { "osc24M", "pll-video0", "pll-periph0" };
- static SUNXI_CCU_M_WITH_MUX_GATE(csi_mclk_clk, "csi-mclk", csi_mclk_parents,
- 				 0x134, 0, 5, 8, 3, BIT(15), 0);
- 
-@@ -470,14 +470,14 @@ static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
- 
--static const char * const hdmi_parents[] = { "pll-video" };
-+static const char * const hdmi_parents[] = { "pll-video0" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
- 				 0x150, 0, 4, 24, 2, BIT(31), 0);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
- 		      0x154, BIT(31), 0);
- 
--static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x", "pll-ddr" };
-+static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x", "pll-ddr0" };
- static SUNXI_CCU_M_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents,
- 				 0x15c, 0, 3, 24, 2, BIT(31), CLK_IS_CRITICAL);
- 
-@@ -487,9 +487,9 @@ static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
- static struct ccu_common *sun8i_h3_ccu_clks[] = {
- 	&pll_cpux_clk.common,
- 	&pll_audio_base_clk.common,
--	&pll_video_clk.common,
-+	&pll_video0_clk.common,
- 	&pll_ve_clk.common,
--	&pll_ddr_clk.common,
-+	&pll_ddr0_clk.common,
- 	&pll_periph0_clk.common,
- 	&pll_gpu_clk.common,
- 	&pll_periph1_clk.common,
++config POWER_RESET_NUC900
++	bool "Nuc900 restart driver"
++	depends on ARCH_W90X900
++	help
++	  Power off and restart support for Nuvoton NUC900 family of
++	  reference boards.
++
+ config POWER_RESET_LTC2952
+ 	bool "LTC2952 PowerPath power-off driver"
+ 	depends on OF_GPIO
+diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+index ab7aa86..d4df889 100644
+--- a/drivers/power/reset/Makefile
++++ b/drivers/power/reset/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+ obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+ obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
+ obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
++obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
+ obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+ obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+ obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
+new file mode 100644
+index 0000000..49986b7
+--- /dev/null
++++ b/drivers/power/reset/nuc900-reset.c
+@@ -0,0 +1,93 @@
++/*
++ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++#include <linux/init.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
++#include <linux/regmap.h>
++
++#define REG_WRPRTR	0x1fc
++#define REG_AHBIPRST	0x060
++
++static struct regmap *syscon;
++
++static int nuc900_restart_handler(struct notifier_block *this,
++				  unsigned long mode, void *cmd)
++{
++	/*0:register protect enable*/
++	int write_protect = 0;
++
++	/*register protection disable*/
++	do {
++		regmap_read(syscon, REG_WRPRTR, &write_protect);
++
++		if (write_protect != 1) {
++			regmap_write(syscon, REG_WRPRTR, 0x59);
++			regmap_write(syscon, REG_WRPRTR, 0x16);
++			regmap_write(syscon, REG_WRPRTR, 0x88);
++		}
++
++	} while (write_protect != 1);
++
++	/*trigger reset*/
++	regmap_write(syscon, REG_AHBIPRST, 0x01);
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block nuc900_restart_nb = {
++	.notifier_call = nuc900_restart_handler,
++	.priority = 128,
++};
++
++static int nuc900_reset_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	int err;
++
++	syscon = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
++	if (IS_ERR(syscon)) {
++		pr_err("%s: syscon lookup failed\n", dev->of_node->name);
++		return PTR_ERR(syscon);
++	}
++
++	err = register_restart_handler(&nuc900_restart_nb);
++	if (err)
++		dev_err(dev, "cannot register restart handler (err=%d)\n", err);
++
++	return err;
++}
++
++static const struct of_device_id of_nuc900_reset_match[] = {
++	{ .compatible = "nuvoton,nuc900-reset", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, of_nuc900_reset_match);
++
++static struct platform_driver nuc900_reset_driver = {
++	.probe = nuc900_reset_probe,
++	.driver = {
++		.name = "nuc900-reset",
++		.of_match_table = of_match_ptr(of_nuc900_reset_match),
++	},
++};
++
++static int __init nuc900_reset_init(void)
++{
++	return platform_driver_register(&nuc900_reset_driver);
++}
++device_initcall(nuc900_reset_init);
 -- 
-2.9.2
+2.7.4
