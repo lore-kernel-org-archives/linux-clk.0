@@ -1,94 +1,66 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Wed, 06 Jul 2016 13:51:09 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v3 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-Message-id: <20160706045108.GD23620@samsunx.samsung>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
- <1467270911-10971-2-git-send-email-andi.shyti@samsung.com>
- <577A2EFF.2010306@samsung.com> <20160704102614.GD1257@jack.zhora.eu>
- <CGME20160704151537epcas1p42a74c53ebb4227da9a30c25e250f0c5a@epcas1p4.samsung.com>
- <577A7D8D.8070004@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <577A7D8D.8070004@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.135]:56913 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757207AbcGJWJB (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 18:09:01 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wan Zongshun <vw@iommu.org>, Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	jason@lakedaemon.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 01/10] ARM: NUC900: Add nuc970 machine support
+Date: Mon, 11 Jul 2016 00:11:31 +0200
+Message-ID: <4947302.8IpnGALVQ9@wuerfel>
+In-Reply-To: <1468135649-19980-2-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-2-git-send-email-vw@iommu.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+On Sunday, July 10, 2016 3:27:21 PM CEST Wan Zongshun wrote:
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio.h>
+> +#include <linux/init.h>
+> +#include <linux/reboot.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/sys_soc.h>
+> +#include <linux/semaphore.h>
+> +
+> +#include <asm/system_misc.h>
+> +#include <asm/mach/arch.h>
+> +
+> +static void __init nuc900_machine_init(void)
+> +{
+> +       of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+> +}
 
-> +#if 0
->                         clocks = <&cmu_peric CLK_PCLK_SPI1>,
->                                  <&cmu_top CLK_SCLK_SPI1_PERIC>;
-> +#else
-> +                       clocks = <&cmu_peric CLK_PCLK_SPI1>,
-> +                                <&cmu_peric CLK_SCLK_SPI1>;
-> +#endif
 
-Yes, that's how it should be, indeed.
+This is the default for .init_machine, so you can leave the function
+undefined.
 
->         /* Disable Clock */
->         if (sdd->port_conf->clk_from_cmu) {
-> -               clk_disable_unprepare(sdd->src_clk);
-> +               /* clk_disable_unprepare(sdd->src_clk); */
->         } else {
->                 val = readl(regs + S3C64XX_SPI_CLK_CFG);
->                 val &= ~S3C64XX_SPI_ENCLK_ENABLE;
-> @@ -626,7 +626,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
->                 /* There is half-multiplier before the SPI */
->                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
->                 /* Enable Clock */
-> -               clk_prepare_enable(sdd->src_clk);
-> +               /* clk_prepare_enable(sdd->src_clk); */
->         } else {
->                 /* Configure Clock */
->                 val = readl(regs + S3C64XX_SPI_CLK_CFG);
+> +static const char *nuc900_dt_compat[] __initconst = {
+> +       "nuvoton,nuc970",
+> +       NULL,
+> +};
+> +
+> +DT_MACHINE_START(nuc900_dt, "Nuvoton NUC900 (Device Tree Support)")
+> +       .init_machine   = nuc900_machine_init,
+> +       .dt_compat      = nuc900_dt_compat,
+> +MACHINE_END
+> 
 
-I don't see anything wrong on the above. We could make it as:
+After that, you can probably remove most of the #include statements.
+The file is still needed for now, until you move to ARCH_MULTIPLATFORM,
+at which point the entire machine descriptor is redundant.
 
-@@ -596,9 +597,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
-        u32 val;
- 
-        /* Disable Clock */
--       if (sdd->port_conf->clk_from_cmu) {
--               clk_disable_unprepare(sdd->src_clk);
--       } else {
-+       if (!sdd->port_conf->clk_from_cmu) {
-                val = readl(regs + S3C64XX_SPI_CLK_CFG);
-                val &= ~S3C64XX_SPI_ENCLK_ENABLE;
-                writel(val, regs + S3C64XX_SPI_CLK_CFG);
-@@ -640,13 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
- 
-        writel(val, regs + S3C64XX_SPI_MODE_CFG);
- 
--       if (sdd->port_conf->clk_from_cmu) {
--               /* Configure Clock */
--               /* There is half-multiplier before the SPI */
--               clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
--               /* Enable Clock */
--               clk_prepare_enable(sdd->src_clk);
--       } else {
-+       if (!sdd->port_conf->clk_from_cmu) {
-                /* Configure Clock */
-                val = readl(regs + S3C64XX_SPI_CLK_CFG);
-                val &= ~S3C64XX_SPI_PSR_MASK;
-
-> I meant we could amend which clocks are specified at the SPI bus device
-> DT nodes and change handling of clocks in the spi-s3c64xx driver to model
-> everything properly and get it all working.
-
-I think that if the clock comes from the cmu it's not necessary
-to disable it. I would like to avoid adding DTS properties
-because we have the clock disabling inherited from old code which
-it might not be required at all (in our tests, indeed it works).
-
-Thanks,
-Andi
+	Arnd
