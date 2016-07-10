@@ -1,116 +1,219 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160711202632.GG4589@lukather>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Chen-Yu Tsai" <wens@csie.org>,
- linux-clk@vger.kernel.org, "Hans de Goede" <hdegoede@redhat.com>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- "Rob Herring" <robh+dt@kernel.org>,
- "Vishnu Patekar" <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, "Jean-Francois Moine" <moinejf@free.fr>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
- <20160629190535.11855-14-maxime.ripard@free-electrons.com>
- <146785878822.73491.15164592643568518865@resonance>
- <20160708213506.GD4522@lukather>
- <146802703641.73491.4992163597821488987@resonance>
- <20160711202632.GG4589@lukather>
-Message-ID: <146827328342.73491.9092592988312446585@resonance>
-Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
-Date: Mon, 11 Jul 2016 14:41:23 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from m199-177.yeah.net ([123.58.177.199]:54979 "EHLO
+	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933326AbcGJH2B (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 03:28:01 -0400
+From: Wan Zongshun <vw@iommu.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
+Subject: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
+Date: Sun, 10 Jul 2016 15:27:22 +0800
+Message-Id: <1468135649-19980-3-git-send-email-vw@iommu.org>
+In-Reply-To: <1468135649-19980-1-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2016-07-11 13:26:32)
-> Hi Mike,
-> =
+This patch is to add irqchip driver support for nuc900 plat,
+current this driver only supports nuc970 SoC.
 
-> On Fri, Jul 08, 2016 at 06:17:16PM -0700, Michael Turquette wrote:
-> > Quoting Maxime Ripard (2016-07-08 14:35:06)
-> > > Hi Mike,
-> > > =
+Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+---
+ arch/arm/mach-w90x900/include/mach/irqs.h |   5 +
+ drivers/irqchip/Makefile                  |   1 +
+ drivers/irqchip/irq-nuc900.c              | 150 ++++++++++++++++++++++++++++++
+ 3 files changed, 156 insertions(+)
+ create mode 100644 drivers/irqchip/irq-nuc900.c
 
-> > > On Wed, Jul 06, 2016 at 07:33:08PM -0700, Michael Turquette wrote:
-> > > > Hi Maxime,
-> > > > =
+diff --git a/arch/arm/mach-w90x900/include/mach/irqs.h b/arch/arm/mach-w90x900/include/mach/irqs.h
+index 9d5cba3..3b035c6 100644
+--- a/arch/arm/mach-w90x900/include/mach/irqs.h
++++ b/arch/arm/mach-w90x900/include/mach/irqs.h
+@@ -59,7 +59,12 @@
+ #define IRQ_KPI		W90X900_IRQ(29)
+ #define IRQ_P2SGROUP	W90X900_IRQ(30)
+ #define IRQ_ADC		W90X900_IRQ(31)
++
++#if !defined(CONFIG_SOC_NUC900)
+ #define NR_IRQS		(IRQ_ADC+1)
++#else
++#define NR_IRQS		62
++#endif
+ 
+ /*for irq group*/
+ 
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 38853a1..9ccd5af8a 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -69,3 +69,4 @@ obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
+ obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
+ obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
+ obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
++obj-$(CONFIG_SOC_NUC970)		+= irq-nuc900.o
+diff --git a/drivers/irqchip/irq-nuc900.c b/drivers/irqchip/irq-nuc900.c
+new file mode 100644
+index 0000000..c4b2e39
+--- /dev/null
++++ b/drivers/irqchip/irq-nuc900.c
+@@ -0,0 +1,150 @@
++/*
++ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqdomain.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++
++#include <asm/exception.h>
++#include <asm/hardirq.h>
++
++#define	REG_AIC_SCR1	0x00
++#define	REG_AIC_SCR2	0x04
++#define	REG_AIC_SCR3	0x08
++#define	REG_AIC_SCR4	0x0C
++#define	REG_AIC_SCR5	0x10
++#define	REG_AIC_SCR6	0x14
++#define	REG_AIC_SCR7	0x18
++#define	REG_AIC_SCR8	0x1C
++#define	REG_AIC_SCR9	0x20
++#define	REG_AIC_SCR10	0x24
++#define	REG_AIC_SCR11	0x28
++#define	REG_AIC_SCR12	0x2C
++#define	REG_AIC_SCR13	0x30
++#define	REG_AIC_SCR14	0x34
++#define	REG_AIC_SCR15	0x38
++#define	REG_AIC_IRSR	0x100
++#define	REG_AIC_IRSRH	0x104
++#define	REG_AIC_IASR	0x108
++#define	REG_AIC_IASRH	0x10C
++#define	REG_AIC_ISR	0x110
++#define	REG_AIC_ISRH	0x114
++#define	REG_AIC_IPER	0x118
++#define	REG_AIC_ISNR	0x120
++#define	REG_AIC_OISR	0x124
++#define	REG_AIC_IMR	0x128
++#define	REG_AIC_IMRH	0x12C
++#define	REG_AIC_MECR	0x130
++#define	REG_AIC_MECRH	0x134
++#define	REG_AIC_MDCR	0x138
++#define	REG_AIC_MDCRH	0x13C
++#define	REG_AIC_SSCR	0x140
++#define	REG_AIC_SSCRH	0x144
++#define	REG_AIC_SCCR	0x148
++#define	REG_AIC_SCCRH	0x14C
++#define	REG_AIC_EOSCR	0x150
++
++static void __iomem *aic_base;
++static struct irq_domain *aic_domain;
++
++static void nuc900_irq_mask(struct irq_data *d)
++{
++	if (d->irq < 32)
++		writel(1 << (d->irq), aic_base + REG_AIC_MDCR);
++	else
++		writel(1 << (d->irq - 32), aic_base + REG_AIC_MDCRH);
++}
++
++static void nuc900_irq_ack(struct irq_data *d)
++{
++	writel(0x01, aic_base + REG_AIC_EOSCR);
++}
++
++static void nuc900_irq_unmask(struct irq_data *d)
++{
++	if (d->irq < 32)
++		writel(1 << (d->irq), aic_base + REG_AIC_MECR);
++	else
++		writel(1 << (d->irq - 32), aic_base + REG_AIC_MECRH);
++}
++
++static struct irq_chip nuc900_irq_chip = {
++	.irq_ack	= nuc900_irq_ack,
++	.irq_mask	= nuc900_irq_mask,
++	.irq_unmask	= nuc900_irq_unmask,
++};
++
++void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
++{
++	u32 hwirq;
++
++	hwirq = readl(aic_base + REG_AIC_IPER);
++	hwirq = readl(aic_base + REG_AIC_ISNR);
++	if (!hwirq)
++		writel(0x01, aic_base + REG_AIC_EOSCR);
++
++	handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
++}
++
++static int aic_irq_domain_map(struct irq_domain *d, unsigned int virq,
++			      irq_hw_number_t hw)
++{
++	irq_set_chip_and_handler(virq, &nuc900_irq_chip, handle_level_irq);
++	irq_clear_status_flags(virq, IRQ_NOREQUEST);
++
++	return 0;
++}
++
++static struct irq_domain_ops aic_irq_domain_ops = {
++	.map = aic_irq_domain_map,
++	.xlate = irq_domain_xlate_onecell,
++};
++
++static int __init aic_of_init(struct device_node *node,
++			      struct device_node *parent)
++{
++	int ret;
++
++	aic_base = of_iomap(node, 0);
++	if (!aic_base) {
++		ret = -ENOMEM;
++		pr_err("%s: unable to map registers\n", node->full_name);
++		goto err_iomap;
++	}
++
++	writel(0xFFFFFFFC, aic_base + REG_AIC_MDCR);
++	writel(0xFFFFFFFF, aic_base + REG_AIC_MDCRH);
++
++	aic_domain = irq_domain_add_linear(node, NR_IRQS,
++					   &aic_irq_domain_ops, NULL);
++
++	if (!aic_domain) {
++		ret = -ENOMEM;
++		pr_err("%s: unable to create IRQ domain\n", node->full_name);
++		goto err_aic_domain;
++	}
++
++	set_handle_irq(aic_handle_irq);
++	return 0;
++
++err_aic_domain:
++	iounmap(aic_base);
++err_iomap:
++	return ret;
++}
++
++IRQCHIP_DECLARE(nuc900, "nuvoton,nuc900-aic", aic_of_init);
+-- 
+2.7.4
 
-> > > > Quoting Maxime Ripard (2016-06-29 12:05:34)
-> > > > > +static void __init sun8i_h3_ccu_setup(struct device_node *node)
-> > > > > +{
-> > > > > +       void __iomem *reg;
-> > > > > +       u32 val;
-> > > > > +
-> > > > > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(=
-node));
-> > > > > +       if (IS_ERR(reg)) {
-> > > > > +               pr_err("%s: Could not map the clock registers\n",
-> > > > > +                      of_node_full_name(node));
-> > > > > +               return;
-> > > > > +       }
-> > > > > +
-> > > > > +       /* Force the PLL-Audio-1x divider to 4 */
-> > > > > +       val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
-> > > > > +       val &=3D ~GENMASK(4, 0);
-> > > > > +       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
-> > > > > +
-> > > > > +       sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
-> > > > > +}
-> > > > > +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
-> > > > > +              sun8i_h3_ccu_setup);
-> > > > =
-
-> > > > There are several examples of drivers that split the clocks between
-> > > > "early" CLK_OF_DECLARE clocks and "late" module clocks. If you real=
-ly
-> > > > need early clocks (which is less likely on a 64-bit platform with
-> > > > architected timers), it would be nice to pair that with a proper
-> > > > platform_driver (using builtin_platform_driver most likely).
-> > > =
-
-> > > I think we discussed that already, but yeah, we do have timers that
-> > > are not the architected ones (and this is a ARMv7 platform). I have
-> > > the feeling that splitting the two doesn't really bring any benefit,
-> > > but complexify a lot the driver.
-> > =
-
-> > Cool. I've pushed patches 1-13 to the clk tree under a shared, immutable
-> > branch: clk-sunxi-ng
-> > =
-
-> > I've merged this branch into clk-next to get some soak testing.
-> > =
-
-> > I did not merge patch #14. Feel free to add my reviewed-by to that
-> > patch.
-> =
-
-> Thanks for merging the other patches, but can you merge patch 14 too?
-> Merging it through my tree would break bisectability, and it should
-> apply properly on your tree.
-
-Applied.
-
-Regards,
-Mike
-
-> =
-
-> > Were you going to spin another version? If so I can replace v3 with v4
-> > when it is ready. Thanks again for your hard work on this! Very happy to
-> > see the binding be reworked :-)
-> =
-
-> I'll send another patch to fix the bug found by Jean-Francois, and one
-> to fix a typo. Feel free to squash them in.
-> =
-
-> Thanks!
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
