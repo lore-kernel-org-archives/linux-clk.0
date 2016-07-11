@@ -1,172 +1,208 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: clk: Per controller locks (prepare & enable)
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <57737761.2020708@samsung.com>
- <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
- <577A1D54.9010203@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
-Date: Mon, 4 Jul 2016 11:15:22 -0400
-MIME-Version: 1.0
-In-Reply-To: <577A1D54.9010203@samsung.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	stephen.boyd@linaro.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 6/6] clk: qcom: Add support for PLLs supporting dynamic reprogramming
+Date: Mon, 11 Jul 2016 16:20:39 +0530
+Message-Id: <1468234239-28693-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
+References: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Some PLLs can support dynamic reprogramming, which means just a L value
+change is whats needed to change the PLL frequency without having to
+explicitly enable/disable or bypass/re-lock the PLL.
+Add support for such PLLs' initial configuration and the ops needed to
+support the dynamic reprogramming thereafter.
 
-On 07/04/2016 04:24 AM, Krzysztof Kozlowski wrote:
-> On 06/30/2016 06:22 PM, Javier Martinez Canillas wrote:
->>> Question:
->>> What do you think about it? I know that talk is cheap and code looks
->>> better but before starting the work I would like to hear some
->>> comments/opinions/ideas.
->>>
->>
->> The problem is that the enable and prepare operations are propagated to
->> the parents, so what the locks want to protecting is really a sub-tree
->> of the clock tree. They currently protect the whole clock hierarchy to
->> make sure that the changes in the clock tree are atomically.
-> 
-> Although there is a hierarchy between clocks from different controllers
-> but still these are all clocks controllers coming from one hardware
-> device (like SoC). At least on Exynos, I think there is no real
-> inter-device dependencies. The deadlock you mentioned (and which I want
-> to fix) is between:
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-pll.c | 106 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-pll.h |   9 +++-
+ 2 files changed, 114 insertions(+), 1 deletion(-)
 
-Yes, my point was that this may not be the case in all systems. IOW the
-framework should be generic enough to allow hierarchies where a parent
-clock is a clock provided by a different controller from a different HW.
-
-> 1. clock in PMIC (the one needed by s3c_rtc_probe()),
-> 2. clock for I2C in SoC (the one needed by regmap_write()),
-> 3. and regmap lock:
-> 
-> What I want to say is that the relationship between clocks even when
-> crossing clock controller boundaries is still self-contained. It is
-> simple parent-child relationship so acquiring both
-> clock-controller-level locks is safe.
->
-
-Is safe if the clock controllers are always aquired in the same order but
-I'm not sure if that will always be the case. I.e: you have controllers A
-and B that have clocks A{1,2} and B{1,2} respectively. So you could have
-something like this:
-
-A1 with parent B1
-B2 with parent A2
-
-That can cause a deadlock since in the first case, the controller A will be
-aquired and then the controller B but in the other case, the opposite order
-will be attempted.
-
-> Current dead lock looks like, simplifying your code:
-> A:                            B:
-> lock(regmap)
->                               lock(prepare)
-> lock(prepare) - wait
->                               lock(regmap) - wait
-> 
-> 
-> When split locks per clock controller this would be:
-> A:                            B:
-> lock(regmap)
->                               lock(s2mps11)
-> lock(i2c/exynos)
->                               lock(regmap) - wait
-> do the transfer
-> unlock(i2c/exynos)
-> unlock(regmap)
->                               lock(regmap) - acquired
->                               lock(i2c/exynos)
->                               do the transfer
->                               unlock(i2c/exynos)
->                               unlock(regmap)
->                               unlock(s2mps11)
->
-
-Yes, splitting the lock per controller will fix the possible deadlock in
-this case but I think we need an approach that is safe for all possible
-scenarios. Otherwise it will work more by coincidence than due a design.
-
-> I still have to figure out how to properly protect the entire tree
-> hierarchy. Maybe the global prepare_lock should be used only for that -
-> for traversing the hierarchy.
->
-
-Other thing to figure out is how to determine when a parent belongs to a
-different controller to get its lock in clk_{prepare,enable}(), at least
-part of the hierarchy has to be traversed on prepare/enable to propagate
-the operations to the parents clocks.
-
->>
->> So a clock per controller won't suffice since you can have a parent for
->> a clock provided by a different controller and that won't be protected.
->>
->> Another option is to have a prepare and enable locks per clock. Since
->> the operations are always propagated in the same direction, I think is
->> safe to do it.
->>
->> But even in the case of a more fine-grained locking, I believe the
->> mentioned deadlocks can still happen. For example in 10ff4c5239a1 the
->> issue was that the s2mps11 PMIC has both regulators and clocks that are
->> controlled via I2C so the regulator and clocks drivers shares the same
->> I2C regmap.
->>
->> What happened was something like this:
->>
->>          CPU0                                   CPU1
->>          ----                                   ----
->>   regulator_set_voltage()                s3c_rtc_probe()
->>   regmap_write()                         clk_prepare()
->>   /* regmap->lock was aquired */         /* prepare_lock was aquired */
->>   regmap_i2c_write()                     s2mps11_clk_prepare()
->>   i2c_transfer()                         regmap_write()
->>   exynos5_i2c_xfer()                     /* deadlock due regmap->lock */
->>   clk_prepare_enable()
->>   clk_prepare_lock()
->>   /* prepare_lock was aquired */
->>
->> So if for example a per clock lock is used, the deadlock can still happen
->> if both the I2C clock and S3C RTC source clock share the same parent in a
->> part of the hierarchy. But as you said this is less likely in practice so
->> probably is not an issue.
-> 
-> I think these clocks do not share the parent.
->
-
-Yes, I meant the issue of having a shared parent in general and not in this
-particular case that no parent is shared. Sorry for the ambiguous sentence.
-
-> Best regards,
-> Krzysztof
->
-
-So in summary, my point is that we should first define what these locks are
-protecting. The good practice in the kernel is to protect data structures
-instead of code, but the prepare and enable locks are not doing the former.
-
-My understanding is that what the locks are protecting is a sub-tree of the
-hierarchy but there isn't a data structure to represent a sub-tree so global
-locks are used to protect the whole tree instead.
-
-Moving the lock to a per controller/provider seems like an arbitrary thing
-to me since what's important AFAIU is the clock hierarchy and not from where
-these clocks come from.
-
-But I'm very far from being a lock expert so maybe my assumptions are wrong,
-I'll let Stephen and Mike to comment on this.
-
-Best regards,
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index b463432..13d3f64 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -32,6 +32,7 @@
+ #define PLL_BIAS_COUNT_SHIFT	14
+ #define PLL_BIAS_COUNT_MASK	0x3f
+ #define PLL_VOTE_FSM_ENA	BIT(20)
++#define PLL_DYN_FSM_ENA		BIT(20)
+ #define PLL_VOTE_FSM_RESET	BIT(21)
+ 
+ static int clk_pll_enable(struct clk_hw *hw)
+@@ -248,6 +249,19 @@ clk_pll_set_fsm_mode(struct clk_pll *pll, struct regmap *regmap, u8 lock_count)
+ 		PLL_VOTE_FSM_ENA);
+ }
+ 
++static void
++clk_pll_set_dynamic_fsm_mode(struct clk_pll *pll, struct regmap *regmap)
++{
++	u32 val;
++	u32 mask;
++
++	mask = PLL_BIAS_COUNT_MASK | PLL_DYN_FSM_ENA;
++	val = 6 << PLL_BIAS_COUNT_SHIFT;
++	val |= PLL_DYN_FSM_ENA;
++
++	regmap_update_bits(regmap, pll->mode_reg, mask, val);
++}
++
+ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	const struct pll_config *config)
+ {
+@@ -299,6 +313,21 @@ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
+ }
+ EXPORT_SYMBOL_GPL(clk_pll_configure_sr_hpm_lp);
+ 
++void clk_pll_configure_dynamic(struct clk_pll *pll, struct regmap *regmap,
++			       const struct pll_config *config)
++{
++	u32 config_ctl_reg = pll->config_ctl_reg;
++	u32 config_ctl_hi_reg = pll->config_ctl_reg + 4;
++
++	clk_pll_configure(pll, regmap, config);
++
++	regmap_write(regmap, config_ctl_reg, config->config_ctl_val);
++	regmap_write(regmap, config_ctl_hi_reg, config->config_ctl_hi_val);
++
++	clk_pll_set_dynamic_fsm_mode(pll, regmap);
++}
++EXPORT_SYMBOL_GPL(clk_pll_configure_dynamic);
++
+ static int clk_pll_sr2_enable(struct clk_hw *hw)
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
+@@ -373,3 +402,80 @@ const struct clk_ops clk_pll_sr2_ops = {
+ 	.determine_rate = clk_pll_determine_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_pll_sr2_ops);
++
++static int clk_pll_dynamic_enable(struct clk_hw *hw)
++{
++	struct clk_pll *pll = to_clk_pll(hw);
++
++	/* Wait for 50us explicitly to avoid transient locks */
++	udelay(50);
++
++	return wait_for_pll(pll);
++};
++
++static void clk_pll_dynamic_disable(struct clk_hw *hw)
++{
++	/* 8 reference clock cycle delay mandated by the HPG */
++	udelay(1);
++};
++
++static unsigned long
++clk_pll_dynamic_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	u32 l_val;
++	int ret;
++
++	struct clk_pll *pll = to_clk_pll(hw);
++
++	ret = regmap_read(pll->clkr.regmap, pll->l_reg, &l_val);
++	if (ret)
++		return ret;
++
++	return l_val * parent_rate;
++};
++
++static int
++clk_pll_dynamic_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	struct clk_pll *pll = to_clk_pll(hw);
++	const struct pll_freq_tbl *f;
++
++	f = find_freq(pll->freq_tbl, req->rate);
++	if (!f)
++		req->rate = DIV_ROUND_UP(req->rate, req->best_parent_rate)
++					* req->best_parent_rate;
++	else
++		req->rate = f->freq;
++
++	if (req->rate < pll->min_rate)
++		req->rate = pll->min_rate;
++	else if (req->rate > pll->max_rate)
++		req->rate = pll->max_rate;
++
++	return 0;
++}
++
++static int
++clk_pll_dynamic_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long prate)
++{
++	u32 l_val;
++	struct clk_pll *pll = to_clk_pll(hw);
++
++	if ((rate < pll->min_rate) || (rate > pll->max_rate) || !prate)
++		return -EINVAL;
++
++	l_val = rate / prate;
++	regmap_write(pll->clkr.regmap, pll->l_reg, l_val);
++
++	return 0;
++}
++
++const struct clk_ops clk_pll_dynamic_ops = {
++	.enable = clk_pll_dynamic_enable,
++	.disable = clk_pll_dynamic_disable,
++	.set_rate = clk_pll_dynamic_set_rate,
++	.recalc_rate = clk_pll_dynamic_recalc_rate,
++	.determine_rate = clk_pll_dynamic_determine_rate,
++};
++EXPORT_SYMBOL_GPL(clk_pll_dynamic_ops);
+diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
+index dbe22a9..627588f 100644
+--- a/drivers/clk/qcom/clk-pll.h
++++ b/drivers/clk/qcom/clk-pll.h
+@@ -52,9 +52,12 @@ struct clk_pll {
+ 	u32	config_reg;
+ 	u32	mode_reg;
+ 	u32	status_reg;
++	u32	config_ctl_reg;
+ 	u8	status_bit;
+ 	u8	post_div_width;
+ 	u8	post_div_shift;
++	unsigned long min_rate;
++	unsigned long max_rate;
+ 
+ 	const struct pll_freq_tbl *freq_tbl;
+ 
+@@ -64,6 +67,7 @@ struct clk_pll {
+ extern const struct clk_ops clk_pll_ops;
+ extern const struct clk_ops clk_pll_vote_ops;
+ extern const struct clk_ops clk_pll_sr2_ops;
++extern const struct clk_ops clk_pll_dynamic_ops;
+ 
+ #define to_clk_pll(_hw) container_of(to_clk_regmap(_hw), struct clk_pll, clkr)
+ 
+@@ -78,6 +82,8 @@ struct pll_config {
+ 	u32 pre_div_mask;
+ 	u32 post_div_val;
+ 	u32 post_div_mask;
++	u32 config_ctl_val;
++	u32 config_ctl_hi_val;
+ 	u32 mn_ena_mask;
+ 	u32 main_output_mask;
+ 	u32 aux_output_mask;
+@@ -88,5 +94,6 @@ void clk_pll_configure_sr(struct clk_pll *pll, struct regmap *regmap,
+ 		const struct pll_config *config, bool fsm_mode);
+ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
+ 		const struct pll_config *config, bool fsm_mode);
+-
++void clk_pll_configure_dynamic(struct clk_pll *pll, struct regmap *regmap,
++		const struct pll_config *config);
+ #endif
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
