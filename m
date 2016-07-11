@@ -1,70 +1,200 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Jul 2016 10:57:11 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/9] clk: sunxi-ng: nk: Make ccu_nk_find_best static
-Message-ID: <20160726085711.GC7190@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-3-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s9fJI615cBHmzTOP"
-In-Reply-To: <1469516671-19377-3-git-send-email-wens@csie.org>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	stephen.boyd@linaro.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 2/6] clk: qcom: Add support for alpha pll hwfsm ops
+Date: Mon, 11 Jul 2016 16:20:35 +0530
+Message-Id: <1468234239-28693-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
+References: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add support to enable/disable the alpha pll using hwfsm
 
---s9fJI615cBHmzTOP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 109 ++++++++++++++++++++++++++++++++++-----
+ drivers/clk/qcom/clk-alpha-pll.h |   1 +
+ 2 files changed, 98 insertions(+), 12 deletions(-)
 
-On Tue, Jul 26, 2016 at 03:04:24PM +0800, Chen-Yu Tsai wrote:
-> make C=3D2 reports:
->=20
->   CHECK   drivers/clk/sunxi-ng/ccu_nk.c
-> drivers/clk/sunxi-ng/ccu_nk.c:17:6: warning: symbol 'ccu_nk_find_best' was
-> not declared. Should it be static?
->=20
-> ccu_nk_find_best is only used within ccu_nk.c. So make it static to get
-> rid of this warning.
->=20
-> Fixes: adbfb0056e03 ("clk: sunxi-ng: Add N-K-factor clock support")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---s9fJI615cBHmzTOP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXlyXnAAoJEBx+YmzsjxAgUI4P/3XbwhVUfyT6JgI01OnSJcn5
-MP6HQtXLGLlmpqjTfzIJz+zYlyjEXXq8I5LDWPSiXUF8snOH2lP2nQkgqLpgQE2F
-EjOHF3ag0vCHS5wB93jtZEK3GK/1s+KuLBhAjWSOb0IUsWHL3cWMlyqQ7mr4g78F
-wOr0f1z8aSYLd50PX9O/HaL6gSPJh6J3h7b6okIrtPbjVT7IgDhmC0oBXAyHcAVC
-AXUwWhCOeFfHN9aQb/1zFJRjBuWB4Z4lyCATDXqQ8ivN3+xng3gmr9u4AW+7Ljgg
-88Y6TESrHhwXxEZk2oBNQqWtZZuVwY70uaaiy4pckDZGzyFYsRK0oOVKAgGvrva4
-S91manZUWuIIoQua01ZlVqSyViqaX1XgAE311dLY2XWJ8smrFv1clIF0EtGt+VCr
-iQfkiyNWiR+OJKlZtLLABCR0QPrFAOQRsVpdqshOZE3oq+vNXh2LfO534wCljcVh
-qUOqeQ3WZY4ClfZlqVHUj6A+aY0WxHgELdkgkLd3f/551Ez3NfjbOD60kkGDaO1F
-kyMZKcNIYsWl8ndPHhN/OF/Oy2/EEbtEK/jUMTEh1Oj/H64LNYM4CFejR6zUd9+z
-IwWVZcxb7JSrH6jLn230HeN/ELQZxNV62IRz0Jv0GsKTPt59R9uT2KK1uZ4ajHsx
-NQ0sPYRMuBmdEAlmCkSY
-=6FB5
------END PGP SIGNATURE-----
-
---s9fJI615cBHmzTOP--
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index e6a03ea..bae31f9 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -62,9 +62,10 @@
+ #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), \
+ 					   struct clk_alpha_pll_postdiv, clkr)
+ 
+-static int wait_for_pll(struct clk_alpha_pll *pll)
++static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
++			const char *action)
+ {
+-	u32 val, mask, off;
++	u32 val, off;
+ 	int count;
+ 	int ret;
+ 	const char *name = clk_hw_get_name(&pll->clkr.hw);
+@@ -74,26 +75,101 @@ static int wait_for_pll(struct clk_alpha_pll *pll)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (val & PLL_VOTE_FSM_ENA)
+-		mask = PLL_ACTIVE_FLAG;
+-	else
+-		mask = PLL_LOCK_DET;
+-
+-	/* Wait for pll to enable. */
+ 	for (count = 100; count > 0; count--) {
+ 		ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
+ 		if (ret)
+ 			return ret;
+-		if ((val & mask) == mask)
++		if (inverse && (val & mask))
++			return 0;
++		else if ((val & mask) == mask)
+ 			return 0;
+ 
+ 		udelay(1);
+ 	}
+ 
+-	WARN(1, "%s didn't enable after voting for it!\n", name);
++	WARN(1, "%s failed to %s!\n", name, action);
+ 	return -ETIMEDOUT;
+ }
+ 
++static int wait_for_pll_enable(struct clk_alpha_pll *pll, u32 mask)
++{
++	return wait_for_pll(pll, mask, 0, "enable");
++}
++
++static int wait_for_pll_disable(struct clk_alpha_pll *pll, u32 mask)
++{
++	return wait_for_pll(pll, mask, 1, "disable");
++}
++
++static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
++{
++	return wait_for_pll(pll, mask, 0, "offline");
++}
++
++/* alpha pll with hwfsm support */
++#define PLL_OFFLINE_REQ		BIT(7)
++#define PLL_FSM_ENA		BIT(20)
++#define PLL_OFFLINE_ACK		BIT(28)
++#define PLL_ACTIVE_FLAG		BIT(30)
++
++static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
++{
++	int ret;
++	u32 val, off;
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++
++	off = pll->offset;
++	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	if (ret)
++		return ret;
++
++	/* Enable HW FSM mode, clear OFFLINE request */
++	val |= PLL_FSM_ENA;
++	val &= ~PLL_OFFLINE_REQ;
++	ret = regmap_write(pll->clkr.regmap, off + PLL_MODE, val);
++	if (ret)
++		return ret;
++
++	/* Make sure enable request goes through before waiting for update */
++	mb();
++
++	ret = wait_for_pll_enable(pll, PLL_ACTIVE_FLAG);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
++{
++	int ret;
++	u32 val, off;
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++
++	off = pll->offset;
++	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	if (ret)
++		return;
++
++	/* Request PLL_OFFLINE and wait for ack */
++	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++				 PLL_OFFLINE_REQ, PLL_OFFLINE_REQ);
++	if (ret)
++		return;
++
++	ret = wait_for_pll_offline(pll, PLL_OFFLINE_ACK);
++	if (ret)
++		return;
++
++	/* Disable hwfsm */
++	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++				 PLL_FSM_ENA, 0);
++	if (ret)
++		return;
++
++	wait_for_pll_disable(pll, PLL_ACTIVE_FLAG);
++}
++
+ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ {
+ 	int ret;
+@@ -112,7 +188,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 		ret = clk_enable_regmap(hw);
+ 		if (ret)
+ 			return ret;
+-		return wait_for_pll(pll);
++		return wait_for_pll_enable(pll, PLL_ACTIVE_FLAG);
+ 	}
+ 
+ 	/* Skip if already enabled */
+@@ -136,7 +212,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = wait_for_pll(pll);
++	ret = wait_for_pll_enable(pll, PLL_LOCK_DET);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -300,6 +376,15 @@ const struct clk_ops clk_alpha_pll_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_ops);
+ 
++const struct clk_ops clk_alpha_pll_hwfsm_ops = {
++	.enable = clk_alpha_pll_hwfsm_enable,
++	.disable = clk_alpha_pll_hwfsm_disable,
++	.recalc_rate = clk_alpha_pll_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++	.set_rate = clk_alpha_pll_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
++
+ static unsigned long
+ clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ {
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 90ce201..f78bf4c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -52,6 +52,7 @@ struct clk_alpha_pll_postdiv {
+ };
+ 
+ extern const struct clk_ops clk_alpha_pll_ops;
++extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_ops;
+ 
+ #endif
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
