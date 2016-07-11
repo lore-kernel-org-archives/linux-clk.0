@@ -1,48 +1,58 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Thu, 07 Jul 2016 22:27:38 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-Message-id: <20160707132738.GI23620@samsunx.samsung>
-References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
- <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
- <CGME20160707124623epcas1p2452001bf48f03cb47c7f7db437130e6d@epcas1p2.samsung.com>
- <577E4F1C.8070004@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <577E4F1C.8070004@samsung.com>
+Return-Path: <Jiada_Wang@mentor.com>
+From: <jiada_wang@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
+	<vladimir_zapolskiy@mentor.com>, <jiada_wang@mentor.com>
+Subject: [RFC PATCH v2] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
+Date: Sun, 10 Jul 2016 22:33:28 -0700
+Message-ID: <1468215208-14576-1-git-send-email-jiada_wang@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+From: Jiada Wang <jiada_wang@mentor.com>
 
-> > The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
-> > Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
-> > which enables the clock line during boot time.
-> 
-> I don't agree. Both flags should be avoided. Clk is critical does not
-> solve the problem. It is just a better workaround for lack of proper
-> clock consumers.
-> 
-> The IOCLK is not a critical clock. It can be disabled (e.g. when SoC is
-> used on a board without any SPI device connected).
+Previously CLK_SET_RATE_GATE flag is only checked in clk_set_rate()
+which only ensures the clock being called by clk_set_rate() won't
+change rate when it has been prepared if CLK_SET_RATE_GATE flag is set.
+But a clk_set_rate() request may propagate rate change to these clocks
+from the requested clock's topmost parent clock to all its offsprings,
+when any one of these clocks has CLK_SET_RATE_GATE flag set
+and it has been prepared, the clk_set_rate() request should fail.
 
-As we discussed offline there is no driver which is requesting
-this clock. We cannot ask to the spi driver to handle three
-clocks because the exynos5433 has its own peculiarities.
+This patch moves check of CLK_SET_RATE_GATE flag to
+clk_propagate_rate_change() to ensure all affected clocks will
+be checked if their rate will be changed after clk_set_rate().
 
-If we want this on the spi driver's side, we need to add a new
-compatible and check it everytime. To me it looks uglier than
-just keep it alive.
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/clk/clk.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Andi
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 820a939..2f930c8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1437,6 +1437,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+ 	if (core->rate == core->new_rate)
+ 		return NULL;
+ 
++	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
++		return core;
++
+ 	if (core->notifier_count) {
+ 		ret = __clk_notify(core, event, core->rate, core->new_rate);
+ 		if (ret & NOTIFY_STOP_MASK)
+@@ -1571,9 +1574,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (rate == clk_core_get_rate_nolock(core))
+ 		return 0;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, rate);
+ 	if (!top)
+-- 
+1.7.9.5
