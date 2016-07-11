@@ -1,42 +1,68 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 4/8] clk: sunxi: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Tue,  5 Jul 2016 18:23:29 +0200
-Message-Id: <1467735814-23518-6-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.134]:59072 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759185AbcGKPdi (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2016 11:33:38 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wan Zongshun <vw@iommu.org>, Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	jason@lakedaemon.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 03/10] Clocksource: add nuc970 clocksource driver
+Date: Mon, 11 Jul 2016 17:36:13 +0200
+Message-ID: <3277576.eNgdG7zPqq@wuerfel>
+In-Reply-To: <1468135649-19980-4-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-4-git-send-email-vw@iommu.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver initializes a clock provider via sun4i_a10_mod0_setup
-and then continues the initialization on sun4i_a10_mod0_clk_probe.
+On Sunday, July 10, 2016 3:27:23 PM CEST Wan Zongshun wrote:
+> 
+> +config NUC900_TIMER
+> +        bool "Clocksource timer for nuc900 platform" if COMPILE_TEST
+> +        depends on ARM
+> +        select CLKSRC_OF if OF
+> +        select CLKSRC_MMIO
+> +        help
+> +          Enables the clocksource for the NUC900 platform.
+> 
 
-Use the new macro to notify the clk subsystem about this behaviour.
+I have put this patch into my randconfig build system and found that
+it lacks a dependency:
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/sunxi/clk-mod0.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-index b38d71cec74c..e54266cc1c51 100644
---- a/drivers/clk/sunxi/clk-mod0.c
-+++ b/drivers/clk/sunxi/clk-mod0.c
-@@ -91,7 +91,8 @@ static void __init sun4i_a10_mod0_setup(struct device_node *node)
- 	sunxi_factors_register(node, &sun4i_a10_mod0_data,
- 			       &sun4i_a10_mod0_lock, reg);
- }
--CLK_OF_DECLARE(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk", sun4i_a10_mod0_setup);
-+CLK_OF_DECLARE_DRIVER(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk",
-+		      sun4i_a10_mod0_setup);
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index e18ef32776a3..59b9251eef37 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -523,7 +523,7 @@ config CLKSRC_ST_LPC
  
- static int sun4i_a10_mod0_clk_probe(struct platform_device *pdev)
- {
--- 
-2.8.1
+ config NUC900_TIMER
+         bool "Clocksource timer for nuc900 platform" if COMPILE_TEST
+-        depends on ARM
++        depends on ARM && GENERIC_CLOCKEVENTS
+         select CLKSRC_OF if OF
+         select CLKSRC_MMIO
+         help
+	
+
+Also the init function has changed its return type in linux-next:
+
+> +static void __init nuc970_timer_of_init(struct device_node *node)
+
+This now needs to return an error code or we get:
+
+../include/linux/of.h:1004:20: error: comparison of distinct pointer types lacks a cast [-Werror]
+        .data = (fn == (fn_type)NULL) ? fn : fn  }
+
+Daniel Lezcano seems to have implemented a migration strategy, but I
+can't see what you are supposed to do here, since the
+CLOCKSOURCE_OF_DECLARE_RET macro is no longer part of linux-next.
+
+	Arnd
