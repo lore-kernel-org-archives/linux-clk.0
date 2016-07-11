@@ -1,91 +1,130 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
-To: Michael Turquette <mturquette@baylibre.com>,
- Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
- Mark Rutland <mark.rutland@arm.com>
-References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
- <577F73B3.8090807@arm.com> <146799758568.73491.4432005583661196579@resonance>
-Cc: xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
- Stefano Stabellini <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <5784B688.7050903@arm.com>
-Date: Tue, 12 Jul 2016 10:21:12 +0100
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <146799758568.73491.4432005583661196579@resonance>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Wan Zongshun <vw@iommu.org>, linux-arm-kernel@lists.infradead.org,
+ "Russell King" <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1468135649-19980-5-git-send-email-vw@iommu.org>
+Cc: "Arnd Bergmann" <arnd@arndb.de>, "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ robh@kernel.org, jason@lakedaemon.net, p.zabel@pengutronix.de,
+ "Wan Zongshun" <vw@iommu.org>, "Wan Zongshun" <mcuos.com@gmail.com>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1468135649-19980-5-git-send-email-vw@iommu.org>
+Message-ID: <146827527560.73491.7859004638616123566@resonance>
+Subject: Re: [PATCH v2 04/10] clk: add Clock driver for nuc970
+Date: Mon, 11 Jul 2016 15:14:35 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Quoting Wan Zongshun (2016-07-10 00:27:24)
+> diff --git a/drivers/clk/nuc900/clk-apll.c b/drivers/clk/nuc900/clk-apll.c
+> new file mode 100644
+> index 0000000..a05aec7
+> --- /dev/null
+> +++ b/drivers/clk/nuc900/clk-apll.c
+> @@ -0,0 +1,168 @@
+> +/*
+> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
+> + *
+> + * The code contained herein is licensed under the GNU General Public
+> + * License. You may obtain a copy of the GNU General Public License
+> + * Version 2 or later at the following locations:
+> + *
+> + * http://www.opensource.org/licenses/gpl-license.html
+> + * http://www.gnu.org/copyleft/gpl.html
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +
+> +#include "clk-ccf.h"
 
-On 08/07/16 18:06, Michael Turquette wrote:
-> Quoting Julien Grall (2016-07-08 02:34:43)
->> Hi Dirk,
->>
->> On 08/07/16 08:44, Dirk Behme wrote:
->>> Xen hypervisor drivers might replace native OS drivers. The result is
->>> that some important clocks that are enabled by the OS in the non-Xen
->>> case are not properly enabled in the presence of Xen. The clocks
->>> property enumerates the clocks that must be enabled by the Xen clock
->>> consumer.
->>>
->>> An example is a serial driver enabled by the hypervisor. Xen must
->>
->> I would say "An example is the UART used by the hypervisor."
->>
->>> consume and enable these clocks in the OS to ensure behavior continues
->>> after firmware configures the UART hardware and corresponding clock
->>> harder.
->>
->> What do you mean by "harder"?
->>
->> Also, relying on DOM0 to enable the clock looks very wrong to me and you
->> give an example which prove that. The UART will be used before hand by
->> Xen, however it will not be possible to use it if you expect DOM0 to
->> enable the clock (or even modify the clock frequency).
->>
->> The clock should be enabled either by the firmware or Xen. But not DOM0.
->> DOM0 should not touch this clock at all.
->>
->> Furthermore, this property could be used for clock associated to device
->> that will be passthrough-ed to a guest. In this case, the clock would be
->> enabled even if the device is not in use which will result more power
->> consumption.
->
-> Is there a need to pass clock references through to guests? If so the
-> unmerged CLK_ENABLE_HAND_OFF[0] feature might be useful to you? If this
-> flag is set on a given clk, it will be enabled at the time it is
-> registered by the clk provider driver, and it's enable_count reference
-> counter will be "handed off" to the first consumer that calls clk_get()
-> and clk_prepare_enable() on it. This means the clock CAN be gated by
-> it's proper driver, but it will be enabled at boot time as well.
+Maybe call it clk-nuc.h?
 
-Some driver requires to have the clock in hand to be able to configure 
-the clock (such as setting the rate). So we would have to find a way to 
-let the guest using the clock either by assigning the clock or some PV 
-clock driver.
+> +static struct clk_ops clk_apll_ops =3D {
+> +       .recalc_rate =3D clk_apll_recalc_rate,
+> +       .enable =3D clk_apll_enable,
+> +       .disable =3D clk_apll_disable,
 
-However, platform device passthrough (i.e non-pci device) cannot be done 
-generically. The user has to provide a lots of information manually 
-(such as MMIO, IRQ, device tree node...). So I am not sure if we want to 
-have a generic solution here.
+Can you provide a .is_enabled?
 
-I though it would be worth to mention it because we may (or not) use 
-this clock to tell DOM0 (don't touch it).
+> +static void __init nuc970_clocks_init(struct device_node *np)
+> +{
+> +       int i, ret;
+> +
+> +       clkctrl =3D of_iomap(np, 0);
+> +       if (!clkctrl)
+> +               pr_err("%s: unable to map registers\n", np->full_name);
+> +
+> +
+> +       /* source */
+> +       clk[XIN]        =3D nuc970_clk_fixed("xin", 12000000);
+> +       clk[XIN32K]     =3D nuc970_clk_fixed("xin32k", 32768);
+> +       clk[APLL]       =3D nuc970_clk_apll("apll", "xin", REG_CLK_APLLCO=
+N);
+> +       clk[UPLL]       =3D nuc970_clk_upll("upll", "xin", REG_CLK_UPLLCO=
+N);
+> +       clk[XIN128_DIV] =3D nuc970_clk_fixed_factor("xin128_div", "xin", =
+1, 128);
+> +       clk[SYS_MUX]    =3D nuc970_clk_mux("sys_mux", REG_CLK_DIV0, 3, 2,
+> +                                        sys_sel_clks,
+> +                                        ARRAY_SIZE(sys_sel_clks));
 
-> This is useful for use cases like splash screens where the bootloader
-> configures the display and plays some animation, and we want the linux
-> kernel to take over the display controller hardware without cutting
-> clocks, blanking or reseting it. Handing off the clock reference count
-> helps achieve this.
+Instead of executing all of these registration functions, how about
+initializing your clock data statically, and then simply calling
+clk_hw_register?
 
- From my understanding, any device used by Xen would be in a similar 
-situation, although there will be no driver in Linux. The current patch 
-(as well as the v4) is calling clk_prepare_enable for each clock used by 
-Xen. Could enabling the clock create unexpected behavior such as the 
-UART loosing/dropping characters?
+For an example see the recently merged drivers/clk/meson/gxbb.c
+
+> +       for (i =3D 0; i < ARRAY_SIZE(clk); i++)
+> +               if (IS_ERR(clk[i]))
+> +                       pr_err("nuc970 clk %d: register failed with %ld\n=
+",
+> +                               i, PTR_ERR(clk[i]));
+
+Better to fail quickly, bail out and unwind your clk registration
+instead of trying to register everything and then walk the list looking
+for failures.
+
+> +
+> +       clk_data.clks =3D clk;
+> +       clk_data.clk_num =3D ARRAY_SIZE(clk);
+> +
+> +       ret =3D of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data=
+);
+> +       if (ret)
+> +               pr_err("Failed to register OF clock provider\n");
+> +
+> +       /* Register clock device */
+> +       clk_register_clkdev(clk[TIMER0_GATE], "timer0", NULL);
+> +       clk_register_clkdev(clk[TIMER1_GATE], "timer1", NULL);
+
+Again, look at how the gxbb.c driver does this. Why do you need to call
+clk_register_clkdev? You're using of_clk_add_provider above, so that
+should be enough to perform lookups.
+
+> +       /* enable some important clocks */
+> +       clk_prepare_enable(clk_get(NULL, "cpu"));
+> +       clk_prepare_enable(clk_get(NULL, "hclk"));
+> +       clk_prepare_enable(clk_get(NULL, "sram"));
+> +       clk_prepare_enable(clk_get(NULL, "dram"));
+> +       clk_prepare_enable(clk_get(NULL, "ddr_hclk"));
+
+You can use the CLK_IS_CRITICAL flag for these clocks if you want. It
+would be better to have drivers that claim them and enable them of
+course.
+
+> +}
+> +
+> +CLK_OF_DECLARE(nuc970_clk, "nuvoton,nuc970-clk", nuc970_clocks_init);
+
+Why do you need to use CLK_OF_DECLARE? Please convert this to a
+platform_driver and load it at module_init.
 
 Regards,
-
--- 
-Julien Grall
+Mike
