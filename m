@@ -1,65 +1,45 @@
-Return-Path: <kesavan.abhilash@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:52056 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753898AbcGKPoD (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2016 11:44:03 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Wan Zongshun <vw@iommu.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
+Date: Mon, 11 Jul 2016 17:46:34 +0200
+Message-ID: <1761342.TGgYi16yul@wuerfel>
+In-Reply-To: <1468135649-19980-3-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-3-git-send-email-vw@iommu.org>
 MIME-Version: 1.0
-In-Reply-To: <577E2E6E.3040809@samsung.com>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <1467750561-13957-3-git-send-email-a.kesavan@samsung.com> <577E2E6E.3040809@samsung.com>
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Date: Mon, 11 Jul 2016 16:43:50 +0200
-Message-ID: <CAM4voa=6-4Gq+0TvQLJGiB24UzKJudTW8kXacUbTAOr1t=JMyg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: samsung: exynos7: Add clocks for atlas block
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>,
-	=?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+On Sunday, July 10, 2016 3:27:22 PM CEST Wan Zongshun wrote:
+> +
+> +#if !defined(CONFIG_SOC_NUC900)
+>  #define NR_IRQS                (IRQ_ADC+1)
+> +#else
+> +#define NR_IRQS                62
+> +#endif
+>  
 
-Thanks for the review.
+The Kconfig symbols are a bit confusing here: CONFIG_SOC_NUC900
+controls the compilation of the soc_device driver, but I guess
+what you actually mean here is CONFIG_SOC_NUC970, which is the
+support for the actual chip.
 
-On Thu, Jul 7, 2016 at 12:26 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
->
->> +static const struct samsung_pll_rate_table pll1450x_24mhz_tbl[] = {
->> +     /* rate, m, p, s */
->> +     PLL_35XX_RATE(2496000000, 208, 2, 0),
->
-> Please add U postfix to these constants to address compiler warning
-> as reported by kbuild-all@01.org:
+Maybe rename the former to something less confusing and change
+this to CONFIG_SOC_NUC970?
 
-I'll fix the warning.
->
->>> drivers/clk/samsung/clk-exynos7.c:43:2: warning: this decimal constant is
-> unsigned only in ISO C90
->      PLL_35XX_RATE(2496000000, 208, 2, 0),
->      ^~~~~~~~~~~~~
->
->
->> +static void __init exynos7_clk_atlas_init(struct device_node *np)
->> +{
->> +     void __iomem *reg_base;
->> +     struct samsung_clk_provider *ctx;
->> +
->> +     reg_base = of_iomap(np, 0);
->> +     if (!reg_base) {
->> +             panic("%s: failed to map registers\n", __func__);
->> +             return;
->> +     }
->> +
->> +     ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
->> +     if (!ctx) {
->> +             panic("%s: unable to allocate ctx\n", __func__);
->
-> You can remove this panic() call, there is already one inside
-> samsung_clk_init().
+Ideally, this should just go away once we use SPARSE_IRQ.
 
-Will remove it.
-
-Thanks,
-Abhilash
+	Arnd
