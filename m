@@ -1,59 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.7-rc5
-Date: Fri,  1 Jul 2016 17:13:50 -0700
-Message-Id: <20160702001350.16344-1-sboyd@codeaurora.org>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	stephen.boyd@linaro.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 5/6] clk: qcom: Add support for PLLs with early output
+Date: Mon, 11 Jul 2016 16:20:38 +0530
+Message-Id: <1468234239-28693-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
+References: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 72ad679aa7182d23d269cbe4d655f7e129d3b057:
+Some PLLs can have an additional early output (apart from
+the main and aux outputs). Add support for the PLL driver
+so it can be used to initialize/configure the early output
 
-  clk: nxp: Select MFD_SYSCON for creg driver (2016-06-01 15:14:06 -0700)
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-pll.c | 2 ++
+ drivers/clk/qcom/clk-pll.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 086347705be7530feabb6274a3ad81dd545e7914:
-
-  Merge tag 'v4.7-rockchip-clk-fixes1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-fixes (2016-06-20 17:01:45 -0700)
-
-----------------------------------------------------------------
-A small fix for the newly added oxnas clk driver and a handful of
-rockchip clk driver fixes for newly added rk3399 support.
-
-----------------------------------------------------------------
-Brian Norris (1):
-      clk: rockchip: mark rk3399 GIC clocks as critical
-
-Douglas Anderson (1):
-      clk: rockchip: Revert "clk: rockchip: reset init state before mmc card initialization"
-
-Heiko Stuebner (1):
-      clk: rockchip: initialize flags of clk_init_data in mmc-phase clock
-
-Shawn Lin (1):
-      clk: rockchip: release io resource when failing to init clk on rk3399
-
-Stephen Boyd (1):
-      Merge tag 'v4.7-rockchip-clk-fixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
-
-Wei Yongjun (1):
-      clk: Fix return value check in oxnas_stdclk_probe()
-
-Xing Zheng (2):
-      clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src
-      clk: rockchip: fix cpuclk registration error handling
-
- drivers/clk/clk-oxnas.c              |  4 ++--
- drivers/clk/rockchip/clk-cpu.c       |  4 ++--
- drivers/clk/rockchip/clk-mmc-phase.c | 12 +-----------
- drivers/clk/rockchip/clk-rk3399.c    |  8 ++++++--
- 4 files changed, 11 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index 08d2fa2..b463432 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -268,6 +268,7 @@ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	val |= config->mn_ena_mask;
+ 	val |= config->main_output_mask;
+ 	val |= config->aux_output_mask;
++	val |= config->early_output_mask;
+ 
+ 	mask = config->vco_mask;
+ 	mask |= config->pre_div_mask;
+@@ -275,6 +276,7 @@ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	mask |= config->mn_ena_mask;
+ 	mask |= config->main_output_mask;
+ 	mask |= config->aux_output_mask;
++	mask |= config->early_output_mask;
+ 
+ 	regmap_update_bits(regmap, pll->config_reg, mask, val);
+ }
+diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
+index 083727e..dbe22a9 100644
+--- a/drivers/clk/qcom/clk-pll.h
++++ b/drivers/clk/qcom/clk-pll.h
+@@ -81,6 +81,7 @@ struct pll_config {
+ 	u32 mn_ena_mask;
+ 	u32 main_output_mask;
+ 	u32 aux_output_mask;
++	u32 early_output_mask;
+ };
+ 
+ void clk_pll_configure_sr(struct clk_pll *pll, struct regmap *regmap,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
