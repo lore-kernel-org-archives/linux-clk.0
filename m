@@ -1,42 +1,35 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 4/8] clk: sunxi: mod0: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Tue,  5 Jul 2016 18:23:28 +0200
-Message-Id: <1467735814-23518-5-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/7] bindings: spi-samsung: add exynos5433 spi compatible
+To: Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <578379BA.3090501@samsung.com>
+Date: Mon, 11 Jul 2016 12:49:30 +0200
+MIME-version: 1.0
+In-reply-to: <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver initializes a clock provider via sun4i_a10_mod0_setup
-and then continues the initialization on sun4i_a10_mod0_clk_probe.
+On 07/08/2016 04:46 PM, Andi Shyti wrote:
+> The samsung,exynos5433-spi has some peculiarities that bring the
+> need of creating a new compatible in the binding.
+> 
+> One of those is the 3-clocks controller management where the spi
+> is fed with three clocks: "spi", "busclkN" and "ioclk".
+> 
+> By adding the exynos5433-spi, we deprecate the exynos7 compatible
+> and discourage its use.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 
-Use the new macro to notify the clk subsystem about this behaviour.
-
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/sunxi/clk-mod0.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-index b38d71cec74c..e54266cc1c51 100644
---- a/drivers/clk/sunxi/clk-mod0.c
-+++ b/drivers/clk/sunxi/clk-mod0.c
-@@ -91,7 +91,8 @@ static void __init sun4i_a10_mod0_setup(struct device_node *node)
- 	sunxi_factors_register(node, &sun4i_a10_mod0_data,
- 			       &sun4i_a10_mod0_lock, reg);
- }
--CLK_OF_DECLARE(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk", sun4i_a10_mod0_setup);
-+CLK_OF_DECLARE_DRIVER(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk",
-+		      sun4i_a10_mod0_setup);
- 
- static int sun4i_a10_mod0_clk_probe(struct platform_device *pdev)
- {
--- 
-2.8.1
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
