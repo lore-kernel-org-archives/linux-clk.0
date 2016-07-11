@@ -1,59 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-To: Michael Turquette <mturquette@baylibre.com>,
- James Liao <jamesjj.liao@mediatek.com>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
- <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
- <20160702012140.GB17071@codeaurora.org> <1467604308.26485.4.camel@mtksdaap41>
- <146802073038.73491.6675612765998057903@resonance>
-Cc: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>,
- Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- srv_heupstream@mediatek.com
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <57804973.4050306@codeaurora.org>
-Date: Fri, 8 Jul 2016 17:46:43 -0700
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  linux-arm-kernel@lists.infradead.org,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Hua Jing <jinghua@marvell.com>,  Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+	<1467931071-31004-2-git-send-email-gregory.clement@free-electrons.com>
+	<20160708093156.4f235b85@free-electrons.com>
+Date: Mon, 11 Jul 2016 18:12:22 +0200
+In-Reply-To: <20160708093156.4f235b85@free-electrons.com> (Thomas Petazzoni's
+	message of "Fri, 8 Jul 2016 09:31:56 +0200")
+Message-ID: <87a8hotaqh.fsf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <146802073038.73491.6675612765998057903@resonance>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08/2016 04:32 PM, Michael Turquette wrote:
-> ---
->  drivers/clk/clk.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+Hi Thomas,
+ 
+ On ven., juil. 08 2016, Thomas Petazzoni <thomas.petazzoni@free-electrons.com> wrote:
+
+> Hello,
 >
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939fb6bb..70efe4c4e0cc 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2449,8 +2449,14 @@ static int __clk_core_init(struct clk_core *core)
->  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
->  		struct clk_core *parent = __clk_init_parent(orphan);
->  
-> -		if (parent)
-> -			clk_core_reparent(orphan, parent);
-> +		/*
-> +		 * we could call __clk_set_parent, but that would result in a
-> +		 * reducant call to the .set_rate op, if it exists
+> On Fri,  8 Jul 2016 00:37:46 +0200, Gregory CLEMENT wrote:
+>
+>> +gpio1: gpio@13800 {
+>> +	compatible = "marvell,mvebu-gpio-3700",	"syscon", "simple-mfd";
+>
+> I find this compatible string not very consistent with what we do for
+> other drivers, it should have been:
+>
+> 	marvell,armada-3700-gpio
 
-Did you mean .set_parent op?
+Thanks for pointing this. We missed it during the last review. I agree
+that using marvell,armada-3700-gpio is more appropriate, especially
+because the gpio controller on Armada 37xx seems to be different that
+the ones used on the other mvebu SoCs.
 
-> +		 */
-> +		if (parent) {
-> +			__clk_set_parent_before(orphan, parent);
-> +			__clk_set_parent_after(orphan, parent, NULL);
-> +		}
->  	}
->  
->  	/*
+Gregory
 
+>
+> or something like that.
+>
+>
+>> +	xtalclk: xtal-clk {
+>> +		compatible = "marvell,armada-3700-xtal-clock";
+>
+> See here for example.
+>
+> Thomas
+> -- 
+> Thomas Petazzoni, CTO, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
