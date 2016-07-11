@@ -1,78 +1,59 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v4] xen/arm: Add a clock property
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
- <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
- <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
- <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
- <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
-CC: Julien Grall <julien.grall@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	<xen-devel@lists.xenproject.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Stefano Stabellini <sstabellini@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <847d3d22-985d-cbe9-3cd9-7c85080fae37@de.bosch.com>
-Date: Wed, 20 Jul 2016 14:53:44 +0200
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Chen-Yu Tsai" <wens@csie.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160711203448.18062-1-maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>
+References: <20160711203448.18062-1-maxime.ripard@free-electrons.com>
+Message-ID: <146827299405.73491.10992289511594199294@resonance>
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: h3: Fix audio clock divider offset
+Date: Mon, 11 Jul 2016 14:36:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.07.2016 14:46, Geert Uytterhoeven wrote:
-> Hi Julien,
->
-> On Wed, Jul 20, 2016 at 2:10 PM, Julien Grall <julien.grall@arm.com> wrote:
->> On 20/07/16 12:49, Geert Uytterhoeven wrote:
->>> On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com>
->>> wrote:
->>>> On 20/07/16 10:43, Geert Uytterhoeven wrote:
->>>>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>>>> wrote:
->>>>>> Clocks described by this property are reserved for use by Xen, and the
->>>>>> OS
->>>>>> must not alter their state any way, such as disabling or gating a
->>>>>> clock,
->>>>>> or modifying its rate. Ensuring this may impose constraints on parent
->>>>>> clocks or other resources used by the clock tree.
->>>>>>
->>>>>> This property is used to proxy clocks for devices Xen has taken
->>>>>> ownership
->>>>>> of, such as UARTs, for which the associated clock controller(s) remain
->>>>>> under the control of Dom0.
->>>>>
->>>>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
->>>>>
->>>>> Can't you just add a clocks property to the (virtual) serial device node
->>>>> in DT?
->>>>> Then the (virtual) serial device driver can get and enable the clock?
->>>>
->>>> There is no DT node for the Xen console (hvc). The UART used by Xen will
->>>> be
->>>> completely removed from the Device tree.
->>>
->>> Why is it removed?
->>
->> Because the device is used exclusively by Xen and DOM0 should not touch it
->> at all (IRQs and MMIOs are not mapped).
->
-> IMHO then it's Xen's responsability to make sure not to disable the clock(s).
->
-> Who removes the device node from the DT? If Xen, can't it just remember
-> which clocks were present in removed device nodes?
+Quoting Maxime Ripard (2016-07-11 13:34:47)
+> The code had a typo and got the wrong offset for the hardcoded divider, f=
+ix
+> that.
+> =
 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Reported-by: Jean-Francois Moine <moinejf@free.fr>
+> Reported-by: Chen-Yu Tsai <wens@csie.org>
 
-Yes, we are trying this with "moving" the clocks of the removed nodes to 
-the Xen hypervisor node:
+Applied.
 
-https://lists.xen.org/archives/html/xen-devel/2016-06/msg02605.html
+Regards,
+Mike
 
-The question discussed here is how to deal with these clocks properly in 
-Linux, then.
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> =
 
-Best regards
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/c=
+cu-sun8i-h3.c
+> index bcc0a95549d3..9af359544110 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> @@ -817,8 +817,8 @@ static void __init sun8i_h3_ccu_setup(struct device_n=
+ode *node)
+>  =
 
-Dirk
+>         /* Force the PLL-Audio-1x divider to 4 */
+>         val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
+> -       val &=3D ~GENMASK(4, 0);
+> -       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
+> +       val &=3D ~GENMASK(19, 16);
+> +       writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
+>  =
+
+>         sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
+>  }
+> -- =
+
+> 2.9.0
+>=20
