@@ -1,40 +1,69 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from
- SPI clocks
-To: Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <57837BD4.5030602@samsung.com>
-Date: Mon, 11 Jul 2016 12:58:28 +0200
-MIME-version: 1.0
-In-reply-to: <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Wan ZongShun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
+Date: Mon, 11 Jul 2016 12:36:16 +0200
+Message-ID: <3879062.QodNaKgPKS@wuerfel>
+In-Reply-To: <CAKT61h_vxcvVqqaDOn2XgtF7cBEpziSjfHRaY3eCWmM1ATfDXw@mail.gmail.com>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1606219.BzcByuFgJm@wuerfel>
+ <CAKT61h_vxcvVqqaDOn2XgtF7cBEpziSjfHRaY3eCWmM1ATfDXw@mail.gmail.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Wan Zongshun <vw@iommu.org>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-kernel <linux-kernel@vger.kernel.org>, p.zabel@pengutronix.de,
+ Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08/2016 04:46 PM, Andi Shyti wrote:
-> Because the Exynos5433 SPI driver supports the ioclk handling and
-> the following patch:
-> 
->   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
-> 
-> fixes a synchronus abort issue, none of the SPI clocks require
-s/synchronus/synchronous
-
-> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-> for the SPI related clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-In case this goes through the spi tree:
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+T24gTW9uZGF5LCBKdWx5IDExLCAyMDE2IDY6Mjg6NTcgUE0gQ0VTVCBXYW4gWm9uZ1NodW4gd3Jv
+dGU6Cj4gMjAxNi0wNy0xMSAxODoyNCBHTVQrMDg6MDAgQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5k
+Yi5kZT46Cj4gPiBPbiBNb25kYXksIEp1bHkgMTEsIDIwMTYgNTowNzowMSBQTSBDRVNUIFdhbiBa
+b25nc2h1biB3cm90ZToKPiA+Pgo+ID4+IE9uIDIwMTblubQwN+aciDEx5pelIDE2OjAzLCBBcm5k
+IEJlcmdtYW5uIHdyb3RlOgo+ID4+ID4gT24gU3VuZGF5LCBKdWx5IDEwLCAyMDE2IDM6Mjc6MjYg
+UE0gQ0VTVCBXYW4gWm9uZ3NodW4gd3JvdGU6Cj4gPj4gPj4gKyAgICAgICByZXQgPSBvZl9wcm9w
+ZXJ0eV9yZWFkX3N0cmluZyhucCwgImNvbXBhdGlibGUiLCAmc29jX2Rldl9hdHRyLT5zb2NfaWQp
+Owo+ID4+ID4+ICsgICAgICAgaWYgKHJldCkKPiA+PiA+PiAgICAgICAgICAgICAgICByZXR1cm4g
+LUVJTlZBTDsKPiA+PiA+PiArCj4gPj4gPj4gKyAgICAgICBzb2NfZGV2X2F0dHItPm1hY2hpbmUg
+PSAiTlVDOTAwRVZCIjsKPiA+PiA+PiArICAgICAgIHNvY19kZXZfYXR0ci0+ZmFtaWx5ID0gIk5V
+QzkwMCI7Cj4gPj4gPj4gKyAgICAgICBzb2NfZGV2ID0gc29jX2RldmljZV9yZWdpc3Rlcihzb2Nf
+ZGV2X2F0dHIpOwo+ID4+ID4+ICsgICAgICAgaWYgKElTX0VSUihzb2NfZGV2KSkgewo+ID4+ID4+
+ICsgICAgICAgICAgICAgICBrZnJlZShzb2NfZGV2X2F0dHIpOwo+ID4+ID4+ICsgICAgICAgICAg
+ICAgICByZXR1cm4gLUVOT0RFVjsKPiA+PiA+PiArICAgICAgIH0KPiA+PiA+PiArCj4gPj4gPj4g
+KyAgICAgICByZXQgPSByZWdtYXBfcmVhZChzeXNjb25fcmVnbWFwLCBHQ1JfQ0hJUElELCAmbnVj
+OTAwX2NoaXBpZCk7Cj4gPj4gPj4gKyAgICAgICBpZiAocmV0KQo+ID4+ID4+ICsgICAgICAgICAg
+ICAgICByZXR1cm4gLUVOT0RFVjsKPiA+PiA+PiArCj4gPj4gPj4gKyAgICAgICBkZXZpY2VfY3Jl
+YXRlX2ZpbGUoc29jX2RldmljZV90b19kZXZpY2Uoc29jX2RldiksICZudWM5MDBfY2hpcGlkX2F0
+dHIpOwo+ID4+ID4+ICsgICAgICAgZGV2aWNlX2NyZWF0ZV9maWxlKHNvY19kZXZpY2VfdG9fZGV2
+aWNlKHNvY19kZXYpLCAmbnVjOTAwX3ZlcnNpb25fYXR0cik7Cj4gPj4gPj4gKwo+ID4+ID4+ICsg
+ICAgICAgZGV2X2luZm8oJnBkZXYtPmRldiwgIk51dm90b24gQ2hpcCBJRDogMHgleCwgVmVyc2lv
+biBJRDoweCV4XG4iLAo+ID4+ID4+ICsgICAgICAgICAgICAgICAgbnVjOTAwX2NoaXBpZCAmIEdD
+Ul9DSElQSURfTUFTSywKPiA+PiA+PiArICAgICAgICAgICAgICAgIChudWM5MDBfY2hpcGlkID4+
+IDI0KSAmIDB4ZmYpOwo+ID4+ID4KPiA+PiA+IEknbSBzdGlsbCBhIGJpdCB1bnN1cmUgYWJvdXQg
+dGhlIHNldCBvZiBhdHRyaWJ1dGVzIGhlcmUuCj4gPj4gPgo+ID4+ID4gLSBUaGUgInNvY19pZCIg
+aXMgcmVhZCBmcm9tIHRoZSBkZXZpY2UgdHJlZSBmcm9tIHRoZSBmaWVsZCB0aGF0IGNvbnRhaW5z
+Cj4gPj4gPiAgICB0aGUgYm9hcmQgbmFtZSwgSSB0aGluayBmb3IgY29uc2lzdGVuY3kgeW91IHNo
+b3VsZCB0cnkgdG8gbWFwIHRoZQo+ID4+ID4gICAgR0NSX0NISVBJRCB0byB0aGUgbmFtZSBvZiB0
+aGUgU29DIGFuZCBhc3NpZ24gdGhhdCBoZXJlCj4gPj4KPiA+PiBJIHdpbGwgdHJ5IHRvIGdldCBj
+aGlwaWQgYW5kIG1hcCBpdCB0byBzb2MgbmFtZSBsaWtlOiDigJxudWM5NzDigJ0sICJudWM5MTAi
+Lgo+ID4+Cj4gPj4gQW5kIEkgd2lsbCBzZXQgdGhpcyBzb2MgbmFtZSB0byBzb2NfaWQsIG9rPwo+
+ID4KPiA+IE9rLgo+IAo+IE1heWJlIEkgYWxzbyBjYW4gc2V0IHZlcnNpb25pZCBhcyBzb2MgbmFt
+ZSBwYXJ0bHksIGxpa2UKPiBudWM5NzAtdmVyc2lvbjEsbnVjOTcwLXZlcnNpb24yPyBhbmQgdGhl
+biBzZXQgdGhlIHRvIHNvY19pZCwgbWFrZQo+IHNlbnNlPwo+IAoKSSBkaWRuJ3QgZXhhY3RseSB1
+bmRlcnN0YW5kIHdoYXQgdGhlIHN1Z2dlc3Rpb24gaXMsIG1heWJlIHNlbmQgdGhhdAphcyBjb2Rl
+IHNvIEkgc2VlIHdoYXQgeW91IG1lYW4uCgoJQXJuZAoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGlu
+dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
+b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
