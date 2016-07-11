@@ -1,50 +1,70 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 11 Jul 2016 12:06:29 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to
+ use proper unit address
+Message-ID: <20160711100629.GJ5823@ulmo.ba.sec>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-5-git-send-email-fcooper@ti.com>
+ <20160711095623.GI5823@ulmo.ba.sec>
 MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>,
- =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
- <1467741391-60534-7-git-send-email-serveralex@gmail.com>
- <b42e2bb3-2cd0-3115-9be4-16e3a48b46fd@codethink.co.uk>
-In-Reply-To: <b42e2bb3-2cd0-3115-9be4-16e3a48b46fd@codethink.co.uk>
-Message-ID: <146776626852.35356.9847034661606022714@resonance>
-Subject: Re: [PATCH 6/7] meson: clk: Add support for clock gates
-Date: Tue, 05 Jul 2016 17:51:08 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ed/6oDxOLijJh8b0"
+In-Reply-To: <20160711095623.GI5823@ulmo.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ben,
 
-Quoting Ben Dooks (2016-07-05 11:01:14)
-> On 05/07/16 18:56, Alexander M=C3=BCller wrote:
-> > This patch adds support for the meson8b clock gates. Most of
-> > them are disabled by Amlogic U-Boot, but need to be enabled
-> > for ethernet, USB and many other components.
-> > =
+--ed/6oDxOLijJh8b0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+On Mon, Jul 11, 2016 at 11:56:23AM +0200, Thierry Reding wrote:
+> On Tue, May 03, 2016 at 10:56:50AM -0500, Franklin S Cooper Jr wrote:
+> > Replace unit address from 0 to the proper physical address. Also insure
+> > that the unit address matches the reg property address.
+> >=20
+> > Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 > > ---
-> =
+> >  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> I applied this long ago but never let you know: Applied, thanks.
 
-> This seems to be a lot of structures for clocks that may
-> never be use. I think it would be better to provide a custom
-> lookup function that creates these as needed and use the ID
-> in the dt as a offset+bit id.
+Actually I didn't. And it seems the reason is that it doesn't apply
+cleanly. For some reason my tree doesn't have an entry for the ecap
+example on am437x. Am I missing a patch? Can you resend whatever is
+not in linux-next yet?
 
-We want the real clocks registered so that we can disable spuriously
-enabled at late_initcall time with clk_disable_unused.
+Thierry
 
-Furthermore, I'd like to not represent all of these gates in the DT
-binding description (see my response to the earlier patches in this
-series), since it becomes ABI (and a maintenance nightmare).
+--ed/6oDxOLijJh8b0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Mike
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> =
+iQIcBAABCAAGBQJXg2+jAAoJEN0jrNd/PrOh5JsP/i0T3/m0XUoP5hAgP9iz4fEz
++dFTXJChc/J0DklRURH1d0UAM6GQU1TpBon9hY4GKU9A00DNNemxo+hyDCix0ETE
+H90PtwWoIsD3kbd+sFpbZFqLNTRM3r9oI18He6OAyy0Gvbx6G1aakqF78V14xxfc
+w5sLmrJQDHNY6PqoNTks7ZgNxRLm+zQbl2NvbRDXSh1WS+5smj44W1RfkaLCq6jt
+ewfEpV4dvFJR6/bX+PiFerDndG98pCeZIQjgLDT2gcabbaPzo8C2pq9kti3kmeXi
+ubDLo17vK/DsZCgO3LyyRVUiadHs0z5DgtCbVbg7MVziFKduZZuEzP5X9tzB01zk
+ja6v2Bibra2YL93KOc6erNsrzLfPuPtkp3bqraZpcGf3u4TpIl9niLrRNPKeM16+
+FOk3oJtn+ROKeOfHBgEPHNsDSWF2aBBCjrahZqWHPJUui7XkSEq3prL88fEJPIPn
+4JShghxqXdbtsyNgbFv3wLnAUrobQBFlDGAFIlIotiJKP9m2xR6L6vnxkaL048iX
+Bbgnhaz5UzsG+t4XNDQxt2orG7V2NnQLOV6ha67e57NNmYrrrCJFgx8bozIZ1ycv
+AAB2iQBt7mOGlzKr+e90hBAKCyT0CXTjeRzeHOgEqRXfkP8qbLs1YAQZL759TrA6
+29zFvSmIXuSPc2pdTP2N
+=T0aR
+-----END PGP SIGNATURE-----
 
-> -- =
-
-> Ben Dooks                               http://www.codethink.co.uk/
-> Senior Engineer                         Codethink - Providing Genius
+--ed/6oDxOLijJh8b0--
