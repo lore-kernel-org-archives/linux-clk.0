@@ -1,74 +1,42 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
-To: Dirk Behme <dirk.behme@de.bosch.com>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
- <577F73B3.8090807@arm.com>
- <437b5eff-4294-3493-b1b2-0ff2c10525e3@de.bosch.com>
-Cc: linux-arm-kernel@lists.infradead.org, Mark Rutland
- <mark.rutland@arm.com>, xen-devel@lists.xenproject.org,
- devicetree@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
- linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <577F853D.405@arm.com>
-Date: Fri, 8 Jul 2016 11:49:33 +0100
-MIME-Version: 1.0
-In-Reply-To: <437b5eff-4294-3493-b1b2-0ff2c10525e3@de.bosch.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	stephen.boyd@linaro.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 0/6] clk: qcom: PLL updates
+Date: Mon, 11 Jul 2016 16:20:33 +0530
+Message-Id: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
+This series adds some additional support to the clk-alpha-pll and the
+clk-pll drivers in preperation to add the CPU clock driver support
+on msm8996
 
-On 08/07/16 11:40, Dirk Behme wrote:
-> Hi Michael and Julien,
->
-> On 08.07.2016 11:34, Julien Grall wrote:
->> Hi Dirk,
->>
->> On 08/07/16 08:44, Dirk Behme wrote:
->>> Xen hypervisor drivers might replace native OS drivers. The result is
->>> that some important clocks that are enabled by the OS in the non-Xen
->>> case are not properly enabled in the presence of Xen. The clocks
->>> property enumerates the clocks that must be enabled by the Xen clock
->>> consumer.
->>>
->>> An example is a serial driver enabled by the hypervisor. Xen must
->>
->> I would say "An example is the UART used by the hypervisor."
->>
->>> consume and enable these clocks in the OS to ensure behavior continues
->>> after firmware configures the UART hardware and corresponding clock
->>> harder.
->>
->> What do you mean by "harder"?
->>
->> Also, relying on DOM0 to enable the clock looks very wrong to me and you
->> give an example which prove that. The UART will be used before hand by
->> Xen, however it will not be possible to use it if you expect DOM0 to
->> enable the clock (or even modify the clock frequency).
->>
->> The clock should be enabled either by the firmware or Xen. But not DOM0.
->> DOM0 should not touch this clock at all.
->>
->> Furthermore, this property could be used for clock associated to device
->> that will be passthrough-ed to a guest. In this case, the clock would be
->> enabled even if the device is not in use which will result more power
->> consumption.
->
->
-> I took the description directly from Michael's proposal
->
-> http://www.spinics.net/lists/arm-kernel/msg516576.html
->
-> Would it be possible that you two experts agree on the exact wording you
-> like to see?
+regards,
+Rajendra
 
-I think the wording suggested by Mark in [1] represents better what we 
-would like to achieve with this property.
+Rajendra Nayak (6):
+  clk: Fix inconsistencies in usage of data types
+  clk: qcom: Add support for alpha pll hwfsm ops
+  clk: qcom: Add support to initialize alpha plls
+  clk: qcom: Add support for PLLs with alpha mode
+  clk: qcom: Add support for PLLs with early output
+  clk: qcom: Add support for PLLs supporting dynamic reprogramming
 
-Regards,
-
-[1] https://www.spinics.net/lists/arm-kernel/msg516158.html
+ drivers/clk/clk.c                |   4 +-
+ drivers/clk/qcom/clk-alpha-pll.c | 132 +++++++++++++++++++++++++++++++++++----
+ drivers/clk/qcom/clk-alpha-pll.h |  14 +++++
+ drivers/clk/qcom/clk-pll.c       | 116 +++++++++++++++++++++++++++++++++-
+ drivers/clk/qcom/clk-pll.h       |  12 +++-
+ include/linux/clk-provider.h     |   5 +-
+ 6 files changed, 263 insertions(+), 20 deletions(-)
 
 -- 
-Julien Grall
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
