@@ -1,116 +1,63 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: festevam@gmail.com,
-	aisheng.dong@nxp.com,
-	shawnguo@kernel.org,
-	kernel@pengutronix.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	grinberg@compulab.co.il,
-	gary.bisson@boundarydevices.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
-Date: Sun,  3 Jul 2016 10:48:13 -0700
-Message-Id: <20160703174813.13970-1-stefan@agner.ch>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 11 Jul 2016 11:56:23 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to
+ use proper unit address
+Message-ID: <20160711095623.GI5823@ulmo.ba.sec>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-5-git-send-email-fcooper@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Encpt1P6Mxii2VuT"
+In-Reply-To: <1462291015-1919-5-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-All device trees currently in mainline specify the time clock parent
-using the assigned-clocks/assigned-clock-parents method, there is no
-need to statically assign the parent in the core clock driver.
-Also all current boards provide an Ethernet reference clock for the
-PHY externally, hence configuring the internal PHY reference clock.
 
-Furthermore, and the actual driver of this patch, specify ethernet
-related parents at that early point in boot leads to a warning:
-bad: scheduling from the idle thread!
+--Encpt1P6Mxii2VuT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The reason for the warning is that setting the parent enables the ENET
-PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
-cause clk_pllv3_wait_lock to sleep. See also:
-commit fc8726a2c021 ("clk: core: support clocks which requires parents
-enable (part 2)").
+On Tue, May 03, 2016 at 10:56:50AM -0500, Franklin S Cooper Jr wrote:
+> Replace unit address from 0 to the proper physical address. Also insure
+> that the unit address matches the reg property address.
+>=20
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Note that setting the ENET AXI root clock parent also requires ENET
-PLL to be enabled. However, U-Boot typically leaves the ENET PLL on,
-hence when the framework sets the parent of the first clock, it does
-not need to wait for the PLL to come up. But because there is currently
-no user of that clock, the PLL gets disabled after setting the parent.
-Therefore, subsequent reparenting calls of any clock which somehow rely
-on the ENET PLL, need to reenable the ENET PLL which leads to a sleep.
-Removing those subsequent reparenting calls works around this issue.
+I applied this long ago but never let you know: Applied, thanks.
 
-Also remove comments. The code is really verbose enough.
+Thierry
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
-Changes since v1:
-- Also remove PHY REF clock
+--Encpt1P6Mxii2VuT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hi All,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Fabio, thanks for testing v1.
+iQIcBAABCAAGBQJXg21HAAoJEN0jrNd/PrOhIf8P/1RA6cb3nNXTmNBuoU9w3FNW
+1/NyIDBXs8zsOf9c1WMvrRrEbG2fhBHRPfykGJVnb71Lg14aJro1XdJ+4/N1WAbU
+E59jJZzIbZ/X7HfY+0kWazhqD5k+MqQJxsNN6aEbH+3nx0q4MpjkqRpvmkD0FyMV
+iJ+W33fymyiPdQKYYKV7hNfVG34Sd/5z+G85Wo2DpTSJ1HWToNqcc2n2Nh7QgdxO
+J9RJWIy8Y/uDN2OSqPQJwyjKG8r8prZMmc/nznxead2zWUI9anh+wBYIiHW2g/WQ
+ZZvDtxGIEPWxmR9Fj196tJE5d5wvR30R8QcCZJ2iaUpqJU0bQ/yVy211EhMLhcyT
+q4itTrxjzB5jEbRix3zYdAhpy5rGDJ83y4cgg4bPW2UMbBXntvYo2sdVvGQjVXzP
+F9RuRdsUnZOt/4d+jaO+UVh4Z9Ldn5ECA58YMY4nPZFMK41E+TpVMfeqc9ILdt6+
+OhKJWqfk33f/ez+59qT3aQxf5iHpXEgly/iFl1uGvew+A0xBtkwrVGNw2IIsNZ0E
+uW0WqnK9Qo870a+DBrSWdRZun4N6BA3fFqp2RAReAxl3Z+j1H89YTO32c6lE2yUI
+70q+EcMvOascx25ieIZ0jgKiDUxRj1vkClzuQTJxznEzNuNpORkPYThLtQ+hZFGx
+3nGf2/oiwyhoC+av9t1O
+=pUZU
+-----END PGP SIGNATURE-----
 
-With v2, the warnings should definitly be gone. However, that might
-break some boards...
-
-What is the IMX7D_ENET_PHY_REF_ROOT_SRC clock for anyway? It sounds
-like it should provide a clock for the PHY. However, there is also
-IMX7D_ENET1_REF_ROOT_CLK and IMX7D_ENET2_REF_ROOT_CLK...
-
-Our first design used to use a clock provided by the SoC, by muxing
-a pad to CCM_ENET1_REF_CLK and enabling IMX7D_ENET1_REF_ROOT_CLK
-it seemd to work just fine, there was no need for
-IMX7D_ENET_PHY_REF_ROOT_SRC.
-
-Dong, can you shed some light on this?
-
-Otherwise, in case a board does not work with that change, something
-like this should do the same using device tree. You probably would
-have to add this to all FEC instances since this seems to be a shared
-clock.
-
-        pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_enet1>;
-        assigned-clocks = <&clks IMX7D_ENET1_TIME_ROOT_SRC>,
--                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>;
--       assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
-+                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>,
-+                         <&clks IMX7D_ENET_PHY_REF_ROOT_SRC>;
-+       assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>, <0>,
-+                                <&clks IMX7D_PLL_ENET_MAIN_25M_CLK>;
-        assigned-clock-rates = <0>, <100000000>;
-        phy-mode = "rgmii";
-        phy-handle = <&ethphy0>;
-
---
-Stefan
-
- drivers/clk/imx/clk-imx7d.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 79293ed..6ed4f8f 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -860,16 +860,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
--	/*
--	 * init enet clock source:
--	 * 	AXI clock source is 250MHz
--	 *	Phy refrence clock is 25MHz
--	 *	1588 time clock source is 100MHz
--	 */
- 	clk_set_parent(clks[IMX7D_ENET_AXI_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_250M_CLK]);
--	clk_set_parent(clks[IMX7D_ENET_PHY_REF_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_25M_CLK]);
--	clk_set_parent(clks[IMX7D_ENET1_TIME_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_100M_CLK]);
--	clk_set_parent(clks[IMX7D_ENET2_TIME_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_100M_CLK]);
- 
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
--- 
-2.9.0
+--Encpt1P6Mxii2VuT--
