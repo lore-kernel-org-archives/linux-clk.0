@@ -1,78 +1,116 @@
 Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,  linux-clk@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
-Cc: "Masahiro Yamada" <yamada.masahiro@socionext.com>,
- "Jay Sternberg" <jay.e.sternberg@intel.com>, "Jens Axboe" <axboe@fb.com>,
- linux-kernel@vger.kernel.org, "Dan Williams" <dan.j.williams@intel.com>,
- =?utf-8?q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
- "Valentin Rothberg" <valentinrothberg@gmail.com>
-References: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
-Message-ID: <146863507652.73491.7469412916688579441@resonance>
-Subject: Re: [PATCH] clk: probe common clock drivers earlier
-Date: Fri, 15 Jul 2016 19:11:16 -0700
+In-Reply-To: <20160711202632.GG4589@lukather>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Chen-Yu Tsai" <wens@csie.org>,
+ linux-clk@vger.kernel.org, "Hans de Goede" <hdegoede@redhat.com>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ "Rob Herring" <robh+dt@kernel.org>,
+ "Vishnu Patekar" <vishnupatekar0510@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, "Jean-Francois Moine" <moinejf@free.fr>
+References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
+ <20160629190535.11855-14-maxime.ripard@free-electrons.com>
+ <146785878822.73491.15164592643568518865@resonance>
+ <20160708213506.GD4522@lukather>
+ <146802703641.73491.4992163597821488987@resonance>
+ <20160711202632.GG4589@lukather>
+Message-ID: <146827328342.73491.9092592988312446585@resonance>
+Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
+Date: Mon, 11 Jul 2016 14:41:23 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Masahiro Yamada (2016-05-05 00:57:17)
-> Several SoCs implement platform drivers for clocks rather than
-> CLK_OF_DECLARE().  Clocks should come earlier because they are
-> prerequisites for many of other drivers.  It will help to mitigate
-> EPROBE_DEFER issues.
+Quoting Maxime Ripard (2016-07-11 13:26:32)
+> Hi Mike,
 > =
 
-> Also, drop the comment since it does not look valuable.
+> On Fri, Jul 08, 2016 at 06:17:16PM -0700, Michael Turquette wrote:
+> > Quoting Maxime Ripard (2016-07-08 14:35:06)
+> > > Hi Mike,
+> > > =
+
+> > > On Wed, Jul 06, 2016 at 07:33:08PM -0700, Michael Turquette wrote:
+> > > > Hi Maxime,
+> > > > =
+
+> > > > Quoting Maxime Ripard (2016-06-29 12:05:34)
+> > > > > +static void __init sun8i_h3_ccu_setup(struct device_node *node)
+> > > > > +{
+> > > > > +       void __iomem *reg;
+> > > > > +       u32 val;
+> > > > > +
+> > > > > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(=
+node));
+> > > > > +       if (IS_ERR(reg)) {
+> > > > > +               pr_err("%s: Could not map the clock registers\n",
+> > > > > +                      of_node_full_name(node));
+> > > > > +               return;
+> > > > > +       }
+> > > > > +
+> > > > > +       /* Force the PLL-Audio-1x divider to 4 */
+> > > > > +       val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
+> > > > > +       val &=3D ~GENMASK(4, 0);
+> > > > > +       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
+> > > > > +
+> > > > > +       sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
+> > > > > +}
+> > > > > +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
+> > > > > +              sun8i_h3_ccu_setup);
+> > > > =
+
+> > > > There are several examples of drivers that split the clocks between
+> > > > "early" CLK_OF_DECLARE clocks and "late" module clocks. If you real=
+ly
+> > > > need early clocks (which is less likely on a 64-bit platform with
+> > > > architected timers), it would be nice to pair that with a proper
+> > > > platform_driver (using builtin_platform_driver most likely).
+> > > =
+
+> > > I think we discussed that already, but yeah, we do have timers that
+> > > are not the architected ones (and this is a ARMv7 platform). I have
+> > > the feeling that splitting the two doesn't really bring any benefit,
+> > > but complexify a lot the driver.
+> > =
+
+> > Cool. I've pushed patches 1-13 to the clk tree under a shared, immutable
+> > branch: clk-sunxi-ng
+> > =
+
+> > I've merged this branch into clk-next to get some soak testing.
+> > =
+
+> > I did not merge patch #14. Feel free to add my reviewed-by to that
+> > patch.
 > =
 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Thanks for merging the other patches, but can you merge patch 14 too?
+> Merging it through my tree would break bisectability, and it should
+> apply properly on your tree.
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+Applied.
 
 Regards,
 Mike
 
-> ---
 > =
 
->  drivers/Makefile | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> > Were you going to spin another version? If so I can replace v3 with v4
+> > when it is ready. Thanks again for your hard work on this! Very happy to
+> > see the binding be reworked :-)
 > =
 
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index 8f5d076..a2a4922 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -44,6 +44,7 @@ obj-$(CONFIG_REGULATOR)               +=3D regulator/
->  =
+> I'll send another patch to fix the bug found by Jean-Francois, and one
+> to fix a typo. Feel free to squash them in.
+> =
 
->  # reset controllers early, since gpu drivers might rely on them to initi=
-alize
->  obj-$(CONFIG_RESET_CONTROLLER) +=3D reset/
-> +obj-y                          +=3D clk/
->  =
+> Thanks!
+> Maxime
+> =
 
->  # tty/ comes before char/ so that the VT console is the boot-time
->  # default.
-> @@ -141,8 +142,6 @@ obj-$(CONFIG_VHOST_RING)    +=3D vhost/
->  obj-$(CONFIG_VLYNQ)            +=3D vlynq/
->  obj-$(CONFIG_STAGING)          +=3D staging/
->  obj-y                          +=3D platform/
-> -#common clk code
-> -obj-y                          +=3D clk/
->  =
-
->  obj-$(CONFIG_MAILBOX)          +=3D mailbox/
->  obj-$(CONFIG_HWSPINLOCK)       +=3D hwspinlock/
 > -- =
 
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
