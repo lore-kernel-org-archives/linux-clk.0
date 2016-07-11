@@ -1,58 +1,65 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Date: Fri, 8 Jul 2016 22:39:27 +0200
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v2 5/7] spi: s3c64xx: add exynos5433 compatible for ioclk
- handling
-Message-ID: <20160708203927.GB26626@kozik-lap>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
+Return-Path: <kesavan.abhilash@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
+In-Reply-To: <577E2E6E.3040809@samsung.com>
+References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
+ <1467750561-13957-3-git-send-email-a.kesavan@samsung.com> <577E2E6E.3040809@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Date: Mon, 11 Jul 2016 16:43:50 +0200
+Message-ID: <CAM4voa=6-4Gq+0TvQLJGiB24UzKJudTW8kXacUbTAOr1t=JMyg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: samsung: exynos7: Add clocks for atlas block
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>,
+	=?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 08, 2016 at 11:46:39PM +0900, Andi Shyti wrote:
-> The new compatible is related to the Samsung Exynos5433 SoC. The
-> difference between the previous is that in the exynos5433 the SPI
-> controller is driven by three clocks instead of only one.
-> 
-> The new clock (ioclk) is controlling the input/output clock
-> whenever the controller is slave or master.
-> 
-> The presence of the clock line is detected from the compatibility
-> structure (exynos5433_spi_port_config) as a boolean value.
-> 
-> The probe function checks whether the ioclk is present and if so,
-> it acquires.
-> 
-> The runtime suspend and resume functions will handle the clock
-> enabling and disabling as well.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 52 insertions(+), 5 deletions(-)
+Hi Sylwester,
+
+Thanks for the review.
+
+On Thu, Jul 7, 2016 at 12:26 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
 >
+>> +static const struct samsung_pll_rate_table pll1450x_24mhz_tbl[] = {
+>> +     /* rate, m, p, s */
+>> +     PLL_35XX_RATE(2496000000, 208, 2, 0),
+>
+> Please add U postfix to these constants to address compiler warning
+> as reported by kbuild-all@01.org:
 
-Looks fine to me, thanks for updates.
+I'll fix the warning.
+>
+>>> drivers/clk/samsung/clk-exynos7.c:43:2: warning: this decimal constant is
+> unsigned only in ISO C90
+>      PLL_35XX_RATE(2496000000, 208, 2, 0),
+>      ^~~~~~~~~~~~~
+>
+>
+>> +static void __init exynos7_clk_atlas_init(struct device_node *np)
+>> +{
+>> +     void __iomem *reg_base;
+>> +     struct samsung_clk_provider *ctx;
+>> +
+>> +     reg_base = of_iomap(np, 0);
+>> +     if (!reg_base) {
+>> +             panic("%s: failed to map registers\n", __func__);
+>> +             return;
+>> +     }
+>> +
+>> +     ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
+>> +     if (!ctx) {
+>> +             panic("%s: unable to allocate ctx\n", __func__);
+>
+> You can remove this panic() call, there is already one inside
+> samsung_clk_init().
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Will remove it.
 
-Best regards,
-Krzysztof
+Thanks,
+Abhilash
