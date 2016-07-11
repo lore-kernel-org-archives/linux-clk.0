@@ -1,92 +1,79 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 11 Jul 2016 12:33:45 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 4/9] pwm: pwm-tiecap: Update dt binding document to
+ use proper unit address
+Message-ID: <20160711103345.GB5503@ulmo.ba.sec>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-5-git-send-email-fcooper@ti.com>
+ <20160711095623.GI5823@ulmo.ba.sec>
+ <20160711100629.GJ5823@ulmo.ba.sec>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160708213506.GD4522@lukather>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Chen-Yu Tsai" <wens@csie.org>,
- linux-clk@vger.kernel.org, "Hans de Goede" <hdegoede@redhat.com>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- "Rob Herring" <robh+dt@kernel.org>,
- "Vishnu Patekar" <vishnupatekar0510@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, "Jean-Francois Moine" <moinejf@free.fr>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
- <20160629190535.11855-14-maxime.ripard@free-electrons.com>
- <146785878822.73491.15164592643568518865@resonance>
- <20160708213506.GD4522@lukather>
-Message-ID: <146802703641.73491.4992163597821488987@resonance>
-Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
-Date: Fri, 08 Jul 2016 18:17:16 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
+In-Reply-To: <20160711100629.GJ5823@ulmo.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2016-07-08 14:35:06)
-> Hi Mike,
-> =
 
-> On Wed, Jul 06, 2016 at 07:33:08PM -0700, Michael Turquette wrote:
-> > Hi Maxime,
-> > =
+--EuxKj2iCbKjpUGkD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Quoting Maxime Ripard (2016-06-29 12:05:34)
-> > > +static void __init sun8i_h3_ccu_setup(struct device_node *node)
-> > > +{
-> > > +       void __iomem *reg;
-> > > +       u32 val;
-> > > +
-> > > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node=
-));
-> > > +       if (IS_ERR(reg)) {
-> > > +               pr_err("%s: Could not map the clock registers\n",
-> > > +                      of_node_full_name(node));
-> > > +               return;
-> > > +       }
-> > > +
-> > > +       /* Force the PLL-Audio-1x divider to 4 */
-> > > +       val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
-> > > +       val &=3D ~GENMASK(4, 0);
-> > > +       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
-> > > +
-> > > +       sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
-> > > +}
-> > > +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
-> > > +              sun8i_h3_ccu_setup);
-> > =
+On Mon, Jul 11, 2016 at 12:06:29PM +0200, Thierry Reding wrote:
+> On Mon, Jul 11, 2016 at 11:56:23AM +0200, Thierry Reding wrote:
+> > On Tue, May 03, 2016 at 10:56:50AM -0500, Franklin S Cooper Jr wrote:
+> > > Replace unit address from 0 to the proper physical address. Also insu=
+re
+> > > that the unit address matches the reg property address.
+> > >=20
+> > > Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/pwm/pwm-tiecap.txt | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > I applied this long ago but never let you know: Applied, thanks.
+>=20
+> Actually I didn't. And it seems the reason is that it doesn't apply
+> cleanly. For some reason my tree doesn't have an entry for the ecap
+> example on am437x. Am I missing a patch? Can you resend whatever is
+> not in linux-next yet?
 
-> > There are several examples of drivers that split the clocks between
-> > "early" CLK_OF_DECLARE clocks and "late" module clocks. If you really
-> > need early clocks (which is less likely on a 64-bit platform with
-> > architected timers), it would be nice to pair that with a proper
-> > platform_driver (using builtin_platform_driver most likely).
-> =
+Oh, nevermind my blabbering, it took me too long to realize that this is
+the series that Tony had picked up for the most part, and I hadn't
+properly marked it done in patchwork.
 
-> I think we discussed that already, but yeah, we do have timers that
-> are not the architected ones (and this is a ARMv7 platform). I have
-> the feeling that splitting the two doesn't really bring any benefit,
-> but complexify a lot the driver.
+I'll go get some coffee now.
 
-Cool. I've pushed patches 1-13 to the clk tree under a shared, immutable
-branch: clk-sunxi-ng
+Thierry
 
-I've merged this branch into clk-next to get some soak testing.
+--EuxKj2iCbKjpUGkD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I did not merge patch #14. Feel free to add my reviewed-by to that
-patch.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Were you going to spin another version? If so I can replace v3 with v4
-when it is ready. Thanks again for your hard work on this! Very happy to
-see the binding be reworked :-)
+iQIcBAABCAAGBQJXg3YJAAoJEN0jrNd/PrOhzdwP/iZmYhqh/Q7NjSWzUse3NL/x
+K6W5441H1aNOs9T9gE8iTWd3d+wVimySETpZTCg7rFH0BdDrRUx5ZhKbtWOlcem4
+L6DpCjhEsPu9ObVw8vBUGaqVkh+GVueV1p6sRlb8F2FdDZtlhBj+mn89xtxDpFKQ
+/fp4rykEsh5PhalxBg//9Zbk3at4ouVev7jUNfB3Qxl5U0kxiPmkQ/sETNp2sjoX
+TxqbA23rD0B0YDAsk5iYUognAOLUcOXVqeyaw46r2/j/w35a8wzW/BLlfS0ePl9J
+Nn2o6xxWm4yEG/5F7+souAa0/65DTERe1nE5OW1UplpVsFFzBHCiH9hjgX2eiRHW
+BTCcibLN5y/w9r+tJadsE1ppN5SxdmBsFDwTdRj1/FscGJmc6nb59bHTf6HxVRHW
+fLlgCDu44WEJ1LkrAqrq/PEiI0Il/hpO90IEHGJgF1Jbyc7eJfIluSJBsT2D94C5
+faQtqO8ZC/rI01LF9pB3IfB9keb43H7c8u+T5t9gHG6QWY1smN9KNUyEJQ4HU8yz
+zfMqp7RlQdfFcnJWGLv60wv1pArOUwIYLgIfiMXgo47evWFrwM51QezWQ+iwgntA
+IPG+o1CeU/PeUub0Cir53su4Rb9J+oJGTMM5kiLicMf5envlFyBY/mfDq9vezBDn
+09ar2DQzX2bP1KfWORs5
+=Mx4R
+-----END PGP SIGNATURE-----
 
-Regards,
-Mike
-
-> =
-
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+--EuxKj2iCbKjpUGkD--
