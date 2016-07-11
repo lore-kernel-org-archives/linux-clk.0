@@ -1,85 +1,66 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sylwester Nawrocki
-	<s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-        Padmavathi Venna <padma.v@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular
-Date: Mon, 4 Jul 2016 17:12:16 -0400
-Message-ID: <20160704211220.5685-7-paul.gortmaker@windriver.com>
-In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:50806 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030318AbcGKIAc (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2016 04:00:32 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wan Zongshun <vw@iommu.org>, Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	jason@lakedaemon.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
+Date: Mon, 11 Jul 2016 10:03:25 +0200
+Message-ID: <4765191.NGpMC1JR46@wuerfel>
+In-Reply-To: <1468135649-19980-7-git-send-email-vw@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-7-git-send-email-vw@iommu.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Kconfig currently controlling compilation of this code is:
+On Sunday, July 10, 2016 3:27:26 PM CEST Wan Zongshun wrote:
+> +       ret = of_property_read_string(np, "compatible", &soc_dev_attr->soc_id);
+> +       if (ret)
+>               return -EINVAL;
+> +
+> +       soc_dev_attr->machine = "NUC900EVB";
+> +       soc_dev_attr->family = "NUC900";
+> +       soc_dev = soc_device_register(soc_dev_attr);
+> +       if (IS_ERR(soc_dev)) {
+> +               kfree(soc_dev_attr);
+> +               return -ENODEV;
+> +       }
+> +
+> +       ret = regmap_read(syscon_regmap, GCR_CHIPID, &nuc900_chipid);
+> +       if (ret)
+> +               return -ENODEV;
+> +
+> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
+> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
+> +
+> +       dev_info(&pdev->dev, "Nuvoton Chip ID: 0x%x, Version ID:0x%x\n",
+> +                nuc900_chipid & GCR_CHIPID_MASK,
+> +                (nuc900_chipid >> 24) & 0xff);
 
-arch/arm/mach-exynos/Kconfig:menuconfig ARCH_EXYNOS
-arch/arm/mach-exynos/Kconfig:   bool "Samsung EXYNOS" if ARCH_MULTI_V7
+I'm still a bit unsure about the set of attributes here.
 
-...meaning that it currently is not being built as a module by anyone.
+- The "soc_id" is read from the device tree from the field that contains
+  the board name, I think for consistency you should try to map the
+  GCR_CHIPID to the name of the SoC and assign that here
 
-Lets remove the couple traces of modularity so that when reading the
-driver there is no doubt it is builtin-only.
+- The "machine" is hardcoded to "NUC900EVB", which in turn looks like
+  a particular board but not the one you are running on. Maybe read
+  that from the DT instead?
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+- The "revision" is not filled at all, I would suggest using something
+  derived from the GCR_CHIPID register here
 
-Since module_init was already not used by this code, the init ordering
-remains unchanged with this commit.
+- you have two nonstandard attributes "chipid" and "version", which
+  I'd hope to avoid -- the set of standard attributes is supposed to
+  give enough information about the machine, and platform independent
+  user space will never read those.
 
-We also delete the MODULE_LICENSE tags etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 4e9584d79089..42b62f865198 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -15,7 +15,7 @@
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/syscore_ops.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/clock/exynos-audss-clk.h>
-@@ -278,14 +278,3 @@ static int __init exynos_audss_clk_init(void)
- 	return platform_driver_register(&exynos_audss_clk_driver);
- }
- core_initcall(exynos_audss_clk_init);
--
--static void __exit exynos_audss_clk_exit(void)
--{
--	platform_driver_unregister(&exynos_audss_clk_driver);
--}
--module_exit(exynos_audss_clk_exit);
--
--MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
--MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:exynos-audss-clk");
--- 
-2.8.4
+	Arnd
