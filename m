@@ -1,65 +1,66 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: clk: Per controller locks (prepare & enable)
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <57737761.2020708@samsung.com>
- <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
- <577A1D54.9010203@samsung.com>
- <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
- <577B54CE.90004@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <913d98f6-0d7c-63e3-8748-961eafd776f4@osg.samsung.com>
-Date: Tue, 5 Jul 2016 09:48:34 -0400
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 11 Jul 2016 11:55:52 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Franklin S Cooper Jr <fcooper@ti.com>
+Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
+	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH v8 3/9] pwm: pwm-tiehrpwm: Update dt binding document to
+ use generic node name
+Message-ID: <20160711095552.GH5823@ulmo.ba.sec>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-4-git-send-email-fcooper@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <577B54CE.90004@samsung.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZPDwMsyfds7q4mrK"
+In-Reply-To: <1462291015-1919-4-git-send-email-fcooper@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
 
-On 07/05/2016 02:33 AM, Krzysztof Kozlowski wrote:
-> On 07/04/2016 05:15 PM, Javier Martinez Canillas wrote:
+--ZPDwMsyfds7q4mrK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[snip]
+On Tue, May 03, 2016 at 10:56:49AM -0500, Franklin S Cooper Jr wrote:
+> Now that the node name has been changed from ehrpwm to pwm the document
+> should show this proper usage. Change the unit address in the example
+> from 0 to the proper physical address value that should be used. Also
+> insure that the unit address matches to the reg property.
+>=20
+> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
->>
->> Yes, splitting the lock per controller will fix the possible deadlock in
->> this case but I think we need an approach that is safe for all possible
->> scenarios. Otherwise it will work more by coincidence than due a design.
-> 
-> This is not a coincidence. This design is meant to fix this deadlock.
-> Not by coincidence. By design.
->
+I applied this long ago, but never replied: Applied, thanks.
 
-Ok, if the configurations I described doesn't exist in practice and are
-just theoretical then yes, doing a per controller lock is a good design. 
- 
-> You are talking about theoretical different configurations... without
-> even real bug reports. I am providing an idea to fix a real deadlock and
-> your argument is that it might not fix other (non-reported) deadlocks.
-> These other deadlocks happen now as well probably...
->
+Thierry
 
-I'm not against you re-working the locks to do it per controller, is just
-that I thought it would be good to have a solution that is going to work
-for all possible scenarios.
+--ZPDwMsyfds7q4mrK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You asked for comments/opinions/ideas and I gave mine, that's all :)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> Best regards,
-> Krzysztof
-> 
+iQIcBAABCAAGBQJXg20mAAoJEN0jrNd/PrOhIeUP/jn+tXVGKN5TntUnYN35a8/r
+thpQZEdWLeKfro6QrXt2PVubKf7DUllHX0p3fLF5K7by13ATq+Ewm2VvLlA0mQEP
+EisBUOBbx/yN05avwMk6iuOzxXMBFwVeCJa9tjpIkOiBCQiIMywqq9ptdshpzp5p
+Ianv0aq49cwpUXpZNrvTq5Vm0G3AKkg6WFr553kmbUkmJ9cjA6sWZp6JVW2IVnLa
+IZgCpZxAwSJgGfiP6cefWWALpMpdsA7xeqCVH+yIe5xVr3St9JUd4j24qcTac8ig
+zBPOJ1Vn6pMLfT2J8XhZBpr8hJ7xL8otNakH0AIErDX0KAURgKzjwjw+m1pxuctH
+iHEgRtufRWUxmCPeJCcchEBCQvBmwJa4+hXUFVTVA+ab1VGnDcPb7MPB4NzFPaAj
+nPtA4AViRewjzjC6/uU61MT8z5p2wES34s2d23AMmrHq6aSRi9frM47vzLaWpUEc
+1G5dQn+Kpa0Ck5SEroeF4d6oh0iQZq/glUrDt8k8U4gLJrTbTMr2CsplkXM5VsGg
+prElhJyEARWOPKrWgsKA0crIeMd5gdKDNHQoG2aKTWwpf5mLg4TN10oIpgo1imwn
+MH+AyUop9jpSJ4glrpJbsqrBNr+kpkNUM0JmmXjMxAFGFoNlB9gMuegcYJTRjLxn
+wpKXs9O1Px8dylvmqcp1
+=FH2T
+-----END PGP SIGNATURE-----
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--ZPDwMsyfds7q4mrK--
