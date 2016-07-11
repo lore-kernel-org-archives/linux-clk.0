@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 21 Jul 2016 18:45:34 +0000
-From: Jason Cooper <jason@lakedaemon.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Wan ZongShun <mcuos.com@gmail.com>, Wan Zongshun <vw@iommu.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>, p.zabel@pengutronix.de
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-Message-ID: <20160721184534.GI5814@io.lakedaemon.net>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <16178876.fFBuoBSjbd@wuerfel>
- <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
- <1885052.EkH2ZADWZS@wuerfel>
+Return-Path: <Jiada_Wang@mentor.com>
+From: <jiada_wang@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
+	<vladimir_zapolskiy@mentor.com>, <jiada_wang@mentor.com>
+Subject: [RFC PATCH] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
+Date: Sun, 10 Jul 2016 21:55:56 -0700
+Message-ID: <1468212956-14411-1-git-send-email-jiada_wang@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1885052.EkH2ZADWZS@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Wan ZongShun,
+From: Jiada Wang <jiada_wang@mentor.com>
 
-On Fri, Jul 15, 2016 at 12:02:55PM +0200, Arnd Bergmann wrote:
-> On Friday, July 15, 2016 5:44:50 PM CEST Wan ZongShun wrote:
-> > 2016-07-15 15:00 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
-> > > On Friday, July 15, 2016 1:15:58 PM CEST Wan Zongshun wrote:
-...
-> > > That assumes that REG_AIC_IPER contains a 32-bit value with one single
-> > > bit set to indicate which IRQ was triggered.
-> > >
-> > > If the difference is only in performance, you could try measuring which
-> > > of the two ends up being faster.
-> > 
-> > It seems hard to measure. I think Do IO operation should be slower
-> > than shift 2. 
-> 
-> It depends on how fast that particular I/O path is. A lot of readl()
-> operations are awfully slow, but the hardware design for the interrupt
-> controller may in fact have optimized this to be reasonably fast.
-> 
-> Another option would be to avoid the shift and just use the raw value
-> of the REG_AIC_IPER register as the hwirq, with a custom map()
-> callback that turns shifts the number read from the DT two bits
-> so it matches the register value.
+Previously CLK_SET_RATE_GATE flag is only checked in clk_set_rate()
+which only ensures the clock being called by clk_set_rate() won't
+change rate when it has been prepared if CLK_SET_RATE_GATE flag is set.
+But a clk_set_rate() request may propagate rate change to these clocks
+from the requested clock's topmost parent clock to all its offsprings,
+when any one of these clocks has CLK_SET_RATE_GATE flag set
+and it has been prepared, the clk_set_rate() request should fail.
 
-Good idea.  Are the two lsb bits constant or do they need to be masked?
+This patch moves check of CLK_SET_RATE_GATE flag to
+clk_propagate_rate_change() to ensure all affected clocks will
+be checked if their rate will be changed after clk_set_rate().
 
-thx,
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/clk/clk.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Jason.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 820a939..aa5e4c3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1437,6 +1437,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+ 	if (core->rate == core->new_rate)
+ 		return NULL;
+ 
++	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
++		return -EBUSY;
++
+ 	if (core->notifier_count) {
+ 		ret = __clk_notify(core, event, core->rate, core->new_rate);
+ 		if (ret & NOTIFY_STOP_MASK)
+@@ -1571,9 +1574,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (rate == clk_core_get_rate_nolock(core))
+ 		return 0;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, rate);
+ 	if (!top)
+-- 
+1.7.9.5
