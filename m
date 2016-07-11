@@ -1,52 +1,68 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v3 0/6] Add Amlogic meson8b clock gates
-Date: Sun, 17 Jul 2016 20:44:45 +0200
-Message-Id: <1468781091-39119-1-git-send-email-serveralex@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3] bindings: spi-samsung: document the clocks and the
+ clock-name property
+Date: Mon, 11 Jul 2016 11:36:21 +0900
+Message-id: <1468204581-16873-1-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <20160708203207.GB25980@kozik-lap>
+References: <20160708203207.GB25980@kozik-lap>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
-U-Boot disables most of them at boot. In order to enable ethernet, USB and other
-components it's mandatory to enable the clock gates when loading the corresponding
-drivers.
+These two properties were not documented but used in the spi
+dts. Add the related documentation.
 
-The meson8b clock gate support is based on the previous work done for Amlogic gxbb
-currently available in clk-next.
+Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+Hi,
 
-Changes since v2:
-  - Added commit description for patch 2
-  - Changed CLK_NR_CLOCKS macro to constant int
-  - Moved back MESON_GATE macro to share it between gxbb and meson8b
+Changelog related only to this patch:
 
-Changes since v1:
-  - Fixed GXBB spelling
-  - Moved newly introduced CLKID defines to private header
-  - Moved CLK_NR_CLKS define from DT binding to private header
-  - Rebased to linux-amlogic/v4.7/integ making Kconfig select obsolete
+V1 -> V2: [new] added the clocks and clock-name documentation
+   in the bindings
 
-Alexander Müller (6):
-  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
-  meson: clk: Move register definitions to meson8b.h
-  meson: clk: Rename register names according to Amlogic datasheet
-  clk: meson: Copy meson8b CLKID defines to private header file
-  gxbb: clk: Adjust MESON_GATE macro to be shared with meson8b
-  meson: clk: Add support for clock gates
+V2 -> V3: reworded the 'clock-names' as suggested by Krzysztof,
+   added Mike's and Krzysztof's review and Krzysztof's
+   suggested-by.
 
- drivers/clk/meson/Makefile                      |   2 +-
- drivers/clk/meson/clkc.h                        |   2 +-
- drivers/clk/meson/gxbb.c                        | 162 ++++++-------
- drivers/clk/meson/{meson8b-clkc.c => meson8b.c} | 293 +++++++++++++++++++++---
- drivers/clk/meson/meson8b.h                     | 148 ++++++++++++
- include/dt-bindings/clock/meson8b-clkc.h        |   2 -
- 6 files changed, 494 insertions(+), 115 deletions(-)
- rename drivers/clk/meson/{meson8b-clkc.c => meson8b.c} (52%)
- create mode 100644 drivers/clk/meson/meson8b.h
+Thanks,
+Andi
 
+ Documentation/devicetree/bindings/spi/spi-samsung.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index 57d5539..f45c6eb 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -24,6 +24,15 @@ Required SoC Specific Properties:
+ - dma-names: Names for the dma channels. There must be at least one channel
+   named "tx" for transmit and named "rx" for receive.
+ 
++- clocks: specifies the clock IDs provided to the SPI controller; they are
++  required for interacting with the controller itself, for synchronizing the bus
++  and as I/O clock (the latter is required by exynos5433 and exynos7).
++
++- clock-names: string names of the clocks in the 'clocks' property; for all the
++  the devices the names must be "spi", "spi_busclkN" (where N is determined by
++  "samsung,spi-src-clk"), while Exynos5433 should specify a third clock
++  "spi_ioclk" for the I/O clock.
++
+ Required Board Specific Properties:
+ 
+ - #address-cells: should be 1.
 -- 
-2.5.0
+2.8.1
