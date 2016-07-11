@@ -1,178 +1,68 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v4] xen/arm: Add a clock property
-To: Michael Turquette <mturquette@baylibre.com>,
-	<linux-arm-kernel@lists.infradead.org>, Julien Grall <julien.grall@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
-CC: <xen-devel@lists.xenproject.org>, <devicetree@vger.kernel.org>, Stefano
- Stabellini <sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Stephen
- Boyd <sboyd@codeaurora.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
-Date: Wed, 13 Jul 2016 10:35:42 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Wan Zongshun <vw@iommu.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	jason@lakedaemon.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
+Date: Mon, 11 Jul 2016 12:24:21 +0200
+Message-ID: <1606219.BzcByuFgJm@wuerfel>
+In-Reply-To: <578361B5.7010803@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <4765191.NGpMC1JR46@wuerfel> <578361B5.7010803@iommu.org>
 MIME-Version: 1.0
-In-Reply-To: <146836236759.73491.11707389619985827497@resonance>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13.07.2016 00:26, Michael Turquette wrote:
-> Quoting Dirk Behme (2016-07-12 00:46:45)
->> Clocks described by this property are reserved for use by Xen, and the OS
->> must not alter their state any way, such as disabling or gating a clock,
->> or modifying its rate. Ensuring this may impose constraints on parent
->> clocks or other resources used by the clock tree.
->
-> Note that clk_prepare_enable will not prevent the rate from changing
-> (clk_set_rate) or a parent from changing (clk_set_parent). The only way
-> to do this currently would be to set the following flags on the effected
-> clocks:
->
-> 	CLK_SET_RATE_GATE
-> 	CLK_SET_PARENT_GATE
+On Monday, July 11, 2016 5:07:01 PM CEST Wan Zongshun wrote:
+> 
+> On 2016年07月11日 16:03, Arnd Bergmann wrote:
+> > On Sunday, July 10, 2016 3:27:26 PM CEST Wan Zongshun wrote:
+> >> +       ret = of_property_read_string(np, "compatible", &soc_dev_attr->soc_id);
+> >> +       if (ret)
+> >>                return -EINVAL;
+> >> +
+> >> +       soc_dev_attr->machine = "NUC900EVB";
+> >> +       soc_dev_attr->family = "NUC900";
+> >> +       soc_dev = soc_device_register(soc_dev_attr);
+> >> +       if (IS_ERR(soc_dev)) {
+> >> +               kfree(soc_dev_attr);
+> >> +               return -ENODEV;
+> >> +       }
+> >> +
+> >> +       ret = regmap_read(syscon_regmap, GCR_CHIPID, &nuc900_chipid);
+> >> +       if (ret)
+> >> +               return -ENODEV;
+> >> +
+> >> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
+> >> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
+> >> +
+> >> +       dev_info(&pdev->dev, "Nuvoton Chip ID: 0x%x, Version ID:0x%x\n",
+> >> +                nuc900_chipid & GCR_CHIPID_MASK,
+> >> +                (nuc900_chipid >> 24) & 0xff);
+> >
+> > I'm still a bit unsure about the set of attributes here.
+> >
+> > - The "soc_id" is read from the device tree from the field that contains
+> >    the board name, I think for consistency you should try to map the
+> >    GCR_CHIPID to the name of the SoC and assign that here
+> 
+> I will try to get chipid and map it to soc name like: “nuc970”, "nuc910".
+> 
+> And I will set this soc name to soc_id, ok?
 
+Ok.
 
+> > - The "machine" is hardcoded to "NUC900EVB", which in turn looks like
+> >    a particular board but not the one you are running on. Maybe read
+> >    that from the DT instead?
+> 
+> Should I read nuc970-evb.dts's "model" or "compatible" properties?
 
-Regarding setting flags, I think we already talked about that. I think 
-the conclusion was that in our case its not possible to manipulate the 
-flags in the OS as this isn't intended to be done in cases like ours. 
-Therefore no API is exported for this.
+I think "model" is best here, but see what the others do.
 
-I.e. if we need to set these flags, we have to do that in Xen where we 
-add the clocks to the hypervisor node in the device tree. And not in the 
-kernel patch discussed here.
-
-Best regards
-
-Dirk
-
-
-> And then enable the clocks. All calls to clk_set_parent and clk_set_rate
-> with those clocks in the path will fail, so long as they are prepared
-> and enabled. This implementation detail is specific to Linux and
-> definitely should not go into the binding.
->
->>
->> This property is used to proxy clocks for devices Xen has taken ownership
->> of, such as UARTs, for which the associated clock controller(s) remain
->> under the control of Dom0.
->
-> I'm still not completely sure about this type of layering and whether or
-> not it is sane. If you want Xen to manage the clock controller, AND you
-> want Linux guests or dom0 to consume those clocks and manipulate them in
-> other drivers, then this solution won't work.
->
-> Regards,
-> Mike
->
->>
->> Up to now, the workaround for this has been to use the Linux kernel
->> command line parameter 'clk_ignore_unused'. See Xen bug
->>
->> http://bugs.xenproject.org/xen/bug/45
->>
->> too.
->>
->> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
->> ---
->> Changes in v4: Switch to the xen.txt description proposed by Mark:
->>                https://www.spinics.net/lists/arm-kernel/msg516158.html
->>
->> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
->>
->> Changes in v2: Drop the Linux implementation details like clk_disable_unused
->>                in xen.txt.
->>
->>  Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
->>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
->>  2 files changed, 59 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
->> index c9b9321..437e50b 100644
->> --- a/Documentation/devicetree/bindings/arm/xen.txt
->> +++ b/Documentation/devicetree/bindings/arm/xen.txt
->> @@ -17,6 +17,18 @@ the following properties:
->>    A GIC node is also required.
->>    This property is unnecessary when booting Dom0 using ACPI.
->>
->> +Optional properties:
->> +
->> +- clocks: a list of phandle + clock-specifier pairs
->> +  Clocks described by this property are reserved for use by Xen, and the
->> +  OS must not alter their state any way, such as disabling or gating a
->> +  clock, or modifying its rate. Ensuring this may impose constraints on
->> +  parent clocks or other resources used by the clock tree.
->> +
->> +  Note: this property is used to proxy clocks for devices Xen has taken
->> +  ownership of, such as UARTs, for which the associated clock
->> +  controller(s) remain under the control of Dom0.
->> +
->>  To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
->>  under /hypervisor with following parameters:
->>
->> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
->> index 47acb36..5c546d0 100644
->> --- a/arch/arm/xen/enlighten.c
->> +++ b/arch/arm/xen/enlighten.c
->> @@ -24,6 +24,7 @@
->>  #include <linux/of_fdt.h>
->>  #include <linux/of_irq.h>
->>  #include <linux/of_address.h>
->> +#include <linux/clk-provider.h>
->>  #include <linux/cpuidle.h>
->>  #include <linux/cpufreq.h>
->>  #include <linux/cpu.h>
->> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
->>  }
->>  late_initcall(xen_pm_init);
->>
->> +/*
->> + * Check if we want to register some clocks, that they
->> + * are not freed because unused by clk_disable_unused().
->> + * E.g. the serial console clock.
->> + */
->> +static int __init xen_arm_register_clks(void)
->> +{
->> +       struct clk *clk;
->> +       struct device_node *xen_node;
->> +       unsigned int i, count;
->> +       int ret = 0;
->> +
->> +       xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
->> +       if (!xen_node) {
->> +               pr_err("Xen support was detected before, but it has disappeared\n");
->> +               return -EINVAL;
->> +       }
->> +
->> +       count = of_clk_get_parent_count(xen_node);
->> +       if (!count)
->> +               goto out;
->> +
->> +       for (i = 0; i < count; i++) {
->> +               clk = of_clk_get(xen_node, i);
->> +               if (IS_ERR(clk)) {
->> +                       pr_err("Xen failed to register clock %i. Error: %li\n",
->> +                              i, PTR_ERR(clk));
->> +                       ret = PTR_ERR(clk);
->> +                       goto out;
->> +               }
->> +
->> +               ret = clk_prepare_enable(clk);
->> +               if (ret < 0) {
->> +                       pr_err("Xen failed to enable clock %i. Error: %i\n",
->> +                              i, ret);
->> +                       goto out;
->> +               }
->> +       }
->> +
->> +       ret = 0;
->> +
->> +out:
->> +       of_node_put(xen_node);
->> +       return ret;
->> +}
->> +late_initcall(xen_arm_register_clks);
->>
->>  /* empty stubs */
->>  void xen_arch_pre_suspend(void) { }
->> --
+	Arnd
