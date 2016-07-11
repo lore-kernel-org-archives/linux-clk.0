@@ -1,43 +1,137 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 17:30:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.8-rc1
-Message-ID: <20160702003020.GH27880@codeaurora.org>
-References: <20160701150056.26537-1-thierry.reding@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:40658 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757302AbcGKC7T (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 22:59:19 -0400
+Date: Sun, 10 Jul 2016 22:58:04 -0400
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Wan Zongshun <vw@iommu.org>
+CC: <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	LKML <linux-kernel@vger.kernel.org>, <p.zabel@pengutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>,
+	<linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
+Message-ID: <20160711025804.GG30853@windriver.com>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1468135649-19980-6-git-send-email-vw@iommu.org>
+ <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
+ <578304CB.8050604@iommu.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160701150056.26537-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <578304CB.8050604@iommu.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/01, Thierry Reding wrote:
-> Hi Michael, Stephen,
-> 
-> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-> 
->   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-clk
-> 
-> for you to fetch changes up to 15d68e8c2e95e8b62465c7cb3bc642784365ee1b:
-> 
->   clk: tegra: Initialize UTMI PLL when enabling PLLU (2016-06-30 17:43:17 +0200)
-> 
+[Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900] On 11/07/2016 (Mon 10:30) Wan Zongshun wrote:
 
-Pulled but please fix these types of errors next time.
+> 
+> 
+> On 2016年07月11日 05:56, Paul Gortmaker wrote:
+> >On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote
+> >>This driver is to add reset support for nuc900 series,
+> >>currently, it only supports nuc970 SoC reset.
+> >>
+> >>Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+> >>---
+> >>  drivers/power/reset/Kconfig        |  7 +++
+> >>  drivers/power/reset/Makefile       |  1 +
+> >>  drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
+> >>  3 files changed, 101 insertions(+)
+> >>  create mode 100644 drivers/power/reset/nuc900-reset.c
+> >>
+> >>diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> >>index 9bb2622..8c84892 100644
+> >>--- a/drivers/power/reset/Kconfig
+> >>+++ b/drivers/power/reset/Kconfig
+> >>@@ -94,6 +94,13 @@ config POWER_RESET_MSM
+> >>         help
+> >>           Power off and restart support for Qualcomm boards.
+> >>
+> >>+config POWER_RESET_NUC900
+> >>+       bool "Nuc900 restart driver"
+> >
+> >If this driver is bool and not tristate, then please remove all references
+> >to MODULE_<xyz> and then the module.h include as well.
+> 
+> I will remove the following codes in my reset.c driver.
+> 
+> MODULE_DEVICE_TABLE(of, of_nuc900_reset_match);
+> #include <linux/module.h>
 
-ERROR: code indent should use tabs where possible
-#470: FILE: drivers/clk/tegra/clk-pll.c:2568:
-+^I         PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |$
+Thanks -- it is not a specific criticism of your driver, but just a
+mistake that we have consistently copied from one driver to the next,
+and I hope we can stop doing that with the right reviews.
 
-ERROR: code indent should use tabs where possible
-#471: FILE: drivers/clk/tegra/clk-pll.c:2569:
-+^I         PLLU_HW_PWRDN_CFG0_USE_LOCKDET;$
+P.
+--
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> 
+> >
+> >Thanks,
+> >Paul.
+> >--
+> >
+> >>+       depends on ARCH_W90X900
+> >>+       help
+> >>+         Power off and restart support for Nuvoton NUC900 family of
+> >>+         reference boards.
+> >>+
+> >>  config POWER_RESET_LTC2952
+> >>         bool "LTC2952 PowerPath power-off driver"
+> >>         depends on OF_GPIO
+> >>diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> >>index ab7aa86..d4df889 100644
+> >>--- a/drivers/power/reset/Makefile
+> >>+++ b/drivers/power/reset/Makefile
+> >>@@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+> >>  obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+> >>  obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
+> >>  obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+> >>+obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
+> >>  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+> >>  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+> >>  obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+> >>diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
+> >>new file mode 100644
+> >>index 0000000..49986b7
+> >>--- /dev/null
+> >>+++ b/drivers/power/reset/nuc900-reset.c
+> >>@@ -0,0 +1,93 @@
+> >>+/*
+> >>+ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
+> >>+ *
+> >>+ * The code contained herein is licensed under the GNU General Public
+> >>+ * License. You may obtain a copy of the GNU General Public License
+> >>+ * Version 2 or later at the following locations:
+> >>+ *
+> >>+ * http://www.opensource.org/licenses/gpl-license.html
+> >>+ * http://www.gnu.org/copyleft/gpl.html
+> >>+ */
+> >>+#include <linux/init.h>
+> >>+#include <linux/err.h>
+> >>+#include <linux/io.h>
+> >>+#include <linux/kernel.h>
+> >>+#include <linux/mfd/syscon.h>
+> >>+#include <linux/module.h>
+> >>+#include <linux/notifier.h>
+> >>+#include <linux/of.h>
+> >>+#include <linux/platform_device.h>
+> >>+#include <linux/reboot.h>
+> >>+#include <linux/regmap.h>
+> >>
+> >
+> >[...]
+> >
+> >_______________________________________________
+> >linux-arm-kernel mailing list
+> >linux-arm-kernel@lists.infradead.org
+> >http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
+> >
