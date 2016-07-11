@@ -1,79 +1,50 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Guodong Xu <guodong.xu@linaro.org>, sboyd@codeaurora.org,
- jorge.ramirez-ortiz@linaro.org, xinliang.liu@linaro.org,
- guodong.xu@linaro.org, john.stultz@linaro.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1467189955-21694-2-git-send-email-guodong.xu@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1467189955-21694-1-git-send-email-guodong.xu@linaro.org>
- <1467189955-21694-2-git-send-email-guodong.xu@linaro.org>
-Message-ID: <146784139106.73491.6417383579004254897@resonance>
-Subject: Re: [PATCH v2 2/2] clk: hi6220: initialize UART1 clock to 150MHz
-Date: Wed, 06 Jul 2016 14:43:11 -0700
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Russell King <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Jorge Ramirez Ortiz <jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH] amba: Support clk parents and rates assigned in DT
+Date: Mon, 11 Jul 2016 14:08:52 -0700
+Message-Id: <20160711210852.31553-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Guodong Xu (2016-06-29 01:45:55)
-> From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> =
+Add the call to of_clk_set_defaults() into the amba probe path so
+that devices on the amba bus can use the assigned rates and
+parents feature of the common clock framework.
 
-> Early at boot, during the sys_clk initialization, make sure UART1 uses
-> the higher frequency clock, 150MHz.
-> =
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Jorge Ramirez Ortiz <jorge.ramirez-ortiz@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/amba/bus.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> This enables support for higher baud rates (up to 3Mbps) in UART1, which
-> is required by faster bluetooth transfers.
-> =
-
-> v2: use clk_set_rate() to propergate clock settings.
-> =
-
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
-> ---
->  drivers/clk/hisilicon/clk-hi6220.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> =
-
-> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/c=
-lk-hi6220.c
-> index a36ffcb..631c56f 100644
-> --- a/drivers/clk/hisilicon/clk-hi6220.c
-> +++ b/drivers/clk/hisilicon/clk-hi6220.c
-> @@ -12,6 +12,7 @@
->  =
-
->  #include <linux/kernel.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/clk.h>
->  #include <linux/clkdev.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> @@ -192,6 +193,9 @@ static void __init hi6220_clk_sys_init(struct device_=
-node *np)
->  =
-
->         hi6220_clk_register_divider(hi6220_div_clks_sys,
->                         ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
-> +
-> +       if (clk_set_rate(clk_data->clk_data.clks[HI6220_UART1_SRC], 15000=
-0000))
-> +               pr_err("failed to set uart1 clock rate\n");
-
-Why doesn't the UART driver call clk_get and then clk_set_rate on this
-clock? Why do it in the clk provider driver?
-
-Thanks,
-Mike
-
->  }
->  CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sy=
-s_init);
->  =
-
-> -- =
-
-> 1.9.1
->=20
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index a5b5c87e2114..a56fa2a1e9aa 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -19,6 +19,7 @@
+ #include <linux/amba/bus.h>
+ #include <linux/sizes.h>
+ #include <linux/limits.h>
++#include <linux/clk/clk-conf.h>
+ 
+ #include <asm/irq.h>
+ 
+@@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
+ 	int ret;
+ 
+ 	do {
++		ret = of_clk_set_defaults(dev->of_node, false);
++		if (ret < 0)
++			break;
++
+ 		ret = dev_pm_domain_attach(dev, true);
+ 		if (ret == -EPROBE_DEFER)
+ 			break;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
