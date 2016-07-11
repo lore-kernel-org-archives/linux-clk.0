@@ -1,131 +1,40 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 8/8] clk: fixed-rate: Convert into a module platform driver
-Date: Tue,  5 Jul 2016 18:23:34 +0200
-Message-Id: <1467735814-23518-11-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from
+ SPI clocks
+To: Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <57837BD4.5030602@samsung.com>
+Date: Mon, 11 Jul 2016 12:58:28 +0200
+MIME-version: 1.0
+In-reply-to: <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Adds support for fixed-rate clock providers which have not been
-enabled via of_clk_init().
+On 07/08/2016 04:46 PM, Andi Shyti wrote:
+> Because the Exynos5433 SPI driver supports the ioclk handling and
+> the following patch:
+> 
+>   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
+> 
+> fixes a synchronus abort issue, none of the SPI clocks require
+s/synchronus/synchronous
 
-This is required by Device trees overlays that introduce clocks
-providers.
+> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+> for the SPI related clocks.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/clk-fixed-rate.c | 69 +++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 65 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index 2edb39342a02..e64ba2315880 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -15,6 +15,7 @@
- #include <linux/io.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/platform_device.h>
- 
- /*
-  * DOC: basic fixed-rate clock that cannot gate
-@@ -160,15 +161,16 @@ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_rate);
- /**
-  * of_fixed_clk_setup() - Setup function for simple fixed rate clock
-  */
--void of_fixed_clk_setup(struct device_node *node)
-+struct clk *_of_fixed_clk_setup(struct device_node *node)
- {
- 	struct clk *clk;
- 	const char *clk_name = node->name;
- 	u32 rate;
- 	u32 accuracy = 0;
-+	int ret;
- 
- 	if (of_property_read_u32(node, "clock-frequency", &rate))
--		return;
-+		return ERR_PTR(-EIO);
- 
- 	of_property_read_u32(node, "clock-accuracy", &accuracy);
- 
-@@ -176,9 +178,68 @@ void of_fixed_clk_setup(struct device_node *node)
- 
- 	clk = clk_register_fixed_rate_with_accuracy(NULL, clk_name, NULL,
- 						    0, rate, accuracy);
--	if (!IS_ERR(clk))
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (ret) {
-+		clk_unregister(clk);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return clk;
-+}
-+
-+void of_fixed_clk_setup(struct device_node *node)
-+{
-+	_of_fixed_clk_setup(node);
- }
- EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
- CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
-+
-+static int of_fixed_clk_remove(struct platform_device *pdev)
-+{
-+	struct clk *clk = platform_get_drvdata(pdev);
-+
-+	if (clk)
-+		clk_unregister_fixed_rate(clk);
-+
-+	return 0;
-+}
-+
-+static int of_fixed_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk;
-+
-+	/*
-+	 * This function is not executed when of_fixed_clk_setup
-+	 * succeeded.
-+	 */
-+
-+	clk = _of_fixed_clk_setup(pdev->dev.of_node);
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	platform_set_drvdata(pdev, clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id of_fixed_clk_ids[] = {
-+	{ .compatible = "fixed-clock" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, of_fixed_clk_ids);
-+
-+static struct platform_driver of_fixed_clk_driver = {
-+	.driver = {
-+		.name = "of_fixed_clk",
-+		.of_match_table = of_fixed_clk_ids,
-+	},
-+	.probe = of_fixed_clk_probe,
-+	.remove = of_fixed_clk_remove,
-+};
-+
-+builtin_platform_driver(of_fixed_clk_driver);
- #endif
--- 
-2.8.1
+In case this goes through the spi tree:
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
