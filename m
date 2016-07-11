@@ -1,44 +1,125 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.135]:60931 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752903AbcGDHvl (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2016 03:51:41 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+Received: from mr213139.mail.yeah.net ([223.252.213.139]:40392 "EHLO
+	mr213139.mail.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757464AbcGKCa5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 22:30:57 -0400
+Subject: Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1468135649-19980-6-git-send-email-vw@iommu.org>
+ <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
+Cc: devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Russell King <linux@armlinux.org.uk>,
-	Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clkdev: add devm_of_clk_get()
-Date: Mon, 04 Jul 2016 09:54:05 +0200
-Message-ID: <7596144.XSxKMDxLKp@wuerfel>
-In-Reply-To: <87y45iz0cs.wl%kuninori.morimoto.gx@renesas.com>
-References: <87y45iz0cs.wl%kuninori.morimoto.gx@renesas.com>
+	LKML <linux-kernel@vger.kernel.org>, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+From: Wan Zongshun <vw@iommu.org>
+Message-ID: <578304CB.8050604@iommu.org>
+Date: Mon, 11 Jul 2016 10:30:35 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 4, 2016 1:04:30 AM CEST Kuninori Morimoto wrote:
-> @@ -501,6 +503,11 @@ static inline struct clk *of_clk_get(struct device_node *np, int index)
->  {
->         return ERR_PTR(-ENOENT);
->  }
-> +struct clk *devm_of_clk_get(struct device *dev,
-> +                           struct device_node *np, int index)
-> +{
-> +       return ERR_PTR(-ENOENT);
-> +}
->  static inline struct clk *of_clk_get_by_name(struct device_node *np,
->                                              const char *name)
->  {
-> -- 
-> 
 
-This is missing "static inline" as found by the bot.
 
-	Arnd
+On 2016年07月11日 05:56, Paul Gortmaker wrote:
+> On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote
+>> This driver is to add reset support for nuc900 series,
+>> currently, it only supports nuc970 SoC reset.
+>>
+>> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+>> ---
+>>   drivers/power/reset/Kconfig        |  7 +++
+>>   drivers/power/reset/Makefile       |  1 +
+>>   drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 101 insertions(+)
+>>   create mode 100644 drivers/power/reset/nuc900-reset.c
+>>
+>> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+>> index 9bb2622..8c84892 100644
+>> --- a/drivers/power/reset/Kconfig
+>> +++ b/drivers/power/reset/Kconfig
+>> @@ -94,6 +94,13 @@ config POWER_RESET_MSM
+>>          help
+>>            Power off and restart support for Qualcomm boards.
+>>
+>> +config POWER_RESET_NUC900
+>> +       bool "Nuc900 restart driver"
+>
+> If this driver is bool and not tristate, then please remove all references
+> to MODULE_<xyz> and then the module.h include as well.
 
+I will remove the following codes in my reset.c driver.
+
+MODULE_DEVICE_TABLE(of, of_nuc900_reset_match);
+#include <linux/module.h>
+
+
+>
+> Thanks,
+> Paul.
+> --
+>
+>> +       depends on ARCH_W90X900
+>> +       help
+>> +         Power off and restart support for Nuvoton NUC900 family of
+>> +         reference boards.
+>> +
+>>   config POWER_RESET_LTC2952
+>>          bool "LTC2952 PowerPath power-off driver"
+>>          depends on OF_GPIO
+>> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+>> index ab7aa86..d4df889 100644
+>> --- a/drivers/power/reset/Makefile
+>> +++ b/drivers/power/reset/Makefile
+>> @@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+>>   obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+>>   obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
+>>   obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+>> +obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
+>>   obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+>>   obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+>>   obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+>> diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
+>> new file mode 100644
+>> index 0000000..49986b7
+>> --- /dev/null
+>> +++ b/drivers/power/reset/nuc900-reset.c
+>> @@ -0,0 +1,93 @@
+>> +/*
+>> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
+>> + *
+>> + * The code contained herein is licensed under the GNU General Public
+>> + * License. You may obtain a copy of the GNU General Public License
+>> + * Version 2 or later at the following locations:
+>> + *
+>> + * http://www.opensource.org/licenses/gpl-license.html
+>> + * http://www.gnu.org/copyleft/gpl.html
+>> + */
+>> +#include <linux/init.h>
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/module.h>
+>> +#include <linux/notifier.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reboot.h>
+>> +#include <linux/regmap.h>
+>>
+>
+> [...]
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
