@@ -2,79 +2,49 @@ Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Chen-Yu Tsai" <wens@csie.org>
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160705195537.GA17805@lukather>
+In-Reply-To: <20160711203448.18062-2-maxime.ripard@free-electrons.com>
 Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>,
- "Chen-Yu Tsai" <wens@csie.org>
-References: <20160705195537.GA17805@lukather>
-Message-ID: <146776432067.35356.1674013489826255803@resonance>
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.7
-Date: Tue, 05 Jul 2016 17:18:40 -0700
+ linux-kernel@vger.kernel.org,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>
+References: <20160711203448.18062-1-maxime.ripard@free-electrons.com>
+ <20160711203448.18062-2-maxime.ripard@free-electrons.com>
+Message-ID: <146827300441.73491.7304040389172798052@resonance>
+Subject: Re: [PATCH 2/2] clk: sunxi-ng: h3: Fix Kconfig symbol typo
+Date: Mon, 11 Jul 2016 14:36:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2016-07-05 12:55:37)
-> Hi Mike, Stephen,
+Quoting Maxime Ripard (2016-07-11 13:34:48)
+> The Kconfig symbol for the sun8i SoC family was mistyped. Fix that.
 > =
 
-> Please pull the following fixes for the 4.7 cycle.
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Pulled.
+Applied.
 
 Regards,
 Mike
 
+> ---
+>  drivers/clk/sunxi-ng/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > =
 
-> Thanks!
-> Maxime
-> =
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 41e53e8d4d41..2afcbd39e41e 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -60,6 +60,6 @@ config SUN8I_H3_CCU
+>         select SUNXI_CCU_NM
+>         select SUNXI_CCU_MP
+>         select SUNXI_CCU_PHASE
+> -       default ARCH_SUN8I
+> +       default MACH_SUN8I
+>  =
 
-> The following changes since commit 1a695a905c18548062509178b98bc91e675108=
-64:
-> =
-
->   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> =
-
-> are available in the git repository at:
-> =
-
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/=
-sunxi-clk-fixes-for-4.7
-> =
-
-> for you to fetch changes up to 9ca91a65583c73e4be6e9f53323a7ae04e6803ef:
-> =
-
->   clk: sunxi: remove unused variable (2016-06-16 09:18:29 +0200)
-> =
-
-> ----------------------------------------------------------------
-> Allwinner clock fixes for 4.7
-> =
-
-> A bunch of changes for the display clocks merged in 4.7
-> =
-
-> ----------------------------------------------------------------
-> Arnd Bergmann (1):
->       clk: sunxi: remove unused variable
-> =
-
-> Maxime Ripard (2):
->       clk: sunxi: tcon-ch1: Do not return a negative error in get_parent
->       clk: sunxi: display: Add per-clock flags
-> =
-
->  drivers/clk/sunxi/clk-sun4i-display.c  | 5 ++++-
->  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c | 4 ----
->  2 files changed, 4 insertions(+), 5 deletions(-)
-> =
-
+>  endif
 > -- =
 
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+> 2.9.0
+>=20
