@@ -1,290 +1,112 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: Changed: sunxi-ng clock code - NKMP clock implementation is wrong
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20160630204001.GC5485@lukather>
- <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
- <20160715085356.GR4761@lukather>
- <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
- <20160721094852.GI5993@lukather>
- <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
- <20160726063253.GW7419@lukather>
- <e1b8127f-c422-46ab-384b-aeee85aa940b@megous.com>
- <20160728210011.GJ6682@lukather>
- <7c5f2835-f044-7c18-def9-52af5ce4afc3@megous.com>
- <20160731103114.GY6215@lukather>
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	=?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-	<devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
-Message-ID: <9175af7e-e1b1-df88-de2b-16f0e8d719c1@megous.com>
-Date: Mon, 1 Aug 2016 00:01:39 +0200
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Tue, 12 Jul 2016 16:34:18 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
+	paul@pwsan.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 2/7] clk: ti: add clkdev get helper
+Message-ID: <20160712153418.GF5783@n2100.arm.linux.org.uk>
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+ <1467296018-25086-3-git-send-email-t-kristo@ti.com>
+ <20160712102228.GE5783@n2100.arm.linux.org.uk>
+ <57850A29.4010806@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20160731103114.GY6215@lukather>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <57850A29.4010806@ti.com>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p
-Content-Type: multipart/mixed; boundary="wGiGXrNbW19ioja3tDbj0dl0i2IBCnLob"
-From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
- =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Message-ID: <9175af7e-e1b1-df88-de2b-16f0e8d719c1@megous.com>
-Subject: Re: Changed: sunxi-ng clock code - NKMP clock implementation is wrong
-References: <20160630204001.GC5485@lukather>
- <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
- <20160715085356.GR4761@lukather>
- <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
- <20160721094852.GI5993@lukather>
- <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
- <20160726063253.GW7419@lukather>
- <e1b8127f-c422-46ab-384b-aeee85aa940b@megous.com>
- <20160728210011.GJ6682@lukather>
- <7c5f2835-f044-7c18-def9-52af5ce4afc3@megous.com>
- <20160731103114.GY6215@lukather>
-In-Reply-To: <20160731103114.GY6215@lukather>
+On Tue, Jul 12, 2016 at 06:18:01PM +0300, Tero Kristo wrote:
+> On 12/07/16 13:22, Russell King - ARM Linux wrote:
+> >On Thu, Jun 30, 2016 at 05:13:33PM +0300, Tero Kristo wrote:
+> >>  /**
+> >>+ * ti_clk_get - lookup a TI clock handle
+> >>+ * @dev_id: device to lookup clock for
+> >>+ * @con_id: connection ID to find
+> >>+ *
+> >>+ * Searches for a TI clock handle based on the DT node name.
+> >>+ * Returns the pointer to the clock handle, or ERR_PTR in failure.
+> >>+ */
+> >>+static struct clk *ti_clk_get(const char *dev_id, const char *con_id)
+> >>+{
+> >>+	struct of_phandle_args clkspec;
+> >>+	struct device_node *node;
+> >>+	struct clk *clk;
+> >>+
+> >>+	/* Only check for cases of type clk_get_sys(NULL, "xyz") */
+> >>+	if (dev_id || !con_id)
+> >>+		return ERR_PTR(-ENOENT);
+> >>+
+> >>+	if (of_have_populated_dt()) {
+> >>+		node = of_find_node_by_name(NULL, con_id);
+> >>+		clkspec.np = node;
+> >>+		clk = of_clk_get_from_provider(&clkspec);
+> >>+
+> >>+		if (!IS_ERR(clk))
+> >>+			return clk;
+> >>+	}
+> >>+
+> >>+	return ERR_PTR(-ENOENT);
+> >>+}
+> >
+> >I _really_ don't like this.  This takes us back to the totally broken
+> >idea, that's already been proven to be greatly harmful in OMAP land,
+> >that the "con_id" is not a _DEVICE SPECIFIC CONNECTION NAME_ but is a
+> >CLOCK NAME.  The connection ID is supposed to be a static string in
+> >the requestor of the clock, not some random string picked out from
+> >DT.
+> 
+> What is the harm in that actually? I have most likely missed some discussion
+> but please educate me.
 
---wGiGXrNbW19ioja3tDbj0dl0i2IBCnLob
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+The problem is that we end up with drivers that we end up needing platform
+information to know what clocks they should get, and what "connection names"
+to use to get their clocks.
 
-Hi,
+We've been there before with OMAP, pre-DT times, and I fixed it up by
+creating clkdev and converting much of OMAP over to clkdev, doing
+everything the right way.  Now, we're heading around the same mistake
+that I already solved several years ago.
 
-On 31.7.2016 12:31, Maxime Ripard wrote:
-> Hi,
->=20
-> On Fri, Jul 29, 2016 at 12:01:09AM +0200, Ond=C5=99ej Jirman wrote:
->> On 28.7.2016 23:00, Maxime Ripard wrote:
->>> Hi Ondrej,
->>>
->>> On Thu, Jul 28, 2016 at 01:27:05PM +0200, Ond=C5=99ej Jirman wrote:
->>>> Hi Maxime,
->>>>
->>>> I don't have your sunxi-ng clock patches in my mailbox, so I'm reply=
-ing
->>>> to this.
->>>
->>> You can find it in the clock maintainers tree:
->>> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/log/?h=3Dc=
-lk-sunxi-ng
->>>
->>>> On 26.7.2016 08:32, Maxime Ripard wrote:
->>>>> On Thu, Jul 21, 2016 at 11:52:15AM +0200, Ond=C5=99ej Jirman wrote:=
+It's _well_ documented that the _connection id_ is a connection id and
+not a clock name.  It's been documented that way ever since the clk API
+was first published, and I'm on record for having brought up this point
+_many_ times.
 
->>>>>>>>> If so, then yes, trying to switch to the 24MHz oscillator befor=
-e
->>>>>>>>> applying the factors, and then switching back when the PLL is s=
-table
->>>>>>>>> would be a nice solution.
->>>>>>>>>
->>>>>>>>> I just checked, and all the SoCs we've had so far have that
->>>>>>>>> possibility, so if it works, for now, I'd like to stick to that=
-=2E
->>>>>>>>
->>>>>>>> It would need to be tested. U-boot does the change only once, wh=
-ile the
->>>>>>>> kernel would be doing it all the time and between various freque=
-ncies
->>>>>>>> and PLL settings. So the issues may show up with this solution t=
-oo.
->>>>>>>
->>>>>>> That would have the benefit of being quite easy to document, not =
-be a
->>>>>>> huge amount of code and it would work on all the CPUs PLLs we hav=
-e so
->>>>>>> far, so still, a pretty big win. If it doesn't, of course, we don=
-'t
->>>>>>> really have the choice.
->>>>>>
->>>>>> It's probably more code though. It has to access different registe=
-r from
->>>>>> the one that is already defined in dts, which would add a lot of c=
-ode
->>>>>> and require dts changes. The original patch I sent is simpler than=
- that.
->>>>>
->>>>> Why?
->>>>>
->>>>> You can use container_of to retrieve the parent structure of the cl=
-ock
->>>>> notifier, and then you get a ccu_common structure pointer, with the=
+So, when I see something reintroducing ways to persist with this crap,
+I'm just not going to allow it.  This is 2016 after all, it's a full
+_ten_ years after this API was created.
 
->>>>> CCU base address, the clock register, its lock, etc.
->>>>>
->>>>> Look at what is done in drivers/clk/meson/clk-cpu.c. It's like 20 L=
-oC.
->>>>>
->>>>> I don't really get why anything should be changed in the DT, or why=
- it
->>>>> would add a lot of code. Or maybe we're not talking about the same
->>>>> thing?
->>>>
->>>> I've looked at the new CCU code, particularly ccu_nkmp.c, and found =
-that
->>>> it very liberally uses divider parameters, even in situations that a=
-re
->>>> out of spec compared to the current code in the kernel.
->>>>
->>>> In the current code and especially in the original vendor code, divi=
-der
->>>> parameters are used as last resort only. Presumably because, of the
->>>> inherent trouble in changing them, as I described to you in other em=
-ail.
->>>>
->>>> The new ccu code uses dividers often and even at very high frequenci=
-es,
->>>> which goes against the spec.
->>>>
->>>> In the vendor code M is never anything else but 0, and P is used onl=
-y
->>>> for frequencies below 288MHz, which matches the H3 datasheet, which =
-says:
->>>
->>> In the vendor code, P is never used either. All the boards we had so
->>> far don't go that low, so we cannot make any of these assumptions,
->>> especially since the vendor code has had the bad habit of doing
->>> something wrong and / or useless in the past.
->>
->> P is used in the arisc firmware according to the spec for the lower
->> frequencies.
->=20
-> Yes, but has anyone actually tested those frequencies? Judging from
-> the FEX files I could gather, cpufreq never actually goes lower than
-> 480 MHz.
->=20
+> The problem is, we are already using this convention
+> all over the place in the kernel (not only OMAPs), and trying to clean up
+> the kernel requires some intermediate steps being taken, otherwise we end up
+> doing all the clean-ups in a single massive patch I fear (change all the
+> hwmod data + clock data + any implementations related to these at the same
+> time.)
 
-I tested it. It works well down to 60MHz. You can even run on 24MHz if
-you run directly from 24mhz osc. It's terribly slow, but it works ok.
+This isn't an intermediate step if you're having to put stuff into DT
+in order to support it.  Anything you throw into DT needs to be supported
+for years by the kernel, since we have the requirement that newer kernels
+are bootable with older DT files without regression.  That effectively
+means we'll never be able to remove this, and we'll end up fighting other
+people abusing the hook.
 
-I've rebased my working branch over the mainline kernel, which now
-contains the sunxi-ng, and tested it. Cpufreq seems to work on orange pi
-pc without any changes discussed in this thread. I didn't do any
-extensive testing though. But it doesn't hang on boot or cpufreq config
-changes.
+> That is true, it will end up adding new DT nodes. However, as OMAP already
+> is doing this extensively, I wonder what would be the alternative. Maybe
+> move all the clock data back to kernel space to increase the size of
+> multi-v7 builds?
 
-You can see it here:
+Why can't you use:
 
-https://github.com/megous/linux/commits/orange-pi-4.8
+	clocks = <&clk_provider fck_index>, <&clk_provider ick_index>, ...;
+	clock-names = "fck", "ick", ...;
 
->>> However, this implementation is a new thing, and it was using the H3
->>> precisely because of its early stage of support to use it as a testbe=
-d
->>> for the more established.
->>>
->>> If you feel like we should use a different formula to favour the
->>> multipliers over the dividers (or want to change the class of the CPU=
+when describing the hardware?  If you don't have a struct device, but
+only a struct device_node, you can use of_clk_get(), which allows you
+to omit the connection ID and look up by index in the clocks property.
 
->>> PLL to an NKM or something else, this is totally doable.
->>
->> I think the original formula that's currently in the mainline kernel i=
-s
->> better and avoids fiddling with dividers too much.
->=20
-> Yeah, but the older formula is not generic at all. The whole rework
-> was precisely to avoid doing the whole one driver per clock that was
-> just becoming a nightmare to maintain, and a pain to add support for
-> new SoCs. That code will be used for A10's CPU and VE PLLs too for
-> example. And they probably have the same constraints, but with
-> different variations (available values of each factors for example).
-
-Fair enough.
-
->>>> "The P factor only use in the condition that PLL output less than 28=
-8
->>>> MHz."
->>>
->>> And the datasheet also had some issues, either misleading or wrong
->>> comments in the past. Don't get me wrong, I'm not saying that this is=
-
->>> wrong, just that we should not follow it religiously, and that we
->>> should trust more the experiments than the datasheet.
->>
->> I can believe that. :) Regardless, I think the reasons given for
->> avoiding dividers are quite reasonable. It's based on how PLL block
->> works, not what manual says.
->=20
-> Yes, indeed.
->=20
-> Would replacing the current factors computation function by something
-> like:
->=20
-> for (m =3D 1; m < max_m; m++)
->     for (p =3D 1; p < max_p; p++)
->         for (n =3D 1; n < max_n; n++)
-> 	     for (k =3D 1; k < max_k; k++)
-> 	         if rate =3D=3D computed rate
-> 		     break;
->=20
-> work for you?
-
-This would be better.
-
-thank you and regards,
-  Ondrej
-
-> That way, we will favor the multipliers over the dividers, and we can
-> always "blacklist" p or m (or both) by setting their maximum to 1
-> (this would need an extra field in _ccu_div though).
->=20
->>>> Also other datasheets of similar socs from Allwinner state that M sh=
-ould
->>>> not be used in production code.
->>>
->>> Which ones specifically?
->>
->> A83T for example. You can search for "only for test" phrase.
->>
->> https://github.com/allwinner-zh/documents/blob/master/A83T/A83T_User_M=
-anual_v1.5.1_20150513.pdf
->>
->> Those PLLs are a bit different though.
->=20
-> Thanks,
-> Maxime
->=20
-
-
---wGiGXrNbW19ioja3tDbj0dl0i2IBCnLob--
-
---JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJXnnVHAAoJEG5kJsZ3z+/xHCIP/i1giaKN025CVSjHQP+nlJJN
-+JNs8LZZx9m7RDqrm3dlFQLU7FMXtIoIZN8JFuo1dnNnGu35+IpQJegHtYcYyBlN
-uO88kauL8E5WuB3ERqygZWkv8/nVtZqUI6tVtkPfFrm3LFPwc4FlwN5w3GSVCybh
-DXi9TGpAJWcmniu8SulG+WNg1g+RByv2nGMXWrPNC3HDhVnoZc0+Jl5YRI4BZr2i
-OnMXV1VJ4sC/sABpTdTKCzP3Dzvul4XeC1QU3UoerQjhiN+6XuEyhZVYDcXLWjPS
-gPd3q9c7bBX0i1aoDMJe94srrJsbbJ3Qqsstqbk1lt7CYTQdcmTMyP+MQ1WoUu8K
-Og/tVa67t2VZbkFbtPk9nGM4phux/VQ6xUYXoYFUfNkkUOT9rOcoXQbDeEg3luj1
-5PMkAG+tvY87v61+xch0Y3AzoY+/+Xi7QlMAnRIEMUmXz/SSo67ihs4yzWa7v3fl
-E+D5rvueqxY9aYNEXs3egNGrPFKvyFURWfddUn83lIhgmbQUi5PyOGW0iLQJD2qA
-L96noHg/A5wwcqZF8VaD7NTEAPaQR24kXFSQdmmPrpq9eENyhaYcLTqGxKQ+Ie9P
-vpBjR2pCil8/Fv0vgSJQHNVxwA87OKeasfCK/KLjPdd1MEgSDKuhiGN6/FIuODc6
-GiTcdeJEAVfyAHi1OhWt
-=tg/u
------END PGP SIGNATURE-----
-
---JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p--
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
