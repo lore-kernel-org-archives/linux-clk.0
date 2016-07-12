@@ -1,58 +1,91 @@
-Return-Path: <hao5781286@gmail.com>
+Return-Path: <julien.grall@arm.com>
+Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
+To: Michael Turquette <mturquette@baylibre.com>,
+ Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
+ Mark Rutland <mark.rutland@arm.com>
+References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
+ <577F73B3.8090807@arm.com> <146799758568.73491.4432005583661196579@resonance>
+Cc: xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
+ Stefano Stabellini <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <5784B688.7050903@arm.com>
+Date: Tue, 12 Jul 2016 10:21:12 +0100
 MIME-Version: 1.0
-In-Reply-To: <20160404212450.GP4227@lukather>
-References: <1458204222-31149-1-git-send-email-yassinjaffer@gmail.com>
- <1458204222-31149-2-git-send-email-yassinjaffer@gmail.com>
- <20160319235905.GA16539@rob-hp-laptop> <20160402011436.GA18567@codeaurora.org>
- <20160404212450.GP4227@lukather>
-From: Hao Zhang <hao5781286@gmail.com>
-Date: Mon, 11 Jul 2016 01:07:26 +0800
-Message-ID: <CAJeuY78Mt-286pWvCVqPFnPixp3cQ+C=SHekCkMfAd7Lf_t1+w@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi: Add CSI (camera's Sensors Interface) module
- clock driver for sun[457]i
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, yassinjaffer@gmail.com,
-	dev@linux-sunxi.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Hans de Goede <hdegoede@redhat.com>,
-	Reinder de Haan <patchesrdh@mveas.com>, Jens Kuske <jenskuske@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: multipart/alternative; boundary=001a114e31f6f1620105374b1112
+In-Reply-To: <146799758568.73491.4432005583661196579@resonance>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
---001a114e31f6f1620105374b1112
-Content-Type: text/plain; charset=UTF-8
+Hi Mike,
 
-Hi all
-I am developing a media codec driver(using bt656) for cubieboard
-one(allwinner a10 processor), i want to use DT to banding csi. after i get
-some reference on
-Documentation/devicetree/bindings/media/video-interfaces.txt, i have some
-question about whether the csi driver for cubieboard one support to parse
-the DT node just like in the reference document? if not, whether someone
-is developing it or should i necessary to complete it together (What's the
-progress of it) ?
+On 08/07/16 18:06, Michael Turquette wrote:
+> Quoting Julien Grall (2016-07-08 02:34:43)
+>> Hi Dirk,
+>>
+>> On 08/07/16 08:44, Dirk Behme wrote:
+>>> Xen hypervisor drivers might replace native OS drivers. The result is
+>>> that some important clocks that are enabled by the OS in the non-Xen
+>>> case are not properly enabled in the presence of Xen. The clocks
+>>> property enumerates the clocks that must be enabled by the Xen clock
+>>> consumer.
+>>>
+>>> An example is a serial driver enabled by the hypervisor. Xen must
+>>
+>> I would say "An example is the UART used by the hypervisor."
+>>
+>>> consume and enable these clocks in the OS to ensure behavior continues
+>>> after firmware configures the UART hardware and corresponding clock
+>>> harder.
+>>
+>> What do you mean by "harder"?
+>>
+>> Also, relying on DOM0 to enable the clock looks very wrong to me and you
+>> give an example which prove that. The UART will be used before hand by
+>> Xen, however it will not be possible to use it if you expect DOM0 to
+>> enable the clock (or even modify the clock frequency).
+>>
+>> The clock should be enabled either by the firmware or Xen. But not DOM0.
+>> DOM0 should not touch this clock at all.
+>>
+>> Furthermore, this property could be used for clock associated to device
+>> that will be passthrough-ed to a guest. In this case, the clock would be
+>> enabled even if the device is not in use which will result more power
+>> consumption.
+>
+> Is there a need to pass clock references through to guests? If so the
+> unmerged CLK_ENABLE_HAND_OFF[0] feature might be useful to you? If this
+> flag is set on a given clk, it will be enabled at the time it is
+> registered by the clk provider driver, and it's enable_count reference
+> counter will be "handed off" to the first consumer that calls clk_get()
+> and clk_prepare_enable() on it. This means the clock CAN be gated by
+> it's proper driver, but it will be enabled at boot time as well.
 
-Best regards :)
-Hao Zhang
+Some driver requires to have the clock in hand to be able to configure 
+the clock (such as setting the rate). So we would have to find a way to 
+let the guest using the clock either by assigning the clock or some PV 
+clock driver.
 
---001a114e31f6f1620105374b1112
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+However, platform device passthrough (i.e non-pci device) cannot be done 
+generically. The user has to provide a lots of information manually 
+(such as MMIO, IRQ, device tree node...). So I am not sure if we want to 
+have a generic solution here.
 
-<div dir=3D"ltr">Hi all<br>I am developing a media codec driver(using bt656=
-) for cubieboard one(allwinner a10 processor), i want to use DT to banding =
-csi. after i get some reference on Documentation/devicetree/bindings/media/=
-video-interfaces.txt, i have some question about whether the csi driver=C2=
-=A0for cubieboard one=C2=A0support to parse the DT node just like in the re=
-ference document? if not, whether someone is=C2=A0developing it or should i=
- necessary to complete it together (<span style=3D"color:rgb(51,51,51);font=
--family:arial;font-size:13px;line-height:20.02px">What&#39;s the progress o=
-f=C2=A0it</span>) ?=C2=A0<br><br>Best regards :)<br>Hao Zhang</div>
+I though it would be worth to mention it because we may (or not) use 
+this clock to tell DOM0 (don't touch it).
 
---001a114e31f6f1620105374b1112--
+> This is useful for use cases like splash screens where the bootloader
+> configures the display and plays some animation, and we want the linux
+> kernel to take over the display controller hardware without cutting
+> clocks, blanking or reseting it. Handing off the clock reference count
+> helps achieve this.
+
+ From my understanding, any device used by Xen would be in a similar 
+situation, although there will be no driver in Linux. The current patch 
+(as well as the v4) is calling clk_prepare_enable for each clock used by 
+Xen. Could enabling the clock create unexpected behavior such as the 
+UART loosing/dropping characters?
+
+Regards,
+
+-- 
+Julien Grall
