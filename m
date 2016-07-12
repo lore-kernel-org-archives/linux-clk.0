@@ -1,72 +1,88 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 5 Jul 2016 08:12:11 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
-	wens@csie.org, emilio@elopez.com.ar, mark.rutland@arm.com,
-	linux@armlinux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 1/5] clk: sunxi: Add a driver for the PLL2 on
- A31/23/33
-Message-ID: <20160705061211.GA7643@lukather>
-References: <20160628101325.2522-1-icenowy@aosc.xyz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
-In-Reply-To: <20160628101325.2522-1-icenowy@aosc.xyz>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Krzysztof =?utf-8?B?S296xYJvd3NraQ==?= <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for Exynos7
+ CPU clocks
+Date: Tue, 12 Jul 2016 15:44:03 +0200
+Message-id: <1893441.PNypKdntnt@amdc1976>
+In-reply-to: 
+ <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
+References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
+ <2318982.ZLuIVQzhgE@amdc1976>
+ <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
+On Monday, July 11, 2016 04:44:30 PM Abhilash Kesavan wrote:
+> Hi Bartlomiej,
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Abhilash,
 
-Hi,
+> Thanks for the comments.
+> 
+> On Thu, Jul 7, 2016 at 1:17 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi
+> >
+> > On Thursday, July 07, 2016 12:45:57 PM Sylwester Nawrocki wrote:
+> >> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
+> >> > Exynos7 has the same CPU clock registers layout as that present
+> >
+> > Please precise for which Exynos7 SoC this change is needed
+> > (all three of them?).
+> 
+> As mentioned in my recently posted PMU series, the exynos7 is a quad
+> core A57 based SoC and not meant to be a SoC family.
 
-On Tue, Jun 28, 2016 at 06:13:21PM +0800, Icenowy Zheng wrote:
-> This is based on the PLL2 driver for A10/20.
+I suppose that it will get some more meaningful name once released
+officially (I couldn't find anything about this SoC on the net).
 
-Thanks for this patch.
+> I have reviewed various exynos7xxx UMs in terms of the CPU CMU. Both
+> exynos7580 and exynos7420 have a similar CMU register layout along
+> with the same mux stat bits as exynos7. Exynos7870 on the other hand
+> is quite different.
+> 
+> Please let me know what naming convention you would prefer that I use
+> E7/E7420/E7580 ?
 
-However, as you might have seen, we're switching to a new clock code
-base, so it would be great if you could use that instead.
+I would prefer using E7420 naming.
+ 
+> >> > in Exynos5433 except for the bits in the MUX_STAT* registers.
+> >> > Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
+> >>
+> >> > --- a/drivers/clk/samsung/clk-cpu.h
+> >> > +++ b/drivers/clk/samsung/clk-cpu.h
+> >> > @@ -63,6 +63,8 @@ struct exynos_cpuclk {
+> >> >  /* The CPU clock registers have Exynos5433-compatible layout */
+> >> >  #define CLK_CPU_HAS_E5433_REGS_LAYOUT      (1 << 2)
+> >>
+> >> > +/* Exynos5433-compatible layout with different MUX_STAT register bits */
+> >> > +#define CLK_CPU_HAS_MODIFIED_MUX_STAT      (1 << 3)
+> >>
+> >> It's getting a bit messy, what if there comes another SoC version
+> >> which has some other modification of exynos5433 registers structure?
+> >> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
+> >> could easily get lost while trying to determine which modification
+> >> is which. How about indicating explicitly it's an exynos7 bits
+> >> layout and renaming the flag to something like
+> >>
+> >> #define CLK_CPU_HAS_E7_MUX_STAT       (1 << 16) ?
+> >
+> > ditto
 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/440077.html
-
-While we declared all the clocks for the H3, nothing really mandates
-that for the existing platforms we don't introduce a few clocks as
-they are needed. That will probably even smoothen the transition.
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXe0+7AAoJEBx+YmzsjxAg0SQP/12GR1O+kAiQdkVMdqw0u8we
-udCmpgX504kQ02GuGXsPQz9BJ4xd2Rjhi0ljVcBLgle3xt/m2kA2qeMYPUwagQLT
-6NZR1t/yHGrQIspokXVQNlH4hLz9Bi3/5ja8uxUmZOEF+oSrRBmJWQ2sQgtvkIT6
-wvJecu3cPobojjZg1eYWlO6SY6HBMe1I4k+7PlkO4QE56LB9VAbJ+C8zMZJo6CZn
-c5V8NRnD68zNjgVcq3Cu6HEHvRMM9dWUc4CJIm4HsqNHOK4xMUq4MObti/waSAZn
-qn5W+ObE7Ov/fSBbmQg93l37z5ldLqGZqYO0vbVuRIWwHcgGx3SNiJCloZenznH1
-Xgkj/Ik38CJh6sy7G1ujurFW+oazmOHDs4x6D4YRAPkpJEUp6A7ceKocxDOBz32l
-oOc4tixqpl/QbcyyVNQAVw6G33Kd2AIILHug8iiNdpxgd5xg1j4gTNaM2en9A/KK
-0Om7WwWbpLWcU9E4fxccqnVlRrNxKKc3POjYIKGbThlh9HvE/oPntGpfU+Utcc4d
-TfIoS4fMK4/QlXBpKfMn5N2xbsx6j8HzBAngVh8pac7GhRCG6OBo+DgoLlhoc9Mi
-TTWoHoFQQxWmWHvu+/Dy+nC3+NQh8bKcPUKTiw2KPht2lsVitHHIoc+7ZDHQPNrE
-cLZYpvwQ6l+vioP26u/y
-=rIEg
------END PGP SIGNATURE-----
-
---PEIAKu/WMn1b1Hv9--
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
