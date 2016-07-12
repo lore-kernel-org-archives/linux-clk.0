@@ -1,63 +1,63 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Date: Tue, 12 Jul 2016 19:02:16 +0900
-Message-id: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:49817 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750850AbcGLIUj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 04:20:39 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Wan Zongshun <vw@iommu.org>
+Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
+	Wan Zongshun <mcuos.com@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 01/10] ARM: NUC900: Add nuc970 machine support
+Date: Tue, 12 Jul 2016 10:23:32 +0200
+Message-ID: <7624955.nn13su4oq1@wuerfel>
+In-Reply-To: <578498E7.4080709@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <57847278.8000408@iommu.org> <578498E7.4080709@iommu.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Because the Exynos5433 SPI driver supports the ioclk handling and
-the following patch:
+On Tuesday, July 12, 2016 3:14:47 PM CEST Wan Zongshun wrote:
+> On 2016年07月12日 12:30, Wan Zongshun wrote:
+> >
+> >
+> > On 2016年07月12日 00:04, Arnd Bergmann wrote:
+> >> On Sunday, July 10, 2016 3:27:21 PM CEST Wan Zongshun wrote:
+> >>> +ifeq ($(CONFIG_SOC_NUC970),)
+> >>>   obj-y                          := irq.o time.o mfp.o gpio.o clock.o
+> >>>   obj-y                          += clksel.o dev.o cpu.o
+> >>> +endif
+> >>>   # W90X900 CPU support files
+> >>
+> >> When mfp.o is disabled like this, I get a link error in two drivers
+> >> using the exported interface:
+> >>
+> >> ERROR: "mfp_set_groupg" [drivers/spi/spi-nuc900.ko] undefined!
+> >> ERROR: "mfp_set_groupi" [drivers/input/keyboard/w90p910_keypad.ko]
+> >> undefined!
+> >
+> > Why remove mfp modules? this multifunction pin driver should be used for
+> > those two drivers, if no mfp_set_groupX, I don't think driver can work.
+> >
+> > Now mfp has standard driver subsystem?
+> >
+> >>
+> >> Any idea for a better migration strategy?
+> 
+> Arnd, If you still think the mfp should be removed, we can send a series 
+> patches to instead of using mfp interface quickly, and do mfp set in 
+> local driver. Do you think it is ok?
 
-  http://marc.info/?l=linux-kernel&m=146787645626318&w=2
+I don't think setting it locally in the driver is a good idea.
 
-fixes a synchronus abort issue, none of the SPI clocks require
-any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-for the SPI related clocks.
+In the long run, this should go through the pinctrl framework, but
+there is no need to implement that right away. Until then, I think
+using the existing mfp.o code is fine, it will just need to be
+adapted slightly to understand the DT based device names.
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index c3a5318..fb19525 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
- 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
--			ENABLE_SCLK_PERIC, 12,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
- 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-@@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
--			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
- 			3, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
--- 
-2.8.1
+	Arnd
