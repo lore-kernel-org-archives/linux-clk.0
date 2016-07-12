@@ -1,101 +1,68 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v4 2/6] meson: clk: Move register definitions to meson8b.h
-Date: Fri, 29 Jul 2016 16:01:00 +0200
-Message-Id: <1469800864-43440-3-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
-References: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:51072 "EHLO
+	pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292AbcGLKWl (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 06:22:41 -0400
+Date: Tue, 12 Jul 2016 11:22:28 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	tony@atomide.com, paul@pwsan.com, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 2/7] clk: ti: add clkdev get helper
+Message-ID: <20160712102228.GE5783@n2100.arm.linux.org.uk>
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+ <1467296018-25086-3-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467296018-25086-3-git-send-email-t-kristo@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the register definitions into a separate header file
-to reflect the gxbb implementation.
+On Thu, Jun 30, 2016 at 05:13:33PM +0300, Tero Kristo wrote:
+>  /**
+> + * ti_clk_get - lookup a TI clock handle
+> + * @dev_id: device to lookup clock for
+> + * @con_id: connection ID to find
+> + *
+> + * Searches for a TI clock handle based on the DT node name.
+> + * Returns the pointer to the clock handle, or ERR_PTR in failure.
+> + */
+> +static struct clk *ti_clk_get(const char *dev_id, const char *con_id)
+> +{
+> +	struct of_phandle_args clkspec;
+> +	struct device_node *node;
+> +	struct clk *clk;
+> +
+> +	/* Only check for cases of type clk_get_sys(NULL, "xyz") */
+> +	if (dev_id || !con_id)
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	if (of_have_populated_dt()) {
+> +		node = of_find_node_by_name(NULL, con_id);
+> +		clkspec.np = node;
+> +		clk = of_clk_get_from_provider(&clkspec);
+> +
+> +		if (!IS_ERR(clk))
+> +			return clk;
+> +	}
+> +
+> +	return ERR_PTR(-ENOENT);
+> +}
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/meson8b.c | 17 +----------------
- drivers/clk/meson/meson8b.h | 40 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+), 16 deletions(-)
- create mode 100644 drivers/clk/meson/meson8b.h
+I _really_ don't like this.  This takes us back to the totally broken
+idea, that's already been proven to be greatly harmful in OMAP land,
+that the "con_id" is not a _DEVICE SPECIFIC CONNECTION NAME_ but is a
+CLOCK NAME.  The connection ID is supposed to be a static string in
+the requestor of the clock, not some random string picked out from
+DT.
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index b1902e9..537cc53 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -26,22 +26,7 @@
- #include <linux/module.h>
- 
- #include "clkc.h"
--
--/*
-- * Clock controller register offsets
-- *
-- * Register offsets from the HardKernel[0] data sheet are listed in comment
-- * blocks below. Those offsets must be multiplied by 4 before adding them to
-- * the base address to get the right value
-- *
-- * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-- */
--#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
--#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
--#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
--#define MESON8B_REG_PLL_FIXED		0x0280
--#define MESON8B_REG_PLL_SYS		0x0300
--#define MESON8B_REG_PLL_VID		0x0320
-+#include "meson8b.h"
- 
- static DEFINE_SPINLOCK(clk_lock);
- 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-new file mode 100644
-index 0000000..5b9cb9f
---- /dev/null
-+++ b/drivers/clk/meson/meson8b.h
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (c) 2015 Endless Mobile, Inc.
-+ * Author: Carlo Caione <carlo@endlessm.com>
-+ *
-+ * Copyright (c) 2016 BayLibre, Inc.
-+ * Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef __MESON8B_H
-+#define __MESON8B_H
-+
-+/*
-+ * Clock controller register offsets
-+ *
-+ * Register offsets from the HardKernel[0] data sheet are listed in comment
-+ * blocks below. Those offsets must be multiplied by 4 before adding them to
-+ * the base address to get the right value
-+ *
-+ * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-+ */
-+#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
-+#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
-+#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
-+#define MESON8B_REG_PLL_FIXED		0x0280
-+#define MESON8B_REG_PLL_SYS		0x0300
-+#define MESON8B_REG_PLL_VID		0x0320
-+
-+#endif /* __MESON8B_H */
+This series started out with the assertion that the new clkdev hook
+was to avoid registering lots of clock aliases, but it seems with
+this patch we're going to end up with lots of specifically named
+nodes in DT instead.  It's just moving the problem to somewhere else.
+
 -- 
-2.5.0
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
