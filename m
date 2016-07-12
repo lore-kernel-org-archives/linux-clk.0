@@ -1,50 +1,67 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	frank.wang@rock-chips.com,
-	wulf@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 2/6] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
-Date: Mon,  1 Aug 2016 12:23:05 +0800
-Message-Id: <1470025389-4094-3-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Fabio Estevam <festevam@gmail.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAOMZO5CuLshhk9R3dJh9RjEG2FphV5Z+sALpb2FitmRkKrFPZA@mail.gmail.com>
+Cc: "Stefan Agner" <stefan@agner.ch>, "Dong Aisheng" <aisheng.dong@nxp.com>,
+ "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer" <kernel@pengutronix.de>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Igor Grinberg" <grinberg@compulab.co.il>,
+ "Gary Bisson" <gary.bisson@boundarydevices.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+ "linux-kernel" <linux-kernel@vger.kernel.org>
+References: <20160703174813.13970-1-stefan@agner.ch>
+ <146785281774.73491.10999943518898018619@resonance>
+ <CAOMZO5CuLshhk9R3dJh9RjEG2FphV5Z+sALpb2FitmRkKrFPZA@mail.gmail.com>
+Message-ID: <146836168743.73491.12016987181408783347@resonance>
+Subject: Re: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
+Date: Tue, 12 Jul 2016 15:14:47 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Export these source clocks for usbphy.
+Quoting Fabio Estevam (2016-07-11 19:15:54)
+> Hi Mike,
+> =
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> On Wed, Jul 6, 2016 at 9:53 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Quoting Stefan Agner (2016-07-03 10:48:13)
+> >> All device trees currently in mainline specify the time clock parent
+> >> using the assigned-clocks/assigned-clock-parents method, there is no
+> >> need to statically assign the parent in the core clock driver.
+> >> Also all current boards provide an Ethernet reference clock for the
+> >> PHY externally, hence configuring the internal PHY reference clock.
+> >>
+> >> Furthermore, and the actual driver of this patch, specify ethernet
+> >> related parents at that early point in boot leads to a warning:
+> >> bad: scheduling from the idle thread!
+> >>
+> >> The reason for the warning is that setting the parent enables the ENET
+> >> PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
+> >> cause clk_pllv3_wait_lock to sleep. See also:
+> >> commit fc8726a2c021 ("clk: core: support clocks which requires parents
+> >> enable (part 2)").
+> >>
+> >> Note that setting the ENET AXI root clock parent also requires ENET
+> >> PLL to be enabled. However, U-Boot typically leaves the ENET PLL on,
+> >> hence when the framework sets the parent of the first clock, it does
+> >> not need to wait for the PLL to come up. But because there is currently
+> >> no user of that clock, the PLL gets disabled after setting the parent.
+> >> Therefore, subsequent reparenting calls of any clock which somehow rely
+> >> on the ENET PLL, need to reenable the ENET PLL which leads to a sleep.
+> >> Removing those subsequent reparenting calls works around this issue.
+> >>
+> >> Also remove comments. The code is really verbose enough.
+> >>
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >
+> > Applied.
+> =
 
----
+> I still don't see this patch applied in clk-next.
 
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It should show up now on the mirror.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 78e51cb..f55f967f 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
- 
--	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
--	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
- 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
--- 
-1.7.9.5
+Regards,
+Mike
