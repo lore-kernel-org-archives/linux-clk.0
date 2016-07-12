@@ -1,143 +1,81 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-arm-kernel@lists.infradead.org>, Julien Grall
-	<julien.grall@arm.com>, Mark Rutland <mark.rutland@arm.com>, Michael
- Turquette <mturquette@baylibre.com>
-CC: <xen-devel@lists.xenproject.org>, <devicetree@vger.kernel.org>, Stefano
- Stabellini <sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Stephen
- Boyd <sboyd@codeaurora.org>, Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v3] xen/arm: enable clocks used by the hypervisor
-Date: Fri, 8 Jul 2016 09:44:31 +0200
-Message-ID: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv3 2/7] clk: ti: add clkdev get helper
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+ <1467296018-25086-3-git-send-email-t-kristo@ti.com>
+ <20160712102228.GE5783@n2100.arm.linux.org.uk>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <paul@pwsan.com>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <57850A29.4010806@ti.com>
+Date: Tue, 12 Jul 2016 18:18:01 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160712102228.GE5783@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Xen hypervisor drivers might replace native OS drivers. The result is
-that some important clocks that are enabled by the OS in the non-Xen
-case are not properly enabled in the presence of Xen. The clocks
-property enumerates the clocks that must be enabled by the Xen clock
-consumer.
+On 12/07/16 13:22, Russell King - ARM Linux wrote:
+> On Thu, Jun 30, 2016 at 05:13:33PM +0300, Tero Kristo wrote:
+>>   /**
+>> + * ti_clk_get - lookup a TI clock handle
+>> + * @dev_id: device to lookup clock for
+>> + * @con_id: connection ID to find
+>> + *
+>> + * Searches for a TI clock handle based on the DT node name.
+>> + * Returns the pointer to the clock handle, or ERR_PTR in failure.
+>> + */
+>> +static struct clk *ti_clk_get(const char *dev_id, const char *con_id)
+>> +{
+>> +	struct of_phandle_args clkspec;
+>> +	struct device_node *node;
+>> +	struct clk *clk;
+>> +
+>> +	/* Only check for cases of type clk_get_sys(NULL, "xyz") */
+>> +	if (dev_id || !con_id)
+>> +		return ERR_PTR(-ENOENT);
+>> +
+>> +	if (of_have_populated_dt()) {
+>> +		node = of_find_node_by_name(NULL, con_id);
+>> +		clkspec.np = node;
+>> +		clk = of_clk_get_from_provider(&clkspec);
+>> +
+>> +		if (!IS_ERR(clk))
+>> +			return clk;
+>> +	}
+>> +
+>> +	return ERR_PTR(-ENOENT);
+>> +}
+>
+> I _really_ don't like this.  This takes us back to the totally broken
+> idea, that's already been proven to be greatly harmful in OMAP land,
+> that the "con_id" is not a _DEVICE SPECIFIC CONNECTION NAME_ but is a
+> CLOCK NAME.  The connection ID is supposed to be a static string in
+> the requestor of the clock, not some random string picked out from
+> DT.
 
-An example is a serial driver enabled by the hypervisor. Xen must
-consume and enable these clocks in the OS to ensure behavior continues
-after firmware configures the UART hardware and corresponding clock
-harder.
+What is the harm in that actually? I have most likely missed some 
+discussion but please educate me. The problem is, we are already using 
+this convention all over the place in the kernel (not only OMAPs), and 
+trying to clean up the kernel requires some intermediate steps being 
+taken, otherwise we end up doing all the clean-ups in a single massive 
+patch I fear (change all the hwmod data + clock data + any 
+implementations related to these at the same time.)
 
-Up to now, the workaround for this has been to use the Linux kernel
-command line parameter 'clk_ignore_unused'. See Xen bug
+This specific implementation should be possible to deprecate later once 
+the hwmod database is gone btw, and is mostly required for hwmod data 
+only (+ OMAP timer implementation, maybe some others.) The biggest 
+abuser of clk_get interface atm is omap-hwmod.
 
-http://bugs.xenproject.org/xen/bug/45
+>
+> This series started out with the assertion that the new clkdev hook
+> was to avoid registering lots of clock aliases, but it seems with
+> this patch we're going to end up with lots of specifically named
+> nodes in DT instead.  It's just moving the problem to somewhere else.
 
-too.
+That is true, it will end up adding new DT nodes. However, as OMAP 
+already is doing this extensively, I wonder what would be the 
+alternative. Maybe move all the clock data back to kernel space to 
+increase the size of multi-v7 builds?
 
-To fix this, we will add the "unused" clocks in Xen to the hypervisor
-node. The OS has to consume and enable the clocks from the hypervisor
-node, then.
-
-Therefore, check if there is a "clocks" entry in the hypervisor node
-and if so consume and enable the given clocks. This prevents the clocks
-from being disabled by the OS.
-
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
-
-Changes in v2: Drop the Linux implementation details like clk_disable_unused
-	       in xen.txt.
-
- Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
- arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
-index c9b9321..00f2165 100644
---- a/Documentation/devicetree/bindings/arm/xen.txt
-+++ b/Documentation/devicetree/bindings/arm/xen.txt
-@@ -17,6 +17,19 @@ the following properties:
-   A GIC node is also required.
-   This property is unnecessary when booting Dom0 using ACPI.
- 
-+Optional properties:
-+
-+clocks: one or more clocks to be enabled
-+  Xen hypervisor drivers might replace native OS drivers. The result is
-+  that some important clocks that are enabled by the OS in the non-Xen
-+  case are not properly enabled in the presence of Xen. The clocks
-+  property enumerates the clocks that must be enabled by the Xen clock
-+  consumer.
-+  An example is a serial driver enabled by the hypervisor. Xen must
-+  consume and enable these clocks in the OS to ensure behavior continues
-+  after firmware configures the UART hardware and corresponding clock
-+  harder.
-+
- To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
- under /hypervisor with following parameters:
- 
-diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-index 47acb36..5c546d0 100644
---- a/arch/arm/xen/enlighten.c
-+++ b/arch/arm/xen/enlighten.c
-@@ -24,6 +24,7 @@
- #include <linux/of_fdt.h>
- #include <linux/of_irq.h>
- #include <linux/of_address.h>
-+#include <linux/clk-provider.h>
- #include <linux/cpuidle.h>
- #include <linux/cpufreq.h>
- #include <linux/cpu.h>
-@@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
- }
- late_initcall(xen_pm_init);
- 
-+/*
-+ * Check if we want to register some clocks, that they
-+ * are not freed because unused by clk_disable_unused().
-+ * E.g. the serial console clock.
-+ */
-+static int __init xen_arm_register_clks(void)
-+{
-+	struct clk *clk;
-+	struct device_node *xen_node;
-+	unsigned int i, count;
-+	int ret = 0;
-+
-+	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
-+	if (!xen_node) {
-+		pr_err("Xen support was detected before, but it has disappeared\n");
-+		return -EINVAL;
-+	}
-+
-+	count = of_clk_get_parent_count(xen_node);
-+	if (!count)
-+		goto out;
-+
-+	for (i = 0; i < count; i++) {
-+		clk = of_clk_get(xen_node, i);
-+		if (IS_ERR(clk)) {
-+			pr_err("Xen failed to register clock %i. Error: %li\n",
-+			       i, PTR_ERR(clk));
-+			ret = PTR_ERR(clk);
-+			goto out;
-+		}
-+
-+		ret = clk_prepare_enable(clk);
-+		if (ret < 0) {
-+			pr_err("Xen failed to enable clock %i. Error: %i\n",
-+			       i, ret);
-+			goto out;
-+		}
-+	}
-+
-+	ret = 0;
-+
-+out:
-+	of_node_put(xen_node);
-+	return ret;
-+}
-+late_initcall(xen_arm_register_clks);
- 
- /* empty stubs */
- void xen_arch_pre_suspend(void) { }
--- 
-2.8.0
+-Tero
