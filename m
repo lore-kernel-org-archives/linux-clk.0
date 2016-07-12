@@ -1,134 +1,186 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 18:12:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, shawnguo@kernel.org,
-	linux-arm-kernel@lists.infradead.org, tglx@linutronix.de,
-	stefan@agner.ch, l.stach@pengutronix.de, cyrille.pitchen@atmel.com,
-	manabian@gmail.com, anson.huang@nxp.com
-Subject: Re: [PATCH RFC 0/7] support clk setting during kernel early boot
-Message-ID: <20160702011216.GR27880@codeaurora.org>
-References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  "Rob Herring" <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  "Jason Cooper" <jason@lakedaemon.net>,  "Andrew Lunn" <andrew@lunn.ch>,  "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,  "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  "Nadav Haklai" <nadavh@marvell.com>,  "Victor Gu" <xigu@marvell.com>,  "Romain Perier" <romain.perier@free-electrons.com>,  "Omri Itach" <omrii@marvell.com>,  "Marcin Wojtas" <mw@semihalf.com>,  "Wilson Ding" <dingwei@marvell.com>,  "Hua Jing" <jinghua@marvell.com>,  "Terry Zhou" <bjzhou@marvell.com>
+Subject: Re: [PATCH v2 2/6] clk: mvebu: Add the xtal clock for Armada 3700 SoC
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+	<1467931071-31004-3-git-send-email-gregory.clement@free-electrons.com>
+	<146799916006.73491.13586762303347604368@resonance>
+Date: Tue, 12 Jul 2016 12:42:10 +0200
+In-Reply-To: <146799916006.73491.13586762303347604368@resonance> (Michael
+	Turquette's message of "Fri, 08 Jul 2016 10:32:40 -0700")
+Message-ID: <87zipnrvct.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/29, Dong Aisheng wrote:
-> Recently several people met the kernel complaining
-> "bad: scheduling from the idle thread!" issue which caused by
-> sleeping during kernel early booting phase by calling clk
-> APIs like clk_prepare_enable.
-> 
-> See:
-> https://lkml.org/lkml/fancy/2016/1/29/695
-> https://lkml.org/lkml/2016/6/10/779
-> http://www.spinics.net/lists/linux-clk/msg08635.html
+Hi Michael,
+ 
+ On ven., juil. 08 2016, Michael Turquette <mturquette@baylibre.com> wrote:
 
-That last one was another bug that happened to trigger this
-problem mistakenly. I doubt critical clks are an issue (more
-below).
+> Quoting Gregory CLEMENT (2016-07-07 15:37:47)
+>> This clock is the parent of all the Armada 3700 clocks. It is a fixed
+>> rate clock which depends on the gpio configuration read when resetting
+>> the SoC.
+>> 
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> ---
+>>  drivers/clk/mvebu/Kconfig            |  3 ++
+>>  drivers/clk/mvebu/Makefile           |  1 +
+>>  drivers/clk/mvebu/armada-37xx-xtal.c | 98 ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 102 insertions(+)
+>>  create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+>> 
+>> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+>> index 3165da77d525..fddc8ac5faff 100644
+>> --- a/drivers/clk/mvebu/Kconfig
+>> +++ b/drivers/clk/mvebu/Kconfig
+>> @@ -24,6 +24,9 @@ config ARMADA_39X_CLK
+>>         bool
+>>         select MVEBU_CLK_COMMON
+>>  
+>> +config ARMADA_37XX_CLK
+>> +       bool
+>> +
+>>  config ARMADA_XP_CLK
+>>         bool
+>>         select MVEBU_CLK_COMMON
+>> diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+>> index 7172ef65693d..4257a36d0219 100644
+>> --- a/drivers/clk/mvebu/Makefile
+>> +++ b/drivers/clk/mvebu/Makefile
+>> @@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_370_CLK)    += armada-370.o
+>>  obj-$(CONFIG_ARMADA_375_CLK)   += armada-375.o
+>>  obj-$(CONFIG_ARMADA_38X_CLK)   += armada-38x.o
+>>  obj-$(CONFIG_ARMADA_39X_CLK)   += armada-39x.o
+>> +obj-$(CONFIG_ARMADA_37XX_CLK)  += armada-37xx-xtal.o
+>>  obj-$(CONFIG_ARMADA_XP_CLK)    += armada-xp.o
+>>  obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
+>>  obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
+>> diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+>> new file mode 100644
+>> index 000000000000..f832c219420f
+>> --- /dev/null
+>> +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+>> @@ -0,0 +1,98 @@
+>> +/*
+>> + * Marvell Armada 37xx SoC xtal clocks
+>> + *
+>> + * Copyright (C) 2016 Marvell
+>> + *
+>> + * Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> + *
+>> + * This file is licensed under the terms of the GNU General Public
+>> + * License version 2.  This program is licensed "as is" without any
+>> + * warranty of any kind, whether express or implied.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>
+> Is clk.h necessary? Is this driver also a clock consumer?
 
-> 
-> The calling sequence simply could be like:
-> start_kernel
->   ->time_init
->     ->of_clk_init
->       ->clk_core_prepare
->         ->clk_pllv3_prepare
->           ->usleep_range
->             ->dequeue_task_idle
-> 
-> This issue is mainly caused during time_init, the irq is still
-> not enabled and scheduler is still not ready, thus there's no way
-> to allow sleep at that time.
-> 
-> However, there're many exist platforms calling clk_prepare_enable/
-> clk_get_rate/clk_set_parent at that time in CLK_OF_DECLARE init
-> function.
-> e.g
-> drivers/clk/imx/clk-{soc}.c
-> drivers/clk/rockchip/clk-rk3188.c
-> drivers/clk/ti/clk-44xx.c
-> ...
-> 
-> And irqchip and clock source is also initialized before it which
-> may requires to do clk settings.
-> 
-> Furthermore, current clk framework also supports critical clocks
-> flagged by CLK_IS_CRITICAL which will be prepared and
-> enabled during clk_register by clk core, that is also happened
-> quite early in of_clk_init usually.
-> 
-> And clk framework also supports assign default clk rate and parent for
-> each registered clk provider which also happens early in of_clk_init.
-> (see of_clk_set_defaults())
-> 
-> Above are all possible cases which may cause sleeping during kernel
-> early booting.
+This driver is not a clock consumer so it is not needed.
+I will remove it.
 
-How many of these cases are really happening and causing problems
-though?
+Thanks,
 
-> 
-> So it seems we'd like to have the requirement to make kernel support
-> calling clk APIs during kernel early boot without sleep.
+Gregory
 
-I wonder if the problem is more that the framework doesn't know
-the hardware state of on/off when it initializes? So we call the
-clk_ops prepare/enable functions when we really shouldn't be
-doing that at all because the clk is already prepared/enabled.
-Presumably for critical clks, we shouldn't go and touch any
-hardware to turn them on, because by definition they're critical
-and should already be on anyway.
-
-> 
-> Since many of them is actually mostly implemented unsleepable already,
-> e.g. recalc_rate, recalc_accuracy, get/set_phase
-> but due to the definition allows them sleep, we may still have to add
-> xxx_hw and xxx_done for them.
-> Not sure if any better idea to avoid adding so many new callbacks.
-> 
-> 5) The most important issue may be callbacks (round_rate and determine_rate)
-> which may recursively call its parent.
-> For this case, we may not be able to convert it to xx_hw type.
-> e.g. drivers/clk/clk-divider.c
-> .round_rate
-> -> clk_divider_round_rate
->    -> clk_hw_round_rate(clk_hw_get_parent(hw), rate) if CLK_SET_RATE_PARENT
-> 
-> clk_hw_round_rate is sleepable in theory.
-> Thus we may not convert .round_rate to .round_rate_hw since we can't
-> predict whether it's parent round_rate is sleepable or not.
-> 
-> This issue may cause us unable to convert the common clk-divider and clk-mux
-> which could be a potential issue since clk_set_rate will indirectly call
-> .round_rate and .determinte_rate which may results in possible sleep.
-> 
-> Any good ideas for this issue?
-> 
-> 6) Not sure your guys's option on calling clk_prepare which acqures a mutex
-> when irq is disalbed.
-> Ideally we probably may should not call mutex_lock with irq disabled.
-> But seems we may can't avoid and during booting, it seems still safe to
-> call it.
-> 
-
-It seems fine to call mutex lock during of_clk_init(). At least
-from what I can tell we're saved here because there's only one
-task during of_clk_init() time so we're not able to be blocked by
-any other task and fall into the mutex slowpath.
-
-The problem seems to be entering the scheduler directly from
-usleep_range() called from clk ops because that effectively
-becomes a scheduler call. Given that of_clk_init() is mostly for
-clk drivers to register clks for their timers and interrupt
-controllers, we should be able to avoid making any clk_ops calls
-besides recalculating rates and checking if clks are enabled or
-not. All other clks should be registered and configured from
-device drivers later on when the scheduler is running.
+>
+> Regards,
+> Mike
+>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +#define NB_GPIO1_LATCH 0xC
+>> +#define XTAL_MODE          BIT(31)
+>> +
+>> +static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device_node *np = pdev->dev.of_node;
+>> +       const char *xtal_name = "xtal";
+>> +       struct device_node *parent;
+>> +       struct regmap *regmap;
+>> +       struct clk_hw *xtal_hw;
+>> +       unsigned int rate;
+>> +       u32 reg;
+>> +       int ret;
+>> +
+>> +       xtal_hw = devm_kzalloc(&pdev->dev, sizeof(*xtal_hw), GFP_KERNEL);
+>> +       if (!xtal_hw)
+>> +               return -ENOMEM;
+>> +
+>> +       platform_set_drvdata(pdev, xtal_hw);
+>> +
+>> +       parent = np->parent;
+>> +       if (!parent) {
+>> +               dev_err(&pdev->dev, "no parent\n");
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       regmap = syscon_node_to_regmap(parent);
+>> +       if (IS_ERR(regmap)) {
+>> +               dev_err(&pdev->dev, "cannot get regmap\n");
+>> +               return PTR_ERR(regmap);
+>> +       }
+>> +
+>> +       ret = regmap_read(regmap, NB_GPIO1_LATCH, &reg);
+>> +       if (ret) {
+>> +               dev_err(&pdev->dev, "cannot read from regmap\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       if (reg & XTAL_MODE)
+>> +               rate = 40000000;
+>> +       else
+>> +               rate = 25000000;
+>> +
+>> +       of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
+>> +       xtal_hw = clk_hw_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
+>> +       if (IS_ERR(xtal_hw))
+>> +               return PTR_ERR(xtal_hw);
+>> +       ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, xtal_hw);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +static int armada_3700_xtal_clock_remove(struct platform_device *pdev)
+>> +{
+>> +       of_clk_del_provider(pdev->dev.of_node);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct of_device_id armada_3700_xtal_clock_of_match[] = {
+>> +       { .compatible = "marvell,armada-3700-xtal-clock", },
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, armada_3700_xtal_clock_of_match);
+>> +
+>> +static struct platform_driver armada_3700_xtal_clock_driver = {
+>> +       .probe = armada_3700_xtal_clock_probe,
+>> +       .remove = armada_3700_xtal_clock_remove,
+>> +       .driver         = {
+>> +               .name   = "marvell-armada-3700-xtal-clock",
+>> +               .of_match_table = armada_3700_xtal_clock_of_match,
+>> +       },
+>> +};
+>> +
+>> +module_platform_driver(armada_3700_xtal_clock_driver);
+>> +
+>> +MODULE_AUTHOR("Gregory CLEMENT <gregory.clement@free-electrons.com>");
+>> +MODULE_DESCRIPTION("Marvell Armada 37xx SoC xtal clocks driver");
+>> +MODULE_LICENSE("GPL v2");
+>> -- 
+>> 2.5.0
+>> 
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
