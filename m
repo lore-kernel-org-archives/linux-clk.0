@@ -1,78 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from m199-177.yeah.net ([123.58.177.199]:54505 "EHLO
-	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751005AbcGNIwv (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2016 04:52:51 -0400
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1761342.TGgYi16yul@wuerfel> <5784968A.7080007@iommu.org>
- <5434334.4rKzx80y6W@wuerfel>
-Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
-	Wan Zongshun <mcuos.com@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
-	linux-clk@vger.kernel.org
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <578752CD.3010408@iommu.org>
-Date: Thu, 14 Jul 2016 16:52:29 +0800
-MIME-Version: 1.0
-In-Reply-To: <5434334.4rKzx80y6W@wuerfel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
+ clocks
+Date: Tue, 12 Jul 2016 19:02:16 +0900
+Message-id: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Because the Exynos5433 SPI driver supports the ioclk handling and
+the following patch:
 
+  http://marc.info/?l=linux-kernel&m=146787645626318&w=2
 
-On 2016年07月12日 16:26, Arnd Bergmann wrote:
-> On Tuesday, July 12, 2016 3:04:42 PM CEST Wan Zongshun wrote:
->>>
->>> Ideally, this should just go away once we use SPARSE_IRQ.
->>
->> This platform also can use SPARSE_IRQ? this just a simple irq map and no
->> more irq number in this Soc.
->>
->
-> SPARSE_IRQ is implied by ARCH_MULTIPLATFORM, so we will have to
-> use it once that gets enabled.
->
-> Your new irqchip driver already handles IRQ domains, so it will
-> work out of the box with SPARSE_IRQ, but you have to change the
-> reference to "NR_IRQS" into something else.
->
-> I've prototyped a patch series to enable ARCH_MULTIPLATFORM,
-> I hope you can start working from what I have and get it to run.
+fixes a synchronus abort issue, none of the SPI clocks require
+any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+for the SPI related clocks.
 
-I go through the ARCH_MULTIPLATFORM and SPARSE_IRQ related codes, but I 
-find I also have to define the NUC900_NR_IRQS firstly like below, so 
-that I can init the .nr_irq.
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-+#if !defined(CONFIG_SOC_NUC970)
-  #define NUC900_NR_IRQS		(IRQ_ADC+1)
-+#else
-+#define NUC900_NR_IRQS		62
-+#endif
-
-  DT_MACHINE_START(nuc900_dt, "Nuvoton NUC900 (Device Tree Support)")
-         .dt_compat      = nuc900_dt_compat,
-+       .nr_irqs        = NUC900_NR_IRQS,
-  MACHINE_END
-
-and then in my irqchip driver, I will use the NUC900_NR_IRQS:
-
-+aic_domain = irq_domain_add_linear(node, NUC900_NR_IRQS,
-+				    &aic_irq_domain_ops, NULL);
-
-
-Is that a right usage?
-
->
-> 	Arnd
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index c3a5318..fb19525 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
+ 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+-			ENABLE_SCLK_PERIC, 12,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+ 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+@@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+-			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			4, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+ 			3, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+-- 
+2.8.1
