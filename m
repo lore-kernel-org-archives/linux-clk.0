@@ -1,81 +1,203 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Mirza Krak <mirza.krak@gmail.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
- <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
- <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
- Turquette" <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	<linux@armlinux.org.uk>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <88fb7138-f2b4-b51c-307b-5ef69b953498@nvidia.com>
-Date: Mon, 25 Jul 2016 09:14:27 +0100
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  "Rob Herring" <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  "Jason Cooper" <jason@lakedaemon.net>,  "Andrew Lunn" <andrew@lunn.ch>,  "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,  "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  "Nadav Haklai" <nadavh@marvell.com>,  "Victor Gu" <xigu@marvell.com>,  "Romain Perier" <romain.perier@free-electrons.com>,  "Omri Itach" <omrii@marvell.com>,  "Marcin Wojtas" <mw@semihalf.com>,  "Wilson Ding" <dingwei@marvell.com>,  "Hua Jing" <jinghua@marvell.com>,  "Terry Zhou" <bjzhou@marvell.com>
+Subject: Re: [PATCH v2 6/6] clk: mvebu: Add the peripheral clock driver for Armada 3700
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+	<1467931071-31004-7-git-send-email-gregory.clement@free-electrons.com>
+	<146800242289.73491.4169295036354147972@resonance>
+Date: Tue, 12 Jul 2016 18:30:34 +0200
+In-Reply-To: <146800242289.73491.4169295036354147972@resonance> (Michael
+	Turquette's message of "Fri, 08 Jul 2016 11:27:02 -0700")
+Message-ID: <87r3aystsl.fsf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Michael,
+ 
+ On ven., juil. 08 2016, Michael Turquette <mturquette@baylibre.com> wrote:
 
-On 22/07/16 20:07, Mirza Krak wrote:
-> 2016-07-22 11:32 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>
->> On 21/07/16 21:10, Mirza Krak wrote:
->>> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>>>
->>>> I wonder if it is worth mentioning that the chip-select specified in the
->>>> "nvidia,config" prop should match that in the "ranges" prop unless you
->>>> have some external decoding logic to provide an external chip-select.
->>>> Which raises a question, what does the chip-select in the ranges
->>>> actually represent? I am not sure if there is a common practice here for
->>>> device tree when boards have external logic to provide additional
->>>> chip-selects. I am sure this is quite common.
->>>
->>> I do not understand why CS pin setting in nvidia,config need to match
->>> the "ranges" prop? Other then maybe cosmetics.
->>
->> Yes it would be cosmetic. That said, I even wonder if CS needs to be
->> exposed at all given that they all map to the same CPU address space.
->> Couldn't your binding for the CAN devices be as follows?
->>
->> nor@70009000 {
->>         ...
->>
->>         can@48000000 {
->>                 ...
->>         };
->>
->>         can@48040000 {
->>                 ...
->>         };
->> };
-> 
-> This has also crossed my mind, maybe just get rid of the "ranges" prop
-> and do like you have above. But then again I do not know what is
-> preferred so I went with "ranges" prop initially.
-> 
-> 
->>
->> Problem is if you did have devices on different chip-selects then how
->> would these be handled? They could not point to the same physical
->> address. I am not sure if there is a way to do that in DT?
-> 
-> Having trouble following your though here. We do not have "different"
-> chip-selects?
+> Quoting Gregory CLEMENT (2016-07-07 15:37:51)
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clk.h>
+>
+> Same question as my previous email. Is clk.h necessary? Is this driver
+> also a clk consumer?
 
-I meant that the device has multiple chip-selects and so I was not sure
-the best way to handle this for the GMI.
+I think I can remove it indeed.
 
-Jon
+>
+>> +static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+>> +                                        const char * const *parent_name,
+>> +                                        void __iomem *reg, spinlock_t *lock,
+>> +                                        struct device *dev, struct clk_hw *hw)
+>> +{
+>> +       const struct clk_ops *mux_ops = NULL, *gate_ops = NULL,
+>> +               *div_ops = NULL;
+>> +       struct clk_hw *mux_hw = NULL, *gate_hw = NULL, *div_hw = NULL;
+>> +       const char * const *names;
+>> +       struct clk_mux *mux = NULL;
+>> +       struct clk_gate *gate = NULL;
+>> +       struct clk_divider *div = NULL;
+>> +       struct clk_double_div *double_div = NULL;
+>> +       int num_parent;
+>> +       int ret = 0;
+>> +
+>> +       if (data->gate_shift != UNUSED) {
+>> +               gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+>> +
+>> +               if (!gate)
+>> +                       return -ENOMEM;
+>> +
+>> +               gate->reg = reg + CLK_DIS;
+>> +               gate->bit_idx = data->gate_shift;
+>> +               gate->lock = lock;
+>> +               gate_ops = &clk_gate_ops;
+>> +               gate_hw = &gate->hw;
+>> +       }
+>> +
+>> +       if (data->mux_shift != UNUSED) {
+>> +               mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+>> +
+>> +               if (!mux) {
+>> +                       ret = -ENOMEM;
+>> +                       goto free_gate;
+>> +               }
+>> +
+>> +               mux->reg = reg + TBG_SEL;
+>> +               mux->shift = data->mux_shift;
+>> +               mux->mask = 0x3;
+>> +               mux->lock = lock;
+>> +               mux_ops = &clk_mux_ro_ops;
+>> +               mux_hw = &mux->hw;
+>> +       }
+>> +
+>> +       if (data->div_reg1 != UNUSED) {
+>> +               if (data->div_reg2 == UNUSED) {
+>> +                       const struct clk_div_table *clkt;
+>> +                       int table_size = 0;
+>> +
+>> +                       div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+>> +                       if (!div) {
+>> +                               ret = -ENOMEM;
+>> +                               goto free_mux;
+>> +                       }
+>> +
+>> +                       div->reg = reg + data->div_reg1;
+>> +                       div->table = data->table;
+>> +                       for (clkt = div->table; clkt->div; clkt++)
+>> +                               table_size++;
+>> +                       div->width = order_base_2(table_size);
+>> +                       div->lock = lock;
+>> +                       div_ops = &clk_divider_ro_ops;
+>> +                       div_hw = &div->hw;
+>> +               } else {
+>> +                       double_div = devm_kzalloc(dev, sizeof(*double_div),
+>> +                                                 GFP_KERNEL);
+>> +                       if (!double_div) {
+>> +                               ret = -ENOMEM;
+>> +                               goto free_mux;
+>> +                       }
+>> +
+>> +                       double_div->reg1 = reg + data->div_reg1;
+>> +                       double_div->shift1 = data->div_shift1;
+>> +                       double_div->reg2 = reg + data->div_reg1;
+>> +                       double_div->shift2 = data->div_shift2;
+>> +                       div_ops = &clk_double_div_ops;
+>> +                       div_hw = &double_div->hw;
+>> +               }
+>> +       }
+>> +
+>> +       switch (data->flags) {
+>> +       case XTAL_CHILD:
+>> +               /* the xtal clock is the 5th clock */
+>> +               names = &parent_name[4];
+>> +               num_parent = 1;
+>> +               break;
+>> +       case TBGA_S_CHILD:
+>> +               /* the TBG A S clock is the 3rd clock */
+>> +               names = &parent_name[2];
+>> +               num_parent = 1;
+>> +               break;
+>> +       case GBE_CORE_CHILD:
+>> +               names = &gbe_name[1];
+>> +               num_parent = 1;
+>> +               break;
+>> +       case  GBE_50_CHILD:
+>> +               names = &gbe_name[0];
+>> +               num_parent = 1;
+>> +               break;
+>> +       case  GBE_125_CHILD:
+>> +               names = &gbe_name[2];
+>> +               num_parent = 1;
+>> +               break;
+>> +       default:
+>> +               names = parent_name;
+>> +               num_parent = 4;
+>> +       }
+>> +       hw = clk_hw_register_composite(dev, data->name,
+>> +                                    names, num_parent,
+>> +                                    mux_hw, mux_ops,
+>> +                                    div_hw, div_ops,
+>> +                                    gate_hw, gate_ops,
+>> +                                    CLK_IGNORE_UNUSED);
+>> +       if (IS_ERR(hw)) {
+>> +               ret = PTR_ERR(hw);
+>> +               goto free_div;
+>> +       }
+>> +
+>> +       return 0;
+>> +free_div:
+>> +       devm_kfree(dev, div);
+>> +       devm_kfree(dev, double_div);
+>> +free_mux:
+>> +       devm_kfree(dev, mux);
+>> +free_gate:
+>> +       devm_kfree(dev, gate);
+>> +       return ret;
+>> +}
+>
+> Can this "add" function (aka registration function) be replaced with
+> static data instead? I think that all of the static data exists already,
+> this function can be removed and your probe can call clk_hw_register
+> directly.
+>
+
+I see your point and indeed we can remove some allocation. However using
+clk_hw_register with composite clock is not straight forward. Indeed the
+clk_ops is filled in the clk_hw_register_composite function and none of
+these operations are exported outside the clk-composite.c file.
+
+We can't directly point a clk_gate_ops structure or a clk_divider_ops as
+you did in the drivers/clk/meson/gxbb.c file for example. For clk
+composite it would need modify the framework to either export all the
+operation or to create set of operations directly usable and I would
+like to avoid doing it when we are close to the merge window.
+
+However I can use static data for the clk_mux, clk_gate and clk_divider
+struct.
+
+Is it OK for you?
+
+Thanks,
+
+Gregory
+
+> It might need a macro though, since composite clock structures are
+> rather messy. This avoids a lot of unnecessary allocations and time
+> populating data that we already have access to. In general I am trying
+> to encourage clk drivers to use only clk_hw_register() in their probe
+> instead of the helper registration functions.
+>
+> Similarly I am discouraging drivers from populating hw.init at run-time,
+> since we already have that data for that at compile-time.
+>
+> Regards,
+> Mike
 
 -- 
-nvpublic
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
