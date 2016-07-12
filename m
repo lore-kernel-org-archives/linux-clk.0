@@ -1,35 +1,84 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 1/7] bindings: spi-samsung: add exynos5433 spi compatible
-To: Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <578379BA.3090501@samsung.com>
-Date: Mon, 11 Jul 2016 12:49:30 +0200
-MIME-version: 1.0
-In-reply-to: <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <fcooper@ti.com>
+Subject: Re: [PATCH v8 1/9] clk: ti: am335x/am4372: Add tbclk to pwm node
+To: Michael Turquette <mturquette@baylibre.com>, <thierry.reding@gmail.com>,
+        <robh+dt@kernel.org>, <tony@atomide.com>, <linux@arm.linux.org.uk>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <sboyd@codeaurora.org>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <vigneshr@ti.com>, <nsekhar@ti.com>
+References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
+ <1462291015-1919-2-git-send-email-fcooper@ti.com>
+ <146827561017.73491.3564276289319851088@resonance>
+From: "Franklin S Cooper Jr." <fcooper@ti.com>
+Message-ID: <5784F48A.50805@ti.com>
+Date: Tue, 12 Jul 2016 08:45:46 -0500
+MIME-Version: 1.0
+In-Reply-To: <146827561017.73491.3564276289319851088@resonance>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08/2016 04:46 PM, Andi Shyti wrote:
-> The samsung,exynos5433-spi has some peculiarities that bring the
-> need of creating a new compatible in the binding.
-> 
-> One of those is the 3-clocks controller management where the spi
-> is fed with three clocks: "spi", "busclkN" and "ioclk".
-> 
-> By adding the exynos5433-spi, we deprecate the exynos7 compatible
-> and discourage its use.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+On 07/11/2016 05:20 PM, Michael Turquette wrote:
+> Quoting Franklin S Cooper Jr (2016-05-03 08:56:47)
+>> Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
+> 
+> s/tblck/tbclk/
+> 
+> I see you have acks already. What tree should this patch go through?
+
+
+I believe it went through Tero's tree. I currently see it in linux-next.
+> 
+> Regards,
+> Mike
+> 
+>> to the time-based clk.
+>>
+>> Do not remove similar entries for ehrpwm node. Later patches will switch
+>> from using ehrpwm node name to pwm. But to maintain ABI compatibility we
+>> shouldn't remove the old entries.
+>>
+>> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
+>> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>> Acked-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>  drivers/clk/ti/clk-33xx.c | 3 +++
+>>  drivers/clk/ti/clk-43xx.c | 6 ++++++
+>>  2 files changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+>> index ef2ec64..0e47d95 100644
+>> --- a/drivers/clk/ti/clk-33xx.c
+>> +++ b/drivers/clk/ti/clk-33xx.c
+>> @@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] = {
+>>         DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
+>>         DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
+>>         DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+>> +       DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
+>> +       DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
+>> +       DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
+>>         { .node_name = NULL },
+>>  };
+>>  
+>> diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+>> index 097fc90..7255aa8 100644
+>> --- a/drivers/clk/ti/clk-43xx.c
+>> +++ b/drivers/clk/ti/clk-43xx.c
+>> @@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] = {
+>>         DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
+>>         DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
+>>         DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
+>> +       DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
+>> +       DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
+>> +       DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
+>> +       DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
+>> +       DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
+>> +       DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
+>>         { .node_name = NULL },
+>>  };
+>>  
+>> -- 
+>> 2.7.0
+>>
