@@ -1,227 +1,85 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: [PATCH v2 4/6] clk: mvebu Add the time base generator clocks for Armada 3700
-Date: Fri,  8 Jul 2016 00:37:49 +0200
-Message-Id: <1467931071-31004-5-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:49950 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbcGLIZq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 04:25:46 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wan Zongshun <vw@iommu.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	devicetree@vger.kernel.org, jason@lakedaemon.net,
+	Wan Zongshun <mcuos.com@gmail.com>,
+	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+	p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] Clocksource: add nuc970 clocksource driver
+Date: Tue, 12 Jul 2016 10:28:35 +0200
+Message-ID: <26830152.1oBSpuVOM0@wuerfel>
+In-Reply-To: <57849D2B.60305@iommu.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <3277576.eNgdG7zPqq@wuerfel> <57849D2B.60305@iommu.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-These clocks are children of the xtal clock and each one can be selected
-as a source for the peripheral clocks.
+On Tuesday, July 12, 2016 3:32:59 PM CEST Wan Zongshun wrote:
+> 
+> On 2016年07月11日 23:36, Arnd Bergmann wrote:
+> > On Sunday, July 10, 2016 3:27:23 PM CEST Wan Zongshun wrote:
+> >>
+> >> +config NUC900_TIMER
+> >> +        bool "Clocksource timer for nuc900 platform" if COMPILE_TEST
+> >> +        depends on ARM
+> >> +        select CLKSRC_OF if OF
+> >> +        select CLKSRC_MMIO
+> >> +        help
+> >> +          Enables the clocksource for the NUC900 platform.
+> >>
+> >
+> > I have put this patch into my randconfig build system and found that
+> > it lacks a dependency:
+> >
+> >
+> >
+> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> > index e18ef32776a3..59b9251eef37 100644
+> > --- a/drivers/clocksource/Kconfig
+> > +++ b/drivers/clocksource/Kconfig
+> > @@ -523,7 +523,7 @@ config CLKSRC_ST_LPC
+> >
+> >   config NUC900_TIMER
+> >           bool "Clocksource timer for nuc900 platform" if COMPILE_TEST
+> > -        depends on ARM
+> > +        depends on ARM && GENERIC_CLOCKEVENTS
+> >           select CLKSRC_OF if OF
+> >           select CLKSRC_MMIO
+> >           help
+> > 	
+> 
+> So this patch, I still need submit or you have merged it?
 
-According to the datasheet it should be possible to modify their rate,
-but currently it is not supported.
+Ideally the driver should get submitted through the clocksource
+maintainer tree. I have not applied it to any git tree that I
+plan to send anywhere.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/Makefile          |   1 +
- drivers/clk/mvebu/armada-37xx-tbg.c | 165 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 166 insertions(+)
- create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
+> >
+> > Also the init function has changed its return type in linux-next:
+> >
+> >> +static void __init nuc970_timer_of_init(struct device_node *node)
+> >
+> > This now needs to return an error code or we get:
+> >
+> > ../include/linux/of.h:1004:20: error: comparison of distinct pointer types lacks a cast [-Werror]
+> >          .data = (fn == (fn_type)NULL) ? fn : fn  }
+> >
+> > Daniel Lezcano seems to have implemented a migration strategy, but I
+> > can't see what you are supposed to do here, since the
+> > CLOCKSOURCE_OF_DECLARE_RET macro is no longer part of linux-next.
+> 
+> Wait for Daniel's comments? or what should I do now?
 
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 4257a36d0219..72e3512a9d4a 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
- obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-xtal.o
-+obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-tbg.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
- obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
- obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
-diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
-new file mode 100644
-index 000000000000..f4af12593afa
---- /dev/null
-+++ b/drivers/clk/mvebu/armada-37xx-tbg.c
-@@ -0,0 +1,165 @@
-+/*
-+ * Marvell Armada 37xx SoC Time Base Generator clocks
-+ *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Gregory CLEMENT <gregory.clement@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#define NUM_TBG	    4
-+
-+#define TBG_CTRL0		0x4
-+#define TBG_CTRL1		0x8
-+#define TBG_CTRL7		0x20
-+#define TBG_CTRL8		0x30
-+
-+#define TBG_DIV_MASK		0x1FF
-+
-+#define TBG_A_REFDIV		0
-+#define TBG_B_REFDIV		16
-+
-+#define TBG_A_FBDIV		2
-+#define TBG_B_FBDIV		18
-+
-+#define TBG_A_VCODIV_SE		0
-+#define TBG_B_VCODIV_SE		16
-+
-+#define TBG_A_VCODIV_DIFF	1
-+#define TBG_B_VCODIV_DIFF	17
-+
-+struct tbg_def {
-+	char *name;
-+	u32 refdiv_offset;
-+	u32 fbdiv_offset;
-+	u32 vcodiv_reg;
-+	u32 vcodiv_offset;
-+};
-+
-+const struct tbg_def tbg[NUM_TBG] = {
-+	{"TBG-A-P", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL8, TBG_A_VCODIV_DIFF},
-+	{"TBG-B-P", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL8, TBG_B_VCODIV_DIFF},
-+	{"TBG-A-S", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL1, TBG_A_VCODIV_SE},
-+	{"TBG-B-S", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL1, TBG_B_VCODIV_SE},
-+};
-+
-+unsigned int tbg_get_mult(void __iomem *reg, const struct tbg_def *ptbg)
-+{
-+	u32 val;
-+
-+	val = readl(reg + TBG_CTRL0);
-+
-+	return ((val >> ptbg->fbdiv_offset) & TBG_DIV_MASK) << 2;
-+}
-+
-+unsigned int tbg_get_div(void __iomem *reg, const struct tbg_def *ptbg)
-+{
-+	u32 val;
-+	unsigned int div;
-+
-+	val = readl(reg + TBG_CTRL7);
-+
-+	div = (val >> ptbg->refdiv_offset) & TBG_DIV_MASK;
-+	if (div == 0)
-+		div = 1;
-+	val = readl(reg + ptbg->vcodiv_reg);
-+
-+	div *= 1 << ((val >>  ptbg->vcodiv_offset) & TBG_DIV_MASK);
-+
-+	return div;
-+}
-+
-+
-+static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct clk_hw_onecell_data *hw_tbg_data;
-+	struct device *dev = &pdev->dev;
-+	const char *parent_name;
-+	struct resource *res;
-+	struct clk *parent;
-+	void __iomem *reg;
-+	int i, ret;
-+
-+	hw_tbg_data = devm_kzalloc(&pdev->dev, sizeof(*hw_tbg_data)
-+				   + sizeof(*hw_tbg_data->hws) * NUM_TBG,
-+				   GFP_KERNEL);
-+	if (!hw_tbg_data)
-+		return -ENOMEM;
-+	hw_tbg_data->num = NUM_TBG;
-+	platform_set_drvdata(pdev, hw_tbg_data);
-+
-+	parent = devm_clk_get(dev, 0);
-+	if (IS_ERR(parent)) {
-+		dev_err(dev, "Could get the clock parent\n");
-+		return -EINVAL;
-+	}
-+	parent_name = __clk_get_name(parent);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	reg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	for (i = 0; i < NUM_TBG; i++) {
-+		const char *name;
-+		unsigned int mult, div;
-+
-+		name = tbg[i].name;
-+		mult = tbg_get_mult(reg, &tbg[i]);
-+		div = tbg_get_div(reg, &tbg[i]);
-+		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(NULL, name,
-+						parent_name, 0, mult, div);
-+		if (IS_ERR(hw_tbg_data->hws[i]))
-+			dev_err(dev, "Can't register TBG clock %s\n", name);
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, hw_tbg_data);
-+
-+	return ret;
-+}
-+
-+static int armada_3700_tbg_clock_remove(struct platform_device *pdev)
-+{
-+	int i;
-+	struct clk_hw_onecell_data *hw_tbg_data = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+	for (i = 0; i < hw_tbg_data->num; i++)
-+		clk_hw_unregister_fixed_factor(hw_tbg_data->hws[i]);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id armada_3700_tbg_clock_of_match[] = {
-+	{ .compatible = "marvell,armada-3700-tbg-clock", },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, armada_3700_tbg_clock_of_match);
-+
-+static struct platform_driver armada_3700_tbg_clock_driver = {
-+	.probe = armada_3700_tbg_clock_probe,
-+	.remove = armada_3700_tbg_clock_remove,
-+	.driver		= {
-+		.name	= "marvell-armada-3700-tbg-clock",
-+		.of_match_table = armada_3700_tbg_clock_of_match,
-+	},
-+};
-+
-+module_platform_driver(armada_3700_tbg_clock_driver);
-+
-+MODULE_AUTHOR("Gregory CLEMENT <gregory.clement@free-electrons.com>");
-+MODULE_DESCRIPTION("Marvell Armada 37xx SoC Time Base Generator driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.5.0
+Yes, let's see what he says. I guess from the timing, this will probably
+have to wait for linux-4.9 anyway, and then we have no problem because the
+API change will make it into 4.8.
+
+	Arnd
