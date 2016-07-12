@@ -1,90 +1,82 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
- non-modular
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-7-paul.gortmaker@windriver.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <577B782E.9090203@samsung.com>
-Date: Tue, 05 Jul 2016 11:04:46 +0200
-MIME-version: 1.0
-In-reply-to: <20160704211220.5685-7-paul.gortmaker@windriver.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mr213138.mail.yeah.net ([223.252.213.138]:40058 "EHLO
+	mr213138.mail.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750748AbcGLHdG (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 03:33:06 -0400
+Subject: Re: [PATCH v2 03/10] Clocksource: add nuc970 clocksource driver
+To: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1468135649-19980-4-git-send-email-vw@iommu.org> <3277576.eNgdG7zPqq@wuerfel>
+Cc: Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, jason@lakedaemon.net,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wan Zongshun <mcuos.com@gmail.com>
+From: Wan Zongshun <vw@iommu.org>
+Message-ID: <57849D2B.60305@iommu.org>
+Date: Tue, 12 Jul 2016 15:32:59 +0800
+MIME-Version: 1.0
+In-Reply-To: <3277576.eNgdG7zPqq@wuerfel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
-> 
-> arch/arm/mach-exynos/Kconfig:menuconfig ARCH_EXYNOS
-> arch/arm/mach-exynos/Kconfig:   bool "Samsung EXYNOS" if ARCH_MULTI_V7
-> 
-> ...meaning that it currently is not being built as a module by anyone.
-> 
-> Lets remove the couple traces of modularity so that when reading the
-> driver there is no doubt it is builtin-only.
-> 
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
-> 
-> Since module_init was already not used by this code, the init ordering
-> remains unchanged with this commit.
-> 
-> We also delete the MODULE_LICENSE tags etc. since all that information
-> is already contained at the top of the file in the comments.
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Padmavathi Venna <padma.v@samsung.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/clk/samsung/clk-exynos-audss.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> index 4e9584d79089..42b62f865198 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -15,7 +15,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of_address.h>
->  #include <linux/syscore_ops.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/platform_device.h>
->  
->  #include <dt-bindings/clock/exynos-audss-clk.h>
-> @@ -278,14 +278,3 @@ static int __init exynos_audss_clk_init(void)
->  	return platform_driver_register(&exynos_audss_clk_driver);
->  }
->  core_initcall(exynos_audss_clk_init);
-> -
-> -static void __exit exynos_audss_clk_exit(void)
-> -{
-> -	platform_driver_unregister(&exynos_audss_clk_driver);
-> -}
-> -module_exit(exynos_audss_clk_exit);
-> -
-> -MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
-> -MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
-> -MODULE_LICENSE("GPL v2");
-> -MODULE_ALIAS("platform:exynos-audss-clk");
 
-Why not removing .remove() callback as well?
 
-I don't find sysfs unbind hook useful except testing the exit paths...
-which in that case do not exist anymore (there is no "modprobe -r" for
-it anyway).
+On 2016年07月11日 23:36, Arnd Bergmann wrote:
+> On Sunday, July 10, 2016 3:27:23 PM CEST Wan Zongshun wrote:
+>>
+>> +config NUC900_TIMER
+>> +        bool "Clocksource timer for nuc900 platform" if COMPILE_TEST
+>> +        depends on ARM
+>> +        select CLKSRC_OF if OF
+>> +        select CLKSRC_MMIO
+>> +        help
+>> +          Enables the clocksource for the NUC900 platform.
+>>
+>
+> I have put this patch into my randconfig build system and found that
+> it lacks a dependency:
+>
+>
+>
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index e18ef32776a3..59b9251eef37 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -523,7 +523,7 @@ config CLKSRC_ST_LPC
+>
+>   config NUC900_TIMER
+>           bool "Clocksource timer for nuc900 platform" if COMPILE_TEST
+> -        depends on ARM
+> +        depends on ARM && GENERIC_CLOCKEVENTS
+>           select CLKSRC_OF if OF
+>           select CLKSRC_MMIO
+>           help
+> 	
 
-Best regards,
-Krzysztof
+So this patch, I still need submit or you have merged it?
+
+>
+> Also the init function has changed its return type in linux-next:
+>
+>> +static void __init nuc970_timer_of_init(struct device_node *node)
+>
+> This now needs to return an error code or we get:
+>
+> ../include/linux/of.h:1004:20: error: comparison of distinct pointer types lacks a cast [-Werror]
+>          .data = (fn == (fn_type)NULL) ? fn : fn  }
+>
+> Daniel Lezcano seems to have implemented a migration strategy, but I
+> can't see what you are supposed to do here, since the
+> CLOCKSOURCE_OF_DECLARE_RET macro is no longer part of linux-next.
+
+Wait for Daniel's comments? or what should I do now?
+
+>
+> 	Arnd
+>
+>
