@@ -1,161 +1,138 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [Xen-devel] [PATCH v2] xen/arm: register clocks used by the
- hypervisor
-To: Michael Turquette <mturquette@baylibre.com>, Julien Grall
-	<julien.grall@arm.com>, <linux-arm-kernel@lists.infradead.org>, Mark Rutland
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>
-References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
- <146776885213.35356.11565744417822933094@resonance>
- <577D035C.7090504@arm.com> <146783774807.35356.6362595927321996311@resonance>
- <dad950db-4c02-e5a2-0ce9-682a40cd12d7@de.bosch.com>
- <146794625655.73491.13497001485518368066@resonance>
-CC: <xen-devel@lists.xenproject.org>, Stefano Stabellini
-	<sstabellini@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <373bf006-1a5e-0b2b-278d-d5ec0d8737fd@de.bosch.com>
-Date: Fri, 8 Jul 2016 07:51:35 +0200
-MIME-Version: 1.0
-In-Reply-To: <146794625655.73491.13497001485518368066@resonance>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3 3/7] spi: s3c64xx: rename goto labels to meaningful names
+Date: Tue, 12 Jul 2016 19:02:12 +0900
+Message-id: <1468317736-18841-4-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08.07.2016 04:50, Michael Turquette wrote:
-> Quoting Dirk Behme (2016-07-07 00:32:34)
->> Hi Michael,
->>
->> On 06.07.2016 22:42, Michael Turquette wrote:
->>> Hi Julien,
->>>
->>> Quoting Julien Grall (2016-07-06 06:10:52)
->>>> On 06/07/16 02:34, Michael Turquette wrote:
->>>>> Hi!
->>>>
->>>> Hello Michael,
->>>>
->>>>> Quoting Dirk Behme (2016-06-30 03:32:32)
->>>>>> Some clocks might be used by the Xen hypervisor and not by the Linux
->>>>>> kernel. If these are not registered by the Linux kernel, they might be
->>>>>> disabled by clk_disable_unused() as the kernel doesn't know that they
->>>>>> are used. The clock of the serial console handled by Xen is one
->>>>>> example for this. It might be disabled by clk_disable_unused() which
->>>>>> stops the whole serial output, even from Xen, then.
->>>>>
->>>>> This whole thread had me confused until I realized that it all boiled
->>>>> down to some nomenclature issues (for me).
->>>>>
->>>>> This code does not _register_ any clocks. It simply gets them and
->>>>> enables them, which is what every other clk consumer in the Linux kernel
->>>>> does. More details below.
->>>>>
->>>>>>
->>>>>> Up to now, the workaround for this has been to use the Linux kernel
->>>>>> command line parameter 'clk_ignore_unused'. See Xen bug
->>>>>>
->>>>>> http://bugs.xenproject.org/xen/bug/45
->>>>>
->>>>> clk_ignore_unused is a band-aid, not a proper medical solution. Setting
->>>>> that flag will not turn clocks on for you, nor will it guarantee that
->>>>> those clocks are never turned off in the future. It looks like you
->>>>> figured this out correctly in the patch below but it is worth repeating.
->>>>>
->>>>> Also the new CLK_IS_CRITICAL flag might be of interest to you, but that
->>>>> flag only exists as a way to enable clocks that must be enabled for the
->>>>> system to function (hence, "critical") AND when those same clocks do not
->>>>> have an accompanying Linux driver to consume them and enable them.
->>>>
->>>> I don't think we want the kernel to enable the clock for the hypervisor.
->>>> We want to tell the kernel "don't touch at all to this clock, it does
->>>> not belong to you".
->>>
->>> But the patch *does* touch the clock from the kernel. It enables the
->>> clock via a call clk_prepare_enable. I'm utterly confused.
->>
->>
->> Maybe we need some advice here :)
->
-> Sure!
->
->>
->>
->> I've used clk_prepare_enable() 'just' to get the enable count incremented
->
-> clk_prepare_enabled will *enable* the clock signal if it currently
-> disabled or gated. In other words, if the physical line is not toggling
-> before the call, it will be after the call returns.
->
->>
->> http://lxr.free-electrons.com/source/drivers/clk/clk.c#L751
->>
->> Because it's my understanding that enable_count is needed to prevent
->> clk_disable_unused() from disabling the clock.
->
-> Having a positive enable_count will prevent the clock from being
-> disabled by both clk_disable_unused AND from the Sneaky Sibling
-> Attack(tm).
->
-> The Sneaky Sibling Attack(tm) occurs when clock A and clock B are
-> siblings and share the same parent, clock C. If clock A is enabled in
-> hardware (by bootloader, firmware or hypervisor), but does NOT have a
-> positive enable_count (in Linux), then it is possible that a driver
-> might call clk_enable(clk_B) then clk_disable(clk_B), which will result
-> in the disable action propagating up the parent chain and disabling
-> clk_C, the shared parent. This will of course gate clk_A, which is
-> clocked by clk_C, breaking things for you.
->
-> So you need to be worried about more than just clk_disable_unused.
->
-> The simple fact is is that if a piece of software knows that it needs
-> for its clock to be enabled, it should actively enable it with
-> clk_prepare_enable.
->
-> Doing some weird stuff with CLK_IGNORE_UNUSED or anything else is just
-> hoping that your clock will not be disabled, and that is the wrong
-> strategy.
->
->>
->>
->> If there is an other / better / correct way to achieve that, please let
->> us know.
->
-> Well, you should not "try to prevent a clock from being disabled", you
-> should "enable the clock that you need to use".
->
->>
->>
->> I've had a look to use the CLK_IGNORE_UNUSED flag, too. But couldn't
->> find a function exported by the clock framework to set that flag (?)
->
-> Right, the flags are immutable and must be set by the clock provider
-> driver before registering the clock. Toggling flags at run-time is a
-> misuse of the flags, and clock consumer drivers should never care about
-> the flags. They are internal to the clock framework.
->
-> In conclusion, I think that your patch does the right thing. The Xen
-> node consumes the clocks that it needs to manage and it calls
-> clk_prepare_enable on them.
+The goto labels of the style of
 
+  err4:
+  err3:
+  err2:
+  err1:
 
-Ok, thanks!
+are complex to insert in between new errors without renaming all
+the goto statements. Replace the errX naming style to meaningful
+names in order to make it easier to insert new goto exit points.
 
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+---
+ drivers/spi/spi-s3c64xx.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-> The two issues to resolve are:
->
-> 1) does consuming these hardware resources from the Linux kernel fit
-> correctly with the Xen model?
-
-
-I think so. Julien, what do you think?
-
-
-> 2) the language of the binding description makes this way more confusing
-> than it needs to be. Just claim the resources you need and enable them,
-> which is an OS-agnostic action.
-
-
-I'll post a v3 patch trying to update the description with your proposals.
-
-
-Best regards
-
-Dirk
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 6f2e91a..0784a4d 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1071,7 +1071,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
+ 				ret);
+-			goto err0;
++			goto err_deref_master;
+ 		}
+ 		sdd->port_id = ret;
+ 	} else {
+@@ -1109,13 +1109,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(sdd->regs)) {
+ 		ret = PTR_ERR(sdd->regs);
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	if (sci->cfg_gpio && sci->cfg_gpio()) {
+ 		dev_err(&pdev->dev, "Unable to config gpio\n");
+ 		ret = -EBUSY;
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	/* Setup clocks */
+@@ -1123,13 +1123,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
+ 		ret = PTR_ERR(sdd->clk);
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	if (clk_prepare_enable(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
+ 		ret = -EBUSY;
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
+@@ -1138,13 +1138,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Unable to acquire clock '%s'\n", clk_name);
+ 		ret = PTR_ERR(sdd->src_clk);
+-		goto err2;
++		goto err_disable_clk;
+ 	}
+ 
+ 	if (clk_prepare_enable(sdd->src_clk)) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
+ 		ret = -EBUSY;
+-		goto err2;
++		goto err_disable_clk;
+ 	}
+ 
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+@@ -1164,7 +1164,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "Failed to request IRQ %d: %d\n",
+ 			irq, ret);
+-		goto err3;
++		goto err_pm_put;
+ 	}
+ 
+ 	writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
+@@ -1174,7 +1174,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
+-		goto err3;
++		goto err_pm_put;
+ 	}
+ 
+ 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
+@@ -1188,15 +1188,15 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-err3:
++err_pm_put:
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+ 	clk_disable_unprepare(sdd->src_clk);
+-err2:
++err_disable_clk:
+ 	clk_disable_unprepare(sdd->clk);
+-err0:
++err_deref_master:
+ 	spi_master_put(master);
+ 
+ 	return ret;
+-- 
+2.8.1
