@@ -1,69 +1,59 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 15 Jul 2016 10:06:36 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: sunxi-ng: Fix inverted test condition in
- ccu_helper_wait_for_lock
-Message-ID: <20160715080636.GP4761@lukather>
-References: <1468464155-11888-1-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iq/fWD14IMVFWBCD"
-In-Reply-To: <1468464155-11888-1-git-send-email-wens@csie.org>
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
+Date: Tue, 12 Jul 2016 15:54:04 +0900
+Message-id: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <57837606.8050906@samsung.com>
+References: <57837606.8050906@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Patch a9e93e8 has erroneously removed some comments which are
+important to understand why the bus frequency is multiplied by
+two during the spi transfer.
 
---iq/fWD14IMVFWBCD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reword the previous comment to a more appropriate message.
 
-On Thu, Jul 14, 2016 at 10:42:35AM +0800, Chen-Yu Tsai wrote:
-> The condition passed to read*_poll_timeout() is the break condition,
-> i.e. wait for this condition to happen and return success.
->=20
-> The original code assumed the opposite, resulting in a warning when
-> the PLL clock rate was changed but never lost it's lock as far as
-> the readout indicated. This was verified by checking the read out
-> register value.
->=20
-> Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+---
+Hi,
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+despite Mike's comments I'm sending the patch as it was
+originally meant. I think that fixing the exact clk where to set
+the rate should anyway go in a different patch.
 
-Mike, Stephen, could you add that patch on top of the current branch?
+V2->V3
+The comment has been reworded as Sylwester recommended.
 
 Thanks,
-Maxime
+Andi
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+ drivers/spi/spi-s3c64xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---iq/fWD14IMVFWBCD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXiJmMAAoJEBx+YmzsjxAgiyoQAIp7V2fQYr9hr6PlX6+r20xe
-y/oFmGvACu281i8h0xuZFAdnzHhmj3mS74pWjJrG+CVTC7C2BX+spSwrCrGGrdA5
-FjsmROOAOR2siDVRIOX2ioE7wacIcth1zRQdPMf7n5HozE1SMStW8I+lzJsA5y4a
-iIbQ8cwzAEGS7bfzS+IAxwIggL3314LqFxZlUnGFK6xEs9S/1599wF7nZpKGAZPE
-hv2wuijdKUjcGVSmieDOyXu17Dz28oE06NtTEq2bCRhbQfuFd8yq4XHJFxhfYYLD
-ZG9a0nZ+7FPDSBJUBYmLb36hpAn8mVKOOL6tpyy77rB3Q9IxPUhuBbwzAKpBVt7S
-zic/DEx8dGAPc4b98HB4cT8DeRw/hcGwDmBWb8vOro4qqqlwdLehb6Gj+OEQzz5T
-J+Vu6xGUej4uqPWcRj0HeVG651CqdNqsIQbQ8wYmoD2rPSOopy3AnnmZkYUz+ZgE
-seeJxJSNf8J/UT1mbVbfterRnBVj8L/VIxFpKpmUSprmF80fSBEILVqILpI7d2eh
-jIv1lvTypz4uRjclBOxmff70/AvbbEtT1odkXQaQZMSYFIMjwYoW5ykP5hAORSS3
-SHivjybejM832G+DQ3Uy85ne2rmJDJub9Jx2dJZ7GwimbP4IoWFLNEs3MH6kGC72
-5+glo7aQhMJh4XsgqF48
-=TBt+
------END PGP SIGNATURE-----
-
---iq/fWD14IMVFWBCD--
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 6da663f..5bedafc 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+ 
+ 	if (sdd->port_conf->clk_from_cmu) {
++		/* The src_clk clock is divided internally by 2 */
+ 		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+ 	} else {
+ 		/* Configure Clock */
+-- 
+2.8.1
