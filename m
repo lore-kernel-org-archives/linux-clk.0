@@ -1,141 +1,88 @@
-Return-Path: <njaigane@codeaurora.org>
-From: njaigane@codeaurora.org
-To: linux-arm-msm@vger.kernel.org
-Cc: linux@qca.qualcomm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	twp@codeaurora.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	plai@codeaurora.org,
-	bgoswami@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	bjorn.andersson@linaro.org,
-	varada@codeaurora.org,
-	pradeepb@codeaurora.org,
-	snlakshm@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	bselvara@codeaurora.org,
-	Jaiganesh Narayanan <njaigane@codeaurora.org>
-Subject: [PATCH 0/4] Qualcomm IPQ4019 Audio driver addition
-Date: Fri, 15 Jul 2016 12:37:02 +0530
-Message-Id: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  LKML <linux-kernel@vger.kernel.org>,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Hua Jing <jinghua@marvell.com>,  Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v2 2/6] clk: mvebu: Add the xtal clock for Armada 3700 SoC
+References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+	<1467931071-31004-3-git-send-email-gregory.clement@free-electrons.com>
+	<CAP=VYLoZdyqP7vLa_pCx3mNpFuYCRaNgkT-STtk571U0KAgdLw@mail.gmail.com>
+Date: Tue, 12 Jul 2016 12:43:38 +0200
+In-Reply-To: <CAP=VYLoZdyqP7vLa_pCx3mNpFuYCRaNgkT-STtk571U0KAgdLw@mail.gmail.com>
+	(Paul Gortmaker's message of "Sat, 9 Jul 2016 19:34:59 -0400")
+Message-ID: <87vb0brvad.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaiganesh Narayanan <njaigane@codeaurora.org>
+Hi Paul,
+ 
+ On dim., juil. 10 2016, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
 
-These patches add the support for Qualcomm IPQ4019 ASoC
-with the ALSA based audio drivers. The patches are broken
+> On Thu, Jul 7, 2016 at 6:37 PM, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>> This clock is the parent of all the Armada 3700 clocks. It is a fixed
+>> rate clock which depends on the gpio configuration read when resetting
+>> the SoC.
+>>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> ---
+>>  drivers/clk/mvebu/Kconfig            |  3 ++
+>>  drivers/clk/mvebu/Makefile           |  1 +
+>>  drivers/clk/mvebu/armada-37xx-xtal.c | 98 ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 102 insertions(+)
+>>  create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+>>
+>> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+>> index 3165da77d525..fddc8ac5faff 100644
+>> --- a/drivers/clk/mvebu/Kconfig
+>> +++ b/drivers/clk/mvebu/Kconfig
+>> @@ -24,6 +24,9 @@ config ARMADA_39X_CLK
+>>         bool
+>>         select MVEBU_CLK_COMMON
+>>
+>> +config ARMADA_37XX_CLK
+>> +       bool
+>> +
+>
+> Since the driver is not tristate, can you please remove all modular
+> references from it?   With the author and license etc. at the top you
+> can just delete the last three lines, the DEVICE_TABLE and register
+> with builtin_platform_driver, and then no need for module.h either.
+>
+> Either that, or change it to a tristate, if that use case makes sense.
 
-1. Device Tree support
-2. Audio clock driver support
-3. TLMM / Pinctrl support
-4. ALSA based audio drivers
+Indeed having these clock drivers as module is not very useful. Let's
+remove the modular reference.
 
-Jaiganesh Narayanan (4):
-  qcom: ipq4019: Add ipq4019 ASoC device tree changes
-  qcom: ipq4019: ASoC clock driver support
-  qcom: ipq4019: ASoC tlmm/pinctrl support
-  qcom: ipq4019: Add ASoC driver modules
+Thanks,
 
- .../bindings/sound/qca,ipq4019-audio-adss.txt      |  20 +
- .../bindings/sound/qca,ipq4019-audio.txt           |  13 +
- .../bindings/sound/qca,ipq4019-codec.txt           |  15 +
- .../devicetree/bindings/sound/qca,ipq4019-i2s.txt  |  33 +
- .../devicetree/bindings/sound/qca,ipq4019-i2s1.txt |  29 +
- .../devicetree/bindings/sound/qca,ipq4019-i2s2.txt |  29 +
- .../devicetree/bindings/sound/qca,ipq4019-mbox.txt |  23 +
- .../bindings/sound/qca,ipq4019-pcm-i2s.txt         |  15 +
- .../bindings/sound/qca,ipq4019-pcm-i2s1.txt        |  15 +
- .../bindings/sound/qca,ipq4019-pcm-i2s2.txt        |  15 +
- .../bindings/sound/qca,ipq4019-pcm-spdif.txt       |  15 +
- .../bindings/sound/qca,ipq4019-pcm-tdm.txt         |  15 +
- .../bindings/sound/qca,ipq4019-spdif.txt           |  35 +
- .../bindings/sound/qca,ipq4019-stereo.txt          |  17 +
- .../devicetree/bindings/sound/qca,ipq4019-tdm.txt  |  33 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi      | 195 ++++-
- arch/arm/boot/dts/qcom-ipq4019.dtsi                | 247 +++++-
- drivers/clk/qcom/Kconfig                           |   8 +
- drivers/clk/qcom/Makefile                          |   2 +
- drivers/clk/qcom/adcc-ipq4019.c                    | 700 +++++++++++++++++
- drivers/clk/qcom/clk-qcapll.c                      | 197 +++++
- drivers/clk/qcom/clk-qcapll.h                      |  60 ++
- drivers/clk/qcom/clk-rcg.h                         |  68 +-
- drivers/clk/qcom/clk-rcg2.c                        | 699 ++++++++++++++++-
- drivers/clk/qcom/common.c                          |   9 +-
- drivers/clk/qcom/common.h                          |   3 +-
- drivers/pinctrl/qcom/pinctrl-ipq4019.c             | 116 ++-
- include/dt-bindings/clock/qca,adcc-ipq4019.h       |  45 ++
- include/dt-bindings/clock/qcom,gcc-ipq4019.h       |   4 +-
- include/dt-bindings/sound/ipq4019-audio.h          |  37 +
- sound/soc/qcom/Kconfig                             |  47 ++
- sound/soc/qcom/Makefile                            |   1 +
- sound/soc/qcom/ipq4019/Makefile                    |  16 +
- sound/soc/qcom/ipq4019/ipq4019-adss.c              | 407 ++++++++++
- sound/soc/qcom/ipq4019/ipq4019-adss.h              | 432 +++++++++++
- sound/soc/qcom/ipq4019/ipq4019-codec.c             | 475 ++++++++++++
- sound/soc/qcom/ipq4019/ipq4019-codec.h             |  91 +++
- sound/soc/qcom/ipq4019/ipq4019-cpu-dai.c           | 687 +++++++++++++++++
- sound/soc/qcom/ipq4019/ipq4019-mbox.c              | 825 +++++++++++++++++++++
- sound/soc/qcom/ipq4019/ipq4019-mbox.h              | 146 ++++
- sound/soc/qcom/ipq4019/ipq4019-pcm-i2s.c           | 609 +++++++++++++++
- sound/soc/qcom/ipq4019/ipq4019-pcm-spdif.c         | 664 +++++++++++++++++
- sound/soc/qcom/ipq4019/ipq4019-pcm-tdm.c           | 609 +++++++++++++++
- sound/soc/qcom/ipq4019/ipq4019-pcm.h               |  37 +
- sound/soc/qcom/ipq4019/ipq4019-stereo.c            | 313 ++++++++
- sound/soc/qcom/ipq4019/ipq4019.c                   | 121 +++
- 46 files changed, 8135 insertions(+), 57 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-audio-adss.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-audio.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-codec.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s1.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s2.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-mbox.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s1.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s2.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-spdif.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-tdm.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-spdif.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-stereo.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-tdm.txt
- create mode 100644 drivers/clk/qcom/adcc-ipq4019.c
- create mode 100644 drivers/clk/qcom/clk-qcapll.c
- create mode 100644 drivers/clk/qcom/clk-qcapll.h
- create mode 100644 include/dt-bindings/clock/qca,adcc-ipq4019.h
- create mode 100644 include/dt-bindings/sound/ipq4019-audio.h
- create mode 100644 sound/soc/qcom/ipq4019/Makefile
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-adss.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-adss.h
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-codec.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-codec.h
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-cpu-dai.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-mbox.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-mbox.h
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm-i2s.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm-spdif.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm-tdm.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm.h
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019-stereo.c
- create mode 100644 sound/soc/qcom/ipq4019/ipq4019.c
+Gregory
+
+
+>
+> Thanks,
+> Paul.
+> --
+>
+>
+>>  config ARMADA_XP_CLK
+>>         bool
+>>         select MVEBU_CLK_COMMON
+>> diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+>> index 7172ef65693d..4257a36d0219 100644
+>> --- a/drivers/clk/mvebu/Makefile
+>> +++ b/drivers/clk/mvebu/Makefile
+>> @@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_370_CLK)    += armada-370.o
+>>  obj-$(CONFIG_ARMADA_375_CLK)   += armada-375.o
+>>  obj-$(CONFIG_ARMADA_38X_CLK)   += armada-38x.o
+>>  obj-$(CONFIG_ARMADA_39X_CLK)   += armada-39x.o
+>> +obj-$(CONFIG_ARMADA_37XX_CLK)  += armada-37xx-xtal.o
+>>  obj-$(CONFIG_ARMADA_XP_
+>
+> [...]
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
