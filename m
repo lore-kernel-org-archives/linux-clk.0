@@ -1,96 +1,61 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Scott Wood <oss@buserror.net>
-Cc: Scott Wood <scott.wood@nxp.com>, Yuantian Tang <yuantian.tang@nxp.com>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng Ren <xiaofeng.ren@nxp.com>
-Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible parent clocks
-Date: Fri, 01 Jul 2016 22:53:44 +0200
-Message-ID: <1736057.IZk9ncTkZk@vostro.rjw.lan>
-In-Reply-To: <1467356146.32358.32.camel@buserror.net>
-References: <1466058085-19353-1-git-send-email-oss@buserror.net> <3794032.AoZL3DhM7U@vostro.rjw.lan> <1467356146.32358.32.camel@buserror.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3 4/7] spi: s3c64xx: use error code from clk_prepare_enable()
+Date: Tue, 12 Jul 2016 19:02:13 +0900
+Message-id: <1468317736-18841-5-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, July 01, 2016 01:55:46 AM Scott Wood wrote:
-> On Thu, 2016-06-30 at 15:29 +0200, Rafael J. Wysocki wrote:
-> > On Thursday, June 30, 2016 05:46:42 AM Scott Wood wrote:
-> > > 
-> > > On 06/29/2016 10:02 PM, Yuantian Tang wrote:
-> > > > 
-> > > > > 
-> > > > > -----Original Message-----
-> > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
-> > > > > Sent: Thursday, June 30, 2016 10:24 AM
-> > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
-> > > > > Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.org.uk
-> > > > > >;
-> > > > > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> > > > > <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>; linux-
-> > > > > clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
-> > > > > dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng Ren
-> > > > > <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>
-> > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
-> > > > > possible
-> > > > > parent clocks
-> > > > > 
-> > > > > On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:
-> > > > > > 
-> > > > > > > 
-> > > > > > > -----Original Message-----
-> > > > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
-> > > > > > > Sent: Thursday, June 30, 2016 9:47 AM
-> > > > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
-> > > > > > > Cc: Scott Wood <oss@buserror.net>; Russell King
-> > > > > > > <linux@armlinux.org.uk>; Michael Turquette
-> > > > > > > <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>;
-> > > > > > > Viresh Kumar <viresh.kumar@linaro.org>; linux- clk@vger.kernel.org
-> > > > > > > ;
-> > > > > > > linux-pm@vger.kernel.org; linuxppc- dev@lists.ozlabs.org; Yang-Leo
-> > > > > > > Li <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>;
-> > > > > > > Scott
-> > > > > > > Wood <scottwood@freescale.com>
-> > > > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
-> > > > > > > possible parent clocks
-> > > > > > > 
-> > > > > > > On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
-> > > > > > > > 
-> > > > > > > > Hi,
-> > > > > > > > 
-> > > > > > > > This patch is acked by clock maintainer. If no comments from
-> > > > > > > > anyone else,
-> > > > > > > we will merge it in next week.
-> > > > > > > 
-> > > > > > > There is a cpufreq commit depending on it.  Are you going to
-> > > > > > > handle
-> > > > > > > that one too?
-> > > > > > > 
-> > > > > > That one has been acked by cpufreq maintainer. You can get this from
-> > > > > patch comments.
-> > > > > 
-> > > > > I know that it has been ACKed.
-> > > > > 
-> > > > > My question is whether or not you are going to apply it along the
-> > > > > [1/2].
-> > > > > 
-> > > > > If not, it will have to be deferred until the [1/2] is merged and then
-> > > > > applied
-> > > > > which may not be desirable.
-> > > > > 
-> > > > I hope we can apply both at same time. Seems Scott has a few concerns.
-> > > > 
-> > > > What you think about this patch? Can you apply it?
-> > > > If you have applied this patch, then I can push CPUfreq maintainer to
-> > > > apply another one which will be delayed.
-> > > My only concern was getting an ack for this patch (1/2) -- did I miss it
-> > > somewhere?
-> > OK, so who's going to apply the series?
-> 
-> Ideally it should go via the cpufreq tree.
+If clk_prepare_enable() fails do not return -EBUSY but use the
+value provided by the function itself.
 
-OK, I'll apply both, then.
+Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Who exactly has ACKed the [1/2] from the clk side?
-
-Thanks,
-Rafael
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 0784a4d..3a65adf 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1126,9 +1126,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err_deref_master;
+ 	}
+ 
+-	if (clk_prepare_enable(sdd->clk)) {
++	ret = clk_prepare_enable(sdd->clk);
++	if (ret) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
+-		ret = -EBUSY;
+ 		goto err_deref_master;
+ 	}
+ 
+@@ -1141,9 +1141,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
+-	if (clk_prepare_enable(sdd->src_clk)) {
++	ret = clk_prepare_enable(sdd->src_clk);
++	if (ret) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
+-		ret = -EBUSY;
+ 		goto err_disable_clk;
+ 	}
+ 
+-- 
+2.8.1
