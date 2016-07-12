@@ -1,88 +1,57 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Krzysztof =?utf-8?B?S296xYJvd3NraQ==?= <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for Exynos7
- CPU clocks
-Date: Tue, 12 Jul 2016 15:44:03 +0200
-Message-id: <1893441.PNypKdntnt@amdc1976>
-In-reply-to: 
- <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <2318982.ZLuIVQzhgE@amdc1976>
- <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 12 Jul 2016 09:22:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Message-ID: <20160712082256.GD9976@sirena.org.uk>
+References: <57837606.8050906@samsung.com>
+ <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZARJHfwaSJQLOEUz"
+In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 11, 2016 04:44:30 PM Abhilash Kesavan wrote:
-> Hi Bartlomiej,
 
-Hi Abhilash,
+--ZARJHfwaSJQLOEUz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Thanks for the comments.
-> 
-> On Thu, Jul 7, 2016 at 1:17 PM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> >
-> > Hi
-> >
-> > On Thursday, July 07, 2016 12:45:57 PM Sylwester Nawrocki wrote:
-> >> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
-> >> > Exynos7 has the same CPU clock registers layout as that present
-> >
-> > Please precise for which Exynos7 SoC this change is needed
-> > (all three of them?).
-> 
-> As mentioned in my recently posted PMU series, the exynos7 is a quad
-> core A57 based SoC and not meant to be a SoC family.
+On Tue, Jul 12, 2016 at 03:54:04PM +0900, Andi Shyti wrote:
+> Patch a9e93e8 has erroneously removed some comments which are
+> important to understand why the bus frequency is multiplied by
+> two during the spi transfer.
 
-I suppose that it will get some more meaningful name once released
-officially (I couldn't find anything about this SoC on the net).
+Please don't bury patches in the middle of old threads, it makes it very
+confusing trying to figure out what's going on especially when you do
+this one patch at a time in a series.  Submit new patches as a complete
+series, ideally not threaded in with anything else (at least for me).
 
-> I have reviewed various exynos7xxx UMs in terms of the CPU CMU. Both
-> exynos7580 and exynos7420 have a similar CMU register layout along
-> with the same mux stat bits as exynos7. Exynos7870 on the other hand
-> is quite different.
-> 
-> Please let me know what naming convention you would prefer that I use
-> E7/E7420/E7580 ?
+--ZARJHfwaSJQLOEUz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I would prefer using E7420 naming.
- 
-> >> > in Exynos5433 except for the bits in the MUX_STAT* registers.
-> >> > Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
-> >>
-> >> > --- a/drivers/clk/samsung/clk-cpu.h
-> >> > +++ b/drivers/clk/samsung/clk-cpu.h
-> >> > @@ -63,6 +63,8 @@ struct exynos_cpuclk {
-> >> >  /* The CPU clock registers have Exynos5433-compatible layout */
-> >> >  #define CLK_CPU_HAS_E5433_REGS_LAYOUT      (1 << 2)
-> >>
-> >> > +/* Exynos5433-compatible layout with different MUX_STAT register bits */
-> >> > +#define CLK_CPU_HAS_MODIFIED_MUX_STAT      (1 << 3)
-> >>
-> >> It's getting a bit messy, what if there comes another SoC version
-> >> which has some other modification of exynos5433 registers structure?
-> >> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
-> >> could easily get lost while trying to determine which modification
-> >> is which. How about indicating explicitly it's an exynos7 bits
-> >> layout and renaming the flag to something like
-> >>
-> >> #define CLK_CPU_HAS_E7_MUX_STAT       (1 << 16) ?
-> >
-> > ditto
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+iQEcBAEBCAAGBQJXhKjfAAoJECTWi3JdVIfQSQ8H/imKcL5X9zL3/qnSek1oyoD8
+Zdq2JKr2OiJ57H7NtoTFcZqHfEdSFgXqNVumGTeA0Nzpn04PT1UsMzcS/xjwt2l8
+c52YhqCZx7JCOPwPY9/IOtVa5B2OkE6HH7pzPVtFyJY5LbswpPCpzXYomjig5Yxq
+f2og8S1BvMX31EiIJQCN2CY1O1OQV6gOMR866l9I2ii4G1Ji47hOsWUGBUJ25ick
+1dhKP48XFPNs1fkTkdzPmAIyw4qVEG6Hv0qNDH+RPIKe2cW/rZQixLOLlcHIzmzo
+eX3mFgUeEjfgnr8FDDtsC1nUxQKxFR5zwSyFK7LabRtsxM2mqQr2eJ3zWDNr698=
+=sadm
+-----END PGP SIGNATURE-----
+
+--ZARJHfwaSJQLOEUz--
