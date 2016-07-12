@@ -1,34 +1,79 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 17:34:57 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] Rockchip clk changes for 4.8
-Message-ID: <20160702003457.GI27880@codeaurora.org>
-References: <112903792.EQ89smGoay@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <112903792.EQ89smGoay@phil>
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+Subject: [PATCH v3 0/7] spi s3c64xx ioclk handling
+Date: Tue, 12 Jul 2016 19:02:09 +0900
+Message-id: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/01, Heiko Stuebner wrote:
-> Hi Mike, Stephen,
-> 
-> please find below clock changes for 4.8.
-> 
-> Apart from some new clock ids there is the addition of a placeholder clock
-> for the rk3399 watchdog pclk - as explained in the code, this gate is not
-> controlled through the clock controller but through the general register
-> files, yet the watchdog is unhappy if can't see the clock. And finally some
-> small fixes for clock mistakes that do not affect any currently support
-> board ip blocks like spdif-DPTX clock on the rk3399.
-> 
-> So if this looks ok, please pull
-> 
+Hi,
 
-Pulled into clk-next.
+this patchset improves the compatibility between the s3c64xx
+driver and the exynos5433. One point of incompatibility, indeed,
+was that the SPI controller in exynos5433 is fed by three clocks
+which need to be handled by the driver. The third clock is the
+ioclk which support is the main purpose of this patchset.
+  
+The last patch was first sent on its own and it was its 5th
+version, it has been queued to this patchset as there is a
+dependency with it.
+
+Changelog V1 -> V2:
+
+ - patch 1: the exynos5433-spi compatible is placed in
+   alphabetical order compared to exynos7-spi
+
+ - patch 1: deprecates exynos7-spi
+
+ - patch 2: [new] added the clocks and clock-name documentation
+   in the bindings
+
+ - patch 3: fixed some typos, renamed the goto label from
+   err_power_off to err_pm_put add the reviewd-by Krzysztof
+
+ - patch 4: new patch
+
+ - patch 5: fixed typos in commit message and use low letters for
+   hex numbers
+
+ - patch 6: removed one line of comment
+
+ - patch 7: added to ensure sequentiality.
+
+Changelog V2 -> V3
+
+ - patch 2: reworded the property descriptions
+
+ - patch 6: reworded the added comment
+
+ - added on all the patches the proper reviewed and acks
+
+Thanks,
+Andi
+
+Andi Shyti (7):
+  bindings: spi-samsung: add exynos5433 spi compatible
+  bindings: spi-samsung: document the clocks and the clock-name property
+  spi: s3c64xx: rename goto labels to meaningful names
+  spi: s3c64xx: use error code from clk_prepare_enable()
+  spi: s3c64xx: add Exynos5433 compatible for ioclk handling
+  spi: s3c64xx: restore removed comments
+  clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI clocks
+
+ .../devicetree/bindings/spi/spi-samsung.txt        | 12 ++-
+ drivers/clk/samsung/clk-exynos5433.c               |  5 +-
+ drivers/spi/spi-s3c64xx.c                          | 90 +++++++++++++++++-----
+ 3 files changed, 82 insertions(+), 25 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
