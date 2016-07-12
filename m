@@ -1,102 +1,80 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-To: Julien Grall <julien.grall@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Dirk Behme <dirk.behme@gmail.com>, Stefano
- Stabellini <sstabellini@kernel.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
- <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
- <57876612.3030407@arm.com>
-CC: Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>, Stephen
- Boyd <sboyd@codeaurora.org>, <xen-devel@lists.xenproject.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <b90f7461-4e6b-c3e3-7a60-a8b4082ec196@de.bosch.com>
-Date: Thu, 14 Jul 2016 12:32:57 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1468135649-19980-7-git-send-email-vw@iommu.org> <4765191.NGpMC1JR46@wuerfel>
+Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
+	Wan Zongshun <mcuos.com@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org
+From: Wan Zongshun <vw@iommu.org>
+Message-ID: <5784B302.80307@iommu.org>
+Date: Tue, 12 Jul 2016 17:06:10 +0800
 MIME-Version: 1.0
-In-Reply-To: <57876612.3030407@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <4765191.NGpMC1JR46@wuerfel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.07.2016 12:14, Julien Grall wrote:
-> Hi Dirk,
+
+
+On 2016年07月11日 16:03, Arnd Bergmann wrote:
+> On Sunday, July 10, 2016 3:27:26 PM CEST Wan Zongshun wrote:
+>> +       ret = of_property_read_string(np, "compatible", &soc_dev_attr->soc_id);
+>> +       if (ret)
+>>                return -EINVAL;
+>> +
+>> +       soc_dev_attr->machine = "NUC900EVB";
+>> +       soc_dev_attr->family = "NUC900";
+>> +       soc_dev = soc_device_register(soc_dev_attr);
+>> +       if (IS_ERR(soc_dev)) {
+>> +               kfree(soc_dev_attr);
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       ret = regmap_read(syscon_regmap, GCR_CHIPID, &nuc900_chipid);
+>> +       if (ret)
+>> +               return -ENODEV;
+>> +
+>> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
+>> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
+>> +
+>> +       dev_info(&pdev->dev, "Nuvoton Chip ID: 0x%x, Version ID:0x%x\n",
+>> +                nuc900_chipid & GCR_CHIPID_MASK,
+>> +                (nuc900_chipid >> 24) & 0xff);
 >
-> On 14/07/16 07:31, Dirk Behme wrote:
->> On 13.07.2016 23:03, Michael Turquette wrote:
->>> Quoting Dirk Behme (2016-07-13 11:56:30)
->>>> On 13.07.2016 20:43, Stefano Stabellini wrote:
->>>>> On Wed, 13 Jul 2016, Dirk Behme wrote:
->>>>>> On 13.07.2016 00:26, Michael Turquette wrote:
->>>>>>> Quoting Dirk Behme (2016-07-12 00:46:45)
->>>>>>>> Clocks described by this property are reserved for use by Xen,
->>>>>>>> and the OS
->>>>>>>> must not alter their state any way, such as disabling or gating a
->>>>>>>> clock,
->>>>>>>> or modifying its rate. Ensuring this may impose constraints on
->>>>>>>> parent
->>>>>>>> clocks or other resources used by the clock tree.
->>>>>>>
->>>>>>> Note that clk_prepare_enable will not prevent the rate from changing
->>>>>>> (clk_set_rate) or a parent from changing (clk_set_parent). The
->>>>>>> only way
->>>>>>> to do this currently would be to set the following flags on the
->>>>>>> effected
->>>>>>> clocks:
->>>>>>>
->>>>>>>     CLK_SET_RATE_GATE
->>>>>>>     CLK_SET_PARENT_GATE
->>>>>>
->>>>>>
->>>>>>
->>>>>> Regarding setting flags, I think we already talked about that. I
->>>>>> think the
->>>>>> conclusion was that in our case its not possible to manipulate the
->>>>>> flags in
->>>>>> the OS as this isn't intended to be done in cases like ours.
->>>>>> Therefore no API
->>>>>> is exported for this.
->>>>>>
->>>>>> I.e. if we need to set these flags, we have to do that in Xen where
->>>>>> we add the
->>>>>> clocks to the hypervisor node in the device tree. And not in the
->>>>>> kernel patch
->>>>>> discussed here.
->>>>>
->>>>> These are internal Linux flags, aren't they?
->>>>
->>>>
->>>> I've been under the impression that you can set clock "flags" via the
->>>> device tree. Seems I need to re-check that ;)
->>>
->>> Right, you cannot set flags from the device tree. Also, setting these
->>> flags is done by the clock provider driver, not a consumer. Xen is the
->>> consumer.
->>
->>
->> Ok, thanks, then I think we can forget about using flags for the issue
->> we are discussing here.
->>
->> Best regards
->>
->> Dirk
->>
->> P.S.: Would it be an option to merge the v4 patch we are discussing
->> here, then? From the discussion until here, it sounds to me that it's
->> the best option we have at the moment. Maybe improving it in the future,
->> then.
+> I'm still a bit unsure about the set of attributes here.
 >
-> I think it is a good start, although I would like to see some rationale
-> in the code and commit message about the behavior of the Linux with
-> those clocks after this patch because it does not match the "contract".
+> - The "soc_id" is read from the device tree from the field that contains
+>    the board name, I think for consistency you should try to map the
+>    GCR_CHIPID to the name of the SoC and assign that here
+>
+> - The "machine" is hardcoded to "NUC900EVB", which in turn looks like
+>    a particular board but not the one you are running on. Maybe read
+>    that from the DT instead?
+>
+> - The "revision" is not filled at all, I would suggest using something
+>    derived from the GCR_CHIPID register here
+>
+> - you have two nonstandard attributes "chipid" and "version", which
+>    I'd hope to avoid -- the set of standard attributes is supposed to
+>    give enough information about the machine, and platform independent
+>    user space will never read those.
 
+So, Maybe I can remove those two codes, no need push those information 
+to user space?
 
-I'd be happy about any wording proposals :)
+device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
+device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
 
-
-Best regards
-
-Dirk
+>
+> 	Arnd
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
