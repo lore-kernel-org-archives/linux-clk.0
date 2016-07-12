@@ -1,60 +1,35 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH RESEND v2 3/8] tty: serial: fsl_lpuart: fix clearing of receive flag
-Date: Tue, 19 Jul 2016 13:13:05 +0530
-Message-ID: <20160719074310.16872-4-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:35543 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754830AbcGLPj0 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 11:39:26 -0400
+Date: Tue, 12 Jul 2016 21:09:10 +0530
+From: Afzal Mohammed <afzal.mohd.ma@gmail.com>
+To: Wan Zongshun <vw@iommu.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	jason@lakedaemon.net, p.zabel@pengutronix.de,
+	Wan Zongshun <mcuos.com@gmail.com>
+Subject: Re: [PATCH v2 08/10] ARM: dts: nuc900: Add nuc970 dts files
+Message-ID: <20160712153910.GA3507@afzalpc>
+References: <1468136542-2656-1-git-send-email-vw@iommu.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468136542-2656-1-git-send-email-vw@iommu.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stefan Agner <stefan@agner.ch>
+Hi,
 
-Commit 8e4934c6d6c6 ("tty: serial: fsl_lpuart: clear receive flag on FIFO
-flush") implemented clearing of the receive flag by reading the status register
-only. It turned out that even though we flush the FIFO afterwards, a explicit
-read of the data register is still required.
+On Sun, Jul 10, 2016 at 03:42:20PM +0800, Wan Zongshun wrote:
+> This patch is to add dts support for nuc970 platform.
 
-This leads to a FIFO underrun. To avoid this, follow the advice in the overrun
-"Operation section": Unconditionally clear RXUF after using RXFLUSH.
+cpu ! in soc ? lost in fab ? ;)
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
----
- drivers/tty/serial/fsl_lpuart.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 75a2098..97c1fda 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -935,13 +935,16 @@ static void lpuart_setup_watermark(struct lpuart_port *sport)
- 	writeb(val | UARTPFIFO_TXFE | UARTPFIFO_RXFE,
- 			sport->port.membase + UARTPFIFO);
- 
--	/* explicitly clear RDRF */
--	readb(sport->port.membase + UARTSR1);
--
- 	/* flush Tx and Rx FIFO */
- 	writeb(UARTCFIFO_TXFLUSH | UARTCFIFO_RXFLUSH,
- 			sport->port.membase + UARTCFIFO);
- 
-+	/* explicitly clear RDRF */
-+	if (readb(sport->port.membase + UARTSR1) & UARTSR1_RDRF) {
-+		readb(sport->port.membase + UARTDR);
-+		writeb(UARTSFIFO_RXUF, sport->port.membase + UARTSFIFO);
-+	}
-+
- 	writeb(0, sport->port.membase + UARTTWFIFO);
- 	writeb(1, sport->port.membase + UARTRWFIFO);
- 
--- 
-2.9.0
+Regards
+afzal
