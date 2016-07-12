@@ -1,57 +1,189 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com> <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Jul 2016 13:49:50 +0200
-Message-ID: <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
-Subject: Re: [PATCH v4] xen/arm: Add a clock property
-To: Julien Grall <julien.grall@arm.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stefano Stabellini <sstabellini@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+To: Tero Kristo <t-kristo@ti.com>,
+ "Russell King - ARM Linux" <linux@armlinux.org.uk>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <5785117B.4050907@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
+ paul@pwsan.com, sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org
+References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
+ <1467296018-25086-3-git-send-email-t-kristo@ti.com>
+ <20160712102228.GE5783@n2100.arm.linux.org.uk> <57850A29.4010806@ti.com>
+ <20160712153418.GF5783@n2100.arm.linux.org.uk> <5785117B.4050907@ti.com>
+Message-ID: <146834521716.73491.12539128897634971676@resonance>
+Subject: Re: [PATCHv3 2/7] clk: ti: add clkdev get helper
+Date: Tue, 12 Jul 2016 10:40:17 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Julien,
+Quoting Tero Kristo (2016-07-12 08:49:15)
+> On 12/07/16 18:34, Russell King - ARM Linux wrote:
+> > On Tue, Jul 12, 2016 at 06:18:01PM +0300, Tero Kristo wrote:
+> >> On 12/07/16 13:22, Russell King - ARM Linux wrote:
+> >>> On Thu, Jun 30, 2016 at 05:13:33PM +0300, Tero Kristo wrote:
+> >>>>   /**
+> >>>> + * ti_clk_get - lookup a TI clock handle
+> >>>> + * @dev_id: device to lookup clock for
+> >>>> + * @con_id: connection ID to find
+> >>>> + *
+> >>>> + * Searches for a TI clock handle based on the DT node name.
+> >>>> + * Returns the pointer to the clock handle, or ERR_PTR in failure.
+> >>>> + */
+> >>>> +static struct clk *ti_clk_get(const char *dev_id, const char *con_i=
+d)
+> >>>> +{
+> >>>> +  struct of_phandle_args clkspec;
+> >>>> +  struct device_node *node;
+> >>>> +  struct clk *clk;
+> >>>> +
+> >>>> +  /* Only check for cases of type clk_get_sys(NULL, "xyz") */
+> >>>> +  if (dev_id || !con_id)
+> >>>> +          return ERR_PTR(-ENOENT);
+> >>>> +
+> >>>> +  if (of_have_populated_dt()) {
+> >>>> +          node =3D of_find_node_by_name(NULL, con_id);
+> >>>> +          clkspec.np =3D node;
+> >>>> +          clk =3D of_clk_get_from_provider(&clkspec);
+> >>>> +
+> >>>> +          if (!IS_ERR(clk))
+> >>>> +                  return clk;
+> >>>> +  }
+> >>>> +
+> >>>> +  return ERR_PTR(-ENOENT);
+> >>>> +}
+> >>>
+> >>> I _really_ don't like this.  This takes us back to the totally broken
+> >>> idea, that's already been proven to be greatly harmful in OMAP land,
+> >>> that the "con_id" is not a _DEVICE SPECIFIC CONNECTION NAME_ but is a
+> >>> CLOCK NAME.  The connection ID is supposed to be a static string in
+> >>> the requestor of the clock, not some random string picked out from
+> >>> DT.
+> >>
+> >> What is the harm in that actually? I have most likely missed some disc=
+ussion
+> >> but please educate me.
+> >
+> > The problem is that we end up with drivers that we end up needing platf=
+orm
+> > information to know what clocks they should get, and what "connection n=
+ames"
+> > to use to get their clocks.
+> >
+> > We've been there before with OMAP, pre-DT times, and I fixed it up by
+> > creating clkdev and converting much of OMAP over to clkdev, doing
+> > everything the right way.  Now, we're heading around the same mistake
+> > that I already solved several years ago.
+> >
+> > It's _well_ documented that the _connection id_ is a connection id and
+> > not a clock name.  It's been documented that way ever since the clk API
+> > was first published, and I'm on record for having brought up this point
+> > _many_ times.
+> =
 
-On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com> wrote:
-> On 20/07/16 10:43, Geert Uytterhoeven wrote:
->> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
->> wrote:
->>>
->>> Clocks described by this property are reserved for use by Xen, and the OS
->>> must not alter their state any way, such as disabling or gating a clock,
->>> or modifying its rate. Ensuring this may impose constraints on parent
->>> clocks or other resources used by the clock tree.
->>>
->>> This property is used to proxy clocks for devices Xen has taken ownership
->>> of, such as UARTs, for which the associated clock controller(s) remain
->>> under the control of Dom0.
->>
->>
->> I'm not familiar with using XEN at all, but I'm a bit puzzled...
->>
->> Can't you just add a clocks property to the (virtual) serial device node
->> in DT?
->> Then the (virtual) serial device driver can get and enable the clock?
->
-> There is no DT node for the Xen console (hvc). The UART used by Xen will be
-> completely removed from the Device tree.
+> Yeah I know this is documented this way, the problem is we have plenty =
 
-Why is it removed?
+> of code around which doesn't really use it this way. >.<
+> =
 
-Gr{oetje,eeting}s,
+> >
+> > So, when I see something reintroducing ways to persist with this crap,
+> > I'm just not going to allow it.  This is 2016 after all, it's a full
+> > _ten_ years after this API was created.
+> =
 
-                        Geert
+> Ok fair enough, lets try to figure out something else. I was pretty much =
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> worried before posting this patch/approach that you will shoot it down, =
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> thus was requesting your feedback specifically. :P
+> =
+
+> >
+> >> The problem is, we are already using this convention
+> >> all over the place in the kernel (not only OMAPs), and trying to clean=
+ up
+> >> the kernel requires some intermediate steps being taken, otherwise we =
+end up
+> >> doing all the clean-ups in a single massive patch I fear (change all t=
+he
+> >> hwmod data + clock data + any implementations related to these at the =
+same
+> >> time.)
+> >
+> > This isn't an intermediate step if you're having to put stuff into DT
+> > in order to support it.  Anything you throw into DT needs to be support=
+ed
+> > for years by the kernel, since we have the requirement that newer kerne=
+ls
+> > are bootable with older DT files without regression.  That effectively
+> > means we'll never be able to remove this, and we'll end up fighting oth=
+er
+> > people abusing the hook.
+> >
+> >> That is true, it will end up adding new DT nodes. However, as OMAP alr=
+eady
+> >> is doing this extensively, I wonder what would be the alternative. May=
+be
+> >> move all the clock data back to kernel space to increase the size of
+> >> multi-v7 builds?
+> >
+> > Why can't you use:
+> >
+> >       clocks =3D <&clk_provider fck_index>, <&clk_provider ick_index>, =
+...;
+> >       clock-names =3D "fck", "ick", ...;
+> >
+> > when describing the hardware?  If you don't have a struct device, but
+> > only a struct device_node, you can use of_clk_get(), which allows you
+> > to omit the connection ID and look up by index in the clocks property.
+> =
+
+> That can be done. However, this means the individual clock provider must =
+
+> implement all the clocks in the kernel, adding loads of static data. And =
+
+
+Clock provider drivers *should* initialize all of their clock data
+statically. Are you trying to opportunistically register only the clocks
+found in DT? This goes against the current direction of clock DT
+bindings where we model only the controller and use it to hook up
+provider and consumer resources. We are *not* using DT to enumerate
+per-clock data.
+
+> the data is different for every TI SoC we have out there in the =
+
+> wild..... aaand, we can't load the clock data as modules either due to =
+
+> early boot time dependencies. This is a royal mess we have here in our =
+
+
+Boot time deps are a separate issue. On ARMv8 you can probably get away
+with it due to architected timers not needing clocks very early.
+
+If you have software dependencies caused by the hwmod framework, again
+that is a separate issue from how you should structure your clock data
+and your clock controller DT binding.
+
+> hands I am trying to clean-up somehow. I think I have posted several =
+
+> different series along the years trying to get rid of the hwmod static =
+
+> boot time dependency, but it always seems to get shot down. See this =
+
+> approach from last year for example:
+> =
+
+> http://comments.gmane.org/gmane.linux.ports.arm.omap/125555
+
+Tony has had a dream to move the clk data into /lib/firmware for a
+while. We've talked about that over beers before. But note that no one
+else is doing that stuff and I would be happy for the OMAP clock code to
+achieve style-parity with the more recent clock provider driver
+submissions before going off and trying to do something fancy.
+
+Regards,
+Mike
+
+> =
+
+> -Tero
