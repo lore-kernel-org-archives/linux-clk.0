@@ -1,83 +1,61 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 12 Jul 2016 10:00:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Message-ID: <20160712090014.GE9976@sirena.org.uk>
+References: <57837606.8050906@samsung.com>
+ <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+ <CGME20160712082324epcas1p483daf92a019d69f6e96d43e2c55d31cf@epcas1p4.samsung.com>
+ <20160712082256.GD9976@sirena.org.uk>
+ <20160712082545.GG18237@samsunx.samsung>
 MIME-Version: 1.0
-To: Franklin S Cooper Jr <fcooper@ti.com>, thierry.reding@gmail.com,
- robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk, paul@pwsan.com,
- t-kristo@ti.com, sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1462291015-1919-2-git-send-email-fcooper@ti.com>
-Cc: "Franklin S Cooper Jr" <fcooper@ti.com>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
- <1462291015-1919-2-git-send-email-fcooper@ti.com>
-Message-ID: <146827561017.73491.3564276289319851088@resonance>
-Subject: Re: [PATCH v8 1/9] clk: ti: am335x/am4372: Add tbclk to pwm node
-Date: Mon, 11 Jul 2016 15:20:10 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="orO6xySwJI16pVnm"
+In-Reply-To: <20160712082545.GG18237@samsunx.samsung>
+Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Franklin S Cooper Jr (2016-05-03 08:56:47)
-> Add tblck to the pwm nodes. This insures that the ehrpwm driver has access
 
-s/tblck/tbclk/
+--orO6xySwJI16pVnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I see you have acks already. What tree should this patch go through?
+On Tue, Jul 12, 2016 at 05:25:46PM +0900, Andi Shyti wrote:
 
-Regards,
-Mike
+> > Please don't bury patches in the middle of old threads, it makes it very
+> > confusing trying to figure out what's going on especially when you do
+> > this one patch at a time in a series.  Submit new patches as a complete
+> > series, ideally not threaded in with anything else (at least for me).
 
-> to the time-based clk.
-> =
+> OK, sorry, do you want me to send everything again?
 
-> Do not remove similar entries for ehrpwm node. Later patches will switch
-> from using ehrpwm node name to pwm. But to maintain ABI compatibility we
-> shouldn't remove the old entries.
-> =
+Yes, please.
 
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> Acked-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  drivers/clk/ti/clk-33xx.c | 3 +++
->  drivers/clk/ti/clk-43xx.c | 6 ++++++
->  2 files changed, 9 insertions(+)
-> =
+--orO6xySwJI16pVnm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-> index ef2ec64..0e47d95 100644
-> --- a/drivers/clk/ti/clk-33xx.c
-> +++ b/drivers/clk/ti/clk-33xx.c
-> @@ -108,6 +108,9 @@ static struct ti_dt_clk am33xx_clks[] =3D {
->         DT_CLK("48300200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
->         DT_CLK("48302200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
->         DT_CLK("48304200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
-> +       DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-> +       DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-> +       DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
->         { .node_name =3D NULL },
->  };
->  =
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-> index 097fc90..7255aa8 100644
-> --- a/drivers/clk/ti/clk-43xx.c
-> +++ b/drivers/clk/ti/clk-43xx.c
-> @@ -115,6 +115,12 @@ static struct ti_dt_clk am43xx_clks[] =3D {
->         DT_CLK("48306200.ehrpwm", "tbclk", "ehrpwm3_tbclk"),
->         DT_CLK("48308200.ehrpwm", "tbclk", "ehrpwm4_tbclk"),
->         DT_CLK("4830a200.ehrpwm", "tbclk", "ehrpwm5_tbclk"),
-> +       DT_CLK("48300200.pwm", "tbclk", "ehrpwm0_tbclk"),
-> +       DT_CLK("48302200.pwm", "tbclk", "ehrpwm1_tbclk"),
-> +       DT_CLK("48304200.pwm", "tbclk", "ehrpwm2_tbclk"),
-> +       DT_CLK("48306200.pwm", "tbclk", "ehrpwm3_tbclk"),
-> +       DT_CLK("48308200.pwm", "tbclk", "ehrpwm4_tbclk"),
-> +       DT_CLK("4830a200.pwm", "tbclk", "ehrpwm5_tbclk"),
->         { .node_name =3D NULL },
->  };
->  =
+iQEcBAEBCAAGBQJXhLGdAAoJECTWi3JdVIfQZCQH/373cwkVFC/nt46h0X8aqv+h
+616+5mggmNKjZlnZrhK/bLy2R122lxKiQc90DPLveCS4jtOrsOYWOlaJeRPxjryj
+RRaVhV8A7sVZR7MnN7BtySXgndDv8PUTAAT9YCU4O2X8Lrpd5/4itXKatfbV7oP0
++cXFbQOQsAIwkcLjlXa23VYy2cc7AAOzmNDsQQz1dGz5b42Ht2j8f07gMSwhnIF9
+U5wKxKyhxwOJ8YYsF2GpP3vrvR8iV6ELzKLY0CvDY084lx2D3LX3dS4Xmw8gT8dg
+wxWyt19zYNNfs4mKC2DJm+pgtgAZ32WOWUtIlcF5pUzBnLG4XNIA8Jl+OAR8C+4=
+=u2/w
+-----END PGP SIGNATURE-----
 
-> -- =
-
-> 2.7.0
->=20
+--orO6xySwJI16pVnm--
