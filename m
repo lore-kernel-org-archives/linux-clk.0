@@ -1,81 +1,80 @@
-Return-Path: <hotran@apm.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAFHUOYz82wyLPJjoG8V9QvXmF10qnQkioe9-oxUR0-aiho-Pjw@mail.gmail.com>
-References: <1466458269-460-1-git-send-email-hotran@apm.com>
- <20160630202358.GC27880@codeaurora.org> <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
- <20160701183845.GD27880@codeaurora.org> <CAFHUOYz82wyLPJjoG8V9QvXmF10qnQkioe9-oxUR0-aiho-Pjw@mail.gmail.com>
-From: Hoan Tran <hotran@apm.com>
-Date: Wed, 20 Jul 2016 11:36:03 -0700
-Message-ID: <CAFHUOYw9rJe7+1kvz9gwxSZO=FucztfhdO_6vOz8kA7QsS9EyA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Add fractional scale clock support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, lkml <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Duc Dang <dhdang@apm.com>, Loc Ho <lho@apm.com>
-Content-Type: text/plain; charset=UTF-8
+To: Andi Shyti <andi.shyti@samsung.com>, "Rob Herring" <robh+dt@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Kukjin Kim" <kgene@kernel.org>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+Cc: "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ "Andi Shyti" <andi.shyti@samsung.com>, "Andi Shyti" <andi@etezian.org>
+References: <57837606.8050906@samsung.com>
+ <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+Message-ID: <146834687302.73491.6686338412638288829@resonance>
+Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
+Date: Tue, 12 Jul 2016 11:07:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 1, 2016 at 5:09 PM, Hoan Tran <hotran@apm.com> wrote:
->
-> Hi Stephen,
->
-> On Fri, Jul 1, 2016 at 11:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > Sorry I replied offlist before. Pressed the wrong key.
-> >
-> > On 06/30, Hoan Tran wrote:
-> >> On Thu, Jun 30, 2016 at 1:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> >> >
-> >> > How is this different from clk-fractional-divider.c?
-> >> >
-> >>
-> >> This is a driver which clock output is multiplied with a fixed fractional
-> >> scale (denominator).
-> >> A field inside a register is used to configure the multiplier.
-> >>
-> >> Example: With fractional scale is 1/8.
-> >> Freq_out = Freq_parent * multiplier * (1/8)
-> >>
-> >> For fractional-divider, there are 2 fields of a register are used which
-> >>  - A field for numerator
-> >>  - A field for denominator
-> >> Freq_out = Freq_parent * numerator / denominator
-> >>
-> >
-> > Ok so the difference is that the denominator is a fixed value?
->
-> The major difference is a fixed denominator.
-> Another difference is:
-> In case CLK_FRACTIONAL_SCALE_INVERTED=1, the freq_out is calculated as below
->
-> Freq_out = Freq_parent * (fixed_denominator - multiplier) / fixed_denominator.
->
-> > Perhaps that can be modeled as a clk-multiplier that is used as
-> > the only parent of a fixed divider?
->
-> Because of CLK_FRACTIONAL_SCALE_INVERTED flag, I don't know how to
-> model as a clk-multiplier. And how to pass the fixed denominator into
-> a clk-multiplier.
->
-> > Or we can add a flag to the
-> > clk-fractional-divider code to handle this minor difference.
->
-> This driver is used 2 register fields for numerator, denominator and
-> calculates both of them.
-> Do you think I can integrate this fractional scale into it ?
->
-> Thanks
-> Hoan
->
+Quoting Andi Shyti (2016-07-11 23:54:04)
+> Patch a9e93e8 has erroneously removed some comments which are
+> important to understand why the bus frequency is multiplied by
+> two during the spi transfer.
+> =
 
-Hi Stephen,
+> Reword the previous comment to a more appropriate message.
+> =
 
-Do you have any comments ?
+> Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> ---
+> Hi,
+> =
 
-Thanks
-Hoan
+> despite Mike's comments I'm sending the patch as it was
+> originally meant. I think that fixing the exact clk where to set
+> the rate should anyway go in a different patch.
 
+That sounds fair.
 
->
-> >
-> > --
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
+Regards,
+Mike
+
+> =
+
+> V2->V3
+> The comment has been reworded as Sylwester recommended.
+> =
+
+> Thanks,
+> Andi
+> =
+
+>  drivers/spi/spi-s3c64xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> =
+
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 6da663f..5bedafc 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_dri=
+ver_data *sdd)
+>         writel(val, regs + S3C64XX_SPI_MODE_CFG);
+>  =
+
+>         if (sdd->port_conf->clk_from_cmu) {
+> +               /* The src_clk clock is divided internally by 2 */
+>                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+>         } else {
+>                 /* Configure Clock */
+> -- =
+
+> 2.8.1
+>=20
