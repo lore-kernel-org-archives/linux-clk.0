@@ -1,49 +1,55 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 1/8] clk: core: New macro CLK_OF_DECLARE_DRIVER
-Date: Tue,  5 Jul 2016 18:23:25 +0200
-Message-Id: <1467735814-23518-2-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
+To: Michael Turquette <mturquette@baylibre.com>
+References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
+ <146799464881.73491.7507792367941552864@resonance>
+ <57837606.8050906@samsung.com>
+ <146827545163.73491.5083923656346798965@resonance>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <5784DFA8.60606@samsung.com>
+Date: Tue, 12 Jul 2016 14:16:40 +0200
+MIME-version: 1.0
+In-reply-to: <146827545163.73491.5083923656346798965@resonance>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This will be used by drivers that requires initialization at
-of_clk_init() time and also during platform device probing.
+On 07/12/2016 12:17 AM, Michael Turquette wrote:
+> Quoting Sylwester Nawrocki (2016-07-11 03:33:42)
+>> On 07/08/2016 06:17 PM, Michael Turquette wrote:
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- include/linux/clk-provider.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> Sure, but it's only a few lines of code to this, and there are examples
+> in the kernel already.
+> 
+>> Additionally, the "There is half-multiplier before the SPI" comment
+>> seems to be obfuscating how the hardware really looks like to me.
+>> It talks about multiplier (which reminds me of PLLs with a divider
+>> in the feedback loop) while there is a simple divider which should
+>> be considered as an integral part of the controller IP block.
+>>
+>> While we are at it, I'd propose to change this comment to something
+>> like:
+>>
+>> /* The SCLK_SPI clock is divided internally by 2 */
+> 
+> It's your choice, but debug output would benefit from showing the real
+> clock frequency at some point.
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a39c0c530778..f403b8a5f8ca 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -780,6 +780,18 @@ extern struct of_device_id __clk_of_table;
- 
- #define CLK_OF_DECLARE(name, compat, fn) OF_DECLARE_1(clk, name, compat, fn)
- 
-+/*
-+ * Use this macro when you have a driver that requires two initialization
-+ * routines, one at of_clk_init(), and one at platform device probe
-+ */
-+#define CLK_OF_DECLARE_DRIVER(name, compat, fn) \
-+	static void name##_of_clk_init_driver(struct device_node *np)	\
-+	{								\
-+		of_node_clear_flag(np, OF_POPULATED);			\
-+		fn(np);							\
-+	}								\
-+	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
-+
- #ifdef CONFIG_OF
- int of_clk_add_provider(struct device_node *np,
- 			struct clk *(*clk_src_get)(struct of_phandle_args *args,
+OK, it's indeed fairly easy to add a fixed rate divide-by-two clock,
+but for the older SoCs we would need to also model the internal mux, gate,
+and an 8-bit divider.  Then it becomes a bit bigger task. Anyway it might
+be worth to try it, this could let us deprecate the samsung,spi-src-clk
+property and for all the SoCs use assigned-clock-parents.
+
 -- 
-2.8.1
+Thanks,
+Sylwester
