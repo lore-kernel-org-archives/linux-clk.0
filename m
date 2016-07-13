@@ -1,229 +1,290 @@
-Return-Path: <sstabellini@kernel.org>
-Date: Thu, 14 Jul 2016 11:25:21 +0100 (BST)
-From: Stefano Stabellini <sstabellini@kernel.org>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 5/7] gxbb: clk: Move MESON_GATE macro to gxbb
+From: =?utf-8?Q?Alexander_M=C3=BCller?= <serveralex@gmail.com>
+In-Reply-To: <146776538903.35356.16063870470160610588@resonance>
+Date: Wed, 13 Jul 2016 19:43:51 +0200
+Cc: linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+Message-Id: <1BDF9282-995B-4127-8436-E015516F5DE9@gmail.com>
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com> <1467741391-60534-6-git-send-email-serveralex@gmail.com> <146776538903.35356.16063870470160610588@resonance>
 To: Michael Turquette <mturquette@baylibre.com>
-cc: Dirk Behme <dirk.behme@gmail.com>,
-    Stefano Stabellini <sstabellini@kernel.org>,
-    Dirk Behme <dirk.behme@de.bosch.com>, Mark Rutland <mark.rutland@arm.com>,
-    devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-    Julien Grall <julien.grall@arm.com>, xen-devel@lists.xenproject.org,
-    linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-In-Reply-To: <146844380895.73491.4867379517577413421@resonance>
-Message-ID: <alpine.DEB.2.10.1607141118490.26575@sstabellini-ThinkPad-X260>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <146836236759.73491.11707389619985827497@resonance> <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com> <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260> <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 13 Jul 2016, Michael Turquette wrote:
-> Quoting Dirk Behme (2016-07-13 11:56:30)
-> > On 13.07.2016 20:43, Stefano Stabellini wrote:
-> > > On Wed, 13 Jul 2016, Dirk Behme wrote:
-> > >> On 13.07.2016 00:26, Michael Turquette wrote:
-> > >>> Quoting Dirk Behme (2016-07-12 00:46:45)
-> > >>>> Clocks described by this property are reserved for use by Xen, and the OS
-> > >>>> must not alter their state any way, such as disabling or gating a clock,
-> > >>>> or modifying its rate. Ensuring this may impose constraints on parent
-> > >>>> clocks or other resources used by the clock tree.
-> > >>>
-> > >>> Note that clk_prepare_enable will not prevent the rate from changing
-> > >>> (clk_set_rate) or a parent from changing (clk_set_parent). The only way
-> > >>> to do this currently would be to set the following flags on the effected
-> > >>> clocks:
-> > >>>
-> > >>>     CLK_SET_RATE_GATE
-> > >>>     CLK_SET_PARENT_GATE
-> > >>
-> > >>
-> > >>
-> > >> Regarding setting flags, I think we already talked about that. I think the
-> > >> conclusion was that in our case its not possible to manipulate the flags in
-> > >> the OS as this isn't intended to be done in cases like ours. Therefore no API
-> > >> is exported for this.
-> > >>
-> > >> I.e. if we need to set these flags, we have to do that in Xen where we add the
-> > >> clocks to the hypervisor node in the device tree. And not in the kernel patch
-> > >> discussed here.
-> > >
-> > > These are internal Linux flags, aren't they?
-> > 
-> > 
-> > I've been under the impression that you can set clock "flags" via the 
-> > device tree. Seems I need to re-check that ;)
-> 
-> Right, you cannot set flags from the device tree. Also, setting these
-> flags is done by the clock provider driver, not a consumer. Xen is the
-> consumer.
+I moved the macro because of the struct variable name which is =
+gxbb_##_name here.
 
-Just for disambiguation, I guess you are referring to the Xen code in
-Linux (such as arch/arm/xen/enlighten.c), right?
-
-We have "Xen", the hypervisor, which runs before Linux and it is a
-separate component running at EL2, and we have Xen support in Linux,
-such as arch/arm/xen and drivers/xen. These are drivers to communicate
-with the Xen hypervisor and other components in a Xen system.
-
-In this case, the Xen hypervisor would be the owner of the clock. Xen
-support in Linux, specifically arch/arm/xen/enlighten.c, only comes into
-the picture to "warn" Linux that shouldn't really be messing with the
-clocks. I guess that from a Linux clock driver point of view, it is a
-consumer.
-
-I hope that helps.
-
-
-> > > They cannot be set in Xen.
-> > >
-> > > If the only way to make sure that clk_set_rate and clk_set_parent fail
-> > > on one of the clocks "owned" by Xen is to set CLK_SET_RATE_GATE and
-> > > CLK_SET_PARENT_GATE, we'll have to do that. Even if it means introducing
-> > > a new internal Linux API.
-> > >
-> > >
-> > >>> And then enable the clocks. All calls to clk_set_parent and clk_set_rate
-> > >>> with those clocks in the path will fail, so long as they are prepared
-> > >>> and enabled. This implementation detail is specific to Linux and
-> > >>> definitely should not go into the binding.
-> > >>>
-> > >>>>
-> > >>>> This property is used to proxy clocks for devices Xen has taken ownership
-> > >>>> of, such as UARTs, for which the associated clock controller(s) remain
-> > >>>> under the control of Dom0.
-> > >>>
-> > >>> I'm still not completely sure about this type of layering and whether or
-> > >>> not it is sane. If you want Xen to manage the clock controller, AND you
-> > >>> want Linux guests or dom0 to consume those clocks and manipulate them in
-> > >>> other drivers, then this solution won't work.
-> > >>>
-> > >>> Regards,
-> > >>> Mike
-> > >>>
-> > >>>>
-> > >>>> Up to now, the workaround for this has been to use the Linux kernel
-> > >>>> command line parameter 'clk_ignore_unused'. See Xen bug
-> > >>>>
-> > >>>> http://bugs.xenproject.org/xen/bug/45
-> > >>>>
-> > >>>> too.
-> > >>>>
-> > >>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> > >>>> ---
-> > >>>> Changes in v4: Switch to the xen.txt description proposed by Mark:
-> > >>>>                 https://www.spinics.net/lists/arm-kernel/msg516158.html
-> > >>>>
-> > >>>> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
-> > >>>>
-> > >>>> Changes in v2: Drop the Linux implementation details like
-> > >>>> clk_disable_unused
-> > >>>>                 in xen.txt.
-> > >>>>
-> > >>>>   Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
-> > >>>>   arch/arm/xen/enlighten.c                      | 47
-> > >>>> +++++++++++++++++++++++++++
-> > >>>>   2 files changed, 59 insertions(+)
-> > >>>>
-> > >>>> diff --git a/Documentation/devicetree/bindings/arm/xen.txt
-> > >>>> b/Documentation/devicetree/bindings/arm/xen.txt
-> > >>>> index c9b9321..437e50b 100644
-> > >>>> --- a/Documentation/devicetree/bindings/arm/xen.txt
-> > >>>> +++ b/Documentation/devicetree/bindings/arm/xen.txt
-> > >>>> @@ -17,6 +17,18 @@ the following properties:
-> > >>>>     A GIC node is also required.
-> > >>>>     This property is unnecessary when booting Dom0 using ACPI.
-> > >>>>
-> > >>>> +Optional properties:
-> > >>>> +
-> > >>>> +- clocks: a list of phandle + clock-specifier pairs
-> > >>>> +  Clocks described by this property are reserved for use by Xen, and the
-> > >>>> +  OS must not alter their state any way, such as disabling or gating a
-> > >>>> +  clock, or modifying its rate. Ensuring this may impose constraints on
-> > >>>> +  parent clocks or other resources used by the clock tree.
-> > >>>> +
-> > >>>> +  Note: this property is used to proxy clocks for devices Xen has taken
-> > >>>> +  ownership of, such as UARTs, for which the associated clock
-> > >>>> +  controller(s) remain under the control of Dom0.
-> > >>>> +
-> > >>>>   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
-> > >>>> "uefi" node
-> > >>>>   under /hypervisor with following parameters:
-> > >>>>
-> > >>>> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-> > >>>> index 47acb36..5c546d0 100644
-> > >>>> --- a/arch/arm/xen/enlighten.c
-> > >>>> +++ b/arch/arm/xen/enlighten.c
-> > >>>> @@ -24,6 +24,7 @@
-> > >>>>   #include <linux/of_fdt.h>
-> > >>>>   #include <linux/of_irq.h>
-> > >>>>   #include <linux/of_address.h>
-> > >>>> +#include <linux/clk-provider.h>
-> > >>>>   #include <linux/cpuidle.h>
-> > >>>>   #include <linux/cpufreq.h>
-> > >>>>   #include <linux/cpu.h>
-> > >>>> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
-> > >>>>   }
-> > >>>>   late_initcall(xen_pm_init);
-> > >>>>
-> > >>>> +/*
-> > >>>> + * Check if we want to register some clocks, that they
-> > >>>> + * are not freed because unused by clk_disable_unused().
-> > >>>> + * E.g. the serial console clock.
-> > >>>> + */
-> > >>>> +static int __init xen_arm_register_clks(void)
-> > >>>> +{
-> > >>>> +       struct clk *clk;
-> > >>>> +       struct device_node *xen_node;
-> > >>>> +       unsigned int i, count;
-> > >>>> +       int ret = 0;
-> > >>>> +
-> > >>>> +       xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
-> > >>>> +       if (!xen_node) {
-> > >>>> +               pr_err("Xen support was detected before, but it has
-> > >>>> disappeared\n");
-> > >>>> +               return -EINVAL;
-> > >>>> +       }
-> > >>>> +
-> > >>>> +       count = of_clk_get_parent_count(xen_node);
-> > >>>> +       if (!count)
-> > >>>> +               goto out;
-> > >>>> +
-> > >>>> +       for (i = 0; i < count; i++) {
-> > >>>> +               clk = of_clk_get(xen_node, i);
-> > >>>> +               if (IS_ERR(clk)) {
-> > >>>> +                       pr_err("Xen failed to register clock %i. Error:
-> > >>>> %li\n",
-> > >>>> +                              i, PTR_ERR(clk));
-> > >>>> +                       ret = PTR_ERR(clk);
-> > >>>> +                       goto out;
-> > >>>> +               }
-> > >>>> +
-> > >>>> +               ret = clk_prepare_enable(clk);
-> > >>>> +               if (ret < 0) {
-> > >>>> +                       pr_err("Xen failed to enable clock %i. Error:
-> > >>>> %i\n",
-> > >>>> +                              i, ret);
-> > >>>> +                       goto out;
-> > >>>> +               }
-> > >>>> +       }
-> > >>>> +
-> > >>>> +       ret = 0;
-> > >>>> +
-> > >>>> +out:
-> > >>>> +       of_node_put(xen_node);
-> > >>>> +       return ret;
-> > >>>> +}
-> > >>>> +late_initcall(xen_arm_register_clks);
-> > >>>>
-> > >>>>   /* empty stubs */
-> > >>>>   void xen_arch_pre_suspend(void) { }
-> > >>>> --
-> > >>
-> > >
-> > > _______________________________________________
-> > > Xen-devel mailing list
-> > > Xen-devel@lists.xen.org
-> > > https://lists.xen.org/xen-devel
-> > >
-> > 
-> 
+> On 06 Jul 2016, at 02:36, Michael Turquette <mturquette@baylibre.com> =
+wrote:
+>=20
+> Hi Alexander,
+>=20
+> Quoting Alexander M=C3=BCller (2016-07-05 10:56:29)
+>> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+>> ---
+>> drivers/clk/meson/clkc.h |  14 ----
+>> drivers/clk/meson/gxbb.c | 176 =
++++++++++++++++++++++++++----------------------
+>> 2 files changed, 95 insertions(+), 95 deletions(-)
+>>=20
+>> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+>> index 53326c3..061a01e 100644
+>> --- a/drivers/clk/meson/clkc.h
+>> +++ b/drivers/clk/meson/clkc.h
+>> @@ -97,20 +97,6 @@ struct meson_clk_mpll {
+>>        spinlock_t *lock;
+>> };
+>>=20
+>> -#define MESON_GATE(_name, _reg, _bit)                                =
+  \
+>> -struct clk_gate gxbb_##_name =3D {                                   =
+            \
+>> -       .reg =3D (void __iomem *) _reg,                               =
+    \
+>> -       .bit_idx =3D (_bit),                                          =
+    \
+>> -       .lock =3D &clk_lock,                                          =
+    \
+>> -       .hw.init =3D &(struct clk_init_data) {                        =
+    \
+>> -               .name =3D #_name,                                 \
+>> -               .ops =3D &clk_gate_ops,                               =
+    \
+>> -               .parent_names =3D (const char *[]){ "clk81" },        =
+    \
+>> -               .num_parents =3D 1,                                   =
+    \
+>> -               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), =
+    \
+>> -       },                                                            =
+  \
+>> -};
+>=20
+> Why can't this macro be shared between meson8b and gxbb? Looks =
+identical
+> to me, but maybe I missed something.
+>=20
+>> -
+>> /* clk_ops */
+>> extern const struct clk_ops meson_clk_pll_ro_ops;
+>> extern const struct clk_ops meson_clk_pll_ops;
+>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+>> index 007b715..0ea71be 100644
+>> --- a/drivers/clk/meson/gxbb.c
+>> +++ b/drivers/clk/meson/gxbb.c
+>> @@ -24,6 +24,20 @@
+>> #include "clkc.h"
+>> #include "gxbb.h"
+>>=20
+>> +#define GBXX_GATE(_name, _reg, _bit)                                 =
+  \
+>=20
+> s/GBXX/GXBB/g
+>=20
+> Including all of the static data further below ;-)
+>=20
+> Regards,
+> Mike
+>=20
+>> +struct clk_gate gxbb_##_name =3D {                                   =
+            \
+>> +       .reg =3D (void __iomem *) _reg,                               =
+    \
+>> +       .bit_idx =3D (_bit),                                          =
+    \
+>> +       .lock =3D &clk_lock,                                          =
+    \
+>> +       .hw.init =3D &(struct clk_init_data) {                        =
+    \
+>> +               .name =3D #_name,                                 \
+>> +               .ops =3D &clk_gate_ops,                               =
+    \
+>> +               .parent_names =3D (const char *[]){ "clk81" },        =
+    \
+>> +               .num_parents =3D 1,                                   =
+    \
+>> +               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), =
+    \
+>> +       },                                                            =
+  \
+>> +};
+>> +
+>> static DEFINE_SPINLOCK(clk_lock);
+>>=20
+>> static const struct pll_rate_table sys_pll_rate_table[] =3D {
+>> @@ -563,90 +577,90 @@ static struct clk_gate gxbb_clk81 =3D {
+>> };
+>>=20
+>> /* Everything Else (EE) domain gates */
+>> -static MESON_GATE(ddr, HHI_GCLK_MPEG0, 0);
+>> -static MESON_GATE(dos, HHI_GCLK_MPEG0, 1);
+>> -static MESON_GATE(isa, HHI_GCLK_MPEG0, 5);
+>> -static MESON_GATE(pl301, HHI_GCLK_MPEG0, 6);
+>> -static MESON_GATE(periphs, HHI_GCLK_MPEG0, 7);
+>> -static MESON_GATE(spicc, HHI_GCLK_MPEG0, 8);
+>> -static MESON_GATE(i2c, HHI_GCLK_MPEG0, 9);
+>> -static MESON_GATE(sar_adc, HHI_GCLK_MPEG0, 10);
+>> -static MESON_GATE(smart_card, HHI_GCLK_MPEG0, 11);
+>> -static MESON_GATE(rng0, HHI_GCLK_MPEG0, 12);
+>> -static MESON_GATE(uart0, HHI_GCLK_MPEG0, 13);
+>> -static MESON_GATE(sdhc, HHI_GCLK_MPEG0, 14);
+>> -static MESON_GATE(stream, HHI_GCLK_MPEG0, 15);
+>> -static MESON_GATE(async_fifo, HHI_GCLK_MPEG0, 16);
+>> -static MESON_GATE(sdio, HHI_GCLK_MPEG0, 17);
+>> -static MESON_GATE(abuf, HHI_GCLK_MPEG0, 18);
+>> -static MESON_GATE(hiu_iface, HHI_GCLK_MPEG0, 19);
+>> -static MESON_GATE(assist_misc, HHI_GCLK_MPEG0, 23);
+>> -static MESON_GATE(spi, HHI_GCLK_MPEG0, 30);
+>> -
+>> -static MESON_GATE(i2s_spdif, HHI_GCLK_MPEG1, 2);
+>> -static MESON_GATE(eth, HHI_GCLK_MPEG1, 3);
+>> -static MESON_GATE(demux, HHI_GCLK_MPEG1, 4);
+>> -static MESON_GATE(aiu_glue, HHI_GCLK_MPEG1, 6);
+>> -static MESON_GATE(iec958, HHI_GCLK_MPEG1, 7);
+>> -static MESON_GATE(i2s_out, HHI_GCLK_MPEG1, 8);
+>> -static MESON_GATE(amclk, HHI_GCLK_MPEG1, 9);
+>> -static MESON_GATE(aififo2, HHI_GCLK_MPEG1, 10);
+>> -static MESON_GATE(mixer, HHI_GCLK_MPEG1, 11);
+>> -static MESON_GATE(mixer_iface, HHI_GCLK_MPEG1, 12);
+>> -static MESON_GATE(adc, HHI_GCLK_MPEG1, 13);
+>> -static MESON_GATE(blkmv, HHI_GCLK_MPEG1, 14);
+>> -static MESON_GATE(aiu, HHI_GCLK_MPEG1, 15);
+>> -static MESON_GATE(uart1, HHI_GCLK_MPEG1, 16);
+>> -static MESON_GATE(g2d, HHI_GCLK_MPEG1, 20);
+>> -static MESON_GATE(usb0, HHI_GCLK_MPEG1, 21);
+>> -static MESON_GATE(usb1, HHI_GCLK_MPEG1, 22);
+>> -static MESON_GATE(reset, HHI_GCLK_MPEG1, 23);
+>> -static MESON_GATE(nand, HHI_GCLK_MPEG1, 24);
+>> -static MESON_GATE(dos_parser, HHI_GCLK_MPEG1, 25);
+>> -static MESON_GATE(usb, HHI_GCLK_MPEG1, 26);
+>> -static MESON_GATE(vdin1, HHI_GCLK_MPEG1, 28);
+>> -static MESON_GATE(ahb_arb0, HHI_GCLK_MPEG1, 29);
+>> -static MESON_GATE(efuse, HHI_GCLK_MPEG1, 30);
+>> -static MESON_GATE(boot_rom, HHI_GCLK_MPEG1, 31);
+>> -
+>> -static MESON_GATE(ahb_data_bus, HHI_GCLK_MPEG2, 1);
+>> -static MESON_GATE(ahb_ctrl_bus, HHI_GCLK_MPEG2, 2);
+>> -static MESON_GATE(hdmi_intr_sync, HHI_GCLK_MPEG2, 3);
+>> -static MESON_GATE(hdmi_pclk, HHI_GCLK_MPEG2, 4);
+>> -static MESON_GATE(usb1_ddr_bridge, HHI_GCLK_MPEG2, 8);
+>> -static MESON_GATE(usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
+>> -static MESON_GATE(mmc_pclk, HHI_GCLK_MPEG2, 11);
+>> -static MESON_GATE(dvin, HHI_GCLK_MPEG2, 12);
+>> -static MESON_GATE(uart2, HHI_GCLK_MPEG2, 15);
+>> -static MESON_GATE(sana, HHI_GCLK_MPEG2, 22);
+>> -static MESON_GATE(vpu_intr, HHI_GCLK_MPEG2, 25);
+>> -static MESON_GATE(sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+>> -static MESON_GATE(clk81_a53, HHI_GCLK_MPEG2, 29);
+>> -
+>> -static MESON_GATE(vclk2_venci0, HHI_GCLK_OTHER, 1);
+>> -static MESON_GATE(vclk2_venci1, HHI_GCLK_OTHER, 2);
+>> -static MESON_GATE(vclk2_vencp0, HHI_GCLK_OTHER, 3);
+>> -static MESON_GATE(vclk2_vencp1, HHI_GCLK_OTHER, 4);
+>> -static MESON_GATE(gclk_venci_int0, HHI_GCLK_OTHER, 8);
+>> -static MESON_GATE(gclk_vencp_int, HHI_GCLK_OTHER, 9);
+>> -static MESON_GATE(dac_clk, HHI_GCLK_OTHER, 10);
+>> -static MESON_GATE(aoclk_gate, HHI_GCLK_OTHER, 14);
+>> -static MESON_GATE(iec958_gate, HHI_GCLK_OTHER, 16);
+>> -static MESON_GATE(enc480p, HHI_GCLK_OTHER, 20);
+>> -static MESON_GATE(rng1, HHI_GCLK_OTHER, 21);
+>> -static MESON_GATE(gclk_venci_int1, HHI_GCLK_OTHER, 22);
+>> -static MESON_GATE(vclk2_venclmcc, HHI_GCLK_OTHER, 24);
+>> -static MESON_GATE(vclk2_vencl, HHI_GCLK_OTHER, 25);
+>> -static MESON_GATE(vclk_other, HHI_GCLK_OTHER, 26);
+>> -static MESON_GATE(edp, HHI_GCLK_OTHER, 31);
+>> +static GBXX_GATE(ddr, HHI_GCLK_MPEG0, 0);
+>> +static GBXX_GATE(dos, HHI_GCLK_MPEG0, 1);
+>> +static GBXX_GATE(isa, HHI_GCLK_MPEG0, 5);
+>> +static GBXX_GATE(pl301, HHI_GCLK_MPEG0, 6);
+>> +static GBXX_GATE(periphs, HHI_GCLK_MPEG0, 7);
+>> +static GBXX_GATE(spicc, HHI_GCLK_MPEG0, 8);
+>> +static GBXX_GATE(i2c, HHI_GCLK_MPEG0, 9);
+>> +static GBXX_GATE(sar_adc, HHI_GCLK_MPEG0, 10);
+>> +static GBXX_GATE(smart_card, HHI_GCLK_MPEG0, 11);
+>> +static GBXX_GATE(rng0, HHI_GCLK_MPEG0, 12);
+>> +static GBXX_GATE(uart0, HHI_GCLK_MPEG0, 13);
+>> +static GBXX_GATE(sdhc, HHI_GCLK_MPEG0, 14);
+>> +static GBXX_GATE(stream, HHI_GCLK_MPEG0, 15);
+>> +static GBXX_GATE(async_fifo, HHI_GCLK_MPEG0, 16);
+>> +static GBXX_GATE(sdio, HHI_GCLK_MPEG0, 17);
+>> +static GBXX_GATE(abuf, HHI_GCLK_MPEG0, 18);
+>> +static GBXX_GATE(hiu_iface, HHI_GCLK_MPEG0, 19);
+>> +static GBXX_GATE(assist_misc, HHI_GCLK_MPEG0, 23);
+>> +static GBXX_GATE(spi, HHI_GCLK_MPEG0, 30);
+>> +
+>> +static GBXX_GATE(i2s_spdif, HHI_GCLK_MPEG1, 2);
+>> +static GBXX_GATE(eth, HHI_GCLK_MPEG1, 3);
+>> +static GBXX_GATE(demux, HHI_GCLK_MPEG1, 4);
+>> +static GBXX_GATE(aiu_glue, HHI_GCLK_MPEG1, 6);
+>> +static GBXX_GATE(iec958, HHI_GCLK_MPEG1, 7);
+>> +static GBXX_GATE(i2s_out, HHI_GCLK_MPEG1, 8);
+>> +static GBXX_GATE(amclk, HHI_GCLK_MPEG1, 9);
+>> +static GBXX_GATE(aififo2, HHI_GCLK_MPEG1, 10);
+>> +static GBXX_GATE(mixer, HHI_GCLK_MPEG1, 11);
+>> +static GBXX_GATE(mixer_iface, HHI_GCLK_MPEG1, 12);
+>> +static GBXX_GATE(adc, HHI_GCLK_MPEG1, 13);
+>> +static GBXX_GATE(blkmv, HHI_GCLK_MPEG1, 14);
+>> +static GBXX_GATE(aiu, HHI_GCLK_MPEG1, 15);
+>> +static GBXX_GATE(uart1, HHI_GCLK_MPEG1, 16);
+>> +static GBXX_GATE(g2d, HHI_GCLK_MPEG1, 20);
+>> +static GBXX_GATE(usb0, HHI_GCLK_MPEG1, 21);
+>> +static GBXX_GATE(usb1, HHI_GCLK_MPEG1, 22);
+>> +static GBXX_GATE(reset, HHI_GCLK_MPEG1, 23);
+>> +static GBXX_GATE(nand, HHI_GCLK_MPEG1, 24);
+>> +static GBXX_GATE(dos_parser, HHI_GCLK_MPEG1, 25);
+>> +static GBXX_GATE(usb, HHI_GCLK_MPEG1, 26);
+>> +static GBXX_GATE(vdin1, HHI_GCLK_MPEG1, 28);
+>> +static GBXX_GATE(ahb_arb0, HHI_GCLK_MPEG1, 29);
+>> +static GBXX_GATE(efuse, HHI_GCLK_MPEG1, 30);
+>> +static GBXX_GATE(boot_rom, HHI_GCLK_MPEG1, 31);
+>> +
+>> +static GBXX_GATE(ahb_data_bus, HHI_GCLK_MPEG2, 1);
+>> +static GBXX_GATE(ahb_ctrl_bus, HHI_GCLK_MPEG2, 2);
+>> +static GBXX_GATE(hdmi_intr_sync, HHI_GCLK_MPEG2, 3);
+>> +static GBXX_GATE(hdmi_pclk, HHI_GCLK_MPEG2, 4);
+>> +static GBXX_GATE(usb1_ddr_bridge, HHI_GCLK_MPEG2, 8);
+>> +static GBXX_GATE(usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
+>> +static GBXX_GATE(mmc_pclk, HHI_GCLK_MPEG2, 11);
+>> +static GBXX_GATE(dvin, HHI_GCLK_MPEG2, 12);
+>> +static GBXX_GATE(uart2, HHI_GCLK_MPEG2, 15);
+>> +static GBXX_GATE(sana, HHI_GCLK_MPEG2, 22);
+>> +static GBXX_GATE(vpu_intr, HHI_GCLK_MPEG2, 25);
+>> +static GBXX_GATE(sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+>> +static GBXX_GATE(clk81_a53, HHI_GCLK_MPEG2, 29);
+>> +
+>> +static GBXX_GATE(vclk2_venci0, HHI_GCLK_OTHER, 1);
+>> +static GBXX_GATE(vclk2_venci1, HHI_GCLK_OTHER, 2);
+>> +static GBXX_GATE(vclk2_vencp0, HHI_GCLK_OTHER, 3);
+>> +static GBXX_GATE(vclk2_vencp1, HHI_GCLK_OTHER, 4);
+>> +static GBXX_GATE(gclk_venci_int0, HHI_GCLK_OTHER, 8);
+>> +static GBXX_GATE(gclk_vencp_int, HHI_GCLK_OTHER, 9);
+>> +static GBXX_GATE(dac_clk, HHI_GCLK_OTHER, 10);
+>> +static GBXX_GATE(aoclk_gate, HHI_GCLK_OTHER, 14);
+>> +static GBXX_GATE(iec958_gate, HHI_GCLK_OTHER, 16);
+>> +static GBXX_GATE(enc480p, HHI_GCLK_OTHER, 20);
+>> +static GBXX_GATE(rng1, HHI_GCLK_OTHER, 21);
+>> +static GBXX_GATE(gclk_venci_int1, HHI_GCLK_OTHER, 22);
+>> +static GBXX_GATE(vclk2_venclmcc, HHI_GCLK_OTHER, 24);
+>> +static GBXX_GATE(vclk2_vencl, HHI_GCLK_OTHER, 25);
+>> +static GBXX_GATE(vclk_other, HHI_GCLK_OTHER, 26);
+>> +static GBXX_GATE(edp, HHI_GCLK_OTHER, 31);
+>>=20
+>> /* Always On (AO) domain gates */
+>>=20
+>> -static MESON_GATE(ao_media_cpu, HHI_GCLK_AO, 0);
+>> -static MESON_GATE(ao_ahb_sram, HHI_GCLK_AO, 1);
+>> -static MESON_GATE(ao_ahb_bus, HHI_GCLK_AO, 2);
+>> -static MESON_GATE(ao_iface, HHI_GCLK_AO, 3);
+>> -static MESON_GATE(ao_i2c, HHI_GCLK_AO, 4);
+>> +static GBXX_GATE(ao_media_cpu, HHI_GCLK_AO, 0);
+>> +static GBXX_GATE(ao_ahb_sram, HHI_GCLK_AO, 1);
+>> +static GBXX_GATE(ao_ahb_bus, HHI_GCLK_AO, 2);
+>> +static GBXX_GATE(ao_iface, HHI_GCLK_AO, 3);
+>> +static GBXX_GATE(ao_i2c, HHI_GCLK_AO, 4);
+>>=20
+>> /* Array of all clocks provided by this provider */
+>>=20
+>> --=20
+>> 2.5.0
