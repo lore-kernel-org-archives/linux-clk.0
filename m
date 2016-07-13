@@ -1,143 +1,178 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Return-Path: <Dirk.Behme@de.bosch.com>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 7/8] clk: fixed-factor: Convert into a module platform driver
-Date: Tue,  5 Jul 2016 18:23:33 +0200
-Message-Id: <1467735814-23518-10-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+	<linux-arm-kernel@lists.infradead.org>, Julien Grall <julien.grall@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <146836236759.73491.11707389619985827497@resonance>
+CC: <xen-devel@lists.xenproject.org>, <devicetree@vger.kernel.org>, Stefano
+ Stabellini <sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Stephen
+ Boyd <sboyd@codeaurora.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
+Date: Wed, 13 Jul 2016 10:35:42 +0200
+MIME-Version: 1.0
+In-Reply-To: <146836236759.73491.11707389619985827497@resonance>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Adds support for fixed-factor clock providers which have not been
-enabled via of_clk_init().
+On 13.07.2016 00:26, Michael Turquette wrote:
+> Quoting Dirk Behme (2016-07-12 00:46:45)
+>> Clocks described by this property are reserved for use by Xen, and the OS
+>> must not alter their state any way, such as disabling or gating a clock,
+>> or modifying its rate. Ensuring this may impose constraints on parent
+>> clocks or other resources used by the clock tree.
+>
+> Note that clk_prepare_enable will not prevent the rate from changing
+> (clk_set_rate) or a parent from changing (clk_set_parent). The only way
+> to do this currently would be to set the following flags on the effected
+> clocks:
+>
+> 	CLK_SET_RATE_GATE
+> 	CLK_SET_PARENT_GATE
 
-This is required by Device trees overlays that introduce clocks
-providers.
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/clk-fixed-factor.c | 72 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 67 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 4db3be214077..3fc14d425fba 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -12,6 +12,7 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/platform_device.h>
- 
- /*
-  * DOC: basic fixed multiplier and divider clock that cannot gate
-@@ -150,24 +151,25 @@ static const struct of_device_id set_rate_parent_matches[] = {
- /**
-  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
-  */
--void __init of_fixed_factor_clk_setup(struct device_node *node)
-+struct clk *_of_fixed_factor_clk_setup(struct device_node *node)
- {
- 	struct clk *clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name;
- 	unsigned long flags = 0;
- 	u32 div, mult;
-+	int ret;
- 
- 	if (of_property_read_u32(node, "clock-div", &div)) {
- 		pr_err("%s Fixed factor clock <%s> must have a clock-div property\n",
- 			__func__, node->name);
--		return;
-+		return ERR_PTR(-EIO);
- 	}
- 
- 	if (of_property_read_u32(node, "clock-mult", &mult)) {
- 		pr_err("%s Fixed factor clock <%s> must have a clock-mult property\n",
- 			__func__, node->name);
--		return;
-+		return ERR_PTR(-EIO);
- 	}
- 
- 	of_property_read_string(node, "clock-output-names", &clk_name);
-@@ -178,10 +180,70 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
- 
- 	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
- 					mult, div);
--	if (!IS_ERR(clk))
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (ret) {
-+		clk_unregister(clk);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return clk;
-+}
-+
-+void __init of_fixed_factor_clk_setup(struct device_node *node)
-+{
-+	_of_fixed_factor_clk_setup(node);
- }
- EXPORT_SYMBOL_GPL(of_fixed_factor_clk_setup);
- CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
- 		of_fixed_factor_clk_setup);
-+
-+static int of_fixed_factor_clk_remove(struct platform_device *pdev)
-+{
-+	struct clk *clk = platform_get_drvdata(pdev);
-+
-+	if (clk)
-+		clk_unregister_fixed_factor(clk);
-+
-+	return 0;
-+}
-+
-+static int of_fixed_factor_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk;
-+
-+	/*
-+	 * This function is not executed when of_fixed_factor_clk_setup
-+	 * succeeded.
-+	 */
-+
-+	clk = _of_fixed_factor_clk_setup(pdev->dev.of_node);
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	platform_set_drvdata(pdev, clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id of_fixed_factor_clk_ids[] = {
-+	{ .compatible = "fixed-factor-clock" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, of_fixed_factor_clk_ids);
-+
-+static struct platform_driver of_fixed_factor_clk_driver = {
-+	.driver = {
-+		.name = "of_fixed_factor_clk",
-+		.of_match_table = of_fixed_factor_clk_ids,
-+	},
-+	.probe = of_fixed_factor_clk_probe,
-+	.remove = of_fixed_factor_clk_remove,
-+};
-+
-+builtin_platform_driver(of_fixed_factor_clk_driver);
-+
- #endif
--- 
-2.8.1
+Regarding setting flags, I think we already talked about that. I think 
+the conclusion was that in our case its not possible to manipulate the 
+flags in the OS as this isn't intended to be done in cases like ours. 
+Therefore no API is exported for this.
+
+I.e. if we need to set these flags, we have to do that in Xen where we 
+add the clocks to the hypervisor node in the device tree. And not in the 
+kernel patch discussed here.
+
+Best regards
+
+Dirk
+
+
+> And then enable the clocks. All calls to clk_set_parent and clk_set_rate
+> with those clocks in the path will fail, so long as they are prepared
+> and enabled. This implementation detail is specific to Linux and
+> definitely should not go into the binding.
+>
+>>
+>> This property is used to proxy clocks for devices Xen has taken ownership
+>> of, such as UARTs, for which the associated clock controller(s) remain
+>> under the control of Dom0.
+>
+> I'm still not completely sure about this type of layering and whether or
+> not it is sane. If you want Xen to manage the clock controller, AND you
+> want Linux guests or dom0 to consume those clocks and manipulate them in
+> other drivers, then this solution won't work.
+>
+> Regards,
+> Mike
+>
+>>
+>> Up to now, the workaround for this has been to use the Linux kernel
+>> command line parameter 'clk_ignore_unused'. See Xen bug
+>>
+>> http://bugs.xenproject.org/xen/bug/45
+>>
+>> too.
+>>
+>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>> ---
+>> Changes in v4: Switch to the xen.txt description proposed by Mark:
+>>                https://www.spinics.net/lists/arm-kernel/msg516158.html
+>>
+>> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+>>
+>> Changes in v2: Drop the Linux implementation details like clk_disable_unused
+>>                in xen.txt.
+>>
+>>  Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
+>>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+>>  2 files changed, 59 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+>> index c9b9321..437e50b 100644
+>> --- a/Documentation/devicetree/bindings/arm/xen.txt
+>> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+>> @@ -17,6 +17,18 @@ the following properties:
+>>    A GIC node is also required.
+>>    This property is unnecessary when booting Dom0 using ACPI.
+>>
+>> +Optional properties:
+>> +
+>> +- clocks: a list of phandle + clock-specifier pairs
+>> +  Clocks described by this property are reserved for use by Xen, and the
+>> +  OS must not alter their state any way, such as disabling or gating a
+>> +  clock, or modifying its rate. Ensuring this may impose constraints on
+>> +  parent clocks or other resources used by the clock tree.
+>> +
+>> +  Note: this property is used to proxy clocks for devices Xen has taken
+>> +  ownership of, such as UARTs, for which the associated clock
+>> +  controller(s) remain under the control of Dom0.
+>> +
+>>  To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
+>>  under /hypervisor with following parameters:
+>>
+>> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+>> index 47acb36..5c546d0 100644
+>> --- a/arch/arm/xen/enlighten.c
+>> +++ b/arch/arm/xen/enlighten.c
+>> @@ -24,6 +24,7 @@
+>>  #include <linux/of_fdt.h>
+>>  #include <linux/of_irq.h>
+>>  #include <linux/of_address.h>
+>> +#include <linux/clk-provider.h>
+>>  #include <linux/cpuidle.h>
+>>  #include <linux/cpufreq.h>
+>>  #include <linux/cpu.h>
+>> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+>>  }
+>>  late_initcall(xen_pm_init);
+>>
+>> +/*
+>> + * Check if we want to register some clocks, that they
+>> + * are not freed because unused by clk_disable_unused().
+>> + * E.g. the serial console clock.
+>> + */
+>> +static int __init xen_arm_register_clks(void)
+>> +{
+>> +       struct clk *clk;
+>> +       struct device_node *xen_node;
+>> +       unsigned int i, count;
+>> +       int ret = 0;
+>> +
+>> +       xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+>> +       if (!xen_node) {
+>> +               pr_err("Xen support was detected before, but it has disappeared\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       count = of_clk_get_parent_count(xen_node);
+>> +       if (!count)
+>> +               goto out;
+>> +
+>> +       for (i = 0; i < count; i++) {
+>> +               clk = of_clk_get(xen_node, i);
+>> +               if (IS_ERR(clk)) {
+>> +                       pr_err("Xen failed to register clock %i. Error: %li\n",
+>> +                              i, PTR_ERR(clk));
+>> +                       ret = PTR_ERR(clk);
+>> +                       goto out;
+>> +               }
+>> +
+>> +               ret = clk_prepare_enable(clk);
+>> +               if (ret < 0) {
+>> +                       pr_err("Xen failed to enable clock %i. Error: %i\n",
+>> +                              i, ret);
+>> +                       goto out;
+>> +               }
+>> +       }
+>> +
+>> +       ret = 0;
+>> +
+>> +out:
+>> +       of_node_put(xen_node);
+>> +       return ret;
+>> +}
+>> +late_initcall(xen_arm_register_clks);
+>>
+>>  /* empty stubs */
+>>  void xen_arch_pre_suspend(void) { }
+>> --
