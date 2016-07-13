@@ -1,156 +1,189 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:54821 "EHLO
-	host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751435AbcGOTNN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jul 2016 15:13:13 -0400
-Message-ID: <1468609977.25630.5.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Yangbo Lu <yangbo.lu@nxp.com>
-Cc: linux-mmc@vger.kernel.org,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	devicetree@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-	netdev <netdev@vger.kernel.org>, ulf.hansson@linaro.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Jochen Friedrich <jochen@scram.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Claudiu Manoil <claudiu.manoil@freescale.com>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-	xiaobo.xie@nxp.com
-Date: Fri, 15 Jul 2016 14:12:57 -0500
-In-Reply-To: <CAP=VYLqsV_M=8CM47k4kzdULCp_y0yP9t8Sq9=jFp6W593QJgw@mail.gmail.com>
-References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com>
-	 <1462417950-46796-4-git-send-email-yangbo.lu@nxp.com>
-	 <CAP=VYLqsV_M=8CM47k4kzdULCp_y0yP9t8Sq9=jFp6W593QJgw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [v10, 3/7] soc: fsl: add GUTS driver for QorIQ platforms
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sstabellini@kernel.org>
+Date: Wed, 13 Jul 2016 19:43:56 +0100 (BST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+cc: Michael Turquette <mturquette@baylibre.com>,
+    linux-arm-kernel@lists.infradead.org, Julien Grall <julien.grall@arm.com>,
+    Mark Rutland <mark.rutland@arm.com>, xen-devel@lists.xenproject.org,
+    devicetree@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
+    linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
+In-Reply-To: <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
+Message-ID: <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <146836236759.73491.11707389619985827497@resonance> <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-07-15 at 12:43 -0400, Paul Gortmaker wrote:
-> On Wed, May 4, 2016 at 11:12 PM, Yangbo Lu <yangbo.lu@nxp.com> wrote:
+On Wed, 13 Jul 2016, Dirk Behme wrote:
+> On 13.07.2016 00:26, Michael Turquette wrote:
+> > Quoting Dirk Behme (2016-07-12 00:46:45)
+> > > Clocks described by this property are reserved for use by Xen, and the OS
+> > > must not alter their state any way, such as disabling or gating a clock,
+> > > or modifying its rate. Ensuring this may impose constraints on parent
+> > > clocks or other resources used by the clock tree.
 > > 
-> > The global utilities block controls power management, I/O device
-> > enabling, power-onreset(POR) configuration monitoring, alternate
-> > function selection for multiplexed signals,and clock control.
+> > Note that clk_prepare_enable will not prevent the rate from changing
+> > (clk_set_rate) or a parent from changing (clk_set_parent). The only way
+> > to do this currently would be to set the following flags on the effected
+> > clocks:
 > > 
-> > This patch adds GUTS driver to manage and access global utilities
-> > block.
-> > 
-> > Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> > Acked-by: Scott Wood <oss@buserror.net>
-> > ---
-> > Changes for v4:
-> >         - Added this patch
-> > Changes for v5:
-> >         - Modified copyright info
-> >         - Changed MODULE_LICENSE to GPL
-> >         - Changed EXPORT_SYMBOL_GPL to EXPORT_SYMBOL
-> >         - Made FSL_GUTS user-invisible
-> >         - Added a complete compatible list for GUTS
-> >         - Stored guts info in file-scope variable
-> >         - Added mfspr() getting SVR
-> >         - Redefined GUTS APIs
-> >         - Called fsl_guts_init rather than using platform driver
-> >         - Removed useless parentheses
-> >         - Removed useless 'extern' key words
-> > Changes for v6:
-> >         - Made guts thread safe in fsl_guts_init
-> > Changes for v7:
-> >         - Removed 'ifdef' for function declaration in guts.h
-> > Changes for v8:
-> >         - Fixes lines longer than 80 characters checkpatch issue
-> >         - Added 'Acked-by: Scott Wood'
-> > Changes for v9:
-> >         - None
-> > Changes for v10:
-> >         - None
-> > ---
-> >  drivers/soc/Kconfig      |   2 +-
-> >  drivers/soc/fsl/Kconfig  |   8 +++
-> >  drivers/soc/fsl/Makefile |   1 +
-> >  drivers/soc/fsl/guts.c   | 119
-> > ++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/fsl/guts.h | 126 +++++++++++++++++++++++++++++-------------
-> > -----
-> >  5 files changed, 207 insertions(+), 49 deletions(-)
-> >  create mode 100644 drivers/soc/fsl/Kconfig
-> >  create mode 100644 drivers/soc/fsl/guts.c
-> > 
-> > diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-> > index cb58ef0..7106463 100644
-> > --- a/drivers/soc/Kconfig
-> > +++ b/drivers/soc/Kconfig
-> > @@ -2,7 +2,7 @@ menu "SOC (System On Chip) specific Drivers"
-> > 
-> >  source "drivers/soc/bcm/Kconfig"
-> >  source "drivers/soc/brcmstb/Kconfig"
-> > -source "drivers/soc/fsl/qe/Kconfig"
-> > +source "drivers/soc/fsl/Kconfig"
-> >  source "drivers/soc/mediatek/Kconfig"
-> >  source "drivers/soc/qcom/Kconfig"
-> >  source "drivers/soc/rockchip/Kconfig"
-> > diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
-> > new file mode 100644
-> > index 0000000..b313759
-> > --- /dev/null
-> > +++ b/drivers/soc/fsl/Kconfig
-> > @@ -0,0 +1,8 @@
-> > +#
-> > +# Freescale SOC drivers
-> > +#
-> > +
-> > +source "drivers/soc/fsl/qe/Kconfig"
-> > +
-> > +config FSL_GUTS
-> > +       bool
-> > diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
-> > index 203307f..02afb7f 100644
-> > --- a/drivers/soc/fsl/Makefile
-> > +++ b/drivers/soc/fsl/Makefile
-> > @@ -4,3 +4,4 @@
-> > 
-> >  obj-$(CONFIG_QUICC_ENGINE)             += qe/
-> >  obj-$(CONFIG_CPM)                      += qe/
-> > +obj-$(CONFIG_FSL_GUTS)                 += guts.o
-> > diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> > new file mode 100644
-> > index 0000000..fa155e6
-> > --- /dev/null
-> > +++ b/drivers/soc/fsl/guts.c
-> > @@ -0,0 +1,119 @@
-> > +/*
-> > + * Freescale QorIQ Platforms GUTS Driver
-> > + *
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published by
-> > + * the Free Software Foundation; either version 2 of the License, or
-> > + * (at your option) any later version.
-> > + */
-> > +
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> Seems there was lots of discussion on this.  If it does end up being
-> resent, it would be nice to get the module.h and other modular stuff
-> gone since it is a bool Kconfig.
+> > 	CLK_SET_RATE_GATE
+> > 	CLK_SET_PARENT_GATE
+> 
+> 
+> 
+> Regarding setting flags, I think we already talked about that. I think the
+> conclusion was that in our case its not possible to manipulate the flags in
+> the OS as this isn't intended to be done in cases like ours. Therefore no API
+> is exported for this.
+> 
+> I.e. if we need to set these flags, we have to do that in Xen where we add the
+> clocks to the hypervisor node in the device tree. And not in the kernel patch
+> discussed here.
 
-I plan to resend just the GUTS driver portion and send it through the PPC
-tree.
+These are internal Linux flags, aren't they? They cannot be set in Xen.
 
-I don't see any modular stuff in there besides the linux/module.h include.
-
--Scott
+If the only way to make sure that clk_set_rate and clk_set_parent fail
+on one of the clocks "owned" by Xen is to set CLK_SET_RATE_GATE and
+CLK_SET_PARENT_GATE, we'll have to do that. Even if it means introducing
+a new internal Linux API.
 
 
+> > And then enable the clocks. All calls to clk_set_parent and clk_set_rate
+> > with those clocks in the path will fail, so long as they are prepared
+> > and enabled. This implementation detail is specific to Linux and
+> > definitely should not go into the binding.
+> > 
+> > > 
+> > > This property is used to proxy clocks for devices Xen has taken ownership
+> > > of, such as UARTs, for which the associated clock controller(s) remain
+> > > under the control of Dom0.
+> > 
+> > I'm still not completely sure about this type of layering and whether or
+> > not it is sane. If you want Xen to manage the clock controller, AND you
+> > want Linux guests or dom0 to consume those clocks and manipulate them in
+> > other drivers, then this solution won't work.
+> > 
+> > Regards,
+> > Mike
+> > 
+> > > 
+> > > Up to now, the workaround for this has been to use the Linux kernel
+> > > command line parameter 'clk_ignore_unused'. See Xen bug
+> > > 
+> > > http://bugs.xenproject.org/xen/bug/45
+> > > 
+> > > too.
+> > > 
+> > > Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> > > ---
+> > > Changes in v4: Switch to the xen.txt description proposed by Mark:
+> > >                https://www.spinics.net/lists/arm-kernel/msg516158.html
+> > > 
+> > > Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+> > > 
+> > > Changes in v2: Drop the Linux implementation details like
+> > > clk_disable_unused
+> > >                in xen.txt.
+> > > 
+> > >  Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
+> > >  arch/arm/xen/enlighten.c                      | 47
+> > > +++++++++++++++++++++++++++
+> > >  2 files changed, 59 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/arm/xen.txt
+> > > b/Documentation/devicetree/bindings/arm/xen.txt
+> > > index c9b9321..437e50b 100644
+> > > --- a/Documentation/devicetree/bindings/arm/xen.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> > > @@ -17,6 +17,18 @@ the following properties:
+> > >    A GIC node is also required.
+> > >    This property is unnecessary when booting Dom0 using ACPI.
+> > > 
+> > > +Optional properties:
+> > > +
+> > > +- clocks: a list of phandle + clock-specifier pairs
+> > > +  Clocks described by this property are reserved for use by Xen, and the
+> > > +  OS must not alter their state any way, such as disabling or gating a
+> > > +  clock, or modifying its rate. Ensuring this may impose constraints on
+> > > +  parent clocks or other resources used by the clock tree.
+> > > +
+> > > +  Note: this property is used to proxy clocks for devices Xen has taken
+> > > +  ownership of, such as UARTs, for which the associated clock
+> > > +  controller(s) remain under the control of Dom0.
+> > > +
+> > >  To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
+> > > "uefi" node
+> > >  under /hypervisor with following parameters:
+> > > 
+> > > diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+> > > index 47acb36..5c546d0 100644
+> > > --- a/arch/arm/xen/enlighten.c
+> > > +++ b/arch/arm/xen/enlighten.c
+> > > @@ -24,6 +24,7 @@
+> > >  #include <linux/of_fdt.h>
+> > >  #include <linux/of_irq.h>
+> > >  #include <linux/of_address.h>
+> > > +#include <linux/clk-provider.h>
+> > >  #include <linux/cpuidle.h>
+> > >  #include <linux/cpufreq.h>
+> > >  #include <linux/cpu.h>
+> > > @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+> > >  }
+> > >  late_initcall(xen_pm_init);
+> > > 
+> > > +/*
+> > > + * Check if we want to register some clocks, that they
+> > > + * are not freed because unused by clk_disable_unused().
+> > > + * E.g. the serial console clock.
+> > > + */
+> > > +static int __init xen_arm_register_clks(void)
+> > > +{
+> > > +       struct clk *clk;
+> > > +       struct device_node *xen_node;
+> > > +       unsigned int i, count;
+> > > +       int ret = 0;
+> > > +
+> > > +       xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+> > > +       if (!xen_node) {
+> > > +               pr_err("Xen support was detected before, but it has
+> > > disappeared\n");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       count = of_clk_get_parent_count(xen_node);
+> > > +       if (!count)
+> > > +               goto out;
+> > > +
+> > > +       for (i = 0; i < count; i++) {
+> > > +               clk = of_clk_get(xen_node, i);
+> > > +               if (IS_ERR(clk)) {
+> > > +                       pr_err("Xen failed to register clock %i. Error:
+> > > %li\n",
+> > > +                              i, PTR_ERR(clk));
+> > > +                       ret = PTR_ERR(clk);
+> > > +                       goto out;
+> > > +               }
+> > > +
+> > > +               ret = clk_prepare_enable(clk);
+> > > +               if (ret < 0) {
+> > > +                       pr_err("Xen failed to enable clock %i. Error:
+> > > %i\n",
+> > > +                              i, ret);
+> > > +                       goto out;
+> > > +               }
+> > > +       }
+> > > +
+> > > +       ret = 0;
+> > > +
+> > > +out:
+> > > +       of_node_put(xen_node);
+> > > +       return ret;
+> > > +}
+> > > +late_initcall(xen_arm_register_clks);
+> > > 
+> > >  /* empty stubs */
+> > >  void xen_arch_pre_suspend(void) { }
+> > > --
+> 
