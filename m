@@ -1,95 +1,114 @@
-Return-Path: <wens@csie.org>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v2 5/7] meson: clk: Add CLKIDs for clock gates
+Date: Wed, 13 Jul 2016 19:49:39 +0200
+Message-Id: <1468432181-9550-6-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160727073005.GG6560@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-8-git-send-email-wens@csie.org> <20160727073005.GG6560@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 27 Jul 2016 15:32:58 +0800
-Message-ID: <CAGb2v67KcvzxadXYTWSg42+gpRxt4fhNmiWmtAD5D7r0+K4T8g@mail.gmail.com>
-Subject: Re: [PATCH 7/9] clk: sunxi-ng: mux: Add clk notifier functions
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev <dev@linux-sunxi.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 27, 2016 at 3:30 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Jul 26, 2016 at 03:04:29PM +0800, Chen-Yu Tsai wrote:
->> On sunxi we support cpufreq by changing the clock rate of PLL-CPU.
->> It's possible the clock output of the PLL goes out of the CPU's
->> operational limits when the PLL's multipliers / dividers are changed
->> and it hasn't stabilized yet. This would result in the CPU hanging.
->>
->> To circumvent this, we temporarily switch the CPU mux clock to another
->> stable clock before the rate change, and switch it back after the PLL
->> stabilizes. This is done with clk notifiers registered on the PLL.
->>
->> This patch adds common functions for notifiers to reparent mux clocks.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  drivers/clk/sunxi-ng/ccu_mux.c | 36 ++++++++++++++++++++++++++++++++++++
->>  drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
->>  2 files changed, 50 insertions(+)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
->> index f96eabb5d1f3..8a6e9065cb85 100644
->> --- a/drivers/clk/sunxi-ng/ccu_mux.c
->> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
->> @@ -8,7 +8,9 @@
->>   * the License, or (at your option) any later version.
->>   */
->>
->> +#include <linux/clk.h>
->>  #include <linux/clk-provider.h>
->> +#include <linux/delay.h>
->>
->>  #include "ccu_gate.h"
->>  #include "ccu_mux.h"
->> @@ -199,3 +201,37 @@ const struct clk_ops ccu_mux_ops = {
->>       .determine_rate = __clk_mux_determine_rate,
->>       .recalc_rate    = ccu_mux_recalc_rate,
->>  };
->> +
->> +/*
->> + * This clock notifier is called when the frequency of the of the parent
->> + * PLL clock is to be changed. The idea is to switch the parent to a
->> + * stable clock, such as the main oscillator, while the PLL frequency
->> + * stabilizes.
->> + */
->> +static int ccu_mux_notifier_cb(struct notifier_block *nb,
->> +                            unsigned long event, void *data)
->> +{
->> +     struct ccu_mux_nb *mux = to_ccu_mux_nb(nb);
->> +     int ret = 0;
->> +
->> +     if (event == PRE_RATE_CHANGE) {
->> +             mux->original_index = ccu_mux_helper_get_parent(mux->common,
->> +                                                             mux->cm);
->> +             ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
->> +                                             mux->bypass_index);
->> +     } else if (event == POST_RATE_CHANGE) {
->> +             ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
->> +                                             mux->original_index);
->> +     }
->> +
->> +     udelay(mux->delay_us);
->
-> Are you sure we need that delay?
->
-> set_rate will end and notify you once the PLL rate is stable, so it
-> looks redundant.
+Add clock ids for the clock gates to private meson8b header file.
 
-The delay requirement is on the cpu mux clk, not the PLL. The
-datasheet says you should wait for up to 8 clock cycles after
-changing the parent. Not sure how this factors with the CPU
-actually doing the waiting though.
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/meson8b.h | 79 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
 
-So this is separate from the PLL lock delay.
-
-ChenYu
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index f8c6942..4ba8be5 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -60,7 +60,84 @@
+ #define CLKID_ZERO		13
+ #define CLKID_MPEG_SEL		14
+ #define CLKID_MPEG_DIV		15
++#define CLKID_DDR		16
++#define CLKID_DOS		17
++#define CLKID_ISA		18
++#define CLKID_PL301		19
++#define CLKID_PERIPHS		20
++#define CLKID_SPICC		21
++#define CLKID_I2C		22
++#define CLKID_SAR_ADC		23
++#define CLKID_SMART_CARD	24
++#define CLKID_RNG0		25
++#define CLKID_UART0		26
++#define CLKID_SDHC		27
++#define CLKID_STREAM		28
++#define CLKID_ASYNC_FIFO	29
++#define CLKID_SDIO		30
++#define CLKID_ABUF		31
++#define CLKID_HIU_IFACE		32
++#define CLKID_ASSIST_MISC	33
++#define CLKID_SPI		34
++#define CLKID_I2S_SPDIF		35
++#define CLKID_ETH		36
++#define CLKID_DEMUX		37
++#define CLKID_AIU_GLUE		38
++#define CLKID_IEC958		39
++#define CLKID_I2S_OUT		40
++#define CLKID_AMCLK		41
++#define CLKID_AIFIFO2		42
++#define CLKID_MIXER		43
++#define CLKID_MIXER_IFACE	44
++#define CLKID_ADC		45
++#define CLKID_BLKMV		46
++#define CLKID_AIU		47
++#define CLKID_UART1		48
++#define CLKID_G2D		49
++#define CLKID_USB0		50
++#define CLKID_USB1		51
++#define CLKID_RESET		52
++#define CLKID_NAND		53
++#define CLKID_DOS_PARSER	54
++#define CLKID_USB		55
++#define CLKID_VDIN1		56
++#define CLKID_AHB_ARB0		57
++#define CLKID_EFUSE		58
++#define CLKID_BOOT_ROM		59
++#define CLKID_AHB_DATA_BUS	60
++#define CLKID_AHB_CTRL_BUS	61
++#define CLKID_HDMI_INTR_SYNC	62
++#define CLKID_HDMI_PCLK		63
++#define CLKID_USB1_DDR_BRIDGE	64
++#define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_MMC_PCLK		66
++#define CLKID_DVIN		67
++#define CLKID_UART2		68
++#define CLKID_SANA		69
++#define CLKID_VPU_INTR		70
++#define CLKID_SEC_AHB_AHB3_BRIDGE	71
++#define CLKID_CLK81_A9		72
++#define CLKID_VCLK2_VENCI0	73
++#define CLKID_VCLK2_VENCI1	74
++#define CLKID_VCLK2_VENCP0	75
++#define CLKID_VCLK2_VENCP1	76
++#define CLKID_GCLK_VENCI_INT	77
++#define CLKID_GCLK_VENCP_INT	78
++#define CLKID_DAC_CLK		79
++#define CLKID_AOCLK_GATE	80
++#define CLKID_IEC958_GATE	81
++#define CLKID_ENC480P		82
++#define CLKID_RNG1		83
++#define CLKID_GCLK_VENCL_INT	84
++#define CLKID_VCLK2_VENCLMCC	85
++#define CLKID_VCLK2_VENCL	86
++#define CLKID_VCLK2_OTHER	87
++#define CLKID_EDP		88
++#define CLKID_AO_MEDIA_CPU	89
++#define CLKID_AO_AHB_SRAM	90
++#define CLKID_AO_AHB_BUS	91
++#define CLKID_AO_IFACE		92
+ 
+-#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
++#define CLK_NR_CLKS		(CLKID_AO_IFACE + 1)
+ 
+ #endif /* __MESON8B_H */
+-- 
+2.5.0
