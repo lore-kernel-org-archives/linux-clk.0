@@ -1,49 +1,71 @@
-Return-Path: <andi@etezian.org>
-Date: Sat, 9 Jul 2016 01:31:58 +0900
-From: Andi Shyti <andi@etezian.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v2 5/7] spi: s3c64xx: add exynos5433 compatible for ioclk
- handling
-Message-ID: <20160708163158.GD1256@jack.zhora.eu>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
- <146799441227.73491.13833003558807352160@resonance>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <146799441227.73491.13833003558807352160@resonance>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <578618CA.8090808@samsung.com>
+Cc: "Paul Gortmaker" <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org,
+ "Tomasz Figa" <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-8-paul.gortmaker@windriver.com>
+ <578618CA.8090808@samsung.com>
+Message-ID: <146844714723.73491.8115500341908237496@resonance>
+Subject: Re: [PATCH 07/10] clk: samsung: make clk-s5pv210-audss explicitly non-modular
+Date: Wed, 13 Jul 2016 14:59:07 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Quoting Sylwester Nawrocki (2016-07-13 03:32:42)
+> On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
+> > The Kconfig currently controlling compilation of this code is:
+> > =
 
-> >         pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
-> >         pm_runtime_use_autosuspend(&pdev->dev);
-> >         pm_runtime_set_active(&pdev->dev);
-> > @@ -1193,6 +1211,8 @@ err_pm_put:
-> >         pm_runtime_disable(&pdev->dev);
-> >         pm_runtime_set_suspended(&pdev->dev);
-> >  
-> > +       clk_disable_unprepare(sdd->ioclk);
-> > +err_disable_src_clk:
-> >         clk_disable_unprepare(sdd->src_clk);
-> >  err_disable_clk:
-> >         clk_disable_unprepare(sdd->clk);
-> 
-> Why aren't these clocks enabled/disabled by calls to pm_runtime_get/put?
+> > arch/arm/mach-s5pv210/Kconfig:config ARCH_S5PV210
+> > arch/arm/mach-s5pv210/Kconfig:  bool "Samsung S5PV210/S5PC110" if ARCH_=
+MULTI_V7
+> > =
 
-yes, they are, but this should be fixed in a different patch.
+> > ...meaning that it currently is not being built as a module by anyone.
+> > =
 
-I will send a follow-up, thanks for pointing this out.
+> > Lets remove the modular code that is essentially orphaned, so that
+> > when reading the driver there is no doubt it is builtin-only.
+> > =
 
-Andi
+> > We explicitly disallow a driver unbind, since that doesn't have a
+> > sensible use case anyway, and it allows us to drop the ".remove"
+> > code for non-modular drivers.
+> > =
+
+> > Since this code is already not using module_init, case, the init
+> > ordering remains unchanged with this commit.
+> > =
+
+> > We also delete the MODULE_LICENSE tags etc. since all that information
+> > is already contained at the top of the file in the comments.
+> > =
+
+> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-clk@vger.kernel.org
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> =
+
+> In case this is going to be applied directly to current clk-next:
+> =
+
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> =
+
+
+Applied to clk-next.
+
+I know that we normally take PRs for the samsung clk stuff, but this
+late in the cycle I'm OK to simply pick individual patches.
+
+Thanks,
+Mike
