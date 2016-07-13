@@ -1,50 +1,57 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	frank.wang@rock-chips.com,
-	wulf@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
-Date: Mon,  1 Aug 2016 11:37:20 +0800
-Message-Id: <1470022644-2152-3-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 7/7] arm: amlogic: select meson8b clk driver
+From: =?utf-8?Q?Alexander_M=C3=BCller?= <serveralex@gmail.com>
+In-Reply-To: <m2inwiqwaa.fsf@baylibre.com>
+Date: Wed, 13 Jul 2016 19:53:12 +0200
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+Message-Id: <41983A35-37D0-40D0-BFD2-1EF7DC655B93@gmail.com>
+References: <1467741391-60534-1-git-send-email-serveralex@gmail.com> <1467741391-60534-8-git-send-email-serveralex@gmail.com> <146776648028.35356.7816151912503029258@resonance> <m2inwiqwaa.fsf@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export these source clocks for usbphy.
+Hi Kevin,=20
 
+I did the proposed changes and rebased to integ.=20
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+Please review and let me know if I missed something.
 
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Alex
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 78e51cb..f55f967f 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
- 
--	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
--	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
- 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
--- 
-1.7.9.5
+> On 06 Jul 2016, at 23:41, Kevin Hilman <khilman@baylibre.com> wrote:
+>=20
+> Michael Turquette <mturquette@baylibre.com> writes:
+>=20
+>> Hi Alex,
+>>=20
+>> Quoting Alexander M=C3=BCller (2016-07-05 10:56:31)
+>>> Select the Amlogic clk code for meson SoCs and the more specific =
+meson8b clk
+>>> driver for Amlogic meson8b.
+>>>=20
+>>> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+>>=20
+>> This patch isn't necessary as an alternative is already queued. See:
+>> =
+https://git.kernel.org/cgit/linux/kernel/git/mturquette/linux.git/commit/?=
+h=3Dgxbb-dt-clk&id=3Dbae5d70ba6f8726ea6306aa07b7d2eb4357d3c81
+>>=20
+>> However, if you're basing on top of clk-next (or clk-s905) then you
+>> won't see the three patches linked above because they are queued =
+through
+>> Kevin & Carlo via the amlogic tree.
+>=20
+> ...which you can find here[1] and specifically, the "integ" branch =
+where
+> I'm keeping the latest queued versions of various things merged =
+together
+> for easier testing.
+>=20
+> Kevin
+>=20
+> [1] =
+https://git.kernel.org/cgit/linux/kernel/git/khilman/linux-amlogic.git/
