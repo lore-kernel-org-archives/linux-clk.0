@@ -1,66 +1,52 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
-To: Dirk Behme <dirk.behme@de.bosch.com>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
- devicetree@vger.kernel.org
-References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com>
- <146776885213.35356.11565744417822933094@resonance>
- <20733b68-9529-bdb9-2a7d-576c8193f15c@de.bosch.com>
-Cc: xen-devel@lists.xenproject.org,
- Stefano Stabellini <sstabellini@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <577F73FB.1070302@arm.com>
-Date: Fri, 8 Jul 2016 10:35:55 +0100
-MIME-Version: 1.0
-In-Reply-To: <20733b68-9529-bdb9-2a7d-576c8193f15c@de.bosch.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <andi.shyti@samsung.com>
+Date: Wed, 13 Jul 2016 21:44:16 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from
+ SPI clocks
+Message-id: <20160713124416.GN18237@samsunx.samsung>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+ <CGME20160712222323epcas1p4020f224ba47b193243867ab41bc109c8@epcas1p4.samsung.com>
+ <146836184696.73491.9452469757415968654@resonance>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <146836184696.73491.9452469757415968654@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike,
 
+> > Because the Exynos5433 SPI driver supports the ioclk handling and
+> > the following patch:
+> > 
+> >   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
+> > 
+> > fixes a synchronus abort issue, none of the SPI clocks require
+> > any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+> > for the SPI related clocks.
+> > 
+> > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> Do you want these patches to go through same tree? If not, I can take
+> this patch into clk-next.
 
-On 08/07/16 07:48, Dirk Behme wrote:
->>>  #include <linux/cpuidle.h>
->>>  #include <linux/cpufreq.h>
->>>  #include <linux/cpu.h>
->>> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
->>>  }
->>>  late_initcall(xen_pm_init);
->>>
->>> +/*
->>> + * Check if we want to register some clocks, that they
->>> + * are not freed because unused by clk_disable_unused().
->>> + * E.g. the serial console clock.
->>> + */
->>> +static int __init xen_arm_register_clks(void)
->>> +{
->>> +       struct clk *clk;
->>> +       struct device_node *xen_node;
->>> +       unsigned int i, count;
->>> +       int ret = 0;
->>> +
->>> +       xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
->>> +       if (!xen_node) {
->>> +               pr_err("Xen support was detected before, but it has
->>> disappeared\n");
->>> +               return -EINVAL;
->>> +       }
->>> +
->>> +       count = of_clk_get_parent_count(xen_node);
->>> +       if (!count)
->>> +               goto out;
->>> +
->>> +       for (i = 0; i < count; i++) {
->>> +               clk = of_clk_get(xen_node, i);
->>
->> Is there a struct device we can use here?
->
->
-> It doesn't look so. Julien?
+oh yes, as Krzysztof and Sylwester pointed out, the dependency is
+not that strict as there is no exynos5433 dts yet, so that we
+wouldn't break anything if patch 7/7 gets in before the others.
 
-We don't have a struct device. Maybe we can create a dummy one if it 
-simplifies the logic?
+If you want to take in your branch the 7/7, please feel free to
+do so. Only the patches on the drivers/spi/spi-s3c64xx.c file
+have some dependencies on some previous patches I sent to Mark.
 
--- 
-Julien Grall
+Andi
