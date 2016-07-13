@@ -1,64 +1,126 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sstabellini@kernel.org>
+Date: Wed, 13 Jul 2016 20:07:39 +0100 (BST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+To: Dirk Behme <dirk.behme@gmail.com>
+cc: Stefano Stabellini <sstabellini@kernel.org>,
+    Dirk Behme <dirk.behme@de.bosch.com>, Mark Rutland <mark.rutland@arm.com>,
+    devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>, Julien Grall <julien.grall@arm.com>,
+    xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
+    linux-arm-kernel@lists.infradead.org
+Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
+In-Reply-To: <57868CB4.1090504@gmail.com>
+Message-ID: <alpine.DEB.2.10.1607132002000.26575@sstabellini-ThinkPad-X260>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <alpine.DEB.2.10.1607131932530.26575@sstabellini-ThinkPad-X260> <57868CB4.1090504@gmail.com>
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1468828152-18389-1-git-send-email-boris.brezillon@free-electrons.com>
-Cc: "Nicolas Ferre" <nicolas.ferre@atmel.com>,
- "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
- "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
- songjun.wu@microchip.com, "Hans Verkuil" <hans.verkuil@cisco.com>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- stable@vger.kernel.org
-References: <1468828152-18389-1-git-send-email-boris.brezillon@free-electrons.com>
-Message-ID: <146888915908.8780.13721343837356910500@resonance>
-Subject: Re: [PATCH] clk: at91: fix clk_programmable_set_parent()
-Date: Mon, 18 Jul 2016 17:45:59 -0700
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2016-07-18 00:49:12)
-> Since commit 1bdf02326b71e ("clk: at91: make use of syscon/regmap
-> internally"), clk_programmable_set_parent() is always selecting the
-> first parent (AKA slow_clk), no matter what's passed in the 'index'
-> parameter.
-> =
+On Wed, 13 Jul 2016, Dirk Behme wrote:
+> On 13.07.2016 20:35, Stefano Stabellini wrote:
+> > On Tue, 12 Jul 2016, Dirk Behme wrote:
+> > > Clocks described by this property are reserved for use by Xen, and the OS
+> > > must not alter their state any way, such as disabling or gating a clock,
+> > > or modifying its rate. Ensuring this may impose constraints on parent
+> > > clocks or other resources used by the clock tree.
+> > > 
+> > > This property is used to proxy clocks for devices Xen has taken ownership
+> > > of, such as UARTs, for which the associated clock controller(s) remain
+> > > under the control of Dom0.
+> > > 
+> > > Up to now, the workaround for this has been to use the Linux kernel
+> > > command line parameter 'clk_ignore_unused'. See Xen bug
+> > > 
+> > > http://bugs.xenproject.org/xen/bug/45
+> > > 
+> > > too.
+> > > 
+> > > Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> > > ---
+> > > Changes in v4: Switch to the xen.txt description proposed by Mark:
+> > >                 https://www.spinics.net/lists/arm-kernel/msg516158.html
+> > > 
+> > > Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+> > > 
+> > > Changes in v2: Drop the Linux implementation details like
+> > > clk_disable_unused
+> > > 	       in xen.txt.
+> > > 
+> > >   Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
+> > >   arch/arm/xen/enlighten.c                      | 47
+> > > +++++++++++++++++++++++++++
+> > >   2 files changed, 59 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/arm/xen.txt
+> > > b/Documentation/devicetree/bindings/arm/xen.txt
+> > > index c9b9321..437e50b 100644
+> > > --- a/Documentation/devicetree/bindings/arm/xen.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> > > @@ -17,6 +17,18 @@ the following properties:
+> > >     A GIC node is also required.
+> > >     This property is unnecessary when booting Dom0 using ACPI.
+> > > 
+> > > +Optional properties:
+> > > +
+> > > +- clocks: a list of phandle + clock-specifier pairs
+> > > +  Clocks described by this property are reserved for use by Xen, and the
+> > > +  OS must not alter their state any way, such as disabling or gating a
+> > > +  clock, or modifying its rate. Ensuring this may impose constraints on
+> > > +  parent clocks or other resources used by the clock tree.
+> > > +
+> > > +  Note: this property is used to proxy clocks for devices Xen has taken
+> > > +  ownership of, such as UARTs, for which the associated clock
+> > > +  controller(s) remain under the control of Dom0.
+> > > +
+> > >   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
+> > > "uefi" node
+> > >   under /hypervisor with following parameters:
+> > > 
+> > > diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+> > > index 47acb36..5c546d0 100644
+> > > --- a/arch/arm/xen/enlighten.c
+> > > +++ b/arch/arm/xen/enlighten.c
+> > > @@ -24,6 +24,7 @@
+> > >   #include <linux/of_fdt.h>
+> > >   #include <linux/of_irq.h>
+> > >   #include <linux/of_address.h>
+> > > +#include <linux/clk-provider.h>
+> > >   #include <linux/cpuidle.h>
+> > >   #include <linux/cpufreq.h>
+> > >   #include <linux/cpu.h>
+> > > @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+> > >   }
+> > >   late_initcall(xen_pm_init);
+> > > 
+> > > +/*
+> > > + * Check if we want to register some clocks, that they
+> > > + * are not freed because unused by clk_disable_unused().
+> > > + * E.g. the serial console clock.
+> > > + */
+> > > +static int __init xen_arm_register_clks(void)
+> > > +{
+> > > +	struct clk *clk;
+> > > +	struct device_node *xen_node;
+> > > +	unsigned int i, count;
+> > > +	int ret = 0;
+> > > +
+> > > +	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+> > > +	if (!xen_node) {
+> > > +		pr_err("Xen support was detected before, but it has
+> > > disappeared\n");
+> > > +		return -EINVAL;
+> > > +	}
+> > 
+> > Given that this is a late initcall, the following should work:
+> > 
+> >      if (!xen_domain())
+> >          return -ENODEV;
+> 
+> 
+> Hmm, sorry, "should work" for what?
 
-> Fix that by initializing the pckr variable to the index value.
-> =
+As a Xen check, if (!xen_domain()) is the common pattern.
 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Reported-by: Hans Verkuil <hans.verkuil@cisco.com>
-> Fixes: 1bdf02326b71e ("clk: at91: make use of syscon/regmap internally")
-> Cc: <stable@vger.kernel.org>
+> We need the xen_node from device tree, anyway.
 
-Applied to clk-fixes.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/at91/clk-programmable.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> =
-
-> diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-p=
-rogrammable.c
-> index 10f846cc8db1..25d5906640c3 100644
-> --- a/drivers/clk/at91/clk-programmable.c
-> +++ b/drivers/clk/at91/clk-programmable.c
-> @@ -99,7 +99,7 @@ static int clk_programmable_set_parent(struct clk_hw *h=
-w, u8 index)
->         struct clk_programmable *prog =3D to_clk_programmable(hw);
->         const struct clk_programmable_layout *layout =3D prog->layout;
->         unsigned int mask =3D layout->css_mask;
-> -       unsigned int pckr =3D 0;
-> +       unsigned int pckr =3D index;
->  =
-
->         if (layout->have_slck_mck)
->                 mask |=3D AT91_PMC_CSSMCK_MCK;
-> -- =
-
-> 2.7.4
->=20
+In that case, what don't you just use the global xen_node in this file?
