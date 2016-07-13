@@ -1,43 +1,47 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 6/8] clk: core: Avoid double initialization of clocks
-Date: Tue,  5 Jul 2016 18:23:32 +0200
-Message-Id: <1467735814-23518-9-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <578616AE.7010805@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ b.zolnierkie@samsung.com
+References: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
+ <146799700614.73491.6564650478987470074@resonance>
+ <578616AE.7010805@samsung.com>
+Message-ID: <146844721045.73491.956929587069230335@resonance>
+Subject: Re: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem CLKCON
+ driver
+Date: Wed, 13 Jul 2016 15:00:10 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clock providers can be initialized via of_clk_init() and also via
-platform device probe.
+Quoting Sylwester Nawrocki (2016-07-13 03:23:42)
+> On 07/08/2016 06:56 PM, Michael Turquette wrote:
+> > Quoting Sylwester Nawrocki (2016-07-08 07:15:00)
+> >> > Any clock dependencies can be properly handled with deferred probing
+> >> > so we can remove core_initcall and switch to a proper loadable platf=
+orm
+> >> > driver module.
+> >> > This change has been tested on Exynos4412 Odroid U3 based board.
+> >> > =
 
-Avoid double initialization of them by setting the OF_POPULATED flag.
+> >> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >
+> > Looks good to me.
+> =
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> Thanks, I have added this patch to my tree, however at the moment
+> I have only two patches queued there. Please feel free to apply
+> this patch directly to clk-next.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939fb6bb..f0403b87f468 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3451,6 +3451,10 @@ void __init of_clk_init(const struct of_device_id *matches)
- 					&clk_provider_list, node) {
- 			if (force || parent_ready(clk_provider->np)) {
- 
-+				/* Don't populate platform devices */
-+				of_node_set_flag(clk_provider->np,
-+						 OF_POPULATED);
-+
- 				clk_provider->clk_init_cb(clk_provider->np);
- 				of_clk_set_defaults(clk_provider->np, true);
- 
--- 
-2.8.1
+Applied.
+
+Regards,
+Mike
+
+> =
+
+> -- =
+
+> Regards,
+> Sylwester
