@@ -1,75 +1,110 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: [PATCH v3 1/6] dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
-Date: Tue, 19 Jul 2016 15:42:17 +0200
-Message-Id: <1468935742-11218-2-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <sstabellini@kernel.org>
+Date: Wed, 13 Jul 2016 19:35:05 +0100 (BST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+cc: linux-arm-kernel@lists.infradead.org, Julien Grall <julien.grall@arm.com>,
+    Mark Rutland <mark.rutland@arm.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
+    Stefano Stabellini <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
+    Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
+In-Reply-To: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+Message-ID: <alpine.DEB.2.10.1607131932530.26575@sstabellini-ThinkPad-X260>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the the Xtal clock on
-Armada 3700 used in the Marvell Armada 3700 SoCs.
+On Tue, 12 Jul 2016, Dirk Behme wrote:
+> Clocks described by this property are reserved for use by Xen, and the OS
+> must not alter their state any way, such as disabling or gating a clock,
+> or modifying its rate. Ensuring this may impose constraints on parent
+> clocks or other resources used by the clock tree.
+> 
+> This property is used to proxy clocks for devices Xen has taken ownership
+> of, such as UARTs, for which the associated clock controller(s) remain
+> under the control of Dom0.
+> 
+> Up to now, the workaround for this has been to use the Linux kernel
+> command line parameter 'clk_ignore_unused'. See Xen bug
+> 
+> http://bugs.xenproject.org/xen/bug/45
+> 
+> too.
+> 
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+> Changes in v4: Switch to the xen.txt description proposed by Mark:
+>                https://www.spinics.net/lists/arm-kernel/msg516158.html
+> 
+> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+> 
+> Changes in v2: Drop the Linux implementation details like clk_disable_unused
+> 	       in xen.txt.
+> 
+>  Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
+>  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
+> index c9b9321..437e50b 100644
+> --- a/Documentation/devicetree/bindings/arm/xen.txt
+> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> @@ -17,6 +17,18 @@ the following properties:
+>    A GIC node is also required.
+>    This property is unnecessary when booting Dom0 using ACPI.
+>  
+> +Optional properties:
+> +
+> +- clocks: a list of phandle + clock-specifier pairs
+> +  Clocks described by this property are reserved for use by Xen, and the
+> +  OS must not alter their state any way, such as disabling or gating a
+> +  clock, or modifying its rate. Ensuring this may impose constraints on
+> +  parent clocks or other resources used by the clock tree.
+> +
+> +  Note: this property is used to proxy clocks for devices Xen has taken
+> +  ownership of, such as UARTs, for which the associated clock
+> +  controller(s) remain under the control of Dom0.
+> +
+>  To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
+>  under /hypervisor with following parameters:
+>  
+> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+> index 47acb36..5c546d0 100644
+> --- a/arch/arm/xen/enlighten.c
+> +++ b/arch/arm/xen/enlighten.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/of_fdt.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/of_address.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/cpuidle.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpu.h>
+> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+>  }
+>  late_initcall(xen_pm_init);
+>  
+> +/*
+> + * Check if we want to register some clocks, that they
+> + * are not freed because unused by clk_disable_unused().
+> + * E.g. the serial console clock.
+> + */
+> +static int __init xen_arm_register_clks(void)
+> +{
+> +	struct clk *clk;
+> +	struct device_node *xen_node;
+> +	unsigned int i, count;
+> +	int ret = 0;
+> +
+> +	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+> +	if (!xen_node) {
+> +		pr_err("Xen support was detected before, but it has disappeared\n");
+> +		return -EINVAL;
+> +	}
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/clock/armada3700-xtal-clock.txt       | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+Given that this is a late initcall, the following should work:
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-new file mode 100644
-index 000000000000..a88f1f05fbd6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-@@ -0,0 +1,28 @@
-+* Xtal Clock bindings for Marvell Armada 37xx SoCs
-+
-+Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
-+reading the gpio latch register.
-+
-+This node must be a subnode of the node exposing the register address
-+of the GPIO block where the gpio latch is located.
-+
-+Required properties:
-+- compatible : shall be one of the following:
-+	"marvell,armada-3700-xtal-clock"
-+- #clock-cells : from common clock binding; shall be set to 0
-+
-+Optional properties:
-+- clock-output-names : from common clock binding; allows overwrite default clock
-+	output names ("xtal")
-+
-+Example:
-+gpio1: gpio@13800 {
-+	compatible = "marvell,armada-3700-gpio", "syscon", "simple-mfd";
-+	reg = <0x13800 0x1000>;
-+
-+	xtalclk: xtal-clk {
-+		compatible = "marvell,armada-3700-xtal-clock";
-+		clock-output-names = "xtal";
-+		#clock-cells = <0>;
-+	};
-+};
--- 
-2.5.0
+    if (!xen_domain())
+        return -ENODEV;
