@@ -1,95 +1,54 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione
-	<carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>
-Subject: [PATCH 02/10] clk: meson: make gxbb explicitly non-modular
-Date: Mon, 4 Jul 2016 17:12:12 -0400
-Message-ID: <20160704211220.5685-3-paul.gortmaker@windriver.com>
-In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: <geert+renesas@glider.be>, <horms@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] clk: renesas: r8a7795: Fix SD clocks
+Date: Wed, 13 Jul 2016 12:20:49 +0900
+Message-ID: <1468380049-5712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The Kconfig currently controlling compilation of this code is:
+According to the datasheet, SDn clocks are from the SDSRC clock. And
+the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
+core clock. Otherwise, since the sdhi driver will calculate clock for
+a sd card using the wrong parent clock rate, and then performance will
+be not good.
 
-drivers/clk/meson/Kconfig:config COMMON_CLK_GXBB
-drivers/clk/meson/Kconfig:      bool
-
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_init translates to device_initcall in the non-modular
-case, the init ordering remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE and ALIAS are no-op for non-modules.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/clk/meson/gxbb.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 007b7157cf4b..a4c6684b3019 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1,4 +1,6 @@
- /*
-+ * AmLogic S905 / GXBB Clock Controller Driver
-+ *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-  *
-@@ -19,7 +21,7 @@
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
--#include <linux/module.h>
-+#include <linux/init.h>
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index ca5519c..5f99f7c 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -91,6 +91,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
+ 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
+ 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
++	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
  
- #include "clkc.h"
- #include "gxbb.h"
-@@ -926,7 +928,6 @@ static const struct of_device_id gxbb_clkc_match_table[] = {
- 	{ .compatible = "amlogic,gxbb-clkc" },
- 	{ }
- };
--MODULE_DEVICE_TABLE(of, gxbb_match_table);
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+@@ -109,10 +110,10 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
+ 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
  
- static struct platform_driver gxbb_driver = {
- 	.probe		= gxbb_clkc_probe,
-@@ -940,15 +941,4 @@ static int __init gxbb_clkc_init(void)
- {
- 	return platform_driver_register(&gxbb_driver);
- }
--module_init(gxbb_clkc_init);
--
--static void __exit gxbb_clkc_exit(void)
--{
--	platform_driver_unregister(&gxbb_driver);
--}
--module_exit(gxbb_clkc_exit);
--
--MODULE_DESCRIPTION("AmLogic S905 / GXBB Clock Controller Driver");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:gxbb-clkc");
--MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
-+device_initcall(gxbb_clkc_init);
+-	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
+-	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
+-	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
+-	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
++	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC, 0x0074),
++	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC, 0x0078),
++	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC, 0x0268),
++	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC, 0x026c),
+ 
+ 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
 -- 
-2.8.4
+1.9.1
