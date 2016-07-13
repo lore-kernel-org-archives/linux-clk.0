@@ -1,114 +1,87 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sylwester Nawrocki
-	<s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH 07/10] clk: samsung: make clk-s5pv210-audss explicitly non-modular
-Date: Mon, 4 Jul 2016 17:12:17 -0400
-Message-ID: <20160704211220.5685-8-paul.gortmaker@windriver.com>
-In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v2 4/7] clk: meson: Copy meson8b CLKID defines to private header file
+Date: Wed, 13 Jul 2016 19:49:38 +0200
+Message-Id: <1468432181-9550-5-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Kconfig currently controlling compilation of this code is:
+Only expose future CLKID constants if necessary. This patch
+removes CLK_NR_CLKS from the DT bindings but leaves all previously
+defined CLKIDs there to keep backward compatibility.
 
-arch/arm/mach-s5pv210/Kconfig:config ARCH_S5PV210
-arch/arm/mach-s5pv210/Kconfig:  bool "Samsung S5PV210/S5PC110" if ARCH_MULTI_V7
-
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since this code is already not using module_init, case, the init
-ordering remains unchanged with this commit.
-
-We also delete the MODULE_LICENSE tags etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
 ---
- drivers/clk/samsung/clk-s5pv210-audss.c | 29 ++---------------------------
- 1 file changed, 2 insertions(+), 27 deletions(-)
+ drivers/clk/meson/meson8b.c              |  1 -
+ drivers/clk/meson/meson8b.h              | 27 +++++++++++++++++++++++++++
+ include/dt-bindings/clock/meson8b-clkc.h |  2 --
+ 3 files changed, 27 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
-index eefb84b22566..c66ed2d1450e 100644
---- a/drivers/clk/samsung/clk-s5pv210-audss.c
-+++ b/drivers/clk/samsung/clk-s5pv210-audss.c
-@@ -18,7 +18,7 @@
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 0c6e26f..9a656d9 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -21,7 +21,6 @@
+ #include <linux/clk.h>
  #include <linux/clk-provider.h>
  #include <linux/of_address.h>
- #include <linux/syscore_ops.h>
--#include <linux/module.h>
-+#include <linux/init.h>
+-#include <dt-bindings/clock/meson8b-clkc.h>
  #include <linux/platform_device.h>
+ #include <linux/module.h>
  
- #include <dt-bindings/clock/s5pv210-audss.h>
-@@ -194,20 +194,6 @@ unregister:
- 	return ret;
- }
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index b2f29f7..f8c6942 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -36,4 +36,31 @@
+ #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
+ #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
  
--static int s5pv210_audss_clk_remove(struct platform_device *pdev)
--{
--	int i;
--
--	of_clk_del_provider(pdev->dev.of_node);
--
--	for (i = 0; i < clk_data.clk_num; i++) {
--		if (!IS_ERR(clk_table[i]))
--			clk_unregister(clk_table[i]);
--	}
--
--	return 0;
--}
--
- static const struct of_device_id s5pv210_audss_clk_of_match[] = {
- 	{ .compatible = "samsung,s5pv210-audss-clock", },
- 	{},
-@@ -216,10 +202,10 @@ static const struct of_device_id s5pv210_audss_clk_of_match[] = {
- static struct platform_driver s5pv210_audss_clk_driver = {
- 	.driver	= {
- 		.name = "s5pv210-audss-clk",
-+		.suppress_bind_attrs = true,
- 		.of_match_table = s5pv210_audss_clk_of_match,
- 	},
- 	.probe = s5pv210_audss_clk_probe,
--	.remove = s5pv210_audss_clk_remove,
- };
++/*
++ * CLKID index values
++ *
++ * These indices are entirely contrived and do not map onto the hardware.
++ * Migrate them out of this header and into the DT header file when they need
++ * to be exposed to client nodes in DT: include/dt-bindings/clock/meson8b-clkc.h
++ */
++
++#define CLKID_UNUSED		0
++#define CLKID_XTAL		1
++#define CLKID_PLL_FIXED		2
++#define CLKID_PLL_VID		3
++#define CLKID_PLL_SYS		4
++#define CLKID_FCLK_DIV2		5
++#define CLKID_FCLK_DIV3		6
++#define CLKID_FCLK_DIV4		7
++#define CLKID_FCLK_DIV5		8
++#define CLKID_FCLK_DIV7		9
++#define CLKID_CLK81		10
++#define CLKID_MALI		11
++#define CLKID_CPUCLK		12
++#define CLKID_ZERO		13
++#define CLKID_MPEG_SEL		14
++#define CLKID_MPEG_DIV		15
++
++#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
++
+ #endif /* __MESON8B_H */
+diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+index 595a58d..a55ff8c 100644
+--- a/include/dt-bindings/clock/meson8b-clkc.h
++++ b/include/dt-bindings/clock/meson8b-clkc.h
+@@ -22,6 +22,4 @@
+ #define CLKID_MPEG_SEL		14
+ #define CLKID_MPEG_DIV		15
  
- static int __init s5pv210_audss_clk_init(void)
-@@ -227,14 +213,3 @@ static int __init s5pv210_audss_clk_init(void)
- 	return platform_driver_register(&s5pv210_audss_clk_driver);
- }
- core_initcall(s5pv210_audss_clk_init);
+-#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
 -
--static void __exit s5pv210_audss_clk_exit(void)
--{
--	platform_driver_unregister(&s5pv210_audss_clk_driver);
--}
--module_exit(s5pv210_audss_clk_exit);
--
--MODULE_AUTHOR("Tomasz Figa <t.figa@samsung.com>");
--MODULE_DESCRIPTION("S5PV210 Audio Subsystem Clock Controller");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:s5pv210-audss-clk");
+ #endif /* __MESON8B_CLKC_H */
 -- 
-2.8.4
+2.5.0
