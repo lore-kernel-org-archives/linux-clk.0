@@ -1,108 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:41322 "EHLO
-	conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756036AbcG1CZU (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2016 22:25:20 -0400
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1469556593-11369-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1469556593-11369-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 28 Jul 2016 11:25:06 +0900
-Message-ID: <CAK7LNAQo9UCxXXGWU81fR+DGhuiet=cnV86xOXVbJUTOYSstdg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
-To: linux-clk <linux-clk@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+ <1468432181-9550-7-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1468432181-9550-7-git-send-email-serveralex@gmail.com>
+Message-ID: <146844555421.73491.17534974282265619018@resonance>
+Subject: Re: [PATCH v2 6/7] gxbb: clk: Move MESON_GATE macro to gxbb
+Date: Wed, 13 Jul 2016 14:32:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi.
+Hi Alexander,
 
+Quoting Alexander M=C3=BCller (2016-07-13 10:49:40)
+> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+> ---
+>  drivers/clk/meson/clkc.h |  14 ----
+>  drivers/clk/meson/gxbb.c | 176 +++++++++++++++++++++++++----------------=
+------
+>  2 files changed, 95 insertions(+), 95 deletions(-)
+> =
 
-I will send v6,
-so please do not apply this version.
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 53326c3..061a01e 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -97,20 +97,6 @@ struct meson_clk_mpll {
+>         spinlock_t *lock;
+>  };
+>  =
 
-(meantime review is very appreciated, though.)
+> -#define MESON_GATE(_name, _reg, _bit)                                  \
+> -struct clk_gate gxbb_##_name =3D {                                      =
+         \
 
+Please leave this macro in clkc.h, but change the above line to:
 
+	#define MESON_GATE(_name, _reg, _bit)	\
+	struct clk_gate _name =3D {		\
 
-2016-07-27 3:09 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> I split into two patches to make review easier.
->
->  1/2: core support code
->  2/2: data arrays
->
->
-> Changes in v5:
->   - Rebase onto next-20160726 for easier git-am
->
-> Changes in v4:
->   - Unify module_platform_driver() boilerplate into a single place
->   - Add binding document
->   - Add USB3 clocks
->
-> Changes in v3:
->   - Change to platform drivers instead of OF_CLK_DECLARE
->   - Split into a core part + SoC drivers
->     SoC drivers just consist of tables of SoC-specific data.
->     This allows reviewer to concentrate on the core-part
->   - Hard-code parent clock names for cascading
->
-> Changes in v2:
->   - split emmc_hw_reset
->   - make SD clock rate-controllable
->   - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
->
-> Masahiro Yamada (2):
->   clk: uniphier: add core support code for UniPhier clock drivers
->   clk: uniphier: add clock data for UniPhier SoCs
->
->  .../devicetree/bindings/clock/uniphier-clock.txt   | 123 ++++
->  MAINTAINERS                                        |   1 +
->  drivers/clk/Kconfig                                |   1 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/uniphier/Kconfig                       |   9 +
->  drivers/clk/uniphier/Makefile                      |   9 +
->  drivers/clk/uniphier/clk-uniphier-core.c           | 216 +++++++
->  drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 ++
->  drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 ++
->  drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++
->  drivers/clk/uniphier/clk-uniphier-mio.c            | 195 +++++++
->  drivers/clk/uniphier/clk-uniphier-mux.c            |  95 ++++
->  drivers/clk/uniphier/clk-uniphier-peri.c           |  95 ++++
->  drivers/clk/uniphier/clk-uniphier-sys.c            | 626 +++++++++++++++++++++
->  drivers/clk/uniphier/clk-uniphier.h                |  96 ++++
->  15 files changed, 1661 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
->  create mode 100644 drivers/clk/uniphier/Kconfig
->  create mode 100644 drivers/clk/uniphier/Makefile
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
->  create mode 100644 drivers/clk/uniphier/clk-uniphier.h
->
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Note that gxbb_##_name is replaced with _name. I should have done it
+like this from the beginning but it's a bit of a brain fart.
 
+>  /* Everything Else (EE) domain gates */
+> -static MESON_GATE(ddr, HHI_GCLK_MPEG0, 0);
 
+Then reflow the above gxbb gate clock like so:
 
--- 
-Best Regards
-Masahiro Yamada
+	static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+
+Then you can re-use the same macro in your meson8b driver by prefixing
+all of your gate clocks with "meson8b_".
+
+Regards,
+Mike
