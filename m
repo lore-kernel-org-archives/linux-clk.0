@@ -1,80 +1,37 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH RESEND v2 2/8] tty: serial: fsl_lpuart: support suspend/resume
-Date: Tue, 19 Jul 2016 13:13:04 +0530
-Message-ID: <20160719074310.16872-3-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from
+ SPI clocks
+To: Michael Turquette <mturquette@baylibre.com>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+ <146836184696.73491.9452469757415968654@resonance>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <578607FD.6050705@samsung.com>
+Date: Wed, 13 Jul 2016 11:21:01 +0200
+MIME-version: 1.0
+In-reply-to: <146836184696.73491.9452469757415968654@resonance>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stefan Agner <stefan@agner.ch>
+On 07/13/2016 12:17 AM, Michael Turquette wrote:
+>
+> Do you want these patches to go through same tree? If not, I can take
+> this patch into clk-next.
 
-Add suspend/resume support.
+I think this patch can safely go separately through the clk tree,
+we just need to ensure whole series is merged for same release
+to avoid regressions. There should be no problems with git bisect
+since there is no exynos5433 based board dts in mainline yet.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
----
- drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index fabfa7e..75a2098 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -483,9 +483,8 @@ static void lpuart_dma_rx_complete(void *arg)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
--static void lpuart_timer_func(unsigned long data)
-+static void lpuart_dma_rx_terminate(struct lpuart_port *sport)
- {
--	struct lpuart_port *sport = (struct lpuart_port *)data;
- 	struct tty_port *port = &sport->port.state->port;
- 	struct dma_tx_state state;
- 	unsigned long flags;
-@@ -510,6 +509,11 @@ static void lpuart_timer_func(unsigned long data)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
-+static void lpuart_timer_func(unsigned long data)
-+{
-+	lpuart_dma_rx_terminate((struct lpuart_port *)data);
-+}
-+
- static inline void lpuart_prepare_rx(struct lpuart_port *sport)
- {
- 	unsigned long flags;
-@@ -1925,7 +1929,12 @@ static int lpuart_suspend(struct device *dev)
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
-+	if (sport->dma_rx_in_progress)
-+		lpuart_dma_rx_terminate(sport);
-+
- 	uart_suspend_port(&lpuart_reg, &sport->port);
-+	if (sport->port.suspended && !sport->port.irq_wake)
-+		clk_disable_unprepare(sport->clk);
- 
- 	return 0;
- }
-@@ -1935,6 +1944,9 @@ static int lpuart_resume(struct device *dev)
- 	struct lpuart_port *sport = dev_get_drvdata(dev);
- 	unsigned long temp;
- 
-+	if (sport->port.suspended && !sport->port.irq_wake)
-+		clk_prepare_enable(sport->clk);
-+
- 	if (sport->lpuart32) {
- 		lpuart32_setup_watermark(sport);
- 		temp = lpuart32_read(sport->port.membase + UARTCTRL);
--- 
-2.9.0
+--
+Thanks,
+Sylwester
