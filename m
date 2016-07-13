@@ -1,221 +1,129 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 15:49:26 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mirza Krak <mirza.krak@gmail.com>, swarren@wwwdotorg.org,
-	gnurou@gmail.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Message-ID: <20160725134926.GM21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <20160725115923.GF21170@ulmo.ba.sec>
- <2b8c0fb7-b3c7-35bb-a237-2397fefbb725@nvidia.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DheUW4aQn8WJk6WR"
-In-Reply-To: <2b8c0fb7-b3c7-35bb-a237-2397fefbb725@nvidia.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+ <1468432181-9550-6-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1468432181-9550-6-git-send-email-serveralex@gmail.com>
+Message-ID: <146844599156.73491.8466487898310327170@resonance>
+Subject: Re: [PATCH v2 5/7] meson: clk: Add CLKIDs for clock gates
+Date: Wed, 13 Jul 2016 14:39:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Alexander M=C3=BCller (2016-07-13 10:49:39)
+> Add clock ids for the clock gates to private meson8b header file.
+> =
 
---DheUW4aQn8WJk6WR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+> ---
+>  drivers/clk/meson/meson8b.h | 79 +++++++++++++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 78 insertions(+), 1 deletion(-)
+> =
 
-On Mon, Jul 25, 2016 at 02:36:35PM +0100, Jon Hunter wrote:
+> diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+> index f8c6942..4ba8be5 100644
+> --- a/drivers/clk/meson/meson8b.h
+> +++ b/drivers/clk/meson/meson8b.h
+> @@ -60,7 +60,84 @@
+>  #define CLKID_ZERO             13
+>  #define CLKID_MPEG_SEL         14
+>  #define CLKID_MPEG_DIV         15
+> +#define CLKID_DDR              16
+> +#define CLKID_DOS              17
+> +#define CLKID_ISA              18
+> +#define CLKID_PL301            19
+> +#define CLKID_PERIPHS          20
+> +#define CLKID_SPICC            21
+> +#define CLKID_I2C              22
+> +#define CLKID_SAR_ADC          23
+> +#define CLKID_SMART_CARD       24
+> +#define CLKID_RNG0             25
+> +#define CLKID_UART0            26
+> +#define CLKID_SDHC             27
+> +#define CLKID_STREAM           28
+> +#define CLKID_ASYNC_FIFO       29
+> +#define CLKID_SDIO             30
+> +#define CLKID_ABUF             31
+> +#define CLKID_HIU_IFACE                32
+> +#define CLKID_ASSIST_MISC      33
+> +#define CLKID_SPI              34
+> +#define CLKID_I2S_SPDIF                35
+> +#define CLKID_ETH              36
+> +#define CLKID_DEMUX            37
+> +#define CLKID_AIU_GLUE         38
+> +#define CLKID_IEC958           39
+> +#define CLKID_I2S_OUT          40
+> +#define CLKID_AMCLK            41
+> +#define CLKID_AIFIFO2          42
+> +#define CLKID_MIXER            43
+> +#define CLKID_MIXER_IFACE      44
+> +#define CLKID_ADC              45
+> +#define CLKID_BLKMV            46
+> +#define CLKID_AIU              47
+> +#define CLKID_UART1            48
+> +#define CLKID_G2D              49
+> +#define CLKID_USB0             50
+> +#define CLKID_USB1             51
+> +#define CLKID_RESET            52
+> +#define CLKID_NAND             53
+> +#define CLKID_DOS_PARSER       54
+> +#define CLKID_USB              55
+> +#define CLKID_VDIN1            56
+> +#define CLKID_AHB_ARB0         57
+> +#define CLKID_EFUSE            58
+> +#define CLKID_BOOT_ROM         59
+> +#define CLKID_AHB_DATA_BUS     60
+> +#define CLKID_AHB_CTRL_BUS     61
+> +#define CLKID_HDMI_INTR_SYNC   62
+> +#define CLKID_HDMI_PCLK                63
+> +#define CLKID_USB1_DDR_BRIDGE  64
+> +#define CLKID_USB0_DDR_BRIDGE  65
+> +#define CLKID_MMC_PCLK         66
+> +#define CLKID_DVIN             67
+> +#define CLKID_UART2            68
+> +#define CLKID_SANA             69
+> +#define CLKID_VPU_INTR         70
+> +#define CLKID_SEC_AHB_AHB3_BRIDGE      71
+> +#define CLKID_CLK81_A9         72
+> +#define CLKID_VCLK2_VENCI0     73
+> +#define CLKID_VCLK2_VENCI1     74
+> +#define CLKID_VCLK2_VENCP0     75
+> +#define CLKID_VCLK2_VENCP1     76
+> +#define CLKID_GCLK_VENCI_INT   77
+> +#define CLKID_GCLK_VENCP_INT   78
+> +#define CLKID_DAC_CLK          79
+> +#define CLKID_AOCLK_GATE       80
+> +#define CLKID_IEC958_GATE      81
+> +#define CLKID_ENC480P          82
+> +#define CLKID_RNG1             83
+> +#define CLKID_GCLK_VENCL_INT   84
+> +#define CLKID_VCLK2_VENCLMCC   85
+> +#define CLKID_VCLK2_VENCL      86
+> +#define CLKID_VCLK2_OTHER      87
+> +#define CLKID_EDP              88
+> +#define CLKID_AO_MEDIA_CPU     89
+> +#define CLKID_AO_AHB_SRAM      90
+> +#define CLKID_AO_AHB_BUS       91
+> +#define CLKID_AO_IFACE         92
+>  =
+
+> -#define CLK_NR_CLKS            (CLKID_MPEG_DIV + 1)
+> +#define CLK_NR_CLKS            (CLKID_AO_IFACE + 1)
+
+You can just make this:
+
+	#define NR_CLKS		93
+
+Regards,
+Mike
+
+>  =
+
+>  #endif /* __MESON8B_H */
+> -- =
+
+> 2.5.0
 >=20
-> On 25/07/16 12:59, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
-> >>
-> >> On 19/07/16 14:36, Mirza Krak wrote:
-> >>> From: Mirza Krak <mirza.krak@gmail.com>
-> >>>
-> >>> Document the devicetree bindings for NOR bus driver found on Tegra20 =
-and
-> >>> Tegra30 SOCs
-> >>>
-> >>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> >>> ---
-> >>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++=
-++++++++++
-> >>>  1 file changed, 73 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegr=
-a20-nor.txt
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor=
-=2Etxt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
-> >>> new file mode 100644
-> >>> index 0000000..9ee4a66
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
-> >>> @@ -0,0 +1,73 @@
-> >>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
-> >>> +
-> >>> +The NOR controller supports a number of memory types, including sync=
-hronous NOR,
-> >>> +asynchronous NOR, and other flash memories with similar interfaces, =
-such as
-> >>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DS=
-Ps,
-> >>> +CAN chips, Wi-Fi chips etc.
-> >>
-> >> Nit-pick ... the Tegra documentation refers to this controller as the
-> >> GMI (general memory interface) or SNOR (sync-NOR) controller because it
-> >> is not just limited to NOR as you mentioned. I see references to GMI in
-> >> the Tegra pinctrl driver and so may be we should use this name.
-> >>
-> >>> +
-> >>> +The actual devices are instantiated from the child nodes of a NOR no=
-de.
-> >>> +
-> >>> +Required properties:
-> >>> +
-> >>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
-> >>
-> >> I see at least one difference at the register level between Tegra20 and
-> >> Tegra30 and so I think this should be something like ...
-> >>
-> >>  - compatible : Should contain one of the following:
-> >> 	For Tegra20 must contain "nvidia,tegra20-gmi".
-> >>  	For Tegra30 must contain "nvidia,tegra30-gmi".
-> >>
-> >>> + - reg: Should contain NOR controller registers location and length.
-> >>> + - clocks: Must contain one entry, for the module clock.
-> >>> +   See ../clocks/clock-bindings.txt for details.
-> >>> + - resets : Must contain an entry for each entry in reset-names.
-> >>> +   See ../reset/reset.txt for details.
-> >>> + - reset-names : Must include the following entries:
-> >>> +  - nor
-> >>> + - #address-cells: Must be set to 2 to allow memory address translat=
-ion
-> >>> + - #size-cells:	Must be set to 1 to allow CS address passing
-> >>> + - ranges: Must be set up to reflect the memory layout with four int=
-eger
-> >>> + 		values for each chip-select line in use.
-> >>> + - nvidia,config: This property represents the SNOR_CONFIG_0 registe=
-r.
-> >>
-> >> There is also a SNOR_MIO_CONFIG for the MIO address space and so I thi=
-nk
-> >> that this should be nvidia,snor-config to be explicit. It might be nice
-> >> to also add a "nvidia,mio-config" while you are at it as well, however,
-> >> that could always be done later. If you do, then the
-> >> "nvidia,snor-config" becomes optional depending on whether you are usi=
-ng
-> >> the SNOR or MIO address space.
-> >>
-> >> Thierry, Stephen, do prefer all the fields on the config registers are
-> >> broken out? There are quite a few but I am not sure what we typically
-> >> recommend here?
-> >=20
-> > As I said elsewhere, I prefer breaking the fields out into separate
-> > properties because that makes it a lot easier to write the DT. Rather
-> > than having to go and manually assemble 32-bit values for this register
-> > and the timing registers, it must be a lot easier to look at datasheets
-> > and copy the values into the corresponding DT properties.
->=20
-> That's what I thought :-)
->=20
-> >>> +Note that the NOR controller does not have any internal chip-select =
-address
-> >>> +decoding and if you want to access multiple devices external chip-se=
-lect
-> >>> +decoding must be provided.
-> >>
-> >> Although it is true, you do have the MIO address space and so you could
-> >> support two devices via the SNOR address space and MIO address space
-> >> (assuming that the MIO can be used for the 2nd device).
-> >=20
-> > Now I'm even more confused. If the GMI controller itself can't select a
-> > chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
-> > that not select a specific chip?
->=20
-> So the GMI has 8 chip-selects and these can be used by either the SNOR
-> interface for MIO interface. As you mentioned the chip-select used for
-> the SNOR interface is configured by the field SNOR_SEL in the
-> SNOR_CONFIG and similarly the chip-select for the MIO interface is
-> configured by the MIO_SEL field in the MIO_CONFIG register.
->=20
-> Looking at the Tegra20 TRM, the SNOR interface is mapped to the address
-> range 0xd0000000-0xdfffffff and the MIO interface is mapped to the
-> address range 0xe0000000-0xefffffff. If chip-select 0 is used for SNOR
-> and chip-select 1 is used for MIO, you can support two devices at the
-> same time and they will be accessible via different address ranges.
-> Whether you can use the MIO interface for the 2nd device is another
-> question.
->=20
-> If you want to support two 256MB NOR devices on the SNOR interface, then
-> you would need to reconfigure the SNOR_CONFIG each time you swap between
-> the two devices.
->=20
-> >> Furthermore, if you do have external logic to support multiple devices
-> >> this would assume that the devices use the same timing and so are
-> >> probably the same type. It also assumes both can fit in the 256MB
-> >> address range. May be worth mentioning.
-> >=20
-> > Similarly if you switch between different devices, wouldn't you have to
-> > reprogram the timing registers if they are different?
->=20
-> Yes.
-
-Okay, good. I'm relieved that I wasn't completely mistaken about how
-this kind of hardware works. =3D)
-
-> > The way I remember this kind of interface to work (it's been a long time
-> > since I used one) is that in order to operate on a chip you need to
-> > acquire the bus first. Typically that would be an API exposed by the bus
-> > driver or some framework that the bus driver registers with. That API
-> > arbitrates between multiple devices on the bus and makes sure that the
-> > proper chip select is asserted and timing is programmed when you're
-> > granted access. A driver that has acquired the bus can then perform what
-> > operations they need and release the bus when done.
-> >=20
-> > SPI uses a mechanism like this, for example.
->=20
-> That would make sense. However, I am not sure how that would work with
-> the client drivers, such as the CAN driver Mirza is using, that wishes
-> to read/write directly to the SNOR address space. I am guessing that SPI
-> works like I2C and buffers up the requests and performs them in sequence.
-
-Yes, you would of course have to guard accesses by the drivers with
-calls to an API that acquire and release the bus. Not that it's very
-nice, but in the absence of automatic address to CS translation that
-really is the only way to solve it (explicit chip-select).
-
-It doesn't seem like we currently have infrastructure for it, but we
-would need something like that to solve this in the general case.
-
-Thierry
-
---DheUW4aQn8WJk6WR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXlhjmAAoJEN0jrNd/PrOh6uwQAKnDvVJjSg50qtf1bANwJxxI
-TnGum+coVOSIYSQliG/AjHl87mWyShJD8bYfz+Z2DhD/bg43V+UxoE5FTx92f5Ju
-z45YN8FIpp5+KsrjgxarBHfz2ZVStmFYxvEvzkTi5w+V2Zsx2y15gBEge18porGa
-dH+vZqKBjffTtSw3jMOScVsIY7o2D60hAD9Xv3elPPPsxcequSZ3kSTQMMsDetQb
-RXAuUhJ7MkZpUh/0HgXmCSnQplVSn9VBBfVHWK483SH3C6CiCXarMwe0djKG7TAI
-13rCTjBSEi1gClKnkP/aKXAXuUgrUfILgBErJSI9bce71dMq6MDP3TchsVGRo+X4
-qtwz37TFWrTaBT6wQ/YJZEcrCutK/GpAf0F8seLSVI6ABSksoHO9DT1lX3k4b0TS
-OHF4rTCoZvb1E5kcXH9px19XmhIwe22pz+9R/dLx8CiNFHGZto3PSmHengr73Xg3
-F4Yjx6yfTDpC7MH/Za4Gagg3Ry+jfch39mVMN8bq6vTUdAt8wrGgX3tnXtYE8mhB
-oI6HYXLSuy/nkGTWOEFTRo4nDr2HQAa4Y7653xOduhYKNDXz8BwjNvw698KKkE6n
-NDbD3ipyRraArByeDMbHUz9BfC+9rg2foyDpv5yob9qRHBlI24TTBeS3S56bXO1C
-miOsmLxRLukW5G83huIa
-=tGLd
------END PGP SIGNATURE-----
-
---DheUW4aQn8WJk6WR--
