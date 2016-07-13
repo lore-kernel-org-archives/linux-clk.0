@@ -1,88 +1,50 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v2 0/7] Add Amlogic meson8b clock gates
+Date: Wed, 13 Jul 2016 19:49:34 +0200
+Message-Id: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-To: Jun Nie <jun.nie@linaro.org>, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1468834877-22534-3-git-send-email-jun.nie@linaro.org>
-Cc: "Jun Nie" <jun.nie@linaro.org>
-References: <1468834877-22534-1-git-send-email-jun.nie@linaro.org>
- <1468834877-22534-3-git-send-email-jun.nie@linaro.org>
-Message-ID: <146888730254.8780.1667996409080895941@resonance>
-Subject: Re: [PATCH 3/3] clk: zx: register ZX296718 clocks using common clock
- framework
-Date: Mon, 18 Jul 2016 17:15:02 -0700
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jun Nie,
+This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
+U-Boot disables most of them at boot. In order to enable ethernet, USB and other
+components it's mandatory to enable the clock gates when loading the corresponding
+drivers.
 
-Quoting Jun Nie (2016-07-18 02:41:17)
-> +Required properties:
-> +- compatible : shall be one of the following:
-> +       "zte,zx296718-topcrm":
-> +               zx296718 top clock selection, divider and gating
-> +
-> +       "zte,zx296718-lsp0crm" and
-> +       "zte,zx296718-lsp1crm":
-> +               zx296718 device level clock selection and gating
-> +
-> +- reg: Address and length of the register set
+The meson8b clock gate support is based on the previous work done for Amlogic gxbb
+currently available in clk-next.
 
-clock-cells?
+Changes since v1:
+  - Fixed GXBB spelling
+  - Moved newly introduced CLKID defines to private header
+  - Moved CLK_NR_CLKS define from DT binding to private header
+  - Rebased to linux-amlogic/v4.7/integ making Kconfig select obsolete
 
-> +#include <linux/clk.h>
+Alexander Müller (7):
+  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
+  meson: clk: Move register definitions to meson8b.h
+  meson: clk: Rename register names according to Amlogic datasheet
+  clk: meson: Copy meson8b CLKID defines to private header file
+  meson: clk: Add CLKIDs for clock gates
+  gxbb: clk: Move MESON_GATE macro to gxbb
+  meson: clk: Add support for clock gates
 
-Is clk.h needed? I don't see any clock consumer api's used in this
-driver.
+ drivers/clk/meson/Makefile               |   2 +-
+ drivers/clk/meson/clkc.h                 |  14 -
+ drivers/clk/meson/gxbb.c                 | 176 ++++----
+ drivers/clk/meson/meson8b-clkc.c         | 458 --------------------
+ drivers/clk/meson/meson8b.c              | 705 +++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h              | 148 +++++++
+ include/dt-bindings/clock/meson8b-clkc.h |   2 -
+ 7 files changed, 949 insertions(+), 556 deletions(-)
+ delete mode 100644 drivers/clk/meson/meson8b-clkc.c
+ create mode 100644 drivers/clk/meson/meson8b.c
+ create mode 100644 drivers/clk/meson/meson8b.h
 
-> +struct zx_fixed_factor_clock top_ffactor_clk[] =3D {
-> +       FFACTOR(0, "clk4m",             "osc24m", 1, 6,  0),
-> +       FFACTOR(0, "clk2m",             "osc24m", 1, 12, 0),
-> +       /* pll cpu */
-> +       FFACTOR(0, "clk1600m",          "pll_cpu", 1, 1, CLK_SET_RATE_PAR=
-ENT),
-> +       FFACTOR(0, "clk800m",           "pll_cpu", 1, 2, CLK_SET_RATE_PAR=
-ENT),
-
-You have a lot of static data here, which is good. It can be expanded to
-fill out struct clk_init_data (as showed in my reply to patch #2) and
-then you can get rid of all of the registration functions.
-
-> diff --git a/include/dt-bindings/clock/zx296718-clock.h b/include/dt-bind=
-ings/clock/zx296718-clock.h
-> new file mode 100644
-> index 0000000..97d45e2
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/zx296718-clock.h
-> @@ -0,0 +1,140 @@
-> +/*
-> + * Copyright (C) 2015 - 2016 ZTE Corporation.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_ZX296718_H
-> +#define __DT_BINDINGS_CLOCK_ZX296718_H
-> +
-> +/* PLL */
-> +#define ZX296718_OSC           0
-> +#define ZX296718_PLL_CPU       1
-> +#define ZX296718_PLL_MAC       2
-> +#define ZX296718_PLL_MM0       3
-> +#define ZX296718_PLL_MM1       4
-> +#define ZX296718_PLL_VGA       5
-> +#define ZX296718_PLL_DDR       6
-> +#define ZX296718_PLL_AUDIO     7
-> +#define ZX296718_PLL_HSIC      8
-
-For some clock controllers I suggest to split this list of numbers into
-a private header that is only used by the Linux driver, and another
-shared DT header that exposes only the clocks that will be consumed by
-downstream drivers (usually just leaf gate clocks).
-
-This also means that you can hide the ugly NR_CLKS stuff in the C-only
-implementation and not add that Linux-specific data into the generic
-binding description. It's up to you though.
-
-Regards,
-Mike
+-- 
+2.5.0
