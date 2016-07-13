@@ -1,114 +1,85 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dev@linux-sunxi.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/9] clk: sunxi-ng: mux: Add clk notifier functions
-Date: Tue, 26 Jul 2016 15:04:29 +0800
-Message-Id: <1469516671-19377-8-git-send-email-wens@csie.org>
-In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Andi Shyti <andi.shyti@samsung.com>, "Rob Herring" <robh+dt@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Kukjin Kim" <kgene@kernel.org>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+Cc: "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+ "Andi Shyti" <andi.shyti@samsung.com>, "Andi Shyti" <andi@etezian.org>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+Message-ID: <146844700397.73491.13145116929743702472@resonance>
+Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
+ clocks
+Date: Wed, 13 Jul 2016 14:56:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On sunxi we support cpufreq by changing the clock rate of PLL-CPU.
-It's possible the clock output of the PLL goes out of the CPU's
-operational limits when the PLL's multipliers / dividers are changed
-and it hasn't stabilized yet. This would result in the CPU hanging.
+Quoting Andi Shyti (2016-07-12 03:02:16)
+> Because the Exynos5433 SPI driver supports the ioclk handling and
+> the following patch:
+> =
 
-To circumvent this, we temporarily switch the CPU mux clock to another
-stable clock before the rate change, and switch it back after the PLL
-stabilizes. This is done with clk notifiers registered on the PLL.
+>   http://marc.info/?l=3Dlinux-kernel&m=3D146787645626318&w=3D2
+> =
 
-This patch adds common functions for notifiers to reparent mux clocks.
+> fixes a synchronus abort issue, none of the SPI clocks require
+> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+> for the SPI related clocks.
+> =
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 36 ++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
- 2 files changed, 50 insertions(+)
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index f96eabb5d1f3..8a6e9065cb85 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -8,7 +8,9 @@
-  * the License, or (at your option) any later version.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- 
- #include "ccu_gate.h"
- #include "ccu_mux.h"
-@@ -199,3 +201,37 @@ const struct clk_ops ccu_mux_ops = {
- 	.determine_rate	= __clk_mux_determine_rate,
- 	.recalc_rate	= ccu_mux_recalc_rate,
- };
-+
-+/*
-+ * This clock notifier is called when the frequency of the of the parent
-+ * PLL clock is to be changed. The idea is to switch the parent to a
-+ * stable clock, such as the main oscillator, while the PLL frequency
-+ * stabilizes.
-+ */
-+static int ccu_mux_notifier_cb(struct notifier_block *nb,
-+			       unsigned long event, void *data)
-+{
-+	struct ccu_mux_nb *mux = to_ccu_mux_nb(nb);
-+	int ret = 0;
-+
-+	if (event == PRE_RATE_CHANGE) {
-+		mux->original_index = ccu_mux_helper_get_parent(mux->common,
-+								mux->cm);
-+		ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
-+						mux->bypass_index);
-+	} else if (event == POST_RATE_CHANGE) {
-+		ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
-+						mux->original_index);
-+	}
-+
-+	udelay(mux->delay_us);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+int ccu_mux_notifier_register(struct clk *clk, struct ccu_mux_nb *mux_nb)
-+{
-+	mux_nb->clk_nb.notifier_call = ccu_mux_notifier_cb;
-+
-+	return clk_notifier_register(clk, &mux_nb->clk_nb);
-+}
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 28d16ec18d55..7ddd9b2c6dbc 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -98,4 +98,18 @@ int ccu_mux_helper_set_parent(struct ccu_common *common,
- 			      struct ccu_mux_internal *cm,
- 			      u8 index);
- 
-+struct ccu_mux_nb {
-+	struct notifier_block	clk_nb;
-+	struct ccu_common	*common;
-+	struct ccu_mux_internal	*cm;
-+
-+	u32	delay_us;	/* How many us to wait after reparenting */
-+	u8	bypass_index;	/* Which parent to temporarily use */
-+	u8	original_index;	/* This is set by the notifier callback */
-+};
-+
-+#define to_ccu_mux_nb(_nb) container_of(_nb, struct ccu_mux_nb, clk_nb)
-+
-+int ccu_mux_notifier_register(struct clk *clk, struct ccu_mux_nb *mux_nb);
-+
- #endif /* _CCU_MUX_H_ */
--- 
-2.8.1
+Applied towards v4.8.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> =
+
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/c=
+lk-exynos5433.c
+> index c3a5318..fb19525 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] =
+__initdata =3D {
+>         GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
+>                         ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+> -                       ENABLE_SCLK_PERIC, 12,
+> -                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +                       ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+>                         ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+> @@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] =
+__initdata =3D {
+>         GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_P=
+ERIC,
+>                         5, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_P=
+ERIC,
+> -                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +                       4, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_P=
+ERIC,
+>                         3, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+> -- =
+
+> 2.8.1
+>=20
