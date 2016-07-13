@@ -1,131 +1,83 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 02/13] clk: sunxi-ng: mux: Add mux table support
-Date: Tue, 26 Jul 2016 22:30:30 +0200
-Message-Id: <20160726203041.29366-3-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: Michael Turquette <mturquette@baylibre.com>
+To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+ <1468432181-9550-8-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1468432181-9550-8-git-send-email-serveralex@gmail.com>
+Message-ID: <146844682774.73491.3554377408257493400@resonance>
+Subject: Re: [PATCH v2 7/7] meson: clk: Add support for clock gates
+Date: Wed, 13 Jul 2016 14:53:47 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the table based muxes, and add macros to register them.
+Quoting Alexander M=C3=BCller (2016-07-13 10:49:41)
+> This patch adds support for the meson8b clock gates. Most of
+> them are disabled by Amlogic U-Boot, but need to be enabled
+> for ethernet, USB and many other components.
+> =
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 14 ++++++++++++++
- drivers/clk/sunxi-ng/ccu_mux.h | 27 ++++++++++++++++++++-------
- 2 files changed, 34 insertions(+), 7 deletions(-)
+> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+> ---
+>  drivers/clk/meson/meson8b.c | 263 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/meson/meson8b.h |   5 +
+>  2 files changed, 268 insertions(+)
+> =
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 58fc36e7dcce..f942044b038a 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -100,6 +100,7 @@ out:
- u8 ccu_mux_helper_get_parent(struct ccu_common *common,
- 			     struct ccu_mux_internal *cm)
- {
-+	int num_parents = clk_hw_get_num_parents(&common->hw);
- 	u32 reg;
- 	u8 parent;
- 
-@@ -107,6 +108,16 @@ u8 ccu_mux_helper_get_parent(struct ccu_common *common,
- 	parent = reg >> cm->shift;
- 	parent &= (1 << cm->width) - 1;
- 
-+	if (cm->table) {
-+		int i;
-+
-+		for (i = 0; i < num_parents; i++)
-+			if (cm->table[i] == parent)
-+				return i;
-+
-+		return -EINVAL;
-+	}
-+
- 	return parent;
- }
- 
-@@ -117,6 +128,9 @@ int ccu_mux_helper_set_parent(struct ccu_common *common,
- 	unsigned long flags;
- 	u32 reg;
- 
-+	if (cm->table)
-+		index = cm->table[index];
-+
- 	spin_lock_irqsave(common->lock, flags);
- 
- 	reg = readl(common->base + common->reg);
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 95cfecec3c39..00cec8ac6ae3 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -9,6 +9,8 @@ struct ccu_mux_internal {
- 	u8	shift;
- 	u8	width;
- 
-+	const u8	*table;
-+
- 	struct {
- 		u8	index;
- 		u8	div;
-@@ -21,12 +23,16 @@ struct ccu_mux_internal {
- 	} variable_prediv;
- };
- 
--#define _SUNXI_CCU_MUX(_shift, _width)		\
--	{					\
--		.shift	= _shift,		\
--		.width	= _width,		\
-+#define _SUNXI_CCU_MUX_TABLE(_shift, _width, _table)	\
-+	{						\
-+		.shift	= _shift,			\
-+		.width	= _width,			\
-+		.table	= _table,			\
- 	}
- 
-+#define _SUNXI_CCU_MUX(_shift, _width)			\
-+	_SUNXI_CCU_MUX_TABLE(_shift, _width, NULL)
-+
- struct ccu_mux {
- 	u16			reg;
- 	u32			enable;
-@@ -47,11 +53,12 @@ struct ccu_mux {
- 		}							\
- 	}
- 
--#define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
--				_shift, _width, _gate, _flags)		\
-+#define SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, _table,	\
-+				      _reg,  _shift, _width, _gate,	\
-+				      _flags)				\
- 	struct ccu_mux _struct = {					\
- 		.enable	= _gate,					\
--		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
-+		.mux	= _SUNXI_CCU_MUX_TABLE(_shift, _width, _table),	\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-@@ -61,6 +68,12 @@ struct ccu_mux {
- 		}							\
- 	}
- 
-+#define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
-+				_shift, _width, _gate, _flags)		\
-+	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
-+				      _reg,  _shift, _width, _gate,	\
-+				      _flags)
-+
- static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
- {
- 	struct ccu_common *common = hw_to_ccu_common(hw);
--- 
-2.9.2
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 9a656d9..0a0e01d 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -27,6 +27,20 @@
+>  #include "clkc.h"
+>  #include "meson8b.h"
+>  =
+
+> +#define MESON8B_GATE(_name, _reg, _bit)                                 =
+       \
+> +struct clk_gate meson8b_##_name =3D {                                   =
+ \
+> +       .reg =3D (void __iomem *) _reg,                                  =
+ \
+> +       .bit_idx =3D (_bit),                                             =
+ \
+> +       .lock =3D &clk_lock,                                             =
+ \
+> +       .hw.init =3D &(struct clk_init_data) {                           =
+ \
+> +               .name =3D #_name,                                        =
+ \
+> +               .ops =3D &clk_gate_ops,                                  =
+ \
+> +               .parent_names =3D (const char *[]){ "clk81" },           =
+ \
+> +               .num_parents =3D 1,                                      =
+ \
+> +               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),    =
+ \
+> +       },                                                              \
+> +};
+
+As I mentioned in patch #6, let's keep this shared between meson8b and
+gxbb in clkc.h.
+
+> +
+>  static DEFINE_SPINLOCK(clk_lock);
+>  =
+
+>  static const struct pll_rate_table sys_pll_rate_table[] =3D {
+> @@ -311,6 +325,92 @@ struct clk_gate meson8b_clk81 =3D {
+>         },
+>  };
+>  =
+
+> +/* Everything Else (EE) domain gates */
+> +
+> +static MESON8B_GATE(ddr, HHI_GCLK_MPEG0, 0);
+
+To do the above, "ddr" will need to become "meson8b_ddr", etc.
+
+Regards,
+Mike
