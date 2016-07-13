@@ -1,66 +1,345 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jul 2016 08:43:44 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/9] clk: sunxi-ng: mux: Increase fixed pre-divider div
- size
-Message-ID: <20160727064344.GB6560@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-4-git-send-email-wens@csie.org>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v2 7/7] meson: clk: Add support for clock gates
+Date: Wed, 13 Jul 2016 19:49:41 +0200
+Message-Id: <1468432181-9550-8-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
+References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
-In-Reply-To: <1469516671-19377-4-git-send-email-wens@csie.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adds support for the meson8b clock gates. Most of
+them are disabled by Amlogic U-Boot, but need to be enabled
+for ethernet, USB and many other components.
 
---cvVnyQ+4j833TQvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/meson8b.c | 263 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h |   5 +
+ 2 files changed, 268 insertions(+)
 
-On Tue, Jul 26, 2016 at 03:04:25PM +0800, Chen-Yu Tsai wrote:
-> Some clocks have a predivider value that is larger than what u8 can
-> store. One such example is the OUT clk found on A20/A31, which has
-> a /750 pre-divider on one of the osc24M parents.
->=20
-> Increase the size of the div field to u16.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---cvVnyQ+4j833TQvp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXmFggAAoJEBx+YmzsjxAg3aoQALlJruhYRF9x4Yh2OMW3pUFj
-rQ9XRQ4E7wps9CF3jUkhSkmBvb5rEpO02OQPMpjC2wV7SJZ7PbdiOlLFbBJ71KtZ
-m2dcsfLLmrwaf6+k5aSHbInOBQz9okQA2IqRM3/6M1n8SXIb/MfDd1CAkEQS3NLx
-kiNuOwqFdfQVOu40S/IiBZETSPOLgDbnFhJhpd6lCUzk5sK8C1dEyKPLcgLDRE1P
-LMZTqwAYS9tE+tIEzlSy8D2YYNKwWCh2UKPY9e8Ez3RfHDSiQ9/zyczFgBaiINqK
-Q8OtJ2bNppuAtUD8kj6ZBmTZx9iA+2/PmHCrDsEp2f49kaCtnouHj28HI4DD+drI
-B80+qX7Vpm2oTONlPMo/8lNHrCdBYW32oo8UaUjGCRPKUB+5saT2bMnP29ZRD6ql
-jT4S8XfwqzjbzwiPFC/+Y2bCY0uKKgJeewwKJJRWkayxfAQfuB6Q+xlYNgp5gGsl
-LBiaKlQYl7CL1+rSjZ2VgWFCbcDQbOGiPkfqS8nHP/QzAAswUx+PFZo8we12eId0
-FYIWvDbUHSeOTXT4XbUYrVKsr+aHOY8jXuEIoSKPqn5+11EOAvEnqSjslT66BxSJ
-+2yir/H7HkMHMB26Ps9he3hux7fJkDo+HqZLum3LApvNCVuymwlSAIwNcm2Ao8yh
-TPkwVJNXg8mfscPNS5hv
-=m+NG
------END PGP SIGNATURE-----
-
---cvVnyQ+4j833TQvp--
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 9a656d9..0a0e01d 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -27,6 +27,20 @@
+ #include "clkc.h"
+ #include "meson8b.h"
+ 
++#define MESON8B_GATE(_name, _reg, _bit)					\
++struct clk_gate meson8b_##_name = { 					\
++	.reg = (void __iomem *) _reg, 					\
++	.bit_idx = (_bit), 						\
++	.lock = &clk_lock,						\
++	.hw.init = &(struct clk_init_data) { 				\
++		.name = #_name,						\
++		.ops = &clk_gate_ops,					\
++		.parent_names = (const char *[]){ "clk81" },		\
++		.num_parents = 1,					\
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED), 	\
++	},								\
++};
++
+ static DEFINE_SPINLOCK(clk_lock);
+ 
+ static const struct pll_rate_table sys_pll_rate_table[] = {
+@@ -311,6 +325,92 @@ struct clk_gate meson8b_clk81 = {
+ 	},
+ };
+ 
++/* Everything Else (EE) domain gates */
++
++static MESON8B_GATE(ddr, HHI_GCLK_MPEG0, 0);
++static MESON8B_GATE(dos, HHI_GCLK_MPEG0, 1);
++static MESON8B_GATE(isa, HHI_GCLK_MPEG0, 5);
++static MESON8B_GATE(pl301, HHI_GCLK_MPEG0, 6);
++static MESON8B_GATE(periphs, HHI_GCLK_MPEG0, 7);
++static MESON8B_GATE(spicc, HHI_GCLK_MPEG0, 8);
++static MESON8B_GATE(i2c, HHI_GCLK_MPEG0, 9);
++static MESON8B_GATE(sar_adc, HHI_GCLK_MPEG0, 10);
++static MESON8B_GATE(smart_card, HHI_GCLK_MPEG0, 11);
++static MESON8B_GATE(rng0, HHI_GCLK_MPEG0, 12);
++static MESON8B_GATE(uart0, HHI_GCLK_MPEG0, 13);
++static MESON8B_GATE(sdhc, HHI_GCLK_MPEG0, 14);
++static MESON8B_GATE(stream, HHI_GCLK_MPEG0, 15);
++static MESON8B_GATE(async_fifo, HHI_GCLK_MPEG0, 16);
++static MESON8B_GATE(sdio, HHI_GCLK_MPEG0, 17);
++static MESON8B_GATE(abuf, HHI_GCLK_MPEG0, 18);
++static MESON8B_GATE(hiu_iface, HHI_GCLK_MPEG0, 19);
++static MESON8B_GATE(assist_misc, HHI_GCLK_MPEG0, 23);
++static MESON8B_GATE(spi, HHI_GCLK_MPEG0, 30);
++
++static MESON8B_GATE(i2s_spdif, HHI_GCLK_MPEG1, 2);
++static MESON8B_GATE(eth, HHI_GCLK_MPEG1, 3);
++static MESON8B_GATE(demux, HHI_GCLK_MPEG1, 4);
++static MESON8B_GATE(aiu_glue, HHI_GCLK_MPEG1, 6);
++static MESON8B_GATE(iec958, HHI_GCLK_MPEG1, 7);
++static MESON8B_GATE(i2s_out, HHI_GCLK_MPEG1, 8);
++static MESON8B_GATE(amclk, HHI_GCLK_MPEG1, 9);
++static MESON8B_GATE(aififo2, HHI_GCLK_MPEG1, 10);
++static MESON8B_GATE(mixer, HHI_GCLK_MPEG1, 11);
++static MESON8B_GATE(mixer_iface, HHI_GCLK_MPEG1, 12);
++static MESON8B_GATE(adc, HHI_GCLK_MPEG1, 13);
++static MESON8B_GATE(blkmv, HHI_GCLK_MPEG1, 14);
++static MESON8B_GATE(aiu, HHI_GCLK_MPEG1, 15);
++static MESON8B_GATE(uart1, HHI_GCLK_MPEG1, 16);
++static MESON8B_GATE(g2d, HHI_GCLK_MPEG1, 20);
++static MESON8B_GATE(usb0, HHI_GCLK_MPEG1, 21);
++static MESON8B_GATE(usb1, HHI_GCLK_MPEG1, 22);
++static MESON8B_GATE(reset, HHI_GCLK_MPEG1, 23);
++static MESON8B_GATE(nand, HHI_GCLK_MPEG1, 24);
++static MESON8B_GATE(dos_parser, HHI_GCLK_MPEG1, 25);
++static MESON8B_GATE(usb, HHI_GCLK_MPEG1, 26);
++static MESON8B_GATE(vdin1, HHI_GCLK_MPEG1, 28);
++static MESON8B_GATE(ahb_arb0, HHI_GCLK_MPEG1, 29);
++static MESON8B_GATE(efuse, HHI_GCLK_MPEG1, 30);
++static MESON8B_GATE(boot_rom, HHI_GCLK_MPEG1, 31);
++
++static MESON8B_GATE(ahb_data_bus, HHI_GCLK_MPEG2, 1);
++static MESON8B_GATE(ahb_ctrl_bus, HHI_GCLK_MPEG2, 2);
++static MESON8B_GATE(hdmi_intr_sync, HHI_GCLK_MPEG2, 3);
++static MESON8B_GATE(hdmi_pclk, HHI_GCLK_MPEG2, 4);
++static MESON8B_GATE(usb1_ddr_bridge, HHI_GCLK_MPEG2, 8);
++static MESON8B_GATE(usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
++static MESON8B_GATE(mmc_pclk, HHI_GCLK_MPEG2, 11);
++static MESON8B_GATE(dvin, HHI_GCLK_MPEG2, 12);
++static MESON8B_GATE(uart2, HHI_GCLK_MPEG2, 15);
++static MESON8B_GATE(sana, HHI_GCLK_MPEG2, 22);
++static MESON8B_GATE(vpu_intr, HHI_GCLK_MPEG2, 25);
++static MESON8B_GATE(sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
++static MESON8B_GATE(clk81_a9, HHI_GCLK_MPEG2, 29);
++
++static MESON8B_GATE(vclk2_venci0, HHI_GCLK_OTHER, 1);
++static MESON8B_GATE(vclk2_venci1, HHI_GCLK_OTHER, 2);
++static MESON8B_GATE(vclk2_vencp0, HHI_GCLK_OTHER, 3);
++static MESON8B_GATE(vclk2_vencp1, HHI_GCLK_OTHER, 4);
++static MESON8B_GATE(gclk_venci_int, HHI_GCLK_OTHER, 8);
++static MESON8B_GATE(gclk_vencp_int, HHI_GCLK_OTHER, 9);
++static MESON8B_GATE(dac_clk, HHI_GCLK_OTHER, 10);
++static MESON8B_GATE(aoclk_gate, HHI_GCLK_OTHER, 14);
++static MESON8B_GATE(iec958_gate, HHI_GCLK_OTHER, 16);
++static MESON8B_GATE(enc480p, HHI_GCLK_OTHER, 20);
++static MESON8B_GATE(rng1, HHI_GCLK_OTHER, 21);
++static MESON8B_GATE(gclk_vencl_int, HHI_GCLK_OTHER, 22);
++static MESON8B_GATE(vclk2_venclmcc, HHI_GCLK_OTHER, 24);
++static MESON8B_GATE(vclk2_vencl, HHI_GCLK_OTHER, 25);
++static MESON8B_GATE(vclk2_other, HHI_GCLK_OTHER, 26);
++static MESON8B_GATE(edp, HHI_GCLK_OTHER, 31);
++
++/* Always On (AO) domain gates */
++
++static MESON8B_GATE(ao_media_cpu, HHI_GCLK_AO, 0);
++static MESON8B_GATE(ao_ahb_sram, HHI_GCLK_AO, 1);
++static MESON8B_GATE(ao_ahb_bus, HHI_GCLK_AO, 2);
++static MESON8B_GATE(ao_iface, HHI_GCLK_AO, 3);
++
+ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 	.hws = {
+ 		[CLKID_XTAL] = &meson8b_xtal.hw,
+@@ -326,6 +426,83 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
+ 		[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
+ 		[CLKID_CLK81] = &meson8b_clk81.hw,
++		[CLKID_DDR]		    = &meson8b_ddr.hw,
++		[CLKID_DOS]		    = &meson8b_dos.hw,
++		[CLKID_ISA]		    = &meson8b_isa.hw,
++		[CLKID_PL301]		    = &meson8b_pl301.hw,
++		[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
++		[CLKID_SPICC]		    = &meson8b_spicc.hw,
++		[CLKID_I2C]		    = &meson8b_i2c.hw,
++		[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
++		[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
++		[CLKID_RNG0]		    = &meson8b_rng0.hw,
++		[CLKID_UART0]		    = &meson8b_uart0.hw,
++		[CLKID_SDHC]		    = &meson8b_sdhc.hw,
++		[CLKID_STREAM]		    = &meson8b_stream.hw,
++		[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
++		[CLKID_SDIO]		    = &meson8b_sdio.hw,
++		[CLKID_ABUF]		    = &meson8b_abuf.hw,
++		[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
++		[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
++		[CLKID_SPI]		    = &meson8b_spi.hw,
++		[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
++		[CLKID_ETH]		    = &meson8b_eth.hw,
++		[CLKID_DEMUX]		    = &meson8b_demux.hw,
++		[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
++		[CLKID_IEC958]		    = &meson8b_iec958.hw,
++		[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
++		[CLKID_AMCLK]		    = &meson8b_amclk.hw,
++		[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
++		[CLKID_MIXER]		    = &meson8b_mixer.hw,
++		[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
++		[CLKID_ADC]		    = &meson8b_adc.hw,
++		[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
++		[CLKID_AIU]		    = &meson8b_aiu.hw,
++		[CLKID_UART1]		    = &meson8b_uart1.hw,
++		[CLKID_G2D]		    = &meson8b_g2d.hw,
++		[CLKID_USB0]		    = &meson8b_usb0.hw,
++		[CLKID_USB1]		    = &meson8b_usb1.hw,
++		[CLKID_RESET]		    = &meson8b_reset.hw,
++		[CLKID_NAND]		    = &meson8b_nand.hw,
++		[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
++		[CLKID_USB]		    = &meson8b_usb.hw,
++		[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
++		[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
++		[CLKID_EFUSE]		    = &meson8b_efuse.hw,
++		[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
++		[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
++		[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
++		[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
++		[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
++		[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
++		[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
++		[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
++		[CLKID_DVIN]		    = &meson8b_dvin.hw,
++		[CLKID_UART2]		    = &meson8b_uart2.hw,
++		[CLKID_SANA]		    = &meson8b_sana.hw,
++		[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
++		[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
++		[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
++		[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
++		[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
++		[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
++		[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
++		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
++		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_vencp_int.hw,
++		[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
++		[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
++		[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
++		[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
++		[CLKID_RNG1]		    = &meson8b_rng1.hw,
++		[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
++		[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
++		[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
++		[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
++		[CLKID_EDP]		    = &meson8b_edp.hw,
++		[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
++		[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
++		[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
++		[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
+ 	},
+ 	.num = CLK_NR_CLKS,
+ };
+@@ -336,6 +513,87 @@ static struct meson_clk_pll *const meson8b_clk_plls[] = {
+ 	&meson8b_sys_pll,
+ };
+ 
++static struct clk_gate *meson8b_clk_gates[] = {
++	&meson8b_clk81,
++	&meson8b_ddr,
++	&meson8b_dos,
++	&meson8b_isa,
++	&meson8b_pl301,
++	&meson8b_periphs,
++	&meson8b_spicc,
++	&meson8b_i2c,
++	&meson8b_sar_adc,
++	&meson8b_smart_card,
++	&meson8b_rng0,
++	&meson8b_uart0,
++	&meson8b_sdhc,
++	&meson8b_stream,
++	&meson8b_async_fifo,
++	&meson8b_sdio,
++	&meson8b_abuf,
++	&meson8b_hiu_iface,
++	&meson8b_assist_misc,
++	&meson8b_spi,
++	&meson8b_i2s_spdif,
++	&meson8b_eth,
++	&meson8b_demux,
++	&meson8b_aiu_glue,
++	&meson8b_iec958,
++	&meson8b_i2s_out,
++	&meson8b_amclk,
++	&meson8b_aififo2,
++	&meson8b_mixer,
++	&meson8b_mixer_iface,
++	&meson8b_adc,
++	&meson8b_blkmv,
++	&meson8b_aiu,
++	&meson8b_uart1,
++	&meson8b_g2d,
++	&meson8b_usb0,
++	&meson8b_usb1,
++	&meson8b_reset,
++	&meson8b_nand,
++	&meson8b_dos_parser,
++	&meson8b_usb,
++	&meson8b_vdin1,
++	&meson8b_ahb_arb0,
++	&meson8b_efuse,
++	&meson8b_boot_rom,
++	&meson8b_ahb_data_bus,
++	&meson8b_ahb_ctrl_bus,
++	&meson8b_hdmi_intr_sync,
++	&meson8b_hdmi_pclk,
++	&meson8b_usb1_ddr_bridge,
++	&meson8b_usb0_ddr_bridge,
++	&meson8b_mmc_pclk,
++	&meson8b_dvin,
++	&meson8b_uart2,
++	&meson8b_sana,
++	&meson8b_vpu_intr,
++	&meson8b_sec_ahb_ahb3_bridge,
++	&meson8b_clk81_a9,
++	&meson8b_vclk2_venci0,
++	&meson8b_vclk2_venci1,
++	&meson8b_vclk2_vencp0,
++	&meson8b_vclk2_vencp1,
++	&meson8b_gclk_venci_int,
++	&meson8b_gclk_vencp_int,
++	&meson8b_dac_clk,
++	&meson8b_aoclk_gate,
++	&meson8b_iec958_gate,
++	&meson8b_enc480p,
++	&meson8b_rng1,
++	&meson8b_gclk_vencl_int,
++	&meson8b_vclk2_venclmcc,
++	&meson8b_vclk2_vencl,
++	&meson8b_vclk2_other,
++	&meson8b_edp,
++	&meson8b_ao_media_cpu,
++	&meson8b_ao_ahb_sram,
++	&meson8b_ao_ahb_bus,
++	&meson8b_ao_iface,
++};
++
+ static int meson8b_clkc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *clk_base;
+@@ -363,6 +621,11 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 	meson8b_mpeg_clk_div.reg = clk_base + (u32)meson8b_mpeg_clk_div.reg;
+ 	meson8b_clk81.reg = clk_base + (u32)meson8b_clk81.reg;
+ 
++	/* Populate base address for gates */
++	for (i = 0; i < ARRAY_SIZE(meson8b_clk_gates); i++)
++		meson8b_clk_gates[i]->reg = clk_base +
++			(u32)meson8b_clk_gates[i]->reg;
++
+ 	/*
+ 	 * register all clks
+ 	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index 4ba8be5..57809d2 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -30,6 +30,11 @@
+  *
+  * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+  */
++#define HHI_GCLK_MPEG0			0x140 /* 0x50 offset in data sheet */
++#define HHI_GCLK_MPEG1			0x144 /* 0x51 offset in data sheet */
++#define HHI_GCLK_MPEG2			0x148 /* 0x52 offset in data sheet */
++#define HHI_GCLK_OTHER			0x150 /* 0x54 offset in data sheet */
++#define HHI_GCLK_AO			0x154 /* 0x55 offset in data sheet */
+ #define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data sheet */
+ #define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet */
+ #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
+-- 
+2.5.0
