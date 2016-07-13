@@ -1,42 +1,39 @@
-Return-Path: <moinejf@free.fr>
-Date: Fri, 29 Jul 2016 07:48:00 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mike
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH v2 08/10] ARM: dts: nuc900: Add nuc970 dts files
+To: Afzal Mohammed <afzal.mohd.ma@gmail.com>
+References: <1468136542-2656-1-git-send-email-vw@iommu.org>
+ <20160712153910.GA3507@afzalpc>
+From: Wan Zongshun <vw@iommu.org>
+Message-ID: <5785ED30.4090206@iommu.org>
+Date: Wed, 13 Jul 2016 15:26:40 +0800
+MIME-Version: 1.0
+In-Reply-To: <20160712153910.GA3507@afzalpc>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
+ Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+ p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+ Wan Zongshun <mcuos.com@gmail.com>, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
-Message-Id: <20160729074800.44b8860cc0a3d2dfcdde32ce@free.fr>
-In-Reply-To: <20160728200705.GG6682@lukather>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-	<20160727104623.e9ca7b708e5c6462f44a5d01@free.fr>
-	<20160728200705.GG6682@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 28 Jul 2016 22:07:05 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
-
-> > > Let me know what you think,
-> >=20
-> > I don't see the interest to have common code for 32bits and 64bits.
-> > The clock driver of a SoC will never evolve, so, it is simpler to
-> > copy the source common with the H3 into a clean A64 clock driver.
->=20
-> I'm not sure why 32 bits vs 64 bits matters here. We're going to share
-> a significant number of drivers already between armv7 and armv8, like
-> MMC, EMAC, I2C, and so on.
->=20
-> And I expect to share the data in other SoCs for the A10, A13 and A20
-> for example, or A23/A33, which have a lot of clocks in common too.
-
-The interest of your sunxi-ng approach is that the clocks of each SoC
-is described in one file. Here you are mixing 2 SoCs in the same source
-file. The advantage is lost.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+CgpPbiAyMDE25bm0MDfmnIgxMuaXpSAyMzozOSwgQWZ6YWwgTW9oYW1tZWQgd3JvdGU6Cj4gSGks
+Cj4KPiBPbiBTdW4sIEp1bCAxMCwgMjAxNiBhdCAwMzo0MjoyMFBNICswODAwLCBXYW4gWm9uZ3No
+dW4gd3JvdGU6Cj4+IFRoaXMgcGF0Y2ggaXMgdG8gYWRkIGR0cyBzdXBwb3J0IGZvciBudWM5NzAg
+cGxhdGZvcm0uCj4KPiBjcHUgISBpbiBzb2MgPyBsb3N0IGluIGZhYiA/IDspCgpEbyB5b3UgbWVh
+biBJIHNob3VsZCBhZGQgY3B1cyBpbnRvIHNvYyBsaWtlPwoKCgljcHVzIHsKCQkjYWRkcmVzcy1j
+ZWxscyA9IDwwPjsKCQkjc2l6ZS1jZWxscyA9IDwwPjsKCgkJY3B1IHsKCQkJY29tcGF0aWJsZSA9
+ICJhcm0sYXJtOTI2ZWotcyI7CgkJCWRldmljZV90eXBlID0gImNwdSI7CgkJfTsKCX07Cgo+Cj4g
+UmVnYXJkcwo+IGFmemFsCj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
+bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
