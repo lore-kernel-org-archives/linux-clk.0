@@ -1,142 +1,70 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dev@linux-sunxi.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] clk: sunxi-ng: nkm: Add mux to support multiple parents
-Date: Tue, 26 Jul 2016 15:04:28 +0800
-Message-Id: <1469516671-19377-7-git-send-email-wens@csie.org>
-In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+Message-Id: <E1bNjZ9-0001jr-4G@debutante>
+Date: Thu, 14 Jul 2016 17:32:47 +0100
+Subject: Applied "spi: s3c64xx: restore removed comments" to the spi tree
 List-ID: <linux-clk.vger.kernel.org>
 
-The MIPI mode of the MIPI-PLL on A31 is an NKM-style PLL with 2
-selectable parents.
+The patch
 
-Add mux support to the NKM clock.
+   spi: s3c64xx: restore removed comments
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 0dbe70a1feb411d17fbcf8e73d61e6c7f33fda72 Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Tue, 12 Jul 2016 19:02:15 +0900
+Subject: [PATCH] spi: s3c64xx: restore removed comments
+
+Patch a9e93e8 has erroneously removed some comments which are
+important to understand why the bus frequency is multiplied by
+two during the spi transfer.
+
+Reword the previous comment to a more appropriate message.
+
+Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu_nkm.c | 40 ++++++++++++++++++++++++++++++++++------
- drivers/clk/sunxi-ng/ccu_nkm.h | 23 +++++++++++++++++++++++
- 2 files changed, 57 insertions(+), 6 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 2071822b1e9c..182452919ede 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -93,19 +93,30 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
- 	return parent_rate * (n + 1) * (k + 1) / (m + 1);
- }
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index a1e84686c70c..3c09e94cf827 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -642,6 +642,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
  
--static long ccu_nkm_round_rate(struct clk_hw *hw, unsigned long rate,
--			      unsigned long *parent_rate)
-+static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
-+					unsigned long parent_rate,
-+					unsigned long rate,
-+					void *data)
- {
--	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+	struct ccu_nkm *nkm = data;
- 	struct _ccu_nkm _nkm;
- 
- 	_nkm.max_n = 1 << nkm->n.width;
- 	_nkm.max_k = 1 << nkm->k.width;
- 	_nkm.max_m = 1 << nkm->m.width;
- 
--	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
-+	ccu_nkm_find_best(parent_rate, rate, &_nkm);
- 
--	return *parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+	return parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+}
-+
-+static int ccu_nkm_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+
-+	return ccu_mux_helper_determine_rate(&nkm->common, &nkm->mux,
-+					     req, ccu_nkm_round_rate, nkm);
- }
- 
- static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -142,12 +153,29 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+static u8 ccu_nkm_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+
-+	return ccu_mux_helper_get_parent(&nkm->common, &nkm->mux);
-+}
-+
-+static int ccu_nkm_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
-+
-+	return ccu_mux_helper_set_parent(&nkm->common, &nkm->mux, index);
-+}
-+
- const struct clk_ops ccu_nkm_ops = {
- 	.disable	= ccu_nkm_disable,
- 	.enable		= ccu_nkm_enable,
- 	.is_enabled	= ccu_nkm_is_enabled,
- 
-+	.get_parent	= ccu_nkm_get_parent,
-+	.set_parent	= ccu_nkm_set_parent,
-+
-+	.determine_rate	= ccu_nkm_determine_rate,
- 	.recalc_rate	= ccu_nkm_recalc_rate,
--	.round_rate	= ccu_nkm_round_rate,
- 	.set_rate	= ccu_nkm_set_rate,
- };
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-index 1936ac1c6b37..fcb152fc4eda 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-@@ -32,10 +32,33 @@ struct ccu_nkm {
- 	struct _ccu_mult	n;
- 	struct _ccu_mult	k;
- 	struct _ccu_div		m;
-+	struct ccu_mux_internal	mux;
- 
- 	struct ccu_common	common;
- };
- 
-+#define SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(_struct, _name, _parents, _reg, \
-+					 _nshift, _nwidth,		\
-+					 _kshift, _kwidth,		\
-+					 _mshift, _mwidth,		\
-+					 _muxshift, _muxwidth,		\
-+					 _gate, _lock, _flags)		\
-+	struct ccu_nkm _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.k		= _SUNXI_CCU_MULT(_kshift, _kwidth),	\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
-+		.mux		= SUNXI_CLK_MUX(_muxshift, _muxwidth),	\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						      _parents,		\
-+						      &ccu_nkm_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
- #define SUNXI_CCU_NKM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
- 				     _nshift, _nwidth,			\
- 				     _kshift, _kwidth,			\
+ 	if (sdd->port_conf->clk_from_cmu) {
++		/* The src_clk clock is divided internally by 2 */
+ 		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+ 	} else {
+ 		/* Configure Clock */
 -- 
 2.8.1
