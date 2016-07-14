@@ -1,296 +1,204 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 4 Jul 2016 23:36:53 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Emilio
- =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Maxime
- Ripard <maxime.ripard@free-electrons.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 08/10] clk: sunxi: make clk-* explicitly non-modular
-Message-ID: <20160704233653.2f3d878a@bbrezillon>
-In-Reply-To: <20160704211220.5685-9-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
-	<20160704211220.5685-9-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+In-Reply-To: <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
+Message-Id: <E1bNjZC-0001lA-35@debutante>
+Date: Thu, 14 Jul 2016 17:32:50 +0100
+Subject: Applied "spi: s3c64xx: add Exynos5433 compatible for ioclk handling" to the spi tree
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 4 Jul 2016 17:12:18 -0400
-Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+The patch
 
-> We have the following file --> Kconfig mapping:
->=20
-> sunxi/clk-factors.c              obj-y
-> sunxi/clk-sun6i-apb0-gates.c     CONFIG_MFD_SUN6I_PRCM (bool)
-> sunxi/clk-sun6i-apb0.c           CONFIG_MFD_SUN6I_PRCM
-> sunxi/clk-sun6i-ar100.c          CONFIG_MFD_SUN6I_PRCM
-> sunxi/clk-sun8i-apb0.c           CONFIG_MFD_SUN6I_PRCM
-> sunxi/clk-sun9i-mmc.c            obj-y
->=20
-> Hence none of these are being built as a module by anyone.
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the drivers there is no doubt they are builtin-only.  All
-> drivers get mostly the same changes, so they are handled in batch.
->=20
-> Changes are (1) convert to builtin_platform_register, (2) use the
-> init.h header, (3) delete the MODULE_LICENCE/MODULE_AUTHOR and
-> associated tags, and (4) delete any ".remove" functions.
->=20
-> There was a stray module.h in a file not using any init.h or
-> module.h stuff, so we simply removed that one.
->=20
-> In two cases, we explicitly disallow a driver unbind, since that
-> doesn't have a sensible use case anyway, and it allows us to drop
-> the ".remove" code for non-modular drivers.
->=20
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> We delete the MODULE_LICENSE etc. tags since all that information
-> is already contained at the top of each file in the comments.
->=20
-> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+   spi: s3c64xx: add Exynos5433 compatible for ioclk handling
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+has been applied to the spi tree at
 
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: "Emilio L=C3=B3pez" <emilio@elopez.com.ar>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/clk/sunxi/clk-factors.c          |  1 -
->  drivers/clk/sunxi/clk-sun6i-apb0-gates.c |  9 ++-------
->  drivers/clk/sunxi/clk-sun6i-apb0.c       |  9 ++-------
->  drivers/clk/sunxi/clk-sun6i-ar100.c      | 21 +++------------------
->  drivers/clk/sunxi/clk-sun8i-apb0.c       |  9 ++-------
->  drivers/clk/sunxi/clk-sun9i-mmc.c        | 28 +++-----------------------=
---
->  6 files changed, 12 insertions(+), 65 deletions(-)
->=20
-> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-fact=
-ors.c
-> index ddefe9668863..dfe5e3e32d28 100644
-> --- a/drivers/clk/sunxi/clk-factors.c
-> +++ b/drivers/clk/sunxi/clk-factors.c
-> @@ -12,7 +12,6 @@
->  #include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> -#include <linux/module.h>
->  #include <linux/of_address.h>
->  #include <linux/slab.h>
->  #include <linux/string.h>
-> diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi=
-/clk-sun6i-apb0-gates.c
-> index 68021fa5ecd9..09cdb9874636 100644
-> --- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-> +++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-> @@ -9,7 +9,7 @@
->   */
-> =20
->  #include <linux/clk-provider.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> @@ -33,7 +33,6 @@ static const struct of_device_id sun6i_a31_apb0_gates_c=
-lk_dt_ids[] =3D {
->  	{ .compatible =3D "allwinner,sun8i-a23-apb0-gates-clk", .data =3D &sun8=
-i_a23_apb0_gates },
->  	{ /* sentinel */ }
->  };
-> -MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_gates_clk_dt_ids);
-> =20
->  static int sun6i_a31_apb0_gates_clk_probe(struct platform_device *pdev)
->  {
-> @@ -102,8 +101,4 @@ static struct platform_driver sun6i_a31_apb0_gates_cl=
-k_driver =3D {
->  	},
->  	.probe =3D sun6i_a31_apb0_gates_clk_probe,
->  };
-> -module_platform_driver(sun6i_a31_apb0_gates_clk_driver);
-> -
-> -MODULE_AUTHOR("Boris BREZILLON <boris.brezillon@free-electrons.com>");
-> -MODULE_DESCRIPTION("Allwinner A31 APB0 gate clocks driver");
-> -MODULE_LICENSE("GPL v2");
-> +builtin_platform_driver(sun6i_a31_apb0_gates_clk_driver);
-> diff --git a/drivers/clk/sunxi/clk-sun6i-apb0.c b/drivers/clk/sunxi/clk-s=
-un6i-apb0.c
-> index e703e1895b76..b9c8d359288c 100644
-> --- a/drivers/clk/sunxi/clk-sun6i-apb0.c
-> +++ b/drivers/clk/sunxi/clk-sun6i-apb0.c
-> @@ -9,7 +9,7 @@
->   */
-> =20
->  #include <linux/clk-provider.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> =20
-> @@ -61,7 +61,6 @@ static const struct of_device_id sun6i_a31_apb0_clk_dt_=
-ids[] =3D {
->  	{ .compatible =3D "allwinner,sun6i-a31-apb0-clk" },
->  	{ /* sentinel */ }
->  };
-> -MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_clk_dt_ids);
-> =20
->  static struct platform_driver sun6i_a31_apb0_clk_driver =3D {
->  	.driver =3D {
-> @@ -70,8 +69,4 @@ static struct platform_driver sun6i_a31_apb0_clk_driver=
- =3D {
->  	},
->  	.probe =3D sun6i_a31_apb0_clk_probe,
->  };
-> -module_platform_driver(sun6i_a31_apb0_clk_driver);
-> -
-> -MODULE_AUTHOR("Boris BREZILLON <boris.brezillon@free-electrons.com>");
-> -MODULE_DESCRIPTION("Allwinner A31 APB0 clock Driver");
-> -MODULE_LICENSE("GPL v2");
-> +builtin_platform_driver(sun6i_a31_apb0_clk_driver);
-> diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-=
-sun6i-ar100.c
-> index 84a187e55360..64ca3e9e38e6 100644
-> --- a/drivers/clk/sunxi/clk-sun6i-ar100.c
-> +++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
-> @@ -10,7 +10,7 @@
-> =20
->  #include <linux/bitops.h>
->  #include <linux/clk-provider.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/spinlock.h>
-> @@ -91,32 +91,17 @@ static int sun6i_a31_ar100_clk_probe(struct platform_=
-device *pdev)
->  	return 0;
->  }
-> =20
-> -static int sun6i_a31_ar100_clk_remove(struct platform_device *pdev)
-> -{
-> -	struct device_node *np =3D pdev->dev.of_node;
-> -	struct clk *clk =3D platform_get_drvdata(pdev);
-> -
-> -	sunxi_factors_unregister(np, clk);
-> -
-> -	return 0;
-> -}
-> -
->  static const struct of_device_id sun6i_a31_ar100_clk_dt_ids[] =3D {
->  	{ .compatible =3D "allwinner,sun6i-a31-ar100-clk" },
->  	{ /* sentinel */ }
->  };
-> -MODULE_DEVICE_TABLE(of, sun6i_a31_ar100_clk_dt_ids);
-> =20
->  static struct platform_driver sun6i_a31_ar100_clk_driver =3D {
->  	.driver =3D {
->  		.name =3D "sun6i-a31-ar100-clk",
->  		.of_match_table =3D sun6i_a31_ar100_clk_dt_ids,
-> +		.suppress_bind_attrs =3D true,
->  	},
->  	.probe =3D sun6i_a31_ar100_clk_probe,
-> -	.remove =3D sun6i_a31_ar100_clk_remove,
->  };
-> -module_platform_driver(sun6i_a31_ar100_clk_driver);
-> -
-> -MODULE_AUTHOR("Boris BREZILLON <boris.brezillon@free-electrons.com>");
-> -MODULE_DESCRIPTION("Allwinner A31 AR100 clock Driver");
-> -MODULE_LICENSE("GPL v2");
-> +builtin_platform_driver(sun6i_a31_ar100_clk_driver);
-> diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-s=
-un8i-apb0.c
-> index 2ea61debffc1..a5666e1d0ce7 100644
-> --- a/drivers/clk/sunxi/clk-sun8i-apb0.c
-> +++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
-> @@ -15,7 +15,7 @@
->   */
-> =20
->  #include <linux/clk-provider.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
-> @@ -108,7 +108,6 @@ static const struct of_device_id sun8i_a23_apb0_clk_d=
-t_ids[] =3D {
->  	{ .compatible =3D "allwinner,sun8i-a23-apb0-clk" },
->  	{ /* sentinel */ }
->  };
-> -MODULE_DEVICE_TABLE(of, sun8i_a23_apb0_clk_dt_ids);
-> =20
->  static struct platform_driver sun8i_a23_apb0_clk_driver =3D {
->  	.driver =3D {
-> @@ -117,8 +116,4 @@ static struct platform_driver sun8i_a23_apb0_clk_driv=
-er =3D {
->  	},
->  	.probe =3D sun8i_a23_apb0_clk_probe,
->  };
-> -module_platform_driver(sun8i_a23_apb0_clk_driver);
-> -
-> -MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-> -MODULE_DESCRIPTION("Allwinner A23 APB0 clock Driver");
-> -MODULE_LICENSE("GPL v2");
-> +builtin_platform_driver(sun8i_a23_apb0_clk_driver);
-> diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-su=
-n9i-mmc.c
-> index 716737388b7d..6041bdba2e97 100644
-> --- a/drivers/clk/sunxi/clk-sun9i-mmc.c
-> +++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
-> @@ -16,7 +16,7 @@
-> =20
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/reset.h>
-> @@ -183,39 +183,17 @@ err_clk_register:
->  	return ret;
->  }
-> =20
-> -static int sun9i_a80_mmc_config_clk_remove(struct platform_device *pdev)
-> -{
-> -	struct device_node *np =3D pdev->dev.of_node;
-> -	struct sun9i_mmc_clk_data *data =3D platform_get_drvdata(pdev);
-> -	struct clk_onecell_data *clk_data =3D &data->clk_data;
-> -	int i;
-> -
-> -	reset_controller_unregister(&data->rcdev);
-> -	of_clk_del_provider(np);
-> -	for (i =3D 0; i < clk_data->clk_num; i++)
-> -		clk_unregister(clk_data->clks[i]);
-> -
-> -	reset_control_assert(data->reset);
-> -
-> -	return 0;
-> -}
-> -
->  static const struct of_device_id sun9i_a80_mmc_config_clk_dt_ids[] =3D {
->  	{ .compatible =3D "allwinner,sun9i-a80-mmc-config-clk" },
->  	{ /* sentinel */ }
->  };
-> -MODULE_DEVICE_TABLE(of, sun9i_a80_mmc_config_clk_dt_ids);
-> =20
->  static struct platform_driver sun9i_a80_mmc_config_clk_driver =3D {
->  	.driver =3D {
->  		.name =3D "sun9i-a80-mmc-config-clk",
-> +		.suppress_bind_attrs =3D true,
->  		.of_match_table =3D sun9i_a80_mmc_config_clk_dt_ids,
->  	},
->  	.probe =3D sun9i_a80_mmc_config_clk_probe,
-> -	.remove =3D sun9i_a80_mmc_config_clk_remove,
->  };
-> -module_platform_driver(sun9i_a80_mmc_config_clk_driver);
-> -
-> -MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-> -MODULE_DESCRIPTION("Allwinner A80 MMC clock/reset Driver");
-> -MODULE_LICENSE("GPL v2");
-> +builtin_platform_driver(sun9i_a80_mmc_config_clk_driver);
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 7990b00819e765ca180d36b38969c2bde2734e53 Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Tue, 12 Jul 2016 19:02:14 +0900
+Subject: [PATCH] spi: s3c64xx: add Exynos5433 compatible for ioclk handling
+
+The new compatible is related to the Samsung Exynos5433 SoC. The
+difference between the previous is that in the exynos5433 the SPI
+controller is driven by three clocks instead of only one.
+
+The new clock (ioclk) is controlling the input/output clock
+whenever the controller is slave or master.
+
+The presence of the clock line is detected from the compatibility
+structure (exynos5433_spi_port_config) as a boolean value.
+
+The probe function checks whether the ioclk is present and if so,
+it acquires.
+
+The runtime suspend and resume functions will handle the clock
+enabling and disabling as well.
+
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 52 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 3d21f8a35837..a1e84686c70c 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -156,12 +156,14 @@ struct s3c64xx_spi_port_config {
+ 	int	quirks;
+ 	bool	high_speed;
+ 	bool	clk_from_cmu;
++	bool	clk_ioclk;
+ };
+ 
+ /**
+  * struct s3c64xx_spi_driver_data - Runtime info holder for SPI driver.
+  * @clk: Pointer to the spi clock.
+  * @src_clk: Pointer to the clock used to generate SPI signals.
++ * @ioclk: Pointer to the i/o clock between master and slave
+  * @master: Pointer to the SPI Protocol master.
+  * @cntrlr_info: Platform specific data for the controller this driver manages.
+  * @tgl_spi: Pointer to the last CS left untoggled by the cs_change hint.
+@@ -181,6 +183,7 @@ struct s3c64xx_spi_driver_data {
+ 	void __iomem                    *regs;
+ 	struct clk                      *clk;
+ 	struct clk                      *src_clk;
++	struct clk                      *ioclk;
+ 	struct platform_device          *pdev;
+ 	struct spi_master               *master;
+ 	struct s3c64xx_spi_info  *cntrlr_info;
+@@ -1154,6 +1157,21 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
++	if (sdd->port_conf->clk_ioclk) {
++		sdd->ioclk = devm_clk_get(&pdev->dev, "spi_ioclk");
++		if (IS_ERR(sdd->ioclk)) {
++			dev_err(&pdev->dev, "Unable to acquire 'ioclk'\n");
++			ret = PTR_ERR(sdd->ioclk);
++			goto err_disable_src_clk;
++		}
++
++		ret = clk_prepare_enable(sdd->ioclk);
++		if (ret) {
++			dev_err(&pdev->dev, "Couldn't enable clock 'ioclk'\n");
++			goto err_disable_src_clk;
++		}
++	}
++
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+@@ -1200,6 +1218,8 @@ err_pm_put:
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
++	clk_disable_unprepare(sdd->ioclk);
++err_disable_src_clk:
+ 	clk_disable_unprepare(sdd->src_clk);
+ err_disable_clk:
+ 	clk_disable_unprepare(sdd->clk);
+@@ -1218,6 +1238,8 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
+ 
++	clk_disable_unprepare(sdd->ioclk);
++
+ 	clk_disable_unprepare(sdd->src_clk);
+ 
+ 	clk_disable_unprepare(sdd->clk);
+@@ -1276,6 +1298,7 @@ static int s3c64xx_spi_runtime_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(sdd->clk);
+ 	clk_disable_unprepare(sdd->src_clk);
++	clk_disable_unprepare(sdd->ioclk);
+ 
+ 	return 0;
+ }
+@@ -1286,17 +1309,28 @@ static int s3c64xx_spi_runtime_resume(struct device *dev)
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	int ret;
+ 
++	if (sdd->port_conf->clk_ioclk) {
++		ret = clk_prepare_enable(sdd->ioclk);
++		if (ret != 0)
++			return ret;
++	}
++
+ 	ret = clk_prepare_enable(sdd->src_clk);
+ 	if (ret != 0)
+-		return ret;
++		goto err_disable_ioclk;
+ 
+ 	ret = clk_prepare_enable(sdd->clk);
+-	if (ret != 0) {
+-		clk_disable_unprepare(sdd->src_clk);
+-		return ret;
+-	}
++	if (ret != 0)
++		goto err_disable_src_clk;
+ 
+ 	return 0;
++
++err_disable_src_clk:
++	clk_disable_unprepare(sdd->src_clk);
++err_disable_ioclk:
++	clk_disable_unprepare(sdd->ioclk);
++
++	return ret;
+ }
+ #endif /* CONFIG_PM */
+ 
+@@ -1352,6 +1386,16 @@ static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
+ 	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
+ };
+ 
++static struct s3c64xx_spi_port_config exynos5433_spi_port_config = {
++	.fifo_lvl_mask	= { 0x1ff, 0x7f, 0x7f, 0x7f, 0x7f, 0x1ff},
++	.rx_lvl_offset	= 15,
++	.tx_st_done	= 25,
++	.high_speed	= true,
++	.clk_from_cmu	= true,
++	.clk_ioclk	= true,
++	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
++};
++
+ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
+ 	{
+ 		.name		= "s3c2443-spi",
+@@ -1382,6 +1426,9 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
+ 	{ .compatible = "samsung,exynos7-spi",
+ 			.data = (void *)&exynos7_spi_port_config,
+ 	},
++	{ .compatible = "samsung,exynos5433-spi",
++			.data = (void *)&exynos5433_spi_port_config,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, s3c64xx_spi_dt_match);
+-- 
+2.8.1
