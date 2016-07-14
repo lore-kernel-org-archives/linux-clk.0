@@ -1,71 +1,78 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 0/8] clk: Don't duplicate initialization on platform_dev
-Date: Tue,  5 Jul 2016 18:23:24 +0200
-Message-Id: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from m199-177.yeah.net ([123.58.177.199]:54505 "EHLO
+	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751005AbcGNIwv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2016 04:52:51 -0400
+Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <1761342.TGgYi16yul@wuerfel> <5784968A.7080007@iommu.org>
+ <5434334.4rKzx80y6W@wuerfel>
+Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
+	Wan Zongshun <mcuos.com@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+	p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+	linux-clk@vger.kernel.org
+From: Wan Zongshun <vw@iommu.org>
+Message-ID: <578752CD.3010408@iommu.org>
+Date: Thu, 14 Jul 2016 16:52:29 +0800
+MIME-Version: 1.0
+In-Reply-To: <5434334.4rKzx80y6W@wuerfel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock providers can be probed as a normal platform device, or via
-of_clk_init() before the rest of the platform devices are initialized
-using the CLK_OF_DECLARE() macro.
 
-If a driver required both initialization methodologies, the core would call
-both probe/init functions.
 
-This changeset prevent the dual initialization using the OF_POPULATE flag.
+On 2016年07月12日 16:26, Arnd Bergmann wrote:
+> On Tuesday, July 12, 2016 3:04:42 PM CEST Wan Zongshun wrote:
+>>>
+>>> Ideally, this should just go away once we use SPARSE_IRQ.
+>>
+>> This platform also can use SPARSE_IRQ? this just a simple irq map and no
+>> more irq number in this Soc.
+>>
+>
+> SPARSE_IRQ is implied by ARCH_MULTIPLATFORM, so we will have to
+> use it once that gets enabled.
+>
+> Your new irqchip driver already handles IRQ domains, so it will
+> work out of the box with SPARSE_IRQ, but you have to change the
+> reference to "NR_IRQS" into something else.
+>
+> I've prototyped a patch series to enable ARCH_MULTIPLATFORM,
+> I hope you can start working from what I have and get it to run.
 
-It also creates a new macro, CLK_OF_DECLARE_DRIVER, used by drivers that
-require double initialization.
+I go through the ARCH_MULTIPLATFORM and SPARSE_IRQ related codes, but I 
+find I also have to define the NUC900_NR_IRQS firstly like below, so 
+that I can init the .nr_irq.
 
-Finally, it adds module platform driver initialization to fixed-factor
-and fixed-rate, enabling its use in dt overlays.
++#if !defined(CONFIG_SOC_NUC970)
+  #define NUC900_NR_IRQS		(IRQ_ADC+1)
++#else
++#define NUC900_NR_IRQS		62
++#endif
 
-The order of the patches allows future bisects of the change. This explains
-why  Avoid double initialization of clocks() is done almost at the end.
+  DT_MACHINE_START(nuc900_dt, "Nuvoton NUC900 (Device Tree Support)")
+         .dt_compat      = nuc900_dt_compat,
++       .nr_irqs        = NUC900_NR_IRQS,
+  MACHINE_END
 
-v5: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
--Create CLK_OF_DECLARE_DRIVER() macro
--use it in clk-artpec6, sunxi,nxp
+and then in my irqchip driver, I will use the NUC900_NR_IRQS:
 
-v4: Huge MACRO(), not posted to the list
++aic_domain = irq_domain_add_linear(node, NUC900_NR_IRQS,
++				    &aic_irq_domain_ops, NULL);
 
-v3: Use OF_POPULATE flag inside fixed-rate and fixed-factor
 
-v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
--Add error check
--CodeStyle on of_device_ide
--Use builtin_platform_driver()
+Is that a right usage?
 
-When clock providers are added to the device tree after of_clk_init is called
-they are not added to the clock provider list. This makes that drivers such
-as i2c-xiic.c fail to init, as they may depend on the unadded clock provider.
-
-Ricardo Ribalda Delgado (8):
-  clk: core: New macro CLK_OF_DECLARE_DRIVER
-  clk: axis: Use new macro CLK_OF_DECLARE_DRIVER
-  clk: npx: Use new macro CLK_OF_DECLARE_DRIVER
-  clk: sunxi: mod0: Use new macro CLK_OF_DECLARE_DRIVER
-  clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER
-  clk: core: Avoid double initialization of clocks
-  clk: fixed-factor: Convert into a module platform driver
-  clk: fixed-rate: Convert into a module platform driver
-
- drivers/clk/axis/clk-artpec6.c     |  4 +--
- drivers/clk/clk-fixed-factor.c     | 72 +++++++++++++++++++++++++++++++++++---
- drivers/clk/clk-fixed-rate.c       | 69 +++++++++++++++++++++++++++++++++---
- drivers/clk/clk.c                  |  4 +++
- drivers/clk/nxp/clk-lpc18xx-creg.c |  3 +-
- drivers/clk/sunxi/clk-mod0.c       |  3 +-
- drivers/clk/sunxi/clk-sun8i-apb0.c |  4 +--
- include/linux/clk-provider.h       | 12 +++++++
- 8 files changed, 156 insertions(+), 15 deletions(-)
-
--- 
-2.8.1
+>
+> 	Arnd
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
