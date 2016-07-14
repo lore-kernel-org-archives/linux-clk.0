@@ -1,43 +1,86 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 10/13] arm64: Kconfig: sunxi: add PINCTRL
-Date: Tue, 26 Jul 2016 22:30:38 +0200
-Message-Id: <20160726203041.29366-11-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+Return-Path: <Jiada_Wang@mentor.com>
+Message-ID: <57871FF3.2030306@mentor.com>
+Date: Thu, 14 Jul 2016 14:15:31 +0900
+From: Jiada Wang <jiada_wang@mentor.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
+	<vladimir_zapolskiy@mentor.com>
+Subject: Re: [RFC PATCH v2] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
+References: <1468215208-14576-1-git-send-email-jiada_wang@mentor.com> <146836257017.73491.10485892804134671614@resonance>
+In-Reply-To: <146836257017.73491.10485892804134671614@resonance>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andre Przywara <andre.przywara@arm.com>
+Hello Michael
 
-Add required PINCTRL symbol to cover non-defconfig setups.
+On 07/13/2016 07:29 AM, Michael Turquette wrote:
+> Quoting jiada_wang@mentor.com (2016-07-10 22:33:28)
+>> From: Jiada Wang <jiada_wang@mentor.com>
+>>
+>> Previously CLK_SET_RATE_GATE flag is only checked in clk_set_rate()
+>> which only ensures the clock being called by clk_set_rate() won't
+>> change rate when it has been prepared if CLK_SET_RATE_GATE flag is set.
+>> But a clk_set_rate() request may propagate rate change to these clocks
+>> from the requested clock's topmost parent clock to all its offsprings,
+>> when any one of these clocks has CLK_SET_RATE_GATE flag set
+>> and it has been prepared, the clk_set_rate() request should fail.
+>>
+>> This patch moves check of CLK_SET_RATE_GATE flag to
+>> clk_propagate_rate_change() to ensure all affected clocks will
+>> be checked if their rate will be changed after clk_set_rate().
+>>
+>> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+>> ---
+>
+> What's different in version 2? It's tradition to put a little version
+> changelog here, below the "---" line and above the "diff --git a/..."
+> line.
+>
+version 2 resolves the following kernel warning
+"
+    drivers/clk/clk.c: In function 'clk_propagate_rate_change':
+ >> drivers/clk/clk.c:1441:3: warning: return makes pointer from integer 
+without a cast
+       return -EBUSY;
+       ^
+"
+I forgot to add a changelog in v2 patch, sorry for the confusion caused.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 4cc444c3c2e9..83bc4bf3513b 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -3,6 +3,7 @@ menu "Platform selection"
- config ARCH_SUNXI
- 	bool "Allwinner sunxi 64-bit SoC Family"
- 	select GENERIC_IRQ_CHIP
-+	select PINCTRL
- 	select PINCTRL_SUN50I_A64
- 	help
- 	  This enables support for Allwinner sunxi based SoCs like the A64.
--- 
-2.9.2
+Thanks,
+Jiada
+> Regards,
+> Mike
+>
+>>   drivers/clk/clk.c |    6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 820a939..2f930c8 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -1437,6 +1437,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+>>          if (core->rate == core->new_rate)
+>>                  return NULL;
+>>
+>> +       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+>> +               return core;
+>> +
+>>          if (core->notifier_count) {
+>>                  ret = __clk_notify(core, event, core->rate, core->new_rate);
+>>                  if (ret & NOTIFY_STOP_MASK)
+>> @@ -1571,9 +1574,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>>          if (rate == clk_core_get_rate_nolock(core))
+>>                  return 0;
+>>
+>> -       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+>> -               return -EBUSY;
+>> -
+>>          /* calculate new rates and get the topmost changed clock */
+>>          top = clk_calc_new_rates(core, rate);
+>>          if (!top)
+>> --
+>> 1.7.9.5
+>>
+>>
