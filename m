@@ -1,70 +1,161 @@
-Return-Path: <dianders@google.com>
-MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <1601887.i7XxTCUQZu@phil>
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de>
- <1462206982-10444-3-git-send-email-heiko@sntech.de> <577B6162.3020609@rock-chips.com>
- <1601887.i7XxTCUQZu@phil>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 6 Jul 2016 15:41:20 -0700
-Message-ID: <CAD=FV=WQeK35+zLpdaLqn5ShFRrUBx1r2LzqS=_THsWqy6iV6g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
- parent changes
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Xing Zheng <zhengxing@rock-chips.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+In-Reply-To: <1467989201-14661-4-git-send-email-andi.shyti@samsung.com>
+Message-Id: <E1bNjZH-0001ni-TY@debutante>
+Date: Thu, 14 Jul 2016 17:32:55 +0100
+Subject: Applied "spi: s3c64xx: rename goto labels to meaningful names" to the spi tree
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The patch
 
-On Tue, Jul 5, 2016 at 3:24 PM, Heiko Stuebner <heiko@sntech.de> wrote:
->> I tests found a problem, about set the freq order.
->> e.p:
->> [VPLL]
->>
->>      ------ [div] ----- dclk_vop
->> If I change VPLL freq 148.5M to 594M, dclk_vop freq will changed as:
->> 148.5M->24M->594M->1485.5M.
->> But we not hope the dclk_vop have a high freq,it will make the system
->> crash or make vop not work well.
->>
->> So if the VPLL is improve the freq, we need to set dclk_vop div first,
->> and than set VPLL freq.
->> If VPLL is reduce the freq, we need to set vpll first,and set dclk_vop
->> div.
->>
->> This is just a example,for all change parent freq, we need follow this
->> operation.
->> Do you have a better idea for this problem?
->
-> In general it seems my simplicistic approach only really works for really
-> simple clock-setups and thus is likely not really usable for general things.
->
-> For the VPLL on the rk3399 we were discussion a different approach in [0],
-> as VPLL usage (aka which vop gets to control it) is likely to complicated to
-> have this done in the clock-framework-
->
-> Doug wanted to take a look and add some thoughts and I guess he'll just do
-> that after the 4th of july celebrations.
+   spi: s3c64xx: rename goto labels to meaningful names
 
-Right.  IMHO you should do something to _really_ make sure that one of
-the VOPs is parented on either GPLL or CPLL and then let the other VOP
-be in control of VPLL.  How we actually do that is up for debate.  I
-still have it on my list of things to do to look at Heiko's response
-to my previous proposal, but given that I'm currently backlogged from
-the two day holiday and that I'm only a few days away from a week long
-vacation (and subsequent backlog), I'm not 100% sure I'll get to it
-soon.  :(  I'll do my best, though...
+has been applied to the spi tree at
 
-In addition to the link Heiko gave, you could also look at
-<https://chromium-review.googlesource.com/#/c/354165/>.  That's also
-not fully baked but is another way to possibly tackle the problem.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-In general if there is only one clock tree under VPLL then you
-shouldn't need to worry too much about things getting out of whack.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
--Doug
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 60a9a964420912a4c4b66efd210d98006177695a Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Tue, 12 Jul 2016 19:02:12 +0900
+Subject: [PATCH] spi: s3c64xx: rename goto labels to meaningful names
+
+The goto labels of the style of
+
+  err4:
+  err3:
+  err2:
+  err1:
+
+are complex to insert in between new errors without renaming all
+the goto statements. Replace the errX naming style to meaningful
+names in order to make it easier to insert new goto exit points.
+
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 001c9ebf884d..0a93eb98c2b6 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1078,7 +1078,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
+ 				ret);
+-			goto err0;
++			goto err_deref_master;
+ 		}
+ 		sdd->port_id = ret;
+ 	} else {
+@@ -1116,13 +1116,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(sdd->regs)) {
+ 		ret = PTR_ERR(sdd->regs);
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	if (sci->cfg_gpio && sci->cfg_gpio()) {
+ 		dev_err(&pdev->dev, "Unable to config gpio\n");
+ 		ret = -EBUSY;
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	/* Setup clocks */
+@@ -1130,13 +1130,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
+ 		ret = PTR_ERR(sdd->clk);
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	if (clk_prepare_enable(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
+ 		ret = -EBUSY;
+-		goto err0;
++		goto err_deref_master;
+ 	}
+ 
+ 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
+@@ -1145,13 +1145,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Unable to acquire clock '%s'\n", clk_name);
+ 		ret = PTR_ERR(sdd->src_clk);
+-		goto err2;
++		goto err_disable_clk;
+ 	}
+ 
+ 	if (clk_prepare_enable(sdd->src_clk)) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
+ 		ret = -EBUSY;
+-		goto err2;
++		goto err_disable_clk;
+ 	}
+ 
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+@@ -1171,7 +1171,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "Failed to request IRQ %d: %d\n",
+ 			irq, ret);
+-		goto err3;
++		goto err_pm_put;
+ 	}
+ 
+ 	writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
+@@ -1181,7 +1181,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
+-		goto err3;
++		goto err_pm_put;
+ 	}
+ 
+ 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
+@@ -1195,15 +1195,15 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-err3:
++err_pm_put:
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+ 	clk_disable_unprepare(sdd->src_clk);
+-err2:
++err_disable_clk:
+ 	clk_disable_unprepare(sdd->clk);
+-err0:
++err_deref_master:
+ 	spi_master_put(master);
+ 
+ 	return ret;
+-- 
+2.8.1
