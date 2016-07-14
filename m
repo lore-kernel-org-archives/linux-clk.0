@@ -1,65 +1,144 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sstabellini@kernel.org>
+Date: Thu, 14 Jul 2016 11:28:31 +0100 (BST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+cc: Stefano Stabellini <sstabellini@kernel.org>,
+    Dirk Behme <dirk.behme@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+    devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>, Julien Grall <julien.grall@arm.com>,
+    xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
+    linux-arm-kernel@lists.infradead.org
+Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
+In-Reply-To: <094be367-ff91-aec7-cbd6-cfb8dc711c54@de.bosch.com>
+Message-ID: <alpine.DEB.2.10.1607141128010.26575@sstabellini-ThinkPad-X260>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <alpine.DEB.2.10.1607131932530.26575@sstabellini-ThinkPad-X260> <57868CB4.1090504@gmail.com> <alpine.DEB.2.10.1607132002000.26575@sstabellini-ThinkPad-X260>
+ <094be367-ff91-aec7-cbd6-cfb8dc711c54@de.bosch.com>
 MIME-Version: 1.0
-To: Andi Shyti <andi.shyti@samsung.com>, "Rob Herring" <robh+dt@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Kukjin Kim" <kgene@kernel.org>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
- "Mark Brown" <broonie@kernel.org>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Tomasz Figa" <tomasz.figa@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
-Cc: "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- "Andi Shyti" <andi.shyti@samsung.com>, "Andi Shyti" <andi@etezian.org>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
-Message-ID: <146799441227.73491.13833003558807352160@resonance>
-Subject: Re: [PATCH v2 5/7] spi: s3c64xx: add exynos5433 compatible for ioclk handling
-Date: Fri, 08 Jul 2016 09:13:32 -0700
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Andi Shyti (2016-07-08 07:46:39)
-> @@ -1147,6 +1150,21 @@ static int s3c64xx_spi_probe(struct platform_devic=
-e *pdev)
->                 goto err_disable_clk;
->         }
->  =
+On Thu, 14 Jul 2016, Dirk Behme wrote:
+> On 13.07.2016 21:07, Stefano Stabellini wrote:
+> > On Wed, 13 Jul 2016, Dirk Behme wrote:
+> > > On 13.07.2016 20:35, Stefano Stabellini wrote:
+> > > > On Tue, 12 Jul 2016, Dirk Behme wrote:
+> > > > > Clocks described by this property are reserved for use by Xen, and the
+> > > > > OS
+> > > > > must not alter their state any way, such as disabling or gating a
+> > > > > clock,
+> > > > > or modifying its rate. Ensuring this may impose constraints on parent
+> > > > > clocks or other resources used by the clock tree.
+> > > > > 
+> > > > > This property is used to proxy clocks for devices Xen has taken
+> > > > > ownership
+> > > > > of, such as UARTs, for which the associated clock controller(s) remain
+> > > > > under the control of Dom0.
+> > > > > 
+> > > > > Up to now, the workaround for this has been to use the Linux kernel
+> > > > > command line parameter 'clk_ignore_unused'. See Xen bug
+> > > > > 
+> > > > > http://bugs.xenproject.org/xen/bug/45
+> > > > > 
+> > > > > too.
+> > > > > 
+> > > > > Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> > > > > ---
+> > > > > Changes in v4: Switch to the xen.txt description proposed by Mark:
+> > > > >                 https://www.spinics.net/lists/arm-kernel/msg516158.html
+> > > > > 
+> > > > > Changes in v3: Use the xen.txt description proposed by Michael.
+> > > > > Thanks!
+> > > > > 
+> > > > > Changes in v2: Drop the Linux implementation details like
+> > > > > clk_disable_unused
+> > > > > 	       in xen.txt.
+> > > > > 
+> > > > >   Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
+> > > > >   arch/arm/xen/enlighten.c                      | 47
+> > > > > +++++++++++++++++++++++++++
+> > > > >   2 files changed, 59 insertions(+)
+> > > > > 
+> > > > > diff --git a/Documentation/devicetree/bindings/arm/xen.txt
+> > > > > b/Documentation/devicetree/bindings/arm/xen.txt
+> > > > > index c9b9321..437e50b 100644
+> > > > > --- a/Documentation/devicetree/bindings/arm/xen.txt
+> > > > > +++ b/Documentation/devicetree/bindings/arm/xen.txt
+> > > > > @@ -17,6 +17,18 @@ the following properties:
+> > > > >     A GIC node is also required.
+> > > > >     This property is unnecessary when booting Dom0 using ACPI.
+> > > > > 
+> > > > > +Optional properties:
+> > > > > +
+> > > > > +- clocks: a list of phandle + clock-specifier pairs
+> > > > > +  Clocks described by this property are reserved for use by Xen, and
+> > > > > the
+> > > > > +  OS must not alter their state any way, such as disabling or gating
+> > > > > a
+> > > > > +  clock, or modifying its rate. Ensuring this may impose constraints
+> > > > > on
+> > > > > +  parent clocks or other resources used by the clock tree.
+> > > > > +
+> > > > > +  Note: this property is used to proxy clocks for devices Xen has
+> > > > > taken
+> > > > > +  ownership of, such as UARTs, for which the associated clock
+> > > > > +  controller(s) remain under the control of Dom0.
+> > > > > +
+> > > > >   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
+> > > > > "uefi" node
+> > > > >   under /hypervisor with following parameters:
+> > > > > 
+> > > > > diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+> > > > > index 47acb36..5c546d0 100644
+> > > > > --- a/arch/arm/xen/enlighten.c
+> > > > > +++ b/arch/arm/xen/enlighten.c
+> > > > > @@ -24,6 +24,7 @@
+> > > > >   #include <linux/of_fdt.h>
+> > > > >   #include <linux/of_irq.h>
+> > > > >   #include <linux/of_address.h>
+> > > > > +#include <linux/clk-provider.h>
+> > > > >   #include <linux/cpuidle.h>
+> > > > >   #include <linux/cpufreq.h>
+> > > > >   #include <linux/cpu.h>
+> > > > > @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+> > > > >   }
+> > > > >   late_initcall(xen_pm_init);
+> > > > > 
+> > > > > +/*
+> > > > > + * Check if we want to register some clocks, that they
+> > > > > + * are not freed because unused by clk_disable_unused().
+> > > > > + * E.g. the serial console clock.
+> > > > > + */
+> > > > > +static int __init xen_arm_register_clks(void)
+> > > > > +{
+> > > > > +	struct clk *clk;
+> > > > > +	struct device_node *xen_node;
+> > > > > +	unsigned int i, count;
+> > > > > +	int ret = 0;
+> > > > > +
+> > > > > +	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+> > > > > +	if (!xen_node) {
+> > > > > +		pr_err("Xen support was detected before, but it has
+> > > > > disappeared\n");
+> > > > > +		return -EINVAL;
+> > > > > +	}
+> > > > 
+> > > > Given that this is a late initcall, the following should work:
+> > > > 
+> > > >      if (!xen_domain())
+> > > >          return -ENODEV;
+> > > 
+> > > 
+> > > Hmm, sorry, "should work" for what?
+> > 
+> > As a Xen check, if (!xen_domain()) is the common pattern.
+> > 
+> > > We need the xen_node from device tree, anyway.
+> > 
+> > In that case, what don't you just use the global xen_node in this file?
+> 
+> 
+> With the recent code there is no global xen_node any more:
+> 
+> https://lists.xen.org/archives/html/xen-devel/2016-06/msg02878.html
 
-> +       if (sdd->port_conf->clk_ioclk) {
-> +               sdd->ioclk =3D devm_clk_get(&pdev->dev, "spi_ioclk");
-> +               if (IS_ERR(sdd->ioclk)) {
-> +                       dev_err(&pdev->dev, "Unable to acquire 'ioclk'\n"=
-);
-> +                       ret =3D PTR_ERR(sdd->ioclk);
-> +                       goto err_disable_src_clk;
-> +               }
-> +
-> +               ret =3D clk_prepare_enable(sdd->ioclk);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "Couldn't enable clock 'ioclk=
-'\n");
-> +                       goto err_disable_src_clk;
-> +               }
-> +       }
-> +
->         pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
->         pm_runtime_use_autosuspend(&pdev->dev);
->         pm_runtime_set_active(&pdev->dev);
-> @@ -1193,6 +1211,8 @@ err_pm_put:
->         pm_runtime_disable(&pdev->dev);
->         pm_runtime_set_suspended(&pdev->dev);
->  =
-
-> +       clk_disable_unprepare(sdd->ioclk);
-> +err_disable_src_clk:
->         clk_disable_unprepare(sdd->src_clk);
->  err_disable_clk:
->         clk_disable_unprepare(sdd->clk);
-
-Why aren't these clocks enabled/disabled by calls to pm_runtime_get/put?
-
-Regards,
-Mike
+Ops, I was looking at upstream. I forgot about those.
