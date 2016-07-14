@@ -1,58 +1,149 @@
-Return-Path: <Jiada_Wang@mentor.com>
-From: <jiada_wang@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
-	<vladimir_zapolskiy@mentor.com>, <jiada_wang@mentor.com>
-Subject: [RFC PATCH v2] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
-Date: Sun, 10 Jul 2016 22:33:28 -0700
-Message-ID: <1468215208-14576-1-git-send-email-jiada_wang@mentor.com>
+Return-Path: <Dirk.Behme@de.bosch.com>
+Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
+To: Stefano Stabellini <sstabellini@kernel.org>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <alpine.DEB.2.10.1607131932530.26575@sstabellini-ThinkPad-X260>
+ <57868CB4.1090504@gmail.com>
+ <alpine.DEB.2.10.1607132002000.26575@sstabellini-ThinkPad-X260>
+CC: Dirk Behme <dirk.behme@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Julien Grall <julien.grall@arm.com>,
+	<xen-devel@lists.xenproject.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <094be367-ff91-aec7-cbd6-cfb8dc711c54@de.bosch.com>
+Date: Thu, 14 Jul 2016 08:11:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <alpine.DEB.2.10.1607132002000.26575@sstabellini-ThinkPad-X260>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On 13.07.2016 21:07, Stefano Stabellini wrote:
+> On Wed, 13 Jul 2016, Dirk Behme wrote:
+>> On 13.07.2016 20:35, Stefano Stabellini wrote:
+>>> On Tue, 12 Jul 2016, Dirk Behme wrote:
+>>>> Clocks described by this property are reserved for use by Xen, and the OS
+>>>> must not alter their state any way, such as disabling or gating a clock,
+>>>> or modifying its rate. Ensuring this may impose constraints on parent
+>>>> clocks or other resources used by the clock tree.
+>>>>
+>>>> This property is used to proxy clocks for devices Xen has taken ownership
+>>>> of, such as UARTs, for which the associated clock controller(s) remain
+>>>> under the control of Dom0.
+>>>>
+>>>> Up to now, the workaround for this has been to use the Linux kernel
+>>>> command line parameter 'clk_ignore_unused'. See Xen bug
+>>>>
+>>>> http://bugs.xenproject.org/xen/bug/45
+>>>>
+>>>> too.
+>>>>
+>>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>>>> ---
+>>>> Changes in v4: Switch to the xen.txt description proposed by Mark:
+>>>>                 https://www.spinics.net/lists/arm-kernel/msg516158.html
+>>>>
+>>>> Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+>>>>
+>>>> Changes in v2: Drop the Linux implementation details like
+>>>> clk_disable_unused
+>>>> 	       in xen.txt.
+>>>>
+>>>>   Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
+>>>>   arch/arm/xen/enlighten.c                      | 47
+>>>> +++++++++++++++++++++++++++
+>>>>   2 files changed, 59 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/xen.txt
+>>>> b/Documentation/devicetree/bindings/arm/xen.txt
+>>>> index c9b9321..437e50b 100644
+>>>> --- a/Documentation/devicetree/bindings/arm/xen.txt
+>>>> +++ b/Documentation/devicetree/bindings/arm/xen.txt
+>>>> @@ -17,6 +17,18 @@ the following properties:
+>>>>     A GIC node is also required.
+>>>>     This property is unnecessary when booting Dom0 using ACPI.
+>>>>
+>>>> +Optional properties:
+>>>> +
+>>>> +- clocks: a list of phandle + clock-specifier pairs
+>>>> +  Clocks described by this property are reserved for use by Xen, and the
+>>>> +  OS must not alter their state any way, such as disabling or gating a
+>>>> +  clock, or modifying its rate. Ensuring this may impose constraints on
+>>>> +  parent clocks or other resources used by the clock tree.
+>>>> +
+>>>> +  Note: this property is used to proxy clocks for devices Xen has taken
+>>>> +  ownership of, such as UARTs, for which the associated clock
+>>>> +  controller(s) remain under the control of Dom0.
+>>>> +
+>>>>   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT
+>>>> "uefi" node
+>>>>   under /hypervisor with following parameters:
+>>>>
+>>>> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+>>>> index 47acb36..5c546d0 100644
+>>>> --- a/arch/arm/xen/enlighten.c
+>>>> +++ b/arch/arm/xen/enlighten.c
+>>>> @@ -24,6 +24,7 @@
+>>>>   #include <linux/of_fdt.h>
+>>>>   #include <linux/of_irq.h>
+>>>>   #include <linux/of_address.h>
+>>>> +#include <linux/clk-provider.h>
+>>>>   #include <linux/cpuidle.h>
+>>>>   #include <linux/cpufreq.h>
+>>>>   #include <linux/cpu.h>
+>>>> @@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
+>>>>   }
+>>>>   late_initcall(xen_pm_init);
+>>>>
+>>>> +/*
+>>>> + * Check if we want to register some clocks, that they
+>>>> + * are not freed because unused by clk_disable_unused().
+>>>> + * E.g. the serial console clock.
+>>>> + */
+>>>> +static int __init xen_arm_register_clks(void)
+>>>> +{
+>>>> +	struct clk *clk;
+>>>> +	struct device_node *xen_node;
+>>>> +	unsigned int i, count;
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
+>>>> +	if (!xen_node) {
+>>>> +		pr_err("Xen support was detected before, but it has
+>>>> disappeared\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>
+>>> Given that this is a late initcall, the following should work:
+>>>
+>>>      if (!xen_domain())
+>>>          return -ENODEV;
+>>
+>>
+>> Hmm, sorry, "should work" for what?
+>
+> As a Xen check, if (!xen_domain()) is the common pattern.
+>
+>> We need the xen_node from device tree, anyway.
+>
+> In that case, what don't you just use the global xen_node in this file?
 
-Previously CLK_SET_RATE_GATE flag is only checked in clk_set_rate()
-which only ensures the clock being called by clk_set_rate() won't
-change rate when it has been prepared if CLK_SET_RATE_GATE flag is set.
-But a clk_set_rate() request may propagate rate change to these clocks
-from the requested clock's topmost parent clock to all its offsprings,
-when any one of these clocks has CLK_SET_RATE_GATE flag set
-and it has been prepared, the clk_set_rate() request should fail.
 
-This patch moves check of CLK_SET_RATE_GATE flag to
-clk_propagate_rate_change() to ensure all affected clocks will
-be checked if their rate will be changed after clk_set_rate().
+With the recent code there is no global xen_node any more:
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/clk/clk.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+https://lists.xen.org/archives/html/xen-devel/2016-06/msg02878.html
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939..2f930c8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1437,6 +1437,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
- 	if (core->rate == core->new_rate)
- 		return NULL;
- 
-+	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
-+		return core;
-+
- 	if (core->notifier_count) {
- 		ret = __clk_notify(core, event, core->rate, core->new_rate);
- 		if (ret & NOTIFY_STOP_MASK)
-@@ -1571,9 +1574,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (rate == clk_core_get_rate_nolock(core))
- 		return 0;
- 
--	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
--		return -EBUSY;
--
- 	/* calculate new rates and get the topmost changed clock */
- 	top = clk_calc_new_rates(core, rate);
- 	if (!top)
--- 
-1.7.9.5
+-- cut --
+The code in this file has changed quite a lot with the support of ACPI. 
+For instance "xen_node" is not anymore a global variable. Can you rebase 
+your rework on top of the branch for-linus-4.8?
+
+
+You can find the branch in:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
+-- cut --
+
+Best regards
+
+Dirk
