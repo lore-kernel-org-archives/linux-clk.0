@@ -1,69 +1,268 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Wan ZongShun <mcuos.com@gmail.com>
-Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
-Date: Mon, 11 Jul 2016 12:36:16 +0200
-Message-ID: <3879062.QodNaKgPKS@wuerfel>
-In-Reply-To: <CAKT61h_vxcvVqqaDOn2XgtF7cBEpziSjfHRaY3eCWmM1ATfDXw@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
+To: Jason Cooper <jason@lakedaemon.net>
 References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1606219.BzcByuFgJm@wuerfel>
- <CAKT61h_vxcvVqqaDOn2XgtF7cBEpziSjfHRaY3eCWmM1ATfDXw@mail.gmail.com>
+ <1468135649-19980-3-git-send-email-vw@iommu.org>
+ <20160713200906.GB31509@io.lakedaemon.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	p.zabel@pengutronix.de, Wan Zongshun <mcuos.com@gmail.com>
+From: Wan Zongshun <vw@iommu.org>
+Message-ID: <578708D5.6050009@iommu.org>
+Date: Thu, 14 Jul 2016 11:36:53 +0800
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Wan Zongshun <vw@iommu.org>,
- Jason Cooper <jason@lakedaemon.net>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Russell King <linux@armlinux.org.uk>,
- linux-kernel <linux-kernel@vger.kernel.org>, p.zabel@pengutronix.de,
- Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20160713200906.GB31509@io.lakedaemon.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gTW9uZGF5LCBKdWx5IDExLCAyMDE2IDY6Mjg6NTcgUE0gQ0VTVCBXYW4gWm9uZ1NodW4gd3Jv
-dGU6Cj4gMjAxNi0wNy0xMSAxODoyNCBHTVQrMDg6MDAgQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5k
-Yi5kZT46Cj4gPiBPbiBNb25kYXksIEp1bHkgMTEsIDIwMTYgNTowNzowMSBQTSBDRVNUIFdhbiBa
-b25nc2h1biB3cm90ZToKPiA+Pgo+ID4+IE9uIDIwMTblubQwN+aciDEx5pelIDE2OjAzLCBBcm5k
-IEJlcmdtYW5uIHdyb3RlOgo+ID4+ID4gT24gU3VuZGF5LCBKdWx5IDEwLCAyMDE2IDM6Mjc6MjYg
-UE0gQ0VTVCBXYW4gWm9uZ3NodW4gd3JvdGU6Cj4gPj4gPj4gKyAgICAgICByZXQgPSBvZl9wcm9w
-ZXJ0eV9yZWFkX3N0cmluZyhucCwgImNvbXBhdGlibGUiLCAmc29jX2Rldl9hdHRyLT5zb2NfaWQp
-Owo+ID4+ID4+ICsgICAgICAgaWYgKHJldCkKPiA+PiA+PiAgICAgICAgICAgICAgICByZXR1cm4g
-LUVJTlZBTDsKPiA+PiA+PiArCj4gPj4gPj4gKyAgICAgICBzb2NfZGV2X2F0dHItPm1hY2hpbmUg
-PSAiTlVDOTAwRVZCIjsKPiA+PiA+PiArICAgICAgIHNvY19kZXZfYXR0ci0+ZmFtaWx5ID0gIk5V
-QzkwMCI7Cj4gPj4gPj4gKyAgICAgICBzb2NfZGV2ID0gc29jX2RldmljZV9yZWdpc3Rlcihzb2Nf
-ZGV2X2F0dHIpOwo+ID4+ID4+ICsgICAgICAgaWYgKElTX0VSUihzb2NfZGV2KSkgewo+ID4+ID4+
-ICsgICAgICAgICAgICAgICBrZnJlZShzb2NfZGV2X2F0dHIpOwo+ID4+ID4+ICsgICAgICAgICAg
-ICAgICByZXR1cm4gLUVOT0RFVjsKPiA+PiA+PiArICAgICAgIH0KPiA+PiA+PiArCj4gPj4gPj4g
-KyAgICAgICByZXQgPSByZWdtYXBfcmVhZChzeXNjb25fcmVnbWFwLCBHQ1JfQ0hJUElELCAmbnVj
-OTAwX2NoaXBpZCk7Cj4gPj4gPj4gKyAgICAgICBpZiAocmV0KQo+ID4+ID4+ICsgICAgICAgICAg
-ICAgICByZXR1cm4gLUVOT0RFVjsKPiA+PiA+PiArCj4gPj4gPj4gKyAgICAgICBkZXZpY2VfY3Jl
-YXRlX2ZpbGUoc29jX2RldmljZV90b19kZXZpY2Uoc29jX2RldiksICZudWM5MDBfY2hpcGlkX2F0
-dHIpOwo+ID4+ID4+ICsgICAgICAgZGV2aWNlX2NyZWF0ZV9maWxlKHNvY19kZXZpY2VfdG9fZGV2
-aWNlKHNvY19kZXYpLCAmbnVjOTAwX3ZlcnNpb25fYXR0cik7Cj4gPj4gPj4gKwo+ID4+ID4+ICsg
-ICAgICAgZGV2X2luZm8oJnBkZXYtPmRldiwgIk51dm90b24gQ2hpcCBJRDogMHgleCwgVmVyc2lv
-biBJRDoweCV4XG4iLAo+ID4+ID4+ICsgICAgICAgICAgICAgICAgbnVjOTAwX2NoaXBpZCAmIEdD
-Ul9DSElQSURfTUFTSywKPiA+PiA+PiArICAgICAgICAgICAgICAgIChudWM5MDBfY2hpcGlkID4+
-IDI0KSAmIDB4ZmYpOwo+ID4+ID4KPiA+PiA+IEknbSBzdGlsbCBhIGJpdCB1bnN1cmUgYWJvdXQg
-dGhlIHNldCBvZiBhdHRyaWJ1dGVzIGhlcmUuCj4gPj4gPgo+ID4+ID4gLSBUaGUgInNvY19pZCIg
-aXMgcmVhZCBmcm9tIHRoZSBkZXZpY2UgdHJlZSBmcm9tIHRoZSBmaWVsZCB0aGF0IGNvbnRhaW5z
-Cj4gPj4gPiAgICB0aGUgYm9hcmQgbmFtZSwgSSB0aGluayBmb3IgY29uc2lzdGVuY3kgeW91IHNo
-b3VsZCB0cnkgdG8gbWFwIHRoZQo+ID4+ID4gICAgR0NSX0NISVBJRCB0byB0aGUgbmFtZSBvZiB0
-aGUgU29DIGFuZCBhc3NpZ24gdGhhdCBoZXJlCj4gPj4KPiA+PiBJIHdpbGwgdHJ5IHRvIGdldCBj
-aGlwaWQgYW5kIG1hcCBpdCB0byBzb2MgbmFtZSBsaWtlOiDigJxudWM5NzDigJ0sICJudWM5MTAi
-Lgo+ID4+Cj4gPj4gQW5kIEkgd2lsbCBzZXQgdGhpcyBzb2MgbmFtZSB0byBzb2NfaWQsIG9rPwo+
-ID4KPiA+IE9rLgo+IAo+IE1heWJlIEkgYWxzbyBjYW4gc2V0IHZlcnNpb25pZCBhcyBzb2MgbmFt
-ZSBwYXJ0bHksIGxpa2UKPiBudWM5NzAtdmVyc2lvbjEsbnVjOTcwLXZlcnNpb24yPyBhbmQgdGhl
-biBzZXQgdGhlIHRvIHNvY19pZCwgbWFrZQo+IHNlbnNlPwo+IAoKSSBkaWRuJ3QgZXhhY3RseSB1
-bmRlcnN0YW5kIHdoYXQgdGhlIHN1Z2dlc3Rpb24gaXMsIG1heWJlIHNlbmQgdGhhdAphcyBjb2Rl
-IHNvIEkgc2VlIHdoYXQgeW91IG1lYW4uCgoJQXJuZAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGlu
-dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
-b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+
+
+On 2016年07月14日 04:09, Jason Cooper wrote:
+> Hi Wan Zongshun,
+>
+> On Sun, Jul 10, 2016 at 03:27:22PM +0800, Wan Zongshun wrote:
+>> This patch is to add irqchip driver support for nuc900 plat,
+>> current this driver only supports nuc970 SoC.
+>>
+>> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
+>> ---
+>>   arch/arm/mach-w90x900/include/mach/irqs.h |   5 +
+>>   drivers/irqchip/Makefile                  |   1 +
+>>   drivers/irqchip/irq-nuc900.c              | 150 ++++++++++++++++++++++++++++++
+>>   3 files changed, 156 insertions(+)
+>>   create mode 100644 drivers/irqchip/irq-nuc900.c
+>>
+>> diff --git a/arch/arm/mach-w90x900/include/mach/irqs.h b/arch/arm/mach-w90x900/include/mach/irqs.h
+>> index 9d5cba3..3b035c6 100644
+>> --- a/arch/arm/mach-w90x900/include/mach/irqs.h
+>> +++ b/arch/arm/mach-w90x900/include/mach/irqs.h
+>> @@ -59,7 +59,12 @@
+>>   #define IRQ_KPI		W90X900_IRQ(29)
+>>   #define IRQ_P2SGROUP	W90X900_IRQ(30)
+>>   #define IRQ_ADC		W90X900_IRQ(31)
+>> +
+>> +#if !defined(CONFIG_SOC_NUC900)
+>>   #define NR_IRQS		(IRQ_ADC+1)
+>> +#else
+>> +#define NR_IRQS		62
+>> +#endif
+>
+> Arnd already covered this...
+>
+>>
+>>   /*for irq group*/
+>>
+>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>> index 38853a1..9ccd5af8a 100644
+>> --- a/drivers/irqchip/Makefile
+>> +++ b/drivers/irqchip/Makefile
+>> @@ -69,3 +69,4 @@ obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
+>>   obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
+>>   obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
+>>   obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
+>> +obj-$(CONFIG_SOC_NUC970)		+= irq-nuc900.o
+>> diff --git a/drivers/irqchip/irq-nuc900.c b/drivers/irqchip/irq-nuc900.c
+>> new file mode 100644
+>> index 0000000..c4b2e39
+>> --- /dev/null
+>> +++ b/drivers/irqchip/irq-nuc900.c
+>> @@ -0,0 +1,150 @@
+>> +/*
+>> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
+>> + *
+>> + * The code contained herein is licensed under the GNU General Public
+>> + * License. You may obtain a copy of the GNU General Public License
+>> + * Version 2 or later at the following locations:
+>> + *
+>> + * http://www.opensource.org/licenses/gpl-license.html
+>> + * http://www.gnu.org/copyleft/gpl.html
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/init.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/irqchip.h>
+>> +#include <linux/irqdomain.h>
+>> +#include <linux/io.h>
+>> +#include <linux/ioport.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +
+>> +#include <asm/exception.h>
+>> +#include <asm/hardirq.h>
+>> +
+>> +#define	REG_AIC_SCR1	0x00
+>> +#define	REG_AIC_SCR2	0x04
+>> +#define	REG_AIC_SCR3	0x08
+>> +#define	REG_AIC_SCR4	0x0C
+>> +#define	REG_AIC_SCR5	0x10
+>> +#define	REG_AIC_SCR6	0x14
+>> +#define	REG_AIC_SCR7	0x18
+>> +#define	REG_AIC_SCR8	0x1C
+>> +#define	REG_AIC_SCR9	0x20
+>> +#define	REG_AIC_SCR10	0x24
+>> +#define	REG_AIC_SCR11	0x28
+>> +#define	REG_AIC_SCR12	0x2C
+>> +#define	REG_AIC_SCR13	0x30
+>> +#define	REG_AIC_SCR14	0x34
+>> +#define	REG_AIC_SCR15	0x38
+>> +#define	REG_AIC_IRSR	0x100
+>> +#define	REG_AIC_IRSRH	0x104
+>> +#define	REG_AIC_IASR	0x108
+>> +#define	REG_AIC_IASRH	0x10C
+>> +#define	REG_AIC_ISR	0x110
+>> +#define	REG_AIC_ISRH	0x114
+>> +#define	REG_AIC_IPER	0x118
+>> +#define	REG_AIC_ISNR	0x120
+>> +#define	REG_AIC_OISR	0x124
+>> +#define	REG_AIC_IMR	0x128
+>> +#define	REG_AIC_IMRH	0x12C
+>> +#define	REG_AIC_MECR	0x130
+>> +#define	REG_AIC_MECRH	0x134
+>> +#define	REG_AIC_MDCR	0x138
+>> +#define	REG_AIC_MDCRH	0x13C
+>> +#define	REG_AIC_SSCR	0x140
+>> +#define	REG_AIC_SSCRH	0x144
+>> +#define	REG_AIC_SCCR	0x148
+>> +#define	REG_AIC_SCCRH	0x14C
+>> +#define	REG_AIC_EOSCR	0x150
+>
+> Please remove unused defines.
+
+Okay.
+
+>
+>> +
+>> +static void __iomem *aic_base;
+>> +static struct irq_domain *aic_domain;
+>> +
+>> +static void nuc900_irq_mask(struct irq_data *d)
+>> +{
+>> +	if (d->irq < 32)
+>> +		writel(1 << (d->irq), aic_base + REG_AIC_MDCR);
+>> +	else
+>> +		writel(1 << (d->irq - 32), aic_base + REG_AIC_MDCRH);
+>> +}
+>> +
+>> +static void nuc900_irq_ack(struct irq_data *d)
+>> +{
+>> +	writel(0x01, aic_base + REG_AIC_EOSCR);
+>> +}
+>> +
+>> +static void nuc900_irq_unmask(struct irq_data *d)
+>> +{
+>> +	if (d->irq < 32)
+>> +		writel(1 << (d->irq), aic_base + REG_AIC_MECR);
+>> +	else
+>> +		writel(1 << (d->irq - 32), aic_base + REG_AIC_MECRH);
+>> +}
+>> +
+>> +static struct irq_chip nuc900_irq_chip = {
+>> +	.irq_ack	= nuc900_irq_ack,
+>> +	.irq_mask	= nuc900_irq_mask,
+>> +	.irq_unmask	= nuc900_irq_unmask,
+>> +};
+>> +
+>> +void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
+>> +{
+>> +	u32 hwirq;
+>> +
+>> +	hwirq = readl(aic_base + REG_AIC_IPER);
+>> +	hwirq = readl(aic_base + REG_AIC_ISNR);
+>> +	if (!hwirq)
+>> +		writel(0x01, aic_base + REG_AIC_EOSCR);
+>
+> Could you explain what's going on here?
+
+AIC_IPER, When the AIC generates the interrupt, VECTOR represents the 
+interrupt channel number that is active, enabled, and has the highest 
+priority.
+
+The value of VECTOR is copied to the register AIC_ISNR thereafter by the 
+AIC. This register was restored a value 0 after it was read by the
+interrupt handler.
+
+So I must read two registers for one irq number, after read IPER, the 
+ISNR(bit0:5) will be updated. ISNR value has no need do offset, it is 
+better than read IPER(bit2:7).
+
+“writel(0x01, aic_base + REG_AIC_EOSCR);”　seems not necessary here, 
+since irqchip has the ack interface. I will remove it.
+
+This AIC_EOSCR register is used by the interrupt service routine to 
+indicate that it is completely served. Thus, the
+interrupt handler can write any value to this register to indicate the 
+end of its interrupt service.
+
+>
+>> +
+>> +	handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
+>> +}
+>> +
+>> +static int aic_irq_domain_map(struct irq_domain *d, unsigned int virq,
+>> +			      irq_hw_number_t hw)
+>> +{
+>> +	irq_set_chip_and_handler(virq, &nuc900_irq_chip, handle_level_irq);
+>> +	irq_clear_status_flags(virq, IRQ_NOREQUEST);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct irq_domain_ops aic_irq_domain_ops = {
+>> +	.map = aic_irq_domain_map,
+>> +	.xlate = irq_domain_xlate_onecell,
+>> +};
+>> +
+>> +static int __init aic_of_init(struct device_node *node,
+>> +			      struct device_node *parent)
+>> +{
+>> +	int ret;
+>> +
+>> +	aic_base = of_iomap(node, 0);
+>> +	if (!aic_base) {
+>> +		ret = -ENOMEM;
+>> +		pr_err("%s: unable to map registers\n", node->full_name);
+>> +		goto err_iomap;
+>> +	}
+>> +
+>> +	writel(0xFFFFFFFC, aic_base + REG_AIC_MDCR);
+>> +	writel(0xFFFFFFFF, aic_base + REG_AIC_MDCRH);
+>> +
+>> +	aic_domain = irq_domain_add_linear(node, NR_IRQS,
+>> +					   &aic_irq_domain_ops, NULL);
+>> +
+>> +	if (!aic_domain) {
+>> +		ret = -ENOMEM;
+>> +		pr_err("%s: unable to create IRQ domain\n", node->full_name);
+>> +		goto err_aic_domain;
+>> +	}
+>> +
+>> +	set_handle_irq(aic_handle_irq);
+>> +	return 0;
+>> +
+>> +err_aic_domain:
+>> +	iounmap(aic_base);
+>> +err_iomap:
+>> +	return ret;
+>> +}
+>> +
+>> +IRQCHIP_DECLARE(nuc900, "nuvoton,nuc900-aic", aic_of_init);
+>
+> afaict, there is no 'nuc900', that's a family.  If so, this compatible
+> needs to be 'nuvoton,nuc970-aic'.
+>
+
+IRQCHIP_DECLARE(nuvoton, "nuvoton,nuc900-aic", aic_of_init);, change 
+nuc900 to nuvoton, ok?
+
+> thx,
+>
+> Jason.
+>
+>
