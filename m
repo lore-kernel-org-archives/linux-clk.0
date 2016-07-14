@@ -1,158 +1,76 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Julien Grall <julien.grall@arm.com>, "Dirk Behme" <dirk.behme@de.bosch.com>,
- linux-arm-kernel@lists.infradead.org, "Mark Rutland" <mark.rutland@arm.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <577F73B3.8090807@arm.com>
-Cc: xen-devel@lists.xenproject.org, devicetree@vger.kernel.org,
- "Stefano Stabellini" <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
- "Stephen Boyd" <sboyd@codeaurora.org>
-References: <1467963871-31556-1-git-send-email-dirk.behme@de.bosch.com>
- <577F73B3.8090807@arm.com>
-Message-ID: <146799758568.73491.4432005583661196579@resonance>
-Subject: Re: [PATCH v3] xen/arm: enable clocks used by the hypervisor
-Date: Fri, 08 Jul 2016 10:06:25 -0700
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+In-Reply-To: <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
+Message-Id: <E1bNjZN-0001qI-NZ@debutante>
+Date: Thu, 14 Jul 2016 17:33:01 +0100
+Subject: Applied "spi: s3c64xx: add exynos5433 spi compatible" to the spi tree
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Julien Grall (2016-07-08 02:34:43)
-> Hi Dirk,
-> =
+The patch
 
-> On 08/07/16 08:44, Dirk Behme wrote:
-> > Xen hypervisor drivers might replace native OS drivers. The result is
-> > that some important clocks that are enabled by the OS in the non-Xen
-> > case are not properly enabled in the presence of Xen. The clocks
-> > property enumerates the clocks that must be enabled by the Xen clock
-> > consumer.
-> >
-> > An example is a serial driver enabled by the hypervisor. Xen must
-> =
+   spi: s3c64xx: add exynos5433 spi compatible
 
-> I would say "An example is the UART used by the hypervisor."
-> =
+has been applied to the spi tree at
 
-> > consume and enable these clocks in the OS to ensure behavior continues
-> > after firmware configures the UART hardware and corresponding clock
-> > harder.
-> =
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-> What do you mean by "harder"?
-> =
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> Also, relying on DOM0 to enable the clock looks very wrong to me and you =
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> give an example which prove that. The UART will be used before hand by =
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> Xen, however it will not be possible to use it if you expect DOM0 to =
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> enable the clock (or even modify the clock frequency).
-> =
+Thanks,
+Mark
 
-> The clock should be enabled either by the firmware or Xen. But not DOM0. =
+>From c068042bf0872c9121f4a6eab281dd63f61df5d3 Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Tue, 12 Jul 2016 19:02:10 +0900
+Subject: [PATCH] spi: s3c64xx: add exynos5433 spi compatible
 
-> DOM0 should not touch this clock at all.
-> =
+The samsung,exynos5433-spi has some peculiarities that bring the
+need of creating a new compatible in the binding.
 
-> Furthermore, this property could be used for clock associated to device =
+One of those is the 3-clocks controller management where the spi
+is fed with three clocks: "spi", "busclkN" and "ioclk".
 
-> that will be passthrough-ed to a guest. In this case, the clock would be =
+By adding the exynos5433-spi, we deprecate the exynos7 compatible
+and discourage its use.
 
-> enabled even if the device is not in use which will result more power =
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> consumption.
-
-Is there a need to pass clock references through to guests? If so the
-unmerged CLK_ENABLE_HAND_OFF[0] feature might be useful to you? If this
-flag is set on a given clk, it will be enabled at the time it is
-registered by the clk provider driver, and it's enable_count reference
-counter will be "handed off" to the first consumer that calls clk_get()
-and clk_prepare_enable() on it. This means the clock CAN be gated by
-it's proper driver, but it will be enabled at boot time as well.
-
-This is useful for use cases like splash screens where the bootloader
-configures the display and plays some animation, and we want the linux
-kernel to take over the display controller hardware without cutting
-clocks, blanking or reseting it. Handing off the clock reference count
-helps achieve this.
-
-[0] lkml.kernel.org/g/1455225554-13267-1-git-send-email-mturquette@baylibre=
-.com
-
-Regards,
-Mike
-
-> =
-
-> >
-> > Up to now, the workaround for this has been to use the Linux kernel
-> > command line parameter 'clk_ignore_unused'. See Xen bug
-> >
-> > http://bugs.xenproject.org/xen/bug/45
-> >
-> > too.
-> >
-> > To fix this, we will add the "unused" clocks in Xen to the hypervisor
-> > node. The OS has to consume and enable the clocks from the hypervisor
-> > node, then.
-> >
-> > Therefore, check if there is a "clocks" entry in the hypervisor node
-> > and if so consume and enable the given clocks. This prevents the clocks
-> > from being disabled by the OS.
-> >
-> > Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> > ---
-> > Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
-> >
-> > Changes in v2: Drop the Linux implementation details like clk_disable_u=
-nused
-> >              in xen.txt.
-> >
-> >   Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
-> >   arch/arm/xen/enlighten.c                      | 47 ++++++++++++++++++=
-+++++++++
-> >   2 files changed, 60 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentat=
-ion/devicetree/bindings/arm/xen.txt
-> > index c9b9321..00f2165 100644
-> > --- a/Documentation/devicetree/bindings/arm/xen.txt
-> > +++ b/Documentation/devicetree/bindings/arm/xen.txt
-> > @@ -17,6 +17,19 @@ the following properties:
-> >     A GIC node is also required.
-> >     This property is unnecessary when booting Dom0 using ACPI.
-> >
-> > +Optional properties:
-> > +
-> > +clocks: one or more clocks to be enabled
-> > +  Xen hypervisor drivers might replace native OS drivers. The result is
-> =
-
-> "native OS" has no meaning on Xen. This seems to be a cumbersome way to =
-
-> say that the device will be used by the hypervisor and hidden to DOM0 =
-
-> (aka hardware domain).
-> =
-
-> > +  that some important clocks that are enabled by the OS in the non-Xen
-> > +  case are not properly enabled in the presence of Xen. The clocks
-> > +  property enumerates the clocks that must be enabled by the Xen clock
-> > +  consumer.
-> > +  An example is a serial driver enabled by the hypervisor. Xen must
-> > +  consume and enable these clocks in the OS to ensure behavior continu=
-es
-> > +  after firmware configures the UART hardware and corresponding clock
-> > +  harder.
-> > +
-> >   To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "=
-uefi" node
-> >   under /hypervisor with following parameters:
-> =
-
-> Regards,
-> =
-
-> -- =
-
-> Julien Grall
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index 930bc7349271..ab4f0a46e859 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -9,7 +9,8 @@ Required SoC Specific Properties:
+     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
+     - samsung,s3c6410-spi: for s3c6410 platforms
+     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
+-    - samsung,exynos7-spi: for exynos7 platforms
++    - samsung,exynos5433-spi: for exynos5433 compatible controllers
++    - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
+ 
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+-- 
+2.8.1
