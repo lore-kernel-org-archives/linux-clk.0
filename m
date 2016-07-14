@@ -1,103 +1,56 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 15:41:38 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-Message-ID: <20160725134138.GL21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
- <20160725111443.GB21170@ulmo.ba.sec>
- <CALw8SCU5s8BAg6B8dT=QokY-D-CcokmMEkYqz1GJWHkX-XWpRQ@mail.gmail.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 14 Jul 2016 17:25:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Message-ID: <20160714162508.GC30372@sirena.org.uk>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-2-git-send-email-andi.shyti@samsung.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UUBKWyapWpFAak7q"
-In-Reply-To: <CALw8SCU5s8BAg6B8dT=QokY-D-CcokmMEkYqz1GJWHkX-XWpRQ@mail.gmail.com>
+	protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
+In-Reply-To: <1468317736-18841-2-git-send-email-andi.shyti@samsung.com>
+Subject: Re: [PATCH v3 1/7] bindings: spi-samsung: add exynos5433 spi
+ compatible
 List-ID: <linux-clk.vger.kernel.org>
 
 
---UUBKWyapWpFAak7q
+--i7F3eY7HS/tUJxUd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 25, 2016 at 02:17:11PM +0200, Mirza Krak wrote:
-> 2016-07-25 13:14 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> > On Tue, Jul 19, 2016 at 03:36:37PM +0200, Mirza Krak wrote:
-[...]
-> >> +
-> >> +     if (of_get_child_count(of_node))
-> >> +             ret =3D of_platform_populate(of_node,
-> >> +                                of_default_bus_match_table,
-> >> +                                NULL, &pdev->dev);
-> >
-> > Why the extra check? of_platform_populate() is almost a no-op if there
-> > aren't any children anyway. What it will do is set the OF_POPULATED_BUS
-> > flag, but I think we want that irrespective of whether or not there are
-> > any children.
-> >
-> > Was there any problem with calling it unconditionally that made you opt
-> > for the extra check?
->=20
-> I have not tested calling it unconditionally. Used another driver as
-> reference and they had that condition (drivers/bus/imx-weim.c), that
-> driver does not mention why the condition is there. But will test
-> removing the condition and see what happens.
+On Tue, Jul 12, 2016 at 07:02:10PM +0900, Andi Shyti wrote:
+> The samsung,exynos5433-spi has some peculiarities that bring the
+> need of creating a new compatible in the binding.
 
-If that works fine for Tegra, it might be a good idea to get rid of the
-call in the imx-weim.c driver, too.
+Please submit patches using subject lines reflecting the style for the
+subsystem.  This makes it easier for people to identify relevant
+patches.
 
-> >> +static struct platform_driver nor_driver =3D {
-> >> +     .driver =3D {
-> >> +             .name           =3D "tegra-nor",
-> >> +             .of_match_table =3D nor_id_table,
-> >> +     },
-> >> +};
-> >> +module_platform_driver_probe(nor_driver, nor_probe);
-> >> +
-> >> +MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
-> >> +MODULE_DESCRIPTION("NVIDIA Tegra NOR Bus Driver");
-> >> +MODULE_LICENSE("GPL");
-> >
-> > You're header comment says GPL version 2, which means that the
-> > MODULE_LICENSE needs to be "GPL v2". "GPL" means "version 2 or later".
->=20
-> Ok, I do not really mind it being GPL version 2 or later so will
-> change the header comment instead if that is ok.
-
-I think "GPL v2" is traditionally more common in kernel code, but as the
-author the decision is obviously yours.
-
-Thierry
-
---UUBKWyapWpFAak7q
+--i7F3eY7HS/tUJxUd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXlhcSAAoJEN0jrNd/PrOhxrkQAKIfNnJW/ScRBGHbRXFNx76t
-jew18H44Px4L2AEbbWXwHFvflQ3TQ3n5M0wL7hu30lvbVh3oKMg80476HMnveUP2
-rV9rWmMRIAWL7yBGdDGWE/b8g9NvT7oteLxPcHq0+uWhq0W7nnfdNNeoeJ/MHClA
-XK0cN9/aBXn7ozo1nYXCcq7cxxPzYUmAvLMbwgawcX7YaY131QGNP+7w13sti3P+
-H7Tro+MJLzwReJNG9q047oBCTrITXvx8Kt91ujQKjI+u0ZmxKjmIaVaNIch0olHu
-9VgtorPZwOjPhAfS6K1zTlHHTUok0QPCd7rNhkXp/qi2aPB9Kksdk0LAVRS0lXln
-vsLe25Fdn+y8jxTLrwzFNcKD3gWzUwxFOVVffoRWN+OywoPpY2zqCBQflGDqfC7u
-2YUgyw7XVzCuVfJRqIT7jMdM3Cr0nrWW1OnSj29DPgAZRxKeMmiDN1GA2b6CZfPS
-SngKBNgEUPoXo8sc8lTp/ytwXIys7smgf3yyO/D0hXyUCiRa0h6mLhqzNF5lbZvo
-Gqo6MHqayGaZt0x67FlssSEWic+nGup55QPEyEFTZ9C3N7tOdV+w+yTPiRehWr/Z
-MsbvT94eMiBnc+Qxc3gtqGPOC8/Wdbsgu+ZE79GW7UXWjls8bYMuOfD69WuvuoFk
-0podG/7XHyb2nBwLheW1
-=yf9T
+iQEcBAEBCAAGBQJXh7zjAAoJECTWi3JdVIfQDbkH/3qGA8XtUod1SM+hB2IEk+OJ
+4xKFKYyd1GwX74Irt6Roa/9Nk2892Kht0YVLUPxjXO44e5qwTJ4NCUNSUU07nRY/
+AmjhkAPCJQ704MBXf7PKpOW57ki5V924t6tWfP1WlIXjHLmrrBKBPNIybuA8GEY5
+w4bK73yzBcztyP/smyQV+sjjkVYB4AG2h2eBIOICV8TYWM92tgZASN5zzcSBmJGf
+4oNp2XT1J0njKcJphdn4issLYidvHJaCHpRGSQ/X9MkjC2xvkr4FL3T1A66AfouI
+5i0vocaZV7WrswcyvvJrt1HQB0lfj9uONBujmW60amYrX4066691UfqQRzo6giU=
+=sOsR
 -----END PGP SIGNATURE-----
 
---UUBKWyapWpFAak7q--
+--i7F3eY7HS/tUJxUd--
