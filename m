@@ -1,43 +1,84 @@
-Return-Path: <ricardo.ribalda@gmail.com>
-Return-Path: <ricardo.ribalda@gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 5/8] clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Tue,  5 Jul 2016 18:23:30 +0200
-Message-Id: <1467735814-23518-7-git-send-email-ricardo.ribalda@gmail.com>
-In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+In-Reply-To: <1467989201-14661-5-git-send-email-andi.shyti@samsung.com>
+Message-Id: <E1bNjZE-0001mT-Vp@debutante>
+Date: Thu, 14 Jul 2016 17:32:52 +0100
+Subject: Applied "spi: s3c64xx: use error code from clk_prepare_enable()" to the spi tree
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver initializes a clock provider via sun8i_a23_apb0_setup
-and then continues the initialization on sun8i_a23_apb0_clk_probe.
+The patch
 
-Use the new macro to notify the clk subsystem about this behaviour.
+   spi: s3c64xx: use error code from clk_prepare_enable()
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 25981d8281ee4cbbd6f7c5bc0f8c048ad9548037 Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Tue, 12 Jul 2016 19:02:13 +0900
+Subject: [PATCH] spi: s3c64xx: use error code from clk_prepare_enable()
+
+If clk_prepare_enable() fails do not return -EBUSY but use the
+value provided by the function itself.
+
+Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/sunxi/clk-sun8i-apb0.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-sun8i-apb0.c
-index 2ea61debffc1..b6be5d2d9440 100644
---- a/drivers/clk/sunxi/clk-sun8i-apb0.c
-+++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
-@@ -82,8 +82,8 @@ err_unmap:
- 	of_address_to_resource(node, 0, &res);
- 	release_mem_region(res.start, resource_size(&res));
- }
--CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
--	       sun8i_a23_apb0_setup);
-+CLK_OF_DECLARE_DRIVER(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
-+		      sun8i_a23_apb0_setup);
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 0a93eb98c2b6..3d21f8a35837 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1133,9 +1133,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err_deref_master;
+ 	}
  
- static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
- {
+-	if (clk_prepare_enable(sdd->clk)) {
++	ret = clk_prepare_enable(sdd->clk);
++	if (ret) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
+-		ret = -EBUSY;
+ 		goto err_deref_master;
+ 	}
+ 
+@@ -1148,9 +1148,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
+-	if (clk_prepare_enable(sdd->src_clk)) {
++	ret = clk_prepare_enable(sdd->src_clk);
++	if (ret) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
+-		ret = -EBUSY;
+ 		goto err_disable_clk;
+ 	}
+ 
 -- 
 2.8.1
