@@ -1,153 +1,141 @@
-Return-Path: <dirk.behme@gmail.com>
-Return-Path: <dirk.behme@gmail.com>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-To: Stefano Stabellini <sstabellini@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Julien Grall <julien.grall@arm.com>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
- <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
- <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
- <146914607316.8780.7961396342647226841@resonance>
- <alpine.DEB.2.10.1607211804000.6667@sstabellini-ThinkPad-X260>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>, Mark Rutland
- <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>, xen-devel@lists.xenproject.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Dirk Behme <dirk.behme@gmail.com>
-Message-ID: <dbd46fe5-6f53-d11e-6363-a2c9905d6c8e@gmail.com>
-Date: Wed, 27 Jul 2016 07:05:37 +0200
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1607211804000.6667@sstabellini-ThinkPad-X260>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <njaigane@codeaurora.org>
+From: njaigane@codeaurora.org
+To: linux-arm-msm@vger.kernel.org
+Cc: linux@qca.qualcomm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	twp@codeaurora.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	plai@codeaurora.org,
+	bgoswami@codeaurora.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	bjorn.andersson@linaro.org,
+	varada@codeaurora.org,
+	pradeepb@codeaurora.org,
+	snlakshm@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	bselvara@codeaurora.org,
+	Jaiganesh Narayanan <njaigane@codeaurora.org>
+Subject: [PATCH 0/4] Qualcomm IPQ4019 Audio driver addition
+Date: Fri, 15 Jul 2016 12:37:02 +0530
+Message-Id: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael, Stefano and Julien,
+From: Jaiganesh Narayanan <njaigane@codeaurora.org>
 
-On 22.07.2016 03:16, Stefano Stabellini wrote:
-> On Thu, 21 Jul 2016, Michael Turquette wrote:
->> Quoting Stefano Stabellini (2016-07-14 03:38:04)
->>> On Thu, 14 Jul 2016, Dirk Behme wrote:
->>>> On 13.07.2016 23:03, Michael Turquette wrote:
->>>>> Quoting Dirk Behme (2016-07-13 11:56:30)
->>>>>> On 13.07.2016 20:43, Stefano Stabellini wrote:
->>>>>>> On Wed, 13 Jul 2016, Dirk Behme wrote:
->>>>>>>> On 13.07.2016 00:26, Michael Turquette wrote:
->>>>>>>>> Quoting Dirk Behme (2016-07-12 00:46:45)
->>>>>>>>>> Clocks described by this property are reserved for use by Xen, and
->>>>>>>>>> the OS
->>>>>>>>>> must not alter their state any way, such as disabling or gating a
->>>>>>>>>> clock,
->>>>>>>>>> or modifying its rate. Ensuring this may impose constraints on
->>>>>>>>>> parent
->>>>>>>>>> clocks or other resources used by the clock tree.
->>>>>>>>>
->>>>>>>>> Note that clk_prepare_enable will not prevent the rate from changing
->>>>>>>>> (clk_set_rate) or a parent from changing (clk_set_parent). The only
->>>>>>>>> way
->>>>>>>>> to do this currently would be to set the following flags on the
->>>>>>>>> effected
->>>>>>>>> clocks:
->>>>>>>>>
->>>>>>>>>     CLK_SET_RATE_GATE
->>>>>>>>>     CLK_SET_PARENT_GATE
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> Regarding setting flags, I think we already talked about that. I think
->>>>>>>> the
->>>>>>>> conclusion was that in our case its not possible to manipulate the
->>>>>>>> flags in
->>>>>>>> the OS as this isn't intended to be done in cases like ours. Therefore
->>>>>>>> no API
->>>>>>>> is exported for this.
->>>>>>>>
->>>>>>>> I.e. if we need to set these flags, we have to do that in Xen where we
->>>>>>>> add the
->>>>>>>> clocks to the hypervisor node in the device tree. And not in the
->>>>>>>> kernel patch
->>>>>>>> discussed here.
->>>>>>>
->>>>>>> These are internal Linux flags, aren't they?
->>>>>>
->>>>>>
->>>>>> I've been under the impression that you can set clock "flags" via the
->>>>>> device tree. Seems I need to re-check that ;)
->>>>>
->>>>> Right, you cannot set flags from the device tree. Also, setting these
->>>>> flags is done by the clock provider driver, not a consumer. Xen is the
->>>>> consumer.
->>>>
->>>>
->>>> Ok, thanks, then I think we can forget about using flags for the issue we are
->>>> discussing here.
->>>>
->>>> Best regards
->>>>
->>>> Dirk
->>>>
->>>> P.S.: Would it be an option to merge the v4 patch we are discussing here,
->>>> then? From the discussion until here, it sounds to me that it's the best
->>>> option we have at the moment. Maybe improving it in the future, then.
->>>
->>> It might be a step in the right direction, but it doesn't really prevent
->>> clk_set_rate from changing properties of a clock owned by Xen.  This
->>> patch is incomplete. We need to understand at least what it would take
->>> to have a complete solution.
->>>
->>> Michael, do you have any suggestions on how it would be possible to set
->>> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
->>> way?
->>
->> No, there is no way for a consumer to do that. The provider must do it.
->
-> All right. But could we design a new device tree binding which the Xen
-> hypervisor would use to politely ask the clock provider in Linux to set
-> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for a given clock?
->
-> Xen would have to modify the DTB before booting Linux with the new
-> binding.
->
->
->>> Like you wrote, I would imagine it needs to be done by the clock
->>> provider driver. Maybe to do that, it would be easier to have a new
->>> device tree property on the clock node, rather than listing phandle and
->>> clock-specifier pairs under the Xen node?
->>
->> Upon further reflection, I think that your clock consumer can probably
->> use clk_set_rate_range() to "lock" in a rate. This is good because it is
->> exactly what a clock consumer should do:
->>
->> 1) get the clk
->> 2) enable the clk
->> 3) set the required rate for the clock
->> 4) set rate range constraints, or conversely,
->> 5) lock in an exact rate; set the min/max rate to the same value
->>
->> The problem with this solution is that it requires the consumer to have
->> knowledge of the rates that it wants for that clock, which I guess is
->> something that Linux kernels in a Xen setup do not want/need?
->
-> Who is usually the component with knowledge of the clock rate to set? If
-> it's a device driver, then neither the Xen hypervisor, nor the Xen core
-> drivers in Linux would know anything about it. (Unless the clock rate is
-> specified on device tree via assigned-clock-rates of course.)
->
->
->> Is it correct that you would prefer some sort of never_touch_this_clk()
->> api?
->
->>From my understading, yes, never_touch_this_clk() would make things easier.
+These patches add the support for Qualcomm IPQ4019 ASoC
+with the ALSA based audio drivers. The patches are broken
 
+1. Device Tree support
+2. Audio clock driver support
+3. TLMM / Pinctrl support
+4. ALSA based audio drivers
 
-Would it be somehow worth to wait for anything like this 
-never_touch_this_clk() api? Or should we try to proceed with 
-clk_prepare_enable() like done in this patch for the moment?
+Jaiganesh Narayanan (4):
+  qcom: ipq4019: Add ipq4019 ASoC device tree changes
+  qcom: ipq4019: ASoC clock driver support
+  qcom: ipq4019: ASoC tlmm/pinctrl support
+  qcom: ipq4019: Add ASoC driver modules
 
-Best regards
+ .../bindings/sound/qca,ipq4019-audio-adss.txt      |  20 +
+ .../bindings/sound/qca,ipq4019-audio.txt           |  13 +
+ .../bindings/sound/qca,ipq4019-codec.txt           |  15 +
+ .../devicetree/bindings/sound/qca,ipq4019-i2s.txt  |  33 +
+ .../devicetree/bindings/sound/qca,ipq4019-i2s1.txt |  29 +
+ .../devicetree/bindings/sound/qca,ipq4019-i2s2.txt |  29 +
+ .../devicetree/bindings/sound/qca,ipq4019-mbox.txt |  23 +
+ .../bindings/sound/qca,ipq4019-pcm-i2s.txt         |  15 +
+ .../bindings/sound/qca,ipq4019-pcm-i2s1.txt        |  15 +
+ .../bindings/sound/qca,ipq4019-pcm-i2s2.txt        |  15 +
+ .../bindings/sound/qca,ipq4019-pcm-spdif.txt       |  15 +
+ .../bindings/sound/qca,ipq4019-pcm-tdm.txt         |  15 +
+ .../bindings/sound/qca,ipq4019-spdif.txt           |  35 +
+ .../bindings/sound/qca,ipq4019-stereo.txt          |  17 +
+ .../devicetree/bindings/sound/qca,ipq4019-tdm.txt  |  33 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi      | 195 ++++-
+ arch/arm/boot/dts/qcom-ipq4019.dtsi                | 247 +++++-
+ drivers/clk/qcom/Kconfig                           |   8 +
+ drivers/clk/qcom/Makefile                          |   2 +
+ drivers/clk/qcom/adcc-ipq4019.c                    | 700 +++++++++++++++++
+ drivers/clk/qcom/clk-qcapll.c                      | 197 +++++
+ drivers/clk/qcom/clk-qcapll.h                      |  60 ++
+ drivers/clk/qcom/clk-rcg.h                         |  68 +-
+ drivers/clk/qcom/clk-rcg2.c                        | 699 ++++++++++++++++-
+ drivers/clk/qcom/common.c                          |   9 +-
+ drivers/clk/qcom/common.h                          |   3 +-
+ drivers/pinctrl/qcom/pinctrl-ipq4019.c             | 116 ++-
+ include/dt-bindings/clock/qca,adcc-ipq4019.h       |  45 ++
+ include/dt-bindings/clock/qcom,gcc-ipq4019.h       |   4 +-
+ include/dt-bindings/sound/ipq4019-audio.h          |  37 +
+ sound/soc/qcom/Kconfig                             |  47 ++
+ sound/soc/qcom/Makefile                            |   1 +
+ sound/soc/qcom/ipq4019/Makefile                    |  16 +
+ sound/soc/qcom/ipq4019/ipq4019-adss.c              | 407 ++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-adss.h              | 432 +++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-codec.c             | 475 ++++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-codec.h             |  91 +++
+ sound/soc/qcom/ipq4019/ipq4019-cpu-dai.c           | 687 +++++++++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-mbox.c              | 825 +++++++++++++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-mbox.h              | 146 ++++
+ sound/soc/qcom/ipq4019/ipq4019-pcm-i2s.c           | 609 +++++++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-pcm-spdif.c         | 664 +++++++++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-pcm-tdm.c           | 609 +++++++++++++++
+ sound/soc/qcom/ipq4019/ipq4019-pcm.h               |  37 +
+ sound/soc/qcom/ipq4019/ipq4019-stereo.c            | 313 ++++++++
+ sound/soc/qcom/ipq4019/ipq4019.c                   | 121 +++
+ 46 files changed, 8135 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-audio-adss.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-audio.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-codec.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s1.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s2.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-mbox.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s1.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s2.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-spdif.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-tdm.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-spdif.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-stereo.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-tdm.txt
+ create mode 100644 drivers/clk/qcom/adcc-ipq4019.c
+ create mode 100644 drivers/clk/qcom/clk-qcapll.c
+ create mode 100644 drivers/clk/qcom/clk-qcapll.h
+ create mode 100644 include/dt-bindings/clock/qca,adcc-ipq4019.h
+ create mode 100644 include/dt-bindings/sound/ipq4019-audio.h
+ create mode 100644 sound/soc/qcom/ipq4019/Makefile
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-adss.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-adss.h
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-codec.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-codec.h
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-cpu-dai.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-mbox.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-mbox.h
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm-i2s.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm-spdif.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm-tdm.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-pcm.h
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019-stereo.c
+ create mode 100644 sound/soc/qcom/ipq4019/ipq4019.c
 
-Dirk
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
