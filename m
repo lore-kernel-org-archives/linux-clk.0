@@ -1,51 +1,38 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] clk: add a helper function __of_clk_find_provider()
-Date: Tue, 19 Jul 2016 18:21:34 +0900
-Message-Id: <1468920098-8553-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: gxbb: expose CLKID_MMC_PCLK
+References: <20160707033837.20029-1-khilman@baylibre.com>
+	<146794722863.73491.474750140948566962@resonance>
+Date: Fri, 15 Jul 2016 09:48:30 -0700
+In-Reply-To: <146794722863.73491.474750140948566962@resonance> (Michael
+	Turquette's message of "Thu, 07 Jul 2016 20:07:08 -0700")
+Message-ID: <m28tx23l0h.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This helper is useful to find an OF clock provider registered for a
-device node.
+Michael Turquette <mturquette@baylibre.com> writes:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> Quoting Kevin Hilman (2016-07-06 20:38:37)
+>> The MMC_PCLK is needed for the SD/eMMC driver, expose to DT (and comment
+>> out in clk driver)
+>> 
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+>
+> Applied to the same clk-s905 branch if you need to re-pull it as a
+> dependency.
 
- drivers/clk/clk.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Ugh.  Just received some updated documentation, and turns out this clock
+is not used at all. :(
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 484acc2..e8c79a7 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3010,6 +3010,21 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
- EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
- 
- /**
-+ * __of_clk_find_provider - Find a clock provider associated with a device node
-+ * @np: device node to obtain the clock provider for
-+ */
-+static struct of_clk_provider *__of_clk_find_provider(struct device_node *np)
-+{
-+	struct of_clk_provider *cp;
-+
-+	list_for_each_entry(cp, &of_clk_providers, link)
-+		if (cp->node == np)
-+			return cp;
-+
-+	return NULL;
-+}
-+
-+/**
-  * of_clk_add_provider() - Register a clock provider for a node
-  * @np: Device node pointer associated with clock provider
-  * @clk_src_get: callback for decoding clock
--- 
-1.9.1
+Feel free to revert now before it becomes ABI.
+
+Now that I have actual docs, I'll have a new series coming that will
+have the right clock details.
+
+Thanks, and sorry for the noise,
+
+Kevin
