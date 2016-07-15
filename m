@@ -1,109 +1,71 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Hua Jing <jinghua@marvell.com>,  Terry Zhou <bjzhou@marvell.com>
-Subject: Re: [PATCH v3 0/6]  Add clock support for Armada 37xx SoCs
-References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
-Date: Mon, 25 Jul 2016 18:33:58 +0200
-In-Reply-To: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Tue, 19 Jul 2016 15:42:16 +0200")
-Message-ID: <878twppthl.fsf@free-electrons.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 15 Jul 2016 13:52:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: njaigane@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	twp@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org,
+	bgoswami@codeaurora.org, lgirdwood@gmail.com, perex@perex.cz,
+	tiwai@suse.com, bjorn.andersson@linaro.org, varada@codeaurora.org,
+	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	alsa-devel@alsa-project.org, bselvara@codeaurora.org
+Message-ID: <20160715125226.GJ30372@sirena.org.uk>
+References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
+ <1468566426-19598-5-git-send-email-njaigane@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
+In-Reply-To: <1468566426-19598-5-git-send-email-njaigane@codeaurora.org>
+Subject: Re: [PATCH 4/4] qcom: ipq4019: Add ASoC driver modules
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike and Stephen,
 
- On mar., juil. 19 2016, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+--72k7VsmfIboquFwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Hi,
->
-> this is the third version of the series adding clock support for the
-> Armada 37xx SoCs.
->
-> The main change is the use of static data for the peripheral clocks
-> when possible, it lead to a use of many macro to define all the needed
-> variables.
->
-> The design of the drivers is as close as possible as the hardware is,
-> with some clocks made of several layers: muxing, divider and gating.
->
-> The device tree binding was written in a way that even if we discover
-> some change inside the clocks, the binding should not be
-> affected. Especially, there are some holes in the clocks, but we
-> should be able to add them seamless.
->
-> The full series is available on the branch Armada-3700-Clocks-v3 at
-> git@github.com:MISL-EBU-System-SW/mainline-public.git
+On Fri, Jul 15, 2016 at 12:37:06PM +0530, njaigane@codeaurora.org wrote:
 
-I think that with this series I took into account all the comments, do
-you think there is a chance that it will be merged in v4.8?
+>  sound/soc/qcom/Kconfig                     |  47 ++
+>  sound/soc/qcom/Makefile                    |   1 +
+>  sound/soc/qcom/ipq4019/Makefile            |  16 +
+>  sound/soc/qcom/ipq4019/ipq4019-adss.c      | 407 ++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-adss.h      | 432 +++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-codec.c     | 475 +++++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-codec.h     |  91 ++++
+>  sound/soc/qcom/ipq4019/ipq4019-cpu-dai.c   | 687 ++++++++++++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-mbox.c      | 825 +++++++++++++++++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-mbox.h      | 146 +++++
+>  sound/soc/qcom/ipq4019/ipq4019-pcm-i2s.c   | 609 +++++++++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-pcm-spdif.c | 664 +++++++++++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-pcm-tdm.c   | 609 +++++++++++++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019-pcm.h       |  37 ++
+>  sound/soc/qcom/ipq4019/ipq4019-stereo.c    | 313 +++++++++++
+>  sound/soc/qcom/ipq4019/ipq4019.c           | 121 +++++
 
-Thanks,
+This is *far* too big to be a single patch.  Please at the very least
+split this up into one patch per driver, look at the git history of
+other drivers for examples of splitting things up.
 
-Gregory
+--72k7VsmfIboquFwl
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> Thanks,
->
-> Changelog:
->
-> v2 -> v3
->
-> - used marvell,armada-3700-gpio instead of marvell,mvebu-gpio-3700 in
->   the binding as pointed by Thomas,
-> - removed the unnecessary include of clk.h in the 3 drivers, suggested
->   by Mike Turquette
-> - removed the modular reference in the 3 drivers, suggested by Paul
->   Gortmaker
-> - used static data for the peripheral driver when possible, suggested
->   by Mike Turquette
->
-> v1 -> v2
->
-> - Move to clk_hw based registration for the 3 clock driver as
->   requested by Stephen Boyd
-> - Fixed typo noticed by Stephen Boyd
-> - Added const and static when they were missing: suggested by Stephen
->   Boyd
-> - Allocated the driver variable during probe instead of using a global
->   one as requested by Stephen Boyd
-> - Managed the failure of the of_clk_add_hw_provider call
-> - Added the Acked-by from Rob Herring on the dt binding patchs
->
->
->
-> Gregory CLEMENT (6):
->   dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
->   clk: mvebu: Add the xtal clock for Armada 3700 SoC
->   dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
->   clk: mvebu Add the time base generator clocks for Armada 3700
->   dt-bindings: clock: add DT binding for the peripheral clocks on Armada
->     3700
->   clk: mvebu: Add the peripheral clock driver for Armada 3700
->
->  .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
->  .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
->  .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
->  drivers/clk/mvebu/Kconfig                          |   3 +
->  drivers/clk/mvebu/Makefile                         |   3 +
->  drivers/clk/mvebu/armada-37xx-periph.c             | 449 +++++++++++++++++++++
->  drivers/clk/mvebu/armada-37xx-tbg.c                | 158 ++++++++
->  drivers/clk/mvebu/armada-37xx-xtal.c               |  91 +++++
->  8 files changed, 829 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
->  create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
->  create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
->  create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
->
-> -- 
-> 2.5.0
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+iQEcBAEBCAAGBQJXiNyKAAoJECTWi3JdVIfQMYkH/0ki4MdD67FXcwTsarosZpd5
+71++4YiUIZBWKq7M1/CDhSggI3Eycdik4cMzazRma7VwCloFmSkQwkV7V+Yu4A2x
+cIK+5TI03ATEP1WRVq8dzlCTiH/KCmpNsCtyMzyTUwUhoEKZc/dvqVFEQdoWAfCq
+Fra9AXMCnJ/LVbvzqLGLLMGRTWgBWPYik9H+HQLw9frdC4+nXW5nc0gvDMt0gtTn
+cbsy493NL4ziMGhJMJIePEp3gGbMob83EOCqrqFrO1DUXy/rNPLzqt11aprWHHWr
+aIDlYMrHvC72K0UX6M7ZrBx3pPAO2Hbvp41+d9hx8xHtTKQ55oGpn/9+4SZArqM=
+=2Aie
+-----END PGP SIGNATURE-----
+
+--72k7VsmfIboquFwl--
