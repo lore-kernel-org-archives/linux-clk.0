@@ -1,64 +1,74 @@
-Return-Path: <zajec5@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36843 "EHLO
+	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751080AbcGOVx6 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jul 2016 17:53:58 -0400
 MIME-Version: 1.0
-In-Reply-To: <1e7e8319-d6d5-d952-634d-1ee9b9f2b1a3@broadcom.com>
-References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
- <de0ba9d2-8b2b-b1e8-9235-1b402f0ffec0@broadcom.com> <CACna6rwj=ordfzTri1_iTOK162VjS+1bNVBSKo8p3AshGZun=Q@mail.gmail.com>
- <1e7e8319-d6d5-d952-634d-1ee9b9f2b1a3@broadcom.com>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 29 Jul 2016 22:52:33 +0200
-Message-ID: <CACna6ryOndBTzLL_H+3S01YmWg1Te7T5t2J4tVsxoUtat2xAiw@mail.gmail.com>
-Subject: Re: [PATCH] clk: bcm: Add driver for Northstar ILP clock
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 16 Jul 2016 06:53:56 +0900
+Message-ID: <CA+55aFyi1M72bMn8xKz-btG6BxuSyfY+8FR6gu3Fd5jy7RhbFg@mail.gmail.com>
+Subject: Re: [PATCH] clk: probe common clock drivers earlier
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org,
+	Jay Sternberg <jay.e.sternberg@intel.com>,
+	Jens Axboe <axboe@fb.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	=?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Valentin Rothberg <valentinrothberg@gmail.com>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29 July 2016 at 22:49, Ray Jui <ray.jui@broadcom.com> wrote:
-> On 7/29/2016 1:46 PM, Rafa=C5=82 Mi=C5=82ecki wrote:
->> On 29 July 2016 at 22:44, Ray Jui <ray.jui@broadcom.com> wrote:
->>>
->>> On 7/29/2016 5:58 AM, Rafa=C5=82 Mi=C5=82ecki wrote:
->>>>
->>>>
->>>> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
->>>>
->>>> This clock is present on cheaper Northstar devices like BCM53573 or
->>>> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
->>>> to calculate clock rate and allows using it in a generic (clk_*) way.
->>>>
->>>
->>> I thought Northstar uses Cortex A9 instead of A7?
->>
->>
->> [    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
->> cr=3D10c5387d
->> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
->> instruction cache
->> [    0.000000] Machine model: Tenda AC9
->>
+This is still in my "what happened to this" patch list..
+
+I'm dropping it as I'll be without internet for a week and I'm trying
+to make sure my pile is empty, but I'd like somebody to take a look at
+it (Greg?) since it feels right to me.
+
+             Linus
+
+On Thu, May 5, 2016 at 4:57 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Several SoCs implement platform drivers for clocks rather than
+> CLK_OF_DECLARE().  Clocks should come earlier because they are
+> prerequisites for many of other drivers.  It will help to mitigate
+> EPROBE_DEFER issues.
 >
-> Yeah ARMv7 instruction set but the core is Cortex A7. Both Cortex A7 and =
-A9
-> use ARMv7 instructions.
-
-OK, sorry for irrelevant part then :)
-
-This is from BCM4709C0:
-bcma: bus0: Core 10 found: ARM Cortex A9 core (ihost) (manuf 0x4BF, id
-0x510, rev 0x07, class 0x0)
-
-This is from BCM47189B0::
-bcma: bus0: Core 3 found: ARM CA7 (manuf 0x4BF, id 0x847, rev 0x00, class 0=
-x0)
-
---=20
-Rafa=C5=82
+> Also, drop the comment since it does not look valuable.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  drivers/Makefile | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 8f5d076..a2a4922 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -44,6 +44,7 @@ obj-$(CONFIG_REGULATOR)               += regulator/
+>
+>  # reset controllers early, since gpu drivers might rely on them to initialize
+>  obj-$(CONFIG_RESET_CONTROLLER) += reset/
+> +obj-y                          += clk/
+>
+>  # tty/ comes before char/ so that the VT console is the boot-time
+>  # default.
+> @@ -141,8 +142,6 @@ obj-$(CONFIG_VHOST_RING)    += vhost/
+>  obj-$(CONFIG_VLYNQ)            += vlynq/
+>  obj-$(CONFIG_STAGING)          += staging/
+>  obj-y                          += platform/
+> -#common clk code
+> -obj-y                          += clk/
+>
+>  obj-$(CONFIG_MAILBOX)          += mailbox/
+>  obj-$(CONFIG_HWSPINLOCK)       += hwspinlock/
+> --
+> 1.9.1
+>
