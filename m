@@ -1,74 +1,74 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Mon, 04 Jul 2016 13:20:03 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v3 0/2] mark spi clocks as critical and enable spi3 clocks
-Message-id: <20160704042003.GB23620@samsunx.samsung>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
- <CGME20160704040000epcas1p3aeb0a1337a7e8e7274090bd932f556e3@epcas1p3.samsung.com>
- <CA+Ln22HuCdDr=g06ynK7mqjDfUVrQgG-NRkfTP_zE6h-wZk6Gw@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: 
- <CA+Ln22HuCdDr=g06ynK7mqjDfUVrQgG-NRkfTP_zE6h-wZk6Gw@mail.gmail.com>
+Return-Path: <andy.gross@linaro.org>
+Return-Path: <andy.gross@linaro.org>
+Date: Fri, 15 Jul 2016 15:23:13 -0500
+From: Andy Gross <andy.gross@linaro.org>
+To: njaigane@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	twp@codeaurora.org, david.brown@linaro.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org,
+	bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+	perex@perex.cz, tiwai@suse.com, bjorn.andersson@linaro.org,
+	varada@codeaurora.org, pradeepb@codeaurora.org,
+	snlakshm@codeaurora.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org,
+	bselvara@codeaurora.org
+Subject: Re: [PATCH 3/4] qcom: ipq4019: ASoC tlmm/pinctrl support
+Message-ID: <20160715202313.GA3509@hector.attlocal.net>
+References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
+ <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tomasz,
-
-> > This patchset enables spi3 clocks by marking critical clocks as
-> > CLK_IS_CRITICAL and in the meantime replaces the use of
-> > CLK_IGNORE_UNUSED for spi1 clocks.
-> >
-> > The sclk needs to be considered critical as well.
-> >
-> > The SPI3 in the tm2/tm2e boards will control an irled for remote
-> > controlling.
-> >
-> > Changelog:
-> >
-> > V1 -> V2
-> >  - the "sclk_spi3" doesn't need to be enabled in boot time as it
-> >   is handled by the spi driver itself.
-> >
-> >  - use the CLK_IS_CRITICAL flag for the ioclk
-> >
-> > V2 -> V3
-> >  - some more tests has confirmed taht "sclk_spi1,3" need to be
-> >    enabled as critical!
+On Fri, Jul 15, 2016 at 12:37:05PM +0530, njaigane@codeaurora.org wrote:
+> From: Jaiganesh Narayanan <njaigane@codeaurora.org>
 > 
-> This sounds like a DTS and/or SPI and/or clock driver bug then. I'm
-> pretty much convinced that it might also cause other problems and this
-> workaround will only mask them making things even more difficult to
-> debug in the future. Let's not introduce more technical debt.
+> This patch adds the tlmm/pinctrl support for IPQ4019 ASoC.
+> 
+> Signed-off-by: Jaiganesh Narayanan <njaigane@codeaurora.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-ipq4019.c | 116 +++++++++++++++++++++++++--------
+>  1 file changed, 88 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> index b68ae42..bc22597 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 and
+> @@ -283,6 +283,18 @@ enum ipq4019_functions {
+>  	qca_mux_blsp_uart0,
+>  	qca_mux_blsp_spi1,
+>  	qca_mux_blsp_spi0,
+> +	qca_mux_i2s_rx_mclk,
+> +	qca_mux_i2s_rx_bclk,
+> +	qca_mux_i2s_rx_fsync,
+> +	qca_mux_i2s_rxd,
+> +	qca_mux_i2s_tx_mclk,
+> +	qca_mux_i2s_tx_bclk,
+> +	qca_mux_i2s_tx_fsync,
+> +	qca_mux_i2s_txd1,
+> +	qca_mux_i2s_txd2,
+> +	qca_mux_i2s_txd3,
+> +	qca_mux_i2s_spdif_out,
+> +	qca_mux_i2s_spdif_in,
 
-In principle I agree, but, the upcoming TM2/TM2e boards will have
-the audio codec connected on SPI1 and the ir remote controller on
-the SPI3 (others SPI slots are used as well, but we don't have
-the drivers ready for them).
+You'll also need to add all of these to the
+Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
 
-I followed for SPI3 the same approach as it was done for SPI1, so
-that I see two choices here:
+I was also going to suggest just using qca_i2s and having a single function, but
+it seems like there is at least 1 pin that supports more than one i2s mode.
 
- * reject this patches and cleanup the SPI1 from the "technical
-   debt" and not have anything working on spi.
-
-or
-
- * do for SPI3 the same as it has been done for SPI1 (and as it
-   is now) with its "technical debt".
-
-I did quite an extensive testing on these lines and I don't see
-any other alternative.
-
-Thanks,
-Andi
+Regards,
+Andy
