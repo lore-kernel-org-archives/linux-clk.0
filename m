@@ -1,81 +1,88 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 13:17:35 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Message-ID: <20160725111735.GC21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-2-git-send-email-mirza.krak@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pmta2.delivery5.ore.mailhop.org ([54.186.218.12]:48869 "EHLO
+	pmta2.delivery5.ore.mailhop.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751191AbcGOPpz (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jul 2016 11:45:55 -0400
+Date: Fri, 15 Jul 2016 15:45:51 +0000
+From: Jason Cooper <jason@lakedaemon.net>
+To: Wan ZongShun <mcuos.com@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Wan Zongshun <vw@iommu.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>, p.zabel@pengutronix.de
+Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
+Message-ID: <20160715154551.GF31509@io.lakedaemon.net>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org>
+ <20160714135426.GC31509@io.lakedaemon.net>
+ <5788718E.7080708@iommu.org>
+ <16178876.fFBuoBSjbd@wuerfel>
+ <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f+W+jCU1fRNres8c"
-In-Reply-To: <1468935397-11926-2-git-send-email-mirza.krak@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Jul 15, 2016 at 05:44:50PM +0800, Wan ZongShun wrote:
+> 2016-07-15 15:00 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+> > On Friday, July 15, 2016 1:15:58 PM CEST Wan Zongshun wrote:
+> >>
+> >> Actually, I have two choice to implement this function:
+> >>
+> >> option1:
+> >>
+> >> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
+> >> {
+> >>         u32 hwirq;
+> >>
+> >>         (void)readl(aic_base + REG_AIC_IPER);
+> >>         hwirq = readl(aic_base + REG_AIC_ISNR);
+> >>
+> >>         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
+> >> }
+> >
+> > (side note: I think you want handle_domain_irq())
+> >
+> >> option2:
+> >>
+> >> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
+> >> {
+> >>         u32 hwirq;
+> >>
+> >>         hwirq = readl(aic_base + REG_AIC_IPER);
+> >>         hwirq <<= 2;
+> >>
+> >>         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
+> >> }
+> >>
+> >> Though the option2 do shift for hwirq, but it seems better than do io
+> >> operation by readl,so I prefer to option2, agree?
+> >
+> > That will only return an irq number that is a multiple of four, which
+> > seems wrong since the numbers are not that. Did you mean to write
+> >
+> >         hwirq = ilog2(hwirq);   ?
+> 
+> Sorry, my fault, I mean hwirq >>= 2, bit[7:2] indicates which irq is triggering.
+> so I have to do right shift 2 for IPER value.
 
---f+W+jCU1fRNres8c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, this makes a lot more sense now. :)
 
-On Tue, Jul 19, 2016 at 03:36:32PM +0200, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
->=20
-> Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegr=
-a20.c
-> index 837e5cb..aefc044 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __i=
-nitdata =3D {
->  	{ TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
->  	{ TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
->  	{ TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-> +	{ TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
+> > That assumes that REG_AIC_IPER contains a 32-bit value with one single
+> > bit set to indicate which IRQ was triggered.
+> >
+> > If the difference is only in performance, you could try measuring which
+> > of the two ends up being faster.
+> 
+> It seems hard to measure. I think Do IO operation should be slower
+> than shift 2. :)
 
-Yay for inconsistent naming in the hardware. It would've been nice if
-this clock was called GMI. Oh well...
+Agreed.
 
-Could you perhaps explain in the commit message why 86.5 MHz is a sane
-default? I'm totally unfamiliar with this controller, so maybe it's
-self-explanatory, but it seems a rather odd value for a clock frequency.
+thx,
 
-Thierry
-
---f+W+jCU1fRNres8c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXlfVOAAoJEN0jrNd/PrOhENMP/iNIX9ybtj2fIJlLxn6ECtC3
-3KrY/BNZX0I1GOU0FvcwfZpEq4LgoUfhnpLcB5ME1SadXwoYZii6rZofRyJEv0lV
-4B8NNTY4EJklvYkBvtQYAmzBrANsaYzUlEQFPApeQY2Ia+VbAF0ecO4FWgGZ8ut5
-1NUH90bn12oQQqj9WwEOE8yR2g1surmt/s+zLxuRvLUksmnza/5wmWvavEFCffTT
-N2snetfIRM3uEDJO/oc7PFLxRYv5xhDclsA4pwqsjHWhS4ztqj3LUWUM5k1T3ZY2
-IQlb87pSrdq4dPgfPO04fAYS7Db7HiSxlACIi656MHbcNotOYxnp1ScUuUw3RXBB
-kpNl2OJCOlNG7DxjRpXO6gvb9FeX6l6ojA25FKk52pFxyYuatCsKpTfhaB54i1ys
-lzBHFWLBfjWH3XNq+Obt8aaK8L1XwYyNgc0GscSa/WRAAvOc3PPwVpEglT21vHOP
-fVnemi6ONHpWIdrIdGyC1uI0L+4RYf6oKqYUPMju1JInzGxS7d3BdcPVDHnL+cv0
-hY+L8A7otszgIfBTsh/cUn53mBFvTdEeqKw90p0oXGQx9mw81K9GUnBgeQeAUUIe
-t990Dsnv9BSPuANLCphRS41TPOZvFSZp2eHhH1J7GP9osxxAzP8Aj3nEM0GmNTeV
-ikOiJWsoeGosDGQ/G8qD
-=KCOv
------END PGP SIGNATURE-----
-
---f+W+jCU1fRNres8c--
+Jason.
