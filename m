@@ -1,67 +1,150 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20160725141544.GN21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
- <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com> <20160725141544.GN21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 25 Jul 2016 21:59:34 +0200
-Message-ID: <CALw8SCVmVL82kZapEJA97XqQv6XZnR_S6ddsW1Gwk61v4Px9AA@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+In-Reply-To: <1462417950-46796-4-git-send-email-yangbo.lu@nxp.com>
+References: <1462417950-46796-1-git-send-email-yangbo.lu@nxp.com> <1462417950-46796-4-git-send-email-yangbo.lu@nxp.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Fri, 15 Jul 2016 12:43:41 -0400
+Message-ID: <CAP=VYLqsV_M=8CM47k4kzdULCp_y0yP9t8Sq9=jFp6W593QJgw@mail.gmail.com>
+Subject: Re: [v10, 3/7] soc: fsl: add GUTS driver for QorIQ platforms
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: linux-mmc@vger.kernel.org,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	devicetree@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+	netdev <netdev@vger.kernel.org>, ulf.hansson@linaro.org,
+	Scott Wood <oss@buserror.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Jochen Friedrich <jochen@scram.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Claudiu Manoil <claudiu.manoil@freescale.com>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
+	xiaobo.xie@nxp.com
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
->> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
->> >
->> > I would've expected this to require some sort of infrastructure to allow
->> > devices connected to the GMI controller to acquire the bus via some API
->> > to select their chip.
->>
->> Yes, ultimately you would need some sort of infrastructure to allow
->> devices to acquire the GMI bus if you want to solve this in software.
->> But at the moment I do not see such an infrastructure in place, and is
->> it feasible to add one specifically for the GMI controller? If one
->> such infrastructure was in place we would need to modify all the
->> drivers that want to use to include Tegra specific infrastructure to
->> access the GMI bus?
->>
->> Since my knowledge is limited it hard for me to comment on this, maybe
->> there is a simple way of doing this?
+On Wed, May 4, 2016 at 11:12 PM, Yangbo Lu <yangbo.lu@nxp.com> wrote:
+> The global utilities block controls power management, I/O device
+> enabling, power-onreset(POR) configuration monitoring, alternate
+> function selection for multiplexed signals,and clock control.
 >
-> I don't think there's a simple way to do this. In order to properly
-> implement it we'd need to implement a generic infrastructure for chip
-> selects so that drivers such as the one for your CAN controller can be
-> written without tying them specifically to the Tegra GMI controller.
+> This patch adds GUTS driver to manage and access global utilities
+> block.
 >
-> From what you and Jon were saying it sounds like the drivers are
-> completely agnostic of any chip-select, so conversion won't be easy.
-> But technically if these chips take a chip-select as input then it's
-> always possible to hook them up to a controller that doesn't do this
-> automatic translation of address to chip-select, so eventually some
-> setup is bound to come along where they'd need explicit chip-select
-> handling as well.
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> Acked-by: Scott Wood <oss@buserror.net>
+> ---
+> Changes for v4:
+>         - Added this patch
+> Changes for v5:
+>         - Modified copyright info
+>         - Changed MODULE_LICENSE to GPL
+>         - Changed EXPORT_SYMBOL_GPL to EXPORT_SYMBOL
+>         - Made FSL_GUTS user-invisible
+>         - Added a complete compatible list for GUTS
+>         - Stored guts info in file-scope variable
+>         - Added mfspr() getting SVR
+>         - Redefined GUTS APIs
+>         - Called fsl_guts_init rather than using platform driver
+>         - Removed useless parentheses
+>         - Removed useless 'extern' key words
+> Changes for v6:
+>         - Made guts thread safe in fsl_guts_init
+> Changes for v7:
+>         - Removed 'ifdef' for function declaration in guts.h
+> Changes for v8:
+>         - Fixes lines longer than 80 characters checkpatch issue
+>         - Added 'Acked-by: Scott Wood'
+> Changes for v9:
+>         - None
+> Changes for v10:
+>         - None
+> ---
+>  drivers/soc/Kconfig      |   2 +-
+>  drivers/soc/fsl/Kconfig  |   8 +++
+>  drivers/soc/fsl/Makefile |   1 +
+>  drivers/soc/fsl/guts.c   | 119 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fsl/guts.h | 126 +++++++++++++++++++++++++++++------------------
+>  5 files changed, 207 insertions(+), 49 deletions(-)
+>  create mode 100644 drivers/soc/fsl/Kconfig
+>  create mode 100644 drivers/soc/fsl/guts.c
 >
-> I don't think it's fair to require you to implement this infrastructure
-> if you don't actually need it. At the same time I want to be cautious
-> and make sure we keep the driver and binding flexible enough to allow
-> us to implement explicit chip-selects should we later need them.
+> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+> index cb58ef0..7106463 100644
+> --- a/drivers/soc/Kconfig
+> +++ b/drivers/soc/Kconfig
+> @@ -2,7 +2,7 @@ menu "SOC (System On Chip) specific Drivers"
 >
-> Thierry
+>  source "drivers/soc/bcm/Kconfig"
+>  source "drivers/soc/brcmstb/Kconfig"
+> -source "drivers/soc/fsl/qe/Kconfig"
+> +source "drivers/soc/fsl/Kconfig"
+>  source "drivers/soc/mediatek/Kconfig"
+>  source "drivers/soc/qcom/Kconfig"
+>  source "drivers/soc/rockchip/Kconfig"
+> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
+> new file mode 100644
+> index 0000000..b313759
+> --- /dev/null
+> +++ b/drivers/soc/fsl/Kconfig
+> @@ -0,0 +1,8 @@
+> +#
+> +# Freescale SOC drivers
+> +#
+> +
+> +source "drivers/soc/fsl/qe/Kconfig"
+> +
+> +config FSL_GUTS
+> +       bool
+> diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
+> index 203307f..02afb7f 100644
+> --- a/drivers/soc/fsl/Makefile
+> +++ b/drivers/soc/fsl/Makefile
+> @@ -4,3 +4,4 @@
+>
+>  obj-$(CONFIG_QUICC_ENGINE)             += qe/
+>  obj-$(CONFIG_CPM)                      += qe/
+> +obj-$(CONFIG_FSL_GUTS)                 += guts.o
+> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+> new file mode 100644
+> index 0000000..fa155e6
+> --- /dev/null
+> +++ b/drivers/soc/fsl/guts.c
+> @@ -0,0 +1,119 @@
+> +/*
+> + * Freescale QorIQ Platforms GUTS Driver
+> + *
+> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/module.h>
 
-One thing that should be noted, and that is the GMI controller also
-supports a DMA master mode (feature for the future?).
+Seems there was lots of discussion on this.  If it does end up being
+resent, it would be nice to get the module.h and other modular stuff
+gone since it is a bool Kconfig.
 
-I do not really know how this effects the binding we are discussing
-but wanted to put it out there.
+Thanks,
+Paul.
+--
 
-Best Regards,
-Mirza
+> +#include <linux/slab.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/fsl/guts.h>
+> +
+>
