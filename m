@@ -1,126 +1,89 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-Date: Thu, 7 Jul 2016 17:00:23 +0100
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@osg.samsung.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Andrzej Hajda
-	<a.hajda@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: clk: Per controller locks (prepare & enable)
-Message-ID: <20160707160023.GF1835@localhost.localdomain>
-References: <57737761.2020708@samsung.com>
- <db64b7f6-2a01-679e-df01-c9545e577e20@osg.samsung.com>
- <577A1D54.9010203@samsung.com>
- <98eb9718-1267-dafe-2e36-323f4976ece0@osg.samsung.com>
- <577B54CE.90004@samsung.com>
- <913d98f6-0d7c-63e3-8748-961eafd776f4@osg.samsung.com>
- <20160707120626.GE1835@localhost.localdomain>
- <577E4E29.5080103@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([217.72.192.73]:58344 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751641AbcGUKy5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2016 06:54:57 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Wan ZongShun <mcuos.com@gmail.com>
+Cc: Wan Zongshun <vw@iommu.org>, Jason Cooper <jason@lakedaemon.net>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>, p.zabel@pengutronix.de
+Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
+Date: Fri, 15 Jul 2016 12:02:55 +0200
+Message-ID: <1885052.EkH2ZADWZS@wuerfel>
+In-Reply-To: <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
+References: <1468135649-19980-1-git-send-email-vw@iommu.org> <16178876.fFBuoBSjbd@wuerfel> <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <577E4E29.5080103@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 07, 2016 at 02:42:17PM +0200, Krzysztof Kozlowski wrote:
-> On 07/07/2016 02:06 PM, Charles Keepax wrote:
-> > On Tue, Jul 05, 2016 at 09:48:34AM -0400, Javier Martinez Canillas wrote:
-> >> Hello Krzysztof,
+On Friday, July 15, 2016 5:44:50 PM CEST Wan ZongShun wrote:
+> 2016-07-15 15:00 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+> > On Friday, July 15, 2016 1:15:58 PM CEST Wan Zongshun wrote:
 > >>
-> >> On 07/05/2016 02:33 AM, Krzysztof Kozlowski wrote:
-> >>> On 07/04/2016 05:15 PM, Javier Martinez Canillas wrote:
-> > I have also been have a brief look at this as we have been
-> > encountering issues attempting to move some of the clocking on
-> > our audio CODECs to the clock framework. The problems are even
-> > worse when the device can be controlled over SPI as well, as the
-> > SPI framework may occasionally defer the transfer to a worker
-> > thread rather than doing it in the same thread which causes the
-> > re-enterant behaviour of the clock locking to no longer function.
+> >> Actually, I have two choice to implement this function:
+> >>
+> >> option1:
+> >>
+> >> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
+> >> {
+> >>         u32 hwirq;
+> >>
+> >>         (void)readl(aic_base + REG_AIC_IPER);
+> >>         hwirq = readl(aic_base + REG_AIC_ISNR);
+> >>
+> >>         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
+> >> }
+> >
+> > (side note: I think you want handle_domain_irq())
+> >
+> >> option2:
+> >>
+> >> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
+> >> {
+> >>         u32 hwirq;
+> >>
+> >>         hwirq = readl(aic_base + REG_AIC_IPER);
+> >>         hwirq <<= 2;
+> >>
+> >>         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
+> >> }
+> >>
+> >> Though the option2 do shift for hwirq, but it seems better than do io
+> >> operation by readl,so I prefer to option2, agree?
+> >
+> > That will only return an irq number that is a multiple of four, which
+> > seems wrong since the numbers are not that. Did you mean to write
+> >
+> >         hwirq = ilog2(hwirq);   ?
 > 
-> As you mentioned later, in such case per-controller-lock won't help.
-> 
+> Sorry, my fault, I mean hwirq >>= 2, bit[7:2] indicates which irq is triggering.
+> so I have to do right shift 2 for IPER value.
 
-It should help as the SPI clocks and the (in this case) CODEC
-clocks are unlikely to be on the same controller.
+Ok, got it.
 
-> > I could perhaps imagine a situation where one device is passing
-> > a clock to second device and that device is doing some FLL/PLL
-> > and passing the resulting clock back. For example supplying a
-> > non-audio rate clock to a CODEC which then supplies back a clock
-> > at an audio rate, which is used for audio functions on the first
-> > device.
+> > That assumes that REG_AIC_IPER contains a 32-bit value with one single
+> > bit set to indicate which IRQ was triggered.
+> >
+> > If the difference is only in performance, you could try measuring which
+> > of the two ends up being faster.
 > 
-> What do you think by "passing" here? Pass the pointer to struct?
-> 
+> It seems hard to measure. I think Do IO operation should be slower
+> than shift 2. 
 
-Apologies for being unclear there, I was really just referring to
-where the source for each clock is coming from. Given controllers
-C1 and C2, and putting the clock in brackets afterwards:
+It depends on how fast that particular I/O path is. A lot of readl()
+operations are awfully slow, but the hardware design for the interrupt
+controller may in fact have optimized this to be reasonably fast.
 
-C1(MCLK@26MHz) is the parent of C2(FLL@24.576MHz) which is the parent
-of C1(AUDIO@24.576MHz). Which makes C2 both a parent and child of
-C1. Its probably not that likely but I could see it happening.
+Another option would be to avoid the shift and just use the raw value
+of the REG_AIC_IPER register as the hwirq, with a custom map()
+callback that turns shifts the number read from the DT two bits
+so it matches the register value.
 
-> > I had also been leaning more towards a lock per clock rather
-> > than a lock per controller. But one other issue that needs to be
-> > kept in mind (with both the controller or clock based locking)
-> > through is that the enable and prepare operations propagate down
-> > the clock tree, where as the set rate operations propagate up the
-> > clock tree.  This makes things a rather furtile breeding ground
-> > for mutex inversions as well.
-> > 
-> 
-> Yeah, that is the problem we were thinking about just a sec ago. :) The
-> set rate (and reparent which might cause set rate) is complicating the
-> design.
-> 
-> Idea I have is (simplifying only to prepare lock... leave away the enable):
-
-Certainly I think only worrying about prepare makes sense.
-
-> 1. Hava a global lock which will protect:
-> a. traversing clock controller hierarchy,
-> b. acquiring per clock controller locks,
-> 2. Add struct for clock controller.
-> 3. Add lock per clock controller.
-> 
-> The basic locking in case of prepare for a simplified case one clock per
-> clock controller:
-> 
-> A (top controller = top clock)
-> \-B
->   \-C
-> 
-> clk_prepare(C) {
->   global_lock();
->   for (clk_ctrl = C) {
->     lock(clk_ctrl);
->     clk_ctrl = get_parent_controller(C);
->   }
->   global_unlock();
-> 
->   prepare_cnt++;
->   // do the same for hierarchy
-> 
->   for (clk_ctrl = C) {
->     unlock(clk_ctrl)
->     clock = get_parent_controller(C);
->   }
-> }
-
-I think this fixes the issues I have been having at my side. I
-will try to find some time in the next few days to go through and
-refresh my memory.
-
-I guess lets wait and see if the clock guys have any thoughts.
-
-Thanks,
-Charles
+	Arnd
