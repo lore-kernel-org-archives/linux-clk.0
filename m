@@ -1,81 +1,62 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: aisheng.dong@nxp.com,
-	shawnguo@kernel.org,
-	kernel@pengutronix.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] clk: imx7d: do not set parent of ethernet time clocks
-Date: Sat,  2 Jul 2016 11:46:08 -0700
-Message-Id: <20160702184608.24462-1-stefan@agner.ch>
+Return-Path: <hramrach@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <98fd2ab2-9b1d-1494-5867-7701780fd471@megous.com>
+References: <20160625034511.7966-1-megous@megous.com> <20160625034511.7966-7-megous@megous.com>
+ <20160630204001.GC5485@lukather> <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+ <20160715085356.GR4761@lukather> <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+ <20160715152756.db7375a7109fed18c2fbf43a@free.fr> <98fd2ab2-9b1d-1494-5867-7701780fd471@megous.com>
+From: Michal Suchanek <hramrach@gmail.com>
+Date: Fri, 15 Jul 2016 16:22:31 +0200
+Message-ID: <CAOMqctTds7adsfvehfv8wcxbb0NOpEQE5wRff6NwfPOUa3SbRw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 06/14] ARM: sun8i: clk: Add
+ clk-factor rate application method
+To: megous@megous.com
+Cc: Jean-Francois Moine <moinejf@free.fr>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, dev <dev@linux-sunxi.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	open list <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-All device trees currently in mainline specify the time clock parent
-using the assigned-clocks/assigned-clock-parents method, there is no
-need to statically assign the parent in the core clock driver.
+Hello,
 
-Furthermore, and the actual driver of this patch, specify parents at
-that early point in boot leads to a warning:
-bad: scheduling from the idle thread!
+On 15 July 2016 at 15:48, Ond=C5=99ej Jirman <megous@megous.com> wrote:
+>
+>
+> On 15.7.2016 15:27, Jean-Francois Moine wrote:
+>> On Fri, 15 Jul 2016 12:38:54 +0200
+>> Ond=C5=99ej Jirman <megous@megous.com> wrote:
+>>
+>>>> If so, then yes, trying to switch to the 24MHz oscillator before
+>>>> applying the factors, and then switching back when the PLL is stable
+>>>> would be a nice solution.
+>>>>
+>>>> I just checked, and all the SoCs we've had so far have that
+>>>> possibility, so if it works, for now, I'd like to stick to that.
+>>>
+>>> It would need to be tested. U-boot does the change only once, while the
+>>> kernel would be doing it all the time and between various frequencies
+>>> and PLL settings. So the issues may show up with this solution too.
+>>
+>> I don't think this is a good idea: the CPU clock may be changed at any
+>> time with the CPUFreq governor. I don't see the system moving from
+>> 1008MHz to 24MHz and then to 1200MHz when some computation is needed!
+>
+> PLL lock time is around 10-20us, I'd guess based on the number of loops
+> in the PLL lock wait loop. So unless you'll be switching frequencies
+> many times per second, this should be barely noticeable.
+>
+> But I'd like a different solution too.
 
-The reason for the warning is that setting the parent enables the ENET
-PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
-cause clk_pllv3_wait_lock to sleep. See also:
-commit fc8726a2c021 ("clk: core: support clocks which requires parents
-enable (part 2)").
+Do you have a patch to test this?
 
-Note that setting the ENET AXI root clock parent (two lines above
-this change) also requires ENET PLL to be enabled. However, U-Boot
-typically leaves the ENET PLL on, hence when the framework sets the
-parent of the first clock, it does not need to wait for the PLL to
-come up. But because there is currently no user of that clock, the
-PLL gets disabled after setting the parent. Therefore, subsequent
-reparenting calls of any clock which somehow rely on the ENET PLL,
-need to reenable the ENET PLL which leads to a sleep. Removing those
-subsequent reparenting calls works around this issue.
+For me changing CPU frequency on Orange Pi One always locks up the
+system. I keep running it on the u-boot setup 1.08GHz at 1.1V
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
-Hi Dong,
+Thanks
 
-What do you think about this change? I really think there is no need
-to set the ethernet time roots here, and it would solve the problem
-for now.
-
-Also, we could move the other two parent assignments of ethernet
-clocks to the device tree. I see it is a bit more problematic because
-they are shared between the two instances. It begs the question: where
-would we put them. I would just put them in both ethernet instances.
-Of course, if they have conflicting settings, we end up in a race
-condition which parent would actually be used in the end... But
-IMHO, such a device tree would just be a buggy dt...
-
---
-Stefan
-
- drivers/clk/imx/clk-imx7d.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 79293ed..9bf6282 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -864,12 +864,9 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	 * init enet clock source:
- 	 * 	AXI clock source is 250MHz
- 	 *	Phy refrence clock is 25MHz
--	 *	1588 time clock source is 100MHz
- 	 */
- 	clk_set_parent(clks[IMX7D_ENET_AXI_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_250M_CLK]);
- 	clk_set_parent(clks[IMX7D_ENET_PHY_REF_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_25M_CLK]);
--	clk_set_parent(clks[IMX7D_ENET1_TIME_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_100M_CLK]);
--	clk_set_parent(clks[IMX7D_ENET2_TIME_ROOT_SRC], clks[IMX7D_PLL_ENET_MAIN_100M_CLK]);
- 
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
--- 
-2.9.0
+Michal
