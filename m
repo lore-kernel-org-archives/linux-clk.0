@@ -1,72 +1,58 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 20 Jul 2016 07:44:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com,
-	pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 15 Jul 2016 12:15:15 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: njaigane@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	twp@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Message-ID: <20160720124408.GA19113@rob-hp-laptop>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+	linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org,
+	bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+	perex@perex.cz, tiwai@suse.com, varada@codeaurora.org,
+	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	alsa-devel@alsa-project.org, bselvara@codeaurora.org
+Subject: Re: [PATCH 3/4] qcom: ipq4019: ASoC tlmm/pinctrl support
+Message-ID: <20160715191515.GC13516@tuxbot>
+References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
+ <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+On Fri 15 Jul 00:07 PDT 2016, njaigane@codeaurora.org wrote:
+
+> From: Jaiganesh Narayanan <njaigane@codeaurora.org>
 > 
-> Document the devicetree bindings for NOR bus driver found on Tegra20 and
-> Tegra30 SOCs
+> This patch adds the tlmm/pinctrl support for IPQ4019 ASoC.
 > 
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> Signed-off-by: Jaiganesh Narayanan <njaigane@codeaurora.org>
 > ---
->  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+>  drivers/pinctrl/qcom/pinctrl-ipq4019.c | 116 +++++++++++++++++++++++++--------
+>  1 file changed, 88 insertions(+), 28 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
-> new file mode 100644
-> index 0000000..9ee4a66
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
-> @@ -0,0 +1,73 @@
-> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
-> +
-> +The NOR controller supports a number of memory types, including synchronous NOR,
-> +asynchronous NOR, and other flash memories with similar interfaces, such as
-> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
-> +CAN chips, Wi-Fi chips etc.
-> +
-> +The actual devices are instantiated from the child nodes of a NOR node.
-> +
-> +Required properties:
-> +
-> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
-> + - reg: Should contain NOR controller registers location and length.
-> + - clocks: Must contain one entry, for the module clock.
-> +   See ../clocks/clock-bindings.txt for details.
-> + - resets : Must contain an entry for each entry in reset-names.
-> +   See ../reset/reset.txt for details.
-> + - reset-names : Must include the following entries:
-> +  - nor
-> + - #address-cells: Must be set to 2 to allow memory address translation
-> + - #size-cells:	Must be set to 1 to allow CS address passing
-> + - ranges: Must be set up to reflect the memory layout with four integer
-> + 		values for each chip-select line in use.
-> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
-> +
-> +Note that the NOR controller does not have any internal chip-select address
-> +decoding and if you want to access multiple devices external chip-select
-> +decoding must be provided.
+> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+[..]
+> +	qca_mux_i2s_rx_mclk,
+> +	qca_mux_i2s_rx_bclk,
+> +	qca_mux_i2s_rx_fsync,
+> +	qca_mux_i2s_rxd,
+> +	qca_mux_i2s_tx_mclk,
+> +	qca_mux_i2s_tx_bclk,
+> +	qca_mux_i2s_tx_fsync,
+> +	qca_mux_i2s_txd1,
+> +	qca_mux_i2s_txd2,
+> +	qca_mux_i2s_txd3,
+> +	qca_mux_i2s_spdif_out,
+> +	qca_mux_i2s_spdif_in,
 
-Then what are the 2 chip selects in ranges?
+I would recommend reducing this to "i2s_rx", "i2s_tx", "spdif_rx"
+and "spdif_tx", as this will make the dts cleaner.
 
-Rob
+Regards,
+Bjorn
