@@ -1,45 +1,57 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1467208335-29876-7-git-send-email-aisheng.dong@nxp.com>
-References: <1467208335-29876-1-git-send-email-aisheng.dong@nxp.com> <1467208335-29876-7-git-send-email-aisheng.dong@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 2 Jul 2016 17:30:11 -0300
-Message-ID: <CAOMZO5DnFevNf6tdJ62woC33Mv3cGgTYLkOq6OOz+3RxZJpnMQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 6/7] clk: imx: pllv3: convert to prepare_hw and set_rate_hw
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Stefan Agner <stefan@agner.ch>, Lucas Stach <l.stach@pengutronix.de>,
-	Cyrille Pitchen <cyrille.pitchen@atmel.com>, manabian@gmail.com,
-	Yongcai Huang <anson.huang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+To: Kevin Hilman <khilman@baylibre.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <m28tx23l0h.fsf@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20160707033837.20029-1-khilman@baylibre.com>
+ <146794722863.73491.474750140948566962@resonance>
+ <m28tx23l0h.fsf@baylibre.com>
+Message-ID: <146863549703.73491.15445512744188633959@resonance>
+Subject: Re: [PATCH v2] clk: gxbb: expose CLKID_MMC_PCLK
+Date: Fri, 15 Jul 2016 19:18:17 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dong,
+Quoting Kevin Hilman (2016-07-15 09:48:30)
+> Michael Turquette <mturquette@baylibre.com> writes:
+> =
 
-On Wed, Jun 29, 2016 at 10:52 AM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+> > Quoting Kevin Hilman (2016-07-06 20:38:37)
+> >> The MMC_PCLK is needed for the SD/eMMC driver, expose to DT (and comme=
+nt
+> >> out in clk driver)
+> >> =
 
-Thanks for working on this series.
+> >> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> >
+> > Applied to the same clk-s905 branch if you need to re-pull it as a
+> > dependency.
+> =
 
-Tested the whole series on a mx7d-sdb and it does fix the several clk
-warnings that we currently have.
+> Ugh.  Just received some updated documentation, and turns out this clock
+> is not used at all. :(
+> =
 
-> +static int clk_pllv3_set_rate_done(struct clk_hw *hw)
-> +{
-> +       struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> +       u32 val = readl_relaxed(pll->base) & pll->powerdown;
+> Feel free to revert now before it becomes ABI.
 
-I had to change this to:
+Reverted.
 
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -108,7 +108,7 @@ static long clk_pllv3_round_rate(struct clk_hw *hw, unsigned
- static int clk_pllv3_set_rate_done(struct clk_hw *hw)
- {
-        struct clk_pllv3 *pll = to_clk_pllv3(hw);
--       u32 val = readl_relaxed(pll->base) & pll->powerdown;
-+       u32 val = readl_relaxed(pll->base) & pll->power_bit;
+> =
 
-,so that it can build against linux-next.
+> Now that I have actual docs, I'll have a new series coming that will
+> have the right clock details.
+
+No problem. I did a git revert b/c I don't want to rebase this late in
+the cycle.
+
+Regards,
+Mike
+
+> =
+
+> Thanks, and sorry for the noise,
+> =
+
+> Kevin
