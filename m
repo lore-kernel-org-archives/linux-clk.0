@@ -1,128 +1,78 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20160725141544.GN21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
- <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com> <20160725141544.GN21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Thu, 28 Jul 2016 11:29:03 +0200
-Message-ID: <CALw8SCX+Sktdij7AKFtkAh3To6qA16xtZNFi4GpkzHE8256N_w@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: "Masahiro Yamada" <yamada.masahiro@socionext.com>,
+ "Jay Sternberg" <jay.e.sternberg@intel.com>, "Jens Axboe" <axboe@fb.com>,
+ linux-kernel@vger.kernel.org, "Dan Williams" <dan.j.williams@intel.com>,
+ =?utf-8?q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+ "Valentin Rothberg" <valentinrothberg@gmail.com>
+References: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <146863507652.73491.7469412916688579441@resonance>
+Subject: Re: [PATCH] clk: probe common clock drivers earlier
+Date: Fri, 15 Jul 2016 19:11:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
->> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> Yes, that clarifies many things. The presence of an external, address-
-> based chip-select is essential information in order to describe this
-> setup properly.
->
-> Given that the external chip select is entirely invisible to software, I
-> think a more accurate description of your setup would be:
->
->         gmi@70090000 {
->                 ...
->
->                 /* for the chip select */
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
->                 /*
->                  * Technically this could be used to translate the range from
->                  * 0x48000000 to 0x4fffffff into a different range, but that
->                  * no longer works because of the #address-cells. Does this
->                  * matter?
->                  */
->                 ranges;
->
->                 bus@0 {
->                         compatible = "simple-bus";
->                         reg = <0>;
->
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->
->                         can@48000000 {
->                                 reg = <0x48000000 0x100>;
->                                 ...
->                         };
->
->                         can@48040000 {
->                                 reg = <0x48040000 0x100>;
->                                 ...
->                         };
->                 };
->         };
->
+Quoting Masahiro Yamada (2016-05-05 00:57:17)
+> Several SoCs implement platform drivers for clocks rather than
+> CLK_OF_DECLARE().  Clocks should come earlier because they are
+> prerequisites for many of other drivers.  It will help to mitigate
+> EPROBE_DEFER issues.
+> =
 
-Finally got around to test this. Above example had some issues, or I
-am doing something wrong.
+> Also, drop the comment since it does not look valuable.
+> =
 
-First of, the address parser does not seem to like that #size-cells =
-<0> when ranges are empty. Got following warning from device tree
-compiler:
-Warning (ranges_format): /nor@70009000 has empty "ranges" property but
-its #size-cells (0) differs from / (1)
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-and on boot:
-[    0.399357] prom_parse: Bad cell count for /nor@70009000/bus@0
+Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-Got it to work if I changed to (also had to add an empty ranges prop
-in bus node):
+Regards,
+Mike
 
-gmi@70009000 {
-    #address-cells = <1>;
-    #size-cells = <1>;
-    ranges;
+> ---
+> =
 
-    bus@0,0 {
-                compatible = "simple-bus";
-                reg = <0 0>;
-                ranges;
+>  drivers/Makefile | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> =
 
-                #address-cells = <1>;
-                #size-cells = <1>;
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 8f5d076..a2a4922 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -44,6 +44,7 @@ obj-$(CONFIG_REGULATOR)               +=3D regulator/
+>  =
 
-                can@48000000 {
-                    reg = <0x48000000 0x100>;
-                    ...
-                };
+>  # reset controllers early, since gpu drivers might rely on them to initi=
+alize
+>  obj-$(CONFIG_RESET_CONTROLLER) +=3D reset/
+> +obj-y                          +=3D clk/
+>  =
 
+>  # tty/ comes before char/ so that the VT console is the boot-time
+>  # default.
+> @@ -141,8 +142,6 @@ obj-$(CONFIG_VHOST_RING)    +=3D vhost/
+>  obj-$(CONFIG_VLYNQ)            +=3D vlynq/
+>  obj-$(CONFIG_STAGING)          +=3D staging/
+>  obj-y                          +=3D platform/
+> -#common clk code
+> -obj-y                          +=3D clk/
+>  =
 
-                can@48040000 {
-                    reg = <0x48040000 0x100>;
-                    ...
-                };
-}
+>  obj-$(CONFIG_MAILBOX)          +=3D mailbox/
+>  obj-$(CONFIG_HWSPINLOCK)       +=3D hwspinlock/
+> -- =
 
-But I wonder is there something wrong with below example (which does
-work), that is omitting the bus node:
+> 1.9.1
+> =
 
-gmi@70009000 {
-    #address-cells = <1>;
-    #size-cells = <1>;
-    ranges;
-
-    can@48000000 {
-        reg = <0x48000000 0x100>;
-        ...
-    };
-
-    can@48040000 {
-        reg = <0x48040000 0x100>;
-        ...
-    };
-}
-
-Just feel that I need to duplicate information if add an bus node.
-
-Best Regards,
-Mirza
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
