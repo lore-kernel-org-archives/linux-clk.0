@@ -1,66 +1,55 @@
-Return-Path: <sstabellini@kernel.org>
-Date: Tue, 5 Jul 2016 15:37:48 +0100 (BST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-To: Julien Grall <julien.grall@arm.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>,
-    Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
-    Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-    xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
-In-Reply-To: <577BBF69.8010809@arm.com>
-Message-ID: <alpine.DEB.2.10.1607051534411.2575@sstabellini-ThinkPad-X260>
-References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com> <alpine.DEB.2.10.1607051449370.2575@sstabellini-ThinkPad-X260> <577BBC1A.8020209@arm.com> <alpine.DEB.2.10.1607051456410.2575@sstabellini-ThinkPad-X260> <577BBF69.8010809@arm.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <146863507652.73491.7469412916688579441@resonance>
+References: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com> <146863507652.73491.7469412916688579441@resonance>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 16 Jul 2016 13:57:51 +0900
+Message-ID: <CAK7LNASny6C=TmVX4uRvf1kF4pNF_ovQQgw9UEhR=xLn+Fy2Jw@mail.gmail.com>
+Subject: Re: [PATCH] clk: probe common clock drivers earlier
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, Jay Sternberg <jay.e.sternberg@intel.com>,
+        Jens Axboe <axboe@fb.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 5 Jul 2016, Julien Grall wrote:
-> On 05/07/16 15:04, Stefano Stabellini wrote:
-> > On Tue, 5 Jul 2016, Julien Grall wrote:
-> > > On 05/07/16 14:53, Stefano Stabellini wrote:
-> > > > On Thu, 30 Jun 2016, Dirk Behme wrote:
-> > > > > +- clocks: one or more clocks to be registered.
-> > > > > +  Xen hypervisor drivers might replace native drivers, resulting in
-> > > > > +  clocks not registered by these native drivers. To avoid that these
-> > > > > +  unregistered clocks are disabled, then, e.g. by
-> > > > > clk_disable_unused(),
-> > > > > +  register them in the hypervisor node.
-> > > > > +  An example for this are the clocks of the serial driver. If the
-> > > > > clocks
-> > > > > +  used by the serial hardware interface are not registered by the
-> > > > > serial
-> > > > > +  driver the serial output might stop once clk_disable_unused() is
-> > > > > called.
-> > > > 
-> > > > What if we use the "status" property of the clocks? Could we set it to
-> > > > "disabled" in Xen? Would that be enough for Linux to leave them alone?
-> > > 
-> > > clocks could be shared between multiple devices. So it is not possible to
-> > > disable the clock.
-> > 
-> > To clarify my suggestion: I am not saying we should disable the clock, I
-> > am saying we should set the "status" property to "disabled" in Xen for
-> > the clock used by the serial or passthrough devices (for which the
-> > "status" property is already set to "disabled"). That should work for
-> > cases where the clock is not shared among multiple devices.
-> 
-> How would you be able to differentiate in Xen between a clock shared and a
-> non-shared one? The only way I can think it going through all the device tree
-> which sounds really expensive.
+2016-07-16 11:11 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> Quoting Masahiro Yamada (2016-05-05 00:57:17)
+>> Several SoCs implement platform drivers for clocks rather than
+>> CLK_OF_DECLARE().  Clocks should come earlier because they are
+>> prerequisites for many of other drivers.  It will help to mitigate
+>> EPROBE_DEFER issues.
+>>
+>> Also, drop the comment since it does not look valuable.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
+>
+> Regards,
+> Mike
+>
 
-Yes, but it is only done once and we only need to do the search for
-clocks of "disabled" devices.
+Thanks for taking a look at this patch.
+
+While I was wondering where is the best place for
+"obj-y += clk/", I thought it can be probed even earlier.
+
+So, v2 is here:
+https://patchwork.kernel.org/patch/9129749/
+
+Please consider it as a applicable candidate.
+
+Thanks!
 
 
-> > If the clock is shared, then I don't think we would run into the issue
-> > described by Dirk because I wouldn't imagine clk_disable_unused would
-> > try to disable the clock anymore, because it would actually be in use
-> > from Linux POV.
-> 
-> We also want to prevent Linux changing the rate of the clock (see Mark's mail
-> [1]).
-
-I am not sure what's the best way to achieve that for clocks shared
-across multiple devices. Let's see what the clock maintainers suggest.
+-- 
+Best Regards
+Masahiro Yamada
