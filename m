@@ -1,96 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:51990 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752566AbcGEKj1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 5 Jul 2016 06:39:27 -0400
-Date: Tue, 5 Jul 2016 11:39:17 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Julien Grall <julien.grall@arm.com>,
-	devicetree@vger.kernel.org, xen-devel@lists.xenproject.org,
-	Stefano Stabellini <sstabellini@kernel.org>,
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
 	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
-Message-ID: <20160705103917.GC20478@leverpostej>
-References: <1467701423-31138-1-git-send-email-dirk.behme@de.bosch.com>
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v3 0/6] Add Amlogic meson8b clock gates
+Date: Sun, 17 Jul 2016 20:44:45 +0200
+Message-Id: <1468781091-39119-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467701423-31138-1-git-send-email-dirk.behme@de.bosch.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+This patch series adds support for the Amlogic meson8b clock gates. The Amlogic
+U-Boot disables most of them at boot. In order to enable ethernet, USB and other
+components it's mandatory to enable the clock gates when loading the corresponding
+drivers.
 
-On Tue, Jul 05, 2016 at 08:50:23AM +0200, Dirk Behme wrote:
-> Some clocks might be used by the Xen hypervisor and not by the Linux
-> kernel. If these are not registered by the Linux kernel, they might be
-> disabled by clk_disable_unused() as the kernel doesn't know that they
-> are used. The clock of the serial console handled by Xen is one
-> example for this. It might be disabled by clk_disable_unused() which
-> stops the whole serial output, even from Xen, then.
-> 
-> Up to now, the workaround for this has been to use the Linux kernel
-> command line parameter 'clk_ignore_unused'. See Xen bug
-> 
-> http://bugs.xenproject.org/xen/bug/45
-> 
-> too.
-> 
-> To fix this, we will add the "unused" clocks in Xen to the hypervisor
-> node. The Linux kernel has to register the clocks from the hypervisor
-> node, then.
-> 
-> Therefore, check if there is a "clocks" entry in the hypervisor node
-> and if so register the given clocks to the Linux kernel clock
-> framework and with this mark them as used. This prevents the clocks
-> from being disabled.
-> 
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> ---
-> Changes in v2: Drop the Linux implementation details like clk_disable_unused
-> 	       in xen.txt.
+The meson8b clock gate support is based on the previous work done for Amlogic gxbb
+currently available in clk-next.
 
-Thanks for doing this.
+Changes since v2:
+  - Added commit description for patch 2
+  - Changed CLK_NR_CLOCKS macro to constant int
+  - Moved back MESON_GATE macro to share it between gxbb and meson8b
 
->  Documentation/devicetree/bindings/arm/xen.txt | 13 ++++++++
->  arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
->  2 files changed, 60 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
-> index c9b9321..21fd469 100644
-> --- a/Documentation/devicetree/bindings/arm/xen.txt
-> +++ b/Documentation/devicetree/bindings/arm/xen.txt
-> @@ -17,6 +17,19 @@ the following properties:
->    A GIC node is also required.
->    This property is unnecessary when booting Dom0 using ACPI.
->  
-> +Optional properties:
-> +
-> +- clocks: one or more clocks to be registered.
-> +  Xen hypervisor drivers might replace native drivers, resulting in
-> +  clocks not registered by these native drivers. To avoid that these
-> +  unregistered clocks are disabled by the Linux kernel initialization
-> +  register them in the hypervisor node.
-> +  An example for this are the clocks of a serial driver already enabled
-> +  by the firmware. If the clocks used by the serial hardware interface
-> +  are not registered by the serial driver itself the serial output
-> +  might stop once the Linux kernel initialization disables the 'unused'
-> +  clocks.
+Changes since v1:
+  - Fixed GXBB spelling
+  - Moved newly introduced CLKID defines to private header
+  - Moved CLK_NR_CLKS define from DT binding to private header
+  - Rebased to linux-amlogic/v4.7/integ making Kconfig select obsolete
 
-The above describes the set of problems, but doesn't set out the actual
-contract. It also covers a number of Linux implementation details in
-abstract.
+Alexander Müller (6):
+  clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
+  meson: clk: Move register definitions to meson8b.h
+  meson: clk: Rename register names according to Amlogic datasheet
+  clk: meson: Copy meson8b CLKID defines to private header file
+  gxbb: clk: Adjust MESON_GATE macro to be shared with meson8b
+  meson: clk: Add support for clock gates
 
-As I commented previously [1], the binding should describe the set of
-guarantees that you rewquire (e.g. that the clocks must be left as-is,
-not gated, and their rates left unchanged).
+ drivers/clk/meson/Makefile                      |   2 +-
+ drivers/clk/meson/clkc.h                        |   2 +-
+ drivers/clk/meson/gxbb.c                        | 162 ++++++-------
+ drivers/clk/meson/{meson8b-clkc.c => meson8b.c} | 293 +++++++++++++++++++++---
+ drivers/clk/meson/meson8b.h                     | 148 ++++++++++++
+ include/dt-bindings/clock/meson8b-clkc.h        |   2 -
+ 6 files changed, 494 insertions(+), 115 deletions(-)
+ rename drivers/clk/meson/{meson8b-clkc.c => meson8b.c} (52%)
+ create mode 100644 drivers/clk/meson/meson8b.h
 
-Please describe the specific set of guarantees that you require.
-
-Thanks,
-Mark.
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/440434.html
+-- 
+2.5.0
