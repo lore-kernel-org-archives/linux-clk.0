@@ -1,81 +1,47 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1467604308.26485.4.camel@mtksdaap41>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
-	<mturquette@baylibre.com>
-CC: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>, Arnd
- Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz
-	<djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 4 Jul 2016 11:51:48 +0800
-In-Reply-To: <20160702012140.GB17071@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
-	 <20160702012140.GB17071@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Sun, 17 Jul 2016 15:53:35 -0500
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michal Simek <michal.simek@xilinx.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	soren.brinkmann@xilinx.com
+Subject: Re: [PATCH] clk: zynq: avoid retrieving clock names from DT property
+Message-ID: <20160717205335.GA24048@rob-hp-laptop>
+References: <1468682123-1434-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468682123-1434-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-07-01 at 18:21 -0700, Stephen Boyd wrote:
-> (Resending to everyone)
+On Sun, Jul 17, 2016 at 12:15:23AM +0900, Masahiro Yamada wrote:
+> The "clock-output-names" property is useful for generic clock
+> providers such as fixed-clock, fixed-factor-clock, etc.
 > 
-> On 06/22, Erin Lo wrote:
-> > From: James Liao <jamesjj.liao@mediatek.com>
-> > 
-> > This patch fixed wrong state of parent clocks if they are registered
-> > after critical clocks.
-> > 
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> On the other hand, it should not be used for really SoC-specific
+> clock providers like this one.  As you see in "enum zynq_clk" in
+> this driver, it is written as if it already knows all the clock
+> names.  Besides, this is instantiated only once, so no clock name
+> conflict would happen even if the clock names are hard-coded in the
+> driver.
 > 
-> It would be nice if you included the information about the
-> problem from James' previous mail. This says what it does, but
-> doesn't explain what the problem is and how it is fixing it.
+> The device tree (arch/arm/boot/dts/zynq-7000.dtsi) will be fixed
+> later.
+
+This should be done now so dts files and docs are in sync.
+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 > 
-> > ---
-> >  drivers/clk/clk.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index d584004..e9f5f89 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
-> >  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-> >  		struct clk_core *parent = __clk_init_parent(orphan);
-> >  
-> > -		if (parent)
-> > +		if (parent) {
-> >  			clk_core_reparent(orphan, parent);
-> > +
-> > +			if (orphan->prepare_count)
-> > +				clk_core_prepare(parent);
-> > +
-> > +			if (orphan->enable_count)
-> > +				clk_core_enable(parent);
-> > +		}
-> >  	}
+> This patch was tested on Zynq Zedboard.
 > 
-> I'm pretty sure I pointed this problem out to Mike when the
-> critical clk patches were being pushed. I can't recall what the
-> plan was though to fix the problem. I'm pretty sure he said that
-> clk_core_reparent() would take care of it, but obviously it is
-> not doing that. Or perhaps it was that clk handoff should figure
-> out that the parents of a critical clk are also on and thus keep
-> them on.
+> 
+>  .../devicetree/bindings/clock/zynq-7000.txt         | 13 -------------
+>  drivers/clk/zynq/clkc.c                             | 21 ++++++++++++---------
+>  2 files changed, 12 insertions(+), 22 deletions(-)
 
-Hi Mike
-
-Is there any other patch to fix this issue? Or did I misuse critical
-clock flag?
-
-
-Best regards,
-
-James
+Acked-by: Rob Herring <robh@kernel.org>
