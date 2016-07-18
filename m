@@ -1,63 +1,155 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sat, 9 Jul 2016 10:26:49 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: weiyj_lk@163.com
-Cc: emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@codeaurora.org,
-	wens@csie.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH -next] clk: sunxi: Fix return value check in
- sun8i_a23_mbus_setup()
-Message-ID: <20160709082649.GH4522@lukather>
-References: <1467807707-32039-1-git-send-email-weiyj_lk@163.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="twz1s1Hj1O0rHoT0"
-In-Reply-To: <1467807707-32039-1-git-send-email-weiyj_lk@163.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1468380049-5712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1468380049-5712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Jul 2016 12:53:42 +0200
+Message-ID: <CAMuHMdWkD96cVe14ps8B0BbRUzA7pQuMogat25PehnDaoqhS=w@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Fix SD clocks
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Shimoda-san,
 
---twz1s1Hj1O0rHoT0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 13, 2016 at 5:20 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> According to the datasheet, SDn clocks are from the SDSRC clock. And
+> the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
+> core clock. Otherwise, since the sdhi driver will calculate clock for
+> a sd card using the wrong parent clock rate, and then performance will
+> be not good.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Wed, Jul 06, 2016 at 12:21:47PM +0000, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->=20
-> In case of error, the function of_io_request_and_map() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should be
-> replaced with IS_ERR().
->=20
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+although this won't apply to v4.6 as-is, due to the move from
+drivers/clk/shmobile/
+to drivers/clk/renesas, and s/DEF_SD/DEF_GEN3_SD/.
 
-Applied, thanks
+This causes the following changes:
 
-Maxime
+--- clk_summary.old     2016-07-18 12:45:07.788501000 +0200
++++ clk_summary 2016-07-18 12:47:43.279660000 +0200
+@@ -34,23 +34,24 @@
+        .pll3                              0            0  1599999936
+        0 0
+        .pll2                              0            0  1199999952
+        0 0
+        .pll1                              1            1  1599999936
+        0 0
+-          .pll1_div2                      5            5   799999968
+        0 0
++          .pll1_div2                      4            4   799999968
+        0 0
+              hdmi                         0            0    24999999
+        0 0
+                 hdmi0                     0            0    24999999
+        0 0
+                 hdmi1                     0            0    24999999
+        0 0
+              cl                           0            0    16666666
+        0 0
+-             sd3                          1            1    12500000
+        0 0
+-                sdif3                     1            2    12500000
+        0 0
+-             sd2                          0            0    99999996
+        0 0
+-                sdif2                     0            0    99999996
+        0 0
+-             sd1                          0            0    99999996
+        0 0
+-                sdif1                     0            0    99999996
+        0 0
+-             sd0                          1            1    12500000
+        0 0
+-                sdif0                     1            2    12500000
+        0 0
+              zx                           0            0   399999984
+        0 0
+              zt                           0            0   199999992
+        0 0
+              ztrd2                        0            0    66666664
+        0 0
+              ztr                          0            0   133333328
+        0 0
++             .sdsrc                       2            2   399999984
+        0 0
++                sd3                       1            1     6250000
+        0 0
++                   sdif3                  1            2     6250000
+        0 0
++                sd2                       0            0    49999998
+        0 0
++                   sdif2                  0            0    49999998
+        0 0
++                sd1                       0            0    49999998
+        0 0
++                   sdif1                  0            0    49999998
+        0 0
++                sd0                       1            1     6250000
+        0 0
++                   sdif0                  1            2     6250000
+        0 0
+              .s3                          3            3   133333328
+        0 0
+                 s3d4                      5            9    33333332
+        0 0
+                    scu-all                0           12    33333332
+        0 0
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Note that I still have a Salvator-X with a 16.67 MHz i.s.o. 33.33 Mhz crystal.
 
---twz1s1Hj1O0rHoT0
-Content-Type: application/pgp-signature; name="signature.asc"
+Wolfram, Dirk: any comments?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Thanks!
 
-iQIcBAEBAgAGBQJXgLVJAAoJEBx+YmzsjxAgaSoQALoQYvGINhSC1wyQ7qw9T9lI
-BNfQZ9dIRz8wk4mIeCBxC6ro/tRFtInnGtKwJho89hDl5YHuBR4Wdvma9NLpC66p
-G2zakiRcYXy0Z0d7jkBDS+YylFyFGO22HCTCH0IrYMR2ZM+DtxcE3G8wU0L0GY7y
-sJgEEvap/T5ptOGctxCEpKIGsURzfhTY0IV8IKwOjvW998TDYDQYPIDwPSDYv4NY
-vUnW+keI2HDfDwUNV94B3/l38Cxo5+sgJl1mE6ZqjidWnwQbOEDcxrCkzGYGTfpn
-/gjvS6+BDeKnjtEm4bf4+y8/7+Agcdr6rEUJDYaCID02FXUG5zpb3SNR4HrctY41
-6DPIBd6ukeXL7Gns4Onko0ebV+XutCqPqYlmW93MgriOtrnMHspkVkhIGxUA53It
-Fhgto7aXck4CcURqe0kXTRdynre1Xb0L2goa9A/kZ/KgxVKdpvTjd92KpDLRv9lc
-uSuHLQt5R25jX0TolfyVijQefgoPHPyowTq1+7Lc+V1xZtQchJATABsNheLnUfBv
-aRZ9Kflqfgv3HJAFGyf722POXKZ1iZjj3SSBpvbbvAu3NrlMPWa/I02iNdCrZUb+
-a5t5GsuCIBY47aLQ4RRQIfsfoIUavpASyx5CHFaV4rYY33S7tHLN4kaM9XNUDF21
-YUZOvYKpdfNgc50ZD6/A
-=2E9n
------END PGP SIGNATURE-----
+> ---
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> index ca5519c..5f99f7c 100644
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -91,6 +91,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+>         DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
+>         DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
+>         DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
+> +       DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+>
+>         /* Core Clock Outputs */
+>         DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+> @@ -109,10 +110,10 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+>         DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
+>         DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
+>
+> -       DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
+> -       DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
+> -       DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
+> -       DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
+> +       DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC, 0x0074),
+> +       DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC, 0x0078),
+> +       DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC, 0x0268),
+> +       DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC, 0x026c),
+>
+>         DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+>         DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
 
---twz1s1Hj1O0rHoT0--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
