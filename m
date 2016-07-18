@@ -1,258 +1,1064 @@
-Return-Path: <megous@megous.com>
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate application
- method
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20160625034511.7966-1-megous@megous.com>
- <20160625034511.7966-7-megous@megous.com> <20160630204001.GC5485@lukather>
- <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
- <20160715085356.GR4761@lukather>
- <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
- <20160721094852.GI5993@lukather>
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
- =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
-Message-ID: <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
-Date: Thu, 21 Jul 2016 11:52:15 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160721094852.GI5993@lukather>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="XeDsBnWmvvKSRXMo8Ha5KRR6BRHhkeU0r"
+Return-Path: <jun.nie@linaro.org>
+Return-Path: <jun.nie@linaro.org>
+From: Jun Nie <jun.nie@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH 3/3] clk: zx: register ZX296718 clocks using common clock framework
+Date: Mon, 18 Jul 2016 17:41:17 +0800
+Message-Id: <1468834877-22534-3-git-send-email-jun.nie@linaro.org>
+In-Reply-To: <1468834877-22534-1-git-send-email-jun.nie@linaro.org>
+References: <1468834877-22534-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---XeDsBnWmvvKSRXMo8Ha5KRR6BRHhkeU0r
-Content-Type: multipart/mixed; boundary="wvbBQToQOt3eA67n26UaGSJJwX34bv2Si"
-From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
- =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Message-ID: <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate application
- method
-References: <20160625034511.7966-1-megous@megous.com>
- <20160625034511.7966-7-megous@megous.com> <20160630204001.GC5485@lukather>
- <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
- <20160715085356.GR4761@lukather>
- <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
- <20160721094852.GI5993@lukather>
-In-Reply-To: <20160721094852.GI5993@lukather>
+The ZX296718 clocks are statically listed and registered using the
+ZTE specific common clock helper functions.
 
---wvbBQToQOt3eA67n26UaGSJJwX34bv2Si
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+---
+ .../devicetree/bindings/clock/zx296718-clk.txt     |  35 +
+ drivers/clk/zte/Makefile                           |   1 +
+ drivers/clk/zte/clk-zx296718.c                     | 833 +++++++++++++++++++++
+ include/dt-bindings/clock/zx296718-clock.h         | 140 ++++
+ 4 files changed, 1009 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/zx296718-clk.txt
+ create mode 100644 drivers/clk/zte/clk-zx296718.c
+ create mode 100644 include/dt-bindings/clock/zx296718-clock.h
 
-
-
-On 21.7.2016 11:48, Maxime Ripard wrote:
-> On Fri, Jul 15, 2016 at 12:38:54PM +0200, Ond=C5=99ej Jirman wrote:
->> On 15.7.2016 10:53, Maxime Ripard wrote:
->>> On Fri, Jul 01, 2016 at 02:50:57AM +0200, Ond=C5=99ej Jirman wrote:
->>>>>>  /**
->>>>>> + * sun8i_h3_apply_pll1_factors() - applies n, k, m, p factors to =
-the
->>>>>> + * register using an algorithm that tries to reserve the PLL lock=
-
->>>>>> + */
->>>>>> +
->>>>>> +static void sun8i_h3_apply_pll1_factors(struct clk_factors *facto=
-rs, struct factors_request *req)
->>>>>> +{
->>>>>> +	const struct clk_factors_config *config =3D factors->config;
->>>>>> +	u32 reg;
->>>>>> +
->>>>>> +	/* Fetch the register value */
->>>>>> +	reg =3D readl(factors->reg);
->>>>>> +
->>>>>> +	if (FACTOR_GET(config->pshift, config->pwidth, reg) < req->p) {
->>>>>> +		reg =3D FACTOR_SET(config->pshift, config->pwidth, reg, req->p)=
-;
->>>>>> +
->>>>>> +		writel(reg, factors->reg);
->>>>>> +		__delay(2000);
->>>>>> +	}
->>>>>
->>>>> So there was some doubts about the fact that P was being used, or a=
-t
->>>>> least that it was useful.
->>>>
->>>> p is necessary to reduce frequencies below 288 MHz according to the
->>>> datasheet.
->>>
->>> Yes, but you could reach those frequencies without P, too, and it's
->>> not part of any OPP provided by Allwinner.
->>
->> The arisc firmware for H3 contains table of factors for frequences fro=
-m
->> 0 to 2GHz and, P is used below 240MHz. M is never used, BTW. (other
->> datasheets specify M as for testing use only, whatever that means - no=
-t
->> H3, but it seems it's the same PLL block)
->=20
-> Interesting. Which SoCs in particular?
->=20
->>>>>> +	if (FACTOR_GET(config->mshift, config->mwidth, reg) < req->m) {
->>>>>> +		reg =3D FACTOR_SET(config->mshift, config->mwidth, reg, req->m)=
-;
->>>>>> +
->>>>>> +		writel(reg, factors->reg);
->>>>>> +		__delay(2000);
->>>>>> +	}
->>>>>> +
->>>>>> +	reg =3D FACTOR_SET(config->nshift, config->nwidth, reg, req->n);=
-
->>>>>> +	reg =3D FACTOR_SET(config->kshift, config->kwidth, reg, req->k);=
-
->>>>>> +
->>>>>> +	writel(reg, factors->reg);
->>>>>> +	__delay(20);
->>>>>> +
->>>>>> +	while (!(readl(factors->reg) & (1 << config->lock)));
->>>>>
->>>>> So, they are applying the dividers first, and then applying the
->>>>> multipliers, and then wait for the PLL to stabilize.
->>>>
->>>> Not exactly, first we are increasing dividers if the new dividers ar=
-e
->>>> higher that that what's already set. This ensures that because
->>>> application of dividers is immediate by the design of the PLL, the
->>>> application of multipliers isn't. So the VCO would still run at the =
-same
->>>> frequency for a while gradually rising to a new value for example,
->>>> while the dividers would be reduced immediately. Leading to crash.
->>>>
->>>> PLL
->>>> --------------------------
->>>> PRE DIV(f0) -> VCO(f1) -> POST DIV(f2)
->>>>    P             K,N           M
->>>>
->>>> Example: (we set all factors at once, reducing dividers and multipli=
-ers
->>>> at the same time at 0ms - this should lead to no change in the outpu=
-t
->>>> frequency, but...)
->>>>
->>>> -1ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 1GHz
->>>>  0ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 2GHz       - boom
->>>>  1ms: f0 =3D 24MHz, f1 =3D 1.5GHz, f2 =3D 1.5GHz
->>>>  2ms: f0 =3D 24MHz, f1 =3D 1GHz,   f2 =3D 1GHz
->>>>
->>>> The current code crashes exactly at boom, you don't get any more
->>>> instructions to execute.
->>>>
->>>> See.
->>>>
->>>> So this patch first increases dividers (only if necessary), changes
->>>> multipliers and waits for change to happen (takes around 2000 cycles=
-),
->>>> and then decreases dividers (only if necessary).
->>>>
->>>> So we get:
->>>>
->>>> -1ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 1GHz
->>>>  0ms: f0 =3D 24MHz, f1 =3D 2GHz,   f2 =3D 1GHz   - no boom, multipli=
-er
->>>>                                              reduced
->>>>  1ms: f0 =3D 24MHz, f1 =3D 1.5GHz, f2 =3D 0.75GHz
->>>> 1.9ms: f0 =3D 24MHz, f1 =3D 1GHz,   f2 =3D 0.5GHz - we got PLL sync
->>>>  2ms: f0 =3D 24MHz, f1 =3D 1GHz,   f2 =3D 1GHz   - and here we reduc=
-e divider
->>>> at last
->>>
->>> Awesome explanation, thanks!
->>>
->>> So I guess it really all boils down to the fact that the CPU is
->>> clocked way outside of it's operating frequency while the PLL
->>> stabilizes, right?
->>
->> It may be, depending on the factors before and after change. I haven't=
-
->> tested what factors the mainline kernel calculates for each frequency.=
-
->> The arisc never uses M, and only uses P at frequencies that would not
->> allow for this behavior.
->>
->> I created a test program for arisc that runs a loop on the main CPU
->> using msgbox to send pings to the arisc CPU, and the vary the PLL1
->> randomly from the arisc, and haven't been able to lockup the main CPU
->> yet with either method.
->>
->> There's also AXI clock, that depends on PLL1. Arisc firmware uses the
->> same method to change it while changing CPUX clock. If the clock would=
-
->> rise above certain frequency, AXI divider is increased before the PLL1=
-
->> change. If it would fall below certain frequency it is decreased after=
-
->> the PLL1 change.
->=20
-> If we ever need to change that, we can always rely on a clock notifier
-> to adjust the divider before the change happen (and support all the
-> scenarios, like the clock change has been aborted).
->=20
->>> If so, then yes, trying to switch to the 24MHz oscillator before
->>> applying the factors, and then switching back when the PLL is stable
->>> would be a nice solution.
->>>
->>> I just checked, and all the SoCs we've had so far have that
->>> possibility, so if it works, for now, I'd like to stick to that.
->>
->> It would need to be tested. U-boot does the change only once, while th=
-e
->> kernel would be doing it all the time and between various frequencies
->> and PLL settings. So the issues may show up with this solution too.
->=20
-> That would have the benefit of being quite easy to document, not be a
-> huge amount of code and it would work on all the CPUs PLLs we have so
-> far, so still, a pretty big win. If it doesn't, of course, we don't
-> really have the choice.
-
-It's probably more code though. It has to access different register from
-the one that is already defined in dts, which would add a lot of code
-and require dts changes. The original patch I sent is simpler than that.
-
-regards,
-  Ondrej
-
-> Maxime
->=20
-
-
---wvbBQToQOt3eA67n26UaGSJJwX34bv2Si--
-
---XeDsBnWmvvKSRXMo8Ha5KRR6BRHhkeU0r
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJXkJtPAAoJEG5kJsZ3z+/xHgIP/Ak1CYPAXrFGYqQEXqigHCox
-hZ5cKRwDlE3pG8eVnwIh6CY/AB/2AMweoXk3WYunVtCcSjkTLDBndDjUyj9J1rMP
-e2m8ulPnPMdivX+6iPGY9Fo5mDuPsS63U+A6sAH5gen0RX7YGG/Oh9SSWvrXF4j1
-fKX+HzUWEaCMdlux3PsZ1hgvdubfp2rYurr7iCbbn+1dGHlrUgMfj1qYkNExhmRz
-nP3YGyMqrCWc0YYXeeXVLytG4uo5F7Y1RrH+3Dz3jz9gB8YmkhDxF7y7CJSzeTRL
-xJhT/v3WAWdDABg/bHF/wo40VlRyowT2VlpjqhzQ4LEuEtSe7otKF2+df3eY3isg
-L9VE+jBoJEcnwlAfpNkTFDFN+5B7oqD5u845CLy0a7ffVDVzad6wcF0eTvtW2+tB
-L7rrIVapYl4iYeTA8/XWfGIM8I+XbPFcDS45nLWZ1mi6LfTkGYuq9DUaOWtlXvFU
-c5nXjksqhscAKLOfT1cchZmDCpuByBW8y5PqBbBBc8rivZabu0Bky8zow0OSgKAo
-xWhN0v7vRiFLf08fpgDuoiot2R1sk8GAjhyhnkIZK16sP3FgNgTnfh2ZrseyQJg1
-4e3gw10jCFMDdpoJTMDOK3LW7VV8mmixRA8STjVbvzQ8A8kkYahv7Pok11QZsrxH
-JYuRbZwRcgHeglHgY8wY
-=/gti
------END PGP SIGNATURE-----
-
---XeDsBnWmvvKSRXMo8Ha5KRR6BRHhkeU0r--
+diff --git a/Documentation/devicetree/bindings/clock/zx296718-clk.txt b/Documentation/devicetree/bindings/clock/zx296718-clk.txt
+new file mode 100644
+index 0000000..a6c5d86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/zx296718-clk.txt
+@@ -0,0 +1,35 @@
++Device Tree Clock bindings for ZTE zx296718
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be one of the following:
++	"zte,zx296718-topcrm":
++		zx296718 top clock selection, divider and gating
++
++	"zte,zx296718-lsp0crm" and
++	"zte,zx296718-lsp1crm":
++		zx296718 device level clock selection and gating
++
++- reg: Address and length of the register set
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell. See include/dt-bindings/clock/zx296718-clock.h
++for the full list of zx296718 clock IDs.
++
++
++topclk: topcrm@0x09800000 {
++        compatible = "zte,zx296718-topcrm-clk";
++        reg = <0x01461000 0x1000>;
++        #clock-cells = <1>;
++};
++
++usbphy0:usb-phy0{
++	compatible = "zte,zx296718-usb-phy";
++	#phy-cells = <0>;
++	clocks = <&topcrm USB20_PHY_CLK>;
++	clock-names = "phyclk";
++	status = "okay";
++};
+diff --git a/drivers/clk/zte/Makefile b/drivers/clk/zte/Makefile
+index 74005aa..83374bf 100644
+--- a/drivers/clk/zte/Makefile
++++ b/drivers/clk/zte/Makefile
+@@ -1,2 +1,3 @@
+ obj-y := clk.o
+ obj-$(CONFIG_SOC_ZX296702) += clk-zx296702.o
++obj-$(CONFIG_ARCH_ZX) += clk-zx296718.o
+diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+new file mode 100644
+index 0000000..4f17561
+--- /dev/null
++++ b/drivers/clk/zte/clk-zx296718.c
+@@ -0,0 +1,833 @@
++/*
++ * Copyright (C) 2015 - 2016 ZTE Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#define pr_fmt(fmt) "clk-zx296718: " fmt
++
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#include <dt-bindings/clock/zx296718-clock.h>
++#include "clk.h"
++
++/* TOP CRM */
++#define TOP_CLK_MUX0	0x04
++#define TOP_CLK_MUX1	0x08
++#define TOP_CLK_MUX2	0x0c
++#define TOP_CLK_MUX3	0x10
++#define TOP_CLK_MUX4	0x14
++#define TOP_CLK_MUX5	0x18
++#define TOP_CLK_MUX6	0x1c
++#define TOP_CLK_MUX7	0x20
++#define TOP_CLK_MUX9	0x28
++
++
++#define TOP_CLK_GATE0	0x34
++#define TOP_CLK_GATE1	0x38
++#define TOP_CLK_GATE2	0x3c
++#define TOP_CLK_GATE3	0x40
++#define TOP_CLK_GATE4	0x44
++#define TOP_CLK_GATE5	0x48
++#define TOP_CLK_GATE6	0x4c
++
++#define TOP_CLK_DIV0	0x58
++
++#define PLL_CPU_REG	0x80
++#define PLL_VGA_REG	0xb0
++#define PLL_DDR_REG	0xa0
++
++/* LSP0 CRM */
++#define LSP0_TIMER3_CLK	0x4
++#define LSP0_TIMER4_CLK	0x8
++#define LSP0_TIMER5_CLK	0xc
++#define LSP0_UART3_CLK	0x10
++#define LSP0_UART1_CLK	0x14
++#define LSP0_UART2_CLK	0x18
++#define LSP0_SPIFC0_CLK	0x1c
++#define LSP0_I2C4_CLK	0x20
++#define LSP0_I2C5_CLK	0x24
++#define LSP0_SSP0_CLK	0x28
++#define LSP0_SSP1_CLK	0x2c
++#define LSP0_USIM0_CLK	0x30
++#define LSP0_GPIO_CLK	0x34
++#define LSP0_I2C3_CLK	0x38
++
++/* LSP1 CRM */
++#define LSP1_UART4_CLK	0x08
++#define LSP1_UART5_CLK	0x0c
++#define LSP1_PWM_CLK	0x10
++#define LSP1_I2C2_CLK	0x14
++#define LSP1_SSP2_CLK	0x1c
++#define LSP1_SSP3_CLK	0x20
++#define LSP1_SSP4_CLK	0x24
++#define LSP1_USIM1_CLK	0x28
++
++/* audio lsp */
++#define AUDIO_I2S0_DIV_CFG1	0x10
++#define AUDIO_I2S0_DIV_CFG2	0x14
++#define AUDIO_I2S0_CLK		0x18
++#define AUDIO_I2S1_DIV_CFG1	0x20
++#define AUDIO_I2S1_DIV_CFG2	0x24
++#define AUDIO_I2S1_CLK		0x28
++#define AUDIO_I2S2_DIV_CFG1	0x30
++#define AUDIO_I2S2_DIV_CFG2	0x34
++#define AUDIO_I2S2_CLK		0x38
++#define AUDIO_I2S3_DIV_CFG1	0x40
++#define AUDIO_I2S3_DIV_CFG2	0x44
++#define AUDIO_I2S3_CLK		0x48
++#define AUDIO_I2C0_CLK		0x50
++#define AUDIO_SPDIF0_DIV_CFG1	0x60
++#define AUDIO_SPDIF0_DIV_CFG2	0x64
++#define AUDIO_SPDIF0_CLK	0x68
++#define AUDIO_SPDIF1_DIV_CFG1	0x70
++#define AUDIO_SPDIF1_DIV_CFG2	0x74
++#define AUDIO_SPDIF1_CLK	0x78
++#define AUDIO_TIMER_CLK		0x80
++#define AUDIO_TDM_CLK		0x90
++#define AUDIO_TS_CLK		0xa0
++
++static struct zx_pll_config pll_cpu_table[] = {
++	PLL_RATE(1312000000, 0x00103621, 0x04aaaaaa),
++	PLL_RATE(1407000000, 0x00103a21, 0x04aaaaaa),
++	PLL_RATE(1503000000, 0x00103e21, 0x04aaaaaa),
++	PLL_RATE(1600000000, 0x00104221, 0x04aaaaaa),
++};
++
++PNAME(osc) = {
++	"osc24m",
++	"osc32k",
++};
++
++PNAME(dbg_wclk_p) = {
++	"clk334m",
++	"clk466m",
++	"clk396m",
++	"clk250m",
++};
++
++PNAME(a72_coreclk_p) = {
++	"osc24m",
++	"pll_mm0_1188m",
++	"pll_mm1_1296m",
++	"clk1000m",
++	"clk648m",
++	"clk1600m",
++	"pll_audio_1800m",
++	"pll_vga_1800m",
++};
++
++PNAME(cpu_periclk_p) = {
++	"osc24m",
++	"clk500m",
++	"clk594m",
++	"clk466m",
++	"clk294m",
++	"clk334m",
++	"clk250m",
++	"clk125m",
++};
++
++PNAME(a53_coreclk_p) = {
++	"osc24m",
++	"clk1000m",
++	"pll_mm0_1188m",
++	"clk648m",
++	"clk500m",
++	"clk800m",
++	"clk1600m",
++	"pll_audio_1800m",
++};
++
++PNAME(sec_wclk_p) = {
++	"osc24m",
++	"clk396m",
++	"clk334m",
++	"clk297m",
++	"clk250m",
++	"clk198m",
++	"clk148m5",
++	"clk99m",
++};
++
++PNAME(sd_nand_wclk_p) = {
++	"osc24m",
++	"clk49m5",
++	"clk99m",
++	"clk198m",
++	"clk167m",
++	"clk148m5",
++	"clk125m",
++	"clk216m",
++};
++
++PNAME(emmc_wclk_p) = {
++	"osc24m",
++	"clk198m",
++	"clk99m",
++	"clk396m",
++	"clk334m",
++	"clk297m",
++	"clk250m",
++	"clk148m5",
++};
++
++PNAME(clk32_p) = {
++	"osc32k",
++	"clk32k768",
++};
++
++PNAME(usb_ref24m_p) = {
++	"osc32k",
++	"clk32k768",
++};
++
++PNAME(sys_noc_alck_p) = {
++	"osc24m",
++	"clk250m",
++	"clk198m",
++	"clk148m5",
++	"clk108m",
++	"clk54m",
++	"clk216m",
++	"clk240m",
++};
++
++PNAME(vde_aclk_p) = {
++	"clk334m",
++	"clk594m",
++	"clk500m",
++	"clk432m",
++	"clk480m",
++	"clk297m",
++	"clk_vga",  /*600MHz*/
++	"clk294m",
++};
++
++PNAME(vce_aclk_p) = {
++	"clk334m",
++	"clk594m",
++	"clk500m",
++	"clk432m",
++	"clk396m",
++	"clk297m",
++	"clk_vga",  /*600MHz*/
++	"clk294m",
++};
++
++PNAME(hde_aclk_p) = {
++	"clk334m",
++	"clk594m",
++	"clk500m",
++	"clk432m",
++	"clk396m",
++	"clk297m",
++	"clk_vga",  /*600MHz*/
++	"clk294m",
++};
++
++PNAME(gpu_aclk_p) = {
++	"clk334m",
++	"clk648m",
++	"clk594m",
++	"clk500m",
++	"clk396m",
++	"clk297m",
++	"clk_vga",  /*600MHz*/
++	"clk294m",
++};
++
++PNAME(sappu_aclk_p) = {
++	"clk396m",
++	"clk500m",
++	"clk250m",
++	"clk148m5",
++};
++
++PNAME(sappu_wclk_p) = {
++	"clk198m",
++	"clk396m",
++	"clk334m",
++	"clk297m",
++	"clk250m",
++	"clk148m5",
++	"clk125m",
++	"clk99m",
++};
++
++PNAME(vou_aclk_p) = {
++	"clk334m",
++	"clk594m",
++	"clk500m",
++	"clk432m",
++	"clk396m",
++	"clk297m",
++	"clk_vga",  /*600MHz*/
++	"clk294m",
++};
++
++PNAME(vou_main_wclk_p) = {
++	"clk108m",
++	"clk594m",
++	"clk297m",
++	"clk148m5",
++	"clk74m25",
++	"clk54m",
++	"clk27m",
++	"clk_vga",
++};
++
++PNAME(vou_aux_wclk_p) = {
++	"clk108m",
++	"clk148m5",
++	"clk74m25",
++	"clk54m",
++	"clk27m",
++	"clk_vga",
++	"clk54m_mm0",
++	"clk"
++};
++
++PNAME(vou_ppu_wclk_p) = {
++	"clk334m",
++	"clk432m",
++	"clk396m",
++	"clk297m",
++	"clk250m",
++	"clk125m",
++	"clk198m",
++	"clk99m",
++};
++
++PNAME(vga_i2c_wclk_p) = {
++	"osc24m",
++	"clk99m",
++};
++
++PNAME(viu_m0_aclk_p) = {
++	"clk334m",
++	"clk432m",
++	"clk396m",
++	"clk297m",
++	"clk250m",
++	"clk125m",
++	"clk198m",
++	"osc24m",
++};
++
++PNAME(viu_m1_aclk_p) = {
++	"clk198m",
++	"clk250m",
++	"clk297m",
++	"clk125m",
++	"clk396m",
++	"clk334m",
++	"clk148m5",
++	"osc24m",
++};
++
++PNAME(viu_clk_p) = {
++	"clk198m",
++	"clk334m",
++	"clk297m",
++	"clk250m",
++	"clk396m",
++	"clk125m",
++	"clk99m",
++	"clk148m5",
++};
++
++PNAME(viu_jpeg_clk_p) = {
++	"clk334m",
++	"clk480m",
++	"clk432m",
++	"clk396m",
++	"clk297m",
++	"clk250m",
++	"clk125m",
++	"clk198m",
++};
++
++PNAME(ts_sys_clk_p) = {
++	"clk192m",
++	"clk167m",
++	"clk125m",
++	"clk99m",
++};
++
++PNAME(wdt_ares_p) = {
++	"osc24m",
++	"clk32k"
++};
++
++struct zx_pll_clock zx296718_pll_clk[] __initdata = {
++	PLL(0,	"pll_cpu",	"osc24m",	PLL_CPU_REG,	pll_cpu_table),
++};
++
++struct zx_fixed_factor_clock top_ffactor_clk[] = {
++	FFACTOR(0, "clk4m",		"osc24m", 1, 6,  0),
++	FFACTOR(0, "clk2m",		"osc24m", 1, 12, 0),
++	/* pll cpu */
++	FFACTOR(0, "clk1600m",		"pll_cpu", 1, 1, CLK_SET_RATE_PARENT),
++	FFACTOR(0, "clk800m",		"pll_cpu", 1, 2, CLK_SET_RATE_PARENT),
++	/* pll mac */
++	FFACTOR(0, "clk25m",		"pll_mac", 1, 40, 0),
++	FFACTOR(0, "clk125m",		"pll_mac", 1, 8, 0),
++	FFACTOR(0, "clk250m",		"pll_mac", 1, 4, 0),
++	FFACTOR(0, "clk50m",		"pll_mac", 1, 20, 0),
++	FFACTOR(0, "clk500m",		"pll_mac", 1, 2, 0),
++	FFACTOR(0, "clk1000m",		"pll_mac", 1, 1, 0),
++	FFACTOR(0, "clk334m",		"pll_mac", 1, 3, 0),
++	FFACTOR(0, "clk167m",		"pll_mac", 1, 6, 0),
++	/* pll mm */
++	FFACTOR(0, "clk54m_mm0",	"pll_mm0", 1, 22, 0),
++	FFACTOR(0, "clk74m25",		"pll_mm0", 1, 16, 0),
++	FFACTOR(0, "clk148m5",		"pll_mm0", 1, 8, 0),
++	FFACTOR(0, "clk297m",		"pll_mm0", 1, 4, 0),
++	FFACTOR(0, "clk594m",		"pll_mm0", 1, 2, 0),
++	FFACTOR(0, "pll_mm0_1188m",	"pll_mm0", 1, 1, 0),
++	FFACTOR(0, "clk396m",		"pll_mm0", 1, 3, 0),
++	FFACTOR(0, "clk198m",		"pll_mm0", 1, 6, 0),
++	FFACTOR(0, "clk99m",		"pll_mm0", 1, 12, 0),
++	FFACTOR(0, "clk49m5",		"pll_mm0", 1, 24, 0),
++	/* pll mm */
++	FFACTOR(0, "clk324m",		"pll_mm1", 1, 4, 0),
++	FFACTOR(0, "clk648m",		"pll_mm1", 1, 2, 0),
++	FFACTOR(0, "pll_mm1_1296m",	"pll_mm1", 1, 1, 0),
++	FFACTOR(0, "clk216m",		"pll_mm1", 1, 6, 0),
++	FFACTOR(0, "clk432m",		"pll_mm1", 1, 3, 0),
++	FFACTOR(0, "clk108m",		"pll_mm1", 1, 12, 0),
++	FFACTOR(0, "clk72m",		"pll_mm1", 1, 18, 0),
++	FFACTOR(0, "clk27m",		"pll_mm1", 1, 48, 0),
++	FFACTOR(0, "clk54m",		"pll_mm1", 1, 24, 0),
++	/* vga */
++	FFACTOR(0, "pll_vga_1800m",	"pll_vga", 1, 1, 0),
++	FFACTOR(0, "clk_vga",		"pll_vga", 1, 2, 0),
++	/* pll ddr */
++	FFACTOR(0, "clk466m",		"pll_ddr", 1, 2, 0),
++
++	/* pll audio */
++	FFACTOR(0, "pll_audio_1800m",	"pll_audio", 1, 1, 0),
++	FFACTOR(0, "clk32k768",		"pll_audio", 1, 27000, 0),
++	FFACTOR(0, "clk16m384",		"pll_audio", 1, 54, 0),
++	FFACTOR(0, "clk294m",		"pll_audio", 1, 3, 0),
++
++	/* pll hsic*/
++	FFACTOR(0, "clk240m",		"pll_hsic", 1, 4, 0),
++	FFACTOR(0, "clk480m",		"pll_hsic", 1, 2, 0),
++	FFACTOR(0, "clk192m",		"pll_hsic", 1, 5, 0),
++	FFACTOR(0, "clk_pll_24m",	"pll_hsic", 1, 40, 0),
++	FFACTOR(0, "emmc_mux_div2",	"emmc_mux", 1, 2, CLK_SET_RATE_PARENT),
++};
++
++static struct clk_div_table noc_div_table[] = {
++	{ .val = 1, .div = 2, },
++	{ .val = 3, .div = 4, },
++};
++struct zx_div_clock top_div_clk[] __initdata = {
++	DIV_T(0, "sys_noc_hclk", "sys_noc_aclk", TOP_CLK_DIV0, 0, 2, 0, noc_div_table),
++	DIV_T(0, "sys_noc_pclk", "sys_noc_aclk", TOP_CLK_DIV0, 4, 2, 0, noc_div_table),
++};
++
++struct zx_mux_clock top_mux_clk[] __initdata = {
++	MUX(0, "dbg_mux",	 dbg_wclk_p,	  TOP_CLK_MUX0, 12, 2),
++	MUX(0, "a72_mux",	 a72_coreclk_p,	  TOP_CLK_MUX0, 8, 3),
++	MUX(0, "cpu_peri_mux",	 cpu_periclk_p,	  TOP_CLK_MUX0, 4, 3),
++	MUX_F(0, "a53_mux",	 a53_coreclk_p,	  TOP_CLK_MUX0, 0, 3, CLK_SET_RATE_PARENT, 0),
++	MUX(0, "sys_noc_aclk",	 sys_noc_alck_p,  TOP_CLK_MUX1, 0, 3),
++	MUX(0, "sec_mux",	 sec_wclk_p,	  TOP_CLK_MUX2, 16, 3),
++	MUX(0, "sd1_mux",	 sd_nand_wclk_p,  TOP_CLK_MUX2, 12, 3),
++	MUX(0, "sd0_mux",	 sd_nand_wclk_p,  TOP_CLK_MUX2, 8, 3),
++	MUX(0, "emmc_mux",	 emmc_wclk_p,	  TOP_CLK_MUX2, 4, 3),
++	MUX(0, "nand_mux",	 sd_nand_wclk_p,  TOP_CLK_MUX2, 0, 3),
++	MUX(0, "usb_ref24m_mux", usb_ref24m_p,	  TOP_CLK_MUX9, 16, 1),
++	MUX(0, "clk32k",	 clk32_p,	  TOP_CLK_MUX9, 12, 1),
++	MUX_F(0, "wdt_mux",	 wdt_ares_p,	  TOP_CLK_MUX9, 8, 1, CLK_SET_RATE_PARENT, 0),
++	MUX(0, "timer_mux",	 osc,		  TOP_CLK_MUX9, 4, 1),
++	MUX(0, "vde_mux",	 vde_aclk_p,	  TOP_CLK_MUX4,  0, 3),
++	MUX(0, "vce_mux",	 vce_aclk_p,	  TOP_CLK_MUX4,  4, 3),
++	MUX(0, "hde_mux",	 hde_aclk_p,	  TOP_CLK_MUX4,  8, 3),
++	MUX(0, "gpu_mux",	 gpu_aclk_p,	  TOP_CLK_MUX5,  0, 3),
++	MUX(0, "sappu_a_mux",	 sappu_aclk_p,	  TOP_CLK_MUX5,  4, 2),
++	MUX(0, "sappu_w_mux",	 sappu_wclk_p,	  TOP_CLK_MUX5,  8, 3),
++	MUX(0, "vou_a_mux",	 vou_aclk_p,	  TOP_CLK_MUX7,  0, 3),
++	MUX(0, "vou_main_w_mux", vou_main_wclk_p, TOP_CLK_MUX7,  4, 3),
++	MUX(0, "vou_aux_w_mux",	 vou_aux_wclk_p,  TOP_CLK_MUX7,  8, 3),
++	MUX(0, "vou_ppu_w_mux",	 vou_ppu_wclk_p,  TOP_CLK_MUX7, 12, 3),
++	MUX(0, "vga_i2c_mux",	 vga_i2c_wclk_p,  TOP_CLK_MUX7, 16, 1),
++	MUX(0, "viu_m0_a_mux",	 viu_m0_aclk_p,	  TOP_CLK_MUX6,  0, 3),
++	MUX(0, "viu_m1_a_mux",	 viu_m1_aclk_p,	  TOP_CLK_MUX6,  4, 3),
++	MUX(0, "viu_w_mux",	 viu_clk_p,	  TOP_CLK_MUX6,  8, 3),
++	MUX(0, "viu_jpeg_w_mux", viu_jpeg_clk_p,  TOP_CLK_MUX6, 12, 3),
++	MUX(0, "ts_sys_mux",	 ts_sys_clk_p,    TOP_CLK_MUX6, 16, 2),
++};
++
++struct zx_gate_clock top_gate_clk[] __initdata = {
++	GATE(CPU_DBG_GATE,    "dbg_wclk",        "dbg_mux",        TOP_CLK_GATE0, 4, CLK_SET_RATE_PARENT, 0),
++	GATE(A72_GATE,        "a72_coreclk",     "a72_mux",        TOP_CLK_GATE0, 3, CLK_SET_RATE_PARENT, 0),
++	GATE(CPU_PERI_GATE,   "cpu_peri",        "cpu_peri_mux",   TOP_CLK_GATE0, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(A53_GATE,        "a53_coreclk",     "a53_mux",        TOP_CLK_GATE0, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(SD1_WCLK,        "sd1_wclk",        "sd1_mux",        TOP_CLK_GATE1, 13, CLK_SET_RATE_PARENT, 0),
++	GATE(SD0_WCLK,        "sd0_wclk",        "sd0_mux",        TOP_CLK_GATE1, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(EMMC_WCLK,       "emmc_wclk",       "emmc_mux_div2",  TOP_CLK_GATE0, 5, CLK_SET_RATE_PARENT, 0),
++	GATE(EMMC_NAND_AXI,   "emmc_nand_aclk",  "sys_noc_aclk",   TOP_CLK_GATE1, 4, CLK_SET_RATE_PARENT, 0),
++	GATE(NAND_WCLK,       "nand_wclk",       "nand_mux",       TOP_CLK_GATE0, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(EMMC_NAND_AHB,   "emmc_nand_hclk",  "sys_noc_hclk",   TOP_CLK_GATE1, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(0,               "lsp1_pclk",       "sys_noc_pclk",   TOP_CLK_GATE2, 31, 0,                  0),
++	GATE(LSP1_148M5,      "lsp1_148m5",      "clk148m5",       TOP_CLK_GATE2, 30, 0,                  0),
++	GATE(LSP1_99M,        "lsp1_99m",        "clk99m",         TOP_CLK_GATE2, 29, 0,                  0),
++	GATE(LSP1_24M,        "lsp1_24m",        "osc24m",         TOP_CLK_GATE2, 28, 0,                  0),
++	GATE(LSP0_74M25,      "lsp0_74m25",      "clk74m25",       TOP_CLK_GATE2, 25, 0,                  0),
++	GATE(0,               "lsp0_pclk",       "sys_noc_pclk",   TOP_CLK_GATE2, 24, 0,                  0),
++	GATE(LSP0_32K,        "lsp0_32k",        "osc32k",         TOP_CLK_GATE2, 23, 0,                  0),
++	GATE(LSP0_148M5,      "lsp0_148m5",      "clk148m5",       TOP_CLK_GATE2, 22, 0,                  0),
++	GATE(LSP0_99M,        "lsp0_99m",        "clk99m",         TOP_CLK_GATE2, 21, 0,                  0),
++	GATE(LSP0_24M,        "lsp0_24m",        "osc24m",         TOP_CLK_GATE2, 20, 0,                  0),
++	GATE(AUDIO_99M,       "audio_99m",       "clk99m",         TOP_CLK_GATE5, 27, 0,                  0),
++	GATE(AUDIO_24M,       "audio_24m",       "osc24m",         TOP_CLK_GATE5, 28, 0,                  0),
++	GATE(AUDIO_16M384,    "audio_16m384",    "clk16m384",      TOP_CLK_GATE5, 29, 0,                  0),
++	GATE(AUDIO_32K,       "audio_32k",       "clk32k",         TOP_CLK_GATE5, 30, 0,                  0),
++	GATE(WDT_WCLK,        "wdt_wclk",        "wdt_mux",        TOP_CLK_GATE6, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(TIMER_WCLK,      "timer_wclk",      "timer_mux",      TOP_CLK_GATE6, 5, CLK_SET_RATE_PARENT, 0),
++	GATE(VDE_ACLK,        "vde_aclk",        "vde_mux",        TOP_CLK_GATE3, 0,  CLK_SET_RATE_PARENT, 0),
++	GATE(VCE_ACLK,        "vce_aclk",        "vce_mux",        TOP_CLK_GATE3, 4,  CLK_SET_RATE_PARENT, 0),
++	GATE(HDE_ACLK,        "hde_aclk",        "hde_mux",        TOP_CLK_GATE3, 8,  CLK_SET_RATE_PARENT, 0),
++	GATE(GPU_ACLK,        "gpu_aclk",        "gpu_mux",        TOP_CLK_GATE3, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(SAPPU_ACLK,      "sappu_aclk",      "sappu_a_mux",    TOP_CLK_GATE3, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(SAPPU_WCLK,      "sappu_wclk",      "sappu_w_mux",    TOP_CLK_GATE3, 22, CLK_SET_RATE_PARENT, 0),
++	GATE(VOU_ACLK,        "vou_aclk",        "vou_a_mux",      TOP_CLK_GATE4, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(VOU_MAIN_WCLK,   "vou_main_wclk",   "vou_main_w_mux", TOP_CLK_GATE4, 18, CLK_SET_RATE_PARENT, 0),
++	GATE(VOU_AUX_WCLK,    "vou_aux_wclk",    "vou_aux_w_mux",  TOP_CLK_GATE4, 19, CLK_SET_RATE_PARENT, 0),
++	GATE(VOU_PPU_WCLK,    "vou_ppu_wclk",    "vou_ppu_w_mux",  TOP_CLK_GATE4, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(MIPI_CFG_CLK,    "mipi_cfg_clk",    "osc24m",         TOP_CLK_GATE4, 21, 0,                   0),
++	GATE(VGA_I2C_WCLK,    "vga_i2c_wclk",    "vga_i2c_mux",    TOP_CLK_GATE4, 23, CLK_SET_RATE_PARENT, 0),
++	GATE(MIPI_REF_CLK,    "mipi_ref_clk",    "clk27m",         TOP_CLK_GATE4, 24, 0,                   0),
++	GATE(HDMI_OSC_CEC,    "hdmi_osc_cec",    "clk2m",          TOP_CLK_GATE4, 22, 0,                   0),
++	GATE(HDMI_OSC_CLK,    "hdmi_osc_clk",    "clk240m",        TOP_CLK_GATE4, 25, 0,                   0),
++	GATE(HDMI_XCLK,       "hdmi_xclk",       "osc24m",         TOP_CLK_GATE4, 26, 0,                   0),
++	GATE(VIU_M0_ACLK,     "viu_m0_aclk",     "viu_m0_a_mux",   TOP_CLK_GATE4, 0,  CLK_SET_RATE_PARENT, 0),
++	GATE(VIU_M1_ACLK,     "viu_m1_aclk",     "viu_m1_a_mux",   TOP_CLK_GATE4, 1,  CLK_SET_RATE_PARENT, 0),
++	GATE(VIU_WCLK,        "viu_wclk",        "viu_w_mux",      TOP_CLK_GATE4, 2,  CLK_SET_RATE_PARENT, 0),
++	GATE(VIU_JPEG_WCLK,   "viu_jpeg_wclk",   "viu_jpeg_w_mux", TOP_CLK_GATE4, 3,  CLK_SET_RATE_PARENT, 0),
++	GATE(VIU_CFG_CLK,     "viu_cfg_clk",     "osc24m",         TOP_CLK_GATE4, 6,  0,                   0),
++	GATE(TS_SYS_WCLK,     "ts_sys_wclk",     "ts_sys_mux",     TOP_CLK_GATE5, 2,  CLK_SET_RATE_PARENT, 0),
++	GATE(TS_SYS_108M,     "ts_sys_108m",     "clk108m",        TOP_CLK_GATE5, 3,  0,                   0),
++	GATE(USB20_HCLK,      "usb20_hclk",      "sys_noc_hclk",   TOP_CLK_GATE2, 12, 0,                   0),
++	GATE(USB20_PHY_CLK,   "usb20_phy_clk",   "usb_ref24m_mux", TOP_CLK_GATE2, 13, 0,                   0),
++	GATE(USB21_HCLK,      "usb21_hclk",      "sys_noc_hclk",   TOP_CLK_GATE2, 14, 0,                   0),
++	GATE(USB21_PHY_CLK,   "usb21_phy_clk",   "usb_ref24m_mux", TOP_CLK_GATE2, 15, 0,                   0),
++	GATE(GMAC_RMIICLK,    "gmac_rmii_clk",   "clk50m",         TOP_CLK_GATE2, 3, 0,                    0),
++	GATE(GMAC_PCLK,       "gmac_pclk",       "clk198m",        TOP_CLK_GATE2, 1, 0,                    0),
++	GATE(GMAC_ACLK,       "gmac_aclk",       "clk49m5",        TOP_CLK_GATE2, 0, 0,                    0),
++	GATE(GMAC_RFCLK,      "gmac_refclk",     "clk25m",         TOP_CLK_GATE2, 4, 0,                    0),
++	GATE(SD1_AHB,         "sd1_hclk",        "sys_noc_hclk",   TOP_CLK_GATE1, 12,  0,                  0),
++	GATE(SD0_AHB,         "sd0_hclk",        "sys_noc_hclk",   TOP_CLK_GATE1, 8,  0,                   0),
++	GATE(TEMPSENSOR_GATE, "tempsensor_gate", "clk4m",          TOP_CLK_GATE5, 31,  0,                  0),
++};
++
++static void __init zx296718_top_clocks_init(struct device_node *np)
++{
++	struct zx_clk_provider *clkp;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	clkp = zx_clk_init(np, reg_base, TOP_NR_CLKS);
++	if (!clkp)
++		panic("%s: unable to allocate context.\n", __func__);
++	zx296718_clk_register_pll(clkp, zx296718_pll_clk, ARRAY_SIZE(zx296718_pll_clk), reg_base);
++	zx_clk_register_fixed_factor(clkp, top_ffactor_clk, ARRAY_SIZE(top_ffactor_clk));
++	zx_clk_register_mux(clkp, top_mux_clk, ARRAY_SIZE(top_mux_clk));
++	zx_clk_register_gate(clkp, top_gate_clk, ARRAY_SIZE(top_gate_clk));
++
++	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clkp->clk_data))
++		panic("could not register clk provider\n");
++	pr_info("top clk init over, nr:%d\n", TOP_NR_CLKS);
++}
++CLK_OF_DECLARE(zx296718_top_clk, "zte,zx296718-topcrm", zx296718_top_clocks_init);
++
++static struct clk_div_table common_even_div_table[] = {
++	{ .val = 0, .div = 1, },
++	{ .val = 1, .div = 2, },
++	{ .val = 3, .div = 4, },
++	{ .val = 5, .div = 6, },
++	{ .val = 7, .div = 8, },
++	{ .val = 9, .div = 10, },
++	{ .val = 11, .div = 12, },
++	{ .val = 13, .div = 14, },
++	{ .val = 15, .div = 16, },
++};
++
++static struct clk_div_table common_div_table[] = {
++	{ .val = 0, .div = 1, },
++	{ .val = 1, .div = 2, },
++	{ .val = 2, .div = 3, },
++	{ .val = 3, .div = 4, },
++	{ .val = 4, .div = 5, },
++	{ .val = 5, .div = 6, },
++	{ .val = 6, .div = 7, },
++	{ .val = 7, .div = 8, },
++	{ .val = 8, .div = 9, },
++	{ .val = 9, .div = 10, },
++	{ .val = 10, .div = 11, },
++	{ .val = 11, .div = 12, },
++	{ .val = 12, .div = 13, },
++	{ .val = 13, .div = 14, },
++	{ .val = 14, .div = 15, },
++	{ .val = 15, .div = 16, },
++};
++
++PNAME(lsp0_wclk_common_p) = {
++	"lsp0_24m",
++	"lsp0_99m",
++};
++
++PNAME(lsp0_wclk_timer3_p) = {
++	"timer3_div",
++	"lsp0_32k"
++};
++
++PNAME(lsp0_wclk_timer4_p) = {
++	"timer4_div",
++	"lsp0_32k"
++};
++
++PNAME(lsp0_wclk_timer5_p) = {
++	"timer5_div",
++	"lsp0_32k"
++};
++
++PNAME(lsp0_wclk_spifc0_p) = {
++	"lsp0_148m5",
++	"lsp0_24m",
++	"lsp0_99m",
++	"lsp0_74m25"
++};
++
++PNAME(lsp0_wclk_ssp_p) = {
++	"lsp0_148m5",
++	"lsp0_99m",
++	"lsp0_24m",
++};
++
++struct zx_mux_clock lsp0_mux_clk[] __initdata = {
++	MUX(0, "timer3_wclk_mux", lsp0_wclk_timer3_p, LSP0_TIMER3_CLK, 4, 1),
++	MUX(0, "timer4_wclk_mux", lsp0_wclk_timer4_p, LSP0_TIMER4_CLK, 4, 1),
++	MUX(0, "timer5_wclk_mux", lsp0_wclk_timer5_p, LSP0_TIMER5_CLK, 4, 1),
++	MUX(0, "uart3_wclk_mux",  lsp0_wclk_common_p, LSP0_UART3_CLK,  4, 1),
++	MUX(0, "uart1_wclk_mux",  lsp0_wclk_common_p, LSP0_UART1_CLK,  4, 1),
++	MUX(0, "uart2_wclk_mux",  lsp0_wclk_common_p, LSP0_UART2_CLK,  4, 1),
++	MUX(0, "spifc0_wclk_mux", lsp0_wclk_spifc0_p, LSP0_SPIFC0_CLK, 4, 2),
++	MUX(0, "i2c4_wclk_mux",   lsp0_wclk_common_p, LSP0_I2C4_CLK,   4, 1),
++	MUX(0, "i2c5_wclk_mux",   lsp0_wclk_common_p, LSP0_I2C5_CLK,   4, 1),
++	MUX(0, "ssp0_wclk_mux",   lsp0_wclk_ssp_p,    LSP0_SSP0_CLK,   4, 1),
++	MUX(0, "ssp1_wclk_mux",   lsp0_wclk_ssp_p,    LSP0_SSP1_CLK,   4, 1),
++	MUX(0, "i2c3_wclk_mux",   lsp0_wclk_common_p, LSP0_I2C3_CLK,   4, 1),
++};
++
++struct zx_gate_clock lsp0_gate_clk[] __initdata = {
++	GATE(LSP0_TIMER3_WCLK, "timer3_wclk", "timer3_wclk_mux", LSP0_TIMER3_CLK, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_TIMER4_WCLK, "timer4_wclk", "timer4_wclk_mux", LSP0_TIMER4_CLK, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_TIMER5_WCLK, "timer5_wclk", "timer5_wclk_mux", LSP0_TIMER5_CLK, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_UART3_WCLK,  "uart3_wclk",  "uart3_wclk_mux",  LSP0_UART3_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_UART1_WCLK,  "uart1_wclk",  "uart1_wclk_mux",  LSP0_UART1_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_UART2_WCLK,  "uart2_wclk",  "uart2_wclk_mux",  LSP0_UART2_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_SPIFC0_WCLK, "spifc0_wclk", "spifc0_wclk_mux", LSP0_SPIFC0_CLK, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_I2C4_WCLK,   "i2c4_wclk",   "i2c4_wclk_mux",   LSP0_I2C4_CLK,   1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_I2C5_WCLK,   "i2c5_wclk",   "i2c5_wclk_mux",   LSP0_I2C5_CLK,   1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_SSP0_WCLK,   "ssp0_wclk",   "ssp0_div",        LSP0_SSP0_CLK,   1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_SSP1_WCLK,   "ssp1_wclk",   "ssp1_div",        LSP0_SSP1_CLK,   1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP0_I2C3_WCLK,   "i2c3_wclk",   "i2c3_wclk_mux",   LSP0_I2C3_CLK,   1, CLK_SET_RATE_PARENT, 0),
++};
++
++struct zx_div_clock lsp0_div_clk[] __initdata = {
++	DIV_T(0, "timer3_div", "lsp0_24m", LSP0_TIMER3_CLK,  12, 4, 0, common_even_div_table),
++	DIV_T(0, "timer4_div", "lsp0_24m", LSP0_TIMER4_CLK,  12, 4, 0, common_even_div_table),
++	DIV_T(0, "timer5_div", "lsp0_24m", LSP0_TIMER5_CLK,  12, 4, 0, common_even_div_table),
++	DIV_T(0, "ssp0_div", "ssp0_wclk_mux", LSP0_SSP0_CLK, 12, 4, 0, common_even_div_table),
++	DIV_T(0, "ssp1_div", "ssp1_wclk_mux", LSP0_SSP1_CLK, 12, 4, 0, common_even_div_table),
++};
++
++static void __init lsp0_clocks_init(struct device_node *np)
++{
++	struct zx_clk_provider *clkp;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	clkp = zx_clk_init(np, reg_base, LSP0_NR_CLKS);
++	if (!clkp)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	zx_clk_register_mux(clkp, lsp0_mux_clk, ARRAY_SIZE(lsp0_mux_clk));
++	zx_clk_register_gate(clkp, lsp0_gate_clk, ARRAY_SIZE(lsp0_gate_clk));
++	zx_clk_register_div(clkp, lsp0_div_clk, ARRAY_SIZE(lsp0_div_clk));
++
++	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clkp->clk_data))
++		panic("could not register clk provider\n");
++	pr_info("lsp0 init over:%d\n", LSP0_NR_CLKS);
++}
++CLK_OF_DECLARE(lsp0_clk, "zte,zx296718-lsp0crm", lsp0_clocks_init);
++
++
++PNAME(lsp1_wclk_common_p) = {
++	"lsp1_24m",
++	"lsp1_99m",
++};
++
++PNAME(lsp1_wclk_ssp_p) = {
++	"lsp1_148m5",
++	"lsp1_99m",
++	"lsp1_24m",
++};
++
++struct zx_mux_clock lsp1_mux_clk[] __initdata = {
++	MUX(0, "uart4_wclk_mux", lsp1_wclk_common_p, LSP1_UART4_CLK, 4, 1),
++	MUX(0, "uart5_wclk_mux", lsp1_wclk_common_p, LSP1_UART5_CLK, 4, 1),
++	MUX(0, "pwm_wclk_mux",   lsp1_wclk_common_p, LSP1_PWM_CLK,   4, 1),
++	MUX(0, "i2c2_wclk_mux",  lsp1_wclk_common_p, LSP1_I2C2_CLK,  4, 1),
++	MUX(0, "ssp2_wclk_mux",  lsp1_wclk_ssp_p,    LSP1_SSP2_CLK,  4, 2),
++	MUX(0, "ssp3_wclk_mux",  lsp1_wclk_ssp_p,    LSP1_SSP3_CLK,  4, 2),
++	MUX(0, "ssp4_wclk_mux",  lsp1_wclk_ssp_p,    LSP1_SSP4_CLK,  4, 2),
++	MUX(0, "usim1_wclk_mux", lsp1_wclk_common_p, LSP1_USIM1_CLK, 4, 1),
++};
++
++struct zx_div_clock lsp1_div_clk[] __initdata = {
++	DIV_T(0, "pwm_div",  "pwm_wclk_mux",  LSP1_PWM_CLK,  12, 4, CLK_SET_RATE_PARENT, common_div_table),
++	DIV_T(0, "ssp2_div", "ssp2_wclk_mux", LSP1_SSP2_CLK, 12, 4, CLK_SET_RATE_PARENT, common_even_div_table),
++	DIV_T(0, "ssp3_div", "ssp3_wclk_mux", LSP1_SSP3_CLK, 12, 4, CLK_SET_RATE_PARENT, common_even_div_table),
++	DIV_T(0, "ssp4_div", "ssp4_wclk_mux", LSP1_SSP4_CLK, 12, 4, CLK_SET_RATE_PARENT, common_even_div_table),
++};
++
++struct zx_gate_clock lsp1_gate_clk[] __initdata = {
++	GATE(LSP1_UART4_WCLK, "lsp1_uart4_wclk", "uart4_wclk_mux", LSP1_UART4_CLK, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_UART5_WCLK, "lsp1_uart5_wclk", "uart5_wclk_mux", LSP1_UART5_CLK, 1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_PWM_WCLK,   "lsp1_pwm_wclk",   "pwm_div",        LSP1_PWM_CLK,   1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_PWM_PCLK,   "lsp1_pwm_pclk",   "lsp1_pclk",      LSP1_PWM_CLK,   0, 0,		   0),
++	GATE(LSP1_I2C2_WCLK,  "lsp1_i2c2_wclk",  "i2c2_wclk_mux",  LSP1_I2C2_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_SSP2_WCLK,  "lsp1_ssp2_wclk",  "ssp2_div",       LSP1_SSP2_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_SSP3_WCLK,  "lsp1_ssp3_wclk",  "ssp3_div",       LSP1_SSP3_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_SSP4_WCLK,  "lsp1_ssp4_wclk",  "ssp4_div",       LSP1_SSP4_CLK,  1, CLK_SET_RATE_PARENT, 0),
++	GATE(LSP1_USIM1_WCLK, "lsp1_usim1_wclk", "usim1_wclk_mux", LSP1_USIM1_CLK, 1, CLK_SET_RATE_PARENT, 0),
++};
++
++
++static void __init lsp1_clocks_init(struct device_node *np)
++{
++	struct zx_clk_provider *clkp;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	clkp = zx_clk_init(np, reg_base, LSP1_NR_CLKS);
++	if (!clkp)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	zx_clk_register_mux(clkp, lsp1_mux_clk, ARRAY_SIZE(lsp1_mux_clk));
++	zx_clk_register_gate(clkp, lsp1_gate_clk, ARRAY_SIZE(lsp1_gate_clk));
++	zx_clk_register_div(clkp, lsp1_div_clk, ARRAY_SIZE(lsp1_div_clk));
++	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clkp->clk_data))
++		panic("could not register clk provider\n");
++	pr_info("lsp1-clk init over, nr:%d\n", LSP1_NR_CLKS);
++}
++CLK_OF_DECLARE(lsp1_clk, "zte,zx296718-lsp1crm", lsp1_clocks_init);
++
++
++
++#if 0
++PNAME(audio_wclk_common_p) = {
++	"audio_24m",
++	"audio_99m",
++};
++
++PNAME(audio_timer_p) = {
++	"audio_24m",
++	"audio_32k",
++};
++
++
++struct zx_mux_clock audio_mux_clk[] __initdata = {
++	MUX(0, "i2s0_wclk_mux", audio_wclk_common_p, AUDIO_I2S0_CLK, 0, 1),
++	MUX(0, "i2s1_wclk_mux", audio_wclk_common_p, AUDIO_I2S1_CLK, 0, 1),
++	MUX(0, "i2s2_wclk_mux", audio_wclk_common_p, AUDIO_I2S2_CLK, 0, 1),
++	MUX(0, "i2s3_wclk_mux", audio_wclk_common_p, AUDIO_I2S3_CLK, 0, 1),
++	MUX(0, "i2c0_wclk_mux", audio_wclk_common_p, AUDIO_I2C0_CLK, 0, 1),
++	MUX(0, "spdif0_wclk_mux", audio_wclk_common_p, AUDIO_SPDIF0_CLK, 0, 1),
++	MUX(0, "spdif1_wclk_mux", audio_wclk_common_p, AUDIO_SPDIF1_CLK, 0, 1),
++	MUX(0, "timer_wclk_mux", audio_timer_p, AUDIO_TIMER_CLK, 0, 1),
++};
++
++
++struct zx_clk_audio_div_table i2s_wclk_div_table[] = {
++	{2048000, 0x3000030, 0xffff5700},
++	{4096000, 0x3000018, 0xffff2b80},
++	{2822400, 0x3000011, 0xffff89cb},
++	{3072000, 0x3000010, 0xffff1d00},
++	{4096000, 0x300000c, 0xffff15c0},
++	{5644800, 0x3000008, 0xffffc4e5},
++	{6144000, 0x3000008, 0xffff0e80},
++	{11289600, 0x3000004, 0xffff6273},
++	{12288000, 0x3000004, 0xffff0740},
++	{22579200, 0x3000002, 0xffff3139},
++	{24576000, 0x3000002, 0xffff03a0},
++};
++
++struct zx_clk_audio_div_table spdif_wclk_div_table[] = {
++	{2822400, 0x00023, 0xffff1397},
++	{3072000, 0x00020, 0xffff3a00},
++	{4096000, 0x00018, 0xffff2b80},
++	{5644800, 0x00011, 0xffff89cb},
++	{6144000, 0x00010, 0xffff1d00},
++	{11289600, 0x00008, 0xffffc4e5},
++	{12288000, 0x00008, 0xffff0e80},
++	{22579200, 0x00004, 0xffff6273},
++	{24576000, 0x00004, 0xffff0740},
++};
++struct zx_audio_div_clock audio_adiv_clk[] __initdata = {
++	DIV_AUDIO(0, "i2s0_wclk_div", "i2s0_wclk_mux", AUDIO_I2S0_DIV_CFG1, 0, i2s_wclk_div_table),
++	DIV_AUDIO(0, "i2s1_wclk_div", "i2s1_wclk_mux", AUDIO_I2S1_DIV_CFG1, 0, i2s_wclk_div_table),
++	DIV_AUDIO(0, "i2s2_wclk_div", "i2s2_wclk_mux", AUDIO_I2S2_DIV_CFG1, 0, i2s_wclk_div_table),
++	DIV_AUDIO(0, "i2s3_wclk_div", "i2s3_wclk_mux", AUDIO_I2S3_DIV_CFG1, 0, i2s_wclk_div_table),
++	DIV_AUDIO(0, "spdif0_wclk_div", "spdif0_wclk_mux", AUDIO_SPDIF0_DIV_CFG1, 0, spdif_wclk_div_table),
++	DIV_AUDIO(0, "spdif1_wclk_div", "spdif1_wclk_mux", AUDIO_SPDIF1_DIV_CFG1, 0, spdif_wclk_div_table),
++};
++
++struct zx_div_clock audio_div_clk[] __initdata = {
++	/*DIV_T(0, "i2s0_wclk_div_int", "i2s0_wclk_div_frac", AUDIO_I2S0_DIV_CFG2, 24, 4, CLK_SET_RATE_PARENT, common_even_div_table),
++	DIV_T(0, "i2s1_wclk_div_int", "i2s1_wclk_div_frac", AUDIO_I2S1_DIV_CFG2, 24, 4, CLK_SET_RATE_PARENT, common_even_div_table),
++	DIV_T(0, "i2s2_wclk_div_int", "i2s2_wclk_div_frac", AUDIO_I2S2_DIV_CFG2, 24, 4, CLK_SET_RATE_PARENT, common_even_div_table),
++	DIV_T(0, "i2s3_wclk_div_int", "i2s3_wclk_div_frac", AUDIO_I2S3_DIV_CFG2, 24, 4, CLK_SET_RATE_PARENT, common_even_div_table),*/
++	DIV_T(0, "tdm_wclk_div", "audio_16m384", AUDIO_TDM_CLK, 8, 4, 0, common_div_table),
++};
++struct zx_gate_clock audio_gate_clk[] __initdata = {
++	GATE(AUDIO_I2S0_WCLK, "i2s0_wclk", "i2s0_wclk_div", AUDIO_I2S0_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_I2S1_WCLK, "i2s1_wclk", "i2s1_wclk_div", AUDIO_I2S1_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_I2S2_WCLK, "i2s2_wclk", "i2s2_wclk_div", AUDIO_I2S2_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_I2S3_WCLK, "i2s3_wclk", "i2s3_wclk_div", AUDIO_I2S3_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_I2C0_WCLK, "i2c0_wclk", "i2c0_wclk_mux", AUDIO_I2C0_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_SPDIF0_WCLK, "spdif0_wclk", "spdif0_wclk_div", AUDIO_SPDIF0_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
++	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
++};
++static void __init audio_clocks_init(struct device_node *np)
++{
++	struct zx_clk_provider *clkp;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	clkp = zx_clk_init(np, reg_base, AUDIO_NR_CLKS);
++	if (!clkp)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	zx_clk_register_mux(clkp, audio_mux_clk, ARRAY_SIZE(audio_mux_clk));
++	zx_clk_register_div_audio(clkp, audio_adiv_clk, ARRAY_SIZE(audio_adiv_clk));
++	zx_clk_register_div(clkp, audio_div_clk, ARRAY_SIZE(audio_div_clk));
++	zx_clk_register_gate(clkp, audio_gate_clk, ARRAY_SIZE(audio_gate_clk));
++	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clkp->clk_data))
++		panic("could not register clk provider\n");
++}
++CLK_OF_DECLARE(audio_clk, "zte,zx296718-audiocrm", audio_clocks_init);
++#endif
+diff --git a/include/dt-bindings/clock/zx296718-clock.h b/include/dt-bindings/clock/zx296718-clock.h
+new file mode 100644
+index 0000000..97d45e2
+--- /dev/null
++++ b/include/dt-bindings/clock/zx296718-clock.h
+@@ -0,0 +1,140 @@
++/*
++ * Copyright (C) 2015 - 2016 ZTE Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef __DT_BINDINGS_CLOCK_ZX296718_H
++#define __DT_BINDINGS_CLOCK_ZX296718_H
++
++/* PLL */
++#define ZX296718_OSC		0
++#define ZX296718_PLL_CPU	1
++#define ZX296718_PLL_MAC	2
++#define ZX296718_PLL_MM0	3
++#define ZX296718_PLL_MM1	4
++#define ZX296718_PLL_VGA	5
++#define ZX296718_PLL_DDR	6
++#define ZX296718_PLL_AUDIO	7
++#define ZX296718_PLL_HSIC	8
++#define CPU_DBG_GATE		9
++#define A72_GATE		10
++#define CPU_PERI_GATE		11
++#define A53_GATE		12
++#define DDR1_GATE		13
++#define DDR0_GATE		14
++#define SD1_WCLK		15
++#define SD1_AHB			16
++#define SD0_WCLK		17
++#define SD0_AHB			18
++#define EMMC_WCLK		19
++#define EMMC_NAND_AXI		20
++#define NAND_WCLK		21
++#define EMMC_NAND_AHB		22
++#define LSP1_148M5		23
++#define LSP1_99M		24
++#define LSP1_24M		25
++#define LSP0_74M25		26
++#define LSP0_32K		27
++#define LSP0_148M5		28
++#define LSP0_99M		29
++#define LSP0_24M		30
++#define DEMUX_AXI		31
++#define DEMUX_APB		32
++#define DEMUX_148M5		33
++#define DEMUX_108M		34
++#define AUDIO_APB		35
++#define AUDIO_99M		36
++#define AUDIO_24M		37
++#define AUDIO_16M384		38
++#define AUDIO_32K		39
++#define WDT_WCLK		40
++#define TIMER_WCLK		41
++#define VDE_ACLK		42
++#define VCE_ACLK		43
++#define HDE_ACLK		44
++#define GPU_ACLK		45
++#define SAPPU_ACLK		46
++#define SAPPU_WCLK		47
++#define VOU_ACLK		48
++#define VOU_MAIN_WCLK		49
++#define VOU_AUX_WCLK		50
++#define VOU_PPU_WCLK		51
++#define MIPI_CFG_CLK		52
++#define VGA_I2C_WCLK		53
++#define MIPI_REF_CLK		54
++#define HDMI_OSC_CEC		55
++#define HDMI_OSC_CLK		56
++#define HDMI_XCLK		57
++#define VIU_M0_ACLK		58
++#define VIU_M1_ACLK		59
++#define VIU_WCLK		60
++#define VIU_JPEG_WCLK		61
++#define VIU_CFG_CLK		62
++#define TS_SYS_WCLK		63
++#define TS_SYS_108M		64
++#define USB20_HCLK		65
++#define USB20_PHY_CLK		66
++#define USB21_HCLK		67
++#define USB21_PHY_CLK		68
++#define GMAC_RMIICLK		69
++#define GMAC_PCLK		70
++#define GMAC_ACLK		71
++#define GMAC_RFCLK		72
++#define TEMPSENSOR_GATE		73
++
++#define TOP_NR_CLKS		74
++
++
++#define LSP0_TIMER3_PCLK	1
++#define LSP0_TIMER3_WCLK	2
++#define LSP0_TIMER4_PCLK	3
++#define LSP0_TIMER4_WCLK	4
++#define LSP0_TIMER5_PCLK	5
++#define LSP0_TIMER5_WCLK	6
++#define LSP0_UART3_PCLK		7
++#define LSP0_UART3_WCLK		8
++#define LSP0_UART1_PCLK		9
++#define LSP0_UART1_WCLK		10
++#define LSP0_UART2_PCLK		11
++#define LSP0_UART2_WCLK		12
++#define LSP0_SPIFC0_PCLK	13
++#define LSP0_SPIFC0_WCLK	14
++#define LSP0_I2C4_PCLK		15
++#define LSP0_I2C4_WCLK		16
++#define LSP0_I2C5_PCLK		17
++#define LSP0_I2C5_WCLK		18
++#define LSP0_SSP0_PCLK		19
++#define LSP0_SSP0_WCLK		20
++#define LSP0_SSP1_PCLK		21
++#define LSP0_SSP1_WCLK		22
++#define LSP0_USIM_PCLK		23
++#define LSP0_USIM_WCLK		24
++#define LSP0_GPIO_PCLK		25
++#define LSP0_GPIO_WCLK		26
++#define LSP0_I2C3_PCLK		27
++#define LSP0_I2C3_WCLK		28
++
++#define LSP0_NR_CLKS		29
++
++
++#define LSP1_UART4_PCLK		1
++#define LSP1_UART4_WCLK		2
++#define LSP1_UART5_PCLK		3
++#define LSP1_UART5_WCLK		4
++#define LSP1_PWM_PCLK		5
++#define LSP1_PWM_WCLK		6
++#define LSP1_I2C2_PCLK		7
++#define LSP1_I2C2_WCLK		8
++#define LSP1_SSP2_PCLK		9
++#define LSP1_SSP2_WCLK		10
++#define LSP1_SSP3_PCLK		11
++#define LSP1_SSP3_WCLK		12
++#define LSP1_SSP4_PCLK		13
++#define LSP1_SSP4_WCLK		14
++#define LSP1_USIM1_PCLK		15
++#define LSP1_USIM1_WCLK		16
++
++#define LSP1_NR_CLKS		17
++#endif
+-- 
+1.9.1
