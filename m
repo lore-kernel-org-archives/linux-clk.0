@@ -1,54 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.73]:53444 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751887AbcGLJvQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2016 05:51:16 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Wan Zongshun <vw@iommu.org>, devicetree@vger.kernel.org,
-	jason@lakedaemon.net, Wan Zongshun <mcuos.com@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
-Date: Tue, 12 Jul 2016 11:50:28 +0200
-Message-ID: <1510379.YVtTfMI32O@wuerfel>
-In-Reply-To: <5784B302.80307@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <4765191.NGpMC1JR46@wuerfel> <5784B302.80307@iommu.org>
+Return-Path: <ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Mon, 18 Jul 2016 22:19:20 +0200
+Message-ID: <CAPybu_3++N26xYPAW9quVR2MT=R8_b89kEJmgJk9HM+VB9nVYA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/8] clk: Don't duplicate initialization on platform_dev
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, July 12, 2016 5:06:10 PM CEST Wan Zongshun wrote:
-> On 2016年07月11日 16:03, Arnd Bergmann wrote:
-> > On Sunday, July 10, 2016 3:27:26 PM CEST Wan Zongshun wrote:
-> > I'm still a bit unsure about the set of attributes here.
-> >
-> > - The "soc_id" is read from the device tree from the field that contains
-> >    the board name, I think for consistency you should try to map the
-> >    GCR_CHIPID to the name of the SoC and assign that here
-> >
-> > - The "machine" is hardcoded to "NUC900EVB", which in turn looks like
-> >    a particular board but not the one you are running on. Maybe read
-> >    that from the DT instead?
-> >
-> > - The "revision" is not filled at all, I would suggest using something
-> >    derived from the GCR_CHIPID register here
-> >
-> > - you have two nonstandard attributes "chipid" and "version", which
-> >    I'd hope to avoid -- the set of standard attributes is supposed to
-> >    give enough information about the machine, and platform independent
-> >    user space will never read those.
-> 
-> So, Maybe I can remove those two codes, no need push those information 
-> to user space?
-> 
-> device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
-> device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
-> 
+Hi Stephen
 
-Yes, that would be good.
 
-	Arnd
+It is anything that am I missing? Can I help you somehow?
+
+
+Regards!
+
+On Tue, Jul 5, 2016 at 6:23 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Clock providers can be probed as a normal platform device, or via
+> of_clk_init() before the rest of the platform devices are initialized
+> using the CLK_OF_DECLARE() macro.
+>
+> If a driver required both initialization methodologies, the core would call
+> both probe/init functions.
+>
+> This changeset prevent the dual initialization using the OF_POPULATE flag.
+>
+> It also creates a new macro, CLK_OF_DECLARE_DRIVER, used by drivers that
+> require double initialization.
+>
+> Finally, it adds module platform driver initialization to fixed-factor
+> and fixed-rate, enabling its use in dt overlays.
+>
+> The order of the patches allows future bisects of the change. This explains
+> why  Avoid double initialization of clocks() is done almost at the end.
+>
+> v5: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+> -Create CLK_OF_DECLARE_DRIVER() macro
+> -use it in clk-artpec6, sunxi,nxp
+>
+> v4: Huge MACRO(), not posted to the list
+>
+> v3: Use OF_POPULATE flag inside fixed-rate and fixed-factor
+>
+> v2: Changes proposed by: Stephen Boyd <sboyd@codeaurora.org>
+> -Add error check
+> -CodeStyle on of_device_ide
+> -Use builtin_platform_driver()
+>
+> When clock providers are added to the device tree after of_clk_init is called
+> they are not added to the clock provider list. This makes that drivers such
+> as i2c-xiic.c fail to init, as they may depend on the unadded clock provider.
+>
+> Ricardo Ribalda Delgado (8):
+>   clk: core: New macro CLK_OF_DECLARE_DRIVER
+>   clk: axis: Use new macro CLK_OF_DECLARE_DRIVER
+>   clk: npx: Use new macro CLK_OF_DECLARE_DRIVER
+>   clk: sunxi: mod0: Use new macro CLK_OF_DECLARE_DRIVER
+>   clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER
+>   clk: core: Avoid double initialization of clocks
+>   clk: fixed-factor: Convert into a module platform driver
+>   clk: fixed-rate: Convert into a module platform driver
+>
+>  drivers/clk/axis/clk-artpec6.c     |  4 +--
+>  drivers/clk/clk-fixed-factor.c     | 72 +++++++++++++++++++++++++++++++++++---
+>  drivers/clk/clk-fixed-rate.c       | 69 +++++++++++++++++++++++++++++++++---
+>  drivers/clk/clk.c                  |  4 +++
+>  drivers/clk/nxp/clk-lpc18xx-creg.c |  3 +-
+>  drivers/clk/sunxi/clk-mod0.c       |  3 +-
+>  drivers/clk/sunxi/clk-sun8i-apb0.c |  4 +--
+>  include/linux/clk-provider.h       | 12 +++++++
+>  8 files changed, 156 insertions(+), 15 deletions(-)
+>
+> --
+> 2.8.1
+>
+
+
+
+-- 
+Ricardo Ribalda
