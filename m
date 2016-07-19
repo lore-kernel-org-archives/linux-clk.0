@@ -1,76 +1,58 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-In-Reply-To: <1467989201-14661-2-git-send-email-andi.shyti@samsung.com>
-Message-Id: <E1bNjZN-0001qI-NZ@debutante>
-Date: Thu, 14 Jul 2016 17:33:01 +0100
-Subject: Applied "spi: s3c64xx: add exynos5433 spi compatible" to the spi tree
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: prevent __of_clk_get_hw_from_provider() from returning NULL
+Date: Tue, 19 Jul 2016 18:03:58 +0900
+Message-Id: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+The .get(_hw) callback of an OF clock provider can return a NULL
+pointer in some cases.
 
-   spi: s3c64xx: add exynos5433 spi compatible
+For example, of_clk_src_onecell_get() returns NULL for index 1 of a
+sparse array of clocks like follows:
 
-has been applied to the spi tree at
+  clk_num == 3
+  idx 0: UART clk
+  idx 1: NULL (no clk is allocated)
+  idx 2: I2C clk
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+In such cases, clk_get() successfully returns NULL.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+A problem is that most drivers only check IS_ERR(), like follows:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+  clk = devm_clk_get(dev, NULL);
+  if (IS_ERR(clk))
+          return PTR_ERR(clk);
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+It carries on moving forward and will probably be hit by a different
+error check with a different error message.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Let's make __of_clk_get_hw_from_provider() return ERR_PTR(-ENOENT)
+if the .get(_hw) returns NULL.
 
-Thanks,
-Mark
-
->From c068042bf0872c9121f4a6eab281dd63f61df5d3 Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Tue, 12 Jul 2016 19:02:10 +0900
-Subject: [PATCH] spi: s3c64xx: add exynos5433 spi compatible
-
-The samsung,exynos5433-spi has some peculiarities that bring the
-need of creating a new compatible in the binding.
-
-One of those is the 3-clocks controller management where the spi
-is fed with three clocks: "spi", "busclkN" and "ioclk".
-
-By adding the exynos5433-spi, we deprecate the exynos7 compatible
-and discourage its use.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 930bc7349271..ab4f0a46e859 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -9,7 +9,8 @@ Required SoC Specific Properties:
-     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
-     - samsung,s3c6410-spi: for s3c6410 platforms
-     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
--    - samsung,exynos7-spi: for exynos7 platforms
-+    - samsung,exynos5433-spi: for exynos5433 compatible controllers
-+    - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 953643f..484acc2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3117,7 +3117,7 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
+ 			hw = ERR_CAST(clk);
+ 	}
  
- - reg: physical base address of the controller and length of memory mapped
-   region.
+-	return hw;
++	return hw ?: ERR_PTR(-ENOENT);
+ }
+ 
+ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
 -- 
-2.8.1
+1.9.1
