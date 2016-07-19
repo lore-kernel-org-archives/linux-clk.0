@@ -1,130 +1,153 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH RESEND v2 8/8] tty: serial: fsl_lpuart: Add support for RS-485
+Date: Tue, 19 Jul 2016 13:13:10 +0530
+Message-ID: <20160719074310.16872-9-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-To: Wan Zongshun <vw@iommu.org>, linux-arm-kernel@lists.infradead.org,
- "Russell King" <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1468135649-19980-5-git-send-email-vw@iommu.org>
-Cc: "Arnd Bergmann" <arnd@arndb.de>, "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- robh@kernel.org, jason@lakedaemon.net, p.zabel@pengutronix.de,
- "Wan Zongshun" <vw@iommu.org>, "Wan Zongshun" <mcuos.com@gmail.com>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-5-git-send-email-vw@iommu.org>
-Message-ID: <146827527560.73491.7859004638616123566@resonance>
-Subject: Re: [PATCH v2 04/10] clk: add Clock driver for nuc970
-Date: Mon, 11 Jul 2016 15:14:35 -0700
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Wan Zongshun (2016-07-10 00:27:24)
-> diff --git a/drivers/clk/nuc900/clk-apll.c b/drivers/clk/nuc900/clk-apll.c
-> new file mode 100644
-> index 0000000..a05aec7
-> --- /dev/null
-> +++ b/drivers/clk/nuc900/clk-apll.c
-> @@ -0,0 +1,168 @@
-> +/*
-> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
-> + *
-> + * The code contained herein is licensed under the GNU General Public
-> + * License. You may obtain a copy of the GNU General Public License
-> + * Version 2 or later at the following locations:
-> + *
-> + * http://www.opensource.org/licenses/gpl-license.html
-> + * http://www.gnu.org/copyleft/gpl.html
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/slab.h>
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +
-> +#include "clk-ccf.h"
+Enable Vybrid's build-in support for RS-485 auto RTS for controlling line
+direction of RS-485 transceiver driver.
 
-Maybe call it clk-nuc.h?
+Enable RS485 feature by either using ioctrl 'TIOCSRS485' or enable it in the
+device tree by setting 'linux,rs485-enabled-at-boot-time' property.
 
-> +static struct clk_ops clk_apll_ops =3D {
-> +       .recalc_rate =3D clk_apll_recalc_rate,
-> +       .enable =3D clk_apll_enable,
-> +       .disable =3D clk_apll_disable,
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 78 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 72 insertions(+), 6 deletions(-)
 
-Can you provide a .is_enabled?
-
-> +static void __init nuc970_clocks_init(struct device_node *np)
-> +{
-> +       int i, ret;
-> +
-> +       clkctrl =3D of_iomap(np, 0);
-> +       if (!clkctrl)
-> +               pr_err("%s: unable to map registers\n", np->full_name);
-> +
-> +
-> +       /* source */
-> +       clk[XIN]        =3D nuc970_clk_fixed("xin", 12000000);
-> +       clk[XIN32K]     =3D nuc970_clk_fixed("xin32k", 32768);
-> +       clk[APLL]       =3D nuc970_clk_apll("apll", "xin", REG_CLK_APLLCO=
-N);
-> +       clk[UPLL]       =3D nuc970_clk_upll("upll", "xin", REG_CLK_UPLLCO=
-N);
-> +       clk[XIN128_DIV] =3D nuc970_clk_fixed_factor("xin128_div", "xin", =
-1, 128);
-> +       clk[SYS_MUX]    =3D nuc970_clk_mux("sys_mux", REG_CLK_DIV0, 3, 2,
-> +                                        sys_sel_clks,
-> +                                        ARRAY_SIZE(sys_sel_clks));
-
-Instead of executing all of these registration functions, how about
-initializing your clock data statically, and then simply calling
-clk_hw_register?
-
-For an example see the recently merged drivers/clk/meson/gxbb.c
-
-> +       for (i =3D 0; i < ARRAY_SIZE(clk); i++)
-> +               if (IS_ERR(clk[i]))
-> +                       pr_err("nuc970 clk %d: register failed with %ld\n=
-",
-> +                               i, PTR_ERR(clk[i]));
-
-Better to fail quickly, bail out and unwind your clk registration
-instead of trying to register everything and then walk the list looking
-for failures.
-
-> +
-> +       clk_data.clks =3D clk;
-> +       clk_data.clk_num =3D ARRAY_SIZE(clk);
-> +
-> +       ret =3D of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data=
-);
-> +       if (ret)
-> +               pr_err("Failed to register OF clock provider\n");
-> +
-> +       /* Register clock device */
-> +       clk_register_clkdev(clk[TIMER0_GATE], "timer0", NULL);
-> +       clk_register_clkdev(clk[TIMER1_GATE], "timer1", NULL);
-
-Again, look at how the gxbb.c driver does this. Why do you need to call
-clk_register_clkdev? You're using of_clk_add_provider above, so that
-should be enough to perform lookups.
-
-> +       /* enable some important clocks */
-> +       clk_prepare_enable(clk_get(NULL, "cpu"));
-> +       clk_prepare_enable(clk_get(NULL, "hclk"));
-> +       clk_prepare_enable(clk_get(NULL, "sram"));
-> +       clk_prepare_enable(clk_get(NULL, "dram"));
-> +       clk_prepare_enable(clk_get(NULL, "ddr_hclk"));
-
-You can use the CLK_IS_CRITICAL flag for these clocks if you want. It
-would be better to have drivers that claim them and enable them of
-course.
-
-> +}
-> +
-> +CLK_OF_DECLARE(nuc970_clk, "nuvoton,nuc970-clk", nuc970_clocks_init);
-
-Why do you need to use CLK_OF_DECLARE? Please convert this to a
-platform_driver and load it at module_init.
-
-Regards,
-Mike
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 134090a..4d1fca4 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -917,6 +917,52 @@ static void lpuart_dma_rx_free(struct uart_port *port)
+ 	sport->dma_rx_cookie = -EINVAL;
+ }
+ 
++static int lpuart_config_rs485(struct uart_port *port,
++			struct serial_rs485 *rs485)
++{
++	struct lpuart_port *sport = container_of(port,
++			struct lpuart_port, port);
++
++	u8 modem = readb(sport->port.membase + UARTMODEM) &
++		~(UARTMODEM_TXRTSPOL | UARTMODEM_TXRTSE);
++	writeb(modem, sport->port.membase + UARTMODEM);
++
++	if (rs485->flags & SER_RS485_ENABLED) {
++		/* Enable auto RS-485 RTS mode */
++		modem |= UARTMODEM_TXRTSE;
++
++		/*
++		 * RTS needs to be logic HIGH either during transer _or_ after
++		 * transfer, other variants are not supported by the hardware.
++		 */
++
++		if (!(rs485->flags & (SER_RS485_RTS_ON_SEND |
++				SER_RS485_RTS_AFTER_SEND)))
++			rs485->flags |= SER_RS485_RTS_ON_SEND;
++
++		if (rs485->flags & SER_RS485_RTS_ON_SEND &&
++				rs485->flags & SER_RS485_RTS_AFTER_SEND)
++			rs485->flags &= ~SER_RS485_RTS_AFTER_SEND;
++
++		/*
++		 * The hardware defaults to RTS logic HIGH while transfer.
++		 * Switch polarity in case RTS shall be logic HIGH
++		 * after transfer.
++		 * Note: UART is assumed to be active high.
++		 */
++		if (rs485->flags & SER_RS485_RTS_ON_SEND)
++			modem &= ~UARTMODEM_TXRTSPOL;
++		else if (rs485->flags & SER_RS485_RTS_AFTER_SEND)
++			modem |= UARTMODEM_TXRTSPOL;
++	}
++
++	/* Store the new configuration */
++	sport->port.rs485 = *rs485;
++
++	writeb(modem, sport->port.membase + UARTMODEM);
++	return 0;
++}
++
+ static unsigned int lpuart_get_mctrl(struct uart_port *port)
+ {
+ 	unsigned int temp = 0;
+@@ -950,17 +996,22 @@ static unsigned int lpuart32_get_mctrl(struct uart_port *port)
+ static void lpuart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ {
+ 	unsigned char temp;
++	struct lpuart_port *sport = container_of(port,
++				struct lpuart_port, port);
+ 
+-	temp = readb(port->membase + UARTMODEM) &
++	/* Make sure RXRTSE bit is not set when RS485 is enabled */
++	if (!(sport->port.rs485.flags & SER_RS485_ENABLED)) {
++		temp = readb(sport->port.membase + UARTMODEM) &
+ 			~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
+ 
+-	if (mctrl & TIOCM_RTS)
+-		temp |= UARTMODEM_RXRTSE;
++		if (mctrl & TIOCM_RTS)
++			temp |= UARTMODEM_RXRTSE;
+ 
+-	if (mctrl & TIOCM_CTS)
+-		temp |= UARTMODEM_TXCTSE;
++		if (mctrl & TIOCM_CTS)
++			temp |= UARTMODEM_TXCTSE;
+ 
+-	writeb(temp, port->membase + UARTMODEM);
++		writeb(temp, port->membase + UARTMODEM);
++	}
+ }
+ 
+ static void lpuart32_set_mctrl(struct uart_port *port, unsigned int mctrl)
+@@ -1256,6 +1307,13 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		cr1 |= UARTCR1_M;
+ 	}
+ 
++	/*
++	 * When auto RS-485 RTS mode is enabled,
++	 * hardware flow control need to be disabled.
++	 */
++	if (sport->port.rs485.flags & SER_RS485_ENABLED)
++		termios->c_cflag &= ~CRTSCTS;
++
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
+ 	} else {
+@@ -1864,6 +1922,8 @@ static int lpuart_probe(struct platform_device *pdev)
+ 		sport->port.ops = &lpuart_pops;
+ 	sport->port.flags = UPF_BOOT_AUTOCONF;
+ 
++	sport->port.rs485_config = lpuart_config_rs485;
++
+ 	sport->clk = devm_clk_get(&pdev->dev, "ipg");
+ 	if (IS_ERR(sport->clk)) {
+ 		ret = PTR_ERR(sport->clk);
+@@ -1904,6 +1964,12 @@ static int lpuart_probe(struct platform_device *pdev)
+ 		dev_info(sport->port.dev, "DMA rx channel request failed, "
+ 				"operating without rx DMA\n");
+ 
++	if (of_property_read_bool(np, "linux,rs485-enabled-at-boot-time")) {
++		sport->port.rs485.flags |= SER_RS485_ENABLED;
++		sport->port.rs485.flags |= SER_RS485_RTS_ON_SEND;
++		writeb(UARTMODEM_TXRTSE, sport->port.membase + UARTMODEM);
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.9.0
