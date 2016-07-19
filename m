@@ -1,153 +1,86 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH RESEND v2 8/8] tty: serial: fsl_lpuart: Add support for RS-485
-Date: Tue, 19 Jul 2016 13:13:10 +0530
-Message-ID: <20160719074310.16872-9-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] clk: avoid adding clock provider multiple times for one node
+Date: Tue, 19 Jul 2016 18:21:35 +0900
+Message-Id: <1468920098-8553-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable Vybrid's build-in support for RS-485 auto RTS for controlling line
-direction of RS-485 transceiver driver.
+It is insane to add multiple OF clock providers against one device
+node.
 
-Enable RS485 feature by either using ioctrl 'TIOCSRS485' or enable it in the
-device tree by setting 'linux,rs485-enabled-at-boot-time' property.
+Let of_clk_add(_hw)_provider() fail with -EEXIST if the given node
+is already associated with an OF clock provider.
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/tty/serial/fsl_lpuart.c | 78 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 72 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 134090a..4d1fca4 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -917,6 +917,52 @@ static void lpuart_dma_rx_free(struct uart_port *port)
- 	sport->dma_rx_cookie = -EINVAL;
- }
+ drivers/clk/clk.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e8c79a7..7832343 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3038,15 +3038,24 @@ int of_clk_add_provider(struct device_node *np,
+ 	struct of_clk_provider *cp;
+ 	int ret;
  
-+static int lpuart_config_rs485(struct uart_port *port,
-+			struct serial_rs485 *rs485)
-+{
-+	struct lpuart_port *sport = container_of(port,
-+			struct lpuart_port, port);
++	mutex_lock(&of_clk_mutex);
 +
-+	u8 modem = readb(sport->port.membase + UARTMODEM) &
-+		~(UARTMODEM_TXRTSPOL | UARTMODEM_TXRTSE);
-+	writeb(modem, sport->port.membase + UARTMODEM);
-+
-+	if (rs485->flags & SER_RS485_ENABLED) {
-+		/* Enable auto RS-485 RTS mode */
-+		modem |= UARTMODEM_TXRTSE;
-+
-+		/*
-+		 * RTS needs to be logic HIGH either during transer _or_ after
-+		 * transfer, other variants are not supported by the hardware.
-+		 */
-+
-+		if (!(rs485->flags & (SER_RS485_RTS_ON_SEND |
-+				SER_RS485_RTS_AFTER_SEND)))
-+			rs485->flags |= SER_RS485_RTS_ON_SEND;
-+
-+		if (rs485->flags & SER_RS485_RTS_ON_SEND &&
-+				rs485->flags & SER_RS485_RTS_AFTER_SEND)
-+			rs485->flags &= ~SER_RS485_RTS_AFTER_SEND;
-+
-+		/*
-+		 * The hardware defaults to RTS logic HIGH while transfer.
-+		 * Switch polarity in case RTS shall be logic HIGH
-+		 * after transfer.
-+		 * Note: UART is assumed to be active high.
-+		 */
-+		if (rs485->flags & SER_RS485_RTS_ON_SEND)
-+			modem &= ~UARTMODEM_TXRTSPOL;
-+		else if (rs485->flags & SER_RS485_RTS_AFTER_SEND)
-+			modem |= UARTMODEM_TXRTSPOL;
++	cp = __of_clk_find_provider(np);
++	if (cp) {
++		mutex_unlock(&of_clk_mutex);
++		return -EEXIST;
 +	}
 +
-+	/* Store the new configuration */
-+	sport->port.rs485 = *rs485;
-+
-+	writeb(modem, sport->port.membase + UARTMODEM);
-+	return 0;
-+}
-+
- static unsigned int lpuart_get_mctrl(struct uart_port *port)
- {
- 	unsigned int temp = 0;
-@@ -950,17 +996,22 @@ static unsigned int lpuart32_get_mctrl(struct uart_port *port)
- static void lpuart_set_mctrl(struct uart_port *port, unsigned int mctrl)
- {
- 	unsigned char temp;
-+	struct lpuart_port *sport = container_of(port,
-+				struct lpuart_port, port);
- 
--	temp = readb(port->membase + UARTMODEM) &
-+	/* Make sure RXRTSE bit is not set when RS485 is enabled */
-+	if (!(sport->port.rs485.flags & SER_RS485_ENABLED)) {
-+		temp = readb(sport->port.membase + UARTMODEM) &
- 			~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
- 
--	if (mctrl & TIOCM_RTS)
--		temp |= UARTMODEM_RXRTSE;
-+		if (mctrl & TIOCM_RTS)
-+			temp |= UARTMODEM_RXRTSE;
- 
--	if (mctrl & TIOCM_CTS)
--		temp |= UARTMODEM_TXCTSE;
-+		if (mctrl & TIOCM_CTS)
-+			temp |= UARTMODEM_TXCTSE;
- 
--	writeb(temp, port->membase + UARTMODEM);
-+		writeb(temp, port->membase + UARTMODEM);
+ 	cp = kzalloc(sizeof(struct of_clk_provider), GFP_KERNEL);
+-	if (!cp)
++	if (!cp) {
++		mutex_unlock(&of_clk_mutex);
+ 		return -ENOMEM;
 +	}
- }
  
- static void lpuart32_set_mctrl(struct uart_port *port, unsigned int mctrl)
-@@ -1256,6 +1307,13 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 		cr1 |= UARTCR1_M;
- 	}
+ 	cp->node = of_node_get(np);
+ 	cp->data = data;
+ 	cp->get = clk_src_get;
  
-+	/*
-+	 * When auto RS-485 RTS mode is enabled,
-+	 * hardware flow control need to be disabled.
-+	 */
-+	if (sport->port.rs485.flags & SER_RS485_ENABLED)
-+		termios->c_cflag &= ~CRTSCTS;
+-	mutex_lock(&of_clk_mutex);
+ 	list_add(&cp->link, &of_clk_providers);
+ 	mutex_unlock(&of_clk_mutex);
+ 	pr_debug("Added clock from %s\n", np->full_name);
+@@ -3073,15 +3082,24 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 	struct of_clk_provider *cp;
+ 	int ret;
+ 
++	mutex_lock(&of_clk_mutex);
 +
- 	if (termios->c_cflag & CRTSCTS) {
- 		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
- 	} else {
-@@ -1864,6 +1922,8 @@ static int lpuart_probe(struct platform_device *pdev)
- 		sport->port.ops = &lpuart_pops;
- 	sport->port.flags = UPF_BOOT_AUTOCONF;
- 
-+	sport->port.rs485_config = lpuart_config_rs485;
-+
- 	sport->clk = devm_clk_get(&pdev->dev, "ipg");
- 	if (IS_ERR(sport->clk)) {
- 		ret = PTR_ERR(sport->clk);
-@@ -1904,6 +1964,12 @@ static int lpuart_probe(struct platform_device *pdev)
- 		dev_info(sport->port.dev, "DMA rx channel request failed, "
- 				"operating without rx DMA\n");
- 
-+	if (of_property_read_bool(np, "linux,rs485-enabled-at-boot-time")) {
-+		sport->port.rs485.flags |= SER_RS485_ENABLED;
-+		sport->port.rs485.flags |= SER_RS485_RTS_ON_SEND;
-+		writeb(UARTMODEM_TXRTSE, sport->port.membase + UARTMODEM);
++	cp = __of_clk_find_provider(np);
++	if (cp) {
++		mutex_unlock(&of_clk_mutex);
++		return -EEXIST;
 +	}
 +
- 	return 0;
- }
+ 	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
+-	if (!cp)
++	if (!cp) {
++		mutex_unlock(&of_clk_mutex);
+ 		return -ENOMEM;
++	}
  
+ 	cp->node = of_node_get(np);
+ 	cp->data = data;
+ 	cp->get_hw = get;
+ 
+-	mutex_lock(&of_clk_mutex);
+ 	list_add(&cp->link, &of_clk_providers);
+ 	mutex_unlock(&of_clk_mutex);
+ 	pr_debug("Added clk_hw provider from %s\n", np->full_name);
 -- 
-2.9.0
+1.9.1
