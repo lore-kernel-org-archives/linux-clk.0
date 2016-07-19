@@ -1,70 +1,68 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
-Message-Id: <E1bNjZ9-0001jr-4G@debutante>
-Date: Thu, 14 Jul 2016 17:32:47 +0100
-Subject: Applied "spi: s3c64xx: restore removed comments" to the spi tree
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH RESEND v2 4/8] tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+Date: Tue, 19 Jul 2016 13:13:06 +0530
+Message-ID: <20160719074310.16872-5-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+By default the driver always configure the mode as 8s1 even when 8m1 mode is
+selected. Fix this by adding support to control the space/mark bit.
 
-   spi: s3c64xx: restore removed comments
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 0dbe70a1feb411d17fbcf8e73d61e6c7f33fda72 Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Tue, 12 Jul 2016 19:02:15 +0900
-Subject: [PATCH] spi: s3c64xx: restore removed comments
-
-Patch a9e93e8 has erroneously removed some comments which are
-important to understand why the bus frequency is multiplied by
-two during the spi transfer.
-
-Reword the previous comment to a more appropriate message.
-
-Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
 ---
- drivers/spi/spi-s3c64xx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/serial/fsl_lpuart.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index a1e84686c70c..3c09e94cf827 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -642,6 +642,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
- 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 97c1fda..615f191 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1220,13 +1220,14 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ {
+ 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
+ 	unsigned long flags;
+-	unsigned char cr1, old_cr1, old_cr2, cr4, bdh, modem;
++	unsigned char cr1, old_cr1, old_cr2, cr3, cr4, bdh, modem;
+ 	unsigned int  baud;
+ 	unsigned int old_csize = old ? old->c_cflag & CSIZE : CS8;
+ 	unsigned int sbr, brfa;
  
- 	if (sdd->port_conf->clk_from_cmu) {
-+		/* The src_clk clock is divided internally by 2 */
- 		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
- 	} else {
- 		/* Configure Clock */
+ 	cr1 = old_cr1 = readb(sport->port.membase + UARTCR1);
+ 	old_cr2 = readb(sport->port.membase + UARTCR2);
++	cr3 = readb(sport->port.membase + UARTCR3);
+ 	cr4 = readb(sport->port.membase + UARTCR4);
+ 	bdh = readb(sport->port.membase + UARTBDH);
+ 	modem = readb(sport->port.membase + UARTMODEM);
+@@ -1274,7 +1275,10 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if ((termios->c_cflag & PARENB)) {
+ 		if (termios->c_cflag & CMSPAR) {
+ 			cr1 &= ~UARTCR1_PE;
+-			cr1 |= UARTCR1_M;
++			if (termios->c_cflag & PARODD)
++				cr3 |= UARTCR3_T8;
++			else
++				cr3 &= ~UARTCR3_T8;
+ 		} else {
+ 			cr1 |= UARTCR1_PE;
+ 			if ((termios->c_cflag & CSIZE) == CS8)
+@@ -1342,6 +1346,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	writeb(cr4 | brfa, sport->port.membase + UARTCR4);
+ 	writeb(bdh, sport->port.membase + UARTBDH);
+ 	writeb(sbr & 0xFF, sport->port.membase + UARTBDL);
++	writeb(cr3, sport->port.membase + UARTCR3);
+ 	writeb(cr1, sport->port.membase + UARTCR1);
+ 	writeb(modem, sport->port.membase + UARTMODEM);
+ 
 -- 
-2.8.1
+2.9.0
