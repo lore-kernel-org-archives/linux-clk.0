@@ -1,70 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:50910 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752533AbcGOHBx (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jul 2016 03:01:53 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Wan Zongshun <vw@iommu.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	p.zabel@pengutronix.de, Wan Zongshun <mcuos.com@gmail.com>
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-Date: Fri, 15 Jul 2016 09:00:22 +0200
-Message-ID: <16178876.fFBuoBSjbd@wuerfel>
-In-Reply-To: <5788718E.7080708@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <20160714135426.GC31509@io.lakedaemon.net> <5788718E.7080708@iommu.org>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH RESEND v2 2/8] tty: serial: fsl_lpuart: support suspend/resume
+Date: Tue, 19 Jul 2016 13:13:04 +0530
+Message-ID: <20160719074310.16872-3-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, July 15, 2016 1:15:58 PM CEST Wan Zongshun wrote:
-> 
-> Actually, I have two choice to implement this function:
-> 
-> option1:
-> 
-> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
-> {
->         u32 hwirq;
-> 
->         (void)readl(aic_base + REG_AIC_IPER);
->         hwirq = readl(aic_base + REG_AIC_ISNR);
-> 
->         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
-> }
+From: Stefan Agner <stefan@agner.ch>
 
-(side note: I think you want handle_domain_irq())
+Add suspend/resume support.
 
-> option2:
-> 
-> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
-> {
->         u32 hwirq;
-> 
->         hwirq = readl(aic_base + REG_AIC_IPER);
->         hwirq <<= 2;
-> 
->         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
-> }
-> 
-> Though the option2 do shift for hwirq, but it seems better than do io 
-> operation by readl,so I prefer to option2, agree?
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-That will only return an irq number that is a multiple of four, which
-seems wrong since the numbers are not that. Did you mean to write
-
-	hwirq = ilog2(hwirq);   ?
-
-That assumes that REG_AIC_IPER contains a 32-bit value with one single
-bit set to indicate which IRQ was triggered.
-
-If the difference is only in performance, you could try measuring which
-of the two ends up being faster.
-
-	Arnd
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index fabfa7e..75a2098 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -483,9 +483,8 @@ static void lpuart_dma_rx_complete(void *arg)
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ }
+ 
+-static void lpuart_timer_func(unsigned long data)
++static void lpuart_dma_rx_terminate(struct lpuart_port *sport)
+ {
+-	struct lpuart_port *sport = (struct lpuart_port *)data;
+ 	struct tty_port *port = &sport->port.state->port;
+ 	struct dma_tx_state state;
+ 	unsigned long flags;
+@@ -510,6 +509,11 @@ static void lpuart_timer_func(unsigned long data)
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ }
+ 
++static void lpuart_timer_func(unsigned long data)
++{
++	lpuart_dma_rx_terminate((struct lpuart_port *)data);
++}
++
+ static inline void lpuart_prepare_rx(struct lpuart_port *sport)
+ {
+ 	unsigned long flags;
+@@ -1925,7 +1929,12 @@ static int lpuart_suspend(struct device *dev)
+ 		writeb(temp, sport->port.membase + UARTCR2);
+ 	}
+ 
++	if (sport->dma_rx_in_progress)
++		lpuart_dma_rx_terminate(sport);
++
+ 	uart_suspend_port(&lpuart_reg, &sport->port);
++	if (sport->port.suspended && !sport->port.irq_wake)
++		clk_disable_unprepare(sport->clk);
+ 
+ 	return 0;
+ }
+@@ -1935,6 +1944,9 @@ static int lpuart_resume(struct device *dev)
+ 	struct lpuart_port *sport = dev_get_drvdata(dev);
+ 	unsigned long temp;
+ 
++	if (sport->port.suspended && !sport->port.irq_wake)
++		clk_prepare_enable(sport->clk);
++
+ 	if (sport->lpuart32) {
+ 		lpuart32_setup_watermark(sport);
+ 		temp = lpuart32_read(sport->port.membase + UARTCTRL);
+-- 
+2.9.0
