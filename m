@@ -1,128 +1,51 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1468432181-9550-1-git-send-email-serveralex@gmail.com>
- <1468432181-9550-3-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1468432181-9550-3-git-send-email-serveralex@gmail.com>
-Message-ID: <146844568505.73491.2805335483621221629@resonance>
-Subject: Re: [PATCH v2 2/7] meson: clk: Move register definitions to meson8b.h
-Date: Wed, 13 Jul 2016 14:34:45 -0700
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] clk: add a helper function __of_clk_find_provider()
+Date: Tue, 19 Jul 2016 18:21:34 +0900
+Message-Id: <1468920098-8553-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1468920098-8553-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexander,
+This helper is useful to find an OF clock provider registered for a
+device node.
 
-Quoting Alexander M=C3=BCller (2016-07-13 10:49:36)
-> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Please explain why you are moving them in the changelog. It's clear
-*what* you are doing, but the *why* is missing.
+ drivers/clk/clk.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Regards,
-Mike
-
-> ---
->  drivers/clk/meson/meson8b.c | 17 +----------------
->  drivers/clk/meson/meson8b.h | 40 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 41 insertions(+), 16 deletions(-)
->  create mode 100644 drivers/clk/meson/meson8b.h
-> =
-
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index b1902e9..537cc53 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -26,22 +26,7 @@
->  #include <linux/module.h>
->  =
-
->  #include "clkc.h"
-> -
-> -/*
-> - * Clock controller register offsets
-> - *
-> - * Register offsets from the HardKernel[0] data sheet are listed in comm=
-ent
-> - * blocks below. Those offsets must be multiplied by 4 before adding the=
-m to
-> - * the base address to get the right value
-> - *
-> - * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150=
-126.pdf
-> - */
-> -#define MESON8B_REG_SYS_CPU_CNTL1      0x015c /* 0x57 offset in data she=
-et */
-> -#define MESON8B_REG_HHI_MPEG           0x0174 /* 0x5d offset in data she=
-et */
-> -#define MESON8B_REG_MALI               0x01b0 /* 0x6c offset in data she=
-et */
-> -#define MESON8B_REG_PLL_FIXED          0x0280
-> -#define MESON8B_REG_PLL_SYS            0x0300
-> -#define MESON8B_REG_PLL_VID            0x0320
-> +#include "meson8b.h"
->  =
-
->  static DEFINE_SPINLOCK(clk_lock);
->  =
-
-> diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-> new file mode 100644
-> index 0000000..5b9cb9f
-> --- /dev/null
-> +++ b/drivers/clk/meson/meson8b.h
-> @@ -0,0 +1,40 @@
-> +/*
-> + * Copyright (c) 2015 Endless Mobile, Inc.
-> + * Author: Carlo Caione <carlo@endlessm.com>
-> + *
-> + * Copyright (c) 2016 BayLibre, Inc.
-> + * Michael Turquette <mturquette@baylibre.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License alo=
-ng with
-> + * this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#ifndef __MESON8B_H
-> +#define __MESON8B_H
-> +
-> +/*
-> + * Clock controller register offsets
-> + *
-> + * Register offsets from the HardKernel[0] data sheet are listed in comm=
-ent
-> + * blocks below. Those offsets must be multiplied by 4 before adding the=
-m to
-> + * the base address to get the right value
-> + *
-> + * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150=
-126.pdf
-> + */
-> +#define MESON8B_REG_SYS_CPU_CNTL1      0x015c /* 0x57 offset in data she=
-et */
-> +#define MESON8B_REG_HHI_MPEG           0x0174 /* 0x5d offset in data she=
-et */
-> +#define MESON8B_REG_MALI               0x01b0 /* 0x6c offset in data she=
-et */
-> +#define MESON8B_REG_PLL_FIXED          0x0280
-> +#define MESON8B_REG_PLL_SYS            0x0300
-> +#define MESON8B_REG_PLL_VID            0x0320
-> +
-> +#endif /* __MESON8B_H */
-> -- =
-
-> 2.5.0
->=20
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 484acc2..e8c79a7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3010,6 +3010,21 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
+ EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
+ 
+ /**
++ * __of_clk_find_provider - Find a clock provider associated with a device node
++ * @np: device node to obtain the clock provider for
++ */
++static struct of_clk_provider *__of_clk_find_provider(struct device_node *np)
++{
++	struct of_clk_provider *cp;
++
++	list_for_each_entry(cp, &of_clk_providers, link)
++		if (cp->node == np)
++			return cp;
++
++	return NULL;
++}
++
++/**
+  * of_clk_add_provider() - Register a clock provider for a node
+  * @np: Device node pointer associated with clock provider
+  * @clk_src_get: callback for decoding clock
+-- 
+1.9.1
