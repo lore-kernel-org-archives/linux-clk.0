@@ -1,51 +1,75 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	gnurou@gmail.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Date: Tue, 19 Jul 2016 15:36:32 +0200
-Message-Id: <1468935397-11926-2-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v3 1/6] dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+Date: Tue, 19 Jul 2016 15:42:17 +0200
+Message-Id: <1468935742-11218-2-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+This commit adds the DT binding documentation for the the Xtal clock on
+Armada 3700 used in the Marvell Armada 3700 SoCs.
 
-Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
-
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra20.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/clock/armada3700-xtal-clock.txt       | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cb..aefc044 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-+	{ TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
- 	{ TEGRA20_CLK_SBC1, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC2, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
+diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+new file mode 100644
+index 000000000000..a88f1f05fbd6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+@@ -0,0 +1,28 @@
++* Xtal Clock bindings for Marvell Armada 37xx SoCs
++
++Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
++reading the gpio latch register.
++
++This node must be a subnode of the node exposing the register address
++of the GPIO block where the gpio latch is located.
++
++Required properties:
++- compatible : shall be one of the following:
++	"marvell,armada-3700-xtal-clock"
++- #clock-cells : from common clock binding; shall be set to 0
++
++Optional properties:
++- clock-output-names : from common clock binding; allows overwrite default clock
++	output names ("xtal")
++
++Example:
++gpio1: gpio@13800 {
++	compatible = "marvell,armada-3700-gpio", "syscon", "simple-mfd";
++	reg = <0x13800 0x1000>;
++
++	xtalclk: xtal-clk {
++		compatible = "marvell,armada-3700-xtal-clock";
++		clock-output-names = "xtal";
++		#clock-cells = <0>;
++	};
++};
 -- 
-2.1.4
+2.5.0
