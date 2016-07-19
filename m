@@ -1,51 +1,46 @@
-Return-Path: <weiyj_lk@163.com>
-From: weiyj_lk@163.com
-To: emilio@elopez.com.ar,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH -next] clk: sunxi: pll2: Fix return value check in sun4i_pll2_setup()
-Date: Wed,  6 Jul 2016 12:18:34 +0000
-Message-Id: <1467807514-31723-1-git-send-email-weiyj_lk@163.com>
+Return-Path: <k.kozlowski.k@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <578616AE.7010805@samsung.com>
+References: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
+ <146799700614.73491.6564650478987470074@resonance> <578616AE.7010805@samsung.com>
+From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k+lkml@gmail.com>
+Date: Tue, 19 Jul 2016 11:26:45 +0200
+Message-ID: <CAJKOXPc3NqsLjEdbs3o1vwaKWCsxK5HxH9G1pRKpMKLD0QXQGw@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem
+ CLKCON driver
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	=?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On Wed, Jul 13, 2016 at 12:23 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 07/08/2016 06:56 PM, Michael Turquette wrote:
+>> Quoting Sylwester Nawrocki (2016-07-08 07:15:00)
+>>> > Any clock dependencies can be properly handled with deferred probing
+>>> > so we can remove core_initcall and switch to a proper loadable platform
+>>> > driver module.
+>>> > This change has been tested on Exynos4412 Odroid U3 based board.
+>>> >
+>>> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>
+>> Looks good to me.
+>
+> Thanks, I have added this patch to my tree, however at the moment
+> I have only two patches queued there. Please feel free to apply
+> this patch directly to clk-next.
 
-In case of error, the functions clk_register_composite() and
-clk_register_divider() returns ERR_PTR() and never returns NULL.
-The NULL test in the return value check should be replaced with
-IS_ERR().
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/clk/sunxi/clk-a10-pll2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Unfortunately this breaks the audio on Odroid XU3 (simple-card). There
+is no sound from:
+$ aplay /usr/share/sounds/alsa/Front_Right.wav
+and the command does not exit.
 
-diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10-pll2.c
-index 0ee1f36..d8eab90 100644
---- a/drivers/clk/sunxi/clk-a10-pll2.c
-+++ b/drivers/clk/sunxi/clk-a10-pll2.c
-@@ -73,7 +73,7 @@ static void __init sun4i_pll2_setup(struct device_node *node,
- 					  SUN4I_PLL2_PRE_DIV_WIDTH,
- 					  CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
- 					  &sun4i_a10_pll2_lock);
--	if (!prediv_clk) {
-+	if (IS_ERR(prediv_clk)) {
- 		pr_err("Couldn't register the prediv clock\n");
- 		goto err_free_array;
- 	}
-@@ -106,7 +106,7 @@ static void __init sun4i_pll2_setup(struct device_node *node,
- 					  &mult->hw, &clk_multiplier_ops,
- 					  &gate->hw, &clk_gate_ops,
- 					  CLK_SET_RATE_PARENT);
--	if (!base_clk) {
-+	if (IS_ERR(base_clk)) {
- 		pr_err("Couldn't register the base multiplier clock\n");
- 		goto err_free_multiplier;
- 	}
+Sylwester,
+Are you going to look at this?
+
+Best regards,
+Krzysztof
