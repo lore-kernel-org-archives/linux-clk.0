@@ -1,49 +1,93 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 2/2] clk: samsung: exynos7: Add clocks for atlas block
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <1467750561-13957-3-git-send-email-a.kesavan@samsung.com>
-Cc: tomasz.figa@gmail.com, kgene.kim@samsung.com, k.kozlowski@samsung.com,
- b.zolnierkie@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <577E2E6E.3040809@samsung.com>
-Date: Thu, 07 Jul 2016 12:26:54 +0200
-MIME-version: 1.0
-In-reply-to: <1467750561-13957-3-git-send-email-a.kesavan@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH RESEND v2 7/8] tty: serial: fsl_lpuart: Update suspend/resume for DMA mode
+Date: Tue, 19 Jul 2016 13:13:09 +0530
+Message-ID: <20160719074310.16872-8-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
+When DMA mode is enabled one need to make sure the DMA channels are idle before
+entering suspend mode especially when UART ports which are set as wakeup source
+and console port with no_console_suspend is set. This patch takes care of
+gracefully releasing DMA channels for the above two cases and start the DMA at
+resume.
 
-> +static const struct samsung_pll_rate_table pll1450x_24mhz_tbl[] = {
-> +	/* rate, m, p, s */
-> +	PLL_35XX_RATE(2496000000, 208, 2, 0),
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 44 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Please add U postfix to these constants to address compiler warning
-as reported by kbuild-all@01.org:
-
->> drivers/clk/samsung/clk-exynos7.c:43:2: warning: this decimal constant is
-unsigned only in ISO C90
-     PLL_35XX_RATE(2496000000, 208, 2, 0),
-     ^~~~~~~~~~~~~
-
-
-> +static void __init exynos7_clk_atlas_init(struct device_node *np)
-> +{
-> +	void __iomem *reg_base;
-> +	struct samsung_clk_provider *ctx;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		panic("%s: failed to map registers\n", __func__);
-> +		return;
-> +	}
-> +
-> +	ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
-> +	if (!ctx) {
-> +		panic("%s: unable to allocate ctx\n", __func__);
-
-You can remove this panic() call, there is already one inside
-samsung_clk_init().
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 27687d5..134090a 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1943,6 +1943,30 @@ static int lpuart_suspend(struct device *dev)
+ 	}
+ 
+ 	uart_suspend_port(&lpuart_reg, &sport->port);
++
++	if (sport->lpuart_dma_rx_use) {
++		/*
++		 * EDMA driver during suspend will forcefully release any
++		 * non-idle DMA channels. If port wakeup is enabled or if port
++		 * is console port or 'no_console_suspend' is set the Rx DMA
++		 * cannot resume as as expected, hence gracefully release the
++		 * Rx DMA path before suspend and start Rx DMA path on resume.
++		 */
++		if (sport->port.irq_wake) {
++			del_timer_sync(&sport->lpuart_timer);
++			lpuart_dma_rx_free(&sport->port);
++		}
++
++		/* Disable Rx DMA to use UART port as wakeup source */
++		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_RDMAS,
++					sport->port.membase + UARTCR5);
++	}
++
++	if (sport->lpuart_dma_tx_use) {
++		sport->dma_tx_in_progress = false;
++		dmaengine_terminate_all(sport->dma_tx_chan);
++	}
++
+ 	if (sport->port.suspended && !sport->port.irq_wake)
+ 		clk_disable_unprepare(sport->clk);
+ 
+@@ -1970,6 +1994,26 @@ static int lpuart_resume(struct device *dev)
+ 		writeb(temp, sport->port.membase + UARTCR2);
+ 	}
+ 
++	if (sport->lpuart_dma_rx_use) {
++		if (sport->port.irq_wake) {
++			if (!lpuart_start_rx_dma(sport)) {
++				sport->lpuart_dma_rx_use = true;
++				rx_dma_timer_init(sport);
++			} else {
++				sport->lpuart_dma_rx_use = false;
++			}
++		}
++	}
++
++	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
++			init_waitqueue_head(&sport->dma_wait);
++			sport->lpuart_dma_tx_use = true;
++			writeb(readb(sport->port.membase + UARTCR5) |
++				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
++	} else {
++		sport->lpuart_dma_tx_use = false;
++	}
++
+ 	uart_resume_port(&lpuart_reg, &sport->port);
+ 
+ 	return 0;
+-- 
+2.9.0
