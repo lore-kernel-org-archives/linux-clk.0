@@ -1,43 +1,88 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 27 Jul 2016 10:36:49 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
- <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- devicetree@vger.kernel.org, dev@linux-sunxi.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
-Message-Id: <20160727103649.9e6ef332847b5a5c8fac66af@free.fr>
-In-Reply-To: <20160727074020.GH6560@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
-	<1469516671-19377-5-git-send-email-wens@csie.org>
-	<20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
-	<20160727065934.GD6560@lukather>
-	<20160727091827.e26f72701ce5758fa29aff7a@free.fr>
-	<20160727074020.GH6560@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jun Nie <jun.nie@linaro.org>, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1468834877-22534-3-git-send-email-jun.nie@linaro.org>
+Cc: "Jun Nie" <jun.nie@linaro.org>
+References: <1468834877-22534-1-git-send-email-jun.nie@linaro.org>
+ <1468834877-22534-3-git-send-email-jun.nie@linaro.org>
+Message-ID: <146888730254.8780.1667996409080895941@resonance>
+Subject: Re: [PATCH 3/3] clk: zx: register ZX296718 clocks using common clock
+ framework
+Date: Mon, 18 Jul 2016 17:15:02 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 27 Jul 2016 09:40:20 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+Hi Jun Nie,
 
-> > > Parenting functions would also not work as expected,
-> > > clk_hw_get_parent_by_index being the obvious example, in that case
-> > > returning the empty string for an invalid parent, while it should
-> > > really return NULL.
-> >=20
-> > I don't see why the clock should be orphan.
-> > Then, when a parent is "", clk_hw_get_parent_by_index() returns NULL.
->=20
-> Why? It should return NULL when there's no parent, while you
-> explicitly registered a parent.
+Quoting Jun Nie (2016-07-18 02:41:17)
+> +Required properties:
+> +- compatible : shall be one of the following:
+> +       "zte,zx296718-topcrm":
+> +               zx296718 top clock selection, divider and gating
+> +
+> +       "zte,zx296718-lsp0crm" and
+> +       "zte,zx296718-lsp1crm":
+> +               zx296718 device level clock selection and gating
+> +
+> +- reg: Address and length of the register set
 
-"" is not an existing parent. It could be "none" / "dum" / "toto" / ...
-with the same result: 'this index cannot be used in mux'.
+clock-cells?
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+> +#include <linux/clk.h>
+
+Is clk.h needed? I don't see any clock consumer api's used in this
+driver.
+
+> +struct zx_fixed_factor_clock top_ffactor_clk[] =3D {
+> +       FFACTOR(0, "clk4m",             "osc24m", 1, 6,  0),
+> +       FFACTOR(0, "clk2m",             "osc24m", 1, 12, 0),
+> +       /* pll cpu */
+> +       FFACTOR(0, "clk1600m",          "pll_cpu", 1, 1, CLK_SET_RATE_PAR=
+ENT),
+> +       FFACTOR(0, "clk800m",           "pll_cpu", 1, 2, CLK_SET_RATE_PAR=
+ENT),
+
+You have a lot of static data here, which is good. It can be expanded to
+fill out struct clk_init_data (as showed in my reply to patch #2) and
+then you can get rid of all of the registration functions.
+
+> diff --git a/include/dt-bindings/clock/zx296718-clock.h b/include/dt-bind=
+ings/clock/zx296718-clock.h
+> new file mode 100644
+> index 0000000..97d45e2
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/zx296718-clock.h
+> @@ -0,0 +1,140 @@
+> +/*
+> + * Copyright (C) 2015 - 2016 ZTE Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_ZX296718_H
+> +#define __DT_BINDINGS_CLOCK_ZX296718_H
+> +
+> +/* PLL */
+> +#define ZX296718_OSC           0
+> +#define ZX296718_PLL_CPU       1
+> +#define ZX296718_PLL_MAC       2
+> +#define ZX296718_PLL_MM0       3
+> +#define ZX296718_PLL_MM1       4
+> +#define ZX296718_PLL_VGA       5
+> +#define ZX296718_PLL_DDR       6
+> +#define ZX296718_PLL_AUDIO     7
+> +#define ZX296718_PLL_HSIC      8
+
+For some clock controllers I suggest to split this list of numbers into
+a private header that is only used by the Linux driver, and another
+shared DT header that exposes only the clocks that will be consumed by
+downstream drivers (usually just leaf gate clocks).
+
+This also means that you can hide the ugly NR_CLKS stuff in the C-only
+implementation and not add that Linux-specific data into the generic
+binding description. It's up to you though.
+
+Regards,
+Mike
