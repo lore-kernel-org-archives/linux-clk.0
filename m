@@ -1,39 +1,166 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 1/7] clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
-Date: Tue,  5 Jul 2016 21:15:31 +0200
-Message-Id: <1467746131-1865-1-git-send-email-serveralex@gmail.com>
-In-Reply-To: <20160705185527.GA17348@localhost>
-References: <20160705185527.GA17348@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v3 2/6] clk: mvebu: Add the xtal clock for Armada 3700 SoC
+Date: Tue, 19 Jul 2016 15:42:18 +0200
+Message-Id: <1468935742-11218-3-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/Makefile                      | 2 +-
- drivers/clk/meson/{meson8b-clkc.c => meson8b.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/clk/meson/{meson8b-clkc.c => meson8b.c} (100%)
+This clock is the parent of all the Armada 3700 clocks. It is a fixed
+rate clock which depends on the gpio configuration read when resetting
+the SoC.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 197e401..1a66799 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -3,5 +3,5 @@
- #
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/clk/mvebu/Kconfig            |  3 ++
+ drivers/clk/mvebu/Makefile           |  1 +
+ drivers/clk/mvebu/armada-37xx-xtal.c | 91 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 95 insertions(+)
+ create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index 3165da77d525..fddc8ac5faff 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -24,6 +24,9 @@ config ARMADA_39X_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
  
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o
--obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
-+obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o
-diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b.c
-similarity index 100%
-rename from drivers/clk/meson/meson8b-clkc.c
-rename to drivers/clk/meson/meson8b.c
++config ARMADA_37XX_CLK
++       bool
++
+ config ARMADA_XP_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 7172ef65693d..4257a36d0219 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
+ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
++obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-xtal.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+ obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
+ obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
+diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+new file mode 100644
+index 000000000000..612d65ede10a
+--- /dev/null
++++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+@@ -0,0 +1,91 @@
++/*
++ * Marvell Armada 37xx SoC xtal clocks
++ *
++ * Copyright (C) 2016 Marvell
++ *
++ * Gregory CLEMENT <gregory.clement@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define NB_GPIO1_LATCH	0xC
++#define XTAL_MODE	    BIT(31)
++
++static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	const char *xtal_name = "xtal";
++	struct device_node *parent;
++	struct regmap *regmap;
++	struct clk_hw *xtal_hw;
++	unsigned int rate;
++	u32 reg;
++	int ret;
++
++	xtal_hw = devm_kzalloc(&pdev->dev, sizeof(*xtal_hw), GFP_KERNEL);
++	if (!xtal_hw)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, xtal_hw);
++
++	parent = np->parent;
++	if (!parent) {
++		dev_err(&pdev->dev, "no parent\n");
++		return -ENODEV;
++	}
++
++	regmap = syscon_node_to_regmap(parent);
++	if (IS_ERR(regmap)) {
++		dev_err(&pdev->dev, "cannot get regmap\n");
++		return PTR_ERR(regmap);
++	}
++
++	ret = regmap_read(regmap, NB_GPIO1_LATCH, &reg);
++	if (ret) {
++		dev_err(&pdev->dev, "cannot read from regmap\n");
++		return ret;
++	}
++
++	if (reg & XTAL_MODE)
++		rate = 40000000;
++	else
++		rate = 25000000;
++
++	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
++	xtal_hw = clk_hw_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
++	if (IS_ERR(xtal_hw))
++		return PTR_ERR(xtal_hw);
++	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, xtal_hw);
++
++	return ret;
++}
++
++static int armada_3700_xtal_clock_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++
++	return 0;
++}
++
++static const struct of_device_id armada_3700_xtal_clock_of_match[] = {
++	{ .compatible = "marvell,armada-3700-xtal-clock", },
++	{ }
++};
++
++static struct platform_driver armada_3700_xtal_clock_driver = {
++	.probe = armada_3700_xtal_clock_probe,
++	.remove = armada_3700_xtal_clock_remove,
++	.driver		= {
++		.name	= "marvell-armada-3700-xtal-clock",
++		.of_match_table = armada_3700_xtal_clock_of_match,
++	},
++};
++
++builtin_platform_driver(armada_3700_xtal_clock_driver);
 -- 
 2.5.0
