@@ -1,171 +1,103 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Fri, 29 Jul 2016 14:15:13 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: bcm: Add driver for Northstar ILP clock
-Message-ID: <20160729131513.GB13080@leverpostej>
-References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: [PATCH v3 0/6]  Add clock support for Armada 37xx SoCs
+Date: Tue, 19 Jul 2016 15:42:16 +0200
+Message-Id: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 29, 2016 at 02:58:32PM +0200, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
-> 
-> This clock is present on cheaper Northstar devices like BCM53573 or
-> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
-> to calculate clock rate and allows using it in a generic (clk_*) way.
-> 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> ---
->  .../devicetree/bindings/clock/brcm,ns-ilp.txt      |  28 ++++
->  drivers/clk/bcm/Makefile                           |   1 +
->  drivers/clk/bcm/clk-ns-ilp.c                       | 146 +++++++++++++++++++++
->  3 files changed, 175 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
->  create mode 100644 drivers/clk/bcm/clk-ns-ilp.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> new file mode 100644
-> index 0000000..c4df38e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> @@ -0,0 +1,28 @@
-> +Broadcom Northstar ILP clock
-> +============================
-> +
-> +This binding uses the common clock binding:
-> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +This binding is used for ILP clock on Broadcom Northstar devices using
-> +Corex-A7 CPU. ILP clock depends on ALP one and has to be calculated on
-> +runtime.
-> +
-> +Required properties:
-> +- compatible: "brcm,ns-ilp"
-> +- reg: iomem address range of PMU (Power Management Unit)
-> +- reg-names: "pmu", the only needed & supported reg right now
+Hi,
 
->From the commit message and binding description, it sounds like there
-should be a binding for the PMU, and that should cover the clocks
-required/exported by the PMU.
+this is the third version of the series adding clock support for the
+Armada 37xx SoCs.
 
-> +- clocks: should reference an ALP clock
-> +- clock-names: "alp", the only needed & supported clock right now
-> +- #clock-cells: should be <0>
+The main change is the use of static data for the peripheral clocks
+when possible, it lead to a use of many macro to define all the needed
+variables.
 
-How many clocks does the PMU output, including the ILP clock?
+The design of the drivers is as close as possible as the hardware is,
+with some clocks made of several layers: muxing, divider and gating.
 
-> +static unsigned long ns_ilp_recalc_rate(struct clk_hw *hw,
-> +					unsigned long parent_rate)
-> +{
-> +	struct ns_ilp *ilp = container_of(hw, struct ns_ilp, hw);
-> +	void __iomem *pmu = ilp->pmu;
-> +	u32 last_val, cur_val;
-> +	u32 sum = 0, num = 0, loop_num = 0;
-> +	u32 avg;
-> +	int err;
-> +
-> +	err = clk_prepare_enable(ilp->alp_clk);
-> +	if (err)
-> +		return 0;
-> +
-> +	/* Enable */
-> +	writel(XTAL_CTL_EN, pmu + PMU_XTAL_FREQ_RATIO);
+The device tree binding was written in a way that even if we discover
+some change inside the clocks, the binding should not be
+affected. Especially, there are some holes in the clocks, but we
+should be able to add them seamless.
 
-What exactly are we enabling here?
-
-> +
-> +	/* Read initial value */
-> +	last_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
-> +
-> +	/* Try getting 20 different values for calculating average */
-
-Please describe *why* this is necessary (i.e. why we need to calculate
-an average).
-
-> +	while (num < 20) {
-> +		cur_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
-> +
-> +		if (cur_val != last_val) {
-> +			/* Got different value, use it */
-> +			sum += cur_val;
-> +			num++;
-> +			loop_num = 0;
-> +			last_val = cur_val;
-> +		} else if (++loop_num > 5000) {
-> +			/* Same value over and over, give up */
-> +			sum += cur_val;
-> +			num++;
-> +			break;
-> +		}
-> +	}
-> +
-> +	/* Disable */
-> +	writel(0x0, pmu + PMU_XTAL_FREQ_RATIO);
-> +
-> +	avg = sum / num;
-> +
-> +	return clk_get_rate(ilp->alp_clk) * 4 / avg;
-> +}
-
-Shouldn't the clk_prepare_enable be balanced?
-
-> +	index = of_property_match_string(np, "reg-names", "pmu");
-> +	if (index < 0) {
-> +		err = index;
-> +		goto err_free_ilp;
-> +	}
-> +	err = of_address_to_resource(np, index, &res);
-> +	if (err) {
-> +		err = index;
-> +		goto err_free_ilp;
-> +	}
-> +	ilp->pmu = ioremap_nocache(res.start, resource_size(&res));
-
-Use ioremap() for mapping devices.
-
-It is not correct to use ioremap_nocache().
-
-We should probably add an of_get_address_resource_by_name() or something
-like that to avoid drivers having to open-code this kind of thing.
-
-> +	if (IS_ERR(ilp->pmu)) {
-> +		err = PTR_ERR(ilp->pmu);
-> +		goto err_free_ilp;
-> +	}
-> +
-> +	ilp->alp_clk = of_clk_get_by_name(np, "alp-clk");
-
-The binding document said "alp", not "alp-clk".
-
-We already know it's a clock, so the "-clk" suffix is redundant.
-
-> +	if (IS_ERR(ilp->alp_clk)) {
-> +		err = PTR_ERR(ilp->alp_clk);
-> +		goto err_unmap_pmu;
-> +	}
-> +
-> +	init.name = np->name;
-> +	init.ops = &ns_ilp_clk_ops;
-> +	init.flags = CLK_IS_ROOT;
-
-That's not true; the ALP clock is a parent...
-
-I thought CLK_IS_ROOT was disappearing, regardless.
+The full series is available on the branch Armada-3700-Clocks-v3 at
+git@github.com:MISL-EBU-System-SW/mainline-public.git
 
 Thanks,
-Mark,
+
+Changelog:
+
+v2 -> v3
+
+- used marvell,armada-3700-gpio instead of marvell,mvebu-gpio-3700 in
+  the binding as pointed by Thomas,
+- removed the unnecessary include of clk.h in the 3 drivers, suggested
+  by Mike Turquette
+- removed the modular reference in the 3 drivers, suggested by Paul
+  Gortmaker
+- used static data for the peripheral driver when possible, suggested
+  by Mike Turquette
+
+v1 -> v2
+
+- Move to clk_hw based registration for the 3 clock driver as
+  requested by Stephen Boyd
+- Fixed typo noticed by Stephen Boyd
+- Added const and static when they were missing: suggested by Stephen
+  Boyd
+- Allocated the driver variable during probe instead of using a global
+  one as requested by Stephen Boyd
+- Managed the failure of the of_clk_add_hw_provider call
+- Added the Acked-by from Rob Herring on the dt binding patchs
+
+
+
+Gregory CLEMENT (6):
+  dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+  clk: mvebu: Add the xtal clock for Armada 3700 SoC
+  dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
+  clk: mvebu Add the time base generator clocks for Armada 3700
+  dt-bindings: clock: add DT binding for the peripheral clocks on Armada
+    3700
+  clk: mvebu: Add the peripheral clock driver for Armada 3700
+
+ .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
+ .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
+ .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
+ drivers/clk/mvebu/Kconfig                          |   3 +
+ drivers/clk/mvebu/Makefile                         |   3 +
+ drivers/clk/mvebu/armada-37xx-periph.c             | 449 +++++++++++++++++++++
+ drivers/clk/mvebu/armada-37xx-tbg.c                | 158 ++++++++
+ drivers/clk/mvebu/armada-37xx-xtal.c               |  91 +++++
+ 8 files changed, 829 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+ create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
+ create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
+ create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+
+-- 
+2.5.0
