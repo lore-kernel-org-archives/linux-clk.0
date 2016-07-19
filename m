@@ -1,64 +1,120 @@
-Return-Path: <sstabellini@kernel.org>
-Date: Wed, 6 Jul 2016 14:16:18 +0100 (BST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-To: Julien Grall <julien.grall@arm.com>
-cc: Michael Turquette <mturquette@baylibre.com>,
-    Dirk Behme <dirk.behme@de.bosch.com>, linux-arm-kernel@lists.infradead.org,
-    Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-    xen-devel@lists.xenproject.org,
-    Stefano Stabellini <sstabellini@kernel.org>, linux-clk@vger.kernel.org,
-    Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] xen/arm: register clocks used by the hypervisor
-In-Reply-To: <577D035C.7090504@arm.com>
-Message-ID: <alpine.DEB.2.10.1607061412370.26575@sstabellini-ThinkPad-X260>
-References: <1467282752-14053-1-git-send-email-dirk.behme@de.bosch.com> <146776885213.35356.11565744417822933094@resonance> <577D035C.7090504@arm.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	gnurou@gmail.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux@armlinux.org.uk,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Tue, 19 Jul 2016 15:36:34 +0200
+Message-Id: <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 6 Jul 2016, Julien Grall wrote:
-> On 06/07/16 02:34, Michael Turquette wrote:
-> > Hi!
-> 
-> Hello Michael,
-> 
-> > Quoting Dirk Behme (2016-06-30 03:32:32)
-> > > Some clocks might be used by the Xen hypervisor and not by the Linux
-> > > kernel. If these are not registered by the Linux kernel, they might be
-> > > disabled by clk_disable_unused() as the kernel doesn't know that they
-> > > are used. The clock of the serial console handled by Xen is one
-> > > example for this. It might be disabled by clk_disable_unused() which
-> > > stops the whole serial output, even from Xen, then.
-> > 
-> > This whole thread had me confused until I realized that it all boiled
-> > down to some nomenclature issues (for me).
-> > 
-> > This code does not _register_ any clocks. It simply gets them and
-> > enables them, which is what every other clk consumer in the Linux kernel
-> > does. More details below.
-> > 
-> > > 
-> > > Up to now, the workaround for this has been to use the Linux kernel
-> > > command line parameter 'clk_ignore_unused'. See Xen bug
-> > > 
-> > > http://bugs.xenproject.org/xen/bug/45
-> > 
-> > clk_ignore_unused is a band-aid, not a proper medical solution. Setting
-> > that flag will not turn clocks on for you, nor will it guarantee that
-> > those clocks are never turned off in the future. It looks like you
-> > figured this out correctly in the patch below but it is worth repeating.
-> > 
-> > Also the new CLK_IS_CRITICAL flag might be of interest to you, but that
-> > flag only exists as a way to enable clocks that must be enabled for the
-> > system to function (hence, "critical") AND when those same clocks do not
-> > have an accompanying Linux driver to consume them and enable them.
-> 
-> I don't think we want the kernel to enable the clock for the hypervisor. We
-> want to tell the kernel "don't touch at all to this clock, it does not belong
-> to you".
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Right, and that's why I was suggesting that another way to do this would
-be to set the "status" to "disabled" in Xen: so that Linux would leave
-the clock alone. But in that case Linux would not be happy to see
-disabled clocks which are actually supposed to be used by some devices.
-Is that correct?
+Document the devicetree bindings for NOR bus driver found on Tegra20 and
+Tegra30 SOCs
+
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+---
+ .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+new file mode 100644
+index 0000000..9ee4a66
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+@@ -0,0 +1,73 @@
++Device tree bindings for NVIDIA Tegra20/30 NOR Bus
++
++The NOR controller supports a number of memory types, including synchronous NOR,
++asynchronous NOR, and other flash memories with similar interfaces, such as
++MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
++CAN chips, Wi-Fi chips etc.
++
++The actual devices are instantiated from the child nodes of a NOR node.
++
++Required properties:
++
++ - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
++ - reg: Should contain NOR controller registers location and length.
++ - clocks: Must contain one entry, for the module clock.
++   See ../clocks/clock-bindings.txt for details.
++ - resets : Must contain an entry for each entry in reset-names.
++   See ../reset/reset.txt for details.
++ - reset-names : Must include the following entries:
++  - nor
++ - #address-cells: Must be set to 2 to allow memory address translation
++ - #size-cells:	Must be set to 1 to allow CS address passing
++ - ranges: Must be set up to reflect the memory layout with four integer
++ 		values for each chip-select line in use.
++ - nvidia,config: This property represents the SNOR_CONFIG_0 register.
++
++Note that the NOR controller does not have any internal chip-select address
++decoding and if you want to access multiple devices external chip-select
++decoding must be provided.
++
++Optional properties:
++
++ - nvidia,cs-timing: The timing array represents the SNOR_TIMING0_0 and
++   SNOR_TIMING1_0 registers for the NOR controller. If unset reset-values will
++   be used. See reference documentation for detailed description of the timing
++   registers.
++
++Example with two SJA1000 CAN controllers connected to the NOR bus:
++
++	nor@70009000 {
++		status = "okay";
++		compatible = "nvidia,tegra20-nor", "nvidia,tegra30-nor";
++		reg = <0x70009000 0x1000>;
++		#address-cells = <2>;
++		#size-cells = <1>;
++		clocks = <&tegra_car TEGRA30_CLK_NOR>;
++		resets = < &tegra_car 42>;
++		reset-names = "nor";
++		ranges = <
++			0 0 0x48000000 0x00000100
++			1 0 0x48040000 0x00000100
++		>;
++
++		can@0,0 {
++			compatible = "nxp,sja1000";
++			reg = <0 0 0x100>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(B, 5) IRQ_TYPE_EDGE_RISING>;
++			nxp,external-clock-frequency = <24000000>;
++			nxp,tx-output-config = <0x16>;
++			nxp,clock-out-frequency = <24000000>;
++			reg-io-width = <2>;
++		};
++
++
++		can@1,0 {
++			compatible = "nxp,sja1000";
++			reg = <1 0 0x100>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(A, 6) IRQ_TYPE_EDGE_RISING>;
++			nxp,external-clock-frequency = <24000000>;
++			nxp,tx-output-config = <0x16>;
++			reg-io-width = <2>;
++	};
+-- 
+2.1.4
