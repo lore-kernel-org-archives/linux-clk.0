@@ -1,66 +1,64 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 1 Jul 2016 11:59:43 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-spi@vger.kernel.org
-Message-ID: <20160701095943.GL6247@sirena.org.uk>
-References: <20160607111930.10375-1-lee.jones@linaro.org>
- <20160607111930.10375-7-lee.jones@linaro.org>
- <20160607151712.GA7510@sirena.org.uk>
- <20160630205215.GF1707@dell>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+To: <gregkh@linuxfoundation.org>
+CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
+ DV <bhuvanchandra.dv@toradex.com>
+Subject: [PATCH RESEND v2 1/8] tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+Date: Tue, 19 Jul 2016 13:13:03 +0530
+Message-ID: <20160719074310.16872-2-bhuvanchandra.dv@toradex.com>
+In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="J/pvEKOcHgREgBce"
-In-Reply-To: <20160630205215.GF1707@dell>
-Subject: Re: [PATCH 6/6] spi: st-ssc4: Remove 'no clocking' hack
+Content-Type: text/plain
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Stefan Agner <stefan@agner.ch>
 
---J/pvEKOcHgREgBce
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Currently the tx_empty callback only considers the Transmit Complete Flag (TC).
+The reference manual is not quite clear if the TC flag covers the TX FIFO too.
+Debug prints on real hardware have shown that from time to time the TC flag is
+asserted (indicating Transmitter idle) while there are still data in the
+TX FIFO. Hence, in this case the serial core will call the shutdown callback
+even though there are data remaining in the TX FIFO buffers.
 
-On Thu, Jun 30, 2016 at 09:52:15PM +0100, Lee Jones wrote:
-> On Tue, 07 Jun 2016, Mark Brown wrote:
-> > On Tue, Jun 07, 2016 at 12:19:30PM +0100, Lee Jones wrote:
-> > > Due to the newly upstreamed 'critical clocks' API we can now
-> > > safely handle clocking in the SPI and I2C drivers without fear
-> > > of catastrophically crippling the running platform.
+Avoid early shutdowns by considering the TX FIFO empty flag too. Also avoid
+theoretical race conditions between DMA and the driver by checking whether the
+TX DMA is in progress too.
 
-> > Acked-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-> We really need to guarantee that this goes in *after* the other
-> patches have landed, and it looks like they're heading in via their
-> own respective trees.  Any chance you can hold this back and submit it
-> via your v4.8-fixes submission?
-
-I've not applied this patch and had no intention of applying it, the
-whole point in me acking it was that I was expecting it to get applied
-as part of the series since AFAICT everything needed to go in together.
-Your pattern of acking patches you're expecting to be apply yourself is
-fairly unusual, if it's someone else it's generally safe to assume
-they're expecting the patch to go via another tree.
-
-If this still needs sorting after the merge window please resend it, or
-ideally it can go in along with the rest of the series via whatever path
-that's taking.
-
---J/pvEKOcHgREgBce
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdj8NAAoJECTWi3JdVIfQWaYH/0HAssuQfDN6WVtDw6B3EkE1
-o6Y3atrxYQQDhPt1t2R1hnB40wwAhyYW8SoicYZhKU91cyn1H5QTmNhGD49ItySM
-qEeLxXZ9El+f/260hxk60o3lQWMei/Tu8631+kNTQjNPKtxgWFv90uQtaMktWDNF
-HNiZJukpyxQfFosymm8nHvimEDo8ani8VH5FILaiWawCJlrCNVOuPoVFIcGlpCW1
-wclps7EGyqbGDfUqUhm5dyCjx6tCDo2SnCfU9m5BlzmJksUMSrUFXIP8+/Uo34Jw
-CNp5Vn8yEkNyN1VOgV9lDW307kWqQOMbfSBRQfvN9ONxmxRmLVW5HIPRfepfM6Y=
-=oFh6
------END PGP SIGNATURE-----
-
---J/pvEKOcHgREgBce--
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 3d79003..fabfa7e 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -810,8 +810,18 @@ static irqreturn_t lpuart32_int(int irq, void *dev_id)
+ /* return TIOCSER_TEMT when transmitter is not busy */
+ static unsigned int lpuart_tx_empty(struct uart_port *port)
+ {
+-	return (readb(port->membase + UARTSR1) & UARTSR1_TC) ?
+-		TIOCSER_TEMT : 0;
++	struct lpuart_port *sport = container_of(port,
++			struct lpuart_port, port);
++	unsigned char sr1 = readb(port->membase + UARTSR1);
++	unsigned char sfifo = readb(port->membase + UARTSFIFO);
++
++	if (sport->dma_tx_in_progress)
++		return 0;
++
++	if (sr1 & UARTSR1_TC && sfifo & UARTSFIFO_TXEMPT)
++		return TIOCSER_TEMT;
++
++	return 0;
+ }
+ 
+ static unsigned int lpuart32_tx_empty(struct uart_port *port)
+-- 
+2.9.0
