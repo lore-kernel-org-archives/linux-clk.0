@@ -1,57 +1,75 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-Date: Tue, 5 Jul 2016 09:17:37 -0400
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sylwester
- Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski
-	<k.kozlowski@samsung.com>,
-        Padmavathi Venna <padma.v@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
- non-modular
-Message-ID: <20160705131737.GB26134@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-7-paul.gortmaker@windriver.com>
- <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
+ <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com> <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
+ <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jul 2016 14:46:43 +0200
+Message-ID: <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
+To: Julien Grall <julien.grall@arm.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stefano Stabellini <sstabellini@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-[Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular] On 05/07/2016 (Tue 13:02) Geert Uytterhoeven wrote:
+Hi Julien,
 
-> Hi Paul,
-> 
-> On Mon, Jul 4, 2016 at 11:12 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> > We also delete the MODULE_LICENSE tags etc. since all that information
-> > is already contained at the top of the file in the comments.
-> 
-> But the unstructured information at the top of the file is much more difficult
-> to grep for...
+On Wed, Jul 20, 2016 at 2:10 PM, Julien Grall <julien.grall@arm.com> wrote:
+> On 20/07/16 12:49, Geert Uytterhoeven wrote:
+>> On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com>
+>> wrote:
+>>> On 20/07/16 10:43, Geert Uytterhoeven wrote:
+>>>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>>> wrote:
+>>>>> Clocks described by this property are reserved for use by Xen, and the
+>>>>> OS
+>>>>> must not alter their state any way, such as disabling or gating a
+>>>>> clock,
+>>>>> or modifying its rate. Ensuring this may impose constraints on parent
+>>>>> clocks or other resources used by the clock tree.
+>>>>>
+>>>>> This property is used to proxy clocks for devices Xen has taken
+>>>>> ownership
+>>>>> of, such as UARTs, for which the associated clock controller(s) remain
+>>>>> under the control of Dom0.
+>>>>
+>>>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
+>>>>
+>>>> Can't you just add a clocks property to the (virtual) serial device node
+>>>> in DT?
+>>>> Then the (virtual) serial device driver can get and enable the clock?
+>>>
+>>> There is no DT node for the Xen console (hvc). The UART used by Xen will
+>>> be
+>>> completely removed from the Device tree.
+>>
+>> Why is it removed?
+>
+> Because the device is used exclusively by Xen and DOM0 should not touch it
+> at all (IRQs and MMIOs are not mapped).
 
-...which IMHO is largely a moot point, since the MODULE_<xyz> tags
-aren't universally deployed and largely don't exist at all once you are
-outside of the driver space.
+IMHO then it's Xen's responsability to make sure not to disable the clock(s).
 
-Paul.
+Who removes the device node from the DT? If Xen, can't it just remember
+which clocks were present in removed device nodes?
+
+What to do on SoCs where the serial device is part of a power area (e.g.
+Renesas SH/R-Mobile)? Who will make sure it is not powered down?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
