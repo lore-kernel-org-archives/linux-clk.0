@@ -1,55 +1,110 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <julien.grall@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
+ <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
+ <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
+ <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
+ <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <457c61fd-4a64-b050-cd87-845b7e22ec39@arm.com>
+Date: Wed, 20 Jul 2016 14:21:45 +0100
 MIME-Version: 1.0
-In-Reply-To: <146785281774.73491.10999943518898018619@resonance>
-References: <20160703174813.13970-1-stefan@agner.ch> <146785281774.73491.10999943518898018619@resonance>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 11 Jul 2016 23:15:54 -0300
-Message-ID: <CAOMZO5CuLshhk9R3dJh9RjEG2FphV5Z+sALpb2FitmRkKrFPZA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stefan Agner <stefan@agner.ch>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, Igor Grinberg <grinberg@compulab.co.il>,
-	Gary Bisson <gary.bisson@boundarydevices.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAMuHMdWdqdT4jnae8h9tDDzzh8ZAbJJwiMW-scPBNVwmjYSiWQ@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
 
-On Wed, Jul 6, 2016 at 9:53 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Stefan Agner (2016-07-03 10:48:13)
->> All device trees currently in mainline specify the time clock parent
->> using the assigned-clocks/assigned-clock-parents method, there is no
->> need to statically assign the parent in the core clock driver.
->> Also all current boards provide an Ethernet reference clock for the
->> PHY externally, hence configuring the internal PHY reference clock.
+
+On 20/07/2016 13:46, Geert Uytterhoeven wrote:
+> Hi Julien,
+
+Hello Geert,
+
+> On Wed, Jul 20, 2016 at 2:10 PM, Julien Grall <julien.grall@arm.com> wrote:
+>> On 20/07/16 12:49, Geert Uytterhoeven wrote:
+>>> On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com>
+>>> wrote:
+>>>> On 20/07/16 10:43, Geert Uytterhoeven wrote:
+>>>>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>>>> wrote:
+>>>>>> Clocks described by this property are reserved for use by Xen, and the
+>>>>>> OS
+>>>>>> must not alter their state any way, such as disabling or gating a
+>>>>>> clock,
+>>>>>> or modifying its rate. Ensuring this may impose constraints on parent
+>>>>>> clocks or other resources used by the clock tree.
+>>>>>>
+>>>>>> This property is used to proxy clocks for devices Xen has taken
+>>>>>> ownership
+>>>>>> of, such as UARTs, for which the associated clock controller(s) remain
+>>>>>> under the control of Dom0.
+>>>>>
+>>>>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
+>>>>>
+>>>>> Can't you just add a clocks property to the (virtual) serial device node
+>>>>> in DT?
+>>>>> Then the (virtual) serial device driver can get and enable the clock?
+>>>>
+>>>> There is no DT node for the Xen console (hvc). The UART used by Xen will
+>>>> be
+>>>> completely removed from the Device tree.
+>>>
+>>> Why is it removed?
 >>
->> Furthermore, and the actual driver of this patch, specify ethernet
->> related parents at that early point in boot leads to a warning:
->> bad: scheduling from the idle thread!
->>
->> The reason for the warning is that setting the parent enables the ENET
->> PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
->> cause clk_pllv3_wait_lock to sleep. See also:
->> commit fc8726a2c021 ("clk: core: support clocks which requires parents
->> enable (part 2)").
->>
->> Note that setting the ENET AXI root clock parent also requires ENET
->> PLL to be enabled. However, U-Boot typically leaves the ENET PLL on,
->> hence when the framework sets the parent of the first clock, it does
->> not need to wait for the PLL to come up. But because there is currently
->> no user of that clock, the PLL gets disabled after setting the parent.
->> Therefore, subsequent reparenting calls of any clock which somehow rely
->> on the ENET PLL, need to reenable the ENET PLL which leads to a sleep.
->> Removing those subsequent reparenting calls works around this issue.
->>
->> Also remove comments. The code is really verbose enough.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> Because the device is used exclusively by Xen and DOM0 should not touch it
+>> at all (IRQs and MMIOs are not mapped).
 >
-> Applied.
+> IMHO then it's Xen's responsability to make sure not to disable the clock(s).
 
-I still don't see this patch applied in clk-next.
+Xen does not disable the clock(s). The problem is Linux thinks the clock 
+is not used and therefore will disable the clock.
+
+Actually Xen does not have any knowledge how to handle clocks (i.e 
+setting rate, enabling/disabling). I would recommend you to read the 
+binding description in the patch and not the implementation which is 
+IHMO misleading.
+
+>
+> Who removes the device node from the DT? If Xen, can't it just remember
+> which clocks were present in removed device nodes?
+
+Xen is removing the node from the DT. Not removing the node will not 
+change the problem. Linux is disabling the clock because there is no 
+driver which used those clocks.
+
+As the clock subsystem will disable any unused clocks (from Linux point 
+of view), the UART will get disabled and the console will be lost.
+
+What we want to achieve with this patch is to let Linux knows that this 
+clock is in use by someone else (hypervisor or guest) and:
+     * If the clock is not shared: don't disable it
+     * If the clock is shared: don't change the rate
+
+>
+> What to do on SoCs where the serial device is part of a power area (e.g.
+> Renesas SH/R-Mobile)? Who will make sure it is not powered down?
+
+I don't have any knowledge on the Renesas SH/R-Mobile. However, we 
+expect some cooperation between DOM0 and Xen to handle the power.
+
+For instance managing the clocks in Xen would require to implement clock 
+driver for each SOC because it does not seem to have a generic way to do it.
+
+Given that Linux already knows a lot about the clock, we want to hand 
+over the clock control to the hardware domain (i.e dom0). This means 
+that we have to find a way to cooperate with it to keep enable clocks 
+that we care about.
+
+Regards,
+
+-- 
+Julien Grall
