@@ -1,29 +1,81 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <hotran@apm.com>
 MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
- <1467741391-60534-4-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1467741391-60534-4-git-send-email-serveralex@gmail.com>
-Message-ID: <146776490365.35356.4549950541188860670@resonance>
-Subject: Re: [PATCH 3/7] meson: clk: Rename register names according to Amlogic
- datasheet
-Date: Tue, 05 Jul 2016 17:28:23 -0700
+In-Reply-To: <CAFHUOYz82wyLPJjoG8V9QvXmF10qnQkioe9-oxUR0-aiho-Pjw@mail.gmail.com>
+References: <1466458269-460-1-git-send-email-hotran@apm.com>
+ <20160630202358.GC27880@codeaurora.org> <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
+ <20160701183845.GD27880@codeaurora.org> <CAFHUOYz82wyLPJjoG8V9QvXmF10qnQkioe9-oxUR0-aiho-Pjw@mail.gmail.com>
+From: Hoan Tran <hotran@apm.com>
+Date: Wed, 20 Jul 2016 11:36:03 -0700
+Message-ID: <CAFHUOYw9rJe7+1kvz9gwxSZO=FucztfhdO_6vOz8kA7QsS9EyA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: Add fractional scale clock support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, lkml <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Duc Dang <dhdang@apm.com>, Loc Ho <lho@apm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexander M=C3=BCller (2016-07-05 10:56:27)
-> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
-> +#define HHI_MPLL_CNTL                  0x280 /* 0xa0 offset in data shee=
-t */
-> +#define HHI_SYS_PLL_CNTL               0x300 /* 0xc0 offset in data shee=
-t */
-> +#define HHI_VID_PLL_CNTL               0x320 /* 0xc8 offset in data shee=
-t */
+On Fri, Jul 1, 2016 at 5:09 PM, Hoan Tran <hotran@apm.com> wrote:
+>
+> Hi Stephen,
+>
+> On Fri, Jul 1, 2016 at 11:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > Sorry I replied offlist before. Pressed the wrong key.
+> >
+> > On 06/30, Hoan Tran wrote:
+> >> On Thu, Jun 30, 2016 at 1:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> >> >
+> >> > How is this different from clk-fractional-divider.c?
+> >> >
+> >>
+> >> This is a driver which clock output is multiplied with a fixed fractional
+> >> scale (denominator).
+> >> A field inside a register is used to configure the multiplier.
+> >>
+> >> Example: With fractional scale is 1/8.
+> >> Freq_out = Freq_parent * multiplier * (1/8)
+> >>
+> >> For fractional-divider, there are 2 fields of a register are used which
+> >>  - A field for numerator
+> >>  - A field for denominator
+> >> Freq_out = Freq_parent * numerator / denominator
+> >>
+> >
+> > Ok so the difference is that the denominator is a fixed value?
+>
+> The major difference is a fixed denominator.
+> Another difference is:
+> In case CLK_FRACTIONAL_SCALE_INVERTED=1, the freq_out is calculated as below
+>
+> Freq_out = Freq_parent * (fixed_denominator - multiplier) / fixed_denominator.
+>
+> > Perhaps that can be modeled as a clk-multiplier that is used as
+> > the only parent of a fixed divider?
+>
+> Because of CLK_FRACTIONAL_SCALE_INVERTED flag, I don't know how to
+> model as a clk-multiplier. And how to pass the fixed denominator into
+> a clk-multiplier.
+>
+> > Or we can add a flag to the
+> > clk-fractional-divider code to handle this minor difference.
+>
+> This driver is used 2 register fields for numerator, denominator and
+> calculates both of them.
+> Do you think I can integrate this fractional scale into it ?
+>
+> Thanks
+> Hoan
+>
 
-Nitpick: these three regs are not present in the data sheet, which is
-why I did not include the comment for these three addresses originally.
+Hi Stephen,
 
-Regards,
-Mike
+Do you have any comments ?
+
+Thanks
+Hoan
+
+
+>
+> >
+> > --
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
