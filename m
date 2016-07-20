@@ -1,60 +1,72 @@
-Return-Path: <mirza.krak@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com> <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
- <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com> <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Fri, 22 Jul 2016 21:18:37 +0200
-Message-ID: <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 20 Jul 2016 07:44:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com,
+	pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
 	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@armlinux.org.uk
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Message-ID: <20160720124408.GA19113@rob-hp-laptop>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-22 11:38 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>> The driver should have a remove function given that we can build as a
->>> module.
->>
->> At the moment I do not know what we would do in a remove function and
->> hence me not adding one.
->
-> Should just be the inverse of the probe (although there is no inverse
-> for the parsing DT bit). If you don't wish to add a remove, that is
-> fine, but make the driver a 'bool' and not 'tristate' in the Kconfig so
-> it cannot be configured as a module.
+On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
+> 
+> Document the devicetree bindings for NOR bus driver found on Tegra20 and
+> Tegra30 SOCs
+> 
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> ---
+>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> new file mode 100644
+> index 0000000..9ee4a66
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> @@ -0,0 +1,73 @@
+> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
+> +
+> +The NOR controller supports a number of memory types, including synchronous NOR,
+> +asynchronous NOR, and other flash memories with similar interfaces, such as
+> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
+> +CAN chips, Wi-Fi chips etc.
+> +
+> +The actual devices are instantiated from the child nodes of a NOR node.
+> +
+> +Required properties:
+> +
+> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+> + - reg: Should contain NOR controller registers location and length.
+> + - clocks: Must contain one entry, for the module clock.
+> +   See ../clocks/clock-bindings.txt for details.
+> + - resets : Must contain an entry for each entry in reset-names.
+> +   See ../reset/reset.txt for details.
+> + - reset-names : Must include the following entries:
+> +  - nor
+> + - #address-cells: Must be set to 2 to allow memory address translation
+> + - #size-cells:	Must be set to 1 to allow CS address passing
+> + - ranges: Must be set up to reflect the memory layout with four integer
+> + 		values for each chip-select line in use.
+> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+> +
+> +Note that the NOR controller does not have any internal chip-select address
+> +decoding and if you want to access multiple devices external chip-select
+> +decoding must be provided.
 
-I understand the concept of a remove function, but I use devm_ calls
-for all resources. These should be handled by the device core on a
-driver detach?
+Then what are the 2 chip selects in ranges?
 
-One thing came to mind now that could be done in a remove method and
-that is clearing the CONFIG_GO bit, or I could just do that first on
-probe instead to make sure the controller is stopped.
-
-Ok, one more thing came to mind, and that is depopulating the child
-devices. Got it remove function it is then.
-
->>>> +module_platform_driver_probe(nor_driver, nor_probe);
->>>
->>> I would use "tegra_nor" namespace for all the structs, functions, etc.
->>> However, we may prefer to go with GMI and in which case tegra_gmi_probe,
->>> etc.
->>
->> ACK. Who gets the last call on what we should call the driver? It
->> seems that we both think GMI is a better name, do we need a third? :).
->
-> The patches would have to go via Thierry and so ultimately, Thierry.
-> However, I can't imagine he would object to GMI ;-)
-
-Eagerly awaiting Thierry`s comments :).
-
-Best Regards,
-Mirza
+Rob
