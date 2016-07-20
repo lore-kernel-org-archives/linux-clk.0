@@ -1,63 +1,52 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v4 0/2] mark spi clocks as critical and enable spi3 clocks
-Date: Thu, 07 Jul 2016 21:13:55 +0900
-Message-id: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jul 2016 11:43:03 +0200
+Message-ID: <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Julien Grall <julien.grall@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stefano Stabellini <sstabellini@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Dirk,
 
-I managed to bring some confusion on these two patches, but
-finally I managed to find the right solution (which is similar to
-the patch version 2).
+On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> Clocks described by this property are reserved for use by Xen, and the OS
+> must not alter their state any way, such as disabling or gating a clock,
+> or modifying its rate. Ensuring this may impose constraints on parent
+> clocks or other resources used by the clock tree.
+>
+> This property is used to proxy clocks for devices Xen has taken ownership
+> of, such as UARTs, for which the associated clock controller(s) remain
+> under the control of Dom0.
 
-The real issue was hidden in the spi bus as reported in the
-following patch:
+I'm not familiar with using XEN at all, but I'm a bit puzzled...
 
-  https://lkml.org/lkml/2016/7/7/81
+Can't you just add a clocks property to the (virtual) serial device node in DT?
+Then the (virtual) serial device driver can get and enable the clock?
 
-This patch in principle replaces the clock_ignore_unused flags in
-for the spi and enables the spi3 that in the tm2(e) board will be
-connected to the IR remote controller.
+Alternatively, you can add a (virtual) clock controller, and power-domains
+and clock properties to all affected devices (I assume there can be others,
+besides virtual UARTs?), and let it be handled by Runtime PM, without the
+(virtual) device drivers having to care about clocks at all.
 
-Changelog:
+Thanks!
 
-V1 -> V2
- - the "sclk_spi3" doesn't need to be enabled in boot time as it
-  is handled by the spi driver itself.
+Gr{oetje,eeting}s,
 
- - use the CLK_IS_CRITICAL flag for the ioclk
+                        Geert
 
-V2 -> V3
- - some more tests has confirmed taht "sclk_spi1,3" need to be
-   enabled as critical!
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- - added Chanwoo's review in the second commit.
-
-V3 -> V4
- - patch V3 was wrong, back to patch v2.
-
- - reworded the commit of patch no. 1
-
-Thanks,
-Andi
-
-Andi Shyti (2):
-  clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI clocks
-  clk: exynos5433: enable sclk_ioclk for SPI3
-
- drivers/clk/samsung/clk-exynos5433.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
