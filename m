@@ -1,122 +1,57 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160725113638.GE21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160720124408.GA19113@rob-hp-laptop>
- <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
- <1f280c99-156f-59d3-308f-b4c8ff0f8f7c@nvidia.com> <20160725113638.GE21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 25 Jul 2016 15:20:44 +0200
-Message-ID: <CALw8SCUxbpWGz0Mrp-Wf=jxa84Frk6mubeL9+KAYFAbq+-9CZQ@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com> <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jul 2016 13:49:50 +0200
+Message-ID: <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
+Subject: Re: [PATCH v4] xen/arm: Add a clock property
+To: Julien Grall <julien.grall@arm.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stefano Stabellini <sstabellini@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 13:36 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Thu, Jul 21, 2016 at 11:26:09AM +0100, Jon Hunter wrote:
+Hi Julien,
+
+On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com> wrote:
+> On 20/07/16 10:43, Geert Uytterhoeven wrote:
+>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>> wrote:
+>>>
+>>> Clocks described by this property are reserved for use by Xen, and the OS
+>>> must not alter their state any way, such as disabling or gating a clock,
+>>> or modifying its rate. Ensuring this may impose constraints on parent
+>>> clocks or other resources used by the clock tree.
+>>>
+>>> This property is used to proxy clocks for devices Xen has taken ownership
+>>> of, such as UARTs, for which the associated clock controller(s) remain
+>>> under the control of Dom0.
 >>
->> On 20/07/16 20:28, Mirza Krak wrote:
->> > 2016-07-20 14:44 GMT+02:00 Rob Herring <robh@kernel.org>:
->> >> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
->> >>> From: Mirza Krak <mirza.krak@gmail.com>
->> >>>
->> >>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
->> >>> Tegra30 SOCs
->> >>>
->> >>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->> >>> ---
->> >>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
->> >>>  1 file changed, 73 insertions(+)
->> >>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> >>>
->> >>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> >>> new file mode 100644
->> >>> index 0000000..9ee4a66
->> >>> --- /dev/null
->> >>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> >>> @@ -0,0 +1,73 @@
->> >>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
->> >>> +
->> >>> +The NOR controller supports a number of memory types, including synchronous NOR,
->> >>> +asynchronous NOR, and other flash memories with similar interfaces, such as
->> >>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
->> >>> +CAN chips, Wi-Fi chips etc.
->> >>> +
->> >>> +The actual devices are instantiated from the child nodes of a NOR node.
->> >>> +
->> >>> +Required properties:
->> >>> +
->> >>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
->> >>> + - reg: Should contain NOR controller registers location and length.
->> >>> + - clocks: Must contain one entry, for the module clock.
->> >>> +   See ../clocks/clock-bindings.txt for details.
->> >>> + - resets : Must contain an entry for each entry in reset-names.
->> >>> +   See ../reset/reset.txt for details.
->> >>> + - reset-names : Must include the following entries:
->> >>> +  - nor
->> >>> + - #address-cells: Must be set to 2 to allow memory address translation
->> >>> + - #size-cells:      Must be set to 1 to allow CS address passing
->> >>> + - ranges: Must be set up to reflect the memory layout with four integer
->> >>> +             values for each chip-select line in use.
->> >>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
->> >>> +
->> >>> +Note that the NOR controller does not have any internal chip-select address
->> >>> +decoding and if you want to access multiple devices external chip-select
->> >>> +decoding must be provided.
->> >>
->> >> Then what are the 2 chip selects in ranges?
->> >>
->> >> Rob
->> >
->> > Those two chip selects are actually a representation of a external
->> > decoding logic based on what we use on our board. Even though it the
->> > NOR controller only supports one single chip select I wanted to give
->> > an example on how one could create more chip-selects with an external
->> > logic and what it would look like in the device tree representation.
 >>
->> Technically, the GMI/SNOR controller supports 8 chip-selects, however,
->> unlike some devices, it appears that software has to select the active
->> chip-select. Although this sounds odd, I believe that the idea is that
->> in order to support devices greater than 256MB (external address space
->> for available NOR/async devices) you can use the chip-selects to page
->> through memory greater than this 256MB range. At least that it my
->> (limited) understanding!
+>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
+>>
+>> Can't you just add a clocks property to the (virtual) serial device node
+>> in DT?
+>> Then the (virtual) serial device driver can get and enable the clock?
 >
-> Actually I had assumed that software would at some point need to select
-> the active chip to switch between multiple connected chips. I suppose it
-> could be possible to have multiple chips share the same chip-select and
-> decode the address lines to determine whether they're being accessed or
-> not.
->
-> What I don't understand, and it's further complicated by the fact that
-> external chip-selects are being used, is how does the controller get
-> told what chip to select? It seems to me like it would always access the
-> same chips because the SNOR_CONFIG_0 register is only ever written on
-> ->probe().
->
-> For external chip selects, how do they tie in with all this? Who gets to
-> implement this logic? Wouldn't we need to abstract this away somehow so
-> that we can support whatever board designers will come up with?
->
-> Thierry
+> There is no DT node for the Xen console (hvc). The UART used by Xen will be
+> completely removed from the Device tree.
 
-You answered it your self :).
+Why is it removed?
 
->I suppose it
-> could be possible to have multiple chips share the same chip-select and
-> decode the address lines to determine whether they're being accessed or
-> not.
+Gr{oetje,eeting}s,
 
-That is what we do and is what I refer to as external chip-selects.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best Regards,
-Mirza
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
