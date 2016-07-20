@@ -1,107 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33487 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757207AbcGJV4x (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 17:56:53 -0400
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1468135649-19980-6-git-send-email-vw@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-6-git-send-email-vw@iommu.org>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date: Sun, 10 Jul 2016 17:56:22 -0400
-Message-ID: <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
-To: Wan Zongshun <vw@iommu.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>, robh@kernel.org,
-	Jason Cooper <jason@lakedaemon.net>, p.zabel@pengutronix.de,
-	Wan Zongshun <mcuos.com@gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAK7LNASny6C=TmVX4uRvf1kF4pNF_ovQQgw9UEhR=xLn+Fy2Jw@mail.gmail.com>
+References: <1462435037-27979-1-git-send-email-yamada.masahiro@socionext.com>
+ <146863507652.73491.7469412916688579441@resonance> <CAK7LNASny6C=TmVX4uRvf1kF4pNF_ovQQgw9UEhR=xLn+Fy2Jw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jul 2016 12:58:20 +0200
+Message-ID: <CAMuHMdVJhc-9EQ6rKFqwyGoUVgrMX-_ANTc+NZyP38UTtMPedA@mail.gmail.com>
+Subject: Re: [PATCH] clk: probe common clock drivers earlier
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Jay Sternberg <jay.e.sternberg@intel.com>, Jens Axboe <axboe@fb.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	=?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Valentin Rothberg <valentinrothberg@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote
-> This driver is to add reset support for nuc900 series,
-> currently, it only supports nuc970 SoC reset.
->
-> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
-> ---
->  drivers/power/reset/Kconfig        |  7 +++
->  drivers/power/reset/Makefile       |  1 +
->  drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 101 insertions(+)
->  create mode 100644 drivers/power/reset/nuc900-reset.c
->
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index 9bb2622..8c84892 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -94,6 +94,13 @@ config POWER_RESET_MSM
->         help
->           Power off and restart support for Qualcomm boards.
->
-> +config POWER_RESET_NUC900
-> +       bool "Nuc900 restart driver"
+On Sat, Jul 16, 2016 at 6:57 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2016-07-16 11:11 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+>> Quoting Masahiro Yamada (2016-05-05 00:57:17)
+>>> Several SoCs implement platform drivers for clocks rather than
+>>> CLK_OF_DECLARE().  Clocks should come earlier because they are
+>>> prerequisites for many of other drivers.  It will help to mitigate
 
-If this driver is bool and not tristate, then please remove all references
-to MODULE_<xyz> and then the module.h include as well.
+As are regulators, DMA engines, power domains, ..., but the actual ordering
+needed depends on the SoC.
 
-Thanks,
-Paul.
+>>> EPROBE_DEFER issues.
+>>>
+>>> Also, drop the comment since it does not look valuable.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>
+>> Acked-by: Michael Turquette <mturquette@baylibre.com>
+>
+> Thanks for taking a look at this patch.
+>
+> While I was wondering where is the best place for
+> "obj-y += clk/", I thought it can be probed even earlier.
+>
+> So, v2 is here:
+> https://patchwork.kernel.org/patch/9129749/
+>
+> Please consider it as a applicable candidate.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +       depends on ARCH_W90X900
-> +       help
-> +         Power off and restart support for Nuvoton NUC900 family of
-> +         reference boards.
-> +
->  config POWER_RESET_LTC2952
->         bool "LTC2952 PowerPath power-off driver"
->         depends on OF_GPIO
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index ab7aa86..d4df889 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
->  obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
->  obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
->  obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
-> +obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
->  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
->  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
->  obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
-> diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
-> new file mode 100644
-> index 0000000..49986b7
-> --- /dev/null
-> +++ b/drivers/power/reset/nuc900-reset.c
-> @@ -0,0 +1,93 @@
-> +/*
-> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
-> + *
-> + * The code contained herein is licensed under the GNU General Public
-> + * License. You may obtain a copy of the GNU General Public License
-> + * Version 2 or later at the following locations:
-> + *
-> + * http://www.opensource.org/licenses/gpl-license.html
-> + * http://www.gnu.org/copyleft/gpl.html
-> + */
-> +#include <linux/init.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reboot.h>
-> +#include <linux/regmap.h>
->
-
-[...]
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
