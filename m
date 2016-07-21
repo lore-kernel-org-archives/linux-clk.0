@@ -1,132 +1,91 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 21 Jul 2016 11:51:08 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
+ application method
+Message-ID: <20160721095108.GJ5993@lukather>
+References: <20160625034511.7966-1-megous@megous.com>
+ <20160625034511.7966-7-megous@megous.com>
+ <20160630204001.GC5485@lukather>
+ <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+ <20160715085356.GR4761@lukather>
+ <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+ <20160715152756.db7375a7109fed18c2fbf43a@free.fr>
 MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: Jun Nie <jun.nie@linaro.org>, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-References: <1468834877-22534-1-git-send-email-jun.nie@linaro.org>
- <1468834877-22534-3-git-send-email-jun.nie@linaro.org>
- <146888730254.8780.1667996409080895941@resonance>
- <57908230.6060104@linaro.org>
-In-Reply-To: <57908230.6060104@linaro.org>
-Message-ID: <146914521506.8780.17917409508909624041@resonance>
-Subject: Re: [PATCH 3/3] clk: zx: register ZX296718 clocks using common clock
- framework
-Date: Thu, 21 Jul 2016 16:53:35 -0700
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cN519qCC4CN1mUcX"
+In-Reply-To: <20160715152756.db7375a7109fed18c2fbf43a@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jun Nie (2016-07-21 01:05:04)
-> On 2016=E5=B9=B407=E6=9C=8819=E6=97=A5 08:15, Michael Turquette wrote:
-> > Hi Jun Nie,
-> >
-> > Quoting Jun Nie (2016-07-18 02:41:17)
-> >> +Required properties:
-> >> +- compatible : shall be one of the following:
-> >> +       "zte,zx296718-topcrm":
-> >> +               zx296718 top clock selection, divider and gating
-> >> +
-> >> +       "zte,zx296718-lsp0crm" and
-> >> +       "zte,zx296718-lsp1crm":
-> >> +               zx296718 device level clock selection and gating
-> >> +
-> >> +- reg: Address and length of the register set
-> >
-> > clock-cells?
-> =
 
-> Right, there are several clock controllers with sparse register regions. =
+--cN519qCC4CN1mUcX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> So separate initialization is needed.
-> =
-
-> >
-> >> +#include <linux/clk.h>
-> >
-> > Is clk.h needed? I don't see any clock consumer api's used in this
-> > driver.
-> =
-
-> I can remove that.
-> =
-
-> >
-> >> +struct zx_fixed_factor_clock top_ffactor_clk[] =3D {
-> >> +       FFACTOR(0, "clk4m",             "osc24m", 1, 6,  0),
-> >> +       FFACTOR(0, "clk2m",             "osc24m", 1, 12, 0),
-> >> +       /* pll cpu */
-> >> +       FFACTOR(0, "clk1600m",          "pll_cpu", 1, 1, CLK_SET_RATE_=
-PARENT),
-> >> +       FFACTOR(0, "clk800m",           "pll_cpu", 1, 2, CLK_SET_RATE_=
-PARENT),
-> >
-> > You have a lot of static data here, which is good. It can be expanded to
-> > fill out struct clk_init_data (as showed in my reply to patch #2) and
-> > then you can get rid of all of the registration functions.
-> =
-
-> Yes, your reply to patch #2 does save registration functions. I will try =
-
-> to follow that way. Thank you!
-> =
-
-> >
-> >> diff --git a/include/dt-bindings/clock/zx296718-clock.h b/include/dt-b=
-indings/clock/zx296718-clock.h
-> >> new file mode 100644
-> >> index 0000000..97d45e2
-> >> --- /dev/null
-> >> +++ b/include/dt-bindings/clock/zx296718-clock.h
-> >> @@ -0,0 +1,140 @@
-> >> +/*
-> >> + * Copyright (C) 2015 - 2016 ZTE Corporation.
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or modi=
-fy
-> >> + * it under the terms of the GNU General Public License version 2 as
-> >> + * published by the Free Software Foundation.
-> >> + */
-> >> +#ifndef __DT_BINDINGS_CLOCK_ZX296718_H
-> >> +#define __DT_BINDINGS_CLOCK_ZX296718_H
-> >> +
-> >> +/* PLL */
-> >> +#define ZX296718_OSC           0
-> >> +#define ZX296718_PLL_CPU       1
-> >> +#define ZX296718_PLL_MAC       2
-> >> +#define ZX296718_PLL_MM0       3
-> >> +#define ZX296718_PLL_MM1       4
-> >> +#define ZX296718_PLL_VGA       5
-> >> +#define ZX296718_PLL_DDR       6
-> >> +#define ZX296718_PLL_AUDIO     7
-> >> +#define ZX296718_PLL_HSIC      8
-> >
-> > For some clock controllers I suggest to split this list of numbers into
-> > a private header that is only used by the Linux driver, and another
-> > shared DT header that exposes only the clocks that will be consumed by
-> > downstream drivers (usually just leaf gate clocks).
-> >
-> > This also means that you can hide the ugly NR_CLKS stuff in the C-only
-> > implementation and not add that Linux-specific data into the generic
-> > binding description. It's up to you though.
-> =
-
-> NR_CLKS provides redundant info to drivers and generic binding =
-
-> description. Maybe that's why you think it is ugly. But move clocks from =
-
-> private header to DT binding header later will result redundant change =
-
-> history and effort. If that's all situation, I prefer to expose all =
-
-> information in DT binding header.
-
-Sure, that sounds fine to me.
-
-Regards,
-Mike
-
-> =
-
-> >
-> > Regards,
-> > Mike
-> >
+On Fri, Jul 15, 2016 at 03:27:56PM +0200, Jean-Francois Moine wrote:
+> On Fri, 15 Jul 2016 12:38:54 +0200
+> Ond=C5=99ej Jirman <megous@megous.com> wrote:
 >=20
+> > > If so, then yes, trying to switch to the 24MHz oscillator before
+> > > applying the factors, and then switching back when the PLL is stable
+> > > would be a nice solution.
+> > >=20
+> > > I just checked, and all the SoCs we've had so far have that
+> > > possibility, so if it works, for now, I'd like to stick to that.
+> >=20
+> > It would need to be tested. U-boot does the change only once, while the
+> > kernel would be doing it all the time and between various frequencies
+> > and PLL settings. So the issues may show up with this solution too.
+>=20
+> I don't think this is a good idea: the CPU clock may be changed at any
+> time with the CPUFreq governor. I don't see the system moving from
+> 1008MHz to 24MHz and then to 1200MHz when some computation is needed!
+
+It wouldn't happen that often. The sampling rate for the governor is
+1000 times the latency, so, at most, 0.1% of the time would be spent
+at 24MHz.
+
+And if you're really concerned about performances, you won't enable
+cpufreq anyway.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--cN519qCC4CN1mUcX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXkJsMAAoJEBx+YmzsjxAgpnsP/2Y+BwDtxpeO0WM//Fdx5OTJ
+UUfKZ9grwq1G+MODQwJRSGAuSfJ/1jOt2FRuDyXy9LWoosDvGEdUN//ZYHqMps5I
+YdTy4TWt1+Zb5phVNnHH4h3Vhim2lp98EF0ExUne+gsNUUnmM/XC+JFpqu+H1gcI
+IjIkqeSfDouagPAya56gOpD9szoMYfEub7+S9yZg8VzXpT5KsgTWZpGv5Iy3TjLX
+l4xkb5XR/wvuF8yzVAF819tx3BJ/S/e2R9iSlJMgcfDgoqWntKqLMGXAUedGnCAI
+iDAdW4ODZd2JHRHsyN9WTHnwQA6Gt4Bn02ddgO1uQC3GXK2gFfcvfvLfWmL7lVq5
+re6dKca1agctgpF5PoaID2Di6ONf8NHuA2i+Ja9goiADMOpzFWnkemQ9NRPd3YXA
+laPcEEcVZdBq8PAGwJVBX1EJbQhTsZtkPp1U3kKoRgy1RAZki/ba3JdiI5e9PX8Q
+2NvG+7qaFS5d8oTdNL3qv/XgOp7xgVDWaunxQ9dPnqIFwd0AtAzcKOXfh8CZJdXC
+7NVcTxrWASkD93LJ8pMycf2J9p+dMoDtZ2YmQVGLynYP4K0ilqmtfa4UQVB+wm1B
+9UBemYPI7Xkq9Ctvmn1yb7RrnjjVkLzt4P+wYdIhncDJuQdCEeiRMhBmwPFhRvIT
+D+j+g4ngmve0xuJeuXlf
+=FHNS
+-----END PGP SIGNATURE-----
+
+--cN519qCC4CN1mUcX--
