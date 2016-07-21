@@ -1,88 +1,148 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pmta2.delivery5.ore.mailhop.org ([54.186.218.12]:48869 "EHLO
-	pmta2.delivery5.ore.mailhop.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751191AbcGOPpz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jul 2016 11:45:55 -0400
-Date: Fri, 15 Jul 2016 15:45:51 +0000
-From: Jason Cooper <jason@lakedaemon.net>
-To: Wan ZongShun <mcuos.com@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Wan Zongshun <vw@iommu.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>, p.zabel@pengutronix.de
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-Message-ID: <20160715154551.GF31509@io.lakedaemon.net>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <20160714135426.GC31509@io.lakedaemon.net>
- <5788718E.7080708@iommu.org>
- <16178876.fFBuoBSjbd@wuerfel>
- <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+Date: Thu, 21 Jul 2016 10:56:44 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAKT61h8EkOOkDHou65Uc7NNomJ6Nowvw8o6JnWxNyc0S_=x_JA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 15, 2016 at 05:44:50PM +0800, Wan ZongShun wrote:
-> 2016-07-15 15:00 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
-> > On Friday, July 15, 2016 1:15:58 PM CEST Wan Zongshun wrote:
-> >>
-> >> Actually, I have two choice to implement this function:
-> >>
-> >> option1:
-> >>
-> >> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
-> >> {
-> >>         u32 hwirq;
-> >>
-> >>         (void)readl(aic_base + REG_AIC_IPER);
-> >>         hwirq = readl(aic_base + REG_AIC_ISNR);
-> >>
-> >>         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
-> >> }
-> >
-> > (side note: I think you want handle_domain_irq())
-> >
-> >> option2:
-> >>
-> >> void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
-> >> {
-> >>         u32 hwirq;
-> >>
-> >>         hwirq = readl(aic_base + REG_AIC_IPER);
-> >>         hwirq <<= 2;
-> >>
-> >>         handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
-> >> }
-> >>
-> >> Though the option2 do shift for hwirq, but it seems better than do io
-> >> operation by readl,so I prefer to option2, agree?
-> >
-> > That will only return an irq number that is a multiple of four, which
-> > seems wrong since the numbers are not that. Did you mean to write
-> >
-> >         hwirq = ilog2(hwirq);   ?
+
+On 19/07/16 14:36, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
 > 
-> Sorry, my fault, I mean hwirq >>= 2, bit[7:2] indicates which irq is triggering.
-> so I have to do right shift 2 for IPER value.
-
-Ok, this makes a lot more sense now. :)
-
-> > That assumes that REG_AIC_IPER contains a 32-bit value with one single
-> > bit set to indicate which IRQ was triggered.
-> >
-> > If the difference is only in performance, you could try measuring which
-> > of the two ends up being faster.
+> Document the devicetree bindings for NOR bus driver found on Tegra20 and
+> Tegra30 SOCs
 > 
-> It seems hard to measure. I think Do IO operation should be slower
-> than shift 2. :)
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> ---
+>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> new file mode 100644
+> index 0000000..9ee4a66
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> @@ -0,0 +1,73 @@
+> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
+> +
+> +The NOR controller supports a number of memory types, including synchronous NOR,
+> +asynchronous NOR, and other flash memories with similar interfaces, such as
+> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
+> +CAN chips, Wi-Fi chips etc.
 
-Agreed.
+Nit-pick ... the Tegra documentation refers to this controller as the
+GMI (general memory interface) or SNOR (sync-NOR) controller because it
+is not just limited to NOR as you mentioned. I see references to GMI in
+the Tegra pinctrl driver and so may be we should use this name.
 
-thx,
+> +
+> +The actual devices are instantiated from the child nodes of a NOR node.
+> +
+> +Required properties:
+> +
+> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
 
-Jason.
+I see at least one difference at the register level between Tegra20 and
+Tegra30 and so I think this should be something like ...
+
+ - compatible : Should contain one of the following:
+	For Tegra20 must contain "nvidia,tegra20-gmi".
+ 	For Tegra30 must contain "nvidia,tegra30-gmi".
+
+> + - reg: Should contain NOR controller registers location and length.
+> + - clocks: Must contain one entry, for the module clock.
+> +   See ../clocks/clock-bindings.txt for details.
+> + - resets : Must contain an entry for each entry in reset-names.
+> +   See ../reset/reset.txt for details.
+> + - reset-names : Must include the following entries:
+> +  - nor
+> + - #address-cells: Must be set to 2 to allow memory address translation
+> + - #size-cells:	Must be set to 1 to allow CS address passing
+> + - ranges: Must be set up to reflect the memory layout with four integer
+> + 		values for each chip-select line in use.
+> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+
+There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
+that this should be nvidia,snor-config to be explicit. It might be nice
+to also add a "nvidia,mio-config" while you are at it as well, however,
+that could always be done later. If you do, then the
+"nvidia,snor-config" becomes optional depending on whether you are using
+the SNOR or MIO address space.
+
+Thierry, Stephen, do prefer all the fields on the config registers are
+broken out? There are quite a few but I am not sure what we typically
+recommend here?
+
+> +
+> +Note that the NOR controller does not have any internal chip-select address
+> +decoding and if you want to access multiple devices external chip-select
+> +decoding must be provided.
+
+Although it is true, you do have the MIO address space and so you could
+support two devices via the SNOR address space and MIO address space
+(assuming that the MIO can be used for the 2nd device).
+
+Furthermore, if you do have external logic to support multiple devices
+this would assume that the devices use the same timing and so are
+probably the same type. It also assumes both can fit in the 256MB
+address range. May be worth mentioning.
+
+The GMI does have 8 chip selects and I believe the purpose of these is
+to allow you to address more than the 256MB range. However, I believe to
+do this it require software intervention to change the current CS that
+is in use.
+
+I wonder if it is worth mentioning that the chip-select specified in the
+"nvidia,config" prop should match that in the "ranges" prop unless you
+have some external decoding logic to provide an external chip-select.
+Which raises a question, what does the chip-select in the ranges
+actually represent? I am not sure if there is a common practice here for
+device tree when boards have external logic to provide additional
+chip-selects. I am sure this is quite common.
+
+> +Optional properties:
+> +
+> + - nvidia,cs-timing: The timing array represents the SNOR_TIMING0_0 and
+> +   SNOR_TIMING1_0 registers for the NOR controller. If unset reset-values will
+> +   be used. See reference documentation for detailed description of the timing
+> +   registers.
+> +
+> +Example with two SJA1000 CAN controllers connected to the NOR bus:
+> +
+> +	nor@70009000 {
+> +		status = "okay";
+> +		compatible = "nvidia,tegra20-nor", "nvidia,tegra30-nor";
+> +		reg = <0x70009000 0x1000>;
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		clocks = <&tegra_car TEGRA30_CLK_NOR>;
+> +		resets = < &tegra_car 42>;
+> +		reset-names = "nor";
+> +		ranges = <
+> +			0 0 0x48000000 0x00000100
+> +			1 0 0x48040000 0x00000100
+> +		>;
+
+The "nvidia,config" appears to be missing here.
+
+Cheers
+Jon
+
+-- 
+nvpublic
