@@ -1,61 +1,81 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v2 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Date: Fri, 08 Jul 2016 23:46:41 +0900
-Message-id: <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <222d4179-a72f-56d1-246b-ab66af3057d9@nvidia.com>
+Date: Thu, 21 Jul 2016 16:12:05 +0100
+MIME-Version: 1.0
+In-Reply-To: <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Because the Exynos5433 SPI driver supports the ioclk handling and
-the following patch:
 
-  http://marc.info/?l=linux-kernel&m=146787645626318&w=2
+On 19/07/16 14:36, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
+> 
+> The NOR bus can be used to connect high-speed devices such as NOR flash,
+> FPGAs, DSPs, CAN chips, Wi-Fi chips etc.
+> 
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> ---
+>  drivers/bus/Kconfig     |   7 +++
+>  drivers/bus/Makefile    |   1 +
+>  drivers/bus/tegra-nor.c | 118 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 126 insertions(+)
+>  create mode 100644 drivers/bus/tegra-nor.c
 
-fixes a synchronus abort issue, none of the SPI clocks require
-any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-for the SPI related clocks.
+...
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+> +static int __init nor_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	struct clk *clk;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	/* get the resource */
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	/* get the clock */
+> +	clk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	ret = clk_prepare_enable(clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* parse the device node */
+> +	ret = nor_parse_dt(pdev, base);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "%s fail to create devices.\n",
+> +			pdev->dev.of_node->full_name);
+> +		clk_disable_unprepare(clk);
+> +		return ret;
+> +	}
+> +
+> +	dev_info(&pdev->dev, "Driver registered.\n");
+> +	return 0;
+> +}
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index c3a5318..fb19525 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
- 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
--			ENABLE_SCLK_PERIC, 12,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
- 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-@@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
--			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
- 			3, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+The reset is defined in the binding, but never used. Should we make sure
+the reset is de-asserted in the probe?
+
+Jon
+
 -- 
-2.8.1
+nvpublic
