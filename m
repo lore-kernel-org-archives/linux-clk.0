@@ -1,47 +1,60 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <jaz@semihalf.com>
+Return-Path: <jaz@semihalf.com>
+From: Grzegorz Jaszczyk <jaz@semihalf.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 4/6] clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
-Date: Mon,  1 Aug 2016 12:23:07 +0800
-Message-Id: <1470025389-4094-5-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com,
+	mw@semihalf.com,
+	jaz@semihalf.com,
+	alior@marvell.com
+Subject: [PATCH] clk: mvebu: armada-39x: add clk description for supported interfaces
+Date: Thu, 21 Jul 2016 12:48:10 +0200
+Message-Id: <1469098090-17836-1-git-send-email-jaz@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We need to add more clocks for supporting more display resolution
-for HDMI.
+Both SATA and second USB3.0 interface are supported in Armada-39x SoC
+family. Add necessary clk description, so both xhci and sata drivers
+can be correctly initialized.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+The binding documentation has also been updated accordingly.
+
+Signed-off-by: Grzegorz Jaszczyk <jaz@semihalf.com>
 ---
+ Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt | 2 ++
+ drivers/clk/mvebu/armada-39x.c                                | 2 ++
+ 2 files changed, 4 insertions(+)
 
- drivers/clk/rockchip/clk-rk3399.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index ad3860a..74afec0 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -100,8 +100,10 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
- 	RK3036_PLL_RATE( 297000000, 1, 99, 4, 2, 1, 0),
- 	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
- 	RK3036_PLL_RATE( 148500000, 1, 99, 4, 4, 1, 0),
-+	RK3036_PLL_RATE( 106500000, 1, 71, 4, 4, 1, 0),
- 	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
- 	RK3036_PLL_RATE(  74250000, 2, 99, 4, 4, 1, 0),
-+	RK3036_PLL_RATE(  65000000, 1, 65, 6, 4, 1, 0),
- 	RK3036_PLL_RATE(  54000000, 1, 54, 6, 4, 1, 0),
- 	RK3036_PLL_RATE(  27000000, 1, 27, 6, 4, 1, 0),
- 	{ /* sentinel */ },
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+index 660e649..cb8542d 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+@@ -86,6 +86,8 @@ ID	Clock		Peripheral
+ 7	pex3		PCIe 3
+ 8	pex0		PCIe 0
+ 9	usb3h0		USB3 Host 0
++10	usb3h1		USB3 Host 1
++15	sata0		SATA 0
+ 17	sdio		SDIO
+ 22	xor0		XOR 0
+ 28	xor1		XOR 1
+diff --git a/drivers/clk/mvebu/armada-39x.c b/drivers/clk/mvebu/armada-39x.c
+index efb974d..4fdfd32 100644
+--- a/drivers/clk/mvebu/armada-39x.c
++++ b/drivers/clk/mvebu/armada-39x.c
+@@ -142,6 +142,8 @@ static const struct clk_gating_soc_desc armada_39x_gating_desc[] __initconst = {
+ 	{ "pex3", NULL, 7 },
+ 	{ "pex0", NULL, 8 },
+ 	{ "usb3h0", NULL, 9 },
++	{ "usb3h1", NULL, 10 },
++	{ "sata0", NULL, 15 },
+ 	{ "sdio", NULL, 17 },
+ 	{ "xor0", NULL, 22 },
+ 	{ "xor1", NULL, 28 },
 -- 
-1.7.9.5
+1.8.3.1
