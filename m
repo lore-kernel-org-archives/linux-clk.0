@@ -1,168 +1,145 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1468225452.31247.7.camel@mtksdaap41>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
-	John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, "Sascha
- Hauer" <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>
-Date: Mon, 11 Jul 2016 16:24:12 +0800
-In-Reply-To: <146802073038.73491.6675612765998057903@resonance>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
-	 <20160702012140.GB17071@codeaurora.org>
-	 <1467604308.26485.4.camel@mtksdaap41>
-	 <146802073038.73491.6675612765998057903@resonance>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	<linux@armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
+Date: Fri, 22 Jul 2016 10:32:19 +0100
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+In-Reply-To: <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
 
-On Fri, 2016-07-08 at 16:32 -0700, Michael Turquette wrote:
-> Hi James,
+On 21/07/16 21:10, Mirza Krak wrote:
+> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>> +
+>>> +The NOR controller supports a number of memory types, including synchronous NOR,
+>>> +asynchronous NOR, and other flash memories with similar interfaces, such as
+>>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
+>>> +CAN chips, Wi-Fi chips etc.
+>>
+>> Nit-pick ... the Tegra documentation refers to this controller as the
+>> GMI (general memory interface) or SNOR (sync-NOR) controller because it
+>> is not just limited to NOR as you mentioned. I see references to GMI in
+>> the Tegra pinctrl driver and so may be we should use this name.
 > 
-> Quoting James Liao (2016-07-03 20:51:48)
-> > On Fri, 2016-07-01 at 18:21 -0700, Stephen Boyd wrote:
-> > > (Resending to everyone)
-> > > 
-> > > On 06/22, Erin Lo wrote:
-> > > > From: James Liao <jamesjj.liao@mediatek.com>
-> > > > 
-> > > > This patch fixed wrong state of parent clocks if they are registered
-> > > > after critical clocks.
-> > > > 
-> > > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > 
-> > > It would be nice if you included the information about the
-> > > problem from James' previous mail. This says what it does, but
-> > > doesn't explain what the problem is and how it is fixing it.
-> > > 
-> > > > ---
-> > > >  drivers/clk/clk.c | 9 ++++++++-
-> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > index d584004..e9f5f89 100644
-> > > > --- a/drivers/clk/clk.c
-> > > > +++ b/drivers/clk/clk.c
-> > > > @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
-> > > >     hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-> > > >             struct clk_core *parent = __clk_init_parent(orphan);
-> > > >  
-> > > > -           if (parent)
-> > > > +           if (parent) {
-> > > >                     clk_core_reparent(orphan, parent);
-> > > > +
-> > > > +                   if (orphan->prepare_count)
-> > > > +                           clk_core_prepare(parent);
-> > > > +
-> > > > +                   if (orphan->enable_count)
-> > > > +                           clk_core_enable(parent);
-> > > > +           }
-> > > >     }
-> > > 
-> > > I'm pretty sure I pointed this problem out to Mike when the
-> > > critical clk patches were being pushed. I can't recall what the
-> > > plan was though to fix the problem. I'm pretty sure he said that
-> > > clk_core_reparent() would take care of it, but obviously it is
-> > > not doing that. Or perhaps it was that clk handoff should figure
-> > > out that the parents of a critical clk are also on and thus keep
-> > > them on.
-> > 
-> > Hi Mike
-> > 
-> > Is there any other patch to fix this issue? Or did I misuse critical
-> > clock flag?
-> 
-> There is no fix yes. Your fix is basically correct. I was mistaken back
-> when I told you and Stephen that the framework already took care of
-> this.
-> 
-> However, instead of "open coding" this solution, I would rather re-use
-> the __clk_set_parent_{before,after} helpers instead. Can you review/test
-> the following patch and let me know what you think?
-> 
-> Thanks,
-> Mike
+> ACK.
 > 
 > 
+>>> +Required properties:
+>>> +
+>>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+>>
+>> I see at least one difference at the register level between Tegra20 and
+>> Tegra30 and so I think this should be something like ...
+>>
+>>  - compatible : Should contain one of the following:
+>>         For Tegra20 must contain "nvidia,tegra20-gmi".
+>>         For Tegra30 must contain "nvidia,tegra30-gmi".
 > 
-> From c0163b3f719b1e219b28ad425f94f9ef54a25a8f Mon Sep 17 00:00:00 2001
-> From: Michael Turquette <mturquette@baylibre.com>
-> Date: Fri, 8 Jul 2016 16:05:22 -0700
-> Subject: [PATCH] clk: migrate ref counts when orphans are reunited
-> 
-> It's always nice to see families reunited, and this is equally true when
-> talking about parent clocks and their children. However, if the orphan
-> clk had a positive prepare_count or enable_count, then we would not
-> migrate those counts up the parent chain correctly.
-> 
-> This has manifested with the recent critical clocks feature, which often
-> enables clocks very early, before their parents have been registered.
-> 
-> Fixed by replacing the call to clk_core_reparent with calls to
-> __clk_set_parent_{before,after}.
-> 
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Erin Lo <erin.lo@mediatek.com>
-> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> ---
->  drivers/clk/clk.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939fb6bb..70efe4c4e0cc 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2449,8 +2449,14 @@ static int __clk_core_init(struct clk_core *core)
->  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
->  		struct clk_core *parent = __clk_init_parent(orphan);
->  
-> -		if (parent)
-> -			clk_core_reparent(orphan, parent);
+> ACK. Just curious, which register was it? I only checked that they
+> have the same count of registers.
 
-Is it correct to remove clk_core_reparent()? It lacks
-__clk_recalc_accuracies() and __clk_recalc_rates(), so the new parent's
-rate will not propagate correctly.
+Register counts are the same, but the SNOR_CONFIG_0 is not identical. I
+believe only Tegra30 defines bit 14.
 
-For example, I set vdec_sel as a critical clock. Without your patch, the
-result was:
+>>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+>>
+>> There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
+>> that this should be nvidia,snor-config to be explicit. It might be nice
+>> to also add a "nvidia,mio-config" while you are at it as well, however,
+>> that could always be done later. If you do, then the
+>> "nvidia,snor-config" becomes optional depending on whether you are using
+>> the SNOR or MIO address space.
+> 
+> ACK the nvidia,snor-config part, will though wait for further comments
+> regarding what to do with the config registers, break-out or keep it
+> is a one property / register.
+> 
+> Regarding mio-config, not sure about if I would like to include that
+> part in this stage. If you feel strongly about this we can do it. If
+> it only comes to down to replicate the same configurations that we do
+> for SNOR to MIO then I do not see much of a problem, but would like
+> SNOR to be accepted and would not like the MIO part to halt this. But
+> then again this up to you guys.
+> 
+>>
+>>> +
+>>> +Note that the NOR controller does not have any internal chip-select address
+>>> +decoding and if you want to access multiple devices external chip-select
+>>> +decoding must be provided.
+>>
+>> Although it is true, you do have the MIO address space and so you could
+>> support two devices via the SNOR address space and MIO address space
+>> (assuming that the MIO can be used for the 2nd device).
+> 
+> This is true. If we include MIO support above could be added to the bindings.
+> 
+>>
+>> Furthermore, if you do have external logic to support multiple devices
+>> this would assume that the devices use the same timing and so are
+>> probably the same type. It also assumes both can fit in the 256MB
+>> address range. May be worth mentioning.
+> 
+> ACK.
+> 
+>>
+>> The GMI does have 8 chip selects and I believe the purpose of these is
+>> to allow you to address more than the 256MB range. However, I believe to
+>> do this it require software intervention to change the current CS that
+>> is in use.
+> 
+> Yes that is true. One has to modify the SNOR_CONFIG register to choose
+> a different CS pin.
+> 
+>>
+>> I wonder if it is worth mentioning that the chip-select specified in the
+>> "nvidia,config" prop should match that in the "ranges" prop unless you
+>> have some external decoding logic to provide an external chip-select.
+>> Which raises a question, what does the chip-select in the ranges
+>> actually represent? I am not sure if there is a common practice here for
+>> device tree when boards have external logic to provide additional
+>> chip-selects. I am sure this is quite common.
+> 
+> I do not understand why CS pin setting in nvidia,config need to match
+> the "ranges" prop? Other then maybe cosmetics.
 
-    vdecpll         0            0   338000000
-       vdecpll_ck   1            1   338000000
-          vdec_sel  1            1   338000000
+Yes it would be cosmetic. That said, I even wonder if CS needs to be
+exposed at all given that they all map to the same CPU address space.
+Couldn't your binding for the CAN devices be as follows?
 
-With your patch, it became:
+nor@70009000 {
+	...
 
-    vdecpll         1            1   338000000
-       vdecpll_ck   1            1           0
-          vdec_sel  1            1           0
+	can@48000000 {
+		...
+	};
 
-The prepare_count and enable_count are correct with your patch, but the
-rates of vdecpll_ck and vdec_sel become incorrect.
+	can@48040000 {
+		...
+	};
+};
 
+Problem is if you did have devices on different chip-selects then how
+would these be handled? They could not point to the same physical
+address. I am not sure if there is a way to do that in DT?
 
-Best regards,
+Cheers
+Jon
 
-James
-
-> +		/*
-> +		 * we could call __clk_set_parent, but that would result in a
-> +		 * reducant call to the .set_rate op, if it exists
-> +		 */
-> +		if (parent) {
-> +			__clk_set_parent_before(orphan, parent);
-> +			__clk_set_parent_after(orphan, parent, NULL);
-> +		}
->  	}
->  
->  	/*
+-- 
+nvpublic
