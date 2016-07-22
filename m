@@ -1,35 +1,111 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Jul 2016 17:44:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, shawnguo@kernel.org,
-	linux-arm-kernel@lists.infradead.org, anson.huang@nxp.com
-Subject: Re: [PATCH V3 2/8] clk: move clk_disable_unused after
- clk_core_disable_unprepare function
-Message-ID: <20160702004416.GK27880@codeaurora.org>
-References: <1467279078-2330-1-git-send-email-aisheng.dong@nxp.com>
- <1467279078-2330-3-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467279078-2330-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <146914709427.8780.16475894348537760808@resonance>
+References: <1467302331-9663-1-git-send-email-wens@csie.org>
+ <1467302331-9663-5-git-send-email-wens@csie.org> <146800297598.73491.13472152266331488346@resonance>
+ <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com> <146914709427.8780.16475894348537760808@resonance>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 22 Jul 2016 09:22:25 +0800
+Message-ID: <CAGb2v65x_3b84mRJMkt2e7-rbbyYQ3Zz05hS3GuH=P9v8ecwpA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/7] rtc: ac100: Add clk output support
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, rtc-linux@googlegroups.com,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/30, Dong Aisheng wrote:
-> No function level change, just moving code place.
-> clk_disable_unused function will need to call clk_core_prepare_enable/
-> clk_core_disable_unprepare when adding CLK_OPS_PARENT_ENABLE features.
-> So move it after clk_core_disable_unprepare to avoid adding forward
-> declared functions later.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
+On Fri, Jul 22, 2016 at 8:24 AM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Quoting Chen-Yu Tsai (2016-07-13 20:34:34)
+>> On Sat, Jul 9, 2016 at 2:36 AM, Michael Turquette
+>> <mturquette@baylibre.com> wrote:
+>> > Quoting Chen-Yu Tsai (2016-06-30 08:58:48)
+>> >> +static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+>> >> +                                   unsigned long prate)
+>> >> +{
+>> >> +       unsigned long best_rate = 0, tmp_rate, tmp_prate;
+>> >> +       int i;
+>> >> +
+>> >> +       if (prate == AC100_RTC_32K_RATE)
+>> >> +               return divider_round_rate(hw, rate, &prate, NULL,
+>> >> +                                         AC100_CLKOUT_DIV_WIDTH,
+>> >> +                                         CLK_DIVIDER_POWER_OF_TWO);
+>> >> +
+>> >> +       for (i = 0; ac100_clkout_prediv[i].div; i++) {
+>> >> +               tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[i].val);
+>> >> +               tmp_rate = divider_round_rate(hw, rate, &tmp_prate, NULL,
+>> >> +                                             AC100_CLKOUT_DIV_WIDTH,
+>> >> +                                             CLK_DIVIDER_POWER_OF_TWO);
+>> >> +
+>> >> +               if (tmp_rate > rate)
+>> >> +                       continue;
+>> >> +               if (rate - tmp_rate < best_rate - tmp_rate)
+>> >> +                       best_rate = tmp_rate;
+>> >> +       }
+>> >> +
+>> >> +       return best_rate;
+>> >> +}
+>> >> +
+>> >> +static int ac100_clkout_determine_rate(struct clk_hw *hw,
+>> >> +                                      struct clk_rate_request *req)
+>> >> +{
+>> >> +       struct clk_hw *best_parent;
+>> >> +       unsigned long best = 0;
+>> >> +       int i, num_parents = clk_hw_get_num_parents(hw);
+>> >> +
+>> >> +       for (i = 0; i < num_parents; i++) {
+>> >> +               struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+>> >> +               unsigned long tmp, prate = clk_hw_get_rate(parent);
+>> >> +
+>> >> +               tmp = ac100_clkout_round_rate(hw, req->rate, prate);
+>> >> +
+>> >> +               if (tmp > req->rate)
+>> >> +                       continue;
+>> >> +               if (req->rate - tmp < req->rate - best) {
+>> >> +                       best = tmp;
+>> >> +                       best_parent = parent;
+>> >> +               }
+>> >> +       }
+>> >> +
+>> >> +       if (!best)
+>> >> +               return -EINVAL;
+>> >> +
+>> >> +       req->best_parent_hw = best_parent;
+>> >> +       req->best_parent_rate = best;
+>> >> +       req->rate = best;
+>> >> +
+>> >> +       return 0;
+>> >> +}
+>> >
+>> > You only need one of the two functions above. Keep the .determine_rate
+>> > callback and drop .round_rate.
+>>
+>> Only .round_rate is set in the clk_ops. ac100_clkout_round_rate just
+>> serves to split out some of the calculations done per parent.
+>
+> If you only use .round_rate, shouldn't you drop .determine_rate then?
 
-Applied to clk-next
+Oops! I meant we only set .determine_rate. ac100_clkout_round_rate is
+called in the per parent loop in .determine_rate.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ChenYu
+
+>
+> Regards,
+> Mike
+>
+>>
+>> > Otherwise the rest of the clk support looks great to me. Feel free to
+>> > add:
+>> >
+>> > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+>>
+>> Thanks!
+>>
+>> ChenYu
