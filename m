@@ -1,216 +1,159 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v3 5/6] gxbb: clk: Adjust MESON_GATE macro to be shared with meson8b
-Date: Sun, 17 Jul 2016 20:44:50 +0200
-Message-Id: <1468781091-39119-6-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1468781091-39119-1-git-send-email-serveralex@gmail.com>
-References: <1468781091-39119-1-git-send-email-serveralex@gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
+ <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
+ <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	<linux@armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
+Date: Fri, 22 Jul 2016 10:38:56 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The macro used gxbb_ prefix for clock definitions. In order
-to share the macro between gxbb and meson8b, the prefix must
-be moved to gxbb.c.
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/clkc.h |   2 +-
- drivers/clk/meson/gxbb.c | 162 +++++++++++++++++++++++------------------------
- 2 files changed, 82 insertions(+), 82 deletions(-)
+On 21/07/16 21:42, Mirza Krak wrote:
+> 2016-07-21 12:15 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>
+>> On 19/07/16 14:36, Mirza Krak wrote:
+>>> From: Mirza Krak <mirza.krak@gmail.com>
+>>> +config TEGRA_NOR
+>>> +     tristate "Nvidia Tegra NOR flash bus driver a.k.a GMI/SNOR"
+>>> +             depends on ARCH_TEGRA_2x_SOC || ARCH_TEGRA_3x_SOC
+>>> +             depends on OF
+>>> +             help
+>>> +                     Driver for NOR flash bus found on Tegra30/20 SOC`s.
+>>
+>> It is actually present on all Tegra's and so I would drop the 30/20.
+> 
+> ACK.
+> 
+>>> +++ b/drivers/bus/tegra-nor.c
+>>> @@ -0,0 +1,118 @@
+>>> +/*
+>>> + * Driver for Nvidia NOR Flash bus a.k.a SNOR/GMI.
+>>> + *
+>>> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
+>>> + *
+>>> + * This file is licensed under the terms of the GNU General Public
+>>> + * License version 2. This program is licensed "as is" without any
+>>> + * warranty of any kind, whether express or implied.
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/mfd/syscon.h>
+>>
+>> Is this needed?
+> 
+> It is not. ACK.
+> 
+>>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of_device.h>
+>>> +#include <linux/regmap.h>
+>>
+>> Or this?
+> 
+> It is not. ACK.
+> 
+>>
+>>> +
+>>> +#define TEGRA_NOR_TIMING_REG_COUNT   2
+>>> +
+>>> +#define TEGRA_NOR_CONFIG                     0x00
+>>> +#define TEGRA_NOR_STATUS                     0x04
+>>> +#define TEGRA_NOR_ADDR_PTR                   0x08
+>>> +#define TEGRA_NOR_AHB_ADDR_PTR               0x0c
+>>> +#define TEGRA_NOR_TIMING0                    0x10
+>>> +#define TEGRA_NOR_TIMING1                    0x14
+>>> +#define TEGRA_NOR_MIO_CONFIG         0x18
+>>> +#define TEGRA_NOR_MIO_TIMING         0x1c
+>>> +#define TEGRA_NOR_DMA_CONFIG         0x20
+>>> +#define TEGRA_NOR_CS_MUX_CONFIG              0x24
+>>
+>> Not all of these are used. It is good to define them and I wonder if we
+>> should add support for MIO while are at it :-)
+> 
+> We can come back to this once I have all SNOR stuff in order.
+> 
+>>
+>>> +
+>>> +#define TEGRA_NOR_CONFIG_GO                          BIT(31)
+>>> +
+>>> +static const struct of_device_id nor_id_table[] = {
+>>> +     /* Tegra30 */
+>>
+>> I don't think this comment is needed.
+> 
+> ACK.
+> 
+>>
+>>> +     { .compatible = "nvidia,tegra30-nor", .data = NULL, },
+>>
+>> You don't need to set data to NULL.
+> 
+> ACK.
+> 
+>>
+>>> +     /* Tegra20 */
+>>> +     { .compatible = "nvidia,tegra20-nor", .data = NULL, },
+>>
+>> Same here.
+> 
+> ACK
+> 
+>>> +static int __init nor_probe(struct platform_device *pdev)
+>>> +{
+>>
+>> I would drop the __init.
+> 
+> ACK.
+> 
+>>> +static struct platform_driver nor_driver = {
+>>> +     .driver = {
+>>> +             .name           = "tegra-nor",
+>>> +             .of_match_table = nor_id_table,
+>>> +     },
+>>> +};
+>>
+>> The driver should have a remove function given that we can build as a
+>> module.
+> 
+> At the moment I do not know what we would do in a remove function and
+> hence me not adding one.
 
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 53326c3..9bb70e7 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -98,7 +98,7 @@ struct meson_clk_mpll {
- };
- 
- #define MESON_GATE(_name, _reg, _bit)					\
--struct clk_gate gxbb_##_name = { 						\
-+struct clk_gate _name = { 						\
- 	.reg = (void __iomem *) _reg, 					\
- 	.bit_idx = (_bit), 						\
- 	.lock = &clk_lock,						\
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 007b715..0e6d163 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -563,90 +563,90 @@ static struct clk_gate gxbb_clk81 = {
- };
- 
- /* Everything Else (EE) domain gates */
--static MESON_GATE(ddr, HHI_GCLK_MPEG0, 0);
--static MESON_GATE(dos, HHI_GCLK_MPEG0, 1);
--static MESON_GATE(isa, HHI_GCLK_MPEG0, 5);
--static MESON_GATE(pl301, HHI_GCLK_MPEG0, 6);
--static MESON_GATE(periphs, HHI_GCLK_MPEG0, 7);
--static MESON_GATE(spicc, HHI_GCLK_MPEG0, 8);
--static MESON_GATE(i2c, HHI_GCLK_MPEG0, 9);
--static MESON_GATE(sar_adc, HHI_GCLK_MPEG0, 10);
--static MESON_GATE(smart_card, HHI_GCLK_MPEG0, 11);
--static MESON_GATE(rng0, HHI_GCLK_MPEG0, 12);
--static MESON_GATE(uart0, HHI_GCLK_MPEG0, 13);
--static MESON_GATE(sdhc, HHI_GCLK_MPEG0, 14);
--static MESON_GATE(stream, HHI_GCLK_MPEG0, 15);
--static MESON_GATE(async_fifo, HHI_GCLK_MPEG0, 16);
--static MESON_GATE(sdio, HHI_GCLK_MPEG0, 17);
--static MESON_GATE(abuf, HHI_GCLK_MPEG0, 18);
--static MESON_GATE(hiu_iface, HHI_GCLK_MPEG0, 19);
--static MESON_GATE(assist_misc, HHI_GCLK_MPEG0, 23);
--static MESON_GATE(spi, HHI_GCLK_MPEG0, 30);
--
--static MESON_GATE(i2s_spdif, HHI_GCLK_MPEG1, 2);
--static MESON_GATE(eth, HHI_GCLK_MPEG1, 3);
--static MESON_GATE(demux, HHI_GCLK_MPEG1, 4);
--static MESON_GATE(aiu_glue, HHI_GCLK_MPEG1, 6);
--static MESON_GATE(iec958, HHI_GCLK_MPEG1, 7);
--static MESON_GATE(i2s_out, HHI_GCLK_MPEG1, 8);
--static MESON_GATE(amclk, HHI_GCLK_MPEG1, 9);
--static MESON_GATE(aififo2, HHI_GCLK_MPEG1, 10);
--static MESON_GATE(mixer, HHI_GCLK_MPEG1, 11);
--static MESON_GATE(mixer_iface, HHI_GCLK_MPEG1, 12);
--static MESON_GATE(adc, HHI_GCLK_MPEG1, 13);
--static MESON_GATE(blkmv, HHI_GCLK_MPEG1, 14);
--static MESON_GATE(aiu, HHI_GCLK_MPEG1, 15);
--static MESON_GATE(uart1, HHI_GCLK_MPEG1, 16);
--static MESON_GATE(g2d, HHI_GCLK_MPEG1, 20);
--static MESON_GATE(usb0, HHI_GCLK_MPEG1, 21);
--static MESON_GATE(usb1, HHI_GCLK_MPEG1, 22);
--static MESON_GATE(reset, HHI_GCLK_MPEG1, 23);
--static MESON_GATE(nand, HHI_GCLK_MPEG1, 24);
--static MESON_GATE(dos_parser, HHI_GCLK_MPEG1, 25);
--static MESON_GATE(usb, HHI_GCLK_MPEG1, 26);
--static MESON_GATE(vdin1, HHI_GCLK_MPEG1, 28);
--static MESON_GATE(ahb_arb0, HHI_GCLK_MPEG1, 29);
--static MESON_GATE(efuse, HHI_GCLK_MPEG1, 30);
--static MESON_GATE(boot_rom, HHI_GCLK_MPEG1, 31);
--
--static MESON_GATE(ahb_data_bus, HHI_GCLK_MPEG2, 1);
--static MESON_GATE(ahb_ctrl_bus, HHI_GCLK_MPEG2, 2);
--static MESON_GATE(hdmi_intr_sync, HHI_GCLK_MPEG2, 3);
--static MESON_GATE(hdmi_pclk, HHI_GCLK_MPEG2, 4);
--static MESON_GATE(usb1_ddr_bridge, HHI_GCLK_MPEG2, 8);
--static MESON_GATE(usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
--static MESON_GATE(mmc_pclk, HHI_GCLK_MPEG2, 11);
--static MESON_GATE(dvin, HHI_GCLK_MPEG2, 12);
--static MESON_GATE(uart2, HHI_GCLK_MPEG2, 15);
--static MESON_GATE(sana, HHI_GCLK_MPEG2, 22);
--static MESON_GATE(vpu_intr, HHI_GCLK_MPEG2, 25);
--static MESON_GATE(sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
--static MESON_GATE(clk81_a53, HHI_GCLK_MPEG2, 29);
--
--static MESON_GATE(vclk2_venci0, HHI_GCLK_OTHER, 1);
--static MESON_GATE(vclk2_venci1, HHI_GCLK_OTHER, 2);
--static MESON_GATE(vclk2_vencp0, HHI_GCLK_OTHER, 3);
--static MESON_GATE(vclk2_vencp1, HHI_GCLK_OTHER, 4);
--static MESON_GATE(gclk_venci_int0, HHI_GCLK_OTHER, 8);
--static MESON_GATE(gclk_vencp_int, HHI_GCLK_OTHER, 9);
--static MESON_GATE(dac_clk, HHI_GCLK_OTHER, 10);
--static MESON_GATE(aoclk_gate, HHI_GCLK_OTHER, 14);
--static MESON_GATE(iec958_gate, HHI_GCLK_OTHER, 16);
--static MESON_GATE(enc480p, HHI_GCLK_OTHER, 20);
--static MESON_GATE(rng1, HHI_GCLK_OTHER, 21);
--static MESON_GATE(gclk_venci_int1, HHI_GCLK_OTHER, 22);
--static MESON_GATE(vclk2_venclmcc, HHI_GCLK_OTHER, 24);
--static MESON_GATE(vclk2_vencl, HHI_GCLK_OTHER, 25);
--static MESON_GATE(vclk_other, HHI_GCLK_OTHER, 26);
--static MESON_GATE(edp, HHI_GCLK_OTHER, 31);
-+static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
-+static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-+static MESON_GATE(gxbb_isa, HHI_GCLK_MPEG0, 5);
-+static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
-+static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
-+static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
-+static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
-+static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-+static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
-+static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
-+static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-+static MESON_GATE(gxbb_sdhc, HHI_GCLK_MPEG0, 14);
-+static MESON_GATE(gxbb_stream, HHI_GCLK_MPEG0, 15);
-+static MESON_GATE(gxbb_async_fifo, HHI_GCLK_MPEG0, 16);
-+static MESON_GATE(gxbb_sdio, HHI_GCLK_MPEG0, 17);
-+static MESON_GATE(gxbb_abuf, HHI_GCLK_MPEG0, 18);
-+static MESON_GATE(gxbb_hiu_iface, HHI_GCLK_MPEG0, 19);
-+static MESON_GATE(gxbb_assist_misc, HHI_GCLK_MPEG0, 23);
-+static MESON_GATE(gxbb_spi, HHI_GCLK_MPEG0, 30);
-+
-+static MESON_GATE(gxbb_i2s_spdif, HHI_GCLK_MPEG1, 2);
-+static MESON_GATE(gxbb_eth, HHI_GCLK_MPEG1, 3);
-+static MESON_GATE(gxbb_demux, HHI_GCLK_MPEG1, 4);
-+static MESON_GATE(gxbb_aiu_glue, HHI_GCLK_MPEG1, 6);
-+static MESON_GATE(gxbb_iec958, HHI_GCLK_MPEG1, 7);
-+static MESON_GATE(gxbb_i2s_out, HHI_GCLK_MPEG1, 8);
-+static MESON_GATE(gxbb_amclk, HHI_GCLK_MPEG1, 9);
-+static MESON_GATE(gxbb_aififo2, HHI_GCLK_MPEG1, 10);
-+static MESON_GATE(gxbb_mixer, HHI_GCLK_MPEG1, 11);
-+static MESON_GATE(gxbb_mixer_iface, HHI_GCLK_MPEG1, 12);
-+static MESON_GATE(gxbb_adc, HHI_GCLK_MPEG1, 13);
-+static MESON_GATE(gxbb_blkmv, HHI_GCLK_MPEG1, 14);
-+static MESON_GATE(gxbb_aiu, HHI_GCLK_MPEG1, 15);
-+static MESON_GATE(gxbb_uart1, HHI_GCLK_MPEG1, 16);
-+static MESON_GATE(gxbb_g2d, HHI_GCLK_MPEG1, 20);
-+static MESON_GATE(gxbb_usb0, HHI_GCLK_MPEG1, 21);
-+static MESON_GATE(gxbb_usb1, HHI_GCLK_MPEG1, 22);
-+static MESON_GATE(gxbb_reset, HHI_GCLK_MPEG1, 23);
-+static MESON_GATE(gxbb_nand, HHI_GCLK_MPEG1, 24);
-+static MESON_GATE(gxbb_dos_parser, HHI_GCLK_MPEG1, 25);
-+static MESON_GATE(gxbb_usb, HHI_GCLK_MPEG1, 26);
-+static MESON_GATE(gxbb_vdin1, HHI_GCLK_MPEG1, 28);
-+static MESON_GATE(gxbb_ahb_arb0, HHI_GCLK_MPEG1, 29);
-+static MESON_GATE(gxbb_efuse, HHI_GCLK_MPEG1, 30);
-+static MESON_GATE(gxbb_boot_rom, HHI_GCLK_MPEG1, 31);
-+
-+static MESON_GATE(gxbb_ahb_data_bus, HHI_GCLK_MPEG2, 1);
-+static MESON_GATE(gxbb_ahb_ctrl_bus, HHI_GCLK_MPEG2, 2);
-+static MESON_GATE(gxbb_hdmi_intr_sync, HHI_GCLK_MPEG2, 3);
-+static MESON_GATE(gxbb_hdmi_pclk, HHI_GCLK_MPEG2, 4);
-+static MESON_GATE(gxbb_usb1_ddr_bridge, HHI_GCLK_MPEG2, 8);
-+static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
-+static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
-+static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
-+static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
-+static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-+static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
-+static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
-+static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
-+
-+static MESON_GATE(gxbb_vclk2_venci0, HHI_GCLK_OTHER, 1);
-+static MESON_GATE(gxbb_vclk2_venci1, HHI_GCLK_OTHER, 2);
-+static MESON_GATE(gxbb_vclk2_vencp0, HHI_GCLK_OTHER, 3);
-+static MESON_GATE(gxbb_vclk2_vencp1, HHI_GCLK_OTHER, 4);
-+static MESON_GATE(gxbb_gclk_venci_int0, HHI_GCLK_OTHER, 8);
-+static MESON_GATE(gxbb_gclk_vencp_int, HHI_GCLK_OTHER, 9);
-+static MESON_GATE(gxbb_dac_clk, HHI_GCLK_OTHER, 10);
-+static MESON_GATE(gxbb_aoclk_gate, HHI_GCLK_OTHER, 14);
-+static MESON_GATE(gxbb_iec958_gate, HHI_GCLK_OTHER, 16);
-+static MESON_GATE(gxbb_enc480p, HHI_GCLK_OTHER, 20);
-+static MESON_GATE(gxbb_rng1, HHI_GCLK_OTHER, 21);
-+static MESON_GATE(gxbb_gclk_venci_int1, HHI_GCLK_OTHER, 22);
-+static MESON_GATE(gxbb_vclk2_venclmcc, HHI_GCLK_OTHER, 24);
-+static MESON_GATE(gxbb_vclk2_vencl, HHI_GCLK_OTHER, 25);
-+static MESON_GATE(gxbb_vclk_other, HHI_GCLK_OTHER, 26);
-+static MESON_GATE(gxbb_edp, HHI_GCLK_OTHER, 31);
- 
- /* Always On (AO) domain gates */
- 
--static MESON_GATE(ao_media_cpu, HHI_GCLK_AO, 0);
--static MESON_GATE(ao_ahb_sram, HHI_GCLK_AO, 1);
--static MESON_GATE(ao_ahb_bus, HHI_GCLK_AO, 2);
--static MESON_GATE(ao_iface, HHI_GCLK_AO, 3);
--static MESON_GATE(ao_i2c, HHI_GCLK_AO, 4);
-+static MESON_GATE(gxbb_ao_media_cpu, HHI_GCLK_AO, 0);
-+static MESON_GATE(gxbb_ao_ahb_sram, HHI_GCLK_AO, 1);
-+static MESON_GATE(gxbb_ao_ahb_bus, HHI_GCLK_AO, 2);
-+static MESON_GATE(gxbb_ao_iface, HHI_GCLK_AO, 3);
-+static MESON_GATE(gxbb_ao_i2c, HHI_GCLK_AO, 4);
- 
- /* Array of all clocks provided by this provider */
- 
+Should just be the inverse of the probe (although there is no inverse
+for the parsing DT bit). If you don't wish to add a remove, that is
+fine, but make the driver a 'bool' and not 'tristate' in the Kconfig so
+it cannot be configured as a module.
+
+>>
+>>> +module_platform_driver_probe(nor_driver, nor_probe);
+>>
+>> I would use "tegra_nor" namespace for all the structs, functions, etc.
+>> However, we may prefer to go with GMI and in which case tegra_gmi_probe,
+>> etc.
+> 
+> ACK. Who gets the last call on what we should call the driver? It
+> seems that we both think GMI is a better name, do we need a third? :).
+
+The patches would have to go via Thierry and so ultimately, Thierry.
+However, I can't imagine he would object to GMI ;-)
+
+Jon
+
 -- 
-2.5.0
+nvpublic
