@@ -1,54 +1,159 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI
- clocks
-Date: Thu, 07 Jul 2016 21:13:56 +0900
-Message-id: <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
-References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Stefano Stabellini <sstabellini@kernel.org>,
+ "Dirk Behme" <dirk.behme@de.bosch.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
+Cc: "Dirk Behme" <dirk.behme@gmail.com>,
+ "Stefano Stabellini" <sstabellini@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Julien Grall" <julien.grall@arm.com>,
+ xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <146836236759.73491.11707389619985827497@resonance>
+ <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
+ <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
+ <57868EDE.6060406@gmail.com>
+ <146844380895.73491.4867379517577413421@resonance>
+ <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
+ <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
+Message-ID: <146914607316.8780.7961396342647226841@resonance>
+Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
+Date: Thu, 21 Jul 2016 17:07:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
-Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
-which enables the clock line during boot time.
+Quoting Stefano Stabellini (2016-07-14 03:38:04)
+> On Thu, 14 Jul 2016, Dirk Behme wrote:
+> > On 13.07.2016 23:03, Michael Turquette wrote:
+> > > Quoting Dirk Behme (2016-07-13 11:56:30)
+> > > > On 13.07.2016 20:43, Stefano Stabellini wrote:
+> > > > > On Wed, 13 Jul 2016, Dirk Behme wrote:
+> > > > > > On 13.07.2016 00:26, Michael Turquette wrote:
+> > > > > > > Quoting Dirk Behme (2016-07-12 00:46:45)
+> > > > > > > > Clocks described by this property are reserved for use by X=
+en, and
+> > > > > > > > the OS
+> > > > > > > > must not alter their state any way, such as disabling or ga=
+ting a
+> > > > > > > > clock,
+> > > > > > > > or modifying its rate. Ensuring this may impose constraints=
+ on
+> > > > > > > > parent
+> > > > > > > > clocks or other resources used by the clock tree.
+> > > > > > > =
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > > > Note that clk_prepare_enable will not prevent the rate from c=
+hanging
+> > > > > > > (clk_set_rate) or a parent from changing (clk_set_parent). Th=
+e only
+> > > > > > > way
+> > > > > > > to do this currently would be to set the following flags on t=
+he
+> > > > > > > effected
+> > > > > > > clocks:
+> > > > > > > =
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index c3a5318..337387b 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1662,7 +1662,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
- 			ENABLE_SCLK_PERIC, 12,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
- 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-@@ -1677,7 +1677,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
--			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
- 			3, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
--- 
-2.8.1
+> > > > > > >     CLK_SET_RATE_GATE
+> > > > > > >     CLK_SET_PARENT_GATE
+> > > > > > =
+
+> > > > > > =
+
+> > > > > > =
+
+> > > > > > Regarding setting flags, I think we already talked about that. =
+I think
+> > > > > > the
+> > > > > > conclusion was that in our case its not possible to manipulate =
+the
+> > > > > > flags in
+> > > > > > the OS as this isn't intended to be done in cases like ours. Th=
+erefore
+> > > > > > no API
+> > > > > > is exported for this.
+> > > > > > =
+
+> > > > > > I.e. if we need to set these flags, we have to do that in Xen w=
+here we
+> > > > > > add the
+> > > > > > clocks to the hypervisor node in the device tree. And not in the
+> > > > > > kernel patch
+> > > > > > discussed here.
+> > > > > =
+
+> > > > > These are internal Linux flags, aren't they?
+> > > > =
+
+> > > > =
+
+> > > > I've been under the impression that you can set clock "flags" via t=
+he
+> > > > device tree. Seems I need to re-check that ;)
+> > > =
+
+> > > Right, you cannot set flags from the device tree. Also, setting these
+> > > flags is done by the clock provider driver, not a consumer. Xen is the
+> > > consumer.
+> > =
+
+> > =
+
+> > Ok, thanks, then I think we can forget about using flags for the issue =
+we are
+> > discussing here.
+> > =
+
+> > Best regards
+> > =
+
+> > Dirk
+> > =
+
+> > P.S.: Would it be an option to merge the v4 patch we are discussing her=
+e,
+> > then? From the discussion until here, it sounds to me that it's the best
+> > option we have at the moment. Maybe improving it in the future, then.
+> =
+
+> It might be a step in the right direction, but it doesn't really prevent
+> clk_set_rate from changing properties of a clock owned by Xen.  This
+> patch is incomplete. We need to understand at least what it would take
+> to have a complete solution.
+> =
+
+> Michael, do you have any suggestions on how it would be possible to set
+> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
+> way?
+
+No, there is no way for a consumer to do that. The provider must do it.
+
+> =
+
+> Like you wrote, I would imagine it needs to be done by the clock
+> provider driver. Maybe to do that, it would be easier to have a new
+> device tree property on the clock node, rather than listing phandle and
+> clock-specifier pairs under the Xen node?
+
+Upon further reflection, I think that your clock consumer can probably
+use clk_set_rate_range() to "lock" in a rate. This is good because it is
+exactly what a clock consumer should do:
+
+1) get the clk
+2) enable the clk
+3) set the required rate for the clock
+4) set rate range constraints, or conversely,
+5) lock in an exact rate; set the min/max rate to the same value
+
+The problem with this solution is that it requires the consumer to have
+knowledge of the rates that it wants for that clock, which I guess is
+something that Linux kernels in a Xen setup do not want/need?
+
+Is it correct that you would prefer some sort of never_touch_this_clk()
+api?
+
+Regards,
+Mike
+
+>=20
