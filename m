@@ -1,96 +1,115 @@
-Return-Path: <sstabellini@kernel.org>
-Date: Thu, 14 Jul 2016 11:38:04 +0100 (BST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-cc: Michael Turquette <mturquette@baylibre.com>,
-    Dirk Behme <dirk.behme@gmail.com>,
-    Stefano Stabellini <sstabellini@kernel.org>,
-    Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-    Stephen Boyd <sboyd@codeaurora.org>, Julien Grall <julien.grall@arm.com>,
-    xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
-    linux-arm-kernel@lists.infradead.org
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-In-Reply-To: <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
-Message-ID: <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com> <146836236759.73491.11707389619985827497@resonance> <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com> <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260> <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance> <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+To: Chen-Yu Tsai <wens@csie.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com>
+Cc: "Chen-Yu Tsai" <wens@csie.org>, "Lee Jones" <lee.jones@linaro.org>,
+ "Alessandro Zummo" <a.zummo@towertech.it>,
+ "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
+ "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+ rtc-linux@googlegroups.com, "linux-clk" <linux-clk@vger.kernel.org>,
+ "devicetree" <devicetree@vger.kernel.org>,
+ "linux-kernel" <linux-kernel@vger.kernel.org>
+References: <1467302331-9663-1-git-send-email-wens@csie.org>
+ <1467302331-9663-5-git-send-email-wens@csie.org>
+ <146800297598.73491.13472152266331488346@resonance>
+ <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com>
+Message-ID: <146914709427.8780.16475894348537760808@resonance>
+Subject: Re: [PATCH v4 4/7] rtc: ac100: Add clk output support
+Date: Thu, 21 Jul 2016 17:24:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 14 Jul 2016, Dirk Behme wrote:
-> On 13.07.2016 23:03, Michael Turquette wrote:
-> > Quoting Dirk Behme (2016-07-13 11:56:30)
-> > > On 13.07.2016 20:43, Stefano Stabellini wrote:
-> > > > On Wed, 13 Jul 2016, Dirk Behme wrote:
-> > > > > On 13.07.2016 00:26, Michael Turquette wrote:
-> > > > > > Quoting Dirk Behme (2016-07-12 00:46:45)
-> > > > > > > Clocks described by this property are reserved for use by Xen, and
-> > > > > > > the OS
-> > > > > > > must not alter their state any way, such as disabling or gating a
-> > > > > > > clock,
-> > > > > > > or modifying its rate. Ensuring this may impose constraints on
-> > > > > > > parent
-> > > > > > > clocks or other resources used by the clock tree.
-> > > > > > 
-> > > > > > Note that clk_prepare_enable will not prevent the rate from changing
-> > > > > > (clk_set_rate) or a parent from changing (clk_set_parent). The only
-> > > > > > way
-> > > > > > to do this currently would be to set the following flags on the
-> > > > > > effected
-> > > > > > clocks:
-> > > > > > 
-> > > > > >     CLK_SET_RATE_GATE
-> > > > > >     CLK_SET_PARENT_GATE
-> > > > > 
-> > > > > 
-> > > > > 
-> > > > > Regarding setting flags, I think we already talked about that. I think
-> > > > > the
-> > > > > conclusion was that in our case its not possible to manipulate the
-> > > > > flags in
-> > > > > the OS as this isn't intended to be done in cases like ours. Therefore
-> > > > > no API
-> > > > > is exported for this.
-> > > > > 
-> > > > > I.e. if we need to set these flags, we have to do that in Xen where we
-> > > > > add the
-> > > > > clocks to the hypervisor node in the device tree. And not in the
-> > > > > kernel patch
-> > > > > discussed here.
-> > > > 
-> > > > These are internal Linux flags, aren't they?
-> > > 
-> > > 
-> > > I've been under the impression that you can set clock "flags" via the
-> > > device tree. Seems I need to re-check that ;)
-> > 
-> > Right, you cannot set flags from the device tree. Also, setting these
-> > flags is done by the clock provider driver, not a consumer. Xen is the
-> > consumer.
-> 
-> 
-> Ok, thanks, then I think we can forget about using flags for the issue we are
-> discussing here.
-> 
-> Best regards
-> 
-> Dirk
-> 
-> P.S.: Would it be an option to merge the v4 patch we are discussing here,
-> then? From the discussion until here, it sounds to me that it's the best
-> option we have at the moment. Maybe improving it in the future, then.
+Quoting Chen-Yu Tsai (2016-07-13 20:34:34)
+> On Sat, Jul 9, 2016 at 2:36 AM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Quoting Chen-Yu Tsai (2016-06-30 08:58:48)
+> >> +static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long =
+rate,
+> >> +                                   unsigned long prate)
+> >> +{
+> >> +       unsigned long best_rate =3D 0, tmp_rate, tmp_prate;
+> >> +       int i;
+> >> +
+> >> +       if (prate =3D=3D AC100_RTC_32K_RATE)
+> >> +               return divider_round_rate(hw, rate, &prate, NULL,
+> >> +                                         AC100_CLKOUT_DIV_WIDTH,
+> >> +                                         CLK_DIVIDER_POWER_OF_TWO);
+> >> +
+> >> +       for (i =3D 0; ac100_clkout_prediv[i].div; i++) {
+> >> +               tmp_prate =3D DIV_ROUND_UP(prate, ac100_clkout_prediv[=
+i].val);
+> >> +               tmp_rate =3D divider_round_rate(hw, rate, &tmp_prate, =
+NULL,
+> >> +                                             AC100_CLKOUT_DIV_WIDTH,
+> >> +                                             CLK_DIVIDER_POWER_OF_TWO=
+);
+> >> +
+> >> +               if (tmp_rate > rate)
+> >> +                       continue;
+> >> +               if (rate - tmp_rate < best_rate - tmp_rate)
+> >> +                       best_rate =3D tmp_rate;
+> >> +       }
+> >> +
+> >> +       return best_rate;
+> >> +}
+> >> +
+> >> +static int ac100_clkout_determine_rate(struct clk_hw *hw,
+> >> +                                      struct clk_rate_request *req)
+> >> +{
+> >> +       struct clk_hw *best_parent;
+> >> +       unsigned long best =3D 0;
+> >> +       int i, num_parents =3D clk_hw_get_num_parents(hw);
+> >> +
+> >> +       for (i =3D 0; i < num_parents; i++) {
+> >> +               struct clk_hw *parent =3D clk_hw_get_parent_by_index(h=
+w, i);
+> >> +               unsigned long tmp, prate =3D clk_hw_get_rate(parent);
+> >> +
+> >> +               tmp =3D ac100_clkout_round_rate(hw, req->rate, prate);
+> >> +
+> >> +               if (tmp > req->rate)
+> >> +                       continue;
+> >> +               if (req->rate - tmp < req->rate - best) {
+> >> +                       best =3D tmp;
+> >> +                       best_parent =3D parent;
+> >> +               }
+> >> +       }
+> >> +
+> >> +       if (!best)
+> >> +               return -EINVAL;
+> >> +
+> >> +       req->best_parent_hw =3D best_parent;
+> >> +       req->best_parent_rate =3D best;
+> >> +       req->rate =3D best;
+> >> +
+> >> +       return 0;
+> >> +}
+> >
+> > You only need one of the two functions above. Keep the .determine_rate
+> > callback and drop .round_rate.
+> =
 
-It might be a step in the right direction, but it doesn't really prevent
-clk_set_rate from changing properties of a clock owned by Xen.  This
-patch is incomplete. We need to understand at least what it would take
-to have a complete solution.
+> Only .round_rate is set in the clk_ops. ac100_clkout_round_rate just
+> serves to split out some of the calculations done per parent.
 
-Michael, do you have any suggestions on how it would be possible to set
-CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
-way?
+If you only use .round_rate, shouldn't you drop .determine_rate then?
 
-Like you wrote, I would imagine it needs to be done by the clock
-provider driver. Maybe to do that, it would be easier to have a new
-device tree property on the clock node, rather than listing phandle and
-clock-specifier pairs under the Xen node?
+Regards,
+Mike
+
+> =
+
+> > Otherwise the rest of the clk support looks great to me. Feel free to
+> > add:
+> >
+> > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> =
+
+> Thanks!
+> =
+
+> ChenYu
