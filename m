@@ -1,129 +1,82 @@
-Return-Path: <oss@buserror.net>
-Message-ID: <1467406642.32358.39.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Russell King
-	 <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Scott Wood <scott.wood@nxp.com>, Yuantian Tang <yuantian.tang@nxp.com>,
- Viresh Kumar <viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>,  "linux-pm@vger.kernel.org"
- <linux-pm@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>, Xiaofeng
- Ren <xiaofeng.ren@nxp.com>
-Date: Fri, 01 Jul 2016 15:57:22 -0500
-In-Reply-To: <1736057.IZk9ncTkZk@vostro.rjw.lan>
-References: <1466058085-19353-1-git-send-email-oss@buserror.net>
-	 <3794032.AoZL3DhM7U@vostro.rjw.lan>
-	 <1467356146.32358.32.camel@buserror.net>
-	 <1736057.IZk9ncTkZk@vostro.rjw.lan>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering possible
- parent clocks
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lin Huang <hl@rock-chips.com>
+Subject: [PATCH] clk: rockchip: add clock flag parameter when register pll
+Date: Fri, 22 Jul 2016 14:37:45 +0800
+Message-Id: <1469169465-5892-1-git-send-email-hl@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-07-01 at 22:53 +0200, Rafael J. Wysocki wrote:
-> On Friday, July 01, 2016 01:55:46 AM Scott Wood wrote:
-> > 
-> > On Thu, 2016-06-30 at 15:29 +0200, Rafael J. Wysocki wrote:
-> > > 
-> > > On Thursday, June 30, 2016 05:46:42 AM Scott Wood wrote:
-> > > > 
-> > > > 
-> > > > On 06/29/2016 10:02 PM, Yuantian Tang wrote:
-> > > > > 
-> > > > > 
-> > > > > > 
-> > > > > > 
-> > > > > > -----Original Message-----
-> > > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
-> > > > > > Sent: Thursday, June 30, 2016 10:24 AM
-> > > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
-> > > > > > Cc: Scott Wood <oss@buserror.net>; Russell King <linux@armlinux.or
-> > > > > > g.uk
-> > > > > > > 
-> > > > > > > ;
-> > > > > > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> > > > > > <sboyd@codeaurora.org>; Viresh Kumar <viresh.kumar@linaro.org>;
-> > > > > > linux-
-> > > > > > clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
-> > > > > > dev@lists.ozlabs.org; Yang-Leo Li <leoyang.li@nxp.com>; Xiaofeng
-> > > > > > Ren
-> > > > > > <xiaofeng.ren@nxp.com>; Scott Wood <scottwood@freescale.com>
-> > > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for discovering
-> > > > > > possible
-> > > > > > parent clocks
-> > > > > > 
-> > > > > > On Thursday, June 30, 2016 01:47:09 AM Yuantian Tang wrote:
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > 
-> > > > > > > > 
-> > > > > > > > -----Original Message-----
-> > > > > > > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
-> > > > > > > > Sent: Thursday, June 30, 2016 9:47 AM
-> > > > > > > > To: Yuantian Tang <yuantian.tang@nxp.com>
-> > > > > > > > Cc: Scott Wood <oss@buserror.net>; Russell King
-> > > > > > > > <linux@armlinux.org.uk>; Michael Turquette
-> > > > > > > > <mturquette@baylibre.com>; Stephen Boyd <sboyd@codeaurora.org>
-> > > > > > > > ;
-> > > > > > > > Viresh Kumar <viresh.kumar@linaro.org>; linux- clk@vger.kernel
-> > > > > > > > .org
-> > > > > > > > ;
-> > > > > > > > linux-pm@vger.kernel.org; linuxppc- dev@lists.ozlabs.org;
-> > > > > > > > Yang-Leo
-> > > > > > > > Li <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>;
-> > > > > > > > Scott
-> > > > > > > > Wood <scottwood@freescale.com>
-> > > > > > > > Subject: Re: [PATCH v3 1/2] clk: Add consumer APIs for
-> > > > > > > > discovering
-> > > > > > > > possible parent clocks
-> > > > > > > > 
-> > > > > > > > On Wednesday, June 29, 2016 05:50:26 AM Yuantian Tang wrote:
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > Hi,
-> > > > > > > > > 
-> > > > > > > > > This patch is acked by clock maintainer. If no comments from
-> > > > > > > > > anyone else,
-> > > > > > > > we will merge it in next week.
-> > > > > > > > 
-> > > > > > > > There is a cpufreq commit depending on it.  Are you going to
-> > > > > > > > handle
-> > > > > > > > that one too?
-> > > > > > > > 
-> > > > > > > That one has been acked by cpufreq maintainer. You can get this
-> > > > > > > from
-> > > > > > patch comments.
-> > > > > > 
-> > > > > > I know that it has been ACKed.
-> > > > > > 
-> > > > > > My question is whether or not you are going to apply it along the
-> > > > > > [1/2].
-> > > > > > 
-> > > > > > If not, it will have to be deferred until the [1/2] is merged and
-> > > > > > then
-> > > > > > applied
-> > > > > > which may not be desirable.
-> > > > > > 
-> > > > > I hope we can apply both at same time. Seems Scott has a few
-> > > > > concerns.
-> > > > > 
-> > > > > What you think about this patch? Can you apply it?
-> > > > > If you have applied this patch, then I can push CPUfreq maintainer
-> > > > > to
-> > > > > apply another one which will be delayed.
-> > > > My only concern was getting an ack for this patch (1/2) -- did I miss
-> > > > it
-> > > > somewhere?
-> > > OK, so who's going to apply the series?
-> > Ideally it should go via the cpufreq tree.
-> OK, I'll apply both, then.
-> 
-> Who exactly has ACKed the [1/2] from the clk side?
+From: Heiko Stübner <heiko@sntech.de>
 
-That's the problem.  I'm not sure what ACK Yuantian is referring to.  The last
-I've heard from a clock maintainer was https://lkml.org/lkml/2015/9/18/816 des
-pite repeated attempts to get Russell King to respond as clock API maintainer.
+add clock flag parameter so we can pass specific clock flag
+(like CLK_GET_RATE_NOCACHE etc..)to pll driver.
 
--Scott
+Change-Id: I1e076b3efa6b5da082b6e68e2e2a4c9dfd93e3d4
+Signed-off-by: Heiko Stübner <heiko@sntech.de>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 4 ++--
+ drivers/clk/rockchip/clk.c     | 2 +-
+ drivers/clk/rockchip/clk.h     | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index db81e45..9c1373e 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -837,7 +837,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		u8 num_parents, int con_offset, int grf_lock_offset,
+ 		int lock_shift, int mode_offset, int mode_shift,
+ 		struct rockchip_pll_rate_table *rate_table,
+-		u8 clk_pll_flags)
++		unsigned long flags, u8 clk_pll_flags)
+ {
+ 	const char *pll_parents[3];
+ 	struct clk_init_data init;
+@@ -892,7 +892,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	init.name = pll_name;
+ 
+ 	/* keep all plls untouched for now */
+-	init.flags = CLK_IGNORE_UNUSED;
++	init.flags = flags | CLK_IGNORE_UNUSED;
+ 
+ 	init.parent_names = &parent_names[0];
+ 	init.num_parents = 1;
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 7ffd134..1f1c74f 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -385,7 +385,7 @@ void __init rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
+ 				list->con_offset, grf_lock_offset,
+ 				list->lock_shift, list->mode_offset,
+ 				list->mode_shift, list->rate_table,
+-				list->pll_flags);
++				list->flags, list->pll_flags);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+ 				list->name);
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 2194ffa..3747de5 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -238,7 +238,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		u8 num_parents, int con_offset, int grf_lock_offset,
+ 		int lock_shift, int mode_offset, int mode_shift,
+ 		struct rockchip_pll_rate_table *rate_table,
+-		u8 clk_pll_flags);
++		unsigned long flags, u8 clk_pll_flags);
+ 
+ struct rockchip_cpuclk_clksel {
+ 	int reg;
+-- 
+2.6.6
