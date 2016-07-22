@@ -1,115 +1,68 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mirza.krak@gmail.com>
 MIME-Version: 1.0
-To: Chen-Yu Tsai <wens@csie.org>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com>
-Cc: "Chen-Yu Tsai" <wens@csie.org>, "Lee Jones" <lee.jones@linaro.org>,
- "Alessandro Zummo" <a.zummo@towertech.it>,
- "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
- "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
- rtc-linux@googlegroups.com, "linux-clk" <linux-clk@vger.kernel.org>,
- "devicetree" <devicetree@vger.kernel.org>,
- "linux-kernel" <linux-kernel@vger.kernel.org>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
- <1467302331-9663-5-git-send-email-wens@csie.org>
- <146800297598.73491.13472152266331488346@resonance>
- <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com>
-Message-ID: <146914709427.8780.16475894348537760808@resonance>
-Subject: Re: [PATCH v4 4/7] rtc: ac100: Add clk output support
-Date: Thu, 21 Jul 2016 17:24:54 -0700
+In-Reply-To: <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com> <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Fri, 22 Jul 2016 21:07:02 +0200
+Message-ID: <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Chen-Yu Tsai (2016-07-13 20:34:34)
-> On Sat, Jul 9, 2016 at 2:36 AM, Michael Turquette
-> <mturquette@baylibre.com> wrote:
-> > Quoting Chen-Yu Tsai (2016-06-30 08:58:48)
-> >> +static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long =
-rate,
-> >> +                                   unsigned long prate)
-> >> +{
-> >> +       unsigned long best_rate =3D 0, tmp_rate, tmp_prate;
-> >> +       int i;
-> >> +
-> >> +       if (prate =3D=3D AC100_RTC_32K_RATE)
-> >> +               return divider_round_rate(hw, rate, &prate, NULL,
-> >> +                                         AC100_CLKOUT_DIV_WIDTH,
-> >> +                                         CLK_DIVIDER_POWER_OF_TWO);
-> >> +
-> >> +       for (i =3D 0; ac100_clkout_prediv[i].div; i++) {
-> >> +               tmp_prate =3D DIV_ROUND_UP(prate, ac100_clkout_prediv[=
-i].val);
-> >> +               tmp_rate =3D divider_round_rate(hw, rate, &tmp_prate, =
-NULL,
-> >> +                                             AC100_CLKOUT_DIV_WIDTH,
-> >> +                                             CLK_DIVIDER_POWER_OF_TWO=
-);
-> >> +
-> >> +               if (tmp_rate > rate)
-> >> +                       continue;
-> >> +               if (rate - tmp_rate < best_rate - tmp_rate)
-> >> +                       best_rate =3D tmp_rate;
-> >> +       }
-> >> +
-> >> +       return best_rate;
-> >> +}
-> >> +
-> >> +static int ac100_clkout_determine_rate(struct clk_hw *hw,
-> >> +                                      struct clk_rate_request *req)
-> >> +{
-> >> +       struct clk_hw *best_parent;
-> >> +       unsigned long best =3D 0;
-> >> +       int i, num_parents =3D clk_hw_get_num_parents(hw);
-> >> +
-> >> +       for (i =3D 0; i < num_parents; i++) {
-> >> +               struct clk_hw *parent =3D clk_hw_get_parent_by_index(h=
-w, i);
-> >> +               unsigned long tmp, prate =3D clk_hw_get_rate(parent);
-> >> +
-> >> +               tmp =3D ac100_clkout_round_rate(hw, req->rate, prate);
-> >> +
-> >> +               if (tmp > req->rate)
-> >> +                       continue;
-> >> +               if (req->rate - tmp < req->rate - best) {
-> >> +                       best =3D tmp;
-> >> +                       best_parent =3D parent;
-> >> +               }
-> >> +       }
-> >> +
-> >> +       if (!best)
-> >> +               return -EINVAL;
-> >> +
-> >> +       req->best_parent_hw =3D best_parent;
-> >> +       req->best_parent_rate =3D best;
-> >> +       req->rate =3D best;
-> >> +
-> >> +       return 0;
-> >> +}
-> >
-> > You only need one of the two functions above. Keep the .determine_rate
-> > callback and drop .round_rate.
-> =
+2016-07-22 11:32 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>
+> On 21/07/16 21:10, Mirza Krak wrote:
+>> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>>
+>>> I wonder if it is worth mentioning that the chip-select specified in the
+>>> "nvidia,config" prop should match that in the "ranges" prop unless you
+>>> have some external decoding logic to provide an external chip-select.
+>>> Which raises a question, what does the chip-select in the ranges
+>>> actually represent? I am not sure if there is a common practice here for
+>>> device tree when boards have external logic to provide additional
+>>> chip-selects. I am sure this is quite common.
+>>
+>> I do not understand why CS pin setting in nvidia,config need to match
+>> the "ranges" prop? Other then maybe cosmetics.
+>
+> Yes it would be cosmetic. That said, I even wonder if CS needs to be
+> exposed at all given that they all map to the same CPU address space.
+> Couldn't your binding for the CAN devices be as follows?
+>
+> nor@70009000 {
+>         ...
+>
+>         can@48000000 {
+>                 ...
+>         };
+>
+>         can@48040000 {
+>                 ...
+>         };
+> };
 
-> Only .round_rate is set in the clk_ops. ac100_clkout_round_rate just
-> serves to split out some of the calculations done per parent.
+This has also crossed my mind, maybe just get rid of the "ranges" prop
+and do like you have above. But then again I do not know what is
+preferred so I went with "ranges" prop initially.
 
-If you only use .round_rate, shouldn't you drop .determine_rate then?
 
-Regards,
-Mike
+>
+> Problem is if you did have devices on different chip-selects then how
+> would these be handled? They could not point to the same physical
+> address. I am not sure if there is a way to do that in DT?
 
-> =
+Having trouble following your though here. We do not have "different"
+chip-selects?
 
-> > Otherwise the rest of the clk support looks great to me. Feel free to
-> > add:
-> >
-> > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-> =
-
-> Thanks!
-> =
-
-> ChenYu
+Best Regards
+Mirza
