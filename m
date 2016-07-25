@@ -1,159 +1,210 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mirza.krak@gmail.com>
 MIME-Version: 1.0
-To: Stefano Stabellini <sstabellini@kernel.org>,
- "Dirk Behme" <dirk.behme@de.bosch.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
-Cc: "Dirk Behme" <dirk.behme@gmail.com>,
- "Stefano Stabellini" <sstabellini@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- "Stephen Boyd" <sboyd@codeaurora.org>, "Julien Grall" <julien.grall@arm.com>,
- xen-devel@lists.xenproject.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
- <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
- <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
-Message-ID: <146914607316.8780.7961396342647226841@resonance>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-Date: Thu, 21 Jul 2016 17:07:53 -0700
+In-Reply-To: <20160725113034.GD21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Mon, 25 Jul 2016 15:16:28 +0200
+Message-ID: <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stefano Stabellini (2016-07-14 03:38:04)
-> On Thu, 14 Jul 2016, Dirk Behme wrote:
-> > On 13.07.2016 23:03, Michael Turquette wrote:
-> > > Quoting Dirk Behme (2016-07-13 11:56:30)
-> > > > On 13.07.2016 20:43, Stefano Stabellini wrote:
-> > > > > On Wed, 13 Jul 2016, Dirk Behme wrote:
-> > > > > > On 13.07.2016 00:26, Michael Turquette wrote:
-> > > > > > > Quoting Dirk Behme (2016-07-12 00:46:45)
-> > > > > > > > Clocks described by this property are reserved for use by X=
-en, and
-> > > > > > > > the OS
-> > > > > > > > must not alter their state any way, such as disabling or ga=
-ting a
-> > > > > > > > clock,
-> > > > > > > > or modifying its rate. Ensuring this may impose constraints=
- on
-> > > > > > > > parent
-> > > > > > > > clocks or other resources used by the clock tree.
-> > > > > > > =
+2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
+>> From: Mirza Krak <mirza.krak@gmail.com>
+>>
+>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
+>> Tegra30 SOCs
+>>
+>> +
+>> +Required properties:
+>> +
+>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+>> + - reg: Should contain NOR controller registers location and length.
+>> + - clocks: Must contain one entry, for the module clock.
+>> +   See ../clocks/clock-bindings.txt for details.
+>> + - resets : Must contain an entry for each entry in reset-names.
+>> +   See ../reset/reset.txt for details.
+>> + - reset-names : Must include the following entries:
+>> +  - nor
+>> + - #address-cells: Must be set to 2 to allow memory address translation
+>> + - #size-cells:      Must be set to 1 to allow CS address passing
+>> + - ranges: Must be set up to reflect the memory layout with four integer
+>> +             values for each chip-select line in use.
+>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+>
+> I'd prefer if this was split out into separate properties. It's somewhat
+> friendlier in my opinion to let people know what each of the settings is
+> along with any units and such, rather than point them at the TRM, which
+> they may or may not have access to.
+>
+> Or which not be available anymore.
 
-> > > > > > > Note that clk_prepare_enable will not prevent the rate from c=
-hanging
-> > > > > > > (clk_set_rate) or a parent from changing (clk_set_parent). Th=
-e only
-> > > > > > > way
-> > > > > > > to do this currently would be to set the following flags on t=
-he
-> > > > > > > effected
-> > > > > > > clocks:
-> > > > > > > =
+Will split it out.
 
-> > > > > > >     CLK_SET_RATE_GATE
-> > > > > > >     CLK_SET_PARENT_GATE
-> > > > > > =
+>
+>> +
+>> +Note that the NOR controller does not have any internal chip-select address
+>> +decoding and if you want to access multiple devices external chip-select
+>> +decoding must be provided.
+>> +
+>> +Optional properties:
+>> +
+>> + - nvidia,cs-timing: The timing array represents the SNOR_TIMING0_0 and
+>> +   SNOR_TIMING1_0 registers for the NOR controller. If unset reset-values will
+>> +   be used. See reference documentation for detailed description of the timing
+>> +   registers.
+>
+> Are the reset values sensible? Are they reasonable defaults for a class
+> of use-cases? I'm thinking that if they aren't we might as well make it
+> a required property.
+>
+> Also, I'd prefer if this was split out into individual fields for the
+> same reasons as the SNOR_CONFIG_0 register property.
 
-> > > > > > =
+I have tested the default values with two different chip types, and
+both have worked without me adjusting any timings. The tested chips
+are SJA1000 (CAN) and 16C550 (UART). So I would say that they are
+sensible.
 
-> > > > > > =
+Will split it out as well.
 
-> > > > > > Regarding setting flags, I think we already talked about that. =
-I think
-> > > > > > the
-> > > > > > conclusion was that in our case its not possible to manipulate =
-the
-> > > > > > flags in
-> > > > > > the OS as this isn't intended to be done in cases like ours. Th=
-erefore
-> > > > > > no API
-> > > > > > is exported for this.
-> > > > > > =
+>
+>> +
+>> +Example with two SJA1000 CAN controllers connected to the NOR bus:
+>> +
+>> +     nor@70009000 {
+>> +             status = "okay";
+>> +             compatible = "nvidia,tegra20-nor", "nvidia,tegra30-nor";
+>> +             reg = <0x70009000 0x1000>;
+>> +             #address-cells = <2>;
+>> +             #size-cells = <1>;
+>> +             clocks = <&tegra_car TEGRA30_CLK_NOR>;
+>> +             resets = < &tegra_car 42>;
+>
+> No space between < and &, please.
 
-> > > > > > I.e. if we need to set these flags, we have to do that in Xen w=
-here we
-> > > > > > add the
-> > > > > > clocks to the hypervisor node in the device tree. And not in the
-> > > > > > kernel patch
-> > > > > > discussed here.
-> > > > > =
+ACK.
 
-> > > > > These are internal Linux flags, aren't they?
-> > > > =
+>
+>> +             reset-names = "nor";
+>> +             ranges = <
+>> +                     0 0 0x48000000 0x00000100
+>> +                     1 0 0x48040000 0x00000100
+>> +             >;
+>> +
+>> +             can@0,0 {
+>> +                     compatible = "nxp,sja1000";
+>> +                     reg = <0 0 0x100>;
+>> +                     interrupt-parent = <&gpio>;
+>> +                     interrupts = <TEGRA_GPIO(B, 5) IRQ_TYPE_EDGE_RISING>;
+>> +                     nxp,external-clock-frequency = <24000000>;
+>> +                     nxp,tx-output-config = <0x16>;
+>> +                     nxp,clock-out-frequency = <24000000>;
+>> +                     reg-io-width = <2>;
+>> +             };
+>> +
+>> +
+>
+> There's an extra blank line here.
 
-> > > > =
+ACK.
 
-> > > > I've been under the impression that you can set clock "flags" via t=
-he
-> > > > device tree. Seems I need to re-check that ;)
-> > > =
+>
+>> +             can@1,0 {
+>> +                     compatible = "nxp,sja1000";
+>> +                     reg = <1 0 0x100>;
+>> +                     interrupt-parent = <&gpio>;
+>> +                     interrupts = <TEGRA_GPIO(A, 6) IRQ_TYPE_EDGE_RISING>;
+>> +                     nxp,external-clock-frequency = <24000000>;
+>> +                     nxp,tx-output-config = <0x16>;
+>> +                     reg-io-width = <2>;
+>> +     };
+>
+> I'm somewhat confused about how this hardware works. My understanding
+> was that each chip gets mapped to the whole range of the NOR address
+> range (0x48000000 - 0x4fffffff on Tegra30).
 
-> > > Right, you cannot set flags from the device tree. Also, setting these
-> > > flags is done by the clock provider driver, not a consumer. Xen is the
-> > > consumer.
-> > =
+I can understand the confusion.
 
-> > =
+>
+> The above suggests that one of the CAN controllers gets mapped to an
+> address 0x48000000 and the other gets mapped to 0x48040000. But why do
+> we even need a chip-select at all in that case? If both chips don't use
+> any overlapping memory region, what good does the chip-select do?
 
-> > Ok, thanks, then I think we can forget about using flags for the issue =
-we are
-> > discussing here.
-> > =
+If we take a look on similar controllers found on others SOCs they
+usually define an address range / chip-select.
 
-> > Best regards
-> > =
+Example (weim):
+ranges = <
+0 0 0x10000000 0x02000000
+1 0 0x12000000 0x01000000
+2 0 0x13000000 0x01000000
+3 0 0x14000000 0x01000000
+4 0 0x15000000 0x01000000
+5 0 0x16000000 0x01000000
+>;
 
-> > Dirk
-> > =
+Which means that you all ready have an address mapped to PIN function.
 
-> > P.S.: Would it be an option to merge the v4 patch we are discussing her=
-e,
-> > then? From the discussion until here, it sounds to me that it's the best
-> > option we have at the moment. Maybe improving it in the future, then.
-> =
+But Tegra GMI controller is a first for me, where you do not have this
+kind of setup in hardware. Usually you also have a timing register /
+chip-select so that you can connect different chip types.
 
-> It might be a step in the right direction, but it doesn't really prevent
-> clk_set_rate from changing properties of a clock owned by Xen.  This
-> patch is incomplete. We need to understand at least what it would take
-> to have a complete solution.
-> =
+The lack of hardware support do decode an address to a chip-select PIN
+function, we have implemented this our self externally.
 
-> Michael, do you have any suggestions on how it would be possible to set
-> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
-> way?
+We actually have 6 different chips connected to the GMI bus and the
+"ranges" would be:
+  ranges = <
+   0 0 0x48000000 0x00000100
+   1 0 0x48040000 0x00000100
+   2 0 0x48080000 0x00000100
+   3 0 0x480A0000 0x00000100
+   4 0 0x480C0000 0x00000100
+   5 0 0x480E0000 0x00000100
+  >;
 
-No, there is no way for a consumer to do that. The provider must do it.
+And this not nothing complicated, small number of AND gates and that is it.
 
-> =
+The chip-select signal is necessary for the access characteristics, so
+we need to translate an address to an chip-select so that the chip
+knows the host CPU wants to talk to it.
 
-> Like you wrote, I would imagine it needs to be done by the clock
-> provider driver. Maybe to do that, it would be easier to have a new
-> device tree property on the clock node, rather than listing phandle and
-> clock-specifier pairs under the Xen node?
+Do not know if I made anything more clear here :).
 
-Upon further reflection, I think that your clock consumer can probably
-use clk_set_rate_range() to "lock" in a rate. This is good because it is
-exactly what a clock consumer should do:
+>
+> Also, it seems to me that you'd have to program the SNOR_CONFIG_0
+> register in order to select a specific chip, but I don't see anything in
+> the driver access that register after the initial write of the register.
 
-1) get the clk
-2) enable the clk
-3) set the required rate for the clock
-4) set rate range constraints, or conversely,
-5) lock in an exact rate; set the min/max rate to the same value
+This is only setup at probe.
 
-The problem with this solution is that it requires the consumer to have
-knowledge of the rates that it wants for that clock, which I guess is
-something that Linux kernels in a Xen setup do not want/need?
+>
+> I would've expected this to require some sort of infrastructure to allow
+> devices connected to the GMI controller to acquire the bus via some API
+> to select their chip.
 
-Is it correct that you would prefer some sort of never_touch_this_clk()
-api?
+Yes, ultimately you would need some sort of infrastructure to allow
+devices to acquire the GMI bus if you want to solve this in software.
+But at the moment I do not see such an infrastructure in place, and is
+it feasible to add one specifically for the GMI controller? If one
+such infrastructure was in place we would need to modify all the
+drivers that want to use to include Tegra specific infrastructure to
+access the GMI bus?
 
-Regards,
-Mike
+Since my knowledge is limited it hard for me to comment on this, maybe
+there is a simple way of doing this?
 
->=20
+
+Best Regards,
+Mirza
