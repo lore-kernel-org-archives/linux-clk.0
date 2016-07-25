@@ -1,141 +1,140 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.137]:32922 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076AbcGFBlS (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2016 21:41:18 -0400
-Message-ID: <577C6152.4010702@rock-chips.com>
-Date: Wed, 06 Jul 2016 09:39:30 +0800
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jul 2016 14:10:45 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
+	linux@armlinux.org.uk
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Message-ID: <20160725121045.GG21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
 MIME-Version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>
-CC: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	zhengxing@rock-chips.com, tomeu.vizoso@collabora.com,
-	dianders@chromium.org
-Subject: Re: [RFC PATCH 2/3] clk: adjust clocks to their requested rate after
- parent changes
-References: <1462206982-10444-1-git-send-email-heiko@sntech.de> <1462206982-10444-3-git-send-email-heiko@sntech.de> <577B6162.3020609@rock-chips.com> <1601887.i7XxTCUQZu@phil>
-In-Reply-To: <1601887.i7XxTCUQZu@phil>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xs+9IvWevLaxKUtW"
+In-Reply-To: <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--xs+9IvWevLaxKUtW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 07/06/2016 06:24 AM, Heiko Stuebner wrote:
-> Hi Elaine,
->
-> Am Dienstag, 5. Juli 2016, 15:27:30 schrieb Elaine Zhang:
->> On 05/03/2016 12:36 AM, Heiko Stuebner wrote:
->>> Given a hirarchy of clk1 -> [div] -> clk2, when the rate of clk1 gets
->>> changed, clk2 changes as well as the divider stays the same. There may
->>> be cases where a user of clk2 needs it at a specific rate, so clk2
->>> needs to be readjusted for the changed rate of clk1.
->>>
->>> So if a rate was requested for the clock, and its rate changed during
->>> the underlying rate-change, with this change the clock framework now
->>> tries to readjust the rate back to/near the requested one.
->>>
->>> The whole process is protected by a new clock-flag to not force this
->>> behaviour change onto every clock defined in the ccf.
->>>
->>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->>> ---
->>>
->>>    drivers/clk/clk.c            | 13 +++++++++++--
->>>    include/linux/clk-provider.h |  1 +
->>>    2 files changed, 12 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->>> index 65e0aad..22be369 100644
->>> --- a/drivers/clk/clk.c
->>> +++ b/drivers/clk/clk.c
->>> @@ -1410,6 +1410,9 @@ static struct clk_core
->>> *clk_propagate_rate_change(struct clk_core *core,>
->>>    	return fail_clk;
->>>
->>>    }
->>>
->>> +static int clk_core_set_rate_nolock(struct clk_core *core,
->>> +				    unsigned long req_rate);
->>> +
->>>
->>>    /*
->>>
->>>     * walk down a subtree and set the new rates notifying the rate
->>>     * change on the way
->>>
->>> @@ -1494,6 +1497,12 @@ static void clk_change_rate(struct clk_core
->>> *core)
->>>
->>>    	/* handle the new child who might not be in core->children yet */
->>>    	if (core->new_child)
->>>    	
->>>    		clk_change_rate(core->new_child);
->>>
->>> +
->>> +	/* handle a changed clock that needs to readjust its rate */
->>> +	if (core->flags & CLK_KEEP_REQ_RATE && core->req_rate
->>> +					    && core->new_rate != old_rate
->>> +					    && core->new_rate != core-
->> req_rate)
->>> +		clk_core_set_rate_nolock(core, core->req_rate);
->>>
->>>    }
->>
->> I tests found a problem, about set the freq order.
->> e.p:
->> [VPLL]
->>
->>       ------ [div] ----- dclk_vop
->> If I change VPLL freq 148.5M to 594M, dclk_vop freq will changed as:
->> 148.5M->24M->594M->1485.5M.
->> But we not hope the dclk_vop have a high freq,it will make the system
->> crash or make vop not work well.
->>
->> So if the VPLL is improve the freq, we need to set dclk_vop div first,
->> and than set VPLL freq.
->> If VPLL is reduce the freq, we need to set vpll first,and set dclk_vop
->> div.
->>
->> This is just a example,for all change parent freq, we need follow this
->> operation.
->> Do you have a better idea for this problem?
->
-> In general it seems my simplicistic approach only really works for really
-> simple clock-setups and thus is likely not really usable for general things.
->
-> For the VPLL on the rk3399 we were discussion a different approach in [0],
-> as VPLL usage (aka which vop gets to control it) is likely to complicated to
-> have this done in the clock-framework-
->
-> Doug wanted to take a look and add some thoughts and I guess he'll just do
-> that after the 4th of july celebrations.
->
-OK, Regardless of the VPLL and vop.
-The current software of clock, there are some problems.
-e.p:
-[GPLL]
-        ------ [div] ----- aclk_perilp
-If I set GPLL 1200M use "assigned-clock-rate".My be the default div of 
-aclk_perilp is 2, GPLL default freq is 600M.
-If I set GPLL first,the aclk_perilp freq will changed as 
-300M->600M->300M.But aclk_perilp 600M is a unsafety.It will make the 
-system crash.
-Aclk_perilp is sizeoff at 300M.It not allowed over frequency.
+On Thu, Jul 21, 2016 at 10:10:49PM +0200, Mirza Krak wrote:
+> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+> >> +
+> >> +The NOR controller supports a number of memory types, including synch=
+ronous NOR,
+> >> +asynchronous NOR, and other flash memories with similar interfaces, s=
+uch as
+> >> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSP=
+s,
+> >> +CAN chips, Wi-Fi chips etc.
+> >
+> > Nit-pick ... the Tegra documentation refers to this controller as the
+> > GMI (general memory interface) or SNOR (sync-NOR) controller because it
+> > is not just limited to NOR as you mentioned. I see references to GMI in
+> > the Tegra pinctrl driver and so may be we should use this name.
+>=20
+> ACK.
+>=20
+>=20
+> >> +Required properties:
+> >> +
+> >> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+> >
+> > I see at least one difference at the register level between Tegra20 and
+> > Tegra30 and so I think this should be something like ...
+> >
+> >  - compatible : Should contain one of the following:
+> >         For Tegra20 must contain "nvidia,tegra20-gmi".
+> >         For Tegra30 must contain "nvidia,tegra30-gmi".
+>=20
+> ACK. Just curious, which register was it? I only checked that they
+> have the same count of registers.
+>=20
+> >> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+> >
+> > There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
+> > that this should be nvidia,snor-config to be explicit. It might be nice
+> > to also add a "nvidia,mio-config" while you are at it as well, however,
+> > that could always be done later. If you do, then the
+> > "nvidia,snor-config" becomes optional depending on whether you are using
+> > the SNOR or MIO address space.
+>=20
+> ACK the nvidia,snor-config part, will though wait for further comments
+> regarding what to do with the config registers, break-out or keep it
+> is a one property / register.
+>=20
+> Regarding mio-config, not sure about if I would like to include that
+> part in this stage. If you feel strongly about this we can do it. If
+> it only comes to down to replicate the same configurations that we do
+> for SNOR to MIO then I do not see much of a problem, but would like
+> SNOR to be accepted and would not like the MIO part to halt this. But
+> then again this up to you guys.
 
-So if I init the PLL freq use "assigned-clock-rate", I need to list it's 
-child clk, make sure it's child clk div is enough,make sure the child 
-clk freq is below the  sizeoff freq.
+What's the difference between SNOR and MIO? Sorry if I'm being dense but
+a quick look around the internet didn't yield anything related. I'd be
+happy to read up if somebody can provide a link.
 
-Do you have a better idea for this problem?
->
-> Heiko
->
->
-> [0] http://lists.infradead.org/pipermail/linux-rockchip/2016-June/010400.html
->
->
->
->
+> > I wonder if it is worth mentioning that the chip-select specified in the
+> > "nvidia,config" prop should match that in the "ranges" prop unless you
+> > have some external decoding logic to provide an external chip-select.
+> > Which raises a question, what does the chip-select in the ranges
+> > actually represent? I am not sure if there is a common practice here for
+> > device tree when boards have external logic to provide additional
+> > chip-selects. I am sure this is quite common.
+>=20
+> I do not understand why CS pin setting in nvidia,config need to match
+> the "ranges" prop? Other then maybe cosmetics.
+>=20
+> If we do not have any external decoding logic to create more
+> chip-selects we only have ONE chip-select, and that one should always
+> be indexed as 0? Regardless of which CS pin is used. Because
+> ultimately what we configure in SNOR_CONFIG is which PIN(function) to
+> use as chip-select. The address space remains the same.
 
+Is that really so? Looking at the list of pins there are 8 CS outputs
+=66rom the GMI controller. That and the presence of the SNOR_SEL field in
+the SNOR_CONFIG_0 register indicate to me that you can use software to
+assert any of the CS outputs (though only one at the same time, which
+makes sense since you want to avoid writing to multiple chips at once).
+
+Of course the documentation is to blame here, it doesn't go into any
+detail at all about how to use the GMI controller.
+
+Thierry
+
+--xs+9IvWevLaxKUtW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXlgHDAAoJEN0jrNd/PrOhI38P/ifxFgrt222EXA6DucwYQCY3
+OezwQw8bSMXDls+WC/FDRZuwgCKxeM6maEHWmkKWIuGzdt3W4mxCOAIkhF3x5AMK
+mFyU6GRYLEjrztP2vP4s+GW/3XPx0Mcz3tF4Q865G7ghTuz0lx0t4m1Kg3VAi1ha
+bzJNFk7q9JLR76i51BC0+zy6ekfnfwt6smOCh8xATbuqU/M/HMrmGD4exQlHiAMQ
+8kZmuQhy339Qy8wEhDaOhrrr9aMjAIhu7P7s94ayV9IsSoe2UOujNRHTTFNTOWZY
+yiPT3fpuDR/MiVvvhkDqPGcD5VG/wNfI9KnwlFiZD+RfsNm5pwkdium8yVgffOPu
+jpIie62khANjA5Bxd+voXNNjjCYVUbqGrFrmlQ0wEK1+l39Ni/uHLZmazFTrEC33
+bxAiLomB1cu+jGqXsp/qvXfrH2vRAEZQp7w94+wqTAlxu0mYDvlWfeHC9bplX6EI
+8cuNXSHbglpoktmF8etyzyPhKTQsKpKYLuwqDpzWs3iWptmO+t36Pyy1A6PiEFgw
+Jm1ksTiuiW6Hf6tPVjsPfYiNrX6X9afcE4cND6fess+xcaNK2vda2wSSI2aYQm8N
+X1OByw/Rg10mm3Hj4rw2IwZrOWkyjVGclJASb8wOBfIDWlOb4evRsYCcnSCWs3/O
+vmnUwD5PfLs2f32eJEKc
+=HN5s
+-----END PGP SIGNATURE-----
+
+--xs+9IvWevLaxKUtW--
