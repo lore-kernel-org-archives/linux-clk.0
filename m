@@ -1,9 +1,9 @@
 Return-Path: <thierry.reding@gmail.com>
 Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 17:34:16 +0200
+Date: Mon, 25 Jul 2016 12:57:13 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mirza Krak <mirza.krak@gmail.com>,
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
 	Prashant Gaikwad <pgaikwad@nvidia.com>,
@@ -13,173 +13,90 @@ Cc: Mirza Krak <mirza.krak@gmail.com>,
 	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
 	linux@armlinux.org.uk
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Message-ID: <20160725153416.GT21170@ulmo.ba.sec>
+Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
+Message-ID: <20160725105713.GA21170@ulmo.ba.sec>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <20160725113034.GD21170@ulmo.ba.sec>
- <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
- <20160725141544.GN21170@ulmo.ba.sec>
- <CALw8SCWouYF+CY7n67mFxyL2CFbY4k1oB7oySTU9WkSMqosFUA@mail.gmail.com>
- <44b2703e-a417-eb3e-b154-6919dc6618d7@nvidia.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
+ <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
+ <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
+ <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
+ <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7Ha3rcGc4ZVRbLT1"
-In-Reply-To: <44b2703e-a417-eb3e-b154-6919dc6618d7@nvidia.com>
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+In-Reply-To: <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---7Ha3rcGc4ZVRbLT1
+--ReaqsoxgOBHFXBhH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 25, 2016 at 04:01:49PM +0100, Jon Hunter wrote:
+On Fri, Jul 22, 2016 at 09:18:37PM +0200, Mirza Krak wrote:
+> 2016-07-22 11:38 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+> >>> The driver should have a remove function given that we can build as a
+> >>> module.
+> >>
+> >> At the moment I do not know what we would do in a remove function and
+> >> hence me not adding one.
+> >
+> > Should just be the inverse of the probe (although there is no inverse
+> > for the parsing DT bit). If you don't wish to add a remove, that is
+> > fine, but make the driver a 'bool' and not 'tristate' in the Kconfig so
+> > it cannot be configured as a module.
 >=20
-> On 25/07/16 15:38, Mirza Krak wrote:
-> > 2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> >> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
-> >>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> >> [...]
-> >>>> The above suggests that one of the CAN controllers gets mapped to an
-> >>>> address 0x48000000 and the other gets mapped to 0x48040000. But why =
-do
-> >>>> we even need a chip-select at all in that case? If both chips don't =
-use
-> >>>> any overlapping memory region, what good does the chip-select do?
-> >>>
-> >>> If we take a look on similar controllers found on others SOCs they
-> >>> usually define an address range / chip-select.
-> >>>
-> >>> Example (weim):
-> >>> ranges =3D <
-> >>> 0 0 0x10000000 0x02000000
-> >>> 1 0 0x12000000 0x01000000
-> >>> 2 0 0x13000000 0x01000000
-> >>> 3 0 0x14000000 0x01000000
-> >>> 4 0 0x15000000 0x01000000
-> >>> 5 0 0x16000000 0x01000000
-> >>>> ;
-> >>>
-> >>> Which means that you all ready have an address mapped to PIN function.
-> >>>
-> >>> But Tegra GMI controller is a first for me, where you do not have this
-> >>> kind of setup in hardware. Usually you also have a timing register /
-> >>> chip-select so that you can connect different chip types.
-> >>>
-> >>> The lack of hardware support do decode an address to a chip-select PIN
-> >>> function, we have implemented this our self externally.
-> >>>
-> >>> We actually have 6 different chips connected to the GMI bus and the
-> >>> "ranges" would be:
-> >>>   ranges =3D <
-> >>>    0 0 0x48000000 0x00000100
-> >>>    1 0 0x48040000 0x00000100
-> >>>    2 0 0x48080000 0x00000100
-> >>>    3 0 0x480A0000 0x00000100
-> >>>    4 0 0x480C0000 0x00000100
-> >>>    5 0 0x480E0000 0x00000100
-> >>>   >;
-> >>>
-> >>> And this not nothing complicated, small number of AND gates and that =
-is it.
-> >>>
-> >>> The chip-select signal is necessary for the access characteristics, so
-> >>> we need to translate an address to an chip-select so that the chip
-> >>> knows the host CPU wants to talk to it.
-> >>>
-> >>> Do not know if I made anything more clear here :).
-> >>
-> >> Yes, that clarifies many things. The presence of an external, address-
-> >> based chip-select is essential information in order to describe this
-> >> setup properly.
-> >>
-> >> Given that the external chip select is entirely invisible to software,=
- I
-> >> think a more accurate description of your setup would be:
-> >>
-> >>         gmi@70090000 {
-> >>                 ...
-> >>
-> >>                 /* for the chip select */
-> >>                 #address-cells =3D <1>;
-> >>                 #size-cells =3D <0>;
-> >>
-> >>                 /*
-> >>                  * Technically this could be used to translate the ran=
-ge from
-> >>                  * 0x48000000 to 0x4fffffff into a different range, bu=
-t that
-> >>                  * no longer works because of the #address-cells. Does=
- this
-> >>                  * matter?
-> >>                  */
-> >>                 ranges;
-> >>
-> >>                 bus@0 {
-> >>                         compatible =3D "simple-bus";
-> >>                         reg =3D <0>;
-> >>
-> >>                         #address-cells =3D <1>;
-> >>                         #size-cells =3D <1>;
-> >>
-> >>                         can@48000000 {
-> >>                                 reg =3D <0x48000000 0x100>;
-> >>                                 ...
-> >>                         };
-> >>
-> >>                         can@48040000 {
-> >>                                 reg =3D <0x48040000 0x100>;
-> >>                                 ...
-> >>                         };
-> >>                 };
-> >>         };
-> >>
-> >> That omits any reference to the external chip select, which I think
-> >> makes sense because it's something that software is completely unaware
-> >> of.
-> >>
-> >> Perhaps one important question: does your setup use the GMI's CS lines
-> >> in any way? Or does it simply get ignored?
-> >=20
-> > Yes, we use the GMI`s CS line. It is important that is present because
-> > it is ANDED with address lines and NOT ALE line. Especially since we
-> > run the GMI controller in AD_MUX mode, which means that we use same
-> > pins for address and data and the access happens in two phases, one
-> > address latch phase where CS is not asserted but ALE is, second
-> > read/write phase where CS must be asserted. In this case we need the
-> > GMI`s CS line to determine which phase we are in.
+> I understand the concept of a remove function, but I use devm_ calls
+> for all resources. These should be handled by the device core on a
+> driver detach?
 >=20
-> Even though the CS is used, we could still implement the driver such
-> that if only 1 CS is defined in the binding, we then statically program
-> the configuration at probe. For now, if there is more than one, we can
-> return an error from probe as it is not supported or default to the
-> first CS defined and warn?
+> One thing came to mind now that could be done in a remove method and
+> that is clearing the CONFIG_GO bit, or I could just do that first on
+> probe instead to make sure the controller is stopped.
+>=20
+> Ok, one more thing came to mind, and that is depopulating the child
+> devices. Got it remove function it is then.
+>=20
+> >>>> +module_platform_driver_probe(nor_driver, nor_probe);
+> >>>
+> >>> I would use "tegra_nor" namespace for all the structs, functions, etc.
+> >>> However, we may prefer to go with GMI and in which case tegra_gmi_pro=
+be,
+> >>> etc.
+> >>
+> >> ACK. Who gets the last call on what we should call the driver? It
+> >> seems that we both think GMI is a better name, do we need a third? :).
+> >
+> > The patches would have to go via Thierry and so ultimately, Thierry.
+> > However, I can't imagine he would object to GMI ;-)
+>=20
+> Eagerly awaiting Thierry`s comments :).
 
-I think either would work. Possibly better to do the latter because at
-least some devices will work that way.
+Let's go with GMI. The TRM has a mix of GMI vs. SNOR, but as Jon points
+out the pinmux doesn't mention SNOR, so in order to hopefully reduce the
+confusion, let's stick with GMI.
 
 Thierry
 
---7Ha3rcGc4ZVRbLT1
+--ReaqsoxgOBHFXBhH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXljF1AAoJEN0jrNd/PrOh40IP/2NFERmRV+toofCmZtDWGuiv
-2EaUi7RdUkyGmbyHxwV8og9F8DLqpteBx+gMThjqmLUEFeub/1Fr+KdhwojNozvc
-jo/ifXUvFFm/EeMJzH6wTWhe2iqkRJEDJUrmifzAA1MbxLQfJUz4pPrbpvb3+WWg
-mieZ98ieHU2+zuHTVAriWPy7Y2RPgQfNPLR577nMu8FvMVQjdL0Jc3MYfooVeHWf
-zgvudgZjVTKoLN9XkSZd3zy+MPG/H2XyKObwx+UHXVgXMbbbTf+PQeheZBxevwbX
-hwwW2CiACQBtBdXNATkTdIkmPe9KYDK5g4oyDlgBTQzcbgt0UbnD3aG0f6mfyUiT
-8i9lb1O0xuq+P8DmekrfXlSpRPigH++un1rwguI5Kq/f442fjBnSX05XkwbS8B2i
-3kqmyXVkT0YhrpbMPTjNQi5PoYwuVRnFDYtoPTzarWiCgZydQNDbh1M4F+3QchSu
-c4pLoMJVtfMbWBa1gJFt4R9aXVYMWfzraD7KwbD9eloIlsA488M8t19yscTmFQM9
-ySxATCOxAi2m4nt9NqeepBMsS2sQooELTIeTDQI7QF9oqgYLS/7wtqUU85CSklBW
-JCBjPscQAjmCD4uWW9mrZDtMLHsLf4ELtJXCj2nC1MVXN1NfDsEOQ86B6mB+7D+g
-hSVOOglO6UPzt1mIpZvE
-=zkOb
+iQIcBAABCAAGBQJXlfCGAAoJEN0jrNd/PrOh93MP/jsPdVE0PwR+Z94UQsYutowG
+t4bK/9ErFyvkKWiNDRTnKudga+1sOhg3NCsxs6FeJ2Xh0Cr3DVPJuJCH0ZknOkGu
+bqErhIUUaG7fHcdBt2H7VGBYDzQDN5eWVvJWKW7Bik4V8AGhV4EGnfkrhnWU7VVm
+B+qzmiGd2B9ec+F5xVJL4uB+M/Ma50N8aldk3kwqlD7pRfuux8nC7iuKMdF/hotg
+m0Nv/+zBN+RaOKCsIFoSKOITRocFF0oM6R6YX4ZsYLNELQyDoXkO51rtnx3LlrGN
+ce2mcddtSyBorAVVyfPyJFgUG2EJG0EF5Z4yQiBb946DU8x4T4W5M87AgngxsIbb
+aHnkHcSIG+PA73Sg/gDw4bzCKiwaMUD8zW7ZRsx2m9whdLZgfi8I9gI86+KPJUFm
+kSujU8bh6ymOKiKC8r0hsgbmBaIQ6AurxxAfxfKcpK5GHr+Yz6qDYUWCiGnCYHXs
+4Kwb2RlFfmmlw3CpVV4ikZzyCEIsu0UxIskgExaMk5+2rF+sj+x3I5iRZt2uJcv0
+xZR6js7H4aphEO1aIpalaLIxliUhoNZP/7+urJKMZdC4rGfzpGxkZpPHNc3Of1Ua
+fmaB6hXoDQwfZVncIWWrfBHlsr8M9OM3rMZSnJEQG0pDtTB+aBbkgvzp0tsR/BSc
+mKs9izCN/aTemZtwCZAw
+=MF8X
 -----END PGP SIGNATURE-----
 
---7Ha3rcGc4ZVRbLT1--
+--ReaqsoxgOBHFXBhH--
