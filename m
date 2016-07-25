@@ -1,135 +1,145 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jul 2016 08:48:09 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
-Message-ID: <20160727064809.GC6560@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-5-git-send-email-wens@csie.org>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Mirza Krak <mirza.krak@gmail.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
+ <20160725141544.GN21170@ulmo.ba.sec>
+ <CALw8SCWouYF+CY7n67mFxyL2CFbY4k1oB7oySTU9WkSMqosFUA@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot
+	<gnurou@gmail.com>, <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>, Kumar Gala
+	<galak@codeaurora.org>, <linux@armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <44b2703e-a417-eb3e-b154-6919dc6618d7@nvidia.com>
+Date: Mon, 25 Jul 2016 16:01:49 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0vzXIDBeUiKkjNJl"
-In-Reply-To: <1469516671-19377-5-git-send-email-wens@csie.org>
+In-Reply-To: <CALw8SCWouYF+CY7n67mFxyL2CFbY4k1oB7oySTU9WkSMqosFUA@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
 
---0vzXIDBeUiKkjNJl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 25/07/16 15:38, Mirza Krak wrote:
+> 2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+>>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> [...]
+>>>> The above suggests that one of the CAN controllers gets mapped to an
+>>>> address 0x48000000 and the other gets mapped to 0x48040000. But why do
+>>>> we even need a chip-select at all in that case? If both chips don't use
+>>>> any overlapping memory region, what good does the chip-select do?
+>>>
+>>> If we take a look on similar controllers found on others SOCs they
+>>> usually define an address range / chip-select.
+>>>
+>>> Example (weim):
+>>> ranges = <
+>>> 0 0 0x10000000 0x02000000
+>>> 1 0 0x12000000 0x01000000
+>>> 2 0 0x13000000 0x01000000
+>>> 3 0 0x14000000 0x01000000
+>>> 4 0 0x15000000 0x01000000
+>>> 5 0 0x16000000 0x01000000
+>>>> ;
+>>>
+>>> Which means that you all ready have an address mapped to PIN function.
+>>>
+>>> But Tegra GMI controller is a first for me, where you do not have this
+>>> kind of setup in hardware. Usually you also have a timing register /
+>>> chip-select so that you can connect different chip types.
+>>>
+>>> The lack of hardware support do decode an address to a chip-select PIN
+>>> function, we have implemented this our self externally.
+>>>
+>>> We actually have 6 different chips connected to the GMI bus and the
+>>> "ranges" would be:
+>>>   ranges = <
+>>>    0 0 0x48000000 0x00000100
+>>>    1 0 0x48040000 0x00000100
+>>>    2 0 0x48080000 0x00000100
+>>>    3 0 0x480A0000 0x00000100
+>>>    4 0 0x480C0000 0x00000100
+>>>    5 0 0x480E0000 0x00000100
+>>>   >;
+>>>
+>>> And this not nothing complicated, small number of AND gates and that is it.
+>>>
+>>> The chip-select signal is necessary for the access characteristics, so
+>>> we need to translate an address to an chip-select so that the chip
+>>> knows the host CPU wants to talk to it.
+>>>
+>>> Do not know if I made anything more clear here :).
+>>
+>> Yes, that clarifies many things. The presence of an external, address-
+>> based chip-select is essential information in order to describe this
+>> setup properly.
+>>
+>> Given that the external chip select is entirely invisible to software, I
+>> think a more accurate description of your setup would be:
+>>
+>>         gmi@70090000 {
+>>                 ...
+>>
+>>                 /* for the chip select */
+>>                 #address-cells = <1>;
+>>                 #size-cells = <0>;
+>>
+>>                 /*
+>>                  * Technically this could be used to translate the range from
+>>                  * 0x48000000 to 0x4fffffff into a different range, but that
+>>                  * no longer works because of the #address-cells. Does this
+>>                  * matter?
+>>                  */
+>>                 ranges;
+>>
+>>                 bus@0 {
+>>                         compatible = "simple-bus";
+>>                         reg = <0>;
+>>
+>>                         #address-cells = <1>;
+>>                         #size-cells = <1>;
+>>
+>>                         can@48000000 {
+>>                                 reg = <0x48000000 0x100>;
+>>                                 ...
+>>                         };
+>>
+>>                         can@48040000 {
+>>                                 reg = <0x48040000 0x100>;
+>>                                 ...
+>>                         };
+>>                 };
+>>         };
+>>
+>> That omits any reference to the external chip select, which I think
+>> makes sense because it's something that software is completely unaware
+>> of.
+>>
+>> Perhaps one important question: does your setup use the GMI's CS lines
+>> in any way? Or does it simply get ignored?
+> 
+> Yes, we use the GMI`s CS line. It is important that is present because
+> it is ANDED with address lines and NOT ALE line. Especially since we
+> run the GMI controller in AD_MUX mode, which means that we use same
+> pins for address and data and the access happens in two phases, one
+> address latch phase where CS is not asserted but ALE is, second
+> read/write phase where CS must be asserted. In this case we need the
+> GMI`s CS line to determine which phase we are in.
 
-On Tue, Jul 26, 2016 at 03:04:26PM +0800, Chen-Yu Tsai wrote:
-> Some clock muxes have holes, i.e. invalid or unconnected inputs,
-> between parent mux values.
->=20
-> Add support for specifying a mux table to map clock parents to
-> mux values.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/clk/sunxi-ng/ccu_mux.c | 12 ++++++++++++
->  drivers/clk/sunxi-ng/ccu_mux.h | 12 ++++++++++--
->  2 files changed, 22 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mu=
-x.c
-> index 1329b9ab481e..68b32f168a74 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> @@ -107,6 +107,15 @@ u8 ccu_mux_helper_get_parent(struct ccu_common *comm=
-on,
->  	parent =3D reg >> cm->shift;
->  	parent &=3D (1 << cm->width) - 1;
-> =20
-> +	if (cm->table) {
-> +		int num_parents =3D clk_hw_get_num_parents(&common->hw);
-> +		int i;
-> +
-> +		for (i =3D 0; i < num_parents; i++)
-> +			if (cm->table[i] =3D=3D parent)
-> +				return i;
-> +	}
-> +
->  	return parent;
->  }
-> =20
-> @@ -117,6 +126,9 @@ int ccu_mux_helper_set_parent(struct ccu_common *comm=
-on,
->  	unsigned long flags;
->  	u32 reg;
-> =20
-> +	if (cm->table)
-> +		index =3D cm->table[index];
-> +
->  	spin_lock_irqsave(common->lock, flags);
-> =20
->  	reg =3D readl(common->base + common->reg);
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mu=
-x.h
-> index d35ce5e93840..f0078de78712 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.h
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
-> @@ -6,8 +6,9 @@
->  #include "ccu_common.h"
-> =20
->  struct ccu_mux_internal {
-> -	u8	shift;
-> -	u8	width;
-> +	u8		shift;
-> +	u8		width;
-> +	const u8	*table;
-> =20
->  	struct {
->  		u8	index;
-> @@ -21,6 +22,13 @@ struct ccu_mux_internal {
->  	} variable_prediv;
->  };
-> =20
-> +#define SUNXI_CLK_MUX_TABLE(_shift, _width, _table)	\
-> +	{						\
-> +		.shift	=3D _shift,			\
-> +		.width	=3D _width,			\
-> +		.table	=3D _table,			\
-> +	}
-> +
+Even though the CS is used, we could still implement the driver such
+that if only 1 CS is defined in the binding, we then statically program
+the configuration at probe. For now, if there is more than one, we can
+return an error from probe as it is not supported or default to the
+first CS defined and warn?
 
-I basically had the exact same patch done a few days ago :)
+Jon
 
-This is in my A64 serie, together with some cleanup on that macro that
-is not consistent with the other internal structures.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---0vzXIDBeUiKkjNJl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXmFkpAAoJEBx+YmzsjxAg0CEP/jPtp4SuF8hS9LL7jhcW6H2x
-+5X7hKszFgNQ2fP3UCsr+EwgyesDY/fFR4C9c+pwOEJV8wdI6sP3RKs+NFFjxHQN
-5/lcZmSHcUNFTLdhnnfFvusPcTzUBXby8Yi5B3tBK3s+TryvVH2AWWNBR/CuQAyc
-1SNNHoLFzkn5PTD72n6YXgUepKwScq5BnWbGLI09ZctIZD+CC1RtYmRDF34Hy7Qh
-SOo2vmvc/0yBS0scdFyUnbSguZoR6KjZ09TlbIZh2fWnxU2eOavg2h5FRsDZCLc8
-DFLWMa4Yla0JyCec8vhS0z1SXYESWyebioHcjGTAbAySE5itIOb1KLaZ+QRjL3ap
-yZ1Ur34u//qWYQbtk2cE5Le7ay8D7dYhfi1Kgkp5y8a7NZX8KC6mLTFPRNagCAur
-S//U0Sg/GQTV+LC6j5hZ/fowGOh9N7QtdS5L2LkWBvXjchRNLJPDXwswGTE45xu2
-ILFg3asMkk9et6haTBV0Va7vx5lZGakmIAVI1SllrjAuGNRJg6B3KEHODvbIIRwI
-mYIIW1Wq0j439GmgkjSboKCMW85wMl6jggEHUWPsPDlSlUhWNOp4ZSYB6ooBhGQ2
-BDvDvRAnzZ5wCUxXHBK8P4Mr3vua/bvpe0tZPfWITi+IB9s1UacBC4/qBT1eb62y
-IIERKEpZML8FZmELRNQn
-=t5aX
------END PGP SIGNATURE-----
-
---0vzXIDBeUiKkjNJl--
+-- 
+nvpublic
