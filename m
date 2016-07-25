@@ -1,89 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Wan Zongshun <vw@iommu.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	jason@lakedaemon.net, Wan Zongshun <mcuos.com@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	p.zabel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-Date: Thu, 14 Jul 2016 13:09:54 +0200
-Message-ID: <4372420.eqVKsk1ckW@wuerfel>
-In-Reply-To: <578752CD.3010408@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <5434334.4rKzx80y6W@wuerfel> <578752CD.3010408@iommu.org>
+Return-Path: <mirza.krak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20160725115923.GF21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <20160725115923.GF21170@ulmo.ba.sec>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Mon, 25 Jul 2016 15:30:34 +0200
+Message-ID: <CALw8SCU6vWeDyoy+t53k2+tmnrZd+ieBV88Vc6FSL9x3FzSm5g@mail.gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, July 14, 2016 4:52:29 PM CEST Wan Zongshun wrote:
-> 
-> On 2016年07月12日 16:26, Arnd Bergmann wrote:
-> > On Tuesday, July 12, 2016 3:04:42 PM CEST Wan Zongshun wrote:
-> >>>
-> >>> Ideally, this should just go away once we use SPARSE_IRQ.
-> >>
-> >> This platform also can use SPARSE_IRQ? this just a simple irq map and no
-> >> more irq number in this Soc.
-> >>
-> >
-> > SPARSE_IRQ is implied by ARCH_MULTIPLATFORM, so we will have to
-> > use it once that gets enabled.
-> >
-> > Your new irqchip driver already handles IRQ domains, so it will
-> > work out of the box with SPARSE_IRQ, but you have to change the
-> > reference to "NR_IRQS" into something else.
-> >
-> > I've prototyped a patch series to enable ARCH_MULTIPLATFORM,
-> > I hope you can start working from what I have and get it to run.
-> 
-> I go through the ARCH_MULTIPLATFORM and SPARSE_IRQ related codes, but I 
-> find I also have to define the NUC900_NR_IRQS firstly like below, so 
-> that I can init the .nr_irq.
-> 
-> +#if !defined(CONFIG_SOC_NUC970)
->   #define NUC900_NR_IRQS		(IRQ_ADC+1)
-> +#else
-> +#define NUC900_NR_IRQS		62
-> +#endif
-> 
->   DT_MACHINE_START(nuc900_dt, "Nuvoton NUC900 (Device Tree Support)")
->          .dt_compat      = nuc900_dt_compat,
-> +       .nr_irqs        = NUC900_NR_IRQS,
->   MACHINE_END
+2016-07-25 13:59 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
+>>
+>
+>> > +Note that the NOR controller does not have any internal chip-select address
+>> > +decoding and if you want to access multiple devices external chip-select
+>> > +decoding must be provided.
+>>
+>> Although it is true, you do have the MIO address space and so you could
+>> support two devices via the SNOR address space and MIO address space
+>> (assuming that the MIO can be used for the 2nd device).
+>
+> Now I'm even more confused. If the GMI controller itself can't select a
+> chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
+> that not select a specific chip?
+>
+>> Furthermore, if you do have external logic to support multiple devices
+>> this would assume that the devices use the same timing and so are
+>> probably the same type. It also assumes both can fit in the 256MB
+>> address range. May be worth mentioning.
+>
+> Similarly if you switch between different devices, wouldn't you have to
+> reprogram the timing registers if they are different?
+>
+> The way I remember this kind of interface to work (it's been a long time
+> since I used one) is that in order to operate on a chip you need to
+> acquire the bus first. Typically that would be an API exposed by the bus
+> driver or some framework that the bus driver registers with. That API
+> arbitrates between multiple devices on the bus and makes sure that the
+> proper chip select is asserted and timing is programmed when you're
+> granted access. A driver that has acquired the bus can then perform what
+> operations they need and release the bus when done.
+>
+> SPI uses a mechanism like this, for example.
+>
+> Thierry
 
-You don't need to set this for the DT based machines, this number
-is just for the set of IRQ that have a hardcoded mapping. With DT,
-they get dynamically allocated as required.
+>From my experience (maybe not as long as yours :)) but these kind of
+things would be handled by the controller. At least with previous SOCs
+that I have used, PXA270, PXA300 and i.MX SOCs.
 
-For the board files, you can hardcode the original definition of 32
-IRQs, but I think you don't need that if you register a legacy IRQ
-domain in mach-w90x900/irq.c.
+That it has an address range per chip-select PIN and timing registers
+per chip-select. And thus eliminating a need for a infrastructure or
+framework.
 
-> and then in my irqchip driver, I will use the NUC900_NR_IRQS:
-> 
-> +aic_domain = irq_domain_add_linear(node, NUC900_NR_IRQS,
-> +				    &aic_irq_domain_ops, NULL);
-> 
-> 
-> Is that a right usage?
 
-This does not look right when NUC900_NR_IRQS can have configuration
-dependent values. I can see two ways of handling it:
-
-a) register the maximum number of IRQs that the irqchip can handle.
-   There is no real cost for having a large number here, as SPARSE_IRQ
-   ensures we only need to allocate the descriptors that are actually
-   used.
-
-b) make the number of interrupts dependent on the compatible string
-   for the irqchip, and handle NUC970 differently from the others
-   in the driver.
-
-In the meantime, I also have a series to enable multiplatform support
-for all of mach-w90x900 based on your patches, but lacking a proper
-clk driver. I'll send that to you so you can include it in your
-series (after verifying that it works, or fixing it where necessary).
-
-	Arnd
+Best regards,
+Mirza
