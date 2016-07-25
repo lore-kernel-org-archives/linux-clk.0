@@ -1,45 +1,109 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:52056 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753898AbcGKPoD (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2016 11:44:03 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Wan Zongshun <vw@iommu.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	jason@lakedaemon.net, p.zabel@pengutronix.de,
-	Wan Zongshun <mcuos.com@gmail.com>
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-Date: Mon, 11 Jul 2016 17:46:34 +0200
-Message-ID: <1761342.TGgYi16yul@wuerfel>
-In-Reply-To: <1468135649-19980-3-git-send-email-vw@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org> <1468135649-19980-3-git-send-email-vw@iommu.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Hua Jing <jinghua@marvell.com>,  Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v3 0/6]  Add clock support for Armada 37xx SoCs
+References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+Date: Mon, 25 Jul 2016 18:33:58 +0200
+In-Reply-To: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+	(Gregory CLEMENT's message of "Tue, 19 Jul 2016 15:42:16 +0200")
+Message-ID: <878twppthl.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sunday, July 10, 2016 3:27:22 PM CEST Wan Zongshun wrote:
-> +
-> +#if !defined(CONFIG_SOC_NUC900)
->  #define NR_IRQS                (IRQ_ADC+1)
-> +#else
-> +#define NR_IRQS                62
-> +#endif
->  
+Hi Mike and Stephen,
 
-The Kconfig symbols are a bit confusing here: CONFIG_SOC_NUC900
-controls the compilation of the soc_device driver, but I guess
-what you actually mean here is CONFIG_SOC_NUC970, which is the
-support for the actual chip.
+ On mar., juil. 19 2016, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
 
-Maybe rename the former to something less confusing and change
-this to CONFIG_SOC_NUC970?
+> Hi,
+>
+> this is the third version of the series adding clock support for the
+> Armada 37xx SoCs.
+>
+> The main change is the use of static data for the peripheral clocks
+> when possible, it lead to a use of many macro to define all the needed
+> variables.
+>
+> The design of the drivers is as close as possible as the hardware is,
+> with some clocks made of several layers: muxing, divider and gating.
+>
+> The device tree binding was written in a way that even if we discover
+> some change inside the clocks, the binding should not be
+> affected. Especially, there are some holes in the clocks, but we
+> should be able to add them seamless.
+>
+> The full series is available on the branch Armada-3700-Clocks-v3 at
+> git@github.com:MISL-EBU-System-SW/mainline-public.git
 
-Ideally, this should just go away once we use SPARSE_IRQ.
+I think that with this series I took into account all the comments, do
+you think there is a chance that it will be merged in v4.8?
 
-	Arnd
+Thanks,
+
+Gregory
+
+>
+> Thanks,
+>
+> Changelog:
+>
+> v2 -> v3
+>
+> - used marvell,armada-3700-gpio instead of marvell,mvebu-gpio-3700 in
+>   the binding as pointed by Thomas,
+> - removed the unnecessary include of clk.h in the 3 drivers, suggested
+>   by Mike Turquette
+> - removed the modular reference in the 3 drivers, suggested by Paul
+>   Gortmaker
+> - used static data for the peripheral driver when possible, suggested
+>   by Mike Turquette
+>
+> v1 -> v2
+>
+> - Move to clk_hw based registration for the 3 clock driver as
+>   requested by Stephen Boyd
+> - Fixed typo noticed by Stephen Boyd
+> - Added const and static when they were missing: suggested by Stephen
+>   Boyd
+> - Allocated the driver variable during probe instead of using a global
+>   one as requested by Stephen Boyd
+> - Managed the failure of the of_clk_add_hw_provider call
+> - Added the Acked-by from Rob Herring on the dt binding patchs
+>
+>
+>
+> Gregory CLEMENT (6):
+>   dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
+>   clk: mvebu: Add the xtal clock for Armada 3700 SoC
+>   dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
+>   clk: mvebu Add the time base generator clocks for Armada 3700
+>   dt-bindings: clock: add DT binding for the peripheral clocks on Armada
+>     3700
+>   clk: mvebu: Add the peripheral clock driver for Armada 3700
+>
+>  .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
+>  .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
+>  .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
+>  drivers/clk/mvebu/Kconfig                          |   3 +
+>  drivers/clk/mvebu/Makefile                         |   3 +
+>  drivers/clk/mvebu/armada-37xx-periph.c             | 449 +++++++++++++++++++++
+>  drivers/clk/mvebu/armada-37xx-tbg.c                | 158 ++++++++
+>  drivers/clk/mvebu/armada-37xx-xtal.c               |  91 +++++
+>  8 files changed, 829 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+>  create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
+>  create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
+>  create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
+>
+> -- 
+> 2.5.0
+>
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
