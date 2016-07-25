@@ -1,84 +1,81 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
-In-Reply-To: <1467989201-14661-5-git-send-email-andi.shyti@samsung.com>
-Message-Id: <E1bNjZE-0001mT-Vp@debutante>
-Date: Thu, 14 Jul 2016 17:32:52 +0100
-Subject: Applied "spi: s3c64xx: use error code from clk_prepare_enable()" to the spi tree
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
+ <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
+ <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	<linux@armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <88fb7138-f2b4-b51c-307b-5ef69b953498@nvidia.com>
+Date: Mon, 25 Jul 2016 09:14:27 +0100
+MIME-Version: 1.0
+In-Reply-To: <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
 
-   spi: s3c64xx: use error code from clk_prepare_enable()
+On 22/07/16 20:07, Mirza Krak wrote:
+> 2016-07-22 11:32 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>
+>> On 21/07/16 21:10, Mirza Krak wrote:
+>>> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>>>
+>>>> I wonder if it is worth mentioning that the chip-select specified in the
+>>>> "nvidia,config" prop should match that in the "ranges" prop unless you
+>>>> have some external decoding logic to provide an external chip-select.
+>>>> Which raises a question, what does the chip-select in the ranges
+>>>> actually represent? I am not sure if there is a common practice here for
+>>>> device tree when boards have external logic to provide additional
+>>>> chip-selects. I am sure this is quite common.
+>>>
+>>> I do not understand why CS pin setting in nvidia,config need to match
+>>> the "ranges" prop? Other then maybe cosmetics.
+>>
+>> Yes it would be cosmetic. That said, I even wonder if CS needs to be
+>> exposed at all given that they all map to the same CPU address space.
+>> Couldn't your binding for the CAN devices be as follows?
+>>
+>> nor@70009000 {
+>>         ...
+>>
+>>         can@48000000 {
+>>                 ...
+>>         };
+>>
+>>         can@48040000 {
+>>                 ...
+>>         };
+>> };
+> 
+> This has also crossed my mind, maybe just get rid of the "ranges" prop
+> and do like you have above. But then again I do not know what is
+> preferred so I went with "ranges" prop initially.
+> 
+> 
+>>
+>> Problem is if you did have devices on different chip-selects then how
+>> would these be handled? They could not point to the same physical
+>> address. I am not sure if there is a way to do that in DT?
+> 
+> Having trouble following your though here. We do not have "different"
+> chip-selects?
 
-has been applied to the spi tree at
+I meant that the device has multiple chip-selects and so I was not sure
+the best way to handle this for the GMI.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Jon
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 25981d8281ee4cbbd6f7c5bc0f8c048ad9548037 Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Tue, 12 Jul 2016 19:02:13 +0900
-Subject: [PATCH] spi: s3c64xx: use error code from clk_prepare_enable()
-
-If clk_prepare_enable() fails do not return -EBUSY but use the
-value provided by the function itself.
-
-Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-s3c64xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 0a93eb98c2b6..3d21f8a35837 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1133,9 +1133,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err_deref_master;
- 	}
- 
--	if (clk_prepare_enable(sdd->clk)) {
-+	ret = clk_prepare_enable(sdd->clk);
-+	if (ret) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
--		ret = -EBUSY;
- 		goto err_deref_master;
- 	}
- 
-@@ -1148,9 +1148,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err_disable_clk;
- 	}
- 
--	if (clk_prepare_enable(sdd->src_clk)) {
-+	ret = clk_prepare_enable(sdd->src_clk);
-+	if (ret) {
- 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
--		ret = -EBUSY;
- 		goto err_disable_clk;
- 	}
- 
 -- 
-2.8.1
+nvpublic
