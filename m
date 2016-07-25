@@ -1,80 +1,110 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-7-git-send-email-vw@iommu.org> <4765191.NGpMC1JR46@wuerfel>
-Cc: devicetree@vger.kernel.org, jason@lakedaemon.net,
-	Wan Zongshun <mcuos.com@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <5784B302.80307@iommu.org>
-Date: Tue, 12 Jul 2016 17:06:10 +0800
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jul 2016 15:23:06 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
+	linux@armlinux.org.uk
+Subject: Re: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
+Message-ID: <20160725132306.GH21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-2-git-send-email-mirza.krak@gmail.com>
+ <20160725111735.GC21170@ulmo.ba.sec>
+ <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4765191.NGpMC1JR46@wuerfel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TKYYegg/GYAC5JIZ"
+In-Reply-To: <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--TKYYegg/GYAC5JIZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2016年07月11日 16:03, Arnd Bergmann wrote:
-> On Sunday, July 10, 2016 3:27:26 PM CEST Wan Zongshun wrote:
->> +       ret = of_property_read_string(np, "compatible", &soc_dev_attr->soc_id);
->> +       if (ret)
->>                return -EINVAL;
->> +
->> +       soc_dev_attr->machine = "NUC900EVB";
->> +       soc_dev_attr->family = "NUC900";
->> +       soc_dev = soc_device_register(soc_dev_attr);
->> +       if (IS_ERR(soc_dev)) {
->> +               kfree(soc_dev_attr);
->> +               return -ENODEV;
->> +       }
->> +
->> +       ret = regmap_read(syscon_regmap, GCR_CHIPID, &nuc900_chipid);
->> +       if (ret)
->> +               return -ENODEV;
->> +
->> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
->> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
->> +
->> +       dev_info(&pdev->dev, "Nuvoton Chip ID: 0x%x, Version ID:0x%x\n",
->> +                nuc900_chipid & GCR_CHIPID_MASK,
->> +                (nuc900_chipid >> 24) & 0xff);
->
-> I'm still a bit unsure about the set of attributes here.
->
-> - The "soc_id" is read from the device tree from the field that contains
->    the board name, I think for consistency you should try to map the
->    GCR_CHIPID to the name of the SoC and assign that here
->
-> - The "machine" is hardcoded to "NUC900EVB", which in turn looks like
->    a particular board but not the one you are running on. Maybe read
->    that from the DT instead?
->
-> - The "revision" is not filled at all, I would suggest using something
->    derived from the GCR_CHIPID register here
->
-> - you have two nonstandard attributes "chipid" and "version", which
->    I'd hope to avoid -- the set of standard attributes is supposed to
->    give enough information about the machine, and platform independent
->    user space will never read those.
+On Mon, Jul 25, 2016 at 02:28:48PM +0200, Mirza Krak wrote:
+> 2016-07-25 13:17 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> > On Tue, Jul 19, 2016 at 03:36:32PM +0200, Mirza Krak wrote:
+> >> From: Mirza Krak <mirza.krak@gmail.com>
+> >>
+> >> Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
+> >>
+> >> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> >> ---
+> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-t=
+egra20.c
+> >> index 837e5cb..aefc044 100644
+> >> --- a/drivers/clk/tegra/clk-tegra20.c
+> >> +++ b/drivers/clk/tegra/clk-tegra20.c
+> >> @@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] =
+__initdata =3D {
+> >>       { TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
+> >>       { TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
+> >>       { TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
+> >> +     { TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
+> >
+> > Yay for inconsistent naming in the hardware. It would've been nice if
+> > this clock was called GMI. Oh well...
+>=20
+> I am allowed to change clk name? Can do that when I re-spin this series.
 
-So, Maybe I can remove those two codes, no need push those information 
-to user space?
+No, leave it as-is. The clock is referred to as NOR in the clock and
+reset controller. I was just saying that it would've been nice if it had
+been named GMI consistently.
 
-device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
-device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
+> > Could you perhaps explain in the commit message why 86.5 MHz is a sane
+> > default? I'm totally unfamiliar with this controller, so maybe it's
+> > self-explanatory, but it seems a rather odd value for a clock frequency.
+>=20
+> I used a value that I have in a downstream kernel based on the L4T.
+> This frequency is well tested and has worked for me, and wanted to
+> avoid setting it to maximum rate. My guess is that they used 86.5 MHz
+> because 92 MHz is max rate on Tegra2 and they put it slightly below
+> that.
+>=20
+> What is otherwise recommended when initializing clocks? The rate could
+> depend on the chip that is attached but otherwise I would like to set
+> it close to max (or max) rate for performance.
 
->
-> 	Arnd
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
+I think we usually set the default rate to the maximum and let drivers
+clock them down as they see fit. This is so that things run fast by
+default and we often don't have much in the way of power management, at
+least not when drivers are first merged. Maximum clock rate ensure that
+we get good performance by default, rather than having to rely on
+drivers to kick it up a notch.
+
+Thierry
+
+--TKYYegg/GYAC5JIZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXlhK3AAoJEN0jrNd/PrOhEsMP/i4bUMyxfX6xpWXIiPqehu4k
+vc6sH7rpKjSmR95gYLNoXdgfh8w6FmBBvjZt7+qvbDJMbBt6/2LMRXwwSAL+knXJ
+QwX0tnfV2z5YF5hm+V48MwHxrdCa3EFOvV6xjn9bZcD9RRPxjVY0pj5O1IsMVEWm
+mgzhgysUazl7QQT7JHdheSs6/MV7T7mz3wkzU3/XU2d/UKqyjG6XJIF2WCUSVkoy
+2ZiArc3xfUZCrpzo4Ook8qsEfqHelK0hfkDBcFq2pts9maLU8K9v393zhmAuUZxC
+Jab8h2lnjzXOP02+sOoUpuwIglLnI9y4DDgZc/NtnxVqk2z11Ea5SJaWQmBZkDlF
+4RSfgC3Wme1MkV+DPbQVBtUezw2I0QCrhZTNECVw8Y/o/CWuAQ7QikDfo9PW4qhI
+o83ww66q8U8CqrH1euzsyxByTSlUThojA9OpEYwItWTISEd0hoZ6O51HjPbImTt8
+bsLxROuljxOqA14J4m/BKa1NfNs7Q/laCkpyV3AUyNJZhAk/EXWHKsNlOJkcZrkv
+CTLgSxgRbabcnbNjjhQmQ4+f/LkTyxHz4grXmediXJEA6zOrC8T9Bb/y1hJ/ZmIf
+GvxbR66Wynfkq2XvHMkju+ssH+/2CfznaKhlAWs64v5S01BTOJ3k1gC+QIfbM5Jp
+b8ZlY1xDsz3e6pqYSgCa
+=fDkY
+-----END PGP SIGNATURE-----
+
+--TKYYegg/GYAC5JIZ--
