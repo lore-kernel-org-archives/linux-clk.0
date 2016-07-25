@@ -1,111 +1,78 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wan Zongshun <vw@iommu.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	jason@lakedaemon.net, p.zabel@pengutronix.de,
-	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
-Subject: [PATCH v2 10/10] nuc900: add nuc970 platform defconfig file
-Date: Sun, 10 Jul 2016 15:42:22 +0800
-Message-Id: <1468136542-2656-3-git-send-email-vw@iommu.org>
-In-Reply-To: <1468136542-2656-1-git-send-email-vw@iommu.org>
-References: <1468136542-2656-1-git-send-email-vw@iommu.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <mirza.krak@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160725133922.GK21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <20160725115923.GF21170@ulmo.ba.sec> <CALw8SCU6vWeDyoy+t53k2+tmnrZd+ieBV88Vc6FSL9x3FzSm5g@mail.gmail.com>
+ <20160725133922.GK21170@ulmo.ba.sec>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Mon, 25 Jul 2016 15:50:55 +0200
+Message-ID: <CALw8SCVkAXN0GBFXKthB=bHCAiOioVE-MTg3AGsZHK3kdcEMJw@mail.gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add nuc970_defconfig file support.
+2016-07-25 15:39 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Mon, Jul 25, 2016 at 03:30:34PM +0200, Mirza Krak wrote:
+>> 2016-07-25 13:59 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> > On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
+>> >>
+>> >
+>> >> > +Note that the NOR controller does not have any internal chip-select address
+>> >> > +decoding and if you want to access multiple devices external chip-select
+>> >> > +decoding must be provided.
+>> >>
+>> >> Although it is true, you do have the MIO address space and so you could
+>> >> support two devices via the SNOR address space and MIO address space
+>> >> (assuming that the MIO can be used for the 2nd device).
+>> >
+>> > Now I'm even more confused. If the GMI controller itself can't select a
+>> > chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
+>> > that not select a specific chip?
+>> >
+>> >> Furthermore, if you do have external logic to support multiple devices
+>> >> this would assume that the devices use the same timing and so are
+>> >> probably the same type. It also assumes both can fit in the 256MB
+>> >> address range. May be worth mentioning.
+>> >
+>> > Similarly if you switch between different devices, wouldn't you have to
+>> > reprogram the timing registers if they are different?
+>> >
+>> > The way I remember this kind of interface to work (it's been a long time
+>> > since I used one) is that in order to operate on a chip you need to
+>> > acquire the bus first. Typically that would be an API exposed by the bus
+>> > driver or some framework that the bus driver registers with. That API
+>> > arbitrates between multiple devices on the bus and makes sure that the
+>> > proper chip select is asserted and timing is programmed when you're
+>> > granted access. A driver that has acquired the bus can then perform what
+>> > operations they need and release the bus when done.
+>> >
+>> > SPI uses a mechanism like this, for example.
+>> >
+>> > Thierry
+>>
+>> From my experience (maybe not as long as yours :)) but these kind of
+>> things would be handled by the controller. At least with previous SOCs
+>> that I have used, PXA270, PXA300 and i.MX SOCs.
+>>
+>> That it has an address range per chip-select PIN and timing registers
+>> per chip-select. And thus eliminating a need for a infrastructure or
+>> framework.
+>
+> Okay, so the controllers have a translation table that needs to be
+> programmed and which maps address ranges to chip-selects. That's a nifty
+> feature, but I think it's also fairly specialized. In such a setup there
+> doesn't need to be a concept of chip-selects in software because it's
+> all transparently handled by the controller. Effectively the only time a
+> chip-select is needed is during the initial programming of the
+> controller when the translation table is set up.
 
-Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
----
- arch/arm/configs/nuc970_defconfig | 76 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 arch/arm/configs/nuc970_defconfig
-
-diff --git a/arch/arm/configs/nuc970_defconfig b/arch/arm/configs/nuc970_defconfig
-new file mode 100644
-index 0000000..b39a406
---- /dev/null
-+++ b/arch/arm/configs/nuc970_defconfig
-@@ -0,0 +1,76 @@
-+# CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_SYSVIPC=y
-+# CONFIG_CROSS_MEMORY_ATTACH is not set
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_BSD_PROCESS_ACCT=y
-+CONFIG_BSD_PROCESS_ACCT_V3=y
-+CONFIG_CGROUPS=y
-+CONFIG_CGROUP_SCHED=y
-+CONFIG_RT_GROUP_SCHED=y
-+CONFIG_CGROUP_FREEZER=y
-+CONFIG_CPUSETS=y
-+CONFIG_CGROUP_DEVICE=y
-+CONFIG_CGROUP_CPUACCT=y
-+CONFIG_CGROUP_PERF=y
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_INITRAMFS_SOURCE="../rootfs"
-+CONFIG_PERF_EVENTS=y
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_ARCH_W90X900=y
-+CONFIG_SOC_NUC970=y
-+# CONFIG_MACH_W90P910EVB is not set
-+CONFIG_PREEMPT=y
-+CONFIG_AEABI=y
-+CONFIG_OABI_COMPAT=y
-+CONFIG_ARM_APPENDED_DTB=y
-+CONFIG_CMDLINE="root=/dev/ram0 console=ttyS0,115200n8 rdinit=/sbin/init mem=64M"
-+CONFIG_KEXEC=y
-+CONFIG_FPE_NWFPE=y
-+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+# CONFIG_SUSPEND is not set
-+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+# CONFIG_STANDALONE is not set
-+# CONFIG_PREVENT_FIRMWARE_BUILD is not set
-+# CONFIG_FIRMWARE_IN_KERNEL is not set
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_BLK_DEV_RAM_SIZE=16384
-+CONFIG_SCSI=y
-+# CONFIG_SCSI_PROC_FS is not set
-+CONFIG_BLK_DEV_SD=y
-+# CONFIG_SCSI_LOWLEVEL is not set
-+# CONFIG_INPUT_MOUSEDEV is not set
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_SERIO is not set
-+CONFIG_VT_HW_CONSOLE_BINDING=y
-+# CONFIG_LEGACY_PTYS is not set
-+CONFIG_SERIAL_NUC970=y
-+CONFIG_SERIAL_NUC970_CONSOLE=y
-+# CONFIG_HW_RANDOM is not set
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_NUC900=y
-+# CONFIG_HWMON is not set
-+# CONFIG_HID is not set
-+# CONFIG_USB_SUPPORT is not set
-+# CONFIG_IOMMU_SUPPORT is not set
-+# CONFIG_DNOTIFY is not set
-+# CONFIG_INOTIFY_USER is not set
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+CONFIG_ROMFS_FS=y
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
-+# CONFIG_ENABLE_WARN_DEPRECATED is not set
-+# CONFIG_ENABLE_MUST_CHECK is not set
-+CONFIG_DEBUG_FS=y
-+CONFIG_RCU_CPU_STALL_TIMEOUT=300
-+CONFIG_STRICT_DEVMEM=y
-+# CONFIG_ARM_UNWIND is not set
--- 
-2.7.4
+Yes, and in some cases you can not "program" the map as it is fixed in hardware.
