@@ -1,74 +1,185 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	stephen.boyd@linaro.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 1/6] clk: Fix inconsistencies in usage of data types
-Date: Mon, 11 Jul 2016 16:20:34 +0530
-Message-Id: <1468234239-28693-2-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
-References: <1468234239-28693-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jul 2016 17:34:16 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mirza Krak <mirza.krak@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
+	linux@armlinux.org.uk
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Message-ID: <20160725153416.GT21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
+ <20160725141544.GN21170@ulmo.ba.sec>
+ <CALw8SCWouYF+CY7n67mFxyL2CFbY4k1oB7oySTU9WkSMqosFUA@mail.gmail.com>
+ <44b2703e-a417-eb3e-b154-6919dc6618d7@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7Ha3rcGc4ZVRbLT1"
+In-Reply-To: <44b2703e-a417-eb3e-b154-6919dc6618d7@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-index is of type u8 in all places except in clk_hw_get_parent_by_index()
-and return value of all round_rate functions is long except for
-clk_hw_round_rate(). Make them consistent with the rest of the places
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/clk.c            | 4 ++--
- include/linux/clk-provider.h | 5 ++---
- 2 files changed, 4 insertions(+), 5 deletions(-)
+--7Ha3rcGc4ZVRbLT1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d584004..1af6989 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -359,7 +359,7 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
- }
- 
- struct clk_hw *
--clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
-+clk_hw_get_parent_by_index(const struct clk_hw *hw, u8 index)
- {
- 	struct clk_core *parent;
- 
-@@ -845,7 +845,7 @@ int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- }
- EXPORT_SYMBOL_GPL(__clk_determine_rate);
- 
--unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
-+long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
- {
- 	int ret;
- 	struct clk_rate_request req;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index fb39d5a..5cf82cc 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -729,8 +729,7 @@ const char *clk_hw_get_name(const struct clk_hw *hw);
- struct clk_hw *__clk_get_hw(struct clk *clk);
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
--struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
--					  unsigned int index);
-+struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw, u8 index);
- unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
-@@ -757,7 +756,7 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- /*
-  * FIXME clock api without lock protection
-  */
--unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
-+long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
- 
- struct of_device_id;
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On Mon, Jul 25, 2016 at 04:01:49PM +0100, Jon Hunter wrote:
+>=20
+> On 25/07/16 15:38, Mirza Krak wrote:
+> > 2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> >> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+> >>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> >> [...]
+> >>>> The above suggests that one of the CAN controllers gets mapped to an
+> >>>> address 0x48000000 and the other gets mapped to 0x48040000. But why =
+do
+> >>>> we even need a chip-select at all in that case? If both chips don't =
+use
+> >>>> any overlapping memory region, what good does the chip-select do?
+> >>>
+> >>> If we take a look on similar controllers found on others SOCs they
+> >>> usually define an address range / chip-select.
+> >>>
+> >>> Example (weim):
+> >>> ranges =3D <
+> >>> 0 0 0x10000000 0x02000000
+> >>> 1 0 0x12000000 0x01000000
+> >>> 2 0 0x13000000 0x01000000
+> >>> 3 0 0x14000000 0x01000000
+> >>> 4 0 0x15000000 0x01000000
+> >>> 5 0 0x16000000 0x01000000
+> >>>> ;
+> >>>
+> >>> Which means that you all ready have an address mapped to PIN function.
+> >>>
+> >>> But Tegra GMI controller is a first for me, where you do not have this
+> >>> kind of setup in hardware. Usually you also have a timing register /
+> >>> chip-select so that you can connect different chip types.
+> >>>
+> >>> The lack of hardware support do decode an address to a chip-select PIN
+> >>> function, we have implemented this our self externally.
+> >>>
+> >>> We actually have 6 different chips connected to the GMI bus and the
+> >>> "ranges" would be:
+> >>>   ranges =3D <
+> >>>    0 0 0x48000000 0x00000100
+> >>>    1 0 0x48040000 0x00000100
+> >>>    2 0 0x48080000 0x00000100
+> >>>    3 0 0x480A0000 0x00000100
+> >>>    4 0 0x480C0000 0x00000100
+> >>>    5 0 0x480E0000 0x00000100
+> >>>   >;
+> >>>
+> >>> And this not nothing complicated, small number of AND gates and that =
+is it.
+> >>>
+> >>> The chip-select signal is necessary for the access characteristics, so
+> >>> we need to translate an address to an chip-select so that the chip
+> >>> knows the host CPU wants to talk to it.
+> >>>
+> >>> Do not know if I made anything more clear here :).
+> >>
+> >> Yes, that clarifies many things. The presence of an external, address-
+> >> based chip-select is essential information in order to describe this
+> >> setup properly.
+> >>
+> >> Given that the external chip select is entirely invisible to software,=
+ I
+> >> think a more accurate description of your setup would be:
+> >>
+> >>         gmi@70090000 {
+> >>                 ...
+> >>
+> >>                 /* for the chip select */
+> >>                 #address-cells =3D <1>;
+> >>                 #size-cells =3D <0>;
+> >>
+> >>                 /*
+> >>                  * Technically this could be used to translate the ran=
+ge from
+> >>                  * 0x48000000 to 0x4fffffff into a different range, bu=
+t that
+> >>                  * no longer works because of the #address-cells. Does=
+ this
+> >>                  * matter?
+> >>                  */
+> >>                 ranges;
+> >>
+> >>                 bus@0 {
+> >>                         compatible =3D "simple-bus";
+> >>                         reg =3D <0>;
+> >>
+> >>                         #address-cells =3D <1>;
+> >>                         #size-cells =3D <1>;
+> >>
+> >>                         can@48000000 {
+> >>                                 reg =3D <0x48000000 0x100>;
+> >>                                 ...
+> >>                         };
+> >>
+> >>                         can@48040000 {
+> >>                                 reg =3D <0x48040000 0x100>;
+> >>                                 ...
+> >>                         };
+> >>                 };
+> >>         };
+> >>
+> >> That omits any reference to the external chip select, which I think
+> >> makes sense because it's something that software is completely unaware
+> >> of.
+> >>
+> >> Perhaps one important question: does your setup use the GMI's CS lines
+> >> in any way? Or does it simply get ignored?
+> >=20
+> > Yes, we use the GMI`s CS line. It is important that is present because
+> > it is ANDED with address lines and NOT ALE line. Especially since we
+> > run the GMI controller in AD_MUX mode, which means that we use same
+> > pins for address and data and the access happens in two phases, one
+> > address latch phase where CS is not asserted but ALE is, second
+> > read/write phase where CS must be asserted. In this case we need the
+> > GMI`s CS line to determine which phase we are in.
+>=20
+> Even though the CS is used, we could still implement the driver such
+> that if only 1 CS is defined in the binding, we then statically program
+> the configuration at probe. For now, if there is more than one, we can
+> return an error from probe as it is not supported or default to the
+> first CS defined and warn?
+
+I think either would work. Possibly better to do the latter because at
+least some devices will work that way.
+
+Thierry
+
+--7Ha3rcGc4ZVRbLT1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXljF1AAoJEN0jrNd/PrOh40IP/2NFERmRV+toofCmZtDWGuiv
+2EaUi7RdUkyGmbyHxwV8og9F8DLqpteBx+gMThjqmLUEFeub/1Fr+KdhwojNozvc
+jo/ifXUvFFm/EeMJzH6wTWhe2iqkRJEDJUrmifzAA1MbxLQfJUz4pPrbpvb3+WWg
+mieZ98ieHU2+zuHTVAriWPy7Y2RPgQfNPLR577nMu8FvMVQjdL0Jc3MYfooVeHWf
+zgvudgZjVTKoLN9XkSZd3zy+MPG/H2XyKObwx+UHXVgXMbbbTf+PQeheZBxevwbX
+hwwW2CiACQBtBdXNATkTdIkmPe9KYDK5g4oyDlgBTQzcbgt0UbnD3aG0f6mfyUiT
+8i9lb1O0xuq+P8DmekrfXlSpRPigH++un1rwguI5Kq/f442fjBnSX05XkwbS8B2i
+3kqmyXVkT0YhrpbMPTjNQi5PoYwuVRnFDYtoPTzarWiCgZydQNDbh1M4F+3QchSu
+c4pLoMJVtfMbWBa1gJFt4R9aXVYMWfzraD7KwbD9eloIlsA488M8t19yscTmFQM9
+ySxATCOxAi2m4nt9NqeepBMsS2sQooELTIeTDQI7QF9oqgYLS/7wtqUU85CSklBW
+JCBjPscQAjmCD4uWW9mrZDtMLHsLf4ELtJXCj2nC1MVXN1NfDsEOQ86B6mB+7D+g
+hSVOOglO6UPzt1mIpZvE
+=zkOb
+-----END PGP SIGNATURE-----
+
+--7Ha3rcGc4ZVRbLT1--
