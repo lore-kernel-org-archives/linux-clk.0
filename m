@@ -1,74 +1,137 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: [PATCH v2 3/6] dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
-Date: Fri,  8 Jul 2016 00:37:48 +0200
-Message-Id: <1467931071-31004-4-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <mirza.krak@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160725132711.GI21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160720124408.GA19113@rob-hp-laptop>
+ <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
+ <1f280c99-156f-59d3-308f-b4c8ff0f8f7c@nvidia.com> <20160725113638.GE21170@ulmo.ba.sec>
+ <CALw8SCUxbpWGz0Mrp-Wf=jxa84Frk6mubeL9+KAYFAbq+-9CZQ@mail.gmail.com> <20160725132711.GI21170@ulmo.ba.sec>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Mon, 25 Jul 2016 15:33:32 +0200
+Message-ID: <CALw8SCU2Pi2zEyf87qJKGosNSOSz6Br14BzS7DftJ9dhpJs50g@mail.gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the Time Base Generator
-clock used in the Marvell Armada 3700 SoCs.
+2016-07-25 15:27 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Mon, Jul 25, 2016 at 03:20:44PM +0200, Mirza Krak wrote:
+>> 2016-07-25 13:36 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> > On Thu, Jul 21, 2016 at 11:26:09AM +0100, Jon Hunter wrote:
+>> >>
+>> >> On 20/07/16 20:28, Mirza Krak wrote:
+>> >> > 2016-07-20 14:44 GMT+02:00 Rob Herring <robh@kernel.org>:
+>> >> >> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
+>> >> >>> From: Mirza Krak <mirza.krak@gmail.com>
+>> >> >>>
+>> >> >>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
+>> >> >>> Tegra30 SOCs
+>> >> >>>
+>> >> >>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+>> >> >>> ---
+>> >> >>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
+>> >> >>>  1 file changed, 73 insertions(+)
+>> >> >>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+>> >> >>>
+>> >> >>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+>> >> >>> new file mode 100644
+>> >> >>> index 0000000..9ee4a66
+>> >> >>> --- /dev/null
+>> >> >>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+>> >> >>> @@ -0,0 +1,73 @@
+>> >> >>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
+>> >> >>> +
+>> >> >>> +The NOR controller supports a number of memory types, including synchronous NOR,
+>> >> >>> +asynchronous NOR, and other flash memories with similar interfaces, such as
+>> >> >>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
+>> >> >>> +CAN chips, Wi-Fi chips etc.
+>> >> >>> +
+>> >> >>> +The actual devices are instantiated from the child nodes of a NOR node.
+>> >> >>> +
+>> >> >>> +Required properties:
+>> >> >>> +
+>> >> >>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+>> >> >>> + - reg: Should contain NOR controller registers location and length.
+>> >> >>> + - clocks: Must contain one entry, for the module clock.
+>> >> >>> +   See ../clocks/clock-bindings.txt for details.
+>> >> >>> + - resets : Must contain an entry for each entry in reset-names.
+>> >> >>> +   See ../reset/reset.txt for details.
+>> >> >>> + - reset-names : Must include the following entries:
+>> >> >>> +  - nor
+>> >> >>> + - #address-cells: Must be set to 2 to allow memory address translation
+>> >> >>> + - #size-cells:      Must be set to 1 to allow CS address passing
+>> >> >>> + - ranges: Must be set up to reflect the memory layout with four integer
+>> >> >>> +             values for each chip-select line in use.
+>> >> >>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+>> >> >>> +
+>> >> >>> +Note that the NOR controller does not have any internal chip-select address
+>> >> >>> +decoding and if you want to access multiple devices external chip-select
+>> >> >>> +decoding must be provided.
+>> >> >>
+>> >> >> Then what are the 2 chip selects in ranges?
+>> >> >>
+>> >> >> Rob
+>> >> >
+>> >> > Those two chip selects are actually a representation of a external
+>> >> > decoding logic based on what we use on our board. Even though it the
+>> >> > NOR controller only supports one single chip select I wanted to give
+>> >> > an example on how one could create more chip-selects with an external
+>> >> > logic and what it would look like in the device tree representation.
+>> >>
+>> >> Technically, the GMI/SNOR controller supports 8 chip-selects, however,
+>> >> unlike some devices, it appears that software has to select the active
+>> >> chip-select. Although this sounds odd, I believe that the idea is that
+>> >> in order to support devices greater than 256MB (external address space
+>> >> for available NOR/async devices) you can use the chip-selects to page
+>> >> through memory greater than this 256MB range. At least that it my
+>> >> (limited) understanding!
+>> >
+>> > Actually I had assumed that software would at some point need to select
+>> > the active chip to switch between multiple connected chips. I suppose it
+>> > could be possible to have multiple chips share the same chip-select and
+>> > decode the address lines to determine whether they're being accessed or
+>> > not.
+>> >
+>> > What I don't understand, and it's further complicated by the fact that
+>> > external chip-selects are being used, is how does the controller get
+>> > told what chip to select? It seems to me like it would always access the
+>> > same chips because the SNOR_CONFIG_0 register is only ever written on
+>> > ->probe().
+>> >
+>> > For external chip selects, how do they tie in with all this? Who gets to
+>> > implement this logic? Wouldn't we need to abstract this away somehow so
+>> > that we can support whatever board designers will come up with?
+>> >
+>> > Thierry
+>>
+>> You answered it your self :).
+>>
+>> >I suppose it
+>> > could be possible to have multiple chips share the same chip-select and
+>> > decode the address lines to determine whether they're being accessed or
+>> > not.
+>>
+>> That is what we do and is what I refer to as external chip-selects.
+>
+> Okay, so there aren't actually chips or pins that serve as external chip
+> selects, but rather the GMI address lines are used to select the chip? I
+> guess that's more like traditional address decoding rather than chip
+> select. Anyway, understanding how your board design works helps devising
+> a device tree binding that is flexible enough to support production
+> devices.
+>
+> Thierry
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/clock/armada3700-tbg-clock.txt        | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+This is the most accurate descriptor.
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-new file mode 100644
-index 000000000000..0ba1d83ff363
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-@@ -0,0 +1,27 @@
-+* Time Base Generator Clock bindings for Marvell Armada 37xx SoCs
-+
-+Marvell Armada 37xx SoCs provde Time Base Generator clocks which are
-+used as parent clocks for the peripheral clocks.
-+
-+The TBG clock consumer should specify the desired clock by having the
-+clock ID in its "clocks" phandle cell.
-+
-+The following is a list of provided IDs and clock names on Armada 3700:
-+ 0 = TBG A P
-+ 1 = TBG B P
-+ 2 = TBG A S
-+ 3 = TBG B S
-+
-+Required properties:
-+- compatible : shall be "marvell,armada-3700-tbg-clock"
-+- reg : must be the register address of North Bridge PLL register
-+- #clock-cells : from common clock binding; shall be set to 1
-+
-+Example:
-+
-+tbg: tbg@13200 {
-+	compatible = "marvell,armada-3700-tbg-clock";
-+	reg = <0x13200 0x1000>;
-+	clocks = <&xtalclk>;
-+	#clock-cells = <1>;
-+};
--- 
-2.5.0
+> GMI address lines are used to select the chip
+
+Best Regards
+Mirza
