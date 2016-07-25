@@ -1,37 +1,67 @@
-Return-Path: <moinejf@free.fr>
-Date: Tue, 26 Jul 2016 19:43:06 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
- devicetree@vger.kernel.org, dev@linux-sunxi.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
-Message-Id: <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
-In-Reply-To: <1469516671-19377-5-git-send-email-wens@csie.org>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
-	<1469516671-19377-5-git-send-email-wens@csie.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <mirza.krak@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160725141544.GN21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com> <20160725141544.GN21170@ulmo.ba.sec>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Mon, 25 Jul 2016 21:59:34 +0200
+Message-ID: <CALw8SCVmVL82kZapEJA97XqQv6XZnR_S6ddsW1Gwk61v4Px9AA@mail.gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 26 Jul 2016 15:04:26 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> >
+>> > I would've expected this to require some sort of infrastructure to allow
+>> > devices connected to the GMI controller to acquire the bus via some API
+>> > to select their chip.
+>>
+>> Yes, ultimately you would need some sort of infrastructure to allow
+>> devices to acquire the GMI bus if you want to solve this in software.
+>> But at the moment I do not see such an infrastructure in place, and is
+>> it feasible to add one specifically for the GMI controller? If one
+>> such infrastructure was in place we would need to modify all the
+>> drivers that want to use to include Tegra specific infrastructure to
+>> access the GMI bus?
+>>
+>> Since my knowledge is limited it hard for me to comment on this, maybe
+>> there is a simple way of doing this?
+>
+> I don't think there's a simple way to do this. In order to properly
+> implement it we'd need to implement a generic infrastructure for chip
+> selects so that drivers such as the one for your CAN controller can be
+> written without tying them specifically to the Tegra GMI controller.
+>
+> From what you and Jon were saying it sounds like the drivers are
+> completely agnostic of any chip-select, so conversion won't be easy.
+> But technically if these chips take a chip-select as input then it's
+> always possible to hook them up to a controller that doesn't do this
+> automatic translation of address to chip-select, so eventually some
+> setup is bound to come along where they'd need explicit chip-select
+> handling as well.
+>
+> I don't think it's fair to require you to implement this infrastructure
+> if you don't actually need it. At the same time I want to be cautious
+> and make sure we keep the driver and binding flexible enough to allow
+> us to implement explicit chip-selects should we later need them.
+>
+> Thierry
 
-> Some clock muxes have holes, i.e. invalid or unconnected inputs,
-> between parent mux values.
->=20
-> Add support for specifying a mux table to map clock parents to
-> mux values.
+One thing that should be noted, and that is the GMI controller also
+supports a DMA master mode (feature for the future?).
 
-Putting empty strings in the holes should work. No?
-Ex:
+I do not really know how this effects the binding we are discussing
+but wanted to put it out there.
 
-static const char * const csi_mclk_parents[] =3D
-	{ "pll-video0", "pll-video1", "", "", "", "osc24M" };
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Best Regards,
+Mirza
