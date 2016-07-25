@@ -1,135 +1,118 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-arm-kernel@lists.infradead.org>, Julien Grall
-	<julien.grall@arm.com>, Mark Rutland <mark.rutland@arm.com>, Michael
- Turquette <mturquette@baylibre.com>
-CC: <xen-devel@lists.xenproject.org>, <devicetree@vger.kernel.org>, Stefano
- Stabellini <sstabellini@kernel.org>, <linux-clk@vger.kernel.org>, Stephen
- Boyd <sboyd@codeaurora.org>, Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v4] xen/arm: Add a clock property
-Date: Tue, 12 Jul 2016 09:46:45 +0200
-Message-ID: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jul 2016 15:39:22 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
+	linux@armlinux.org.uk
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Message-ID: <20160725133922.GK21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <20160725115923.GF21170@ulmo.ba.sec>
+ <CALw8SCU6vWeDyoy+t53k2+tmnrZd+ieBV88Vc6FSL9x3FzSm5g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nzri8VXeXB/g5ayr"
+In-Reply-To: <CALw8SCU6vWeDyoy+t53k2+tmnrZd+ieBV88Vc6FSL9x3FzSm5g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks described by this property are reserved for use by Xen, and the OS
-must not alter their state any way, such as disabling or gating a clock,
-or modifying its rate. Ensuring this may impose constraints on parent
-clocks or other resources used by the clock tree.
 
-This property is used to proxy clocks for devices Xen has taken ownership
-of, such as UARTs, for which the associated clock controller(s) remain
-under the control of Dom0.
+--nzri8VXeXB/g5ayr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Up to now, the workaround for this has been to use the Linux kernel
-command line parameter 'clk_ignore_unused'. See Xen bug
+On Mon, Jul 25, 2016 at 03:30:34PM +0200, Mirza Krak wrote:
+> 2016-07-25 13:59 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> > On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
+> >>
+> >
+> >> > +Note that the NOR controller does not have any internal chip-select=
+ address
+> >> > +decoding and if you want to access multiple devices external chip-s=
+elect
+> >> > +decoding must be provided.
+> >>
+> >> Although it is true, you do have the MIO address space and so you could
+> >> support two devices via the SNOR address space and MIO address space
+> >> (assuming that the MIO can be used for the 2nd device).
+> >
+> > Now I'm even more confused. If the GMI controller itself can't select a
+> > chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
+> > that not select a specific chip?
+> >
+> >> Furthermore, if you do have external logic to support multiple devices
+> >> this would assume that the devices use the same timing and so are
+> >> probably the same type. It also assumes both can fit in the 256MB
+> >> address range. May be worth mentioning.
+> >
+> > Similarly if you switch between different devices, wouldn't you have to
+> > reprogram the timing registers if they are different?
+> >
+> > The way I remember this kind of interface to work (it's been a long time
+> > since I used one) is that in order to operate on a chip you need to
+> > acquire the bus first. Typically that would be an API exposed by the bus
+> > driver or some framework that the bus driver registers with. That API
+> > arbitrates between multiple devices on the bus and makes sure that the
+> > proper chip select is asserted and timing is programmed when you're
+> > granted access. A driver that has acquired the bus can then perform what
+> > operations they need and release the bus when done.
+> >
+> > SPI uses a mechanism like this, for example.
+> >
+> > Thierry
+>=20
+> From my experience (maybe not as long as yours :)) but these kind of
+> things would be handled by the controller. At least with previous SOCs
+> that I have used, PXA270, PXA300 and i.MX SOCs.
+>=20
+> That it has an address range per chip-select PIN and timing registers
+> per chip-select. And thus eliminating a need for a infrastructure or
+> framework.
 
-http://bugs.xenproject.org/xen/bug/45
+Okay, so the controllers have a translation table that needs to be
+programmed and which maps address ranges to chip-selects. That's a nifty
+feature, but I think it's also fairly specialized. In such a setup there
+doesn't need to be a concept of chip-selects in software because it's
+all transparently handled by the controller. Effectively the only time a
+chip-select is needed is during the initial programming of the
+controller when the translation table is set up.
 
-too.
+=46rom a software point of view the devices are then addressed by memory
+address alone, so they aren't on a "manually switched" bus using chip-
+selects.
 
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-Changes in v4: Switch to the xen.txt description proposed by Mark:
-               https://www.spinics.net/lists/arm-kernel/msg516158.html
+Thierry
 
-Changes in v3: Use the xen.txt description proposed by Michael. Thanks!
+--nzri8VXeXB/g5ayr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Changes in v2: Drop the Linux implementation details like clk_disable_unused
-	       in xen.txt.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
- Documentation/devicetree/bindings/arm/xen.txt | 12 +++++++
- arch/arm/xen/enlighten.c                      | 47 +++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+iQIcBAABCAAGBQJXlhaKAAoJEN0jrNd/PrOhoCIP/ioNAe4W4/LZZipU04ckvf7B
+HA4bbh8fWANkpFmwofLiE+3LkWoL9duMGORx0aHrLrKfa+L+q2ZHaY/Wjld5oNtP
+O59xUdSOaAMZILq63/QxIpeo/hC7O0J7gvavzovOYlN54slYUVYmmK/xMwcRzdAA
+WE5dx2jbonKYfSdRjJrUiHnBMlFNWKKYQF8NhaX5skNtI8JwTZEclP9U99tpogCi
+FcWQTBYP2XxiWJM03xDllZGDDltjkOJM0rSf5KBQN3DTNkWuAp4UIyVxzBHNW0K4
+dAGHf3eUvj+XTwO0BhladBzpcOD+j/mKn+GNoj6xwLModxf0nZO5oR1NkIZl5/wb
+Zc5sP03lQMeWOvGcezMm5Qcx/GKuCsWxkc6lqTZFjksVeNMz731g+fdILGmBM14L
+tpQJ2ig17V/uzxCUAQ5ENqYKb1JjooSOtbWZPionactKrtXL4XdRZUKOiOvkGaad
+JVodVYnClyaV1Tt7Pqdl8/3IzffV1rb1oA+Ac+2tEtzU/tBgDan85jK1VqH1sHkB
+46CWoGBZtjNEkYIQx+xunEbY/6usKYHOeWQ+gO7IRR4RYRhir5jKMJKnCcm0geGP
+QFTcV9QLGXTnRRqxM+QwOaL4TIotF7Yy9vPWGpcEHAPpaGksvb8qoLOhPQd2dq8k
+uZ8QCO2ViBkLK/zMVogA
+=KGlk
+-----END PGP SIGNATURE-----
 
-diff --git a/Documentation/devicetree/bindings/arm/xen.txt b/Documentation/devicetree/bindings/arm/xen.txt
-index c9b9321..437e50b 100644
---- a/Documentation/devicetree/bindings/arm/xen.txt
-+++ b/Documentation/devicetree/bindings/arm/xen.txt
-@@ -17,6 +17,18 @@ the following properties:
-   A GIC node is also required.
-   This property is unnecessary when booting Dom0 using ACPI.
- 
-+Optional properties:
-+
-+- clocks: a list of phandle + clock-specifier pairs
-+  Clocks described by this property are reserved for use by Xen, and the
-+  OS must not alter their state any way, such as disabling or gating a
-+  clock, or modifying its rate. Ensuring this may impose constraints on
-+  parent clocks or other resources used by the clock tree.
-+
-+  Note: this property is used to proxy clocks for devices Xen has taken
-+  ownership of, such as UARTs, for which the associated clock
-+  controller(s) remain under the control of Dom0.
-+
- To support UEFI on Xen ARM virtual platforms, Xen populates the FDT "uefi" node
- under /hypervisor with following parameters:
- 
-diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-index 47acb36..5c546d0 100644
---- a/arch/arm/xen/enlighten.c
-+++ b/arch/arm/xen/enlighten.c
-@@ -24,6 +24,7 @@
- #include <linux/of_fdt.h>
- #include <linux/of_irq.h>
- #include <linux/of_address.h>
-+#include <linux/clk-provider.h>
- #include <linux/cpuidle.h>
- #include <linux/cpufreq.h>
- #include <linux/cpu.h>
-@@ -444,6 +445,52 @@ static int __init xen_pm_init(void)
- }
- late_initcall(xen_pm_init);
- 
-+/*
-+ * Check if we want to register some clocks, that they
-+ * are not freed because unused by clk_disable_unused().
-+ * E.g. the serial console clock.
-+ */
-+static int __init xen_arm_register_clks(void)
-+{
-+	struct clk *clk;
-+	struct device_node *xen_node;
-+	unsigned int i, count;
-+	int ret = 0;
-+
-+	xen_node = of_find_compatible_node(NULL, NULL, "xen,xen");
-+	if (!xen_node) {
-+		pr_err("Xen support was detected before, but it has disappeared\n");
-+		return -EINVAL;
-+	}
-+
-+	count = of_clk_get_parent_count(xen_node);
-+	if (!count)
-+		goto out;
-+
-+	for (i = 0; i < count; i++) {
-+		clk = of_clk_get(xen_node, i);
-+		if (IS_ERR(clk)) {
-+			pr_err("Xen failed to register clock %i. Error: %li\n",
-+			       i, PTR_ERR(clk));
-+			ret = PTR_ERR(clk);
-+			goto out;
-+		}
-+
-+		ret = clk_prepare_enable(clk);
-+		if (ret < 0) {
-+			pr_err("Xen failed to enable clock %i. Error: %i\n",
-+			       i, ret);
-+			goto out;
-+		}
-+	}
-+
-+	ret = 0;
-+
-+out:
-+	of_node_put(xen_node);
-+	return ret;
-+}
-+late_initcall(xen_arm_register_clks);
- 
- /* empty stubs */
- void xen_arch_pre_suspend(void) { }
--- 
-2.8.0
+--nzri8VXeXB/g5ayr--
