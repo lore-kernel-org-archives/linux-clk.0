@@ -1,37 +1,54 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Tue, 12 Jul 2016 17:25:46 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
-Message-id: <20160712082545.GG18237@samsunx.samsung>
-References: <57837606.8050906@samsung.com>
- <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
- <CGME20160712082324epcas1p483daf92a019d69f6e96d43e2c55d31cf@epcas1p4.samsung.com>
- <20160712082256.GD9976@sirena.org.uk>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <20160712082256.GD9976@sirena.org.uk>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dev@linux-sunxi.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/9] clk: sunxi-ng: nk: Make ccu_nk_find_best static
+Date: Tue, 26 Jul 2016 15:04:24 +0800
+Message-Id: <1469516671-19377-3-git-send-email-wens@csie.org>
+In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-> > Patch a9e93e8 has erroneously removed some comments which are
-> > important to understand why the bus frequency is multiplied by
-> > two during the spi transfer.
-> 
-> Please don't bury patches in the middle of old threads, it makes it very
-> confusing trying to figure out what's going on especially when you do
-> this one patch at a time in a series.  Submit new patches as a complete
-> series, ideally not threaded in with anything else (at least for me).
+make C=2 reports:
 
-OK, sorry, do you want me to send everything again?
+  CHECK   drivers/clk/sunxi-ng/ccu_nk.c
+drivers/clk/sunxi-ng/ccu_nk.c:17:6: warning: symbol 'ccu_nk_find_best' was
+not declared. Should it be static?
 
-Andi
+ccu_nk_find_best is only used within ccu_nk.c. So make it static to get
+rid of this warning.
+
+Fixes: adbfb0056e03 ("clk: sunxi-ng: Add N-K-factor clock support")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_nk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index 4470ffc8cf0d..d6fafb397489 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -14,9 +14,9 @@
+ #include "ccu_gate.h"
+ #include "ccu_nk.h"
+ 
+-void ccu_nk_find_best(unsigned long parent, unsigned long rate,
+-		      unsigned int max_n, unsigned int max_k,
+-		      unsigned int *n, unsigned int *k)
++static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
++			     unsigned int max_n, unsigned int max_k,
++			     unsigned int *n, unsigned int *k)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned int best_k = 0, best_n = 0;
+-- 
+2.8.1
