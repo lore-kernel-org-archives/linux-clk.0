@@ -1,1007 +1,637 @@
-Return-Path: <njaigane@codeaurora.org>
-From: njaigane@codeaurora.org
-To: linux-arm-msm@vger.kernel.org
-Cc: linux@qca.qualcomm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	twp@codeaurora.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	plai@codeaurora.org,
-	bgoswami@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	bjorn.andersson@linaro.org,
-	varada@codeaurora.org,
-	pradeepb@codeaurora.org,
-	snlakshm@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	bselvara@codeaurora.org,
-	Jaiganesh Narayanan <njaigane@codeaurora.org>
-Subject: [PATCH 1/4] qcom: ipq4019: Add ipq4019 ASoC device tree changes
-Date: Fri, 15 Jul 2016 12:37:03 +0530
-Message-Id: <1468566426-19598-2-git-send-email-njaigane@codeaurora.org>
-In-Reply-To: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
-References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 1/2] clk: uniphier: add core support code for UniPhier clock drivers
+Date: Wed, 27 Jul 2016 02:53:07 +0900
+Message-Id: <1469555588-9114-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1469555588-9114-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1469555588-9114-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaiganesh Narayanan <njaigane@codeaurora.org>
+This is the common code for the clock drivers of UniPhier SoCs.
 
-This patch adds the ipq4019 ASoC device tree changes and the
-binding documentation for pcm, spdif, tdm, stereo, codec, mbox,
-adss modules
-
-Signed-off-by: Jaiganesh Narayanan <njaigane@codeaurora.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- .../bindings/sound/qca,ipq4019-audio-adss.txt      |  20 ++
- .../bindings/sound/qca,ipq4019-audio.txt           |  13 ++
- .../bindings/sound/qca,ipq4019-codec.txt           |  15 ++
- .../devicetree/bindings/sound/qca,ipq4019-i2s.txt  |  33 +++
- .../devicetree/bindings/sound/qca,ipq4019-i2s1.txt |  29 +++
- .../devicetree/bindings/sound/qca,ipq4019-i2s2.txt |  29 +++
- .../devicetree/bindings/sound/qca,ipq4019-mbox.txt |  23 ++
- .../bindings/sound/qca,ipq4019-pcm-i2s.txt         |  15 ++
- .../bindings/sound/qca,ipq4019-pcm-i2s1.txt        |  15 ++
- .../bindings/sound/qca,ipq4019-pcm-i2s2.txt        |  15 ++
- .../bindings/sound/qca,ipq4019-pcm-spdif.txt       |  15 ++
- .../bindings/sound/qca,ipq4019-pcm-tdm.txt         |  15 ++
- .../bindings/sound/qca,ipq4019-spdif.txt           |  35 +++
- .../bindings/sound/qca,ipq4019-stereo.txt          |  17 ++
- .../devicetree/bindings/sound/qca,ipq4019-tdm.txt  |  33 +++
- arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi      | 195 ++++++++++++++--
- arch/arm/boot/dts/qcom-ipq4019.dtsi                | 247 ++++++++++++++++++++-
- 17 files changed, 742 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-audio-adss.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-audio.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-codec.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s1.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-i2s2.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-mbox.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s1.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s2.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-spdif.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-tdm.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-spdif.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-stereo.txt
- create mode 100644 Documentation/devicetree/bindings/sound/qca,ipq4019-tdm.txt
 
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-audio-adss.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-audio-adss.txt
-new file mode 100644
-index 0000000..5ba2b9d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-audio-adss.txt
-@@ -0,0 +1,20 @@
-+* Qualcomm Technologies IPQ4019 ASoC audio subsystem driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC audio subsystem driver
-+
-+Required properties:
-+
-+- compatible	: "qca,ipq4019-audio-adss"
-+- reg		: should have the stereo register address, length
-+- resets	: references to the reset controllers
-+- reset-names	: should be "blk_rst"
-+
-+
-+Example:
-+audio: audio@7700000 {
-+	compatible = "qca,ipq4019-audio-adss";
-+	reg = <0x7700000 0x34>;
-+	resets = <&gcc AUDIO_BLK_ARES>;
-+	reset-names = "blk_rst";
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-audio.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-audio.txt
-new file mode 100644
-index 0000000..fde039f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-audio.txt
-@@ -0,0 +1,13 @@
-+* Qualcomm Technologies IPQ4019 ASoC machine driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC machine driver
-+
-+Required properties:
-+
-+- compatible		: "qca,ipq4019-audio"
-+
-+Example:
-+
-+sound: sound {
-+	compatible = "qca,ipq4019-audio";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-codec.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-codec.txt
-new file mode 100644
-index 0000000..3df7742d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-codec.txt
-@@ -0,0 +1,15 @@
-+* Qualcomm Technologies IPQ4019 ASoC Codec driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC Codec driver
-+
-+Required properties:
-+
-+- compatible	: "qca,ipq4019-codec"
-+- reg		: should have the stereo i2c register address
-+
-+Example:
-+qca_codec: qca_codec@12 {
-+	compatible = "qca,ipq4019-codec";
-+	reg = <0x12>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s.txt
-new file mode 100644
-index 0000000..af9b63e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s.txt
-@@ -0,0 +1,33 @@
-+* Qualcomm Technologies IPQ4019 ASoC PCM driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC I2S PCM driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-i2s"
-+- dma-tx-channel : should have the mbox tx channel id
-+- dma-rx-channel : should have the mbox rx channel id
-+- stereo-tx-port : should have the stereo tx id
-+- stereo-rx-port : should have the stereo rx id
-+- clocks	 : should have the audio tx bit clock, tx master clock,
-+		   rx bit clock, rx master clock id
-+- clock-names	 : should be "audio_tx_bclk", "audio_tx_mclk", "audio_rx_bclk",
-+		   "audio_rx_mclk"
-+
-+Example:
-+i2s: ipq4019-pcm-i2s@0 {
-+	compatible = "qca,ipq4019-i2s";
-+	dma-tx-channel = <MBOX0_TX_ID>;
-+	dma-rx-channel = <MBOX3_RX_ID>;
-+	stereo-tx-port = <STEREO0_ID>;
-+	stereo-rx-port = <STEREO3_ID>;
-+	clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+		<&adcc ADCC_TXM_CLK_SRC>,
-+		<&adcc ADCC_RXB_CLK_SRC>,
-+		<&adcc ADCC_RXM_CLK_SRC>;
-+	clock-names = "audio_tx_bclk",
-+		"audio_tx_mclk",
-+		"audio_rx_bclk",
-+		"audio_rx_mclk";
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s1.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s1.txt
-new file mode 100644
-index 0000000..47333b3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s1.txt
-@@ -0,0 +1,29 @@
-+* Qualcomm Technologies IPQ4019 ASoC I2S PCM driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC I2S PCM driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-i2s1"
-+- dma-tx-channel : should have the mbox tx channel id
-+- stereo-tx-port : should have the stereo tx id
-+- clocks	 : should have the audio tx bit clock, tx master clock,
-+		   rx bit clock, rx master clock id
-+- clock-names	 : should be "audio_tx_bclk", "audio_tx_mclk", "audio_rx_bclk",
-+		   "audio_rx_mclk"
-+
-+Example:
-+i2s1: ipq4019-pcm-i2s1@0 {
-+	compatible = "qca,ipq4019-i2s1";
-+	dma-tx-channel = <MBOX1_TX_ID>;
-+	stereo-tx-port = <STEREO1_ID>;
-+	clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+		<&adcc ADCC_TXM_CLK_SRC>,
-+		<&adcc ADCC_RXB_CLK_SRC>,
-+		<&adcc ADCC_RXM_CLK_SRC>;
-+	clock-names = "audio_tx_bclk",
-+		"audio_tx_mclk",
-+		"audio_rx_bclk",
-+		"audio_rx_mclk";
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s2.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s2.txt
-new file mode 100644
-index 0000000..9af0113
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-i2s2.txt
-@@ -0,0 +1,29 @@
-+* Qualcomm Technologies IPQ4019 ASoC I2S PCM driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC I2S PCM driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-i2s2"
-+- dma-tx-channel : should have the mbox tx channel id
-+- stereo-tx-port : should have the stereo tx id
-+- clocks	 : should have the audio tx bit clock, tx master clock,
-+		   rx bit clock, rx master clock id
-+- clock-names	 : should be "audio_tx_bclk", "audio_tx_mclk", "audio_rx_bclk",
-+		   "audio_rx_mclk"
-+
-+Example:
-+i2s1: ipq4019-pcm-i2s2@0 {
-+	compatible = "qca,ipq4019-i2s2";
-+	dma-tx-channel = <MBOX2_TX_ID>;
-+	stereo-tx-port = <STEREO2_ID>;
-+	clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+		<&adcc ADCC_TXM_CLK_SRC>,
-+		<&adcc ADCC_RXB_CLK_SRC>,
-+		<&adcc ADCC_RXM_CLK_SRC>;
-+	clock-names = "audio_tx_bclk",
-+		"audio_tx_mclk",
-+		"audio_rx_bclk",
-+		"audio_rx_mclk";
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-mbox.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-mbox.txt
-new file mode 100644
-index 0000000..51d6c51
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-mbox.txt
-@@ -0,0 +1,23 @@
-+* Qualcomm Technologies IPQ4019 ASoC MBOX driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC mbox driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-mbox"
-+- dma-index	 : should have the mbox dma index
-+- reg		 : should have the stereo register address, length
-+- interrupts	 : should have the mbox interrupt no
-+- tx-channel	 : should have the mbox tx id
-+- rx-channel	 : should have the mbox rx id
-+
-+Example:
-+mbox0: mbox@7708000 {
-+	compatible = "qca,ipq4019-mbox";
-+	dma-index = <0>;
-+	reg = <0x7708000 0x1000>;
-+	interrupts = <0 156 0>;
-+	tx-channel = <MBOX0_TX_ID>;
-+	rx-channel = <MBOX0_RX_ID>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s.txt
-new file mode 100644
-index 0000000..a47c7fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s.txt
-@@ -0,0 +1,15 @@
-+* Qualcomm Technologies IPQ4019 ASoC platform driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC platform driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-pcm-i2s"
-+- reg		 : should have the stereo register address, length
-+
-+Example:
-+i2splatform: qca-pcm-i2s@7709000 {
-+	compatible = "qca,ipq4019-pcm-i2s";
-+	reg = <0x7709000 0x1000>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s1.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s1.txt
-new file mode 100644
-index 0000000..cf23ca0b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s1.txt
-@@ -0,0 +1,15 @@
-+* Qualcomm Technologies IPQ4019 ASoC platform driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC platform driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-pcm-i2s1"
-+- reg		 : should have the stereo register address, length
-+
-+Example:
-+i2s1platform: qca-pcm-i2s1@770b000 {
-+	compatible = "qca,ipq4019-pcm-i2s1";
-+	reg = <0x770b000 0x1000>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s2.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s2.txt
-new file mode 100644
-index 0000000..ae04380
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-i2s2.txt
-@@ -0,0 +1,15 @@
-+* Qualcomm Technologies IPQ4019 ASoC platform driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC platform driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-pcm-i2s2"
-+- reg		 : should have the stereo register address, length
-+
-+Example:
-+i2s2platform: qca-pcm-i2s1@770d000 {
-+	compatible = "qca,ipq4019-pcm-i2s2";
-+	reg = <0x770d000 0x1000>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-spdif.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-spdif.txt
-new file mode 100644
-index 0000000..b47c02c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-spdif.txt
-@@ -0,0 +1,15 @@
-+* Qualcomm Technologies IPQ4019 ASoC SPDIF platform driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC SPDIF platform driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-pcm-spdif"
-+- reg		 : should have the stereo register address, length
-+
-+Example:
-+tdmplatform: qca-pcm-spdif@7707000 {
-+	compatible = "qca,ipq4019-pcm-spdif";
-+	reg = <0x7709000 0x1000>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-tdm.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-tdm.txt
-new file mode 100644
-index 0000000..bd3aaa3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-pcm-tdm.txt
-@@ -0,0 +1,15 @@
-+* Qualcomm Technologies IPQ4019 ASoC TDM platform driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC TDM platform driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-pcm-tdm"
-+- reg		 : should have the stereo register address, length
-+
-+Example:
-+tdmplatform: qca-pcm-tdm@7709000 {
-+	compatible = "qca,ipq4019-pcm-tdm";
-+	reg = <0x7709000 0x1000>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-spdif.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-spdif.txt
-new file mode 100644
-index 0000000..5a80bbe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-spdif.txt
-@@ -0,0 +1,35 @@
-+* Qualcomm Technologies IPQ4019 ASoC SPDIF driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC SPDIF driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-spdif"
-+- dma-tx-channel : should have the mbox tx channel id
-+- dma-rx-channel : should have the mbox rx channel id
-+- stereo-tx-port : should have the stereo tx id
-+- stereo-rx-port : should have the stereo tx id
-+- clocks	 : should have the audio tx bit clock, tx master clock,
-+		   spdif clock, spdif divider clock, spdif in fast clock
-+- clock-names	 : should be "audio_tx_bclk", "audio_tx_mclk", "audio_spdif_src",
-+		   "audio_spdif_div2", "audio_spdifinfast_src"
-+
-+Example:
-+spdif: spdif@0 {
-+	compatible = "qca,ipq4019-spdif";
-+	dma-tx-channel = <MBOX0_TX_ID>;
-+	dma-rx-channel = <MBOX3_RX_ID>;
-+	stereo-tx-port = <STEREO0_ID>;
-+	stereo-rx-port = <STEREO3_ID>;
-+	clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+		<&adcc ADCC_TXM_CLK_SRC>,
-+		<&adcc ADCC_SPDIF_SRC>,
-+		<&adcc ADCC_SPDIFDIV2_SRC>,
-+		<&adcc ADCC_AUDIO_SPDIFINFAST_SRC>;
-+	clock-names = "audio_tx_bclk",
-+		"audio_tx_mclk",
-+		"audio_spdif_src",
-+		"audio_spdif_div2",
-+		"audio_spdifinfast_src";
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-stereo.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-stereo.txt
-new file mode 100644
-index 0000000..35b4815
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-stereo.txt
-@@ -0,0 +1,17 @@
-+* Qualcomm Technologies IPQ4019 ASoC stereo driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC stereo driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-stereo"
-+- reg		 : should have the stereo register address, length
-+- stereo-index	 : should have the stereo port index
-+
-+Example:
-+stereo0: stereo@7709000 {
-+	compatible = "qca,ipq4019-stereo";
-+	reg = <0x7709000 0x1000>;
-+	stereo-index = <STEREO0_ID>;
-+	status = "disabled";
-+};
-diff --git a/Documentation/devicetree/bindings/sound/qca,ipq4019-tdm.txt b/Documentation/devicetree/bindings/sound/qca,ipq4019-tdm.txt
-new file mode 100644
-index 0000000..c2bf38c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qca,ipq4019-tdm.txt
-@@ -0,0 +1,33 @@
-+* Qualcomm Technologies IPQ4019 ASoC TDM driver
-+
-+This node models the Qualcomm Technologies IPQ4019 ASoC TDM driver
-+
-+Required properties:
-+
-+- compatible	 : "qca,ipq4019-tdm"
-+- dma-tx-channel : should have the mbox tx channel id
-+- dma-rx-channel : should have the mbox rx channel id
-+- stereo-tx-port : should have the stereo tx id
-+- stereo-rx-port : should have the stereo tx id
-+- clocks	 : should have the audio tx bit clock, tx master clock,
-+		   rx bit clock, rx master clock id
-+- clock-names	 : should be "audio_tx_bclk", "audio_tx_mclk", "audio_rx_bclk",
-+		   "audio_rx_mclk"
-+
-+Example:
-+tdm: tdm@0 {
-+	compatible = "qca,ipq4019-tdm";
-+	dma-tx-channel = <MBOX0_TX_ID>;
-+	dma-rx-channel = <MBOX3_RX_ID>;
-+	stereo-tx-port = <STEREO0_ID>;
-+	stereo-rx-port = <STEREO3_ID>;
-+	clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+		<&adcc ADCC_TXM_CLK_SRC>,
-+		<&adcc ADCC_RXB_CLK_SRC>,
-+		<&adcc ADCC_RXM_CLK_SRC>;
-+	clock-names = "audio_tx_bclk",
-+		"audio_tx_mclk",
-+		"audio_rx_bclk",
-+		"audio_rx_mclk";
-+	status = "disabled";
-+};
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-index b9457dd2..e2ab95a 100644
---- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-@@ -1,4 +1,4 @@
--/* Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+/* Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
-  *
-  * Permission to use, copy, modify, and/or distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
-@@ -20,26 +20,7 @@
- 	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK01.1";
- 	compatible = "qcom,ipq4019";
+ MAINTAINERS                                      |   1 +
+ drivers/clk/Kconfig                              |   1 +
+ drivers/clk/Makefile                             |   1 +
+ drivers/clk/uniphier/Kconfig                     |   9 ++
+ drivers/clk/uniphier/Makefile                    |   6 ++
+ drivers/clk/uniphier/clk-uniphier-core.c         | 125 +++++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-factor.c |  49 +++++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-rate.c   |  48 +++++++++
+ drivers/clk/uniphier/clk-uniphier-gate.c         |  97 ++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-mux.c          |  95 +++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h              |  83 +++++++++++++++
+ 11 files changed, 515 insertions(+)
+ create mode 100644 drivers/clk/uniphier/Kconfig
+ create mode 100644 drivers/clk/uniphier/Makefile
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6c2d653..022f481 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1795,6 +1795,7 @@ F:	arch/arm/mach-uniphier/
+ F:	arch/arm/mm/cache-uniphier.c
+ F:	arch/arm64/boot/dts/socionext/
+ F:	drivers/bus/uniphier-system-bus.c
++F:	drivers/clk/uniphier/
+ F:	drivers/i2c/busses/i2c-uniphier*
+ F:	drivers/mmc/host/uniphier-sd.c
+ F:	drivers/pinctrl/uniphier/
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98efbfc..4a8f437 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -215,5 +215,6 @@ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
+ source "drivers/clk/ti/Kconfig"
++source "drivers/clk/uniphier/Kconfig"
  
--	clocks {
--                xo: xo {
--                        compatible = "fixed-clock";
--                        clock-frequency = <48000000>;
--                        #clock-cells = <0>;
--                };
--	};
--
- 	soc {
--
--
--		timer {
--			compatible = "arm,armv7-timer";
--			interrupts = <1 2 0xf08>,
--				     <1 3 0xf08>,
--				     <1 4 0xf08>,
--				     <1 1 0xf08>;
--			clock-frequency = <48000000>;
--		};
--
- 		pinctrl@0x01000000 {
- 			serial_pins: serial_pinmux {
- 				mux {
-@@ -69,6 +50,81 @@
- 					bias-disable;
- 					output-high;
- 				};
+ endmenu
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dcc5e69..f424b27 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -81,6 +81,7 @@ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+ obj-y					+= ti/
++obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
+ obj-$(CONFIG_ARCH_U8500)		+= ux500/
+ obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
+ obj-$(CONFIG_X86)			+= x86/
+diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+new file mode 100644
+index 0000000..a67c133
+--- /dev/null
++++ b/drivers/clk/uniphier/Kconfig
+@@ -0,0 +1,9 @@
++config CLK_UNIPHIER
++	tristate "Clock driver for UniPhier SoCs"
++	depends on ARCH_UNIPHIER || COMPILE_TEST
++	depends on OF && MFD_SYSCON
++	default ARCH_UNIPHIER
++	help
++	  Support for clock controllers on UniPhier SoCs.
++	  Say Y if you want to control clocks provided by System Control
++	  block, Media I/O block, Peripheral Block.
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+new file mode 100644
+index 0000000..8f359aa
+--- /dev/null
++++ b/drivers/clk/uniphier/Makefile
+@@ -0,0 +1,6 @@
++obj-$(CONFIG_CLK_UNIPHIER)	+= clk-uniphier.o
++clk-uniphier-y			+= clk-uniphier-core.o
++clk-uniphier-y			+= clk-uniphier-fixed-factor.o
++clk-uniphier-y			+= clk-uniphier-fixed-rate.o
++clk-uniphier-y			+= clk-uniphier-gate.o
++clk-uniphier-y			+= clk-uniphier-mux.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
+new file mode 100644
+index 0000000..fcb7582
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-core.c
+@@ -0,0 +1,125 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+			};
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
 +
-+			audio_pins: audio_pinmux {
-+				mux_1 {
-+					pins = "gpio25", "gpio53", "gpio60";
-+					function = "i2s_tx_bclk";
-+					bias-pull,up;
-+				};
++#include "clk-uniphier.h"
 +
-+				mux_2 {
-+					pins = "gpio27", "gpio54", "gpio63";
-+					function = "i2s_txd1";
-+					bias-pull,up;
-+				};
++static struct clk_hw *uniphier_clk_register(struct device *dev,
++					    struct regmap *regmap,
++					const struct uniphier_clk_data *data)
++{
++	switch (data->type) {
++	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
++		return uniphier_clk_register_fixed_factor(dev, data->name,
++							  &data->data.factor);
++	case UNIPHIER_CLK_TYPE_FIXED_RATE:
++		return uniphier_clk_register_fixed_rate(dev, data->name,
++							&data->data.rate);
++	case UNIPHIER_CLK_TYPE_GATE:
++		return uniphier_clk_register_gate(dev, regmap, data->name,
++						  &data->data.gate);
++	case UNIPHIER_CLK_TYPE_MUX:
++		return uniphier_clk_register_mux(dev, regmap, data->name,
++						 &data->data.mux);
++	default:
++		dev_err(dev, "unsupported clock type\n");
++		return ERR_PTR(-EINVAL);
++	}
++}
 +
-+				mux_3 {
-+					pins = "gpio28", "gpio55";
-+					function = "i2s_txd2";
-+					bias-pull,up;
-+				};
++static const struct of_device_id uniphier_clk_match[] = {
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, uniphier_clk_match);
 +
-+				mux_4 {
-+					pins = "gpio29", "gpio56";
-+					function = "i2s_txd3";
-+					bias-pull,up;
-+				};
++int uniphier_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct of_device_id *match;
++	struct clk_hw_onecell_data *hw_data;
++	struct device_node *parent;
++	struct regmap *regmap;
++	const struct uniphier_clk_data *p;
++	int clk_num = 0;
 +
-+				mux_5 {
-+					pins = "gpio24", "gpio52";
-+					function = "i2s_tx_mclk";
-+					bias-pull,up;
-+				};
++	match = of_match_node(uniphier_clk_match, dev->of_node);
++	if (!match)
++		return -ENODEV;
 +
-+				mux_6 {
-+					pins = "gpio26", "gpio57", "gpio61";
-+					function = "i2s_tx_fsync";
-+					bias-pull,up;
-+				};
++	parent = of_get_parent(dev->of_node); /* parent should be syscon node */
++	regmap = syscon_node_to_regmap(parent);
++	of_node_put(parent);
++	if (IS_ERR(regmap)) {
++		dev_err(dev, "failed to get regmap (error %ld)\n",
++			PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
 +
-+				mux_7 {
-+					pins = "gpio2", "gpio23", "gpio63";
-+					function = "i2s_rxd";
-+					bias-pull,up;
-+				};
++	for (p = match->data; p->name; p++)
++		clk_num = max(clk_num, p->output_index + 1);
 +
-+				mux_8 {
-+					pins = "gpio20", "gpio58";
-+					function = "i2s_rx_mclk";
-+					bias-pull,up;
-+				};
++	hw_data = devm_kzalloc(dev,
++			sizeof(*hw_data) + clk_num * sizeof(struct clk_hw *),
++			GFP_KERNEL);
++	if (!hw_data)
++		return -ENOMEM;
 +
-+				mux_9 {
-+					pins = "gpio0", "gpio21", "gpio60";
-+					function = "i2s_rx_bclk";
-+					bias-pull,up;
-+				};
++	hw_data->num = clk_num;
 +
-+				mux_10 {
-+					pins = "gpio1", "gpio22", "gpio61";
-+					function = "i2s_rx_fsync";
-+					bias-pull,up;
-+				};
++	for (p = match->data; p->name; p++) {
++		struct clk_hw *hw;
 +
-+				mux_11 {
-+					pins = "gpio34", "gpio59", "gpio63";
-+					function = "i2s_spdif_in";
-+					bias-pull,up;
-+				};
++		dev_dbg(dev, "register %s (index=%d)\n", p->name,
++			p->output_index);
++		hw = uniphier_clk_register(dev, regmap, p);
++		if (IS_ERR(hw)) {
++			dev_err(dev, "failed to register %s (error %ld)\n",
++				p->name, PTR_ERR(hw));
++			return PTR_ERR(hw);
++		}
 +
-+				mux_12 {
-+					pins = "gpio35", "gpio62", "gpio63";
-+					function = "i2s_spdif_out";
-+					bias-pull,up;
-+				};
- 			};
- 		};
- 
-@@ -108,5 +164,104 @@
- 		watchdog@b017000 {
- 			status = "ok";
- 		};
++		if (p->output_index >= 0)
++			hw_data->hws[p->output_index] = hw;
++	}
 +
-+		adcc: clock-controller@7700038 {
-+			status = "ok";
-+		};
++	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++				      hw_data);
++}
 +
-+		audio: audio@7700000 {
-+			status = "ok";
-+		};
++int uniphier_clk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
 +
-+		mbox0: mbox@7708000 {
-+			status = "ok";
-+		};
++	return 0;
++}
 +
-+		mbox1: mbox@770a000 {
-+			status = "ok";
-+		};
++static struct platform_driver uniphier_clk_driver = {
++	.probe = uniphier_clk_probe,
++	.remove = uniphier_clk_remove,
++	.driver = {
++		.name = "uniphier-clk",
++		.of_match_table = uniphier_clk_match,
++	},
++};
++module_platform_driver(uniphier_clk_driver);
 +
-+		mbox2: mbox@770c000 {
-+			status = "ok";
-+		};
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier Clock Driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/uniphier/clk-uniphier-fixed-factor.c b/drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+new file mode 100644
+index 0000000..d64ea61
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+@@ -0,0 +1,49 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		mbox3: mbox@770e000 {
-+			status = "ok";
-+		};
++#include <linux/clk-provider.h>
++#include <linux/device.h>
 +
-+		mbox4: mbox@7706000 {
-+			status = "ok";
-+		};
++#include "clk-uniphier.h"
 +
-+		stereo0: stereo@7709000 {
-+			status = "ok";
-+		};
++struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
++						  const char *name,
++			const struct uniphier_clk_fixed_factor_data *data)
++{
++	struct clk_fixed_factor *fix;
++	struct clk_init_data init;
++	int ret;
 +
-+		stereo1: stereo@770b000 {
-+			status = "ok";
-+		};
++	fix = devm_kzalloc(dev, sizeof(*fix), GFP_KERNEL);
++	if (!fix)
++		return ERR_PTR(-ENOMEM);
 +
-+		stereo2: stereo@770d000 {
-+			status = "ok";
-+		};
++	init.name = name;
++	init.ops = &clk_fixed_factor_ops;
++	init.flags = data->parent_name ? CLK_SET_RATE_PARENT : 0;
++	init.flags |= CLK_IS_BASIC;
++	init.parent_names = data->parent_name ? &data->parent_name : NULL;
++	init.num_parents = data->parent_name ? 1 : 0;
 +
-+		stereo3: stereo@770f000 {
-+			status = "ok";
-+		};
++	fix->mult = data->mult;
++	fix->div = data->div;
++	fix->hw.init = &init;
 +
-+		/* Enable Audio Interfaces */
-+		i2s: ipq4019-pcm-i2s@0 {
-+			status = "ok";
-+		};
++	ret = devm_clk_hw_register(dev, &fix->hw);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+		i2splatform: qca-pcm-i2s@7709000 {
-+			status = "ok";
-+		};
++	return &fix->hw;
++}
+diff --git a/drivers/clk/uniphier/clk-uniphier-fixed-rate.c b/drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+new file mode 100644
+index 0000000..e0f55ca
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		i2s1platform: qca-pcm-i2s1@770b000 {
-+			status = "ok";
-+		};
++#include <linux/clk-provider.h>
++#include <linux/device.h>
 +
-+		i2s1: ipq4019-pcm-i2s1@0 {
-+			status = "ok";
-+		};
++#include "clk-uniphier.h"
 +
-+		i2s2platform: qca-pcm-i2s2@770d000 {
-+			status = "ok";
-+		};
++struct clk_hw *uniphier_clk_register_fixed_rate(struct device *dev,
++						const char *name,
++				const struct uniphier_clk_fixed_rate_data *data)
++{
++	struct clk_fixed_rate *fixed;
++	struct clk_init_data init;
++	int ret;
 +
-+		i2s2: ipq4019-pcm-i2s2@0 {
-+			status = "ok";
-+		};
++	/* allocate fixed-rate clock */
++	fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
++	if (!fixed)
++		return ERR_PTR(-ENOMEM);
 +
-+		tdmplatform: qca-pcm-tdm@7709000 {
-+			status = "ok";
-+		};
++	init.name = name;
++	init.ops = &clk_fixed_rate_ops;
++	init.flags = CLK_IS_BASIC;
++	init.parent_names = NULL;
++	init.num_parents = 0;
 +
-+		tdm: tdm@0 {
-+			status = "ok";
-+		};
++	fixed->fixed_rate = data->fixed_rate;
++	fixed->hw.init = &init;
 +
-+		spdifplatform: qca-pcm-spdif@7707000 {
-+			status = "ok";
-+		};
++	ret = devm_clk_hw_register(dev, &fixed->hw);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+		spdif: spdif@0 {
-+			status = "ok";
-+		};
++	return &fixed->hw;
++}
+diff --git a/drivers/clk/uniphier/clk-uniphier-gate.c b/drivers/clk/uniphier/clk-uniphier-gate.c
+new file mode 100644
+index 0000000..f4488fa
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-gate.c
+@@ -0,0 +1,97 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		sound: sound@0 {
-+			pinctrl-0 = <&audio_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/regmap.h>
 +
-+		i2c_0: i2c@78b7000 { /* BLSP1 QUP2 */
-+			status = "ok";
++#include "clk-uniphier.h"
 +
-+			qca_codec: qca_codec@12 {
-+				status = "ok";
-+			};
-+		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index 5c08d19..e2b4810 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -15,6 +15,8 @@
- 
- #include "skeleton.dtsi"
- #include <dt-bindings/clock/qcom,gcc-ipq4019.h>
-+#include <dt-bindings/clock/qca,adcc-ipq4019.h>
-+#include <dt-bindings/sound/ipq4019-audio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
-@@ -90,6 +92,21 @@
- 			clock-frequency = <32768>;
- 			#clock-cells = <0>;
- 		};
++struct uniphier_clk_gate {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	unsigned int reg;
++	unsigned int mask;
++};
 +
-+		xo: xo {
-+			compatible = "fixed-clock";
-+			clock-frequency = <48000000>;
-+			#clock-cells = <0>;
-+		};
-+	};
++#define to_uniphier_clk_gate(_hw) \
++				container_of(_hw, struct uniphier_clk_gate, hw)
 +
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <1 2 0xf08>,
-+			     <1 3 0xf08>,
-+			     <1 4 0xf08>,
-+			     <1 1 0xf08>;
-+		clock-frequency = <48000000>;
- 	};
- 
- 	soc {
-@@ -156,8 +173,13 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
--		};
- 
-+			qca_codec: qca_codec@12 {
-+				compatible = "qca,ipq4019-codec";
-+				reg = <0x12>;
-+				status = "disabled";
-+			};
-+		};
- 
- 		cryptobam: dma@8e04000 {
- 			compatible = "qcom,bam-v1.7.0";
-@@ -263,5 +285,226 @@
- 			compatible = "qcom,pshold";
- 			reg = <0x4ab000 0x4>;
- 		};
++static int uniphier_clk_gate_endisable(struct clk_hw *hw, int enable)
++{
++	struct uniphier_clk_gate *gate = to_uniphier_clk_gate(hw);
 +
-+		adcc: clock-controller@7700038 {
-+			compatible = "qcom,adcc-ipq4019";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			reg = <0x7700038 0x1DC>;
-+			status = "disabled";
-+		};
++	return regmap_write_bits(gate->regmap, gate->reg, gate->mask,
++				 enable ? gate->mask : 0);
++}
 +
-+		audio: audio@7700000 {
-+			compatible = "qca,ipq4019-audio-adss";
-+			reg = <0x7700000 0x34>,
-+				<0x7707000 0x20>;
-+			resets = <&gcc AUDIO_BLK_ARES>;
-+			reset-names = "blk_rst";
-+			status = "disabled";
-+		};
++static int uniphier_clk_gate_enable(struct clk_hw *hw)
++{
++	return uniphier_clk_gate_endisable(hw, 1);
++}
 +
-+		pcm: pcm@7704000 {
-+			compatible = "qca,ipq4019-pcm";
-+			reg = <0x7704000 0x2000>;
-+			dma-tx-channel = <MBOX3_TX_ID>;
-+			dma-rx-channel = <MBOX0_RX_ID>;
-+			stereo-tx-port = <STEREO3_ID>;
-+			stereo-rx-port = <STEREO0_ID>;
-+			clocks = <&adcc ADCC_PCM_CLK_SRC>;
-+			clock-names = "audio_pcm_clk";
-+			status = "disabled";
-+		};
++static void uniphier_clk_gate_disable(struct clk_hw *hw)
++{
++	if (uniphier_clk_gate_endisable(hw, 0) < 0)
++		pr_warn("failed to disable clk\n");
++}
 +
-+		mbox0: mbox@7708000 {
-+			dma-index = <0>;
-+			compatible = "qca,ipq4019-mbox";
-+			reg = <0x7708000 0x1000>;
-+			interrupts = <0 156 0>;
-+			tx-channel = <MBOX0_TX_ID>;
-+			rx-channel = <MBOX0_RX_ID>;
-+			status = "disabled";
-+		};
++static int uniphier_clk_gate_is_enabled(struct clk_hw *hw)
++{
++	struct uniphier_clk_gate *gate = to_uniphier_clk_gate(hw);
++	unsigned int val;
 +
-+		mbox1: mbox@770a000 {
-+			dma-index = <1>;
-+			compatible = "qca,ipq4019-mbox";
-+			reg = <0x770A000 0x1000>;
-+			interrupts = <0 157 0>;
-+			tx-channel = <MBOX1_TX_ID>;
-+			status = "disabled";
-+		};
++	if (regmap_read(gate->regmap, gate->reg, &val) < 0)
++		pr_warn("is_enabled() may return wrong result\n");
 +
-+		mbox2: mbox@770c000 {
-+			dma-index = <2>;
-+			compatible = "qca,ipq4019-mbox";
-+			reg = <0x770C000 0x1000>;
-+			interrupts = <0 158 0>;
-+			tx-channel = <MBOX2_TX_ID>;
-+			status = "disabled";
-+		};
++	return !(~val & gate->mask);
++}
 +
-+		mbox3: mbox@770e000 {
-+			dma-index = <3>;
-+			compatible = "qca,ipq4019-mbox";
-+			reg = <0x770E000 0x1000>;
-+			interrupts = <0 159 0>;
-+			tx-channel = <MBOX3_TX_ID>;
-+			rx-channel = <MBOX3_RX_ID>;
-+			status = "disabled";
-+		};
++static const struct clk_ops uniphier_clk_gate_ops = {
++	.enable = uniphier_clk_gate_enable,
++	.disable = uniphier_clk_gate_disable,
++	.is_enabled = uniphier_clk_gate_is_enabled,
++};
 +
-+		mbox4: mbox@7706000 {
-+			dma-index = <4>;
-+			compatible = "qca,ipq4019-mbox";
-+			reg = <0x7706000 0x1000>;
-+			interrupts = <0 163 0>;
-+			rx-channel = <MBOX_SPDIF_RX_ID>;
-+			status = "disabled";
-+		};
++struct clk_hw *uniphier_clk_register_gate(struct device *dev,
++					  struct regmap *regmap,
++					  const char *name,
++				const struct uniphier_clk_gate_data *data)
++{
++	struct uniphier_clk_gate *gate;
++	struct clk_init_data init;
++	int ret;
 +
-+		stereo0: stereo@7709000 {
-+			stereo-index = <STEREO0_ID>;
-+			compatible = "qca,ipq4019-stereo";
-+			reg = <0x7709000 0x1000>;
-+			status = "disabled";
-+		};
++	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
 +
-+		stereo1: stereo@770b000 {
-+			stereo-index = <STEREO1_ID>;
-+			compatible = "qca,ipq4019-stereo";
-+			reg = <0x770B000 0x1000>;
-+			status = "disabled";
-+		};
++	init.name = name;
++	init.ops = &uniphier_clk_gate_ops;
++	init.flags = data->parent_name ? CLK_SET_RATE_PARENT : 0;
++	init.parent_names = data->parent_name ? &data->parent_name : NULL;
++	init.num_parents = data->parent_name ? 1 : 0;
 +
-+		stereo2: stereo@770d000 {
-+			stereo-index = <STEREO2_ID>;
-+			compatible = "qca,ipq4019-stereo";
-+			reg = <0x770D000 0x1000>;
-+			status = "disabled";
-+		};
++	gate->regmap = regmap;
++	gate->reg = data->reg;
++	gate->mask = data->mask;
++	gate->hw.init = &init;
 +
-+		stereo3: stereo@770f000 {
-+			stereo-index = <STEREO3_ID>;
-+			compatible = "qca,ipq4019-stereo";
-+			reg = <0x770F000 0x1000>;
-+			status = "disabled";
-+		};
++	ret = devm_clk_hw_register(dev, &gate->hw);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+		i2splatform: qca-pcm-i2s@7709000 {
-+			compatible = "qca,ipq4019-pcm-i2s";
-+			reg = <0x7709000 0x1000>;
-+			status = "disabled";
-+		};
++	return &gate->hw;
++}
+diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
+new file mode 100644
+index 0000000..15a2f2c
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-mux.c
+@@ -0,0 +1,95 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		i2s: ipq4019-pcm-i2s@0 {
-+			compatible = "qca,ipq4019-i2s";
-+			dma-tx-channel = <MBOX0_TX_ID>;
-+			stereo-tx-port = <STEREO0_ID>;
-+			dma-rx-channel = <MBOX3_RX_ID>;
-+			stereo-rx-port = <STEREO3_ID>;
-+			clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+				<&adcc ADCC_TXM_CLK_SRC>,
-+				<&adcc ADCC_RXB_CLK_SRC>,
-+				<&adcc ADCC_RXM_CLK_SRC>;
-+			clock-names = "audio_tx_bclk",
-+				"audio_tx_mclk",
-+				"audio_rx_bclk",
-+				"audio_rx_mclk";
-+			status = "disabled";
-+		};
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/regmap.h>
 +
-+		i2s1platform: qca-pcm-i2s1@770b000 {
-+			compatible = "qca,ipq4019-pcm-i2s1";
-+			reg = <0x770b000 0x1000>;
-+			status = "disabled";
-+		};
++#include "clk-uniphier.h"
 +
-+		i2s1: ipq4019-pcm-i2s1@0 {
-+			compatible = "qca,ipq4019-i2s1";
-+			dma-tx-channel = <MBOX1_TX_ID>;
-+			stereo-tx-port = <STEREO1_ID>;
-+			clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+				<&adcc ADCC_TXM_CLK_SRC>,
-+				<&adcc ADCC_RXB_CLK_SRC>,
-+				<&adcc ADCC_RXM_CLK_SRC>;
-+			clock-names = "audio_tx_bclk",
-+				"audio_tx_mclk",
-+				"audio_rx_bclk",
-+				"audio_rx_mclk";
-+			status = "disabled";
-+		};
++struct uniphier_clk_mux {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	unsigned int reg;
++	const unsigned int *masks;
++	const unsigned int *vals;
++};
 +
-+		i2s2platform: qca-pcm-i2s2@770d000 {
-+			compatible = "qca,ipq4019-pcm-i2s2";
-+			reg = <0x770d000 0x1000>;
-+			status = "disabled";
-+		};
++#define to_uniphier_clk_mux(_hw) container_of(_hw, struct uniphier_clk_mux, hw)
 +
-+		i2s2: ipq4019-pcm-i2s2@0 {
-+			compatible = "qca,ipq4019-i2s2";
-+			dma-tx-channel = <MBOX2_TX_ID>;
-+			stereo-tx-port = <STEREO2_ID>;
-+			clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+				<&adcc ADCC_TXM_CLK_SRC>,
-+				<&adcc ADCC_RXB_CLK_SRC>,
-+				<&adcc ADCC_RXM_CLK_SRC>;
-+			clock-names = "audio_tx_bclk",
-+				"audio_tx_mclk",
-+				"audio_rx_bclk",
-+				"audio_rx_mclk";
-+			status = "disabled";
-+		};
++static int uniphier_clk_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
 +
-+		tdmplatform: qca-pcm-tdm@7709000 {
-+			compatible = "qca,ipq4019-pcm-tdm";
-+			reg = <0x7709000 0x1000>;
-+			status = "disabled";
-+		};
++	return regmap_write_bits(mux->regmap, mux->reg, mux->masks[index],
++				 mux->vals[index]);
++}
 +
-+		tdm: tdm@0 {
-+			compatible = "qca,ipq4019-tdm";
-+			dma-tx-channel = <MBOX0_TX_ID>;
-+			dma-rx-channel = <MBOX3_RX_ID>;
-+			stereo-tx-port = <STEREO0_ID>;
-+			stereo-rx-port = <STEREO3_ID>;
-+			clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+				<&adcc ADCC_TXM_CLK_SRC>,
-+				<&adcc ADCC_RXB_CLK_SRC>,
-+				<&adcc ADCC_RXM_CLK_SRC>;
-+			clock-names = "audio_tx_bclk",
-+				"audio_tx_mclk",
-+				"audio_rx_bclk",
-+				"audio_rx_mclk";
-+			status = "disabled";
-+		};
++static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
++{
++	struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
++	int ret;
++	u32 val;
++	u8 i;
 +
-+		spdifplatform: qca-pcm-spdif@7707000 {
-+			compatible = "qca,ipq4019-pcm-spdif";
-+			reg = <0x7707000 0x1000>;
-+			status = "disabled";
-+		};
++	ret = regmap_read(mux->regmap, mux->reg, &val);
++	if (ret)
++		return ret;
 +
-+		spdif: spdif@0 {
-+			compatible = "qca,ipq4019-spdif";
-+			dma-tx-channel = <MBOX0_TX_ID>;
-+			dma-rx-channel = <MBOX_SPDIF_RX_ID>;
-+			stereo-tx-port = <STEREO0_ID>;
-+			clocks = <&adcc ADCC_TXB_CLK_SRC>,
-+				<&adcc ADCC_TXM_CLK_SRC>,
-+				<&adcc ADCC_SPDIF_SRC>,
-+				<&adcc ADCC_SPDIFDIV2_SRC >,
-+				<&adcc ADCC_AUDIO_SPDIFINFAST_SRC>;
-+			clock-names = "audio_tx_bclk",
-+				"audio_tx_mclk",
-+				"audio_spdif_src",
-+				"audio_spdif_div2",
-+				"audio_spdifinfast_src";
-+			status = "disabled";
-+		};
++	for (i = 0; i < num_parents; i++)
++		if ((mux->masks[i] & val) == mux->vals[i])
++			return i;
 +
-+		sound: sound@0 {
-+			compatible = "qca,ipq4019-audio";
-+			status = "disabled";
-+		};
- 	};
- };
++	return -EINVAL;
++}
++
++static const struct clk_ops uniphier_clk_mux_ops = {
++	.determine_rate = __clk_mux_determine_rate,
++	.set_parent = uniphier_clk_mux_set_parent,
++	.get_parent = uniphier_clk_mux_get_parent,
++};
++
++struct clk_hw *uniphier_clk_register_mux(struct device *dev,
++					 struct regmap *regmap,
++					 const char *name,
++				const struct uniphier_clk_mux_data *data)
++{
++	struct uniphier_clk_mux *mux;
++	struct clk_init_data init;
++	int ret;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &uniphier_clk_mux_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = data->parent_names;
++	init.num_parents = data->num_parents,
++
++	mux->regmap = regmap;
++	mux->reg = data->reg;
++	mux->masks = data->masks;
++	mux->vals = data->vals;
++	mux->hw.init = &init;
++
++	ret = devm_clk_hw_register(dev, &mux->hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return &mux->hw;
++}
+diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
+new file mode 100644
+index 0000000..364953c
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier.h
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef __CLK_UNIPHIER_H__
++#define __CLK_UNIPHIER_H__
++
++struct clk_hw;
++struct device;
++struct regmap;
++
++#define UNIPHIER_CLK_MUX_MAX_PARENTS	8
++
++enum uniphier_clk_type {
++	UNIPHIER_CLK_TYPE_FIXED_FACTOR,
++	UNIPHIER_CLK_TYPE_FIXED_RATE,
++	UNIPHIER_CLK_TYPE_GATE,
++	UNIPHIER_CLK_TYPE_MUX,
++};
++
++struct uniphier_clk_fixed_factor_data {
++	const char *parent_name;
++	unsigned int mult;
++	unsigned int div;
++};
++
++struct uniphier_clk_fixed_rate_data {
++	unsigned long fixed_rate;
++};
++
++struct uniphier_clk_gate_data {
++	const char *parent_name;
++	unsigned int reg;
++	unsigned int mask;
++};
++
++struct uniphier_clk_mux_data {
++	const char *parent_names[UNIPHIER_CLK_MUX_MAX_PARENTS];
++	unsigned int num_parents;
++	unsigned int reg;
++	unsigned int masks[UNIPHIER_CLK_MUX_MAX_PARENTS];
++	unsigned int vals[UNIPHIER_CLK_MUX_MAX_PARENTS];
++};
++
++struct uniphier_clk_data {
++	const char *name;
++	enum uniphier_clk_type type;
++	int output_index;
++	union {
++		struct uniphier_clk_fixed_factor_data factor;
++		struct uniphier_clk_fixed_rate_data rate;
++		struct uniphier_clk_gate_data gate;
++		struct uniphier_clk_mux_data mux;
++	} data;
++};
++
++struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
++						  const char *name,
++			const struct uniphier_clk_fixed_factor_data *data);
++struct clk_hw *uniphier_clk_register_fixed_rate(struct device *dev,
++						const char *name,
++			const struct uniphier_clk_fixed_rate_data *data);
++struct clk_hw *uniphier_clk_register_gate(struct device *dev,
++					  struct regmap *regmap,
++					  const char *name,
++				const struct uniphier_clk_gate_data *data);
++struct clk_hw *uniphier_clk_register_mux(struct device *dev,
++					 struct regmap *regmap,
++					 const char *name,
++				const struct uniphier_clk_mux_data *data);
++
++#endif /* __CLK_UNIPHIER_H__ */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
