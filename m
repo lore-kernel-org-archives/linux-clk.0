@@ -1,95 +1,71 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jul 2016 09:30:05 +0200
+Date: Tue, 26 Jul 2016 08:32:53 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] clk: sunxi-ng: mux: Add clk notifier functions
-Message-ID: <20160727073005.GG6560@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-8-git-send-email-wens@csie.org>
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
+ application method
+Message-ID: <20160726063253.GW7419@lukather>
+References: <20160625034511.7966-1-megous@megous.com>
+ <20160625034511.7966-7-megous@megous.com>
+ <20160630204001.GC5485@lukather>
+ <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+ <20160715085356.GR4761@lukather>
+ <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+ <20160721094852.GI5993@lukather>
+ <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GdbWtwDHkcXqP16f"
-In-Reply-To: <1469516671-19377-8-git-send-email-wens@csie.org>
+	protocol="application/pgp-signature"; boundary="5FFaGRZUwcpbKFrw"
+In-Reply-To: <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---GdbWtwDHkcXqP16f
-Content-Type: text/plain; charset=us-ascii
+--5FFaGRZUwcpbKFrw
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 26, 2016 at 03:04:29PM +0800, Chen-Yu Tsai wrote:
-> On sunxi we support cpufreq by changing the clock rate of PLL-CPU.
-> It's possible the clock output of the PLL goes out of the CPU's
-> operational limits when the PLL's multipliers / dividers are changed
-> and it hasn't stabilized yet. This would result in the CPU hanging.
+On Thu, Jul 21, 2016 at 11:52:15AM +0200, Ond=C5=99ej Jirman wrote:
+> >>> If so, then yes, trying to switch to the 24MHz oscillator before
+> >>> applying the factors, and then switching back when the PLL is stable
+> >>> would be a nice solution.
+> >>>
+> >>> I just checked, and all the SoCs we've had so far have that
+> >>> possibility, so if it works, for now, I'd like to stick to that.
+> >>
+> >> It would need to be tested. U-boot does the change only once, while the
+> >> kernel would be doing it all the time and between various frequencies
+> >> and PLL settings. So the issues may show up with this solution too.
+> >=20
+> > That would have the benefit of being quite easy to document, not be a
+> > huge amount of code and it would work on all the CPUs PLLs we have so
+> > far, so still, a pretty big win. If it doesn't, of course, we don't
+> > really have the choice.
 >=20
-> To circumvent this, we temporarily switch the CPU mux clock to another
-> stable clock before the rate change, and switch it back after the PLL
-> stabilizes. This is done with clk notifiers registered on the PLL.
->=20
-> This patch adds common functions for notifiers to reparent mux clocks.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/clk/sunxi-ng/ccu_mux.c | 36 ++++++++++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
->  2 files changed, 50 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mu=
-x.c
-> index f96eabb5d1f3..8a6e9065cb85 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> @@ -8,7 +8,9 @@
->   * the License, or (at your option) any later version.
->   */
-> =20
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> =20
->  #include "ccu_gate.h"
->  #include "ccu_mux.h"
-> @@ -199,3 +201,37 @@ const struct clk_ops ccu_mux_ops =3D {
->  	.determine_rate	=3D __clk_mux_determine_rate,
->  	.recalc_rate	=3D ccu_mux_recalc_rate,
->  };
-> +
-> +/*
-> + * This clock notifier is called when the frequency of the of the parent
-> + * PLL clock is to be changed. The idea is to switch the parent to a
-> + * stable clock, such as the main oscillator, while the PLL frequency
-> + * stabilizes.
-> + */
-> +static int ccu_mux_notifier_cb(struct notifier_block *nb,
-> +			       unsigned long event, void *data)
-> +{
-> +	struct ccu_mux_nb *mux =3D to_ccu_mux_nb(nb);
-> +	int ret =3D 0;
-> +
-> +	if (event =3D=3D PRE_RATE_CHANGE) {
-> +		mux->original_index =3D ccu_mux_helper_get_parent(mux->common,
-> +								mux->cm);
-> +		ret =3D ccu_mux_helper_set_parent(mux->common, mux->cm,
-> +						mux->bypass_index);
-> +	} else if (event =3D=3D POST_RATE_CHANGE) {
-> +		ret =3D ccu_mux_helper_set_parent(mux->common, mux->cm,
-> +						mux->original_index);
-> +	}
-> +
-> +	udelay(mux->delay_us);
+> It's probably more code though. It has to access different register from
+> the one that is already defined in dts, which would add a lot of code
+> and require dts changes. The original patch I sent is simpler than that.
 
-Are you sure we need that delay?
+Why?
 
-set_rate will end and notify you once the PLL rate is stable, so it
-looks redundant.
+You can use container_of to retrieve the parent structure of the clock
+notifier, and then you get a ccu_common structure pointer, with the
+CCU base address, the clock register, its lock, etc.
+
+Look at what is done in drivers/clk/meson/clk-cpu.c. It's like 20 LoC.
+
+I don't really get why anything should be changed in the DT, or why it
+would add a lot of code. Or maybe we're not talking about the same
+thing?
 
 Maxime
 
@@ -98,25 +74,25 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---GdbWtwDHkcXqP16f
+--5FFaGRZUwcpbKFrw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXmGL9AAoJEBx+YmzsjxAg/N0P/AjIqgBl/7aLRhDif+H/FYOg
-5aDj6v03ArHwVhBKeSRKyLCmvPSLsSLfWWWx7fSIiyMjhbyShYB1mFeisjTW7GkY
-/n1HCaEf7KOtS36Rzk305Hbja72KynC/GpJZCwcoQtepMU4WZ06ISErguLRfGU2C
-DKKdQ8Kijx1ZBshJtYdXUP0gK2VhRMwWPeUKUUXLd/FKhHat5Y0ejNXqe2sW7p0E
-5oiAytgRBr18/nSJCLESTQvZxMTtNPferv/ENaigB3mUi3FFZer09eUKL2qIr0kh
-dcjJKF3qu4/XQPxB5xIR0DTszh6+RCExVkEKmup8JyFHF22kN/OZIMxSyD5Jgs2D
-VmzJWnrQ1AUGoaTwTTsoyarYEKSysHPyqyLZcmaniUg4TddJkeoOc/7/fuKQT31X
-vZWylK6bVMTpd18dnE7OOq3k5b8B4ZQQvJyQms8lPrfrMgO9eZPzwDaWADEXn08Q
-wo5dttGRcuGXwPnU042XkG84tzeThJzXwv99fNEERCsBl+Jh2xw3jRavd3QrrToh
-UHbFidh3+1GeKst5DeYKMHsZkmEAyfAbjl+ScxUJHnZlZQTulUAQItwiAHGMLlPB
-7w8YLVixeVlZIi4newrNWrDHTz7Aj+ifUtabNmr9M224V4lO966pAghg+FRlZ6YR
-aObKxfFjv6QPN/AaQKJI
-=DOU6
+iQIcBAEBAgAGBQJXlwQVAAoJEBx+YmzsjxAg/8EP/ipA+WJ9Z8ChTI5DhyyqF2j9
+0kaCZyc/mpfHUpzm2FM01UpHXkYt2+vaMPWpPJcjInkAxS/hhRb2yoZW1pOpRWQD
+3z8cpYZTUkT5kCLWRiLdocvlh+KlWiw1Qq82KpsgWuFYmWR1W8nKgKfhlTPM4+lv
+7x1b5zzbcRO244xkgAEM0YzrmM0Vi5aZNaByhP8MwDqWOB7BHYEJ5+S6iqC9sruX
+i8uT0pX+cYEhCs9leiG4UNgHW0v17YVqQiBCS4SJ5vYfdGi36K/0WU+IjRTiMHAb
+jDIt+pcCL74De83B/onoWjOUN7HYB9rxm5dzH7b0Ny8vE7ZS0AX9X8+wQW8+J9SH
+7d97BQssv+FwnTLgv4/1s/qMi1CR9QnxuaC9dzQIFstbd6WYkFhrOZUcIfMs+nRY
+dAX8r6YdW2GUU9s6A1DQEik8U7N5gVLCShImUi7OETgtBH+dh5bT4syhRFoZhsgX
+3jdVC1wl7FqZaj9F/DVd8HWYI19vlNNSM9bmHjdyn2AOaa27rLVXN3BHStVUqeuL
+Gkh3/oSBA2132r7RYR6gj1x+6bvthkGQWGyUMgrl+DvZICmklZGN6CiShLfJ0Piz
+5zYB1N+6u1sScfrr+EE4L9dEazXAeY0qNEmSLkCdwUfqqte/5Shkx3jOCzM9JelN
+z8umqeIqAZMEG8P8h5fY
+=Spuj
 -----END PGP SIGNATURE-----
 
---GdbWtwDHkcXqP16f--
+--5FFaGRZUwcpbKFrw--
