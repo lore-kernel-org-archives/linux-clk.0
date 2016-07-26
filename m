@@ -1,93 +1,43 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-To: <gregkh@linuxfoundation.org>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>, Bhuvanchandra
- DV <bhuvanchandra.dv@toradex.com>
-Subject: [PATCH RESEND v2 7/8] tty: serial: fsl_lpuart: Update suspend/resume for DMA mode
-Date: Tue, 19 Jul 2016 13:13:09 +0530
-Message-ID: <20160719074310.16872-8-bhuvanchandra.dv@toradex.com>
-In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 11/13] Documentation: devicetree: add vendor prefix for Pine64
+Date: Tue, 26 Jul 2016 22:30:39 +0200
+Message-Id: <20160726203041.29366-12-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When DMA mode is enabled one need to make sure the DMA channels are idle before
-entering suspend mode especially when UART ports which are set as wakeup source
-and console port with no_console_suspend is set. This patch takes care of
-gracefully releasing DMA channels for the above two cases and start the DMA at
-resume.
+From: Andre Przywara <andre.przywara@arm.com>
 
-Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Rob Herring <robh@kernel.org>
+[Maxime: Change title prefix to match the usual style]
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/tty/serial/fsl_lpuart.c | 44 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 27687d5..134090a 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1943,6 +1943,30 @@ static int lpuart_suspend(struct device *dev)
- 	}
- 
- 	uart_suspend_port(&lpuart_reg, &sport->port);
-+
-+	if (sport->lpuart_dma_rx_use) {
-+		/*
-+		 * EDMA driver during suspend will forcefully release any
-+		 * non-idle DMA channels. If port wakeup is enabled or if port
-+		 * is console port or 'no_console_suspend' is set the Rx DMA
-+		 * cannot resume as as expected, hence gracefully release the
-+		 * Rx DMA path before suspend and start Rx DMA path on resume.
-+		 */
-+		if (sport->port.irq_wake) {
-+			del_timer_sync(&sport->lpuart_timer);
-+			lpuart_dma_rx_free(&sport->port);
-+		}
-+
-+		/* Disable Rx DMA to use UART port as wakeup source */
-+		writeb(readb(sport->port.membase + UARTCR5) & ~UARTCR5_RDMAS,
-+					sport->port.membase + UARTCR5);
-+	}
-+
-+	if (sport->lpuart_dma_tx_use) {
-+		sport->dma_tx_in_progress = false;
-+		dmaengine_terminate_all(sport->dma_tx_chan);
-+	}
-+
- 	if (sport->port.suspended && !sport->port.irq_wake)
- 		clk_disable_unprepare(sport->clk);
- 
-@@ -1970,6 +1994,26 @@ static int lpuart_resume(struct device *dev)
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
-+	if (sport->lpuart_dma_rx_use) {
-+		if (sport->port.irq_wake) {
-+			if (!lpuart_start_rx_dma(sport)) {
-+				sport->lpuart_dma_rx_use = true;
-+				rx_dma_timer_init(sport);
-+			} else {
-+				sport->lpuart_dma_rx_use = false;
-+			}
-+		}
-+	}
-+
-+	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
-+			init_waitqueue_head(&sport->dma_wait);
-+			sport->lpuart_dma_tx_use = true;
-+			writeb(readb(sport->port.membase + UARTCR5) |
-+				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
-+	} else {
-+		sport->lpuart_dma_tx_use = false;
-+	}
-+
- 	uart_resume_port(&lpuart_reg, &sport->port);
- 
- 	return 0;
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index a7440bcd67ff..f25502b28b55 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -198,6 +198,7 @@ parade	Parade Technologies Inc.
+ pericom	Pericom Technology Inc.
+ phytec	PHYTEC Messtechnik GmbH
+ picochip	Picochip Ltd
++pine64	Pine64
+ plathome	Plat'Home Co., Ltd.
+ plda	PLDA
+ pixcir  PIXCIR MICROELECTRONICS Co., Ltd
 -- 
-2.9.0
+2.9.2
