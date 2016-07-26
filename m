@@ -1,61 +1,33 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 4/7] spi: s3c64xx: use error code from clk_prepare_enable()
-Date: Tue, 12 Jul 2016 19:02:13 +0900
-Message-id: <1468317736-18841-5-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <moinejf@free.fr>
+Date: Tue, 26 Jul 2016 10:30:37 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ devicetree@vger.kernel.org, dev@linux-sunxi.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 8/9] clk: sunxi-ng: Add A31/A31s clocks
+Message-Id: <20160726103037.5a1571dd124f7c29bb8daa88@free.fr>
+In-Reply-To: <1469516671-19377-9-git-send-email-wens@csie.org>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+	<1469516671-19377-9-git-send-email-wens@csie.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-If clk_prepare_enable() fails do not return -EBUSY but use the
-value provided by the function itself.
+On Tue, 26 Jul 2016 15:04:30 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/spi/spi-s3c64xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> +static const struct ccu_mux_fixed_prediv clk_out_predivs[] =3D {
+> +	{ .index =3D 0, .div =3D 750, },
+> +	{ .index =3D 3, .div =3D 4, },
+> +	{ .index =3D 4, .div =3D 4, },
+> +};
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 0784a4d..3a65adf 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1126,9 +1126,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err_deref_master;
- 	}
- 
--	if (clk_prepare_enable(sdd->clk)) {
-+	ret = clk_prepare_enable(sdd->clk);
-+	if (ret) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
--		ret = -EBUSY;
- 		goto err_deref_master;
- 	}
- 
-@@ -1141,9 +1141,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err_disable_clk;
- 	}
- 
--	if (clk_prepare_enable(sdd->src_clk)) {
-+	ret = clk_prepare_enable(sdd->src_clk);
-+	if (ret) {
- 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
--		ret = -EBUSY;
- 		goto err_disable_clk;
- 	}
- 
--- 
-2.8.1
+No end of table.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
