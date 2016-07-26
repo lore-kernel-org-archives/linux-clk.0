@@ -1,117 +1,72 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: [PATCH v3 5/6] dt-bindings: clock: add DT binding for the peripheral clocks on Armada 3700
-Date: Tue, 19 Jul 2016 15:42:21 +0200
-Message-Id: <1468935742-11218-6-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 06/13] clk: sunxi-ng: sun8i: Move fixed factors around
+Date: Tue, 26 Jul 2016 22:30:34 +0200
+Message-Id: <20160726203041.29366-7-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the DT binding documentation for the peripheral clocks
-used in the Marvell Armada 3700 SoCs.
+Move the fixed factors clocks before the ccu_common list so that we can
+separate the clocks definitions and the registration part.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../bindings/clock/armada3700-periph-clock.txt     | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-new file mode 100644
-index 000000000000..1e3370ba189f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
-@@ -0,0 +1,70 @@
-+* Peripheral Clock bindings for Marvell Armada 37xx SoCs
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index f61d2e245ac4..ec8c67201e8e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -484,6 +484,19 @@ static SUNXI_CCU_M_WITH_MUX_GATE(mbus_h3_clk, "mbus", mbus_h3_parents,
+ static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
+ 			     0x1a0, 0, 3, BIT(31), 0);
+ 
++/* Fixed Factor clocks */
++/* We hardcode the divider to 4 for now */
++static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
++			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
++			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
++			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
++			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
++			"pll-periph0", 1, 2, 0);
 +
-+Marvell Armada 37xx SoCs provide peripheral clocks which are
-+used as clock source for the peripheral of the SoC.
-+
-+There are two different blocks associated to north bridge and south
-+bridge.
-+
-+The peripheral clock consumer should specify the desired clock by
-+having the clock ID in its "clocks" phandle cell.
-+
-+The following is a list of provided IDs for Armada 370 North bridge clocks:
-+ID	Clock name	Description
-+-----------------------------------
-+0	mmc		MMC controller
-+1	sata_host	Sata Host
-+2	sec_at		Security AT
-+3	sac_dap		Security DAP
-+4	tsecm		Security Engine
-+5	setm_tmx	Serial Embedded Trace Module
-+6	avs		Adaptive Voltage Scaling
-+7	sqf		SPI
-+8	pwm		PWM
-+9	i2c_2		I2C 2
-+10	i2c_1		I2C 1
-+11	ddr_phy		DDR PHY
-+12	ddr_fclk	DDR F clock
-+13	trace		Trace
-+14	counter		Counter
-+15	eip97		EIP 97
-+16	cpu		CPU
-+
-+The following is a list of provided IDs for Armada 370 South bridge clocks:
-+ID	Clock name	Description
-+-----------------------------------
-+0	gbe-50		50 MHz parent clock for Gigabit Ethernet
-+1	gbe-core	parent clock for Gigabit Ethernet core
-+2	gbe-125		125 MHz parent clock for Gigabit Ethernet
-+3	gbe1-50		50 MHz clock for Gigabit Ethernet port 1
-+4	gbe0-50		50 MHz clock for Gigabit Ethernet port 0
-+5	gbe1-125	125 MHz clock for Gigabit Ethernet port 1
-+6	gbe0-125	125 MHz clock for Gigabit Ethernet port 0
-+7	gbe1-core	Gigabit Ethernet core port 1
-+8	gbe0-core	Gigabit Ethernet core port 0
-+9	gbe-bm		Gigabit Ethernet Buffer Manager
-+10	sdio		SDIO
-+11	usb32-sub2-sys	USB 2 clock
-+12	usb32-ss-sys	USB 3 clock
-+
-+Required properties:
-+
-+- compatible : shall be "marvell,armada-3700-periph-clock-nb" for the
-+  north bridge block, or
-+  "marvell,armada-3700-periph-clock-sb" for the south bridge block
-+- reg : must be the register address of North/South Bridge Clock register
-+- #clock-cells : from common clock binding; shall be set to 1
-+
-+- clocks : list of the parent clock phandle in the following order:
-+  TBG-A P, TBG-B P, TBG-A S, TBG-B S and finally the xtal clock.
-+
-+
-+Example:
-+
-+nb_perih_clk: nb-periph-clk@13000{
-+	compatible = "marvell,armada-3700-periph-clock-nb";
-+	reg = <0x13000 0x1000>;
-+	clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
-+	<&tbg 3>, <&xtalclk>;
-+	#clock-cells = <1>;
-+};
+ static struct ccu_common *sun8i_h3_ccu_clks[] = {
+ 	&pll_cpux_clk.common,
+ 	&pll_audio_base_clk.common,
+@@ -597,18 +610,6 @@ static struct ccu_common *sun8i_h3_ccu_clks[] = {
+ 	&gpu_clk.common,
+ };
+ 
+-/* We hardcode the divider to 4 for now */
+-static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
+-			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
+-			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
+-			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
+-			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
+-static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
+-			"pll-periph0", 1, 2, 0);
+-
+ static struct clk_hw_onecell_data sun8i_h3_hw_clks = {
+ 	.hws	= {
+ 		[CLK_PLL_CPUX]		= &pll_cpux_clk.common.hw,
 -- 
-2.5.0
+2.9.2
