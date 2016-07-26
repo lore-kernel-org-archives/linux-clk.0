@@ -1,95 +1,46 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <146800297598.73491.13472152266331488346@resonance>
-References: <1467302331-9663-1-git-send-email-wens@csie.org>
- <1467302331-9663-5-git-send-email-wens@csie.org> <146800297598.73491.13472152266331488346@resonance>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 14 Jul 2016 11:34:34 +0800
-Message-ID: <CAGb2v67ft=EktCcfGFdBN1K4SoOyK+Stz2WuvqScMmRjoBWxfA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] rtc: ac100: Add clk output support
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, rtc-linux@googlegroups.com,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 09/13] arm64: sunxi: Kconfig: add essential pinctrl driver
+Date: Tue, 26 Jul 2016 22:30:37 +0200
+Message-Id: <20160726203041.29366-10-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 9, 2016 at 2:36 AM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Chen-Yu Tsai (2016-06-30 08:58:48)
->> +static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                                   unsigned long prate)
->> +{
->> +       unsigned long best_rate = 0, tmp_rate, tmp_prate;
->> +       int i;
->> +
->> +       if (prate == AC100_RTC_32K_RATE)
->> +               return divider_round_rate(hw, rate, &prate, NULL,
->> +                                         AC100_CLKOUT_DIV_WIDTH,
->> +                                         CLK_DIVIDER_POWER_OF_TWO);
->> +
->> +       for (i = 0; ac100_clkout_prediv[i].div; i++) {
->> +               tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[i].val);
->> +               tmp_rate = divider_round_rate(hw, rate, &tmp_prate, NULL,
->> +                                             AC100_CLKOUT_DIV_WIDTH,
->> +                                             CLK_DIVIDER_POWER_OF_TWO);
->> +
->> +               if (tmp_rate > rate)
->> +                       continue;
->> +               if (rate - tmp_rate < best_rate - tmp_rate)
->> +                       best_rate = tmp_rate;
->> +       }
->> +
->> +       return best_rate;
->> +}
->> +
->> +static int ac100_clkout_determine_rate(struct clk_hw *hw,
->> +                                      struct clk_rate_request *req)
->> +{
->> +       struct clk_hw *best_parent;
->> +       unsigned long best = 0;
->> +       int i, num_parents = clk_hw_get_num_parents(hw);
->> +
->> +       for (i = 0; i < num_parents; i++) {
->> +               struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
->> +               unsigned long tmp, prate = clk_hw_get_rate(parent);
->> +
->> +               tmp = ac100_clkout_round_rate(hw, req->rate, prate);
->> +
->> +               if (tmp > req->rate)
->> +                       continue;
->> +               if (req->rate - tmp < req->rate - best) {
->> +                       best = tmp;
->> +                       best_parent = parent;
->> +               }
->> +       }
->> +
->> +       if (!best)
->> +               return -EINVAL;
->> +
->> +       req->best_parent_hw = best_parent;
->> +       req->best_parent_rate = best;
->> +       req->rate = best;
->> +
->> +       return 0;
->> +}
->
-> You only need one of the two functions above. Keep the .determine_rate
-> callback and drop .round_rate.
+From: Andre Przywara <andre.przywara@arm.com>
 
-Only .round_rate is set in the clk_ops. ac100_clkout_round_rate just
-serves to split out some of the calculations done per parent.
+The pinctrl driver is essential for the Allwinner SoCs to work.
+Add the driver's config symbol to the Kconfig entry to always compile
+it in. We can't use the arm approach to make the _driver's_ Kconfig
+symbol def_bool, because we lack the MACH_* symbols in arm64.
 
-> Otherwise the rest of the clk support looks great to me. Feel free to
-> add:
->
-> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks!
-
-ChenYu
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 7ef1d05859ae..4cc444c3c2e9 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -3,6 +3,7 @@ menu "Platform selection"
+ config ARCH_SUNXI
+ 	bool "Allwinner sunxi 64-bit SoC Family"
+ 	select GENERIC_IRQ_CHIP
++	select PINCTRL_SUN50I_A64
+ 	help
+ 	  This enables support for Allwinner sunxi based SoCs like the A64.
+ 
+-- 
+2.9.2
