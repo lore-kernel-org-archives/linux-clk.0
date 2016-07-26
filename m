@@ -1,210 +1,71 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 26 Jul 2016 10:56:51 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend 1/9] clk: sunxi-ng: Fix inverted test condition in
+ ccu_helper_wait_for_lock
+Message-ID: <20160726085651.GB7190@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20160725113034.GD21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 25 Jul 2016 15:16:28 +0200
-Message-ID: <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+In-Reply-To: <1469516671-19377-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak@gmail.com>
->>
->> Document the devicetree bindings for NOR bus driver found on Tegra20 and
->> Tegra30 SOCs
->>
->> +
->> +Required properties:
->> +
->> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
->> + - reg: Should contain NOR controller registers location and length.
->> + - clocks: Must contain one entry, for the module clock.
->> +   See ../clocks/clock-bindings.txt for details.
->> + - resets : Must contain an entry for each entry in reset-names.
->> +   See ../reset/reset.txt for details.
->> + - reset-names : Must include the following entries:
->> +  - nor
->> + - #address-cells: Must be set to 2 to allow memory address translation
->> + - #size-cells:      Must be set to 1 to allow CS address passing
->> + - ranges: Must be set up to reflect the memory layout with four integer
->> +             values for each chip-select line in use.
->> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
->
-> I'd prefer if this was split out into separate properties. It's somewhat
-> friendlier in my opinion to let people know what each of the settings is
-> along with any units and such, rather than point them at the TRM, which
-> they may or may not have access to.
->
-> Or which not be available anymore.
 
-Will split it out.
+--0eh6TmSyL6TZE2Uz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->> +
->> +Note that the NOR controller does not have any internal chip-select address
->> +decoding and if you want to access multiple devices external chip-select
->> +decoding must be provided.
->> +
->> +Optional properties:
->> +
->> + - nvidia,cs-timing: The timing array represents the SNOR_TIMING0_0 and
->> +   SNOR_TIMING1_0 registers for the NOR controller. If unset reset-values will
->> +   be used. See reference documentation for detailed description of the timing
->> +   registers.
->
-> Are the reset values sensible? Are they reasonable defaults for a class
-> of use-cases? I'm thinking that if they aren't we might as well make it
-> a required property.
->
-> Also, I'd prefer if this was split out into individual fields for the
-> same reasons as the SNOR_CONFIG_0 register property.
+On Tue, Jul 26, 2016 at 03:04:23PM +0800, Chen-Yu Tsai wrote:
+> The condition passed to read*_poll_timeout() is the break condition,
+> i.e. wait for this condition to happen and return success.
+>=20
+> The original code assumed the opposite, resulting in a warning when
+> the PLL clock rate was changed but never lost it's lock as far as
+> the readout indicated. This was verified by checking the read out
+> register value.
+>=20
+> Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-I have tested the default values with two different chip types, and
-both have worked without me adjusting any timings. The tested chips
-are SJA1000 (CAN) and 16C550 (UART). So I would say that they are
-sensible.
+Applied, thanks
 
-Will split it out as well.
+Maxime
 
->
->> +
->> +Example with two SJA1000 CAN controllers connected to the NOR bus:
->> +
->> +     nor@70009000 {
->> +             status = "okay";
->> +             compatible = "nvidia,tegra20-nor", "nvidia,tegra30-nor";
->> +             reg = <0x70009000 0x1000>;
->> +             #address-cells = <2>;
->> +             #size-cells = <1>;
->> +             clocks = <&tegra_car TEGRA30_CLK_NOR>;
->> +             resets = < &tegra_car 42>;
->
-> No space between < and &, please.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-ACK.
+--0eh6TmSyL6TZE2Uz
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
->> +             reset-names = "nor";
->> +             ranges = <
->> +                     0 0 0x48000000 0x00000100
->> +                     1 0 0x48040000 0x00000100
->> +             >;
->> +
->> +             can@0,0 {
->> +                     compatible = "nxp,sja1000";
->> +                     reg = <0 0 0x100>;
->> +                     interrupt-parent = <&gpio>;
->> +                     interrupts = <TEGRA_GPIO(B, 5) IRQ_TYPE_EDGE_RISING>;
->> +                     nxp,external-clock-frequency = <24000000>;
->> +                     nxp,tx-output-config = <0x16>;
->> +                     nxp,clock-out-frequency = <24000000>;
->> +                     reg-io-width = <2>;
->> +             };
->> +
->> +
->
-> There's an extra blank line here.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-ACK.
+iQIcBAEBAgAGBQJXlyXTAAoJEBx+YmzsjxAgqLgP/RVNz5buAaHr6E7WFc3DAYh8
+Y35JsUUcZxwcCZgbCrBGEb73Y7WsrIfWXQo/5/093BeMXrdOJ2HCxRz5l7N5XM81
+P+JXVonKv6VLDOrtt1OlOeFMJDnJPMMvncLHqXHm/0LFgvUm7QlftKhHIqku/B2A
+o/JInYqlj82pM59AosM3qgxmTiHbueZFJR6/pGeZ4mGz1F/Ba+GnB7zye2vZ8xl1
+7wOMAa0vFfpfyDS9krXIZmokPJQKnDCiOjOA69Z7QVFHgroeiAybFKPyNczYEzHB
+6vKDrbP4rQx9rHxemJgBhXdy03+EkFGC9ioeqPSsdLf5yEyYWT+Oh+V7EBXRQD3y
+CQX1VtJRfXWGJyoGzgXke/X/5zP4qHH2DTwoKCRes1tI775sNCu+vmJtBpEeTkR4
+hRoF6MXTeQWLGB0bDgtjzaMC+RDmoXNbkQ1t5N1wdUNWqVCbpVwVayja5NtwLtgW
+tNJ7hTl+U8h28ZoaYRX9VDyjjB8J7mwrVogBmj9up7JtP2bmmZ7wdSl0fRvs+lFr
+jToCUklhh2WnOKHNqY1zHMgUg5h61wsbdCjwL99GKrunIoSpRapCyvksM8LAW8o+
+KH/bPWR5J1ts4YTcVJUbbvFriJJ43nSGkRzJnqIHxh5dH7aHZGX/QE4yU++dDQl6
+JPblvim2rJe97n4DCc99
+=nCZJ
+-----END PGP SIGNATURE-----
 
->
->> +             can@1,0 {
->> +                     compatible = "nxp,sja1000";
->> +                     reg = <1 0 0x100>;
->> +                     interrupt-parent = <&gpio>;
->> +                     interrupts = <TEGRA_GPIO(A, 6) IRQ_TYPE_EDGE_RISING>;
->> +                     nxp,external-clock-frequency = <24000000>;
->> +                     nxp,tx-output-config = <0x16>;
->> +                     reg-io-width = <2>;
->> +     };
->
-> I'm somewhat confused about how this hardware works. My understanding
-> was that each chip gets mapped to the whole range of the NOR address
-> range (0x48000000 - 0x4fffffff on Tegra30).
-
-I can understand the confusion.
-
->
-> The above suggests that one of the CAN controllers gets mapped to an
-> address 0x48000000 and the other gets mapped to 0x48040000. But why do
-> we even need a chip-select at all in that case? If both chips don't use
-> any overlapping memory region, what good does the chip-select do?
-
-If we take a look on similar controllers found on others SOCs they
-usually define an address range / chip-select.
-
-Example (weim):
-ranges = <
-0 0 0x10000000 0x02000000
-1 0 0x12000000 0x01000000
-2 0 0x13000000 0x01000000
-3 0 0x14000000 0x01000000
-4 0 0x15000000 0x01000000
-5 0 0x16000000 0x01000000
->;
-
-Which means that you all ready have an address mapped to PIN function.
-
-But Tegra GMI controller is a first for me, where you do not have this
-kind of setup in hardware. Usually you also have a timing register /
-chip-select so that you can connect different chip types.
-
-The lack of hardware support do decode an address to a chip-select PIN
-function, we have implemented this our self externally.
-
-We actually have 6 different chips connected to the GMI bus and the
-"ranges" would be:
-  ranges = <
-   0 0 0x48000000 0x00000100
-   1 0 0x48040000 0x00000100
-   2 0 0x48080000 0x00000100
-   3 0 0x480A0000 0x00000100
-   4 0 0x480C0000 0x00000100
-   5 0 0x480E0000 0x00000100
-  >;
-
-And this not nothing complicated, small number of AND gates and that is it.
-
-The chip-select signal is necessary for the access characteristics, so
-we need to translate an address to an chip-select so that the chip
-knows the host CPU wants to talk to it.
-
-Do not know if I made anything more clear here :).
-
->
-> Also, it seems to me that you'd have to program the SNOR_CONFIG_0
-> register in order to select a specific chip, but I don't see anything in
-> the driver access that register after the initial write of the register.
-
-This is only setup at probe.
-
->
-> I would've expected this to require some sort of infrastructure to allow
-> devices connected to the GMI controller to acquire the bus via some API
-> to select their chip.
-
-Yes, ultimately you would need some sort of infrastructure to allow
-devices to acquire the GMI bus if you want to solve this in software.
-But at the moment I do not see such an infrastructure in place, and is
-it feasible to add one specifically for the GMI controller? If one
-such infrastructure was in place we would need to modify all the
-drivers that want to use to include Tegra specific infrastructure to
-access the GMI bus?
-
-Since my knowledge is limited it hard for me to comment on this, maybe
-there is a simple way of doing this?
-
-
-Best Regards,
-Mirza
+--0eh6TmSyL6TZE2Uz--
