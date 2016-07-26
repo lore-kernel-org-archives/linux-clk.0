@@ -1,73 +1,73 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com
-Subject: [RESEND PATCH 6/6] clk: rockchip: rk3399: Add support frac mode frequencies
-Date: Mon,  1 Aug 2016 12:25:01 +0800
-Message-Id: <1470025501-4259-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
+Date: Wed, 27 Jul 2016 02:53:06 +0900
+Message-Id: <1469555588-9114-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We need to support various display resolutions for external
-display devices like HDMI/DP, the frac mode can help us to
-acquire almost any frequencies, and need higher VCOs to reduce
-clock jitters.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+I split into two patches to make review easier.
 
- drivers/clk/rockchip/clk-rk3399.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ 1/2: core support code
+ 2/2: data arrays
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 4a15ce5b..3daa164 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -109,6 +109,25 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
- 	{ /* sentinel */ },
- };
- 
-+static struct rockchip_pll_rate_table rk3399_pll_frates[] = {
-+	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
-+	RK3036_PLL_RATE( 594000000, 1, 123, 5, 1, 0, 12582912),  /* vco = 2970000000 */
-+	RK3036_PLL_RATE( 593406593, 1, 123, 5, 1, 0, 10508804),  /* vco = 2967032965 */
-+	RK3036_PLL_RATE( 297000000, 1, 123, 5, 2, 0, 12582912),  /* vco = 2970000000 */
-+	RK3036_PLL_RATE( 296703297, 1, 123, 5, 2, 0, 10508807),  /* vco = 2967032970 */
-+	RK3036_PLL_RATE( 148500000, 1, 129, 7, 3, 0, 15728640),  /* vco = 3118500000 */
-+	RK3036_PLL_RATE( 148351648, 1, 123, 5, 4, 0, 10508800),  /* vco = 2967032960 */
-+	RK3036_PLL_RATE( 106500000, 1, 124, 7, 4, 0,  4194304),  /* vco = 2982000000 */
-+	RK3036_PLL_RATE(  74250000, 1, 129, 7, 6, 0, 15728640),  /* vco = 3118500000 */
-+	RK3036_PLL_RATE(  74175824, 1, 129, 7, 6, 0, 13550823),  /* vco = 3115384608 */
-+	RK3036_PLL_RATE(  65000000, 1, 113, 7, 6, 0, 12582912),  /* vco = 2730000000 */
-+	RK3036_PLL_RATE(  59340659, 1, 121, 7, 7, 0,  2581098),  /* vco = 2907692291 */
-+	RK3036_PLL_RATE(  54000000, 1, 110, 7, 7, 0,  4194304),  /* vco = 2646000000 */
-+	RK3036_PLL_RATE(  27000000, 1,  55, 7, 7, 0,  2097152),  /* vco = 1323000000 */
-+	RK3036_PLL_RATE(  26973027, 1,  55, 7, 7, 0,  1173232),  /* vco = 1321678323 */
-+	{ /* sentinel */ },
-+};
-+
- /* CRU parents */
- PNAME(mux_pll_p)				= { "xin24m", "xin32k" };
- 
-@@ -229,7 +248,7 @@ static struct rockchip_pll_clock rk3399_pll_clks[] __initdata = {
- 	[npll] = PLL(pll_rk3399, PLL_NPLL, "npll",  mux_pll_p, 0, RK3399_PLL_CON(40),
- 		     RK3399_PLL_CON(43), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
- 	[vpll] = PLL(pll_rk3399, PLL_VPLL, "vpll",  mux_pll_p, 0, RK3399_PLL_CON(48),
--		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
-+		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_frates),
- };
- 
- static struct rockchip_pll_clock rk3399_pmu_pll_clks[] __initdata = {
+
+Changes in v4:
+  - Unify module_platform_driver() boilerplate into a single place
+  - Add binding document
+  - Add USB3 clocks
+
+Changes in v3:
+  - Change to platform drivers instead of OF_CLK_DECLARE
+  - Split into a core part + SoC drivers
+    SoC drivers just consist of tables of SoC-specific data.
+    This allows reviewer to concentrate on the core-part
+  - Hard-code parent clock names for cascading
+
+Changes in v2:
+  - split emmc_hw_reset
+  - make SD clock rate-controllable
+  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
+
+Masahiro Yamada (2):
+  clk: uniphier: add core support code for UniPhier clock drivers
+  clk: uniphier: add clock data for UniPhier SoCs
+
+ .../devicetree/bindings/clock/uniphier-clock.txt   | 123 ++++
+ MAINTAINERS                                        |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/uniphier/Kconfig                       |   9 +
+ drivers/clk/uniphier/Makefile                      |   9 +
+ drivers/clk/uniphier/clk-uniphier-core.c           | 216 +++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 ++
+ drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 ++
+ drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++
+ drivers/clk/uniphier/clk-uniphier-mio.c            | 195 +++++++
+ drivers/clk/uniphier/clk-uniphier-mux.c            |  95 ++++
+ drivers/clk/uniphier/clk-uniphier-peri.c           |  95 ++++
+ drivers/clk/uniphier/clk-uniphier-sys.c            | 626 +++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h                |  96 ++++
+ 15 files changed, 1661 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
+ create mode 100644 drivers/clk/uniphier/Kconfig
+ create mode 100644 drivers/clk/uniphier/Makefile
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+
 -- 
-1.7.9.5
+1.9.1
