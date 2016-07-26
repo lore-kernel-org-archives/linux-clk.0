@@ -1,53 +1,37 @@
-Return-Path: <jorge.ramirez-ortiz@linaro.org>
-Return-Path: <jorge.ramirez-ortiz@linaro.org>
-Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
-To: Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>
-References: <20160711210852.31553-1-sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
-From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <57843C5A.4040806@linaro.org>
-Date: Tue, 12 Jul 2016 02:39:54 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160711210852.31553-1-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <moinejf@free.fr>
+Date: Tue, 26 Jul 2016 19:43:06 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ devicetree@vger.kernel.org, dev@linux-sunxi.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
+Message-Id: <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
+In-Reply-To: <1469516671-19377-5-git-send-email-wens@csie.org>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+	<1469516671-19377-5-git-send-email-wens@csie.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/2016 11:08 PM, Stephen Boyd wrote:
-> Add the call to of_clk_set_defaults() into the amba probe path so
-> that devices on the amba bus can use the assigned rates and
-> parents feature of the common clock framework.
->
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Jorge Ramirez Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+On Tue, 26 Jul 2016 15:04:26 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Tested-by: Jorge Ramirez Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Some clock muxes have holes, i.e. invalid or unconnected inputs,
+> between parent mux values.
+>=20
+> Add support for specifying a mux table to map clock parents to
+> mux values.
 
-> ---
->   drivers/amba/bus.c | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index a5b5c87e2114..a56fa2a1e9aa 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -19,6 +19,7 @@
->   #include <linux/amba/bus.h>
->   #include <linux/sizes.h>
->   #include <linux/limits.h>
-> +#include <linux/clk/clk-conf.h>
->   
->   #include <asm/irq.h>
->   
-> @@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
->   	int ret;
->   
->   	do {
-> +		ret = of_clk_set_defaults(dev->of_node, false);
-> +		if (ret < 0)
-> +			break;
-> +
->   		ret = dev_pm_domain_attach(dev, true);
->   		if (ret == -EPROBE_DEFER)
->   			break;
+Putting empty strings in the holes should work. No?
+Ex:
+
+static const char * const csi_mclk_parents[] =3D
+	{ "pll-video0", "pll-video1", "", "", "", "osc24M" };
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
