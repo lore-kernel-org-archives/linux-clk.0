@@ -1,138 +1,60 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-Subject: [PATCH v3 3/7] spi: s3c64xx: rename goto labels to meaningful names
-Date: Tue, 12 Jul 2016 19:02:12 +0900
-Message-id: <1468317736-18841-4-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dev@linux-sunxi.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/9] clk: sunxi-ng: mux: Increase fixed pre-divider div size
+Date: Tue, 26 Jul 2016 15:04:25 +0800
+Message-Id: <1469516671-19377-4-git-send-email-wens@csie.org>
+In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The goto labels of the style of
+Some clocks have a predivider value that is larger than what u8 can
+store. One such example is the OUT clk found on A20/A31, which has
+a /750 pre-divider on one of the osc24M parents.
 
-  err4:
-  err3:
-  err2:
-  err1:
+Increase the size of the div field to u16.
 
-are complex to insert in between new errors without renaming all
-the goto statements. Replace the errX naming style to meaningful
-names in order to make it easier to insert new goto exit points.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/spi/spi-s3c64xx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/clk/sunxi-ng/ccu_mux.c | 2 +-
+ drivers/clk/sunxi-ng/ccu_mux.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 6f2e91a..0784a4d 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1071,7 +1071,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
- 				ret);
--			goto err0;
-+			goto err_deref_master;
- 		}
- 		sdd->port_id = ret;
- 	} else {
-@@ -1109,13 +1109,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(sdd->regs)) {
- 		ret = PTR_ERR(sdd->regs);
--		goto err0;
-+		goto err_deref_master;
- 	}
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 58fc36e7dcce..1329b9ab481e 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -18,7 +18,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ 					     int parent_index,
+ 					     unsigned long *parent_rate)
+ {
+-	u8 prediv = 1;
++	u16 prediv = 1;
+ 	u32 reg;
  
- 	if (sci->cfg_gpio && sci->cfg_gpio()) {
- 		dev_err(&pdev->dev, "Unable to config gpio\n");
- 		ret = -EBUSY;
--		goto err0;
-+		goto err_deref_master;
- 	}
+ 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 945082631e7d..d35ce5e93840 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -11,7 +11,7 @@ struct ccu_mux_internal {
  
- 	/* Setup clocks */
-@@ -1123,13 +1123,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (IS_ERR(sdd->clk)) {
- 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
- 		ret = PTR_ERR(sdd->clk);
--		goto err0;
-+		goto err_deref_master;
- 	}
+ 	struct {
+ 		u8	index;
+-		u8	div;
++		u16	div;
+ 	} fixed_prediv;
  
- 	if (clk_prepare_enable(sdd->clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
- 		ret = -EBUSY;
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-@@ -1138,13 +1138,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Unable to acquire clock '%s'\n", clk_name);
- 		ret = PTR_ERR(sdd->src_clk);
--		goto err2;
-+		goto err_disable_clk;
- 	}
- 
- 	if (clk_prepare_enable(sdd->src_clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
- 		ret = -EBUSY;
--		goto err2;
-+		goto err_disable_clk;
- 	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
-@@ -1164,7 +1164,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "Failed to request IRQ %d: %d\n",
- 			irq, ret);
--		goto err3;
-+		goto err_pm_put;
- 	}
- 
- 	writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
-@@ -1174,7 +1174,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
--		goto err3;
-+		goto err_pm_put;
- 	}
- 
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
-@@ -1188,15 +1188,15 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--err3:
-+err_pm_put:
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	clk_disable_unprepare(sdd->src_clk);
--err2:
-+err_disable_clk:
- 	clk_disable_unprepare(sdd->clk);
--err0:
-+err_deref_master:
- 	spi_master_put(master);
- 
- 	return ret;
+ 	struct {
 -- 
 2.8.1
