@@ -1,69 +1,88 @@
-Return-Path: <narmstrong@baylibre.com>
-MIME-Version: 1.0
-In-Reply-To: <20160707091844.196a7930@endymion>
-References: <20160707091844.196a7930@endymion>
-Date: Sat, 9 Jul 2016 23:08:34 +0200
-Message-ID: <CAA3gFWvv7U_Q3W2LdnFnyq+V0ciSRuaFxDLGjMrgFJQHgfseQQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: oxnas: Add hardware dependencies
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: multipart/alternative; boundary=001a11406d2a75112805373a52e6
+Cc: devicetree@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 01/13] clk: sunxi-ng: mux: Rename mux macro to be consistent
+Date: Tue, 26 Jul 2016 22:30:29 +0200
+Message-Id: <20160726203041.29366-2-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---001a11406d2a75112805373a52e6
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Rename the internal mux macro to be consistent with the other internal
+structure macros.
 
-Le jeudi 7 juillet 2016, Jean Delvare <jdelvare@suse.de> a =C3=A9crit :
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_div.h | 2 +-
+ drivers/clk/sunxi-ng/ccu_mp.h  | 2 +-
+ drivers/clk/sunxi-ng/ccu_mux.h | 6 +++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-> The clk-oxnas driver is specific to its architecture, so do not
-> propose it on other architectures, unless build-testing.
->
-> Signed-off-by: Jean Delvare <jdelvare@suse.de <javascript:;>>
-> Cc: Neil Armstrong <narmstrong@baylibre.com <javascript:;>>
-> Cc: Stephen Boyd <sboyd@codeaurora.org <javascript:;>>
-> ---
->  drivers/clk/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-
-
---=20
-Neil Armstrong
-Embedded Linux Software Engineer
-BayLibre - At the Heart of Embedded Linux
-www.baylibre.com
-
---001a11406d2a75112805373a52e6
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Le=C2=A0jeudi 7 juillet 2016, Jean Delvare &lt;<a href=3D"mailto:jdelvare@s=
-use.de">jdelvare@suse.de</a>&gt; a =C3=A9crit=C2=A0:<br><blockquote class=
-=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
-ing-left:1ex">The clk-oxnas driver is specific to its architecture, so do n=
-ot<br>
-propose it on other architectures, unless build-testing.<br>
-<br>
-Signed-off-by: Jean Delvare &lt;<a href=3D"javascript:;" onclick=3D"_e(even=
-t, &#39;cvml&#39;, &#39;jdelvare@suse.de&#39;)">jdelvare@suse.de</a>&gt;<br=
->
-Cc: Neil Armstrong &lt;<a href=3D"javascript:;" onclick=3D"_e(event, &#39;c=
-vml&#39;, &#39;narmstrong@baylibre.com&#39;)">narmstrong@baylibre.com</a>&g=
-t;<br>
-Cc: Stephen Boyd &lt;<a href=3D"javascript:;" onclick=3D"_e(event, &#39;cvm=
-l&#39;, &#39;sboyd@codeaurora.org&#39;)">sboyd@codeaurora.org</a>&gt;<br>
----<br>
-=C2=A0drivers/clk/Kconfig |=C2=A0 =C2=A0 1 +<br>
-=C2=A01 file changed, 1 insertion(+)</blockquote><div><br></div><div>Acked-=
-by: Neil Armstrong &lt;<a href=3D"mailto:narmstrong@baylibre.com">narmstron=
-g@baylibre.com</a>&gt;</div><br><br>-- <br><div dir=3D"ltr"><div><div>Neil =
-Armstrong<br></div><div>Embedded Linux Software Engineer<br></div>BayLibre =
-- At the Heart of Embedded Linux<br></div><a href=3D"http://www.baylibre.co=
-m" target=3D"_blank">www.baylibre.com</a><br></div><br>
-
---001a11406d2a75112805373a52e6--
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index 653ade5769b3..5d98549e23a6 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -83,7 +83,7 @@ struct ccu_div {
+ 	struct ccu_div _struct = {					\
+ 		.enable	= _gate,					\
+ 		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+-		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
++		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+index 3cf12bf95962..edf9215ea8cc 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.h
++++ b/drivers/clk/sunxi-ng/ccu_mp.h
+@@ -44,7 +44,7 @@ struct ccu_mp {
+ 		.enable	= _gate,					\
+ 		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+ 		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
+-		.mux	= SUNXI_CLK_MUX(_muxshift, _muxwidth),		\
++		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 945082631e7d..95cfecec3c39 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -21,7 +21,7 @@ struct ccu_mux_internal {
+ 	} variable_prediv;
+ };
+ 
+-#define SUNXI_CLK_MUX(_shift, _width)	\
++#define _SUNXI_CCU_MUX(_shift, _width)		\
+ 	{					\
+ 		.shift	= _shift,		\
+ 		.width	= _width,		\
+@@ -37,7 +37,7 @@ struct ccu_mux {
+ 
+ #define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
+ 	struct ccu_mux _struct = {					\
+-		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
++		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+@@ -51,7 +51,7 @@ struct ccu_mux {
+ 				_shift, _width, _gate, _flags)		\
+ 	struct ccu_mux _struct = {					\
+ 		.enable	= _gate,					\
+-		.mux	= SUNXI_CLK_MUX(_shift, _width),		\
++		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+-- 
+2.9.2
