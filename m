@@ -1,60 +1,50 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [PATCH v4] xen/arm: Add a clock property
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <CAMuHMdU9yP2SMYa5ssrQSu1vwSN2gM4mD-EVYSGr2Pqf=jmCgw@mail.gmail.com>
- <cc28ef7e-dce3-fe5f-ab80-b662244bcbd0@arm.com>
- <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, xen-devel@lists.xenproject.org,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Stefano Stabellini <sstabellini@kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <04d9dbfb-196d-a775-7fbb-526aba8085f4@arm.com>
-Date: Wed, 20 Jul 2016 13:10:14 +0100
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWeJjcuBHjnjppc5Ys5Ew8VssXzg=dLpLPCOQaBnUo_7Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dev@linux-sunxi.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH resend 1/9] clk: sunxi-ng: Fix inverted test condition in ccu_helper_wait_for_lock
+Date: Tue, 26 Jul 2016 15:04:23 +0800
+Message-Id: <1469516671-19377-2-git-send-email-wens@csie.org>
+In-Reply-To: <1469516671-19377-1-git-send-email-wens@csie.org>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The condition passed to read*_poll_timeout() is the break condition,
+i.e. wait for this condition to happen and return success.
 
+The original code assumed the opposite, resulting in a warning when
+the PLL clock rate was changed but never lost it's lock as far as
+the readout indicated. This was verified by checking the read out
+register value.
 
-On 20/07/16 12:49, Geert Uytterhoeven wrote:
-> Hi Julien,
->
-> On Wed, Jul 20, 2016 at 1:01 PM, Julien Grall <julien.grall@arm.com> wrote:
->> On 20/07/16 10:43, Geert Uytterhoeven wrote:
->>> On Tue, Jul 12, 2016 at 9:46 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>> wrote:
->>>>
->>>> Clocks described by this property are reserved for use by Xen, and the OS
->>>> must not alter their state any way, such as disabling or gating a clock,
->>>> or modifying its rate. Ensuring this may impose constraints on parent
->>>> clocks or other resources used by the clock tree.
->>>>
->>>> This property is used to proxy clocks for devices Xen has taken ownership
->>>> of, such as UARTs, for which the associated clock controller(s) remain
->>>> under the control of Dom0.
->>>
->>>
->>> I'm not familiar with using XEN at all, but I'm a bit puzzled...
->>>
->>> Can't you just add a clocks property to the (virtual) serial device node
->>> in DT?
->>> Then the (virtual) serial device driver can get and enable the clock?
->>
->> There is no DT node for the Xen console (hvc). The UART used by Xen will be
->> completely removed from the Device tree.
->
-> Why is it removed?
+Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Because the device is used exclusively by Xen and DOM0 should not touch 
-it at all (IRQs and MMIOs are not mapped).
-
-Regards,
-
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index fc17b5295e16..51d4bac97ab3 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -31,7 +31,7 @@ void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+ 		return;
+ 
+ 	WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg, reg,
+-					   !(reg & lock), 100, 70000));
++					   reg & lock, 100, 70000));
+ }
+ 
+ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
 -- 
-Julien Grall
+2.8.1
