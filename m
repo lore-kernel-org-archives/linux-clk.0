@@ -1,98 +1,95 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione
-	<carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>
-Subject: [PATCH 01/10] clk: meson8b: make it explicitly non-modular
-Date: Mon, 4 Jul 2016 17:12:11 -0400
-Message-ID: <20160704211220.5685-2-paul.gortmaker@windriver.com>
-In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160727073005.GG6560@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-8-git-send-email-wens@csie.org> <20160727073005.GG6560@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 27 Jul 2016 15:32:58 +0800
+Message-ID: <CAGb2v67KcvzxadXYTWSg42+gpRxt4fhNmiWmtAD5D7r0+K4T8g@mail.gmail.com>
+Subject: Re: [PATCH 7/9] clk: sunxi-ng: mux: Add clk notifier functions
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, dev <dev@linux-sunxi.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Kconfig currently controlling compilation of this code is:
+On Wed, Jul 27, 2016 at 3:30 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Tue, Jul 26, 2016 at 03:04:29PM +0800, Chen-Yu Tsai wrote:
+>> On sunxi we support cpufreq by changing the clock rate of PLL-CPU.
+>> It's possible the clock output of the PLL goes out of the CPU's
+>> operational limits when the PLL's multipliers / dividers are changed
+>> and it hasn't stabilized yet. This would result in the CPU hanging.
+>>
+>> To circumvent this, we temporarily switch the CPU mux clock to another
+>> stable clock before the rate change, and switch it back after the PLL
+>> stabilizes. This is done with clk notifiers registered on the PLL.
+>>
+>> This patch adds common functions for notifiers to reparent mux clocks.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu_mux.c | 36 ++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
+>>  2 files changed, 50 insertions(+)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+>> index f96eabb5d1f3..8a6e9065cb85 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_mux.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
+>> @@ -8,7 +8,9 @@
+>>   * the License, or (at your option) any later version.
+>>   */
+>>
+>> +#include <linux/clk.h>
+>>  #include <linux/clk-provider.h>
+>> +#include <linux/delay.h>
+>>
+>>  #include "ccu_gate.h"
+>>  #include "ccu_mux.h"
+>> @@ -199,3 +201,37 @@ const struct clk_ops ccu_mux_ops = {
+>>       .determine_rate = __clk_mux_determine_rate,
+>>       .recalc_rate    = ccu_mux_recalc_rate,
+>>  };
+>> +
+>> +/*
+>> + * This clock notifier is called when the frequency of the of the parent
+>> + * PLL clock is to be changed. The idea is to switch the parent to a
+>> + * stable clock, such as the main oscillator, while the PLL frequency
+>> + * stabilizes.
+>> + */
+>> +static int ccu_mux_notifier_cb(struct notifier_block *nb,
+>> +                            unsigned long event, void *data)
+>> +{
+>> +     struct ccu_mux_nb *mux = to_ccu_mux_nb(nb);
+>> +     int ret = 0;
+>> +
+>> +     if (event == PRE_RATE_CHANGE) {
+>> +             mux->original_index = ccu_mux_helper_get_parent(mux->common,
+>> +                                                             mux->cm);
+>> +             ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
+>> +                                             mux->bypass_index);
+>> +     } else if (event == POST_RATE_CHANGE) {
+>> +             ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
+>> +                                             mux->original_index);
+>> +     }
+>> +
+>> +     udelay(mux->delay_us);
+>
+> Are you sure we need that delay?
+>
+> set_rate will end and notify you once the PLL rate is stable, so it
+> looks redundant.
 
-drivers/clk/meson/Kconfig:config COMMON_CLK_MESON8B
-drivers/clk/meson/Kconfig:      bool
+The delay requirement is on the cpu mux clk, not the PLL. The
+datasheet says you should wait for up to 8 clock cycles after
+changing the parent. Not sure how this factors with the CPU
+actually doing the waiting though.
 
-...meaning that it currently is not being built as a module by anyone.
-However a recent commit added a bunch of modular boilerplate to this
-driver.
+So this is separate from the PLL lock delay.
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_init translates to device_initcall in the non-modular
-case, the init ordering remains unchanged with this commit.
-
-Also note that MODULE DEVICE_TABLE/ALIAS are no-op when non-modular.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/clk/meson/meson8b-clkc.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b-clkc.c
-index b1902e91213d..4c9413cdf373 100644
---- a/drivers/clk/meson/meson8b-clkc.c
-+++ b/drivers/clk/meson/meson8b-clkc.c
-@@ -1,4 +1,6 @@
- /*
-+ * AmLogic S805 / Meson8b Clock Controller Driver
-+ *
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-@@ -23,7 +25,7 @@
- #include <linux/of_address.h>
- #include <dt-bindings/clock/meson8b-clkc.h>
- #include <linux/platform_device.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- 
- #include "clkc.h"
- 
-@@ -429,7 +431,6 @@ static const struct of_device_id meson8b_clkc_match_table[] = {
- 	{ .compatible = "amlogic,meson8b-clkc" },
- 	{ }
- };
--MODULE_DEVICE_TABLE(of, meson8b_match_table);
- 
- static struct platform_driver meson8b_driver = {
- 	.probe		= meson8b_clkc_probe,
-@@ -443,16 +444,4 @@ static int __init meson8b_clkc_init(void)
- {
- 	return platform_driver_register(&meson8b_driver);
- }
--module_init(meson8b_clkc_init);
--
--static void __exit meson8b_clkc_exit(void)
--{
--	platform_driver_unregister(&meson8b_driver);
--}
--module_exit(meson8b_clkc_exit);
--
--MODULE_DESCRIPTION("AmLogic S805 / Meson8b Clock Controller Driver");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:meson8b-clkc");
--MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
--MODULE_AUTHOR("Carlo Caione <carlo@endlessm.com>");
-+device_initcall(meson8b_clkc_init);
--- 
-2.8.4
+ChenYu
