@@ -1,66 +1,66 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 11 Jul 2016 11:55:52 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Franklin S Cooper Jr <fcooper@ti.com>
-Cc: robh+dt@kernel.org, tony@atomide.com, linux@arm.linux.org.uk,
-	paul@pwsan.com, t-kristo@ti.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, vigneshr@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH v8 3/9] pwm: pwm-tiehrpwm: Update dt binding document to
- use generic node name
-Message-ID: <20160711095552.GH5823@ulmo.ba.sec>
-References: <1462291015-1919-1-git-send-email-fcooper@ti.com>
- <1462291015-1919-4-git-send-email-fcooper@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jul 2016 09:27:55 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/9] clk: sunxi-ng: nkm: Add mux to support multiple
+ parents
+Message-ID: <20160727072755.GF6560@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-7-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZPDwMsyfds7q4mrK"
-In-Reply-To: <1462291015-1919-4-git-send-email-fcooper@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="m1UC1K4AOz1Ywdkx"
+In-Reply-To: <1469516671-19377-7-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---ZPDwMsyfds7q4mrK
+--m1UC1K4AOz1Ywdkx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 03, 2016 at 10:56:49AM -0500, Franklin S Cooper Jr wrote:
-> Now that the node name has been changed from ehrpwm to pwm the document
-> should show this proper usage. Change the unit address in the example
-> from 0 to the proper physical address value that should be used. Also
-> insure that the unit address matches to the reg property.
+On Tue, Jul 26, 2016 at 03:04:28PM +0800, Chen-Yu Tsai wrote:
+> The MIPI mode of the MIPI-PLL on A31 is an NKM-style PLL with 2
+> selectable parents.
 >=20
-> Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Add mux support to the NKM clock.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-I applied this long ago, but never replied: Applied, thanks.
+Applied, thanks
 
-Thierry
+Maxime
 
---ZPDwMsyfds7q4mrK
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--m1UC1K4AOz1Ywdkx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAABCAAGBQJXg20mAAoJEN0jrNd/PrOhIeUP/jn+tXVGKN5TntUnYN35a8/r
-thpQZEdWLeKfro6QrXt2PVubKf7DUllHX0p3fLF5K7by13ATq+Ewm2VvLlA0mQEP
-EisBUOBbx/yN05avwMk6iuOzxXMBFwVeCJa9tjpIkOiBCQiIMywqq9ptdshpzp5p
-Ianv0aq49cwpUXpZNrvTq5Vm0G3AKkg6WFr553kmbUkmJ9cjA6sWZp6JVW2IVnLa
-IZgCpZxAwSJgGfiP6cefWWALpMpdsA7xeqCVH+yIe5xVr3St9JUd4j24qcTac8ig
-zBPOJ1Vn6pMLfT2J8XhZBpr8hJ7xL8otNakH0AIErDX0KAURgKzjwjw+m1pxuctH
-iHEgRtufRWUxmCPeJCcchEBCQvBmwJa4+hXUFVTVA+ab1VGnDcPb7MPB4NzFPaAj
-nPtA4AViRewjzjC6/uU61MT8z5p2wES34s2d23AMmrHq6aSRi9frM47vzLaWpUEc
-1G5dQn+Kpa0Ck5SEroeF4d6oh0iQZq/glUrDt8k8U4gLJrTbTMr2CsplkXM5VsGg
-prElhJyEARWOPKrWgsKA0crIeMd5gdKDNHQoG2aKTWwpf5mLg4TN10oIpgo1imwn
-MH+AyUop9jpSJ4glrpJbsqrBNr+kpkNUM0JmmXjMxAFGFoNlB9gMuegcYJTRjLxn
-wpKXs9O1Px8dylvmqcp1
-=FH2T
+iQIcBAEBAgAGBQJXmGJ7AAoJEBx+YmzsjxAg1c8P/3GVAkmofxpghWq+4a+PL+gQ
+6YumrP5oYm9tRgbEtBfnv8ZjswxYPRgnFpqY1UpaEmuEezzoenjAffFuQbVNFRAf
+qeGCxPP+Iaw8XhOKR9fMpGjmPUZpQlemv9RKDA1KaZnsOt9X/JzNL6d3cls1Nrtu
+JvfXibLyj1uNt509kfDXunDV9zDLnDgPcy4aP/si7XcL3mwLIkWTeb1taGdvcjIU
+jsFdbRPeehFiT1Zsd+o262HEo+kjwJ+opVoBaf+ltN32ATGejujcCPTZb7kGGxxw
+9N44HJCs9Rwg/7r9R44pv7W43RrCuSvdbnSWpLNRho6gs18waE/b8a+u9GLs4Ggp
+K8HnggUdCzhmIcbE7cJgGXmdsGfjJ20gKqkC/fiK8U7tiFKg0LmNRf7ifhSzcjwP
+OP2Ly6S0Cb1psfQgAv/KejPB0hEoO6/Do4f0U40dDV7jrYQfW4BJkmynbPqu1/vr
+yRtZXJFoeVJXT3Z+myDd8squliO+Udv5L3pvHnYZTicEj2R6X5r8UbLeW1nZ+JEy
+/AnaMvMgl09vAo7gFUomRv1VMwFeXpK0SAmy9rCFCdSk9dSLRC2JEWMErHilJFzE
+twMoW0Pi3zZRvH36E/9c/ibxEd+woyaKNGguYe09BYYvzLt5p7yAxDjg0ULgsblv
+/6EGM164ds9fDz50SV4k
+=3QFU
 -----END PGP SIGNATURE-----
 
---ZPDwMsyfds7q4mrK--
+--m1UC1K4AOz1Ywdkx--
