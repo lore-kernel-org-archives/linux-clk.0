@@ -1,75 +1,55 @@
-Return-Path: <kesavan.abhilash@gmail.com>
-Return-Path: <kesavan.abhilash@gmail.com>
-Sender: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-To: s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com
-Cc: kgene.kim@samsung.com,
-	k.kozlowski@samsung.com,
-	b.zolnierkie@samsung.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for Exynos7 CPU clocks
-Date: Wed,  6 Jul 2016 01:59:20 +0530
-Message-Id: <1467750561-13957-2-git-send-email-a.kesavan@samsung.com>
-In-Reply-To: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20160727091827.e26f72701ce5758fa29aff7a@free.fr>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-5-git-send-email-wens@csie.org> <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
+ <20160727065934.GD6560@lukather> <20160727091827.e26f72701ce5758fa29aff7a@free.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 27 Jul 2016 15:30:11 +0800
+Message-ID: <CAGb2v65MfbOm-F49VEXTW_GW_0=atwcQTY=8Od4B2cz1xsgHMw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	devicetree <devicetree@vger.kernel.org>, dev <dev@linux-sunxi.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos7 has the same CPU clock registers layout as that present
-in Exynos5433 except for the bits in the MUX_STAT* registers.
-Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
+On Wed, Jul 27, 2016 at 3:18 PM, Jean-Francois Moine <moinejf@free.fr> wrote:
+> On Wed, 27 Jul 2016 08:59:34 +0200
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>
+>> On Tue, Jul 26, 2016 at 07:43:06PM +0200, Jean-Francois Moine wrote:
+>> > On Tue, 26 Jul 2016 15:04:26 +0800
+>> > Chen-Yu Tsai <wens@csie.org> wrote:
+>> >
+>> > > Some clock muxes have holes, i.e. invalid or unconnected inputs,
+>> > > between parent mux values.
+>> > >
+>> > > Add support for specifying a mux table to map clock parents to
+>> > > mux values.
+>> >
+>> > Putting empty strings in the holes should work. No?
+>> > Ex:
+>> >
+>> > static const char * const csi_mclk_parents[] =
+>> >     { "pll-video0", "pll-video1", "", "", "", "osc24M" };
+>>
+>> Not really. The clock would be declared as orphan, while it's really
+>> not.
+>>
+>> Parenting functions would also not work as expected,
+>> clk_hw_get_parent_by_index being the obvious example, in that case
+>> returning the empty string for an invalid parent, while it should
+>> really return NULL.
+>
+> I don't see why the clock should be orphan.
+> Then, when a parent is "", clk_hw_get_parent_by_index() returns NULL.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- drivers/clk/samsung/clk-cpu.c | 10 ++++++++--
- drivers/clk/samsung/clk-cpu.h |  2 ++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+There's no requirement for parent clk indexes to match the actual
+register value, is there?
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 8bf7e80..d40d740 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -322,7 +322,10 @@ static int exynos5433_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	/* select the alternate parent */
- 	mux_reg = readl(base + E5433_MUX_SEL2);
- 	writel(mux_reg | 1, base + E5433_MUX_SEL2);
--	wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 2);
-+	if (cpuclk->flags & CLK_CPU_HAS_MODIFIED_MUX_STAT)
-+		wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 1);
-+	else
-+		wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 2);
- 
- 	/* alternate parent is active now. set the dividers */
- 	writel(div0, base + E5433_DIV_CPU0);
-@@ -348,7 +351,10 @@ static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	/* select apll as the alternate parent */
- 	mux_reg = readl(base + E5433_MUX_SEL2);
- 	writel(mux_reg & ~1, base + E5433_MUX_SEL2);
--	wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 1);
-+	if (cpuclk->flags & CLK_CPU_HAS_MODIFIED_MUX_STAT)
-+		wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 0);
-+	else
-+		wait_until_mux_stable(base + E5433_MUX_STAT2, 0, 1);
- 
- 	exynos5433_set_safe_div(base, div, div_mask);
- 	spin_unlock_irqrestore(cpuclk->lock, flags);
-diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
-index d4b6b51..b4d9a4b 100644
---- a/drivers/clk/samsung/clk-cpu.h
-+++ b/drivers/clk/samsung/clk-cpu.h
-@@ -63,6 +63,8 @@ struct exynos_cpuclk {
- #define CLK_CPU_NEEDS_DEBUG_ALT_DIV	(1 << 1)
- /* The CPU clock registers have Exynos5433-compatible layout */
- #define CLK_CPU_HAS_E5433_REGS_LAYOUT	(1 << 2)
-+/* Exynos5433-compatible layout with different MUX_STAT register bits */
-+#define CLK_CPU_HAS_MODIFIED_MUX_STAT	(1 << 3)
- };
- 
- extern int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
--- 
-1.9.1
+ChenYu
