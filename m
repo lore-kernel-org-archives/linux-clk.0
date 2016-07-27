@@ -1,63 +1,66 @@
-Return-Path: <moinejf@free.fr>
-Date: Thu, 28 Jul 2016 16:23:05 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
- <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- devicetree@vger.kernel.org, dev@linux-sunxi.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
-Message-Id: <20160728162305.b157e6a8073c7db375f2b5d3@free.fr>
-In-Reply-To: <20160728132842.GA6682@lukather>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jul 2016 08:43:44 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/9] clk: sunxi-ng: mux: Increase fixed pre-divider div
+ size
+Message-ID: <20160727064344.GB6560@lukather>
 References: <1469516671-19377-1-git-send-email-wens@csie.org>
-	<1469516671-19377-5-git-send-email-wens@csie.org>
-	<20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
-	<20160727065934.GD6560@lukather>
-	<20160727091827.e26f72701ce5758fa29aff7a@free.fr>
-	<20160727074020.GH6560@lukather>
-	<20160727103649.9e6ef332847b5a5c8fac66af@free.fr>
-	<20160728132842.GA6682@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+ <1469516671-19377-4-git-send-email-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
+In-Reply-To: <1469516671-19377-4-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 28 Jul 2016 15:28:42 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-> On Wed, Jul 27, 2016 at 10:36:49AM +0200, Jean-Francois Moine wrote:
-> > On Wed, 27 Jul 2016 09:40:20 +0200
-> > Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
-> >=20
-> > > > > Parenting functions would also not work as expected,
-> > > > > clk_hw_get_parent_by_index being the obvious example, in that case
-> > > > > returning the empty string for an invalid parent, while it should
-> > > > > really return NULL.
-> > > >=20
-> > > > I don't see why the clock should be orphan.
-> > > > Then, when a parent is "", clk_hw_get_parent_by_index() returns NUL=
-L.
-> > >=20
-> > > Why? It should return NULL when there's no parent, while you
-> > > explicitly registered a parent.
-> >=20
-> > "" is not an existing parent. It could be "none" / "dum" / "toto" / ...
-> > with the same result: 'this index cannot be used in mux'.
+--cvVnyQ+4j833TQvp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 26, 2016 at 03:04:25PM +0800, Chen-Yu Tsai wrote:
+> Some clocks have a predivider value that is larger than what u8 can
+> store. One such example is the OUT clk found on A20/A31, which has
+> a /750 pre-divider on one of the osc24M parents.
 >=20
-> And the clock is marked as orphan, while it really isn't.
+> Increase the size of the div field to u16.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Sorry for I don't follow you.
-
-A clock is orphan when it has no parent. In our case, there are many
-possible parents and, at startup time, the hardware or the boot sets
-the mux to point to a real parent, with an index out of the usused
-values.
-Yes, the clock may be orphan, as the other clocks, but just the time
-this real parent becomes visible.
-
-So, how could such a clock stay marked as orphan?
+Applied, thanks!
+Maxime
 
 --=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--cvVnyQ+4j833TQvp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXmFggAAoJEBx+YmzsjxAg3aoQALlJruhYRF9x4Yh2OMW3pUFj
+rQ9XRQ4E7wps9CF3jUkhSkmBvb5rEpO02OQPMpjC2wV7SJZ7PbdiOlLFbBJ71KtZ
+m2dcsfLLmrwaf6+k5aSHbInOBQz9okQA2IqRM3/6M1n8SXIb/MfDd1CAkEQS3NLx
+kiNuOwqFdfQVOu40S/IiBZETSPOLgDbnFhJhpd6lCUzk5sK8C1dEyKPLcgLDRE1P
+LMZTqwAYS9tE+tIEzlSy8D2YYNKwWCh2UKPY9e8Ez3RfHDSiQ9/zyczFgBaiINqK
+Q8OtJ2bNppuAtUD8kj6ZBmTZx9iA+2/PmHCrDsEp2f49kaCtnouHj28HI4DD+drI
+B80+qX7Vpm2oTONlPMo/8lNHrCdBYW32oo8UaUjGCRPKUB+5saT2bMnP29ZRD6ql
+jT4S8XfwqzjbzwiPFC/+Y2bCY0uKKgJeewwKJJRWkayxfAQfuB6Q+xlYNgp5gGsl
+LBiaKlQYl7CL1+rSjZ2VgWFCbcDQbOGiPkfqS8nHP/QzAAswUx+PFZo8we12eId0
+FYIWvDbUHSeOTXT4XbUYrVKsr+aHOY8jXuEIoSKPqn5+11EOAvEnqSjslT66BxSJ
++2yir/H7HkMHMB26Ps9he3hux7fJkDo+HqZLum3LApvNCVuymwlSAIwNcm2Ao8yh
+TPkwVJNXg8mfscPNS5hv
+=m+NG
+-----END PGP SIGNATURE-----
+
+--cvVnyQ+4j833TQvp--
