@@ -1,72 +1,31 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 06/13] clk: sunxi-ng: sun8i: Move fixed factors around
-Date: Tue, 26 Jul 2016 22:30:34 +0200
-Message-Id: <20160726203041.29366-7-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+Return-Path: <moinejf@free.fr>
+Date: Wed, 27 Jul 2016 10:38:31 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ devicetree@vger.kernel.org, dev@linux-sunxi.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/9] clk: sunxi-ng: mux: support fixed pre-dividers on
+ multiple parents
+Message-Id: <20160727103831.2b5c822ecd808deaf8d92707@free.fr>
+In-Reply-To: <1469516671-19377-6-git-send-email-wens@csie.org>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+	<1469516671-19377-6-git-send-email-wens@csie.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the fixed factors clocks before the ccu_common list so that we can
-separate the clocks definitions and the registration part.
+On Tue, 26 Jul 2016 15:04:27 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+> Some clocks on the A31 have fixed pre-dividers on multiple parents.
+> Add support for them.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index f61d2e245ac4..ec8c67201e8e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -484,6 +484,19 @@ static SUNXI_CCU_M_WITH_MUX_GATE(mbus_h3_clk, "mbus", mbus_h3_parents,
- static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
- 			     0x1a0, 0, 3, BIT(31), 0);
- 
-+/* Fixed Factor clocks */
-+/* We hardcode the divider to 4 for now */
-+static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
-+			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
-+			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-+			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
-+			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
-+			"pll-periph0", 1, 2, 0);
-+
- static struct ccu_common *sun8i_h3_ccu_clks[] = {
- 	&pll_cpux_clk.common,
- 	&pll_audio_base_clk.common,
-@@ -597,18 +610,6 @@ static struct ccu_common *sun8i_h3_ccu_clks[] = {
- 	&gpu_clk.common,
- };
- 
--/* We hardcode the divider to 4 for now */
--static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
--			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
--			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
--			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
--			"pll-periph0", 1, 2, 0);
--
- static struct clk_hw_onecell_data sun8i_h3_hw_clks = {
- 	.hws	= {
- 		[CLK_PLL_CPUX]		= &pll_cpux_clk.common.hw,
--- 
-2.9.2
+This could be done by intermediate clocks.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
