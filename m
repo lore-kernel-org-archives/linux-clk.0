@@ -1,81 +1,141 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jul 2016 09:43:26 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, dev <dev@linux-sunxi.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/9] clk: sunxi-ng: mux: Add clk notifier functions
+Message-ID: <20160727074326.GI6560@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-8-git-send-email-wens@csie.org>
+ <20160727073005.GG6560@lukather>
+ <CAGb2v67KcvzxadXYTWSg42+gpRxt4fhNmiWmtAD5D7r0+K4T8g@mail.gmail.com>
 MIME-Version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- "Andi Shyti" <andi.shyti@samsung.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <57837606.8050906@samsung.com>
-Cc: "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
- "Kukjin Kim" <kgene@kernel.org>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
- "Mark Brown" <broonie@kernel.org>, "Tomasz Figa" <tomasz.figa@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Jaehoon Chung" <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
- "Andi Shyti" <andi@etezian.org>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
- <146799464881.73491.7507792367941552864@resonance>
- <57837606.8050906@samsung.com>
-Message-ID: <146827545163.73491.5083923656346798965@resonance>
-Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
-Date: Mon, 11 Jul 2016 15:17:31 -0700
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yzvKDKJiLNESc64M"
+In-Reply-To: <CAGb2v67KcvzxadXYTWSg42+gpRxt4fhNmiWmtAD5D7r0+K4T8g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sylwester Nawrocki (2016-07-11 03:33:42)
-> On 07/08/2016 06:17 PM, Michael Turquette wrote:
-> > Quoting Andi Shyti (2016-07-08 07:46:40)
-> =
 
-> >> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> >> index 6da663f..32b66f0 100644
-> >> --- a/drivers/spi/spi-s3c64xx.c
-> >> +++ b/drivers/spi/spi-s3c64xx.c
-> >> @@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_=
-driver_data *sdd)
-> >>         writel(val, regs + S3C64XX_SPI_MODE_CFG);
-> >>  =
+--yzvKDKJiLNESc64M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >>         if (sdd->port_conf->clk_from_cmu) {
-> >> +               /* There is half-multiplier before the SPI */
-> >>                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
-> > =
+On Wed, Jul 27, 2016 at 03:32:58PM +0800, Chen-Yu Tsai wrote:
+> On Wed, Jul 27, 2016 at 3:30 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Tue, Jul 26, 2016 at 03:04:29PM +0800, Chen-Yu Tsai wrote:
+> >> On sunxi we support cpufreq by changing the clock rate of PLL-CPU.
+> >> It's possible the clock output of the PLL goes out of the CPU's
+> >> operational limits when the PLL's multipliers / dividers are changed
+> >> and it hasn't stabilized yet. This would result in the CPU hanging.
+> >>
+> >> To circumvent this, we temporarily switch the CPU mux clock to another
+> >> stable clock before the rate change, and switch it back after the PLL
+> >> stabilizes. This is done with clk notifiers registered on the PLL.
+> >>
+> >> This patch adds common functions for notifiers to reparent mux clocks.
+> >>
+> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu_mux.c | 36 +++++++++++++++++++++++++++++++++=
++++
+> >>  drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
+> >>  2 files changed, 50 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu=
+_mux.c
+> >> index f96eabb5d1f3..8a6e9065cb85 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu_mux.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
+> >> @@ -8,7 +8,9 @@
+> >>   * the License, or (at your option) any later version.
+> >>   */
+> >>
+> >> +#include <linux/clk.h>
+> >>  #include <linux/clk-provider.h>
+> >> +#include <linux/delay.h>
+> >>
+> >>  #include "ccu_gate.h"
+> >>  #include "ccu_mux.h"
+> >> @@ -199,3 +201,37 @@ const struct clk_ops ccu_mux_ops =3D {
+> >>       .determine_rate =3D __clk_mux_determine_rate,
+> >>       .recalc_rate    =3D ccu_mux_recalc_rate,
+> >>  };
+> >> +
+> >> +/*
+> >> + * This clock notifier is called when the frequency of the of the par=
+ent
+> >> + * PLL clock is to be changed. The idea is to switch the parent to a
+> >> + * stable clock, such as the main oscillator, while the PLL frequency
+> >> + * stabilizes.
+> >> + */
+> >> +static int ccu_mux_notifier_cb(struct notifier_block *nb,
+> >> +                            unsigned long event, void *data)
+> >> +{
+> >> +     struct ccu_mux_nb *mux =3D to_ccu_mux_nb(nb);
+> >> +     int ret =3D 0;
+> >> +
+> >> +     if (event =3D=3D PRE_RATE_CHANGE) {
+> >> +             mux->original_index =3D ccu_mux_helper_get_parent(mux->c=
+ommon,
+> >> +                                                             mux->cm);
+> >> +             ret =3D ccu_mux_helper_set_parent(mux->common, mux->cm,
+> >> +                                             mux->bypass_index);
+> >> +     } else if (event =3D=3D POST_RATE_CHANGE) {
+> >> +             ret =3D ccu_mux_helper_set_parent(mux->common, mux->cm,
+> >> +                                             mux->original_index);
+> >> +     }
+> >> +
+> >> +     udelay(mux->delay_us);
+> >
+> > Are you sure we need that delay?
+> >
+> > set_rate will end and notify you once the PLL rate is stable, so it
+> > looks redundant.
+>=20
+> The delay requirement is on the cpu mux clk, not the PLL. The
+> datasheet says you should wait for up to 8 clock cycles after
+> changing the parent. Not sure how this factors with the CPU
+> actually doing the waiting though.
+>=20
+> So this is separate from the PLL lock delay.
 
-> > Just a small comment, but if the fixed-factor divide-by-two clock was
-> > modeled in Linux, then this driver could call clk_set_rate on that clock
-> > with the "correct" rate.
-> > =
+Ok, thanks :)
 
-> > I guess that this driver would be the provider of that clock?
-> =
+Maxime
 
-> Good point, however I'm not sure if it is worth to model this divider
-> with a clk object.  It is an internal divider and the clock it provides
-> is only used internally within the SPI controller.  Thus the spi-s3c64xx
-> driver would be provider on the only consumer of this clock.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Sure, but it's only a few lines of code to this, and there are examples
-in the kernel already.
+--yzvKDKJiLNESc64M
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> =
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> Additionally, the "There is half-multiplier before the SPI" comment
-> seems to be obfuscating how the hardware really looks like to me.
-> It talks about multiplier (which reminds me of PLLs with a divider
-> in the feedback loop) while there is a simple divider which should
-> be considered as an integral part of the controller IP block.
-> =
+iQIcBAEBAgAGBQJXmGYdAAoJEBx+YmzsjxAgaYkP/3lUFxkTKkFqel25vUjryh40
+geJDj9YE0Q5fH1yAHU+4sc+Nvvg2hcB3UFEL2XWmYb+rY/dDxMbEm1RQBo2re7kb
+uQdogCZ5hfyR/NYe8IeDFXVXwYNbZRIrfKlUAY4hBjkrPsek+rSQjgD6ATXgUn6D
+nZ+fNtW4woQEkIDZOrM+Psaxqd03qj5bc8VjrypqE8t5Sdf2yLDHLri4htz+hLAT
+J+x+wiqmJWeW0pJ0v549dOdjjOoXtTQTFJYEmwrvBxb2LDme4mM38B/7AZWhAEO2
+FJLqYuW5TpSJpN44R8fRt0DVv3ZnPWq+T7REIzmoBsOzNxP8Yx58rdeKHH78OK2m
+jioeXtCfONRnvR5+bPvddxvLdhYn1dkvXGWwp4wBPJ3fO0EZ4WQvoD9T8Z3b2IbT
+ctrVK9+83LljEWTS49/uThdK9PR0b9MXtz0q+vXvFylFqnZNvl9NrlKPPMBk92LA
+AsKyzeIEn/DFeplYSSVQr7olUZdrf7uOAH1jhcyWcAi/pN4W47GEvSnYGZdeStx5
+KkIb5NFqLewgihIiqjQePLBZ894SKOzcg58wTNo9acBnZETDb4m8eTLgXeZsgBxo
+IayGf03sippf1N7oof9uSWoc4EFtW54X15d4bizoEosCImRMH9xeAIo029uoA1R+
+pAClMBK71CVp5MT9WgKV
+=0Ir+
+-----END PGP SIGNATURE-----
 
-> While we are at it, I'd propose to change this comment to something
-> like:
-> =
-
-> /* The SCLK_SPI clock is divided internally by 2 */
-
-It's your choice, but debug output would benefit from showing the real
-clock frequency at some point.
-
-Regards,
-Mike
+--yzvKDKJiLNESc64M--
