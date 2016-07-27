@@ -1,219 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from m199-177.yeah.net ([123.58.177.199]:54979 "EHLO
-	m199-177.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933326AbcGJH2B (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 03:28:01 -0400
-From: Wan Zongshun <vw@iommu.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	jason@lakedaemon.net, p.zabel@pengutronix.de,
-	Wan Zongshun <vw@iommu.org>, Wan Zongshun <mcuos.com@gmail.com>
-Subject: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-Date: Sun, 10 Jul 2016 15:27:22 +0800
-Message-Id: <1468135649-19980-3-git-send-email-vw@iommu.org>
-In-Reply-To: <1468135649-19980-1-git-send-email-vw@iommu.org>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jul 2016 09:40:20 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	dev@linux-sunxi.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
+Message-ID: <20160727074020.GH6560@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-5-git-send-email-wens@csie.org>
+ <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
+ <20160727065934.GD6560@lukather>
+ <20160727091827.e26f72701ce5758fa29aff7a@free.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="o71xDhNo7p97+qVi"
+In-Reply-To: <20160727091827.e26f72701ce5758fa29aff7a@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch is to add irqchip driver support for nuc900 plat,
-current this driver only supports nuc970 SoC.
 
-Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
----
- arch/arm/mach-w90x900/include/mach/irqs.h |   5 +
- drivers/irqchip/Makefile                  |   1 +
- drivers/irqchip/irq-nuc900.c              | 150 ++++++++++++++++++++++++++++++
- 3 files changed, 156 insertions(+)
- create mode 100644 drivers/irqchip/irq-nuc900.c
+--o71xDhNo7p97+qVi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-w90x900/include/mach/irqs.h b/arch/arm/mach-w90x900/include/mach/irqs.h
-index 9d5cba3..3b035c6 100644
---- a/arch/arm/mach-w90x900/include/mach/irqs.h
-+++ b/arch/arm/mach-w90x900/include/mach/irqs.h
-@@ -59,7 +59,12 @@
- #define IRQ_KPI		W90X900_IRQ(29)
- #define IRQ_P2SGROUP	W90X900_IRQ(30)
- #define IRQ_ADC		W90X900_IRQ(31)
-+
-+#if !defined(CONFIG_SOC_NUC900)
- #define NR_IRQS		(IRQ_ADC+1)
-+#else
-+#define NR_IRQS		62
-+#endif
- 
- /*for irq group*/
- 
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 38853a1..9ccd5af8a 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -69,3 +69,4 @@ obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
- obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
- obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
- obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
-+obj-$(CONFIG_SOC_NUC970)		+= irq-nuc900.o
-diff --git a/drivers/irqchip/irq-nuc900.c b/drivers/irqchip/irq-nuc900.c
-new file mode 100644
-index 0000000..c4b2e39
---- /dev/null
-+++ b/drivers/irqchip/irq-nuc900.c
-@@ -0,0 +1,150 @@
-+/*
-+ * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
-+ *
-+ * The code contained herein is licensed under the GNU General Public
-+ * License. You may obtain a copy of the GNU General Public License
-+ * Version 2 or later at the following locations:
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqdomain.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+
-+#include <asm/exception.h>
-+#include <asm/hardirq.h>
-+
-+#define	REG_AIC_SCR1	0x00
-+#define	REG_AIC_SCR2	0x04
-+#define	REG_AIC_SCR3	0x08
-+#define	REG_AIC_SCR4	0x0C
-+#define	REG_AIC_SCR5	0x10
-+#define	REG_AIC_SCR6	0x14
-+#define	REG_AIC_SCR7	0x18
-+#define	REG_AIC_SCR8	0x1C
-+#define	REG_AIC_SCR9	0x20
-+#define	REG_AIC_SCR10	0x24
-+#define	REG_AIC_SCR11	0x28
-+#define	REG_AIC_SCR12	0x2C
-+#define	REG_AIC_SCR13	0x30
-+#define	REG_AIC_SCR14	0x34
-+#define	REG_AIC_SCR15	0x38
-+#define	REG_AIC_IRSR	0x100
-+#define	REG_AIC_IRSRH	0x104
-+#define	REG_AIC_IASR	0x108
-+#define	REG_AIC_IASRH	0x10C
-+#define	REG_AIC_ISR	0x110
-+#define	REG_AIC_ISRH	0x114
-+#define	REG_AIC_IPER	0x118
-+#define	REG_AIC_ISNR	0x120
-+#define	REG_AIC_OISR	0x124
-+#define	REG_AIC_IMR	0x128
-+#define	REG_AIC_IMRH	0x12C
-+#define	REG_AIC_MECR	0x130
-+#define	REG_AIC_MECRH	0x134
-+#define	REG_AIC_MDCR	0x138
-+#define	REG_AIC_MDCRH	0x13C
-+#define	REG_AIC_SSCR	0x140
-+#define	REG_AIC_SSCRH	0x144
-+#define	REG_AIC_SCCR	0x148
-+#define	REG_AIC_SCCRH	0x14C
-+#define	REG_AIC_EOSCR	0x150
-+
-+static void __iomem *aic_base;
-+static struct irq_domain *aic_domain;
-+
-+static void nuc900_irq_mask(struct irq_data *d)
-+{
-+	if (d->irq < 32)
-+		writel(1 << (d->irq), aic_base + REG_AIC_MDCR);
-+	else
-+		writel(1 << (d->irq - 32), aic_base + REG_AIC_MDCRH);
-+}
-+
-+static void nuc900_irq_ack(struct irq_data *d)
-+{
-+	writel(0x01, aic_base + REG_AIC_EOSCR);
-+}
-+
-+static void nuc900_irq_unmask(struct irq_data *d)
-+{
-+	if (d->irq < 32)
-+		writel(1 << (d->irq), aic_base + REG_AIC_MECR);
-+	else
-+		writel(1 << (d->irq - 32), aic_base + REG_AIC_MECRH);
-+}
-+
-+static struct irq_chip nuc900_irq_chip = {
-+	.irq_ack	= nuc900_irq_ack,
-+	.irq_mask	= nuc900_irq_mask,
-+	.irq_unmask	= nuc900_irq_unmask,
-+};
-+
-+void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
-+{
-+	u32 hwirq;
-+
-+	hwirq = readl(aic_base + REG_AIC_IPER);
-+	hwirq = readl(aic_base + REG_AIC_ISNR);
-+	if (!hwirq)
-+		writel(0x01, aic_base + REG_AIC_EOSCR);
-+
-+	handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
-+}
-+
-+static int aic_irq_domain_map(struct irq_domain *d, unsigned int virq,
-+			      irq_hw_number_t hw)
-+{
-+	irq_set_chip_and_handler(virq, &nuc900_irq_chip, handle_level_irq);
-+	irq_clear_status_flags(virq, IRQ_NOREQUEST);
-+
-+	return 0;
-+}
-+
-+static struct irq_domain_ops aic_irq_domain_ops = {
-+	.map = aic_irq_domain_map,
-+	.xlate = irq_domain_xlate_onecell,
-+};
-+
-+static int __init aic_of_init(struct device_node *node,
-+			      struct device_node *parent)
-+{
-+	int ret;
-+
-+	aic_base = of_iomap(node, 0);
-+	if (!aic_base) {
-+		ret = -ENOMEM;
-+		pr_err("%s: unable to map registers\n", node->full_name);
-+		goto err_iomap;
-+	}
-+
-+	writel(0xFFFFFFFC, aic_base + REG_AIC_MDCR);
-+	writel(0xFFFFFFFF, aic_base + REG_AIC_MDCRH);
-+
-+	aic_domain = irq_domain_add_linear(node, NR_IRQS,
-+					   &aic_irq_domain_ops, NULL);
-+
-+	if (!aic_domain) {
-+		ret = -ENOMEM;
-+		pr_err("%s: unable to create IRQ domain\n", node->full_name);
-+		goto err_aic_domain;
-+	}
-+
-+	set_handle_irq(aic_handle_irq);
-+	return 0;
-+
-+err_aic_domain:
-+	iounmap(aic_base);
-+err_iomap:
-+	return ret;
-+}
-+
-+IRQCHIP_DECLARE(nuc900, "nuvoton,nuc900-aic", aic_of_init);
--- 
-2.7.4
+On Wed, Jul 27, 2016 at 09:18:27AM +0200, Jean-Francois Moine wrote:
+> On Wed, 27 Jul 2016 08:59:34 +0200
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>=20
+> > On Tue, Jul 26, 2016 at 07:43:06PM +0200, Jean-Francois Moine wrote:
+> > > On Tue, 26 Jul 2016 15:04:26 +0800
+> > > Chen-Yu Tsai <wens@csie.org> wrote:
+> > >=20
+> > > > Some clock muxes have holes, i.e. invalid or unconnected inputs,
+> > > > between parent mux values.
+> > > >=20
+> > > > Add support for specifying a mux table to map clock parents to
+> > > > mux values.
+> > >=20
+> > > Putting empty strings in the holes should work. No?
+> > > Ex:
+> > >=20
+> > > static const char * const csi_mclk_parents[] =3D
+> > > 	{ "pll-video0", "pll-video1", "", "", "", "osc24M" };
+> >=20
+> > Not really. The clock would be declared as orphan, while it's really
+> > not.
+> >=20
+> > Parenting functions would also not work as expected,
+> > clk_hw_get_parent_by_index being the obvious example, in that case
+> > returning the empty string for an invalid parent, while it should
+> > really return NULL.
+>=20
+> I don't see why the clock should be orphan.
+> Then, when a parent is "", clk_hw_get_parent_by_index() returns NULL.
 
+Why? It should return NULL when there's no parent, while you
+explicitly registered a parent.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--o71xDhNo7p97+qVi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXmGVkAAoJEBx+YmzsjxAgtmgP/jF9L2OeR+JIzVLUdw1NyWnm
+lBK83DnBzsHToogO9fCuxx9dXrCv9FVHEYV5gwpZhJIlTrtgxny7PR6YqB6rQ6jB
+70PjALVu2rf48KI2TDIsrHNZHuGojFJVkn/t1EOIE88a/BFMnt3olv4hvzUDbNCo
+vHonLeiRkvwRb+b9zHz+tE+nyRwxf/BNOAF0gnbPTqh3MEPu/dD9gmxpIe/oAaXR
+xcERCNWg1CbtAW0oDwO11x6Lu0yJrcot3ey3CxE4eG07NB029SptGxOqUUT1JXwV
+bNa3v2B6xUbfi1z+cYJEcLQIzucGfqzDYA9EW79+E38827wQ2eddj2st6rElTv9A
+mTuLYrRS4kveMaM7a+e6IiTUGafOAoKMmN/cRIvUHaKC2aVitArxbAQ/05MJewpa
+cdpzTMxPZ86JyCfv8chm+yMybtrY3mMeHzDyui75mo7d0NbjSroR7YnoQOeg6JP+
+kMtcXMLlEB7n0JR/PMK1G/4F4fZqwP868wbjK8hhTTOKD+k0zxdLDYgMVJbp9Uf3
+MjrUYbhO4ZASYLfwp+nL5wDN2aF2AKMxshGwNW+SSDwCQwg+8V2poMZqm5lf79MK
+1w08CQPlIiplWLSYSX27hIeTUFEAbT4jDBiMPQn8Bk9GMjq50v/Akd3ApZUd81/z
+5tvdVEwTAsB1f0QqXODE
+=Pqgq
+-----END PGP SIGNATURE-----
+
+--o71xDhNo7p97+qVi--
