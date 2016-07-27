@@ -1,166 +1,153 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <20160725115923.GF21170@ulmo.ba.sec>
-CC: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<gnurou@gmail.com>, <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@armlinux.org.uk>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <2b8c0fb7-b3c7-35bb-a237-2397fefbb725@nvidia.com>
-Date: Mon, 25 Jul 2016 14:36:35 +0100
+Return-Path: <dirk.behme@gmail.com>
+Return-Path: <dirk.behme@gmail.com>
+Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
+To: Stefano Stabellini <sstabellini@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Julien Grall <julien.grall@arm.com>
+References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
+ <146836236759.73491.11707389619985827497@resonance>
+ <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
+ <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
+ <57868EDE.6060406@gmail.com>
+ <146844380895.73491.4867379517577413421@resonance>
+ <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
+ <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
+ <146914607316.8780.7961396342647226841@resonance>
+ <alpine.DEB.2.10.1607211804000.6667@sstabellini-ThinkPad-X260>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>, Mark Rutland
+ <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>, xen-devel@lists.xenproject.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <dbd46fe5-6f53-d11e-6363-a2c9905d6c8e@gmail.com>
+Date: Wed, 27 Jul 2016 07:05:37 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160725115923.GF21170@ulmo.ba.sec>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <alpine.DEB.2.10.1607211804000.6667@sstabellini-ThinkPad-X260>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Michael, Stefano and Julien,
 
-On 25/07/16 12:59, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
->>
->> On 19/07/16 14:36, Mirza Krak wrote:
->>> From: Mirza Krak <mirza.krak@gmail.com>
+On 22.07.2016 03:16, Stefano Stabellini wrote:
+> On Thu, 21 Jul 2016, Michael Turquette wrote:
+>> Quoting Stefano Stabellini (2016-07-14 03:38:04)
+>>> On Thu, 14 Jul 2016, Dirk Behme wrote:
+>>>> On 13.07.2016 23:03, Michael Turquette wrote:
+>>>>> Quoting Dirk Behme (2016-07-13 11:56:30)
+>>>>>> On 13.07.2016 20:43, Stefano Stabellini wrote:
+>>>>>>> On Wed, 13 Jul 2016, Dirk Behme wrote:
+>>>>>>>> On 13.07.2016 00:26, Michael Turquette wrote:
+>>>>>>>>> Quoting Dirk Behme (2016-07-12 00:46:45)
+>>>>>>>>>> Clocks described by this property are reserved for use by Xen, and
+>>>>>>>>>> the OS
+>>>>>>>>>> must not alter their state any way, such as disabling or gating a
+>>>>>>>>>> clock,
+>>>>>>>>>> or modifying its rate. Ensuring this may impose constraints on
+>>>>>>>>>> parent
+>>>>>>>>>> clocks or other resources used by the clock tree.
+>>>>>>>>>
+>>>>>>>>> Note that clk_prepare_enable will not prevent the rate from changing
+>>>>>>>>> (clk_set_rate) or a parent from changing (clk_set_parent). The only
+>>>>>>>>> way
+>>>>>>>>> to do this currently would be to set the following flags on the
+>>>>>>>>> effected
+>>>>>>>>> clocks:
+>>>>>>>>>
+>>>>>>>>>     CLK_SET_RATE_GATE
+>>>>>>>>>     CLK_SET_PARENT_GATE
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Regarding setting flags, I think we already talked about that. I think
+>>>>>>>> the
+>>>>>>>> conclusion was that in our case its not possible to manipulate the
+>>>>>>>> flags in
+>>>>>>>> the OS as this isn't intended to be done in cases like ours. Therefore
+>>>>>>>> no API
+>>>>>>>> is exported for this.
+>>>>>>>>
+>>>>>>>> I.e. if we need to set these flags, we have to do that in Xen where we
+>>>>>>>> add the
+>>>>>>>> clocks to the hypervisor node in the device tree. And not in the
+>>>>>>>> kernel patch
+>>>>>>>> discussed here.
+>>>>>>>
+>>>>>>> These are internal Linux flags, aren't they?
+>>>>>>
+>>>>>>
+>>>>>> I've been under the impression that you can set clock "flags" via the
+>>>>>> device tree. Seems I need to re-check that ;)
+>>>>>
+>>>>> Right, you cannot set flags from the device tree. Also, setting these
+>>>>> flags is done by the clock provider driver, not a consumer. Xen is the
+>>>>> consumer.
+>>>>
+>>>>
+>>>> Ok, thanks, then I think we can forget about using flags for the issue we are
+>>>> discussing here.
+>>>>
+>>>> Best regards
+>>>>
+>>>> Dirk
+>>>>
+>>>> P.S.: Would it be an option to merge the v4 patch we are discussing here,
+>>>> then? From the discussion until here, it sounds to me that it's the best
+>>>> option we have at the moment. Maybe improving it in the future, then.
 >>>
->>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
->>> Tegra30 SOCs
+>>> It might be a step in the right direction, but it doesn't really prevent
+>>> clk_set_rate from changing properties of a clock owned by Xen.  This
+>>> patch is incomplete. We need to understand at least what it would take
+>>> to have a complete solution.
 >>>
->>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->>> ---
->>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
->>>  1 file changed, 73 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>> new file mode 100644
->>> index 0000000..9ee4a66
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>> @@ -0,0 +1,73 @@
->>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
->>> +
->>> +The NOR controller supports a number of memory types, including synchronous NOR,
->>> +asynchronous NOR, and other flash memories with similar interfaces, such as
->>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
->>> +CAN chips, Wi-Fi chips etc.
+>>> Michael, do you have any suggestions on how it would be possible to set
+>>> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
+>>> way?
 >>
->> Nit-pick ... the Tegra documentation refers to this controller as the
->> GMI (general memory interface) or SNOR (sync-NOR) controller because it
->> is not just limited to NOR as you mentioned. I see references to GMI in
->> the Tegra pinctrl driver and so may be we should use this name.
+>> No, there is no way for a consumer to do that. The provider must do it.
+>
+> All right. But could we design a new device tree binding which the Xen
+> hypervisor would use to politely ask the clock provider in Linux to set
+> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for a given clock?
+>
+> Xen would have to modify the DTB before booting Linux with the new
+> binding.
+>
+>
+>>> Like you wrote, I would imagine it needs to be done by the clock
+>>> provider driver. Maybe to do that, it would be easier to have a new
+>>> device tree property on the clock node, rather than listing phandle and
+>>> clock-specifier pairs under the Xen node?
 >>
->>> +
->>> +The actual devices are instantiated from the child nodes of a NOR node.
->>> +
->>> +Required properties:
->>> +
->>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+>> Upon further reflection, I think that your clock consumer can probably
+>> use clk_set_rate_range() to "lock" in a rate. This is good because it is
+>> exactly what a clock consumer should do:
 >>
->> I see at least one difference at the register level between Tegra20 and
->> Tegra30 and so I think this should be something like ...
+>> 1) get the clk
+>> 2) enable the clk
+>> 3) set the required rate for the clock
+>> 4) set rate range constraints, or conversely,
+>> 5) lock in an exact rate; set the min/max rate to the same value
 >>
->>  - compatible : Should contain one of the following:
->> 	For Tegra20 must contain "nvidia,tegra20-gmi".
->>  	For Tegra30 must contain "nvidia,tegra30-gmi".
->>
->>> + - reg: Should contain NOR controller registers location and length.
->>> + - clocks: Must contain one entry, for the module clock.
->>> +   See ../clocks/clock-bindings.txt for details.
->>> + - resets : Must contain an entry for each entry in reset-names.
->>> +   See ../reset/reset.txt for details.
->>> + - reset-names : Must include the following entries:
->>> +  - nor
->>> + - #address-cells: Must be set to 2 to allow memory address translation
->>> + - #size-cells:	Must be set to 1 to allow CS address passing
->>> + - ranges: Must be set up to reflect the memory layout with four integer
->>> + 		values for each chip-select line in use.
->>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
->>
->> There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
->> that this should be nvidia,snor-config to be explicit. It might be nice
->> to also add a "nvidia,mio-config" while you are at it as well, however,
->> that could always be done later. If you do, then the
->> "nvidia,snor-config" becomes optional depending on whether you are using
->> the SNOR or MIO address space.
->>
->> Thierry, Stephen, do prefer all the fields on the config registers are
->> broken out? There are quite a few but I am not sure what we typically
->> recommend here?
-> 
-> As I said elsewhere, I prefer breaking the fields out into separate
-> properties because that makes it a lot easier to write the DT. Rather
-> than having to go and manually assemble 32-bit values for this register
-> and the timing registers, it must be a lot easier to look at datasheets
-> and copy the values into the corresponding DT properties.
+>> The problem with this solution is that it requires the consumer to have
+>> knowledge of the rates that it wants for that clock, which I guess is
+>> something that Linux kernels in a Xen setup do not want/need?
+>
+> Who is usually the component with knowledge of the clock rate to set? If
+> it's a device driver, then neither the Xen hypervisor, nor the Xen core
+> drivers in Linux would know anything about it. (Unless the clock rate is
+> specified on device tree via assigned-clock-rates of course.)
+>
+>
+>> Is it correct that you would prefer some sort of never_touch_this_clk()
+>> api?
+>
+>>From my understading, yes, never_touch_this_clk() would make things easier.
 
-That's what I thought :-)
 
->>> +Note that the NOR controller does not have any internal chip-select address
->>> +decoding and if you want to access multiple devices external chip-select
->>> +decoding must be provided.
->>
->> Although it is true, you do have the MIO address space and so you could
->> support two devices via the SNOR address space and MIO address space
->> (assuming that the MIO can be used for the 2nd device).
-> 
-> Now I'm even more confused. If the GMI controller itself can't select a
-> chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
-> that not select a specific chip?
+Would it be somehow worth to wait for anything like this 
+never_touch_this_clk() api? Or should we try to proceed with 
+clk_prepare_enable() like done in this patch for the moment?
 
-So the GMI has 8 chip-selects and these can be used by either the SNOR
-interface for MIO interface. As you mentioned the chip-select used for
-the SNOR interface is configured by the field SNOR_SEL in the
-SNOR_CONFIG and similarly the chip-select for the MIO interface is
-configured by the MIO_SEL field in the MIO_CONFIG register.
+Best regards
 
-Looking at the Tegra20 TRM, the SNOR interface is mapped to the address
-range 0xd0000000-0xdfffffff and the MIO interface is mapped to the
-address range 0xe0000000-0xefffffff. If chip-select 0 is used for SNOR
-and chip-select 1 is used for MIO, you can support two devices at the
-same time and they will be accessible via different address ranges.
-Whether you can use the MIO interface for the 2nd device is another
-question.
-
-If you want to support two 256MB NOR devices on the SNOR interface, then
-you would need to reconfigure the SNOR_CONFIG each time you swap between
-the two devices.
-
->> Furthermore, if you do have external logic to support multiple devices
->> this would assume that the devices use the same timing and so are
->> probably the same type. It also assumes both can fit in the 256MB
->> address range. May be worth mentioning.
-> 
-> Similarly if you switch between different devices, wouldn't you have to
-> reprogram the timing registers if they are different?
-
-Yes.
-
-> The way I remember this kind of interface to work (it's been a long time
-> since I used one) is that in order to operate on a chip you need to
-> acquire the bus first. Typically that would be an API exposed by the bus
-> driver or some framework that the bus driver registers with. That API
-> arbitrates between multiple devices on the bus and makes sure that the
-> proper chip select is asserted and timing is programmed when you're
-> granted access. A driver that has acquired the bus can then perform what
-> operations they need and release the bus when done.
-> 
-> SPI uses a mechanism like this, for example.
-
-That would make sense. However, I am not sure how that would work with
-the client drivers, such as the CAN driver Mirza is using, that wishes
-to read/write directly to the SNOR address space. I am guessing that SPI
-works like I2C and buffers up the requests and performs them in sequence.
-
-Jon
-
--- 
-nvpublic
+Dirk
