@@ -1,69 +1,54 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 8 Jul 2016 23:35:06 +0200
+Date: Wed, 27 Jul 2016 08:59:34 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>
-Subject: Re: [PATCH v3 13/14] clk: sunxi-ng: Add H3 clocks
-Message-ID: <20160708213506.GD4522@lukather>
-References: <20160629190535.11855-1-maxime.ripard@free-electrons.com>
- <20160629190535.11855-14-maxime.ripard@free-electrons.com>
- <146785878822.73491.15164592643568518865@resonance>
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	dev@linux-sunxi.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
+Message-ID: <20160727065934.GD6560@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-5-git-send-email-wens@csie.org>
+ <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
-In-Reply-To: <146785878822.73491.15164592643568518865@resonance>
+	protocol="application/pgp-signature"; boundary="zS7rBR6csb6tI2e1"
+In-Reply-To: <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---jq0ap7NbKX2Kqbes
+--zS7rBR6csb6tI2e1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
-
-On Wed, Jul 06, 2016 at 07:33:08PM -0700, Michael Turquette wrote:
-> Hi Maxime,
+On Tue, Jul 26, 2016 at 07:43:06PM +0200, Jean-Francois Moine wrote:
+> On Tue, 26 Jul 2016 15:04:26 +0800
+> Chen-Yu Tsai <wens@csie.org> wrote:
 >=20
-> Quoting Maxime Ripard (2016-06-29 12:05:34)
-> > +static void __init sun8i_h3_ccu_setup(struct device_node *node)
-> > +{
-> > +       void __iomem *reg;
-> > +       u32 val;
-> > +
-> > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
-> > +       if (IS_ERR(reg)) {
-> > +               pr_err("%s: Could not map the clock registers\n",
-> > +                      of_node_full_name(node));
-> > +               return;
-> > +       }
-> > +
-> > +       /* Force the PLL-Audio-1x divider to 4 */
-> > +       val =3D readl(reg + SUN8I_H3_PLL_AUDIO_REG);
-> > +       val &=3D ~GENMASK(4, 0);
-> > +       writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
-> > +
-> > +       sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
-> > +}
-> > +CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
-> > +              sun8i_h3_ccu_setup);
+> > Some clock muxes have holes, i.e. invalid or unconnected inputs,
+> > between parent mux values.
+> >=20
+> > Add support for specifying a mux table to map clock parents to
+> > mux values.
 >=20
-> There are several examples of drivers that split the clocks between
-> "early" CLK_OF_DECLARE clocks and "late" module clocks. If you really
-> need early clocks (which is less likely on a 64-bit platform with
-> architected timers), it would be nice to pair that with a proper
-> platform_driver (using builtin_platform_driver most likely).
+> Putting empty strings in the holes should work. No?
+> Ex:
+>=20
+> static const char * const csi_mclk_parents[] =3D
+> 	{ "pll-video0", "pll-video1", "", "", "", "osc24M" };
 
-I think we discussed that already, but yeah, we do have timers that
-are not the architected ones (and this is a ARMv7 platform). I have
-the feeling that splitting the two doesn't really bring any benefit,
-but complexify a lot the driver.
+Not really. The clock would be declared as orphan, while it's really
+not.
+
+Parenting functions would also not work as expected,
+clk_hw_get_parent_by_index being the obvious example, in that case
+returning the empty string for an invalid parent, while it should
+really return NULL.
 
 Maxime
 
@@ -72,25 +57,25 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---jq0ap7NbKX2Kqbes
+--zS7rBR6csb6tI2e1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXgByKAAoJEBx+YmzsjxAguFgP/2WpKChtDyTQ5tgd1pxBaP6P
-kGkKQNOdBOc3wXQf3G59+Ph76lgpkQiJNTMMN3zh4p4vF1p/UvyIhoAr1ct5a+bA
-nrIFs/EMRHi1UkqbrzTEpA6ZWBXlJnV+XLF0AOlFak/IfjXSVbsax933RN7j62ph
-BkZCIJ1zdPvumszQwTz06xnVSZ1pXfgahirYpXqZ2a7dpBGW43GCvdcZlPX4fG0v
-LHPjGXXx/mBC4LQfLZv3HK5kHwktdfvR5vGGm87Thugaalm30InWmimjnfyTmsmT
-xXWeEcbLxeUEJVr7Z1ozrLk+rimhBmqJWcKRaDXLs6TrWMvELSi72mGBLnbuLEfU
-eEJ9lyOR4TVMk8tKXUHQGrC6OVqarS0H3HDk2hFzJNZ+NLluDtZUnwW9z/UHzR0G
-5ckIfyEOFRkrPGWBYqgn/ArTBnUPrFFv0PXHmeS4360OiQnZ9/ei8hGuoqzuU88L
-DNxDS8TVYO5fj3k5HxPtTeQ9g/mt52Q5mz+is/9nyRvkAvaKHvykXcTc/V9WSzq9
-qZuGmSe1po852wtwJEnHV1X2GpsyCCLcUcaxiHaPyydPqluSqyUW2JuDNnNZRLsr
-nhNcaOTOsD/01IH0EcjfiLh6XylJCpbDWwjj/C+rTal6Bm56PdZ5xNiCBVznIJXm
-2kQdnLoWGbpHEDdk5/sw
-=0m3t
+iQIcBAEBAgAGBQJXmFvWAAoJEBx+YmzsjxAgvxoQAL5zKe1dkPf+ASL5YxDfh3dq
+uu42e+QySoseFwGW+eTm/v5wwkJyotF1ck5IF3fWwfMmZ+jGPSQDK5SDsGbzcdh4
+V8bRqe7CjiYK1zHBHluk6QiIpFuIHIavwA5hr0y2weI6TLBhQKn129Y4KXXcs9Zn
+Xy0sUfejEICEflyZLtJN+XRPJEPjLop88pKCW84NiLGEnLtz7iCjFezbF5QXfMih
+d6uPnGcKqbfigysxgl9ai0ROV6LQfP6wpXOXrOHLWK9NX7YNDd3sEV2AWDTHH0V2
+fyA8nNPfVdKUEpwTHB0AhS4B4oPkz7ZW+nYnyTQf5wMqiIj3jJKryJJyl3pcZ+vC
+F2CyFE2jgCtaz0vA9/yV5BOmLr87Uf+gbEl1MXDYJLB317ItPeb4r2KbyHui7feg
+hiS84k4U/2PdhkgTco47//VzwWD1zr6zrRrkTJx0H24lmEWcyX0EMYKz3cgsR+DI
+PZf74WSdm43vow/+c9NIfPpn7F2Q+Z4oxfs3soHHOwxf/B2x+/epzQCbjZ/s5h38
++i1JJK0xPfmI0js4uU/uuYEtWeL7Xz8FOJ2v0welSzhaOc23ZYEnOsBtg1/U9nJK
+A1Q9/c+NeDRghZeV1frFNUNCJxD1SmUvb0wJzo4VhFJBRWjhtLVGv37BAQvR5YTH
+3UcbuGkUOjgthhEyZLrV
+=CCPA
 -----END PGP SIGNATURE-----
 
---jq0ap7NbKX2Kqbes--
+--zS7rBR6csb6tI2e1--
