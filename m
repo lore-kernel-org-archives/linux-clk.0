@@ -1,151 +1,71 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 28 Jul 2016 15:31:45 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, dev@linux-sunxi.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] clk: sunxi-ng: Add A31/A31s clocks
+Message-ID: <20160728133145.GB6682@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+ <1469516671-19377-9-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-To: Stefan Agner <stefan@agner.ch>, festevam@gmail.com, aisheng.dong@nxp.com,
- shawnguo@kernel.org, kernel@pengutronix.de
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160703174813.13970-1-stefan@agner.ch>
-Cc: sboyd@codeaurora.org, grinberg@compulab.co.il,
- gary.bisson@boundarydevices.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Stefan Agner" <stefan@agner.ch>
-References: <20160703174813.13970-1-stefan@agner.ch>
-Message-ID: <146785281774.73491.10999943518898018619@resonance>
-Subject: Re: [PATCH v2] clk: imx7d: do not set parent of ethernet time/ref clocks
-Date: Wed, 06 Jul 2016 17:53:38 -0700
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+In-Reply-To: <1469516671-19377-9-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stefan Agner (2016-07-03 10:48:13)
-> All device trees currently in mainline specify the time clock parent
-> using the assigned-clocks/assigned-clock-parents method, there is no
-> need to statically assign the parent in the core clock driver.
-> Also all current boards provide an Ethernet reference clock for the
-> PHY externally, hence configuring the internal PHY reference clock.
-> =
 
-> Furthermore, and the actual driver of this patch, specify ethernet
-> related parents at that early point in boot leads to a warning:
-> bad: scheduling from the idle thread!
-> =
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The reason for the warning is that setting the parent enables the ENET
-> PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
-> cause clk_pllv3_wait_lock to sleep. See also:
-> commit fc8726a2c021 ("clk: core: support clocks which requires parents
-> enable (part 2)").
-> =
-
-> Note that setting the ENET AXI root clock parent also requires ENET
-> PLL to be enabled. However, U-Boot typically leaves the ENET PLL on,
-> hence when the framework sets the parent of the first clock, it does
-> not need to wait for the PLL to come up. But because there is currently
-> no user of that clock, the PLL gets disabled after setting the parent.
-> Therefore, subsequent reparenting calls of any clock which somehow rely
-> on the ENET PLL, need to reenable the ENET PLL which leads to a sleep.
-> Removing those subsequent reparenting calls works around this issue.
-> =
-
-> Also remove comments. The code is really verbose enough.
-> =
-
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-
-Applied.
-
-Regards,
-Mike
-
-> ---
-> Changes since v1:
-> - Also remove PHY REF clock
-> =
-
-> Hi All,
-> =
-
-> Fabio, thanks for testing v1.
-> =
-
-> With v2, the warnings should definitly be gone. However, that might
-> break some boards...
-> =
-
-> What is the IMX7D_ENET_PHY_REF_ROOT_SRC clock for anyway? It sounds
-> like it should provide a clock for the PHY. However, there is also
-> IMX7D_ENET1_REF_ROOT_CLK and IMX7D_ENET2_REF_ROOT_CLK...
-> =
-
-> Our first design used to use a clock provided by the SoC, by muxing
-> a pad to CCM_ENET1_REF_CLK and enabling IMX7D_ENET1_REF_ROOT_CLK
-> it seemd to work just fine, there was no need for
-> IMX7D_ENET_PHY_REF_ROOT_SRC.
-> =
-
-> Dong, can you shed some light on this?
-> =
-
-> Otherwise, in case a board does not work with that change, something
-> like this should do the same using device tree. You probably would
-> have to add this to all FEC instances since this seems to be a shared
-> clock.
-> =
-
->         pinctrl-names =3D "default";
->         pinctrl-0 =3D <&pinctrl_enet1>;
->         assigned-clocks =3D <&clks IMX7D_ENET1_TIME_ROOT_SRC>,
-> -                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>;
-> -       assigned-clock-parents =3D <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
-> +                         <&clks IMX7D_ENET1_TIME_ROOT_CLK>,
-> +                         <&clks IMX7D_ENET_PHY_REF_ROOT_SRC>;
-> +       assigned-clock-parents =3D <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>, =
-<0>,
-> +                                <&clks IMX7D_PLL_ENET_MAIN_25M_CLK>;
->         assigned-clock-rates =3D <0>, <100000000>;
->         phy-mode =3D "rgmii";
->         phy-handle =3D <&ethphy0>;
-> =
-
-> --
-> Stefan
-> =
-
->  drivers/clk/imx/clk-imx7d.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> =
-
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 79293ed..6ed4f8f 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -860,16 +860,7 @@ static void __init imx7d_clocks_init(struct device_n=
-ode *ccm_node)
->         /* use old gpt clk setting, gpt1 root clk must be twice as gpt co=
-unter freq */
->         clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]=
-);
->  =
-
-> -       /*
-> -        * init enet clock source:
-> -        *      AXI clock source is 250MHz
-> -        *      Phy refrence clock is 25MHz
-> -        *      1588 time clock source is 100MHz
-> -        */
->         clk_set_parent(clks[IMX7D_ENET_AXI_ROOT_SRC], clks[IMX7D_PLL_ENET=
-_MAIN_250M_CLK]);
-> -       clk_set_parent(clks[IMX7D_ENET_PHY_REF_ROOT_SRC], clks[IMX7D_PLL_=
-ENET_MAIN_25M_CLK]);
-> -       clk_set_parent(clks[IMX7D_ENET1_TIME_ROOT_SRC], clks[IMX7D_PLL_EN=
-ET_MAIN_100M_CLK]);
-> -       clk_set_parent(clks[IMX7D_ENET2_TIME_ROOT_SRC], clks[IMX7D_PLL_EN=
-ET_MAIN_100M_CLK]);
->  =
-
->         /* set uart module clock's parent clock source that must be great=
- then 80MHz */
->         clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK=
-]);
-> -- =
-
-> 2.9.0
+On Tue, Jul 26, 2016 at 03:04:30PM +0800, Chen-Yu Tsai wrote:
+> Add a new style driver for the clock control unit in Allwinner A31/A31s.
 >=20
+> A few clocks are still missing:
+>=20
+>     - EMAC clock
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Looks good to me, aside from the comment made by Jean-Francois.
+
+I guess I'd prefer to have the SoC names in the define, just in case
+we need to introduce support for another SoC, but this can always be
+done later.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXmglBAAoJEBx+YmzsjxAgFc0P/iNgLZshtE7s3k62EH60E+5i
+7og05mhhIItkXR0omNlpZIhDv0S7K+noH/2k1sUzmhWyHgvSPAnv9utV6UEgtcjX
+qxnR6r3fjWsf+Yus7axxxbZIbvqFt6jpJYip2kGaTAN9diUoDPeNPjaw1TMOIJ7m
+pX15mK623kcRTfy5iiuKlKAYHyNsd9DRpAucURd7OFBs32mXsnxsbIHiY8dUP/Ge
+/85R+wrCg7BUHSW5Y0OBCRoR0F9OP8bW/LxeEotmuCf7IgW3PMh94nnqFrSIUu96
+xcOIH6FQFOE59f5L+k7IHFzq6ddTowkBtEBmum5B0r2VmBttsw+X+tLF0t4jTGKB
+EBhnJYL3/rUkuwB3RXqN1VgXLhOKAubSufOoxaP01WU0IlTsJIknrWHygdujrFgp
+JOb51atlSghnf94EWoB76aaeRXCrzwlmIVgSlGEJzaK181wLtLFIAymJN1gv4hmL
+574mgYFSW11j+E3Gu5BJSm5Afl/eZy7RTOh3OeE4U/XA6TYVExW57LHyS5prMgA0
+fMLbENkJzaoxBe2iCgNm7XlL1+dxvwrnBgVfK3pwWB7kQglBMxGvtUn0DYr1bPXY
+a1Lkkl4ZFlnUCk6MISP985fElD+8jve3rCqxbPOwYL8e9uSGCnb8GnH/I9KVtB/i
+pHP0ln2pi/0scAqaMSKr
+=7Xn3
+-----END PGP SIGNATURE-----
+
+--lEGEL1/lMxI0MVQ2--
