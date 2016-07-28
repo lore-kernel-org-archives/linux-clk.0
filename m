@@ -1,57 +1,63 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 12 Jul 2016 09:22:56 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>
-Message-ID: <20160712082256.GD9976@sirena.org.uk>
-References: <57837606.8050906@samsung.com>
- <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZARJHfwaSJQLOEUz"
-In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
-Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
+Return-Path: <moinejf@free.fr>
+Date: Thu, 28 Jul 2016 16:23:05 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ devicetree@vger.kernel.org, dev@linux-sunxi.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
+Message-Id: <20160728162305.b157e6a8073c7db375f2b5d3@free.fr>
+In-Reply-To: <20160728132842.GA6682@lukather>
+References: <1469516671-19377-1-git-send-email-wens@csie.org>
+	<1469516671-19377-5-git-send-email-wens@csie.org>
+	<20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
+	<20160727065934.GD6560@lukather>
+	<20160727091827.e26f72701ce5758fa29aff7a@free.fr>
+	<20160727074020.GH6560@lukather>
+	<20160727103649.9e6ef332847b5a5c8fac66af@free.fr>
+	<20160728132842.GA6682@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, 28 Jul 2016 15:28:42 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
---ZARJHfwaSJQLOEUz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Wed, Jul 27, 2016 at 10:36:49AM +0200, Jean-Francois Moine wrote:
+> > On Wed, 27 Jul 2016 09:40:20 +0200
+> > Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+> >=20
+> > > > > Parenting functions would also not work as expected,
+> > > > > clk_hw_get_parent_by_index being the obvious example, in that case
+> > > > > returning the empty string for an invalid parent, while it should
+> > > > > really return NULL.
+> > > >=20
+> > > > I don't see why the clock should be orphan.
+> > > > Then, when a parent is "", clk_hw_get_parent_by_index() returns NUL=
+L.
+> > >=20
+> > > Why? It should return NULL when there's no parent, while you
+> > > explicitly registered a parent.
+> >=20
+> > "" is not an existing parent. It could be "none" / "dum" / "toto" / ...
+> > with the same result: 'this index cannot be used in mux'.
+>=20
+> And the clock is marked as orphan, while it really isn't.
 
-On Tue, Jul 12, 2016 at 03:54:04PM +0900, Andi Shyti wrote:
-> Patch a9e93e8 has erroneously removed some comments which are
-> important to understand why the bus frequency is multiplied by
-> two during the spi transfer.
+Sorry for I don't follow you.
 
-Please don't bury patches in the middle of old threads, it makes it very
-confusing trying to figure out what's going on especially when you do
-this one patch at a time in a series.  Submit new patches as a complete
-series, ideally not threaded in with anything else (at least for me).
+A clock is orphan when it has no parent. In our case, there are many
+possible parents and, at startup time, the hardware or the boot sets
+the mux to point to a real parent, with an index out of the usused
+values.
+Yes, the clock may be orphan, as the other clocks, but just the time
+this real parent becomes visible.
 
---ZARJHfwaSJQLOEUz
-Content-Type: application/pgp-signature; name="signature.asc"
+So, how could such a clock stay marked as orphan?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXhKjfAAoJECTWi3JdVIfQSQ8H/imKcL5X9zL3/qnSek1oyoD8
-Zdq2JKr2OiJ57H7NtoTFcZqHfEdSFgXqNVumGTeA0Nzpn04PT1UsMzcS/xjwt2l8
-c52YhqCZx7JCOPwPY9/IOtVa5B2OkE6HH7pzPVtFyJY5LbswpPCpzXYomjig5Yxq
-f2og8S1BvMX31EiIJQCN2CY1O1OQV6gOMR866l9I2ii4G1Ji47hOsWUGBUJ25ick
-1dhKP48XFPNs1fkTkdzPmAIyw4qVEG6Hv0qNDH+RPIKe2cW/rZQixLOLlcHIzmzo
-eX3mFgUeEjfgnr8FDDtsC1nUxQKxFR5zwSyFK7LabRtsxM2mqQr2eJ3zWDNr698=
-=sadm
------END PGP SIGNATURE-----
-
---ZARJHfwaSJQLOEUz--
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
