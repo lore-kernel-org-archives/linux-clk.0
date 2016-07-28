@@ -1,102 +1,108 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jul 2016 12:57:13 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>,
-	linux@armlinux.org.uk
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-Message-ID: <20160725105713.GA21170@ulmo.ba.sec>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
- <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
- <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
- <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
- <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:41322 "EHLO
+	conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756036AbcG1CZU (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2016 22:25:20 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-In-Reply-To: <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
+In-Reply-To: <1469556593-11369-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1469556593-11369-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 28 Jul 2016 11:25:06 +0900
+Message-ID: <CAK7LNAQo9UCxXXGWU81fR+DGhuiet=cnV86xOXVbJUTOYSstdg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
+To: linux-clk <linux-clk@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi.
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 22, 2016 at 09:18:37PM +0200, Mirza Krak wrote:
-> 2016-07-22 11:38 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
-> >>> The driver should have a remove function given that we can build as a
-> >>> module.
-> >>
-> >> At the moment I do not know what we would do in a remove function and
-> >> hence me not adding one.
-> >
-> > Should just be the inverse of the probe (although there is no inverse
-> > for the parsing DT bit). If you don't wish to add a remove, that is
-> > fine, but make the driver a 'bool' and not 'tristate' in the Kconfig so
-> > it cannot be configured as a module.
->=20
-> I understand the concept of a remove function, but I use devm_ calls
-> for all resources. These should be handled by the device core on a
-> driver detach?
->=20
-> One thing came to mind now that could be done in a remove method and
-> that is clearing the CONFIG_GO bit, or I could just do that first on
-> probe instead to make sure the controller is stopped.
->=20
-> Ok, one more thing came to mind, and that is depopulating the child
-> devices. Got it remove function it is then.
->=20
-> >>>> +module_platform_driver_probe(nor_driver, nor_probe);
-> >>>
-> >>> I would use "tegra_nor" namespace for all the structs, functions, etc.
-> >>> However, we may prefer to go with GMI and in which case tegra_gmi_pro=
-be,
-> >>> etc.
-> >>
-> >> ACK. Who gets the last call on what we should call the driver? It
-> >> seems that we both think GMI is a better name, do we need a third? :).
-> >
-> > The patches would have to go via Thierry and so ultimately, Thierry.
-> > However, I can't imagine he would object to GMI ;-)
->=20
-> Eagerly awaiting Thierry`s comments :).
+I will send v6,
+so please do not apply this version.
 
-Let's go with GMI. The TRM has a mix of GMI vs. SNOR, but as Jon points
-out the pinmux doesn't mention SNOR, so in order to hopefully reduce the
-confusion, let's stick with GMI.
+(meantime review is very appreciated, though.)
 
-Thierry
 
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+2016-07-27 3:09 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> I split into two patches to make review easier.
+>
+>  1/2: core support code
+>  2/2: data arrays
+>
+>
+> Changes in v5:
+>   - Rebase onto next-20160726 for easier git-am
+>
+> Changes in v4:
+>   - Unify module_platform_driver() boilerplate into a single place
+>   - Add binding document
+>   - Add USB3 clocks
+>
+> Changes in v3:
+>   - Change to platform drivers instead of OF_CLK_DECLARE
+>   - Split into a core part + SoC drivers
+>     SoC drivers just consist of tables of SoC-specific data.
+>     This allows reviewer to concentrate on the core-part
+>   - Hard-code parent clock names for cascading
+>
+> Changes in v2:
+>   - split emmc_hw_reset
+>   - make SD clock rate-controllable
+>   - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
+>
+> Masahiro Yamada (2):
+>   clk: uniphier: add core support code for UniPhier clock drivers
+>   clk: uniphier: add clock data for UniPhier SoCs
+>
+>  .../devicetree/bindings/clock/uniphier-clock.txt   | 123 ++++
+>  MAINTAINERS                                        |   1 +
+>  drivers/clk/Kconfig                                |   1 +
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/uniphier/Kconfig                       |   9 +
+>  drivers/clk/uniphier/Makefile                      |   9 +
+>  drivers/clk/uniphier/clk-uniphier-core.c           | 216 +++++++
+>  drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 ++
+>  drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 ++
+>  drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++
+>  drivers/clk/uniphier/clk-uniphier-mio.c            | 195 +++++++
+>  drivers/clk/uniphier/clk-uniphier-mux.c            |  95 ++++
+>  drivers/clk/uniphier/clk-uniphier-peri.c           |  95 ++++
+>  drivers/clk/uniphier/clk-uniphier-sys.c            | 626 +++++++++++++++++++++
+>  drivers/clk/uniphier/clk-uniphier.h                |  96 ++++
+>  15 files changed, 1661 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
+>  create mode 100644 drivers/clk/uniphier/Kconfig
+>  create mode 100644 drivers/clk/uniphier/Makefile
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
+>  create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+>
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-iQIcBAABCAAGBQJXlfCGAAoJEN0jrNd/PrOh93MP/jsPdVE0PwR+Z94UQsYutowG
-t4bK/9ErFyvkKWiNDRTnKudga+1sOhg3NCsxs6FeJ2Xh0Cr3DVPJuJCH0ZknOkGu
-bqErhIUUaG7fHcdBt2H7VGBYDzQDN5eWVvJWKW7Bik4V8AGhV4EGnfkrhnWU7VVm
-B+qzmiGd2B9ec+F5xVJL4uB+M/Ma50N8aldk3kwqlD7pRfuux8nC7iuKMdF/hotg
-m0Nv/+zBN+RaOKCsIFoSKOITRocFF0oM6R6YX4ZsYLNELQyDoXkO51rtnx3LlrGN
-ce2mcddtSyBorAVVyfPyJFgUG2EJG0EF5Z4yQiBb946DU8x4T4W5M87AgngxsIbb
-aHnkHcSIG+PA73Sg/gDw4bzCKiwaMUD8zW7ZRsx2m9whdLZgfi8I9gI86+KPJUFm
-kSujU8bh6ymOKiKC8r0hsgbmBaIQ6AurxxAfxfKcpK5GHr+Yz6qDYUWCiGnCYHXs
-4Kwb2RlFfmmlw3CpVV4ikZzyCEIsu0UxIskgExaMk5+2rF+sj+x3I5iRZt2uJcv0
-xZR6js7H4aphEO1aIpalaLIxliUhoNZP/7+urJKMZdC4rGfzpGxkZpPHNc3Of1Ua
-fmaB6hXoDQwfZVncIWWrfBHlsr8M9OM3rMZSnJEQG0pDtTB+aBbkgvzp0tsR/BSc
-mKs9izCN/aTemZtwCZAw
-=MF8X
------END PGP SIGNATURE-----
 
---ReaqsoxgOBHFXBhH--
+
+-- 
+Best Regards
+Masahiro Yamada
