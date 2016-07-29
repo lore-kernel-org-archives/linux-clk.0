@@ -1,146 +1,167 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
- <1467270911-10971-2-git-send-email-andi.shyti@samsung.com>
- <577A2EFF.2010306@samsung.com> <20160704102614.GD1257@jack.zhora.eu>
-Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andrzej Hajda <a.hajda@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: Andi Shyti <andi.shyti@samsung.com>
-Message-id: <577A7D8D.8070004@samsung.com>
-Date: Mon, 04 Jul 2016 17:15:25 +0200
-MIME-version: 1.0
-In-reply-to: <20160704102614.GD1257@jack.zhora.eu>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v4 4/6] clk: meson: Copy meson8b CLKID defines to private header file
+Date: Fri, 29 Jul 2016 16:01:02 +0200
+Message-Id: <1469800864-43440-5-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
+References: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/04/2016 12:26 PM, Andi Shyti wrote:
+Only expose future CLKID constants if necessary. This patch
+removes CLK_NR_CLKS from the DT bindings but leaves all previously
+defined CLKIDs there to keep backward compatibility.
+
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/meson8b.c              |   1 -
+ drivers/clk/meson/meson8b.h              | 107 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/meson8b-clkc.h |   2 -
+ 3 files changed, 107 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 0c6e26f..9a656d9 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -21,7 +21,6 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+-#include <dt-bindings/clock/meson8b-clkc.h>
+ #include <linux/platform_device.h>
+ #include <linux/module.h>
  
-> The single clock lines are not configured in the exynos5433 dts,
-> but in the drivers/clk/samsung/clk-exynos5433.c file and it's the
-> only place where we can set the flags.
-
-I meant we could amend which clocks are specified at the SPI bus device
-DT nodes and change handling of clocks in the spi-s3c64xx driver to model
-everything properly and get it all working.
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index b2f29f7..86efe6a 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -36,4 +36,111 @@
+ #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
+ #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
  
->> What is an exact problem here, are you perhaps testing suspend to RAM?
->> I tested my sound support patches on top of v4.7-rc1 and everything
->> seemed to work well, I didn't notice any issues with the audio codec
->> which was the only slave on the SPI 1 bus.
-> 
-> Yes, because the audio codec is on SPI1 and its bus line
-> (spi_busclk0) is CLK_SCLK_SPI1_PERIC while the CLK_SCLK_SPI1 is
-> set as CLK_IGNORE_UNUSED.
-
-That's true, looking at a downstream kernel I see that there is just plain 
-div clock specified for spi_busclk0 (DIVsclk_spi1_b), i.e. SCLK_SPI1_PERIC 
-and SCLK_SPI1 don't get disabled in s3c64xx_spi_config().
-It seems SCLK_SPI1 in CMU_PERIC need to be kept enabled while accessing 
-the SPI controller's registers.
-
->> Doesn't it help when you specify CLK_SCLK_SPI1 as the second clock
->> ("spi_busclk0") of the spi_1 bus controller instead of
->> CLK_SCLK_SPI0_PERIC? CLK_SCLK_SPI0_PERIC seem to be parent of
->> CLK_SCLK_SPI1 so the enable state would be propagated.
-> 
-> nope! :(
-> 
-> For some reasons, if you set in the DTS as spi_busclk0 the
-> CLK_SCLK_SPI1 from cmu_peric you get a synchronus abort in the
-> s3c64xx_spi_config (the first read performed on the device).
-
-Indeed, I also observed that, after removing CLK_IGNORE_UNUSED from 
-the CLK_SCLK_SPI1 clock. 
-
-After discussion with Krzysztof and Andrzej I came up with a patch as below 
-where there is no aborts, the sound works and clocks are not kept always 
-enabled:
-
-root@localhost:~# cat /sys/kernel/debug/clk/clk_summary | grep spi1
- ioclk_spi1_clk_in                        0            0    50000000          0 0  
-    sclk_ioclk_spi1                       0            0    50000000          0 0  
-          pclk_isp_spi1                   0            0     6000000          0 0  
-    mout_sclk_isp_spi1_user               0            0    24000000          0 0  
-       sclk_isp_spi1                      0            0    24000000          0 0  
-    mout_sclk_spi1                        0            0    24000000          0 0  
-       div_sclk_spi1_a                    0            0     3000000          0 0  
-          div_sclk_spi1_b                 0            0     3000000          0 0  
-             sclk_spi1_peric              0            0     3000000          0 0  
-                sclk_spi1                 0            0     3000000          0 0  
-    mout_sclk_isp_spi1                    0            0    24000000          0 0  
-       div_sclk_isp_spi1_a                0            0     3000000          0 0  
-          div_sclk_isp_spi1_b             0            0       25000          0 0  
-             sclk_isp_spi1_cam1           0            0       25000          0 0  
-                      pclk_spi1           0            0    66666667          0 0  
-
-I'm not yet 100% sure if it is a correct approach, the downstream kernel uses
-"global-per-IP" gate clocks (ENABLE_IP_PERIC? registers), that gate all clocks 
-to a given IP block and those clocks are not defined in mainline at all, but 
-it seems we just need to amend the SPI controller driver to not be disabling
-sdd->src_clk clock before accessing registers. 
-Or maybe to pass only DIVsclk_spi?_b as spi_busclk0 in DT nodes and add 
-SCLK_SPI0 from CMU_PERIC as a third SPI device clock for exynos5433.
-
------------8<------------
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 8e124fc..f444c66 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -617,8 +617,13 @@
-                        dma-names = "tx", "rx";
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-+#if 0
-                        clocks = <&cmu_peric CLK_PCLK_SPI1>,
-                                 <&cmu_top CLK_SCLK_SPI1_PERIC>;
-+#else
-+                       clocks = <&cmu_peric CLK_PCLK_SPI1>,
-+                                <&cmu_peric CLK_SCLK_SPI1>;
-+#endif
-                        clock-names = "spi", "spi_busclk0";
-                        samsung,spi-src-clk = <0>;
-                        pinctrl-names = "default";
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index e3cc935..61d5643 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1675,7 +1675,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
-        GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
-                        5, CLK_SET_RATE_PARENT, 0),
-        GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
--                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+                       4, CLK_SET_RATE_PARENT, 0),
-        GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
-                        3, CLK_SET_RATE_PARENT, 0),
-        GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 5a76a50..2cb965c 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -578,7 +578,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
++/*
++ * CLKID index values
++ *
++ * These indices are entirely contrived and do not map onto the hardware.
++ * Migrate them out of this header and into the DT header file when they need
++ * to be exposed to client nodes in DT: include/dt-bindings/clock/meson8b-clkc.h
++ */
++
++/* CLKID_UNUSED */
++/* CLKID_XTAL */
++/* CLKID_PLL_FIXED */
++/* CLKID_PLL_VID */
++/* CLKID_PLL_SYS */
++/* CLKID_FCLK_DIV2 */
++/* CLKID_FCLK_DIV3 */
++/* CLKID_FCLK_DIV4 */
++/* CLKID_FCLK_DIV5 */
++/* CLKID_FCLK_DIV7 */
++/* CLKID_CLK81 */
++/* CLKID_MALI */
++/* CLKID_CPUCLK */
++/* CLKID_ZERO */
++/* CLKID_MPEG_SEL */
++/* CLKID_MPEG_DIV */
++#define CLKID_DDR		16
++#define CLKID_DOS		17
++#define CLKID_ISA		18
++#define CLKID_PL301		19
++#define CLKID_PERIPHS		20
++#define CLKID_SPICC		21
++#define CLKID_I2C		22
++#define CLKID_SAR_ADC		23
++#define CLKID_SMART_CARD	24
++#define CLKID_RNG0		25
++#define CLKID_UART0		26
++#define CLKID_SDHC		27
++#define CLKID_STREAM		28
++#define CLKID_ASYNC_FIFO	29
++#define CLKID_SDIO		30
++#define CLKID_ABUF		31
++#define CLKID_HIU_IFACE		32
++#define CLKID_ASSIST_MISC	33
++#define CLKID_SPI		34
++#define CLKID_I2S_SPDIF		35
++#define CLKID_ETH		36
++#define CLKID_DEMUX		37
++#define CLKID_AIU_GLUE		38
++#define CLKID_IEC958		39
++#define CLKID_I2S_OUT		40
++#define CLKID_AMCLK		41
++#define CLKID_AIFIFO2		42
++#define CLKID_MIXER		43
++#define CLKID_MIXER_IFACE	44
++#define CLKID_ADC		45
++#define CLKID_BLKMV		46
++#define CLKID_AIU		47
++#define CLKID_UART1		48
++#define CLKID_G2D		49
++#define CLKID_USB0		50
++#define CLKID_USB1		51
++#define CLKID_RESET		52
++#define CLKID_NAND		53
++#define CLKID_DOS_PARSER	54
++#define CLKID_USB		55
++#define CLKID_VDIN1		56
++#define CLKID_AHB_ARB0		57
++#define CLKID_EFUSE		58
++#define CLKID_BOOT_ROM		59
++#define CLKID_AHB_DATA_BUS	60
++#define CLKID_AHB_CTRL_BUS	61
++#define CLKID_HDMI_INTR_SYNC	62
++#define CLKID_HDMI_PCLK		63
++#define CLKID_USB1_DDR_BRIDGE	64
++#define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_MMC_PCLK		66
++#define CLKID_DVIN		67
++#define CLKID_UART2		68
++#define CLKID_SANA		69
++#define CLKID_VPU_INTR		70
++#define CLKID_SEC_AHB_AHB3_BRIDGE	71
++#define CLKID_CLK81_A9		72
++#define CLKID_VCLK2_VENCI0	73
++#define CLKID_VCLK2_VENCI1	74
++#define CLKID_VCLK2_VENCP0	75
++#define CLKID_VCLK2_VENCP1	76
++#define CLKID_GCLK_VENCI_INT	77
++#define CLKID_GCLK_VENCP_INT	78
++#define CLKID_DAC_CLK		79
++#define CLKID_AOCLK_GATE	80
++#define CLKID_IEC958_GATE	81
++#define CLKID_ENC480P		82
++#define CLKID_RNG1		83
++#define CLKID_GCLK_VENCL_INT	84
++#define CLKID_VCLK2_VENCLMCC	85
++#define CLKID_VCLK2_VENCL	86
++#define CLKID_VCLK2_OTHER	87
++#define CLKID_EDP		88
++#define CLKID_AO_MEDIA_CPU	89
++#define CLKID_AO_AHB_SRAM	90
++#define CLKID_AO_AHB_BUS	91
++#define CLKID_AO_IFACE		92
++
++#define CLK_NR_CLKS		93
++
++/* include the CLKIDs that have been made part of the stable DT binding */
++#include <dt-bindings/clock/meson8b-clkc.h>
++
+ #endif /* __MESON8B_H */
+diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+index 595a58d..a55ff8c 100644
+--- a/include/dt-bindings/clock/meson8b-clkc.h
++++ b/include/dt-bindings/clock/meson8b-clkc.h
+@@ -22,6 +22,4 @@
+ #define CLKID_MPEG_SEL		14
+ #define CLKID_MPEG_DIV		15
  
-        /* Disable Clock */
-        if (sdd->port_conf->clk_from_cmu) {
--               clk_disable_unprepare(sdd->src_clk);
-+               /* clk_disable_unprepare(sdd->src_clk); */
-        } else {
-                val = readl(regs + S3C64XX_SPI_CLK_CFG);
-                val &= ~S3C64XX_SPI_ENCLK_ENABLE;
-@@ -626,7 +626,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
-                /* There is half-multiplier before the SPI */
-                clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
-                /* Enable Clock */
--               clk_prepare_enable(sdd->src_clk);
-+               /* clk_prepare_enable(sdd->src_clk); */
-        } else {
-                /* Configure Clock */
-                val = readl(regs + S3C64XX_SPI_CLK_CFG);
------------8<------------
+-#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
+-
+ #endif /* __MESON8B_CLKC_H */
+-- 
+2.5.0
