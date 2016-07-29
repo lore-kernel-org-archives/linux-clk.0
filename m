@@ -1,129 +1,147 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-To: Stefano Stabellini <sstabellini@kernel.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
- <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
- <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
-CC: Michael Turquette <mturquette@baylibre.com>, Dirk Behme
-	<dirk.behme@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-	<devicetree@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Julien
- Grall <julien.grall@arm.com>, <xen-devel@lists.xenproject.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <86951b96-0a3e-79b1-1a2f-88dfeba9b76b@de.bosch.com>
-Date: Thu, 14 Jul 2016 12:49:35 +0200
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v4 3/6] meson: clk: Rename register names according to Amlogic datasheet
+Date: Fri, 29 Jul 2016 16:01:01 +0200
+Message-Id: <1469800864-43440-4-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
+References: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1607141132000.26575@sstabellini-ThinkPad-X260>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.07.2016 12:38, Stefano Stabellini wrote:
-> On Thu, 14 Jul 2016, Dirk Behme wrote:
->> On 13.07.2016 23:03, Michael Turquette wrote:
->>> Quoting Dirk Behme (2016-07-13 11:56:30)
->>>> On 13.07.2016 20:43, Stefano Stabellini wrote:
->>>>> On Wed, 13 Jul 2016, Dirk Behme wrote:
->>>>>> On 13.07.2016 00:26, Michael Turquette wrote:
->>>>>>> Quoting Dirk Behme (2016-07-12 00:46:45)
->>>>>>>> Clocks described by this property are reserved for use by Xen, and
->>>>>>>> the OS
->>>>>>>> must not alter their state any way, such as disabling or gating a
->>>>>>>> clock,
->>>>>>>> or modifying its rate. Ensuring this may impose constraints on
->>>>>>>> parent
->>>>>>>> clocks or other resources used by the clock tree.
->>>>>>>
->>>>>>> Note that clk_prepare_enable will not prevent the rate from changing
->>>>>>> (clk_set_rate) or a parent from changing (clk_set_parent). The only
->>>>>>> way
->>>>>>> to do this currently would be to set the following flags on the
->>>>>>> effected
->>>>>>> clocks:
->>>>>>>
->>>>>>>     CLK_SET_RATE_GATE
->>>>>>>     CLK_SET_PARENT_GATE
->>>>>>
->>>>>>
->>>>>>
->>>>>> Regarding setting flags, I think we already talked about that. I think
->>>>>> the
->>>>>> conclusion was that in our case its not possible to manipulate the
->>>>>> flags in
->>>>>> the OS as this isn't intended to be done in cases like ours. Therefore
->>>>>> no API
->>>>>> is exported for this.
->>>>>>
->>>>>> I.e. if we need to set these flags, we have to do that in Xen where we
->>>>>> add the
->>>>>> clocks to the hypervisor node in the device tree. And not in the
->>>>>> kernel patch
->>>>>> discussed here.
->>>>>
->>>>> These are internal Linux flags, aren't they?
->>>>
->>>>
->>>> I've been under the impression that you can set clock "flags" via the
->>>> device tree. Seems I need to re-check that ;)
->>>
->>> Right, you cannot set flags from the device tree. Also, setting these
->>> flags is done by the clock provider driver, not a consumer. Xen is the
->>> consumer.
->>
->>
->> Ok, thanks, then I think we can forget about using flags for the issue we are
->> discussing here.
->>
->> Best regards
->>
->> Dirk
->>
->> P.S.: Would it be an option to merge the v4 patch we are discussing here,
->> then? From the discussion until here, it sounds to me that it's the best
->> option we have at the moment. Maybe improving it in the future, then.
->
-> It might be a step in the right direction, but it doesn't really prevent
-> clk_set_rate from changing properties of a clock owned by Xen.  This
-> patch is incomplete.
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/meson8b.c | 26 +++++++++++++-------------
+ drivers/clk/meson/meson8b.h | 11 +++++------
+ 2 files changed, 18 insertions(+), 19 deletions(-)
 
-
-Let me ask then: Do we have a practical example where it's not 
-sufficient practically?
-
-To my understanding, Xen people have been happy with the 
-"clk_ignore_unused" workaround since ~2 years, now [1]. And I think the 
-"clk_ignore_unused" workaround does mainly the same like the patch 
-discussed here. It doesn't care regarding clk_set_rate from changing 
-properties, too?
-
-While I agree that the patch theoretically incomplete, if nobody has a 
-real world example I would think that from practical point of view it's 
-sufficient in a first step.
-
-If this is the case, I'd propose to fix the practical issue in a first 
-step with a patch (this one) which is sufficient to fix the issues the 
-Xen users have. And update the code for theoretical future issues in a 
-second step.
-
-Best regards
-
-Dirk
-
-[1] http://bugs.xenproject.org/xen/bug/45
-
-
-> We need to understand at least what it would take
-> to have a complete solution.
->
-> Michael, do you have any suggestions on how it would be possible to set
-> CLK_SET_RATE_GATE and CLK_SET_PARENT_GATE for those clocks in a proper
-> way?
->
-> Like you wrote, I would imagine it needs to be done by the clock
-> provider driver. Maybe to do that, it would be easier to have a new
-> device tree property on the clock node, rather than listing phandle and
-> clock-specifier pairs under the Xen node?
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 537cc53..0c6e26f 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -111,17 +111,17 @@ static struct clk_fixed_rate meson8b_xtal = {
+ 
+ static struct meson_clk_pll meson8b_fixed_pll = {
+ 	.m = {
+-		.reg_off = MESON8B_REG_PLL_FIXED,
++		.reg_off = HHI_MPLL_CNTL,
+ 		.shift   = 0,
+ 		.width   = 9,
+ 	},
+ 	.n = {
+-		.reg_off = MESON8B_REG_PLL_FIXED,
++		.reg_off = HHI_MPLL_CNTL,
+ 		.shift   = 9,
+ 		.width   = 5,
+ 	},
+ 	.od = {
+-		.reg_off = MESON8B_REG_PLL_FIXED,
++		.reg_off = HHI_MPLL_CNTL,
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
+@@ -137,17 +137,17 @@ static struct meson_clk_pll meson8b_fixed_pll = {
+ 
+ static struct meson_clk_pll meson8b_vid_pll = {
+ 	.m = {
+-		.reg_off = MESON8B_REG_PLL_VID,
++		.reg_off = HHI_VID_PLL_CNTL,
+ 		.shift   = 0,
+ 		.width   = 9,
+ 	},
+ 	.n = {
+-		.reg_off = MESON8B_REG_PLL_VID,
++		.reg_off = HHI_VID_PLL_CNTL,
+ 		.shift   = 9,
+ 		.width   = 5,
+ 	},
+ 	.od = {
+-		.reg_off = MESON8B_REG_PLL_VID,
++		.reg_off = HHI_VID_PLL_CNTL,
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
+@@ -163,17 +163,17 @@ static struct meson_clk_pll meson8b_vid_pll = {
+ 
+ static struct meson_clk_pll meson8b_sys_pll = {
+ 	.m = {
+-		.reg_off = MESON8B_REG_PLL_SYS,
++		.reg_off = HHI_SYS_PLL_CNTL,
+ 		.shift   = 0,
+ 		.width   = 9,
+ 	},
+ 	.n = {
+-		.reg_off = MESON8B_REG_PLL_SYS,
++		.reg_off = HHI_SYS_PLL_CNTL,
+ 		.shift   = 9,
+ 		.width   = 5,
+ 	},
+ 	.od = {
+-		.reg_off = MESON8B_REG_PLL_SYS,
++		.reg_off = HHI_SYS_PLL_CNTL,
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
+@@ -250,7 +250,7 @@ static struct clk_fixed_factor meson8b_fclk_div7 = {
+  * forthcoming coordinated clock rates feature
+  */
+ static struct meson_clk_cpu meson8b_cpu_clk = {
+-	.reg_off = MESON8B_REG_SYS_CPU_CNTL1,
++	.reg_off = HHI_SYS_CPU_CLK_CNTL1,
+ 	.div_table = cpu_div_table,
+ 	.clk_nb.notifier_call = meson_clk_cpu_notifier_cb,
+ 	.hw.init = &(struct clk_init_data){
+@@ -264,7 +264,7 @@ static struct meson_clk_cpu meson8b_cpu_clk = {
+ static u32 mux_table_clk81[]	= { 6, 5, 7 };
+ 
+ struct clk_mux meson8b_mpeg_clk_sel = {
+-	.reg = (void *)MESON8B_REG_HHI_MPEG,
++	.reg = (void *)HHI_MPEG_CLK_CNTL,
+ 	.mask = 0x7,
+ 	.shift = 12,
+ 	.flags = CLK_MUX_READ_ONLY,
+@@ -286,7 +286,7 @@ struct clk_mux meson8b_mpeg_clk_sel = {
+ };
+ 
+ struct clk_divider meson8b_mpeg_clk_div = {
+-	.reg = (void *)MESON8B_REG_HHI_MPEG,
++	.reg = (void *)HHI_MPEG_CLK_CNTL,
+ 	.shift = 0,
+ 	.width = 7,
+ 	.lock = &clk_lock,
+@@ -300,7 +300,7 @@ struct clk_divider meson8b_mpeg_clk_div = {
+ };
+ 
+ struct clk_gate meson8b_clk81 = {
+-	.reg = (void *)MESON8B_REG_HHI_MPEG,
++	.reg = (void *)HHI_MPEG_CLK_CNTL,
+ 	.bit_idx = 7,
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index 5b9cb9f..b2f29f7 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -30,11 +30,10 @@
+  *
+  * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+  */
+-#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
+-#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
+-#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
+-#define MESON8B_REG_PLL_FIXED		0x0280
+-#define MESON8B_REG_PLL_SYS		0x0300
+-#define MESON8B_REG_PLL_VID		0x0320
++#define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data sheet */
++#define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet */
++#define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
++#define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
++#define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
+ 
+ #endif /* __MESON8B_H */
+-- 
+2.5.0
