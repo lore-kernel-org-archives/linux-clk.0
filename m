@@ -1,125 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mr213139.mail.yeah.net ([223.252.213.139]:40392 "EHLO
-	mr213139.mail.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757464AbcGKCa5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2016 22:30:57 -0400
-Subject: Re: [PATCH v2 05/10] power/reset: Add reset driver support for nuc900
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-6-git-send-email-vw@iommu.org>
- <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
-Cc: devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	LKML <linux-kernel@vger.kernel.org>, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wan Zongshun <mcuos.com@gmail.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <578304CB.8050604@iommu.org>
-Date: Mon, 11 Jul 2016 10:30:35 +0800
+Return-Path: <zajec5@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAP=VYLrb5ujiLTPXnPxzPHsdbHft9R45JB3LbbvRnaZ4rUAJoA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1e7e8319-d6d5-d952-634d-1ee9b9f2b1a3@broadcom.com>
+References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
+ <de0ba9d2-8b2b-b1e8-9235-1b402f0ffec0@broadcom.com> <CACna6rwj=ordfzTri1_iTOK162VjS+1bNVBSKo8p3AshGZun=Q@mail.gmail.com>
+ <1e7e8319-d6d5-d952-634d-1ee9b9f2b1a3@broadcom.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Fri, 29 Jul 2016 22:52:33 +0200
+Message-ID: <CACna6ryOndBTzLL_H+3S01YmWg1Te7T5t2J4tVsxoUtat2xAiw@mail.gmail.com>
+Subject: Re: [PATCH] clk: bcm: Add driver for Northstar ILP clock
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 2016年07月11日 05:56, Paul Gortmaker wrote:
-> On Sun, Jul 10, 2016 at 3:27 AM, Wan Zongshun <vw@iommu.org> wrote
->> This driver is to add reset support for nuc900 series,
->> currently, it only supports nuc970 SoC reset.
+On 29 July 2016 at 22:49, Ray Jui <ray.jui@broadcom.com> wrote:
+> On 7/29/2016 1:46 PM, Rafa=C5=82 Mi=C5=82ecki wrote:
+>> On 29 July 2016 at 22:44, Ray Jui <ray.jui@broadcom.com> wrote:
+>>>
+>>> On 7/29/2016 5:58 AM, Rafa=C5=82 Mi=C5=82ecki wrote:
+>>>>
+>>>>
+>>>> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+>>>>
+>>>> This clock is present on cheaper Northstar devices like BCM53573 or
+>>>> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
+>>>> to calculate clock rate and allows using it in a generic (clk_*) way.
+>>>>
+>>>
+>>> I thought Northstar uses Cortex A9 instead of A7?
 >>
->> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
->> ---
->>   drivers/power/reset/Kconfig        |  7 +++
->>   drivers/power/reset/Makefile       |  1 +
->>   drivers/power/reset/nuc900-reset.c | 93 ++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 101 insertions(+)
->>   create mode 100644 drivers/power/reset/nuc900-reset.c
 >>
->> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
->> index 9bb2622..8c84892 100644
->> --- a/drivers/power/reset/Kconfig
->> +++ b/drivers/power/reset/Kconfig
->> @@ -94,6 +94,13 @@ config POWER_RESET_MSM
->>          help
->>            Power off and restart support for Qualcomm boards.
->>
->> +config POWER_RESET_NUC900
->> +       bool "Nuc900 restart driver"
->
-> If this driver is bool and not tristate, then please remove all references
-> to MODULE_<xyz> and then the module.h include as well.
-
-I will remove the following codes in my reset.c driver.
-
-MODULE_DEVICE_TABLE(of, of_nuc900_reset_match);
-#include <linux/module.h>
-
-
->
-> Thanks,
-> Paul.
-> --
->
->> +       depends on ARCH_W90X900
->> +       help
->> +         Power off and restart support for Nuvoton NUC900 family of
->> +         reference boards.
->> +
->>   config POWER_RESET_LTC2952
->>          bool "LTC2952 PowerPath power-off driver"
->>          depends on OF_GPIO
->> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
->> index ab7aa86..d4df889 100644
->> --- a/drivers/power/reset/Makefile
->> +++ b/drivers/power/reset/Makefile
->> @@ -9,6 +9,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
->>   obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
->>   obj-$(CONFIG_POWER_RESET_IMX) += imx-snvs-poweroff.o
->>   obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
->> +obj-$(CONFIG_POWER_RESET_NUC900) += nuc900-reset.o
->>   obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
->>   obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
->>   obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
->> diff --git a/drivers/power/reset/nuc900-reset.c b/drivers/power/reset/nuc900-reset.c
->> new file mode 100644
->> index 0000000..49986b7
->> --- /dev/null
->> +++ b/drivers/power/reset/nuc900-reset.c
->> @@ -0,0 +1,93 @@
->> +/*
->> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
->> + *
->> + * The code contained herein is licensed under the GNU General Public
->> + * License. You may obtain a copy of the GNU General Public License
->> + * Version 2 or later at the following locations:
->> + *
->> + * http://www.opensource.org/licenses/gpl-license.html
->> + * http://www.gnu.org/copyleft/gpl.html
->> + */
->> +#include <linux/init.h>
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/module.h>
->> +#include <linux/notifier.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reboot.h>
->> +#include <linux/regmap.h>
+>> [    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
+>> cr=3D10c5387d
+>> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+>> instruction cache
+>> [    0.000000] Machine model: Tenda AC9
 >>
 >
-> [...]
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
+> Yeah ARMv7 instruction set but the core is Cortex A7. Both Cortex A7 and =
+A9
+> use ARMv7 instructions.
+
+OK, sorry for irrelevant part then :)
+
+This is from BCM4709C0:
+bcma: bus0: Core 10 found: ARM Cortex A9 core (ihost) (manuf 0x4BF, id
+0x510, rev 0x07, class 0x0)
+
+This is from BCM47189B0::
+bcma: bus0: Core 3 found: ARM CA7 (manuf 0x4BF, id 0x847, rev 0x00, class 0=
+x0)
+
+--=20
+Rafa=C5=82
