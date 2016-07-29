@@ -1,79 +1,238 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 28 Jul 2016 15:28:42 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <zajec5@gmail.com>
+Return-Path: <zajec5@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	dev@linux-sunxi.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/9] clk: sunxi-ng: mux: Add support for mux tables
-Message-ID: <20160728132842.GA6682@lukather>
-References: <1469516671-19377-1-git-send-email-wens@csie.org>
- <1469516671-19377-5-git-send-email-wens@csie.org>
- <20160726194306.9b6aadd3d1669bd6f5a54d99@free.fr>
- <20160727065934.GD6560@lukather>
- <20160727091827.e26f72701ce5758fa29aff7a@free.fr>
- <20160727074020.GH6560@lukather>
- <20160727103649.9e6ef332847b5a5c8fac66af@free.fr>
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: bcm: Add driver for Northstar ILP clock
+Date: Fri, 29 Jul 2016 14:58:32 +0200
+Message-Id: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-In-Reply-To: <20160727103649.9e6ef332847b5a5c8fac66af@free.fr>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Rafał Miłecki <rafal@milecki.pl>
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This clock is present on cheaper Northstar devices like BCM53573 or
+BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
+to calculate clock rate and allows using it in a generic (clk_*) way.
 
-On Wed, Jul 27, 2016 at 10:36:49AM +0200, Jean-Francois Moine wrote:
-> On Wed, 27 Jul 2016 09:40:20 +0200
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > > > Parenting functions would also not work as expected,
-> > > > clk_hw_get_parent_by_index being the obvious example, in that case
-> > > > returning the empty string for an invalid parent, while it should
-> > > > really return NULL.
-> > >=20
-> > > I don't see why the clock should be orphan.
-> > > Then, when a parent is "", clk_hw_get_parent_by_index() returns NULL.
-> >=20
-> > Why? It should return NULL when there's no parent, while you
-> > explicitly registered a parent.
->=20
-> "" is not an existing parent. It could be "none" / "dum" / "toto" / ...
-> with the same result: 'this index cannot be used in mux'.
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+ .../devicetree/bindings/clock/brcm,ns-ilp.txt      |  28 ++++
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-ns-ilp.c                       | 146 +++++++++++++++++++++
+ 3 files changed, 175 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+ create mode 100644 drivers/clk/bcm/clk-ns-ilp.c
 
-And the clock is marked as orphan, while it really isn't.
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXmgiKAAoJEBx+YmzsjxAgcL4P/1mZaGjaSKf94azBc2yHzWM/
-aUWVYUuuPmiIeKsvcNdJs90PdmN39360m58PLBsijiFc2PZJXEH0W7knZmLw1M8T
-cfrwBj6AiYPlXM12X35ZpAu8ki3sLezgVmCAHk0lIKkIrtcqpQNSBX3r78JcKjUY
-ndaOg7kjgtHrFWZHvXVmz79wcPsHyp3uYxPfpTUATsPtP4iXG8AVGoEr3xpm44Pw
-dvAFEpDvDdh1UzGkSCFlF2ggDgGGI/OR8ATs2DgGohyLW3AthXaXEoQxcgG0lZZs
-PZBvT15yy+nf/Lp11WH7dd+sVZ6jFeiGr4DYuytcKpCOoQERf7e20LsThF8j4BVs
-Yy0sJODDqAj/n7QVYMVACrYudTADyyWnteRwM29GsoznZk4MhHUHiJY5jrXaVUQX
-KXNFmvordNDMO7W+48L0K2aTS3oRDElQEhbVNgoJjo/j8kRxRastjCfQpPf5sCTG
-spUuyizxcn/4Qur0NMvZuFf85bT4bJFdFb5a0Pj6HAXtpybn0od1gTuPMixYRTOP
-1upFTtf74n7N/11rF4gNizwxTokQKR0ADczi0BgSmxhUtjerRwysuB+p4BPIy12m
-tkcVfoiyKYxsfrSrOhCDbXmMNnC8rPjrwbiLwqKhXGfyU5o5Zy4Y3N1EsjjwZAib
-9veIdfg88UpZJwtCdDUI
-=fg8K
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
+diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+new file mode 100644
+index 0000000..c4df38e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+@@ -0,0 +1,28 @@
++Broadcom Northstar ILP clock
++============================
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++This binding is used for ILP clock on Broadcom Northstar devices using
++Corex-A7 CPU. ILP clock depends on ALP one and has to be calculated on
++runtime.
++
++Required properties:
++- compatible: "brcm,ns-ilp"
++- reg: iomem address range of PMU (Power Management Unit)
++- reg-names: "pmu", the only needed & supported reg right now
++- clocks: should reference an ALP clock
++- clock-names: "alp", the only needed & supported clock right now
++- #clock-cells: should be <0>
++
++Example:
++
++ilp: ilp {
++	compatible = "brcm,ns-ilp";
++	reg = <0x18012000 0x1000>;
++	reg-names = "pmu";
++	clocks = <&alp>;
++	clock-names = "alp-clk";
++	#clock-cells = <0>;
++};
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 1d79bd2..1389379 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+ obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+ obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
++obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-ns-ilp.o
+diff --git a/drivers/clk/bcm/clk-ns-ilp.c b/drivers/clk/bcm/clk-ns-ilp.c
+new file mode 100644
+index 0000000..230458e8
+--- /dev/null
++++ b/drivers/clk/bcm/clk-ns-ilp.c
+@@ -0,0 +1,146 @@
++/*
++ * Copyright (C) 2016 Rafał Miłecki <rafal@milecki.pl>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++
++#define PMU_XTAL_FREQ_RATIO			0x66c
++#define  XTAL_ALP_PER_4ILP			0x00001fff
++#define  XTAL_CTL_EN				0x80000000
++#define PMU_SLOW_CLK_PERIOD			0x6dc
++
++struct ns_ilp {
++	struct clk *clk;
++	struct clk_hw hw;
++	struct clk *alp_clk;
++	void __iomem *pmu;
++};
++
++static int ns_ilp_enable(struct clk_hw *hw)
++{
++	struct ns_ilp *ilp = container_of(hw, struct ns_ilp, hw);
++
++	writel(0x10199, ilp->pmu + PMU_SLOW_CLK_PERIOD);
++	writel(0x10000, ilp->pmu + 0x674);
++
++	return 0;
++}
++
++static unsigned long ns_ilp_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct ns_ilp *ilp = container_of(hw, struct ns_ilp, hw);
++	void __iomem *pmu = ilp->pmu;
++	u32 last_val, cur_val;
++	u32 sum = 0, num = 0, loop_num = 0;
++	u32 avg;
++	int err;
++
++	err = clk_prepare_enable(ilp->alp_clk);
++	if (err)
++		return 0;
++
++	/* Enable */
++	writel(XTAL_CTL_EN, pmu + PMU_XTAL_FREQ_RATIO);
++
++	/* Read initial value */
++	last_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
++
++	/* Try getting 20 different values for calculating average */
++	while (num < 20) {
++		cur_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
++
++		if (cur_val != last_val) {
++			/* Got different value, use it */
++			sum += cur_val;
++			num++;
++			loop_num = 0;
++			last_val = cur_val;
++		} else if (++loop_num > 5000) {
++			/* Same value over and over, give up */
++			sum += cur_val;
++			num++;
++			break;
++		}
++	}
++
++	/* Disable */
++	writel(0x0, pmu + PMU_XTAL_FREQ_RATIO);
++
++	avg = sum / num;
++
++	return clk_get_rate(ilp->alp_clk) * 4 / avg;
++}
++
++const struct clk_ops ns_ilp_clk_ops = {
++	.enable = ns_ilp_enable,
++	.recalc_rate = ns_ilp_recalc_rate,
++};
++
++static void ns_ilp_init(struct device_node *np)
++{
++	struct ns_ilp *ilp;
++	struct resource res;
++	struct clk_init_data init = { 0 };
++	int index;
++	int err;
++
++	ilp = kzalloc(sizeof(*ilp), GFP_KERNEL);
++	if (!ilp)
++		return;
++
++	index = of_property_match_string(np, "reg-names", "pmu");
++	if (index < 0) {
++		err = index;
++		goto err_free_ilp;
++	}
++	err = of_address_to_resource(np, index, &res);
++	if (err) {
++		err = index;
++		goto err_free_ilp;
++	}
++	ilp->pmu = ioremap_nocache(res.start, resource_size(&res));
++	if (IS_ERR(ilp->pmu)) {
++		err = PTR_ERR(ilp->pmu);
++		goto err_free_ilp;
++	}
++
++	ilp->alp_clk = of_clk_get_by_name(np, "alp-clk");
++	if (IS_ERR(ilp->alp_clk)) {
++		err = PTR_ERR(ilp->alp_clk);
++		goto err_unmap_pmu;
++	}
++
++	init.name = np->name;
++	init.ops = &ns_ilp_clk_ops;
++	init.flags = CLK_IS_ROOT;
++
++	ilp->hw.init = &init;
++	ilp->clk = clk_register(NULL, &ilp->hw);
++	if (WARN_ON(IS_ERR(ilp->clk)))
++		goto err_put_alp_clk;
++
++	of_clk_add_provider(np, of_clk_src_simple_get, ilp->clk);
++
++	return;
++
++err_put_alp_clk:
++	clk_put(ilp->alp_clk);
++err_unmap_pmu:
++	iounmap(ilp->pmu);
++err_free_ilp:
++	kfree(ilp);
++	pr_err("Failed to init ILP clock: %d\n", err);
++}
++CLK_OF_DECLARE(ns_ilp_clk, "brcm,ns-ilp", ns_ilp_init);
+-- 
+1.8.4.5
