@@ -1,94 +1,42 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>, gregkh@linuxfoundation.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160628053235.5114-3-bhuvanchandra.dv@toradex.com>
-Cc: stefan@agner.ch, shawnguo@kernel.org, kernel@pengutronix.de,
- sboyd@codeaurora.org, jslaby@suse.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org,
- "Bhuvanchandra DV" <bhuvanchandra.dv@toradex.com>
-References: <20160628053235.5114-1-bhuvanchandra.dv@toradex.com>
- <20160628053235.5114-3-bhuvanchandra.dv@toradex.com>
-Message-ID: <146800320338.73491.1283261070387404973@resonance>
-Subject: Re: [PATCH v2 2/9] clk: imx: vf610: Disable automatic clock gating for
- lpuart in LPSTOP mode
-Date: Fri, 08 Jul 2016 11:40:03 -0700
+Return-Path: <moinejf@free.fr>
+Date: Fri, 29 Jul 2016 07:48:00 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mike
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
+Message-Id: <20160729074800.44b8860cc0a3d2dfcdde32ce@free.fr>
+In-Reply-To: <20160728200705.GG6682@lukather>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+	<20160727104623.e9ca7b708e5c6462f44a5d01@free.fr>
+	<20160728200705.GG6682@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bhuvanchandra DV (2016-06-27 22:32:28)
-> From: Stefan Agner <stefan@agner.ch>
-> =
+On Thu, 28 Jul 2016 22:07:05 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-> In order to allow wake support in STOP sleep mode, clocks are needed. Use
-> imx_clk_gate2_cgr to disable automatic clock gating in low power mode STO=
-P.
-> This allows to enable wake by UART using:
-> echo enabled > /sys/class/tty/ttyLP0/power/wakeup
-> =
-
-> However, if wake is not enabled, the driver should disable the clocks exp=
-licitly
-> to save power.
-> =
-
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-
-Applied.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/imx/clk-vf610.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> =
-
-> diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-> index 3a1f244..0476353 100644
-> --- a/drivers/clk/imx/clk-vf610.c
-> +++ b/drivers/clk/imx/clk-vf610.c
-> @@ -315,12 +315,12 @@ static void __init vf610_clocks_init(struct device_=
-node *ccm_node)
->  =
-
->         clk[VF610_CLK_PIT] =3D imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1,=
- CCM_CCGRx_CGn(7));
->  =
-
-> -       clk[VF610_CLK_UART0] =3D imx_clk_gate2("uart0", "ipg_bus", CCM_CC=
-GR0, CCM_CCGRx_CGn(7));
-> -       clk[VF610_CLK_UART1] =3D imx_clk_gate2("uart1", "ipg_bus", CCM_CC=
-GR0, CCM_CCGRx_CGn(8));
-> -       clk[VF610_CLK_UART2] =3D imx_clk_gate2("uart2", "ipg_bus", CCM_CC=
-GR0, CCM_CCGRx_CGn(9));
-> -       clk[VF610_CLK_UART3] =3D imx_clk_gate2("uart3", "ipg_bus", CCM_CC=
-GR0, CCM_CCGRx_CGn(10));
-> -       clk[VF610_CLK_UART4] =3D imx_clk_gate2("uart4", "ipg_bus", CCM_CC=
-GR6, CCM_CCGRx_CGn(9));
-> -       clk[VF610_CLK_UART5] =3D imx_clk_gate2("uart5", "ipg_bus", CCM_CC=
-GR6, CCM_CCGRx_CGn(10));
-> +       clk[VF610_CLK_UART0] =3D imx_clk_gate2_cgr("uart0", "ipg_bus", CC=
-M_CCGR0, CCM_CCGRx_CGn(7), 0x2);
-> +       clk[VF610_CLK_UART1] =3D imx_clk_gate2_cgr("uart1", "ipg_bus", CC=
-M_CCGR0, CCM_CCGRx_CGn(8), 0x2);
-> +       clk[VF610_CLK_UART2] =3D imx_clk_gate2_cgr("uart2", "ipg_bus", CC=
-M_CCGR0, CCM_CCGRx_CGn(9), 0x2);
-> +       clk[VF610_CLK_UART3] =3D imx_clk_gate2_cgr("uart3", "ipg_bus", CC=
-M_CCGR0, CCM_CCGRx_CGn(10), 0x2);
-> +       clk[VF610_CLK_UART4] =3D imx_clk_gate2_cgr("uart4", "ipg_bus", CC=
-M_CCGR6, CCM_CCGRx_CGn(9), 0x2);
-> +       clk[VF610_CLK_UART5] =3D imx_clk_gate2_cgr("uart5", "ipg_bus", CC=
-M_CCGR6, CCM_CCGRx_CGn(10), 0x2);
->  =
-
->         clk[VF610_CLK_I2C0] =3D imx_clk_gate2("i2c0", "ipg_bus", CCM_CCGR=
-4, CCM_CCGRx_CGn(6));
->         clk[VF610_CLK_I2C1] =3D imx_clk_gate2("i2c1", "ipg_bus", CCM_CCGR=
-4, CCM_CCGRx_CGn(7));
-> -- =
-
-> 2.9.0
+> > > Let me know what you think,
+> >=20
+> > I don't see the interest to have common code for 32bits and 64bits.
+> > The clock driver of a SoC will never evolve, so, it is simpler to
+> > copy the source common with the H3 into a clean A64 clock driver.
 >=20
+> I'm not sure why 32 bits vs 64 bits matters here. We're going to share
+> a significant number of drivers already between armv7 and armv8, like
+> MMC, EMAC, I2C, and so on.
+>=20
+> And I expect to share the data in other SoCs for the A10, A13 and A20
+> for example, or A23/A33, which have a lot of clocks in common too.
+
+The interest of your sunxi-ng approach is that the clocks of each SoC
+is described in one file. Here you are mixing 2 SoCs in the same source
+file. The advantage is lost.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
