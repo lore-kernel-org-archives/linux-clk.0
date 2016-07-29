@@ -1,86 +1,38 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Nadav Haklai <nadavh@marvell.com>,  Victor Gu <xigu@marvell.com>,  Romain Perier <romain.perier@free-electrons.com>,  Omri Itach <omrii@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson Ding <dingwei@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 00/10] Add clock support for Armada 37xx SoCs
-References: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-Date: Mon, 04 Jul 2016 22:29:35 +0200
-In-Reply-To: <1465565018-14172-1-git-send-email-gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Fri, 10 Jun 2016 15:23:28 +0200")
-Message-ID: <874m85w3io.fsf@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 29 Jul 2016 16:15:11 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/13] clk: sunxi-ng: Add A64 clocks
+Message-ID: <20160729211511.GA5571@rob-hp-laptop>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+ <20160726203041.29366-9-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160726203041.29366-9-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
- 
- On ven., juin 10 2016, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+On Tue, Jul 26, 2016 at 10:30:36PM +0200, Maxime Ripard wrote:
+> Add the A64 CCU clocks set.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
 
-> Hi,
->
-> this series add clock support for the Armada 37xx SoCs.
->
-> The design of the drivers is as close as possible as the hardware is,
-> with some clocks made of several layers: muxing, divider and gating.
->
-> The device tree binding was written in a way that even if we discover
-> some change inside the clocks, the binding should not be
-> affected. Especially, there are some holes in the clocks, but we
-> should be able to add them seamless.
->
-> I tried to follow the last update made in the clock framework, I hope
-> theses drivers will comply the new guidelines.
+Acked-by: Rob Herring <robh@kernel.org>
 
-I applied the first 4 patches on the mvebu branches, the first one on
-mvebu/arm64 and the 3 other on mvebu/dt64. I did this in order to not
-miss the arm-soc merge window.
-
-The binding was acked by the dt maintainer and the review of the clk
-maintainer was abut the internal of the driver. The only change I did
-was fixing a typo in the address part of the name of the sb-periph-clk
-node as pointed by Victor Gu. I will submit a second version soon
-addressing these concerns.
-
-Gregory
-
->
-> Gregory CLEMENT (10):
->   arm64: marvell: enable Armada 3700 clock drivers
->   arm64: dts: marvell: Add xtal clock support for Armada 3700
->   arm64: dts: marvell: add tbg clocks for Armada 37xx
->   arm64: dts: marvell: add peripherals clocks for Armada 37xx
->   dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
->   clk: mvebu: Add the xtal clock for Armada 3700 SoC
->   dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
->   clk: mvebu Add the time base generator clocks for Armada 3700
->   dt-bindings: clock: add DT binding for the peripheral clocks on Armada
->     3700
->   clk: mvebu: Add the peripheral clock driver for Armada 3700
->
->  .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
->  .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
->  .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
->  arch/arm64/Kconfig.platforms                       |   1 +
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi       |  35 ++
->  drivers/clk/mvebu/Kconfig                          |   3 +
->  drivers/clk/mvebu/Makefile                         |   3 +
->  drivers/clk/mvebu/armada-37xx-periph.c             | 462 +++++++++++++++++++++
->  drivers/clk/mvebu/armada-37xx-tbg.c                | 172 ++++++++
->  drivers/clk/mvebu/armada-37xx-xtal.c               |  93 +++++
->  10 files changed, 894 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
->  create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
->  create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
->  create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
->
-> -- 
-> 2.5.0
->
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+>  drivers/clk/sunxi-ng/Kconfig                       |  13 +-
+>  drivers/clk/sunxi-ng/Makefile                      |   2 +-
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.h              |  68 +++
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c                | 483 +++++++++++++++++++++
+>  include/dt-bindings/clock/sun50i-a64-ccu.h         | 132 ++++++
+>  include/dt-bindings/reset/sun50i-a64-ccu.h         |  97 +++++
+>  7 files changed, 793 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+>  create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
