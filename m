@@ -1,44 +1,72 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Alexander =?utf-8?Q?M=C3=BCller?= <serveralex@gmail.com>,
-  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 7/7] arm: amlogic: select meson8b clk driver
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
-	<1467741391-60534-8-git-send-email-serveralex@gmail.com>
-	<146776648028.35356.7816151912503029258@resonance>
-Date: Wed, 06 Jul 2016 14:41:33 -0700
-In-Reply-To: <146776648028.35356.7816151912503029258@resonance> (Michael
-	Turquette's message of "Tue, 05 Jul 2016 17:54:40 -0700")
-Message-ID: <m2inwiqwaa.fsf@baylibre.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH] clk: bcm: Add driver for Northstar ILP clock
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+ Ray Jui <ray.jui@broadcom.com>
+References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
+ <de0ba9d2-8b2b-b1e8-9235-1b402f0ffec0@broadcom.com>
+ <CACna6rwj=ordfzTri1_iTOK162VjS+1bNVBSKo8p3AshGZun=Q@mail.gmail.com>
+ <1e7e8319-d6d5-d952-634d-1ee9b9f2b1a3@broadcom.com>
+ <CACna6ryOndBTzLL_H+3S01YmWg1Te7T5t2J4tVsxoUtat2xAiw@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>, Jon Mason <jonmason@broadcom.com>,
+ Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <23e2aa2f-a0ff-f72e-5e98-ea539c6fb69d@gmail.com>
+Date: Fri, 29 Jul 2016 13:55:55 -0700
 MIME-Version: 1.0
+In-Reply-To: <CACna6ryOndBTzLL_H+3S01YmWg1Te7T5t2J4tVsxoUtat2xAiw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Michael Turquette <mturquette@baylibre.com> writes:
+On 07/29/2016 01:52 PM, Rafał Miłecki wrote:
+> On 29 July 2016 at 22:49, Ray Jui <ray.jui@broadcom.com> wrote:
+>> On 7/29/2016 1:46 PM, Rafał Miłecki wrote:
+>>> On 29 July 2016 at 22:44, Ray Jui <ray.jui@broadcom.com> wrote:
+>>>>
+>>>> On 7/29/2016 5:58 AM, Rafał Miłecki wrote:
+>>>>>
+>>>>>
+>>>>> From: Rafał Miłecki <rafal@milecki.pl>
+>>>>>
+>>>>> This clock is present on cheaper Northstar devices like BCM53573 or
+>>>>> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
+>>>>> to calculate clock rate and allows using it in a generic (clk_*) way.
+>>>>>
+>>>>
+>>>> I thought Northstar uses Cortex A9 instead of A7?
+>>>
+>>>
+>>> [    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
+>>> cr=10c5387d
+>>> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+>>> instruction cache
+>>> [    0.000000] Machine model: Tenda AC9
+>>>
+>>
+>> Yeah ARMv7 instruction set but the core is Cortex A7. Both Cortex A7 and A9
+>> use ARMv7 instructions.
+> 
+> OK, sorry for irrelevant part then :)
+> 
+> This is from BCM4709C0:
+> bcma: bus0: Core 10 found: ARM Cortex A9 core (ihost) (manuf 0x4BF, id
+> 0x510, rev 0x07, class 0x0)
+> 
+> This is from BCM47189B0::
+> bcma: bus0: Core 3 found: ARM CA7 (manuf 0x4BF, id 0x847, rev 0x00, class 0x0)
+> 
 
-> Hi Alex,
->
-> Quoting Alexander M=C3=BCller (2016-07-05 10:56:31)
->> Select the Amlogic clk code for meson SoCs and the more specific meson8b=
- clk
->> driver for Amlogic meson8b.
->>=20
->> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
->
-> This patch isn't necessary as an alternative is already queued. See:
-> https://git.kernel.org/cgit/linux/kernel/git/mturquette/linux.git/commit/=
-?h=3Dgxbb-dt-clk&id=3Dbae5d70ba6f8726ea6306aa07b7d2eb4357d3c81
->
-> However, if you're basing on top of clk-next (or clk-s905) then you
-> won't see the three patches linked above because they are queued through
-> Kevin & Carlo via the amlogic tree.
-
-...which you can find here[1] and specifically, the "integ" branch where
-I'm keeping the latest queued versions of various things merged together
-for easier testing.
-
-Kevin
-
-[1] https://git.kernel.org/cgit/linux/kernel/git/khilman/linux-amlogic.git/
+This is indeed a Cortex A7-based chip, not clear if putting this chip in
+the Northstar family is accurate here because it really seems to have a
+different architecture from the NS/NSP family here...
+-- 
+Florian
