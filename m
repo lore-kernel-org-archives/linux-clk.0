@@ -1,80 +1,125 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mr213138.mail.yeah.net ([223.252.213.138]:13847 "EHLO
-	mr213138.mail.yeah.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753155AbcGKJHI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2016 05:07:08 -0400
-Subject: Re: [PATCH v2 06/10] soc: Add SoC specific driver support for nuc900
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-7-git-send-email-vw@iommu.org> <4765191.NGpMC1JR46@wuerfel>
-Cc: Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, jason@lakedaemon.net,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wan Zongshun <mcuos.com@gmail.com>
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <578361B5.7010803@iommu.org>
-Date: Mon, 11 Jul 2016 17:07:01 +0800
+Return-Path: <paul.gortmaker@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4765191.NGpMC1JR46@wuerfel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Sender: paul.gortmaker@gmail.com
+In-Reply-To: <1469832362-13947-1-git-send-email-zajec5@gmail.com>
+References: <1469797120-29298-1-git-send-email-zajec5@gmail.com> <1469832362-13947-1-git-send-email-zajec5@gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Sun, 31 Jul 2016 15:38:05 -0400
+Message-ID: <CAP=VYLoMQwD8N2_YthDQjaWyF5VgEkehd0acrXV5BT0UKxh_aQ@mail.gmail.com>
+Subject: Re: [PATCH V2] clk: bcm: Add driver for Northstar ILP clock
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Jul 29, 2016 at 6:45 PM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>=
+ wrote:
+> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+>
+> This clock is present on cheaper Northstar devices like BCM53573 or
+> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
+> to calculate clock rate and allows using it in a generic (clk_*) way.
+>
+> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> ---
+> V2: Rebase on top of clk-next
+>     Use ALP as parent clock
+>     Improve comments
+>     Switch from ioremap_nocache to ioremap
+>     Check of_clk_add_provide result for error
+> ---
+>  .../devicetree/bindings/clock/brcm,ns-ilp.txt      |  26 ++++
+>  drivers/clk/bcm/Makefile                           |   1 +
+>  drivers/clk/bcm/clk-ns-ilp.c                       | 147 +++++++++++++++=
+++++++
+>  3 files changed, 174 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,ns-ilp.t=
+xt
+>  create mode 100644 drivers/clk/bcm/clk-ns-ilp.c
+>
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/Do=
+cumentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+> new file mode 100644
+> index 0000000..2c862a0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+> @@ -0,0 +1,26 @@
+> +Broadcom Northstar ILP clock
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> +
+> +This binding uses the common clock binding:
+> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +This binding is used for ILP clock on Broadcom Northstar devices using
+> +Corex-A7 CPU. ILP clock depends on ALP one and has to be calculated on
+> +runtime.
+> +
+> +Required properties:
+> +- compatible: "brcm,ns-ilp"
+> +- reg: iomem address range of PMU (Power Management Unit)
+> +- reg-names: "pmu", the only needed & supported reg right now
+> +- clocks: has to reference an ALP clock
+> +- #clock-cells: should be <0>
+> +
+> +Example:
+> +
+> +ilp: ilp {
+> +       compatible =3D "brcm,ns-ilp";
+> +       reg =3D <0x18012000 0x1000>;
+> +       reg-names =3D "pmu";
+> +       clocks =3D <&alp>;
+> +       #clock-cells =3D <0>;
+> +};
+> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> index 1d79bd2..1389379 100644
+> --- a/drivers/clk/bcm/Makefile
+> +++ b/drivers/clk/bcm/Makefile
+> @@ -10,3 +10,4 @@ obj-$(CONFIG_COMMON_CLK_IPROC)        +=3D clk-ns2.o
+>  obj-$(CONFIG_ARCH_BCM_CYGNUS)  +=3D clk-cygnus.o
+>  obj-$(CONFIG_ARCH_BCM_NSP)     +=3D clk-nsp.o
+>  obj-$(CONFIG_ARCH_BCM_5301X)   +=3D clk-nsp.o
+> +obj-$(CONFIG_ARCH_BCM_5301X)   +=3D clk-ns-ilp.o
+> diff --git a/drivers/clk/bcm/clk-ns-ilp.c b/drivers/clk/bcm/clk-ns-ilp.c
+> new file mode 100644
+> index 0000000..0337313
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-ns-ilp.c
+> @@ -0,0 +1,147 @@
+> +/*
+> + * Copyright (C) 2016 Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
 
+I didn't see anything using modular content from the above header file, so
+I think you can remove it.
 
-On 2016年07月11日 16:03, Arnd Bergmann wrote:
-> On Sunday, July 10, 2016 3:27:26 PM CEST Wan Zongshun wrote:
->> +       ret = of_property_read_string(np, "compatible", &soc_dev_attr->soc_id);
->> +       if (ret)
->>                return -EINVAL;
->> +
->> +       soc_dev_attr->machine = "NUC900EVB";
->> +       soc_dev_attr->family = "NUC900";
->> +       soc_dev = soc_device_register(soc_dev_attr);
->> +       if (IS_ERR(soc_dev)) {
->> +               kfree(soc_dev_attr);
->> +               return -ENODEV;
->> +       }
->> +
->> +       ret = regmap_read(syscon_regmap, GCR_CHIPID, &nuc900_chipid);
->> +       if (ret)
->> +               return -ENODEV;
->> +
->> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_chipid_attr);
->> +       device_create_file(soc_device_to_device(soc_dev), &nuc900_version_attr);
->> +
->> +       dev_info(&pdev->dev, "Nuvoton Chip ID: 0x%x, Version ID:0x%x\n",
->> +                nuc900_chipid & GCR_CHIPID_MASK,
->> +                (nuc900_chipid >> 24) & 0xff);
->
-> I'm still a bit unsure about the set of attributes here.
->
-> - The "soc_id" is read from the device tree from the field that contains
->    the board name, I think for consistency you should try to map the
->    GCR_CHIPID to the name of the SoC and assign that here
+Paul.
+--
 
-I will try to get chipid and map it to soc name like: “nuc970”, "nuc910".
-
-And I will set this soc name to soc_id, ok?
-
->
-> - The "machine" is hardcoded to "NUC900EVB", which in turn looks like
->    a particular board but not the one you are running on. Maybe read
->    that from the DT instead?
-
-Should I read nuc970-evb.dts's "model" or "compatible" properties?
-
->
-> - The "revision" is not filled at all, I would suggest using something
->    derived from the GCR_CHIPID register here
->
-> - you have two nonstandard attributes "chipid" and "version", which
->    I'd hope to avoid -- the set of standard attributes is supposed to
->    give enough information about the machine, and platform independent
->    user space will never read those.
->
-> 	Arnd
->
->
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#define PMU_XTAL_FREQ_RATIO                    0x66c
+> +#define  XTAL_ALP_PER_4ILP                     0x00001fff
+> +#define  XTAL_CTL_EN                           0x80000000
+> +#define PMU_SLOW_CLK_PERIOD                    0x6dc
+> +
