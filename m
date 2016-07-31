@@ -1,57 +1,290 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 7/7] arm: amlogic: select meson8b clk driver
-From: =?utf-8?Q?Alexander_M=C3=BCller?= <serveralex@gmail.com>
-In-Reply-To: <m2inwiqwaa.fsf@baylibre.com>
-Date: Wed, 13 Jul 2016 19:53:12 +0200
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-Message-Id: <41983A35-37D0-40D0-BFD2-1EF7DC655B93@gmail.com>
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com> <1467741391-60534-8-git-send-email-serveralex@gmail.com> <146776648028.35356.7816151912503029258@resonance> <m2inwiqwaa.fsf@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: Changed: sunxi-ng clock code - NKMP clock implementation is wrong
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20160630204001.GC5485@lukather>
+ <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+ <20160715085356.GR4761@lukather>
+ <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+ <20160721094852.GI5993@lukather>
+ <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
+ <20160726063253.GW7419@lukather>
+ <e1b8127f-c422-46ab-384b-aeee85aa940b@megous.com>
+ <20160728210011.GJ6682@lukather>
+ <7c5f2835-f044-7c18-def9-52af5ce4afc3@megous.com>
+ <20160731103114.GY6215@lukather>
+Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
+Message-ID: <9175af7e-e1b1-df88-de2b-16f0e8d719c1@megous.com>
+Date: Mon, 1 Aug 2016 00:01:39 +0200
+MIME-Version: 1.0
+In-Reply-To: <20160731103114.GY6215@lukather>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kevin,=20
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p
+Content-Type: multipart/mixed; boundary="wGiGXrNbW19ioja3tDbj0dl0i2IBCnLob"
+From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+ =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Message-ID: <9175af7e-e1b1-df88-de2b-16f0e8d719c1@megous.com>
+Subject: Re: Changed: sunxi-ng clock code - NKMP clock implementation is wrong
+References: <20160630204001.GC5485@lukather>
+ <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
+ <20160715085356.GR4761@lukather>
+ <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+ <20160721094852.GI5993@lukather>
+ <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
+ <20160726063253.GW7419@lukather>
+ <e1b8127f-c422-46ab-384b-aeee85aa940b@megous.com>
+ <20160728210011.GJ6682@lukather>
+ <7c5f2835-f044-7c18-def9-52af5ce4afc3@megous.com>
+ <20160731103114.GY6215@lukather>
+In-Reply-To: <20160731103114.GY6215@lukather>
 
-I did the proposed changes and rebased to integ.=20
+--wGiGXrNbW19ioja3tDbj0dl0i2IBCnLob
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Please review and let me know if I missed something.
+Hi,
 
-Alex
+On 31.7.2016 12:31, Maxime Ripard wrote:
+> Hi,
+>=20
+> On Fri, Jul 29, 2016 at 12:01:09AM +0200, Ond=C5=99ej Jirman wrote:
+>> On 28.7.2016 23:00, Maxime Ripard wrote:
+>>> Hi Ondrej,
+>>>
+>>> On Thu, Jul 28, 2016 at 01:27:05PM +0200, Ond=C5=99ej Jirman wrote:
+>>>> Hi Maxime,
+>>>>
+>>>> I don't have your sunxi-ng clock patches in my mailbox, so I'm reply=
+ing
+>>>> to this.
+>>>
+>>> You can find it in the clock maintainers tree:
+>>> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/log/?h=3Dc=
+lk-sunxi-ng
+>>>
+>>>> On 26.7.2016 08:32, Maxime Ripard wrote:
+>>>>> On Thu, Jul 21, 2016 at 11:52:15AM +0200, Ond=C5=99ej Jirman wrote:=
 
-> On 06 Jul 2016, at 23:41, Kevin Hilman <khilman@baylibre.com> wrote:
+>>>>>>>>> If so, then yes, trying to switch to the 24MHz oscillator befor=
+e
+>>>>>>>>> applying the factors, and then switching back when the PLL is s=
+table
+>>>>>>>>> would be a nice solution.
+>>>>>>>>>
+>>>>>>>>> I just checked, and all the SoCs we've had so far have that
+>>>>>>>>> possibility, so if it works, for now, I'd like to stick to that=
+=2E
+>>>>>>>>
+>>>>>>>> It would need to be tested. U-boot does the change only once, wh=
+ile the
+>>>>>>>> kernel would be doing it all the time and between various freque=
+ncies
+>>>>>>>> and PLL settings. So the issues may show up with this solution t=
+oo.
+>>>>>>>
+>>>>>>> That would have the benefit of being quite easy to document, not =
+be a
+>>>>>>> huge amount of code and it would work on all the CPUs PLLs we hav=
+e so
+>>>>>>> far, so still, a pretty big win. If it doesn't, of course, we don=
+'t
+>>>>>>> really have the choice.
+>>>>>>
+>>>>>> It's probably more code though. It has to access different registe=
+r from
+>>>>>> the one that is already defined in dts, which would add a lot of c=
+ode
+>>>>>> and require dts changes. The original patch I sent is simpler than=
+ that.
+>>>>>
+>>>>> Why?
+>>>>>
+>>>>> You can use container_of to retrieve the parent structure of the cl=
+ock
+>>>>> notifier, and then you get a ccu_common structure pointer, with the=
+
+>>>>> CCU base address, the clock register, its lock, etc.
+>>>>>
+>>>>> Look at what is done in drivers/clk/meson/clk-cpu.c. It's like 20 L=
+oC.
+>>>>>
+>>>>> I don't really get why anything should be changed in the DT, or why=
+ it
+>>>>> would add a lot of code. Or maybe we're not talking about the same
+>>>>> thing?
+>>>>
+>>>> I've looked at the new CCU code, particularly ccu_nkmp.c, and found =
+that
+>>>> it very liberally uses divider parameters, even in situations that a=
+re
+>>>> out of spec compared to the current code in the kernel.
+>>>>
+>>>> In the current code and especially in the original vendor code, divi=
+der
+>>>> parameters are used as last resort only. Presumably because, of the
+>>>> inherent trouble in changing them, as I described to you in other em=
+ail.
+>>>>
+>>>> The new ccu code uses dividers often and even at very high frequenci=
+es,
+>>>> which goes against the spec.
+>>>>
+>>>> In the vendor code M is never anything else but 0, and P is used onl=
+y
+>>>> for frequencies below 288MHz, which matches the H3 datasheet, which =
+says:
+>>>
+>>> In the vendor code, P is never used either. All the boards we had so
+>>> far don't go that low, so we cannot make any of these assumptions,
+>>> especially since the vendor code has had the bad habit of doing
+>>> something wrong and / or useless in the past.
+>>
+>> P is used in the arisc firmware according to the spec for the lower
+>> frequencies.
 >=20
-> Michael Turquette <mturquette@baylibre.com> writes:
+> Yes, but has anyone actually tested those frequencies? Judging from
+> the FEX files I could gather, cpufreq never actually goes lower than
+> 480 MHz.
 >=20
->> Hi Alex,
->>=20
->> Quoting Alexander M=C3=BCller (2016-07-05 10:56:31)
->>> Select the Amlogic clk code for meson SoCs and the more specific =
-meson8b clk
->>> driver for Amlogic meson8b.
->>>=20
->>> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
->>=20
->> This patch isn't necessary as an alternative is already queued. See:
->> =
-https://git.kernel.org/cgit/linux/kernel/git/mturquette/linux.git/commit/?=
-h=3Dgxbb-dt-clk&id=3Dbae5d70ba6f8726ea6306aa07b7d2eb4357d3c81
->>=20
->> However, if you're basing on top of clk-next (or clk-s905) then you
->> won't see the three patches linked above because they are queued =
-through
->> Kevin & Carlo via the amlogic tree.
+
+I tested it. It works well down to 60MHz. You can even run on 24MHz if
+you run directly from 24mhz osc. It's terribly slow, but it works ok.
+
+I've rebased my working branch over the mainline kernel, which now
+contains the sunxi-ng, and tested it. Cpufreq seems to work on orange pi
+pc without any changes discussed in this thread. I didn't do any
+extensive testing though. But it doesn't hang on boot or cpufreq config
+changes.
+
+You can see it here:
+
+https://github.com/megous/linux/commits/orange-pi-4.8
+
+>>> However, this implementation is a new thing, and it was using the H3
+>>> precisely because of its early stage of support to use it as a testbe=
+d
+>>> for the more established.
+>>>
+>>> If you feel like we should use a different formula to favour the
+>>> multipliers over the dividers (or want to change the class of the CPU=
+
+>>> PLL to an NKM or something else, this is totally doable.
+>>
+>> I think the original formula that's currently in the mainline kernel i=
+s
+>> better and avoids fiddling with dividers too much.
 >=20
-> ...which you can find here[1] and specifically, the "integ" branch =
-where
-> I'm keeping the latest queued versions of various things merged =
-together
-> for easier testing.
+> Yeah, but the older formula is not generic at all. The whole rework
+> was precisely to avoid doing the whole one driver per clock that was
+> just becoming a nightmare to maintain, and a pain to add support for
+> new SoCs. That code will be used for A10's CPU and VE PLLs too for
+> example. And they probably have the same constraints, but with
+> different variations (available values of each factors for example).
+
+Fair enough.
+
+>>>> "The P factor only use in the condition that PLL output less than 28=
+8
+>>>> MHz."
+>>>
+>>> And the datasheet also had some issues, either misleading or wrong
+>>> comments in the past. Don't get me wrong, I'm not saying that this is=
+
+>>> wrong, just that we should not follow it religiously, and that we
+>>> should trust more the experiments than the datasheet.
+>>
+>> I can believe that. :) Regardless, I think the reasons given for
+>> avoiding dividers are quite reasonable. It's based on how PLL block
+>> works, not what manual says.
 >=20
-> Kevin
+> Yes, indeed.
 >=20
-> [1] =
-https://git.kernel.org/cgit/linux/kernel/git/khilman/linux-amlogic.git/
+> Would replacing the current factors computation function by something
+> like:
+>=20
+> for (m =3D 1; m < max_m; m++)
+>     for (p =3D 1; p < max_p; p++)
+>         for (n =3D 1; n < max_n; n++)
+> 	     for (k =3D 1; k < max_k; k++)
+> 	         if rate =3D=3D computed rate
+> 		     break;
+>=20
+> work for you?
+
+This would be better.
+
+thank you and regards,
+  Ondrej
+
+> That way, we will favor the multipliers over the dividers, and we can
+> always "blacklist" p or m (or both) by setting their maximum to 1
+> (this would need an extra field in _ccu_div though).
+>=20
+>>>> Also other datasheets of similar socs from Allwinner state that M sh=
+ould
+>>>> not be used in production code.
+>>>
+>>> Which ones specifically?
+>>
+>> A83T for example. You can search for "only for test" phrase.
+>>
+>> https://github.com/allwinner-zh/documents/blob/master/A83T/A83T_User_M=
+anual_v1.5.1_20150513.pdf
+>>
+>> Those PLLs are a bit different though.
+>=20
+> Thanks,
+> Maxime
+>=20
+
+
+--wGiGXrNbW19ioja3tDbj0dl0i2IBCnLob--
+
+--JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJXnnVHAAoJEG5kJsZ3z+/xHCIP/i1giaKN025CVSjHQP+nlJJN
++JNs8LZZx9m7RDqrm3dlFQLU7FMXtIoIZN8JFuo1dnNnGu35+IpQJegHtYcYyBlN
+uO88kauL8E5WuB3ERqygZWkv8/nVtZqUI6tVtkPfFrm3LFPwc4FlwN5w3GSVCybh
+DXi9TGpAJWcmniu8SulG+WNg1g+RByv2nGMXWrPNC3HDhVnoZc0+Jl5YRI4BZr2i
+OnMXV1VJ4sC/sABpTdTKCzP3Dzvul4XeC1QU3UoerQjhiN+6XuEyhZVYDcXLWjPS
+gPd3q9c7bBX0i1aoDMJe94srrJsbbJ3Qqsstqbk1lt7CYTQdcmTMyP+MQ1WoUu8K
+Og/tVa67t2VZbkFbtPk9nGM4phux/VQ6xUYXoYFUfNkkUOT9rOcoXQbDeEg3luj1
+5PMkAG+tvY87v61+xch0Y3AzoY+/+Xi7QlMAnRIEMUmXz/SSo67ihs4yzWa7v3fl
+E+D5rvueqxY9aYNEXs3egNGrPFKvyFURWfddUn83lIhgmbQUi5PyOGW0iLQJD2qA
+L96noHg/A5wwcqZF8VaD7NTEAPaQR24kXFSQdmmPrpq9eENyhaYcLTqGxKQ+Ie9P
+vpBjR2pCil8/Fv0vgSJQHNVxwA87OKeasfCK/KLjPdd1MEgSDKuhiGN6/FIuODc6
+GiTcdeJEAVfyAHi1OhWt
+=tg/u
+-----END PGP SIGNATURE-----
+
+--JWaS5ruaG9vNv4hWMkfGISRGo3KRbiw2p--
