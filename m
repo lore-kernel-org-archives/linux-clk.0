@@ -1,217 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Aug 2016 17:25:07 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
- clock driver
-Message-ID: <20160819002507.GS361@codeaurora.org>
-References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
- <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20160801140012.41b8609b69faa1fe1d7d2a4a@free.fr>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+ <fb559224-561c-3476-1146-96f7aea427f0@arm.com> <20160801103024.cc74c093466d7fdfd91a2587@free.fr>
+ <CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com> <20160801140012.41b8609b69faa1fe1d7d2a4a@free.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 1 Aug 2016 20:01:49 +0800
+Message-ID: <CAGb2v66bvtY5qtkSJ_BgyPtA+Mi-3m06NwVnntcwaNnbdwYC6w@mail.gmail.com>
+Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Chen-Yu Tsai <wens@csie.org>, =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/02, Masahiro Yamada wrote:
-> diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-> new file mode 100644
-> index 0000000..d6dfa4d
-> --- /dev/null
-> +++ b/drivers/clk/uniphier/clk-uniphier-core.c
-> @@ -0,0 +1,124 @@
-> +/*
-> + * Copyright (C) 2016 Socionext Inc.
-> + *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-uniphier.h"
-> +
-> +static struct clk_hw *uniphier_clk_register(struct device *dev,
-> +					    struct regmap *regmap,
-> +					const struct uniphier_clk_data *data)
-> +{
-> +	switch (data->type) {
-> +	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
-> +		return uniphier_clk_register_fixed_factor(dev, data->name,
-> +							  &data->data.factor);
-> +	case UNIPHIER_CLK_TYPE_FIXED_RATE:
-> +		return uniphier_clk_register_fixed_rate(dev, data->name,
-> +							&data->data.rate);
-> +	case UNIPHIER_CLK_TYPE_GATE:
-> +		return uniphier_clk_register_gate(dev, regmap, data->name,
-> +						  &data->data.gate);
-> +	case UNIPHIER_CLK_TYPE_MUX:
-> +		return uniphier_clk_register_mux(dev, regmap, data->name,
-> +						 &data->data.mux);
-> +	default:
-> +		dev_err(dev, "unsupported clock type\n");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +}
-> +
-> +static const struct of_device_id uniphier_clk_match[] = {
-> +	{ /* sentinel */ }
+On Mon, Aug 1, 2016 at 8:00 PM, Jean-Francois Moine <moinejf@free.fr> wrote=
+:
+> On Mon, 1 Aug 2016 17:13:34 +0800
+> Chen-Yu Tsai <wens@csie.org> wrote:
+>
+>> > But I don't see why you are keeping the simple-gates. The bus gate may
+>> > be ungated/gated when the clock is enabled/disabled, and that's what
+>> > Allwinner's software does.
+>>
+>> For peripherals that have a separate mod clock, having them separate
+>> is a good thing. One example might be the audio codecs. You could ungate
+>> the bus gate to access its registers to program it, but only enable
+>> the mod clock when you actually play something.
+>
+> The roles of the bus gate and the clock gate are the same. I don't see
+> any reason to set one gate without setting the other one. More, the
+> spec says what the bus gate must be enabled before the clock gate (and
+> reverse order while disabling). So, setting both gates in one function
+> call seems safer.
 
-Looks funny but I guess we'll fill this in later so it's ok.
+Wha? Aren't bus gates and clock gates the same thing in this context?
 
-> +};
-> +MODULE_DEVICE_TABLE(of, uniphier_clk_match);
-> +
-> +int uniphier_clk_probe(struct platform_device *pdev)
+ChenYu
 
-static?
-
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	const struct of_device_id *match;
-> +	struct clk_hw_onecell_data *hw_data;
-> +	struct device_node *parent;
-> +	struct regmap *regmap;
-> +	const struct uniphier_clk_data *p;
-> +	int clk_num = 0;
-> +
-> +	match = of_match_node(uniphier_clk_match, dev->of_node);
-> +	if (!match)
-> +		return -ENODEV;
-
-We can use of_driver_match_device() to make this simpler.
-
-> +
-> +	parent = of_get_parent(dev->of_node); /* parent should be syscon node */
-> +	regmap = syscon_node_to_regmap(parent);
-> +	of_node_put(parent);
-
-devm_get_regmap(dev->parent) should work then? Why do we need to
-use OF APIs?
-
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(dev, "failed to get regmap (error %ld)\n",
-> +			PTR_ERR(regmap));
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	for (p = match->data; p->name; p++)
-> +		clk_num = max(clk_num, p->idx + 1);
-> +
-> +	hw_data = devm_kzalloc(dev,
-> +			sizeof(*hw_data) + clk_num * sizeof(struct clk_hw *),
-> +			GFP_KERNEL);
-> +	if (!hw_data)
-> +		return -ENOMEM;
-> +
-> +	hw_data->num = clk_num;
-> +
-> +	for (p = match->data; p->name; p++) {
-> +		struct clk_hw *hw;
-> +
-> +		dev_dbg(dev, "register %s (index=%d)\n", p->name, p->idx);
-> +		hw = uniphier_clk_register(dev, regmap, p);
-> +		if (IS_ERR(hw)) {
-> +			dev_err(dev, "failed to register %s (error %ld)\n",
-> +				p->name, PTR_ERR(hw));
-> +			return PTR_ERR(hw);
-> +		}
-> +
-> +		if (p->idx >= 0)
-> +			hw_data->hws[p->idx] = hw;
-> +	}
-> +
-> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-> +				      hw_data);
-> +}
-> +
-> +int uniphier_clk_remove(struct platform_device *pdev)
-
-static?
-
-> +{
-> +	of_clk_del_provider(pdev->dev.of_node);
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/clk/uniphier/clk-uniphier-fixed-factor.c b/drivers/clk/uniphier/clk-uniphier-fixed-factor.c
-> new file mode 100644
-> index 0000000..d64ea61
-> --- /dev/null
-> +++ b/drivers/clk/uniphier/clk-uniphier-fixed-factor.c
-> @@ -0,0 +1,49 @@
-> +/*
-> + * Copyright (C) 2016 Socionext Inc.
-> + *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/device.h>
-> +
-> +#include "clk-uniphier.h"
-> +
-> +struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
-> +						  const char *name,
-> +			const struct uniphier_clk_fixed_factor_data *data)
-> +{
-> +	struct clk_fixed_factor *fix;
-> +	struct clk_init_data init;
-> +	int ret;
-> +
-> +	fix = devm_kzalloc(dev, sizeof(*fix), GFP_KERNEL);
-> +	if (!fix)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name = name;
-> +	init.ops = &clk_fixed_factor_ops;
-> +	init.flags = data->parent_name ? CLK_SET_RATE_PARENT : 0;
-> +	init.flags |= CLK_IS_BASIC;
-
-Please don't use CLK_IS_BASIC unless you need it. So far we've
-kept it to OMAP and I'm hoping to delete it.
-
-> +	init.parent_names = data->parent_name ? &data->parent_name : NULL;
-> +	init.num_parents = data->parent_name ? 1 : 0;
-> +
-> +	fix->mult = data->mult;
-> +	fix->div = data->div;
-> +	fix->hw.init = &init;
-> +
-> +	ret = devm_clk_hw_register(dev, &fix->hw);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return &fix->hw;
-> +}
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Then, if you want to save some power while not playing anything, just do
+> clk_disable() of the (main and only) i2s clock.
+>
+> --
+> Ken ar c'henta=C3=B1 |             ** Breizh ha Linux atav! **
+> Jef             |               http://moinejf.free.fr/
