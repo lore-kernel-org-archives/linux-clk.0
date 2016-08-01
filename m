@@ -1,280 +1,52 @@
-Return-Path: <andre.przywara@arm.com>
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
- <fb559224-561c-3476-1146-96f7aea427f0@arm.com>
- <20160823193129.GO2598@lukather>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Message-ID: <822ff63c-117d-2250-c1ac-27cd1f787095@arm.com>
-Date: Thu, 25 Aug 2016 00:54:14 +0100
-MIME-Version: 1.0
-In-Reply-To: <20160823193129.GO2598@lukather>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	wulf@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/7] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+Date: Mon,  1 Aug 2016 17:33:31 +0800
+Message-Id: <1470044016-29764-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+Export these source clocks for usbphy.
 
-thanks for your answer, much appreciated!
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-On 23/08/16 20:31, Maxime Ripard wrote:
-> Hi Andre,
-> 
-> On Mon, Aug 01, 2016 at 02:43:06AM +0100, André Przywara wrote:
->> Hi Maxime,
->>
->> On 26/07/16 21:30, Maxime Ripard wrote:
->>> Hi,
->>>
->>> Here is the previous A64 patches made by Andre [1], reworked to use
->>> the new sunxi-ng clock framework.
->>>
->>> This uses the current H3 clock code, as both are really similar. The
->>> first patches are just meant to rework slightly the H3 code, before
->>> introducing the A64-related patches.
->>>
->>> Some WiP stuff have been removed, such as the MMC part, but this serie
->>> already has a decent amount of devices supported: uart, i2c, rsb, etc.
->>
->> Thanks very much for looking into this and compiling this series!
->>
->> In general this looks good to me - apart from the sunxi-ng clock usage.
->> I think I have some small fixes to the DT (have to compare against my
->> latest local branch), I will comment on this later.
->>
->> As I think I never officially expressed my concerns about the new sunxi
->> clock system, so I use that opportunity here ;-)
->>
->> As this became quite a long read, here a TL;DR:
->> - We consider using an SCPI based clock system for the A64, alongside
->> allwinner,simple-gates and fixed clocks. We try to avoid any Allwinner
->> specific clocks (apart from the simple-gates).
->> - ARM Trusted Firmware provides the SCPI implementation - for now, later
->> we may move this into a possible arisc firmware.
->> - We upstream some basic DT first, possibly omitting any controversial
->> clock parts at all.
->>
->> Let me know what you think!
->>
->>
->> Now the long part ....
->>
->> Basically I see those issues with the new clocks:
->> - sunxi-ng requires a complicated SoC specific source file in the
->> kernel. Although that makes the DT pretty easy (and avoids breaking it
->> the future), it ultimately requires an explicit code drop for every new
->> SoC, even if they share 95% of the clocks (as H3 and A64 do, for instance).
->> - This code file does not actually contain any code, instead it's just
->> data and looks like it should really be presented in DT - which brings
->> us back to something like the old sunxi clock scheme, which is
->> apparently not considered good enough. I still wonder if we could create
->> a generic sunxi-ng user, which explains the needed clocks in the DT
->> instead of in code. I admit that looks like quite some work.
->> - It makes it quite hard for any other DT user (*BSD, U-Boot) to use the
->> clocks, since they would have to copy quite verbatim the Linux
->> implementation choice. This is admittedly also true for the old clock
->> framework, but still unfortunate.
-> 
-> 3 - You never get a complete clock support for any SoC, requirining
->     for pretty much every driver to create from scratch a new clock
->     driver.
+---
 
-I don't understand this. Are you referring to the old clock system? Or
-to the proposed SCPI approach? Or to sunxi-ng with DT descriptions?
+Changes in v2: None
 
-And why would a *driver* care about a specific clock if it's using the
-common clock framework?
-Confused ...
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 4 - You require for all these clocks drivers some Ack from both the DT
->     and clocks maintainers, who both said they were fed up with this.
-
-Again which new clock drivers? The old sunxi-clks?
-For the SCPI version I propose we don't need any ACKs (apart from the
-new .dtsi, maybe), because the clocks are already there.
-
-> 5 - If you realise some day down the road that the parenting
->     relationship is not right, or that some clock is not doing what
->     you thought it was, you can't really fix it properly because of
->     the DT stability you wanted us to enforce.
-> 
->> So as mentioned several times before, I am looking into a more firmware
->> driven clock system using the SCPI[1] framework.
->> The idea is:
->> - The basic clocks (OSC24M, OSC32K, AHB1, APB1, APB2, PERIPH0) are
->> expressed as fixed clocks. If I am not mistaken, Allwinner recommends
->> certain frequencies for them anyway, so we just use that and set them up
->> before booting Linux, for instance in ATF.
->> - The gates clocks are expressed as before, but by defining a generic DT
->> compatible fallback name. I have no idea why every SoC enters its name
->> into the simple_gates.c source file, while just mentioning the
->> compatible string in the DT bindings and using the SoC specific name
->> together with a generic fallback like "allwinner,sunxi-simple-gates"
->> would suffice. This means that we don't need to touch simple-gates.c
->> anymore most of the time.
->> - Any clock that can (and has to) be programmed with a variable
->> frequency is expressed as an SCPI clock. This interface allows basically
->> querying and setting a frequency - not very powerful, but sufficient for
->> the clocks I checked. Firmware then takes the burden of programming the
->> respective clock register - which is not rocket science if we lock the
->> base clocks to a certain frequency.
->>
->> The advantage of this approach would be:
->> - The impact to Linux code is minimized. Normally there would be no need
->> to touch the kernel at all when we introduce a new SoC.
-> 
-> But you duplicate the clock framework entirely, both the core code and
-> the data you were complaining about, with all the issues that arise
-> from code duplication. You still have to create that big file you were
-> complaining about, with exactly the same constraints.
-
-We don't need to comply with some common clock framework in firmware, we
-just need to provide implementations for specific clocks. From a
-maintainer's point of view the CCF is nice, but its implementation is
-quite complicated and hard to understand for mere mortals. Also tweaking
-a particular clock is not easy, as it has to fit into the framework and
-we may miss the interfaces.
-
-See the MMC clock implementation for instance: it's just a simple
-divider clock. My implementation in ATF is probably bad and stupid, but
-at the end of the day I just have to provide a way to set a frequency of
-one single clock.
-I think we win a lot if we go away from possibly tuning the parent's
-clocks (AHB, PLL6 & friends), instead leaving them as fixed clocks - my
-understanding is that Allwinner recommends this anyway. Then the whole
-complex clock tree degrades into just a bunch of more or less
-independent clock registers.
-Also we can go with a much easier implementation, since we don't need to
-support all clocks in one image, but just the clocks for one particular
-SoC. This brings the complexity down, so we can get away with a much
-simpler implementation (compare U-Boot, though this isn't the best
-example, admittedly).
-
->> - Any other DT user can quite easily make use of the clock system
->> without adding tons of complicated Allwinner specific clock code. The
->> simple-gates driver is almost trivial to implement, and chances are SCPI
->> is already around anyway.
->> - If there are any peculiarities with a certain clock (implementation),
->> we can solve this in firmware. Fixes to code would immediately benefit
->> all users - existing kernels (from distributions), newer kernels and
->> other OSes.
-> 
-> But no-one would actually be able to use it, because no one upgrades
-> its firmware, including all the major distributions (Debian, Ubuntu,
-> Fedora, OpenWRT, Arch, Gento, you name it). So there's effectively no
-> way to fix a bug that was there.
-
-But currently distributions do upgrade U-Boot, don't they? ATF would be
-part of a FIT image, compiled alongside U-Boot and included in one image
-with the SPL and the U-Boot proper. In the Allwinner world with firmware
-on SD cards or in eMMC I don't see big issues.
-Also honestly I don't expect frequent updates. Yes: in the beginning we
-may have changes, but at some point we make a (tested) release and maybe
-publish updates every now and then. Either these updates fix bugs or
-provide new features, so there is some incentive for users to update. Or
-they don't care, in which case it may just work for them and they keep
-using the old version.
-
->> - Having SCPI gives us simple regulators and sensors (temperature,
->> power) for free (in terms of no Linux code required). It also allows for
->> DVFS support, though this may require more work on the firmware side.
-> 
-> And ignoring all the other features that the PMIC support, and the
-> board uses out there (GPIO, ADCs, Power supplies, battery charger, USB
-> VBUS monitoring)
-
-Replying to that in that other email ...
-
->> - This approach matches many of the more serious ARM64 machines out
->> there, which refrain from exposing all of their clock framework to Linux.
-> 
-> $ git grep -l scpi arch/arm64/boot/dts/**.dtsi
-> arch/arm64/boot/dts/arm/juno-base.dtsi
-> 
-> Are you saying that only Juno is a serious ARM64 machine?
-
-I wasn't referring to SCPI in particular (which is indeed used only by
-Juno at the moment), but about not exposing the actual internal clock
-layout to Linux. PCs certainly don't, but also AMD Seattle and ThunderX
-avoid this.
-
->> Also this opens the door to much easier support for new SoCs - up to a
->> point where any new chip would actually run out of the box on existing
->> distributions (thinking of LTS releases here). The pinctrl driver is a
->> nasty guy around here - but let's not make it worse and try to fix that
->> guy later ;-)
-> 
-> That's not true and you know it.
-> 
-> What you actually suggest is to implement a minimal set of clocks in
-> ATF (the opposite being, the entire set of clocks, which would of
-> course be untested, so it basically falls down in the exact same
-> category).
-> 
-> What this means is that, since we will obviously not support all the
-> clocks client from day one, any user will be *required* for a new
-> kernel release to operate as it's expected to upgrade the ATF.
-
-I don't see that these are related - unless you consider the DT part of
-the kernel - which it clearly isn't (although the current scheme of DT
-updates suggests this). Actually the firmware should provide the DT,
-just advertising all the clocks it implements.
-And as I don't expect implementing an isolated clock as an SCPI clock to
-be rocket science, I'd hope for the error rate to be minimal.
-So we may publish an early firmware version with support for certain
-devices only and later upgrade this. U-Boot gets also upgraded via the
-distributions at the moment. We could even introduce some firmware
-upgrade infrastructure (or use the Linux one) if we find us in dire need
-for.
-
-> Without any help from the distribution (s)he's running, because no one
-> has that kind of scenario in mind. And let's be honest, I don't see
-> Ubuntu changing the dependencies for the kernel for the Allwinner SoCs
-> alone (let alone the fact that it's pretty much impossible in a
-> generic way to know where and how the ATF is installed).
-
-Again how does this differ from U-Boot, which I consider firmware as
-well and which is handled by the distributions (although I don't like
-this approach very much, because it pushes hardware support to Linux
-vendors).
-
-> Apart from being a major pain for any user, upgrading the bootloader
-> is also a showstopper for most industries.
-> 
-> So, no, we won't do that. The A64 support is something we actually
-> want to use in real-life products, and our users to be happy with the
-> support they have.
-
-I can understand that we can just do what we did in the past: Spoon feed
-every new SoC as soon as we get our hands on some boards and explicitly
-add support for it in the Linux kernel.
-But I'd like to revisit this approach, as it actually takes quite some
-time for support to trickle in down the kernel road - especially if we
-look at major distributions (think LTS).
-If we can get closer to a state were new SoCs just require appropriate
-firmware and a DT - without any new kernel code - I see a big
-opportunity to get much quicker support for new SoCs - up to a point
-where the firmware is the only thing that's needed. Maybe some day the
-board vendors provide these firmware bits even, who knows?
-
-Another thing that strikes me: Currently we have strict per-SoC pinctrl
-drivers, which is unfortunate. But now we are adding new clock
-_descriptions_ for new SoCs as well, partly degrading the DT to a mere
-"board file selector". IIRC Linus complained about those numerous clock
-updates for ARM boards back then in his big ARM rant, I am just afraid
-that we go back to this state, bloating the kernel with SoC specific
-clock details - that it not necessarily needs to know about. In the end
-the kernel just wants to program this MMC clock to 52 MHz.
-
-> 
-> NAK.
-
-Cheers,
-Andre.
-
-P.S. I am cowardly leaving for a few days off after hitting the Send
-button, so don't expect immediate replies.
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 78e51cb..f55f967f 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
+ 
+-	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+-	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+ 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
+-- 
+1.7.9.5
