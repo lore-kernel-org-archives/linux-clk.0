@@ -1,85 +1,52 @@
-Return-Path: <James.Hogan@imgtec.com>
-Date: Fri, 12 Aug 2016 14:16:59 +0100
-From: James Hogan <james.hogan@imgtec.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: divider: Fix clk_divider_round_rate() to use
- clk_readl()
-Message-ID: <20160812131659.GR19514@jhogan-linux.le.imgtec.org>
-References: <1471005474-32301-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HAv5+T9jbwMPl6Kw"
-In-Reply-To: <1471005474-32301-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/7] clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+Date: Mon,  1 Aug 2016 17:33:33 +0800
+Message-Id: <1470044016-29764-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---HAv5+T9jbwMPl6Kw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dues to incorrect diagram, we need to fix incorrect bits for
+(c/g)pll_aclk_emmc_src:
+cpll_aclk_emmc_src --> G6[13]
+gpll_aclk_emmc_src --> G6[12]
 
-On Fri, Aug 12, 2016 at 02:37:54PM +0200, Geert Uytterhoeven wrote:
-> clk-divider uses clk_readl()/clk_writel() everywhere, except in
-> clk_divider_round_rate(), where plain readl() is used. Change this to
-> clk_readl(), as it makes a difference on powerpc.
->=20
-> Fixes: e6d5e7d90be92cee ("clk-divider: Fix READ_ONLY when divider > 1")
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-Hmm yes, sorry. I don't know how I managed to do that considering the
-prevalance of clk_readl() at the time.
+Changes in v2: None
 
-Reviewed-by: James Hogan <james.hogan@imgtec.com>
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks
-James
-
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Found by code inspection, untested on powerpc.
-> ---
->  drivers/clk/clk-divider.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index a0f55bc1ad3d277f..96386ffc84835f12 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -352,7 +352,7 @@ static long clk_divider_round_rate(struct clk_hw *hw,=
- unsigned long rate,
-> =20
->  	/* if read only, just return current value */
->  	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-> -		bestdiv =3D readl(divider->reg) >> divider->shift;
-> +		bestdiv =3D clk_readl(divider->reg) >> divider->shift;
->  		bestdiv &=3D div_mask(divider->width);
->  		bestdiv =3D _get_div(divider->table, bestdiv, divider->flags,
->  			divider->width);
-> --=20
-> 1.9.1
->=20
-
---HAv5+T9jbwMPl6Kw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJXrcxLAAoJEGwLaZPeOHZ6pEkQAMAbtsJIUeVjl1ZVPEMGOa7c
-TPky9glda252NbkxFfTUF+ks3miq8Mv0KyY4w814C1FTzz/unQLO+5e/V2q19FS9
-0N4VDfFFLnglwbpepF7gqDJL+r/w0h7HgO6uz7ja1Lf4l/xfeLHXv3NlLwfXmIPb
-N/IVy6FdGYCd4PmWOLlFWMJ3Ev0DNgae0/Bosg/wHuR4OE6X/uKgN8N4QDRGO//0
-OVAXweOYlHi6azLAovM3qesV1AMy8McvpacQZLMpeLfLg2ftqaZfK+U5jG3/4Qli
-2rqQjcGO5jMClIzD915KKqgyRBHRIxeGpCVo1SY+EZxgXmklG6MbNXRWe54Fi/O0
-xEdwwkODhLyQBTOAZhRMlGLHr4tX/PyIqfskspNmZIvo1f0evQlIu4gqK6KTMJPl
-xGO+g1Ry3TwjPubBA+5gcFm+zZXNROpO2KHG4aqtr7hw8FE7LUbjSA14Zf3MfVG3
-ySO3GB59s+CCfSlFzWrLcrWvMyyYfPp7A1A3753Z/rVXCDa0i44uHq5sbC/if9lB
-hPFXtQfkLofEe3sH0UaHfpOiIeH8fs85UaEWwHbRt1H9DctkcVvzFsqiA5QOqECc
-nbXw/D/l7habnLszPZhQkLXo8UnbebC1Rr6MPbUT1wE+7Kewv8ANggG1ngpi/fOa
-gdO3ZS80Nd8VKKLEy6Ou
-=4rEt
------END PGP SIGNATURE-----
-
---HAv5+T9jbwMPl6Kw--
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 8bf0d19..44e673e 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -923,9 +923,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(6), 14, GFLAGS),
+ 
+ 	GATE(0, "cpll_aclk_emmc_src", "cpll", CLK_IGNORE_UNUSED,
+-			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+-	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 13, GFLAGS),
++	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
++			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+ 	COMPOSITE_NOGATE(ACLK_EMMC, "aclk_emmc", mux_aclk_emmc_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(21), 7, 1, MFLAGS, 0, 5, DFLAGS),
+ 	GATE(ACLK_EMMC_CORE, "aclk_emmccore", "aclk_emmc", CLK_IGNORE_UNUSED,
+-- 
+1.7.9.5
