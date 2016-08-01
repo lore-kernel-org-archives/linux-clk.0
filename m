@@ -1,76 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.133]:50163 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752195AbcGUKzG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2016 06:55:06 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Wan Zongshun <vw@iommu.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	jason@lakedaemon.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wan Zongshun <mcuos.com@gmail.com>
-Subject: Re: [PATCH v2 09/10] Documentation: devicetree: Add dts description for nuc900
-Date: Mon, 11 Jul 2016 09:46:50 +0200
-Message-ID: <1644086.jqpXDrkuq8@wuerfel>
-In-Reply-To: <578300E2.5000405@iommu.org>
-References: <1468136542-2656-1-git-send-email-vw@iommu.org> <1850749.ap1S8Xq0fA@wuerfel> <578300E2.5000405@iommu.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com
+Subject: [RESEND PATCH 6/6] clk: rockchip: rk3399: Add support frac mode frequencies
+Date: Mon,  1 Aug 2016 12:25:01 +0800
+Message-Id: <1470025501-4259-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 11, 2016 10:13:54 AM CEST Wan Zongshun wrote:
-> 
-> On 2016年07月11日 06:17, Arnd Bergmann wrote:
-> > On Sunday, July 10, 2016 3:42:21 PM CEST Wan Zongshun wrote:
-> >> +
-> >> +Required properties:
-> >> +- compatible : Should be "nuvoton,nuc970-tmr"
-> >> +- reg : Address and length of the register set
-> >> +- clocks : Reference on the timer input clock
-> >> +- interrupts : Reference to the timer interrupt
-> >> +
-> >> +Example:
-> >> +
-> >> +tmr@0xb8001000 {
-> >
-> > The name should be "timer", not "tmr", and the address should
-> > not contain a leading "0x".
-> 
-> Ok, so all dts addresses has no need contain a leading "0x"?
+We need to support various display resolutions for external
+display devices like HDMI/DP, the frac mode can help us to
+acquire almost any frequencies, and need higher VCOs to reduce
+clock jitters.
 
-In properties, you need the leading 0x for hexadecimal numbers,
-in the node name the portion after the "@" depends on the bus,
-but is usually just the value of the address in hexadecimal
-without the leading 0x.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-> >
-> >> +       compatible = "nuvoton,nuc970-tmr";
-> >> +       reg = <0xb8001000 0x1000>;
-> >> +       interrupts = <16>;
-> >> +       clocks = <&clks TIMER0_GATE>,
-> >> +       <&clks TIMER1_GATE>;
-> >> +       clock-names = "timer0", "timer1";
-> >> +};
-> >
-> > The clocks/clock-names description does not match the example:
-> > you only define a single clock in the required properties, but
-> > have two separate inputs in the example. Please fix one or the
-> > other.
-> 
-> Two clocks are necessary, so I only need modify this description like?
-> 
-> Required properties:
->    clocks : Reference on the timer input clock, This list should be 2
-> 	   clocks, the order is timer0 , timer1.
-> 
-> Is it ok?
+ drivers/clk/rockchip/clk-rk3399.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-Yes, looks good.
-
-	Arnd
-
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 4a15ce5b..3daa164 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -109,6 +109,25 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	{ /* sentinel */ },
+ };
+ 
++static struct rockchip_pll_rate_table rk3399_pll_frates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE( 594000000, 1, 123, 5, 1, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 593406593, 1, 123, 5, 1, 0, 10508804),  /* vco = 2967032965 */
++	RK3036_PLL_RATE( 297000000, 1, 123, 5, 2, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 296703297, 1, 123, 5, 2, 0, 10508807),  /* vco = 2967032970 */
++	RK3036_PLL_RATE( 148500000, 1, 129, 7, 3, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE( 148351648, 1, 123, 5, 4, 0, 10508800),  /* vco = 2967032960 */
++	RK3036_PLL_RATE( 106500000, 1, 124, 7, 4, 0,  4194304),  /* vco = 2982000000 */
++	RK3036_PLL_RATE(  74250000, 1, 129, 7, 6, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE(  74175824, 1, 129, 7, 6, 0, 13550823),  /* vco = 3115384608 */
++	RK3036_PLL_RATE(  65000000, 1, 113, 7, 6, 0, 12582912),  /* vco = 2730000000 */
++	RK3036_PLL_RATE(  59340659, 1, 121, 7, 7, 0,  2581098),  /* vco = 2907692291 */
++	RK3036_PLL_RATE(  54000000, 1, 110, 7, 7, 0,  4194304),  /* vco = 2646000000 */
++	RK3036_PLL_RATE(  27000000, 1,  55, 7, 7, 0,  2097152),  /* vco = 1323000000 */
++	RK3036_PLL_RATE(  26973027, 1,  55, 7, 7, 0,  1173232),  /* vco = 1321678323 */
++	{ /* sentinel */ },
++};
++
+ /* CRU parents */
+ PNAME(mux_pll_p)				= { "xin24m", "xin32k" };
+ 
+@@ -229,7 +248,7 @@ static struct rockchip_pll_clock rk3399_pll_clks[] __initdata = {
+ 	[npll] = PLL(pll_rk3399, PLL_NPLL, "npll",  mux_pll_p, 0, RK3399_PLL_CON(40),
+ 		     RK3399_PLL_CON(43), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
+ 	[vpll] = PLL(pll_rk3399, PLL_VPLL, "vpll",  mux_pll_p, 0, RK3399_PLL_CON(48),
+-		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
++		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_frates),
+ };
+ 
+ static struct rockchip_pll_clock rk3399_pmu_pll_clks[] __initdata = {
+-- 
+1.7.9.5
