@@ -1,91 +1,50 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: [PATCH v2 0/6] Add clock support for Armada 37xx SoCs
-Date: Fri,  8 Jul 2016 00:37:45 +0200
-Message-Id: <1467931071-31004-1-git-send-email-gregory.clement@free-electrons.com>
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH 3/6] clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+Date: Mon,  1 Aug 2016 12:23:06 +0800
+Message-Id: <1470025389-4094-4-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Dues to incorrect diagram, we need to fix incorrect bits for
+(c/g)pll_aclk_emmc_src:
+cpll_aclk_emmc_src --> G6[13]
+gpll_aclk_emmc_src --> G6[12]
 
-eventually this is the second version of the series adding clock
-support for the Armada 37xx SoCs.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-The design of the drivers is as close as possible as the hardware is,
-with some clocks made of several layers: muxing, divider and gating.
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The device tree binding was written in a way that even if we discover
-some change inside the clocks, the binding should not be
-affected. Especially, there are some holes in the clocks, but we
-should be able to add them seamless.
-
-Since the firs version the main change is the use of clk_hw instead of
-clk for the registration. I also removed the dt related patches as they
-were already applied.
-
-However the full series is available on the branch
-Armada-3700-Clocks-v2 at
-git@github.com:MISL-EBU-System-SW/mainline-public.git
-
-Thanks,
-
-Changelog:
-
-v1 -> v2
-
-- Move to clk_hw based registration for the 3 clock driver as
-  requested by Stephen Boyd
-- Fixed typo noticed by Stephen Boyd
-- Added const and static when they were missing: suggested by Stephen
-  Boyd
-- Allocated the driver variable during probe instead of using a global
-  one as requested by Stephen Boyd
-- Managed the failure of the of_clk_add_hw_provider call
-- Added the Acked-by from Rob Herring on the dt binding patchs
-
-Gregory CLEMENT (6):
-  dt-bindings: clock: add DT binding for the Xtal clock on Armada 3700
-  clk: mvebu: Add the xtal clock for Armada 3700 SoC
-  dt-bindings: clock: add DT binding for the TBG clocks on Armada 3700
-  clk: mvebu Add the time base generator clocks for Armada 3700
-  dt-bindings: clock: add DT binding for the peripheral clocks on Armada
-    3700
-  clk: mvebu: Add the peripheral clock driver for Armada 3700
-
- .../bindings/clock/armada3700-periph-clock.txt     |  70 ++++
- .../bindings/clock/armada3700-tbg-clock.txt        |  27 ++
- .../bindings/clock/armada3700-xtal-clock.txt       |  28 ++
- drivers/clk/mvebu/Kconfig                          |   3 +
- drivers/clk/mvebu/Makefile                         |   3 +
- drivers/clk/mvebu/armada-37xx-periph.c             | 457 +++++++++++++++++++++
- drivers/clk/mvebu/armada-37xx-tbg.c                | 165 ++++++++
- drivers/clk/mvebu/armada-37xx-xtal.c               |  98 +++++
- 8 files changed, 851 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
- create mode 100644 drivers/clk/mvebu/armada-37xx-periph.c
- create mode 100644 drivers/clk/mvebu/armada-37xx-tbg.c
- create mode 100644 drivers/clk/mvebu/armada-37xx-xtal.c
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index f55f967f..ad3860a 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -923,9 +923,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(6), 14, GFLAGS),
+ 
+ 	GATE(0, "cpll_aclk_emmc_src", "cpll", CLK_IGNORE_UNUSED,
+-			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+-	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 13, GFLAGS),
++	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
++			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+ 	COMPOSITE_NOGATE(ACLK_EMMC, "aclk_emmc", mux_aclk_emmc_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(21), 7, 1, MFLAGS, 0, 5, DFLAGS),
+ 	GATE(ACLK_EMMC_CORE, "aclk_emmccore", "aclk_emmc", CLK_IGNORE_UNUSED,
 -- 
-2.5.0
+1.7.9.5
