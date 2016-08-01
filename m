@@ -1,66 +1,59 @@
-Return-Path: <stephen.boyd@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <665a9824-b0c5-9eb3-d4b6-4821204d5db0@osg.samsung.com>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-18-stephen.boyd@linaro.org> <CABxcv=mWdwPrGRrP7ay=2FBxzoew6yBdfjZNvgFeDGACnQZdcQ@mail.gmail.com>
- <665a9824-b0c5-9eb3-d4b6-4821204d5db0@osg.samsung.com>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-Date: Tue, 16 Aug 2016 13:06:03 -0700
-Message-ID: <CAJOFmgzfvUza7DQeMsd0bD_e=+P5=WGT8kOkV7H5CCwVq4Z0RQ@mail.gmail.com>
-Subject: Re: [PATCH 17/34] clk: maxgen: Migrate to clk_hw based OF and
- registration APIs
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	wulf@rock-chips.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RESEND PATCH v2 0/8] fix and optimize some clock configuration for the RK3399 platfom
+Date: Mon,  1 Aug 2016 17:53:35 +0800
+Message-Id: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 7, 2016 at 11:55 AM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> On 06/07/2016 02:50 PM, Javier Martinez Canillas wrote:
->> Hello Stephen,
->>
->> On Wed, Jun 1, 2016 at 7:15 PM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
->>> Now that we have clk_hw based provider APIs to register clks, we
->>> can get rid of struct clk pointers while registering clks in
->>> these drivers, allowing us to move closer to a clear split of
->>> consumer and provider clk APIs.
->>>
->>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>
->> This email address doesn't exist anymore, you can use
->> javier@osg.samsung.com instead.
->>
->>> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
->>> ---
->>>
->>> See commit 58657d189a2f and it's children for details on this
->>> new registration API.
->>>
->>
->> I tried this patch on top of linux-next and my Peach Pi Chromebook
->> (that has a max77802 chip) failed to boot. Following is the relevant
->> parts from the boot log:
->>
->
-> It seems the mailer did a mess with the line wrapping so here's another attempt:
->
 
-Thanks! Found the problem too.
+Hi:
+  In the development work, we found that some of the previous
+incorrect clock configuration on the RK3399 platform, we should
+fix and optimize them.
 
-----8<-----
-diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
-index 4bb53fcf8639..5e8bac190698 100644
---- a/drivers/clk/clk-max-gen.c
-+++ b/drivers/clk/clk-max-gen.c
-@@ -169,7 +169,7 @@ int max_gen_clk_probe(struct platform_device
-*pdev, struct regmap *regmap,
+Changes in v2:
+- add the patch "fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src"
+- add the patch "fix incorrect GATE bits for {c, g}pll_aclk_perihp_src"
 
-        if (dev->of_node) {
-                ret = of_clk_add_hw_provider(dev->of_node, of_clk_max_gen_get,
--                                            max_gen_clks);
-+                                            max_gen_data);
-                if (ret) {
-                        dev_err(dev, "failed to register OF clock provider\n");
-                        return ret;
+Elaine Zhang (1):
+  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+
+Xing Zheng (7):
+  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
+  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+  clk: rockchip: rk3399: fix incorrect parent for rk3399's {c,
+    g}pll_aclk_perihp_src
+  clk: rockchip: rk3399: fix incorrect GATE bits for {c,
+    g}pll_aclk_perihp_src
+  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+  clk: rockchip: rk3399: Add support frac mode frequencies
+
+ drivers/clk/rockchip/clk-rk3399.c      |   41 ++++++++++++++++++++++++--------
+ include/dt-bindings/clock/rk3399-cru.h |    2 ++
+ 2 files changed, 33 insertions(+), 10 deletions(-)
+
+-- 
+1.7.9.5
