@@ -1,98 +1,52 @@
-Return-Path: <julien.grall@arm.com>
-Subject: Re: [Xen-devel] [PATCH v4] xen/arm: Add a clock property
-To: Dirk Behme <dirk.behme@de.bosch.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Dirk Behme <dirk.behme@gmail.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-References: <1468309605-19522-1-git-send-email-dirk.behme@de.bosch.com>
- <146836236759.73491.11707389619985827497@resonance>
- <c320f820-8749-f4a4-435e-ddd9379655b5@de.bosch.com>
- <alpine.DEB.2.10.1607131941200.26575@sstabellini-ThinkPad-X260>
- <57868EDE.6060406@gmail.com>
- <146844380895.73491.4867379517577413421@resonance>
- <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>, xen-devel@lists.xenproject.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <57876612.3030407@arm.com>
-Date: Thu, 14 Jul 2016 11:14:42 +0100
-MIME-Version: 1.0
-In-Reply-To: <7df784ab-d0c0-939b-393e-214535c4b191@de.bosch.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	shawn.lin@rock-chips.com
+Subject: [RESEND PATCH 5/6] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+Date: Mon,  1 Aug 2016 12:24:45 +0800
+Message-Id: <1470025485-4218-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dirk,
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-On 14/07/16 07:31, Dirk Behme wrote:
-> On 13.07.2016 23:03, Michael Turquette wrote:
->> Quoting Dirk Behme (2016-07-13 11:56:30)
->>> On 13.07.2016 20:43, Stefano Stabellini wrote:
->>>> On Wed, 13 Jul 2016, Dirk Behme wrote:
->>>>> On 13.07.2016 00:26, Michael Turquette wrote:
->>>>>> Quoting Dirk Behme (2016-07-12 00:46:45)
->>>>>>> Clocks described by this property are reserved for use by Xen,
->>>>>>> and the OS
->>>>>>> must not alter their state any way, such as disabling or gating a
->>>>>>> clock,
->>>>>>> or modifying its rate. Ensuring this may impose constraints on
->>>>>>> parent
->>>>>>> clocks or other resources used by the clock tree.
->>>>>>
->>>>>> Note that clk_prepare_enable will not prevent the rate from changing
->>>>>> (clk_set_rate) or a parent from changing (clk_set_parent). The
->>>>>> only way
->>>>>> to do this currently would be to set the following flags on the
->>>>>> effected
->>>>>> clocks:
->>>>>>
->>>>>>     CLK_SET_RATE_GATE
->>>>>>     CLK_SET_PARENT_GATE
->>>>>
->>>>>
->>>>>
->>>>> Regarding setting flags, I think we already talked about that. I
->>>>> think the
->>>>> conclusion was that in our case its not possible to manipulate the
->>>>> flags in
->>>>> the OS as this isn't intended to be done in cases like ours.
->>>>> Therefore no API
->>>>> is exported for this.
->>>>>
->>>>> I.e. if we need to set these flags, we have to do that in Xen where
->>>>> we add the
->>>>> clocks to the hypervisor node in the device tree. And not in the
->>>>> kernel patch
->>>>> discussed here.
->>>>
->>>> These are internal Linux flags, aren't they?
->>>
->>>
->>> I've been under the impression that you can set clock "flags" via the
->>> device tree. Seems I need to re-check that ;)
->>
->> Right, you cannot set flags from the device tree. Also, setting these
->> flags is done by the clock provider driver, not a consumer. Xen is the
->> consumer.
->
->
-> Ok, thanks, then I think we can forget about using flags for the issue
-> we are discussing here.
->
-> Best regards
->
-> Dirk
->
-> P.S.: Would it be an option to merge the v4 patch we are discussing
-> here, then? From the discussion until here, it sounds to me that it's
-> the best option we have at the moment. Maybe improving it in the future,
-> then.
+allow aclk_pcie and aclk_perf_pcie disabled when unused.
 
-I think it is a good start, although I would like to see some rationale 
-in the code and commit message about the behavior of the Linux with 
-those clocks after this patch because it does not match the "contract".
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-Regards,
+---
 
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 74afec0..4a15ce5b 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
+ 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+ 
+-	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
++	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
+ 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
+-	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
++	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
+ 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
+ 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
 -- 
-Julien Grall
+1.7.9.5
