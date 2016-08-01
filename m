@@ -1,91 +1,47 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 21 Jul 2016 11:51:08 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 06/14] ARM: sun8i: clk: Add clk-factor rate
- application method
-Message-ID: <20160721095108.GJ5993@lukather>
-References: <20160625034511.7966-1-megous@megous.com>
- <20160625034511.7966-7-megous@megous.com>
- <20160630204001.GC5485@lukather>
- <0b71ed7e-98c9-109e-85e6-ceb95131d88a@megous.com>
- <20160715085356.GR4761@lukather>
- <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
- <20160715152756.db7375a7109fed18c2fbf43a@free.fr>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cN519qCC4CN1mUcX"
-In-Reply-To: <20160715152756.db7375a7109fed18c2fbf43a@free.fr>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6] clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+Date: Mon,  1 Aug 2016 11:37:22 +0800
+Message-Id: <1470022644-2152-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+We need to add more clocks for supporting more display resolution
+for HDMI.
 
---cN519qCC4CN1mUcX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-On Fri, Jul 15, 2016 at 03:27:56PM +0200, Jean-Francois Moine wrote:
-> On Fri, 15 Jul 2016 12:38:54 +0200
-> Ond=C5=99ej Jirman <megous@megous.com> wrote:
->=20
-> > > If so, then yes, trying to switch to the 24MHz oscillator before
-> > > applying the factors, and then switching back when the PLL is stable
-> > > would be a nice solution.
-> > >=20
-> > > I just checked, and all the SoCs we've had so far have that
-> > > possibility, so if it works, for now, I'd like to stick to that.
-> >=20
-> > It would need to be tested. U-boot does the change only once, while the
-> > kernel would be doing it all the time and between various frequencies
-> > and PLL settings. So the issues may show up with this solution too.
->=20
-> I don't think this is a good idea: the CPU clock may be changed at any
-> time with the CPUFreq governor. I don't see the system moving from
-> 1008MHz to 24MHz and then to 1200MHz when some computation is needed!
+ drivers/clk/rockchip/clk-rk3399.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-It wouldn't happen that often. The sampling rate for the governor is
-1000 times the latency, so, at most, 0.1% of the time would be spent
-at 24MHz.
-
-And if you're really concerned about performances, you won't enable
-cpufreq anyway.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---cN519qCC4CN1mUcX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXkJsMAAoJEBx+YmzsjxAgpnsP/2Y+BwDtxpeO0WM//Fdx5OTJ
-UUfKZ9grwq1G+MODQwJRSGAuSfJ/1jOt2FRuDyXy9LWoosDvGEdUN//ZYHqMps5I
-YdTy4TWt1+Zb5phVNnHH4h3Vhim2lp98EF0ExUne+gsNUUnmM/XC+JFpqu+H1gcI
-IjIkqeSfDouagPAya56gOpD9szoMYfEub7+S9yZg8VzXpT5KsgTWZpGv5Iy3TjLX
-l4xkb5XR/wvuF8yzVAF819tx3BJ/S/e2R9iSlJMgcfDgoqWntKqLMGXAUedGnCAI
-iDAdW4ODZd2JHRHsyN9WTHnwQA6Gt4Bn02ddgO1uQC3GXK2gFfcvfvLfWmL7lVq5
-re6dKca1agctgpF5PoaID2Di6ONf8NHuA2i+Ja9goiADMOpzFWnkemQ9NRPd3YXA
-laPcEEcVZdBq8PAGwJVBX1EJbQhTsZtkPp1U3kKoRgy1RAZki/ba3JdiI5e9PX8Q
-2NvG+7qaFS5d8oTdNL3qv/XgOp7xgVDWaunxQ9dPnqIFwd0AtAzcKOXfh8CZJdXC
-7NVcTxrWASkD93LJ8pMycf2J9p+dMoDtZ2YmQVGLynYP4K0ilqmtfa4UQVB+wm1B
-9UBemYPI7Xkq9Ctvmn1yb7RrnjjVkLzt4P+wYdIhncDJuQdCEeiRMhBmwPFhRvIT
-D+j+g4ngmve0xuJeuXlf
-=FHNS
------END PGP SIGNATURE-----
-
---cN519qCC4CN1mUcX--
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index ad3860a..74afec0 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -100,8 +100,10 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE( 297000000, 1, 99, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 148500000, 1, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE( 106500000, 1, 71, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  74250000, 2, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE(  65000000, 1, 65, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(  54000000, 1, 54, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(  27000000, 1, 27, 6, 4, 1, 0),
+ 	{ /* sentinel */ },
+-- 
+1.7.9.5
