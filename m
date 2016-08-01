@@ -1,268 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 02/10] irqchip: add irqchip driver for nuc900
-To: Jason Cooper <jason@lakedaemon.net>
-References: <1468135649-19980-1-git-send-email-vw@iommu.org>
- <1468135649-19980-3-git-send-email-vw@iommu.org>
- <20160713200906.GB31509@io.lakedaemon.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	p.zabel@pengutronix.de, Wan Zongshun <mcuos.com@gmail.com>
-From: Wan Zongshun <vw@iommu.org>
-Message-ID: <578708D5.6050009@iommu.org>
-Date: Thu, 14 Jul 2016 11:36:53 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160713200906.GB31509@io.lakedaemon.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	wulf@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH 2/6] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+Date: Mon,  1 Aug 2016 12:23:05 +0800
+Message-Id: <1470025389-4094-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Export these source clocks for usbphy.
 
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-On 2016年07月14日 04:09, Jason Cooper wrote:
-> Hi Wan Zongshun,
->
-> On Sun, Jul 10, 2016 at 03:27:22PM +0800, Wan Zongshun wrote:
->> This patch is to add irqchip driver support for nuc900 plat,
->> current this driver only supports nuc970 SoC.
->>
->> Signed-off-by: Wan Zongshun <mcuos.com@gmail.com>
->> ---
->>   arch/arm/mach-w90x900/include/mach/irqs.h |   5 +
->>   drivers/irqchip/Makefile                  |   1 +
->>   drivers/irqchip/irq-nuc900.c              | 150 ++++++++++++++++++++++++++++++
->>   3 files changed, 156 insertions(+)
->>   create mode 100644 drivers/irqchip/irq-nuc900.c
->>
->> diff --git a/arch/arm/mach-w90x900/include/mach/irqs.h b/arch/arm/mach-w90x900/include/mach/irqs.h
->> index 9d5cba3..3b035c6 100644
->> --- a/arch/arm/mach-w90x900/include/mach/irqs.h
->> +++ b/arch/arm/mach-w90x900/include/mach/irqs.h
->> @@ -59,7 +59,12 @@
->>   #define IRQ_KPI		W90X900_IRQ(29)
->>   #define IRQ_P2SGROUP	W90X900_IRQ(30)
->>   #define IRQ_ADC		W90X900_IRQ(31)
->> +
->> +#if !defined(CONFIG_SOC_NUC900)
->>   #define NR_IRQS		(IRQ_ADC+1)
->> +#else
->> +#define NR_IRQS		62
->> +#endif
->
-> Arnd already covered this...
->
->>
->>   /*for irq group*/
->>
->> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->> index 38853a1..9ccd5af8a 100644
->> --- a/drivers/irqchip/Makefile
->> +++ b/drivers/irqchip/Makefile
->> @@ -69,3 +69,4 @@ obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
->>   obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
->>   obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
->>   obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->> +obj-$(CONFIG_SOC_NUC970)		+= irq-nuc900.o
->> diff --git a/drivers/irqchip/irq-nuc900.c b/drivers/irqchip/irq-nuc900.c
->> new file mode 100644
->> index 0000000..c4b2e39
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-nuc900.c
->> @@ -0,0 +1,150 @@
->> +/*
->> + * Copyright 2016 Wan Zongshun <mcuos.com@gmail.com>
->> + *
->> + * The code contained herein is licensed under the GNU General Public
->> + * License. You may obtain a copy of the GNU General Public License
->> + * Version 2 or later at the following locations:
->> + *
->> + * http://www.opensource.org/licenses/gpl-license.html
->> + * http://www.gnu.org/copyleft/gpl.html
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/init.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/irqdomain.h>
->> +#include <linux/io.h>
->> +#include <linux/ioport.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +
->> +#include <asm/exception.h>
->> +#include <asm/hardirq.h>
->> +
->> +#define	REG_AIC_SCR1	0x00
->> +#define	REG_AIC_SCR2	0x04
->> +#define	REG_AIC_SCR3	0x08
->> +#define	REG_AIC_SCR4	0x0C
->> +#define	REG_AIC_SCR5	0x10
->> +#define	REG_AIC_SCR6	0x14
->> +#define	REG_AIC_SCR7	0x18
->> +#define	REG_AIC_SCR8	0x1C
->> +#define	REG_AIC_SCR9	0x20
->> +#define	REG_AIC_SCR10	0x24
->> +#define	REG_AIC_SCR11	0x28
->> +#define	REG_AIC_SCR12	0x2C
->> +#define	REG_AIC_SCR13	0x30
->> +#define	REG_AIC_SCR14	0x34
->> +#define	REG_AIC_SCR15	0x38
->> +#define	REG_AIC_IRSR	0x100
->> +#define	REG_AIC_IRSRH	0x104
->> +#define	REG_AIC_IASR	0x108
->> +#define	REG_AIC_IASRH	0x10C
->> +#define	REG_AIC_ISR	0x110
->> +#define	REG_AIC_ISRH	0x114
->> +#define	REG_AIC_IPER	0x118
->> +#define	REG_AIC_ISNR	0x120
->> +#define	REG_AIC_OISR	0x124
->> +#define	REG_AIC_IMR	0x128
->> +#define	REG_AIC_IMRH	0x12C
->> +#define	REG_AIC_MECR	0x130
->> +#define	REG_AIC_MECRH	0x134
->> +#define	REG_AIC_MDCR	0x138
->> +#define	REG_AIC_MDCRH	0x13C
->> +#define	REG_AIC_SSCR	0x140
->> +#define	REG_AIC_SSCRH	0x144
->> +#define	REG_AIC_SCCR	0x148
->> +#define	REG_AIC_SCCRH	0x14C
->> +#define	REG_AIC_EOSCR	0x150
->
-> Please remove unused defines.
+---
 
-Okay.
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
->> +
->> +static void __iomem *aic_base;
->> +static struct irq_domain *aic_domain;
->> +
->> +static void nuc900_irq_mask(struct irq_data *d)
->> +{
->> +	if (d->irq < 32)
->> +		writel(1 << (d->irq), aic_base + REG_AIC_MDCR);
->> +	else
->> +		writel(1 << (d->irq - 32), aic_base + REG_AIC_MDCRH);
->> +}
->> +
->> +static void nuc900_irq_ack(struct irq_data *d)
->> +{
->> +	writel(0x01, aic_base + REG_AIC_EOSCR);
->> +}
->> +
->> +static void nuc900_irq_unmask(struct irq_data *d)
->> +{
->> +	if (d->irq < 32)
->> +		writel(1 << (d->irq), aic_base + REG_AIC_MECR);
->> +	else
->> +		writel(1 << (d->irq - 32), aic_base + REG_AIC_MECRH);
->> +}
->> +
->> +static struct irq_chip nuc900_irq_chip = {
->> +	.irq_ack	= nuc900_irq_ack,
->> +	.irq_mask	= nuc900_irq_mask,
->> +	.irq_unmask	= nuc900_irq_unmask,
->> +};
->> +
->> +void __exception_irq_entry aic_handle_irq(struct pt_regs *regs)
->> +{
->> +	u32 hwirq;
->> +
->> +	hwirq = readl(aic_base + REG_AIC_IPER);
->> +	hwirq = readl(aic_base + REG_AIC_ISNR);
->> +	if (!hwirq)
->> +		writel(0x01, aic_base + REG_AIC_EOSCR);
->
-> Could you explain what's going on here?
-
-AIC_IPER, When the AIC generates the interrupt, VECTOR represents the 
-interrupt channel number that is active, enabled, and has the highest 
-priority.
-
-The value of VECTOR is copied to the register AIC_ISNR thereafter by the 
-AIC. This register was restored a value 0 after it was read by the
-interrupt handler.
-
-So I must read two registers for one irq number, after read IPER, the 
-ISNR(bit0:5) will be updated. ISNR value has no need do offset, it is 
-better than read IPER(bit2:7).
-
-“writel(0x01, aic_base + REG_AIC_EOSCR);”　seems not necessary here, 
-since irqchip has the ack interface. I will remove it.
-
-This AIC_EOSCR register is used by the interrupt service routine to 
-indicate that it is completely served. Thus, the
-interrupt handler can write any value to this register to indicate the 
-end of its interrupt service.
-
->
->> +
->> +	handle_IRQ((irq_find_mapping(aic_domain, hwirq)), regs);
->> +}
->> +
->> +static int aic_irq_domain_map(struct irq_domain *d, unsigned int virq,
->> +			      irq_hw_number_t hw)
->> +{
->> +	irq_set_chip_and_handler(virq, &nuc900_irq_chip, handle_level_irq);
->> +	irq_clear_status_flags(virq, IRQ_NOREQUEST);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct irq_domain_ops aic_irq_domain_ops = {
->> +	.map = aic_irq_domain_map,
->> +	.xlate = irq_domain_xlate_onecell,
->> +};
->> +
->> +static int __init aic_of_init(struct device_node *node,
->> +			      struct device_node *parent)
->> +{
->> +	int ret;
->> +
->> +	aic_base = of_iomap(node, 0);
->> +	if (!aic_base) {
->> +		ret = -ENOMEM;
->> +		pr_err("%s: unable to map registers\n", node->full_name);
->> +		goto err_iomap;
->> +	}
->> +
->> +	writel(0xFFFFFFFC, aic_base + REG_AIC_MDCR);
->> +	writel(0xFFFFFFFF, aic_base + REG_AIC_MDCRH);
->> +
->> +	aic_domain = irq_domain_add_linear(node, NR_IRQS,
->> +					   &aic_irq_domain_ops, NULL);
->> +
->> +	if (!aic_domain) {
->> +		ret = -ENOMEM;
->> +		pr_err("%s: unable to create IRQ domain\n", node->full_name);
->> +		goto err_aic_domain;
->> +	}
->> +
->> +	set_handle_irq(aic_handle_irq);
->> +	return 0;
->> +
->> +err_aic_domain:
->> +	iounmap(aic_base);
->> +err_iomap:
->> +	return ret;
->> +}
->> +
->> +IRQCHIP_DECLARE(nuc900, "nuvoton,nuc900-aic", aic_of_init);
->
-> afaict, there is no 'nuc900', that's a family.  If so, this compatible
-> needs to be 'nuvoton,nuc970-aic'.
->
-
-IRQCHIP_DECLARE(nuvoton, "nuvoton,nuc900-aic", aic_of_init);, change 
-nuc900 to nuvoton, ok?
-
-> thx,
->
-> Jason.
->
->
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 78e51cb..f55f967f 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
+ 
+-	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+-	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+ 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
+-- 
+1.7.9.5
