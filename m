@@ -1,87 +1,56 @@
-Return-Path: <Paul.Burton@imgtec.com>
-Subject: Re: [PATCH 24/26] dt-bindings: Document img,boston-clock binding
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20160826153725.11629-1-paul.burton@imgtec.com>
- <20160826153725.11629-25-paul.burton@imgtec.com>
- <20160826174446.GX19826@codeaurora.org>
-CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
-	<devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-From: Paul Burton <paul.burton@imgtec.com>
-Message-ID: <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
-Date: Tue, 30 Aug 2016 16:53:01 +0100
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20160826174446.GX19826@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20160801103024.cc74c093466d7fdfd91a2587@free.fr>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+ <fb559224-561c-3476-1146-96f7aea427f0@arm.com> <20160801103024.cc74c093466d7fdfd91a2587@free.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 1 Aug 2016 17:13:34 +0800
+Message-ID: <CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
+Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26/08/16 18:44, Stephen Boyd wrote:
-> On 08/26, Paul Burton wrote:
->> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
->> new file mode 100644
->> index 0000000..c01ea60
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
->> @@ -0,0 +1,27 @@
->> +Binding for Imagination Technologies MIPS Boston clock sources.
->> +
->> +This binding uses the common clock binding[1].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Required properties:
->> +- compatible : Should be "img,boston-clock".
->> +- #clock-cells : Should be set to 1.
->> +  Values available for clock consumers can be found in the header file:
->> +    <dt-bindings/clock/boston-clock.h>
->> +- regmap : Phandle to the Boston platform register system controller.
->> +  This should contain a phandle to the system controller node covering the
->> +  platform registers provided by the Boston board.
->> +
->> +Example:
->> +
->> +	clk_boston: clock {
->> +		compatible = "img,boston-clock";
->> +		#clock-cells = <1>;
->> +		regmap = <&plat_regs>;
-> 
-> Isn't syscon more standard than regmap as the property name? Is
-> there a binding for the plat_regs device? Is there any reason the
-> clks can't be populated in that syscon driver?
+On Mon, Aug 1, 2016 at 4:30 PM, Jean-Francois Moine <moinejf@free.fr> wrote=
+:
+> On Mon, 1 Aug 2016 02:43:06 +0100
+> Andr=C3=A9 Przywara <andre.przywara@arm.com> wrote:
+>
+>> As this became quite a long read, here a TL;DR:
+>> - We consider using an SCPI based clock system for the A64, alongside
+>> allwinner,simple-gates and fixed clocks. We try to avoid any Allwinner
+>> specific clocks (apart from the simple-gates).
+>> - ARM Trusted Firmware provides the SCPI implementation - for now, later
+>> we may move this into a possible arisc firmware.
+>> - We upstream some basic DT first, possibly omitting any controversial
+>> clock parts at all.
+>>
+>> Let me know what you think!
+>
+> Hi Andr=C3=A9,
+>
+> This looks interesting.
+> As I understand, the clock enable/rate setting functions would be in
+> the arisc. The arisc firmware would be loaded only once in the Soc and
+> would contain the code for handling this specific SoC.
+> From my calculations, this would save about 1Mb of clock descriptions
+> in the kernel for a universal Allwinner kernel.
+>
+> But I don't see why you are keeping the simple-gates. The bus gate may
+> be ungated/gated when the clock is enabled/disabled, and that's what
+> Allwinner's software does.
 
-Hi Stephen,
+For peripherals that have a separate mod clock, having them separate
+is a good thing. One example might be the audio codecs. You could ungate
+the bus gate to access its registers to program it, but only enable
+the mod clock when you actually play something.
 
-The plat_regs device doesn't have a custom driver, it simply makes use
-of the generic "syscon" driver which can provide a regmap.
-
-It would be possible to register the clocks from a register for the
-plat_regs device, but I don't think it would make much sense. The
-platform registers in question are essentially just a convenient place
-where various bits of information about the system are exposed,
-including the clock frequencies but also other bits & pieces like
-connectivity of PCIe controllers or I/O coherence units, the RTL
-revision of the CPU or the wrapper RTL that runs on this FPGA-based
-board, a register that allows for resetting the board, etc. It's not a
-single piece of hardware, more a dumping ground for miscellanea. So in
-my opinion using the syscon approach works best here, and drivers for
-well defined pieces of hardware or functionality can reference that
-syscon to retrieve the regmap.
-
-As for whether "syscon" is a more standard property name than "regmap",
-both seem to be used based on a grep of
-Documentation/devicetree/bindings/. I believe I picked up use of
-"regmap" from the generic syscon-poweroff & syscon-reboot drivers, which
-both use "regmap" as a property name.
-
-Thanks,
-    Paul
-
-> 
->> +	};
->> +
->> +	uart0: uart@17ffe000 {
->> +		/* ... */
->> +		clocks = <&clk_boston BOSTON_CLK_SYS>;
->> +	};
-> 
+Regards
+ChenYu
