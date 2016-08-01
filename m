@@ -1,76 +1,61 @@
-Return-Path: <frank.wang@rock-chips.com>
-From: Frank Wang <frank.wang@rock-chips.com>
-Subject: Re: [PATCH v3 2/7] clk: rockchip: rk3399: export 480M_SRC clock id
- for usbphy0/usbphy1
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- Xing Zheng <zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
- <1470122401-31934-3-git-send-email-zhengxing@rock-chips.com>
- <1918977.W0kRfKbZsD@diego>
-Cc: linux-rockchip@lists.infradead.org, dianders@chromium.org,
- briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com,
- wulf@rock-chips.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- daniel.meng@rock-chips.com, frank.wang@rock-chips.com
-Message-ID: <cba79ba6-7f41-5398-389c-7fd3fe5e0089@rock-chips.com>
-Date: Fri, 5 Aug 2016 16:34:42 +0800
+Return-Path: <shawn.lin@rock-chips.com>
+Subject: Re: [RESEND PATCH 5/6] clk: rockchip: rk3399: delete the
+ CLK_IGNORE_UNUSED for aclk_pcie
+To: Xing Zheng <zhengxing@rock-chips.com>, heiko@sntech.de
+References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
+ <1470025485-4218-1-git-send-email-zhengxing@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com,
+ zhangqing@rock-chips.com
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <8ee66f8c-f758-45ef-6e21-f757157d2fe4@rock-chips.com>
+Date: Mon, 1 Aug 2016 16:47:32 +0800
 MIME-Version: 1.0
-In-Reply-To: <1918977.W0kRfKbZsD@diego>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1470025485-4218-1-git-send-email-zhengxing@rock-chips.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
-
-On 2016/8/5 3:10, Heiko Stübner wrote:
-> Hi Xing,
+On 2016/8/1 12:24, Xing Zheng wrote:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
 >
-> Am Dienstag, 2. August 2016, 15:19:56 schrieb Xing Zheng:
->> Export these source clocks for usbphy.
->>
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> can you please provide a rationale why you need manual control over that
-> intermediate clock?
-
-Well, From below graph, you can see that 'clk_usbphyX_480m' is generated 
-from usb2phy, and 'clk_usbphy_480m' which select from 
-clk_usbphyX_480m_src via a gate (G13[12])  provided 480M clock to other 
-modules.
-
-   xin24m
-       |__ clk_usb2phy0_ref
-       |                 |__ clk_usbphy0_480m
-       |                                   |__clk_usbphy0_480m_src
-       | |__clk_usbphy_480m
-       |         |__ ... ...
-       |__ clk_usb2phy1_ref
-                          |__ clk_usbphy1_480m
-                                          |__clk_usbphy1_480m_src
-
-> The two usbphys seem to use the  clk_usb2phyX_ref clocks, generate the 480m
-> clocks, but do not seem to need the clk_usbphyX_480m_src gates.
-
-Yeah, they used to be. However, the story went something like this,
-
-Some PM suspend process related ehci/ohci controller are base on 480m 
-clocks, unfortunately, usb2-phy suspended earlier than ehci/ohci 
-(usb2-phy will be auto suspended if no devices plug-in), and the 
-clk-480m provided by it was disabled if no module used. As a result, the 
-PM suspend process was blocked when it run into ehci/ohci module.
-
-Hence, we are planing to refer clk_usbphyX_480m_src into each ehci/ohci 
-driver. Maybe you will challenge why not refer clk_usbphy_480m directly? 
-because there are two ehci/ohci connected in the different usb2phy, and 
-only one clk_usbphy_480m clock was selected in clock tree.
-
-BR.
-Frank
-
-> The clk_usbphyX_480m_src clocks on the other hand only lead to the
-> clk_usbphy_480m mux, so I'd like some explanation on what you want to achieve
-> here :-)
+> allow aclk_pcie and aclk_perf_pcie disabled when unused.
 >
+
+Thanks for landing it. Yes, my pcie driver will control it
+manually, and this patch looks the same as what we land on
+the downstream tree, so
+
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 >
-> Thanks
-> Heiko
+> ---
 >
+>  drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index 74afec0..4a15ce5b 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>  			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
+>  			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+>
+> -	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
+> +	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
+>  			RK3399_CLKGATE_CON(20), 2, GFLAGS),
+> -	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
+> +	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
+>  			RK3399_CLKGATE_CON(20), 10, GFLAGS),
+>  	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
+>  			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+>
+
+
+-- 
+Best Regards
+Shawn Lin
