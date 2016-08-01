@@ -1,34 +1,101 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:27:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
-	galak@codeaurora.org, pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org, varada@codeaurora.org,
-	sricharan@codeaurora.org, architt@codeaurora.org,
-	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: qcom: ipq4019: Added the nodes for pcnoc
-Message-ID: <20160815222733.GM361@codeaurora.org>
-References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
- <1466516962-18087-4-git-send-email-absahu@codeaurora.org>
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Andre Przywara <andre.przywara@arm.com>,
+	Jean-Francois Moine <moinejf@free.fr>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <8b4d1f09-b1ce-5708-f815-29dbd438c2db@arm.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+	 <fb559224-561c-3476-1146-96f7aea427f0@arm.com>
+	 <20160801103024.cc74c093466d7fdfd91a2587@free.fr> <8b4d1f09-b1ce-5708-f815-29dbd438c2db@arm.com>
+Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466516962-18087-4-git-send-email-absahu@codeaurora.org>
+Message-Id: <70891470053994@web8m.yandex.ru>
+Date: Mon, 01 Aug 2016 20:19:54 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, Abhishek Sahu wrote:
-> The current ipq4019 clock driver does not have the node for
-> PCNOC so this patch adds and registers the PCNOC clock nodes.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
+Hi Andre,
 
-This one looks good.
+01.08.2016, 18:48, "Andre Przywara" <andre.przywara@arm.com>:
+> Hi Jean-Francois,
+>
+> On 01/08/16 09:30, Jean-Francois Moine wrote:
+>>  On Mon, 1 Aug 2016 02:43:06 +0100
+>>  André Przywara <andre.przywara@arm.com> wrote:
+>>
+>>>  As this became quite a long read, here a TL;DR:
+>>>  - We consider using an SCPI based clock system for the A64, alongside
+>>>  allwinner,simple-gates and fixed clocks. We try to avoid any Allwinner
+>>>  specific clocks (apart from the simple-gates).
+>>>  - ARM Trusted Firmware provides the SCPI implementation - for now, later
+>>>  we may move this into a possible arisc firmware.
+>>>  - We upstream some basic DT first, possibly omitting any controversial
+>>>  clock parts at all.
+>>>
+>>>  Let me know what you think!
+>>
+>>  Hi André,
+>>
+>>  This looks interesting.
+>>  As I understand, the clock enable/rate setting functions would be in
+>>  the arisc. The arisc firmware would be loaded only once in the Soc and
+>>  would contain the code for handling this specific SoC.
+>>  From my calculations, this would save about 1Mb of clock descriptions
+>>  in the kernel for a universal Allwinner kernel.
+>
+> This is the rough idea, yes. In the moment the clock code sits in the
+> ARM Trusted Firmware part, but in fact this is an implementation detail.
+> Theoretically we could also move that clock code to U-Boot on 32-bit
+> SoCs to sit next to the PSCI implementation, which uses the same smc
+> call mechanism as I do in this first implementation.
+> But unfortunately we cannot remove the existing code from the kernel,
+> since that would break all existing users (unless they upgrade their
+> firmware). So I am not sure if supporting older SoCs with this mechanism
+> is worthwhile.
+>
+> But: yes, I want to avoid adding tedious clock descriptions for each and
+> every new SoC to the kernel. What really worries me is that sunxi-ng
+> makes this situation probably worse, as we now have to add SoC specific
+> "code" (in fact: clock descriptions) for every SoC, even if that chip
+> doesn't introduce any new clock type.
+>
+>>  But I don't see why you are keeping the simple-gates. The bus gate may
+>>  be ungated/gated when the clock is enabled/disabled, and that's what
+>>  Allwinner's software does.
+>
+> We could do. But SCPI does not have an explicit enable/disable
+> interface, it only describes that setting the frequency to 0 disables
+> the clock. For enabling it one would have to set some frequency (!= 0),
+> which the firmware could then translate into a "set that bit in the gate
+> register" for any gate-only clock, which sounds rather hackish to me.
+> Also it would require to alter the SCPI clock driver to implement the
+> enable/disable ops, since I think we never call set_rate for those clocks.
+>
+> So having the quite straight forward "simple-gates" driver around seems
+> more sane. In the end this driver just translates "clock number x" into
+> "bit number x" in that register, which is very generic. That's why I
+> urged to introduce a fallback compatible name to express this very feature.
+>
+> Cheers,
+> Andre.
+>
+It may be unpolite to say that, but I just want a working A64 mainline kernel at first.
+I'm trying to submit the drivers of the changed IP blocks now, but it's a pity that I
+cannot submit the DT patches now.
+clock-ng is at least now a usable solution.
+Or can you work out such a firmware-based clock driver as soon as possible?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I'm expecting your SCPI-based driver!
+(ARM is now such a mess that it really needs a standard.)
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
