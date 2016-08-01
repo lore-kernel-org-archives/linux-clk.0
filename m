@@ -1,66 +1,73 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1467741391-60534-1-git-send-email-serveralex@gmail.com>
- <1467741391-60534-8-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1467741391-60534-8-git-send-email-serveralex@gmail.com>
-Message-ID: <146776648028.35356.7816151912503029258@resonance>
-Subject: Re: [PATCH 7/7] arm: amlogic: select meson8b clk driver
-Date: Tue, 05 Jul 2016 17:54:40 -0700
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com
+Subject: [PATCH 6/6] clk: rockchip: rk3399: Add support frac mode frequencies
+Date: Mon,  1 Aug 2016 11:46:58 +0800
+Message-Id: <1470023218-2529-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alex,
+We need to support various display resolutions for external
+display devices like HDMI/DP, the frac mode can help us to
+acquire almost any frequencies, and need higher VCOs to reduce
+clock jitters.
 
-Quoting Alexander M=C3=BCller (2016-07-05 10:56:31)
-> Select the Amlogic clk code for meson SoCs and the more specific meson8b =
-clk
-> driver for Amlogic meson8b.
-> =
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-> Signed-off-by: Alexander M=C3=BCller <serveralex@gmail.com>
+ drivers/clk/rockchip/clk-rk3399.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-This patch isn't necessary as an alternative is already queued. See:
-https://git.kernel.org/cgit/linux/kernel/git/mturquette/linux.git/commit/?h=
-=3Dgxbb-dt-clk&id=3Dbae5d70ba6f8726ea6306aa07b7d2eb4357d3c81
-
-However, if you're basing on top of clk-next (or clk-s905) then you
-won't see the three patches linked above because they are queued through
-Kevin & Carlo via the amlogic tree.
-
-Regards,
-Mike
-
-> ---
->  arch/arm/mach-meson/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> =
-
-> diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-> index 31bdd91..b3add39 100644
-> --- a/arch/arm/mach-meson/Kconfig
-> +++ b/arch/arm/mach-meson/Kconfig
-> @@ -7,6 +7,7 @@ menuconfig ARCH_MESON
->         select CACHE_L2X0
->         select PINCTRL
->         select PINCTRL_MESON
-> +       select COMMON_CLK_AMLOGIC
->  =
-
->  if ARCH_MESON
->  =
-
-> @@ -24,5 +25,6 @@ config MACH_MESON8B
->         bool "Amlogic Meson8b SoCs support"
->         default ARCH_MESON
->         select MESON6_TIMER
-> +       select COMMON_CLK_MESON8B
->  =
-
->  endif
-> -- =
-
-> 2.5.0
->=20
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 4a15ce5b..3daa164 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -109,6 +109,25 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	{ /* sentinel */ },
+ };
+ 
++static struct rockchip_pll_rate_table rk3399_pll_frates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE( 594000000, 1, 123, 5, 1, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 593406593, 1, 123, 5, 1, 0, 10508804),  /* vco = 2967032965 */
++	RK3036_PLL_RATE( 297000000, 1, 123, 5, 2, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 296703297, 1, 123, 5, 2, 0, 10508807),  /* vco = 2967032970 */
++	RK3036_PLL_RATE( 148500000, 1, 129, 7, 3, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE( 148351648, 1, 123, 5, 4, 0, 10508800),  /* vco = 2967032960 */
++	RK3036_PLL_RATE( 106500000, 1, 124, 7, 4, 0,  4194304),  /* vco = 2982000000 */
++	RK3036_PLL_RATE(  74250000, 1, 129, 7, 6, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE(  74175824, 1, 129, 7, 6, 0, 13550823),  /* vco = 3115384608 */
++	RK3036_PLL_RATE(  65000000, 1, 113, 7, 6, 0, 12582912),  /* vco = 2730000000 */
++	RK3036_PLL_RATE(  59340659, 1, 121, 7, 7, 0,  2581098),  /* vco = 2907692291 */
++	RK3036_PLL_RATE(  54000000, 1, 110, 7, 7, 0,  4194304),  /* vco = 2646000000 */
++	RK3036_PLL_RATE(  27000000, 1,  55, 7, 7, 0,  2097152),  /* vco = 1323000000 */
++	RK3036_PLL_RATE(  26973027, 1,  55, 7, 7, 0,  1173232),  /* vco = 1321678323 */
++	{ /* sentinel */ },
++};
++
+ /* CRU parents */
+ PNAME(mux_pll_p)				= { "xin24m", "xin32k" };
+ 
+@@ -229,7 +248,7 @@ static struct rockchip_pll_clock rk3399_pll_clks[] __initdata = {
+ 	[npll] = PLL(pll_rk3399, PLL_NPLL, "npll",  mux_pll_p, 0, RK3399_PLL_CON(40),
+ 		     RK3399_PLL_CON(43), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
+ 	[vpll] = PLL(pll_rk3399, PLL_VPLL, "vpll",  mux_pll_p, 0, RK3399_PLL_CON(48),
+-		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
++		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_frates),
+ };
+ 
+ static struct rockchip_pll_clock rk3399_pmu_pll_clks[] __initdata = {
+-- 
+1.7.9.5
