@@ -1,52 +1,50 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, sboyd@codeaurora.org,
- mcoquelin.stm32@gmail.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1467526003-13318-1-git-send-email-christophe.jaillet@wanadoo.fr>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
-References: <1467526003-13318-1-git-send-email-christophe.jaillet@wanadoo.fr>
-Message-ID: <146785294442.73491.14204638951540057623@resonance>
-Subject: Re: [PATCH] clk: stm32f4: fix error handling
-Date: Wed, 06 Jul 2016 17:55:44 -0700
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+Date: Mon,  1 Aug 2016 11:37:21 +0800
+Message-Id: <1470022644-2152-4-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Christophe JAILLET (2016-07-02 23:06:43)
-> This is likely that checking 'clks[idx]' instead of 'clks[n]' is
-> expected here.
-> =
+Dues to incorrect diagram, we need to fix incorrect bits for
+(c/g)pll_aclk_emmc_src:
+cpll_aclk_emmc_src --> G6[13]
+gpll_aclk_emmc_src --> G6[12]
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-Applied.
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Mike
-
-> ---
->  drivers/clk/clk-stm32f4.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> =
-
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index b6ca33f..02d6810 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -364,7 +364,7 @@ static void __init stm32f4_rcc_init(struct device_nod=
-e *np)
->                     NULL, gd->name, gd->parent_name, gd->flags,
->                     base + gd->offset, gd->bit_idx, 0, &stm32f4_clk_lock);
->  =
-
-> -               if (IS_ERR(clks[n])) {
-> +               if (IS_ERR(clks[idx])) {
->                         pr_err("%s: Unable to register leaf clock %s\n",
->                                np->full_name, gd->name);
->                         goto fail;
-> -- =
-
-> 2.7.4
->=20
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index f55f967f..ad3860a 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -923,9 +923,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(6), 14, GFLAGS),
+ 
+ 	GATE(0, "cpll_aclk_emmc_src", "cpll", CLK_IGNORE_UNUSED,
+-			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+-	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 13, GFLAGS),
++	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
++			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+ 	COMPOSITE_NOGATE(ACLK_EMMC, "aclk_emmc", mux_aclk_emmc_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(21), 7, 1, MFLAGS, 0, 5, DFLAGS),
+ 	GATE(ACLK_EMMC_CORE, "aclk_emmccore", "aclk_emmc", CLK_IGNORE_UNUSED,
+-- 
+1.7.9.5
