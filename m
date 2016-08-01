@@ -1,81 +1,48 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v5 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
-Date: Tue,  2 Aug 2016 13:14:52 +0900
-Message-Id: <1470111307-21078-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <moinejf@free.fr>
+Date: Mon, 1 Aug 2016 10:30:24 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: =?ISO-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring
+ <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mike Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
+Message-Id: <20160801103024.cc74c093466d7fdfd91a2587@free.fr>
+In-Reply-To: <fb559224-561c-3476-1146-96f7aea427f0@arm.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+	<fb559224-561c-3476-1146-96f7aea427f0@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-I split into two patches to make review easier.
+On Mon, 1 Aug 2016 02:43:06 +0100
+Andr=E9 Przywara <andre.przywara@arm.com> wrote:
 
- 1/2: core support code
- 2/2: data arrays
+> As this became quite a long read, here a TL;DR:
+> - We consider using an SCPI based clock system for the A64, alongside
+> allwinner,simple-gates and fixed clocks. We try to avoid any Allwinner
+> specific clocks (apart from the simple-gates).
+> - ARM Trusted Firmware provides the SCPI implementation - for now, later
+> we may move this into a possible arisc firmware.
+> - We upstream some basic DT first, possibly omitting any controversial
+> clock parts at all.
+>=20
+> Let me know what you think!
 
+Hi Andr=E9,
 
-Changes in v5:
-  - Assign each gating register bit with a separate clk
-  - Fix examples in binding document to add specific compatible
-  - Document provided clocks for system clock
+This looks interesting.
+As I understand, the clock enable/rate setting functions would be in
+the arisc. The arisc firmware would be loaded only once in the Soc and
+would contain the code for handling this specific SoC.
+>From my calculations, this would save about 1Mb of clock descriptions
+in the kernel for a universal Allwinner kernel.
 
-Changes in v4:
-  - Unify module_platform_driver() boilerplate into a single place
-  - Add binding document
-  - Add USB3 clocks
+But I don't see why you are keeping the simple-gates. The bus gate may
+be ungated/gated when the clock is enabled/disabled, and that's what
+Allwinner's software does.
 
-Changes in v3:
-  - Change to platform drivers instead of OF_CLK_DECLARE
-  - Split into a core part + SoC drivers
-    SoC drivers just consist of tables of SoC-specific data.
-    This allows reviewer to concentrate on the core-part
-  - Hard-code parent clock names for cascading
-
-Changes in v2:
-  - split emmc_hw_reset
-  - make SD clock rate-controllable
-  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
-
-Masahiro Yamada (2):
-  clk: uniphier: add core support code for UniPhier clock driver
-  clk: uniphier: add clock data for UniPhier SoCs
-
- .../devicetree/bindings/clock/uniphier-clock.txt   | 134 +++++++++++++
- MAINTAINERS                                        |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/uniphier/Kconfig                       |   9 +
- drivers/clk/uniphier/Makefile                      |   9 +
- drivers/clk/uniphier/clk-uniphier-core.c           | 215 +++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 +++++
- drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 +++++
- drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++++++++
- drivers/clk/uniphier/clk-uniphier-mio.c            | 103 ++++++++++
- drivers/clk/uniphier/clk-uniphier-mux.c            |  95 +++++++++
- drivers/clk/uniphier/clk-uniphier-peri.c           |  59 ++++++
- drivers/clk/uniphier/clk-uniphier-sys.c            | 151 +++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h                | 122 ++++++++++++
- 15 files changed, 1094 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
- create mode 100644 drivers/clk/uniphier/Kconfig
- create mode 100644 drivers/clk/uniphier/Makefile
- create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier.h
-
--- 
-1.9.1
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
