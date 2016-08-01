@@ -1,56 +1,76 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1472271672.21203.17.camel@mtksdaap41>
-Subject: Re: [PATCH v12 2/4] reset: mediatek: Add MT2701 reset driver
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>, Daniel
- Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
-	<shunli.wang@mediatek.com>
-Date: Sat, 27 Aug 2016 12:21:12 +0800
-In-Reply-To: <20160824175049.GC19826@codeaurora.org>
-References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
-	 <1471854565-19810-3-git-send-email-erin.lo@mediatek.com>
-	 <20160824175049.GC19826@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com
+Subject: [PATCH v2 7/7] clk: rockchip: rk3399: Add support frac mode frequencies
+Date: Mon,  1 Aug 2016 17:37:51 +0800
+Message-Id: <1470044271-29925-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-08-24 at 10:50 -0700, Stephen Boyd wrote:
-> On 08/22, Erin Lo wrote:
-> > diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-> > index 18b4ab5..702fd74 100644
-> > --- a/drivers/clk/mediatek/clk-mt2701-hif.c
-> > +++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-> > @@ -52,11 +52,15 @@ static int mtk_hifsys_init(struct device_node *node)
-> >  						clk_data);
-> >  
-> >  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > -	if (r)
-> > +	if (r) {
-> >  		pr_err("%s(): could not register clock provider: %d\n",
-> >  			__func__, r);
-> > +		return r;
-> > +	}
-> > +
-> > +	mtk_register_reset_controller(node, 1, 0x34);
-> 
-> The cleanup here isn't great. mtk_register_reset_controller()
-> should really return an error so that we can properly cleanup if
-> needed. Fixing that in a later patch would be a good idea.
+We need to support various display resolutions for external
+display devices like HDMI/DP, the frac mode can help us to
+acquire almost any frequencies, and need higher VCOs to reduce
+clock jitters.
 
-Hi Stephen,
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-I think so. This function returns void because it was invoked in
-CLK_OF_DECLARE() in previous SoC's drivers. I'll investigate how to make
-it return an error code without breaking backward compatibility.
+Changes in v2:
+- add the patch "fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src"
 
+ drivers/clk/rockchip/clk-rk3399.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-Best regards,
-
-James
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 071eb96..db8394b 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -109,6 +109,25 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	{ /* sentinel */ },
+ };
+ 
++static struct rockchip_pll_rate_table rk3399_pll_frates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE( 594000000, 1, 123, 5, 1, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 593406593, 1, 123, 5, 1, 0, 10508804),  /* vco = 2967032965 */
++	RK3036_PLL_RATE( 297000000, 1, 123, 5, 2, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 296703297, 1, 123, 5, 2, 0, 10508807),  /* vco = 2967032970 */
++	RK3036_PLL_RATE( 148500000, 1, 129, 7, 3, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE( 148351648, 1, 123, 5, 4, 0, 10508800),  /* vco = 2967032960 */
++	RK3036_PLL_RATE( 106500000, 1, 124, 7, 4, 0,  4194304),  /* vco = 2982000000 */
++	RK3036_PLL_RATE(  74250000, 1, 129, 7, 6, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE(  74175824, 1, 129, 7, 6, 0, 13550823),  /* vco = 3115384608 */
++	RK3036_PLL_RATE(  65000000, 1, 113, 7, 6, 0, 12582912),  /* vco = 2730000000 */
++	RK3036_PLL_RATE(  59340659, 1, 121, 7, 7, 0,  2581098),  /* vco = 2907692291 */
++	RK3036_PLL_RATE(  54000000, 1, 110, 7, 7, 0,  4194304),  /* vco = 2646000000 */
++	RK3036_PLL_RATE(  27000000, 1,  55, 7, 7, 0,  2097152),  /* vco = 1323000000 */
++	RK3036_PLL_RATE(  26973027, 1,  55, 7, 7, 0,  1173232),  /* vco = 1321678323 */
++	{ /* sentinel */ },
++};
++
+ /* CRU parents */
+ PNAME(mux_pll_p)				= { "xin24m", "xin32k" };
+ 
+@@ -229,7 +248,7 @@ static struct rockchip_pll_clock rk3399_pll_clks[] __initdata = {
+ 	[npll] = PLL(pll_rk3399, PLL_NPLL, "npll",  mux_pll_p, 0, RK3399_PLL_CON(40),
+ 		     RK3399_PLL_CON(43), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
+ 	[vpll] = PLL(pll_rk3399, PLL_VPLL, "vpll",  mux_pll_p, 0, RK3399_PLL_CON(48),
+-		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
++		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_frates),
+ };
+ 
+ static struct rockchip_pll_clock rk3399_pmu_pll_clks[] __initdata = {
+-- 
+1.7.9.5
