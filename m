@@ -1,93 +1,49 @@
-Return-Path: <lidongpo@hisilicon.com>
-Subject: Re: [PATCH 1/4] net: hix5hd2_gmac: add tx scatter-gather feature
-To: Rob Herring <robh@kernel.org>
-References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
- <1470906115-155569-2-git-send-email-lidongpo@hisilicon.com>
- <20160812184336.GA5706@rob-hp-laptop>
-CC: <mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux@armlinux.org.uk>, <zhangfei.gao@linaro.org>,
-        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <davem@davemloft.net>, <arnd@arndb.de>, <andrew@lunn.ch>,
-        <xuejiancheng@hisilicon.com>, <benjamin.chenhao@hisilicon.com>,
-        <howell.yang@hisilicon.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Dongpo Li <lidongpo@hisilicon.com>
-Message-ID: <57B1664F.1090708@hisilicon.com>
-Date: Mon, 15 Aug 2016 14:50:55 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160812184336.GA5706@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com
+Subject: [PATCH v2 5/7] clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+Date: Mon,  1 Aug 2016 17:36:59 +0800
+Message-Id: <1470044219-29856-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
-Many thanks for your review.
+We need to add more clocks for supporting more display resolution
+for HDMI.
 
-On 2016/8/13 2:43, Rob Herring wrote:
-> On Thu, Aug 11, 2016 at 05:01:52PM +0800, Dongpo Li wrote:
->> From: Li Dongpo <lidongpo@hisilicon.com>
->>
->> The "hix5hd2" is SoC name, add the generic ethernet driver name.
->> The "hisi-gemac-v1" is the basic version and "hisi-gemac-v2" adds
->> the SG/TXCSUM/TSO/UFO features.
->> This patch only adds the SG(scatter-gather) driver for transmitting,
->> the drivers of other features will be submitted later.
-> 
-> The compatible string changes should probably be a separate patch.
-> 
-ok, I will split this patch into two patches, one for compatible string changes,
-and one for driver feature implementation.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
->> Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
->> ---
->>  .../bindings/net/hisilicon-hix5hd2-gmac.txt        |   9 +-
->>  drivers/net/ethernet/hisilicon/hix5hd2_gmac.c      | 213 +++++++++++++++++++--
->>  2 files changed, 205 insertions(+), 17 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->> index 75d398b..3c02fac 100644
->> --- a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->> +++ b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->> @@ -1,7 +1,12 @@
->>  Hisilicon hix5hd2 gmac controller
->>  
->>  Required properties:
->> -- compatible: should be "hisilicon,hix5hd2-gmac".
->> +- compatible: should contain one of the following version strings:
->> +	* "hisilicon,hisi-gemac-v1"
->> +	* "hisilicon,hisi-gemac-v2"
->> +	and one of the following SoC string:
->> +	* "hisilicon,hix5hd2-gemac"
->> +	* "hisilicon,hi3798cv200-gemac"
-> 
-> Make it clear what the order should be.
-> 
-ok, I will put the SoC strings in alphabetical order.
+Changes in v2: None
 
-> 2 SOC versions so far and 2 generic versions. I'm not really convinced 
-> that the generic string is needed.
-> 
-Actually, there are more SoC versions not listed here. We aim to support hi3798cv200
-this time, but may support more SoCs in future.
+ drivers/clk/rockchip/clk-rk3399.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
->>  - reg: specifies base physical address(s) and size of the device registers.
->>    The first region is the MAC register base and size.
->>    The second region is external interface control register.
->> @@ -20,7 +25,7 @@ Required properties:
->>  
->>  Example:
->>  	gmac0: ethernet@f9840000 {
->> -		compatible = "hisilicon,hix5hd2-gmac";
->> +		compatible = "hisilicon,hix5hd2-gemac", "hisilicon,hisi-gemac-v1";
->>  		reg = <0xf9840000 0x1000>,<0xf984300c 0x4>;
->>  		interrupts = <0 71 4>;
->>  		#address-cells = <1>;
-> 
-> .
-> 
-
-
-    Regards,
-    Dongpo
-
-.
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 44e673e..580abf1 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -100,8 +100,10 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE( 297000000, 1, 99, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 148500000, 1, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE( 106500000, 1, 71, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  74250000, 2, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE(  65000000, 1, 65, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(  54000000, 1, 54, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(  27000000, 1, 27, 6, 4, 1, 0),
+ 	{ /* sentinel */ },
+-- 
+1.7.9.5
