@@ -1,51 +1,52 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	gnurou@gmail.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
 Cc: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	zhengxing@rock-chips.com,
 	linux-clk@vger.kernel.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [RFC 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
-Date: Tue, 19 Jul 2016 15:36:33 +0200
-Message-Id: <1468935397-11926-3-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	shawn.lin@rock-chips.com
+Subject: [PATCH 5/6] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+Date: Mon,  1 Aug 2016 11:46:14 +0800
+Message-Id: <1470023174-2435-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-Add TEGRA30_CLK_NOR to init table and set a sane default rate.
+allow aclk_pcie and aclk_perf_pcie disabled when unused.
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/tegra/clk-tegra30.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 9396f49..5eda262 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1361,6 +1361,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
-+	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 86500000, 0 },
- 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
---
-2.1.4
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 74afec0..4a15ce5b 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
+ 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+ 
+-	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
++	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
+ 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
+-	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
++	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
+ 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
+ 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+-- 
+1.7.9.5
