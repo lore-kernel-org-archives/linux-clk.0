@@ -1,83 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:55133 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752152AbcHQBAx (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2016 21:00:53 -0400
-Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>
-References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
- <20160815182959.GV361@codeaurora.org>
-Cc: shawn.lin@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
-Date: Wed, 17 Aug 2016 09:00:05 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160815182959.GV361@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com
+Subject: [RESEND PATCH v2 8/8] clk: rockchip: rk3399: Add support frac mode frequencies
+Date: Mon,  1 Aug 2016 17:58:23 +0800
+Message-Id: <1470045503-32062-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016/8/16 2:29, Stephen Boyd wrote:
-> On 08/13, Jean-Francois Moine wrote:
->> The hardware phase delay may depend on some other settings as clock
->> reparenting, so, it has to be set each time.
->> Also, when the delay was the same as previously, an error was returned.
->>
->> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
->> ---
->
-> This effectively reverts commit 023bd7166be0 (clk: skip
-> unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
-> to see if Shawn has any comments or if that patch was just a
-> broken optimization.
->
-> We may want to go another route and get the phase from the
-> hardware and compare that to what's requested. That way we don't
-> set the phase again unnecessarily.
->
+We need to support various display resolutions for external
+display devices like HDMI/DP, the frac mode can help us to
+acquire almost any frequencies, and need higher VCOs to reduce
+clock jitters.
 
-Sorry for late response.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-If the client calls clk_set_phase to set the same phase ,
-why it needs to reparent as *this* parent already support this phase and
-we don't need to do it again?
+Changes in v2:
+- add the patch "fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src"
+- add the patch "fix incorrect GATE bits for {c, g}pll_aclk_perihp_src"
 
-For some reasons we have to reparent the clock, it should be sub clock
-drivers' responsibility to guarantee that we can maintain/restore the
-topology structure no matter for rate or for phase. But it shouldn't
-make the callers/users be aware of what was happening.
+ drivers/clk/rockchip/clk-rk3399.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-How do you nofify them that "Oh, reparent now, please call
-clk_set_phase again" ? :)
-
-Plz correct me if my understanding is wrong.
-
-
->>  drivers/clk/clk.c | 4 ----
->>  1 file changed, 4 deletions(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 820a939..2e6b91e 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1908,10 +1908,6 @@ int clk_set_phase(struct clk *clk, int degrees)
->>
->>  	clk_prepare_lock();
->>
->> -	/* bail early if nothing to do */
->> -	if (degrees == clk->core->phase)
->> -		goto out;
->> -
->>  	trace_clk_set_phase(clk->core, degrees);
->>
->>  	if (clk->core->ops->set_phase)
->
-
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 071eb96..db8394b 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -109,6 +109,25 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	{ /* sentinel */ },
+ };
+ 
++static struct rockchip_pll_rate_table rk3399_pll_frates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE( 594000000, 1, 123, 5, 1, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 593406593, 1, 123, 5, 1, 0, 10508804),  /* vco = 2967032965 */
++	RK3036_PLL_RATE( 297000000, 1, 123, 5, 2, 0, 12582912),  /* vco = 2970000000 */
++	RK3036_PLL_RATE( 296703297, 1, 123, 5, 2, 0, 10508807),  /* vco = 2967032970 */
++	RK3036_PLL_RATE( 148500000, 1, 129, 7, 3, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE( 148351648, 1, 123, 5, 4, 0, 10508800),  /* vco = 2967032960 */
++	RK3036_PLL_RATE( 106500000, 1, 124, 7, 4, 0,  4194304),  /* vco = 2982000000 */
++	RK3036_PLL_RATE(  74250000, 1, 129, 7, 6, 0, 15728640),  /* vco = 3118500000 */
++	RK3036_PLL_RATE(  74175824, 1, 129, 7, 6, 0, 13550823),  /* vco = 3115384608 */
++	RK3036_PLL_RATE(  65000000, 1, 113, 7, 6, 0, 12582912),  /* vco = 2730000000 */
++	RK3036_PLL_RATE(  59340659, 1, 121, 7, 7, 0,  2581098),  /* vco = 2907692291 */
++	RK3036_PLL_RATE(  54000000, 1, 110, 7, 7, 0,  4194304),  /* vco = 2646000000 */
++	RK3036_PLL_RATE(  27000000, 1,  55, 7, 7, 0,  2097152),  /* vco = 1323000000 */
++	RK3036_PLL_RATE(  26973027, 1,  55, 7, 7, 0,  1173232),  /* vco = 1321678323 */
++	{ /* sentinel */ },
++};
++
+ /* CRU parents */
+ PNAME(mux_pll_p)				= { "xin24m", "xin32k" };
+ 
+@@ -229,7 +248,7 @@ static struct rockchip_pll_clock rk3399_pll_clks[] __initdata = {
+ 	[npll] = PLL(pll_rk3399, PLL_NPLL, "npll",  mux_pll_p, 0, RK3399_PLL_CON(40),
+ 		     RK3399_PLL_CON(43), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
+ 	[vpll] = PLL(pll_rk3399, PLL_VPLL, "vpll",  mux_pll_p, 0, RK3399_PLL_CON(48),
+-		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
++		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_frates),
+ };
+ 
+ static struct rockchip_pll_clock rk3399_pmu_pll_clks[] __initdata = {
 -- 
-Best Regards
-Shawn Lin
-
+1.7.9.5
