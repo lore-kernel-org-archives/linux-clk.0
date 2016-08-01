@@ -1,44 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Aug 2016 13:57:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: prevent __of_clk_get_hw_from_provider() from
- returning NULL
-Message-ID: <20160804205734.GA15690@codeaurora.org>
-References: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	wulf@rock-chips.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/7] fix and optimize some clock configuration for the RK3399 platfom
+Date: Mon,  1 Aug 2016 17:33:29 +0800
+Message-Id: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/19, Masahiro Yamada wrote:
-> The .get(_hw) callback of an OF clock provider can return a NULL
-> pointer in some cases.
-> 
-> For example, of_clk_src_onecell_get() returns NULL for index 1 of a
-> sparse array of clocks like follows:
-> 
->   clk_num == 3
->   idx 0: UART clk
->   idx 1: NULL (no clk is allocated)
->   idx 2: I2C clk
-> 
-> In such cases, clk_get() successfully returns NULL.
-> 
-> A problem is that most drivers only check IS_ERR(), like follows:
-> 
->   clk = devm_clk_get(dev, NULL);
->   if (IS_ERR(clk))
->           return PTR_ERR(clk);
-> 
-> It carries on moving forward and will probably be hit by a different
-> error check with a different error message.
 
-NULL is a valid clk pointer, so we can't really do anything here
-besides rely on driver authors to do the right thing.
+Hi:
+  In the development work, we found that some of the previous
+incorrect clock configuration on the RK3399 platform, we should
+fix and optimize them.
+
+Changes in v2:
+- add the patch "fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src"
+
+Elaine Zhang (1):
+  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+
+Xing Zheng (6):
+  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
+  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+  clk: rockchip: rk3399: fix incorrect parent for rk3399's {c,
+    g}pll_aclk_perihp_src
+  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+  clk: rockchip: rk3399: Add support frac mode frequencies
+
+ drivers/clk/rockchip/clk-rk3399.c      |   41 ++++++++++++++++++++++++--------
+ include/dt-bindings/clock/rk3399-cru.h |    2 ++
+ 2 files changed, 33 insertions(+), 10 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
