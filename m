@@ -1,41 +1,52 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kumar Gala <galak@codeaurora.org>,
 	linux-kernel@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 1/2] clk: sunxi-ng: h3: Fix audio clock divider offset
-Date: Mon, 11 Jul 2016 22:34:47 +0200
-Message-Id: <20160711203448.18062-1-maxime.ripard@free-electrons.com>
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	wulf@rock-chips.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/6] fix and optimize some clock configuration for the RK3399 platfom
+Date: Mon,  1 Aug 2016 11:37:18 +0800
+Message-Id: <1470022644-2152-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The code had a typo and got the wrong offset for the hardcoded divider, fix
-that.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reported-by: Jean-Francois Moine <moinejf@free.fr>
-Reported-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi:
+  In the development work, we found that some of the previous
+incorrect clock configuration on the RK3399 platform, we should
+fix and optimize them.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index bcc0a95549d3..9af359544110 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -817,8 +817,8 @@ static void __init sun8i_h3_ccu_setup(struct device_node *node)
- 
- 	/* Force the PLL-Audio-1x divider to 4 */
- 	val = readl(reg + SUN8I_H3_PLL_AUDIO_REG);
--	val &= ~GENMASK(4, 0);
--	writel(val | 3, reg + SUN8I_H3_PLL_AUDIO_REG);
-+	val &= ~GENMASK(19, 16);
-+	writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
- 
- 	sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
- }
+
+Elaine Zhang (1):
+  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+
+Xing Zheng (5):
+  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
+  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+  clk: rockchip: rk3399: Add support frac mode frequencies
+
+ drivers/clk/rockchip/clk-rk3399.c      |   35 +++++++++++++++++++++++++-------
+ include/dt-bindings/clock/rk3399-cru.h |    2 ++
+ 2 files changed, 30 insertions(+), 7 deletions(-)
+
 -- 
-2.9.0
+1.7.9.5
