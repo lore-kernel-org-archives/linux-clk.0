@@ -1,70 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:58837 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750971AbcHYTGF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2016 15:06:05 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Cc: Chris Brandt <chris.brandt@renesas.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
-Date: Thu, 25 Aug 2016 15:05:18 -0400
-Message-Id: <20160825190518.20764-1-chris.brandt@renesas.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <briannorris@chromium.org>
+Return-Path: <briannorris@chromium.org>
+Date: Mon, 1 Aug 2016 13:20:58 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
+	dianders@chromium.org, huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 4/8] clk: rockchip: rk3399: fix incorrect GATE
+ bits for {c, g}pll_aclk_perihp_src
+Message-ID: <20160801202057.GB129313@google.com>
+References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+ <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of hard coding EXTAL only, check if EXTAL was specified. If not,
-then assume the USB clock is used as the main system clock.
+On Mon, Aug 01, 2016 at 05:53:39PM +0800, Xing Zheng wrote:
+> Sorry to refer incorrect clock diagram, we double check it that the
+> bits configuration of the Xpll_aclk_perihp_src need to be fixed:
+> bit 1 - shows aclk_perihp_cpll_src_en
+> bit 0 - shows aclk_perihp_gpll_src_en
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clk/renesas/clk-rz.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+Last time, you confirmed with the IC designers that we had things right.
+What's different this time? Have you, for instance, done more thorough
+testing, to show that the logical parent structure this driver outputs
+is actually what the hardware is doing?
 
-diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
-index f6312c6..466b9fc 100644
---- a/drivers/clk/renesas/clk-rz.c
-+++ b/drivers/clk/renesas/clk-rz.c
-@@ -37,13 +37,29 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
- 	static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
- 
- 	if (strcmp(name, "pll") == 0) {
--		/* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
--		unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
--		const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
--
--		mult = cpg_mode ? (32 / 4) : 30;
--
--		return clk_register_fixed_factor(NULL, name, parent_name, 0, mult, 1);
-+		u32 freq = 0;
-+		struct device_node *np;
-+
-+		/* If a clock-frequency for extal was specified, assume EXTAL boot */
-+		np = of_find_node_by_name(NULL, "extal");
-+		if( np ) {
-+			of_property_read_u32(np, "clock-frequency", &freq);
-+			if( freq )
-+				return clk_register_fixed_factor(NULL, "pll", "extal",
-+					0, 30, 1);
-+		}
-+
-+		/* Must be USB clock boot */
-+		np = of_find_node_by_name(NULL, "usb_x1");
-+		if( np ) {
-+			of_property_read_u32(np, "clock-frequency", &freq);
-+			if( freq )
-+				return clk_register_fixed_factor(NULL, "pll", "usb_x1",
-+					0, (32 / 4), 1);
-+		}
-+
-+		/* No clock frequency set in DT */
-+		BUG();
- 	}
- 
- 	/* If mapping regs failed, skip non-pll clocks. System will boot anyhow */
--- 
-2.9.2
+I think maybe this would qualify as:
 
+Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src")
 
+The above is not exactly a pure regression (we really want both
+changes), but apparently it wasn't a complete fix.
+
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> ---
+> 
+> Changes in v2: None
+
+Uhh, isn't this patch brand new in v2? I don't think that means
+"Changes ... None".
+
+Brian
+
+>  drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index 2182391..8bf0d19 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -833,9 +833,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>  
+>  	/* perihp */
+>  	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+> -			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+> -	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+>  			RK3399_CLKGATE_CON(5), 1, GFLAGS),
+> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+> +			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+>  	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
+>  			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
+>  			RK3399_CLKGATE_CON(5), 2, GFLAGS),
+> -- 
+> 1.7.9.5
+> 
+> 
