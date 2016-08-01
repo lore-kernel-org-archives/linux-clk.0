@@ -1,43 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 30 Aug 2016 11:49:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.9 (take two)
-Message-ID: <20160830184952.GC12510@codeaurora.org>
-References: <1472569013-3003-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472569013-3003-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <moinejf@free.fr>
+Date: Mon, 1 Aug 2016 14:00:12 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: =?ISO-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>, Maxime
+ Ripard <maxime.ripard@free-electrons.com>, Rob Herring
+ <robh+dt@kernel.org>, Mike Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, linux-clk
+ <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
+Message-Id: <20160801140012.41b8609b69faa1fe1d7d2a4a@free.fr>
+In-Reply-To: <CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
+References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
+	<fb559224-561c-3476-1146-96f7aea427f0@arm.com>
+	<20160801103024.cc74c093466d7fdfd91a2587@free.fr>
+	<CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/30, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit b51d5275016c6edbf4656eaee30d836fef127016:
-> 
->   clk: renesas: r8a7796: Add watchdog module clock (2016-08-09 09:53:47 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.9-tag2
-> 
-> for you to fetch changes up to 074969813350cda4c624a585489cc1b3550414bc:
-> 
->   clk: renesas: r8a7796: Add SDIF clocks (2016-08-23 10:30:41 +0200)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: r8a7796: Add SDHI clocks
-> 
-> Add all clocks needed to use the SDHI interfaces on the Renesas R-Car M3-W
-> (r8a7796) SoC.
-> 
+On Mon, 1 Aug 2016 17:13:34 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Thanks. Pulled into clk-next.
+> > But I don't see why you are keeping the simple-gates. The bus gate may
+> > be ungated/gated when the clock is enabled/disabled, and that's what
+> > Allwinner's software does.
+>=20
+> For peripherals that have a separate mod clock, having them separate
+> is a good thing. One example might be the audio codecs. You could ungate
+> the bus gate to access its registers to program it, but only enable
+> the mod clock when you actually play something.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The roles of the bus gate and the clock gate are the same. I don't see
+any reason to set one gate without setting the other one. More, the
+spec says what the bus gate must be enabled before the clock gate (and
+reverse order while disabling). So, setting both gates in one function
+call seems safer.
+
+Then, if you want to save some power while not playing anything, just do
+clk_disable() of the (main and only) i2s clock.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
