@@ -1,99 +1,52 @@
-Return-Path: <stephen.boyd@linaro.org>
-Return-Path: <stephen.boyd@linaro.org>
-From: Stephen Boyd <stephen.boyd@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	uclinux-h8-devel@lists.sourceforge.jp
-Subject: [PATCH] clk: h8300: Migrate to clk_hw based registration APIs
-Date: Tue, 16 Aug 2016 15:37:57 -0700
-Message-Id: <20160816223757.726-1-stephen.boyd@linaro.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 4/8] clk: rockchip: rk3399: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src
+Date: Mon,  1 Aug 2016 17:53:39 +0800
+Message-Id: <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in
-these drivers, allowing us to move closer to a clear split of
-consumer and provider clk APIs.
+Sorry to refer incorrect clock diagram, we double check it that the
+bits configuration of the Xpll_aclk_perihp_src need to be fixed:
+bit 1 - shows aclk_perihp_cpll_src_en
+bit 0 - shows aclk_perihp_gpll_src_en
 
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: <uclinux-h8-devel@lists.sourceforge.jp>
-Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/h8300/clk-div.c     | 10 +++++-----
- drivers/clk/h8300/clk-h8s2678.c | 12 ++++++------
- 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/h8300/clk-div.c b/drivers/clk/h8300/clk-div.c
-index 4bf44a25d950..715b882205a8 100644
---- a/drivers/clk/h8300/clk-div.c
-+++ b/drivers/clk/h8300/clk-div.c
-@@ -14,7 +14,7 @@ static DEFINE_SPINLOCK(clklock);
- static void __init h8300_div_clk_setup(struct device_node *node)
- {
- 	unsigned int num_parents;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	const char *clk_name = node->name;
- 	const char *parent_name;
- 	void __iomem *divcr = NULL;
-@@ -38,15 +38,15 @@ static void __init h8300_div_clk_setup(struct device_node *node)
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 2182391..8bf0d19 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -833,9 +833,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
  
- 	parent_name = of_clk_get_parent_name(node, 0);
- 	of_property_read_u32(node, "renesas,width", &width);
--	clk = clk_register_divider(NULL, clk_name, parent_name,
-+	hw = clk_hw_register_divider(NULL, clk_name, parent_name,
- 				   CLK_SET_RATE_GATE, divcr, offset, width,
- 				   CLK_DIVIDER_POWER_OF_TWO, &clklock);
--	if (!IS_ERR(clk)) {
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (!IS_ERR(hw)) {
-+		of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
- 		return;
- 	}
- 	pr_err("%s: failed to register %s div clock (%ld)\n",
--	       __func__, clk_name, PTR_ERR(clk));
-+	       __func__, clk_name, PTR_ERR(hw));
- error:
- 	if (divcr)
- 		iounmap(divcr);
-diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
-index c9c2fd575ef7..a26312460621 100644
---- a/drivers/clk/h8300/clk-h8s2678.c
-+++ b/drivers/clk/h8300/clk-h8s2678.c
-@@ -84,11 +84,11 @@ static const struct clk_ops pll_ops = {
- static void __init h8s2678_pll_clk_setup(struct device_node *node)
- {
- 	unsigned int num_parents;
--	struct clk *clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name;
- 	struct pll_clock *pll_clock;
- 	struct clk_init_data init;
-+	int ret;
- 
- 	num_parents = of_clk_get_parent_count(node);
- 	if (!num_parents) {
-@@ -121,14 +121,14 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
- 	init.num_parents = 1;
- 	pll_clock->hw.init = &init;
- 
--	clk = clk_register(NULL, &pll_clock->hw);
--	if (IS_ERR(clk)) {
--		pr_err("%s: failed to register %s div clock (%ld)\n",
--		       __func__, clk_name, PTR_ERR(clk));
-+	ret = clk_hw_register(NULL, &pll_clock->hw);
-+	if (ret) {
-+		pr_err("%s: failed to register %s div clock (%d)\n",
-+		       __func__, clk_name, ret);
- 		goto unmap_pllcr;
- 	}
- 
--	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	of_clk_add_hw_provider(node, of_clk_hw_simple_get, &pll_clock->hw);
- 	return;
- 
- unmap_pllcr:
+ 	/* perihp */
+ 	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+-			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+-	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(5), 1, GFLAGS),
++	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
++			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+ 	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(5), 2, GFLAGS),
 -- 
-2.9.0.rc2.8.ga28705d
+1.7.9.5
