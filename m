@@ -1,122 +1,52 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mips@linux-mips.org, Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Wan ZongShun <mcuos.com@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Steven Miao <realmz6@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3] clk: let clk_disable() return immediately if clk is NULL
-Date: Thu, 25 Aug 2016 02:26:53 +0900
-Message-Id: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	wulf@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 2/8] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+Date: Mon,  1 Aug 2016 17:53:37 +0800
+Message-Id: <1470045224-31854-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Many of clk_disable() implementations just return for NULL pointer,
-but this check is missing from some.  Let's make it tree-wide
-consistent.  It will allow clock consumers to call clk_disable()
-without NULL pointer check.
+Export these source clocks for usbphy.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Greg Ungerer <gerg@uclinux.org>
-Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+
 ---
 
-I came back after a long pause.
-You can see the discussion about the previous version:
-https://www.linux-mips.org/archives/linux-mips/2016-04/msg00063.html
+Changes in v2: None
 
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v3:
-  - Return only when clk is NULL.  Do not take care of error pointer.
-
-Changes in v2:
-  - Rebase on Linux 4.6-rc1
-
- arch/arm/mach-mmp/clock.c        | 3 +++
- arch/arm/mach-w90x900/clock.c    | 3 +++
- arch/blackfin/mach-bf609/clock.c | 3 +++
- arch/m68k/coldfire/clk.c         | 4 ++++
- arch/mips/bcm63xx/clk.c          | 3 +++
- 5 files changed, 16 insertions(+)
-
-diff --git a/arch/arm/mach-mmp/clock.c b/arch/arm/mach-mmp/clock.c
-index ac6633d..28fe64c 100644
---- a/arch/arm/mach-mmp/clock.c
-+++ b/arch/arm/mach-mmp/clock.c
-@@ -67,6 +67,9 @@ void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 78e51cb..f55f967f 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
  
-+	if (!clk)
-+		return;
-+
- 	WARN_ON(clk->enabled == 0);
- 
- 	spin_lock_irqsave(&clocks_lock, flags);
-diff --git a/arch/arm/mach-w90x900/clock.c b/arch/arm/mach-w90x900/clock.c
-index 2c371ff..ac6fd1a 100644
---- a/arch/arm/mach-w90x900/clock.c
-+++ b/arch/arm/mach-w90x900/clock.c
-@@ -46,6 +46,9 @@ void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
- 
-+	if (!clk)
-+		return;
-+
- 	WARN_ON(clk->enabled == 0);
- 
- 	spin_lock_irqsave(&clocks_lock, flags);
-diff --git a/arch/blackfin/mach-bf609/clock.c b/arch/blackfin/mach-bf609/clock.c
-index 3783058..392a59b 100644
---- a/arch/blackfin/mach-bf609/clock.c
-+++ b/arch/blackfin/mach-bf609/clock.c
-@@ -97,6 +97,9 @@ EXPORT_SYMBOL(clk_enable);
- 
- void clk_disable(struct clk *clk)
- {
-+	if (!clk)
-+		return;
-+
- 	if (clk->ops && clk->ops->disable)
- 		clk->ops->disable(clk);
- }
-diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c
-index fddfdcc..1e3c7e9 100644
---- a/arch/m68k/coldfire/clk.c
-+++ b/arch/m68k/coldfire/clk.c
-@@ -101,6 +101,10 @@ EXPORT_SYMBOL(clk_enable);
- void clk_disable(struct clk *clk)
- {
- 	unsigned long flags;
-+
-+	if (!clk)
-+		return;
-+
- 	spin_lock_irqsave(&clk_lock, flags);
- 	if ((--clk->enabled == 0) && clk->clk_ops)
- 		clk->clk_ops->disable(clk);
-diff --git a/arch/mips/bcm63xx/clk.c b/arch/mips/bcm63xx/clk.c
-index 6375652..b49fc9c 100644
---- a/arch/mips/bcm63xx/clk.c
-+++ b/arch/mips/bcm63xx/clk.c
-@@ -326,6 +326,9 @@ EXPORT_SYMBOL(clk_enable);
- 
- void clk_disable(struct clk *clk)
- {
-+	if (!clk)
-+		return;
-+
- 	mutex_lock(&clocks_mutex);
- 	clk_disable_unlocked(clk);
- 	mutex_unlock(&clocks_mutex);
+-	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+-	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+ 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
 -- 
-1.9.1
+1.7.9.5
