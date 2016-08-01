@@ -1,207 +1,61 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Mirza Krak <mirza.krak@gmail.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
- <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
- <CALw8SCV61w6BgtBb8pY4czeB4yFmbtLmB2MuyrvGcvepmRpeBQ@mail.gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <linux@armlinux.org.uk>, <robh+dt@kernel.org>, "Kumar
- Gala" <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5e0402db-10ce-75eb-cf95-d9e2d26e3efe@nvidia.com>
-Date: Tue, 9 Aug 2016 14:34:19 +0100
+Return-Path: <briannorris@chromium.org>
+Return-Path: <briannorris@chromium.org>
+Date: Mon, 1 Aug 2016 13:13:50 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
+	dianders@chromium.org, huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 3/8] clk: rockchip: rk3399: fix incorrect
+ parent for rk3399's {c, g}pll_aclk_perihp_src
+Message-ID: <20160801201349.GA129313@google.com>
+References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+ <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <CALw8SCV61w6BgtBb8pY4czeB4yFmbtLmB2MuyrvGcvepmRpeBQ@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, Aug 01, 2016 at 05:53:38PM +0800, Xing Zheng wrote:
+> There was a typo, swapping 'c' <--> 'g'.
+> (This patch is updated and am from https://patchwork.kernel.org/patch/9254067/)
+> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+> Changes in v2: None
 
-On 09/08/16 09:40, Mirza Krak wrote:
-> 2016-08-08 16:44 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>
->> On 06/08/16 20:40, Mirza Krak wrote:
->>> From: Mirza Krak <mirza.krak@gmail.com>
->>>
->>> Document the devicetree bindings for the Generic Memory Interface (GMI)
->>> bus driver found on Tegra SOCs.
->>>
->>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->>> ---
->>>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 99 ++++++++++++++++++++++
->>>  1 file changed, 99 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
->>> new file mode 100644
->>> index 0000000..046846e
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
->>> @@ -0,0 +1,99 @@
->>> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
->>> +
->>> +The Generic Memory Interface bus enables memory transfers between internal and
->>> +external memory. Can be used to attach various high speed devices such as
->>> +synchronous/asynchronous NOR, FPGA, UARTS and more.
->>> +
->>> +The actual devices are instantiated from the child nodes of a GMI node.
->>> +
->>> +Required properties:
->>> +  - compatible : Should contain one of the following:
->>> +        For Tegra20 must contain "nvidia,tegra20-gmi".
->>> +        For Tegra30 must contain "nvidia,tegra30-gmi".
->>> + - reg: Should contain GMI controller registers location and length.
->>> + - clocks: Must contain an entry for each entry in clock-names.
->>> + - clock-names: Must include the following entries: "gmi"
->>> + - resets : Must contain an entry for each entry in reset-names.
->>> + - reset-names : Must include the following entries: "gmi"
->>> + - #address-cells: The number of cells used to represent physical base
->>> +   addresses in the GMI address space.
->>> + - #size-cells: The number of cells used to represent the size of an address
->>> +   range in the GMI address space.
->>> + - ranges: Mapping of the GMI address space to the CPU address space.
->>> +
->>> +Note that the GMI controller does not have any internal chip-select address
->>> +decoding and if you want to access multiple devices external chip-select
->>> +decoding must be provided. Furthermore, if you do have external logic to
->>
->> The above is not 100% accurate. I would say that because there is no
->> chip-select address decoding, chip-selects either need to be managed via
->> software or by employing external chip-select decoding logic.
-> 
-> ACK, will update with the possibility of managing CS in software.
->>
->>> +support multiple devices this would assume that the devices use the same
->>> +timing and so are probably the same type. It also assumes that they can fit in
->>> +the 256MB address range.
->>
->> Again this is only true for the case where you have external chip-select
->> decoding logic, but would not be the case if software were to manage the
->> chip-selects.
-> 
-> ACK
-> 
->>
->>> +
->>> +Optional properties:
->>> +
->>> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
->>> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
->>> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
->>> +   If omitted it will be asserted with data.
->>> + - nvidia,snor-rdy-inv: RDY signal is active high
->>> + - nvidia,snor-adv-inv: ADV signal is active high
->>> + - nvidia,snor-oe-inv: WE/OE signal is active high
->>> + - nvidia,snor-cs-inv: CS signal is active high
->>> + - nvidia,snor-cs-select: CS output pin configuration. Default is CS0
->>
->> Nit ... I think "nvidia,snor-cs" is sufficient for the name. But I am
->> not sure if we even need this. See below.
->>
->>> +     <0> : CS0
->>> +     <1> : CS1
->>> +     <2> : CS2
->>> +     <3> : CS3
->>> +     <4> : CS4
->>> +     <5> : CS5
->>> +     <6> : CS6
->>> +     <7> : CS7
->>> +
->>> +  Note that there is some special handling for the timing values.
->>> +  From Tegra TRM:
->>> +  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
->>> +
->>> + - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
->>> +   bus. Valid values are 0-15, default is 1
->>> + - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
->>> +   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
->>> +   (in case of MASTER Request). Valid values are 0-15, default is 1
->>> + - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
->>> +   Valid values are 0-15, default is 1.
->>> + - nvidia,snor-ce-width: Number of cycles before CE is asserted.
->>> +   Valid values are 0-255, default is 4
->>
->> ce-width only occupies a 4-bit field and so the max is 15.
-> 
-> ACK.
-> 
->>
->>> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
->>> +   Valid values are 0-15, default is 1
->>> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
->>> +   Valid values are 0-255, default is 1
->>> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
->>> +   Valid values are 0-255, default is 3
->>> +
->>> +Example with two SJA1000 CAN controllers connected to the GMI bus:
->>> +
->>> +  gmi@70090000 {
->>> +    #address-cells = <1>;
->>> +    #size-cells = <1>;
->>
->> I think 0 for size makes sense. I know that caused you problems before,
->> but I am wondering if ...
->>
->>> +    ranges;
->>
->> ... ranges is needed here? If we do have it, I am wondering if it should
->> be a single entry for the chip-select that is being used. For now we
->> could only support a ranges with one entry.
->>
->>         #address-cells = <1>;
->>         #size-cells = <1>;
->>         ranges = <4 0x48000000 0x00040000>;
-> 
-> I prefer if we have "ranges" with one single entry, and warn if user enters
-> multiple for now, like we discussed earlier. Should have really done it in
-> this series.
+I believe this patch was already applied upstream; otherwise, it
+wouldn't make sense to have both this patch and patch 4 -- we would
+probably squash them together.
 
-I think I do as well.
+Brian
 
->>
->>> +    nvidia,snor-mux-mode;
->>> +    nvidia,snor-adv-inv;
->>> +    nvidia,snor-cs-select = <4>;
->>
->> I would have expected these under bus@X node as they are specific to the
->> GMI CS.
+>  drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Yes, that is true.
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index f55f967f..2182391 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>  			RK3399_CLKGATE_CON(13), 1, GFLAGS),
+>  
+>  	/* perihp */
+> -	GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+> +	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+>  			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+> -	GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+>  			RK3399_CLKGATE_CON(5), 1, GFLAGS),
+>  	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
+>  			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
+> -- 
+> 1.7.9.5
 > 
->>
->> I would also expect that the actual chip-select number is encoded in the
->> reg property.
->>
->>> +
->>> +    bus@0,0 {
->>
->> bus@4
 > 
-> ACK.
-> 
->>
->> No mention of this bus node in the above documentation.
-> 
-> I was hesitant documenting it since I am not sure if we really need it
-> in a generic case? It does make sense in my
-> specific case. But what would it look like if we could maintain CS in software.
-> 
-> Do you then have a bus node per CS? I am guessing not. Is it enough to
-> document it in my "example brief"?
-
-I see what you mean. May be it is fine to document with the examples
-below how child devices should be populated. You should also state that
-currently the GMI only supports one child device currently for the
-chip-select that is being used.
-
-Cheers
-Jon
-
--- 
-nvpublic
