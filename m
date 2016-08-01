@@ -1,189 +1,52 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>,
- "Russell King - ARM Linux" <linux@armlinux.org.uk>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <5785117B.4050907@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
- paul@pwsan.com, sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org
-References: <1467296018-25086-1-git-send-email-t-kristo@ti.com>
- <1467296018-25086-3-git-send-email-t-kristo@ti.com>
- <20160712102228.GE5783@n2100.arm.linux.org.uk> <57850A29.4010806@ti.com>
- <20160712153418.GF5783@n2100.arm.linux.org.uk> <5785117B.4050907@ti.com>
-Message-ID: <146834521716.73491.12539128897634971676@resonance>
-Subject: Re: [PATCHv3 2/7] clk: ti: add clkdev get helper
-Date: Tue, 12 Jul 2016 10:40:17 -0700
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	wulf@rock-chips.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RESEND PATCH 0/6] fix and optimize some clock configuration for the RK3399 platfom
+Date: Mon,  1 Aug 2016 12:23:03 +0800
+Message-Id: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tero Kristo (2016-07-12 08:49:15)
-> On 12/07/16 18:34, Russell King - ARM Linux wrote:
-> > On Tue, Jul 12, 2016 at 06:18:01PM +0300, Tero Kristo wrote:
-> >> On 12/07/16 13:22, Russell King - ARM Linux wrote:
-> >>> On Thu, Jun 30, 2016 at 05:13:33PM +0300, Tero Kristo wrote:
-> >>>>   /**
-> >>>> + * ti_clk_get - lookup a TI clock handle
-> >>>> + * @dev_id: device to lookup clock for
-> >>>> + * @con_id: connection ID to find
-> >>>> + *
-> >>>> + * Searches for a TI clock handle based on the DT node name.
-> >>>> + * Returns the pointer to the clock handle, or ERR_PTR in failure.
-> >>>> + */
-> >>>> +static struct clk *ti_clk_get(const char *dev_id, const char *con_i=
-d)
-> >>>> +{
-> >>>> +  struct of_phandle_args clkspec;
-> >>>> +  struct device_node *node;
-> >>>> +  struct clk *clk;
-> >>>> +
-> >>>> +  /* Only check for cases of type clk_get_sys(NULL, "xyz") */
-> >>>> +  if (dev_id || !con_id)
-> >>>> +          return ERR_PTR(-ENOENT);
-> >>>> +
-> >>>> +  if (of_have_populated_dt()) {
-> >>>> +          node =3D of_find_node_by_name(NULL, con_id);
-> >>>> +          clkspec.np =3D node;
-> >>>> +          clk =3D of_clk_get_from_provider(&clkspec);
-> >>>> +
-> >>>> +          if (!IS_ERR(clk))
-> >>>> +                  return clk;
-> >>>> +  }
-> >>>> +
-> >>>> +  return ERR_PTR(-ENOENT);
-> >>>> +}
-> >>>
-> >>> I _really_ don't like this.  This takes us back to the totally broken
-> >>> idea, that's already been proven to be greatly harmful in OMAP land,
-> >>> that the "con_id" is not a _DEVICE SPECIFIC CONNECTION NAME_ but is a
-> >>> CLOCK NAME.  The connection ID is supposed to be a static string in
-> >>> the requestor of the clock, not some random string picked out from
-> >>> DT.
-> >>
-> >> What is the harm in that actually? I have most likely missed some disc=
-ussion
-> >> but please educate me.
-> >
-> > The problem is that we end up with drivers that we end up needing platf=
-orm
-> > information to know what clocks they should get, and what "connection n=
-ames"
-> > to use to get their clocks.
-> >
-> > We've been there before with OMAP, pre-DT times, and I fixed it up by
-> > creating clkdev and converting much of OMAP over to clkdev, doing
-> > everything the right way.  Now, we're heading around the same mistake
-> > that I already solved several years ago.
-> >
-> > It's _well_ documented that the _connection id_ is a connection id and
-> > not a clock name.  It's been documented that way ever since the clk API
-> > was first published, and I'm on record for having brought up this point
-> > _many_ times.
-> =
 
-> Yeah I know this is documented this way, the problem is we have plenty =
-
-> of code around which doesn't really use it this way. >.<
-> =
-
-> >
-> > So, when I see something reintroducing ways to persist with this crap,
-> > I'm just not going to allow it.  This is 2016 after all, it's a full
-> > _ten_ years after this API was created.
-> =
-
-> Ok fair enough, lets try to figure out something else. I was pretty much =
-
-> worried before posting this patch/approach that you will shoot it down, =
-
-> thus was requesting your feedback specifically. :P
-> =
-
-> >
-> >> The problem is, we are already using this convention
-> >> all over the place in the kernel (not only OMAPs), and trying to clean=
- up
-> >> the kernel requires some intermediate steps being taken, otherwise we =
-end up
-> >> doing all the clean-ups in a single massive patch I fear (change all t=
-he
-> >> hwmod data + clock data + any implementations related to these at the =
-same
-> >> time.)
-> >
-> > This isn't an intermediate step if you're having to put stuff into DT
-> > in order to support it.  Anything you throw into DT needs to be support=
-ed
-> > for years by the kernel, since we have the requirement that newer kerne=
-ls
-> > are bootable with older DT files without regression.  That effectively
-> > means we'll never be able to remove this, and we'll end up fighting oth=
-er
-> > people abusing the hook.
-> >
-> >> That is true, it will end up adding new DT nodes. However, as OMAP alr=
-eady
-> >> is doing this extensively, I wonder what would be the alternative. May=
-be
-> >> move all the clock data back to kernel space to increase the size of
-> >> multi-v7 builds?
-> >
-> > Why can't you use:
-> >
-> >       clocks =3D <&clk_provider fck_index>, <&clk_provider ick_index>, =
-...;
-> >       clock-names =3D "fck", "ick", ...;
-> >
-> > when describing the hardware?  If you don't have a struct device, but
-> > only a struct device_node, you can use of_clk_get(), which allows you
-> > to omit the connection ID and look up by index in the clocks property.
-> =
-
-> That can be done. However, this means the individual clock provider must =
-
-> implement all the clocks in the kernel, adding loads of static data. And =
+Hi:
+  In the development work, we found that some of the previous
+incorrect clock configuration on the RK3399 platform, we should
+fix and optimize them.
 
 
-Clock provider drivers *should* initialize all of their clock data
-statically. Are you trying to opportunistically register only the clocks
-found in DT? This goes against the current direction of clock DT
-bindings where we model only the controller and use it to hook up
-provider and consumer resources. We are *not* using DT to enumerate
-per-clock data.
+Elaine Zhang (1):
+  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
 
-> the data is different for every TI SoC we have out there in the =
+Xing Zheng (5):
+  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
+  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+  clk: rockchip: rk3399: Add support frac mode frequencies
 
-> wild..... aaand, we can't load the clock data as modules either due to =
+ drivers/clk/rockchip/clk-rk3399.c      |   35 +++++++++++++++++++++++++-------
+ include/dt-bindings/clock/rk3399-cru.h |    2 ++
+ 2 files changed, 30 insertions(+), 7 deletions(-)
 
-> early boot time dependencies. This is a royal mess we have here in our =
-
-
-Boot time deps are a separate issue. On ARMv8 you can probably get away
-with it due to architected timers not needing clocks very early.
-
-If you have software dependencies caused by the hwmod framework, again
-that is a separate issue from how you should structure your clock data
-and your clock controller DT binding.
-
-> hands I am trying to clean-up somehow. I think I have posted several =
-
-> different series along the years trying to get rid of the hwmod static =
-
-> boot time dependency, but it always seems to get shot down. See this =
-
-> approach from last year for example:
-> =
-
-> http://comments.gmane.org/gmane.linux.ports.arm.omap/125555
-
-Tony has had a dream to move the clk data into /lib/firmware for a
-while. We've talked about that over beers before. But note that no one
-else is doing that stuff and I would be happy for the OMAP clock code to
-achieve style-parity with the more recent clock provider driver
-submissions before going off and trying to do something fancy.
-
-Regards,
-Mike
-
-> =
-
-> -Tero
+-- 
+1.7.9.5
