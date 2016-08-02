@@ -1,332 +1,106 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 2/3] clk: versatile/icst: add Integrator core module clocks
-Date: Wed, 10 Aug 2016 11:09:48 +0200
-Message-Id: <1470820188-12888-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: gxbb: add MMC gate clocks, and expose for DT
+Date: Tue,  2 Aug 2016 14:40:11 -0700
+Message-Id: <20160802214011.19077-1-khilman@baylibre.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The Integrator/AP and Integrator/CP have special derivatives
-of the ICST525 control registers, where some bits have been
-hardwired but others are possible to adjust, resulting in a
-control register that makes it possible to set an even,
-desired megahertz value.
+Add the SD/eMMC gate clocks and expose them for use by DT.
 
-The Integrator/AP and Integrator/CP have slightly different
-layout so we support them using different compatible
-strings.
+While at it, also explose FCLK_DIV2 since this is one of the input
+clocks to the mux internal to each of the SD/eMMC blocks.
 
-After adding these clocks, the Integrator-specific cpufreq
-driver can be switched over to use the generic operating
-point device tree cpufreq driver.
-
-Instead of simply writing a value to the oscillator control
-register we switch to the more elaborate method of providing
-a bitmask and use regmap_update_bits() to poke the right bits
-for the desired frequency, this is needed since these control
-registers sometimes control more than one clock.
-
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 ---
- drivers/clk/versatile/clk-icst.c | 176 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 161 insertions(+), 15 deletions(-)
+Applies on top of current clk-s905 branch.
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 5e9b65278e4c..078ac01c379f 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -27,6 +27,21 @@
- /* Magic unlocking token used on all Versatile boards */
- #define VERSATILE_LOCK_VAL	0xA05F
+ drivers/clk/meson/gxbb.c              | 9 +++++++++
+ drivers/clk/meson/gxbb.h              | 7 +++++--
+ include/dt-bindings/clock/gxbb-clkc.h | 4 ++++
+ 3 files changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 007b7157cf4b..4fc8e58feef9 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -581,6 +581,9 @@ static MESON_GATE(sdio, HHI_GCLK_MPEG0, 17);
+ static MESON_GATE(abuf, HHI_GCLK_MPEG0, 18);
+ static MESON_GATE(hiu_iface, HHI_GCLK_MPEG0, 19);
+ static MESON_GATE(assist_misc, HHI_GCLK_MPEG0, 23);
++static MESON_GATE(emmc_a, HHI_GCLK_MPEG0, 24);
++static MESON_GATE(emmc_b, HHI_GCLK_MPEG0, 25);
++static MESON_GATE(emmc_c, HHI_GCLK_MPEG0, 26);
+ static MESON_GATE(spi, HHI_GCLK_MPEG0, 30);
  
-+#define VERSATILE_AUX_OSC_BITS 0x7FFFF
-+#define INTEGRATOR_AP_CM_BITS 0xFF
-+#define INTEGRATOR_CP_CM_CORE_BITS 0x7FF
-+#define INTEGRATOR_CP_CM_MEM_BITS 0x7FF000
-+
-+/**
-+ * enum icst_control_type - the type of ICST control register
-+ */
-+enum icst_control_type {
-+	ICST_VERSATILE, /* The standard type, all control bits available */
-+	ICST_INTEGRATOR_AP_CM, /* Only 8 bits of VDW available */
-+	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
-+	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
-+};
-+
- /**
-  * struct clk_icst - ICST VCO clock wrapper
-  * @hw: corresponding clock hardware entry
-@@ -34,6 +49,7 @@
-  * @lockreg: VCO lock register address
-  * @params: parameters for this ICST instance
-  * @rate: current rate
-+ * @ctype: the type of control register for the ICST
-  */
- struct clk_icst {
- 	struct clk_hw hw;
-@@ -42,6 +58,7 @@ struct clk_icst {
- 	u32 lockreg_off;
- 	struct icst_params *params;
- 	unsigned long rate;
-+	enum icst_control_type ctype;
+ static MESON_GATE(i2s_spdif, HHI_GCLK_MPEG1, 2);
+@@ -746,6 +749,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_AO_AHB_BUS]	    = &gxbb_ao_ahb_bus.hw,
+ 		[CLKID_AO_IFACE]	    = &gxbb_ao_iface.hw,
+ 		[CLKID_AO_I2C]		    = &gxbb_ao_i2c.hw,
++		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
++		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
++		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -845,6 +851,9 @@ static struct clk_gate *gxbb_clk_gates[] = {
+ 	&gxbb_ao_ahb_bus,
+ 	&gxbb_ao_iface,
+ 	&gxbb_ao_i2c,
++	&gxbb_emmc_a,
++	&gxbb_emmc_b,
++	&gxbb_emmc_c,
  };
  
- #define to_icst(_hw) container_of(_hw, struct clk_icst, hw)
-@@ -59,6 +76,44 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
- 	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
- 	if (ret)
- 		return ret;
-+
-+	/*
-+	 * The Integrator/AP core clock can only access the low eight
-+	 * bits of the v PLL divider. Bit 8 is tied low and always zero,
-+	 * r is hardwired to 22 and output divider s is hardwired to 1
-+	 * (divide by 2) according to the document
-+	 * "Integrator CM926EJ-S, CM946E-S, CM966E-S, CM1026EJ-S and
-+	 * CM1136JF-S User Guide" ARM DUI 0138E, page 3-13 thru 3-14.
-+	 */
-+	if (icst->ctype == ICST_INTEGRATOR_AP_CM) {
-+		vco->v = val & INTEGRATOR_AP_CM_BITS;
-+		vco->r = 22;
-+		vco->s = 1;
-+		return 0;
-+	}
-+
-+	/*
-+	 * The Integrator/CP core clock can access the low eight bits
-+	 * of the v PLL divider. Bit 8 is tied low and always zero,
-+	 * r is hardwired to 22 and the output divider s is accessible
-+	 * in bits 8 thru 10 according to the document
-+	 * "Integrator/CM940T, CM920T, CM740T, and CM720T User Guide"
-+	 * ARM DUI 0157A, page 3-20 thru 3-23 and 4-10.
-+	 */
-+	if (icst->ctype == ICST_INTEGRATOR_CP_CM_CORE) {
-+		vco->v = val & 0xFF;
-+		vco->r = 22;
-+		vco->s = (val >> 8) & 7;
-+		return 0;
-+	}
-+
-+	if (icst->ctype == ICST_INTEGRATOR_CP_CM_MEM) {
-+		vco->v = (val >> 12) & 0xFF;
-+		vco->r = 22;
-+		vco->s = (val >> 20) & 7;
-+		return 0;
-+	}
-+
- 	vco->v = val & 0x1ff;
- 	vco->r = (val >> 9) & 0x7f;
- 	vco->s = (val >> 16) & 03;
-@@ -72,22 +127,52 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
-  */
- static int vco_set(struct clk_icst *icst, struct icst_vco vco)
- {
-+	u32 mask;
- 	u32 val;
- 	int ret;
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index a2adf3448b59..217df516de44 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -172,7 +172,7 @@
+ /* CLKID_CPUCLK */
+ #define CLKID_HDMI_PLL		  2
+ #define CLKID_FIXED_PLL		  3
+-#define CLKID_FCLK_DIV2		  4
++/* CLKID_FCLK_DIV2 */
+ #define CLKID_FCLK_DIV3		  5
+ #define CLKID_FCLK_DIV4		  6
+ #define CLKID_FCLK_DIV5		  7
+@@ -262,8 +262,11 @@
+ #define CLKID_AO_AHB_BUS	  91
+ #define CLKID_AO_IFACE		  92
+ #define CLKID_AO_I2C		  93
++/* CLKID_SD_EMMC_A */
++/* CLKID_SD_EMMC_B */
++/* CLKID_SD_EMMC_C */
  
--	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
--	if (ret)
--		return ret;
-+	/* Mask the bits used by the VCO */
-+	switch (icst->ctype) {
-+	case ICST_INTEGRATOR_AP_CM:
-+		mask = INTEGRATOR_AP_CM_BITS;
-+		val = vco.v & 0xFF;
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.s != 1)
-+			pr_err("ICST error: tried to use VOD != 1\n");
-+		if (vco.r != 22)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
-+	case ICST_INTEGRATOR_CP_CM_CORE:
-+		mask = INTEGRATOR_CP_CM_CORE_BITS; /* Uses 12 bits */
-+		val = (vco.v & 0xFF) | vco.s << 8;
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.r != 22)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
-+	case ICST_INTEGRATOR_CP_CM_MEM:
-+		mask = INTEGRATOR_CP_CM_MEM_BITS; /* Uses 12 bits */
-+		val = ((vco.v & 0xFF) << 12) | (vco.s << 20);
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.r != 22)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
-+	default:
-+		/* Regular auxilary oscillator */
-+		mask = VERSATILE_AUX_OSC_BITS;
-+		val = vco.v | (vco.r << 9) | (vco.s << 16);
-+		break;
-+	}
+-#define NR_CLKS			  94
++#define NR_CLKS			  97
  
--	/* Mask the 18 bits used by the VCO */
--	val &= ~0x7ffff;
--	val |= vco.v | (vco.r << 9) | (vco.s << 16);
-+	pr_debug("ICST: new val = 0x%08x\n", val);
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index f889d80246cb..7d418643cdcc 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -6,7 +6,11 @@
+ #define __GXBB_CLKC_H
  
- 	/* This magic unlocks the VCO so it can be controlled */
- 	ret = regmap_write(icst->map, icst->lockreg_off, VERSATILE_LOCK_VAL);
- 	if (ret)
- 		return ret;
--	ret = regmap_write(icst->map, icst->vcoreg_off, val);
-+	ret = regmap_update_bits(icst->map, icst->vcoreg_off, mask, val);
- 	if (ret)
- 		return ret;
- 	/* This locks the VCO again */
-@@ -121,6 +206,25 @@ static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_icst *icst = to_icst(hw);
- 	struct icst_vco vco;
+ #define CLKID_CPUCLK		1
++#define CLKID_FCLK_DIV2		4
+ #define CLKID_CLK81		12
+ #define CLKID_ETH		36
++#define CLKID_SD_EMMC_A		94
++#define CLKID_SD_EMMC_B		95
++#define CLKID_SD_EMMC_C		96
  
-+	if (icst->ctype == ICST_INTEGRATOR_AP_CM ||
-+	    icst->ctype == ICST_INTEGRATOR_CP_CM_CORE) {
-+		if (rate <= 12000000)
-+			return 12000000;
-+		if (rate >= 160000000)
-+			return 160000000;
-+		/* Slam to closest megahertz */
-+		return DIV_ROUND_CLOSEST(rate, 1000000) * 1000000;
-+	}
-+
-+	if (icst->ctype == ICST_INTEGRATOR_CP_CM_MEM) {
-+		if (rate <= 6000000)
-+			return 6000000;
-+		if (rate >= 66000000)
-+			return 66000000;
-+		/* Slam to closest 0.5 megahertz */
-+		return DIV_ROUND_CLOSEST(rate, 500000) * 500000;
-+	}
-+
- 	vco = icst_hz_to_vco(icst->params, rate);
- 	return icst_hz(icst->params, vco);
- }
-@@ -148,7 +252,8 @@ static struct clk *icst_clk_setup(struct device *dev,
- 				  const struct clk_icst_desc *desc,
- 				  const char *name,
- 				  const char *parent_name,
--				  struct regmap *map)
-+				  struct regmap *map,
-+				  enum icst_control_type ctype)
- {
- 	struct clk *clk;
- 	struct clk_icst *icst;
-@@ -178,6 +283,7 @@ static struct clk *icst_clk_setup(struct device *dev,
- 	icst->params = pclone;
- 	icst->vcoreg_off = desc->vco_offset;
- 	icst->lockreg_off = desc->lock_offset;
-+	icst->ctype = ctype;
- 
- 	clk = clk_register(dev, &icst->hw);
- 	if (IS_ERR(clk)) {
-@@ -206,7 +312,8 @@ struct clk *icst_clk_register(struct device *dev,
- 		pr_err("could not initialize ICST regmap\n");
- 		return ERR_CAST(map);
- 	}
--	return icst_clk_setup(dev, desc, name, parent_name, map);
-+	return icst_clk_setup(dev, desc, name, parent_name, map,
-+			      ICST_VERSATILE);
- }
- EXPORT_SYMBOL_GPL(icst_clk_register);
- 
-@@ -239,6 +346,28 @@ static const struct icst_params icst307_params = {
- 	.idx2s		= icst307_idx2s,
- };
- 
-+/**
-+ * The core modules on the Integrator/AP and Integrator/CP have
-+ * especially crippled ICST525 control.
-+ */
-+static const struct icst_params icst525_apcp_cm_params = {
-+	.vco_max	= ICST525_VCO_MAX_5V,
-+	.vco_min	= ICST525_VCO_MIN,
-+	/* Minimum 12 MHz, VDW = 4 */
-+	.vd_min		= 12,
-+	/*
-+	 * Maximum 160 MHz, VDW = 152 for all core modules, but
-+	 * CM926EJ-S, CM1026EJ-S and CM1136JF-S can actually
-+	 * go to 200 MHz (max VDW = 192).
-+	 */
-+	.vd_max		= 192,
-+	/* r is hardcoded to 22 and this is the actual divisor, +2 */
-+	.rd_min		= 24,
-+	.rd_max		= 24,
-+	.s2div		= icst525_s2div,
-+	.idx2s		= icst525_idx2s,
-+};
-+
- static void __init of_syscon_icst_setup(struct device_node *np)
- {
- 	struct device_node *parent;
-@@ -247,6 +376,7 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 	const char *name = np->name;
- 	const char *parent_name;
- 	struct clk *regclk;
-+	enum icst_control_type ctype;
- 
- 	/* We do not release this reference, we are using it perpetually */
- 	parent = of_get_parent(np);
-@@ -269,11 +399,22 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 		return;
- 	}
- 
--	if (of_device_is_compatible(np, "arm,syscon-icst525"))
-+	if (of_device_is_compatible(np, "arm,syscon-icst525")) {
- 		icst_desc.params = &icst525_params;
--	else if (of_device_is_compatible(np, "arm,syscon-icst307"))
-+		ctype = ICST_VERSATILE;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst307")) {
- 		icst_desc.params = &icst307_params;
--	else {
-+		ctype = ICST_VERSATILE;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-cm")) {
-+		icst_desc.params = &icst525_apcp_cm_params;
-+		ctype = ICST_INTEGRATOR_AP_CM;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-core")) {
-+		icst_desc.params = &icst525_apcp_cm_params;
-+		ctype = ICST_INTEGRATOR_CP_CM_CORE;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-mem")) {
-+		icst_desc.params = &icst525_apcp_cm_params;
-+		ctype = ICST_INTEGRATOR_CP_CM_MEM;
-+	} else {
- 		pr_err("unknown ICST clock %s\n", name);
- 		return;
- 	}
-@@ -281,18 +422,23 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 	/* Parent clock name is not the same as node parent */
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
--	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map);
-+	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map, ctype);
- 	if (IS_ERR(regclk)) {
- 		pr_err("error setting up syscon ICST clock %s\n", name);
- 		return;
- 	}
- 	of_clk_add_provider(np, of_clk_src_simple_get, regclk);
--	pr_debug("registered syscon ICST clock %s\n", name);
-+	pr_info("registered syscon ICST clock %s\n", name);
- }
- 
- CLK_OF_DECLARE(arm_syscon_icst525_clk,
- 	       "arm,syscon-icst525", of_syscon_icst_setup);
- CLK_OF_DECLARE(arm_syscon_icst307_clk,
- 	       "arm,syscon-icst307", of_syscon_icst_setup);
--
-+CLK_OF_DECLARE(arm_syscon_integratorap_cm_clk,
-+	       "arm,syscon-icst525-integratorap-cm", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_integratorcp_cm_core_clk,
-+	       "arm,syscon-icst525-integratorcp-cm-core", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_integratorcp_cm_mem_clk,
-+	       "arm,syscon-icst525-integratorcp-cm-mem", of_syscon_icst_setup);
- #endif
+ #endif /* __GXBB_CLKC_H */
 -- 
-2.7.4
+2.9.0
