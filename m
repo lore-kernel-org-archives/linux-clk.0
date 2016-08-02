@@ -1,61 +1,81 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 25 Aug 2016 22:27:36 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] clk: sunxi-ng: mux: support fixed pre-dividers on
- multiple parents
-Message-ID: <20160825202736.GD32598@lukather>
-References: <20160825062200.17206-1-wens@csie.org>
- <20160825062200.17206-4-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XvKFcGCOAo53UbWW"
-In-Reply-To: <20160825062200.17206-4-wens@csie.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v5 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
+Date: Tue,  2 Aug 2016 13:14:52 +0900
+Message-Id: <1470111307-21078-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+I split into two patches to make review easier.
 
---XvKFcGCOAo53UbWW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ 1/2: core support code
+ 2/2: data arrays
 
-On Thu, Aug 25, 2016 at 02:21:57PM +0800, Chen-Yu Tsai wrote:
-> Some clocks on the A31 have fixed pre-dividers on multiple parents.
-> Add support for them.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Applied, thanks!
-Maxime
+Changes in v5:
+  - Assign each gating register bit with a separate clk
+  - Fix examples in binding document to add specific compatible
+  - Document provided clocks for system clock
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Changes in v4:
+  - Unify module_platform_driver() boilerplate into a single place
+  - Add binding document
+  - Add USB3 clocks
 
---XvKFcGCOAo53UbWW
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v3:
+  - Change to platform drivers instead of OF_CLK_DECLARE
+  - Split into a core part + SoC drivers
+    SoC drivers just consist of tables of SoC-specific data.
+    This allows reviewer to concentrate on the core-part
+  - Hard-code parent clock names for cascading
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Changes in v2:
+  - split emmc_hw_reset
+  - make SD clock rate-controllable
+  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
 
-iQIcBAEBAgAGBQJXv1S4AAoJEBx+YmzsjxAgMVMQAJdZzBfBTF+7rKs8AGXDwcok
-YvGz4tOXcG1ZzHfvLuSEXRCCxY0TIt+X5kO4Cvq9Ugt+5loCNvexN+qggzGYXAKj
-N2N0C32WYstkAJhwyVUjBxWO3pIGAuRBrB4L3Y5ZMjHbe4TfG0z8B1JRCFsjcRX2
-Nnoci1fmi3kmgnjWnKnsfcHIPOtcxM9jSC+QSPvHnumouTky8/bAlvvz0w6eLWij
-Y1XH4bshmutvflqBur0cj02aJHBftz1Jwk/J7JMvqQo2W06EKTqrHJrQS7fLGc0i
-OaLuf6H1OTSmTMq6C3lQL228cQIEg5MX9OD4TUypTMxghgr9Aq6rZhABJzg0xnCM
-cKsDf3llpWollsagMqiDSj8NFPfwkqsdXt43AxzJPaaLirKJ3dYoSIF06k6iAC+D
-WvqB0tYssaqqF4PxD7pMRBfkF8oOBPh+DliEUETrXelsAPQxnjAHRstZnhVldGg5
-Sp524qXhxLAyIxOtImXZvk85cX2G6nmW0LcOeja+cxXahdMo75wwOJFZAiIhxHa2
-KzPWicbK9CxaT+zHplwRxdTQNZxbZVzw2eH8cWEbMSK5oTOVCXw3mYphFIXxquFo
-fyhQYuaotityoCJL/nYb7zFY0PUBq6gbIXj89T1Hvv2SqRDRRfJJ4/Yj8exiE7zZ
-pKqwQdjuCy0lh/4VWezC
-=GZkd
------END PGP SIGNATURE-----
+Masahiro Yamada (2):
+  clk: uniphier: add core support code for UniPhier clock driver
+  clk: uniphier: add clock data for UniPhier SoCs
 
---XvKFcGCOAo53UbWW--
+ .../devicetree/bindings/clock/uniphier-clock.txt   | 134 +++++++++++++
+ MAINTAINERS                                        |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/uniphier/Kconfig                       |   9 +
+ drivers/clk/uniphier/Makefile                      |   9 +
+ drivers/clk/uniphier/clk-uniphier-core.c           | 215 +++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 +++++
+ drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 +++++
+ drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-mio.c            | 103 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-mux.c            |  95 +++++++++
+ drivers/clk/uniphier/clk-uniphier-peri.c           |  59 ++++++
+ drivers/clk/uniphier/clk-uniphier-sys.c            | 151 +++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h                | 122 ++++++++++++
+ 15 files changed, 1094 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
+ create mode 100644 drivers/clk/uniphier/Kconfig
+ create mode 100644 drivers/clk/uniphier/Makefile
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+
+-- 
+1.9.1
