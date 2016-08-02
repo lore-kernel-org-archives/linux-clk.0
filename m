@@ -1,70 +1,57 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 04/10] clk: qcom: Add support for PLLs with alpha mode
-Date: Thu, 11 Aug 2016 14:10:52 +0530
-Message-Id: <1470904858-11930-5-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/7] clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+Date: Tue,  2 Aug 2016 15:19:58 +0800
+Message-Id: <1470122401-31934-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some PLLs can support an alpha mode, and a single alpha
-register (instead of registers to program the M/N values),
-the contents of which depend on the alpha mode selected.
-(They are either treated as two's complement or M/N value)
-Add support for this in the clk PLL driver.
+Dues to incorrect diagram, we need to fix incorrect bits for
+(c/g)pll_aclk_emmc_src:
+cpll_aclk_emmc_src --> G6[13]
+gpll_aclk_emmc_src --> G6[12]
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+
 ---
- drivers/clk/qcom/clk-pll.c | 8 ++++++--
- drivers/clk/qcom/clk-pll.h | 2 ++
- 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
-index 5b940d6..08d2fa2 100644
---- a/drivers/clk/qcom/clk-pll.c
-+++ b/drivers/clk/qcom/clk-pll.c
-@@ -255,8 +255,12 @@ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
- 	u32 mask;
+Changes in v3:
+- add "Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>"
+
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index f511de6..e5fdac0 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -923,9 +923,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(6), 14, GFLAGS),
  
- 	regmap_write(regmap, pll->l_reg, config->l);
--	regmap_write(regmap, pll->m_reg, config->m);
--	regmap_write(regmap, pll->n_reg, config->n);
-+	if (pll->alpha_reg) {
-+		regmap_write(regmap, pll->alpha_reg, config->alpha);
-+	} else {
-+		regmap_write(regmap, pll->m_reg, config->m);
-+		regmap_write(regmap, pll->n_reg, config->n);
-+	}
- 
- 	val = config->vco_val;
- 	val |= config->pre_div_val;
-diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
-index ffd0c63..083727e 100644
---- a/drivers/clk/qcom/clk-pll.h
-+++ b/drivers/clk/qcom/clk-pll.h
-@@ -48,6 +48,7 @@ struct clk_pll {
- 	u32	l_reg;
- 	u32	m_reg;
- 	u32	n_reg;
-+	u32	alpha_reg;
- 	u32	config_reg;
- 	u32	mode_reg;
- 	u32	status_reg;
-@@ -70,6 +71,7 @@ struct pll_config {
- 	u16 l;
- 	u32 m;
- 	u32 n;
-+	u32 alpha;
- 	u32 vco_val;
- 	u32 vco_mask;
- 	u32 pre_div_val;
+ 	GATE(0, "cpll_aclk_emmc_src", "cpll", CLK_IGNORE_UNUSED,
+-			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+-	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 13, GFLAGS),
++	GATE(0, "gpll_aclk_emmc_src", "gpll", CLK_IGNORE_UNUSED,
++			RK3399_CLKGATE_CON(6), 12, GFLAGS),
+ 	COMPOSITE_NOGATE(ACLK_EMMC, "aclk_emmc", mux_aclk_emmc_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(21), 7, 1, MFLAGS, 0, 5, DFLAGS),
+ 	GATE(ACLK_EMMC_CORE, "aclk_emmccore", "aclk_emmc", CLK_IGNORE_UNUSED,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.7.9.5
