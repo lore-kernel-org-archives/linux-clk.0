@@ -1,109 +1,62 @@
-Return-Path: <nm@ti.com>
-From: Nishanth Menon <nm@ti.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Dave Gerlach <d-gerlach@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Russell
- King <rmk+kernel@armlinux.org.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Nishanth Menon
-	<nm@ti.com>
-Subject: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-Date: Fri, 19 Aug 2016 19:33:40 -0500
-Message-ID: <20160820003342.13599-2-nm@ti.com>
-In-Reply-To: <20160820003342.13599-1-nm@ti.com>
-References: <20160820003342.13599-1-nm@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	wulf@rock-chips.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/7] fix and optimize some clock configuration for the RK3399 platfom
+Date: Tue,  2 Aug 2016 15:19:54 +0800
+Message-Id: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tero Kristo <t-kristo@ti.com>
 
-Add a clock implementation, TI SCI clock, that will hook to the common
-clock framework, and allow each clock to be controlled via TI SCI
-protocol.
+Hi:
+  In the development work, we found that some of the previous
+incorrect clock configuration on the RK3399 platform, we should
+fix and optimize them.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Tested-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
- .../devicetree/bindings/clock/ti,sci-clk.txt       | 51 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+Changes in v3:
+- list more details of the testing steps
+- add the regresson message "Fixes: 3bd14ae9da91 ..." to track the previous commit
+- remove the patch "clk: rockchip: rk3399: fix incorrect parent for rk3399's {c, g}pll_aclk_perihp_src"
+- add "Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>"
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-new file mode 100644
-index 000000000000..231cb80a058e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-@@ -0,0 +1,51 @@
-+Texas Instruments TI-SCI Clocks
-+===============================
-+
-+All clocks on Texas Instruments' SoCs that contain a System Controller,
-+are only controlled by this entity. Communication between a host processor
-+running an OS and the System Controller happens through a protocol known
-+as TI-SCI[1]. This clock implementation plugs into the common clock
-+framework and makes use of the TI-SCI protocol on clock API requests.
-+
-+[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-+
-+Required properties:
-+-------------------
-+- compatible: Must be "ti,sci-clk"
-+- #clock-cells: Shall be 2.
-+  In clock consumers, this cell represents the device ID and clock ID
-+  exposed by the PM firmware. The assignments can be found in the header
-+  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
-+  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
-+  is the SoC involved, for example 'k2g'.
-+- ti,sci: Phandle to the TI SCI device to use for managing the clocks
-+
-+Optional properties:
-+-------------------
-+- ti,ssc-clocks: Array of phandle clocks that shall enable spread spectrum
-+		 clocking while enabled
-+- ti,allow-freq-change-clocks: Array of phandle clocks that shall allow
-+			       dynamic clock frequency changes by firmware
-+- ti,input-term-clocks: Array of phandle clocks that shall enable input
-+			termination
-+
-+Examples:
-+--------
-+
-+k2g_clks: k2g_clks {
-+	compatible = "ti,sci-clk";
-+	ti,sci = <&pmmc>;
-+	#clock-cells = <2>;
-+};
-+
-+dummy_node@1234 {
-+	clocks = <&k2g_clks K2G_DEV_DUMMY K2G_DEV_DUMMY_FCK>;
-+};
-+
-+dummy_node2@2345 {
-+	clocks = <&k2g_clks K2G_DEV_DUMMY2 K2G_DEV_DUMMY_X1_CLK>;
-+};
-+
-+&k2g_clks {
-+	ti,ssc-clocks = <&k2g_clks K2G_DEV_DUMMY K2G_DEV_DUMMY_FCK>;
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 448f6801bd78..1837b98d96a9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11576,6 +11576,7 @@ F:	include/linux/soc/ti/ti_sci_protocol.h
- F:	Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
- F:	include/dt-bindings/genpd/k2g.h
- F:	drivers/soc/ti/ti_sci_pm_domains.c
-+F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
- 
- THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
+Changes in v2:
+- add this patch " clk: rockchip: rk3399: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src" into the patchset
+
+Elaine Zhang (1):
+  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+
+Xing Zheng (6):
+  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
+  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+  clk: rockchip: rk3399: fix incorrect GATE bits for {c,
+    g}pll_aclk_perihp_src
+  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
+  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+  clk: rockchip: rk3399: Add support frac mode frequencies
+
+ drivers/clk/rockchip/clk-rk3399.c      |   39 ++++++++++++++++++++++++--------
+ include/dt-bindings/clock/rk3399-cru.h |    2 ++
+ 2 files changed, 32 insertions(+), 9 deletions(-)
+
 -- 
-2.9.1.200.gb1ec08f
+1.7.9.5
