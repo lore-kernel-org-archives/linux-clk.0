@@ -1,32 +1,85 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 16:08:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Alex Elder <elder@linaro.org>
-Subject: Re: [PATCH 06/34] clk: bcm: kona: Migrate to clk_hw based
- registration and OF APIs
-Message-ID: <20160824230821.GI19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-7-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-7-stephen.boyd@linaro.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v6 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
+Date: Tue,  2 Aug 2016 13:28:28 +0900
+Message-Id: <1470112128-24513-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we can use clk_hw pointers we don't need to have two
-> duplicate arrays holding the same mapping of clk index to clk_hw
-> pointer. Implement a custom clk_hw provider function to map the
-> OF specifier to the clk_hw instance for it.
-> 
-> Cc: Alex Elder <elder@linaro.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
 
-Applied to clk-next
+I split into two patches to make review easier.
+
+ 1/2: core support code
+ 2/2: data arrays
+
+
+Changes in v6:
+  - Fix provided clock description a bit
+
+Changes in v5:
+  - Assign each gating register bit with a separate clk
+  - Fix examples in binding document to add specific compatible
+  - Document provided clocks for system clock
+
+Changes in v4:
+  - Unify module_platform_driver() boilerplate into a single place
+  - Add binding document
+  - Add USB3 clocks
+
+Changes in v3:
+  - Change to platform drivers instead of OF_CLK_DECLARE
+  - Split into a core part + SoC drivers
+    SoC drivers just consist of tables of SoC-specific data.
+    This allows reviewer to concentrate on the core-part
+  - Hard-code parent clock names for cascading
+
+Changes in v2:
+  - split emmc_hw_reset
+  - make SD clock rate-controllable
+  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
+
+Masahiro Yamada (2):
+  clk: uniphier: add core support code for UniPhier clock driver
+  clk: uniphier: add clock data for UniPhier SoCs
+
+ .../devicetree/bindings/clock/uniphier-clock.txt   | 134 +++++++++++++
+ MAINTAINERS                                        |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/uniphier/Kconfig                       |   9 +
+ drivers/clk/uniphier/Makefile                      |   9 +
+ drivers/clk/uniphier/clk-uniphier-core.c           | 215 +++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  49 +++++
+ drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  48 +++++
+ drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-mio.c            | 103 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-mux.c            |  95 +++++++++
+ drivers/clk/uniphier/clk-uniphier-peri.c           |  59 ++++++
+ drivers/clk/uniphier/clk-uniphier-sys.c            | 151 +++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h                | 122 ++++++++++++
+ 15 files changed, 1094 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
+ create mode 100644 drivers/clk/uniphier/Kconfig
+ create mode 100644 drivers/clk/uniphier/Makefile
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
