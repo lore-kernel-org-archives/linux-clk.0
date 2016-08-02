@@ -1,33 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Aug 2016 17:09:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: Re: [PATCH 16/34] clk: ls1x: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160819000906.GN361@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-17-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-17-stephen.boyd@linaro.org>
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com
+Subject: [PATCH v3 5/7] clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+Date: Tue,  2 Aug 2016 15:22:26 +0800
+Message-Id: <1470122546-32015-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Kelvin Cheung <keguang.zhang@gmail.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+We need to add more clocks for supporting more display resolution
+for HDMI.
 
-Applied to clk-next + a small fix to get it to compile
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
+Changes in v3: None
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3399.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index e5fdac0..8032eba 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -100,8 +100,10 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE( 297000000, 1, 99, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
+ 	RK3036_PLL_RATE( 148500000, 1, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE( 106500000, 1, 71, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  74250000, 2, 99, 4, 4, 1, 0),
++	RK3036_PLL_RATE(  65000000, 1, 65, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(  54000000, 1, 54, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(  27000000, 1, 27, 6, 4, 1, 0),
+ 	{ /* sentinel */ },
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
