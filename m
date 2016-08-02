@@ -1,75 +1,55 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Sat, 27 Aug 2016 18:33:10 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block
- 800Mhz on exynos5422-odroidxu3
-Message-ID: <20160827163310.GA8616@kozik-book>
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
- <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	shawn.lin@rock-chips.com
+Subject: [PATCH v3 6/7] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+Date: Tue,  2 Aug 2016 15:22:49 +0800
+Message-Id: <1470122569-32049-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 25, 2016 at 03:57:18PM +0900, Chanwoo Choi wrote:
-> This patch sets the clock rate for DREX (DRAM Express) block
-> on exynos5422-odroidxu3 board. In the exynos5422 TRM,
-> DRAM clocks use BPLL clock and CMU_CDREX generates
-> the 800MHz DRAM clock.
-> 
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
->From the commit message I don't get two things:
-1. Why setting this on XU3-family of boards, not all 542x/5800?
-2. Why this is needed? The commit msg lacks the answer to the "why".
+allow aclk_pcie and aclk_perf_pcie disabled when unused.
 
-> [clk_summary on exynos5422-odroidxu3 board]
-> fout_bpll                             0            0   800000000          0 0
->     mout_bpll                          0            0   800000000          0 0
->        mout_mclk_cdrex                 0            0   800000000          0 0
->           dout_pclk_core_mem           0            0   200000000          0 0
->           dout_sclk_cdrex              0            0   800000000          0 0
->
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-What is the purpose of this dump of clk_summary? Is it a state before or
-after the change? After it is quite obvious that it should have
-800MHz...
+---
 
-Best regards,
-Krzysztof
+Changes in v3: None
+Changes in v2: None
 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index d56253049ccb..fd3f67c72039 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -229,6 +229,11 @@
->  	status = "okay";
->  };
->  
-> +&clock {
-> +	assigned-clocks = <&clock CLK_DOUT_SCLK_CDREX>;
-> +	assigned-clock-rates = <800000000>;
-> +};
-> +
->  &clock_audss {
->  	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
->  			<&clock_audss EXYNOS_MOUT_I2S>,
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 8032eba..2792404 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
+ 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+ 
+-	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
++	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
+ 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
+-	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
++	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
+ 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
+ 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+-- 
+1.7.9.5
