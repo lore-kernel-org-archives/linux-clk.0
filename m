@@ -1,97 +1,60 @@
-Return-Path: <lidongpo@hisilicon.com>
-Subject: Re: [PATCH 1/4] net: hix5hd2_gmac: add tx scatter-gather feature
-To: Rob Herring <robh@kernel.org>
-References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
- <1470906115-155569-2-git-send-email-lidongpo@hisilicon.com>
- <20160812184336.GA5706@rob-hp-laptop> <57B1664F.1090708@hisilicon.com>
- <CAL_JsqLgzaPECHdX8yHC3DAUq0jXhgUFE+xVFbeV0OLQXopqxg@mail.gmail.com>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Yisen Zhuang
-	<yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        David Miller
-	<davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Lunn
-	<andrew@lunn.ch>, <xuejiancheng@hisilicon.com>,
-        <benjamin.chenhao@hisilicon.com>, <howell.yang@hisilicon.com>,
-        netdev
-	<netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Dongpo Li <lidongpo@hisilicon.com>
-Message-ID: <57B27A3C.5070403@hisilicon.com>
-Date: Tue, 16 Aug 2016 10:28:12 +0800
+Return-Path: <andrew@lunn.ch>
+Date: Tue, 2 Aug 2016 17:28:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, stefan@agner.ch,
+	kernel@pengutronix.de, jslaby@suse.com, shawnguo@kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RESEND v2 0/8] Improve Rx/Tx DMA implementation
+Message-ID: <20160802152835.GC21602@lunn.ch>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+ <a5d420fa-0837-f0af-dee9-a61562d473c2@toradex.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLgzaPECHdX8yHC3DAUq0jXhgUFE+xVFbeV0OLQXopqxg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <a5d420fa-0837-f0af-dee9-a61562d473c2@toradex.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 2016/8/16 0:18, Rob Herring wrote:
-> On Mon, Aug 15, 2016 at 1:50 AM, Dongpo Li <lidongpo@hisilicon.com> wrote:
->> Hi Rob,
->> Many thanks for your review.
->>
->> On 2016/8/13 2:43, Rob Herring wrote:
->>> On Thu, Aug 11, 2016 at 05:01:52PM +0800, Dongpo Li wrote:
->>>> From: Li Dongpo <lidongpo@hisilicon.com>
->>>>
->>>> The "hix5hd2" is SoC name, add the generic ethernet driver name.
->>>> The "hisi-gemac-v1" is the basic version and "hisi-gemac-v2" adds
->>>> the SG/TXCSUM/TSO/UFO features.
->>>> This patch only adds the SG(scatter-gather) driver for transmitting,
->>>> the drivers of other features will be submitted later.
->>>
->>> The compatible string changes should probably be a separate patch.
->>>
->> ok, I will split this patch into two patches, one for compatible string changes,
->> and one for driver feature implementation.
->>
->>>> Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
->>>> ---
->>>>  .../bindings/net/hisilicon-hix5hd2-gmac.txt        |   9 +-
->>>>  drivers/net/ethernet/hisilicon/hix5hd2_gmac.c      | 213 +++++++++++++++++++--
->>>>  2 files changed, 205 insertions(+), 17 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->>>> index 75d398b..3c02fac 100644
->>>> --- a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->>>> +++ b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->>>> @@ -1,7 +1,12 @@
->>>>  Hisilicon hix5hd2 gmac controller
->>>>
->>>>  Required properties:
->>>> -- compatible: should be "hisilicon,hix5hd2-gmac".
->>>> +- compatible: should contain one of the following version strings:
->>>> +    * "hisilicon,hisi-gemac-v1"
->>>> +    * "hisilicon,hisi-gemac-v2"
->>>> +    and one of the following SoC string:
->>>> +    * "hisilicon,hix5hd2-gemac"
->>>> +    * "hisilicon,hi3798cv200-gemac"
->>>
->>> Make it clear what the order should be.
->>>
->> ok, I will put the SoC strings in alphabetical order.
+On Tue, Aug 02, 2016 at 01:23:32PM +0530, Bhuvanchandra DV wrote:
+> Hello,
 > 
-> No, I mean the most specific string comes first.
+> Any comments on this patchset?
+
+I tested v1 on my Vybrid board and it fixed the corruption issues i
+was seeing with the console on a serial port. I will try to test this
+version.
+
+    Andrew
+
 > 
-ok, I will fix it in next patch version. Thank you.
-
-> Rob
+> On 07/19/16 13:13, Bhuvanchandra DV wrote:
 > 
-> .
+> >Drop the clock change patch from v2 patchset[1] since it is applied.
+> >
+> >Changes since v1:
+> >Split suspend/resume patch.
+> >
+> >[1] https://lkml.org/lkml/2016/6/28/124
+> >
+> >Bhuvanchandra DV (5):
+> >   tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+> >   tty: serial: fsl_lpuart: Use cyclic DMA for Rx
+> >   tty: serial: fsl_lpuart: Use scatter/gather DMA for Tx
+> >   tty: serial: fsl_lpuart: Update suspend/resume for DMA mode
+> >   tty: serial: fsl_lpuart: Add support for RS-485
+> >
+> >Stefan Agner (3):
+> >   tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+> >   tty: serial: fsl_lpuart: support suspend/resume
+> >   tty: serial: fsl_lpuart: fix clearing of receive flag
+> >
+> >  drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
+> >  1 file changed, 476 insertions(+), 334 deletions(-)
+> >
 > 
-
-
-    Regards,
-    Dongpo
-
-.
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
