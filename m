@@ -1,47 +1,73 @@
-Return-Path: <marcel.ziswiler@toradex.com>
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com"
-	<mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "pdeschrijver@nvidia.com"
-	<pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 5/6] ARM: tegra: Add Tegra20 GMI support
-Date: Wed, 31 Aug 2016 07:18:47 +0000
-Message-ID: <1472627926.31008.7.camel@toradex.com>
-References: <1472569349.5703.25.camel@toradex.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [RESEND PATCH v2 3/8] clk: rockchip: rk3399: fix incorrect parent
+ for rk3399's {c, g}pll_aclk_perihp_src
+To: Brian Norris <briannorris@chromium.org>
+References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+ <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
+ <20160801201349.GA129313@google.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
+ dianders@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <579FFC4D.2070406@rock-chips.com>
+Date: Tue, 2 Aug 2016 09:50:05 +0800
 MIME-Version: 1.0
+In-Reply-To: <20160801201349.GA129313@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gV2VkLCAyMDE2LTA4LTI0IGF0IDE1OjM3ICswMjAwLCBNaXJ6YSBLcmFrIHdyb3RlOg0KPiAN
-Cj4gRnJvbTogTWlyemEgS3JhayA8bWlyemEua3Jhay1SZTVKUUVlUXFlOEF2eHRpdU13eDN3QHB1
-YmxpYy5nbWFuZS5vcmc+DQo+IA0KPiBBZGQgYSBkZXZpY2Ugbm9kZSBmb3IgdGhlIEdNSSBjb250
-cm9sbGVyIGZvdW5kIG9uIFRlZ3JhMjAuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNaXJ6YSBLcmFr
-IDxtaXJ6YS5rcmFrLVJlNUpRRWVRcWU4QXZ4dGl1TXd4M3dAcHVibGljLmcNCj4gbWFuZS5vcmc+
-DQo+IC0tLQ0KPiBDaGFuZ2VzIGluIHYyOg0KPiAtIGFkZGVkIGFkZHJlc3MtY2VsbHMsIHNpemUt
-Y2VsbHMgYW5kIHJhbmdlcyBwcm9wZXJ0aWVzDQo+IA0KPiDCoGFyY2gvYXJtL2Jvb3QvZHRzL3Rl
-Z3JhMjAuZHRzaSB8IDE0ICsrKysrKysrKysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDE0IGlu
-c2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTIw
-LmR0c2kNCj4gYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTIwLmR0c2kNCj4gaW5kZXggMjIwN2Mw
-OC4uMDNlYjAyOSAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEyMC5kdHNp
-DQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAuZHRzaQ0KPiBAQCAtMzc2LDYgKzM3
-NiwyMCBAQA0KPiDCoAkJc3RhdHVzID0gImRpc2FibGVkIjsNCj4gwqAJfTsNCj4gDQo+ICsNCj4g
-KwlnbWlANzAwMDkwMDAgew0KPiArCQljb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIwLWdtaSI7
-DQo+ICsJCXJlZyA9IDw3MDAwOTAwMCAweDEwMDA+Ow0KPiArCQkjYWRkcmVzcy1jZWxscyA9IDwx
-PjsNCj4gKwkJI3NpemUtY2VsbHMgPSA8MT47DQo+ICsJCXJhbmdlcyA9IDwwIDB4NDgwMDAwMDAg
-MHg3ZmZmZmZmPjsNCg0KT24gVDIwIGl0IGlzIGFjdHVhbGx5IHJhdGhlciAweGQwMDAwMDAwLg0K
-DQo+IA0KPiArCQljbG9ja3MgPSA8JnRlZ3JhX2NhciBURUdSQTIwX0NMS19OT1I+Ow0KPiArCQlj
-bG9jay1uYW1lcyA9ICJnbWkiOw0KPiArCQlyZXNldHMgPSA8ICZ0ZWdyYV9jYXIgNDI+Ow0KPiAr
-CQlyZXNldC1uYW1lcyA9ICJnbWkiOw0KPiArCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiArCX07
-DQo+ICsNCj4gwqAJcHdtOiBwd21ANzAwMGEwMDAgew0KPiDCoAkJY29tcGF0aWJsZSA9ICJudmlk
-aWEsdGVncmEyMC1wd20iOw0KPiDCoAkJcmVnID0gPDB4NzAwMGEwMDAgMHgxMDA+Ow0KPiAtLQ0K
-PiAyLjEuNA==
+Hi Brain,
+
+On 2016年08月02日 04:13, Brian Norris wrote:
+> On Mon, Aug 01, 2016 at 05:53:38PM +0800, Xing Zheng wrote:
+>> There was a typo, swapping 'c' <--> 'g'.
+>> (This patch is updated and am from https://patchwork.kernel.org/patch/9254067/)
+>>
+>> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+>> Signed-off-by: Brian Norris <briannorris@chromium.org>
+>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>> ---
+>>
+>> Changes in v2: None
+> I believe this patch was already applied upstream; otherwise, it
+> wouldn't make sense to have both this patch and patch 4 -- we would
+> probably squash them together.
+>
+> Brian
+>
+Yes, this patch is applied in mmind/linux-rockchip.git v4.7-clk/fixes, I 
+arm sorry to tracked on v4.8-clk/next so that didn't note it.
+This patch will be abandoned.
+
+Thanks.
+
+>>   drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+>> index f55f967f..2182391 100644
+>> --- a/drivers/clk/rockchip/clk-rk3399.c
+>> +++ b/drivers/clk/rockchip/clk-rk3399.c
+>> @@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>>   			RK3399_CLKGATE_CON(13), 1, GFLAGS),
+>>   
+>>   	/* perihp */
+>> -	GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+>> +	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+>>   			RK3399_CLKGATE_CON(5), 0, GFLAGS),
+>> -	GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
+>> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
+>>   			RK3399_CLKGATE_CON(5), 1, GFLAGS),
+>>   	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
+>>   			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
+>> -- 
+>> 1.7.9.5
+>>
+>>
+>
+>
+
+-- 
+- Xing Zheng
