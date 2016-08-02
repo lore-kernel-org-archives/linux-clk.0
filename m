@@ -1,34 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:25:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	briannorris@chromium.org,
+	huangtao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	frank.wang@rock-chips.com,
+	wulf@rock-chips.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>, Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH 22/34] clk: palmas: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160825002535.GW19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-23-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-23-stephen.boyd@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/7] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
+Date: Tue,  2 Aug 2016 15:19:56 +0800
+Message-Id: <1470122401-31934-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+Export these source clocks for usbphy.
 
-Applied to clk-next
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
+---
+
+Changes in v3: None
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3399.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 8059a8d..316f5f4 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
+ 
+-	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+-	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
++	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+ 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
