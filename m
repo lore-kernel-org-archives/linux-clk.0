@@ -1,33 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 19 Aug 2016 12:51:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Subject: Re: [PATCH v2 1/3] clk: meson: Add GXBB AO Clock and Reset
- controller driver
-Message-ID: <20160819195148.GF6502@codeaurora.org>
-References: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
- <1471514928-3341-2-git-send-email-narmstrong@baylibre.com>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [PATCH] clk: rockchip: rk3399: add pll up and down when change
+ pll freq
+To: Doug Anderson <dianders@chromium.org>
+References: <1470143599-8851-1-git-send-email-zhengxing@rock-chips.com>
+ <CAD=FV=X1ZAhzBrFukvE9BxdFmgo8dj4GKjZ9EmPLTagHfO-ufg@mail.gmail.com>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Brian Norris <briannorris@chromium.org>, Tao Huang
+ <huangtao@rock-chips.com>, zhangqing <zhangqing@rock-chips.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <57A14819.9060309@rock-chips.com>
+Date: Wed, 3 Aug 2016 09:25:45 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471514928-3341-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <CAD=FV=X1ZAhzBrFukvE9BxdFmgo8dj4GKjZ9EmPLTagHfO-ufg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/18, Neil Armstrong wrote:
-> Adds a Clock and Reset controller driver for the Always-On part
-> of the Amlogic Meson GXBB SoC.
-> 
-> It exports paired Clocks and Resets lines that will be used by
-> peripherals in the Always-On subsystem.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
+Hi Doug,
 
-Applied to clk-meson-gxbb-ao and merged into clk-next. I applied
-this after the dt binding headers to keep things compiling.
+On 2016年08月03日 08:49, Doug Anderson wrote:
+> Xing,
+>
+> On Tue, Aug 2, 2016 at 6:13 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+>> From: Elaine Zhang <zhangqing@rock-chips.com>
+>>
+>> The suggestion that is from IC designer, the correct pll sequence setting
+>> should be like these:
+>> ----
+>>    set pll to slow mode or other plls
+>>    set pll down
+>>    set pll params
+>>    set pll up
+>>    wait pll lock status
+>>    set pll to normal mode
+>> ----
+>>
+>> Hence, there are potential risks that we need to fix:
+>> rockchip_rk3399_wait_pll_lock - timeout waiting for pll to lock
+>> rockchip_rk3399_pll_set_params - pll update unsucessful, trying to restore old params
+> I still don't understand how that groks with the statement in the TRM:
+>
+>> In most cases the PLL programming can be changed on-the-fly and the PLL will simply slew to the new frequency
+> That makes it sound like these PLLs are super great at dynamic updates.
+>
+>
+Well, I will report it to IC & Doc folkers to update the TRM and make it 
+clear.
+
+Thanks.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+- Xing Zheng
