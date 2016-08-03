@@ -1,66 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] clk: Return errors from clk providers in __of_clk_get_from_provider()
-Date: Mon, 15 Aug 2016 14:45:40 -0700
-Message-Id: <20160815214540.20381-1-sboyd@codeaurora.org>
+Return-Path: <bhuvanchandra.dv@toradex.com>
+Subject: Re: [PATCH RESEND v2 0/8] Improve Rx/Tx DMA implementation
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
+ <a5d420fa-0837-f0af-dee9-a61562d473c2@toradex.com>
+ <20160802152835.GC21602@lunn.ch>
+CC: <gregkh@linuxfoundation.org>, <linux-serial@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-kernel@vger.kernel.org>, <stefan@agner.ch>, <kernel@pengutronix.de>,
+	<jslaby@suse.com>, <shawnguo@kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Message-ID: <e4084260-be57-8f30-a016-c75e57237392@toradex.com>
+Date: Wed, 3 Aug 2016 10:09:22 +0530
+MIME-Version: 1.0
+In-Reply-To: <20160802152835.GC21602@lunn.ch>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: bhuvanchandra.dv@toradex.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Before commit 0861e5b8cf80 (clk: Add clk_hw OF clk providers,
-2016-02-05) __of_clk_get_from_provider() would return an error
-pointer of the provider's choosing if there was a provider
-registered and EPROBE_DEFER otherwise. After that commit, it
-would return EPROBE_DEFER regardless of whether or not the
-provider returned an error. This is odd and can lead to behavior
-where clk consumers keep probe deferring when they should be
-seeing some other error.
+Hi Andrew,
 
-Let's restore the previous behavior where we only return
-EPROBE_DEFER when there isn't a provider in our of_clk_providers
-list. Otherwise, return the error from the last provider we find
-that matches the node.
+On 08/02/16 20:58, Andrew Lunn wrote:
 
-Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Fixes: 0861e5b8cf80 ("clk: Add clk_hw OF clk providers")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> On Tue, Aug 02, 2016 at 01:23:32PM +0530, Bhuvanchandra DV wrote:
+>> Hello,
+>>
+>> Any comments on this patchset?
+> I tested v1 on my Vybrid board and it fixed the corruption issues i
+> was seeing with the console on a serial port. I will try to test this
+> version.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 6298715d0e44..71cc56712666 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3194,7 +3194,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- {
- 	struct of_clk_provider *provider;
- 	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
--	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
-+	struct clk_hw *hw;
- 
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
-@@ -3202,12 +3202,13 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	/* Check if we have such a provider in our array */
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
--		if (provider->node == clkspec->np)
-+		if (provider->node == clkspec->np) {
- 			hw = __of_clk_get_hw_from_provider(provider, clkspec);
--		if (!IS_ERR(hw)) {
- 			clk = __clk_create_clk(hw, dev_id, con_id);
-+		}
- 
--			if (!IS_ERR(clk) && !__clk_get(clk)) {
-+		if (!IS_ERR(clk)) {
-+			if (!__clk_get(clk)) {
- 				__clk_free_clk(clk);
- 				clk = ERR_PTR(-ENOENT);
- 			}
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks! for testing it. As such there is nothing much changed w.r.t
+code, we only split the suspend/resume patch in v2.
+
+--
+Bhuvan
+
+>
+>      Andrew
+>
+>> On 07/19/16 13:13, Bhuvanchandra DV wrote:
+>>
+>>> Drop the clock change patch from v2 patchset[1] since it is applied.
+>>>
+>>> Changes since v1:
+>>> Split suspend/resume patch.
+>>>
+>>> [1] https://lkml.org/lkml/2016/6/28/124
+>>>
+>>> Bhuvanchandra DV (5):
+>>>    tty: serial: fsl_lpuart: Fix broken 8m/s1 support
+>>>    tty: serial: fsl_lpuart: Use cyclic DMA for Rx
+>>>    tty: serial: fsl_lpuart: Use scatter/gather DMA for Tx
+>>>    tty: serial: fsl_lpuart: Update suspend/resume for DMA mode
+>>>    tty: serial: fsl_lpuart: Add support for RS-485
+>>>
+>>> Stefan Agner (3):
+>>>    tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
+>>>    tty: serial: fsl_lpuart: support suspend/resume
+>>>    tty: serial: fsl_lpuart: fix clearing of receive flag
+>>>
+>>>   drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
+>>>   1 file changed, 476 insertions(+), 334 deletions(-)
+>>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
