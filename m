@@ -1,147 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	a.hajda@samsung.com,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 17/17] Revert
- "i2c: s3c2410: fix ABBA deadlock by keeping clock prepared"
-Date: Tue, 16 Aug 2016 15:35:14 +0200
-Message-id: <1471354514-24224-18-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <1470143599-8851-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470143599-8851-1-git-send-email-zhengxing@rock-chips.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 2 Aug 2016 17:49:24 -0700
+Message-ID: <CAD=FV=X1ZAhzBrFukvE9BxdFmgo8dj4GKjZ9EmPLTagHfO-ufg@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: rk3399: add pll up and down when change
+ pll freq
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Brian Norris <briannorris@chromium.org>, Tao Huang <huangtao@rock-chips.com>,
+	zhangqing <zhangqing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This reverts commit 34e81ad5f0b60007c95995eb7803da7e00c6c611.
+Xing,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Tue, Aug 2, 2016 at 6:13 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
+>
+> The suggestion that is from IC designer, the correct pll sequence setting
+> should be like these:
+> ----
+>   set pll to slow mode or other plls
+>   set pll down
+>   set pll params
+>   set pll up
+>   wait pll lock status
+>   set pll to normal mode
+> ----
+>
+> Hence, there are potential risks that we need to fix:
+> rockchip_rk3399_wait_pll_lock - timeout waiting for pll to lock
+> rockchip_rk3399_pll_set_params - pll update unsucessful, trying to restore old params
 
-Conflicts:
-	drivers/i2c/busses/i2c-s3c2410.c
----
- drivers/i2c/busses/i2c-s3c2410.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+I still don't understand how that groks with the statement in the TRM:
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 38dc1cacfd8b..571250415617 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -771,16 +771,14 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 	int retry;
- 	int ret;
- 
--	ret = clk_enable(i2c->clk);
--	if (ret)
--		return ret;
-+	clk_prepare_enable(i2c->clk);
- 
- 	for (retry = 0; retry < adap->retries; retry++) {
- 
- 		ret = s3c24xx_i2c_doxfer(i2c, msgs, num);
- 
- 		if (ret != -EAGAIN) {
--			clk_disable(i2c->clk);
-+			clk_disable_unprepare(i2c->clk);
- 			return ret;
- 		}
- 
-@@ -789,7 +787,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 		udelay(100);
- 	}
- 
--	clk_disable(i2c->clk);
-+	clk_disable_unprepare(i2c->clk);
- 	return -EREMOTEIO;
- }
- 
-@@ -1165,7 +1163,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = s3c24xx_i2c_init(i2c);
--	clk_disable(i2c->clk);
-+	clk_disable_unprepare(i2c->clk);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "I2C controller init failed\n");
- 		clk_unprepare(i2c->clk);
-@@ -1180,7 +1178,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		i2c->irq = ret = platform_get_irq(pdev, 0);
- 		if (ret <= 0) {
- 			dev_err(&pdev->dev, "cannot find IRQ\n");
--			clk_unprepare(i2c->clk);
- 			return ret;
- 		}
- 
-@@ -1188,7 +1185,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 				       0, dev_name(&pdev->dev), i2c);
- 		if (ret != 0) {
- 			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
--			clk_unprepare(i2c->clk);
- 			return ret;
- 		}
- 	}
-@@ -1196,7 +1192,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	ret = s3c24xx_i2c_register_cpufreq(i2c);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
--		clk_unprepare(i2c->clk);
- 		return ret;
- 	}
- 
-@@ -1218,7 +1213,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
- 		pm_runtime_disable(&pdev->dev);
- 		s3c24xx_i2c_deregister_cpufreq(i2c);
--		clk_unprepare(i2c->clk);
- 		return ret;
- 	}
- 
-@@ -1230,8 +1224,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- {
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
- 
--	clk_unprepare(i2c->clk);
--
- 	pm_runtime_disable(&pdev->dev);
- 
- 	s3c24xx_i2c_deregister_cpufreq(i2c);
-@@ -1262,16 +1254,13 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
--	int ret;
- 
- 	if (!IS_ERR(i2c->sysreg))
- 		regmap_write(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, i2c->sys_i2c_cfg);
- 
--	ret = clk_enable(i2c->clk);
--	if (ret)
--		return ret;
-+	clk_prepare_enable(i2c->clk);
- 	s3c24xx_i2c_init(i2c);
--	clk_disable(i2c->clk);
-+	clk_disable_unprepare(i2c->clk);
- 	i2c->suspended = 0;
- 
- 	return 0;
--- 
-1.9.1
+> In most cases the PLL programming can be changed on-the-fly and the PLL will simply slew to the new frequency
+
+That makes it sound like these PLLs are super great at dynamic updates.
