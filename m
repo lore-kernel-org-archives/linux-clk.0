@@ -1,52 +1,24 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 11 Aug 2016 18:45:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH] clk: imx7d: do not set the parent of
- IMX7D_ENET_AXI_ROOT_SRC
-Message-ID: <20160812014519.GO2996@codeaurora.org>
-References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
- <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
- <20160811222842.GM2996@codeaurora.org>
- <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
- <88d5c57d3047176ebf2eec0f21e86613@agner.ch>
- <CAOMZO5AYVbobwxyNippO_AviZhNjCS0hhC2NmLHiPEt8MoP-5Q@mail.gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com
+Subject: Re: [PATCH v3 5/7] clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
+Date: Thu, 04 Aug 2016 21:05:03 +0200
+Message-ID: <3547456.uj6fXio0Ds@diego>
+In-Reply-To: <1470122546-32015-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1470122546-32015-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5AYVbobwxyNippO_AviZhNjCS0hhC2NmLHiPEt8MoP-5Q@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Fabio Estevam wrote:
-> Hi Stefan,
+Am Dienstag, 2. August 2016, 15:22:26 schrieb Xing Zheng:
+> We need to add more clocks for supporting more display resolution
+> for HDMI.
 > 
-> On Thu, Aug 11, 2016 at 8:57 PM, Stefan Agner <stefan@agner.ch> wrote:
-> 
-> > I don't think so, at least not that root clock.
-> >
-> > Otherwise grep -e IMX7D_PLL_ENET_MAIN_250M_CLK arch/arm/boot/dts/imx7*
-> > should return something...
-> 
-> Yes, you are right. The enet root clock parent assignment is missing in dts.
-> 
-> Other enet clocks are assigned.
-> 
-> > I guess in practice it is not a problem because the boot loader
-> > configures the clock selection already. Still, I think we should also
-> > fix our device trees and select the root clock there...
-> 
-> Yes, I didn't see any error on mx7d-sdb when I tested this patch, but
-> to be on the safe side I will update all the mx7 fec users to assign
-> enet root clk in the dts.
-> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-Ok it sounds like this isn't urgent for fixes. I'll go ahead and
-queue it up for v4.9
+applied to my clock-branch for 4.9
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Thanks
+Heiko
