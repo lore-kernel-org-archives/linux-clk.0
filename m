@@ -1,95 +1,102 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-Date: Fri, 19 Aug 2016 15:46:40 +0100
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Stephen Warren <swarren@wwwdotorg.org>, Lee Jones
-	<lee@kernel.org>,
-        Eric Anholt <eric@anholt.net>,
-        Florian Fainelli
-	<f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden
-	<sbranden@broadcom.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "Sylwester
- Nawrocki" <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Mark
- Brown" <broonie@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        <a.hajda@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
-Message-ID: <20160819144640.GM21682@localhost.localdomain>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
- <65703100-1e16-6c34-babe-40e630180688@samsung.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com
+Subject: Re: [PATCH v3 7/7] clk: rockchip: rk3399: Add support frac mode frequencies
+Date: Fri, 05 Aug 2016 10:48:38 +0200
+Message-ID: <1786762.HqNHoLusdi@diego>
+In-Reply-To: <57A3F971.6000009@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <12790025.3tRiQgk9GG@diego> <57A3F971.6000009@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <65703100-1e16-6c34-babe-40e630180688@samsung.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 16, 2016 at 03:51:10PM +0200, Krzysztof Kozlowski wrote:
-> On 08/16/2016 03:34 PM, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > RFC, please, do not apply, maybe except patch #1 which is harmless.
-> > 
-> > 
-> > Introduction
-> > ============
-> > The patchset brings new entity: clock controller representing a hardware
-> > block.  The clock controller comes with its own prepare lock which
-> > is used then in many places.  The idea is to fix the deadlock mentioned
-> > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
-> > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
-> > by keeping clock prepared").
-> > 
-> 
-> Damn, I forgot to describe the overall idea. :) It is mentioned in patch
-> 15 but probably not many will have enough of patience to reach it.
-> 
-> The locking idea
-> ================
-> Clock controllers representing different hardware blocks, will contain
-> its own prepare lock which protects the clocks inside controller.  The
-> hierarchy itself is protected by global lock.
-> 
-> In prepare path, the global prepare lock is removed.  This is direct
-> solution for the deadlock.
-> 
-> Clock hierarchy imposes also hierarchy between controllers so when a
-> prepare happens, also parents have to be locked.
-> 
-> Following locking design was chosen:
-> 1. For prepare/unprepare paths: lock only clock controller and its
->    parents.
-> 2. For recalc rates paths: lock global lock, the controller and its
->    children.
-> 3. For reparent paths: lock entire tree up down (children and parents)
->    and the global lock as well.
-> 
-> 
-> In each case of traversing the clock hierarchy, the locking of
-> controllers is always from children to parents.
-> 
-> 
-> Best regards,
-> Krzysztof
+Hi Xing,
 
-I have been playing with these patches on my Arndale board and
-they certainly do seem to resolve the interaction issues I have
-been SPI and the clocking framework, which is awesome and lets me
-sensibly add the clocking framework into our codec drivers. I will
-keep investigating and for what its worth have a little more
-detailed look through the code.
+Am Freitag, 5. August 2016, 10:26:57 schrieb Xing Zheng:
+> On 2016=E5=B9=B408=E6=9C=8805=E6=97=A5 03:19, Heiko St=C3=BCbner wrot=
+e:
+> > Am Dienstag, 2. August 2016, 15:22:59 schrieb Xing Zheng:
+> >> We need to support various display resolutions for external
+> >> display devices like HDMI/DP, the frac mode can help us to
+> >> acquire almost any frequencies, and need higher VCOs to reduce
+> >> clock jitters.
+> >>=20
+> >> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
+> >=20
+> > why does this need to be a separate rate array and cannot live in t=
+he
+> > general pll rate array?
+> >=20
+> > The plls are general purpose, so we shouldn't limit them arbitarily=
+.
+>=20
+> Yes, I understand your mean. :-)
+>=20
+> > I currently only see some frequencies (594MHz, 297MHz, 54MHz) that =
+are
+> > present in both arrays but have different settings. As your patch
+> > description says that these settings reduce clock jitter, wouldn't =
+the
+> > general frequencies also profit from merging these new values into =
+the
+> > general rate array?
+>=20
+> and here are some of our ideas:
+>=20
+> "WIth the frac mode and higher VCO to reduce clock jitters" that
+> suggestion is from IC designer.
+> There are many and various kinds resolution and needed frequencies fo=
+r
+> external disaplay devices. For example, the DP needs:
+> 3840x2160 533250KHz
+> 3840x2160 297000KHz
+> 3840x2160 296703KHz
+> 2560x1440 241500KHz
+> 1920x1080 148500KHz
+> 1920x1080 148352KHz
+> 1680x1050 146250KHz
+> 1600x900 108000KHz
+> 1280x1024 135000KHz
+> 1280x1024 108000KHz
+> ... and so on
+>=20
+> There some frequencies must be allocated with frac mode. We separate
+> these frequencies that are only used for display (VPLL) from the gene=
+ral
+> rate table, and put them to be classified into a frac mode table, we =
+can
+> reduce the frequency of the query time, the two rate tables will not
+> interfere with each other. Because other PLLs don't need to assgin th=
+ese
+> various frequencies with frac mode.
 
-Thanks,
-Charles
+Hmm, you're adding 14 frequencies to that new table (4 or so of them=20=
+
+duplicating existing frequencies). So even if the effective number of n=
+ew=20
+frequencies goes from now 10 to 20, I don't think walking that table wi=
+ll take=20
+an excessive time longer than now.
+
+After the patch introducing the automatic rate calculation, the rate ta=
+ble we=20
+need to walk, will even get smaller.
+
+Other components might also profit from the updated standard frequencie=
+s with=20
+less jitter you're introducing here.
+
+And of course there is also the possibility somebody might want to buil=
+d some=20
+rk3399 device without any graphics output at all [arm-server seem to be=
+ the=20
+new hype :-) ], so may want to use the vpll for something else complete=
+ly.
+
+So I still don't see an argument why it needs to be a separate table, a=
+s I=20
+currently don't see a case were it will really hurt the other PLLs.
+
+
+Heiko
