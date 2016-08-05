@@ -1,55 +1,100 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and
- EPLL clocks
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
- <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
-Date: Tue, 30 Aug 2016 11:54:16 +0200
-MIME-version: 1.0
-In-reply-to: <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [RESEND PATCH v2 00/13] Clock improvement for video playback
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas
+ Kandagatla <srinivas.kandagatla@gmail.com>,
+        Maxime Coquelin
+	<maxime.coquelin@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        <gabriel.fernandez@st.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <b6389057-0c53-7095-81a3-617aff678e28@st.com>
+Date: Fri, 5 Aug 2016 10:11:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22/2016 06:30 PM, Sylwester Nawrocki wrote:
-> The PDMA{0,1} and EPLL clock IDs are added separately in this
-> patch so the patch can be merged to the arm-soc tree as dependency.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  include/dt-bindings/clock/exynos5410.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-> index 85b467b..a74442a 100644
-> --- a/include/dt-bindings/clock/exynos5410.h
-> +++ b/include/dt-bindings/clock/exynos5410.h
-> @@ -19,6 +19,7 @@
->  #define CLK_FOUT_MPLL		4
->  #define CLK_FOUT_BPLL		5
->  #define CLK_FOUT_KPLL		6
-> +#define CLK_FOUT_EPLL		7
->  
->  /* gate for special clocks (sclk) */
->  #define CLK_SCLK_UART0		128
-> @@ -48,6 +49,8 @@
->  #define CLK_USI3		268
->  #define CLK_UART3		260
->  #define CLK_PWM			279
-> +#define CLK_PDMA0		280
-> +#define CLK_PDMA1		281
+Hi Mike
 
-How about making the IDs the same as in exynos5420? This way those
-drivers could be merged someday in the future (if someone would be
-bored...).
+I believe that you and Gabriel found an agreement to include this series in v4.8
 
-Best regards,
-Krzysztof
+Unfortunately it seems it's not the case, for which reason ?
 
->  #define CLK_MCT			315
->  #define CLK_WDT			316
->  #define CLK_RTC			317
-> 
+Thanks
+
+Patrice
+
+
+
+On 06/16/2016 11:20 AM, Gabriel Fernandez wrote:
+> v2:
+>   - Simpliflication of clock binding
+>     remark from Rob https://lkml.org/lkml/2016/5/25/492
+>   - Suppression of stih415-416 support for the clocks (in order
+> 	to help simplification of clock binding)
+>     (others patchs for the machine and drivers will come)
+>
+> This serie allows to increase video resolutions and make audio
+> adjustment during a video playback.
+>
+> Gabriel Fernandez (13):
+>   drivers: clk: st: Remove stih415-416 clock support
+>   drivers: clk: st: Simplify clock binding of STiH4xx platforms
+>   drivers: clk: st: Add fs660c32 synthesizer algorithm
+>   drivers: clk: st: Add clock propagation for audio clocks
+>   drivers: clk: st: Handle clk synchronous mode for video clocks
+>   ARM: DT: STiH407: Enable clock propagation for audio clocks
+>   ARM: DT: STiH410: Enable clock propagation for audio clocks
+>   ARM: DT: STiH418: Enable clock propagation for audio clocks
+>   ARM: DT: STiH407: Enable synchronous clock mode for video clocks
+>   ARM: DT: STiH410: Enable synchronous clock mode for video clocks
+>   ARM: DT: STiH418: Enable synchronous clock mode for video clocks
+>   ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
+>   ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+>
+>  .../bindings/clock/st/st,clkgen-divmux.txt         |  49 --
+>  .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  20 +-
+>  .../devicetree/bindings/clock/st/st,clkgen-pll.txt |  35 +-
+>  .../bindings/clock/st/st,clkgen-prediv.txt         |  36 -
+>  .../devicetree/bindings/clock/st/st,clkgen-vcc.txt |  61 --
+>  .../devicetree/bindings/clock/st/st,clkgen.txt     |  54 +-
+>  .../devicetree/bindings/clock/st/st,flexgen.txt    |   4 +
+>  .../devicetree/bindings/clock/st/st,quadfs.txt     |  31 +-
+>  arch/arm/boot/dts/stih407-clock.dtsi               |   4 +-
+>  arch/arm/boot/dts/stih407.dtsi                     |  16 +-
+>  arch/arm/boot/dts/stih410-clock.dtsi               |   4 +-
+>  arch/arm/boot/dts/stih410.dtsi                     |  16 +-
+>  arch/arm/boot/dts/stih418-clock.dtsi               |   4 +-
+>  drivers/clk/st/clk-flexgen.c                       |  61 +-
+>  drivers/clk/st/clkgen-fsyn.c                       | 481 ++++---------
+>  drivers/clk/st/clkgen-mux.c                        | 748 +--------------------
+>  drivers/clk/st/clkgen-pll.c                        | 470 +------------
+>  17 files changed, 297 insertions(+), 1797 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-divmux.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-prediv.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-vcc.txt
+>
