@@ -1,29 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Aug 2016 13:02:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: gcc-msm8996: Fix pcie 2 pipe register offset
-Message-ID: <20160825200228.GO19826@codeaurora.org>
-References: <1472124047-22627-1-git-send-email-srinivas.kandagatla@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Fri, 5 Aug 2016 13:22:01 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Wadim Egorov <w.egorov@phytec.de>
+Cc: Andy Yan <andy.yan@rock-chips.com>, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, a.zummo@towertech.it,
+	pawel.moll@arm.com, rtc-linux@googlegroups.com,
+	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
+	robh+dt@kernel.org, alexandre.belloni@free-electrons.com,
+	broonie@kernel.org, dianders@chromium.org, galak@codeaurora.org,
+	zyw@rock-chips.com, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH v5 1/5] mfd: RK808: Add RK818 support
+Message-ID: <20160805122201.GW5243@dell>
+References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
+ <20160608141735.GE14888@dell>
+ <5759277D.7090101@phytec.de>
+ <577C77DF.9060706@rock-chips.com>
+ <577CBB62.8080806@phytec.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472124047-22627-1-git-send-email-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <577CBB62.8080806@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25, Srinivas Kandagatla wrote:
-> This patch corrects the register offset for pcie2 pipe clock.
-> Offset according to datasheet is 0x6e018 instead of 0x6e108.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
+[...]
 
-Applied to clk-next
+> Lee, you have already applied this series. But I can't find the patches
+> in your kernel tree.
+> I would like to read the device ID from the register in the probe function.
+> Do you want me to base my changes on top of this series or send a new
+> version?
+
+Please rebase and resend the series.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
