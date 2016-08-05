@@ -1,41 +1,101 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 19 Aug 2016 12:46:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
-	James Liao <jamesjj.liao@mediatek.com>
-Subject: Re: [PATCH v11 4/9] clk: mediatek: Add dt-bindings for MT2701 clocks
-Message-ID: <20160819194621.GB6502@codeaurora.org>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
- <1471584896-9986-5-git-send-email-erin.lo@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.130]:45925 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758060AbcHENXq (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2016 09:23:46 -0400
+Message-ID: <57A49342.3020309@rock-chips.com>
+Date: Fri, 05 Aug 2016 21:23:14 +0800
+From: Xing Zheng <zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471584896-9986-5-git-send-email-erin.lo@mediatek.com>
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+CC: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dianders@chromium.org, briannorris@chromium.org,
+	huangtao@rock-chips.com, zhangqing@rock-chips.com
+Subject: Re: [PATCH v3 7/7] clk: rockchip: rk3399: Add support frac mode frequencies
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <12790025.3tRiQgk9GG@diego> <57A3F971.6000009@rock-chips.com> <1786762.HqNHoLusdi@diego>
+In-Reply-To: <1786762.HqNHoLusdi@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/19, Erin Lo wrote:
-> From: Shunli Wang <shunli.wang@mediatek.com>
-> 
-> Add MT2701 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg, pericfg and subsystem clocks.
-> 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> Tested-by: John Crispin <blogic@openwrt.org>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
+Hi Heiko,
 
-Applied to clk-next
+On 2016年08月05日 16:48, Heiko Stübner wrote:
+> Hi Xing,
+>
+> Am Freitag, 5. August 2016, 10:26:57 schrieb Xing Zheng:
+>> On 2016年08月05日 03:19, Heiko Stübner wrote:
+>>> Am Dienstag, 2. August 2016, 15:22:59 schrieb Xing Zheng:
+>>>> We need to support various display resolutions for external
+>>>> display devices like HDMI/DP, the frac mode can help us to
+>>>> acquire almost any frequencies, and need higher VCOs to reduce
+>>>> clock jitters.
+>>>>
+>>>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
+>>> why does this need to be a separate rate array and cannot live in the
+>>> general pll rate array?
+>>>
+>>> The plls are general purpose, so we shouldn't limit them arbitarily.
+>> Yes, I understand your mean. :-)
+>>
+>>> I currently only see some frequencies (594MHz, 297MHz, 54MHz) that are
+>>> present in both arrays but have different settings. As your patch
+>>> description says that these settings reduce clock jitter, wouldn't the
+>>> general frequencies also profit from merging these new values into the
+>>> general rate array?
+>> and here are some of our ideas:
+>>
+>> "WIth the frac mode and higher VCO to reduce clock jitters" that
+>> suggestion is from IC designer.
+>> There are many and various kinds resolution and needed frequencies for
+>> external disaplay devices. For example, the DP needs:
+>> 3840x2160 533250KHz
+>> 3840x2160 297000KHz
+>> 3840x2160 296703KHz
+>> 2560x1440 241500KHz
+>> 1920x1080 148500KHz
+>> 1920x1080 148352KHz
+>> 1680x1050 146250KHz
+>> 1600x900 108000KHz
+>> 1280x1024 135000KHz
+>> 1280x1024 108000KHz
+>> ... and so on
+>>
+>> There some frequencies must be allocated with frac mode. We separate
+>> these frequencies that are only used for display (VPLL) from the general
+>> rate table, and put them to be classified into a frac mode table, we can
+>> reduce the frequency of the query time, the two rate tables will not
+>> interfere with each other. Because other PLLs don't need to assgin these
+>> various frequencies with frac mode.
+> Hmm, you're adding 14 frequencies to that new table (4 or so of them
+> duplicating existing frequencies). So even if the effective number of new
+> frequencies goes from now 10 to 20, I don't think walking that table will take
+> an excessive time longer than now.
+>
+> After the patch introducing the automatic rate calculation, the rate table we
+> need to walk, will even get smaller.
+>
+> Other components might also profit from the updated standard frequencies with
+> less jitter you're introducing here.
+>
+> And of course there is also the possibility somebody might want to build some
+> rk3399 device without any graphics output at all [arm-server seem to be the
+> new hype :-) ], so may want to use the vpll for something else completely.
+>
+> So I still don't see an argument why it needs to be a separate table, as I
+> currently don't see a case were it will really hurt the other PLLs.
+>
+>
+> Heiko
+>
+Yes, sorry to this idea is not comprehensive. I will try to find a 
+better way.
+
+Thanks for your comments. :-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+- Xing Zheng
+
+
