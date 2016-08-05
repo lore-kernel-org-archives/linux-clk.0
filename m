@@ -1,50 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:40:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH V3 1/4] clk: max77686: Combine Maxim max77686 and
- max77802 driver
-Message-ID: <20160815224018.GO361@codeaurora.org>
-References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
- <1466160667-28451-2-git-send-email-ldewangan@nvidia.com>
+Return-Path: <frank.wang@rock-chips.com>
+From: Frank Wang <frank.wang@rock-chips.com>
+Subject: Re: [PATCH v3 2/7] clk: rockchip: rk3399: export 480M_SRC clock id
+ for usbphy0/usbphy1
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ Xing Zheng <zhengxing@rock-chips.com>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+ <1470122401-31934-3-git-send-email-zhengxing@rock-chips.com>
+ <1918977.W0kRfKbZsD@diego>
+Cc: linux-rockchip@lists.infradead.org, dianders@chromium.org,
+ briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com,
+ wulf@rock-chips.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ daniel.meng@rock-chips.com, frank.wang@rock-chips.com
+Message-ID: <cba79ba6-7f41-5398-389c-7fd3fe5e0089@rock-chips.com>
+Date: Fri, 5 Aug 2016 16:34:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466160667-28451-2-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1918977.W0kRfKbZsD@diego>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/17, Laxman Dewangan wrote:
-> The clock IP used on the Maxim PMICs max77686 and max77802 are
-> same. The configuration of clock register is also same except
-> the number of clocks.
-> 
-> Part of common code utilisation, there is 3 files for these chips
-> clock driver, one for common and two files for driver registration.
-> 
-> Combine both drivers into single file and move common code into
-> same common file reduces the 2 files and make max77686 and max77802
-> clock driver in single fine. This driver does not depends on the
-> parent driver structure. The regmap handle is acquired through
-> regmap APIs for the register access.
-> 
-> This combination of driver helps on adding clock driver for different
-> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
+Hi Heiko,
 
-Applied to clk-next
+On 2016/8/5 3:10, Heiko Stübner wrote:
+> Hi Xing,
+>
+> Am Dienstag, 2. August 2016, 15:19:56 schrieb Xing Zheng:
+>> Export these source clocks for usbphy.
+>>
+>> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> can you please provide a rationale why you need manual control over that
+> intermediate clock?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Well, From below graph, you can see that 'clk_usbphyX_480m' is generated 
+from usb2phy, and 'clk_usbphy_480m' which select from 
+clk_usbphyX_480m_src via a gate (G13[12])  provided 480M clock to other 
+modules.
+
+   xin24m
+       |__ clk_usb2phy0_ref
+       |                 |__ clk_usbphy0_480m
+       |                                   |__clk_usbphy0_480m_src
+       | |__clk_usbphy_480m
+       |         |__ ... ...
+       |__ clk_usb2phy1_ref
+                          |__ clk_usbphy1_480m
+                                          |__clk_usbphy1_480m_src
+
+> The two usbphys seem to use the  clk_usb2phyX_ref clocks, generate the 480m
+> clocks, but do not seem to need the clk_usbphyX_480m_src gates.
+
+Yeah, they used to be. However, the story went something like this,
+
+Some PM suspend process related ehci/ohci controller are base on 480m 
+clocks, unfortunately, usb2-phy suspended earlier than ehci/ohci 
+(usb2-phy will be auto suspended if no devices plug-in), and the 
+clk-480m provided by it was disabled if no module used. As a result, the 
+PM suspend process was blocked when it run into ehci/ohci module.
+
+Hence, we are planing to refer clk_usbphyX_480m_src into each ehci/ohci 
+driver. Maybe you will challenge why not refer clk_usbphy_480m directly? 
+because there are two ehci/ohci connected in the different usb2phy, and 
+only one clk_usbphy_480m clock was selected in clock tree.
+
+BR.
+Frank
+
+> The clk_usbphyX_480m_src clocks on the other hand only lead to the
+> clk_usbphy_480m mux, so I'd like some explanation on what you want to achieve
+> here :-)
+>
+>
+> Thanks
+> Heiko
+>
