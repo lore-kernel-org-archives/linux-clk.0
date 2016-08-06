@@ -1,72 +1,146 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160819002826.GT361@codeaurora.org>
-References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
- <1470112223-24835-3-git-send-email-yamada.masahiro@socionext.com> <20160819002826.GT361@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 20 Aug 2016 02:55:12 +0900
-Message-ID: <CAK7LNAROCdE4tomp6jg4p5Ep-koPjWSchNEXH01Qn0Wn3q-f2g@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] clk: uniphier: add clock data for UniPhier SoCs
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	gnurou@gmail.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com
+Cc: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Sat,  6 Aug 2016 21:40:49 +0200
+Message-Id: <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Mirza Krak <mirza.krak@gmail.com>
 
+Document the devicetree bindings for the Generic Memory Interface (GMI)
+bus driver found on Tegra SOCs.
 
-2016-08-19 9:28 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+---
+ .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 99 ++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
 
->> +
->> +
->> +System clock
->> +------------
->> +
->> +Required properties:
->> +- compatible: should be one of the following:
->> +    "socionext,uniphier-sld3-clock" - for PH1-sLD3 SoC.
->> +    "socionext,uniphier-ld4-clock"  - for PH1-LD4 SoC.
->> +    "socionext,uniphier-pro4-clock" - for PH1-Pro4 SoC.
->> +    "socionext,uniphier-sld8-clock" - for PH1-sLD8 SoC.
->> +    "socionext,uniphier-pro5-clock" - for PH1-Pro5 SoC.
->> +    "socionext,uniphier-pxs2-clock" - for ProXstream2/PH1-LD6b SoC.
->> +    "socionext,uniphier-ld11-clock" - for PH1-LD11 SoC.
->> +    "socionext,uniphier-ld20-clock" - for PH1-LD20 SoC.
->> +- #clock-cells: should be 1.
->> +
->> +Example:
->> +
->> +     sysctrl@61840000 {
->> +             compatible = "socionext,uniphier-ld20-sysctrl",
->> +                          "simple-mfd", "syscon";
->> +             reg = <0x61840000 0x4000>;
->> +
->> +             clock {
->> +                     compatible = "socionext,uniphier-ld20-clock";
->> +                     #clock-cells = <1>;
->> +             };
->> +
->> +             other nodes ...
->
-> What are the other nodes? Is there a document for the rest of the
-> MFD?
-
-At lease there are "clock" and "reset" in this MFD at this point.
-Perhaps, I may want to add more in the future.
-
-That's why I do not want to list all of the sibling nodes.
-
-The reset node is documented in its binding document,
-added by the following patch:
-https://patchwork.kernel.org/patch/9255101/
-
-
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+new file mode 100644
+index 0000000..046846e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+@@ -0,0 +1,99 @@
++Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
++
++The Generic Memory Interface bus enables memory transfers between internal and
++external memory. Can be used to attach various high speed devices such as
++synchronous/asynchronous NOR, FPGA, UARTS and more.
++
++The actual devices are instantiated from the child nodes of a GMI node.
++
++Required properties:
++  - compatible : Should contain one of the following:
++        For Tegra20 must contain "nvidia,tegra20-gmi".
++        For Tegra30 must contain "nvidia,tegra30-gmi".
++ - reg: Should contain GMI controller registers location and length.
++ - clocks: Must contain an entry for each entry in clock-names.
++ - clock-names: Must include the following entries: "gmi"
++ - resets : Must contain an entry for each entry in reset-names.
++ - reset-names : Must include the following entries: "gmi"
++ - #address-cells: The number of cells used to represent physical base
++   addresses in the GMI address space.
++ - #size-cells: The number of cells used to represent the size of an address
++   range in the GMI address space.
++ - ranges: Mapping of the GMI address space to the CPU address space.
++
++Note that the GMI controller does not have any internal chip-select address
++decoding and if you want to access multiple devices external chip-select
++decoding must be provided. Furthermore, if you do have external logic to
++support multiple devices this would assume that the devices use the same
++timing and so are probably the same type. It also assumes that they can fit in
++the 256MB address range.
++
++Optional properties:
++
++ - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
++ - nvidia,snor-mux-mode: Enable address/data MUX mode.
++ - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
++   If omitted it will be asserted with data.
++ - nvidia,snor-rdy-inv: RDY signal is active high
++ - nvidia,snor-adv-inv: ADV signal is active high
++ - nvidia,snor-oe-inv: WE/OE signal is active high
++ - nvidia,snor-cs-inv: CS signal is active high
++ - nvidia,snor-cs-select: CS output pin configuration. Default is CS0
++ 	<0> : CS0
++	<1> : CS1
++	<2> : CS2
++	<3> : CS3
++	<4> : CS4
++	<5> : CS5
++	<6> : CS6
++	<7> : CS7
++
++  Note that there is some special handling for the timing values.
++  From Tegra TRM:
++  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
++
++ - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
++   bus. Valid values are 0-15, default is 1
++ - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
++   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
++   (in case of MASTER Request). Valid values are 0-15, default is 1
++ - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
++   Valid values are 0-15, default is 1.
++ - nvidia,snor-ce-width: Number of cycles before CE is asserted.
++   Valid values are 0-255, default is 4
++ - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
++   Valid values are 0-15, default is 1
++ - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
++   Valid values are 0-255, default is 1
++ - nvidia,snor-wait-width: Number of cycles before READY is asserted.
++   Valid values are 0-255, default is 3
++
++Example with two SJA1000 CAN controllers connected to the GMI bus:
++
++  gmi@70090000 {
++    #address-cells = <1>;
++    #size-cells = <1>;
++    ranges;
++    nvidia,snor-mux-mode;
++    nvidia,snor-adv-inv;
++    nvidia,snor-cs-select = <4>;
++
++    bus@0,0 {
++      compatible = "simple-bus";
++      reg = <0 0>;
++      ranges;
++
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      can@48000000 {
++        reg = <0x48000000 0x100>;
++        ...
++      };
++
++      can@48040000 {
++        reg = <0x48040000 0x100>;
++        ...
++      };
++    };
++  };
 -- 
-Best Regards
-Masahiro Yamada
+2.1.4
