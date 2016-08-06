@@ -1,44 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:64619 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbcHQGFI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Aug 2016 02:05:08 -0400
-Subject: Re: [PATCH v2] clk: max77686: Migrate to clk_hw based OF and
- registration APIs
-To: Stephen Boyd <stephen.boyd@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-References: <20160816223856.1282-1-stephen.boyd@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <ab7f86c8-8feb-1512-2046-016b950ce68b@samsung.com>
-Date: Wed, 17 Aug 2016 08:05:03 +0200
-MIME-version: 1.0
-In-reply-to: <20160816223856.1282-1-stephen.boyd@linaro.org>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	gnurou@gmail.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com
+Cc: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH 4/6] ARM: tegra: Add Tegra30 GMI support
+Date: Sat,  6 Aug 2016 21:40:50 +0200
+Message-Id: <1470512452-8322-5-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/17/2016 12:38 AM, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
->  drivers/clk/clk-max77686.c | 42 +++++++++++++++++++++---------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Looks correct. The pr_err() could be replaced to dev_err() but first
-pointer to dev should be stored... so this may be fixed on different patch.
+Add a device node for the GMI controller found on Tegra30.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+---
+ arch/arm/boot/dts/tegra30.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 5030065..5fd4d29 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -439,6 +439,16 @@
+ 		status = "disabled";
+ 	};
+ 
++	gmi@70009000 {
++		compatible = "nvidia,tegra30-gmi";
++		reg = <0x70009000 0x1000>;
++		clocks = <&tegra_car TEGRA30_CLK_NOR>;
++		clock-names = "gmi";
++		resets = <&tegra_car 42>;
++		reset-names = "gmi";
++		status = "disabled";
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
+-- 
+2.1.4
