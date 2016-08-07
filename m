@@ -1,29 +1,28 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 29 Aug 2016 17:10:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] Rockchip clk fixes for 4.8
-Message-ID: <20160830001044.GA12510@codeaurora.org>
-References: <5043281.GVRln4Xh5N@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <5043281.GVRln4Xh5N@diego>
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC 0/2] clk: renesas: r8a7795: improve z clock rate
+Date: Mon,  8 Aug 2016 02:58:10 +0900
+Message-Id: <1470592692-3486-1-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/30, Heiko Stübner wrote:
-> Hi Mike, Stephen,
-> 
-> please find below some fixes for rk3399 clocks.
-> Really only wrong register bits where the manual contained (now fixed)
-> mistakes and one needed critical clock.
-> 
-> So if nothing stands out please pull
-> 
+These patches improve the calculated value of Z clock.
 
-Pulled. Thanks.
+This series is based on the clk-next branch.
+
+Dien Pham (2):
+  clk: renesas: r8a7795: Improve the calculated value of Clock.
+  clk: renesas: r8a7795: Do rounding for calculated frequency value
+
+ drivers/clk/renesas/clk-rcar-gen2.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
