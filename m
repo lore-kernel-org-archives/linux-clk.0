@@ -1,70 +1,63 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-Subject: Re: [PATCH RESEND v2 0/8] Improve Rx/Tx DMA implementation
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
- <a5d420fa-0837-f0af-dee9-a61562d473c2@toradex.com>
- <20160802152835.GC21602@lunn.ch>
-CC: <gregkh@linuxfoundation.org>, <linux-serial@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-kernel@vger.kernel.org>, <stefan@agner.ch>, <kernel@pengutronix.de>,
-	<jslaby@suse.com>, <shawnguo@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-Message-ID: <e4084260-be57-8f30-a016-c75e57237392@toradex.com>
-Date: Wed, 3 Aug 2016 10:09:22 +0530
-MIME-Version: 1.0
-In-Reply-To: <20160802152835.GC21602@lunn.ch>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: bhuvanchandra.dv@toradex.com
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC 1/2] clk: renesas: r8a7795: Improve the calculated value of Clock.
+Date: Mon,  8 Aug 2016 02:58:11 +0900
+Message-Id: <1470592692-3486-2-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1470592692-3486-1-git-send-email-ykaneko0929@gmail.com>
+References: <1470592692-3486-1-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andrew,
+From: Dien Pham <dien.pham.ry@rvc.renesas.com>
 
-On 08/02/16 20:58, Andrew Lunn wrote:
+This patch improves the calculated value of Z Clock when odd frequency
+(as 33.33 MHz) is inputted.
 
-> On Tue, Aug 02, 2016 at 01:23:32PM +0530, Bhuvanchandra DV wrote:
->> Hello,
->>
->> Any comments on this patchset?
-> I tested v1 on my Vybrid board and it fixed the corruption issues i
-> was seeing with the console on a serial port. I will try to test this
-> version.
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+ drivers/clk/renesas/clk-rcar-gen2.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Thanks! for testing it. As such there is nothing much changed w.r.t
-code, we only split the suspend/resume patch in v2.
-
---
-Bhuvan
-
->
->      Andrew
->
->> On 07/19/16 13:13, Bhuvanchandra DV wrote:
->>
->>> Drop the clock change patch from v2 patchset[1] since it is applied.
->>>
->>> Changes since v1:
->>> Split suspend/resume patch.
->>>
->>> [1] https://lkml.org/lkml/2016/6/28/124
->>>
->>> Bhuvanchandra DV (5):
->>>    tty: serial: fsl_lpuart: Fix broken 8m/s1 support
->>>    tty: serial: fsl_lpuart: Use cyclic DMA for Rx
->>>    tty: serial: fsl_lpuart: Use scatter/gather DMA for Tx
->>>    tty: serial: fsl_lpuart: Update suspend/resume for DMA mode
->>>    tty: serial: fsl_lpuart: Add support for RS-485
->>>
->>> Stefan Agner (3):
->>>    tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
->>>    tty: serial: fsl_lpuart: support suspend/resume
->>>    tty: serial: fsl_lpuart: fix clearing of receive flag
->>>
->>>   drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
->>>   1 file changed, 476 insertions(+), 334 deletions(-)
->>>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index 00e6aba..7519f71 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -65,7 +65,8 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+ 	    >> CPG_FRQCRC_ZFC_SHIFT;
+ 	mult = 32 - val;
+ 
+-	return div_u64((u64)parent_rate * mult, 32);
++	/* Add 1/2 to reduce the math error that raises by math rounding */
++	return div_u64((u64)parent_rate * mult + 16, 32);
+ }
+ 
+ static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -77,7 +78,7 @@ static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!prate)
+ 		prate = 1;
+ 
+-	mult = div_u64((u64)rate * 32, prate);
++	mult = div_u64((u64)rate * 32 + prate / 2, prate);
+ 	mult = clamp(mult, 1U, 32U);
+ 
+ 	return *parent_rate / 32 * mult;
+@@ -91,7 +92,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 val, kick;
+ 	unsigned int i;
+ 
+-	mult = div_u64((u64)rate * 32, parent_rate);
++	mult = div_u64((u64)rate * 32 + parent_rate / 2, parent_rate);
+ 	mult = clamp(mult, 1U, 32U);
+ 
+ 	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+-- 
+1.9.1
