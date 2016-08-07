@@ -1,86 +1,55 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: =?utf-8?q?Alexander_M=C3=BCller?= <serveralex@gmail.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1469800864-43440-1-git-send-email-serveralex@gmail.com>
-Message-ID: <147208467939.32728.10815386393422927131@resonance>
-Subject: Re: [PATCH v4 0/6] Add Amlogic meson8b clock gates
-Date: Wed, 24 Aug 2016 17:24:39 -0700
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC 2/2] clk: renesas: r8a7795: Do rounding for calculated frequency value
+Date: Mon,  8 Aug 2016 02:58:12 +0900
+Message-Id: <1470592692-3486-3-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1470592692-3486-1-git-send-email-ykaneko0929@gmail.com>
+References: <1470592692-3486-1-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexander M=C3=BCller (2016-07-29 07:00:58)
-> This patch series adds support for the Amlogic meson8b clock gates. The A=
-mlogic
-> U-Boot disables most of them at boot. In order to enable ethernet, USB an=
-d other
-> components it's mandatory to enable the clock gates when loading the corr=
-esponding
-> drivers.
-> =
+From: Dien Pham <dien.pham.ry@rvc.renesas.com>
 
-> The meson8b clock gate support is based on the previous work done for Aml=
-ogic gxbb
-> currently available in clk-next.
+The calculation value has some errors after some calculation,
+especially, when one of the input value is odd value.
+This patch applies rounding to closest frequency at 100Mhz unit.
 
-Hi Alexander,
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+ drivers/clk/renesas/clk-rcar-gen2.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-This series looks good to me. Can you rebase it against the
-clk-meson-gxbb-ao branch?
-
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-meson-gxbb-=
-ao
-
-I'll merge it on top of that and Kevin and Carlo can pull it into the
-linux-amlogic tree if they feel like it.
-
-Regards,
-Mike
-
-> =
-
-> Changes since v3:
->   - Include include/dt-bindings/clock/meson8b-clkc.h to prevent code dupl=
-icates
-> =
-
-> Changes since v2:
->   - Added commit description for patch 2
->   - Changed CLK_NR_CLOCKS macro to constant int
->   - Moved back MESON_GATE macro to share it between gxbb and meson8b
-> =
-
-> Changes since v1:
->   - Fixed GXBB spelling
->   - Moved newly introduced CLKID defines to private header
->   - Moved CLK_NR_CLKS define from DT binding to private header
->   - Rebased to linux-amlogic/v4.7/integ making Kconfig select obsolete
-> =
-
-> Alexander M=C3=BCller (6):
->   clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
->   meson: clk: Move register definitions to meson8b.h
->   meson: clk: Rename register names according to Amlogic datasheet
->   clk: meson: Copy meson8b CLKID defines to private header file
->   gxbb: clk: Adjust MESON_GATE macro to be shared with meson8b
->   meson: clk: Add support for clock gates
-> =
-
->  drivers/clk/meson/Makefile                      |   2 +-
->  drivers/clk/meson/clkc.h                        |   2 +-
->  drivers/clk/meson/gxbb.c                        | 162 ++++++-------
->  drivers/clk/meson/{meson8b-clkc.c =3D> meson8b.c} | 293 ++++++++++++++++=
-+++++---
->  drivers/clk/meson/meson8b.h                     | 151 ++++++++++++
->  include/dt-bindings/clock/meson8b-clkc.h        |   2 -
->  6 files changed, 497 insertions(+), 115 deletions(-)
->  rename drivers/clk/meson/{meson8b-clkc.c =3D> meson8b.c} (52%)
->  create mode 100644 drivers/clk/meson/meson8b.h
-> =
-
-> -- =
-
-> 2.5.0
->=20
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index 7519f71..5c4dcc7 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -60,13 +60,16 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+ 	struct cpg_z_clk *zclk = to_z_clk(hw);
+ 	unsigned int mult;
+ 	unsigned int val;
++	unsigned long rate;
+ 
+ 	val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+ 	    >> CPG_FRQCRC_ZFC_SHIFT;
+ 	mult = 32 - val;
+ 
+-	/* Add 1/2 to reduce the math error that raises by math rounding */
+-	return div_u64((u64)parent_rate * mult + 16, 32);
++	rate = div_u64((u64)parent_rate * mult + 16, 32);
++	/* Round to closest value at 100MHz unit */
++	rate = 100000000 * DIV_ROUND_CLOSEST(rate, 100000000);
++	return rate;
+ }
+ 
+ static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+1.9.1
