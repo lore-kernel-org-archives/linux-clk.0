@@ -1,58 +1,328 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 6/6] bus: Add support for Tegra Generic Memory Interface
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-7-git-send-email-mirza.krak@gmail.com>
+CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+	<pawel.moll@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <linux@armlinux.org.uk>,
+	<robh+dt@kernel.org>, <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Message-ID: <fae8dbaf-53e9-dcfe-f755-32f7b28f4c9f@nvidia.com>
+Date: Mon, 8 Aug 2016 14:47:51 +0100
 MIME-Version: 1.0
-In-Reply-To: <20160804205734.GA15690@codeaurora.org>
-References: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com> <20160804205734.GA15690@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 10 Aug 2016 17:16:29 +0900
-Message-ID: <CAK7LNAQL2u1YTxr_SWR6S_2aFPfXAPcaFfkWKSV_D-RU2vq7BQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: prevent __of_clk_get_hw_from_provider() from
- returning NULL
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1470512452-8322-7-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-05 5:57 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 07/19, Masahiro Yamada wrote:
->> The .get(_hw) callback of an OF clock provider can return a NULL
->> pointer in some cases.
->>
->> For example, of_clk_src_onecell_get() returns NULL for index 1 of a
->> sparse array of clocks like follows:
->>
->>   clk_num == 3
->>   idx 0: UART clk
->>   idx 1: NULL (no clk is allocated)
->>   idx 2: I2C clk
->>
->> In such cases, clk_get() successfully returns NULL.
->>
->> A problem is that most drivers only check IS_ERR(), like follows:
->>
->>   clk = devm_clk_get(dev, NULL);
->>   if (IS_ERR(clk))
->>           return PTR_ERR(clk);
->>
->> It carries on moving forward and will probably be hit by a different
->> error check with a different error message.
->
-> NULL is a valid clk pointer, so we can't really do anything here
-> besides rely on driver authors to do the right thing.
 
+On 06/08/16 20:40, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
+> 
+> The Generic Memory Interface bus can be used to connect high-speed
+> devices such as NOR flash, FPGAs, DSPs...
+> 
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> ---
+>  drivers/bus/Kconfig     |   7 ++
+>  drivers/bus/Makefile    |   1 +
+>  drivers/bus/tegra-gmi.c | 224 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 232 insertions(+)
+>  create mode 100644 drivers/bus/tegra-gmi.c
+> 
+> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+> index 3b205e2..88bbf2c 100644
+> --- a/drivers/bus/Kconfig
+> +++ b/drivers/bus/Kconfig
+> @@ -145,6 +145,13 @@ config TEGRA_ACONNECT
+>  	  Driver for the Tegra ACONNECT bus which is used to interface with
+>  	  the devices inside the Audio Processing Engine (APE) for Tegra210.
+>  
+> +config TEGRA_GMI
+> +	tristate "Tegra Generic Memory Interface bus driver"
+> +		depends on ARCH_TEGRA
+> +		help
+> +			Driver for the Tegra Generic Memory Interface bus which can be used
+> +			to attach devices such as NOR, UART, FPGA and more.
+> +
+>  config UNIPHIER_SYSTEM_BUS
+>  	tristate "UniPhier System Bus driver"
+>  	depends on ARCH_UNIPHIER && OF
+> diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+> index ac84cc4..34e2bab 100644
+> --- a/drivers/bus/Makefile
+> +++ b/drivers/bus/Makefile
+> @@ -18,5 +18,6 @@ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
+>  obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
+>  obj-$(CONFIG_SIMPLE_PM_BUS)	+= simple-pm-bus.o
+>  obj-$(CONFIG_TEGRA_ACONNECT)	+= tegra-aconnect.o
+> +obj-$(CONFIG_TEGRA_GMI)		+= tegra-gmi.o
+>  obj-$(CONFIG_UNIPHIER_SYSTEM_BUS)	+= uniphier-system-bus.o
+>  obj-$(CONFIG_VEXPRESS_CONFIG)	+= vexpress-config.o
+> diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
+> new file mode 100644
+> index 0000000..7a45442
+> --- /dev/null
+> +++ b/drivers/bus/tegra-gmi.c
+> @@ -0,0 +1,224 @@
+> +/*
+> + * Driver for NVIDIA Generic Memory Interface
+> + *
+> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2. This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/reset.h>
+> +
+> +#define TEGRA_GMI_CONFIG			0x00
+> +#define TEGRA_GMI_CONFIG_GO			BIT(31)
+> +#define TEGRA_GMI_BUS_WIDTH_32BIT	BIT(30)
+> +#define TEGRA_GMI_MUX_MODE			BIT(28)
+> +#define TEGRA_GMI_RDY_BEFORE_DATA	BIT(24)
+> +#define TEGRA_GMI_RDY_ACTIVE_HIGH	BIT(23)
+> +#define TEGRA_GMI_ADV_ACTIVE_HIGH	BIT(22)
+> +#define TEGRA_GMI_OE_ACTIVE_HIGH	BIT(21)
+> +#define TEGRA_GMI_CS_ACTIVE_HIGH	BIT(20)
+> +#define TEGRA_GMI_CS_SELECT(x)		((x & 0x7) << 4)
+> +
+> +#define TEGRA_GMI_TIMING0			0x10
+> +#define TEGRA_GMI_MUXED_WIDTH(x)	((x & 0xf) << 12)
+> +#define TEGRA_GMI_HOLD_WIDTH(x)		((x & 0xf) << 8)
+> +#define TEGRA_GMI_ADV_WIDTH(x)		((x & 0xf) << 4)
+> +#define TEGRA_GMI_CE_WIDTH(x)		(x & 0xf)
+> +
+> +#define TEGRA_GMI_TIMING1			0x14
+> +#define TEGRA_GMI_WE_WIDTH(x)		((x & 0xff) << 16)
+> +#define TEGRA_GMI_OE_WIDTH(x)		((x & 0xff) << 8)
+> +#define TEGRA_GMI_WAIT_WIDTH(x)		(x & 0xff)
+> +
+> +struct tegra_gmi_priv {
+> +	void __iomem *base;
+> +
+> +	u32 snor_config;
+> +	u32 snor_timing0;
+> +	u32 snor_timing1;
+> +
+> +	struct clk *clk;
+> +};
+> +
+> +static void tegra_gmi_init(struct device *dev, struct tegra_gmi_priv *priv)
+> +{
+> +	writel(priv->snor_timing0, priv->base + TEGRA_GMI_TIMING0);
+> +	writel(priv->snor_timing1, priv->base + TEGRA_GMI_TIMING1);
+> +
+> +	priv->snor_config |= TEGRA_GMI_CONFIG_GO;
+> +	writel(priv->snor_config, priv->base + TEGRA_GMI_CONFIG);
+> +}
+> +
+> +static int tegra_gmi_parse_dt(struct device *dev, struct tegra_gmi_priv *priv)
+> +{
+> +	struct device_node *of_node = dev->of_node;
+> +	u32 property;
+> +
+> +	/* configuration */
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-data-width-32bit"))
+> +		priv->snor_config |= TEGRA_GMI_BUS_WIDTH_32BIT;
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-mux-mode"))
+> +		priv->snor_config |= TEGRA_GMI_MUX_MODE;
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-rdy-active-before-data"))
 
-I still do not understand this.
+Line is over 80 characters.
 
+> +		priv->snor_config |= TEGRA_GMI_RDY_BEFORE_DATA;
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-rdy-inv"))
+> +		priv->snor_config |= TEGRA_GMI_RDY_ACTIVE_HIGH;
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-adv-inv"))
+> +		priv->snor_config |= TEGRA_GMI_ADV_ACTIVE_HIGH;
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-oe-inv"))
+> +		priv->snor_config |= TEGRA_GMI_OE_ACTIVE_HIGH;
+> +
+> +	if (of_property_read_bool(of_node, "nvidia,snor-cs-inv"))
+> +		priv->snor_config |= TEGRA_GMI_CS_ACTIVE_HIGH;
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-cs-select", &property))
+> +		priv->snor_config |= TEGRA_GMI_CS_SELECT(property);
+> +
+> +	/* Timing, the default values that are provided are reset values */
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-muxed-width", &property))
 
-I think clk_get() should return > 0 pointer on success,
-error-pointer on failure.
+Line is over 80 characters.
 
-I have no idea when NULL is useful as a return value of clk_get().
+> +		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(property);
+> +	else
+> +		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(1);
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-hold-width", &property))
+> +		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(property);
+> +	else
+> +		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(1);
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-adv-width", &property))
+> +		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(property);
+> +	else
+> +		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(1);
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-ce-width", &property))
+> +		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(property);
+> +	else
+> +		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(4);
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-we-width", &property))
+> +		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(property);
+> +	else
+> +		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(1);
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-oe-width", &property))
+> +		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(property);
+> +	else
+> +		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(1);
+> +
+> +	if (!of_property_read_u32(of_node, "nvidia,snor-wait-width", &property))
+> +		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(property);
+> +	else
+> +		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(3);
+> +
+> +	return of_platform_default_populate(of_node, NULL, dev);
 
+Seems odd to do this here. Why not as the last thing in probe once the
+GMI has been setup correctly?
 
+> +}
+> +
+> +static int tegra_gmi_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	struct clk *clk;
+> +	struct device *dev = &pdev->dev;
+> +	struct reset_control *rst;
+> +	struct tegra_gmi_priv *priv;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->base = base;
 
+If you allocate the memory first, you can get rid of this extra base
+variable.
+
+> +	clk = devm_clk_get(dev, "gmi");
+> +	if (IS_ERR(clk)) {
+> +		dev_err(dev, "can not get clock\n");
+> +		return PTR_ERR(clk);
+> +	}
+> +
+> +	priv->clk = clk;
+
+Why not set priv->clk directly from calling devm_clk_get? Then you don't
+this extra clk variable.
+
+> +
+> +	rst = devm_reset_control_get(dev, "gmi");
+> +	if (IS_ERR(rst)) {
+> +		dev_err(dev, "can not get reset\n");
+> +		return PTR_ERR(rst);
+> +	}
+> +
+> +	ret = tegra_gmi_parse_dt(dev, priv);
+> +	if (ret) {
+> +		dev_err(dev, "fail to create devices.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(clk);
+> +	if (ret) {
+> +		dev_err(dev, "fail to enable clock.\n");
+> +		return ret;
+> +	}
+> +
+> +	reset_control_assert(rst);
+> +	udelay(2);
+> +	reset_control_deassert(rst);
+> +
+> +	tegra_gmi_init(dev, priv);
+> +
+> +	dev_set_drvdata(dev, priv);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_gmi_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+
+Do you really need this dev variable?
+
+> +	struct tegra_gmi_priv *priv = dev_get_drvdata(dev);
+> +	void __iomem *base = priv->base;
+
+Do you really need this base variable?
+
+> +	u32 config;
+> +
+> +	of_platform_depopulate(dev);
+> +
+> +	config = readl(base + TEGRA_GMI_CONFIG);
+> +	config &= ~TEGRA_GMI_CONFIG_GO;
+> +	writel(config, base + TEGRA_GMI_CONFIG);
+> +
+> +	clk_disable_unprepare(priv->clk);
+
+What about asserting the reset?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id tegra_gmi_id_table[] = {
+> +	{ .compatible = "nvidia,tegra20-gmi", },
+> +	{ .compatible = "nvidia,tegra30-gmi", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, tegra_gmi_id_table);
+> +
+> +static struct platform_driver tegra_gmi_driver = {
+> +	.probe = tegra_gmi_probe,
+> +	.remove = tegra_gmi_remove,
+> +	.driver = {
+> +		.name		= "tegra-gmi",
+> +		.of_match_table	= tegra_gmi_id_table,
+> +	},
+> +};
+> +module_platform_driver(tegra_gmi_driver);
+> +
+> +MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
+> +MODULE_DESCRIPTION("NVIDIA Tegra GMI Bus Driver");
+> +MODULE_LICENSE("GPL v2");
+> 
+
+Cheers
+Jon
 
 -- 
-Best Regards
-Masahiro Yamada
+nvpublic
