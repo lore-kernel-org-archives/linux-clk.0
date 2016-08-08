@@ -1,145 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 23 Aug 2016 23:13:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v2 02/10] clk: qcom: Add support for alpha pll hwfsm ops
-Message-ID: <20160824061301.GT6502@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
- <1470904858-11930-3-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from nasmtp01.atmel.com ([192.199.1.245]:27566 "EHLO
+	ussmtp01.atmel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751979AbcHHKRc (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2016 06:17:32 -0400
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v6 0/6] ARM: at91: pm: add ULP1 mode support
+Date: Mon, 8 Aug 2016 18:04:59 +0800
+Message-ID: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470904858-11930-3-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Rajendra Nayak wrote:
-> Add support to enable/disable the alpha pll using hwfsm
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
 
-Care to add some more description here about what's going on?
+In order to achieve the lowest power consumption, in the ULP1 mode,
+all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
 
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 109 ++++++++++++++++++++++++++++++++++-----
->  drivers/clk/qcom/clk-alpha-pll.h |   1 +
->  2 files changed, 98 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index e6a03ea..bae31f9 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -62,9 +62,10 @@
->  #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), \
->  					   struct clk_alpha_pll_postdiv, clkr)
->  
-> -static int wait_for_pll(struct clk_alpha_pll *pll)
-> +static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
-> +			const char *action)
->  {
-> -	u32 val, mask, off;
-> +	u32 val, off;
->  	int count;
->  	int ret;
->  	const char *name = clk_hw_get_name(&pll->clkr.hw);
-> @@ -74,26 +75,101 @@ static int wait_for_pll(struct clk_alpha_pll *pll)
->  	if (ret)
->  		return ret;
->  
-> -	if (val & PLL_VOTE_FSM_ENA)
-> -		mask = PLL_ACTIVE_FLAG;
-> -	else
-> -		mask = PLL_LOCK_DET;
-> -
-> -	/* Wait for pll to enable. */
+The fast startup signal is used as a wake up source for ULP1 mode.
+As soon as the wake up event is asserted, the embedded 12MHz RC
+oscillator restarts automatically, which fast startup signal
+to trigger the PMC to wake up the system from the ULP1 mode can be
+configured via DT.
 
-Perhaps commit text could state why we shouldn't keep extending
-this model of figuring out what to poll?
+Changes in v6:
+ - Add Acked-by tag.
+ - Add specific sama5d2_pm_init() for SAMA5D2, which supports ULP1.
+   It is called sama5d2_dt_device_init(). Instead of by reading
+   the PMC version to check if it supports ULP1.
+ - Add comment to describe the platform condition of calling
+   at91_pm_ulp1_mode().
+ - Update the commit log.
+ - Add a new patch to support a new DT_MACHINE for SAMA5D2.
 
->  	for (count = 100; count > 0; count--) {
->  		ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
->  		if (ret)
->  			return ret;
-> -		if ((val & mask) == mask)
-> +		if (inverse && (val & mask))
-> +			return 0;
-> +		else if ((val & mask) == mask)
->  			return 0;
->  
->  		udelay(1);
->  	}
->  
-> -	WARN(1, "%s didn't enable after voting for it!\n", name);
-> +	WARN(1, "%s failed to %s!\n", name, action);
->  	return -ETIMEDOUT;
->  }
->  
-> +static int wait_for_pll_enable(struct clk_alpha_pll *pll, u32 mask)
-> +{
-> +	return wait_for_pll(pll, mask, 0, "enable");
-> +}
+Changes in v5:
+ - to improve the scalability, rework the DT expression part, use
+   the child nodes to describe the wake-up input and its active level.
+ - due to the DT property expression change, update the binding
+   document.
+ - due to the DT property expression change, update the fast restart
+   node's property.
 
-This is only called with two masks, so maybe we can have two
-functions for it or a simple macro to avoid making clients know
-about the mask?
+Changes in v4:
+ - add Acked-by tag.
+ - add fast_restart node to the DT file.
 
-> +
-> +static int wait_for_pll_disable(struct clk_alpha_pll *pll, u32 mask)
-> +{
-> +	return wait_for_pll(pll, mask, 1, "disable");
-> +}
-> +
-> +static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
-> +{
-> +	return wait_for_pll(pll, mask, 0, "offline");
-> +}
+Changes in v3:
+ - use 0 and 1, not string, to define the trigger active polarity.
+ - update the property description.
 
-These two are only called with one mask, why have that as a parameter?
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
+ - shorten the pmc-fast-startup property's name.
+ - use the value property, instead of bool property for high
+   or low triggered.
+ - change the property name and property description.
 
-> +
-> +/* alpha pll with hwfsm support */
-> +#define PLL_OFFLINE_REQ		BIT(7)
-> +#define PLL_FSM_ENA		BIT(20)
-> +#define PLL_OFFLINE_ACK		BIT(28)
-> +#define PLL_ACTIVE_FLAG		BIT(30)
+Wenyou Yang (6):
+  ARM: at91: sama5: Add a new DT_MACHINE for SAMA5D2
+  ARM: at91: pm: Create a procedure for the ULP0 mode
+  ARM: at91: pm: Add ULP1 mode support
+  ARM: at91: pm: Configure PMC fast startup signals
+  Documentation: atmel-pmc: Add DT bindings for fast startup
+  ARM: at91/dt: sama5d2_xplained: Add fast_restart node
 
-Please put these up top next to the register that they're for.
-
-> +
-> +static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
-> +{
-> +	int ret;
-> +	u32 val, off;
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +
-> +	off = pll->offset;
-> +	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable HW FSM mode, clear OFFLINE request */
-
-That's pretty obvious.
-
-> +	val |= PLL_FSM_ENA;
-> +	val &= ~PLL_OFFLINE_REQ;
-> +	ret = regmap_write(pll->clkr.regmap, off + PLL_MODE, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Make sure enable request goes through before waiting for update */
-> +	mb();
-> +
-> +	ret = wait_for_pll_enable(pll, PLL_ACTIVE_FLAG);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-Simplify to return wait_for_pll_enable()?
-
+ .../devicetree/bindings/arm/atmel-pmc.txt          |  52 +++++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  19 +++
+ arch/arm/mach-at91/generic.h                       |   2 +
+ arch/arm/mach-at91/pm.c                            |  83 ++++++++++-
+ arch/arm/mach-at91/pm.h                            |   7 +
+ arch/arm/mach-at91/pm_suspend.S                    | 160 ++++++++++++++++++---
+ arch/arm/mach-at91/sama5.c                         |  26 +++-
+ include/linux/clk/at91_pmc.h                       |  16 +++
+ 8 files changed, 338 insertions(+), 27 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
