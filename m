@@ -1,119 +1,47 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Mirza Krak <mirza.krak@gmail.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
- <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
- <CALw8SCV61w6BgtBb8pY4czeB4yFmbtLmB2MuyrvGcvepmRpeBQ@mail.gmail.com>
- <5e0402db-10ce-75eb-cf95-d9e2d26e3efe@nvidia.com>
- <CALw8SCVrQeZLQjkapLjk9Me=AVU4kbtOskem8jeEeYDK5tznGg@mail.gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <linux@armlinux.org.uk>, <robh+dt@kernel.org>, Kumar
- Gala <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d72d3f8f-6987-3623-077f-14485679e321@nvidia.com>
-Date: Wed, 10 Aug 2016 09:45:06 +0100
-MIME-Version: 1.0
-In-Reply-To: <CALw8SCVrQeZLQjkapLjk9Me=AVU4kbtOskem8jeEeYDK5tznGg@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <moinejf@free.fr>
+Date: Mon, 8 Aug 2016 20:15:27 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai
+ <wens@csie.org>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 3/7] clk: sunxi: add generic multi-parent bus clock
+ gates driver
+Message-Id: <20160808201527.62ec34beb19b86dcfd3dbf03@free.fr>
+In-Reply-To: <20160808172149.30861-4-andre.przywara@arm.com>
+References: <20160808172149.30861-1-andre.przywara@arm.com>
+	<20160808172149.30861-4-andre.przywara@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon,  8 Aug 2016 18:21:45 +0100
+Andre Przywara <andre.przywara@arm.com> wrote:
 
-On 09/08/16 21:48, Mirza Krak wrote:
-> 2016-08-09 15:34 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>
->> On 09/08/16 09:40, Mirza Krak wrote:
->>> 2016-08-08 16:44 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>>>
->>>> On 06/08/16 20:40, Mirza Krak wrote:
->>>>> From: Mirza Krak <mirza.krak@gmail.com>
->>>>>
-> 
-> <--snip-->
-> 
->>>>> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
->>>>> +   Valid values are 0-15, default is 1
->>>>> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
->>>>> +   Valid values are 0-255, default is 1
->>>>> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
->>>>> +   Valid values are 0-255, default is 3
->>>>> +
->>>>> +Example with two SJA1000 CAN controllers connected to the GMI bus:
->>>>> +
->>>>> +  gmi@70090000 {
->>>>> +    #address-cells = <1>;
->>>>> +    #size-cells = <1>;
->>>>
->>>> I think 0 for size makes sense. I know that caused you problems before,
->>>> but I am wondering if ...
->>>>
->>>>> +    ranges;
->>>>
->>>> ... ranges is needed here? If we do have it, I am wondering if it should
->>>> be a single entry for the chip-select that is being used. For now we
->>>> could only support a ranges with one entry.
->>>>
->>>>         #address-cells = <1>;
->>>>         #size-cells = <1>;
->>>>         ranges = <4 0x48000000 0x00040000>;
->>>
->>> I prefer if we have "ranges" with one single entry, and warn if user enters
->>> multiple for now, like we discussed earlier. Should have really done it in
->>> this series.
->>
->> I think I do as well.
->>
->>>>
->>>>> +    nvidia,snor-mux-mode;
->>>>> +    nvidia,snor-adv-inv;
->>>>> +    nvidia,snor-cs-select = <4>;
->>>>
->>>> I would have expected these under bus@X node as they are specific to the
->>>> GMI CS.
->>>
->>> Yes, that is true.
->>>
->>>>
->>>> I would also expect that the actual chip-select number is encoded in the
->>>> reg property.
->>>>
->>>>> +
->>>>> +    bus@0,0 {
->>>>
->>>> bus@4
->>>
->>> ACK.
->>>
->>>>
->>>> No mention of this bus node in the above documentation.
->>>
->>> I was hesitant documenting it since I am not sure if we really need it
->>> in a generic case? It does make sense in my
->>> specific case. But what would it look like if we could maintain CS in software.
->>>
->>> Do you then have a bus node per CS? I am guessing not. Is it enough to
->>> document it in my "example brief"?
->>
->> I see what you mean. May be it is fine to document with the examples
->> below how child devices should be populated. You should also state that
->> currently the GMI only supports one child device currently for the
->> chip-select that is being used.
-> 
-> Should I really need to state that? Is it not always the case, that
-> you have one child device per chip-select?
+> The Allwinner H3 SoC introduced bus clock gates with potentially
+> different parents per clock gate register. The H3 driver chose to
+> hardcode the actual parent clock relation in the code.
+> Add a new driver (which has the potential to drive the H3 and also
+> the simple clock gates as well) which uses the power of DT to describe
+> this relationship in an elegant and flexible way.
+> Using one subnode for every parent clock we get away with a single
+> DT compatible match, which can be used as a fallback value in the
+> actual DTs without the need to add specific compatible strings to the
+> code.  This avoids adding a new driver or function for every new SoC.
 
-I think so. Remember it is one child device for the GMI, however, that
-child device could still have one than one child device (per you example
-with two CANs). The GMI child represents the active chip-select and we
-only currently support one with this driver.
+The 'parent's of the bus gates are of no interest.
+They are supposed to be (no clear documentation) apb1, apb2, ahb1 and
+ahb2, but, as you well noticed in the patch 5/7, these clocks are fixed
+and have no gate. Some of them are parents of real clocks, but they
+don't bring anything to the bus gates of the other clocks.
 
-Jon
+As I wrote previously, the simplest is to ungate/gate the clocks in
+both the bus and clock registers on clk_prepare/unprepare.
+Then, your 'multi-bus-gates' would be simply a generic 'multi-gates'.
 
--- 
-nvpublic
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
