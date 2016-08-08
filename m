@@ -1,68 +1,204 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55088 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752228AbcHVKCZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2016 06:02:25 -0400
-Subject: Re: [PATCH] MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS
-To: Chanwoo Choi <cw00.choi@samsung.com>
-References: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, k.kozlowski@samsung.com, kgene@kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, chanwoo@kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <76aea8a8-cda7-ca9f-54ff-d614d834dde0@samsung.com>
-Date: Mon, 22 Aug 2016 12:01:58 +0200
-MIME-version: 1.0
-In-reply-to: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
+CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+	<pawel.moll@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <linux@armlinux.org.uk>,
+	<robh+dt@kernel.org>, <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Message-ID: <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
+Date: Mon, 8 Aug 2016 15:44:31 +0100
+MIME-Version: 1.0
+In-Reply-To: <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chanwoo,
 
-On 08/18/2016 02:47 PM, Chanwoo Choi wrote:
-> Add the myself to the entry of SAMSUNG SOC CLOCK DRIVERS to review
-> and test the patches as supporter. I will help them. I can access the all
-> datasheet of Exynos SoC and test it on Exynos-based board. I was implemented
-> the exynos4415/5433 clock driver as author and handled the exynos3250 clock
-> driver. Lastly, adding the missing information of the exynos clock drivers.
+On 06/08/16 20:40, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
 > 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-I'm going to apply this patch with commit message rephrased as below.
-
-"MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS co-maintainer
-
-Add myself to the SAMSUNG SOC CLOCK DRIVERS entry, I'm going to review
-and test related patches as supporter.  I can access all the datasheet
-of Exynos SoC series and can do tests on Exynos based boards.  I have
-implemented the exynos4415/5433 clock drivers and co-authored the
-exynos3250 clock driver.  While at it, add missing paths of the exynos
-clock driver files."
-
-Please let me know if you see any issues with that.
-
+> Document the devicetree bindings for the Generic Memory Interface (GMI)
+> bus driver found on Tegra SOCs.
+> 
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
 > ---
->  MAINTAINERS | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 99 ++++++++++++++++++++++
+>  1 file changed, 99 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 20bb1d00098c..442d6f5c65be 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10233,9 +10233,12 @@ F:	drivers/nfc/s3fwrn5
->  SAMSUNG SOC CLOCK DRIVERS
->  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->  M:	Tomasz Figa <tomasz.figa@gmail.com>
-> +M:	Chanwoo Choi <cw00.choi@samsung.com>
->  S:	Supported
->  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->  F:	drivers/clk/samsung/
-> +F:	include/dt-bindings/clock/exynos*.h
-> +F:	Documentation/devicetree/bindings/clock/exynos*.txt
->  
->  SAMSUNG SXGBE DRIVERS
->  M:	Byungho An <bh74.an@samsung.com>
+> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+> new file mode 100644
+> index 0000000..046846e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+> @@ -0,0 +1,99 @@
+> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
+> +
+> +The Generic Memory Interface bus enables memory transfers between internal and
+> +external memory. Can be used to attach various high speed devices such as
+> +synchronous/asynchronous NOR, FPGA, UARTS and more.
+> +
+> +The actual devices are instantiated from the child nodes of a GMI node.
+> +
+> +Required properties:
+> +  - compatible : Should contain one of the following:
+> +        For Tegra20 must contain "nvidia,tegra20-gmi".
+> +        For Tegra30 must contain "nvidia,tegra30-gmi".
+> + - reg: Should contain GMI controller registers location and length.
+> + - clocks: Must contain an entry for each entry in clock-names.
+> + - clock-names: Must include the following entries: "gmi"
+> + - resets : Must contain an entry for each entry in reset-names.
+> + - reset-names : Must include the following entries: "gmi"
+> + - #address-cells: The number of cells used to represent physical base
+> +   addresses in the GMI address space.
+> + - #size-cells: The number of cells used to represent the size of an address
+> +   range in the GMI address space.
+> + - ranges: Mapping of the GMI address space to the CPU address space.
+> +
+> +Note that the GMI controller does not have any internal chip-select address
+> +decoding and if you want to access multiple devices external chip-select
+> +decoding must be provided. Furthermore, if you do have external logic to
 
+The above is not 100% accurate. I would say that because there is no
+chip-select address decoding, chip-selects either need to be managed via
+software or by employing external chip-select decoding logic.
+
+> +support multiple devices this would assume that the devices use the same
+> +timing and so are probably the same type. It also assumes that they can fit in
+> +the 256MB address range.
+
+Again this is only true for the case where you have external chip-select
+decoding logic, but would not be the case if software were to manage the
+chip-selects.
+
+> +
+> +Optional properties:
+> +
+> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
+> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
+> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
+> +   If omitted it will be asserted with data.
+> + - nvidia,snor-rdy-inv: RDY signal is active high
+> + - nvidia,snor-adv-inv: ADV signal is active high
+> + - nvidia,snor-oe-inv: WE/OE signal is active high
+> + - nvidia,snor-cs-inv: CS signal is active high
+> + - nvidia,snor-cs-select: CS output pin configuration. Default is CS0
+
+Nit ... I think "nvidia,snor-cs" is sufficient for the name. But I am
+not sure if we even need this. See below.
+
+> + 	<0> : CS0
+> +	<1> : CS1
+> +	<2> : CS2
+> +	<3> : CS3
+> +	<4> : CS4
+> +	<5> : CS5
+> +	<6> : CS6
+> +	<7> : CS7
+> +
+> +  Note that there is some special handling for the timing values.
+> +  From Tegra TRM:
+> +  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
+> +
+> + - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
+> +   bus. Valid values are 0-15, default is 1
+> + - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
+> +   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
+> +   (in case of MASTER Request). Valid values are 0-15, default is 1
+> + - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
+> +   Valid values are 0-15, default is 1.
+> + - nvidia,snor-ce-width: Number of cycles before CE is asserted.
+> +   Valid values are 0-255, default is 4
+
+ce-width only occupies a 4-bit field and so the max is 15.
+
+> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
+> +   Valid values are 0-15, default is 1
+> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
+> +   Valid values are 0-255, default is 1
+> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
+> +   Valid values are 0-255, default is 3
+> +
+> +Example with two SJA1000 CAN controllers connected to the GMI bus:
+> +
+> +  gmi@70090000 {
+> +    #address-cells = <1>;
+> +    #size-cells = <1>;
+
+I think 0 for size makes sense. I know that caused you problems before,
+but I am wondering if ...
+
+> +    ranges;
+
+... ranges is needed here? If we do have it, I am wondering if it should
+be a single entry for the chip-select that is being used. For now we
+could only support a ranges with one entry.
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges = <4 0x48000000 0x00040000>;
+
+> +    nvidia,snor-mux-mode;
+> +    nvidia,snor-adv-inv;
+> +    nvidia,snor-cs-select = <4>;
+
+I would have expected these under bus@X node as they are specific to the
+GMI CS.
+
+I would also expect that the actual chip-select number is encoded in the
+reg property.
+
+> +
+> +    bus@0,0 {
+
+bus@4
+
+No mention of this bus node in the above documentation.
+
+> +      compatible = "simple-bus";
+> +      reg = <0 0>;
+
+reg = <4>;
+
+We should look up the chip-select from the reg property.
+
+> +      ranges;
+> +
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +
+> +      can@48000000 {
+> +        reg = <0x48000000 0x100>;
+> +        ...
+> +      };
+> +
+> +      can@48040000 {
+> +        reg = <0x48040000 0x100>;
+> +        ...
+> +      };
+
+If we use ranges we could have ...
+
+	can@0 {
+		reg = <0x0 0x100>;
+		...
+	};
+
+	can@40000 {
+		reg = <0x40000 0x100>;
+		...
+	};
+
+Nit ... please use tabs for spacing as we do in the dtsi/dts files.
+
+Cheers
+Jon
+
+-- 
+nvpublic
