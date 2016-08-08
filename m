@@ -1,103 +1,148 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
-	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v12 2/4] reset: mediatek: Add MT2701 reset driver
-Date: Mon, 22 Aug 2016 16:29:23 +0800
-Message-ID: <1471854565-19810-3-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
-References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:58733 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752444AbcHHKSF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2016 06:18:05 -0400
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v6 2/6] ARM: at91: pm: Create a procedure for the ULP0 mode
+Date: Mon, 8 Aug 2016 18:05:01 +0800
+Message-ID: <1470650705-31418-3-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+To make the code more legible and prepare to add the ULP1 mode
+support in the future, create a separate procedure for the ULP0 mode.
 
-In infrasys and perifsys, there are many reset
-control bits for kinds of modules. These bits are
-used as actual reset controllers to be registered
-into kernel's generic reset controller framework.
-
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
- drivers/clk/mediatek/clk-mt2701-hif.c |  8 ++++++--
- drivers/clk/mediatek/clk-mt2701.c     | 16 ++++++++++++----
- 2 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-index 18b4ab5..702fd74 100644
---- a/drivers/clk/mediatek/clk-mt2701-hif.c
-+++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-@@ -52,11 +52,15 @@ static int mtk_hifsys_init(struct device_node *node)
- 						clk_data);
+Changes in v6:
+ - Add Acked-by tag.
+
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ arch/arm/mach-at91/pm_suspend.S | 65 +++++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 25 deletions(-)
+
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index a25defd..5fcffdc 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
  
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
--	if (r)
-+	if (r) {
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+		return r;
-+	}
+ 	ldr	r0, .pm_mode
+ 	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_disable_main_clock
++	beq	standby_mode
+ 
+ 	ldr	pmc, .pmc_base
+ 
+@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+ 
+-	/* Turn off the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-skip_disable_main_clock:
+-	ldr	pmc, .pmc_base
+-
+-	/* Wait for interrupt */
+-	at91_cpu_idle
+-
+-	ldr	r0, .pm_mode
+-	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_enable_main_clock
++ulp0_mode:
++	bl	at91_pm_ulp0_mode
++	b	ulp_exit
+ 
++ulp_exit:
+ 	ldr	pmc, .pmc_base
+ 
+-	/* Turn on the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-	wait_moscrdy
+-
+ 	/* Restore PLLA setting */
+ 	ldr	tmp1, .saved_pllar
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+@@ -177,7 +158,15 @@ skip_disable_main_clock:
+ 
+ 	wait_mckrdy
+ 
+-skip_enable_main_clock:
++	b	pm_exit
 +
-+	mtk_register_reset_controller(node, 1, 0x34);
- 
--	return r;
-+	return 0;
- }
- 
- static const struct of_device_id of_match_clk_mt2701_hif[] = {
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index f6df578..c8cc583 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -790,11 +790,15 @@ static int mtk_infrasys_init(struct device_node *node)
- 						infra_clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, infra_clk_data);
--	if (r)
-+	if (r) {
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+		return r;
-+	}
- 
--	return r;
-+	mtk_register_reset_controller(node, 2, 0x30);
++standby_mode:
++	ldr	pmc, .pmc_base
 +
-+	return 0;
- }
- 
- static const struct mtk_gate_regs peri0_cg_regs = {
-@@ -912,11 +916,15 @@ static int mtk_pericfg_init(struct device_node *node)
- 			&lock, clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
--	if (r)
-+	if (r) {
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+		return r;
-+	}
- 
--	return r;
-+	mtk_register_reset_controller(node, 2, 0x0);
++	/* Wait for interrupt */
++	at91_cpu_idle
 +
-+	return 0;
- }
++pm_exit:
+ 	/* Exit the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_EXIT
+ 	bl	at91_sramc_self_refresh
+@@ -311,6 +300,32 @@ exit_sramc_sf:
+ 	mov	pc, lr
+ ENDPROC(at91_sramc_self_refresh)
  
- #define MT8590_PLL_FMAX		(2000 * MHZ)
++/*
++ * void at91_pm_ulp0_mode(void)
++ */
++ENTRY(at91_pm_ulp0_mode)
++	ldr	pmc, .pmc_base
++
++	/* Turn off the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	/* Wait for interrupt */
++	at91_cpu_idle
++
++	/* Turn on the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscrdy
++
++	mov	pc, lr
++ENDPROC(at91_pm_ulp0_mode)
++
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
 -- 
-1.9.1
+2.7.4
+
