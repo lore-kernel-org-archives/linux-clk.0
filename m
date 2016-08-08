@@ -1,61 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 22 Aug 2016 17:55:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com,
-	kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
- samsung_cmu_info to init section
-Message-ID: <20160823005512.GP6502@codeaurora.org>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Mon, 8 Aug 2016 23:32:20 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Amit Kucheria <amit.kucheria@verdurent.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Guodong Xu <guodong.xu@linaro.org>
+Subject: Re: [PATCH] clk: Hi6220: enable stub clock driver for ARCH_HISI
+Message-ID: <20160808153220.GB5285@leoy-linaro>
+References: <1470627463-20570-1-git-send-email-leo.yan@linaro.org>
+ <CAHLCerN1dwvjT_r7UD2ZFD0Aar8uPg_RkCh_FDSFxNvLKZPqDQ@mail.gmail.com>
+ <20160808064241.GA30622@leoy-linaro>
+ <CAHLCerObKvK2KZRQFWk2BpjEiRSskwUNs4csMMNRQGmjHF8nhg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+In-Reply-To: <CAHLCerObKvK2KZRQFWk2BpjEiRSskwUNs4csMMNRQGmjHF8nhg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22, Chanwoo Choi wrote:
-> This patch moves the all samsung_cmu_info struct to initconst section
-> because they are used only in initconst section.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5260.c | 350 +++++++++++++++++------------------
->  1 file changed, 175 insertions(+), 175 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-> index a43642c36039..fd1d9bfc151b 100644
-> --- a/drivers/clk/samsung/clk-exynos5260.c
-> +++ b/drivers/clk/samsung/clk-exynos5260.c
-> @@ -131,21 +131,21 @@ static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
->  			EN_IP_AUD, 4, 0, 0),
->  };
->  
-> +static const struct samsung_cmu_info aud_cmu __initconst = {
-> +	.mux_clks	= aud_mux_clks,
-> +	.nr_mux_clks	= ARRAY_SIZE(aud_mux_clks),
-> +	.div_clks	= aud_div_clks,
-> +	.nr_div_clks	= ARRAY_SIZE(aud_div_clks),
-> +	.gate_clks	= aud_gate_clks,
-> +	.nr_gate_clks	= ARRAY_SIZE(aud_gate_clks),
-> +	.nr_clk_ids	= AUD_NR_CLK,
-> +	.clk_regs	= aud_clk_regs,
-> +	.nr_clk_regs	= ARRAY_SIZE(aud_clk_regs),
-> +};
-> +
->  static void __init exynos5260_clk_aud_init(struct device_node *np)
->  {
-> -	struct samsung_cmu_info cmu = { NULL };
-> -
+On Mon, Aug 08, 2016 at 08:12:21PM +0530, Amit Kucheria wrote:
 
-I presume this was done this way to save some initdata space by
-only allocating the array that's needed at runtime? I would
-expect to see some more kernel image bloat from this change but
-runtime memory usage would stay the same. Is there any real
-benefit from this patch though?
+[...]
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> >> > diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+> >> > index 3f537a0..9e0a95e 100644
+> >> > --- a/drivers/clk/hisilicon/Kconfig
+> >> > +++ b/drivers/clk/hisilicon/Kconfig
+> >> > @@ -23,5 +23,6 @@ config RESET_HISI
+> >> >  config STUB_CLK_HI6220
+> >> >         bool "Hi6220 Stub Clock Driver"
+> >> >         depends on COMMON_CLK_HI6220 && MAILBOX
+> >> > +       default ARCH_HISI
+> 
+> Instead of forcing this up on the entire arch, why not restrict it to
+> just the cpufreq driver?  ARM_HISI_ACPU_CPUFREQ?
+
+ARM_HISI_ACPU_CPUFREQ has been removed by 3920be471ce7f "cpufreq:
+hisilicon: Use generic platdev driver". By default now platforms are
+using drivers/cpufreq/cpufreq-dt-platdev.c.
+
+> >> >         help
+> >> >           Build the Hisilicon Hi6220 stub clock driver.
+> >> > --
+> >> > 1.9.1
+> >> >
