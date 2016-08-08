@@ -1,101 +1,311 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v5 2/6] meson: clk: Move register definitions to meson8b.h
-Date: Sat, 27 Aug 2016 19:40:50 +0200
-Message-Id: <1472319654-59048-3-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1472319654-59048-1-git-send-email-serveralex@gmail.com>
-References: <1472319654-59048-1-git-send-email-serveralex@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:58809 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751985AbcHHKSe (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2016 06:18:34 -0400
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v6 3/6] ARM: at91: pm: Add ULP1 mode support
+Date: Mon, 8 Aug 2016 18:05:02 +0800
+Message-ID: <1470650705-31418-4-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the register definitions into a separate header file
-to reflect the gxbb implementation.
+In the ULP1 mode, in order to achieve the lowest power consumption
+with the system in retention mode and be able to resume on the wake
+up events, all the clocks are shut off, inclusive the embedded 12MHz
+RC oscillator, and the number of wake up sources is limited as well.
+When the wake up event is asserted, the embedded 12MHz RC oscillator
+restarts automatically.
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
+
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
 ---
- drivers/clk/meson/meson8b.c | 17 +----------------
- drivers/clk/meson/meson8b.h | 40 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+), 16 deletions(-)
- create mode 100644 drivers/clk/meson/meson8b.h
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 4c9413c..d52ae53 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -28,22 +28,7 @@
- #include <linux/init.h>
+Changes in v6:
+ - Add specific sama5d2_pm_init() for SAMA5D2, which supports ULP1.
+   It is called sama5d2_dt_device_init(). Instead of by reading
+   the PMC version to check if it supports ULP1.
+ - Add comment to describe the platform condition of calling
+   at91_pm_ulp1_mode().
+ - Update the commit log.
+
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
+
+ arch/arm/mach-at91/generic.h    |  2 +
+ arch/arm/mach-at91/pm.c         | 18 +++++++-
+ arch/arm/mach-at91/pm.h         |  7 +++
+ arch/arm/mach-at91/pm_suspend.S | 99 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-at91/sama5.c      |  1 +
+ include/linux/clk/at91_pmc.h    |  2 +
+ 6 files changed, 127 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
+index 28ca57a..d716164 100644
+--- a/arch/arm/mach-at91/generic.h
++++ b/arch/arm/mach-at91/generic.h
+@@ -17,12 +17,14 @@ extern void __init at91sam9260_pm_init(void);
+ extern void __init at91sam9g45_pm_init(void);
+ extern void __init at91sam9x5_pm_init(void);
+ extern void __init sama5_pm_init(void);
++extern void __init sama5d2_pm_init(void);
+ #else
+ static inline void __init at91rm9200_pm_init(void) { }
+ static inline void __init at91sam9260_pm_init(void) { }
+ static inline void __init at91sam9g45_pm_init(void) { }
+ static inline void __init at91sam9x5_pm_init(void) { }
+ static inline void __init sama5_pm_init(void) { }
++static inline void __init sama5d2_pm_init(void) { }
+ #endif
  
- #include "clkc.h"
--
--/*
-- * Clock controller register offsets
-- *
-- * Register offsets from the HardKernel[0] data sheet are listed in comment
-- * blocks below. Those offsets must be multiplied by 4 before adding them to
-- * the base address to get the right value
-- *
-- * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-- */
--#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
--#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
--#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
--#define MESON8B_REG_PLL_FIXED		0x0280
--#define MESON8B_REG_PLL_SYS		0x0300
--#define MESON8B_REG_PLL_VID		0x0320
-+#include "meson8b.h"
+ #endif /* _AT91_GENERIC_H */
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index f062701..dad412f 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -36,6 +36,9 @@
+ #include "generic.h"
+ #include "pm.h"
  
- static DEFINE_SPINLOCK(clk_lock);
++#define ULP0_MODE	0x00
++#define ULP1_MODE	0x11
++
+ static void __iomem *pmc;
  
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-new file mode 100644
-index 0000000..5b9cb9f
---- /dev/null
-+++ b/drivers/clk/meson/meson8b.h
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (c) 2015 Endless Mobile, Inc.
-+ * Author: Carlo Caione <carlo@endlessm.com>
-+ *
-+ * Copyright (c) 2016 BayLibre, Inc.
-+ * Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ /*
+@@ -52,6 +55,7 @@ extern void at91_pinctrl_gpio_resume(void);
+ static struct {
+ 	unsigned long uhp_udp_mask;
+ 	int memctrl;
++	u32 ulp_mode;
+ } at91_pm_data;
+ 
+ void __iomem *at91_ramc_base[2];
+@@ -141,8 +145,11 @@ static void at91_pm_suspend(suspend_state_t state)
+ {
+ 	unsigned int pm_data = at91_pm_data.memctrl;
+ 
+-	pm_data |= (state == PM_SUSPEND_MEM) ?
+-				AT91_PM_MODE(AT91_PM_SLOW_CLOCK) : 0;
++	if (state == PM_SUSPEND_MEM) {
++		pm_data |= AT91_PM_MODE(AT91_PM_SLOW_CLOCK);
++		if (at91_pm_data.ulp_mode == ULP1_MODE)
++			pm_data |= AT91_PM_ULP(AT91_PM_ULP1_MODE);
++	}
+ 
+ 	flush_cache_all();
+ 	outer_disable();
+@@ -498,3 +505,10 @@ void __init sama5_pm_init(void)
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+ 	at91_pm_init(NULL);
+ }
++
++void __init sama5d2_pm_init(void)
++{
++	sama5_pm_init();
++
++	at91_pm_data.ulp_mode = ULP1_MODE;
++}
+diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
+index 3fcf881..2e76745 100644
+--- a/arch/arm/mach-at91/pm.h
++++ b/arch/arm/mach-at91/pm.h
+@@ -39,4 +39,11 @@ extern void __iomem *at91_ramc_base[];
+ 
+ #define	AT91_PM_SLOW_CLOCK	0x01
+ 
++#define AT91_PM_ULP_OFFSET	5
++#define AT91_PM_ULP_MASK	0x03
++#define AT91_PM_ULP(x)		(((x) & AT91_PM_ULP_MASK) << AT91_PM_ULP_OFFSET)
++
++#define AT91_PM_ULP0_MODE	0x00
++#define AT91_PM_ULP1_MODE	0x01
++
+ #endif
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index 5fcffdc..de45575 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -41,6 +41,15 @@ tmp2	.req	r5
+ 	.endm
+ 
+ /*
++ * Wait for main oscillator selection is done
 + */
-+
-+#ifndef __MESON8B_H
-+#define __MESON8B_H
++	.macro wait_moscsels
++1:	ldr	tmp1, [pmc, #AT91_PMC_SR]
++	tst	tmp1, #AT91_PMC_MOSCSELS
++	beq	1b
++	.endm
 +
 +/*
-+ * Clock controller register offsets
-+ *
-+ * Register offsets from the HardKernel[0] data sheet are listed in comment
-+ * blocks below. Those offsets must be multiplied by 4 before adding them to
-+ * the base address to get the right value
-+ *
-+ * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-+ */
-+#define MESON8B_REG_SYS_CPU_CNTL1	0x015c /* 0x57 offset in data sheet */
-+#define MESON8B_REG_HHI_MPEG		0x0174 /* 0x5d offset in data sheet */
-+#define MESON8B_REG_MALI		0x01b0 /* 0x6c offset in data sheet */
-+#define MESON8B_REG_PLL_FIXED		0x0280
-+#define MESON8B_REG_PLL_SYS		0x0300
-+#define MESON8B_REG_PLL_VID		0x0320
+  * Wait until PLLA has locked.
+  */
+ 	.macro wait_pllalock
+@@ -101,6 +110,10 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	and	r0, r0, #AT91_PM_MODE_MASK
+ 	str	r0, .pm_mode
+ 
++	lsr	r0, r3, #AT91_PM_ULP_OFFSET
++	and	r0, r0, #AT91_PM_ULP_MASK
++	str	r0, .ulp_mode
 +
-+#endif /* __MESON8B_H */
+ 	/* Active the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_ACTIVE
+ 	bl	at91_sramc_self_refresh
+@@ -131,6 +144,13 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+ 
++	ldr	r0, .ulp_mode
++	tst	r0, #AT91_PM_ULP1_MODE
++	beq	ulp0_mode
++
++	bl	at91_pm_ulp1_mode
++	b	ulp_exit
++
+ ulp0_mode:
+ 	bl	at91_pm_ulp0_mode
+ 	b	ulp_exit
+@@ -326,6 +346,83 @@ ENTRY(at91_pm_ulp0_mode)
+ 	mov	pc, lr
+ ENDPROC(at91_pm_ulp0_mode)
+ 
++/**
++ * void at91_pm_ulp1_mode(void)
++ * Note: This procedure only applies on the platform which uses
++ * the external crystal oscillator as a main clock source.
++ */
++ENTRY(at91_pm_ulp1_mode)
++	ldr	pmc, .pmc_base
++
++	/* Switch the main clock source to 12-MHz RC oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCSEL
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscsels
++
++	/* Disable the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	/* Switch the master clock source to main clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	/* Enter the ULP1 mode by set WAITMODE bit in CKGR_MOR */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_WAITMODE
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_mckrdy
++
++	/* Enable the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscrdy
++
++	/* Switch the master clock source to slow clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	/* Switch main clock source to crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCSEL
++	bic	tmp1, tmp1, #AT91_PMC_KEY_MASK
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscsels
++
++	/* Switch the master clock source to main clock */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	orr	tmp1, tmp1, #AT91_PMC_CSS_MAIN
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	mov	pc, lr
++ENDPROC(at91_pm_ulp1_mode)
++
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
+@@ -336,6 +433,8 @@ ENDPROC(at91_pm_ulp0_mode)
+ 	.word 0
+ .pm_mode:
+ 	.word 0
++.ulp_mode:
++	.word 0
+ .saved_mckr:
+ 	.word 0
+ .saved_pllar:
+diff --git a/arch/arm/mach-at91/sama5.c b/arch/arm/mach-at91/sama5.c
+index 2debfe2..5bc3fc8 100644
+--- a/arch/arm/mach-at91/sama5.c
++++ b/arch/arm/mach-at91/sama5.c
+@@ -103,6 +103,7 @@ MACHINE_END
+ static void __init sama5d2_dt_device_init(void)
+ {
+ 	sama5_common_init();
++	sama5d2_pm_init();
+ }
+ 
+ static const char *const sama5d2_dt_board_compat[] __initconst = {
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 17f413b..cec6cc3 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -47,8 +47,10 @@
+ #define	AT91_CKGR_MOR		0x20			/* Main Oscillator Register [not on SAM9RL] */
+ #define		AT91_PMC_MOSCEN		(1    <<  0)		/* Main Oscillator Enable */
+ #define		AT91_PMC_OSCBYPASS	(1    <<  1)		/* Oscillator Bypass */
++#define		AT91_PMC_WAITMODE	(1    <<  2)		/* Wait Mode Command */
+ #define		AT91_PMC_MOSCRCEN	(1    <<  3)		/* Main On-Chip RC Oscillator Enable [some SAM9] */
+ #define		AT91_PMC_OSCOUNT	(0xff <<  8)		/* Main Oscillator Start-up Time */
++#define		AT91_PMC_KEY_MASK	(0xff << 16)
+ #define		AT91_PMC_KEY		(0x37 << 16)		/* MOR Writing Key */
+ #define		AT91_PMC_MOSCSEL	(1    << 24)		/* Main Oscillator Selection [some SAM9] */
+ #define		AT91_PMC_CFDEN		(1    << 25)		/* Clock Failure Detector Enable [some SAM9] */
 -- 
-2.5.0
+2.7.4
+
