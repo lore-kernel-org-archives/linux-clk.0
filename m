@@ -1,26 +1,56 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 0/2] clk: samsung: Move struct samsung_cmu_info to init section
-Date: Mon, 22 Aug 2016 11:49:43 +0900
-Message-id: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4/6] ARM: tegra: Add Tegra30 GMI support
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-5-git-send-email-mirza.krak@gmail.com>
+CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+	<pawel.moll@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <linux@armlinux.org.uk>,
+	<robh+dt@kernel.org>, <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <ca971719-f73f-fc22-5b39-57d2636b55a1@nvidia.com>
+Date: Mon, 8 Aug 2016 16:09:24 +0100
+MIME-Version: 1.0
+In-Reply-To: <1470512452-8322-5-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset moves the struct samsung_cmu_info to init section for
-exynos5260/5410 because they are used only in initconst section.
 
-Chanwoo Choi (2):
-  clk: samsung: exynos5260: Move struct samsung_cmu_info to init section
-  clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
+On 06/08/16 20:40, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
+> 
+> Add a device node for the GMI controller found on Tegra30.
+> 
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra30.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index 5030065..5fd4d29 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -439,6 +439,16 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	gmi@70009000 {
+> +		compatible = "nvidia,tegra30-gmi";
+> +		reg = <0x70009000 0x1000>;
+> +		clocks = <&tegra_car TEGRA30_CLK_NOR>;
+> +		clock-names = "gmi";
+> +		resets = <&tegra_car 42>;
+> +		reset-names = "gmi";
+> +		status = "disabled";
 
- drivers/clk/samsung/clk-exynos5260.c | 350 +++++++++++++++++------------------
- drivers/clk/samsung/clk-exynos5410.c |  33 ++--
- 2 files changed, 188 insertions(+), 195 deletions(-)
+#address-cells, #size-cells and ranges appears to be missing.
+
+Cheers
+Jon
 
 -- 
-1.9.1
+nvpublic
