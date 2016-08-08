@@ -1,87 +1,40 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 03/10] clk: qcom: Add support to initialize alpha plls
-Date: Thu, 11 Aug 2016 14:10:51 +0530
-Message-Id: <1470904858-11930-4-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <weiyj.lk@gmail.com>
+Return-Path: <weiyj.lk@gmail.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH -next] clk: gxbb: use builtin_platform_driver to simplify the code
+Date: Mon,  8 Aug 2016 13:55:20 +0000
+Message-Id: <1470664520-9604-1-git-send-email-weiyj.lk@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a function to do initial configuration of the alpha plls
+Use the builtin_platform_driver() macro to make the code simpler.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Wei Yongjun <weiyj.lk@gmail.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 23 +++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h | 13 +++++++++++++
- 2 files changed, 36 insertions(+)
+ drivers/clk/meson/gxbb.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index bae31f9..8b8710f 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -112,6 +112,29 @@ static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
- #define PLL_OFFLINE_ACK		BIT(28)
- #define PLL_ACTIVE_FLAG		BIT(30)
- 
-+void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+			     const struct alpha_pll_config *config)
-+{
-+	u32 val, mask;
-+
-+	regmap_write(regmap, pll->offset + PLL_CONFIG_CTL,
-+		     config->config_ctl_val);
-+
-+	val = config->main_output_mask;
-+	val |= config->aux_output_mask;
-+	val |= config->aux2_output_mask;
-+	val |= config->early_output_mask;
-+	val |= config->post_div_val;
-+
-+	mask = config->main_output_mask;
-+	mask |= config->aux_output_mask;
-+	mask |= config->aux2_output_mask;
-+	mask |= config->early_output_mask;
-+	mask |= config->post_div_mask;
-+
-+	regmap_update_bits(regmap, pll->offset + PLL_USER_CTL, mask, val);
-+}
-+
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
- {
- 	int ret;
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index f78bf4c..12a349e 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -51,8 +51,21 @@ struct clk_alpha_pll_postdiv {
- 	struct clk_regmap clkr;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 8e36d22..b736277 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -946,8 +946,4 @@ static struct platform_driver gxbb_driver = {
+ 	},
  };
  
-+struct alpha_pll_config {
-+	u32 config_ctl_val;
-+	u32 main_output_mask;
-+	u32 aux_output_mask;
-+	u32 aux2_output_mask;
-+	u32 early_output_mask;
-+	u32 post_div_val;
-+	u32 post_div_mask;
-+};
-+
- extern const struct clk_ops clk_alpha_pll_ops;
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
- 
-+void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+			     const struct alpha_pll_config *config);
-+
- #endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+-static int __init gxbb_clkc_init(void)
+-{
+-	return platform_driver_register(&gxbb_driver);
+-}
+-device_initcall(gxbb_clkc_init);
++builtin_platform_driver(gxbb_driver);
