@@ -1,56 +1,90 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
-Date: Wed, 31 Aug 2016 16:50:15 +0800
-Message-Id: <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <hotran@apm.com>
+MIME-Version: 1.0
+In-Reply-To: <CAFHUOYw9rJe7+1kvz9gwxSZO=FucztfhdO_6vOz8kA7QsS9EyA@mail.gmail.com>
+References: <1466458269-460-1-git-send-email-hotran@apm.com>
+ <20160630202358.GC27880@codeaurora.org> <CAFHUOYxS-aZGE-W8Oaop6hgfvd6MsvJ_N+GHTYdOzQZhH7hUPA@mail.gmail.com>
+ <20160701183845.GD27880@codeaurora.org> <CAFHUOYz82wyLPJjoG8V9QvXmF10qnQkioe9-oxUR0-aiho-Pjw@mail.gmail.com>
+ <CAFHUOYw9rJe7+1kvz9gwxSZO=FucztfhdO_6vOz8kA7QsS9EyA@mail.gmail.com>
+From: Hoan Tran <hotran@apm.com>
+Date: Mon, 8 Aug 2016 16:40:41 -0700
+Message-ID: <CAFHUOYxT0BB6dCz8xEht7MmjgBT7HQwaOKsSnF1wFfgYFwjy=g@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: Add fractional scale clock support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, lkml <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Duc Dang <dhdang@apm.com>, Loc Ho <lho@apm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
-default, as result stub clock driver has not been registered and
-CPUFreq driver cannot work.
+On Wed, Jul 20, 2016 at 11:36 AM, Hoan Tran <hotran@apm.com> wrote:
+> On Fri, Jul 1, 2016 at 5:09 PM, Hoan Tran <hotran@apm.com> wrote:
+>>
+>> Hi Stephen,
+>>
+>> On Fri, Jul 1, 2016 at 11:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > Sorry I replied offlist before. Pressed the wrong key.
+>> >
+>> > On 06/30, Hoan Tran wrote:
+>> >> On Thu, Jun 30, 2016 at 1:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> >> >
+>> >> > How is this different from clk-fractional-divider.c?
+>> >> >
+>> >>
+>> >> This is a driver which clock output is multiplied with a fixed fractional
+>> >> scale (denominator).
+>> >> A field inside a register is used to configure the multiplier.
+>> >>
+>> >> Example: With fractional scale is 1/8.
+>> >> Freq_out = Freq_parent * multiplier * (1/8)
+>> >>
+>> >> For fractional-divider, there are 2 fields of a register are used which
+>> >>  - A field for numerator
+>> >>  - A field for denominator
+>> >> Freq_out = Freq_parent * numerator / denominator
+>> >>
+>> >
+>> > Ok so the difference is that the denominator is a fixed value?
+>>
+>> The major difference is a fixed denominator.
+>> Another difference is:
+>> In case CLK_FRACTIONAL_SCALE_INVERTED=1, the freq_out is calculated as below
+>>
+>> Freq_out = Freq_parent * (fixed_denominator - multiplier) / fixed_denominator.
+>>
+>> > Perhaps that can be modeled as a clk-multiplier that is used as
+>> > the only parent of a fixed divider?
+>>
+>> Because of CLK_FRACTIONAL_SCALE_INVERTED flag, I don't know how to
+>> model as a clk-multiplier. And how to pass the fixed denominator into
+>> a clk-multiplier.
+>>
+>> > Or we can add a flag to the
+>> > clk-fractional-divider code to handle this minor difference.
+>>
+>> This driver is used 2 register fields for numerator, denominator and
+>> calculates both of them.
+>> Do you think I can integrate this fractional scale into it ?
+>>
+>> Thanks
+>> Hoan
+>>
+>
+> Hi Stephen,
+>
+> Do you have any comments ?
+>
+> Thanks
+> Hoan
+>
+>
+>>
+>> >
+>> > --
+>> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>> > a Linux Foundation Collaborative Project
 
-This patch is to enable stub clock driver in config for ARCH_HISI.
+Hi Stephen,
 
-Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/clk/hisilicon/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Do you have any comments or suggestions on this patch ?
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index 3f537a0..9e0a95e 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -23,5 +23,6 @@ config RESET_HISI
- config STUB_CLK_HI6220
- 	bool "Hi6220 Stub Clock Driver"
- 	depends on COMMON_CLK_HI6220 && MAILBOX
-+	default ARCH_HISI
- 	help
- 	  Build the Hisilicon Hi6220 stub clock driver.
--- 
-1.9.1
+Thanks
+Hoan
