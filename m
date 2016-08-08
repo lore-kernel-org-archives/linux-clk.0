@@ -1,39 +1,70 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: prevent __of_clk_get_hw_from_provider() from
- returning NULL
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
+ <20160804212553.GB15690@codeaurora.org> <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 11:00:30 +0200
+Message-ID: <CAMuHMdX=VVQYZMNow_ycnGq8NWZ2Y0Sijx19jo4PtRE-N7pXnA@mail.gmail.com>
+Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com>
- <20160804205734.GA15690@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <792d2cb8-06bf-7406-b79a-06c16b977bd4@samsung.com>
-Date: Fri, 05 Aug 2016 10:29:39 +0200
-MIME-version: 1.0
-In-reply-to: <20160804205734.GA15690@codeaurora.org>
-Content-type: text/plain; charset=windows-1252
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04/2016 10:57 PM, Stephen Boyd wrote:
-> On 07/19, Masahiro Yamada wrote:
->> > The .get(_hw) callback of an OF clock provider can return a NULL
->> > pointer in some cases.
->> > 
->> > For example, of_clk_src_onecell_get() returns NULL for index 1 of a
->> > sparse array of clocks like follows:
->> > 
->> >   clk_num == 3
->> >   idx 0: UART clk
->> >   idx 1: NULL (no clk is allocated)
->> >   idx 2: I2C clk
->> > 
->> > In such cases, clk_get() successfully returns NULL.
+On Sun, Aug 7, 2016 at 6:54 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2016-08-05 6:25 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> +Rob in case he has any insight
+>>
+>> On 07/09, Masahiro Yamada wrote:
+>>> I think the current code allows to add
+>>> clk_providers multiple times against one DT node.
+>>>
+>>> Are there cases that really need to do so?
+>>
+>> If we have clk drivers that have a device driver structure and
+>> also use CLK_OF_DECLARE then we could get into a situation where
+>> they register two providers for the same device node. I can't
+>> think of any other situation where this would happen though.
+>
+> What is the benefit for splitting one clock device
+> into CLK_OF_DECLARE() and a platform_driver?
 
-I remember running into same issue before, we have addressed
-it by initializing the array of clocks with some errno value,
-e.g ERR_PTR(-ENOENT), so there is no chance to get NULL from
-the array - either a valid clk pointer or an ERR_PTR() value.
+It may be useful if you want to provide a few clocks very early in the boot
+(through CLK_OF_DECLARE()), and the remaining ones later (through the
+platform_driver).
+
+> If we go this way, I think we need to fix the current code.
+>
+> of_clk_add_provider() calls of_clk_del_provider()
+> in its failure path.
+>
+> Notice of_clk_del_provider() unregister
+> all the providers associated with the device node.
+>
+> So, if of_clk_add_provider() fails to register a platform driver,
+> it may unregister another provider added by OF_CLK_DECLARE().
+
+Do you have to call of_clk_add_provider() from the platform driver?
+Can't you just populate the missing entries in the clk_onecell_data as
+registered from the CLK_OF_DECLARE() driver part?
+
+Alternatively, if there's a clear (non-Linux specific, as this affects DT!)
+distinction between the two sets of clocks, you could register your own
+twocell_get routine from CLK_OF_DELCARE(), and fill in a second
+(third, fourth, ...) set of clocks from the platform_driver.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --
-Thanks,
-Sylwester
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
