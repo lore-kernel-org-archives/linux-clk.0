@@ -1,63 +1,94 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 09/10] clk: qcom: Add .is_enabled ops for clk-alpha-pll
-Date: Thu, 11 Aug 2016 14:10:57 +0530
-Message-Id: <1470904858-11930-10-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v6 1/6] ARM: at91: sama5: Add a new DT_MACHINE for SAMA5D2
+Date: Mon, 8 Aug 2016 18:05:00 +0800
+Message-ID: <1470650705-31418-2-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This would be useful in subsequent patches when the .set_rate operation
-would need to identify if the PLL is actually enabled
+To support the SAMA5D2 specific pm_init function, add a new
+DT_MACHINE for SAMA5D2.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 854487e..2184dc1 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -198,6 +198,23 @@ static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
- 	wait_for_pll_disable(pll, PLL_ACTIVE_FLAG);
- }
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ arch/arm/mach-at91/sama5.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-at91/sama5.c b/arch/arm/mach-at91/sama5.c
+index 922b85f..2debfe2 100644
+--- a/arch/arm/mach-at91/sama5.c
++++ b/arch/arm/mach-at91/sama5.c
+@@ -59,7 +59,7 @@ static const struct at91_soc sama5_socs[] = {
+ 	{ /* sentinel */ },
+ };
  
-+static int clk_alpha_pll_is_enabled(struct clk_hw *hw)
-+{
-+	int ret;
-+	u32 val, off;
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+
-+	off = pll->offset;
-+	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val & PLL_LOCK_DET)
-+		return 1;
-+	else
-+		return 0;
+-static void __init sama5_dt_device_init(void)
++static void __init sama5_common_init(void)
+ {
+ 	struct soc_device *soc;
+ 	struct device *soc_dev = NULL;
+@@ -69,6 +69,11 @@ static void __init sama5_dt_device_init(void)
+ 		soc_dev = soc_device_to_device(soc);
+ 
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
 +}
 +
- static int clk_alpha_pll_enable(struct clk_hw *hw)
- {
- 	int ret;
-@@ -398,6 +415,7 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- const struct clk_ops clk_alpha_pll_ops = {
- 	.enable = clk_alpha_pll_enable,
- 	.disable = clk_alpha_pll_disable,
-+	.is_enabled = clk_alpha_pll_is_enabled,
- 	.recalc_rate = clk_alpha_pll_recalc_rate,
- 	.round_rate = clk_alpha_pll_round_rate,
- 	.set_rate = clk_alpha_pll_set_rate,
++static void __init sama5_dt_device_init(void)
++{
++	sama5_common_init();
+ 	sama5_pm_init();
+ }
+ 
+@@ -84,7 +89,6 @@ DT_MACHINE_START(sama5_dt, "Atmel SAMA5")
+ MACHINE_END
+ 
+ static const char *const sama5_alt_dt_board_compat[] __initconst = {
+-	"atmel,sama5d2",
+ 	"atmel,sama5d4",
+ 	NULL
+ };
+@@ -95,3 +99,20 @@ DT_MACHINE_START(sama5_alt_dt, "Atmel SAMA5")
+ 	.dt_compat	= sama5_alt_dt_board_compat,
+ 	.l2c_aux_mask	= ~0UL,
+ MACHINE_END
++
++static void __init sama5d2_dt_device_init(void)
++{
++	sama5_common_init();
++}
++
++static const char *const sama5d2_dt_board_compat[] __initconst = {
++	"atmel,sama5d2",
++	NULL
++};
++
++DT_MACHINE_START(sama5d2_dt, "Atmel SAMA5")
++	/* Maintainer: Atmel */
++	.init_machine	= sama5d2_dt_device_init,
++	.dt_compat	= sama5d2_dt_board_compat,
++	.l2c_aux_mask	= ~0UL,
++MACHINE_END
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
