@@ -1,90 +1,78 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as
- critical
-To: Guenter Roeck <groeck@google.com>, Chris Zhong <zyw@rock-chips.com>
-References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
- <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, =?UTF-8?B?5aea5pm65oOF?=
- <yzq@rock-chips.com>, mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa
- <tfiga@chromium.org>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Douglas Anderson <dianders@chromium.org>, Guenter Roeck
- <groeck@chromium.org>, =?UTF-8?Q?St=c3=a9phane_Marchesin?=
- <marcheu@chromium.org>, wulf <wulf@rock-chips.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <57ABE369.6070800@rock-chips.com>
-Date: Thu, 11 Aug 2016 10:31:05 +0800
+Return-Path: <amit.kucheria@verdurent.com>
 MIME-Version: 1.0
-In-Reply-To: <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20160808064241.GA30622@leoy-linaro>
+References: <1470627463-20570-1-git-send-email-leo.yan@linaro.org>
+ <CAHLCerN1dwvjT_r7UD2ZFD0Aar8uPg_RkCh_FDSFxNvLKZPqDQ@mail.gmail.com> <20160808064241.GA30622@leoy-linaro>
+From: Amit Kucheria <amit.kucheria@verdurent.com>
+Date: Mon, 8 Aug 2016 20:12:21 +0530
+Message-ID: <CAHLCerObKvK2KZRQFWk2BpjEiRSskwUNs4csMMNRQGmjHF8nhg@mail.gmail.com>
+Subject: Re: [PATCH] clk: Hi6220: enable stub clock driver for ARCH_HISI
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Guodong Xu <guodong.xu@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Chris,
+On Mon, Aug 8, 2016 at 12:12 PM, Leo Yan <leo.yan@linaro.org> wrote:
+> Hi Amit,
+>
+> On Mon, Aug 08, 2016 at 11:23:31AM +0530, Amit Kucheria wrote:
+>> On Mon, Aug 8, 2016 at 9:07 AM, Leo Yan <leo.yan@linaro.org> wrote:
+>> > In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
+>> > default, as result stub clock driver has not been registered and
+>> > CPUFreq driver cannot work.
+>>
+>> I have a related patch that has been pending for a while:
+>> https://lkml.org/lkml/2016/6/20/375 but it was tied only to the
+>> thermal driver.
+>
+> I also have concern this patch may duplicate with yours.
+>
+>> Is the stub mandatory for the architecture? Will other SoCs in the
+>> family will use the same stub?
+>
+> I don't think stub driver is mandartory for archtitecture and it's
+> only used by Hi6220 on Hikey. AFAIK, currently stub driver is only used
+> by CPU frequency change.
+>
+> The logic is:
+>   Thermal cooling device driver
+>       `-> CPUFreq DT driver
+>               `-> Stub clock driver
+>
+> ARM is working on Hikey for EAS profiling, so usually the use case is
+> to enable CPUFreq driver and stub clock driver. Sometimes it only
+> need enable this driver without thermal driver; so this is why we
+> cannot rely on thermal driver to enable stub clock driver.
+>
+> I'm open-minded if you have better idea to enable it.
+>
+>> > This patch is to enable stub clock driver in config for ARCH_HISI.
+>> >
+>> > Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+>> > ---
+>> >  drivers/clk/hisilicon/Kconfig | 1 +
+>> >  1 file changed, 1 insertion(+)
+>> >
+>> > diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+>> > index 3f537a0..9e0a95e 100644
+>> > --- a/drivers/clk/hisilicon/Kconfig
+>> > +++ b/drivers/clk/hisilicon/Kconfig
+>> > @@ -23,5 +23,6 @@ config RESET_HISI
+>> >  config STUB_CLK_HI6220
+>> >         bool "Hi6220 Stub Clock Driver"
+>> >         depends on COMMON_CLK_HI6220 && MAILBOX
+>> > +       default ARCH_HISI
 
-On 2016年08月11日 06:14, Guenter Roeck wrote:
-> On Tue, Aug 9, 2016 at 11:02 AM, Chris Zhong <zyw@rock-chips.com> wrote:
->> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
->> this modification, the aclk_vio_noc should be put into critical list,
->> since it is required by VOP.
->> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
->> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
->>
->> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
->> ---
->>
->>   drivers/clk/rockchip/clk-rk3399.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
->> index b173711a..676b017 100644
->> --- a/drivers/clk/rockchip/clk-rk3399.c
->> +++ b/drivers/clk/rockchip/clk-rk3399.c
->> @@ -1073,7 +1073,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->>          /* vio */
->>          COMPOSITE(ACLK_VIO, "aclk_vio", mux_pll_src_cpll_gpll_ppll_p, CLK_IGNORE_UNUSED,
->>                          RK3399_CLKSEL_CON(42), 6, 2, MFLAGS, 0, 5, DFLAGS,
->> -                       RK3399_CLKGATE_CON(11), 10, GFLAGS),
->> +                       RK3399_CLKGATE_CON(11), 0, GFLAGS),
-Sorry to broken copy&paste, thanks to fix the incorrect bit.
+Instead of forcing this up on the entire arch, why not restrict it to
+just the cpufreq driver?  ARM_HISI_ACPU_CPUFREQ?
 
-Reviewed-by: Xing Zheng <zhengxing@rock-chips.com>
-
-Thanks.
->>          COMPOSITE_NOMUX(PCLK_VIO, "pclk_vio", "aclk_vio", 0,
->>                          RK3399_CLKSEL_CON(43), 0, 5, DFLAGS,
->>                          RK3399_CLKGATE_CON(11), 1, GFLAGS),
->> @@ -1470,6 +1470,9 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
->>          "aclk_cci_pre",
->>          "aclk_gic",
->>          "aclk_gic_noc",
->> +       "aclk_hdcp_noc",
->> +       "hclk_hdcp_noc",
->> +       "pclk_hdcp_noc",
->>          "pclk_perilp0",
->>          "pclk_perilp0",
->>          "hclk_perilp0",
->> @@ -1489,6 +1492,7 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
->>          "gpll_hclk_perilp1_src",
->>          "gpll_aclk_perilp0_src",
->>          "gpll_aclk_perihp_src",
->> +       "aclk_vio_noc",
-> I think there was a previous comment suggesting that this clock should
-> be handled differently. Has this been resolved ?
->
-> Otherwise
->
-> Reviewed-by: Guenter Roeck <groeck@chromium.org>
->
->>   };
->>
->>   static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
->> --
->> 1.9.1
->>
->
->
-
--- 
-- Xing Zheng
+>> >         help
+>> >           Build the Hisilicon Hi6220 stub clock driver.
+>> > --
+>> > 1.9.1
+>> >
