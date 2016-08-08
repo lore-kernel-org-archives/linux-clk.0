@@ -1,94 +1,123 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v6 1/6] ARM: at91: sama5: Add a new DT_MACHINE for SAMA5D2
-Date: Mon, 8 Aug 2016 18:05:00 +0800
-Message-ID: <1470650705-31418-2-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
-References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 8 Aug 2016 16:37:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
+Message-ID: <20160808233711.GA2996@codeaurora.org>
+References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
+ <20160804212553.GB15690@codeaurora.org>
+ <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-To support the SAMA5D2 specific pm_init function, add a new
-DT_MACHINE for SAMA5D2.
+On 08/08, Masahiro Yamada wrote:
+> Hi Stephen,
+> 
+> 
+> 2016-08-05 6:25 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> > +Rob in case he has any insight
+> >
+> > On 07/09, Masahiro Yamada wrote:
+> >> Hi.
+> >>
+> >> I think the current code allows to add
+> >> clk_providers multiple times against one DT node.
+> >>
+> >> Are there cases that really need to do so?
+> >
+> > If we have clk drivers that have a device driver structure and
+> > also use CLK_OF_DECLARE then we could get into a situation where
+> > they register two providers for the same device node. I can't
+> > think of any other situation where this would happen though.
+> 
+> 
+> What is the benefit for splitting one clock device
+> into CLK_OF_DECLARE() and a platform_driver?
+> 
+> 
+> If we go this way, I think we need to fix the current code.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+Sure. Do we have anyone registering two providers for the same
+node? I'm trying to weigh the urgency of this.
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+> 
+> of_clk_add_provider() calls of_clk_del_provider()
+> in its failure path.
+> 
+> Notice of_clk_del_provider() unregister
+> all the providers associated with the device node.
 
- arch/arm/mach-at91/sama5.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+Where is that? I see a break statement in the while loop after
+the first matching np is found.
 
-diff --git a/arch/arm/mach-at91/sama5.c b/arch/arm/mach-at91/sama5.c
-index 922b85f..2debfe2 100644
---- a/arch/arm/mach-at91/sama5.c
-+++ b/arch/arm/mach-at91/sama5.c
-@@ -59,7 +59,7 @@ static const struct at91_soc sama5_socs[] = {
- 	{ /* sentinel */ },
- };
- 
--static void __init sama5_dt_device_init(void)
-+static void __init sama5_common_init(void)
- {
- 	struct soc_device *soc;
- 	struct device *soc_dev = NULL;
-@@ -69,6 +69,11 @@ static void __init sama5_dt_device_init(void)
- 		soc_dev = soc_device_to_device(soc);
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
-+}
-+
-+static void __init sama5_dt_device_init(void)
-+{
-+	sama5_common_init();
- 	sama5_pm_init();
- }
- 
-@@ -84,7 +89,6 @@ DT_MACHINE_START(sama5_dt, "Atmel SAMA5")
- MACHINE_END
- 
- static const char *const sama5_alt_dt_board_compat[] __initconst = {
--	"atmel,sama5d2",
- 	"atmel,sama5d4",
- 	NULL
- };
-@@ -95,3 +99,20 @@ DT_MACHINE_START(sama5_alt_dt, "Atmel SAMA5")
- 	.dt_compat	= sama5_alt_dt_board_compat,
- 	.l2c_aux_mask	= ~0UL,
- MACHINE_END
-+
-+static void __init sama5d2_dt_device_init(void)
-+{
-+	sama5_common_init();
-+}
-+
-+static const char *const sama5d2_dt_board_compat[] __initconst = {
-+	"atmel,sama5d2",
-+	NULL
-+};
-+
-+DT_MACHINE_START(sama5d2_dt, "Atmel SAMA5")
-+	/* Maintainer: Atmel */
-+	.init_machine	= sama5d2_dt_device_init,
-+	.dt_compat	= sama5d2_dt_board_compat,
-+	.l2c_aux_mask	= ~0UL,
-+MACHINE_END
+> 
+> So, if of_clk_add_provider() fails to register a platform driver,
+> it may unregister another provider added by OF_CLK_DECLARE().
+
+I suppose if we loop over the list in the incorrect order we
+would unregister the wrong one.
+
+> 
+> Some platform drivers call of_clk_del_provider() in a .remove callback,
+> so the same problem could happen.
+> 
+> Why does of_clk_del_provider() take (struct device_node *np) ?
+> Shouldn't it take (struct of_clk_provider *cp)?
+> 
+
+Not sure. Probably someone thought they could hide the structure
+from consumers and just return success or failure. We could make
+it an opaque pointer though and properly cleanup without
+iterating the list. Maybe we should do that for the hw provider
+API so that it simplifies the search.
+
+> 
+> 
+> 
+> > It used to return the last provider's error, but I accidentally
+> > changed that behavior when adding clk_hw providers in commit
+> > 0861e5b8cf80 (clk: Add clk_hw OF clk providers, 2016-02-05).
+> > Nobody seems to have complained though, so you're the first to
+> > have reported this.
+> 
+> 
+> If we allow multiple OF-providers for one device node,
+> I think any error should be treated as EPROBE_DEFER,
+> i.e. the current code is good.
+> 
+> 
+> The scenario is:
+> 
+>  - Clocks with ID 0 thru 3 are provided by CLK_OF_DECLARE()
+>  - Clocks with ID 4 thru 9 are provided by a platform driver.
+> 
+> What if a clock consumer requests the clk ID 5
+> after CLK_OF_DECLARE(), but before the clk platform driver is registered?
+> 
+> If the clock consumer gets the last provider's error
+> (-EINVAL returned from CLK_OR_DECLARE one in this case)
+> it will lose a chance to retry it after clocks from a platform driver
+> are registered.
+> 
+> A bit nasty...
+> 
+
+Yes, but right now if we get an error from a provider and that's
+the only provider in the list we don't return the error. Also,
+this case should be fixed by having the first provider return
+EPROBE_DEFER for clks that aren't populated early on.
+
+The best we can do is have the framework only return probe defer
+if there isn't a provider registered. Once a provider is
+registered, it needs to do the right thing and return the
+appropriate error (invalid or probe defer for example) at the
+right time.
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
