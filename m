@@ -1,121 +1,114 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Aug 2016 17:02:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: Loongson1: Refactor Loongson1 clock
-Message-ID: <20160819000244.GK361@codeaurora.org>
-References: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
- <1470999108-9851-2-git-send-email-keguang.zhang@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from nasmtp01.atmel.com ([192.199.1.245]:28022 "EHLO
+	ussmtp01.atmel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752044AbcHHKTb (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2016 06:19:31 -0400
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Kumar Gala" <galak@codeaurora.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v6 5/6] Documentation: atmel-pmc: Add DT bindings for fast startup
+Date: Mon, 8 Aug 2016 18:05:04 +0800
+Message-ID: <1470650705-31418-6-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470999108-9851-2-git-send-email-keguang.zhang@gmail.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/12, Keguang Zhang wrote:
-> @@ -91,3 +90,4 @@ obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
->  obj-$(CONFIG_X86)			+= x86/
->  obj-$(CONFIG_ARCH_ZX)			+= zte/
->  obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
-> +obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
+Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
+to trigger a fast restart signal to PMC.
 
-Please keep this sorted alphabetically.
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Acked-by: Rob Herring <robh+dt@kernel.org>
+---
 
-> diff --git a/drivers/clk/loongson1/clk.c b/drivers/clk/loongson1/clk.c
-> new file mode 100644
-> index 0000000..367b84a
-> --- /dev/null
-> +++ b/drivers/clk/loongson1/clk.c
-> @@ -0,0 +1,52 @@
-> +/*
-> + * Copyright (c) 2012-2016 Zhang, Keguang <keguang.zhang@gmail.com>
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/slab.h>
-> +
-> +int ls1x_pll_clk_enable(struct clk_hw *hw)
-> +{
-> +	return 0;
-> +}
-> +
-> +void ls1x_pll_clk_disable(struct clk_hw *hw)
-> +{
-> +}
+Changes in v6: None
+Changes in v5:
+ - due to the DT property expression change, update the binding
+   document.
 
-Why do we need empty functions?
+Changes in v4:
+ - add Acked-by tag.
 
-> +
-> +struct clk *__init clk_register_pll(struct device *dev,
-> +				    const char *name,
-> +				    const char *parent_name,
-> +				    const struct clk_ops *ops,
-> +				    unsigned long flags)
-> +{
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +
-> +	/* allocate the divider */
-> +	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
-> +	if (!hw)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name = name;
-> +	init.ops = ops;
-> +	init.flags = flags | CLK_IS_BASIC;
-> +	init.parent_names = (parent_name ? &parent_name : NULL);
-> +	init.num_parents = (parent_name ? 1 : 0);
-> +	hw->init = &init;
-> +
-> +	/* register the clock */
-> +	clk = clk_register(dev, hw);
+Changes in v3:
+ - update the property description.
 
-Please rebase this on clk: ls1x: Migrate to clk_hw based OF and
-registration APIs. I've put that into clk-next.
+Changes in v2:
+ - change the property name and property description.
 
-> +
-> +	if (IS_ERR(clk))
-> +		kfree(hw);
-> +
-> +	return clk;
-> +}
-> +
-> diff --git a/drivers/clk/loongson1/clk.h b/drivers/clk/loongson1/clk.h
-> new file mode 100644
-> index 0000000..aa880e6
-> --- /dev/null
-> +++ b/drivers/clk/loongson1/clk.h
-> @@ -0,0 +1,21 @@
-> +/*
-> + * Copyright (c) 2012-2016 Zhang, Keguang <keguang.zhang@gmail.com>
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef __LOONGSON1_CLK_H
-> +#define __LOONGSON1_CLK_H
+ .../devicetree/bindings/arm/atmel-pmc.txt          | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-Forward declare struct clk_hw, struct device, struct clk_ops
-here.
-
-> +
-> +int ls1x_pll_clk_enable(struct clk_hw *hw);
-> +void ls1x_pll_clk_disable(struct clk_hw *hw);
-> +struct clk *__init clk_register_pll(struct device *dev,
-
-__init is unnecessary in header files.
-
+diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+index 795cc78..76fdc66 100644
+--- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+@@ -12,3 +12,55 @@ Examples:
+ 		compatible = "atmel,at91rm9200-pmc";
+ 		reg = <0xfffffc00 0x100>;
+ 	};
++
++PMC Fast Startup Signals
++
++The PMC Fast Start Signals are used as the wake up source to trigger the PMC
++to wake up the system from the ULP1 mode.
++
++required properties:
++- compatible: should be "atmel,sama5d2-pmc-fast-startup".
++
++optional properties:
++- atmel,wakeup-rtc-timer: boolean to enable RTC alarm wake-up.
++- atmel,wakeup-usb-resume: boolean to enable USB resume wake-up.
++- atmel,wakeup-sdmmc-cd: boolean to enable SDMMC card detect wake-up.
++- atmel,wakeup-rxlp-match: boolean to enable RXLP matching condition wake-up.
++- atmel,wakeup-acc-comparison: boolean to enable ACC comparison wake-up.
++
++The node contains child nodes for each wake-up input pin that the platform uses.
++
++Input nodes
++
++Required properties:
++- reg: should contain the wake-up input index [0 - 10], to enable
++  the corresponding wake-up input.
++
++Optional properties:
++- atmel,wakeup-active-high: boolean to declare the corresponding wake-up
++  input described by the child be active high.
++  The default is to be active low.
++
++Example:
++
++	pmc: pmc@f0014000 {
++		compatible = "atmel,sama5d2-pmc";
++		reg = <0xf0014000 0x160>;
++
++		pmc_fast_restart {
++			compatible = "atmel,sama5d2-pmc-fast-startup";
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			atmel,wakeup-rtc-timer;
++
++			wkpin: input@0 {
++				reg = <0>;
++			};
++
++			gmac_wol: input@10 {
++				reg = <10>;
++				atmel,wakeup-active-high;
++			};
++		};
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
