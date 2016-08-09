@@ -1,43 +1,54 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	linux-clk@vger.kernel.org,
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Guodong Xu <guodong.xu@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH] clk: Hi6220: enable stub clock driver for ARCH_HISI
-Date: Mon,  8 Aug 2016 11:37:43 +0800
-Message-Id: <1470627463-20570-1-git-send-email-leo.yan@linaro.org>
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	devicetree@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 3/3] ARM64: dts: meson-gxbb: Add GXBB AO Clock and Reset node
+Date: Tue,  9 Aug 2016 11:13:28 +0200
+Message-Id: <1470734008-18849-4-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
+References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
-default, as result stub clock driver has not been registered and
-CPUFreq driver cannot work.
+Add the AO clock controller node for the AmLogic GXBB SoC.
 
-This patch is to enable stub clock driver in config for ARCH_HISI.
-
-Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/hisilicon/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index 3f537a0..9e0a95e 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -23,5 +23,6 @@ config RESET_HISI
- config STUB_CLK_HI6220
- 	bool "Hi6220 Stub Clock Driver"
- 	depends on COMMON_CLK_HI6220 && MAILBOX
-+	default ARCH_HISI
- 	help
- 	  Build the Hisilicon Hi6220 stub clock driver.
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index e502c24..c81e1ab 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -45,6 +45,8 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/gpio/meson-gxbb-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson-gxbb-reset.h>
++#include <dt-bindings/clock/gxbb-aoclkc.h>
++#include <dt-bindings/reset/gxbb-aoclkc.h>
+ 
+ / {
+ 	compatible = "amlogic,meson-gxbb";
+@@ -205,6 +207,13 @@
+ 				};
+ 			};
+ 
++			clkc_AO: clock-controller@040 {
++				compatible = "amlogic,gxbb-aoclkc";
++				reg = <0x0 0x00040 0x0 0x4>;
++				#clock-cells = <1>;
++				#reset-cells = <1>;
++			};
++
+ 			uart_AO: serial@4c0 {
+ 				compatible = "amlogic,meson-uart";
+ 				reg = <0x0 0x004c0 0x0 0x14>;
 -- 
-1.9.1
+2.7.0
