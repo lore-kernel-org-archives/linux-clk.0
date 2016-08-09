@@ -1,45 +1,49 @@
-Return-Path: <bhuvanchandra.dv@toradex.com>
-Subject: Re: [PATCH RESEND v2 0/8] Improve Rx/Tx DMA implementation
-To: <gregkh@linuxfoundation.org>
-References: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-CC: <stefan@agner.ch>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <jslaby@suse.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
-From: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-Message-ID: <a5d420fa-0837-f0af-dee9-a61562d473c2@toradex.com>
-Date: Tue, 2 Aug 2016 13:23:32 +0530
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH 6/6] bus: Add support for Tegra Generic Memory Interface
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-7-git-send-email-mirza.krak@gmail.com>
+ <fae8dbaf-53e9-dcfe-f755-32f7b28f4c9f@nvidia.com>
+ <CALw8SCWjs2TnwFcTY=iXv_eskpKaKpvUmoXnTgtpoL8w9neD=w@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <pawel.moll@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux@armlinux.org.uk>, <robh+dt@kernel.org>, "Kumar
+ Gala" <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c6c6d000-d0d4-ac9f-e19e-0d2a513cd3e8@nvidia.com>
+Date: Tue, 9 Aug 2016 14:37:05 +0100
 MIME-Version: 1.0
-In-Reply-To: <20160719074310.16872-1-bhuvanchandra.dv@toradex.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: bhuvanchandra.dv@toradex.com
+In-Reply-To: <CALw8SCWjs2TnwFcTY=iXv_eskpKaKpvUmoXnTgtpoL8w9neD=w@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
 
-Any comments on this patchset?
+On 09/08/16 08:21, Mirza Krak wrote:
+> 2016-08-08 15:47 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
 
-On 07/19/16 13:13, Bhuvanchandra DV wrote:
+...
 
-> Drop the clock change patch from v2 patchset[1] since it is applied.
->
-> Changes since v1:
-> Split suspend/resume patch.
->
-> [1] https://lkml.org/lkml/2016/6/28/124
->
-> Bhuvanchandra DV (5):
->    tty: serial: fsl_lpuart: Fix broken 8m/s1 support
->    tty: serial: fsl_lpuart: Use cyclic DMA for Rx
->    tty: serial: fsl_lpuart: Use scatter/gather DMA for Tx
->    tty: serial: fsl_lpuart: Update suspend/resume for DMA mode
->    tty: serial: fsl_lpuart: Add support for RS-485
->
-> Stefan Agner (3):
->    tty: serial: fsl_lpuart: consider TX FIFO too in tx_empty
->    tty: serial: fsl_lpuart: support suspend/resume
->    tty: serial: fsl_lpuart: fix clearing of receive flag
->
->   drivers/tty/serial/fsl_lpuart.c | 810 +++++++++++++++++++++++-----------------
->   1 file changed, 476 insertions(+), 334 deletions(-)
->
+>>> +     return of_platform_default_populate(of_node, NULL, dev);
+>>
+>> Seems odd to do this here. Why not as the last thing in probe once the
+>> GMI has been setup correctly?
+> 
+> It is done here mostly to avoid clean up in probe. I could move it out
+> of tegra_gmi_parse_dt and put it right after that call but still
+> before clk enable? Is that less odd?
+
+I would have thought that clocks should be enabled and resets
+de-asserted before we even attempt to populate any children. Hence, I
+would do this last. Yes that will require some clean-up in probe if this
+does fail but seems safest.
+
+Cheers
+Jon
+
+-- 
+nvpublic
