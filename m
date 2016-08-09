@@ -1,237 +1,228 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 3/3 v2] clk: versatile/icst: support for AP baseboard clocks
-Date: Mon, 22 Aug 2016 11:19:34 +0200
-Message-Id: <1471857574-13125-3-git-send-email-linus.walleij@linaro.org>
-In-Reply-To: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
-References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	devicetree@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 2/3] dt-bindings: clock: reset: Add GXBB AO Clock and Reset Bindings
+Date: Tue,  9 Aug 2016 11:13:27 +0200
+Message-Id: <1470734008-18849-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
+References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the two ICST525-based clocks on the
-Integrator/AP baseboard, as documented in the board manual
-"Integrator/AP ASIC Development Motherboard", ARM DUI0098 B,
-pages 3-15 thru 3-18.
+Add documentations and dt-bindings headers for the AO clock and reset
+controller.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
-ChangeLog v1->v2:
-- Drop DTS patch hunk that need to go into a separate patch.
----
- drivers/clk/versatile/clk-icst.c | 137 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 137 insertions(+)
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         | 45 +++++++++++++++
+ include/dt-bindings/clock/gxbb-aoclkc.h            | 66 ++++++++++++++++++++++
+ include/dt-bindings/reset/gxbb-aoclkc.h            | 66 ++++++++++++++++++++++
+ 3 files changed, 177 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+ create mode 100644 include/dt-bindings/clock/gxbb-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/gxbb-aoclkc.h
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 8f06473b72ff..5fd54a6a604e 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -29,15 +29,20 @@
- 
- #define VERSATILE_AUX_OSC_BITS 0x7FFFF
- #define INTEGRATOR_AP_CM_BITS 0xFF
-+#define INTEGRATOR_AP_SYS_BITS 0xFF
- #define INTEGRATOR_CP_CM_CORE_BITS 0x7FF
- #define INTEGRATOR_CP_CM_MEM_BITS 0x7FF000
- 
-+#define INTEGRATOR_AP_PCI_25_33_MHZ BIT(8)
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+new file mode 100644
+index 0000000..a55d31b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -0,0 +1,45 @@
++* Amlogic GXBB AO Clock and Reset Unit
 +
- /**
-  * enum icst_control_type - the type of ICST control register
-  */
- enum icst_control_type {
- 	ICST_VERSATILE, /* The standard type, all control bits available */
- 	ICST_INTEGRATOR_AP_CM, /* Only 8 bits of VDW available */
-+	ICST_INTEGRATOR_AP_SYS, /* Only 8 bits of VDW available */
-+	ICST_INTEGRATOR_AP_PCI, /* Odd bit pattern storage */
- 	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
- 	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
- };
-@@ -93,6 +98,38 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
- 	}
- 
- 	/*
-+	 * The Integrator/AP system clock on the base board can only
-+	 * access the low eight bits of the v PLL divider. Bit 8 is tied low
-+	 * and always zero, r is hardwired to 46, and the output divider is
-+	 * hardwired to 3 (divide by 4) according to the document
-+	 * "Integrator AP ASIC Development Motherboard" ARM DUI 0098B,
-+	 * page 3-16.
-+	 */
-+	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
-+		vco->v = val & INTEGRATOR_AP_SYS_BITS;
-+		vco->r = 46;
-+		vco->s = 3;
-+		return 0;
-+	}
++The Amlogic GXBB AO clock controller generates and supplies clock to various
++controllers within the Always-On part of the SoC.
 +
-+	/*
-+	 * The Integrator/AP PCI clock is using an odd pattern to create
-+	 * the child clock, basically a single bit called DIVX/Y is used
-+	 * to select between two different hardwired values: setting the
-+	 * bit to 0 yields v = 17, r = 22 and OD = 1, whereas setting the
-+	 * bit to 1 yields v = 14, r = 14 and OD = 1 giving the frequencies
-+	 * 33 or 25 MHz respectively.
-+	 */
-+	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
-+		bool divxy = !!(val & INTEGRATOR_AP_PCI_25_33_MHZ);
++Required Properties:
 +
-+		vco->v = divxy ? 17 : 14;
-+		vco->r = divxy ? 22 : 14;
-+		vco->s = 1;
-+		return 0;
-+	}
++- compatible: should be "amlogic,gxbb-aoclkc"
++- reg: physical base address of the clock controller and length of memory
++       mapped region.
 +
-+	/*
- 	 * The Integrator/CP core clock can access the low eight bits
- 	 * of the v PLL divider. Bit 8 is tied low and always zero,
- 	 * r is hardwired to 22 and the output divider s is accessible
-@@ -143,6 +180,17 @@ static int vco_set(struct clk_icst *icst, struct icst_vco vco)
- 		if (vco.r != 22)
- 			pr_err("ICST error: tried to use RDW != 22\n");
- 		break;
-+	case ICST_INTEGRATOR_AP_SYS:
-+		mask = INTEGRATOR_AP_SYS_BITS;
-+		val &= ~0xFF; /* Uses 8 bits */
-+		val |= vco.v & 0xFF;
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.s != 3)
-+			pr_err("ICST error: tried to use VOD != 1\n");
-+		if (vco.r != 46)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
- 	case ICST_INTEGRATOR_CP_CM_CORE:
- 		mask = INTEGRATOR_CP_CM_CORE_BITS; /* Uses 12 bits */
- 		val = (vco.v & 0xFF) | vco.s << 8;
-@@ -225,6 +273,27 @@ static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
- 		return DIV_ROUND_CLOSEST(rate, 500000) * 500000;
- 	}
- 
-+	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
-+		/* Divides between 3 and 50 MHz in steps of 0.25 MHz */
-+		if (rate <= 3000000)
-+			return 3000000;
-+		if (rate >= 50000000)
-+			return 5000000;
-+		/* Slam to closest 0.25 MHz */
-+		return DIV_ROUND_CLOSEST(rate, 250000) * 250000;
-+	}
++- #clock-cells: should be 1.
 +
-+	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
-+		/*
-+		 * If we're below or less than halfway from 25 to 33 MHz
-+		 * select 25 MHz
-+		 */
-+		if (rate <= 25000000 || rate < 29000000)
-+			return 25000000;
-+		/* Else just return the default frequency */
-+		return 33000000;
-+	}
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/gxbb-aoclkc.h header and can be
++used in device tree sources.
 +
- 	vco = icst_hz_to_vco(icst->params, rate);
- 	return icst_hz(icst->params, vco);
- }
-@@ -235,6 +304,36 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_icst *icst = to_icst(hw);
- 	struct icst_vco vco;
- 
-+	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
-+		/* This clock is especially primitive */
-+		unsigned int val;
-+		int ret;
++- #reset-cells: should be 1.
 +
-+		if (rate == 25000000) {
-+			val = 0;
-+		} else if (rate == 33000000) {
-+			val = INTEGRATOR_AP_PCI_25_33_MHZ;
-+		} else {
-+			pr_err("ICST: cannot set PCI frequency %lu\n",
-+			       rate);
-+			return -EINVAL;
-+		}
-+		ret = regmap_write(icst->map, icst->lockreg_off,
-+				   VERSATILE_LOCK_VAL);
-+		if (ret)
-+			return ret;
-+		ret = regmap_update_bits(icst->map, icst->vcoreg_off,
-+					 INTEGRATOR_AP_PCI_25_33_MHZ,
-+					 val);
-+		if (ret)
-+			return ret;
-+		/* This locks the VCO again */
-+		ret = regmap_write(icst->map, icst->lockreg_off, 0);
-+		if (ret)
-+			return ret;
-+		return 0;
-+	}
++Each reset is assigned an identifier and client nodes can use this identifier
++to specify the reset which they consume. All available resets are defined as
++preprocessor macros in the dt-bindings/reset/gxbb-aoclkc.h header and can be
++used in device tree sources.
 +
- 	if (parent_rate)
- 		icst->params->ref = parent_rate;
- 	vco = icst_hz_to_vco(icst->params, rate);
-@@ -368,6 +467,34 @@ static const struct icst_params icst525_apcp_cm_params = {
- 	.idx2s		= icst525_idx2s,
- };
- 
-+static const struct icst_params icst525_ap_sys_params = {
-+	.vco_max	= ICST525_VCO_MAX_5V,
-+	.vco_min	= ICST525_VCO_MIN,
-+	/* Minimum 3 MHz, VDW = 4 */
-+	.vd_min		= 3,
-+	/* Maximum 50 MHz, VDW = 192 */
-+	.vd_max		= 50,
-+	/* r is hardcoded to 46 and this is the actual divisor, +2 */
-+	.rd_min		= 48,
-+	.rd_max		= 48,
-+	.s2div		= icst525_s2div,
-+	.idx2s		= icst525_idx2s,
-+};
++Example: AO Clock controller node:
 +
-+static const struct icst_params icst525_ap_pci_params = {
-+	.vco_max	= ICST525_VCO_MAX_5V,
-+	.vco_min	= ICST525_VCO_MIN,
-+	/* Minimum 25 MHz */
-+	.vd_min		= 25,
-+	/* Maximum 33 MHz */
-+	.vd_max		= 33,
-+	/* r is hardcoded to 14 or 22 and this is the actual divisors +2 */
-+	.rd_min		= 16,
-+	.rd_max		= 24,
-+	.s2div		= icst525_s2div,
-+	.idx2s		= icst525_idx2s,
-+};
++	clkc_AO: clock-controller@040 {
++		compatible = "amlogic,gxbb-aoclkc";
++		reg = <0x0 0x040 0x0 0x4>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
 +
- static void __init of_syscon_icst_setup(struct device_node *np)
- {
- 	struct device_node *parent;
-@@ -408,6 +535,12 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-cm")) {
- 		icst_desc.params = &icst525_apcp_cm_params;
- 		ctype = ICST_INTEGRATOR_AP_CM;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-sys")) {
-+		icst_desc.params = &icst525_ap_sys_params;
-+		ctype = ICST_INTEGRATOR_AP_SYS;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-pci")) {
-+		icst_desc.params = &icst525_ap_pci_params;
-+		ctype = ICST_INTEGRATOR_AP_PCI;
- 	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-core")) {
- 		icst_desc.params = &icst525_apcp_cm_params;
- 		ctype = ICST_INTEGRATOR_CP_CM_CORE;
-@@ -437,6 +570,10 @@ CLK_OF_DECLARE(arm_syscon_icst307_clk,
- 	       "arm,syscon-icst307", of_syscon_icst_setup);
- CLK_OF_DECLARE(arm_syscon_integratorap_cm_clk,
- 	       "arm,syscon-icst525-integratorap-cm", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_integratorap_sys_clk,
-+	       "arm,syscon-icst525-integratorap-sys", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_integratorap_pci_clk,
-+	       "arm,syscon-icst525-integratorap-pci", of_syscon_icst_setup);
- CLK_OF_DECLARE(arm_syscon_integratorcp_cm_core_clk,
- 	       "arm,syscon-icst525-integratorcp-cm-core", of_syscon_icst_setup);
- CLK_OF_DECLARE(arm_syscon_integratorcp_cm_mem_clk,
++Example: UART controller node that consumes the clock and reset generated
++  by the clock controller:
++
++	uart_AO: serial@4c0 {
++		compatible = "amlogic,meson-uart";
++		reg = <0x4c0 0x14>;
++		interrupts = <0 90 1>;
++		clocks = <&clkc_AO CLKID_AO_UART1>;
++		resets = <&clkc_AO RESET_AO_UART1>;
++		status = "disabled";
++	};
+diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
+new file mode 100644
+index 0000000..3175148
+--- /dev/null
++++ b/include/dt-bindings/clock/gxbb-aoclkc.h
+@@ -0,0 +1,66 @@
++/*
++ * This file is provided under a dual BSD/GPLv2 license.  When using or
++ * redistributing this file, you may do so under either license.
++ *
++ * GPL LICENSE SUMMARY
++ *
++ * Copyright (c) 2016 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ * The full GNU General Public License is included in this distribution
++ * in the file called COPYING.
++ *
++ * BSD LICENSE
++ *
++ * Copyright (c) 2016 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ *   * Redistributions of source code must retain the above copyright
++ *     notice, this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above copyright
++ *     notice, this list of conditions and the following disclaimer in
++ *     the documentation and/or other materials provided with the
++ *     distribution.
++ *   * Neither the name of Intel Corporation nor the names of its
++ *     contributors may be used to endorse or promote products derived
++ *     from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_GXBB_AOCLK
++#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_GXBB_AOCLK
++
++#define CLKID_AO_REMOTE		0
++#define CLKID_AO_I2C_MASTER	1
++#define CLKID_AO_I2C_SLAVE	2
++#define CLKID_AO_UART1		3
++#define CLKID_AO_UART2		4
++#define CLKID_AO_IR_BLASTER	5
++
++#endif
+diff --git a/include/dt-bindings/reset/gxbb-aoclkc.h b/include/dt-bindings/reset/gxbb-aoclkc.h
+new file mode 100644
+index 0000000..9e3fd60
+--- /dev/null
++++ b/include/dt-bindings/reset/gxbb-aoclkc.h
+@@ -0,0 +1,66 @@
++/*
++ * This file is provided under a dual BSD/GPLv2 license.  When using or
++ * redistributing this file, you may do so under either license.
++ *
++ * GPL LICENSE SUMMARY
++ *
++ * Copyright (c) 2016 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ * The full GNU General Public License is included in this distribution
++ * in the file called COPYING.
++ *
++ * BSD LICENSE
++ *
++ * Copyright (c) 2016 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ *   * Redistributions of source code must retain the above copyright
++ *     notice, this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above copyright
++ *     notice, this list of conditions and the following disclaimer in
++ *     the documentation and/or other materials provided with the
++ *     distribution.
++ *   * Neither the name of Intel Corporation nor the names of its
++ *     contributors may be used to endorse or promote products derived
++ *     from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_GXBB_AOCLK
++#define DT_BINDINGS_RESET_AMLOGIC_MESON_GXBB_AOCLK
++
++#define RESET_AO_REMOTE		0
++#define RESET_AO_I2C_MASTER	1
++#define RESET_AO_I2C_SLAVE	2
++#define RESET_AO_UART1		3
++#define RESET_AO_UART2		4
++#define RESET_AO_IR_BLASTER	5
++
++#endif
 -- 
-2.7.4
+2.7.0
