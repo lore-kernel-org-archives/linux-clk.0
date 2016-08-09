@@ -1,61 +1,60 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-Date: Mon, 1 Aug 2016 13:13:50 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	dianders@chromium.org, huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 3/8] clk: rockchip: rk3399: fix incorrect
- parent for rk3399's {c, g}pll_aclk_perihp_src
-Message-ID: <20160801201349.GA129313@google.com>
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
- <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <20160808201527.62ec34beb19b86dcfd3dbf03@free.fr>
+References: <20160808172149.30861-1-andre.przywara@arm.com>
+ <20160808172149.30861-4-andre.przywara@arm.com> <20160808201527.62ec34beb19b86dcfd3dbf03@free.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 9 Aug 2016 18:02:47 +0800
+Message-ID: <CAGb2v64CnRJyQih=DMZ4wfMPjdYNHwm2TxqNjaALsQ+m7bwsbg@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 3/7] clk: sunxi: add generic
+ multi-parent bus clock gates driver
+To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Moine?= <moinejf@free.fr>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 01, 2016 at 05:53:38PM +0800, Xing Zheng wrote:
-> There was a typo, swapping 'c' <--> 'g'.
-> (This patch is updated and am from https://patchwork.kernel.org/patch/9254067/)
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v2: None
+On Tue, Aug 9, 2016 at 2:15 AM, Jean-Francois Moine <moinejf@free.fr> wrote:
+> On Mon,  8 Aug 2016 18:21:45 +0100
+> Andre Przywara <andre.przywara@arm.com> wrote:
+>
+>> The Allwinner H3 SoC introduced bus clock gates with potentially
+>> different parents per clock gate register. The H3 driver chose to
+>> hardcode the actual parent clock relation in the code.
+>> Add a new driver (which has the potential to drive the H3 and also
+>> the simple clock gates as well) which uses the power of DT to describe
+>> this relationship in an elegant and flexible way.
+>> Using one subnode for every parent clock we get away with a single
+>> DT compatible match, which can be used as a fallback value in the
+>> actual DTs without the need to add specific compatible strings to the
+>> code.  This avoids adding a new driver or function for every new SoC.
+>
+> The 'parent's of the bus gates are of no interest.
+> They are supposed to be (no clear documentation) apb1, apb2, ahb1 and
+> ahb2, but, as you well noticed in the patch 5/7, these clocks are fixed
+> and have no gate. Some of them are parents of real clocks, but they
+> don't bring anything to the bus gates of the other clocks.
 
-I believe this patch was already applied upstream; otherwise, it
-wouldn't make sense to have both this patch and patch 4 -- we would
-probably squash them together.
+Yes they are. Some devices, such as UARTs and I2C controllers, need
+to get the clock rate of the gate and calculate the proper internal
+divider.
 
-Brian
+> As I wrote previously, the simplest is to ungate/gate the clocks in
+> both the bus and clock registers on clk_prepare/unprepare.
+> Then, your 'multi-bus-gates' would be simply a generic 'multi-gates'.
 
->  drivers/clk/rockchip/clk-rk3399.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index f55f967f..2182391 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->  			RK3399_CLKGATE_CON(13), 1, GFLAGS),
->  
->  	/* perihp */
-> -	GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
-> +	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
->  			RK3399_CLKGATE_CON(5), 0, GFLAGS),
-> -	GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
-> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->  			RK3399_CLKGATE_CON(5), 1, GFLAGS),
->  	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
->  			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
-> -- 
-> 1.7.9.5
-> 
-> 
+This is somewhat misleading. What "clock" registers are you referring
+to? There are no "bus" registers. The reason we call them "bus clock
+gates" is because they are mashed together, instead of having clearly
+separated registers for each AHB/APB bus.
+
+And if you want just a generic clock gates driver, we already have
+the "simple-gates" driver.
+
+Regards
+ChenYu
