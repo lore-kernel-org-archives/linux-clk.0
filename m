@@ -1,90 +1,105 @@
-Return-Path: <zajec5@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAC3K-4pvDjziC08fzRjHoi9Tb=smnmNMzfxgG60hqAy1yC13gA@mail.gmail.com>
-References: <1470830763-29189-1-git-send-email-zajec5@gmail.com> <CAC3K-4pvDjziC08fzRjHoi9Tb=smnmNMzfxgG60hqAy1yC13gA@mail.gmail.com>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 10 Aug 2016 19:28:07 +0200
-Message-ID: <CACna6rw8X_25m2s8in-OEL-Ve4-_K9b7fGSBsv6ccS9sOLa0oA@mail.gmail.com>
-Subject: Re: [PATCH V3] clk: bcm: Add driver for Northstar ILP clock
-To: Jon Mason <jon.mason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-	Florian Fainelli <f.fainelli@gmail.com>, Jon Mason <jonmason@broadcom.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <5e0402db-10ce-75eb-cf95-d9e2d26e3efe@nvidia.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-4-git-send-email-mirza.krak@gmail.com> <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
+ <CALw8SCV61w6BgtBb8pY4czeB4yFmbtLmB2MuyrvGcvepmRpeBQ@mail.gmail.com> <5e0402db-10ce-75eb-cf95-d9e2d26e3efe@nvidia.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Tue, 9 Aug 2016 22:48:00 +0200
+Message-ID: <CALw8SCVrQeZLQjkapLjk9Me=AVU4kbtOskem8jeEeYDK5tznGg@mail.gmail.com>
+Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, mark.rutland@arm.com, devicetree@vger.kernel.org,
+	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, linux@armlinux.org.uk,
+	robh+dt@kernel.org, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10 August 2016 at 19:22, Jon Mason <jon.mason@broadcom.com> wrote:
-> On Wed, Aug 10, 2016 at 8:05 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.co=
-m> wrote:
->> diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/D=
-ocumentation/devicetree/bindings/clock/brcm,ns-ilp.txt
->> new file mode 100644
->> index 0000000..a18c73f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
->> @@ -0,0 +1,40 @@
->> +Broadcom Northstar ILP clock
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->> +
->> +This binding uses the common clock binding:
->> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +This binding is used for ILP clock (sometimes referred as "slow clock")
->> +on Broadcom Northstar devices using Corex-A7 CPU.
->> +
->> +This clock is part of PMU (Power Management Unit), a Broadcom's device
->> +handing power-related aspects. Please note PMU contains more subdevices=
-,
->> +ILP is only one of them.
->> +
->> +ILP's rate has to be calculated on runtime and it depends on ALP clock
->> +which has to be referenced.
->> +
->> +Required properties:
->> +- compatible: "brcm,ns-ilp"
->> +- reg: iomem address range of PMU (Power Management Unit)
->> +- reg-names: "pmu", the only needed & supported reg right now
->> +- clocks: has to reference an ALP clock
->> +- #clock-cells: should be <0>
->> +
->> +Example:
->> +
->> +pmu@18012000 {
->> +       compatible =3D "simple-bus";
->> +       ranges =3D <0x00000000 0x18012000 0x00001000>;
+2016-08-09 15:34 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
 >
-> I don't see a corresponding DT entry in this patch, but 18012000 is
-> the PCI block.  So, I am concerned this will collide if used there.
+> On 09/08/16 09:40, Mirza Krak wrote:
+>> 2016-08-08 16:44 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>>
+>>> On 06/08/16 20:40, Mirza Krak wrote:
+>>>> From: Mirza Krak <mirza.krak@gmail.com>
+>>>>
+
+<--snip-->
+
+>>>> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
+>>>> +   Valid values are 0-15, default is 1
+>>>> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
+>>>> +   Valid values are 0-255, default is 1
+>>>> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
+>>>> +   Valid values are 0-255, default is 3
+>>>> +
+>>>> +Example with two SJA1000 CAN controllers connected to the GMI bus:
+>>>> +
+>>>> +  gmi@70090000 {
+>>>> +    #address-cells = <1>;
+>>>> +    #size-cells = <1>;
+>>>
+>>> I think 0 for size makes sense. I know that caused you problems before,
+>>> but I am wondering if ...
+>>>
+>>>> +    ranges;
+>>>
+>>> ... ranges is needed here? If we do have it, I am wondering if it should
+>>> be a single entry for the chip-select that is being used. For now we
+>>> could only support a ranges with one entry.
+>>>
+>>>         #address-cells = <1>;
+>>>         #size-cells = <1>;
+>>>         ranges = <4 0x48000000 0x00040000>;
+>>
+>> I prefer if we have "ranges" with one single entry, and warn if user enters
+>> multiple for now, like we discussed earlier. Should have really done it in
+>> this series.
 >
-> I looked at the NS register reference guide, and I cannot find the
-> registers you are trying to reference.  Is this supposed to be
-> referencing the LCPLL clock registers in DMU?  If so, there is already
-> a driver in there for this (see drivers/clk/bcm/clk-nsp.c).
+> I think I do as well.
+>
+>>>
+>>>> +    nvidia,snor-mux-mode;
+>>>> +    nvidia,snor-adv-inv;
+>>>> +    nvidia,snor-cs-select = <4>;
+>>>
+>>> I would have expected these under bus@X node as they are specific to the
+>>> GMI CS.
+>>
+>> Yes, that is true.
+>>
+>>>
+>>> I would also expect that the actual chip-select number is encoded in the
+>>> reg property.
+>>>
+>>>> +
+>>>> +    bus@0,0 {
+>>>
+>>> bus@4
+>>
+>> ACK.
+>>
+>>>
+>>> No mention of this bus node in the above documentation.
+>>
+>> I was hesitant documenting it since I am not sure if we really need it
+>> in a generic case? It does make sense in my
+>> specific case. But what would it look like if we could maintain CS in software.
+>>
+>> Do you then have a bus node per CS? I am guessing not. Is it enough to
+>> document it in my "example brief"?
+>
+> I see what you mean. May be it is fine to document with the examples
+> below how child devices should be populated. You should also state that
+> currently the GMI only supports one child device currently for the
+> chip-select that is being used.
 
-This patch is for BCM53573 family, not BCM4708 family you are looking at.
+Should I really need to state that? Is it not always the case, that
+you have one child device per chip-select?
 
-Found chip with id 53573, rev 0x02 and package 0x01
-Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x36, class 0x0)
-Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x38, class 0x0)
-Core 2 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x05, class 0x0)
-Core 3 found: ARM CA7 (manuf 0x4BF, id 0x847, rev 0x00, class 0x0)
-Core 4 found: USB 2.0 Host (manuf 0x4BF, id 0x819, rev 0x05, class 0x0)
-Core 5 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x08, class 0x0)
-Core 6 found: I2S (manuf 0x4BF, id 0x834, rev 0x06, class 0x0)
-Core 7 found: CNDS DDR2/3 memory controller (manuf 0x4BF, id 0x846,
-rev 0x00, class 0x0)
-Core 8 found: NAND flash controller (manuf 0x4BF, id 0x509, rev 0x01, class=
- 0x0)
-Core 9 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x38, class 0x0)
-Core 10 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x08, class 0x0)
-Core 11 found: I2S (manuf 0x4BF, id 0x834, rev 0x06, class 0x0)
-Core 12 found: GCI (manuf 0x4BF, id 0x840, rev 0x08, class 0x0)
-Core 13 found: PMU (manuf 0x4BF, id 0x827, rev 0x1C, class 0x0)
+Best Regards
+Mirza
