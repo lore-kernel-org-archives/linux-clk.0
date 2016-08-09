@@ -1,35 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:30:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	=?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH 29/34] clk: si570: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160825003025.GA19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-30-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20160601231533.9354-30-stephen.boyd@linaro.org>
+Return-Path: <moinejf@free.fr>
+Date: Tue, 9 Aug 2016 19:27:07 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Andre Przywara <andre.przywara@arm.com>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Emilio =?ISO-8859-1?Q?L=F3pez?=
+ <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel
+ <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+ linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 3/7] clk: sunxi: add generic
+ multi-parent bus clock gates driver
+Message-Id: <20160809192707.ecb29cd176c29232e1086c82@free.fr>
+In-Reply-To: <CAGb2v64CnRJyQih=DMZ4wfMPjdYNHwm2TxqNjaALsQ+m7bwsbg@mail.gmail.com>
+References: <20160808172149.30861-1-andre.przywara@arm.com>
+	<20160808172149.30861-4-andre.przywara@arm.com>
+	<20160808201527.62ec34beb19b86dcfd3dbf03@free.fr>
+	<CAGb2v64CnRJyQih=DMZ4wfMPjdYNHwm2TxqNjaALsQ+m7bwsbg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+On Tue, 9 Aug 2016 18:02:47 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Applied to clk-next
+> > The 'parent's of the bus gates are of no interest.
+> > They are supposed to be (no clear documentation) apb1, apb2, ahb1 and
+> > ahb2, but, as you well noticed in the patch 5/7, these clocks are fixed
+> > and have no gate. Some of them are parents of real clocks, but they
+> > don't bring anything to the bus gates of the other clocks.
+>=20
+> Yes they are. Some devices, such as UARTs and I2C controllers, need
+> to get the clock rate of the gate and calculate the proper internal
+> divider.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+You are right, the clocks of some subsystems have only a gate, but
+these are exceptions.
+
+Look at an ordinary clock, say the mmc0 of the H3.
+There is a "bus" gate (see below) in the CCU register 0x60, bit 8, and
+the "clock" gate in the CCU register 0x88, bit 31.
+
+The 'simple-gates' says that the "bus gate" is child of ahb1 (in all
+sunxi versions, the one prior to 'simple-gate', in the 'simple-gate',
+in 'sunxi-ng', and now in Andr=E9's patch).
+
+But, where do you see a hardware relation between the mmc0 clock and
+the ahb1 clock?
+
+> > As I wrote previously, the simplest is to ungate/gate the clocks in
+> > both the bus and clock registers on clk_prepare/unprepare.
+> > Then, your 'multi-bus-gates' would be simply a generic 'multi-gates'.
+>=20
+> This is somewhat misleading. What "clock" registers are you referring
+> to? There are no "bus" registers. The reason we call them "bus clock
+> gates" is because they are mashed together, instead of having clearly
+> separated registers for each AHB/APB bus.
+>=20
+> And if you want just a generic clock gates driver, we already have
+> the "simple-gates" driver.
+
+Maybe I used the wrong words.
+
+The "clock" register is the one which defines the parameters of the
+clock (parents, mul/div factors, gate). For the H3 mmc0, it is the
+CCU register 0x60.
+
+The "bus" register is one of the so-called "Bus Clock Gating Register"s.
+For the H3 mmc0, it is the CCU register 0x88.=09
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
