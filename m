@@ -1,43 +1,99 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Aug 2016 14:09:22 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
+	Erin Lo <erin.lo@mediatek.com>, linux-kernel@vger.kernel.org,
+	srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
+ parents
+Message-ID: <20160810210922.GD2996@codeaurora.org>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+ <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+ <20160702012140.GB17071@codeaurora.org>
+ <1467604308.26485.4.camel@mtksdaap41>
+ <146802073038.73491.6675612765998057903@resonance>
+ <1468225452.31247.7.camel@mtksdaap41>
+ <1470203182.17063.3.camel@mtksdaap41>
+ <1470721183.8551.6.camel@mtksdaap41>
 MIME-Version: 1.0
-In-Reply-To: <20160804212553.GB15690@codeaurora.org>
-References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
- <20160804212553.GB15690@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 4 Aug 2016 17:02:07 -0500
-Message-ID: <CAL_JsqJT2R65TU52bXTdbBiFBEESnFnjZkwE51ojq7DNwp5ofg@mail.gmail.com>
-Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470721183.8551.6.camel@mtksdaap41>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 4, 2016 at 4:25 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> +Rob in case he has any insight
->
-> On 07/09, Masahiro Yamada wrote:
->> Hi.
+(Including lists)
+
+On 08/09, James Liao wrote:
+> On Wed, 2016-08-03 at 13:46 +0800, James Liao wrote:
 >>
->> I think the current code allows to add
->> clk_providers multiple times against one DT node.
+>> Hi Mike,
 >>
->> Are there cases that really need to do so?
+>> Do you have new patches to fix new clock parents? If not, I think we can
+>> use my patch first. Is it okay?
+>>
 >
-> If we have clk drivers that have a device driver structure and
-> also use CLK_OF_DECLARE then we could get into a situation where
-> they register two providers for the same device node. I can't
-> think of any other situation where this would happen though.
+> Hi Stephen,
+>
+> Do you have comments for the bug fixing? I prefer to use my patch (clk:
+> fix initial state of critical clock's parents). How do you think?
+>
 
-In this case I'd think you could have some sort of hand-off. Perhaps
-the code using CLK_OF_DECLARE can only do provide enable and get_rate
-and then the full driver loads with more capabilities.
+How about we recalc accuracies and rates in addition to the patch
+from Mike? That will fix everything?
 
-The other case I could think of is you need to match on more than just
-the compatible, so the callbacks could have additional logic to match
-against. But in that case, only one should succeed. Also, there's the
-general problem that we can't support 2 drivers both matching where
-one is a better match than the other.
+---8<----
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH] clk: migrate ref counts when orphans are reunited
 
-Rob
+It's always nice to see families reunited, and this is equally true when
+talking about parent clocks and their children. However, if the orphan
+clk had a positive prepare_count or enable_count, then we would not
+migrate those counts up the parent chain correctly.
+
+This has manifested with the recent critical clocks feature, which often
+enables clocks very early, before their parents have been registered.
+
+Fixed by replacing the call to clk_core_reparent with calls to
+__clk_set_parent_{before,after}.
+
+Cc: James Liao <jamesjj.liao@mediatek.com>
+Cc: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+[sboyd@codeaurora.org: Recalc accuracies and rates too]
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 820a939fb6bb..dc3fff2bf839 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2449,8 +2449,16 @@ static int __clk_core_init(struct clk_core *core)
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
+ 
+-		if (parent)
+-			clk_core_reparent(orphan, parent);
++		/*
++		 * we could call __clk_set_parent, but that would result in a
++		 * reducant call to the .set_rate op, if it exists
++		 */
++		if (parent) {
++			__clk_set_parent_before(orphan, parent);
++			__clk_set_parent_after(orphan, parent, NULL);
++			__clk_recalc_accuracies(orphan);
++			__clk_recalc_rates(orphan, 0);
++		}
+ 	}
+ 
+ 	/*
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
