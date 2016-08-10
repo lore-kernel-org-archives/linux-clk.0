@@ -1,40 +1,40 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 0/3] clk: samsung: exynos5420: Add clocks for CMU_CDREX
- domain
-Date: Thu, 25 Aug 2016 15:57:15 +0900
-Message-id: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Aug 2016 15:06:14 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: sunxi-ng: Fix inverted test condition in
+ ccu_helper_wait_for_lock
+Message-ID: <20160810220614.GE2996@codeaurora.org>
+References: <1468464155-11888-1-git-send-email-wens@csie.org>
+ <20160715080636.GP4761@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160715080636.GP4761@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches add the clocks for CMU_CDREX (DRAM Express Controller)
-that generates the clocks for DRAM and NoC (Network on Chip) bus clock.
+On 07/15, Maxime Ripard wrote:
+> On Thu, Jul 14, 2016 at 10:42:35AM +0800, Chen-Yu Tsai wrote:
+> > The condition passed to read*_poll_timeout() is the break condition,
+> > i.e. wait for this condition to happen and return success.
+> > 
+> > The original code assumed the opposite, resulting in a warning when
+> > the PLL clock rate was changed but never lost it's lock as far as
+> > the readout indicated. This was verified by checking the read out
+> > register value.
+> > 
+> > Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> 
+> Mike, Stephen, could you add that patch on top of the current branch?
+> 
 
-[clk_summary on exynos5422-odroidxu3 board]
-fout_bpll                             0            0   800000000          0 0
-    mout_bpll                          0            0   800000000          0 0
-       mout_mclk_cdrex                 0            0   800000000          0 0
-          dout_pclk_core_mem           0            0   200000000          0 0
-          dout_sclk_cdrex              0            0   800000000          0 0
-
-Changes from v1:
-- Use the BPLL for DRAM clock to generate the 800MHz
-- Add patch3 to assign the clock rate for DRAM clock
-
-Chanwoo Choi (3):
-  dt-bindings: Add the clock id for CMU_CDREX (DRAM Express Controller)
-  clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
-  ARM: dts: Set the clock rate for DREX block 800Mhz on exynos5422-odroidxu3
-
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  5 +++
- drivers/clk/samsung/clk-exynos5420.c               | 37 ++++++++++++++++++++++
- include/dt-bindings/clock/exynos5420.h             | 11 ++++++-
- 3 files changed, 52 insertions(+), 1 deletion(-)
+Applied to clk-fixes
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
