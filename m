@@ -1,62 +1,61 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH 2/3] thermal: hisilicon: fix for dependency
-Date: Wed, 31 Aug 2016 16:50:16 +0800
-Message-Id: <1472633417-9330-3-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <57AAF68D.7090707@nvidia.com>
+References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+ <1466160667-28451-3-git-send-email-ldewangan@nvidia.com> <20160620163947.GA27492@rob-hp-laptop>
+ <5768E2AD.8070004@nvidia.com> <57725F64.4030903@nvidia.com> <57AAF68D.7090707@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 10 Aug 2016 07:43:04 -0500
+Message-ID: <CAL_JsqL+sZ1tX_Wnj=N+ku4Gs0dNRhKDe4vDkEitAu+M4HEBmA@mail.gmail.com>
+Subject: Re: [PATCH V3 2/4] clk: Combine DT binding doc for max77686 and max77802
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The thermal driver is standalone driver which is used to enable
-thermal sensors, so it can be used with any cooling device and
-should not bind with CPU cooling device driver.
+On Wed, Aug 10, 2016 at 4:40 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> Hi,
+>
+> On Tuesday 28 June 2016 04:58 PM, Laxman Dewangan wrote:
+>>
+>> Hi Rob,
+>>
+>> On Tuesday 21 June 2016 12:16 PM, Laxman Dewangan wrote:
+>>>
+>>>
+>>> On Monday 20 June 2016 10:09 PM, Rob Herring wrote:
+>>>>
+>>>> On Fri, Jun 17, 2016 at 04:21:05PM +0530, Laxman Dewangan wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> +
+>>>>>   Following properties should be presend in main device node of the MFD
+>>>>> chip.
+>>>>>     Required properties:
+>>>>
+>>>> I'd expect to see compatible strings updated...
+>>>>
+>>>
+>>> There is no separate compatible string for clock. The clock nodes is the
+>>> parent node only and the compatible described in the parent DT binding doc.
+>>>
+>>>
+>>> Do we also need to add same thing here?
+>>
+>>
+>> Are you fine with the above? As there is no compatible string for clock
+>> (clock does not have separate node), do I still need to add explicitly here?
+>>
+>
+>
+> Can you please help here to review? If required, I can rebase and re-send
+> the patches.
 
-This original patch is suggested by Amit Kucheria; so it's to
-polish the dependency in Kconfig, and remove the dependency with
-CPU_THERMAL.
+It is fine.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/thermal/Kconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 2d702ca..91ebab3 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -177,8 +177,10 @@ config THERMAL_EMULATION
- 
- config HISI_THERMAL
- 	tristate "Hisilicon thermal driver"
--	depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST
-+	depends on ARCH_HISI || COMPILE_TEST
- 	depends on HAS_IOMEM
-+	depends on OF
-+	default y
- 	help
- 	  Enable this to plug hisilicon's thermal sensor driver into the Linux
- 	  thermal framework. cpufreq is used as the cooling device to throttle
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
