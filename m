@@ -1,77 +1,132 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v6 6/6] ARM: at91/dt: sama5d2_xplained: Add fast_restart node
-Date: Mon, 8 Aug 2016 18:05:05 +0800
-Message-ID: <1470650705-31418-7-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
-References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <jon.mason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <442a71de-7153-2204-2c05-cae6373fdd23@broadcom.com>
+References: <1470830763-29189-1-git-send-email-zajec5@gmail.com>
+ <CAC3K-4pvDjziC08fzRjHoi9Tb=smnmNMzfxgG60hqAy1yC13gA@mail.gmail.com>
+ <CACna6rw8X_25m2s8in-OEL-Ve4-_K9b7fGSBsv6ccS9sOLa0oA@mail.gmail.com> <442a71de-7153-2204-2c05-cae6373fdd23@broadcom.com>
+From: Jon Mason <jon.mason@broadcom.com>
+Date: Wed, 10 Aug 2016 14:21:40 -0400
+Message-ID: <CAC3K-4pWS2SgdzHxJ6rcMmbYHYNwoCx9th0cp+wWeW=CQc+ySA@mail.gmail.com>
+Subject: Re: [PATCH V3] clk: bcm: Add driver for Northstar ILP clock
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+	Florian Fainelli <f.fainelli@gmail.com>, Jon Mason <jonmason@broadcom.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add fast_restart node as a pmc's child node to support fast startup
-signal configuration.
+On Wed, Aug 10, 2016 at 1:44 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+>
+>
+> On 8/10/2016 10:28 AM, Rafa=C5=82 Mi=C5=82ecki wrote:
+>>
+>> On 10 August 2016 at 19:22, Jon Mason <jon.mason@broadcom.com> wrote:
+>>>
+>>> On Wed, Aug 10, 2016 at 8:05 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.=
+com> wrote:
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+>>>> b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+>>>> new file mode 100644
+>>>> index 0000000..a18c73f
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
+>>>> @@ -0,0 +1,40 @@
+>>>> +Broadcom Northstar ILP clock
+>>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>>>> +
+>>>> +This binding uses the common clock binding:
+>>>> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>>> +
+>>>> +This binding is used for ILP clock (sometimes referred as "slow clock=
+")
+>>>> +on Broadcom Northstar devices using Corex-A7 CPU.
+>>>> +
+>>>> +This clock is part of PMU (Power Management Unit), a Broadcom's devic=
+e
+>>>> +handing power-related aspects. Please note PMU contains more
+>>>> subdevices,
+>>>> +ILP is only one of them.
+>>>> +
+>>>> +ILP's rate has to be calculated on runtime and it depends on ALP cloc=
+k
+>>>> +which has to be referenced.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: "brcm,ns-ilp"
+>>>> +- reg: iomem address range of PMU (Power Management Unit)
+>>>> +- reg-names: "pmu", the only needed & supported reg right now
+>>>> +- clocks: has to reference an ALP clock
+>>>> +- #clock-cells: should be <0>
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +pmu@18012000 {
+>>>> +       compatible =3D "simple-bus";
+>>>> +       ranges =3D <0x00000000 0x18012000 0x00001000>;
+>>>
+>>>
+>>> I don't see a corresponding DT entry in this patch, but 18012000 is
+>>> the PCI block.  So, I am concerned this will collide if used there.
+>>>
+>>> I looked at the NS register reference guide, and I cannot find the
+>>> registers you are trying to reference.  Is this supposed to be
+>>> referencing the LCPLL clock registers in DMU?  If so, there is already
+>>> a driver in there for this (see drivers/clk/bcm/clk-nsp.c).
+>>
+>>
+>> This patch is for BCM53573 family, not BCM4708 family you are looking at=
+.
+>>
+>> Found chip with id 53573, rev 0x02 and package 0x01
+>> Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x36, class 0x0)
+>> Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x38, class 0x0)
+>> Core 2 found: PCIe Gen 2 (manuf 0x4BF, id 0x501, rev 0x05, class 0x0)
+>> Core 3 found: ARM CA7 (manuf 0x4BF, id 0x847, rev 0x00, class 0x0)
+>> Core 4 found: USB 2.0 Host (manuf 0x4BF, id 0x819, rev 0x05, class 0x0)
+>> Core 5 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x08, class 0x0)
+>> Core 6 found: I2S (manuf 0x4BF, id 0x834, rev 0x06, class 0x0)
+>> Core 7 found: CNDS DDR2/3 memory controller (manuf 0x4BF, id 0x846,
+>> rev 0x00, class 0x0)
+>> Core 8 found: NAND flash controller (manuf 0x4BF, id 0x509, rev 0x01,
+>> class 0x0)
+>> Core 9 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x38, class 0x0)
+>> Core 10 found: GBit MAC (manuf 0x4BF, id 0x82D, rev 0x08, class 0x0)
+>> Core 11 found: I2S (manuf 0x4BF, id 0x834, rev 0x06, class 0x0)
+>> Core 12 found: GCI (manuf 0x4BF, id 0x840, rev 0x08, class 0x0)
+>> Core 13 found: PMU (manuf 0x4BF, id 0x827, rev 0x1C, class 0x0)
+>>
+>
+> Out of curiosity, I searched the datasheet and found this is a wireless
+> router SoC done by the WLAN team. It happens to share some peripherals wi=
+th
+> other iProc based SoCs.
+>
+> I cannot find a code name for this SoC from our internal documents. I gue=
+ss
+> that name "Northstar" used here has confused both Jon and me.
+>
+> Thanks,
+>
+> Ray
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+Ray is right.  I just spoke to one of the people here with knowledge
+of the HW, and this is not related at all to the 4708/9/5301X.  It MAY
+have some of the same peripherals, but the core is different (Cortex
+A7 instead of A9).
 
-Changes in v6:
- - Add a new patch to support a new DT_MACHINE for SAMA5D2.
+I think we are best off to change the name and turn this into a
+separate device tree, driver base, etc.  I wasn't able to get a code
+name, so perhaps simply call it "BCM53573".
 
-Changes in v5:
- - due to the DT property expression change, update the fast restart
-   node's property.
-
-Changes in v4:
- - add fast_restart node to the DT file.
-
-Changes in v3: None
-Changes in v2: None
-
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index eb4f1ac..714fd82 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -110,6 +110,25 @@
- 		};
- 
- 		apb {
-+			pmc: pmc@f0014000 {
-+				pmc_fast_restart {
-+					compatible = "atmel,sama5d2-pmc-fast-startup";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					atmel,wakeup-rtc-timer;
-+
-+					wkpin: input@0 {
-+						reg = <0>;
-+					};
-+
-+					gmac_wol: input@10 {
-+						reg = <10>;
-+						atmel,wakeup-active-high;
-+					};
-+				};
-+			};
-+
- 			spi0: spi@f8000000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_spi0_default>;
--- 
-2.7.4
+Thanks,
+Jon
