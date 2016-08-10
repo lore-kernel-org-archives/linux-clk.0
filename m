@@ -1,189 +1,66 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-4-git-send-email-mirza.krak@gmail.com> <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Tue, 23 Aug 2016 12:33:09 +0200
-Message-ID: <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, mark.rutland@arm.com, devicetree@vger.kernel.org,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, linux@armlinux.org.uk,
-	robh+dt@kernel.org, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
+References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 10 Aug 2016 08:37:04 -0300
+Message-ID: <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx7d: do not set the parent of IMX7D_ENET_AXI_ROOT_SRC
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stefan Agner <stefan@agner.ch>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-08 16:44 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->> +
->> +  gmi@70090000 {
->> +    #address-cells = <1>;
->> +    #size-cells = <1>;
->
-> I think 0 for size makes sense. I know that caused you problems before,
-> but I am wondering if ...
->
->> +    ranges;
->
-> ... ranges is needed here? If we do have it, I am wondering if it should
-> be a single entry for the chip-select that is being used. For now we
-> could only support a ranges with one entry.
->
->         #address-cells = <1>;
->         #size-cells = <1>;
->         ranges = <4 0x48000000 0x00040000>;
->
->> +    nvidia,snor-mux-mode;
->> +    nvidia,snor-adv-inv;
->> +    nvidia,snor-cs-select = <4>;
->
-> I would have expected these under bus@X node as they are specific to the
-> GMI CS.
->
-> I would also expect that the actual chip-select number is encoded in the
-> reg property.
->
->> +
->> +    bus@0,0 {
->
-> bus@4
->
-> No mention of this bus node in the above documentation.
->
->> +      compatible = "simple-bus";
->> +      reg = <0 0>;
->
-> reg = <4>;
->
-> We should look up the chip-select from the reg property.
->
->> +      ranges;
->> +
->> +      #address-cells = <1>;
->> +      #size-cells = <1>;
->> +
->> +      can@48000000 {
->> +        reg = <0x48000000 0x100>;
->> +        ...
->> +      };
->> +
->> +      can@48040000 {
->> +        reg = <0x48040000 0x100>;
->> +        ...
->> +      };
->
-> If we use ranges we could have ...
->
->         can@0 {
->                 reg = <0x0 0x100>;
->                 ...
->         };
->
->         can@40000 {
->                 reg = <0x40000 0x100>;
->                 ...
->         };
->
+Hi Mike,
 
-Hi.
+On Fri, Jul 15, 2016 at 10:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+> Booting the kernel on a imx7s-warp leads to several warnings like these:
+>
+> [    0.000000] ------------[ cut here ]------------
+> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:3536 lock_release+0x2f8/0x330
+> [    0.000000] releasing a pinned lock
+>
+> [    0.000000] ------------[ cut here ]------------
+> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:2722 trace_hardirqs_on_caller+0x1ac/0x1f4
+> [    0.000000] DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled))
+>
+> [    0.000000] ---[ end trace cb88537fdc8fa201 ]---
+> [    0.000000] bad: scheduling from the idle thread!
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W       4.7.0-rc7-next-20160715 #404
+>
+> [    0.000000] ------------[ cut here ]------------
+> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
+> [    0.000000] Modules linked in:
+>
+> [    0.000591] ------------[ cut here ]------------
+> [    0.000610] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
+>
+> [    0.002084] ------------[ cut here ]------------
+> [    0.002104] WARNING: CPU: 0 PID: 0 at init/main.c:576 start_kernel+0x258/0x3b0
+> [    0.002114] Interrupts were enabled early
+>
+>
+> This fix is along the same lines as 5e33ebff7edd ("clk: imx7d: do not
+> set parent of ethernet time/ref clocks") and the explanation from that
+> commit is:
+>
+> "The reason for the warning is that setting the parent enables the ENET
+>  PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
+>  cause clk_pllv3_wait_lock to sleep. See also:
+>  commit fc8726a2c021 ("clk: core: support clocks which requires parents
+>  enable (part 2)")."
+>
+> imx7s-warp does not even use the FEC interface, so we should not really
+> configure the parent of IMX7D_ENET_AXI_ROOT_SRC in the common MX7 clock
+> driver code.
+>
+> The dts file should use the assigned-clocks/assigned-clock-parents method,
+> so simply remove the configuration of IMX7D_ENET_AXI_ROOT_SRC parent.
+>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-Like we discussed I am now trying to implement this but without
-success and I am starting to think that it is not that simple unless I
-am missing something.
+Do you think this one could be applied to 4.8-rc?
 
-Below tree
-
-gmi@70009000 {
-     status = "okay";
-     #address-cells = <1>;
-     #size-cells = <1>;
-     ranges = <4 0x48000000 0x7ffffff>;
-
-     bus@4 {
-          compatible = "simple-bus";
-          reg = <4 0>;
-          #address-cells = <1>;
-          #size-cells = <1>;
-         nvidia,snor-mux-mode;
-         nvidia,snor-adv-inv;
-
-        can@0 {
-              compatible = "nxp,sja1000";
-              reg = <0 0x100>;
-              ....
-     };
-
-     can@40000 {
-           compatible = "nxp,sja1000";
-           reg = <0x40000 0x100>;
-           ....
-    };
-};
-};
-
-results in:
-
-[    8.472509]    create child: /gmi@70009000/bus@4/can@0
-[    8.472561] OF: ** translation for device /gmi@70009000/bus@4/can@0 **
-[    8.472577] OF: bus is default (na=1, ns=1) on /gmi@70009000/bus@4
-[    8.472589] OF: translating address: 00000000
-[    8.472624] OF: parent bus is default (na=1, ns=1) on /gmi@70009000
-[    8.472641] OF: no ranges; cannot translate
-[    8.472668] of_irq_parse_one: dev=/gmi@70009000/bus@4/can@0, index=0
-[    8.472687]  intspec=13 intlen=2
-[    8.472726]  intsize=2 intlen=2
-[    8.472740] of_irq_parse_raw:  /gpio@6000d000:0000000d,00000001
-[    8.493718] of_irq_parse_raw: ipar=/gpio@6000d000, size=2
-[    8.493737]  -> addrsize=1
-[    8.493743]  -> got it !
-[    8.493755] of_irq_parse_one: dev=/gmi@70009000/bus@4/can@0, index=1
-[    8.493771]  intspec=13 intlen=2
-[    8.493790]  intsize=2 intlen=2
-[    8.493800] of_irq_parse_one: dev=/gmi@70009000/bus@4/can@0, index=0
-[    8.493805]  intspec=13 intlen=2
-[    8.493812]  intsize=2 intlen=2
-[    8.493824] of_irq_parse_raw:  /gpio@6000d000:0000000d,00000001
-[    8.493829] of_irq_parse_raw: ipar=/gpio@6000d000, size=2
-[    8.493834]  -> addrsize=1
-[    8.493837]  -> got it !
-[    8.493869] OF: ** translation for device /gmi@70009000/bus@4/can@0 **
-[    8.493885] OF: bus is default (na=1, ns=1) on /gmi@70009000/bus@4
-[    8.493892] OF: translating address: 00000000
-[    8.493902] OF: parent bus is default (na=1, ns=1) on /gmi@70009000
-[    8.493906] OF: no ranges; cannot translate
-[    8.493918] OF: ** translation for device /gmi@70009000/bus@4 **
-[    8.493924] OF: bus is default (na=1, ns=1) on /gmi@70009000
-[    8.493930] OF: translating address: 00000004
-[    8.493938] OF: parent bus is default (na=1, ns=1) on /
-[    8.493944] OF: walking ranges...
-[    8.493952] OF: default map, cp=4, s=7ffffff, da=4
-[    8.493973] OF: parent translation for: 48000000
-[    8.493978] OF: with offset: 0
-[    8.493986] OF: one level translation: 48000000
-[    8.493989] OF: reached root node
-[    8.494011] of_dma_get_range: no dma-ranges found for
-node(/gmi@70009000/bus@4/can@0)
-[    8.494037] platform 48000000.bus:can@0: device is not dma coherent
-[    8.494048] platform 48000000.bus:can@0: device is not behind an iommu
-[    8.495209] sja1000 probe entered
-[    8.495212] sja1000 probe entered1
-
-sja1000 probe fails because resource address is NULL.
-
-The result is the same for the second child device.
-
-I also attempted to add "ranges;" property to the bus child node,
-which results in the same error on can@0, and can@4000 is actually
-translated but it is not what I expect it to be (0x4803fff8).
-
-And I am not quite sure how to get around this in a simple way. I can
-not wrap my head around how the ranges property actually works really.
-
-Any suggestions would be really helpful.
-
-Best Regards
-Mirza
+Thanks
