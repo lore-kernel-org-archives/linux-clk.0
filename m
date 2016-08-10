@@ -1,215 +1,273 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/2] clk: qcom: gdsc: Add support for gdscs with RETENTION power state
-Date: Tue, 16 Aug 2016 12:56:30 +0530
-Message-Id: <1471332390-6590-1-git-send-email-rnayak@codeaurora.org>
+	Linus Walleij <linus.walleij@linaro.org>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 3/3] clk: versatile/icst: support for AP baseboard clocks
+Date: Wed, 10 Aug 2016 11:09:56 +0200
+Message-Id: <1470820196-12935-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some gdscs can support an intermediate RETENTION state apart from
-the ON and OFF states. The RETENTION state can further be configured
-to either retain all memory, or just some part of it (periperal or
-core).
-This patch adds support so gdscs can support the additional RET state
-which the client drivers can then choose based on acceptable
-latency.
+This adds support for the two ICST525-based clocks on the
+Integrator/AP baseboard, as documented in the board manual
+"Integrator/AP ASIC Development Motherboard", ARM DUI0098 B,
+pages 3-15 thru 3-18.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/clk/qcom/gdsc.c | 81 ++++++++++++++++++++++++++++++++++++++++++-------
- drivers/clk/qcom/gdsc.h | 22 +++++++++-----
- 2 files changed, 85 insertions(+), 18 deletions(-)
+ arch/arm/boot/dts/integratorap.dts |  22 ++++++
+ drivers/clk/versatile/clk-icst.c   | 137 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 159 insertions(+)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index f12d7b2..e0859df 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -38,6 +38,7 @@
+diff --git a/arch/arm/boot/dts/integratorap.dts b/arch/arm/boot/dts/integratorap.dts
+index cf06e32ee108..16266722ce7c 100644
+--- a/arch/arm/boot/dts/integratorap.dts
++++ b/arch/arm/boot/dts/integratorap.dts
+@@ -39,6 +39,7 @@
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <14745600>;
++		clocks = <&xtal24mhz>;
+ 	};
  
- #define RETAIN_MEM		BIT(14)
- #define RETAIN_PERIPH		BIT(13)
-+#define OFF_PERIPH		BIT(12)
- 
- #define TIMEOUT_US		100
- 
-@@ -122,24 +123,56 @@ static inline int gdsc_assert_reset(struct gdsc *sc)
- 	return 0;
- }
- 
--static inline void gdsc_force_mem_on(struct gdsc *sc)
-+static inline void gdsc_force_mem_core_on(struct gdsc *sc)
- {
- 	int i;
--	u32 mask = RETAIN_MEM | RETAIN_PERIPH;
-+	u32 mask = RETAIN_MEM;
- 
- 	for (i = 0; i < sc->cxc_count; i++)
- 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, mask);
- }
- 
--static inline void gdsc_clear_mem_on(struct gdsc *sc)
-+static inline void gdsc_force_mem_periph_on(struct gdsc *sc)
- {
- 	int i;
--	u32 mask = RETAIN_MEM | RETAIN_PERIPH;
-+	u32 mask = RETAIN_PERIPH | OFF_PERIPH;
-+	u32 val = RETAIN_PERIPH;
+ 	syscon {
+@@ -47,6 +48,27 @@
+ 		interrupt-parent = <&pic>;
+ 		/* These are the logical module IRQs */
+ 		interrupts = <9>, <10>, <11>, <12>;
 +
-+	for (i = 0; i < sc->cxc_count; i++)
-+		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, val);
-+}
++		/*
++		 * SYSCLK clocks PCIv3 bridge, system controller and the
++		 * logic modules.
++		 */
++		sysclk: apsys@24M {
++			compatible = "arm,syscon-icst525-integratorap-sys";
++			#clock-cells = <0>;
++			lock-offset = <0x1c>;
++			vco-offset = <0x04>;
++			clocks = <&xtal24mhz>;
++		};
 +
-+static inline void gdsc_force_mem_on(struct gdsc *sc)
-+{
-+	gdsc_force_mem_core_on(sc);
-+	gdsc_force_mem_periph_on(sc);
-+}
-+
-+static inline void gdsc_clear_mem_core_on(struct gdsc *sc)
-+{
-+	int i;
-+	u32 mask = RETAIN_MEM;
++		/* One-bit control for the PCI bus clock (33 or 25 MHz) */
++		pciclk: pciclk@24M {
++			compatible = "arm,syscon-icst525-integratorap-pci";
++			#clock-cells = <0>;
++			lock-offset = <0x1c>;
++			vco-offset = <0x04>;
++			clocks = <&xtal24mhz>;
++		};
+ 	};
  
- 	for (i = 0; i < sc->cxc_count; i++)
- 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, 0);
- }
+ 	timer0: timer@13000000 {
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 078ac01c379f..c44f22f52738 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -29,15 +29,20 @@
  
-+static inline void gdsc_clear_mem_periph_on(struct gdsc *sc)
-+{
-+	int i;
-+	u32 mask = RETAIN_PERIPH | OFF_PERIPH;
-+	u32 val = OFF_PERIPH;
-+
-+	for (i = 0; i < sc->cxc_count; i++)
-+		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, val);
-+}
-+
-+static inline void gdsc_clear_mem_on(struct gdsc *sc)
-+{
-+	gdsc_clear_mem_core_on(sc);
-+	gdsc_clear_mem_periph_on(sc);
-+}
-+
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
-@@ -152,8 +185,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 	if (ret)
- 		return ret;
+ #define VERSATILE_AUX_OSC_BITS 0x7FFFF
+ #define INTEGRATOR_AP_CM_BITS 0xFF
++#define INTEGRATOR_AP_SYS_BITS 0xFF
+ #define INTEGRATOR_CP_CM_CORE_BITS 0x7FF
+ #define INTEGRATOR_CP_CM_MEM_BITS 0x7FF000
  
--	if (sc->pwrsts & PWRSTS_OFF)
--		gdsc_force_mem_on(sc);
-+	gdsc_force_mem_on(sc);
++#define INTEGRATOR_AP_PCI_25_33_MHZ BIT(8)
++
+ /**
+  * enum icst_control_type - the type of ICST control register
+  */
+ enum icst_control_type {
+ 	ICST_VERSATILE, /* The standard type, all control bits available */
+ 	ICST_INTEGRATOR_AP_CM, /* Only 8 bits of VDW available */
++	ICST_INTEGRATOR_AP_SYS, /* Only 8 bits of VDW available */
++	ICST_INTEGRATOR_AP_PCI, /* Odd bit pattern storage */
+ 	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
+ 	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
+ };
+@@ -93,6 +98,38 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
+ 	}
  
  	/*
- 	 * If clocks to this power domain were already on, they will take an
-@@ -170,12 +202,35 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- static int gdsc_disable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
-+	u8 pwrst;
- 
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
--	if (sc->pwrsts & PWRSTS_OFF)
-+	if (domain->state_count > 1)
-+		pwrst = 1 << domain->state_idx;
-+	else if (sc->pwrsts & PWRSTS_OFF)
-+		pwrst = PWRSTS_OFF;
-+	else
-+		pwrst = PWRSTS_RET;
++	 * The Integrator/AP system clock on the base board can only
++	 * access the low eight bits of the v PLL divider. Bit 8 is tied low
++	 * and always zero, r is hardwired to 46, and the output divider is
++	 * hardwired to 3 (divide by 4) according to the document
++	 * "Integrator AP ASIC Development Motherboard" ARM DUI 0098B,
++	 * page 3-16.
++	 */
++	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
++		vco->v = val & INTEGRATOR_AP_SYS_BITS;
++		vco->r = 46;
++		vco->s = 3;
++		return 0;
++	}
 +
-+	switch (pwrst) {
-+	case PWRSTS_OFF:
- 		gdsc_clear_mem_on(sc);
++	/*
++	 * The Integrator/AP PCI clock is using an odd pattern to create
++	 * the child clock, basically a single bit called DIVX/Y is used
++	 * to select between two different hardwired values: setting the
++	 * bit to 0 yields v = 17, r = 22 and OD = 1, whereas setting the
++	 * bit to 1 yields v = 14, r = 14 and OD = 1 giving the frequencies
++	 * 33 or 25 MHz respectively.
++	 */
++	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
++		bool divxy = !!(val & INTEGRATOR_AP_PCI_25_33_MHZ);
++
++		vco->v = divxy ? 17 : 14;
++		vco->r = divxy ? 22 : 14;
++		vco->s = 1;
++		return 0;
++	}
++
++	/*
+ 	 * The Integrator/CP core clock can access the low eight bits
+ 	 * of the v PLL divider. Bit 8 is tied low and always zero,
+ 	 * r is hardwired to 22 and the output divider s is accessible
+@@ -143,6 +180,17 @@ static int vco_set(struct clk_icst *icst, struct icst_vco vco)
+ 		if (vco.r != 22)
+ 			pr_err("ICST error: tried to use RDW != 22\n");
+ 		break;
++	case ICST_INTEGRATOR_AP_SYS:
++		mask = INTEGRATOR_AP_SYS_BITS;
++		val &= ~0xFF; /* Uses 8 bits */
++		val |= vco.v & 0xFF;
++		if (vco.v & 0x100)
++			pr_err("ICST error: tried to set bit 8 of VDW\n");
++		if (vco.s != 3)
++			pr_err("ICST error: tried to use VOD != 1\n");
++		if (vco.r != 46)
++			pr_err("ICST error: tried to use RDW != 22\n");
 +		break;
-+	case PWRSTS_RET:
-+		if (sc->pwrsts_ret == PWRSTS_RET_ALL)
-+			gdsc_force_mem_on(sc);
-+		else if (sc->pwrsts_ret == PWRSTS_RET_MEM)
-+			gdsc_force_mem_core_on(sc);
-+		else if (sc->pwrsts_ret == PWRSTS_RET_PERIPH)
-+			gdsc_force_mem_periph_on(sc);
-+		else
+ 	case ICST_INTEGRATOR_CP_CM_CORE:
+ 		mask = INTEGRATOR_CP_CM_CORE_BITS; /* Uses 12 bits */
+ 		val = (vco.v & 0xFF) | vco.s << 8;
+@@ -225,6 +273,27 @@ static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		return DIV_ROUND_CLOSEST(rate, 500000) * 500000;
+ 	}
+ 
++	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
++		/* Divides between 3 and 50 MHz in steps of 0.25 MHz */
++		if (rate <= 3000000)
++			return 3000000;
++		if (rate >= 50000000)
++			return 5000000;
++		/* Slam to closest 0.25 MHz */
++		return DIV_ROUND_CLOSEST(rate, 250000) * 250000;
++	}
++
++	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
++		/*
++		 * If we're below or less than halfway from 25 to 33 MHz
++		 * select 25 MHz
++		 */
++		if (rate <= 25000000 || rate < 29000000)
++			return 25000000;
++		/* Else just return the default frequency */
++		return 33000000;
++	}
++
+ 	vco = icst_hz_to_vco(icst->params, rate);
+ 	return icst_hz(icst->params, vco);
+ }
+@@ -235,6 +304,36 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_icst *icst = to_icst(hw);
+ 	struct icst_vco vco;
+ 
++	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
++		/* This clock is especially primitive */
++		unsigned int val;
++		int ret;
++
++		if (rate == 25000000) {
++			val = 0;
++		} else if (rate == 33000000) {
++			val = INTEGRATOR_AP_PCI_25_33_MHZ;
++		} else {
++			pr_err("ICST: cannot set PCI frequency %lu\n",
++			       rate);
 +			return -EINVAL;
-+		break;
-+	default:
-+		return -EINVAL;
-+	};
- 
- 	return gdsc_toggle_logic(sc, false);
- }
-@@ -198,6 +253,9 @@ static int gdsc_init(struct gdsc *sc)
- 	if (ret)
- 		return ret;
- 
-+	if (!sc->pwrsts)
-+		return -EINVAL;
++		}
++		ret = regmap_write(icst->map, icst->lockreg_off,
++				   VERSATILE_LOCK_VAL);
++		if (ret)
++			return ret;
++		ret = regmap_update_bits(icst->map, icst->vcoreg_off,
++					 INTEGRATOR_AP_PCI_25_33_MHZ,
++					 val);
++		if (ret)
++			return ret;
++		/* This locks the VCO again */
++		ret = regmap_write(icst->map, icst->lockreg_off, 0);
++		if (ret)
++			return ret;
++		return 0;
++	}
 +
- 	/* Force gdsc ON if only ON state is supported */
- 	if (sc->pwrsts == PWRSTS_ON) {
- 		ret = gdsc_toggle_logic(sc, true);
-@@ -217,14 +275,15 @@ static int gdsc_init(struct gdsc *sc)
- 	if ((sc->flags & VOTABLE) && on)
- 		gdsc_enable(&sc->pd);
+ 	if (parent_rate)
+ 		icst->params->ref = parent_rate;
+ 	vco = icst_hz_to_vco(icst->params, rate);
+@@ -368,6 +467,34 @@ static const struct icst_params icst525_apcp_cm_params = {
+ 	.idx2s		= icst525_idx2s,
+ };
  
--	if (on || (sc->pwrsts & PWRSTS_RET))
-+	if (on)
- 		gdsc_force_mem_on(sc);
--	else
--		gdsc_clear_mem_on(sc);
- 
- 	sc->pd.power_off = gdsc_disable;
- 	sc->pd.power_on = gdsc_enable;
--	pm_genpd_init(&sc->pd, NULL, !on);
-+	if (sc->pd.state_count)
-+		pm_genpd_init(&sc->pd, &simple_qos_governor, !on);
-+	else
-+		pm_genpd_init(&sc->pd, NULL, !on);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 3bf497c..0032c96 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -41,15 +41,23 @@ struct gdsc {
- 	unsigned int			gds_hw_ctrl;
- 	unsigned int			*cxcs;
- 	unsigned int			cxc_count;
-+/* supported options for pwrsts */
-+#define PWRSTS_RET			BIT(0)
-+#define PWRSTS_OFF			BIT(1)
-+#define PWRSTS_ON			BIT(2)
-+#define PWRSTS_MAX			3
-+#define PWRSTS_OFF_ON			(PWRSTS_OFF | PWRSTS_ON)
-+#define PWRSTS_RET_ON			(PWRSTS_RET | PWRSTS_ON)
-+#define PWRSTS_OFF_RET_ON		(PWRSTS_OFF | PWRSTS_RET | PWRSTS_ON)
- 	const u8			pwrsts;
--/* Powerdomain allowable state bitfields */
--#define PWRSTS_OFF		BIT(0)
--#define PWRSTS_RET		BIT(1)
--#define PWRSTS_ON		BIT(2)
--#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
--#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
-+/* supported options for pwrsts_ret */
-+#define PWRSTS_RET_ALL			0 /* default retains all */
-+#define PWRSTS_RET_MEM			BIT(0)
-+#define PWRSTS_RET_PERIPH		BIT(1)
-+	const u8			pwrsts_ret;
-+/* supported flags */
-+#define VOTABLE				BIT(0)
- 	const u8			flags;
--#define VOTABLE		BIT(0)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
++static const struct icst_params icst525_ap_sys_params = {
++	.vco_max	= ICST525_VCO_MAX_5V,
++	.vco_min	= ICST525_VCO_MIN,
++	/* Minimum 3 MHz, VDW = 4 */
++	.vd_min		= 3,
++	/* Maximum 50 MHz, VDW = 192 */
++	.vd_max		= 50,
++	/* r is hardcoded to 46 and this is the actual divisor, +2 */
++	.rd_min		= 48,
++	.rd_max		= 48,
++	.s2div		= icst525_s2div,
++	.idx2s		= icst525_idx2s,
++};
++
++static const struct icst_params icst525_ap_pci_params = {
++	.vco_max	= ICST525_VCO_MAX_5V,
++	.vco_min	= ICST525_VCO_MIN,
++	/* Minimum 25 MHz */
++	.vd_min		= 25,
++	/* Maximum 33 MHz */
++	.vd_max		= 33,
++	/* r is hardcoded to 14 or 22 and this is the actual divisors +2 */
++	.rd_min		= 16,
++	.rd_max		= 24,
++	.s2div		= icst525_s2div,
++	.idx2s		= icst525_idx2s,
++};
++
+ static void __init of_syscon_icst_setup(struct device_node *np)
+ {
+ 	struct device_node *parent;
+@@ -408,6 +535,12 @@ static void __init of_syscon_icst_setup(struct device_node *np)
+ 	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-cm")) {
+ 		icst_desc.params = &icst525_apcp_cm_params;
+ 		ctype = ICST_INTEGRATOR_AP_CM;
++	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-sys")) {
++		icst_desc.params = &icst525_ap_sys_params;
++		ctype = ICST_INTEGRATOR_AP_SYS;
++	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-pci")) {
++		icst_desc.params = &icst525_ap_pci_params;
++		ctype = ICST_INTEGRATOR_AP_PCI;
+ 	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-core")) {
+ 		icst_desc.params = &icst525_apcp_cm_params;
+ 		ctype = ICST_INTEGRATOR_CP_CM_CORE;
+@@ -437,6 +570,10 @@ CLK_OF_DECLARE(arm_syscon_icst307_clk,
+ 	       "arm,syscon-icst307", of_syscon_icst_setup);
+ CLK_OF_DECLARE(arm_syscon_integratorap_cm_clk,
+ 	       "arm,syscon-icst525-integratorap-cm", of_syscon_icst_setup);
++CLK_OF_DECLARE(arm_syscon_integratorap_sys_clk,
++	       "arm,syscon-icst525-integratorap-sys", of_syscon_icst_setup);
++CLK_OF_DECLARE(arm_syscon_integratorap_pci_clk,
++	       "arm,syscon-icst525-integratorap-pci", of_syscon_icst_setup);
+ CLK_OF_DECLARE(arm_syscon_integratorcp_cm_core_clk,
+ 	       "arm,syscon-icst525-integratorcp-cm-core", of_syscon_icst_setup);
+ CLK_OF_DECLARE(arm_syscon_integratorcp_cm_mem_clk,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
