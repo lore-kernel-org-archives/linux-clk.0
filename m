@@ -1,27 +1,25 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:40:20 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49318 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751111AbcHJWg6 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2016 18:36:58 -0400
+Date: Wed, 10 Aug 2016 15:36:57 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: Migrate to clk_hw based registration and
- OF APIs
-Message-ID: <20160825004020.GI19826@codeaurora.org>
-References: <20160816223827.977-1-stephen.boyd@linaro.org>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [ANNOUNCE] linux-clk irc channel on freenode
+Message-ID: <20160810223657.GG2996@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160816223827.977-1-stephen.boyd@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/16, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers in this driver, allowing us to
-> move closer to a clear split of consumer and provider clk APIs.
-> 
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+For those interested, there's an irc channel on freenode for
+linux kernel clk framework and driver discussions.
 
-Applied to clk-next
+	Channel: #linux-clk
+	Network: freenode.net
+	irc://irc.freenode.net/linux-clk
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
