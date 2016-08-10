@@ -1,77 +1,86 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Mirza Krak <mirza.krak@gmail.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
- <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
- <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <a7851104-1aa1-fd8d-a594-545a01046cdf@nvidia.com>
-Date: Fri, 26 Aug 2016 08:25:08 +0100
-MIME-Version: 1.0
-In-Reply-To: <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 1/3] clk: versatile add DT bindings for the ICST CM variants
+Date: Wed, 10 Aug 2016 11:09:32 +0200
+Message-Id: <1470820172-12840-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The Integrator/AP and Integrator/CP core modules have special
+versions of the ICST525 interface hardcoding some bits. Create
+special compatible strings to identify these variants, also
+explain a bit what is going on.
 
-On 26/08/16 05:53, Mirza Krak wrote:
+Cc: devicetree@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ .../devicetree/bindings/clock/arm-syscon-icst.txt  | 35 ++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
 
-...
-
->> I have an idea which is following:
->>
->> gmi@70090000 {
->>          status = "okay";
->>          #address-cells = <2>;
->>          #size-cells = <1>;
->>          ranges = <4 0 0x48000000 0x00040000>;
->>
->>          cs4 {
->>                  compatible = "simple-bus";
->>                  #address-cells = <2>;
->>                  #size-cells = <1>;
->>                  ranges;
->>
->>                  nvidia,snor-cs = <4>;
->>                  nvidia,snor-mux-mode;
->>                  nvidia,snor-adv-inv;
->>
->>                  can@0 {
->>                          compatible = "nxp,sja1000";
->>                          reg = <4 0 0x100>;
->>                          ...
->>                  };
->>
->>
->>                  can@40000 {
->>                          compatible = "nxp,sja1000";
->>                          reg = <4 0x40000 0x100>;
->>                          ...
->>                  };
->>          };
->> };
->>
->> Do not know if above will work at all (not able to test at current
->> location), anyway I will play around with it some more and get back to
->> you.
-> 
-> Gave above a test run and it works like a charm. Are we happy with that?
-
-Does it not work with #address-cells = <1>? Seems odd to have the cs in
-the reg for the device.
-
-Cheers
-Jon
-
+diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+index 8b7177cecb36..48886490591a 100644
+--- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
++++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+@@ -5,20 +5,51 @@ Technology (IDT). ARM integrated these oscillators deeply into their
+ reference designs by adding special control registers that manage such
+ oscillators to their system controllers.
+ 
+-The ARM system controller contains logic to serialize and initialize
++The ARM system controllers contains logic to serialize and initialize
+ an ICST clock request after a write to the 32 bit register at an offset
+ into the system controller. Furthermore, to even be able to alter one of
+ these frequencies, the system controller must first be unlocked by
+ writing a special token to another offset in the system controller.
+ 
++The ARM Integrator/AP and Integrator/CP core modules and baseboard contain
++special versions of the serial interface that only connects the low 8 bits
++of the VDW (missing one bit), hardwires RDW to different values and sometimes
++als hardwire the output divider. They therefore have special compatible
++strings as per this table (the OD value is the value on the pins, not the
++resulting output divider):
++
++Integrator variant:      RDW     OD          VDW
++
++Integrator/AP            22      1           Bit 8 0, rest variable
++integratorap-cm
++
++Integrator/AP            46      3           Bit 8 0, rest variable
++integratorap-sys
++
++Integrator/AP            22 or   1           17 or (33 or 25 MHz)
++integratorap-pci         14      1           14
++
++Integrator/CP            22      variable    Bit 8 0, rest variable
++integratorcp-cm-core
++
++Integrator/CP            22      variable    Bit 8 0, rest variable
++integratorcp-cm-mem
++
+ The ICST oscillator must be provided inside a system controller node.
+ 
+ Required properties:
++- compatible: must be one of
++  "arm,syscon-icst525"
++  "arm,syscon-icst307"
++  "arm,syscon-icst525-integratorap-cm"
++  "arm,syscon-icst525-integratorap-sys"
++  "arm,syscon-icst525-integratorap-pci"
++  "arm,syscon-icst525-integratorcp-cm-core"
++  "arm,syscon-icst525-integratorcp-cm-mem"
+ - lock-offset: the offset address into the system controller where the
+   unlocking register is located
+ - vco-offset: the offset address into the system controller where the
+   ICST control register is located (even 32 bit address)
+-- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
+ - #clock-cells: must be <0>
+ - clocks: parent clock, since the ICST needs a parent clock to derive its
+   frequency from, this attribute is compulsory.
 -- 
-nvpublic
+2.7.4
