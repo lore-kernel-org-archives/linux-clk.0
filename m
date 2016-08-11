@@ -1,27 +1,90 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
-Date: Fri, 12 Aug 2016 10:05:37 +0200
-Message-ID: <2820412.n3i6OJSAzs@diego>
-In-Reply-To: <1470122401-31934-5-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1470122401-31934-5-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as
+ critical
+To: Guenter Roeck <groeck@google.com>, Chris Zhong <zyw@rock-chips.com>
+References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
+ <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, =?UTF-8?B?5aea5pm65oOF?=
+ <yzq@rock-chips.com>, mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa
+ <tfiga@chromium.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Douglas Anderson <dianders@chromium.org>, Guenter Roeck
+ <groeck@chromium.org>, =?UTF-8?Q?St=c3=a9phane_Marchesin?=
+ <marcheu@chromium.org>, wulf <wulf@rock-chips.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <57ABE369.6070800@rock-chips.com>
+Date: Thu, 11 Aug 2016 10:31:05 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 2. August 2016, 15:19:58 schrieb Xing Zheng:
-> Dues to incorrect diagram, we need to fix incorrect bits for
-> (c/g)pll_aclk_emmc_src:
-> cpll_aclk_emmc_src --> G6[13]
-> gpll_aclk_emmc_src --> G6[12]
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+Chris,
 
-applied to my clk-fixes branch for 4.8
+On 2016年08月11日 06:14, Guenter Roeck wrote:
+> On Tue, Aug 9, 2016 at 11:02 AM, Chris Zhong <zyw@rock-chips.com> wrote:
+>> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
+>> this modification, the aclk_vio_noc should be put into critical list,
+>> since it is required by VOP.
+>> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
+>> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
+>>
+>> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+>> ---
+>>
+>>   drivers/clk/rockchip/clk-rk3399.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+>> index b173711a..676b017 100644
+>> --- a/drivers/clk/rockchip/clk-rk3399.c
+>> +++ b/drivers/clk/rockchip/clk-rk3399.c
+>> @@ -1073,7 +1073,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+>>          /* vio */
+>>          COMPOSITE(ACLK_VIO, "aclk_vio", mux_pll_src_cpll_gpll_ppll_p, CLK_IGNORE_UNUSED,
+>>                          RK3399_CLKSEL_CON(42), 6, 2, MFLAGS, 0, 5, DFLAGS,
+>> -                       RK3399_CLKGATE_CON(11), 10, GFLAGS),
+>> +                       RK3399_CLKGATE_CON(11), 0, GFLAGS),
+Sorry to broken copy&paste, thanks to fix the incorrect bit.
 
+Reviewed-by: Xing Zheng <zhengxing@rock-chips.com>
 
-Thanks
-Heiko
+Thanks.
+>>          COMPOSITE_NOMUX(PCLK_VIO, "pclk_vio", "aclk_vio", 0,
+>>                          RK3399_CLKSEL_CON(43), 0, 5, DFLAGS,
+>>                          RK3399_CLKGATE_CON(11), 1, GFLAGS),
+>> @@ -1470,6 +1470,9 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
+>>          "aclk_cci_pre",
+>>          "aclk_gic",
+>>          "aclk_gic_noc",
+>> +       "aclk_hdcp_noc",
+>> +       "hclk_hdcp_noc",
+>> +       "pclk_hdcp_noc",
+>>          "pclk_perilp0",
+>>          "pclk_perilp0",
+>>          "hclk_perilp0",
+>> @@ -1489,6 +1492,7 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
+>>          "gpll_hclk_perilp1_src",
+>>          "gpll_aclk_perilp0_src",
+>>          "gpll_aclk_perihp_src",
+>> +       "aclk_vio_noc",
+> I think there was a previous comment suggesting that this clock should
+> be handled differently. Has this been resolved ?
+>
+> Otherwise
+>
+> Reviewed-by: Guenter Roeck <groeck@chromium.org>
+>
+>>   };
+>>
+>>   static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
+>> --
+>> 1.9.1
+>>
+>
+>
+
+-- 
+- Xing Zheng
