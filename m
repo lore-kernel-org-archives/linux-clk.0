@@ -1,61 +1,97 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 29 Aug 2016 08:39:16 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: jorik@kippendief.biz
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
-	megous@megous.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: Fix wrong reset register offsets
-Message-ID: <20160829063916.GA7612@lukather>
-References: <20160827121545.GT3165@lukather>
- <1472324673-11233-1-git-send-email-jorik@kippendief.biz>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:32902 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932730AbcHKJGY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 11 Aug 2016 05:06:24 -0400
+From: Dongpo Li <lidongpo@hisilicon.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux@armlinux.org.uk>, <zhangfei.gao@linaro.org>,
+	<yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+	<davem@davemloft.net>, <arnd@arndb.de>, <andrew@lunn.ch>
+CC: <xuejiancheng@hisilicon.com>, <benjamin.chenhao@hisilicon.com>,
+	<howell.yang@hisilicon.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dongpo Li <lidongpo@hisilicon.com>
+Subject: [PATCH 4/4] ARM: dts: hix5hd2: add gmac clock and reset property
+Date: Thu, 11 Aug 2016 17:01:55 +0800
+Message-ID: <1470906115-155569-5-git-send-email-lidongpo@hisilicon.com>
+In-Reply-To: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
+References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-In-Reply-To: <1472324673-11233-1-git-send-email-jorik@kippendief.biz>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add clock and reset property for gmac node.
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
+---
+ arch/arm/boot/dts/hisi-x5hd2-dkb.dts |  2 ++
+ arch/arm/boot/dts/hisi-x5hd2.dtsi    | 15 +++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-On Sat, Aug 27, 2016 at 09:04:33PM +0200, jorik@kippendief.biz wrote:
-> From: Jorik Jonker <jorik@kippendief.biz>
->=20
-> The reset register offsets for UART*, I2C* and SCR were off by a few byte=
-s.
->=20
-> Signed-off-by: Jorik Jonker <jorik@kippendief.biz>
+diff --git a/arch/arm/boot/dts/hisi-x5hd2-dkb.dts b/arch/arm/boot/dts/hisi-x5hd2-dkb.dts
+index d13af84..9da9283 100644
+--- a/arch/arm/boot/dts/hisi-x5hd2-dkb.dts
++++ b/arch/arm/boot/dts/hisi-x5hd2-dkb.dts
+@@ -57,6 +57,7 @@
+ 	#size-cells = <0>;
+ 	phy-handle = <&phy2>;
+ 	phy-mode = "mii";
++	hisilicon,phy-reset-delays-us = <1000 1000 20000>;
+ 	/* Placeholder, overwritten by bootloader */
+ 	mac-address = [00 00 00 00 00 00];
+ 	status = "okay";
+@@ -71,6 +72,7 @@
+ 	#size-cells = <0>;
+ 	phy-handle = <&phy1>;
+ 	phy-mode = "rgmii";
++	hisilicon,phy-reset-delays-us = <10000 10000 30000>;
+ 	/* Placeholder, overwritten by bootloader */
+ 	mac-address = [00 00 00 00 00 00];
+ 	status = "okay";
+diff --git a/arch/arm/boot/dts/hisi-x5hd2.dtsi b/arch/arm/boot/dts/hisi-x5hd2.dtsi
+index fdcc23d..c391ce6 100644
+--- a/arch/arm/boot/dts/hisi-x5hd2.dtsi
++++ b/arch/arm/boot/dts/hisi-x5hd2.dtsi
+@@ -413,6 +413,7 @@
+ 				compatible = "hisilicon,hix5hd2-clock";
+ 				reg = <0 0x2000>;
+ 				#clock-cells = <1>;
++				#reset-cells = <2>;
+ 			};
+ 		};
+ 
+@@ -436,18 +437,24 @@
+ 		};
+ 
+ 		gmac0: ethernet@1840000 {
+-			compatible = "hisilicon,hix5hd2-gmac";
++			compatible = "hisilicon,hix5hd2-gemac", "hisilicon,hisi-gemac-v1";
+ 			reg = <0x1840000 0x1000>,<0x184300c 0x4>;
+ 			interrupts = <0 71 4>;
+-			clocks = <&clock HIX5HD2_MAC0_CLK>;
++			clocks = <&clock HIX5HD2_MAC0_CLK>, <&clock HIX5HD2_MAC_IFC0_CLK>;
++			clock-names = "mac_core", "mac_ifc";
++			resets = <&clock 0xcc 8>, <&clock 0xcc 10>, <&clock 0x120 4>;
++			reset-names = "mac_core", "mac_ifc", "phy";
+ 			status = "disabled";
+ 		};
+ 
+ 		gmac1: ethernet@1841000 {
+-			compatible = "hisilicon,hix5hd2-gmac";
++			compatible = "hisilicon,hix5hd2-gemac", "hisilicon,hisi-gemac-v1";
+ 			reg = <0x1841000 0x1000>,<0x1843010 0x4>;
+ 			interrupts = <0 72 4>;
+-			clocks = <&clock HIX5HD2_MAC1_CLK>;
++			clocks = <&clock HIX5HD2_MAC1_CLK>, <&clock HIX5HD2_MAC_IFC1_CLK>;
++			clock-names = "mac_core", "mac_ifc";
++			resets = <&clock 0xcc 9>, <&clock 0xcc 11>, <&clock 0x168 2>;
++			reset-names = "mac_core", "mac_ifc", "phy";
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.8.2
 
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXw9iUAAoJEBx+YmzsjxAgxrwP/ivGp7yXb9Yuz3mJYhJMmmSY
-rfUAHOOpJ9OvC5Izf4yzlosuIQz3KaVP7v7AeY/c634TcBzo7HQURt0r6z/DzgCt
-qikthFzXlcEc6DMs96vEMvqzmMRwoGDVRHmtHIudzxxGN7ogN2ut5UkkJ3ALgPmO
-0/bKUZRuyMtFaNyy+RyeTzK3/oG+mE+nUBgaMQ6NpTqA9cFuncYl0WaZh5HRgGWN
-OGtb440ajafxceUua8eK78iJieBtHMM62H1gF3mMBuesM5PNjo2sS24lL01UHbBD
-BgGo2rR6wAhwSAzlQAqnTcvcBeXfSDtPHKeRtArTa75dHWHiodPEPW0y/Iptm16m
-nLKinCShX0P8YvIZ6zJxSlIV2uRVZE5pJoQpdeKIRBqw+LU9QUSpCx/8AfMb/PjI
-COhgOGQ2yJRixWXPwypGivkcIsdehE57XMfhdnBEgISxDKRLnL/EXzmkFf6usTQw
-FHqur1d/J8D2uEqvujMmEEUw3E0kdy/uQfkGUzUQVszSVgLv8C5FN610J+FNRhk2
-K2n7Svgfq8jCabVWDTcjZ9tDZOKWrH6A2Dmv3EjaQZDeT2nNBo3F9NNjiwrDcyKj
-rs3Gcdmvylc5NNyQ/tqbsMNYUEKl7qNp9ScdR8caw7h1OkySp94xZp7W3t3/XQ/K
-FrqhYslMxXfm57rAr0pm
-=Bwcj
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
