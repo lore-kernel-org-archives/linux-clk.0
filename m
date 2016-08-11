@@ -1,63 +1,80 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Aug 2016 17:28:26 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/2] clk: uniphier: add clock data for UniPhier SoCs
-Message-ID: <20160819002826.GT361@codeaurora.org>
-References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
- <1470112223-24835-3-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Guenter Roeck <groeck@google.com>
+Cc: Chris Zhong <zyw@rock-chips.com>, Xing Zheng <zhengxing@rock-chips.com>, =?utf-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tfiga@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Douglas Anderson <dianders@chromium.org>, Guenter Roeck <groeck@chromium.org>, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, wulf <wulf@rock-chips.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as critical
+Date: Thu, 11 Aug 2016 09:07 +0200
+Message-ID: <1993709.ojDB6MdHog@diego>
+In-Reply-To: <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
+References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com> <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470112223-24835-3-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/02, Masahiro Yamada wrote:
-> diff --git a/Documentation/devicetree/bindings/clock/uniphier-clock.txt b/Documentation/devicetree/bindings/clock/uniphier-clock.txt
-> new file mode 100644
-> index 0000000..1a4db8b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/uniphier-clock.txt
-> @@ -0,0 +1,134 @@
-> +UniPhier clock controller
-> +
-> +
-> +System clock
-> +------------
-> +
-> +Required properties:
-> +- compatible: should be one of the following:
-> +    "socionext,uniphier-sld3-clock" - for PH1-sLD3 SoC.
-> +    "socionext,uniphier-ld4-clock"  - for PH1-LD4 SoC.
-> +    "socionext,uniphier-pro4-clock" - for PH1-Pro4 SoC.
-> +    "socionext,uniphier-sld8-clock" - for PH1-sLD8 SoC.
-> +    "socionext,uniphier-pro5-clock" - for PH1-Pro5 SoC.
-> +    "socionext,uniphier-pxs2-clock" - for ProXstream2/PH1-LD6b SoC.
-> +    "socionext,uniphier-ld11-clock" - for PH1-LD11 SoC.
-> +    "socionext,uniphier-ld20-clock" - for PH1-LD20 SoC.
-> +- #clock-cells: should be 1.
-> +
-> +Example:
-> +
-> +	sysctrl@61840000 {
-> +		compatible = "socionext,uniphier-ld20-sysctrl",
-> +			     "simple-mfd", "syscon";
-> +		reg = <0x61840000 0x4000>;
-> +
-> +		clock {
-> +			compatible = "socionext,uniphier-ld20-clock";
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		other nodes ...
+Am Mittwoch, 10. August 2016, 15:14:06 schrieb Guenter Roeck:
+> On Tue, Aug 9, 2016 at 11:02 AM, Chris Zhong <zyw@rock-chips.com> wrote:
+> > Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
+> > this modification, the aclk_vio_noc should be put into critical list,
+> > since it is required by VOP.
+> > And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
+> > pclk_hdcp_noc. Mark them as critical to avoid someone close them.
+> > 
+> > Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> > ---
+> > 
+> >  drivers/clk/rockchip/clk-rk3399.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3399.c
+> > b/drivers/clk/rockchip/clk-rk3399.c index b173711a..676b017 100644
+> > --- a/drivers/clk/rockchip/clk-rk3399.c
+> > +++ b/drivers/clk/rockchip/clk-rk3399.c
+> > @@ -1073,7 +1073,7 @@ static struct rockchip_clk_branch
+> > rk3399_clk_branches[] __initdata = {> 
+> >         /* vio */
+> >         COMPOSITE(ACLK_VIO, "aclk_vio", mux_pll_src_cpll_gpll_ppll_p,
+> >         CLK_IGNORE_UNUSED,>         
+> >                         RK3399_CLKSEL_CON(42), 6, 2, MFLAGS, 0, 5, DFLAGS,
+> > 
+> > -                       RK3399_CLKGATE_CON(11), 10, GFLAGS),
+> > +                       RK3399_CLKGATE_CON(11), 0, GFLAGS),
+> > 
+> >         COMPOSITE_NOMUX(PCLK_VIO, "pclk_vio", "aclk_vio", 0,
+> >         
+> >                         RK3399_CLKSEL_CON(43), 0, 5, DFLAGS,
+> >                         RK3399_CLKGATE_CON(11), 1, GFLAGS),
+> > 
+> > @@ -1470,6 +1470,9 @@ static const char *const
+> > rk3399_cru_critical_clocks[] __initconst = {> 
+> >         "aclk_cci_pre",
+> >         "aclk_gic",
+> >         "aclk_gic_noc",
+> > 
+> > +       "aclk_hdcp_noc",
+> > +       "hclk_hdcp_noc",
+> > +       "pclk_hdcp_noc",
+> > 
+> >         "pclk_perilp0",
+> >         "pclk_perilp0",
+> >         "hclk_perilp0",
+> > 
+> > @@ -1489,6 +1492,7 @@ static const char *const
+> > rk3399_cru_critical_clocks[] __initconst = {> 
+> >         "gpll_hclk_perilp1_src",
+> >         "gpll_aclk_perilp0_src",
+> >         "gpll_aclk_perihp_src",
+> > 
+> > +       "aclk_vio_noc",
+> 
+> I think there was a previous comment suggesting that this clock should
+> be handled differently. Has this been resolved ?
 
-What are the other nodes? Is there a document for the rest of the
-MFD?
+The clock getting handled differently was pclk_grf_vio - aka the GRF part 
+needed. This one is the interconnect clock of the vio port (as far as I 
+understand that), which we currently don't model at all.
+But if we did it would probably handled in some new part but not in the 
+graphics drivers.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So all looks well like it is here :-)
+
+Heiko
