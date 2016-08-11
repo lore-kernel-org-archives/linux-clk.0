@@ -1,36 +1,70 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20160825200632.GQ19826@codeaurora.org>
-References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
- <1471857574-13125-3-git-send-email-linus.walleij@linaro.org> <20160825200632.GQ19826@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 27 Aug 2016 14:02:39 +0200
-Message-ID: <CACRpkdZkzz_TTnw1wYwLdc__SRh_-wvAPgnhPKcV18ZKd4tQcg@mail.gmail.com>
-Subject: Re: [PATCH 3/3 v2] clk: versatile/icst: support for AP baseboard clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 04/10] clk: qcom: Add support for PLLs with alpha mode
+Date: Thu, 11 Aug 2016 14:10:52 +0530
+Message-Id: <1470904858-11930-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 25, 2016 at 10:06 PM, Stephen Boyd <sboyd@codeaurora.org> wrote=
-:
-> On 08/22, Linus Walleij wrote:
->> @@ -143,6 +180,17 @@ static int vco_set(struct clk_icst *icst, struct ic=
-st_vco vco)
->>               if (vco.r !=3D 22)
->>                       pr_err("ICST error: tried to use RDW !=3D 22\n");
->>               break;
->> +     case ICST_INTEGRATOR_AP_SYS:
->> +             mask =3D INTEGRATOR_AP_SYS_BITS;
->> +             val &=3D ~0xFF; /* Uses 8 bits */
->
-> drivers/clk/versatile/clk-icst.c: In function =E2=80=98icst_set_rate=E2=
-=80=99:
-> drivers/clk/versatile/clk-icst.c:185:7: warning: =E2=80=98val=E2=80=99 ma=
-y be used uninitialized in this function [-Wuninitialized]
+Some PLLs can support an alpha mode, and a single alpha
+register (instead of registers to program the M/N values),
+the contents of which depend on the alpha mode selected.
+(They are either treated as two's complement or M/N value)
+Add support for this in the clk PLL driver.
 
-Sorry, a dangling oneliner. Resent only this patch as v3.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-pll.c | 8 ++++++--
+ drivers/clk/qcom/clk-pll.h | 2 ++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index 5b940d6..08d2fa2 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -255,8 +255,12 @@ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	u32 mask;
+ 
+ 	regmap_write(regmap, pll->l_reg, config->l);
+-	regmap_write(regmap, pll->m_reg, config->m);
+-	regmap_write(regmap, pll->n_reg, config->n);
++	if (pll->alpha_reg) {
++		regmap_write(regmap, pll->alpha_reg, config->alpha);
++	} else {
++		regmap_write(regmap, pll->m_reg, config->m);
++		regmap_write(regmap, pll->n_reg, config->n);
++	}
+ 
+ 	val = config->vco_val;
+ 	val |= config->pre_div_val;
+diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
+index ffd0c63..083727e 100644
+--- a/drivers/clk/qcom/clk-pll.h
++++ b/drivers/clk/qcom/clk-pll.h
+@@ -48,6 +48,7 @@ struct clk_pll {
+ 	u32	l_reg;
+ 	u32	m_reg;
+ 	u32	n_reg;
++	u32	alpha_reg;
+ 	u32	config_reg;
+ 	u32	mode_reg;
+ 	u32	status_reg;
+@@ -70,6 +71,7 @@ struct pll_config {
+ 	u16 l;
+ 	u32 m;
+ 	u32 n;
++	u32 alpha;
+ 	u32 vco_val;
+ 	u32 vco_mask;
+ 	u32 pre_div_val;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
