@@ -1,67 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:46206 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752154AbcH2CVr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Aug 2016 22:21:47 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 11 Aug 2016 15:28:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stefan Agner <stefan@agner.ch>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH] clk: imx7d: do not set the parent of
+ IMX7D_ENET_AXI_ROOT_SRC
+Message-ID: <20160811222842.GM2996@codeaurora.org>
+References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160819191612.GU361@codeaurora.org>
-References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
- <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
- <20160819002507.GS361@codeaurora.org> <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
- <20160819191612.GU361@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 29 Aug 2016 11:21:35 +0900
-Message-ID: <CAK7LNAQownrE0n8rAYGgUs9_byvok8W0V=c6gts_C=8Wvio86g@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
- clock driver
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-
-2016-08-20 4:16 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
->>
->> >> +
->> >> +     parent = of_get_parent(dev->of_node); /* parent should be syscon node */
->> >> +     regmap = syscon_node_to_regmap(parent);
->> >> +     of_node_put(parent);
->> >
->> > devm_get_regmap(dev->parent) should work then? Why do we need to
->> > use OF APIs?
->>
->> "git grep devm_get_regmap" did not hit anything.
->>
->> Where is it defined?
->>
+On 08/10, Fabio Estevam wrote:
+> Hi Mike,
+> 
+> On Fri, Jul 15, 2016 at 10:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+> > Booting the kernel on a imx7s-warp leads to several warnings like these:
+> >
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:3536 lock_release+0x2f8/0x330
+> > [    0.000000] releasing a pinned lock
+> >
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:2722 trace_hardirqs_on_caller+0x1ac/0x1f4
+> > [    0.000000] DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled))
+> >
+> > [    0.000000] ---[ end trace cb88537fdc8fa201 ]---
+> > [    0.000000] bad: scheduling from the idle thread!
+> > [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W       4.7.0-rc7-next-20160715 #404
+> >
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
+> > [    0.000000] Modules linked in:
+> >
+> > [    0.000591] ------------[ cut here ]------------
+> > [    0.000610] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
+> >
+> > [    0.002084] ------------[ cut here ]------------
+> > [    0.002104] WARNING: CPU: 0 PID: 0 at init/main.c:576 start_kernel+0x258/0x3b0
+> > [    0.002114] Interrupts were enabled early
+> >
+> >
+> > This fix is along the same lines as 5e33ebff7edd ("clk: imx7d: do not
+> > set parent of ethernet time/ref clocks") and the explanation from that
+> > commit is:
+> >
+> > "The reason for the warning is that setting the parent enables the ENET
+> >  PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
+> >  cause clk_pllv3_wait_lock to sleep. See also:
+> >  commit fc8726a2c021 ("clk: core: support clocks which requires parents
+> >  enable (part 2)")."
+> >
+> > imx7s-warp does not even use the FEC interface, so we should not really
+> > configure the parent of IMX7D_ENET_AXI_ROOT_SRC in the common MX7 clock
+> > driver code.
+> >
+> > The dts file should use the assigned-clocks/assigned-clock-parents method,
+> > so simply remove the configuration of IMX7D_ENET_AXI_ROOT_SRC parent.
+> >
+> > Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Do you think this one could be applied to 4.8-rc?
 >
-> Sorry I meant dev_get_regmap().
->
 
-I tried this, but it did not work.
-
-To make dev_get_regmap() work,
-the parent device needs to call dev_regmap_init_mmio() beforehand.
-
-
-Since commit bdb0066df96e74a4002125467ebe459feff1ebef
-(mfd: syscon: Decouple syscon interface from platform devices),
-syscon_probe() is not called for platform devices,
-so that never happens.
-
-
+Is there a "Fixes:" tag that can be applied here? Does this
+depend on some sort of DTS changes to add assigned clocks and
+parents?
 
 -- 
-Best Regards
-Masahiro Yamada
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
