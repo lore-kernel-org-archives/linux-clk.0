@@ -1,49 +1,37 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160811222842.GM2996@codeaurora.org>
+References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com> <20160811222842.GM2996@codeaurora.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 11 Aug 2016 20:53:06 -0300
+Message-ID: <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx7d: do not set the parent of IMX7D_ENET_AXI_ROOT_SRC
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] clk: qcom: select GDSC for msm8996 gcc and mmcc
-Date: Thu, 25 Aug 2016 12:28:07 +0100
-Message-Id: <1472124487-22776-1-git-send-email-srinivas.kandagatla@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stefan Agner <stefan@agner.ch>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch selects QCOM_GDSC Kconfig for msm8996 GCC and MMCC clock
-controllers, as these provide some of the gdscs on the SOC.
+Hi Stephen,
 
-Also selecting this config will make it align with other drivers which
-do the same.
+On Thu, Aug 11, 2016 at 7:28 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> Is there a "Fixes:" tag that can be applied here? Does this
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 280436a..28a7542 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -146,6 +146,7 @@ config MSM_MMCC_8974
- 
- config MSM_GCC_8996
- 	tristate "MSM8996 Global Clock Controller"
-+	select QCOM_GDSC
- 	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8996 devices.
-@@ -155,6 +156,7 @@ config MSM_GCC_8996
- config MSM_MMCC_8996
- 	tristate "MSM8996 Multimedia Clock Controller"
- 	select MSM_GCC_8996
-+	select QCOM_GDSC
- 	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the multimedia clock controller on msm8996 devices.
--- 
-2.7.4
+This parent assignment exists since the mx7d clk driver was introduced
+in commit 8f6d8094b21 ("ARM: imx: add imx7d clk tree support").
+
+> depend on some sort of DTS changes to add assigned clocks and
+> parents?
+
+All the mx7 dts users assign the ENET clocks in their dts files.
+
+As imx7s-warp is the only affected board and it will be only available
+in 4.9, I think it is OK to apply this one into clk-next if you are
+happt with it.
+
+Thanks,
+
+Fabio Estevam
