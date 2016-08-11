@@ -1,129 +1,50 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
-	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v11 6/9] reset: mediatek: Add MT2701 reset controller dt-binding file
-Date: Fri, 19 Aug 2016 13:34:53 +0800
-Message-ID: <1471584896-9986-7-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 00/10] clk: qcom: PLL updates
+Date: Thu, 11 Aug 2016 14:10:48 +0530
+Message-Id: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+Hi,
 
-Dt-binding file about reset controller is used to provide
-kinds of definition, which is referenced by dts file and
-IC-specified reset controller driver code.
+This series adds some additional support to the clk-alpha-pll and the
+clk-pll drivers in preperation to add the CPU clock driver support
+on msm8996
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+Changes in v2:
+* Patch 1 to 6 are same as v1 post, added patches 7 to 10
 
-diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
-new file mode 100644
-index 0000000..aaf0305
---- /dev/null
-+++ b/include/dt-bindings/reset/mt2701-resets.h
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
-+#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
-+
-+/* INFRACFG resets */
-+#define MT2701_INFRA_EMI_REG_RST		0
-+#define MT2701_INFRA_DRAMC0_A0_RST		1
-+#define MT2701_INFRA_FHCTL_RST			2
-+#define MT2701_INFRA_APCIRQ_EINT_RST		3
-+#define MT2701_INFRA_APXGPT_RST			4
-+#define MT2701_INFRA_SCPSYS_RST			5
-+#define MT2701_INFRA_KP_RST			6
-+#define MT2701_INFRA_PMIC_WRAP_RST		7
-+#define MT2701_INFRA_MIPI_RST			8
-+#define MT2701_INFRA_IRRX_RST			9
-+#define MT2701_INFRA_CEC_RST			10
-+#define MT2701_INFRA_EMI_RST			32
-+#define MT2701_INFRA_DRAMC0_RST			34
-+#define MT2701_INFRA_TRNG_RST			37
-+#define MT2701_INFRA_SYSIRQ_RST			38
-+
-+/*  PERICFG resets */
-+#define MT2701_PERI_UART0_SW_RST		0
-+#define MT2701_PERI_UART1_SW_RST		1
-+#define MT2701_PERI_UART2_SW_RST		2
-+#define MT2701_PERI_UART3_SW_RST		3
-+#define MT2701_PERI_GCPU_SW_RST			5
-+#define MT2701_PERI_BTIF_SW_RST			6
-+#define MT2701_PERI_PWM_SW_RST			8
-+#define MT2701_PERI_AUXADC_SW_RST		10
-+#define MT2701_PERI_DMA_SW_RST			11
-+#define MT2701_PERI_NFI_SW_RST			14
-+#define MT2701_PERI_NLI_SW_RST			15
-+#define MT2701_PERI_THERM_SW_RST		16
-+#define MT2701_PERI_MSDC2_SW_RST		17
-+#define MT2701_PERI_MSDC0_SW_RST		19
-+#define MT2701_PERI_MSDC1_SW_RST		20
-+#define MT2701_PERI_I2C0_SW_RST			22
-+#define MT2701_PERI_I2C1_SW_RST			23
-+#define MT2701_PERI_I2C2_SW_RST			24
-+#define MT2701_PERI_I2C3_SW_RST			25
-+#define MT2701_PERI_USB_SW_RST			28
-+#define MT2701_PERI_ETH_SW_RST			29
-+#define MT2701_PERI_SPI0_SW_RST			33
-+
-+/* TOPRGU resets */
-+#define MT2701_TOPRGU_INFRA_RST			0
-+#define MT2701_TOPRGU_MM_RST			1
-+#define MT2701_TOPRGU_MFG_RST			2
-+#define MT2701_TOPRGU_ETHDMA_RST		3
-+#define MT2701_TOPRGU_VDEC_RST			4
-+#define MT2701_TOPRGU_VENC_IMG_RST		5
-+#define MT2701_TOPRGU_DDRPHY_RST		6
-+#define MT2701_TOPRGU_MD_RST			7
-+#define MT2701_TOPRGU_INFRA_AO_RST		8
-+#define MT2701_TOPRGU_CONN_RST			9
-+#define MT2701_TOPRGU_APMIXED_RST		10
-+#define MT2701_TOPRGU_HIFSYS_RST		11
-+#define MT2701_TOPRGU_CONN_MCU_RST		12
-+#define MT2701_TOPRGU_BDP_DISP_RST		13
-+
-+/* HIFSYS resets */
-+#define MT2701_HIFSYS_UHOST0_RST		3
-+#define MT2701_HIFSYS_UHOST1_RST		4
-+#define MT2701_HIFSYS_UPHY0_RST			21
-+#define MT2701_HIFSYS_UPHY1_RST			22
-+#define MT2701_HIFSYS_PCIE0_RST			24
-+#define MT2701_HIFSYS_PCIE1_RST			25
-+#define MT2701_HIFSYS_PCIE2_RST			26
-+
-+#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
+Rajendra Nayak (8):
+  clk: Fix inconsistencies in usage of data types
+  clk: qcom: Add support for alpha pll hwfsm ops
+  clk: qcom: Add support to initialize alpha plls
+  clk: qcom: Add support for PLLs with alpha mode
+  clk: qcom: Add support for PLLs with early output
+  clk: qcom: Add support for PLLs supporting dynamic reprogramming
+  clk: qcom: Add support to enable FSM mode for votable alpha PLLs
+  clk: qcom: Add .is_enabled ops for clk-alpha-pll
+
+Taniya Das (2):
+  clk: qcom: Cleanup some macro defs
+  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
+
+ drivers/clk/clk.c                |   4 +-
+ drivers/clk/qcom/clk-alpha-pll.c | 235 ++++++++++++++++++++++++++++++++++-----
+ drivers/clk/qcom/clk-alpha-pll.h |  17 +++
+ drivers/clk/qcom/clk-pll.c       | 123 +++++++++++++++++---
+ drivers/clk/qcom/clk-pll.h       |  12 +-
+ drivers/clk/qcom/common.c        |  29 +++++
+ drivers/clk/qcom/common.h        |   2 +
+ include/linux/clk-provider.h     |   5 +-
+ 8 files changed, 378 insertions(+), 49 deletions(-)
+
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
