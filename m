@@ -1,339 +1,184 @@
-Return-Path: <zhengxing@rock-chips.com>
-Message-ID: <57A00EDC.7090105@rock-chips.com>
-Date: Tue, 02 Aug 2016 11:09:16 +0800
-From: Xing Zheng <zhengxing@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Dongpo Li <lidongpo@hisilicon.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux@armlinux.org.uk>, <zhangfei.gao@linaro.org>,
+	<yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+	<davem@davemloft.net>, <arnd@arndb.de>, <andrew@lunn.ch>
+CC: <xuejiancheng@hisilicon.com>, <benjamin.chenhao@hisilicon.com>,
+	<howell.yang@hisilicon.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dongpo Li <lidongpo@hisilicon.com>
+Subject: [PATCH 3/4] clk: hix5hd2: change ethernet clock type
+Date: Thu, 11 Aug 2016 17:01:54 +0800
+Message-ID: <1470906115-155569-4-git-send-email-lidongpo@hisilicon.com>
+In-Reply-To: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
+References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
 MIME-Version: 1.0
-To: Brian Norris <briannorris@chromium.org>
-CC: heiko@sntech.de, linux-rockchip@lists.infradead.org,
- dianders@chromium.org, huangtao@rock-chips.com,
- zhangqing@rock-chips.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 4/8] clk: rockchip: rk3399: fix incorrect GATE
- bits for {c, g}pll_aclk_perihp_src
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com> <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com> <20160801202057.GB129313@google.com> <57A00D08.3070607@rock-chips.com>
-In-Reply-To: <57A00D08.3070607@rock-chips.com>
-Content-Type: multipart/alternative;
- boundary="------------050501030400050803070604"
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------050501030400050803070604
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Because the clock and reset signals share the same register,
+we initialize reset controller when initializing clock controller.
+So the ethernet driver will control the reset signal instead of
+the clock driver.
+All the ethernet clock is changed from complex clock to gate clock.
+The original ethernet clock is really a "complex" clock because
+it's obscure and hard to understand.
 
-On 2016?08?02? 11:01, Xing Zheng wrote:
-> On 2016?08?02? 04:20, Brian Norris wrote:
->> On Mon, Aug 01, 2016 at 05:53:39PM +0800, Xing Zheng wrote:
->>> Sorry to refer incorrect clock diagram, we double check it that the
->>> bits configuration of the Xpll_aclk_perihp_src need to be fixed:
->>> bit 1 - shows aclk_perihp_cpll_src_en
->>> bit 0 - shows aclk_perihp_gpll_src_en
->> Last time, you confirmed with the IC designers that we had things right.
->> What's different this time? Have you, for instance, done more thorough
->> testing, to show that the logical parent structure this driver outputs
->> is actually what the hardware is doing?
-> I tried to proof it throught the testing that plug/unplug the USB 
-> ethernet cable on kevin board.
->
-> 1. the hclk_host0 and hclk_host1 are endpoint clocks.
-> cpll --> G5[1] --> aclk_perihp_cpll_src --\                   |--> 
-> hclk_host0
->                                                                 | --> 
-> ... ---> |
-> gpll --> G5[0] --> aclk_perihp_gpll_src --/                   |--> 
-> hclk_host1
->
-> 2. on the kevin, there is no clock below the cpll_aclk_perihp_src, and 
-> the hclk_hostX are below the gpll_aclk_perihp_src:
->     pll_cpll                              1            1   
-> 800000000          0 0
->        cpll                               7           19   
-> 800000000          0 0
->           cpll_aclk_perihp_src            0            0   
-> 800000000          0 0
->
-> ...
->     pll_gpll                              1            1   
-> 594000000          0 0
->        gpll                              10           10   
-> 594000000          0 0
->           gpll_aclk_perihp_src            2            2   
-> 594000000          0 0
->                 hclk_perihp               5            5    
-> 74250000          0 0
->                    hclk_host1_arb           2            2    
-> 74250000          0 0
->                    hclk_host1             2            2    
-> 74250000          0 0
->                    hclk_host0_arb           2            2    
-> 74250000          0 0
->                    hclk_host0             2            2    
-> 74250000          0 0
->
-> 3. by default, G5[0] and G5[1] are enabled:
-> localhost ~ # mem r 0xff760314
-> 0x000003e0
->
-> 4. close the G5[1] (aclk_perihp_cpll_src), and plug/unplug USB 
-> ethernet cable, the DUT still works well:
-> localhost ~ # mem w 0xff760314 0xffff03e2
-> localhost ~ # mem r 0xff760314
-> 0x000003e2
-> plug/unplug ok
->
-> 5. close the G5[0] (aclk_perihp_gpll_src), , and plug/unplug USB 
-> ethernet cable, the DUT will be crashed:
-> localhost ~ # mem w 0xff760314 0xffff03e1
-> localhost ~ # mem r 0xff760314
-> 0x000003e1
-> plug/unplug crashed
->
-> Hence:
-> bit 1 - shows aclk_perihp_cpll_src_en
-> bit 0 - shows aclk_perihp_gpll_src_en
->
->> I think maybe this would qualify as:
->>
->> Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src")
->>
->> The above is not exactly a pure regression (we really want both
->> changes), but apparently it wasn't a complete fix.
-> OK, I will add the commit message
-> "Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for 
-> rk3399's {c,g}pll_aclk_perihp_src")"
-> at next version.
->>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
->>> ---
->>>
->>> Changes in v2: None
->> Uhh, isn't this patch brand new in v2? I don't think that means
->> "Changes ... None".
-> Yes, I will add change log into this patch at next version.
->
-> Thanks. 
-Sorry to change my mind. This patch is only started to be added in 
-patchset_v2, not be included in my patchset_v1, so I think it should be 
-"Changes ... None".
-
-Thanks.
->> Brian
->>
->>>   drivers/clk/rockchip/clk-rk3399.c |    4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
->>> index 2182391..8bf0d19 100644
->>> --- a/drivers/clk/rockchip/clk-rk3399.c
->>> +++ b/drivers/clk/rockchip/clk-rk3399.c
->>> @@ -833,9 +833,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->>>
->>>   	/* perihp */
->>>   	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
->>> -			RK3399_CLKGATE_CON(5), 0, GFLAGS),
->>> -	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->>>   			RK3399_CLKGATE_CON(5), 1, GFLAGS),
->>> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->>> +			RK3399_CLKGATE_CON(5), 0, GFLAGS),
->>>   	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
->>>   			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
->>>   			RK3399_CLKGATE_CON(5), 2, GFLAGS),
->>> -- 
->>> 1.7.9.5
->>>
->>>
->>
->
->
-> -- 
-> - Xing Zheng
-
-
--- 
-- Xing Zheng
-
-
---------------050501030400050803070604
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-
-<html>
-  <head>
-    <meta content="text/html; charset=ISO-8859-1"
-      http-equiv="Content-Type">
-  </head>
-  <body bgcolor="#FFFFFF" text="#000000">
-    On 2016&#24180;08&#26376;02&#26085; 11:01, Xing Zheng wrote:
-    <blockquote cite="mid:57A00D08.3070607@rock-chips.com" type="cite">
-      <meta content="text/html; charset=ISO-8859-1"
-        http-equiv="Content-Type">
-      On 2016&#24180;08&#26376;02&#26085; 04:20, Brian Norris wrote:
-      <blockquote cite="mid:20160801202057.GB129313@google.com"
-        type="cite">
-        <pre wrap="">On Mon, Aug 01, 2016 at 05:53:39PM +0800, Xing Zheng wrote:
-</pre>
-        <blockquote type="cite">
-          <pre wrap="">Sorry to refer incorrect clock diagram, we double check it that the
-bits configuration of the Xpll_aclk_perihp_src need to be fixed:
-bit 1 - shows aclk_perihp_cpll_src_en
-bit 0 - shows aclk_perihp_gpll_src_en
-</pre>
-        </blockquote>
-        <pre wrap="">Last time, you confirmed with the IC designers that we had things right.
-What's different this time? Have you, for instance, done more thorough
-testing, to show that the logical parent structure this driver outputs
-is actually what the hardware is doing?</pre>
-      </blockquote>
-      I tried to proof it throught the testing that plug/unplug the USB
-      ethernet cable on kevin board.<br>
-      <br>
-      1. the hclk_host0 and hclk_host1 are endpoint clocks.<br>
-      cpll --&gt; G5[1] --&gt; aclk_perihp_cpll_src
-      --\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |--&gt; hclk_host0<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-      --&gt; ... ---&gt; |<br>
-      gpll --&gt; G5[0] --&gt; aclk_perihp_gpll_src
-      --/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |--&gt; hclk_host1<br>
-      <br>
-      2. on the kevin, there is no clock below the cpll_aclk_perihp_src,
-      and the hclk_hostX are below the gpll_aclk_perihp_src:<br>
-      &nbsp;&nbsp;&nbsp; pll_cpll&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;
-      800000000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cpll&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 19&nbsp;&nbsp;
-      800000000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0 <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cpll_aclk_perihp_src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;
-      800000000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0 <br>
-      <br>
-      ...<br>
-      &nbsp;&nbsp;&nbsp; pll_gpll&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;
-      594000000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gpll&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10&nbsp;&nbsp;
-      594000000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gpll_aclk_perihp_src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;
-      594000000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hclk_perihp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp;&nbsp;
-      74250000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hclk_host1_arb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;
-      74250000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hclk_host1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;
-      74250000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hclk_host0_arb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;
-      74250000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0&nbsp; <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hclk_host0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;
-      74250000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 0 <br>
-      <br>
-      3. by default, G5[0] and G5[1] are enabled:<br>
-      localhost ~ # mem r 0xff760314<br>
-      0x000003e0<br>
-      <br>
-      4. close the G5[1] (aclk_perihp_cpll_src), and plug/unplug USB
-      ethernet cable, the DUT still works well:<br>
-      localhost ~ # mem w 0xff760314
-      0xffff03e2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-      <br>
-      localhost ~ # mem r 0xff760314<br>
-      0x000003e2<br>
-      plug/unplug ok<br>
-      <br>
-      5. close the G5[0] (aclk_perihp_gpll_src), , and plug/unplug USB
-      ethernet cable, the DUT will be crashed:<br>
-      localhost ~ # mem w 0xff760314 0xffff03e1
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-      <br>
-      localhost ~ # mem r 0xff760314<br>
-      0x000003e1<br>
-      <font color="#ff0000">plug/unplug crashed</font><br>
-      <br>
-      Hence:<br>
-      bit 1 - shows aclk_perihp_cpll_src_en<br>
-      bit 0 - shows aclk_perihp_gpll_src_en<br>
-      <br>
-      <blockquote cite="mid:20160801202057.GB129313@google.com"
-        type="cite">
-        <pre wrap="">
-I think maybe this would qualify as:
-
-Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src")
-
-The above is not exactly a pure regression (we really want both
-changes), but apparently it wasn't a complete fix.</pre>
-      </blockquote>
-      OK, I will add the commit message<br>
-      "Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for
-      rk3399's {c,g}pll_aclk_perihp_src")"<br>
-      at next version.<br>
-      <blockquote cite="mid:20160801202057.GB129313@google.com"
-        type="cite">
-        <pre wrap="">
-</pre>
-        <blockquote type="cite">
-          <pre wrap="">Signed-off-by: Xing Zheng <a moz-do-not-send="true" class="moz-txt-link-rfc2396E" href="mailto:zhengxing@rock-chips.com">&lt;zhengxing@rock-chips.com&gt;</a>
+Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
 ---
+ drivers/clk/hisilicon/clk-hix5hd2.c       | 72 +++++++------------------------
+ include/dt-bindings/clock/hix5hd2-clock.h |  6 ++-
+ 2 files changed, 20 insertions(+), 58 deletions(-)
 
-Changes in v2: None
-</pre>
-        </blockquote>
-        <pre wrap="">Uhh, isn't this patch brand new in v2? I don't think that means
-"Changes ... None".</pre>
-      </blockquote>
-      Yes, I will add change log into this patch at next version.<br>
-      <br>
-      Thanks. </blockquote>
-    Sorry to change my mind. This patch is only started to be added in
-    patchset_v2, not be included in my patchset_v1, so I think it should
-    be "Changes ... None".<br>
-    <br>
-    Thanks.<br>
-    <blockquote cite="mid:57A00D08.3070607@rock-chips.com" type="cite">
-      <blockquote cite="mid:20160801202057.GB129313@google.com"
-        type="cite">
-        <pre wrap="">
-Brian
-
-</pre>
-        <blockquote type="cite">
-          <pre wrap=""> drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 2182391..8bf0d19 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -833,9 +833,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+diff --git a/drivers/clk/hisilicon/clk-hix5hd2.c b/drivers/clk/hisilicon/clk-hix5hd2.c
+index 14b05ef..f9689e3 100644
+--- a/drivers/clk/hisilicon/clk-hix5hd2.c
++++ b/drivers/clk/hisilicon/clk-hix5hd2.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+ #include "clk.h"
++#include "reset.h"
  
- 	/* perihp */
- 	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
--			RK3399_CLKGATE_CON(5), 0, GFLAGS),
--	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(5), 1, GFLAGS),
-+	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
-+			RK3399_CLKGATE_CON(5), 0, GFLAGS),
- 	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 2, GFLAGS),
+ static struct hisi_fixed_rate_clock hix5hd2_fixed_rate_clks[] __initdata = {
+ 	{ HIX5HD2_FIXED_1200M, "1200m", NULL, 0, 1200000000, },
+@@ -93,8 +94,12 @@ static struct hisi_gate_clock hix5hd2_gate_clks[] __initdata = {
+ 	/* gsf */
+ 	{ HIX5HD2_FWD_BUS_CLK, "clk_fwd_bus", NULL, 0, 0xcc, 0, 0, },
+ 	{ HIX5HD2_FWD_SYS_CLK, "clk_fwd_sys", "clk_fwd_bus", 0, 0xcc, 5, 0, },
+-	{ HIX5HD2_MAC0_PHY_CLK, "clk_fephy", "clk_fwd_sys",
+-		 CLK_SET_RATE_PARENT, 0x120, 0, 0, },
++	{ HIX5HD2_MAC0_CLK, "clk_mac0", "clk_fwd_sys", 0, 0xcc, 1, 0, },
++	{ HIX5HD2_MAC_IFC0_CLK, "clk_mac_ifc0", "clk_fwd_sys", 0, 0xcc, 3, 0, },
++	{ HIX5HD2_MAC1_CLK, "clk_mac1", "clk_fwd_sys", 0, 0xcc, 2, 0, },
++	{ HIX5HD2_MAC_IFC1_CLK, "clk_mac_ifc1", "clk_fwd_sys", 0, 0xcc, 4, 0, },
++	{ HIX5HD2_MAC0_PHY_CLK, "clk_fephy", NULL,
++		 CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0x120, 0, 0, },
+ 	/* wdg0 */
+ 	{ HIX5HD2_WDG0_CLK, "clk_wdg0", "24m",
+ 		CLK_SET_RATE_PARENT, 0x178, 0, 0, },
+@@ -129,7 +134,6 @@ static struct hisi_gate_clock hix5hd2_gate_clks[] __initdata = {
+ 
+ enum hix5hd2_clk_type {
+ 	TYPE_COMPLEX,
+-	TYPE_ETHER,
+ };
+ 
+ struct hix5hd2_complex_clock {
+@@ -157,10 +161,6 @@ struct hix5hd2_clk_complex {
+ };
+ 
+ static struct hix5hd2_complex_clock hix5hd2_complex_clks[] __initdata = {
+-	{"clk_mac0", "clk_fephy", HIX5HD2_MAC0_CLK,
+-		0xcc, 0xa, 0x500, 0x120, 0, 0x10, TYPE_ETHER},
+-	{"clk_mac1", "clk_fwd_sys", HIX5HD2_MAC1_CLK,
+-		0xcc, 0x14, 0xa00, 0x168, 0x2, 0, TYPE_ETHER},
+ 	{"clk_sata", NULL, HIX5HD2_SATA_CLK,
+ 		0xa8, 0x1f, 0x300, 0xac, 0x1, 0x0, TYPE_COMPLEX},
+ 	{"clk_usb", NULL, HIX5HD2_USB_CLK,
+@@ -169,50 +169,6 @@ static struct hix5hd2_complex_clock hix5hd2_complex_clks[] __initdata = {
+ 
+ #define to_complex_clk(_hw) container_of(_hw, struct hix5hd2_clk_complex, hw)
+ 
+-static int clk_ether_prepare(struct clk_hw *hw)
+-{
+-	struct hix5hd2_clk_complex *clk = to_complex_clk(hw);
+-	u32 val;
+-
+-	val = readl_relaxed(clk->ctrl_reg);
+-	val |= clk->ctrl_clk_mask | clk->ctrl_rst_mask;
+-	writel_relaxed(val, clk->ctrl_reg);
+-	val &= ~(clk->ctrl_rst_mask);
+-	writel_relaxed(val, clk->ctrl_reg);
+-
+-	val = readl_relaxed(clk->phy_reg);
+-	val |= clk->phy_clk_mask;
+-	val &= ~(clk->phy_rst_mask);
+-	writel_relaxed(val, clk->phy_reg);
+-	mdelay(10);
+-
+-	val &= ~(clk->phy_clk_mask);
+-	val |= clk->phy_rst_mask;
+-	writel_relaxed(val, clk->phy_reg);
+-	mdelay(10);
+-
+-	val |= clk->phy_clk_mask;
+-	val &= ~(clk->phy_rst_mask);
+-	writel_relaxed(val, clk->phy_reg);
+-	mdelay(30);
+-	return 0;
+-}
+-
+-static void clk_ether_unprepare(struct clk_hw *hw)
+-{
+-	struct hix5hd2_clk_complex *clk = to_complex_clk(hw);
+-	u32 val;
+-
+-	val = readl_relaxed(clk->ctrl_reg);
+-	val &= ~(clk->ctrl_clk_mask);
+-	writel_relaxed(val, clk->ctrl_reg);
+-}
+-
+-static struct clk_ops clk_ether_ops = {
+-	.prepare = clk_ether_prepare,
+-	.unprepare = clk_ether_unprepare,
+-};
+-
+ static int clk_complex_enable(struct clk_hw *hw)
+ {
+ 	struct hix5hd2_clk_complex *clk = to_complex_clk(hw);
+@@ -269,10 +225,7 @@ hix5hd2_clk_register_complex(struct hix5hd2_complex_clock *clks, int nums,
+ 			return;
+ 
+ 		init.name = clks[i].name;
+-		if (clks[i].type == TYPE_ETHER)
+-			init.ops = &clk_ether_ops;
+-		else
+-			init.ops = &clk_complex_ops;
++		init.ops = &clk_complex_ops;
+ 
+ 		init.flags = CLK_IS_BASIC;
+ 		init.parent_names =
+@@ -302,10 +255,17 @@ hix5hd2_clk_register_complex(struct hix5hd2_complex_clock *clks, int nums,
+ static void __init hix5hd2_clk_init(struct device_node *np)
+ {
+ 	struct hisi_clock_data *clk_data;
++	struct hisi_reset_controller *rstc;
++
++	rstc = hisi_reset_init(np);
++	if (!rstc)
++		return;
+ 
+ 	clk_data = hisi_clk_init(np, HIX5HD2_NR_CLKS);
+-	if (!clk_data)
++	if (!clk_data) {
++		hisi_reset_exit(rstc);
+ 		return;
++	}
+ 
+ 	hisi_clk_register_fixed_rate(hix5hd2_fixed_rate_clks,
+ 				     ARRAY_SIZE(hix5hd2_fixed_rate_clks),
+diff --git a/include/dt-bindings/clock/hix5hd2-clock.h b/include/dt-bindings/clock/hix5hd2-clock.h
+index fd29c17..90f0731 100644
+--- a/include/dt-bindings/clock/hix5hd2-clock.h
++++ b/include/dt-bindings/clock/hix5hd2-clock.h
+@@ -74,10 +74,12 @@
+ #define HIX5HD2_I2C4_RST		150
+ #define HIX5HD2_I2C5_CLK		151
+ #define HIX5HD2_I2C5_RST		152
++#define HIX5HD2_MAC0_CLK		153
++#define HIX5HD2_MAC1_CLK		154
++#define HIX5HD2_MAC_IFC0_CLK		155
++#define HIX5HD2_MAC_IFC1_CLK		156
+ 
+ /* complex */
+-#define HIX5HD2_MAC0_CLK		192
+-#define HIX5HD2_MAC1_CLK		193
+ #define HIX5HD2_SATA_CLK		194
+ #define HIX5HD2_USB_CLK			195
+ 
 -- 
-1.7.9.5
-
-
-</pre>
-        </blockquote>
-        <pre wrap="">
-
-</pre>
-      </blockquote>
-      <br>
-      <br>
-      <pre class="moz-signature" cols="72">-- 
-- Xing Zheng</pre>
-    </blockquote>
-    <br>
-    <br>
-    <pre class="moz-signature" cols="72">-- 
-- Xing Zheng</pre>
-  </body>
-</html>
-
---------------050501030400050803070604--
+2.8.2
