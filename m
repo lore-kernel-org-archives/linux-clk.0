@@ -1,67 +1,61 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/5] clk: samsung: exynos5420: Fix the checkpatch warnings
-Date: Mon, 22 Aug 2016 18:48:38 +0900
-Message-id: <1471859319-30681-5-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
-References: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 05/10] clk: qcom: Add support for PLLs with early output
+Date: Thu, 11 Aug 2016 14:10:53 +0530
+Message-Id: <1470904858-11930-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch fixes the following warnings by using checkpatch.pl script.
-- WARNING: void function return statements are not generally useful
-- ERROR: space prohibited before that ','
-- ERROR: Use of __initconst requires a separate use of const
+Some PLLs can have an additional early output (apart from
+the main and aux outputs). Add support for the PLL driver
+so it can be used to initialize/configure the early output
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/clk/qcom/clk-pll.c | 2 ++
+ drivers/clk/qcom/clk-pll.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index c99d05cd37b7..16b7d160fbdf 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -336,7 +336,6 @@ err_soc:
- 	kfree(exynos5x_save);
- 	pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
- 		__func__);
--	return;
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index 08d2fa2..b463432 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -268,6 +268,7 @@ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	val |= config->mn_ena_mask;
+ 	val |= config->main_output_mask;
+ 	val |= config->aux_output_mask;
++	val |= config->early_output_mask;
+ 
+ 	mask = config->vco_mask;
+ 	mask |= config->pre_div_mask;
+@@ -275,6 +276,7 @@ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	mask |= config->mn_ena_mask;
+ 	mask |= config->main_output_mask;
+ 	mask |= config->aux_output_mask;
++	mask |= config->early_output_mask;
+ 
+ 	regmap_update_bits(regmap, pll->config_reg, mask, val);
  }
- #else
- static void __init exynos5420_clk_sleep_init(void) {}
-@@ -345,8 +344,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- /* list of all parent clocks */
- PNAME(mout_mspll_cpu_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
- 				"mout_sclk_mpll", "mout_sclk_spll"};
--PNAME(mout_cpu_p) = {"mout_apll" , "mout_mspll_cpu"};
--PNAME(mout_kfc_p) = {"mout_kpll" , "mout_mspll_kfc"};
-+PNAME(mout_cpu_p) = {"mout_apll", "mout_mspll_cpu"};
-+PNAME(mout_kfc_p) = {"mout_kpll", "mout_mspll_kfc"};
- PNAME(mout_apll_p) = {"fin_pll", "fout_apll"};
- PNAME(mout_bpll_p) = {"fin_pll", "fout_bpll"};
- PNAME(mout_cpll_p) = {"fin_pll", "fout_cpll"};
-@@ -503,14 +502,12 @@ static const struct samsung_fixed_rate_clock exynos5x_fixed_rate_clks[] __initco
- 	FRATE(0, "sclk_usbh20_scan_clk", NULL, 0, 480000000),
+diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
+index 083727e..dbe22a9 100644
+--- a/drivers/clk/qcom/clk-pll.h
++++ b/drivers/clk/qcom/clk-pll.h
+@@ -81,6 +81,7 @@ struct pll_config {
+ 	u32 mn_ena_mask;
+ 	u32 main_output_mask;
+ 	u32 aux_output_mask;
++	u32 early_output_mask;
  };
  
--static const struct samsung_fixed_factor_clock
--		exynos5x_fixed_factor_clks[] __initconst = {
-+static const struct samsung_fixed_factor_clock exynos5x_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "ff_hsic_12m", "fin_pll", 1, 2, 0),
- 	FFACTOR(0, "ff_sw_aclk66", "mout_sw_aclk66", 1, 2, 0),
- };
- 
--static const struct samsung_fixed_factor_clock
--		exynos5800_fixed_factor_clks[] __initconst = {
-+static const struct samsung_fixed_factor_clock exynos5800_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "ff_dout_epll2", "mout_sclk_epll", 1, 2, 0),
- 	FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
- };
+ void clk_pll_configure_sr(struct clk_pll *pll, struct regmap *regmap,
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
