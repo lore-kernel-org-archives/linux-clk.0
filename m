@@ -1,71 +1,52 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 4/5] clk: samsung: Add support for EPLL on exynos5410
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
- <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <74d97f1b-6a3a-78f1-6d96-b0d0b9717ab2@samsung.com>
-Date: Tue, 30 Aug 2016 12:36:13 +0200
-MIME-version: 1.0
-In-reply-to: <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [RESEND PATCH v2 3/3] dt-bindings: clock: Update bindings for MDM9615 GCC and LCC
+Date: Thu, 11 Aug 2016 14:48:05 +0200
+Message-Id: <1470919685-11260-4-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1470919685-11260-1-git-send-email-narmstrong@baylibre.com>
+References: <1470919685-11260-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22/2016 06:31 PM, Sylwester Nawrocki wrote:
-> This patch adds code instantiating the EPLL, which is used as the
-> audio subsystem's root clock.
-> The requirement to specify the external root clock in clocks property
-> is also added.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,gcc.txt | 1 +
+ Documentation/devicetree/bindings/clock/qcom,lcc.txt | 1 +
+ 2 files changed, 2 insertions(+)
 
-I think the requirement was there already but explained little bit
-differently:
-19 External clock:
-20
-21 There is clock that is generated outside the SoC. It
-22 is expected that it is defined using standard clock bindings
-23 with following clock-output-name:
-24
-25  - "fin_pll" - PLL input clock from XXTI
-
-so you can just combine them. Driver now will require the fin_pll in two
-ways:
-1. Old lookup by "fin_pll" name.
-2. of_clk_get of yours.
-
-
->  That ensures proper initialization order by explicitly
-> specifying dependencies in devicetree.  It prevents situations when the
-> SoC's clock controller driver has initialized, the external oscillator
-> clock is not yet registered and setting clock frequencies through
-> assigned-clock-rates property doesn't work properly due to unknown
-> external oscillator frequency.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/clock/exynos5410-clock.txt |  14 +++
->  drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
->  drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
->  drivers/clk/samsung/clk-pll.h                      |   1 +
->  4 files changed, 145 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> index aeab635..2aefc07 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> @@ -12,6 +12,9 @@ Required Properties:
->  
->  - #clock-cells: should be 1.
->  
-> +- clocks: should contain an entry specifying the root oscillator clock
-> +  on XXTI pin (fin_pll).
-
-Combine with "external clock".
-
-Rest looks ok:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+index 9a60fde..869a2f0 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+@@ -15,6 +15,7 @@ Required properties :
+ 			"qcom,gcc-msm8974pro"
+ 			"qcom,gcc-msm8974pro-ac"
+ 			"qcom,gcc-msm8996"
++			"qcom,gcc-mdm9615"
+ 
+ - reg : shall contain base register location and length
+ - #clock-cells : shall contain 1
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.txt b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
+index dd755be..a3c78aa 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,lcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
+@@ -7,6 +7,7 @@ Required properties :
+ 			"qcom,lcc-msm8960"
+ 			"qcom,lcc-apq8064"
+ 			"qcom,lcc-ipq8064"
++			"qcom,lcc-mdm9615"
+ 
+ - reg : shall contain base register location and length
+ - #clock-cells : shall contain 1
+-- 
+1.9.1
