@@ -1,34 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mxout1.idt.com ([157.165.5.25]:52858 "EHLO mxout1.idt.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752342AbcHJWug convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Aug 2016 18:50:36 -0400
-Received: from mail.idt.com (localhost [127.0.0.1])
-	by mxout1.idt.com (8.13.1/8.13.1) with ESMTP id u7AMoZRq022926
-	for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2016 15:50:35 -0700
-Received: from corpml3.corp.idt.com (corpml3.corp.idt.com [157.165.140.25])
-	by mail.idt.com (8.13.8/8.13.8) with ESMTP id u7AMoYik003672
-	for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2016 15:50:35 -0700 (PDT)
-Received: from corpmail2.na.ads.idt.com (corpimss2.corp.idt.com [157.165.141.30])
-	by corpml3.corp.idt.com (8.11.7p1+Sun/8.11.7) with ESMTP id u7AMoYT24327
-	for <linux-clk@vger.kernel.org>; Wed, 10 Aug 2016 15:50:34 -0700 (PDT)
-From: "Cater, David" <David.Cater@idt.com>
-To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Unable to add my common clock framework driver to a Raspberry Pi
- device tree
-Date: Wed, 10 Aug 2016 22:50:33 +0000
-Message-ID: <9CB9E73754876847AB77809DF28B0A8C2A2E45@corpmail1.na.ads.idt.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 11 Aug 2016 16:57:48 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam
+ <fabio.estevam@nxp.com>
+Subject: Re: [PATCH] clk: imx7d: do not set the parent of
+ IMX7D_ENET_AXI_ROOT_SRC
+In-Reply-To: <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
+References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
+ <20160811222842.GM2996@codeaurora.org>
+ <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
+Message-ID: <88d5c57d3047176ebf2eec0f21e86613@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-I am trying to write a common clock framework driver for a clock that I have attached to my Raspberry PI 3 via I2C.  I have created a basic Hello World common clock framework driver, and I am trying to add it to the device tree.  As far as I can tell, the PI is not loading my driver (a printk message in the probe function doesn't appear in dmesg).
+Hi,
 
-I have posted a full description of the issue here, including my code and device tree snippets:
+On 2016-08-11 16:53, Fabio Estevam wrote:
+> Hi Stephen,
+> 
+> On Thu, Aug 11, 2016 at 7:28 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> 
+>> Is there a "Fixes:" tag that can be applied here? Does this
+> 
+> This parent assignment exists since the mx7d clk driver was introduced
+> in commit 8f6d8094b21 ("ARM: imx: add imx7d clk tree support").
+> 
+>> depend on some sort of DTS changes to add assigned clocks and
+>> parents?
+> 
+> All the mx7 dts users assign the ENET clocks in their dts files.
 
-http://stackoverflow.com/questions/38884498/hello-world-for-common-clock-framework-driver-on-raspberry-pi-3
+I don't think so, at least not that root clock.
 
-Thanks,
+Otherwise grep -e IMX7D_PLL_ENET_MAIN_250M_CLK arch/arm/boot/dts/imx7*
+should return something...
 
-David
+I guess in practice it is not a problem because the boot loader
+configures the clock selection already. Still, I think we should also
+fix our device trees and select the root clock there...
+
+--
+Stefan
