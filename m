@@ -1,48 +1,81 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <57BEB77F.4090906@codeaurora.org>
-Date: Thu, 25 Aug 2016 14:46:47 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- tdas@codeaurora.org
-Subject: Re: [PATCH v2 07/10] clk: qcom: Add support to enable FSM mode for
- votable alpha PLLs
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org> <1470904858-11930-8-git-send-email-rnayak@codeaurora.org> <20160824063152.GY6502@codeaurora.org>
-In-Reply-To: <20160824063152.GY6502@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1470915049-15249-1-git-send-email-broonie@kernel.org>
+References: <1470915049-15249-1-git-send-email-broonie@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Aug 2016 13:50:08 +0200
+Message-ID: <CAMuHMdVhd6qk4g98xEXZYjf4qnwTT5=hKu-o8YRJXWNFQREueQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: Make clock framework user selectable
+To: Mark Brown <broonie@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Aug 11, 2016 at 1:30 PM, Mark Brown <broonie@kernel.org> wrote:
+> Some architectures like x86 don't use the clock API in architecture code
+> but one of the advantages of the common clock API is that it can be used
+> by regular devices to represent their clocking structures so we should
+> allow users to enable the clock API themselves even if the architecture
+> doesn't need it. This is more straightforward than going round every
+> architecture and convincing their maintainers to add the select.
+>
+> Unfortunately some architectures do still provide a custom implementation
+> of the clock API which is incompatible with common clock. Provide a config
+> option HAS_CUSTOM_CLK which these architectures can select in order to
+> prevent COMMON_CLK being enabled.
 
+The list is not that long anymore, so it looks fixable with not too much
+effort:
 
-On 08/24/2016 12:01 PM, Stephen Boyd wrote:
-> On 08/11, Rajendra Nayak wrote:
->> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->> index f7c226a..6bf5abd 100644
->> --- a/drivers/clk/qcom/common.c
->> +++ b/drivers/clk/qcom/common.c
->> @@ -25,6 +25,14 @@
->>  #include "reset.h"
->>  #include "gdsc.h"
->>  
->> +#define PLL_LOCK_COUNT_SHIFT	8
->> +#define PLL_LOCK_COUNT_MASK	0x3f
->> +#define PLL_BIAS_COUNT_SHIFT	14
->> +#define PLL_BIAS_COUNT_MASK	0x3f
->> +#define PLL_VOTE_FSM_ENA	BIT(20)
->> +#define PLL_DYN_FSM_ENA		BIT(20)
->> +#define PLL_VOTE_FSM_RESET	BIT(21)
-> 
-> These appear but aren't deleted from anywhere else so I suspect
-> now we have two copies of these defines somewhere? Perhaps this
-> should go into common.h as well?
+$ git grep '\*clk_get\>'
+arch/avr32/mach-at32ap/clock.c:struct clk *clk_get(struct device *dev,
+const char *id)
+arch/m68k/coldfire/clk.c:struct clk *clk_get(struct device *dev, const char *id)
+arch/mips/ar7/clock.c:struct clk *clk_get(struct device *dev, const char *id)
+arch/mips/bcm63xx/clk.c:struct clk *clk_get(struct device *dev, const char *id)
+arch/mips/loongson64/lemote-2f/clock.c:struct clk *clk_get(struct
+device *dev, const char *id)
+arch/mips/txx9/generic/setup.c:struct clk *clk_get(struct device *dev,
+const char *id)
+arch/unicore32/kernel/clock.c:struct clk *clk_get(struct device *dev,
+const char *id)
+drivers/clk/clkdev.c:struct clk *clk_get(struct device *dev, const char *con_id)
 
-yes, these are used in clk-pll.c as well, so could as well move them
-over to common.h instead of having two copies
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -7,7 +7,8 @@ config HAVE_CLK_PREPARE
+>         bool
+>
+>  config COMMON_CLK
+> -       bool
+> +       bool "Common Clock Framework Support"
+> +       depends on !HAVE_CUSTOM_CLK
+>         select HAVE_CLK_PREPARE
+>         select CLKDEV_LOOKUP
+>         select SRCU
+> @@ -19,6 +20,9 @@ config COMMON_CLK
+>           Architectures utilizing the common struct clk should select
+>           this option.
+>
+> +config HAVE_CUSTOM_CLK
 
-> 
+HAVE_LEGACY_CLK, to give a better clue?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+> +       bool
+> +
+>  menu "Common Clock Framework"
+>         depends on COMMON_CLK
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
