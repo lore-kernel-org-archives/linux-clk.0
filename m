@@ -1,105 +1,187 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 12 Aug 2016 13:20:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 1/3] clk: versatile add DT bindings for the ICST CM
- variants
-Message-ID: <20160812182036.GA26431@rob-hp-laptop>
-References: <1470820172-12840-1-git-send-email-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470820172-12840-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 07/10] clk: qcom: Add support to enable FSM mode for votable alpha PLLs
+Date: Thu, 11 Aug 2016 14:10:55 +0530
+Message-Id: <1470904858-11930-8-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 10, 2016 at 11:09:32AM +0200, Linus Walleij wrote:
-> The Integrator/AP and Integrator/CP core modules have special
-> versions of the ICST525 interface hardcoding some bits. Create
-> special compatible strings to identify these variants, also
-> explain a bit what is going on.
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  .../devicetree/bindings/clock/arm-syscon-icst.txt  | 35 ++++++++++++++++++++--
->  1 file changed, 33 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-> index 8b7177cecb36..48886490591a 100644
-> --- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-> +++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-> @@ -5,20 +5,51 @@ Technology (IDT). ARM integrated these oscillators deeply into their
->  reference designs by adding special control registers that manage such
->  oscillators to their system controllers.
->  
-> -The ARM system controller contains logic to serialize and initialize
-> +The ARM system controllers contains logic to serialize and initialize
+The votable alpha PLLs need to have the fsm mode enabled as part
+of the initialization. The sequence seems to be the same as used
+by clk-pll, so move the function which does this into a common
+place and reuse it for the clk-alpha-pll
 
-s/contains/contain/
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c |  5 +++++
+ drivers/clk/qcom/clk-alpha-pll.h |  2 ++
+ drivers/clk/qcom/clk-pll.c       | 25 +++----------------------
+ drivers/clk/qcom/common.c        | 29 +++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.h        |  2 ++
+ 5 files changed, 41 insertions(+), 22 deletions(-)
 
->  an ICST clock request after a write to the 32 bit register at an offset
->  into the system controller. Furthermore, to even be able to alter one of
->  these frequencies, the system controller must first be unlocked by
->  writing a special token to another offset in the system controller.
->  
-> +The ARM Integrator/AP and Integrator/CP core modules and baseboard contain
-> +special versions of the serial interface that only connects the low 8 bits
-> +of the VDW (missing one bit), hardwires RDW to different values and sometimes
-> +als hardwire the output divider. They therefore have special compatible
-
-s/als/also/
-
-I don't see what is special here. Different h/w is supposed to have 
-different compatible strings. I'd word this more, so that you don't have 
-to change it again if another compatible string is added.
-
-> +strings as per this table (the OD value is the value on the pins, not the
-> +resulting output divider):
-> +
-> +Integrator variant:      RDW     OD          VDW
-> +
-> +Integrator/AP            22      1           Bit 8 0, rest variable
-> +integratorap-cm
-> +
-> +Integrator/AP            46      3           Bit 8 0, rest variable
-> +integratorap-sys
-> +
-> +Integrator/AP            22 or   1           17 or (33 or 25 MHz)
-> +integratorap-pci         14      1           14
-> +
-> +Integrator/CP            22      variable    Bit 8 0, rest variable
-> +integratorcp-cm-core
-> +
-> +Integrator/CP            22      variable    Bit 8 0, rest variable
-> +integratorcp-cm-mem
-> +
->  The ICST oscillator must be provided inside a system controller node.
->  
->  Required properties:
-> +- compatible: must be one of
-> +  "arm,syscon-icst525"
-> +  "arm,syscon-icst307"
-> +  "arm,syscon-icst525-integratorap-cm"
-> +  "arm,syscon-icst525-integratorap-sys"
-> +  "arm,syscon-icst525-integratorap-pci"
-> +  "arm,syscon-icst525-integratorcp-cm-core"
-> +  "arm,syscon-icst525-integratorcp-cm-mem"
->  - lock-offset: the offset address into the system controller where the
->    unlocking register is located
->  - vco-offset: the offset address into the system controller where the
->    ICST control register is located (even 32 bit address)
-> -- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
->  - #clock-cells: must be <0>
->  - clocks: parent clock, since the ICST needs a parent clock to derive its
->    frequency from, this attribute is compulsory.
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 8b8710f..e8f3505 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ 
+ #include "clk-alpha-pll.h"
++#include "common.h"
+ 
+ #define PLL_MODE		0x00
+ # define PLL_OUTCTRL		BIT(0)
+@@ -133,6 +134,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	mask |= config->post_div_mask;
+ 
+ 	regmap_update_bits(regmap, pll->offset + PLL_USER_CTL, mask, val);
++
++	if (pll->flags & SUPPORTS_VOTE_FSM)
++		qcom_pll_set_fsm_mode(regmap, pll->offset + PLL_MODE, 6, 0);
++
+ }
+ 
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 12a349e..4bd42fd 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -35,6 +35,8 @@ struct clk_alpha_pll {
+ 	const struct pll_vco *vco_table;
+ 	size_t num_vco;
+ 
++#define SUPPORTS_VOTE_FSM	BIT(0)
++	u8 flags;
+ 	struct clk_regmap clkr;
+ };
+ 
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index 13d3f64..776278b 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -23,6 +23,7 @@
+ #include <asm/div64.h>
+ 
+ #include "clk-pll.h"
++#include "common.h"
+ 
+ #define PLL_OUTCTRL		BIT(0)
+ #define PLL_BYPASSNL		BIT(1)
+@@ -230,26 +231,6 @@ const struct clk_ops clk_pll_vote_ops = {
+ EXPORT_SYMBOL_GPL(clk_pll_vote_ops);
+ 
+ static void
+-clk_pll_set_fsm_mode(struct clk_pll *pll, struct regmap *regmap, u8 lock_count)
+-{
+-	u32 val;
+-	u32 mask;
+-
+-	/* De-assert reset to FSM */
+-	regmap_update_bits(regmap, pll->mode_reg, PLL_VOTE_FSM_RESET, 0);
+-
+-	/* Program bias count and lock count */
+-	val = 1 << PLL_BIAS_COUNT_SHIFT | lock_count << PLL_LOCK_COUNT_SHIFT;
+-	mask = PLL_BIAS_COUNT_MASK << PLL_BIAS_COUNT_SHIFT;
+-	mask |= PLL_LOCK_COUNT_MASK << PLL_LOCK_COUNT_SHIFT;
+-	regmap_update_bits(regmap, pll->mode_reg, mask, val);
+-
+-	/* Enable PLL FSM voting */
+-	regmap_update_bits(regmap, pll->mode_reg, PLL_VOTE_FSM_ENA,
+-		PLL_VOTE_FSM_ENA);
+-}
+-
+-static void
+ clk_pll_set_dynamic_fsm_mode(struct clk_pll *pll, struct regmap *regmap)
+ {
+ 	u32 val;
+@@ -300,7 +281,7 @@ void clk_pll_configure_sr(struct clk_pll *pll, struct regmap *regmap,
+ {
+ 	clk_pll_configure(pll, regmap, config);
+ 	if (fsm_mode)
+-		clk_pll_set_fsm_mode(pll, regmap, 8);
++		qcom_pll_set_fsm_mode(regmap, pll->mode_reg, 1, 8);
+ }
+ EXPORT_SYMBOL_GPL(clk_pll_configure_sr);
+ 
+@@ -309,7 +290,7 @@ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
+ {
+ 	clk_pll_configure(pll, regmap, config);
+ 	if (fsm_mode)
+-		clk_pll_set_fsm_mode(pll, regmap, 0);
++		qcom_pll_set_fsm_mode(regmap, pll->mode_reg, 1, 0);
+ }
+ EXPORT_SYMBOL_GPL(clk_pll_configure_sr_hpm_lp);
+ 
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index f7c226a..6bf5abd 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -25,6 +25,14 @@
+ #include "reset.h"
+ #include "gdsc.h"
+ 
++#define PLL_LOCK_COUNT_SHIFT	8
++#define PLL_LOCK_COUNT_MASK	0x3f
++#define PLL_BIAS_COUNT_SHIFT	14
++#define PLL_BIAS_COUNT_MASK	0x3f
++#define PLL_VOTE_FSM_ENA	BIT(20)
++#define PLL_DYN_FSM_ENA		BIT(20)
++#define PLL_VOTE_FSM_RESET	BIT(21)
++
+ struct qcom_cc {
+ 	struct qcom_reset_controller reset;
+ 	struct clk_onecell_data data;
+@@ -74,6 +82,27 @@ qcom_cc_map(struct platform_device *pdev, const struct qcom_cc_desc *desc)
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_map);
+ 
++void
++qcom_pll_set_fsm_mode(struct regmap *map, u32 reg, u8 bias_count, u8 lock_count)
++{
++	u32 val;
++	u32 mask;
++
++	/* De-assert reset to FSM */
++	regmap_update_bits(map, reg, PLL_VOTE_FSM_RESET, 0);
++
++	/* Program bias count and lock count */
++	val = bias_count << PLL_BIAS_COUNT_SHIFT |
++		lock_count << PLL_LOCK_COUNT_SHIFT;
++	mask = PLL_BIAS_COUNT_MASK << PLL_BIAS_COUNT_SHIFT;
++	mask |= PLL_LOCK_COUNT_MASK << PLL_LOCK_COUNT_SHIFT;
++	regmap_update_bits(map, reg, mask, val);
++
++	/* Enable PLL FSM voting */
++	regmap_update_bits(map, reg, PLL_VOTE_FSM_ENA, PLL_VOTE_FSM_ENA);
++}
++EXPORT_SYMBOL_GPL(qcom_pll_set_fsm_mode);
++
+ static void qcom_cc_del_clk_provider(void *data)
+ {
+ 	of_clk_del_provider(data);
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index ae9bdeb..5b12ac0 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -34,6 +34,8 @@ struct qcom_cc_desc {
+ 
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
++extern void
++qcom_pll_set_fsm_mode(struct regmap *m, u32 reg, u8 bias_count, u8 lock_count);
+ extern int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map,
+ 			       u8 src);
+ 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
