@@ -1,46 +1,208 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 31 Aug 2016 15:40:49 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
-Message-ID: <20160831224049.GK12510@codeaurora.org>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
- <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 06/10] clk: qcom: Add support for PLLs supporting dynamic reprogramming
+Date: Thu, 11 Aug 2016 14:10:54 +0530
+Message-Id: <1470904858-11930-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/31, Leo Yan wrote:
-> In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
-> default, as result stub clock driver has not been registered and
-> CPUFreq driver cannot work.
-> 
-> This patch is to enable stub clock driver in config for ARCH_HISI.
-> 
-> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+Some PLLs can support dynamic reprogramming, which means just a L value
+change is whats needed to change the PLL frequency without having to
+explicitly enable/disable or bypass/re-lock the PLL.
+Add support for such PLLs' initial configuration and the ops needed to
+support the dynamic reprogramming thereafter.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-pll.c | 106 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-pll.h |   9 +++-
+ 2 files changed, 114 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index b463432..13d3f64 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -32,6 +32,7 @@
+ #define PLL_BIAS_COUNT_SHIFT	14
+ #define PLL_BIAS_COUNT_MASK	0x3f
+ #define PLL_VOTE_FSM_ENA	BIT(20)
++#define PLL_DYN_FSM_ENA		BIT(20)
+ #define PLL_VOTE_FSM_RESET	BIT(21)
+ 
+ static int clk_pll_enable(struct clk_hw *hw)
+@@ -248,6 +249,19 @@ clk_pll_set_fsm_mode(struct clk_pll *pll, struct regmap *regmap, u8 lock_count)
+ 		PLL_VOTE_FSM_ENA);
+ }
+ 
++static void
++clk_pll_set_dynamic_fsm_mode(struct clk_pll *pll, struct regmap *regmap)
++{
++	u32 val;
++	u32 mask;
++
++	mask = PLL_BIAS_COUNT_MASK | PLL_DYN_FSM_ENA;
++	val = 6 << PLL_BIAS_COUNT_SHIFT;
++	val |= PLL_DYN_FSM_ENA;
++
++	regmap_update_bits(regmap, pll->mode_reg, mask, val);
++}
++
+ static void clk_pll_configure(struct clk_pll *pll, struct regmap *regmap,
+ 	const struct pll_config *config)
+ {
+@@ -299,6 +313,21 @@ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
+ }
+ EXPORT_SYMBOL_GPL(clk_pll_configure_sr_hpm_lp);
+ 
++void clk_pll_configure_dynamic(struct clk_pll *pll, struct regmap *regmap,
++			       const struct pll_config *config)
++{
++	u32 config_ctl_reg = pll->config_ctl_reg;
++	u32 config_ctl_hi_reg = pll->config_ctl_reg + 4;
++
++	clk_pll_configure(pll, regmap, config);
++
++	regmap_write(regmap, config_ctl_reg, config->config_ctl_val);
++	regmap_write(regmap, config_ctl_hi_reg, config->config_ctl_hi_val);
++
++	clk_pll_set_dynamic_fsm_mode(pll, regmap);
++}
++EXPORT_SYMBOL_GPL(clk_pll_configure_dynamic);
++
+ static int clk_pll_sr2_enable(struct clk_hw *hw)
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
+@@ -373,3 +402,80 @@ const struct clk_ops clk_pll_sr2_ops = {
+ 	.determine_rate = clk_pll_determine_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_pll_sr2_ops);
++
++static int clk_pll_dynamic_enable(struct clk_hw *hw)
++{
++	struct clk_pll *pll = to_clk_pll(hw);
++
++	/* Wait for 50us explicitly to avoid transient locks */
++	udelay(50);
++
++	return wait_for_pll(pll);
++};
++
++static void clk_pll_dynamic_disable(struct clk_hw *hw)
++{
++	/* 8 reference clock cycle delay mandated by the HPG */
++	udelay(1);
++};
++
++static unsigned long
++clk_pll_dynamic_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	u32 l_val;
++	int ret;
++
++	struct clk_pll *pll = to_clk_pll(hw);
++
++	ret = regmap_read(pll->clkr.regmap, pll->l_reg, &l_val);
++	if (ret)
++		return ret;
++
++	return l_val * parent_rate;
++};
++
++static int
++clk_pll_dynamic_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	struct clk_pll *pll = to_clk_pll(hw);
++	const struct pll_freq_tbl *f;
++
++	f = find_freq(pll->freq_tbl, req->rate);
++	if (!f)
++		req->rate = DIV_ROUND_UP(req->rate, req->best_parent_rate)
++					* req->best_parent_rate;
++	else
++		req->rate = f->freq;
++
++	if (req->rate < pll->min_rate)
++		req->rate = pll->min_rate;
++	else if (req->rate > pll->max_rate)
++		req->rate = pll->max_rate;
++
++	return 0;
++}
++
++static int
++clk_pll_dynamic_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long prate)
++{
++	u32 l_val;
++	struct clk_pll *pll = to_clk_pll(hw);
++
++	if ((rate < pll->min_rate) || (rate > pll->max_rate) || !prate)
++		return -EINVAL;
++
++	l_val = rate / prate;
++	regmap_write(pll->clkr.regmap, pll->l_reg, l_val);
++
++	return 0;
++}
++
++const struct clk_ops clk_pll_dynamic_ops = {
++	.enable = clk_pll_dynamic_enable,
++	.disable = clk_pll_dynamic_disable,
++	.set_rate = clk_pll_dynamic_set_rate,
++	.recalc_rate = clk_pll_dynamic_recalc_rate,
++	.determine_rate = clk_pll_dynamic_determine_rate,
++};
++EXPORT_SYMBOL_GPL(clk_pll_dynamic_ops);
+diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
+index dbe22a9..627588f 100644
+--- a/drivers/clk/qcom/clk-pll.h
++++ b/drivers/clk/qcom/clk-pll.h
+@@ -52,9 +52,12 @@ struct clk_pll {
+ 	u32	config_reg;
+ 	u32	mode_reg;
+ 	u32	status_reg;
++	u32	config_ctl_reg;
+ 	u8	status_bit;
+ 	u8	post_div_width;
+ 	u8	post_div_shift;
++	unsigned long min_rate;
++	unsigned long max_rate;
+ 
+ 	const struct pll_freq_tbl *freq_tbl;
+ 
+@@ -64,6 +67,7 @@ struct clk_pll {
+ extern const struct clk_ops clk_pll_ops;
+ extern const struct clk_ops clk_pll_vote_ops;
+ extern const struct clk_ops clk_pll_sr2_ops;
++extern const struct clk_ops clk_pll_dynamic_ops;
+ 
+ #define to_clk_pll(_hw) container_of(to_clk_regmap(_hw), struct clk_pll, clkr)
+ 
+@@ -78,6 +82,8 @@ struct pll_config {
+ 	u32 pre_div_mask;
+ 	u32 post_div_val;
+ 	u32 post_div_mask;
++	u32 config_ctl_val;
++	u32 config_ctl_hi_val;
+ 	u32 mn_ena_mask;
+ 	u32 main_output_mask;
+ 	u32 aux_output_mask;
+@@ -88,5 +94,6 @@ void clk_pll_configure_sr(struct clk_pll *pll, struct regmap *regmap,
+ 		const struct pll_config *config, bool fsm_mode);
+ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
+ 		const struct pll_config *config, bool fsm_mode);
+-
++void clk_pll_configure_dynamic(struct clk_pll *pll, struct regmap *regmap,
++		const struct pll_config *config);
+ #endif
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
