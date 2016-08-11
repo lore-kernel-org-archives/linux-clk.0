@@ -1,65 +1,32 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: [PATCH v3 07/14] ARM: DT: STiH407: Enable clock propagation for audio clocks
-Date: Mon, 29 Aug 2016 14:26:59 +0200
-Message-ID: <1472473626-15398-8-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: zhengxing@rock-chips.com, yzq@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, tfiga@chromium.org, linux-rockchip@lists.infradead.org, dianders@chromium.org, groeck@chromium.org, marcheu@chromium.org, wulf@rock-chips.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as critical
+Date: Fri, 12 Aug 2016 00:17:15 +0200
+Message-ID: <1721159.V5xB9fz0jT@diego>
+In-Reply-To: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
+References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Am Dienstag, 9. August 2016, 11:02:33 schrieb Chris Zhong:
+> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
+> this modification, the aclk_vio_noc should be put into critical list,
+> since it is required by VOP.
+> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
+> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
+> 
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 
-This patch is used in the clock driver to apply a clock propagation
-flag on the audio clocks of STiH407
+I've split that patch in two and applied them there:
+https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.8-clk/fixes&id=a3f457d9636b3f5ae4fc6502cb0c95f60f5e342b
+(gate-bit-fix)
+https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.9-clk/next&id=54479449c801e46ee2b6ba08e2f19cd810f74f94
+(critical clocks)
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+with the provided Reviewed-bys.
 
-diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
-index 38a56d7..c4a8f1c 100644
---- a/arch/arm/boot/dts/stih407-clock.dtsi
-+++ b/arch/arm/boot/dts/stih407-clock.dtsi
-@@ -216,7 +216,7 @@
- 
- 			clk_s_d0_flexgen: clk-s-d0-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-audio", "st,flexgen";
- 
- 				clocks = <&clk_s_d0_quadfs 0>,
- 					 <&clk_s_d0_quadfs 1>,
--- 
-1.9.1
+
+Heiko
