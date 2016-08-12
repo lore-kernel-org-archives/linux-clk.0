@@ -1,46 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Denis Efremov <yefremov.denis@gmail.com>
-Subject: [PATCH 2/2] clk: fixed-rate: Remove export symbol on setup function
-Date: Fri, 12 Aug 2016 18:50:23 -0700
-Message-Id: <20160813015023.28221-2-sboyd@codeaurora.org>
-In-Reply-To: <20160813015023.28221-1-sboyd@codeaurora.org>
-References: <20160813015023.28221-1-sboyd@codeaurora.org>
+Return-Path: <keguang.zhang@gmail.com>
+Return-Path: <keguang.zhang@gmail.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH 2/3] clk: Loongson1: Update clocks of Loongson1B
+Date: Fri, 12 Aug 2016 18:51:47 +0800
+Message-Id: <1470999108-9851-3-git-send-email-keguang.zhang@gmail.com>
+In-Reply-To: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
+References: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This function is only called by builtin code, but we always
-exported it and had marked it as __init before commit
-e4eda8e0654c (clk: remove exported function from __init section,
-2013-01-06) removed that marking. Given that it isn't used by
-modules, lets unexport it and add back __init.
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-Cc: Denis Efremov <yefremov.denis@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+This patch updates some clock names of Loongson1B,
+and adds AC97, DMA and NAND clock.
+
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 ---
- drivers/clk/clk-fixed-rate.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/loongson1/clk-loongson1b.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index c735272ed706..b5c46b3f8764 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -190,11 +190,10 @@ static struct clk *_of_fixed_clk_setup(struct device_node *node)
- /**
-  * of_fixed_clk_setup() - Setup function for simple fixed rate clock
-  */
--void of_fixed_clk_setup(struct device_node *node)
-+void __init of_fixed_clk_setup(struct device_node *node)
- {
- 	_of_fixed_clk_setup(node);
- }
--EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
- CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
+diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
+index 336ff95..2302ee5 100644
+--- a/drivers/clk/loongson1/clk-loongson1b.c
++++ b/drivers/clk/loongson1/clk-loongson1b.c
+@@ -39,19 +39,19 @@ static const struct clk_ops ls1x_pll_clk_ops = {
+ 	.recalc_rate = ls1x_pll_recalc_rate,
+ };
  
- static int of_fixed_clk_remove(struct platform_device *pdev)
+-static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
+-static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
+-static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
++static const char *const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
++static const char *const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
++static const char *const dc_parents[] = { "dc_clk_div", "osc_clk", };
+ 
+ void __init ls1x_clk_init(void)
+ {
+ 	struct clk *clk;
+ 
+-	clk = clk_register_fixed_rate(NULL, "osc_33m_clk", NULL, 0, OSC);
+-	clk_register_clkdev(clk, "osc_33m_clk", NULL);
++	clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
++	clk_register_clkdev(clk, "osc_clk", NULL);
+ 
+ 	/* clock derived from 33 MHz OSC clk */
+-	clk = clk_register_pll(NULL, "pll_clk", "osc_33m_clk",
++	clk = clk_register_pll(NULL, "pll_clk", "osc_clk",
+ 			       &ls1x_pll_clk_ops, 0);
+ 	clk_register_clkdev(clk, "pll_clk", NULL);
+ 
+@@ -106,6 +106,7 @@ void __init ls1x_clk_init(void)
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+ 			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
+ 	clk_register_clkdev(clk, "ahb_clk", NULL);
++	clk_register_clkdev(clk, "ls1x-dma", NULL);
+ 	clk_register_clkdev(clk, "stmmaceth", NULL);
+ 
+ 	/* clock derived from AHB clk */
+@@ -113,9 +114,11 @@ void __init ls1x_clk_init(void)
+ 	clk = clk_register_fixed_factor(NULL, "apb_clk", "ahb_clk", 0, 1,
+ 					DIV_APB);
+ 	clk_register_clkdev(clk, "apb_clk", NULL);
+-	clk_register_clkdev(clk, "ls1x_i2c", NULL);
+-	clk_register_clkdev(clk, "ls1x_pwmtimer", NULL);
+-	clk_register_clkdev(clk, "ls1x_spi", NULL);
+-	clk_register_clkdev(clk, "ls1x_wdt", NULL);
++	clk_register_clkdev(clk, "ls1x-ac97", NULL);
++	clk_register_clkdev(clk, "ls1x-i2c", NULL);
++	clk_register_clkdev(clk, "ls1x-nand", NULL);
++	clk_register_clkdev(clk, "ls1x-pwmtimer", NULL);
++	clk_register_clkdev(clk, "ls1x-spi", NULL);
++	clk_register_clkdev(clk, "ls1x-wdt", NULL);
+ 	clk_register_clkdev(clk, "serial8250", NULL);
+ }
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
