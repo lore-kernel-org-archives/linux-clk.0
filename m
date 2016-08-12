@@ -1,42 +1,108 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/2] clk: gcc-msm8996: Fix pcie 2 pipe register offset
-Date: Thu, 25 Aug 2016 12:20:46 +0100
-Message-Id: <1472124047-22627-1-git-send-email-srinivas.kandagatla@linaro.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1470989873.8551.10.camel@mtksdaap41>
+Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
+ parents
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>
+CC: Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Arnd Bergmann <arnd@arndb.de>, <devicetree@vger.kernel.org>, Erin Lo
+	<erin.lo@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, <linux-mediatek@lists.infradead.org>, "Sascha
+ Hauer" <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 12 Aug 2016 16:17:53 +0800
+In-Reply-To: <20160810210922.GD2996@codeaurora.org>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+	 <20160702012140.GB17071@codeaurora.org>
+	 <1467604308.26485.4.camel@mtksdaap41>
+	 <146802073038.73491.6675612765998057903@resonance>
+	 <1468225452.31247.7.camel@mtksdaap41> <1470203182.17063.3.camel@mtksdaap41>
+	 <1470721183.8551.6.camel@mtksdaap41> <20160810210922.GD2996@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch corrects the register offset for pcie2 pipe clock.
-Offset according to datasheet is 0x6e018 instead of 0x6e108.
+On Wed, 2016-08-10 at 14:09 -0700, Stephen Boyd wrote:
+> (Including lists)
+> 
+> On 08/09, James Liao wrote:
+> > On Wed, 2016-08-03 at 13:46 +0800, James Liao wrote:
+> >>
+> >> Hi Mike,
+> >>
+> >> Do you have new patches to fix new clock parents? If not, I think we can
+> >> use my patch first. Is it okay?
+> >>
+> >
+> > Hi Stephen,
+> >
+> > Do you have comments for the bug fixing? I prefer to use my patch (clk:
+> > fix initial state of critical clock's parents). How do you think?
+> >
+> 
+> How about we recalc accuracies and rates in addition to the patch
+> from Mike? That will fix everything?
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Stephen,
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index a1ef12f..456b2f4 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -2592,9 +2592,9 @@ static struct clk_branch gcc_pcie_2_aux_clk = {
- };
- 
- static struct clk_branch gcc_pcie_2_pipe_clk = {
--	.halt_reg = 0x6e108,
-+	.halt_reg = 0x6e018,
- 	.clkr = {
--		.enable_reg = 0x6e108,
-+		.enable_reg = 0x6e018,
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_2_pipe_clk",
--- 
-2.7.4
+It works!
+
+I'll send a new series of MT2701 clock support in few days. Should I
+include this patch in my series? Or you'll merge it into clk-next
+directly?
+
+
+Best regards,
+
+James
+
+> ---8<----
+> From: Michael Turquette <mturquette@baylibre.com>
+> Subject: [PATCH] clk: migrate ref counts when orphans are reunited
+> 
+> It's always nice to see families reunited, and this is equally true when
+> talking about parent clocks and their children. However, if the orphan
+> clk had a positive prepare_count or enable_count, then we would not
+> migrate those counts up the parent chain correctly.
+> 
+> This has manifested with the recent critical clocks feature, which often
+> enables clocks very early, before their parents have been registered.
+> 
+> Fixed by replacing the call to clk_core_reparent with calls to
+> __clk_set_parent_{before,after}.
+> 
+> Cc: James Liao <jamesjj.liao@mediatek.com>
+> Cc: Erin Lo <erin.lo@mediatek.com>
+> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+> [sboyd@codeaurora.org: Recalc accuracies and rates too]
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clk.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 820a939fb6bb..dc3fff2bf839 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2449,8 +2449,16 @@ static int __clk_core_init(struct clk_core *core)
+>  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+>  		struct clk_core *parent = __clk_init_parent(orphan);
+>  
+> -		if (parent)
+> -			clk_core_reparent(orphan, parent);
+> +		/*
+> +		 * we could call __clk_set_parent, but that would result in a
+> +		 * reducant call to the .set_rate op, if it exists
+> +		 */
+> +		if (parent) {
+> +			__clk_set_parent_before(orphan, parent);
+> +			__clk_set_parent_after(orphan, parent, NULL);
+> +			__clk_recalc_accuracies(orphan);
+> +			__clk_recalc_rates(orphan, 0);
+> +		}
+>  	}
+>  
+>  	/*
