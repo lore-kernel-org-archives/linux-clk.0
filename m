@@ -1,280 +1,40 @@
-Return-Path: <hotran@apm.com>
-Return-Path: <hotran@apm.com>
-From: Hoan Tran <hotran@apm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	lho@apm.com,
-	Duc Dang <dhdang@apm.com>,
-	Hoan Tran <hotran@apm.com>
-Subject: [PATCH 2/3] clk: xgene: Add PMD clock
-Date: Tue, 23 Aug 2016 08:52:40 -0700
-Message-Id: <1471967561-23634-3-git-send-email-hotran@apm.com>
-In-Reply-To: <1471967561-23634-1-git-send-email-hotran@apm.com>
-References: <1471967561-23634-1-git-send-email-hotran@apm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-dm3nam03on0080.outbound.protection.outlook.com ([104.47.41.80]:56576
+	"EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753188AbcHLSmm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 12 Aug 2016 14:42:42 -0400
+From: Fabio Estevam <fabio.estevam@nxp.com>
+To: <sboyd@codeaurora.org>
+CC: <shawnguo@kernel.org>, <stefan@agner.ch>, <festevam@gmail.com>,
+	<linux-clk@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH 1/3] clk: imx7d: Add the clock for SDMA
+Date: Fri, 12 Aug 2016 15:26:54 -0300
+Message-ID: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add X-Gene PMD clock support.
+Add IMX7D_SDMA_CORE_CLK clock so that SDMA can be functional.
 
-PMD clock is implemented for a single register field.
-  Output rate = parent_rate * (denominator - scale) / denominator
-with
-  - denominator = bitmask of register field + 1
-  - scale = value of register field
-
-For example, for bitmask is 0x7, denominator will be 8 and scale
-will be computed and programmed accordingly.
-
-Signed-off-by: Hoan Tran <hotran@apm.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- drivers/clk/clk-xgene.c | 223 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 223 insertions(+)
+ drivers/clk/imx/clk-imx7d.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index 3433132..66ce200 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -217,6 +217,228 @@ static void xgene_pcppllclk_init(struct device_node *np)
- 	xgene_pllclk_init(np, PLL_TYPE_PCP);
- }
- 
-+/**
-+ * struct xgene_clk_pmd - PMD clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @reg:	register containing the fractional scale multiplier (scaler)
-+ * @shift:	shift to the unit bit field
-+ * @denom:	1/denominator unit
-+ * @lock:	register lock
-+ * Flags:
-+ * XGENE_CLK_PMD_SCALE_INVERTED - By default the scaler is the value read
-+ *	from the register plus one. For example,
-+ *		0 for (0 + 1) / denom,
-+ *		1 for (1 + 1) / denom and etc.
-+ *	If this flag is set, it is
-+ *		0 for (denom - 0) / denom,
-+ *		1 for (denom - 1) / denom and etc.
-+ *
-+ */
-+struct xgene_clk_pmd {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		shift;
-+	u32		mask;
-+	u64		denom;
-+	u32		flags;
-+	spinlock_t	*lock;
-+};
-+
-+#define to_xgene_clk_pmd(_hw) container_of(_hw, struct xgene_clk_pmd, hw)
-+
-+#define XGENE_CLK_PMD_SCALE_INVERTED	BIT(0)
-+
-+static unsigned long xgene_clk_pmd_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	struct xgene_clk_pmd *fd = to_xgene_clk_pmd(hw);
-+	unsigned long flags = 0;
-+	u64 ret, scale;
-+	u32 val;
-+
-+	if (fd->lock)
-+		spin_lock_irqsave(fd->lock, flags);
-+	else
-+		__acquire(fd->lock);
-+
-+	val = clk_readl(fd->reg);
-+
-+	if (fd->lock)
-+		spin_unlock_irqrestore(fd->lock, flags);
-+	else
-+		__release(fd->lock);
-+
-+	ret = (u64)parent_rate;
-+
-+	scale = (val & fd->mask) >> fd->shift;
-+	if (fd->flags & XGENE_CLK_PMD_SCALE_INVERTED)
-+		scale = fd->denom - scale;
-+	else
-+		scale++;
-+
-+	/* freq = parent_rate * scaler / denom */
-+	do_div(ret, fd->denom);
-+	ret *= scale;
-+	if (ret == 0)
-+		ret = (u64)parent_rate;
-+
-+	return ret;
-+}
-+
-+static long xgene_clk_pmd_round_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long *parent_rate)
-+{
-+	struct xgene_clk_pmd *fd = to_xgene_clk_pmd(hw);
-+	u64 ret, scale;
-+
-+	if (!rate || rate >= *parent_rate)
-+		return *parent_rate;
-+
-+	/* freq = parent_rate * scaler / denom */
-+	ret = rate * fd->denom;
-+	scale = DIV_ROUND_UP_ULL(ret, *parent_rate);
-+
-+	ret = (u64)*parent_rate * scale;
-+	do_div(ret, fd->denom);
-+
-+	return ret;
-+}
-+
-+static int xgene_clk_pmd_set_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long parent_rate)
-+{
-+	struct xgene_clk_pmd *fd = to_xgene_clk_pmd(hw);
-+	unsigned long flags = 0;
-+	u64 scale, ret;
-+	u32 val;
-+
-+	/*
-+	 * Compute the scaler:
-+	 *
-+	 * freq = parent_rate * scaler / denom, or
-+	 * scaler = freq * denom / parent_rate
-+	 */
-+	ret = rate * fd->denom;
-+	scale = DIV_ROUND_UP_ULL(ret, (u64)parent_rate);
-+
-+	/* Check if inverted */
-+	if (fd->flags & XGENE_CLK_PMD_SCALE_INVERTED)
-+		scale = fd->denom - scale;
-+	else
-+		scale--;
-+
-+	if (fd->lock)
-+		spin_lock_irqsave(fd->lock, flags);
-+	else
-+		__acquire(fd->lock);
-+
-+	val = clk_readl(fd->reg);
-+	val &= ~fd->mask;
-+	val |= (scale << fd->shift);
-+	clk_writel(val, fd->reg);
-+
-+	if (fd->lock)
-+		spin_unlock_irqrestore(fd->lock, flags);
-+	else
-+		__release(fd->lock);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops xgene_clk_pmd_ops = {
-+	.recalc_rate = xgene_clk_pmd_recalc_rate,
-+	.round_rate = xgene_clk_pmd_round_rate,
-+	.set_rate = xgene_clk_pmd_set_rate,
-+};
-+
-+static struct clk *
-+xgene_register_clk_pmd(struct device *dev,
-+		       const char *name, const char *parent_name,
-+		       unsigned long flags, void __iomem *reg, u8 shift,
-+		       u8 width, u64 denom, u32 clk_flags, spinlock_t *lock)
-+{
-+	struct xgene_clk_pmd *fd;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+
-+	fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+	if (!fd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &xgene_clk_pmd_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	fd->reg = reg;
-+	fd->shift = shift;
-+	fd->mask = (BIT(width) - 1) << shift;
-+	fd->denom = denom;
-+	fd->flags = clk_flags;
-+	fd->lock = lock;
-+	fd->hw.init = &init;
-+
-+	clk = clk_register(dev, &fd->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: could not register clk %s\n", __func__, name);
-+		kfree(fd);
-+		return NULL;
-+	}
-+
-+	return clk;
-+}
-+
-+static void xgene_pmdclk_init(struct device_node *np)
-+{
-+	const char *clk_name = np->full_name;
-+	void __iomem *csr_reg;
-+	struct resource res;
-+	struct clk *clk;
-+	u32 shift, width;
-+	u64 denom;
-+	u32 flags = 0;
-+	int rc;
-+
-+	/* Check if the entry is disabled */
-+	if (!of_device_is_available(np))
-+		return;
-+
-+	/* Parse the DTS register for resource */
-+	rc = of_address_to_resource(np, 0, &res);
-+	if (rc != 0) {
-+		pr_err("no DTS register for %s\n", np->full_name);
-+		return;
-+	}
-+	csr_reg = of_iomap(np, 0);
-+	if (!csr_reg) {
-+		pr_err("Unable to map resource for %s\n", np->full_name);
-+		return;
-+	}
-+	if (of_property_read_u32(np, "clock-shift", &shift))
-+		shift = 0;
-+	if (of_property_read_u32(np, "clock-width", &width))
-+		width = 32;
-+	of_property_read_string(np, "clock-output-names", &clk_name);
-+
-+	denom = BIT(width);
-+	flags |= XGENE_CLK_PMD_SCALE_INVERTED;
-+
-+	clk = xgene_register_clk_pmd(NULL, clk_name,
-+				     of_clk_get_parent_name(np, 0), 0,
-+				     csr_reg, shift, width, denom,
-+				     flags, &clk_lock);
-+	if (!IS_ERR(clk)) {
-+		of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+		clk_register_clkdev(clk, clk_name, NULL);
-+		pr_debug("Add %s clock\n", clk_name);
-+	} else {
-+		if (csr_reg)
-+			iounmap(csr_reg);
-+	}
-+}
-+
- /* IP Clock */
- struct xgene_dev_parameters {
- 	void __iomem *csr_reg;		/* CSR for IP clock */
-@@ -543,6 +765,7 @@ err:
- 
- CLK_OF_DECLARE(xgene_socpll_clock, "apm,xgene-socpll-clock", xgene_socpllclk_init);
- CLK_OF_DECLARE(xgene_pcppll_clock, "apm,xgene-pcppll-clock", xgene_pcppllclk_init);
-+CLK_OF_DECLARE(xgene_pmd_clock, "apm,xgene-pmd-clock", xgene_pmdclk_init);
- CLK_OF_DECLARE(xgene_socpll_v2_clock, "apm,xgene-socpll-v2-clock",
- 	       xgene_socpllclk_init);
- CLK_OF_DECLARE(xgene_pcppll_v2_clock, "apm,xgene-pcppll-v2-clock",
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 9257972..c24677d 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -779,6 +779,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
++	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
+ 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
+ 	clks[IMX7D_PCIE_PHY_ROOT_CLK] = imx_clk_gate4("pcie_phy_root_clk", "pcie_phy_post_div", base + 0x4600, 0);
+ 	clks[IMX7D_EPDC_PIXEL_ROOT_CLK] = imx_clk_gate4("epdc_pixel_root_clk", "epdc_pixel_post_div", base + 0x44a0, 0);
 -- 
 1.9.1
+
