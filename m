@@ -1,112 +1,103 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
-	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v12 3/4] arm: dts: mt2701: Add clock controller device nodes
-Date: Mon, 22 Aug 2016 16:29:24 +0800
-Message-ID: <1471854565-19810-4-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
-References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:45086 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752903AbcHLQi5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:57 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 8/9 option 3] clk: divider: Add hack to support dummy clocks
+Date: Fri, 12 Aug 2016 18:38:44 +0200
+Message-Id: <1471019925-29083-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+Allow registering dummy divider clocks that do not operate on an actual
+hardware register (reg = NULL), for testing clock algorithms.
 
-Add clock controller nodes for MT2701, include topckgen, infracfg,
-pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
-bdpsys. This patch also add two oscillators that provide clocks for
-MT2701.
-
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Not intended for upstream merge.
+---
+ drivers/clk/clk-divider.c    | 33 +++++++++++++++++++++++----------
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 18596a2..c9a8dbf 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -12,8 +12,10 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 96386ffc84835f12..cd1caea76d6243ec 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -141,8 +141,12 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+ 	struct clk_divider *divider = to_clk_divider(hw);
+ 	unsigned int val;
  
-+#include <dt-bindings/clock/mt2701-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/mt2701-resets.h>
- #include "skeleton64.dtsi"
- #include "mt2701-pinfunc.h"
+-	val = clk_readl(divider->reg) >> divider->shift;
+-	val &= div_mask(divider->width);
++	if (divider->reg) {
++		val = clk_readl(divider->reg) >> divider->shift;
++		val &= div_mask(divider->width);
++	} else {
++		val = divider->reg_val;
++	}
  
-@@ -77,6 +79,20 @@
- 		#clock-cells = <0>;
- 	};
+ 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+ 				   divider->flags);
+@@ -352,8 +356,12 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
  
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	rtc32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000>;
-+		clock-output-names = "rtc32k";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupt-parent = <&gic>;
-@@ -104,6 +120,26 @@
- 		reg = <0 0x10005000 0 0x1000>;
- 	};
+ 	/* if read only, just return current value */
+ 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+-		bestdiv = clk_readl(divider->reg) >> divider->shift;
+-		bestdiv &= div_mask(divider->width);
++		if (divider->reg) {
++			bestdiv = clk_readl(divider->reg) >> divider->shift;
++			bestdiv &= div_mask(divider->width);
++		} else {
++			bestdiv = divider->reg_val;
++		}
+ 		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+ 			divider->width);
+ 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
+@@ -396,14 +404,19 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		__acquire(divider->lock);
  
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt2701-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt2701-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	pericfg: syscon@10003000 {
-+		compatible = "mediatek,mt2701-pericfg", "syscon";
-+		reg = <0 0x10003000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
- 	watchdog: watchdog@10007000 {
- 		compatible = "mediatek,mt2701-wdt",
- 			     "mediatek,mt6589-wdt";
-@@ -128,6 +164,12 @@
- 		reg = <0 0x10200100 0 0x1c>;
- 	};
+-	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
+-		val = div_mask(divider->width) << (divider->shift + 16);
++	if (divider->reg) {
++		if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
++			val = div_mask(divider->width) << (divider->shift + 16);
++		} else {
++			val = clk_readl(divider->reg);
++			val &= ~(div_mask(divider->width) << divider->shift);
++		}
++		val |= value << divider->shift;
++		clk_writel(val, divider->reg);
+ 	} else {
+-		val = clk_readl(divider->reg);
+-		val &= ~(div_mask(divider->width) << divider->shift);
++		pr_info("Setting %pC to value 0x%x\n", hw->clk, value);
++		divider->reg_val = value;
+ 	}
+-	val |= value << divider->shift;
+-	clk_writel(val, divider->reg);
  
-+	apmixedsys: syscon@10209000 {
-+		compatible = "mediatek,mt2701-apmixedsys", "syscon";
-+		reg = <0 0x10209000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@10211000 {
- 		compatible = "arm,cortex-a7-gic";
- 		interrupt-controller;
+ 	if (divider->lock)
+ 		spin_unlock_irqrestore(divider->lock, flags);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a39c0c530778251b..8aea584750f17a74 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -389,6 +389,7 @@ struct clk_div_table {
+ struct clk_divider {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
++	unsigned int reg_val;	// FIXME if reg is NULL
+ 	u8		shift;
+ 	u8		width;
+ 	u8		flags;
 -- 
 1.9.1
+
