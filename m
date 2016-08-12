@@ -1,66 +1,130 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:47153 "EHLO
+	conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750878AbcHLHER (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 03:04:17 -0400
 MIME-Version: 1.0
-In-Reply-To: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
-References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 10 Aug 2016 08:37:04 -0300
-Message-ID: <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx7d: do not set the parent of IMX7D_ENET_AXI_ROOT_SRC
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stefan Agner <stefan@agner.ch>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+In-Reply-To: <20160810230845.GH2996@codeaurora.org>
+References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
+ <20160804212553.GB15690@codeaurora.org> <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+ <20160808233711.GA2996@codeaurora.org> <CAK7LNAScz7bJABbOgUuvg9J-ORaiLEfpwA3yMP+bZbLgB+S3uQ@mail.gmail.com>
+ <20160810230845.GH2996@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 12 Aug 2016 16:04:02 +0900
+Message-ID: <CAK7LNAQ9wgpHn2LXiFfbyp_j85h8ZkGnAP39eVj+jmKczi=VSA@mail.gmail.com>
+Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+2016-08-11 8:08 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 08/10, Masahiro Yamada wrote:
+>> Hi Stephen,
+>>
+>>
+>>
+>> 2016-08-09 8:37 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> > On 08/08, Masahiro Yamada wrote:
+>> >> Hi Stephen,
+>> >>
+>> >>
+>> >> 2016-08-05 6:25 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> >
+>> >>
+>> >> of_clk_add_provider() calls of_clk_del_provider()
+>> >> in its failure path.
+>> >>
+>> >> Notice of_clk_del_provider() unregister
+>> >> all the providers associated with the device node.
+>> >
+>> > Where is that? I see a break statement in the while loop after
+>> > the first matching np is found.
+>>
+>> Ah, I missed the "break".
+>>
+>> So, this works *almost* well.
+>>
+>> I mean *almost* because the of_clk_mutex is released
+>> between of_clk_add_hw_provider() and of_clk_del_provider().
+>>
+>> What if two providers are added concurrently.
+>> I know it never happens in use-cases we assume, though.
+>
+> Agreed, that would be bad. We can definitely do better in that
+> case and properly delete the provider that we have already
+> registered without calling of_clk_del_provider() though. We have
+> everything in the local scope at the time.
+>
+>>
+>>
+>> >>
+>> >> Some platform drivers call of_clk_del_provider() in a .remove callback,
+>> >> so the same problem could happen.
+>> >>
+>> >> Why does of_clk_del_provider() take (struct device_node *np) ?
+>> >> Shouldn't it take (struct of_clk_provider *cp)?
+>> >>
+>> >
+>> > Not sure. Probably someone thought they could hide the structure
+>> > from consumers and just return success or failure.
+>>
+>> consumers?   or did you mean providers?
+>> I think consumers have no chance to call of_clk_del_provider().
+>
+> Sorry, bad choice of words. I meant users of this
+> of_clk_add*_provider() API.
+>
+>>
+>>
+>> > The best we can do is have the framework only return probe defer
+>> > if there isn't a provider registered. Once a provider is
+>> > registered, it needs to do the right thing and return the
+>> > appropriate error (invalid or probe defer for example) at the
+>> > right time.
+>>
+>> Agreed.
+>
+> Ok. I think I will merge my patch then to restore previous
+> behavior.
+>
+>>
+>> Lastly, we have two solutions so far.  Which do you think is better?
+>>
+>> One solution is, as others suggested,
+>> CLK_OF_DECLARE() can allocate a bigger array than it needs,
+>> so that blank entries can be filled by a platfrom_driver later.
+>>
+>>
+>> The other way is,
+>> CLK_OF_DECLARE() and a platfrom_driver
+>> allocate separate of_clk_provider for each of them.
+>>
+>
+> I believe we have precedence for the former case, so there's some
+> momentum around that approach. It doesn't make me feel great
+> though because we have published the provider before all clks are
+> registered, and then we go back and modify the array in place
+> while consumers could potentially be using it. I suppose we're
+> saved because cpus access the pointer in the array and only see
+> the whole pointer and not half of the old one and half of the new
+> one?
 
-On Fri, Jul 15, 2016 at 10:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
-> Booting the kernel on a imx7s-warp leads to several warnings like these:
->
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:3536 lock_release+0x2f8/0x330
-> [    0.000000] releasing a pinned lock
->
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:2722 trace_hardirqs_on_caller+0x1ac/0x1f4
-> [    0.000000] DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled))
->
-> [    0.000000] ---[ end trace cb88537fdc8fa201 ]---
-> [    0.000000] bad: scheduling from the idle thread!
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W       4.7.0-rc7-next-20160715 #404
->
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
-> [    0.000000] Modules linked in:
->
-> [    0.000591] ------------[ cut here ]------------
-> [    0.000610] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
->
-> [    0.002084] ------------[ cut here ]------------
-> [    0.002104] WARNING: CPU: 0 PID: 0 at init/main.c:576 start_kernel+0x258/0x3b0
-> [    0.002114] Interrupts were enabled early
->
->
-> This fix is along the same lines as 5e33ebff7edd ("clk: imx7d: do not
-> set parent of ethernet time/ref clocks") and the explanation from that
-> commit is:
->
-> "The reason for the warning is that setting the parent enables the ENET
->  PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
->  cause clk_pllv3_wait_lock to sleep. See also:
->  commit fc8726a2c021 ("clk: core: support clocks which requires parents
->  enable (part 2)")."
->
-> imx7s-warp does not even use the FEC interface, so we should not really
-> configure the parent of IMX7D_ENET_AXI_ROOT_SRC in the common MX7 clock
-> driver code.
->
-> The dts file should use the assigned-clocks/assigned-clock-parents method,
-> so simply remove the configuration of IMX7D_ENET_AXI_ROOT_SRC parent.
->
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-Do you think this one could be applied to 4.8-rc?
+I am not sure.
 
-Thanks
+But, maybe just filling the blank entries of the array seems safe.
+In this case, filling should be done at the end of the probe callback.
+Otherwise, devm_clk_hw_register() will free the clk_hw when the driver
+is detached.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
