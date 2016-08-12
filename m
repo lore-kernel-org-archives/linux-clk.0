@@ -1,48 +1,137 @@
-Return-Path: <stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 11 Aug 2016 16:57:48 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam
- <fabio.estevam@nxp.com>
-Subject: Re: [PATCH] clk: imx7d: do not set the parent of
- IMX7D_ENET_AXI_ROOT_SRC
-In-Reply-To: <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
-References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
- <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
- <20160811222842.GM2996@codeaurora.org>
- <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
-Message-ID: <88d5c57d3047176ebf2eec0f21e86613@agner.ch>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51423 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752885AbcHLQiz (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 0/9] R-Car H3 MSIOF Parent Clock Control Prototype
+Date: Fri, 12 Aug 2016 18:38:36 +0200
+Message-Id: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+	Hi all,
 
-On 2016-08-11 16:53, Fabio Estevam wrote:
-> Hi Stephen,
-> 
-> On Thu, Aug 11, 2016 at 7:28 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> 
->> Is there a "Fixes:" tag that can be applied here? Does this
-> 
-> This parent assignment exists since the mx7d clk driver was introduced
-> in commit 8f6d8094b21 ("ARM: imx: add imx7d clk tree support").
-> 
->> depend on some sort of DTS changes to add assigned clocks and
->> parents?
-> 
-> All the mx7 dts users assign the ENET clocks in their dts files.
+On R-Car H3, the various MSIOF instances (used for SPI) have a common
+parent clock. This mso clock is a programmable "DIV6" clock (divider
+1 - 64). Its rate lies in the range 12.5 to 800 MHz, or 6.25 to 400 MHz
+(depending on the main crystal).
+After boot up, the default configuration is the lowest possible rate,
+which leads to bad performance with devices desiring a higher transfer
+rate.
 
-I don't think so, at least not that root clock.
+MSIOF clock tree:
 
-Otherwise grep -e IMX7D_PLL_ENET_MAIN_250M_CLK arch/arm/boot/dts/imx7*
-should return something...
+    pll1/4 (800 or 400 MHz)
+      mso clock
+	msiof0 clock (type MSTP = gate + status)
+	  msiof0 internal divider (divider range 1 - 1024, with holes)
+	msiof1 clock (type MSTP)
+	  msiof1 internal divider
+	msiof2 clock (type MSTP)
+	  msiof2 internal divider
+	msiof3 clock (type MSTP)
+	  msiof3 internal divider
 
-I guess in practice it is not a problem because the boot loader
-configures the clock selection already. Still, I think we should also
-fix our device trees and select the root clock there...
+To optimize performance, we want to control the mso parent clock.
+
+  - Higher parent clock means:
+      + Better performance for devices wanting high target rates,
+      + More accurate target rates in MSIOF driver,
+      - More power consumption (doesn't matter that much with R-Car),
+      - Cannot support devices needing real low target rates.
+  - Lower parent clock means:
+      + Less power consumption (doesn't matter that much with R-Car),
+      + Can support all devices,
+      - Worse performance for devices wanting high target rates,
+      - Less accurate target rates, decreasing performance.
+
+Configuring the mso parent clock rate can either be done statically, or
+dynamically. In both cases, this must be based on individual device
+requirements. Note that this is not specific to SPI.
+
+SPI specific notes:
+  - The SPI master knows about SPI slave device maximum frequencies only
+    when spi_master.setup() is called,
+  - SPI slave device maximum frequencies may change at runtime (through
+    calling spi_setup(), esp. for spidev),
+  - Currently the MSIOF driver does not set
+    spi_master.{min,max}_speed_hz. However, setting it means the SPI
+    core will never call spi_master.setup() with a rate outside this
+    range, and thus we will never be informed of such rates.  Hence if
+    we decide to set this, and we want dynamic configuration, we should
+    fill in the real minimum and maximum supported by the hardware,
+    regardless of the current parent clock rate.
+
+In this prototype, I'm offering 3 solutions to control the mso parent
+clock rate.
+
+  - Option 1: Static configuration through the "assigned-clocks" and
+    assigned-clock-rates DT properties.
+
+  - Option 2: Dynamic configuration, by changing the mso clock through
+    the msiofX module clocks from the MSIOF driver.
+
+  - Option 2: Dynamic configuration, by changing a dummy clk-divider,
+    which mimics the capabilities of the MSIOF internal divider.
+
+More information can be found in the individual patches for the various
+options.
+
+For your convenience, these patches are also available in the following
+branches of my renesas-drivers git repository at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git:
+  - topic/r8a7795-msiof-parent-clock-prototype-core
+  - topic/r8a7795-msiof-parent-clock-prototype-dt
+  - topic/r8a7795-msiof-parent-clock-prototype-option-1
+  - topic/r8a7795-msiof-parent-clock-prototype-option-2
+  - topic/r8a7795-msiof-parent-clock-prototype-option-3
+
+Warning:
+  - None of these patches is intended to be applied as-is!
+  - R-Car H3 ES1.0 has a hardware bug preventing MSIOF from being used
+    with real SPI devices. However, this does not affect the generation
+    of clock signals on the SPI bus.
+
+Conclusion, based on the observations for the various options:
+  The mso clock frequency cannot be changed while the mso clock is
+  enabled. However, Runtime PM may not have disabled it yet due its
+  asynchronous nature, leading to subtle failures. Add to this the added
+  complexity for options 2 and 3, and their still needed improvements, I
+  think static configuration in DT (option 1) is the best solution.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (9):
+  [common] spi: sh-msiof: Add support for R-Car H3
+  [common] spi: sh-msiof: Print max and transfer frequency
+  [common] arm64: dts: r8a7795: Add all MSIOF nodes
+  [common] arm64: dts: salvator-x: Add dummy MSIOF SPI slave devices
+  [option 1] arm64: dts: salvator-x: Configure MSIOF parent clock
+  [option 2/3] spi: sh-msiof: Add clock notifier to enforce valid parent
+    clock
+  [option 2] spi: sh-msiof: Configure MSIOF parent clock
+  [option 3] clk: divider: Add hack to support dummy clocks
+  [option 3] spi: sh-msiof: Configure MSIOF parent clock
+
+ Documentation/devicetree/bindings/spi/sh-msiof.txt |   1 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  79 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  52 +++
+ drivers/clk/clk-divider.c                          |  33 ++-
+ drivers/spi/spi-sh-msiof.c                         | 355 +++++++++++++++++++++
+ include/linux/clk-provider.h                       |   1 +
+ 4 files changed, 508 insertions(+), 13 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
 
 --
-Stefan
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
