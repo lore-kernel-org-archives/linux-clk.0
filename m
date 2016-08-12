@@ -1,46 +1,74 @@
-Return-Path: <moinejf@free.fr>
-Date: Mon, 1 Aug 2016 14:00:12 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: =?ISO-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>, Maxime
- Ripard <maxime.ripard@free-electrons.com>, Rob Herring
- <robh+dt@kernel.org>, Mike Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, linux-clk
- <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
-Message-Id: <20160801140012.41b8609b69faa1fe1d7d2a4a@free.fr>
-In-Reply-To: <CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-	<fb559224-561c-3476-1146-96f7aea427f0@arm.com>
-	<20160801103024.cc74c093466d7fdfd91a2587@free.fr>
-	<CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:50829 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752902AbcHLQi5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:57 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 5/9 option 1] arm64: dts: salvator-x: Configure MSIOF parent clock
+Date: Fri, 12 Aug 2016 18:38:41 +0200
+Message-Id: <1471019925-29083-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 1 Aug 2016 17:13:34 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+Add assigned-clocks and assigned-clock-rates DT properties to the cpg
+device node, to configure the MSIOF parent clock for 20 MHz.
 
-> > But I don't see why you are keeping the simple-gates. The bus gate may
-> > be ungated/gated when the clock is enabled/disabled, and that's what
-> > Allwinner's software does.
->=20
-> For peripherals that have a separate mod clock, having them separate
-> is a good thing. One example might be the audio codecs. You could ungate
-> the bus gate to access its registers to program it, but only enable
-> the mod clock when you actually play something.
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
 
-The roles of the bus gate and the clock gate are the same. I don't see
-any reason to set one gate without setting the other one. More, the
-spec says what the bus gate must be enabled before the clock gate (and
-reverse order while disabling). So, setting both gates in one function
-call seems safer.
+Note that these properties could also be added to an individual MSIOF
+device node. As all MSIOF instances share the same parent clock, this
+is not a good idea:
+  - MSIOF instances initialized before the one with the properties will
+    use the old (default) parent clock rate.
+    When the MSIOF instances with the properties is initialized, the
+    parent clock rate will change. In the absence of a clock notifier,
+    no one will notice (at this point).
+    All subsequent operations will use the new parent clock rate.
+    As the MSIOF driver use clk_get_rate() before setting up each
+    transfer, it will automatically adapt.
+    However, spi_master.{min,max}_speed_hz are not updated (note that
+    currently they are not set by the MSIOF driver anyway!).
+  - If you add conflicting properties to multiple msiof nodes, they will
+    still be used, but override each other, determined by probe order.
 
-Then, if you want to save some power while not playing anything, just do
-clk_disable() of the (main and only) i2s clock.
+Cfr. Documentation/devicetree/bindings/clock/clock-bindings.txt
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+   "Configuring a clock's parent and rate through the device node that
+    consumes the clock can be done only for clocks that have a single
+    user. Specifying conflicting parent or rate configuration in
+    multiple consumer nodes for a shared clock is forbidden."
+
+and
+
+   "Configuration of common clocks, which affect multiple consumer
+    devices can be similarly specified in the clock provider node."
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 9040a691b8b61887..61c9f651adbdfcad 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -143,6 +143,11 @@
+ 	};
+ };
+ 
++&cpg {
++	assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_MSO>;
++	assigned-clock-rates = <20000000>;
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+-- 
+1.9.1
+
