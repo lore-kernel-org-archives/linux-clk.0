@@ -1,55 +1,58 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	shawn.lin@rock-chips.com
-Subject: [PATCH v3 6/7] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
-Date: Tue,  2 Aug 2016 15:22:49 +0800
-Message-Id: <1470122569-32049-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:46044 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752488AbcHLQiy (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:54 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 1/9 common] spi: sh-msiof: Add support for R-Car H3
+Date: Fri, 12 Aug 2016 18:38:37 +0200
+Message-Id: <1471019925-29083-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Add support for MSIOF in r8a7795 (R-Car H3).
 
-allow aclk_pcie and aclk_perf_pcie disabled when unused.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+Not intended for upstream merge.
 
-Changes in v3: None
-Changes in v2: None
+R-Car H3 ES1.0 has a hardware bug preventing MSIOF from being used with
+real SPI devices. However, this does not affect the generation of clock
+signals on the SPI bus.
+---
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
+ drivers/spi/spi-sh-msiof.c                         | 1 +
+ 2 files changed, 2 insertions(+)
 
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 8032eba..2792404 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
- 
--	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
--	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
- 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index aa005c1d10d95756..e4ba96cb45ffff31 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 			 "renesas,msiof-r8a7792" (R-Car V2H)
+ 			 "renesas,msiof-r8a7793" (R-Car M2-N)
+ 			 "renesas,msiof-r8a7794" (R-Car E2)
++			 "renesas,msiof-r8a7795" (R-Car H3)
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ - reg                  : A list of offsets and lengths of the register sets for
+ 			 the device.
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 6852552a32ef7457..ffa5efdf266a8276 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -996,6 +996,7 @@ static const struct of_device_id sh_msiof_match[] = {
+ 	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
++	{ .compatible = "renesas,msiof-r8a7795",   .data = &r8a779x_data },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sh_msiof_match);
 -- 
-1.7.9.5
+1.9.1
+
