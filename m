@@ -1,55 +1,41 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>
-Date: Thu, 11 Aug 2016 12:30:49 +0100
-Message-Id: <1470915049-15249-1-git-send-email-broonie@kernel.org>
-Subject: [PATCH] clk: Make clock framework user selectable
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:36617 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751636AbcHLK4V (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 06:56:21 -0400
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH] MIPS: Loongson1B: Change the OSC clock name
+Date: Fri, 12 Aug 2016 18:56:03 +0800
+Message-Id: <1470999363-9978-1-git-send-email-keguang.zhang@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some architectures like x86 don't use the clock API in architecture code
-but one of the advantages of the common clock API is that it can be used
-by regular devices to represent their clocking structures so we should
-allow users to enable the clock API themselves even if the architecture
-doesn't need it. This is more straightforward than going round every
-architecture and convincing their maintainers to add the select.
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-Unfortunately some architectures do still provide a custom implementation
-of the clock API which is incompatible with common clock. Provide a config
-option HAS_CUSTOM_CLK which these architectures can select in order to
-prevent COMMON_CLK being enabled.
+This patch changes the OSC clock name to "osc_clk".
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 ---
- drivers/clk/Kconfig | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/mips/loongson32/common/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e2d9bd760c84..08a0b2cd49c6 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -7,7 +7,8 @@ config HAVE_CLK_PREPARE
- 	bool
- 
- config COMMON_CLK
--	bool
-+	bool "Common Clock Framework Support"
-+	depends on !HAVE_CUSTOM_CLK
- 	select HAVE_CLK_PREPARE
- 	select CLKDEV_LOOKUP
- 	select SRCU
-@@ -19,6 +20,9 @@ config COMMON_CLK
- 	  Architectures utilizing the common struct clk should select
- 	  this option.
- 
-+config HAVE_CUSTOM_CLK
-+	bool
-+
- menu "Common Clock Framework"
- 	depends on COMMON_CLK
- 
+diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
+index 4d12e36..fb60602 100644
+--- a/arch/mips/loongson32/common/platform.c
++++ b/arch/mips/loongson32/common/platform.c
+@@ -69,7 +69,7 @@ void __init ls1x_serial_set_uartclk(struct platform_device *pdev)
+ /* CPUFreq */
+ static struct plat_ls1x_cpufreq ls1x_cpufreq_pdata = {
+ 	.clk_name	= "cpu_clk",
+-	.osc_clk_name	= "osc_33m_clk",
++	.osc_clk_name	= "osc_clk",
+ 	.max_freq	= 266 * 1000,
+ 	.min_freq	= 33 * 1000,
+ };
 -- 
-2.8.1
+1.9.1
+
