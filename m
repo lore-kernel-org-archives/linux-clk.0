@@ -1,302 +1,105 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	gnurou@gmail.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com
-Cc: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH 6/6] bus: Add support for Tegra Generic Memory Interface
-Date: Sat,  6 Aug 2016 21:40:52 +0200
-Message-Id: <1470512452-8322-7-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 12 Aug 2016 13:20:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH 1/3] clk: versatile add DT bindings for the ICST CM
+ variants
+Message-ID: <20160812182036.GA26431@rob-hp-laptop>
+References: <1470820172-12840-1-git-send-email-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470820172-12840-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+On Wed, Aug 10, 2016 at 11:09:32AM +0200, Linus Walleij wrote:
+> The Integrator/AP and Integrator/CP core modules have special
+> versions of the ICST525 interface hardcoding some bits. Create
+> special compatible strings to identify these variants, also
+> explain a bit what is going on.
+> 
+> Cc: devicetree@vger.kernel.org
+> Cc: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/arm-syscon-icst.txt  | 35 ++++++++++++++++++++--
+>  1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> index 8b7177cecb36..48886490591a 100644
+> --- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> +++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> @@ -5,20 +5,51 @@ Technology (IDT). ARM integrated these oscillators deeply into their
+>  reference designs by adding special control registers that manage such
+>  oscillators to their system controllers.
+>  
+> -The ARM system controller contains logic to serialize and initialize
+> +The ARM system controllers contains logic to serialize and initialize
 
-The Generic Memory Interface bus can be used to connect high-speed
-devices such as NOR flash, FPGAs, DSPs...
+s/contains/contain/
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
----
- drivers/bus/Kconfig     |   7 ++
- drivers/bus/Makefile    |   1 +
- drivers/bus/tegra-gmi.c | 224 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 232 insertions(+)
- create mode 100644 drivers/bus/tegra-gmi.c
+>  an ICST clock request after a write to the 32 bit register at an offset
+>  into the system controller. Furthermore, to even be able to alter one of
+>  these frequencies, the system controller must first be unlocked by
+>  writing a special token to another offset in the system controller.
+>  
+> +The ARM Integrator/AP and Integrator/CP core modules and baseboard contain
+> +special versions of the serial interface that only connects the low 8 bits
+> +of the VDW (missing one bit), hardwires RDW to different values and sometimes
+> +als hardwire the output divider. They therefore have special compatible
 
-diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-index 3b205e2..88bbf2c 100644
---- a/drivers/bus/Kconfig
-+++ b/drivers/bus/Kconfig
-@@ -145,6 +145,13 @@ config TEGRA_ACONNECT
- 	  Driver for the Tegra ACONNECT bus which is used to interface with
- 	  the devices inside the Audio Processing Engine (APE) for Tegra210.
- 
-+config TEGRA_GMI
-+	tristate "Tegra Generic Memory Interface bus driver"
-+		depends on ARCH_TEGRA
-+		help
-+			Driver for the Tegra Generic Memory Interface bus which can be used
-+			to attach devices such as NOR, UART, FPGA and more.
-+
- config UNIPHIER_SYSTEM_BUS
- 	tristate "UniPhier System Bus driver"
- 	depends on ARCH_UNIPHIER && OF
-diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-index ac84cc4..34e2bab 100644
---- a/drivers/bus/Makefile
-+++ b/drivers/bus/Makefile
-@@ -18,5 +18,6 @@ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
- obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
- obj-$(CONFIG_SIMPLE_PM_BUS)	+= simple-pm-bus.o
- obj-$(CONFIG_TEGRA_ACONNECT)	+= tegra-aconnect.o
-+obj-$(CONFIG_TEGRA_GMI)		+= tegra-gmi.o
- obj-$(CONFIG_UNIPHIER_SYSTEM_BUS)	+= uniphier-system-bus.o
- obj-$(CONFIG_VEXPRESS_CONFIG)	+= vexpress-config.o
-diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
-new file mode 100644
-index 0000000..7a45442
---- /dev/null
-+++ b/drivers/bus/tegra-gmi.c
-@@ -0,0 +1,224 @@
-+/*
-+ * Driver for NVIDIA Generic Memory Interface
-+ *
-+ * Copyright (C) 2016 Host Mobility AB. All rights reserved.
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/reset.h>
-+
-+#define TEGRA_GMI_CONFIG			0x00
-+#define TEGRA_GMI_CONFIG_GO			BIT(31)
-+#define TEGRA_GMI_BUS_WIDTH_32BIT	BIT(30)
-+#define TEGRA_GMI_MUX_MODE			BIT(28)
-+#define TEGRA_GMI_RDY_BEFORE_DATA	BIT(24)
-+#define TEGRA_GMI_RDY_ACTIVE_HIGH	BIT(23)
-+#define TEGRA_GMI_ADV_ACTIVE_HIGH	BIT(22)
-+#define TEGRA_GMI_OE_ACTIVE_HIGH	BIT(21)
-+#define TEGRA_GMI_CS_ACTIVE_HIGH	BIT(20)
-+#define TEGRA_GMI_CS_SELECT(x)		((x & 0x7) << 4)
-+
-+#define TEGRA_GMI_TIMING0			0x10
-+#define TEGRA_GMI_MUXED_WIDTH(x)	((x & 0xf) << 12)
-+#define TEGRA_GMI_HOLD_WIDTH(x)		((x & 0xf) << 8)
-+#define TEGRA_GMI_ADV_WIDTH(x)		((x & 0xf) << 4)
-+#define TEGRA_GMI_CE_WIDTH(x)		(x & 0xf)
-+
-+#define TEGRA_GMI_TIMING1			0x14
-+#define TEGRA_GMI_WE_WIDTH(x)		((x & 0xff) << 16)
-+#define TEGRA_GMI_OE_WIDTH(x)		((x & 0xff) << 8)
-+#define TEGRA_GMI_WAIT_WIDTH(x)		(x & 0xff)
-+
-+struct tegra_gmi_priv {
-+	void __iomem *base;
-+
-+	u32 snor_config;
-+	u32 snor_timing0;
-+	u32 snor_timing1;
-+
-+	struct clk *clk;
-+};
-+
-+static void tegra_gmi_init(struct device *dev, struct tegra_gmi_priv *priv)
-+{
-+	writel(priv->snor_timing0, priv->base + TEGRA_GMI_TIMING0);
-+	writel(priv->snor_timing1, priv->base + TEGRA_GMI_TIMING1);
-+
-+	priv->snor_config |= TEGRA_GMI_CONFIG_GO;
-+	writel(priv->snor_config, priv->base + TEGRA_GMI_CONFIG);
-+}
-+
-+static int tegra_gmi_parse_dt(struct device *dev, struct tegra_gmi_priv *priv)
-+{
-+	struct device_node *of_node = dev->of_node;
-+	u32 property;
-+
-+	/* configuration */
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-data-width-32bit"))
-+		priv->snor_config |= TEGRA_GMI_BUS_WIDTH_32BIT;
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-mux-mode"))
-+		priv->snor_config |= TEGRA_GMI_MUX_MODE;
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-rdy-active-before-data"))
-+		priv->snor_config |= TEGRA_GMI_RDY_BEFORE_DATA;
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-rdy-inv"))
-+		priv->snor_config |= TEGRA_GMI_RDY_ACTIVE_HIGH;
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-adv-inv"))
-+		priv->snor_config |= TEGRA_GMI_ADV_ACTIVE_HIGH;
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-oe-inv"))
-+		priv->snor_config |= TEGRA_GMI_OE_ACTIVE_HIGH;
-+
-+	if (of_property_read_bool(of_node, "nvidia,snor-cs-inv"))
-+		priv->snor_config |= TEGRA_GMI_CS_ACTIVE_HIGH;
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-cs-select", &property))
-+		priv->snor_config |= TEGRA_GMI_CS_SELECT(property);
-+
-+	/* Timing, the default values that are provided are reset values */
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-muxed-width", &property))
-+		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(property);
-+	else
-+		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(1);
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-hold-width", &property))
-+		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(property);
-+	else
-+		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(1);
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-adv-width", &property))
-+		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(property);
-+	else
-+		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(1);
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-ce-width", &property))
-+		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(property);
-+	else
-+		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(4);
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-we-width", &property))
-+		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(property);
-+	else
-+		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(1);
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-oe-width", &property))
-+		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(property);
-+	else
-+		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(1);
-+
-+	if (!of_property_read_u32(of_node, "nvidia,snor-wait-width", &property))
-+		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(property);
-+	else
-+		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(3);
-+
-+	return of_platform_default_populate(of_node, NULL, dev);
-+}
-+
-+static int tegra_gmi_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct clk *clk;
-+	struct device *dev = &pdev->dev;
-+	struct reset_control *rst;
-+	struct tegra_gmi_priv *priv;
-+	void __iomem *base;
-+	int ret;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->base = base;
-+
-+	clk = devm_clk_get(dev, "gmi");
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "can not get clock\n");
-+		return PTR_ERR(clk);
-+	}
-+
-+	priv->clk = clk;
-+
-+	rst = devm_reset_control_get(dev, "gmi");
-+	if (IS_ERR(rst)) {
-+		dev_err(dev, "can not get reset\n");
-+		return PTR_ERR(rst);
-+	}
-+
-+	ret = tegra_gmi_parse_dt(dev, priv);
-+	if (ret) {
-+		dev_err(dev, "fail to create devices.\n");
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		dev_err(dev, "fail to enable clock.\n");
-+		return ret;
-+	}
-+
-+	reset_control_assert(rst);
-+	udelay(2);
-+	reset_control_deassert(rst);
-+
-+	tegra_gmi_init(dev, priv);
-+
-+	dev_set_drvdata(dev, priv);
-+
-+	return 0;
-+}
-+
-+static int tegra_gmi_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct tegra_gmi_priv *priv = dev_get_drvdata(dev);
-+	void __iomem *base = priv->base;
-+	u32 config;
-+
-+	of_platform_depopulate(dev);
-+
-+	config = readl(base + TEGRA_GMI_CONFIG);
-+	config &= ~TEGRA_GMI_CONFIG_GO;
-+	writel(config, base + TEGRA_GMI_CONFIG);
-+
-+	clk_disable_unprepare(priv->clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_gmi_id_table[] = {
-+	{ .compatible = "nvidia,tegra20-gmi", },
-+	{ .compatible = "nvidia,tegra30-gmi", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra_gmi_id_table);
-+
-+static struct platform_driver tegra_gmi_driver = {
-+	.probe = tegra_gmi_probe,
-+	.remove = tegra_gmi_remove,
-+	.driver = {
-+		.name		= "tegra-gmi",
-+		.of_match_table	= tegra_gmi_id_table,
-+	},
-+};
-+module_platform_driver(tegra_gmi_driver);
-+
-+MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
-+MODULE_DESCRIPTION("NVIDIA Tegra GMI Bus Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.1.4
+s/als/also/
+
+I don't see what is special here. Different h/w is supposed to have 
+different compatible strings. I'd word this more, so that you don't have 
+to change it again if another compatible string is added.
+
+> +strings as per this table (the OD value is the value on the pins, not the
+> +resulting output divider):
+> +
+> +Integrator variant:      RDW     OD          VDW
+> +
+> +Integrator/AP            22      1           Bit 8 0, rest variable
+> +integratorap-cm
+> +
+> +Integrator/AP            46      3           Bit 8 0, rest variable
+> +integratorap-sys
+> +
+> +Integrator/AP            22 or   1           17 or (33 or 25 MHz)
+> +integratorap-pci         14      1           14
+> +
+> +Integrator/CP            22      variable    Bit 8 0, rest variable
+> +integratorcp-cm-core
+> +
+> +Integrator/CP            22      variable    Bit 8 0, rest variable
+> +integratorcp-cm-mem
+> +
+>  The ICST oscillator must be provided inside a system controller node.
+>  
+>  Required properties:
+> +- compatible: must be one of
+> +  "arm,syscon-icst525"
+> +  "arm,syscon-icst307"
+> +  "arm,syscon-icst525-integratorap-cm"
+> +  "arm,syscon-icst525-integratorap-sys"
+> +  "arm,syscon-icst525-integratorap-pci"
+> +  "arm,syscon-icst525-integratorcp-cm-core"
+> +  "arm,syscon-icst525-integratorcp-cm-mem"
+>  - lock-offset: the offset address into the system controller where the
+>    unlocking register is located
+>  - vco-offset: the offset address into the system controller where the
+>    ICST control register is located (even 32 bit address)
+> -- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
+>  - #clock-cells: must be <0>
+>  - clocks: parent clock, since the ICST needs a parent clock to derive its
+>    frequency from, this attribute is compulsory.
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
