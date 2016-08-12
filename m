@@ -1,63 +1,72 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 25 Aug 2016 22:27:04 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] clk: sunxi-ng: mux: Add support for mux tables
-Message-ID: <20160825202704.GC32598@lukather>
-References: <20160825062200.17206-1-wens@csie.org>
- <20160825062200.17206-3-wens@csie.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 12 Aug 2016 13:43:37 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dongpo Li <lidongpo@hisilicon.com>
+Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux@armlinux.org.uk, zhangfei.gao@linaro.org,
+	yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+	davem@davemloft.net, arnd@arndb.de, andrew@lunn.ch,
+	xuejiancheng@hisilicon.com, benjamin.chenhao@hisilicon.com,
+	howell.yang@hisilicon.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] net: hix5hd2_gmac: add tx scatter-gather feature
+Message-ID: <20160812184336.GA5706@rob-hp-laptop>
+References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
+ <1470906115-155569-2-git-send-email-lidongpo@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
-In-Reply-To: <20160825062200.17206-3-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470906115-155569-2-git-send-email-lidongpo@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Aug 11, 2016 at 05:01:52PM +0800, Dongpo Li wrote:
+> From: Li Dongpo <lidongpo@hisilicon.com>
+> 
+> The "hix5hd2" is SoC name, add the generic ethernet driver name.
+> The "hisi-gemac-v1" is the basic version and "hisi-gemac-v2" adds
+> the SG/TXCSUM/TSO/UFO features.
+> This patch only adds the SG(scatter-gather) driver for transmitting,
+> the drivers of other features will be submitted later.
 
---3siQDZowHQqNOShm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The compatible string changes should probably be a separate patch.
 
-On Thu, Aug 25, 2016 at 02:21:56PM +0800, Chen-Yu Tsai wrote:
-> Some clock muxes have holes, i.e. invalid or unconnected inputs,
-> between parent mux values.
->=20
-> Add support for specifying a mux table to map clock parents to
-> mux values.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
+> ---
+>  .../bindings/net/hisilicon-hix5hd2-gmac.txt        |   9 +-
+>  drivers/net/ethernet/hisilicon/hix5hd2_gmac.c      | 213 +++++++++++++++++++--
+>  2 files changed, 205 insertions(+), 17 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
+> index 75d398b..3c02fac 100644
+> --- a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
+> +++ b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
+> @@ -1,7 +1,12 @@
+>  Hisilicon hix5hd2 gmac controller
+>  
+>  Required properties:
+> -- compatible: should be "hisilicon,hix5hd2-gmac".
+> +- compatible: should contain one of the following version strings:
+> +	* "hisilicon,hisi-gemac-v1"
+> +	* "hisilicon,hisi-gemac-v2"
+> +	and one of the following SoC string:
+> +	* "hisilicon,hix5hd2-gemac"
+> +	* "hisilicon,hi3798cv200-gemac"
 
-Applied, thanks!
-Maxime
+Make it clear what the order should be.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2 SOC versions so far and 2 generic versions. I'm not really convinced 
+that the generic string is needed.
 
---3siQDZowHQqNOShm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXv1SYAAoJEBx+YmzsjxAgEYQP/0r8kd26zTesOgMayp955SQN
-erEwSWA4pT77R7OzRqq27SqBMjpY96EK4misr48LTd1unJcVynQ/DjFKvJJAaneR
-9upNZY18Mv9PPFcbuYj/tKkR3BDB2y2KDPgvYTZSzZ6/x/uhyh3qlwpHXpc3hefd
-Y6JPxNI3CGnkj74secT5E5HfICc+5jR8oR+TDx0kN4nzuHkoXx+x1RZW9kjFJx/F
-WlY2LSbLhskbdIbN953CIbv6OwtjWoKOcLkvekJ+/Y+j0mFuJWOouuGAQwPtjvul
-7oCFJ5wtG6rkolsY1eWhNdPWOP2fg1zXmc0KzUXCy4OC0+6hqBBqkLtmrky0wtX2
-V/xbLG9y9YBCPrI0yTYgT9MnRdwXpBHquqhAwQmFDdqIq7PbZhaD0KQEhgwMKHlP
-Ej/2EO2yCarbA/ijq5rnKmOMTL+Vnnr0k3/WCPZrEN0qM3UX/t2g02ivEZKXce63
-GK6M+Ml1d6iJvLj/2cxmsTYPIAmYhJOOFORwS6VS71DPi2vwkRvUWSKvcb3C0tnB
-tVnDfPTMpfSJf+XUG7ndc2Z53dkbC3/RB0ClmMd50x/K/uQyX3Fpy9m5BqCVZk+y
-h5uzoO600QXLIRx1fEpawQkk6ELYROMjJzgJ21CrEDqL3dJhiv94kUnyzklgt3TZ
-t6Kvizgdj0BpE8HhGnE9
-=/zyL
------END PGP SIGNATURE-----
-
---3siQDZowHQqNOShm--
+>  - reg: specifies base physical address(s) and size of the device registers.
+>    The first region is the MAC register base and size.
+>    The second region is external interface control register.
+> @@ -20,7 +25,7 @@ Required properties:
+>  
+>  Example:
+>  	gmac0: ethernet@f9840000 {
+> -		compatible = "hisilicon,hix5hd2-gmac";
+> +		compatible = "hisilicon,hix5hd2-gemac", "hisilicon,hisi-gemac-v1";
+>  		reg = <0xf9840000 0x1000>,<0xf984300c 0x4>;
+>  		interrupts = <0 71 4>;
+>  		#address-cells = <1>;
