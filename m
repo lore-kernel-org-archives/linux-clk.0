@@ -1,338 +1,146 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0042.outbound.protection.outlook.com ([104.47.37.42]:38080
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933810AbcH3RsZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 30 Aug 2016 13:48:25 -0400
-From: Fabio Estevam <fabio.estevam@nxp.com>
-To: <sboyd@codeaurora.org>
-CC: <shawnguo@kernel.org>, <festevam@gmail.com>, <stefan@agner.ch>,
-        <linux-clk@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH v2]  clk: imx7d: Add PLL_AUDIO_TEST_DIV/POST_DIV clocks
-Date: Tue, 30 Aug 2016 14:33:51 -0300
-Message-ID: <1472578431-11257-1-git-send-email-fabio.estevam@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from albert.telenet-ops.be ([195.130.137.90]:50823 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752921AbcHLQi5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:57 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 7/9 option 2] spi: sh-msiof: Configure MSIOF parent clock
+Date: Fri, 12 Aug 2016 18:38:43 +0200
+Message-Id: <1471019925-29083-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently we see the following error when using the SAI audio
-driver on mx7:
+Change the clock rate in spi_master.setup() to accomodate the desired
+maximum clock rate for the device being set up:
+  - Change the clock rate if the msiofX (and thus mso) clock rate is too
+    high.  Failure to do so is considered an error.
+  - Try to change the clock rate if the msiofX (and thus mso) clock rate
+    is too low to achieve the desired performance. Failure to do so is
+    not considered an error, as the device will still work, but slower.
 
-Division by zero in kernel.                                      
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.8.0-rc3-next-20160823
-Hardware name: Freescale i.MX7 Dual (Device Tree)                
-Backtrace:                                                       
-[<c010b70c>] (dump_backtrace) from [<c010b8a8>] (show_stack+0x18)
-r6:60000013 r5:ffffffff r4:00000000 r3:00000000                 
-[<c010b890>] (show_stack) from [<c03e9324>] (dump_stack+0xb0/0xe)
-[<c03e9274>] (dump_stack) from [<c010b578>] (__div0+0x18/0x20)   
-r8:00000000 r7:ffffffff r6:ffffffff r5:00000000 r4:00000000 r3:0
-[<c010b560>] (__div0) from [<c03e795c>] (Ldiv0_64+0x8/0x18)      
-[<c06cd860>] (divider_get_val) from [<c06cda28>] (clk_divider_se)
+Results (sequential operations during probing):
+  1. msiof0 (and mso) set to 30.8 MHz, 15.4 MHz after internal
+     divider,
+  2. msiof2 kept at 30.8 MHz, 993 kHz after internal divider,
+  3. msiof3 (and mso) set to 20 MHz, 19.5 kHz after internal divider.
 
-This error happens due to the lack of definition of the
-IMX7D_PLL_AUDIO_TEST_DIV/IMX7D_PLL_AUDIO_POST_DIV clocks.
+Observations:
+  - As the requested rate of 30 MHz is rounded to 30.8 MHz, which is
+    higher than 30 MHz, an mso internal divider of 2 is used, leading to
+    a much lower rate of 15.4 MHz, and thus lower performance than
+    expected.
+  - The parent clock frequency cannot be changed while the mso clock is
+    enabled. This is tricky, as the MSIOF modules are part of a Clock
+    Domain, hence their clocks (and its parent clock) are under control
+    of Runtime PM.
+    So the parent clock may still be enabled due to asynchronous
+    runtime-suspend not having disabled it yet, causing clk_set_rate()
+    to fail sometimes with -EBUSY.
 
-Add support for them.
-
-Tested on a imx7s-warp board.
-
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes since v1:
-- Also use pll_audio_post_div in the muxes. (Stefan)
+Not intended for upstream merge.
+---
+ drivers/spi/spi-sh-msiof.c | 74 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 1 deletion(-)
 
- drivers/clk/imx/clk-imx7d.c | 101 ++++++++++++++++++++++++++------------------
- 1 file changed, 61 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 6bafcaa..86e2fdb 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -26,43 +26,59 @@ static u32 share_count_sai1;
- static u32 share_count_sai2;
- static u32 share_count_sai3;
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 656eaa4d03ed497b..0b69643936cdb941 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -584,7 +584,8 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ 	struct device_node	*np = spi->master->dev.of_node;
+ 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
+ 	u32 max_speed_hz, min_speed_hz;
+-	unsigned long rate;
++	unsigned long rate, req_rate;
++	int error;
  
-+static struct clk_div_table test_div_table[] = {
-+	{ .val = 3, .div = 1, },
-+	{ .val = 2, .div = 1, },
-+	{ .val = 1, .div = 2, },
-+	{ .val = 0, .div = 4, },
-+	{ }
-+};
+ 	rate = clk_get_rate(p->clk);
+ 	max_speed_hz = rate;
+@@ -594,6 +595,77 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ 		 "%s: master speed min %u max %u, device speed max = %u\n",
+ 		 __func__, min_speed_hz, max_speed_hz, spi->max_speed_hz);
+ 
++	if (spi->max_speed_hz < min_speed_hz) {
++		dev_err(&p->pdev->dev,
++			"Parent clock rate %lu too high for %u!\n", rate,
++			spi->max_speed_hz);
 +
-+static struct clk_div_table post_div_table[] = {
-+	{ .val = 3, .div = 4, },
-+	{ .val = 2, .div = 1, },
-+	{ .val = 1, .div = 2, },
-+	{ .val = 0, .div = 1, },
-+	{ }
-+};
++		req_rate = spi->max_speed_hz * MAX_DIV;
 +
- static struct clk *clks[IMX7D_CLK_END];
- static const char *arm_a7_sel[] = { "osc", "pll_arm_main_clk",
- 	"pll_enet_500m_clk", "pll_dram_main_clk",
--	"pll_sys_main_clk", "pll_sys_pfd0_392m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_clk", "pll_sys_pfd0_392m_clk", "pll_audio_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_enet_250m_clk", "pll_sys_pfd2_270m_clk",
--	"pll_dram_533m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_usb_main_clk", };
- 
- static const char *arm_m0_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_125m_clk", "pll_sys_pfd2_135m_clk",
--	"pll_dram_533m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_usb_main_clk", };
- 
- static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "pll_sys_pfd7_clk", };
-+	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
- 
- static const char *disp_axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd6_clk",
--	"pll_sys_pfd7_clk", "pll_audio_main_clk", "pll_video_main_clk", };
-+	"pll_sys_pfd7_clk", "pll_audio_post_div", "pll_video_main_clk", };
- 
- static const char *enet_axi_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk",
--	"pll_sys_main_240m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_sys_main_240m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_sys_pfd4_clk", };
- 
- static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_sys_main_240m_clk",
- 	"pll_sys_pfd2_135m_clk", "pll_sys_pfd6_clk", "pll_enet_250m_clk",
--	"pll_audio_main_clk", };
-+	"pll_audio_post_div", };
- 
- static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
--	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_main_clk",
-+	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_post_div",
- 	"pll_video_main_clk", };
- 
- static const char *dram_phym_sel[] = { "pll_dram_main_clk",
-@@ -73,13 +89,13 @@ static const char *dram_sel[] = { "pll_dram_main_clk",
- 
- static const char *dram_phym_alt_sel[] = { "osc", "pll_dram_533m_clk",
- 	"pll_sys_main_clk", "pll_enet_500m_clk",
--	"pll_usb_main_clk", "pll_sys_pfd7_clk", "pll_audio_main_clk",
-+	"pll_usb_main_clk", "pll_sys_pfd7_clk", "pll_audio_post_div",
- 	"pll_video_main_clk", };
- 
- static const char *dram_alt_sel[] = { "osc", "pll_dram_533m_clk",
- 	"pll_sys_main_clk", "pll_enet_500m_clk",
- 	"pll_enet_250m_clk", "pll_sys_pfd0_392m_clk",
--	"pll_audio_main_clk", "pll_sys_pfd2_270m_clk", };
-+	"pll_audio_post_div", "pll_sys_pfd2_270m_clk", };
- 
- static const char *usb_hsic_sel[] = { "osc", "pll_sys_main_clk",
- 	"pll_usb_main_clk", "pll_sys_pfd3_clk", "pll_sys_pfd4_clk",
-@@ -105,53 +121,53 @@ static const char *lcdif_pixel_sel[] = { "osc", "pll_sys_pfd5_clk",
- 
- static const char *mipi_dsi_sel[] = { "osc", "pll_sys_pfd5_clk",
- 	"pll_sys_pfd3_clk", "pll_sys_main_clk", "pll_sys_pfd0_196m_clk",
--	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_main_clk", };
-+	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_post_div", };
- 
- static const char *mipi_csi_sel[] = { "osc", "pll_sys_pfd4_clk",
- 	"pll_sys_pfd3_clk", "pll_sys_main_clk", "pll_sys_pfd0_196m_clk",
--	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_main_clk", };
-+	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_post_div", };
- 
- static const char *mipi_dphy_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd5_clk", "ref_1m_clk", "ext_clk_2",
- 	"pll_video_main_clk", "ext_clk_3", };
- 
- static const char *sai1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_main_clk", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_2", };
- 
- static const char *sai2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_main_clk", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_2", };
- 
- static const char *sai3_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_main_clk", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_3", };
- 
- static const char *spdif_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_main_clk", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_3_clk", };
- 
- static const char *enet1_ref_sel[] = { "osc", "pll_enet_125m_clk",
- 	"pll_enet_50m_clk", "pll_enet_25m_clk",
--	"pll_sys_main_120m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"ext_clk_4", };
- 
- static const char *enet1_time_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_audio_main_clk", "ext_clk_1", "ext_clk_2", "ext_clk_3",
-+	"pll_audio_post_div", "ext_clk_1", "ext_clk_2", "ext_clk_3",
- 	"ext_clk_4", "pll_video_main_clk", };
- 
- static const char *enet2_ref_sel[] = { "osc", "pll_enet_125m_clk",
- 	"pll_enet_50m_clk", "pll_enet_25m_clk",
--	"pll_sys_main_120m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"ext_clk_4", };
- 
- static const char *enet2_time_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_audio_main_clk", "ext_clk_1", "ext_clk_2", "ext_clk_3",
-+	"pll_audio_post_div", "ext_clk_1", "ext_clk_2", "ext_clk_3",
- 	"ext_clk_4", "pll_video_main_clk", };
- 
- static const char *enet_phy_ref_sel[] = { "osc", "pll_enet_25m_clk",
- 	"pll_enet_50m_clk", "pll_enet_125m_clk",
--	"pll_dram_533m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_sys_pfd3_clk", };
- 
- static const char *eim_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-@@ -192,22 +208,22 @@ static const char *can2_sel[] = { "osc", "pll_sys_main_120m_clk",
- 
- static const char *i2c1_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c2_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c3_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c4_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *uart1_sel[] = { "osc", "pll_sys_main_240m_clk",
-@@ -266,32 +282,32 @@ static const char *ecspi4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_usb_main_clk", };
- 
- static const char *pwm1_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
- 	"ext_clk_1", "ref_1m_clk", "pll_video_main_clk", };
- 
- static const char *pwm2_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
- 	"ext_clk_1", "ref_1m_clk", "pll_video_main_clk", };
- 
- static const char *pwm3_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
- 	"ext_clk_2", "ref_1m_clk", "pll_video_main_clk", };
- 
- static const char *pwm4_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
- 	"ext_clk_2", "ref_1m_clk", "pll_video_main_clk", };
- 
- static const char *flextimer1_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
- 	"ext_clk_3", "ref_1m_clk", "pll_video_main_clk", };
- 
- static const char *flextimer2_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_main_clk",
-+	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
- 	"ext_clk_3", "ref_1m_clk", "pll_video_main_clk", };
- 
- static const char *sim1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_usb_main_clk", "pll_audio_main_clk", "pll_enet_125m_clk",
-+	"pll_usb_main_clk", "pll_audio_post_div", "pll_enet_125m_clk",
- 	"pll_sys_pfd7_clk", };
- 
- static const char *sim2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-@@ -301,19 +317,19 @@ static const char *sim2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 
- static const char *gpt1_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
--	"ref_1m_clk", "pll_audio_main_clk", "ext_clk_1", };
-+	"ref_1m_clk", "pll_audio_post_div", "ext_clk_1", };
- 
- static const char *gpt2_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
--	"ref_1m_clk", "pll_audio_main_clk", "ext_clk_2", };
-+	"ref_1m_clk", "pll_audio_post_div", "ext_clk_2", };
- 
- static const char *gpt3_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
--	"ref_1m_clk", "pll_audio_main_clk", "ext_clk_3", };
-+	"ref_1m_clk", "pll_audio_post_div", "ext_clk_3", };
- 
- static const char *gpt4_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
--	"ref_1m_clk", "pll_audio_main_clk", "ext_clk_4", };
-+	"ref_1m_clk", "pll_audio_post_div", "ext_clk_4", };
- 
- static const char *trace_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
-@@ -327,12 +343,12 @@ static const char *wdog_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 
- static const char *csi_mclk_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_enet_125m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_usb_main_clk", };
- 
- static const char *audio_mclk_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_enet_125m_clk", "pll_audio_main_clk", "pll_video_main_clk",
-+	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_usb_main_clk", };
- 
- static const char *wrclk_sel[] = { "osc", "pll_enet_40m_clk",
-@@ -346,13 +362,13 @@ static const char *clko1_sel[] = { "osc", "pll_sys_main_clk",
- 
- static const char *clko2_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_sys_pfd1_166m_clk", "pll_sys_pfd4_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "ckil", };
-+	"pll_audio_post_div", "pll_video_main_clk", "ckil", };
- 
- static const char *lvds1_sel[] = { "pll_arm_main_clk",
- 	"pll_sys_main_clk", "pll_sys_pfd0_392m_clk", "pll_sys_pfd1_332m_clk",
- 	"pll_sys_pfd2_270m_clk", "pll_sys_pfd3_clk", "pll_sys_pfd4_clk",
- 	"pll_sys_pfd5_clk", "pll_sys_pfd6_clk", "pll_sys_pfd7_clk",
--	"pll_audio_main_clk", "pll_video_main_clk", "pll_enet_500m_clk",
-+	"pll_audio_post_div", "pll_video_main_clk", "pll_enet_500m_clk",
- 	"pll_enet_250m_clk", "pll_enet_125m_clk", "pll_enet_100m_clk",
- 	"pll_enet_50m_clk", "pll_enet_40m_clk", "pll_enet_25m_clk",
- 	"pll_dram_main_clk", };
-@@ -434,6 +450,11 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
- 	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
- 
-+	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
-+	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 22, 2, 0, post_div_table, &imx_ccm_lock);
++		error = clk_set_rate(p->clk, req_rate);
++		if (error) {
++			dev_err(&p->pdev->dev,
++				"Failed to set parent clock rate to %lu: %d\n",
++				req_rate, error);
++			return error;
++		}
 +
- 	clks[IMX7D_PLL_SYS_PFD0_392M_CLK] = imx_clk_pfd("pll_sys_pfd0_392m_clk", "pll_sys_main_clk", base + 0xc0, 0);
- 	clks[IMX7D_PLL_SYS_PFD1_332M_CLK] = imx_clk_pfd("pll_sys_pfd1_332m_clk", "pll_sys_main_clk", base + 0xc0, 1);
- 	clks[IMX7D_PLL_SYS_PFD2_270M_CLK] = imx_clk_pfd("pll_sys_pfd2_270m_clk", "pll_sys_main_clk", base + 0xc0, 2);
++		rate = clk_get_rate(p->clk);
++		dev_info(&p->pdev->dev,
++			 "Changed parent clock rate to %lu actual %lu\n",
++			 req_rate, rate);
++
++		max_speed_hz = rate;
++		min_speed_hz = rate / MAX_DIV;
++
++		dev_info(&p->pdev->dev,
++			 "%s: new master speed min %u max %u, device speed max = %u\n",
++			 __func__, min_speed_hz, max_speed_hz,
++			 spi->max_speed_hz);
++
++		if (spi->max_speed_hz < min_speed_hz) {
++			dev_err(&p->pdev->dev,
++				"New parent clock rate %lu too high for %u!\n",
++				rate, spi->max_speed_hz);
++			return -EINVAL;
++		}
++	} else if (spi->max_speed_hz * 4 > max_speed_hz * 5) {
++		/* More than 20% lower than desired */
++		dev_warn(&p->pdev->dev,
++			 "Parent clock rate %lu too low for %u\n", rate,
++			 spi->max_speed_hz);
++
++		req_rate = spi->max_speed_hz;
++
++		error = clk_set_rate(p->clk, req_rate);
++		if (error) {
++			dev_warn(&p->pdev->dev,
++				"Failed to set parent clock rate to %lu: %d, ignoring\n",
++				req_rate, error);
++			goto done;
++		}
++
++		rate = clk_get_rate(p->clk);
++		dev_info(&p->pdev->dev,
++			 "Changed parent clock rate to %lu actual %lu\n",
++			 req_rate, rate);
++
++		max_speed_hz = rate;
++		min_speed_hz = rate / MAX_DIV;
++
++		dev_info(&p->pdev->dev,
++			 "%s: new master speed min %u max %u, device speed max = %u\n",
++			 __func__, min_speed_hz, max_speed_hz,
++			 spi->max_speed_hz);
++
++		if (spi->max_speed_hz * 4 > max_speed_hz * 5) {
++			dev_warn(&p->pdev->dev,
++				 "New parent clock rate %lu too high for %u, ignoring\n",
++				 rate, spi->max_speed_hz);
++		}
++	}
++
++done:
+ 	p->dev_max_speed_hz = spi->max_speed_hz;
+ 
+ 	pm_runtime_get_sync(&p->pdev->dev);
 -- 
 1.9.1
 
