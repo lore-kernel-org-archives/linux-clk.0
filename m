@@ -1,56 +1,41 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20160801103024.cc74c093466d7fdfd91a2587@free.fr>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
- <fb559224-561c-3476-1146-96f7aea427f0@arm.com> <20160801103024.cc74c093466d7fdfd91a2587@free.fr>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 1 Aug 2016 17:13:34 +0800
-Message-ID: <CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
-Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <keguang.zhang@gmail.com>
+Return-Path: <keguang.zhang@gmail.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH 3/3] clk: Loongson1: Make use of GENMASK
+Date: Fri, 12 Aug 2016 18:51:48 +0800
+Message-Id: <1470999108-9851-4-git-send-email-keguang.zhang@gmail.com>
+In-Reply-To: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
+References: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 1, 2016 at 4:30 PM, Jean-Francois Moine <moinejf@free.fr> wrote=
-:
-> On Mon, 1 Aug 2016 02:43:06 +0100
-> Andr=C3=A9 Przywara <andre.przywara@arm.com> wrote:
->
->> As this became quite a long read, here a TL;DR:
->> - We consider using an SCPI based clock system for the A64, alongside
->> allwinner,simple-gates and fixed clocks. We try to avoid any Allwinner
->> specific clocks (apart from the simple-gates).
->> - ARM Trusted Firmware provides the SCPI implementation - for now, later
->> we may move this into a possible arisc firmware.
->> - We upstream some basic DT first, possibly omitting any controversial
->> clock parts at all.
->>
->> Let me know what you think!
->
-> Hi Andr=C3=A9,
->
-> This looks interesting.
-> As I understand, the clock enable/rate setting functions would be in
-> the arisc. The arisc firmware would be loaded only once in the Soc and
-> would contain the code for handling this specific SoC.
-> From my calculations, this would save about 1Mb of clock descriptions
-> in the kernel for a universal Allwinner kernel.
->
-> But I don't see why you are keeping the simple-gates. The bus gate may
-> be ungated/gated when the clock is enabled/disabled, and that's what
-> Allwinner's software does.
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-For peripherals that have a separate mod clock, having them separate
-is a good thing. One example might be the audio codecs. You could ungate
-the bus gate to access its registers to program it, but only enable
-the mod clock when you actually play something.
+Make use of GENMASK instead of open coding the equivalent operation,
+and update the PLL formula.
 
-Regards
-ChenYu
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+---
+ drivers/clk/loongson1/clk-loongson1b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
+index 2302ee5..5cedb28 100644
+--- a/drivers/clk/loongson1/clk-loongson1b.c
++++ b/drivers/clk/loongson1/clk-loongson1b.c
+@@ -26,7 +26,7 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+ 	u32 pll, rate;
+ 
+ 	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
+-	rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
++	rate = 12 + (pll & GENMASK(5, 0));
+ 	rate *= OSC;
+ 	rate >>= 1;
+ 
+-- 
+1.9.1
