@@ -1,47 +1,52 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 3/5] clk: samsung: exynos5260: Fix the checkpatch warnings
-Date: Mon, 22 Aug 2016 18:48:37 +0900
-Message-id: <1471859319-30681-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
-References: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-dm3nam03on0085.outbound.protection.outlook.com ([104.47.41.85]:48694
+	"EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750989AbcHLS1P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 12 Aug 2016 14:27:15 -0400
+From: Fabio Estevam <fabio.estevam@nxp.com>
+To: <sboyd@codeaurora.org>
+CC: <shawnguo@kernel.org>, <stefan@agner.ch>, <festevam@gmail.com>,
+	<linux-clk@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH 2/3] clk: imx: Introduce clk_register_gate2()
+Date: Fri, 12 Aug 2016 15:26:55 -0300
+Message-ID: <1471026416-11769-2-git-send-email-fabio.estevam@nxp.com>
+In-Reply-To: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+References: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch removes the the prohibited space by using checkscript.pl script.
-- ERROR: space prohibited before that ','
+Introduce imx_clk_gate2_shared2() which is similar to the existing
+imx_clk_gate2_shared() and passes CLK_OPS_PARENT_ENABLE flag, which
+is useful for i.MX7 shared clocks.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- drivers/clk/samsung/clk-exynos5260.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-index fd1d9bfc151b..e613b03f1acd 100644
---- a/drivers/clk/samsung/clk-exynos5260.c
-+++ b/drivers/clk/samsung/clk-exynos5260.c
-@@ -1446,7 +1446,7 @@ static const struct samsung_fixed_rate_clock fixed_rate_clks[] __initconst = {
- 	FRATE(PHYCLK_HDMI_LINK_O_TMDS_CLKHI, "phyclk_hdmi_link_o_tmds_clkhi",
- 			NULL, 0, 125000000),
- 	FRATE(PHYCLK_MIPI_DPHY_4L_M_TXBYTECLKHS,
--			"phyclk_mipi_dphy_4l_m_txbyte_clkhs" , NULL,
-+			"phyclk_mipi_dphy_4l_m_txbyte_clkhs", NULL,
- 			0, 187500000),
- 	FRATE(PHYCLK_DPTX_PHY_O_REF_CLK_24M, "phyclk_dptx_phy_o_ref_clk_24m",
- 			NULL, 0, 24000000),
-@@ -1617,7 +1617,7 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 			mout_isp1_media_400_p,
- 			MUX_SEL_TOP_ISP10, 4, 1),
- 	MUX(TOP_MOUT_ACLK_ISP1_400, "mout_aclk_isp1_400", mout_aclk_isp1_400_p,
--			MUX_SEL_TOP_ISP10, 8 , 1),
-+			MUX_SEL_TOP_ISP10, 8, 1),
- 	MUX(TOP_MOUT_ISP1_MEDIA_266, "mout_isp1_media_266",
- 			mout_isp1_media_266_p,
- 			MUX_SEL_TOP_ISP10, 16, 1),
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index a81c038..3799ff8 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -134,6 +134,15 @@ static inline struct clk *imx_clk_gate2_shared(const char *name,
+ 			shift, 0x3, 0, &imx_ccm_lock, share_count);
+ }
+ 
++static inline struct clk *imx_clk_gate2_shared2(const char *name,
++		const char *parent, void __iomem *reg, u8 shift,
++		unsigned int *share_count)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT |
++				  CLK_OPS_PARENT_ENABLE, reg, shift, 0x3, 0,
++				  &imx_ccm_lock, share_count);
++}
++
+ static inline struct clk *imx_clk_gate2_cgr(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift, u8 cgr_val)
+ {
 -- 
 1.9.1
+
