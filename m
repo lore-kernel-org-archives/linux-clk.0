@@ -1,51 +1,50 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block 800Mhz on
- exynos5422-odroidxu3
-Date: Thu, 25 Aug 2016 15:57:18 +0900
-Message-id: <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <zyw@rock-chips.com>
+Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as
+ critical
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
+ <1721159.V5xB9fz0jT@diego>
+Cc: zhengxing@rock-chips.com, yzq@rock-chips.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linux-kernel@vger.kernel.org, tfiga@chromium.org,
+ linux-rockchip@lists.infradead.org, dianders@chromium.org,
+ groeck@chromium.org, marcheu@chromium.org, wulf@rock-chips.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Chris Zhong <zyw@rock-chips.com>
+Message-ID: <57AD1AC1.5080600@rock-chips.com>
+Date: Fri, 12 Aug 2016 08:39:29 +0800
+MIME-Version: 1.0
+In-Reply-To: <1721159.V5xB9fz0jT@diego>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch sets the clock rate for DREX (DRAM Express) block
-on exynos5422-odroidxu3 board. In the exynos5422 TRM,
-DRAM clocks use BPLL clock and CMU_CDREX generates
-the 800MHz DRAM clock.
+Hi Heiko
 
-[clk_summary on exynos5422-odroidxu3 board]
-fout_bpll                             0            0   800000000          0 0
-    mout_bpll                          0            0   800000000          0 0
-       mout_mclk_cdrex                 0            0   800000000          0 0
-          dout_pclk_core_mem           0            0   200000000          0 0
-          dout_sclk_cdrex              0            0   800000000          0 0
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+On 08/12/2016 06:17 AM, Heiko Stübner wrote:
+> Am Dienstag, 9. August 2016, 11:02:33 schrieb Chris Zhong:
+>> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
+>> this modification, the aclk_vio_noc should be put into critical list,
+>> since it is required by VOP.
+>> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
+>> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
+>>
+>> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> I've split that patch in two and applied them there:
+> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.8-clk/fixes&id=a3f457d9636b3f5ae4fc6502cb0c95f60f5e342b
+> (gate-bit-fix)
+> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.9-clk/next&id=54479449c801e46ee2b6ba08e2f19cd810f74f94
+> (critical clocks)
+>
+> with the provided Reviewed-bys.
+with the "gate-bit-fix" patch, probably someone will find the panel can 
+not display, since the aclk_vio_noc would be disabled default, and this 
+noc clk is required by VOP.
+So, if someone want to pick up "gate-bit-fix", please get the one 
+"critical clocks" firstly.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index d56253049ccb..fd3f67c72039 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -229,6 +229,11 @@
- 	status = "okay";
- };
- 
-+&clock {
-+	assigned-clocks = <&clock CLK_DOUT_SCLK_CDREX>;
-+	assigned-clock-rates = <800000000>;
-+};
-+
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
- 			<&clock_audss EXYNOS_MOUT_I2S>,
--- 
-1.9.1
+>
+>
+> Heiko
+>
+>
+>
