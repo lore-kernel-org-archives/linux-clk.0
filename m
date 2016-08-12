@@ -1,137 +1,52 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 13/17] clk: samsung: audss: samsung: Switch to new clock
- controller API
-Date: Tue, 16 Aug 2016 15:35:10 +0200
-Message-id: <1471354514-24224-14-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 11 Aug 2016 18:45:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH] clk: imx7d: do not set the parent of
+ IMX7D_ENET_AXI_ROOT_SRC
+Message-ID: <20160812014519.GO2996@codeaurora.org>
+References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
+ <20160811222842.GM2996@codeaurora.org>
+ <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
+ <88d5c57d3047176ebf2eec0f21e86613@agner.ch>
+ <CAOMZO5AYVbobwxyNippO_AviZhNjCS0hhC2NmLHiPEt8MoP-5Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5AYVbobwxyNippO_AviZhNjCS0hhC2NmLHiPEt8MoP-5Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+On 08/11, Fabio Estevam wrote:
+> Hi Stefan,
+> 
+> On Thu, Aug 11, 2016 at 8:57 PM, Stefan Agner <stefan@agner.ch> wrote:
+> 
+> > I don't think so, at least not that root clock.
+> >
+> > Otherwise grep -e IMX7D_PLL_ENET_MAIN_250M_CLK arch/arm/boot/dts/imx7*
+> > should return something...
+> 
+> Yes, you are right. The enet root clock parent assignment is missing in dts.
+> 
+> Other enet clocks are assigned.
+> 
+> > I guess in practice it is not a problem because the boot loader
+> > configures the clock selection already. Still, I think we should also
+> > fix our device trees and select the root clock there...
+> 
+> Yes, I didn't see any error on mx7d-sdb when I tested this patch, but
+> to be on the safe side I will update all the mx7 fec users to assign
+> enet root clk in the dts.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+Ok it sounds like this isn't urgent for fixes. I'll go ahead and
+queue it up for v4.9
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index bdf8b971f332..c13e6ab6f3b6 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -30,6 +30,7 @@ static DEFINE_SPINLOCK(lock);
- static struct clk **clk_table;
- static void __iomem *reg_base;
- static struct clk_onecell_data clk_data;
-+static struct clk_ctrl *clk_ctrl;
- /*
-  * On Exynos5420 this will be a clock which has to be enabled before any
-  * access to audss registers. Typically a child of EPLL.
-@@ -135,6 +136,10 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	if (!clk_table)
- 		return -ENOMEM;
- 
-+	clk_ctrl = clk_ctrl_register(&pdev->dev); /* FIXME: Use devm-like, leaks now on error path */
-+	if (IS_ERR(clk_ctrl))
-+		return PTR_ERR(clk_ctrl);
-+
- 	clk_data.clks = clk_table;
- 	if (variant == TYPE_EXYNOS5420)
- 		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
-@@ -159,7 +164,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 			}
- 		}
- 	}
--	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
-+	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, clk_ctrl, "mout_audss",
- 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
-@@ -170,48 +175,48 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		mout_i2s_p[1] = __clk_get_name(cdclk);
- 	if (!IS_ERR(sclk_audio))
- 		mout_i2s_p[2] = __clk_get_name(sclk_audio);
--	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
-+	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, clk_ctrl, "mout_i2s",
- 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
- 
--	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
-+	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, clk_ctrl, "dout_srp",
- 				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
- 				0, &lock);
- 
--	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
-+	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL, clk_ctrl,
- 				"dout_aud_bus", "dout_srp", 0,
- 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
- 
--	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
-+	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, clk_ctrl, "dout_i2s",
- 				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
- 				&lock);
- 
--	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
-+	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, clk_ctrl, "srp_clk",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 0, 0, &lock);
- 
--	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
-+	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, clk_ctrl, "i2s_bus",
- 				"dout_aud_bus", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 2, 0, &lock);
- 
--	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
-+	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, clk_ctrl, "sclk_i2s",
- 				"dout_i2s", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 3, 0, &lock);
- 
--	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
-+	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, clk_ctrl, "pcm_bus",
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
- 	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
- 	if (!IS_ERR(sclk_pcm_in))
- 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
--	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
-+	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, clk_ctrl, "sclk_pcm",
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
- 	if (variant == TYPE_EXYNOS5420) {
--		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
-+		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, clk_ctrl, "adma",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 9, 0, &lock);
- 	}
-@@ -261,6 +266,9 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- 	if (!IS_ERR(epll))
- 		clk_disable_unprepare(epll);
- 
-+	clk_ctrl_unregister(clk_ctrl);
-+	clk_ctrl = NULL;
-+
- 	return 0;
- }
- 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
