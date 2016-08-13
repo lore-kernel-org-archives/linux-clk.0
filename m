@@ -1,112 +1,49 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
-	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v11 8/9] arm: dts: mt2701: Add clock controller device nodes
-Date: Fri, 19 Aug 2016 13:34:55 +0800
-Message-ID: <1471584896-9986-9-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [v.1] clk:clk-rockchip:-of_iomap failed to remap then abort clock initialization.
+Date: Sat, 13 Aug 2016 20:56:18 +0530
+Message-Id: <1471101978-1881-1-git-send-email-arvind.yadav.cs@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+-check return of 'of_iomap'.if It's falied to remap then abort.
 
-Add clock controller nodes for MT2701, include topckgen, infracfg,
-pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
-bdpsys. This patch also add two oscillators that provide clocks for
-MT2701.
+-Unmap a region obtained by remap. iounmap frees the mapping when failed
+to allocate the memory.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/clk/rockchip/clk-rockchip.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 18596a2..c9a8dbf 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -12,8 +12,10 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/drivers/clk/rockchip/clk-rockchip.c b/drivers/clk/rockchip/clk-rockchip.c
+index 4cf838d5..2c9bb81 100644
+--- a/drivers/clk/rockchip/clk-rockchip.c
++++ b/drivers/clk/rockchip/clk-rockchip.c
+@@ -49,14 +49,19 @@ static void __init rk2928_gate_clk_init(struct device_node *node)
+ 	}
  
-+#include <dt-bindings/clock/mt2701-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/mt2701-resets.h>
- #include "skeleton64.dtsi"
- #include "mt2701-pinfunc.h"
+ 	reg = of_iomap(node, 0);
++	if (!reg)
++		return;
  
-@@ -77,6 +79,20 @@
- 		#clock-cells = <0>;
- 	};
+ 	clk_data = kzalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
+-	if (!clk_data)
++	if (!clk_data) {
++		iounmap(reg);
+ 		return;
++	}
  
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	rtc32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000>;
-+		clock-output-names = "rtc32k";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupt-parent = <&gic>;
-@@ -104,6 +120,26 @@
- 		reg = <0 0x10005000 0 0x1000>;
- 	};
+ 	clk_data->clks = kzalloc(qty * sizeof(struct clk *), GFP_KERNEL);
+ 	if (!clk_data->clks) {
+ 		kfree(clk_data);
++		iounmap(reg);
+ 		return;
+ 	}
  
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt2701-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt2701-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	pericfg: syscon@10003000 {
-+		compatible = "mediatek,mt2701-pericfg", "syscon";
-+		reg = <0 0x10003000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
- 	watchdog: watchdog@10007000 {
- 		compatible = "mediatek,mt2701-wdt",
- 			     "mediatek,mt6589-wdt";
-@@ -128,6 +164,12 @@
- 		reg = <0 0x10200100 0 0x1c>;
- 	};
- 
-+	apmixedsys: syscon@10209000 {
-+		compatible = "mediatek,mt2701-apmixedsys", "syscon";
-+		reg = <0 0x10209000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@10211000 {
- 		compatible = "arm,cortex-a7-gic";
- 		interrupt-controller;
 -- 
-1.9.1
+2.7.4
