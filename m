@@ -1,86 +1,33 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info
- to init section
-To: Chanwoo Choi <cw00.choi@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
- <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
-Date: Tue, 23 Aug 2016 12:07:30 +0200
-MIME-version: 1.0
-In-reply-to: <57BBB66E.2060807@samsung.com>
-Content-type: text/plain; charset=utf-8
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Aug 2016 17:57:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v2 08/10] clk: qcom: Cleanup some macro defs
+Message-ID: <20160813005754.GF361@codeaurora.org>
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+ <1470904858-11930-9-git-send-email-rnayak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470904858-11930-9-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
->>>  
->>> +static const struct samsung_cmu_info aud_cmu __initconst = {
->>> +	.mux_clks	= aud_mux_clks,
->>> +	.nr_mux_clks	= ARRAY_SIZE(aud_mux_clks),
->>> +	.div_clks	= aud_div_clks,
->>> +	.nr_div_clks	= ARRAY_SIZE(aud_div_clks),
->>> +	.gate_clks	= aud_gate_clks,
->>> +	.nr_gate_clks	= ARRAY_SIZE(aud_gate_clks),
->>> +	.nr_clk_ids	= AUD_NR_CLK,
->>> +	.clk_regs	= aud_clk_regs,
->>> +	.nr_clk_regs	= ARRAY_SIZE(aud_clk_regs),
->>> +};
->>> +
->>>  static void __init exynos5260_clk_aud_init(struct device_node *np)
->>>  {
->>> -	struct samsung_cmu_info cmu = { NULL };
->>> -
->>
->> I presume this was done this way to save some initdata space by
->> only allocating the array that's needed at runtime? I would
->> expect to see some more kernel image bloat from this change but
->> runtime memory usage would stay the same. Is there any real
->> benefit from this patch though?
->>
+On 08/11, Rajendra Nayak wrote:
+> From: Taniya Das <tdas@codeaurora.org>
 > 
-> After this patch, 'struct samsung_cmu_info' size should be added
-> to kernel image and then the size of deleted code should be removed
-> from kernel image. I think that it is not bloating.
-> (struct samsung_cmu_info includes the pointer and integer value.)
+> Move all
+> '# define XYZ'
+> to
+> '#define XYZ'
 > 
-> This patch make the code more simple and improve the readability.
-> And, the samsung_cmu_register_on() requires the 'const' type
-> argument for 'struct samsung_cmu_info'.
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-I checked stripped object files and it seems with the patch there
-is some saving of the kernel image size. Exactly 784 bytes, which
-makes zImage smaller by 480 bytes.
+This was done on purpose. Please drop this patch
 
-The patch increases .init.rodata section size by 780 bytes but 
-decreases .init.text section size by 1564 bytes.  Looks like 
-a static initializer is cheaper.
-
-$ ls -l  drivers/clk/samsung/clk-exynos5260.o
-
-< -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
----
-> -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
-
-
-The section size differences are as below:
-15c15
-<   3 .init.text    000006b8  00000000  00000000  00000034  2**2
----
->   3 .init.text    0000009c  00000000  00000000  00000034  2**2
-25c25
-<   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
----
->   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
-
-So the saving is rather insignificant but the patch doesn't make
-things worse and I'd say it might be worth applying.
-
---
-Thanks, 
-Sylwester
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
