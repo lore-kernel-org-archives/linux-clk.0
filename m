@@ -1,32 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:20:27 -0700
+Date: Fri, 12 Aug 2016 17:32:30 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexander Shiyan <shc_work@mail.ru>
-Subject: Re: [PATCH 13/34] clk: clps711x: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160825002027.GS19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-14-stephen.boyd@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH 2/3] clk: versatile/icst: add Integrator core module
+ clocks
+Message-ID: <20160813003230.GA25111@codeaurora.org>
+References: <1470820188-12888-1-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-14-stephen.boyd@linaro.org>
+In-Reply-To: <1470820188-12888-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Alexander Shiyan <shc_work@mail.ru>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+On 08/10, Linus Walleij wrote:
+> @@ -281,18 +422,23 @@ static void __init of_syscon_icst_setup(struct device_node *np)
+>  	if (IS_ERR(regclk)) {
+>  		pr_err("error setting up syscon ICST clock %s\n", name);
+>  		return;
+>  	}
+>  	of_clk_add_provider(np, of_clk_src_simple_get, regclk);
+> -	pr_debug("registered syscon ICST clock %s\n", name);
+> +	pr_info("registered syscon ICST clock %s\n", name);
 
-Applied to clk-next
+This shouldn't change?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
