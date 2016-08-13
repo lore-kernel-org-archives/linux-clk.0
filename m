@@ -1,33 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 29 Aug 2016 10:49:40 -0700
+Date: Fri, 12 Aug 2016 18:16:40 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 3/3 v3] clk: versatile/icst: support for AP baseboard
- clocks
-Message-ID: <20160829174940.GC19826@codeaurora.org>
-References: <1472299279-27560-1-git-send-email-linus.walleij@linaro.org>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/8] clk: sunxi: mod0: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Message-ID: <20160813011640.GK361@codeaurora.org>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+ <1467735814-23518-5-git-send-email-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1472299279-27560-1-git-send-email-linus.walleij@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467735814-23518-5-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/27, Linus Walleij wrote:
-> @@ -143,6 +180,16 @@ static int vco_set(struct clk_icst *icst, struct icst_vco vco)
->  		if (vco.r != 22)
->  			pr_err("ICST error: tried to use RDW != 22\n");
->  		break;
-> +	case ICST_INTEGRATOR_AP_SYS:
-> +		mask = INTEGRATOR_AP_SYS_BITS;
-> +		val |= vco.v & 0xFF;
+On 07/05, Ricardo Ribalda Delgado wrote:
+> This driver initializes a clock provider via sun4i_a10_mod0_setup
+> and then continues the initialization on sun4i_a10_mod0_clk_probe.
+> 
+> Use the new macro to notify the clk subsystem about this behaviour.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
 
-drivers/clk/versatile/clk-icst.c: In function ‘icst_set_rate’:
-drivers/clk/versatile/clk-icst.c:185:7: warning: ‘val’ may be used uninitialized in this function [-Wuninitialized]
-drivers/clk/versatile/clk-icst.c:168:6: note: ‘val’ was declared here
-
-
-I assume it should just be val = instead?
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
