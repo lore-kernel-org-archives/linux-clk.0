@@ -1,79 +1,29 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1471229226.8551.16.camel@mtksdaap41>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann
-	<arnd@arndb.de>, <devicetree@vger.kernel.org>, Erin Lo
-	<erin.lo@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, <linux-mediatek@lists.infradead.org>, "Sascha
- Hauer" <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Date: Mon, 15 Aug 2016 10:47:06 +0800
-In-Reply-To: <20160813003913.GA361@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
-	 <20160702012140.GB17071@codeaurora.org>
-	 <1467604308.26485.4.camel@mtksdaap41>
-	 <146802073038.73491.6675612765998057903@resonance>
-	 <1468225452.31247.7.camel@mtksdaap41> <1470203182.17063.3.camel@mtksdaap41>
-	 <1470721183.8551.6.camel@mtksdaap41> <20160810210922.GD2996@codeaurora.org>
-	 <1470989873.8551.10.camel@mtksdaap41> <20160813003913.GA361@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Aug 2016 18:16:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/8] clk: sunxi: Use new macro CLK_OF_DECLARE_DRIVER
+Message-ID: <20160813011643.GL361@codeaurora.org>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+ <1467735814-23518-6-git-send-email-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1467735814-23518-6-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On Fri, 2016-08-12 at 17:39 -0700, Stephen Boyd wrote:
-> On 08/12, James Liao wrote:
-> > On Wed, 2016-08-10 at 14:09 -0700, Stephen Boyd wrote:
-> > > (Including lists)
-> > > 
-> > > On 08/09, James Liao wrote:
-> > > > On Wed, 2016-08-03 at 13:46 +0800, James Liao wrote:
-> > > >>
-> > > >> Hi Mike,
-> > > >>
-> > > >> Do you have new patches to fix new clock parents? If not, I think we can
-> > > >> use my patch first. Is it okay?
-> > > >>
-> > > >
-> > > > Hi Stephen,
-> > > >
-> > > > Do you have comments for the bug fixing? I prefer to use my patch (clk:
-> > > > fix initial state of critical clock's parents). How do you think?
-> > > >
-> > > 
-> > > How about we recalc accuracies and rates in addition to the patch
-> > > from Mike? That will fix everything?
-> > 
-> > Hi Stephen,
-> > 
-> > It works!
-> > 
-> > I'll send a new series of MT2701 clock support in few days. Should I
-> > include this patch in my series? Or you'll merge it into clk-next
-> > directly?
-> > 
+On 07/05, Ricardo Ribalda Delgado wrote:
+> This driver initializes a clock provider via sun4i_a10_mod0_setup
+> and then continues the initialization on sun4i_a10_mod0_clk_probe.
 > 
-> Thanks. I can take that as a tested-by? I can merge it into
+> Use the new macro to notify the clk subsystem about this behaviour.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
 
-Yes, please feel free to add:
+Applied to clk-next
 
-Tested-by: James Liao <jamesjj.liao@mediatek.com>
-
-> clk-next directly, but do we need to put the mt2701 patches on a
-> separate branch to merge into arm-soc? If so we'll need to put
-> this patch first to avoid bisection failures.
-
-I prefer to merge clk driver into mainline first. Patches that depend on
-mt2701 clks such as dtsi can base on next kernel release.
-
-
-Best regards,
-
-James
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
