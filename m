@@ -1,46 +1,30 @@
-Return-Path: <dianders@google.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Aug 2016 17:33:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	James Hogan <james.hogan@imgtec.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: divider: Fix clk_divider_round_rate() to use
+ clk_readl()
+Message-ID: <20160813003319.GB25111@codeaurora.org>
+References: <1471005474-32301-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <1470143599-8851-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470143599-8851-1-git-send-email-zhengxing@rock-chips.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 2 Aug 2016 17:49:24 -0700
-Message-ID: <CAD=FV=X1ZAhzBrFukvE9BxdFmgo8dj4GKjZ9EmPLTagHfO-ufg@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: rk3399: add pll up and down when change
- pll freq
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Brian Norris <briannorris@chromium.org>, Tao Huang <huangtao@rock-chips.com>,
-	zhangqing <zhangqing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471005474-32301-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Xing,
+On 08/12, Geert Uytterhoeven wrote:
+> clk-divider uses clk_readl()/clk_writel() everywhere, except in
+> clk_divider_round_rate(), where plain readl() is used. Change this to
+> clk_readl(), as it makes a difference on powerpc.
+> 
+> Fixes: e6d5e7d90be92cee ("clk-divider: Fix READ_ONLY when divider > 1")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-On Tue, Aug 2, 2016 at 6:13 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
->
-> The suggestion that is from IC designer, the correct pll sequence setting
-> should be like these:
-> ----
->   set pll to slow mode or other plls
->   set pll down
->   set pll params
->   set pll up
->   wait pll lock status
->   set pll to normal mode
-> ----
->
-> Hence, there are potential risks that we need to fix:
-> rockchip_rk3399_wait_pll_lock - timeout waiting for pll to lock
-> rockchip_rk3399_pll_set_params - pll update unsucessful, trying to restore old params
+Applied to clk-next
 
-I still don't understand how that groks with the statement in the TRM:
-
-> In most cases the PLL programming can be changed on-the-fly and the PLL will simply slew to the new frequency
-
-That makes it sound like these PLLs are super great at dynamic updates.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
