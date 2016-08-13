@@ -1,49 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 17:41:31 -0700
+Date: Fri, 12 Aug 2016 18:16:38 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, James Liao <jamesjj.liao@mediatek.com>,
-	Shunli Wang <shunli.wang@mediatek.com>
-Subject: Re: [PATCH v9 03/10] clk: mediatek: Refine the makefile to support
- multiple clock drivers
-Message-ID: <20160813004131.GB361@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
- <1466581229-2342-4-git-send-email-erin.lo@mediatek.com>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, s.hauer@pengutronix.de,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/8] clk: npx: Use new macro CLK_OF_DECLARE_DRIVER
+Message-ID: <20160813011638.GJ361@codeaurora.org>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+ <1467735814-23518-4-git-send-email-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466581229-2342-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1467735814-23518-4-git-send-email-ricardo.ribalda@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22, Erin Lo wrote:
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> new file mode 100644
-> index 0000000..dc224e6
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -0,0 +1,23 @@
-> +#
-> +# MediaTek SoC drivers
-> +#
-> +config COMMON_CLK_MEDIATEK
-> +	bool
-> +	---help---
-> +	  Mediatek SoCs' clock support.
-> +
-> +config COMMON_CLK_MT8135
-> +	bool "Clock driver for Mediatek MT8135"
-> +	depends on COMMON_CLK
+On 07/05, Ricardo Ribalda Delgado wrote:
+> This driver initializes a clock provider via lpc18xx_creg_clk_init
+> and then continues the initialization on lpc18xx_creg_clk_probe.
+> 
+> Use the new macro to notify the clk subsystem about this behaviour.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
 
-These depends on COMMON_CLK are just noise because this Kconfig
-file is only included if common clk is enabled. Please remove
-them.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
