@@ -1,26 +1,26 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com, shawn.lin@rock-chips.com
-Subject: Re: [PATCH v3 6/7] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
-Date: Thu, 04 Aug 2016 21:06:02 +0200
-Message-ID: <133671526.OE8kzUfojK@diego>
-In-Reply-To: <1470122569-32049-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1470122569-32049-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 12 Aug 2016 17:57:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: mturquette@baylibre.com, stefan@agner.ch,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	shawnguo@kernel.org, festevam@gmail.com
+Subject: Re: [PATCH] clk: imx7d: do not set the parent of
+ IMX7D_ENET_AXI_ROOT_SRC
+Message-ID: <20160813005705.GE361@codeaurora.org>
+References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 2. August 2016, 15:22:49 schrieb Xing Zheng:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
+On 07/15, Fabio Estevam wrote:
+> Booting the kernel on a imx7s-warp leads to several warnings like these:
 > 
-> allow aclk_pcie and aclk_perf_pcie disabled when unused.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> [    0.000000] ------------[ cut here ]------------
 
-applied to my clock-branch for 4.9
+Applied to clk-next
 
-
-Thanks
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
