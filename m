@@ -1,57 +1,39 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 31 Aug 2016 11:16:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Mark Rutland <mark.rutland@arm.com>, Eric Anholt <eric@anholt.net>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5] clk: bcm: Add driver for BCM53573 ILP clock
-Message-ID: <20160831161651.GA32012@rob-hp-laptop>
-References: <20160823061745.8162-1-zajec5@gmail.com>
- <20160823062613.13865-1-zajec5@gmail.com>
- <20160823195528.GA17844@rob-hp-laptop>
- <CACna6rzeLdAW_mEpUN355Xrr3v-zjBtQW_4z-gV1kOrPS=wr8A@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40122 "EHLO
+	pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441AbcHMHiV (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 13 Aug 2016 03:38:21 -0400
+Date: Sat, 13 Aug 2016 08:38:10 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: prevent __of_clk_get_hw_from_provider() from
+ returning NULL
+Message-ID: <20160813073809.GA32102@n2100.armlinux.org.uk>
+References: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160804205734.GA15690@codeaurora.org>
+ <CAK7LNAQL2u1YTxr_SWR6S_2aFPfXAPcaFfkWKSV_D-RU2vq7BQ@mail.gmail.com>
+ <20160810232307.GK2996@codeaurora.org>
+ <CAK7LNASGVAy1Ff8Hp_s+icDEtYHMmxfJv7La=mFF0haJ0hWrUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CACna6rzeLdAW_mEpUN355Xrr3v-zjBtQW_4z-gV1kOrPS=wr8A@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNASGVAy1Ff8Hp_s+icDEtYHMmxfJv7La=mFF0haJ0hWrUw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 25, 2016 at 02:42:52PM +0200, Rafał Miłecki wrote:
-> On 23 August 2016 at 21:55, Rob Herring <robh@kernel.org> wrote:
-> > On Tue, Aug 23, 2016 at 08:25:59AM +0200, Rafał Miłecki wrote:
-> >> From: Rafał Miłecki <rafal@milecki.pl>
-> >>
-> >> This clock is present on BCM53573 devices (including BCM47189) that use
-> >> Cortex-A7. ILP is a part of PMU (Power Management Unit) and so it should
-> >> be defined as one of its subnodes (subdevices). For more details see
-> >> Documentation entry.
-> >>
-> >> Unfortunately there isn't a set of registers related to ILP clock only.
-> >> We use registers 0x66c, 0x674 and 0x6dc and between them there are e.g.
-> >> "retention*" and "control_ext" regs. This is why this driver maps all
-> >> 0x1000 B of space.
-> >
-> > Then describe the block as a syscon which has several functions of
-> > which clocks are one.
-> 
-> This isn't clear to me, sorry, could you describe it? Would you like
-> me to update commit message or documentation? Is code fine as is?
+On Fri, Aug 12, 2016 at 03:59:51PM +0900, Masahiro Yamada wrote:
+> But, actually, clk_get returns ERR_PTR(-ENOENT) if "clocks" property
+> is missing.
 
-Let me put it another way, when you need to use the other registers, how 
-do you plan to describe them in DT? We don't really want a node per 
-register, nor do I want to get binding docs one by one as you add each 
-function. Instead describe the block with all the misc functions as a 
-whole. What would you call that block? Still ILP or something else? 
+Probably because we don't know if that's a case of a partially
+converted platform (which doesn't yet have its clk stuff in DT),
+so we need to fall back to the table-driven code, or if it really
+has no clocks.
 
-Also, you if you do have multiple drivers all needing to access this 
-single block, then that is when you need syscon and regmap.
-
-Rob
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
