@@ -1,70 +1,110 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: gxbb: add MMC gate clocks, and expose for DT
+References: <20160802214011.19077-1-khilman@baylibre.com>
+Date: Mon, 15 Aug 2016 12:38:44 -0500
+In-Reply-To: <20160802214011.19077-1-khilman@baylibre.com> (Kevin Hilman's
+	message of "Tue, 2 Aug 2016 14:40:11 -0700")
+Message-ID: <m2twem9bkr.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <57B1664F.1090708@hisilicon.com>
-References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
- <1470906115-155569-2-git-send-email-lidongpo@hisilicon.com>
- <20160812184336.GA5706@rob-hp-laptop> <57B1664F.1090708@hisilicon.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 15 Aug 2016 11:18:19 -0500
-Message-ID: <CAL_JsqLgzaPECHdX8yHC3DAUq0jXhgUFE+xVFbeV0OLQXopqxg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] net: hix5hd2_gmac: add tx scatter-gather feature
-To: Dongpo Li <lidongpo@hisilicon.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>, Yisen Zhuang <yisen.zhuang@huawei.com>,
-	salil.mehta@huawei.com, David Miller <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>,
-	Andrew Lunn <andrew@lunn.ch>, xuejiancheng@hisilicon.com, benjamin.chenhao@hisilicon.com,
-	howell.yang@hisilicon.com, netdev <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 15, 2016 at 1:50 AM, Dongpo Li <lidongpo@hisilicon.com> wrote:
-> Hi Rob,
-> Many thanks for your review.
->
-> On 2016/8/13 2:43, Rob Herring wrote:
->> On Thu, Aug 11, 2016 at 05:01:52PM +0800, Dongpo Li wrote:
->>> From: Li Dongpo <lidongpo@hisilicon.com>
->>>
->>> The "hix5hd2" is SoC name, add the generic ethernet driver name.
->>> The "hisi-gemac-v1" is the basic version and "hisi-gemac-v2" adds
->>> the SG/TXCSUM/TSO/UFO features.
->>> This patch only adds the SG(scatter-gather) driver for transmitting,
->>> the drivers of other features will be submitted later.
->>
->> The compatible string changes should probably be a separate patch.
->>
-> ok, I will split this patch into two patches, one for compatible string changes,
-> and one for driver feature implementation.
->
->>> Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
->>> ---
->>>  .../bindings/net/hisilicon-hix5hd2-gmac.txt        |   9 +-
->>>  drivers/net/ethernet/hisilicon/hix5hd2_gmac.c      | 213 +++++++++++++++++++--
->>>  2 files changed, 205 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->>> index 75d398b..3c02fac 100644
->>> --- a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->>> +++ b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
->>> @@ -1,7 +1,12 @@
->>>  Hisilicon hix5hd2 gmac controller
->>>
->>>  Required properties:
->>> -- compatible: should be "hisilicon,hix5hd2-gmac".
->>> +- compatible: should contain one of the following version strings:
->>> +    * "hisilicon,hisi-gemac-v1"
->>> +    * "hisilicon,hisi-gemac-v2"
->>> +    and one of the following SoC string:
->>> +    * "hisilicon,hix5hd2-gemac"
->>> +    * "hisilicon,hi3798cv200-gemac"
->>
->> Make it clear what the order should be.
->>
-> ok, I will put the SoC strings in alphabetical order.
+Kevin Hilman <khilman@baylibre.com> writes:
 
-No, I mean the most specific string comes first.
+> Add the SD/eMMC gate clocks and expose them for use by DT.
+>
+> While at it, also explose FCLK_DIV2 since this is one of the input
+> clocks to the mux internal to each of the SD/eMMC blocks.
+>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 
-Rob
+Gentle reminder ping.
+
+> ---
+> Applies on top of current clk-s905 branch.
+>
+>  drivers/clk/meson/gxbb.c              | 9 +++++++++
+>  drivers/clk/meson/gxbb.h              | 7 +++++--
+>  include/dt-bindings/clock/gxbb-clkc.h | 4 ++++
+>  3 files changed, 18 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 007b7157cf4b..4fc8e58feef9 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -581,6 +581,9 @@ static MESON_GATE(sdio, HHI_GCLK_MPEG0, 17);
+>  static MESON_GATE(abuf, HHI_GCLK_MPEG0, 18);
+>  static MESON_GATE(hiu_iface, HHI_GCLK_MPEG0, 19);
+>  static MESON_GATE(assist_misc, HHI_GCLK_MPEG0, 23);
+> +static MESON_GATE(emmc_a, HHI_GCLK_MPEG0, 24);
+> +static MESON_GATE(emmc_b, HHI_GCLK_MPEG0, 25);
+> +static MESON_GATE(emmc_c, HHI_GCLK_MPEG0, 26);
+>  static MESON_GATE(spi, HHI_GCLK_MPEG0, 30);
+>  
+>  static MESON_GATE(i2s_spdif, HHI_GCLK_MPEG1, 2);
+> @@ -746,6 +749,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+>  		[CLKID_AO_AHB_BUS]	    = &gxbb_ao_ahb_bus.hw,
+>  		[CLKID_AO_IFACE]	    = &gxbb_ao_iface.hw,
+>  		[CLKID_AO_I2C]		    = &gxbb_ao_i2c.hw,
+> +		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
+> +		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
+> +		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
+>  	},
+>  	.num = NR_CLKS,
+>  };
+> @@ -845,6 +851,9 @@ static struct clk_gate *gxbb_clk_gates[] = {
+>  	&gxbb_ao_ahb_bus,
+>  	&gxbb_ao_iface,
+>  	&gxbb_ao_i2c,
+> +	&gxbb_emmc_a,
+> +	&gxbb_emmc_b,
+> +	&gxbb_emmc_c,
+>  };
+>  
+>  static int gxbb_clkc_probe(struct platform_device *pdev)
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index a2adf3448b59..217df516de44 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -172,7 +172,7 @@
+>  /* CLKID_CPUCLK */
+>  #define CLKID_HDMI_PLL		  2
+>  #define CLKID_FIXED_PLL		  3
+> -#define CLKID_FCLK_DIV2		  4
+> +/* CLKID_FCLK_DIV2 */
+>  #define CLKID_FCLK_DIV3		  5
+>  #define CLKID_FCLK_DIV4		  6
+>  #define CLKID_FCLK_DIV5		  7
+> @@ -262,8 +262,11 @@
+>  #define CLKID_AO_AHB_BUS	  91
+>  #define CLKID_AO_IFACE		  92
+>  #define CLKID_AO_I2C		  93
+> +/* CLKID_SD_EMMC_A */
+> +/* CLKID_SD_EMMC_B */
+> +/* CLKID_SD_EMMC_C */
+>  
+> -#define NR_CLKS			  94
+> +#define NR_CLKS			  97
+>  
+>  /* include the CLKIDs that have been made part of the stable DT binding */
+>  #include <dt-bindings/clock/gxbb-clkc.h>
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+> index f889d80246cb..7d418643cdcc 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -6,7 +6,11 @@
+>  #define __GXBB_CLKC_H
+>  
+>  #define CLKID_CPUCLK		1
+> +#define CLKID_FCLK_DIV2		4
+>  #define CLKID_CLK81		12
+>  #define CLKID_ETH		36
+> +#define CLKID_SD_EMMC_A		94
+> +#define CLKID_SD_EMMC_B		95
+> +#define CLKID_SD_EMMC_C		96
+>  
+>  #endif /* __GXBB_CLKC_H */
