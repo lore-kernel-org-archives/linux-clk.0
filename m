@@ -1,37 +1,39 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 0/2] clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
-Date: Mon, 22 Aug 2016 17:41:46 +0900
-Message-id: <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 15 Aug 2016 14:09:44 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: add DT binding for the TBG
+ clocks on Armada 3700
+Message-ID: <20160815210944.GB361@codeaurora.org>
+References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+ <1468935742-11218-4-git-send-email-gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468935742-11218-4-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches add the clocks for CMU_CDREX (DRAM Express Controller)
-that generates the clocks for DRAM and NoC (Network on Chip) bus clock.
+On 07/19, Gregory CLEMENT wrote:
+> This commit adds the DT binding documentation for the Time Base Generator
+> clock used in the Marvell Armada 3700 SoCs.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-[Result for clk_summary on exynos5422-odroidxu3 board]
-    fout_bpll                             0            0   825000000          0 0  
-       mout_bpll                          0            0   825000000          0 0  
-          mout_mclk_cdrex                 0            0   825000000          0 0  
-             dout_pclk_core_mem           0            0   206250000          0 0  
-             dout_sclk_cdrex              0            0   825000000          0 0  
-                dout_clk2x_phy0           0            0   825000000          0 0  
-                   dout_aclk_cdrex1           0            0   412500000          0 0  
-                      dout_pclk_cdrex           0            0   103125000          0 0  
-                   dout_cclk_drex0           0            0   412500000          0 0  
-
-Chanwoo Choi (2):
-  dt-bindings: Add the clock id for CMU_CDREX (DRAM Express Controller)
-  clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
-
- drivers/clk/samsung/clk-exynos5420.c   | 35 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/exynos5420.h | 11 ++++++++++-
- 2 files changed, 45 insertions(+), 1 deletion(-)
+Applied to clk-next
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
