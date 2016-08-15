@@ -1,161 +1,109 @@
-Return-Path: <hotran@apm.com>
-Return-Path: <hotran@apm.com>
-From: Hoan Tran <hotran@apm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	lho@apm.com,
-	Duc Dang <dhdang@apm.com>,
-	Hoan Tran <hotran@apm.com>
-Subject: [PATCH 3/3] arm64: dts: xgene: Add DT node for APM X-Gene 2 CPU clocks
-Date: Tue, 23 Aug 2016 08:52:41 -0700
-Message-Id: <1471967561-23634-4-git-send-email-hotran@apm.com>
-In-Reply-To: <1471967561-23634-1-git-send-email-hotran@apm.com>
-References: <1471967561-23634-1-git-send-email-hotran@apm.com>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 2/5] clk: sunxi-ng: mux: support fixed pre-dividers on multiple parents
+Date: Mon, 15 Aug 2016 16:13:12 +0800
+Message-Id: <1471248795-17951-3-git-send-email-wens@csie.org>
+In-Reply-To: <1471248795-17951-1-git-send-email-wens@csie.org>
+References: <1471248795-17951-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT nodes to enable APM X-Gene 2 CPU clocks.
+Some clocks on the A31 have fixed pre-dividers on multiple parents.
+Add support for them.
 
-Signed-off-by: Hoan Tran <hotran@apm.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi | 64 ++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+Changes since v1:
 
-diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-index 1425ed4..e656e16 100644
---- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-@@ -26,6 +26,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_0>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd0clk 0>;
- 		};
- 		cpu@001 {
- 			device_type = "cpu";
-@@ -34,6 +36,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_0>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd0clk 0>;
- 		};
- 		cpu@100 {
- 			device_type = "cpu";
-@@ -42,6 +46,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_1>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd1clk 0>;
- 		};
- 		cpu@101 {
- 			device_type = "cpu";
-@@ -50,6 +56,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_1>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd1clk 0>;
- 		};
- 		cpu@200 {
- 			device_type = "cpu";
-@@ -58,6 +66,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_2>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd2clk 0>;
- 		};
- 		cpu@201 {
- 			device_type = "cpu";
-@@ -66,6 +76,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_2>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd2clk 0>;
- 		};
- 		cpu@300 {
- 			device_type = "cpu";
-@@ -74,6 +86,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_3>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd3clk 0>;
- 		};
- 		cpu@301 {
- 			device_type = "cpu";
-@@ -82,6 +96,8 @@
- 			enable-method = "spin-table";
- 			cpu-release-addr = <0x1 0x0000fff8>;
- 			next-level-cache = <&xgene_L2_3>;
-+			#clock-cells = <1>;
-+			clocks = <&pmd3clk 0>;
- 		};
- 		xgene_L2_0: l2-cache-0 {
- 			compatible = "cache";
-@@ -223,6 +239,54 @@
- 				clock-output-names = "refclk";
- 			};
+  - Add field for number of fixed pre-dividers.
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c |  9 +++++----
+ drivers/clk/sunxi-ng/ccu_mux.c      |  6 ++++--
+ drivers/clk/sunxi-ng/ccu_mux.h      | 11 +++++++----
+ 3 files changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 9af359544110..a01298881991 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -184,15 +184,16 @@ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
+ 			     0);
  
-+			pmdpll: pmdpll@170000f0 {
-+				compatible = "apm,xgene-pcppll-v2-clock";
-+				#clock-cells = <1>;
-+				clocks = <&refclk 0>;
-+				reg = <0x0 0x170000f0 0x0 0x10>;
-+				clock-output-names = "pmdpll";
-+			};
+ static const char * const ahb2_parents[] = { "ahb1" , "pll-periph0" };
++static const struct ccu_mux_fixed_prediv ahb2_fixed_predivs[] = {
++	{ .index = 1, .div = 2 },
++	{ },
++};
+ static struct ccu_mux ahb2_clk = {
+ 	.mux		= {
+ 		.shift	= 0,
+ 		.width	= 1,
+ 
+-		.fixed_prediv	= {
+-			.index	= 1,
+-			.div	= 2,
+-		},
++		.fixed_predivs	= ahb2_fixed_predivs,
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 68b32f168a74..7b17e0c26b01 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -20,6 +20,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ {
+ 	u16 prediv = 1;
+ 	u32 reg;
++	int i;
+ 
+ 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
+ 	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
+@@ -32,8 +33,9 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ 	}
+ 
+ 	if (common->features & CCU_FEATURE_FIXED_PREDIV)
+-		if (parent_index == cm->fixed_prediv.index)
+-			prediv = cm->fixed_prediv.div;
++		for (i = 0; i < cm->n_predivs; i++)
++			if (parent_index == cm->fixed_predivs[i].index)
++				prediv = cm->fixed_predivs[i].div;
+ 
+ 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
+ 		if (parent_index == cm->variable_prediv.index) {
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index f0078de78712..5308b41da22a 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -5,15 +5,18 @@
+ 
+ #include "ccu_common.h"
+ 
++struct ccu_mux_fixed_prediv {
++	u8	index;
++	u16	div;
++};
 +
-+			pmd0clk: pmd0clk {
-+				compatible = "apm,xgene-pmd-clock";
-+				#clock-cells = <1>;
-+				clocks = <&pmdpll 0>;
-+				reg = <0x0 0x7E200200 0x0 0x10>;
-+				clock-shift = <8>;
-+				clock-width = <3>;
-+				clock-output-names = "pmd0clk";
-+			};
-+
-+			pmd1clk: pmd1clk {
-+				compatible = "apm,xgene-pmd-clock";
-+				#clock-cells = <1>;
-+				clocks = <&pmdpll 0>;
-+				reg = <0x0 0x7E200210 0x0 0x10>;
-+				clock-shift = <8>;
-+				clock-width = <3>;
-+				clock-output-names = "pmd1clk";
-+			};
-+
-+			pmd2clk: pmd2clk {
-+				compatible = "apm,xgene-pmd-clock";
-+				#clock-cells = <1>;
-+				clocks = <&pmdpll 0>;
-+				reg = <0x0 0x7E200220 0x0 0x10>;
-+				clock-shift = <8>;
-+				clock-width = <3>;
-+				clock-output-names = "pmd2clk";
-+			};
-+
-+			pmd3clk: pmd3clk {
-+				compatible = "apm,xgene-pmd-clock";
-+				#clock-cells = <1>;
-+				clocks = <&pmdpll 0>;
-+				reg = <0x0 0x7E200230 0x0 0x10>;
-+				clock-shift = <8>;
-+				clock-width = <3>;
-+				clock-output-names = "pmd3clk";
-+			};
-+
- 			socpll: socpll@17000120 {
- 				compatible = "apm,xgene-socpll-v2-clock";
- 				#clock-cells = <1>;
+ struct ccu_mux_internal {
+ 	u8		shift;
+ 	u8		width;
+ 	const u8	*table;
+ 
+-	struct {
+-		u8	index;
+-		u16	div;
+-	} fixed_prediv;
++	const struct ccu_mux_fixed_prediv	*fixed_predivs;
++	u8		n_predivs;
+ 
+ 	struct {
+ 		u8	index;
 -- 
-1.9.1
+2.8.1
