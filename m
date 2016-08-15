@@ -1,33 +1,38 @@
-Return-Path: <horms@verge.net.au>
-Date: Tue, 30 Aug 2016 09:06:41 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] clk: renesas: rz: Select EXTAL vs USB clock
-Message-ID: <20160830070640.GD12845@verge.net.au>
-References: <20160825190518.20764-1-chris.brandt@renesas.com>
- <20160830031358.19468-1-chris.brandt@renesas.com>
- <20160830070443.GC12845@verge.net.au>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 15 Aug 2016 15:40:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH V3 4/4] clk: max77686: Add support for MAX77620 clocks
+Message-ID: <20160815224048.GR361@codeaurora.org>
+References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
+ <1466160667-28451-5-git-send-email-ldewangan@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160830070443.GC12845@verge.net.au>
+In-Reply-To: <1466160667-28451-5-git-send-email-ldewangan@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 30, 2016 at 09:04:44AM +0200, Simon Horman wrote:
-> On Mon, Aug 29, 2016 at 11:13:58PM -0400, Chris Brandt wrote:
-> > Check the MD_CLK pin to determine the current clock mode in order to set
-> > the pll clock parent correctly.
-> > 
-> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> > ---
-> > v2:
-> > * Switched to reading MD_CLK pin to determine mode
+On 06/17, Laxman Dewangan wrote:
+> Maxim Max77620 has one 32KHz clock output and the clock HW
+> IP used on this PMIC is same as what it is there in the MAX77686.
 > 
-> Thanks, I have queued this up.
+> Add clock driver support for MAX77620 on the MAX77686 driver.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
 
-Sorry, I hit reply to the wrong message
-This patch is for Geert not me.
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
