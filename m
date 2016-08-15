@@ -1,33 +1,83 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:36:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 34/34] clk: wm831x: Migrate to clk_hw based registration
- APIs
-Message-ID: <20160825003623.GG19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-35-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-35-stephen.boyd@linaro.org>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/5] clk: sunxi-ng: Support A31/A31s CCU
+Date: Mon, 15 Aug 2016 16:13:10 +0800
+Message-Id: <1471248795-17951-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+Hi everyone,
 
-Applied to clk-next
+This is v2 of the sunxi-ng clk driver for A31/A31s CCU, consisting of
+the remaining patches that haven't been merged, with some minor changes
+addressing review comments. Changelog is inline in each patch.
+
+This series adds support for the A31/A31s CCU (clock control unit) with
+the new sunxi-ng binding/driver. This is a near complete driver, with a
+few features unimplemented or might need reworking:
+
+  - The HDMI mode of the PLL-MIPI clock is unsupported.
+
+  - The EMAC clock is unimplemented. In the past we modelled this as a
+    clock. Unforunately that doesn't work very well. While it is sort
+    of a clock control, with clock inverters and delay chains, it also
+    controls the interface mode of the EMAC. On later SoCs this register
+    is moved out of the CCU, into the system control register range.
+    Other platforms consider this a part of the ethernet controller glue
+    logic, and map and use it directly as part of the controller bindings.
+    I would like to do the same.
+
+  - The A31 has 2 SDRAM clocks and 2 MBUS clocks. As such we can't have
+    them all as the DRAM gate clocks' parent. Instead I'm using the MDFS
+    clock as their parent. It is unclear what MDFS actually is, but the
+    close proximity of the registers to the DRAM bits, and hints about
+    this tied to DRAM DVFS suggest this is a common memory bus. If we're
+    wrong we can always fix this as the relationship is part of the driver,
+    not the binding. Also, all 5 clocks are marked as critical.
+
+Various changes were made to the common (to sunxi-ng) clock types to make
+them compatible with the A31/A31s' CCU's design.
+
+Also new is support for clk notifiers for mux clocks. This is needed for
+the cpu clock, which should be muxed to the stable main oscillator when
+the PLL-CPU clock rate is changed, to avoid any instabilities in the PLL
+which result in the CPU crashing. This is similar to what the meson
+platform does.
+
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (5):
+  clk: sunxi-ng: mux: Add support for mux tables
+  clk: sunxi-ng: mux: support fixed pre-dividers on multiple parents
+  clk: sunxi-ng: mux: Add clk notifier functions
+  clk: sunxi-ng: Add A31/A31s clocks
+  ARM: dts: sun6i: switch A31/A31s to new CCU clock bindings
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    3 +-
+ arch/arm/boot/dts/sun6i-a31.dtsi                   |  424 ++-----
+ drivers/clk/sunxi-ng/Kconfig                       |   10 +
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c               | 1235 ++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.h               |   72 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |    9 +-
+ drivers/clk/sunxi-ng/ccu_mux.c                     |   54 +-
+ drivers/clk/sunxi-ng/ccu_mux.h                     |   37 +-
+ include/dt-bindings/clock/sun6i-a31-ccu.h          |  187 +++
+ include/dt-bindings/reset/sun6i-a31-ccu.h          |  106 ++
+ 11 files changed, 1798 insertions(+), 340 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-a31.h
+ create mode 100644 include/dt-bindings/clock/sun6i-a31-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun6i-a31-ccu.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
