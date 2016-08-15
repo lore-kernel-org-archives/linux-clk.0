@@ -1,54 +1,52 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:13:40 -0700
+Date: Mon, 15 Aug 2016 15:24:38 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marcin Wojtas <mw@semihalf.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	sebastian.hesselbarth@gmail.com, andrew@lunn.ch,
-	jason@lakedaemon.net, thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com, nadavh@marvell.com,
-	alior@marvell.com, tn@semihalf.com, jaz@semihalf.com
-Subject: Re: [PATCH 1/2] clk: mvebu: set flags in CP110 gate clock
-Message-ID: <20160825001340.GP19826@codeaurora.org>
-References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
- <1471933609-8456-2-git-send-email-mw@semihalf.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
+	galak@codeaurora.org, pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org, varada@codeaurora.org,
+	sricharan@codeaurora.org, architt@codeaurora.org,
+	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] clk: qcom: ipq4019: Added the all frequencies for
+ apps cpu
+Message-ID: <20160815222438.GK361@codeaurora.org>
+References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
+ <1466516962-18087-5-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471933609-8456-2-git-send-email-mw@semihalf.com>
+In-Reply-To: <1466516962-18087-5-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/23, Marcin Wojtas wrote:
-> Armada CP110 system controller comprise its own routine responsble
-> for registering gate clocks. Among others 'flags' field in
-> struct clk_init_data was not set, using a random values, which
-> may cause an unpredicted behavior.
-> 
-> This patch fixes the problem by setting CLK_IS_BASIC flag for
-> all gated clocks of Armada 7k/8k SoCs family.
-> 
-> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
-> 
-> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
-> ---
->  drivers/clk/mvebu/cp110-system-controller.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-> index 7fa42d6..0835e1d 100644
-> --- a/drivers/clk/mvebu/cp110-system-controller.c
-> +++ b/drivers/clk/mvebu/cp110-system-controller.c
-> @@ -144,6 +144,7 @@ static struct clk *cp110_register_gate(const char *name,
+On 06/21, Abhishek Sahu wrote:
+> @@ -554,11 +554,21 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
+>  };
 >  
->  	init.name = name;
->  	init.ops = &cp110_gate_ops;
-> +	init.flags = CLK_IS_BASIC;
+>  static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+> -	F(48000000, P_XO,	   1, 0, 0),
+> -	F(200000000, P_FEPLL200,   1, 0, 0),
+> -	F(500000000, P_FEPLL500,   1, 0, 0),
+> -	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	{ }
+> +	{48000000, P_XO,          1, 0, 0},
+> +	{200000000, P_FEPLL200,   1, 0, 0},
+> +	{380000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{409000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{444000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{484000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{500000000, P_FEPLL500,   1, 0, 0},
+> +	{507000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{532000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{560000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{592000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{626000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{666000000, P_DDRPLLAPSS, 1, 0, 0},
+> +	{710000000, P_DDRPLLAPSS, 1, 0, 0},
 
-Please don't use CLK_IS_BASIC unless you need it (so far only TI
-clks seem to want it?). Just set it to 0 if possible.
-
->  	init.parent_names = &parent_name;
->  	init.num_parents = 1;
->  
+Please keep using F macro just in case the hid changes.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
