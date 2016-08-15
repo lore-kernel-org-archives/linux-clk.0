@@ -1,146 +1,79 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	gnurou@gmail.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com
-Cc: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Sat,  6 Aug 2016 21:40:49 +0200
-Message-Id: <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1471229226.8551.16.camel@mtksdaap41>
+Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
+ parents
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann
+	<arnd@arndb.de>, <devicetree@vger.kernel.org>, Erin Lo
+	<erin.lo@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, <linux-mediatek@lists.infradead.org>, "Sascha
+ Hauer" <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date: Mon, 15 Aug 2016 10:47:06 +0800
+In-Reply-To: <20160813003913.GA361@codeaurora.org>
+References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
+	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
+	 <20160702012140.GB17071@codeaurora.org>
+	 <1467604308.26485.4.camel@mtksdaap41>
+	 <146802073038.73491.6675612765998057903@resonance>
+	 <1468225452.31247.7.camel@mtksdaap41> <1470203182.17063.3.camel@mtksdaap41>
+	 <1470721183.8551.6.camel@mtksdaap41> <20160810210922.GD2996@codeaurora.org>
+	 <1470989873.8551.10.camel@mtksdaap41> <20160813003913.GA361@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+Hi Stephen,
 
-Document the devicetree bindings for the Generic Memory Interface (GMI)
-bus driver found on Tegra SOCs.
+On Fri, 2016-08-12 at 17:39 -0700, Stephen Boyd wrote:
+> On 08/12, James Liao wrote:
+> > On Wed, 2016-08-10 at 14:09 -0700, Stephen Boyd wrote:
+> > > (Including lists)
+> > > 
+> > > On 08/09, James Liao wrote:
+> > > > On Wed, 2016-08-03 at 13:46 +0800, James Liao wrote:
+> > > >>
+> > > >> Hi Mike,
+> > > >>
+> > > >> Do you have new patches to fix new clock parents? If not, I think we can
+> > > >> use my patch first. Is it okay?
+> > > >>
+> > > >
+> > > > Hi Stephen,
+> > > >
+> > > > Do you have comments for the bug fixing? I prefer to use my patch (clk:
+> > > > fix initial state of critical clock's parents). How do you think?
+> > > >
+> > > 
+> > > How about we recalc accuracies and rates in addition to the patch
+> > > from Mike? That will fix everything?
+> > 
+> > Hi Stephen,
+> > 
+> > It works!
+> > 
+> > I'll send a new series of MT2701 clock support in few days. Should I
+> > include this patch in my series? Or you'll merge it into clk-next
+> > directly?
+> > 
+> 
+> Thanks. I can take that as a tested-by? I can merge it into
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
----
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 99 ++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+Yes, please feel free to add:
 
-diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-new file mode 100644
-index 0000000..046846e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-@@ -0,0 +1,99 @@
-+Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
-+
-+The Generic Memory Interface bus enables memory transfers between internal and
-+external memory. Can be used to attach various high speed devices such as
-+synchronous/asynchronous NOR, FPGA, UARTS and more.
-+
-+The actual devices are instantiated from the child nodes of a GMI node.
-+
-+Required properties:
-+  - compatible : Should contain one of the following:
-+        For Tegra20 must contain "nvidia,tegra20-gmi".
-+        For Tegra30 must contain "nvidia,tegra30-gmi".
-+ - reg: Should contain GMI controller registers location and length.
-+ - clocks: Must contain an entry for each entry in clock-names.
-+ - clock-names: Must include the following entries: "gmi"
-+ - resets : Must contain an entry for each entry in reset-names.
-+ - reset-names : Must include the following entries: "gmi"
-+ - #address-cells: The number of cells used to represent physical base
-+   addresses in the GMI address space.
-+ - #size-cells: The number of cells used to represent the size of an address
-+   range in the GMI address space.
-+ - ranges: Mapping of the GMI address space to the CPU address space.
-+
-+Note that the GMI controller does not have any internal chip-select address
-+decoding and if you want to access multiple devices external chip-select
-+decoding must be provided. Furthermore, if you do have external logic to
-+support multiple devices this would assume that the devices use the same
-+timing and so are probably the same type. It also assumes that they can fit in
-+the 256MB address range.
-+
-+Optional properties:
-+
-+ - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
-+ - nvidia,snor-mux-mode: Enable address/data MUX mode.
-+ - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
-+   If omitted it will be asserted with data.
-+ - nvidia,snor-rdy-inv: RDY signal is active high
-+ - nvidia,snor-adv-inv: ADV signal is active high
-+ - nvidia,snor-oe-inv: WE/OE signal is active high
-+ - nvidia,snor-cs-inv: CS signal is active high
-+ - nvidia,snor-cs-select: CS output pin configuration. Default is CS0
-+ 	<0> : CS0
-+	<1> : CS1
-+	<2> : CS2
-+	<3> : CS3
-+	<4> : CS4
-+	<5> : CS5
-+	<6> : CS6
-+	<7> : CS7
-+
-+  Note that there is some special handling for the timing values.
-+  From Tegra TRM:
-+  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
-+
-+ - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
-+   bus. Valid values are 0-15, default is 1
-+ - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
-+   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
-+   (in case of MASTER Request). Valid values are 0-15, default is 1
-+ - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
-+   Valid values are 0-15, default is 1.
-+ - nvidia,snor-ce-width: Number of cycles before CE is asserted.
-+   Valid values are 0-255, default is 4
-+ - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
-+   Valid values are 0-15, default is 1
-+ - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
-+   Valid values are 0-255, default is 1
-+ - nvidia,snor-wait-width: Number of cycles before READY is asserted.
-+   Valid values are 0-255, default is 3
-+
-+Example with two SJA1000 CAN controllers connected to the GMI bus:
-+
-+  gmi@70090000 {
-+    #address-cells = <1>;
-+    #size-cells = <1>;
-+    ranges;
-+    nvidia,snor-mux-mode;
-+    nvidia,snor-adv-inv;
-+    nvidia,snor-cs-select = <4>;
-+
-+    bus@0,0 {
-+      compatible = "simple-bus";
-+      reg = <0 0>;
-+      ranges;
-+
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      can@48000000 {
-+        reg = <0x48000000 0x100>;
-+        ...
-+      };
-+
-+      can@48040000 {
-+        reg = <0x48040000 0x100>;
-+        ...
-+      };
-+    };
-+  };
--- 
-2.1.4
+Tested-by: James Liao <jamesjj.liao@mediatek.com>
+
+> clk-next directly, but do we need to put the mt2701 patches on a
+> separate branch to merge into arm-soc? If so we'll need to put
+> this patch first to avoid bisection failures.
+
+I prefer to merge clk driver into mainline first. Patches that depend on
+mt2701 clks such as dtsi can base on next kernel release.
+
+
+Best regards,
+
+James
