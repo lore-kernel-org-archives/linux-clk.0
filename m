@@ -1,74 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:50829 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752902AbcHLQi5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:57 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/PROTO 5/9 option 1] arm64: dts: salvator-x: Configure MSIOF parent clock
-Date: Fri, 12 Aug 2016 18:38:41 +0200
-Message-Id: <1471019925-29083-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 15 Aug 2016 11:29:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
+Message-ID: <20160815182959.GV361@codeaurora.org>
+References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160813164656.DD30A61A06@smtp.codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add assigned-clocks and assigned-clock-rates DT properties to the cpg
-device node, to configure the MSIOF parent clock for 20 MHz.
+On 08/13, Jean-Francois Moine wrote:
+> The hardware phase delay may depend on some other settings as clock
+> reparenting, so, it has to be set each time.
+> Also, when the delay was the same as previously, an error was returned.
+> 
+> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> ---
 
-Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
+This effectively reverts commit 023bd7166be0 (clk: skip
+unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
+to see if Shawn has any comments or if that patch was just a
+broken optimization.
 
-Note that these properties could also be added to an individual MSIOF
-device node. As all MSIOF instances share the same parent clock, this
-is not a good idea:
-  - MSIOF instances initialized before the one with the properties will
-    use the old (default) parent clock rate.
-    When the MSIOF instances with the properties is initialized, the
-    parent clock rate will change. In the absence of a clock notifier,
-    no one will notice (at this point).
-    All subsequent operations will use the new parent clock rate.
-    As the MSIOF driver use clk_get_rate() before setting up each
-    transfer, it will automatically adapt.
-    However, spi_master.{min,max}_speed_hz are not updated (note that
-    currently they are not set by the MSIOF driver anyway!).
-  - If you add conflicting properties to multiple msiof nodes, they will
-    still be used, but override each other, determined by probe order.
+We may want to go another route and get the phase from the
+hardware and compare that to what's requested. That way we don't
+set the phase again unnecessarily.
 
-Cfr. Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  drivers/clk/clk.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 820a939..2e6b91e 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1908,10 +1908,6 @@ int clk_set_phase(struct clk *clk, int degrees)
+>  
+>  	clk_prepare_lock();
+>  
+> -	/* bail early if nothing to do */
+> -	if (degrees == clk->core->phase)
+> -		goto out;
+> -
+>  	trace_clk_set_phase(clk->core, degrees);
+>  
+>  	if (clk->core->ops->set_phase)
 
-   "Configuring a clock's parent and rate through the device node that
-    consumes the clock can be done only for clocks that have a single
-    user. Specifying conflicting parent or rate configuration in
-    multiple consumer nodes for a shared clock is forbidden."
-
-and
-
-   "Configuration of common clocks, which affect multiple consumer
-    devices can be similarly specified in the clock provider node."
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 9040a691b8b61887..61c9f651adbdfcad 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -143,6 +143,11 @@
- 	};
- };
- 
-+&cpg {
-+	assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_MSO>;
-+	assigned-clock-rates = <20000000>;
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
