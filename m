@@ -1,88 +1,81 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 15 Aug 2016 14:10:14 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v3 4/6] clk: mvebu Add the time base generator clocks for
+ Armada 3700
+Message-ID: <20160815211014.GC361@codeaurora.org>
+References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+ <1468935742-11218-5-git-send-email-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20160824180806.GE19826@codeaurora.org>
-References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
- <20160804212553.GB15690@codeaurora.org> <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
- <20160808233711.GA2996@codeaurora.org> <CAK7LNAScz7bJABbOgUuvg9J-ORaiLEfpwA3yMP+bZbLgB+S3uQ@mail.gmail.com>
- <20160810230845.GH2996@codeaurora.org> <CAK7LNAQ9wgpHn2LXiFfbyp_j85h8ZkGnAP39eVj+jmKczi=VSA@mail.gmail.com>
- <CAK7LNAThC-oBV5qNRNLnkV_tS7JLZDVoeEYrJo_8LsbRftELew@mail.gmail.com> <20160824180806.GE19826@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 25 Aug 2016 11:36:47 +0900
-Message-ID: <CAK7LNAQgzaZH7Ondt9r7yJ1iwSqyzqSOO+1oZvbaq_kmrPQeLQ@mail.gmail.com>
-Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1468935742-11218-5-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 07/19, Gregory CLEMENT wrote:
+> These clocks are children of the xtal clock and each one can be selected
+> as a source for the peripheral clocks.
+> 
+> According to the datasheet it should be possible to modify their rate,
+> but currently it is not supported.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
 
+Applied to clk-next + the following squashed in
 
-2016-08-25 3:08 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> (Please trim replies)
->
-> On 08/24, Masahiro Yamada wrote:
->>
->> Looks like the whole of my series was rejected,
->> but I was not sure why the following one was rejected.
->> https://patchwork.kernel.org/patch/9236563/
->>
->
-> Replying to that patch would have been better.
->
->>
->> Could you explain why -EPROBE_DEFER should be returned
->> if both .get_hw and .get are missing.
->
-> That's just a bug. Perhaps this patch would be better, and look,
-> it saves 5 lines.
->
-> ---8<----
->  drivers/clk/clk.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 71cc56712666..d3d26148cdfb 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3174,19 +3174,14 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
->                               struct of_phandle_args *clkspec)
->  {
->         struct clk *clk;
-> -       struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
->
-> -       if (provider->get_hw) {
-> -               hw = provider->get_hw(clkspec, provider->data);
-> -       } else if (provider->get) {
-> -               clk = provider->get(clkspec, provider->data);
-> -               if (!IS_ERR(clk))
-> -                       hw = __clk_get_hw(clk);
-> -               else
-> -                       hw = ERR_CAST(clk);
-> -       }
-> +       if (provider->get_hw)
-> +               return provider->get_hw(clkspec, provider->data);
->
-> -       return hw;
-> +       clk = provider->get(clkspec, provider->data);
-> +       if (IS_ERR(clk))
-> +               return ERR_CAST(clk);
-> +       return __clk_get_hw(clk);
->  }
->
->  struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
-
-
-Good.
-Could you post it as a patch file?
-
-
-Thanks!
-
-
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+index 2063ba7d5cb1..aa80db11f543 100644
+--- a/drivers/clk/mvebu/armada-37xx-tbg.c
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -46,14 +46,14 @@ struct tbg_def {
+ 	u32 vcodiv_offset;
+ };
+ 
+-const struct tbg_def tbg[NUM_TBG] = {
++static const struct tbg_def tbg[NUM_TBG] = {
+ 	{"TBG-A-P", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL8, TBG_A_VCODIV_DIFF},
+ 	{"TBG-B-P", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL8, TBG_B_VCODIV_DIFF},
+ 	{"TBG-A-S", TBG_A_REFDIV, TBG_A_FBDIV, TBG_CTRL1, TBG_A_VCODIV_SE},
+ 	{"TBG-B-S", TBG_B_REFDIV, TBG_B_FBDIV, TBG_CTRL1, TBG_B_VCODIV_SE},
+ };
+ 
+-unsigned int tbg_get_mult(void __iomem *reg, const struct tbg_def *ptbg)
++static unsigned int tbg_get_mult(void __iomem *reg, const struct tbg_def *ptbg)
+ {
+ 	u32 val;
+ 
+@@ -62,7 +62,7 @@ unsigned int tbg_get_mult(void __iomem *reg, const struct tbg_def *ptbg)
+ 	return ((val >> ptbg->fbdiv_offset) & TBG_DIV_MASK) << 2;
+ }
+ 
+-unsigned int tbg_get_div(void __iomem *reg, const struct tbg_def *ptbg)
++static unsigned int tbg_get_div(void __iomem *reg, const struct tbg_def *ptbg)
+ {
+ 	u32 val;
+ 	unsigned int div;
+@@ -99,7 +99,7 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+ 	hw_tbg_data->num = NUM_TBG;
+ 	platform_set_drvdata(pdev, hw_tbg_data);
+ 
+-	parent = devm_clk_get(dev, 0);
++	parent = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(parent)) {
+ 		dev_err(dev, "Could get the clock parent\n");
+ 		return -EINVAL;
 
 -- 
-Best Regards
-Masahiro Yamada
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
