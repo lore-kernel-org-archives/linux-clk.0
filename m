@@ -1,77 +1,38 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 11 Aug 2016 15:28:42 -0700
+Date: Mon, 15 Aug 2016 14:24:31 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stefan Agner <stefan@agner.ch>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH] clk: imx7d: do not set the parent of
- IMX7D_ENET_AXI_ROOT_SRC
-Message-ID: <20160811222842.GM2996@codeaurora.org>
-References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
- <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
+	Romain Perier <romain.perier@free-electrons.com>,
+	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>,
+	Terry Zhou <bjzhou@marvell.com>
+Subject: Re: [PATCH v3 5/6] dt-bindings: clock: add DT binding for the
+ peripheral clocks on Armada 3700
+Message-ID: <20160815212431.GE361@codeaurora.org>
+References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
+ <1468935742-11218-6-git-send-email-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
+In-Reply-To: <1468935742-11218-6-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Fabio Estevam wrote:
-> Hi Mike,
+On 07/19, Gregory CLEMENT wrote:
+> This commit adds the DT binding documentation for the peripheral clocks
+> used in the Marvell Armada 3700 SoCs.
 > 
-> On Fri, Jul 15, 2016 at 10:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
-> > Booting the kernel on a imx7s-warp leads to several warnings like these:
-> >
-> > [    0.000000] ------------[ cut here ]------------
-> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:3536 lock_release+0x2f8/0x330
-> > [    0.000000] releasing a pinned lock
-> >
-> > [    0.000000] ------------[ cut here ]------------
-> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:2722 trace_hardirqs_on_caller+0x1ac/0x1f4
-> > [    0.000000] DEBUG_LOCKS_WARN_ON(unlikely(early_boot_irqs_disabled))
-> >
-> > [    0.000000] ---[ end trace cb88537fdc8fa201 ]---
-> > [    0.000000] bad: scheduling from the idle thread!
-> > [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W       4.7.0-rc7-next-20160715 #404
-> >
-> > [    0.000000] ------------[ cut here ]------------
-> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
-> > [    0.000000] Modules linked in:
-> >
-> > [    0.000591] ------------[ cut here ]------------
-> > [    0.000610] WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:179 sched_clock_register+0x44/0x1f8
-> >
-> > [    0.002084] ------------[ cut here ]------------
-> > [    0.002104] WARNING: CPU: 0 PID: 0 at init/main.c:576 start_kernel+0x258/0x3b0
-> > [    0.002114] Interrupts were enabled early
-> >
-> >
-> > This fix is along the same lines as 5e33ebff7edd ("clk: imx7d: do not
-> > set parent of ethernet time/ref clocks") and the explanation from that
-> > commit is:
-> >
-> > "The reason for the warning is that setting the parent enables the ENET
-> >  PLL since we are using CLK_OPS_PARENT_ENABLE. Enabling the ENET PLL can
-> >  cause clk_pllv3_wait_lock to sleep. See also:
-> >  commit fc8726a2c021 ("clk: core: support clocks which requires parents
-> >  enable (part 2)")."
-> >
-> > imx7s-warp does not even use the FEC interface, so we should not really
-> > configure the parent of IMX7D_ENET_AXI_ROOT_SRC in the common MX7 clock
-> > driver code.
-> >
-> > The dts file should use the assigned-clocks/assigned-clock-parents method,
-> > so simply remove the configuration of IMX7D_ENET_AXI_ROOT_SRC parent.
-> >
-> > Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> Do you think this one could be applied to 4.8-rc?
->
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Is there a "Fixes:" tag that can be applied here? Does this
-depend on some sort of DTS changes to add assigned clocks and
-parents?
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
