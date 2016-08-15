@@ -1,39 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:30:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	=?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH 27/34] clk: si514: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160825003029.GC19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-28-stephen.boyd@linaro.org>
+Return-Path: <yuantian.tang@nxp.com>
+From: <yuantian.tang@nxp.com>
+To: <mturquette@baylibre.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<scott.wood@nxp.com>, Tang Yuantian <Yuantian.Tang@nxp.com>, Tang Yuantian
+	<yuantian.tang@nxp.com>
+Subject: [PATCH] clk: qoriq: fix a register offset error
+Date: Mon, 15 Aug 2016 15:28:20 +0800
+Message-ID: <1471246100-40713-1-git-send-email-yuantian.tang@nxp.com>
+Return-Path: yuantian.tang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20160601231533.9354-28-stephen.boyd@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
-> Cc: Mike Looijmans <mike.looijmans@topic.nl>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+From: Tang Yuantian <Yuantian.Tang@nxp.com>
 
-Applied to clk-next
+The offset of Core Cluster clock control/status register
+on cluster group V3 version is different from others, and
+should be plus 0x70000.
 
+Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+---
+ drivers/clk/clk-qoriq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index f4c455a..05e416c 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -774,7 +774,11 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
+ 	if (!hwc)
+ 		return NULL;
+ 
+-	hwc->reg = cg->regs + 0x20 * idx;
++	if (cg->info.flags & CG_VER3)
++		hwc->reg = cg->regs + 0x70000 + 0x20 * idx;
++	else
++		hwc->reg = cg->regs + 0x20 * idx;
++
+ 	hwc->info = cg->info.cmux_groups[cg->info.cmux_to_group[idx]];
+ 
+ 	/*
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
