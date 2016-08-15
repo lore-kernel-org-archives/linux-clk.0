@@ -1,37 +1,66 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <2f74597a-de90-884e-6878-cbe60c48af24@cogentembedded.com>
-References: <20160825190518.20764-1-chris.brandt@renesas.com> <2f74597a-de90-884e-6878-cbe60c48af24@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Aug 2016 20:41:37 +0200
-Message-ID: <CAMuHMdU5BhqOfGhpn2K7B0imTVxYrnewDWzC3sk2wZ-rFysLLA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] clk: Return errors from clk providers in __of_clk_get_from_provider()
+Date: Mon, 15 Aug 2016 14:45:40 -0700
+Message-Id: <20160815214540.20381-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 29, 2016 at 8:39 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
->> +               np = of_find_node_by_name(NULL, "usb_x1");
->
->
->    "usb_x1" looks like a board specific name too much. Previously on R-Car
-> we had the USB_EXTAL pin, maybe that one would be better?
+Before commit 0861e5b8cf80 (clk: Add clk_hw OF clk providers,
+2016-02-05) __of_clk_get_from_provider() would return an error
+pointer of the provider's choosing if there was a provider
+registered and EPROBE_DEFER otherwise. After that commit, it
+would return EPROBE_DEFER regardless of whether or not the
+provider returned an error. This is odd and can lead to behavior
+where clk consumers keep probe deferring when they should be
+seeing some other error.
 
-See Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+Let's restore the previous behavior where we only return
+EPROBE_DEFER when there isn't a provider in our of_clk_providers
+list. Otherwise, return the error from the last provider we find
+that matches the node.
 
-Gr{oetje,eeting}s,
+Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: 0861e5b8cf80 ("clk: Add clk_hw OF clk providers")
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 6298715d0e44..71cc56712666 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3194,7 +3194,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ {
+ 	struct of_clk_provider *provider;
+ 	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
+-	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
++	struct clk_hw *hw;
+ 
+ 	if (!clkspec)
+ 		return ERR_PTR(-EINVAL);
+@@ -3202,12 +3202,13 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ 	/* Check if we have such a provider in our array */
+ 	mutex_lock(&of_clk_mutex);
+ 	list_for_each_entry(provider, &of_clk_providers, link) {
+-		if (provider->node == clkspec->np)
++		if (provider->node == clkspec->np) {
+ 			hw = __of_clk_get_hw_from_provider(provider, clkspec);
+-		if (!IS_ERR(hw)) {
+ 			clk = __clk_create_clk(hw, dev_id, con_id);
++		}
+ 
+-			if (!IS_ERR(clk) && !__clk_get(clk)) {
++		if (!IS_ERR(clk)) {
++			if (!__clk_get(clk)) {
+ 				__clk_free_clk(clk);
+ 				clk = ERR_PTR(-ENOENT);
+ 			}
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
