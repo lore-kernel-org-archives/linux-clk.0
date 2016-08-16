@@ -1,92 +1,66 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: [PATCH v3 14/14] ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-Date: Mon, 29 Aug 2016 14:27:06 +0200
-Message-ID: <1472473626-15398-15-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <stephen.boyd@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <665a9824-b0c5-9eb3-d4b6-4821204d5db0@osg.samsung.com>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-18-stephen.boyd@linaro.org> <CABxcv=mWdwPrGRrP7ay=2FBxzoew6yBdfjZNvgFeDGACnQZdcQ@mail.gmail.com>
+ <665a9824-b0c5-9eb3-d4b6-4821204d5db0@osg.samsung.com>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Date: Tue, 16 Aug 2016 13:06:03 -0700
+Message-ID: <CAJOFmgzfvUza7DQeMsd0bD_e=+P5=WGT8kOkV7H5CCwVq4Z0RQ@mail.gmail.com>
+Subject: Re: [PATCH 17/34] clk: maxgen: Migrate to clk_hw based OF and
+ registration APIs
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Tue, Jun 7, 2016 at 11:55 AM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> On 06/07/2016 02:50 PM, Javier Martinez Canillas wrote:
+>> Hello Stephen,
+>>
+>> On Wed, Jun 1, 2016 at 7:15 PM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
+>>> Now that we have clk_hw based provider APIs to register clks, we
+>>> can get rid of struct clk pointers while registering clks in
+>>> these drivers, allowing us to move closer to a clear split of
+>>> consumer and provider clk APIs.
+>>>
+>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>
+>> This email address doesn't exist anymore, you can use
+>> javier@osg.samsung.com instead.
+>>
+>>> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+>>> ---
+>>>
+>>> See commit 58657d189a2f and it's children for details on this
+>>> new registration API.
+>>>
+>>
+>> I tried this patch on top of linux-next and my Peach Pi Chromebook
+>> (that has a max77802 chip) failed to boot. Following is the relevant
+>> parts from the boot log:
+>>
+>
+> It seems the mailer did a mess with the line wrapping so here's another attempt:
+>
 
-It is necessary to properly configure these clocks in order
-to address 720p and 1080p HDMI resolution.
+Thanks! Found the problem too.
 
-Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+----8<-----
+diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
+index 4bb53fcf8639..5e8bac190698 100644
+--- a/drivers/clk/clk-max-gen.c
++++ b/drivers/clk/clk-max-gen.c
+@@ -169,7 +169,7 @@ int max_gen_clk_probe(struct platform_device
+*pdev, struct regmap *regmap,
 
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-index 18ed1ad..7eec729 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -103,7 +103,10 @@
- 			#size-cells = <1>;
- 
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
--					  <&clk_s_d2_quadfs 0>,
-+					  <&clk_s_d2_quadfs 1>,
-+					  <&clk_s_c0_pll1 0>,
-+					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
-+					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
-@@ -113,14 +116,21 @@
- 
- 			assigned-clock-parents = <0>,
- 						 <0>,
-+						 <0>,
-+						 <&clk_s_c0_pll1 0>,
-+						 <&clk_s_c0_pll1 0>,
- 						 <&clk_s_d2_quadfs 0>,
--						 <&clk_s_d2_quadfs 0>,
-+						 <&clk_s_d2_quadfs 1>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>;
- 
--			assigned-clock-rates = <297000000>, <297000000>;
-+			assigned-clock-rates = <297000000>,
-+					       <108000000>,
-+					       <0>,
-+					       <400000000>,
-+					       <400000000>;
- 
- 			ranges;
- 
--- 
-1.9.1
+        if (dev->of_node) {
+                ret = of_clk_add_hw_provider(dev->of_node, of_clk_max_gen_get,
+-                                            max_gen_clks);
++                                            max_gen_data);
+                if (ret) {
+                        dev_err(dev, "failed to register OF clock provider\n");
+                        return ret;
