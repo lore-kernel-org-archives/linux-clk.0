@@ -1,151 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:39193 "EHLO
-	leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752585AbcHRTKT (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 15:10:19 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by leibniz.telenet-ops.be (Postfix) with ESMTP id 3sFYBq6wrkzMqvZd
-	for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2016 19:34:59 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-	Mark Brown <broonie@kernel.org>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
-	linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 3/3] MIPS: TXx9: Convert to Common Clock Framework
-Date: Thu, 18 Aug 2016 19:34:27 +0200
-Message-Id: <1471541667-30689-4-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
-References: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 16/17] Revert
+ "i2c: exynos5: Fix possible ABBA deadlock by keeping I2C clock prepared"
+Date: Tue, 16 Aug 2016 15:35:13 +0200
+Message-id: <1471354514-24224-17-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace the custom minimal clock implementation for Toshiba TXx9 by a
-basic implementation using the Common Clock Framework.
-
-The only clocks that are provided are those needed by TXx9-specific
-drivers ("imbus" and "spi" (TX4938 only)), and their common parent
-clock "gbus". Other clocks can be added when needed.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+This reverts commit 10ff4c5239a137abfc896ec73ef3d15a0f86a16a.
 ---
-Tested on RBTX4927.
----
- arch/mips/txx9/Kconfig         |  2 +-
- arch/mips/txx9/generic/setup.c | 68 ++++++++++++++++++++----------------------
- 2 files changed, 34 insertions(+), 36 deletions(-)
+ drivers/i2c/busses/i2c-exynos5.c | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-diff --git a/arch/mips/txx9/Kconfig b/arch/mips/txx9/Kconfig
-index 8c337d60f790db9f..42923478d45ca363 100644
---- a/arch/mips/txx9/Kconfig
-+++ b/arch/mips/txx9/Kconfig
-@@ -20,7 +20,7 @@ config MACH_TXX9
- 	select SYS_SUPPORTS_32BIT_KERNEL
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select SYS_SUPPORTS_BIG_ENDIAN
--	select HAVE_CLK
-+	select COMMON_CLK
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index c0e3ada02876..8710052eeb6b 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -671,9 +671,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+ 		return -EIO;
+ 	}
  
- config TOSHIBA_JMR3927
- 	bool "Toshiba JMR-TX3927 board"
-diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
-index ada92db92f87d91a..2fdbcf91b2cc472c 100644
---- a/arch/mips/txx9/generic/setup.c
-+++ b/arch/mips/txx9/generic/setup.c
-@@ -15,7 +15,8 @@
- #include <linux/interrupt.h>
- #include <linux/string.h>
- #include <linux/module.h>
--#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/err.h>
- #include <linux/gpio/driver.h>
- #include <linux/platform_device.h>
-@@ -83,40 +84,6 @@ int txx9_ccfg_toeon __initdata;
- int txx9_ccfg_toeon __initdata = 1;
- #endif
+-	ret = clk_enable(i2c->clk);
+-	if (ret)
+-		return ret;
++	clk_prepare_enable(i2c->clk);
  
--/* Minimum CLK support */
--
--struct clk *clk_get(struct device *dev, const char *id)
--{
--	if (!strcmp(id, "spi-baseclk"))
--		return (struct clk *)((unsigned long)txx9_gbus_clock / 2 / 2);
--	if (!strcmp(id, "imbus_clk"))
--		return (struct clk *)((unsigned long)txx9_gbus_clock / 2);
--	return ERR_PTR(-ENOENT);
--}
--EXPORT_SYMBOL(clk_get);
--
--int clk_enable(struct clk *clk)
--{
--	return 0;
--}
--EXPORT_SYMBOL(clk_enable);
--
--void clk_disable(struct clk *clk)
--{
--}
--EXPORT_SYMBOL(clk_disable);
--
--unsigned long clk_get_rate(struct clk *clk)
--{
--	return (unsigned long)clk;
--}
--EXPORT_SYMBOL(clk_get_rate);
--
--void clk_put(struct clk *clk)
--{
--}
--EXPORT_SYMBOL(clk_put);
--
- #define BOARD_VEC(board)	extern struct txx9_board_vec board;
- #include <asm/txx9/boards.h>
- #undef BOARD_VEC
-@@ -560,8 +527,39 @@ void __init plat_time_init(void)
- 	txx9_board_vec->time_init();
+ 	for (i = 0; i < num; i++, msgs++) {
+ 		stop = (i == num - 1);
+@@ -697,7 +695,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+ 	}
+ 
+  out:
+-	clk_disable(i2c->clk);
++	clk_disable_unprepare(i2c->clk);
+ 	return ret;
  }
  
-+static void txx9_clk_init(void)
-+{
-+	struct clk *clk;
-+	int error;
-+
-+	clk = clk_register_fixed_rate(NULL, "gbus", NULL, 0, txx9_gbus_clock);
-+	if (IS_ERR(clk)) {
-+		error = PTR_ERR(clk);
-+		goto fail;
-+	}
-+
-+	clk = clk_register_fixed_factor(NULL, "imbus", "gbus", 0, 1, 2);
-+	error = clk_register_clkdev(clk, "imbus_clk", NULL);
-+	if (error)
-+		goto fail;
-+
-+	if (TX4938_REV_PCODE() == 0x4938) {
-+		clk = clk_register_fixed_factor(NULL, "spi", "gbus", 0, 1, 4);
-+		error = clk_register_clkdev(clk, "spi-baseclk", NULL);
-+		if (error)
-+			goto fail;
-+	}
-+
-+	return;
-+
-+fail:
-+	pr_err("Failed to register clocks: %d\n", error);
-+}
-+
- static int __init _txx9_arch_init(void)
- {
-+	txx9_clk_init();
-+
- 	if (txx9_board_vec->arch_init)
- 		txx9_board_vec->arch_init();
+@@ -749,9 +747,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	ret = clk_prepare_enable(i2c->clk);
+-	if (ret)
+-		return ret;
++	clk_prepare_enable(i2c->clk);
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	i2c->regs = devm_ioremap_resource(&pdev->dev, mem);
+@@ -803,10 +799,6 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, i2c);
+ 
+-	clk_disable(i2c->clk);
+-
+-	return 0;
+-
+  err_clk:
+ 	clk_disable_unprepare(i2c->clk);
+ 	return ret;
+@@ -818,8 +810,6 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
+ 
+ 	i2c_del_adapter(&i2c->adap);
+ 
+-	clk_unprepare(i2c->clk);
+-
+ 	return 0;
+ }
+ 
+@@ -831,8 +821,6 @@ static int exynos5_i2c_suspend_noirq(struct device *dev)
+ 
+ 	i2c->suspended = 1;
+ 
+-	clk_unprepare(i2c->clk);
+-
+ 	return 0;
+ }
+ 
+@@ -842,9 +830,7 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+ 	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
+ 	int ret = 0;
+ 
+-	ret = clk_prepare_enable(i2c->clk);
+-	if (ret)
+-		return ret;
++	clk_prepare_enable(i2c->clk);
+ 
+ 	ret = exynos5_hsi2c_clock_setup(i2c);
+ 	if (ret) {
+@@ -853,7 +839,7 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+ 	}
+ 
+ 	exynos5_i2c_init(i2c);
+-	clk_disable(i2c->clk);
++	clk_disable_unprepare(i2c->clk);
+ 	i2c->suspended = 0;
+ 
  	return 0;
 -- 
 1.9.1
-
