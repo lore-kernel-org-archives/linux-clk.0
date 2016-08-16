@@ -1,108 +1,105 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1470989873.8551.10.camel@mtksdaap41>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>
-CC: Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>, <devicetree@vger.kernel.org>, Erin Lo
-	<erin.lo@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, <linux-mediatek@lists.infradead.org>, "Sascha
- Hauer" <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Date: Fri, 12 Aug 2016 16:17:53 +0800
-In-Reply-To: <20160810210922.GD2996@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
-	 <20160702012140.GB17071@codeaurora.org>
-	 <1467604308.26485.4.camel@mtksdaap41>
-	 <146802073038.73491.6675612765998057903@resonance>
-	 <1468225452.31247.7.camel@mtksdaap41> <1470203182.17063.3.camel@mtksdaap41>
-	 <1470721183.8551.6.camel@mtksdaap41> <20160810210922.GD2996@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 06/17] clk: gate: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:03 +0200
+Message-id: <1471354514-24224-7-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-08-10 at 14:09 -0700, Stephen Boyd wrote:
-> (Including lists)
-> 
-> On 08/09, James Liao wrote:
-> > On Wed, 2016-08-03 at 13:46 +0800, James Liao wrote:
-> >>
-> >> Hi Mike,
-> >>
-> >> Do you have new patches to fix new clock parents? If not, I think we can
-> >> use my patch first. Is it okay?
-> >>
-> >
-> > Hi Stephen,
-> >
-> > Do you have comments for the bug fixing? I prefer to use my patch (clk:
-> > fix initial state of critical clock's parents). How do you think?
-> >
-> 
-> How about we recalc accuracies and rates in addition to the patch
-> from Mike? That will fix everything?
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
-Hi Stephen,
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/clk-gate.c       | 8 +++++---
+ drivers/clk/samsung/clk.c    | 5 +++--
+ include/linux/clk-provider.h | 6 ++++--
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
-It works!
-
-I'll send a new series of MT2701 clock support in few days. Should I
-include this patch in my series? Or you'll merge it into clk-next
-directly?
-
-
-Best regards,
-
-James
-
-> ---8<----
-> From: Michael Turquette <mturquette@baylibre.com>
-> Subject: [PATCH] clk: migrate ref counts when orphans are reunited
-> 
-> It's always nice to see families reunited, and this is equally true when
-> talking about parent clocks and their children. However, if the orphan
-> clk had a positive prepare_count or enable_count, then we would not
-> migrate those counts up the parent chain correctly.
-> 
-> This has manifested with the recent critical clocks feature, which often
-> enables clocks very early, before their parents have been registered.
-> 
-> Fixed by replacing the call to clk_core_reparent with calls to
-> __clk_set_parent_{before,after}.
-> 
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Erin Lo <erin.lo@mediatek.com>
-> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> [sboyd@codeaurora.org: Recalc accuracies and rates too]
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clk.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939fb6bb..dc3fff2bf839 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2449,8 +2449,16 @@ static int __clk_core_init(struct clk_core *core)
->  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
->  		struct clk_core *parent = __clk_init_parent(orphan);
->  
-> -		if (parent)
-> -			clk_core_reparent(orphan, parent);
-> +		/*
-> +		 * we could call __clk_set_parent, but that would result in a
-> +		 * reducant call to the .set_rate op, if it exists
-> +		 */
-> +		if (parent) {
-> +			__clk_set_parent_before(orphan, parent);
-> +			__clk_set_parent_after(orphan, parent, NULL);
-> +			__clk_recalc_accuracies(orphan);
-> +			__clk_recalc_rates(orphan, 0);
-> +		}
->  	}
->  
->  	/*
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 4e691e35483a..5eea0457778d 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -120,7 +120,8 @@ EXPORT_SYMBOL_GPL(clk_gate_ops);
+  * @clk_gate_flags: gate-specific flags for this clock
+  * @lock: shared register lock for this clock
+  */
+-struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 bit_idx,
+ 		u8 clk_gate_flags, spinlock_t *lock)
+@@ -166,14 +167,15 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_gate);
+ 
+-struct clk *clk_register_gate(struct device *dev, const char *name,
++struct clk *clk_register_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 bit_idx,
+ 		u8 clk_gate_flags, spinlock_t *lock)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_gate(dev, name, parent_name, flags, reg,
++	hw = clk_hw_register_gate(dev, ctrl, name, parent_name, flags, reg,
+ 				  bit_idx, clk_gate_flags, lock);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index cb1e4398d6e5..79332011f258 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -268,8 +268,9 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_gate(NULL, list->name, list->parent_name,
+-				list->flags, ctx->reg_base + list->offset,
++		clk = clk_register_gate(NULL, ctx->clk_ctrl, list->name,
++				list->parent_name, list->flags,
++				ctx->reg_base + list->offset,
+ 				list->bit_idx, list->gate_flags, &ctx->lock);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2ee4e337e784..289290655283 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -340,11 +340,13 @@ struct clk_gate {
+ #define CLK_GATE_HIWORD_MASK		BIT(1)
+ 
+ extern const struct clk_ops clk_gate_ops;
+-struct clk *clk_register_gate(struct device *dev, const char *name,
++struct clk *clk_register_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 bit_idx,
+ 		u8 clk_gate_flags, spinlock_t *lock);
+-struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 bit_idx,
+ 		u8 clk_gate_flags, spinlock_t *lock);
+-- 
+1.9.1
