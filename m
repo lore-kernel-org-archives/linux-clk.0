@@ -1,43 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 19 Aug 2016 12:46:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
-	James Liao <jamesjj.liao@mediatek.com>
-Subject: Re: [PATCH v11 6/9] reset: mediatek: Add MT2701 reset controller
- dt-binding file
-Message-ID: <20160819194655.GE6502@codeaurora.org>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
- <1471584896-9986-7-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471584896-9986-7-git-send-email-erin.lo@mediatek.com>
+Return-Path: <andi.shyti@samsung.com>
+Date: Tue, 16 Aug 2016 15:06:07 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: clk: update file names containing
+ referenced structures
+Message-id: <20160816060552.2kqetu6kgrsflvyu@samsunx.samsung>
+References: 
+ <CGME20160812124132epcas1p41e2e94ea2d3929882b2cb0d4ba5efb15@epcas1p4.samsung.com>
+ <1471005685-505-1-git-send-email-geert+renesas@glider.be>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <1471005685-505-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/19, Erin Lo wrote:
-> From: Shunli Wang <shunli.wang@mediatek.com>
+Hi Geert,
+
+> Commit 'b09d6d991' removes include/linux/clk-private.h and
+> re-arranges the clock related structures contained in it in
+> different files. The documentation has not been updated
+> accordingly, thus it wasn't anymore consistent.
 > 
-> Dt-binding file about reset controller is used to provide
-> kinds of definition, which is referenced by dts file and
-> IC-specified reset controller driver code.
+> Place the structures referenced by Documentation/clk.txt in the
+> correct files and update their contents to the latest status.
 > 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> Tested-by: John Crispin <blogic@openwrt.org>
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> [geert: Fix path to clk.c, whitespace, more clk_core, ...]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
+> v2:
+>   - Take over from Andi,
+>   - Correct path to clk.c,
+>   - Drop whitespace changes,
+>   - Replace clk by clk_core where appropriate,
+>   - Update to_clk_gate(),
+>   - Drop final reference to clk-private.h.
 
-Applied to clk-next
+Thanks for taking care! Somehow it disappeared from my todo list :)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Andi
