@@ -1,54 +1,163 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	shawn.lin@rock-chips.com
-Subject: [PATCH v2 6/7] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
-Date: Mon,  1 Aug 2016 17:37:22 +0800
-Message-Id: <1470044242-29890-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470044016-29764-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 11/17] clk: gpio: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:08 +0200
+Message-id: <1471354514-24224-12-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
-allow aclk_pcie and aclk_perf_pcie disabled when unused.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
+ drivers/clk/clk-gpio.c       | 29 +++++++++++++++++------------
+ include/linux/clk-provider.h | 12 ++++++++----
+ 2 files changed, 25 insertions(+), 16 deletions(-)
 
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 580abf1..071eb96 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 86b245746a6b..8ebd520c1aa0 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -94,7 +94,8 @@ const struct clk_ops clk_gpio_mux_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
  
--	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
--	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
- 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+-static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
++static struct clk_hw *clk_register_gpio(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags,
+ 		const struct clk_ops *clk_gpio_ops)
+@@ -168,25 +169,27 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+  * @active_low: true if gpio should be set to 0 to enable clock
+  * @flags: clock flags
+  */
+-struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags)
+ {
+-	return clk_register_gpio(dev, name,
++	return clk_register_gpio(dev, ctrl, name,
+ 			(parent_name ? &parent_name : NULL),
+ 			(parent_name ? 1 : 0), gpio, active_low, flags,
+ 			&clk_gpio_gate_ops);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
+ 
+-struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
++struct clk *clk_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
+-				       flags);
++	hw = clk_hw_register_gpio_gate(dev, ctrl, name, parent_name, gpio,
++				       active_low, flags);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+ 	return hw->clk;
+@@ -203,7 +206,8 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+  * @active_low: true if gpio should be set to 0 to enable clock
+  * @flags: clock flags
+  */
+-struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags)
+ {
+@@ -212,18 +216,19 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	return clk_register_gpio(dev, name, parent_names, num_parents,
++	return clk_register_gpio(dev, ctrl, name, parent_names, num_parents,
+ 			gpio, active_low, flags, &clk_gpio_mux_ops);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
+ 
+-struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++struct clk *clk_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
++	hw = clk_hw_register_gpio_mux(dev, ctrl, name, parent_names, num_parents,
+ 			gpio, active_low, flags);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+@@ -271,10 +276,10 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 	active_low = of_flags & OF_GPIO_ACTIVE_LOW;
+ 
+ 	if (is_mux)
+-		clk = clk_register_gpio_mux(&pdev->dev, node->name,
++		clk = clk_register_gpio_mux(&pdev->dev, NULL, node->name,
+ 				parent_names, num_parents, gpio, active_low, 0);
+ 	else
+-		clk = clk_register_gpio_gate(&pdev->dev, node->name,
++		clk = clk_register_gpio_gate(&pdev->dev, NULL, node->name,
+ 				parent_names ?  parent_names[0] : NULL, gpio,
+ 				active_low, 0);
+ 	if (IS_ERR(clk))
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2bd0a8cb7a9c..c39760cba9ac 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -698,10 +698,12 @@ struct clk_gpio {
+ #define to_clk_gpio(_hw) container_of(_hw, struct clk_gpio, hw)
+ 
+ extern const struct clk_ops clk_gpio_gate_ops;
+-struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
++struct clk *clk_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags);
+-struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags);
+ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+@@ -717,10 +719,12 @@ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+  */
+ 
+ extern const struct clk_ops clk_gpio_mux_ops;
+-struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++struct clk *clk_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags);
+-struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags);
+ void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
 -- 
-1.7.9.5
+1.9.1
