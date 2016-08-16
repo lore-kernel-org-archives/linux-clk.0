@@ -1,81 +1,110 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdVhd6qk4g98xEXZYjf4qnwTT5=hKu-o8YRJXWNFQREueQ@mail.gmail.com>
-References: <1470915049-15249-1-git-send-email-broonie@kernel.org> <CAMuHMdVhd6qk4g98xEXZYjf4qnwTT5=hKu-o8YRJXWNFQREueQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Aug 2016 14:32:59 +0200
-Message-ID: <CAMuHMdXdozxFJjXrkDy83iat+3jb08V33=dfWPexxdfpH=nPuA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Make clock framework user selectable
-To: Mark Brown <broonie@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 08/17] clk: fixed-factor: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:05 +0200
+Message-id: <1471354514-24224-9-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 11, 2016 at 1:50 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Aug 11, 2016 at 1:30 PM, Mark Brown <broonie@kernel.org> wrote:
->> Some architectures like x86 don't use the clock API in architecture code
->> but one of the advantages of the common clock API is that it can be used
->> by regular devices to represent their clocking structures so we should
->> allow users to enable the clock API themselves even if the architecture
->> doesn't need it. This is more straightforward than going round every
->> architecture and convincing their maintainers to add the select.
->>
->> Unfortunately some architectures do still provide a custom implementation
->> of the clock API which is incompatible with common clock. Provide a config
->> option HAS_CUSTOM_CLK which these architectures can select in order to
->> prevent COMMON_CLK being enabled.
->
-> The list is not that long anymore, so it looks fixable with not too much
-> effort:
->
-> $ git grep '\*clk_get\>'
-> arch/avr32/mach-at32ap/clock.c:struct clk *clk_get(struct device *dev,
-> const char *id)
-> arch/m68k/coldfire/clk.c:struct clk *clk_get(struct device *dev, const char *id)
-> arch/mips/ar7/clock.c:struct clk *clk_get(struct device *dev, const char *id)
-> arch/mips/bcm63xx/clk.c:struct clk *clk_get(struct device *dev, const char *id)
-> arch/mips/loongson64/lemote-2f/clock.c:struct clk *clk_get(struct
-> device *dev, const char *id)
-> arch/mips/txx9/generic/setup.c:struct clk *clk_get(struct device *dev,
-> const char *id)
-> arch/unicore32/kernel/clock.c:struct clk *clk_get(struct device *dev,
-> const char *id)
-> drivers/clk/clkdev.c:struct clk *clk_get(struct device *dev, const char *con_id)
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
-Having your own clk_get() doesn't seem to be sufficient. Found a few more:
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/clk-fixed-factor.c | 11 +++++++----
+ drivers/clk/samsung/clk.c      |  2 +-
+ include/linux/clk-provider.h   |  4 +++-
+ 3 files changed, 11 insertions(+), 6 deletions(-)
 
-$ git grep 'long clk_get_rate\>'arch/arm/mach-davinci/clock.c:unsigned
-long clk_get_rate(struct clk *clk)
-arch/arm/mach-ep93xx/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/arm/mach-mmp/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/arm/mach-omap1/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/arm/mach-sa1100/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/arm/mach-w90x900/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/avr32/mach-at32ap/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/blackfin/mach-bf609/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/c6x/platforms/pll.c:unsigned long clk_get_rate(struct clk *clk)
-arch/m68k/coldfire/clk.c:unsigned long clk_get_rate(struct clk *clk)
-arch/mips/ar7/clock.c:unsigned long clk_get_rate(struct clk *clk)
-arch/mips/bcm63xx/clk.c:unsigned long clk_get_rate(struct clk *clk)
-arch/mips/lantiq/clk.c:unsigned long clk_get_rate(struct clk *clk)
-arch/mips/loongson64/lemote-2f/clock.c:unsigned long clk_get_rate(struct clk *cl
-arch/mips/ralink/clk.c:unsigned long clk_get_rate(struct clk *clk)
-arch/mips/txx9/generic/setup.c:unsigned long clk_get_rate(struct clk *clk)
-arch/unicore32/kernel/clock.c:unsigned long clk_get_rate(struct clk *clk)
-drivers/clk/clk.c:unsigned long clk_get_rate(struct clk *clk)
-drivers/sh/clk/core.c:unsigned long clk_get_rate(struct clk *clk)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 4db3be214077..921a99b6e421 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -69,6 +69,7 @@ const struct clk_ops clk_fixed_factor_ops = {
+ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+ 
+ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+@@ -103,13 +104,14 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+-struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
++struct clk *clk_register_fixed_factor(struct device *dev,
++		struct clk_ctrl *ctrl, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_fixed_factor(dev, name, parent_name, flags, mult,
++	hw = clk_hw_register_fixed_factor(dev, ctrl, name, parent_name, flags, mult,
+ 					  div);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+@@ -176,8 +178,9 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
+ 	if (of_match_node(set_rate_parent_matches, node))
+ 		flags |= CLK_SET_RATE_PARENT;
+ 
+-	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
+-					mult, div);
++	/* TODO: convert to clk_ctrl */
++	clk = clk_register_fixed_factor(NULL, NULL, clk_name, parent_name,
++					flags, mult, div);
+ 	if (!IS_ERR(clk))
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ }
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 1a296bbabd47..7bfd895781c5 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -176,7 +176,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
+ 	unsigned int idx;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_fixed_factor(NULL, list->name,
++		clk = clk_register_fixed_factor(NULL, ctx->clk_ctrl, list->name,
+ 			list->parent_name, list->flags, list->mult, list->div);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f5f062d267a9..26171815948e 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -545,11 +545,13 @@ struct clk_fixed_factor {
+ #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
+ 
+ extern const struct clk_ops clk_fixed_factor_ops;
+-struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
++struct clk *clk_register_fixed_factor(struct device *dev,
++		struct clk_ctrl *ctrl, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_unregister_fixed_factor(struct clk *clk);
+ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+-- 
+1.9.1
