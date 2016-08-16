@@ -1,169 +1,129 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 26 Aug 2016 10:41:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 25/26] clk: boston: Add a driver for MIPS Boston board
- clocks
-Message-ID: <20160826174144.GW19826@codeaurora.org>
-References: <20160826153725.11629-1-paul.burton@imgtec.com>
- <20160826153725.11629-26-paul.burton@imgtec.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
+	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v10 6/9] reset: mediatek: Add MT2701 reset controller dt-binding file
+Date: Tue, 16 Aug 2016 15:30:26 +0800
+Message-ID: <1471332629-15722-7-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
+References: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160826153725.11629-26-paul.burton@imgtec.com>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/26, Paul Burton wrote:
-> 
->  drivers/clk/Kconfig      |   9 ++++
->  drivers/clk/Makefile     |   1 +
->  drivers/clk/clk-boston.c | 131 +++++++++++++++++++++++++++++++++++++++++++++++
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Maybe a vendor subdirectory is appropriate? imgtec?
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
 
-> +
-> +struct clk_boston_state {
-> +	struct clk *clk[BOSTON_CLK_COUNT];
-> +	struct clk_boston clk_boston[BOSTON_CLK_COUNT];
-> +	struct clk_onecell_data onecell_data[BOSTON_CLK_COUNT];
-> +};
-> +
-> +static const char *clk_names[BOSTON_CLK_COUNT] = {
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
 
-const char * const?
-
-> +	[BOSTON_CLK_SYS] = "sys",
-> +	[BOSTON_CLK_CPU] = "cpu",
-> +};
-> +
-> +#define BOSTON_PLAT_MMCMDIV		0x30
-> +# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
-> +# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
-> +# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
-> +# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
-> +
-> +static struct clk_boston *to_clk_boston(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct clk_boston, hw);
-> +}
-> +
-> +static uint32_t ext_field(uint32_t val, uint32_t mask)
-
-Please use u32 instead of uint32_t in drivers.
-
-> +{
-> +	return (val & mask) >> (ffs(mask) - 1);
-> +}
-> +
-> +static unsigned long clk_boston_recalc_rate(struct clk_hw *hw,
-> +					    unsigned long parent_rate)
-> +{
-> +	struct clk_boston *state = to_clk_boston(hw);
-> +	uint32_t in_rate, mul, div;
-> +	uint mmcmdiv;
-
-unsigned int?
-
-> +	int err;
-> +
-> +	err = regmap_read(state->regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
-> +	if (err)
-> +		return 0;
-> +
-> +	in_rate = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT);
-
-This sounds like a parent rate? Should there be another clk
-created for that so that parent_rate in this function is useful?
-
-> +	mul = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
-> +
-> +	switch (state->id) {
-> +	case BOSTON_CLK_SYS:
-> +		div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
-> +		break;
-> +	case BOSTON_CLK_CPU:
-> +		div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
-
-Why not put the CLK0DIV or CLK1DIV offset in state->id instead?
-That way this function just read in_rate, mul, and div and then
-does the math?
-
-> +		break;
-> +	default:
-> +		return 0;
-> +	}
-> +
-> +	return (in_rate * mul * 1000000) / div;
-
-Is this always fixed at boot? It may be easier to populate fixed
-rate clks during probe with the rate calculated there. Then there
-aren't any clk_ops to implement.
-
-> +}
-> +
-> +static const struct clk_ops clk_boston_ops = {
-> +	.recalc_rate = clk_boston_recalc_rate,
-> +};
-> +
-> +static void __init clk_boston_setup(struct device_node *np)
-> +{
-> +	struct clk_boston_state *state;
-> +	struct clk_init_data init;
-> +	struct regmap *regmap;
-> +	int i, err;
-> +
-> +	state = kzalloc(sizeof(*state), GFP_KERNEL);
-> +	if (!state)
-> +		return;
-> +
-> +	regmap = syscon_regmap_lookup_by_phandle(np, "regmap");
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("failed to find regmap\n");
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < BOSTON_CLK_COUNT; i++) {
-> +		memset(&init, 0, sizeof(init));
-> +		init.flags = CLK_IS_BASIC;
-
-Please drop this flag unless you really need it for something. As
-far as I know CLK_IS_BASIC is just for OMAP code.
-
-> +		init.name = clk_names[i];
-> +		init.ops = &clk_boston_ops;
-> +
-> +		state->clk_boston[i].hw.init = &init;
-> +		state->clk_boston[i].id = i;
-> +		state->clk_boston[i].regmap = regmap;
-> +
-> +		state->clk[i] = clk_register(NULL, &state->clk_boston[i].hw);
-
-Please use clk_hw_register() instead.
-
-> +		if (IS_ERR(state->clk[i])) {
-> +			pr_err("failed to register clock: %ld\n",
-> +			       PTR_ERR(state->clk[i]));
-> +			return;
-> +		}
-> +	}
-> +
-> +	state->onecell_data->clks = state->clk;
-> +	state->onecell_data->clk_num = BOSTON_CLK_COUNT;
-> +
-> +	err = of_clk_add_provider(np, of_clk_src_onecell_get,
-> +				  state->onecell_data);
-
-Please use of_clk_add_hw_provider() instead.
-
-> +	if (err)
-> +		pr_err("failed to add DT provider: %d\n", err);
-> +}
-> +CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
-
-Please make this into a platform driver.
-
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
+new file mode 100644
+index 0000000..aaf0305
+--- /dev/null
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
++
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
++
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
++
++/* HIFSYS resets */
++#define MT2701_HIFSYS_UHOST0_RST		3
++#define MT2701_HIFSYS_UHOST1_RST		4
++#define MT2701_HIFSYS_UPHY0_RST			21
++#define MT2701_HIFSYS_UPHY1_RST			22
++#define MT2701_HIFSYS_PCIE0_RST			24
++#define MT2701_HIFSYS_PCIE1_RST			25
++#define MT2701_HIFSYS_PCIE2_RST			26
++
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
