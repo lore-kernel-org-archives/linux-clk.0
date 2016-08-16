@@ -1,187 +1,60 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 07/10] clk: qcom: Add support to enable FSM mode for votable alpha PLLs
-Date: Thu, 11 Aug 2016 14:10:55 +0530
-Message-Id: <1470904858-11930-8-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160813015023.28221-2-sboyd@codeaurora.org>
+References: <20160813015023.28221-1-sboyd@codeaurora.org> <20160813015023.28221-2-sboyd@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 Aug 2016 14:24:42 +0200
+Message-ID: <CAMuHMdU5USf7SHpg5NXJ=G-RBhX4q+5DAQBYUaMYxJk07vPMOg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: fixed-rate: Remove export symbol on setup function
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Denis Efremov <yefremov.denis@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The votable alpha PLLs need to have the fsm mode enabled as part
-of the initialization. The sequence seems to be the same as used
-by clk-pll, so move the function which does this into a common
-place and reuse it for the clk-alpha-pll
+Hi Stephen,
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c |  5 +++++
- drivers/clk/qcom/clk-alpha-pll.h |  2 ++
- drivers/clk/qcom/clk-pll.c       | 25 +++----------------------
- drivers/clk/qcom/common.c        | 29 +++++++++++++++++++++++++++++
- drivers/clk/qcom/common.h        |  2 ++
- 5 files changed, 41 insertions(+), 22 deletions(-)
+On Sat, Aug 13, 2016 at 3:50 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> This function is only called by builtin code, but we always
+> exported it and had marked it as __init before commit
+> e4eda8e0654c (clk: remove exported function from __init section,
+> 2013-01-06) removed that marking. Given that it isn't used by
+> modules, lets unexport it and add back __init.
+>
+> Cc: Denis Efremov <yefremov.denis@gmail.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clk-fixed-rate.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+> index c735272ed706..b5c46b3f8764 100644
+> --- a/drivers/clk/clk-fixed-rate.c
+> +++ b/drivers/clk/clk-fixed-rate.c
+> @@ -190,11 +190,10 @@ static struct clk *_of_fixed_clk_setup(struct device_node *node)
+>  /**
+>   * of_fixed_clk_setup() - Setup function for simple fixed rate clock
+>   */
+> -void of_fixed_clk_setup(struct device_node *node)
+> +void __init of_fixed_clk_setup(struct device_node *node)
+>  {
+>         _of_fixed_clk_setup(node);
+>  }
+> -EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
+>  CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 8b8710f..e8f3505 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- 
- #include "clk-alpha-pll.h"
-+#include "common.h"
- 
- #define PLL_MODE		0x00
- # define PLL_OUTCTRL		BIT(0)
-@@ -133,6 +134,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	mask |= config->post_div_mask;
- 
- 	regmap_update_bits(regmap, pll->offset + PLL_USER_CTL, mask, val);
-+
-+	if (pll->flags & SUPPORTS_VOTE_FSM)
-+		qcom_pll_set_fsm_mode(regmap, pll->offset + PLL_MODE, 6, 0);
-+
- }
- 
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 12a349e..4bd42fd 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -35,6 +35,8 @@ struct clk_alpha_pll {
- 	const struct pll_vco *vco_table;
- 	size_t num_vco;
- 
-+#define SUPPORTS_VOTE_FSM	BIT(0)
-+	u8 flags;
- 	struct clk_regmap clkr;
- };
- 
-diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
-index 13d3f64..776278b 100644
---- a/drivers/clk/qcom/clk-pll.c
-+++ b/drivers/clk/qcom/clk-pll.c
-@@ -23,6 +23,7 @@
- #include <asm/div64.h>
- 
- #include "clk-pll.h"
-+#include "common.h"
- 
- #define PLL_OUTCTRL		BIT(0)
- #define PLL_BYPASSNL		BIT(1)
-@@ -230,26 +231,6 @@ const struct clk_ops clk_pll_vote_ops = {
- EXPORT_SYMBOL_GPL(clk_pll_vote_ops);
- 
- static void
--clk_pll_set_fsm_mode(struct clk_pll *pll, struct regmap *regmap, u8 lock_count)
--{
--	u32 val;
--	u32 mask;
--
--	/* De-assert reset to FSM */
--	regmap_update_bits(regmap, pll->mode_reg, PLL_VOTE_FSM_RESET, 0);
--
--	/* Program bias count and lock count */
--	val = 1 << PLL_BIAS_COUNT_SHIFT | lock_count << PLL_LOCK_COUNT_SHIFT;
--	mask = PLL_BIAS_COUNT_MASK << PLL_BIAS_COUNT_SHIFT;
--	mask |= PLL_LOCK_COUNT_MASK << PLL_LOCK_COUNT_SHIFT;
--	regmap_update_bits(regmap, pll->mode_reg, mask, val);
--
--	/* Enable PLL FSM voting */
--	regmap_update_bits(regmap, pll->mode_reg, PLL_VOTE_FSM_ENA,
--		PLL_VOTE_FSM_ENA);
--}
--
--static void
- clk_pll_set_dynamic_fsm_mode(struct clk_pll *pll, struct regmap *regmap)
- {
- 	u32 val;
-@@ -300,7 +281,7 @@ void clk_pll_configure_sr(struct clk_pll *pll, struct regmap *regmap,
- {
- 	clk_pll_configure(pll, regmap, config);
- 	if (fsm_mode)
--		clk_pll_set_fsm_mode(pll, regmap, 8);
-+		qcom_pll_set_fsm_mode(regmap, pll->mode_reg, 1, 8);
- }
- EXPORT_SYMBOL_GPL(clk_pll_configure_sr);
- 
-@@ -309,7 +290,7 @@ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
- {
- 	clk_pll_configure(pll, regmap, config);
- 	if (fsm_mode)
--		clk_pll_set_fsm_mode(pll, regmap, 0);
-+		qcom_pll_set_fsm_mode(regmap, pll->mode_reg, 1, 0);
- }
- EXPORT_SYMBOL_GPL(clk_pll_configure_sr_hpm_lp);
- 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index f7c226a..6bf5abd 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -25,6 +25,14 @@
- #include "reset.h"
- #include "gdsc.h"
- 
-+#define PLL_LOCK_COUNT_SHIFT	8
-+#define PLL_LOCK_COUNT_MASK	0x3f
-+#define PLL_BIAS_COUNT_SHIFT	14
-+#define PLL_BIAS_COUNT_MASK	0x3f
-+#define PLL_VOTE_FSM_ENA	BIT(20)
-+#define PLL_DYN_FSM_ENA		BIT(20)
-+#define PLL_VOTE_FSM_RESET	BIT(21)
-+
- struct qcom_cc {
- 	struct qcom_reset_controller reset;
- 	struct clk_onecell_data data;
-@@ -74,6 +82,27 @@ qcom_cc_map(struct platform_device *pdev, const struct qcom_cc_desc *desc)
- }
- EXPORT_SYMBOL_GPL(qcom_cc_map);
- 
-+void
-+qcom_pll_set_fsm_mode(struct regmap *map, u32 reg, u8 bias_count, u8 lock_count)
-+{
-+	u32 val;
-+	u32 mask;
-+
-+	/* De-assert reset to FSM */
-+	regmap_update_bits(map, reg, PLL_VOTE_FSM_RESET, 0);
-+
-+	/* Program bias count and lock count */
-+	val = bias_count << PLL_BIAS_COUNT_SHIFT |
-+		lock_count << PLL_LOCK_COUNT_SHIFT;
-+	mask = PLL_BIAS_COUNT_MASK << PLL_BIAS_COUNT_SHIFT;
-+	mask |= PLL_LOCK_COUNT_MASK << PLL_LOCK_COUNT_SHIFT;
-+	regmap_update_bits(map, reg, mask, val);
-+
-+	/* Enable PLL FSM voting */
-+	regmap_update_bits(map, reg, PLL_VOTE_FSM_ENA, PLL_VOTE_FSM_ENA);
-+}
-+EXPORT_SYMBOL_GPL(qcom_pll_set_fsm_mode);
-+
- static void qcom_cc_del_clk_provider(void *data)
- {
- 	of_clk_del_provider(data);
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index ae9bdeb..5b12ac0 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -34,6 +34,8 @@ struct qcom_cc_desc {
- 
- extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
- 					     unsigned long rate);
-+extern void
-+qcom_pll_set_fsm_mode(struct regmap *m, u32 reg, u8 bias_count, u8 lock_count);
- extern int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map,
- 			       u8 src);
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+This function is needed to instantiate clocks from DT overlays,
+which I'm using with out-of-tree "clk: add generic driver for fixed rate clock".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
