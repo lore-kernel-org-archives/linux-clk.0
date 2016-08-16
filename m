@@ -1,49 +1,163 @@
-Return-Path: <marcel.ziswiler@toradex.com>
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com"
-	<mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "pdeschrijver@nvidia.com"
-	<pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: [Fwd: Re: [PATCH v2 1/6] clk: tegra: add TEGRA20_CLK_NOR to init
- table]
-Date: Wed, 31 Aug 2016 07:15:45 +0000
-Message-ID: <1472627744.31008.2.camel@toradex.com>
-References: <1472569308.5703.22.camel@toradex.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/3] clk: meson: Add GXBB AO Clock and Reset controller
+ driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
+ <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
+ <20160813012910.GT361@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ mturquette@baylibre.com
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <16163435-1310-043d-804f-3bb1fd33cff4@baylibre.com>
+Date: Tue, 16 Aug 2016 15:34:35 +0200
 MIME-Version: 1.0
+In-Reply-To: <20160813012910.GT361@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gV2VkLCAyMDE2LTA4LTI0IGF0IDE1OjM3ICswMjAwLCBNaXJ6YSBLcmFrIHdyb3RlOg0KPiAN
-Cj4gRnJvbTogTWlyemEgS3JhayA8bWlyemEua3Jhay1SZTVKUUVlUXFlOEF2eHRpdU13eDN3QHB1
-YmxpYy5nbWFuZS5vcmc+DQo+IA0KPiBBZGQgVEVHUkEyMF9DTEtfTk9SIHRvIGluaXQgdGFiZWwg
-YW5kIHNldCBkZWZhdWx0IHJhdGUgdG8gOTIgTUh6DQo+IHdoaWNoDQo+IGlzIG1heCByYXRlLg0K
-DQp0YWJsZQ0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNaXJ6YSBLcmFrIDxtaXJ6YS5rcmFrLVJl
-NUpRRWVRcWU4QXZ4dGl1TXd4M3dAcHVibGljLmcNCj4gbWFuZS5vcmc+DQo+IC0tLQ0KPiBDaGFu
-Z2VzIGluIHYyOg0KPiAtIG5vIGNoYW5nZXMNCj4gDQo+IMKgZHJpdmVycy9jbGsvdGVncmEvY2xr
-LXRlZ3JhMjAuYyB8IDEgKw0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMgYi9kcml2ZXJz
-L2Nsay90ZWdyYS9jbGstDQo+IHRlZ3JhMjAuYw0KPiBpbmRleCA4MzdlNWNiLi4xM2QzYjVhIDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEyMC5jDQo+ICsrKyBiL2Ry
-aXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMNCj4gQEAgLTEwNDcsNiArMTA0Nyw3IEBAIHN0
-YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX2luaXRfdGFibGUgaW5pdF90YWJsZVtdDQo+IF9faW5pdGRh
-dGEgPSB7DQo+IMKgCXsgVEVHUkEyMF9DTEtfU0RNTUMzLCBURUdSQTIwX0NMS19QTExfUCwgNDgw
-MDAwMDAsIDAgfSwNCj4gwqAJeyBURUdSQTIwX0NMS19TRE1NQzQsIFRFR1JBMjBfQ0xLX1BMTF9Q
-LCA0ODAwMDAwMCwgMCB9LA0KPiDCoAl7IFRFR1JBMjBfQ0xLX1NQSSwgVEVHUkEyMF9DTEtfUExM
-X1AsIDIwMDAwMDAwLCAwIH0sDQo+ICsJeyBURUdSQTIwX0NMS19OT1IsIFRFR1JBMjBfQ0xLX1BM
-TF9QLCA5MjAwMDAwMCwgMCB9LA0KDQpJJ20ganVzdCBjdXJpb3VzIHdoZXJlIHRoYXQgOTIgTUh6
-IGNhbWUgZnJvbS4gQWNjb3JkaW5nIHRvIHRoZSBUZWdyYSAyDQpJbnRlcmZhY2UgRGVzaWduIEd1
-aWRlIHVwIHRvIDEzMyBNSHogc2hvdWxkIGFjdHVhbGx5IGJlIHBvc3NpYmxlLg0KDQo+IA0KPiDC
-oAl7IFRFR1JBMjBfQ0xLX1NCQzEsIFRFR1JBMjBfQ0xLX1BMTF9QLCAxMDAwMDAwMDAsIDAgfSwN
-Cj4gwqAJeyBURUdSQTIwX0NMS19TQkMyLCBURUdSQTIwX0NMS19QTExfUCwgMTAwMDAwMDAwLCAw
-IH0sDQo+IMKgCXsgVEVHUkEyMF9DTEtfU0JDMywgVEVHUkEyMF9DTEtfUExMX1AsIDEwMDAwMDAw
-MCwgMCB9LA0KPiAtLQ0KPiAyLjEuNA==
+Hi Stephen,
+
+On 08/13/2016 03:29 AM, Stephen Boyd wrote:
+> On 08/09, Neil Armstrong wrote:
+>> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+>> new file mode 100644
+>> index 0000000..56a9186
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/gxbb-aoclk.c
+>> @@ -0,0 +1,203 @@
+
+[...]
+
+>> + */
+>> +#include <linux/clk.h>
+> 
+> Is this include used?
+
+No !
+
+> 
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset-controller.h>
+>> +#include <linux/module.h>
+>> +#include <dt-bindings/clock/gxbb-aoclkc.h>
+>> +#include <dt-bindings/reset/gxbb-aoclkc.h>
+>> +
+>> +static DEFINE_SPINLOCK(clk_lock);
+> 
+> gxbb_clk_lock?
+
+Renamed into gxbb_aoclk_lock for sake of clarity
+
+> 
+>> +
+>> +struct gxbb_aoclk_reset_controller {
+>> +	struct reset_controller_dev reset;
+>> +	unsigned int *data;
+>> +	void __iomem *base;
+>> +};
+>> +
+
+[...]
+
+>> +
+>> +static struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+> 
+> can this be const?
+
+It would be awesome, but it will be discarded by of_clk_add_hw_provider :
+
+drivers/clk/meson/gxbb-aoclk.c:176:4: warning: passing argument 3 of 'of_clk_add_hw_provider' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+    &gxbb_aoclk_onecell_data);
+
+In file included from drivers/clk/meson/gxbb-aoclk.c:55:0:
+./include/linux/clk-provider.h:788:5: note: expected 'void *' but argument is of type 'const struct clk_hw_onecell_data *'
+ int of_clk_add_hw_provider(struct device_node *np,
+
+> 
+>> +	.hws = {
+>> +		[CLKID_AO_REMOTE] = &remote_ao.hw,
+>> +		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
+>> +		[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao.hw,
+>> +		[CLKID_AO_UART1] = &uart1_ao.hw,
+>> +		[CLKID_AO_UART2] = &uart2_ao.hw,
+>> +		[CLKID_AO_IR_BLASTER] = &ir_blaster_ao.hw,
+>> +	},
+>> +	.num = ARRAY_SIZE(gxbb_aoclk_gate),
+>> +};
+>> +
+>> +static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>> +{
+>> +	void __iomem *base;
+>> +	int ret, clkid;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct gxbb_aoclk_reset_controller *rstc;
+>> +
+>> +	rstc = devm_kzalloc(dev, sizeof(rstc), GFP_KERNEL);
+>> +	if (!rstc)
+>> +		return -ENOMEM;
+>> +
+>> +	/*  Generic clocks */
+>> +	base = of_iomap(dev->of_node, 0);
+> 
+> use devm_ioremap_resource() please and platform APIs to get the
+> ioresource.
+
+Done.
+
+> 
+>> +	if (!base) {
+>> +		pr_err("%s: Unable to map clk base\n", __func__);
+> 
+> We don't need error prints here with devm_ioremap_resource().
+> 
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	/* Reset Controller */
+>> +	rstc->base = base;
+>> +	rstc->data = gxbb_aoclk_reset;
+>> +	rstc->reset.ops = &gxbb_aoclk_reset_ops;
+>> +	rstc->reset.nr_resets = ARRAY_SIZE(gxbb_aoclk_reset);
+>> +	rstc->reset.of_node = dev->of_node;
+>> +	ret = devm_reset_controller_register(dev, &rstc->reset);
+>> +
+>> +	/*
+>> +	 * Populate base address and register all clks
+>> +	 */
+>> +	for (clkid = 0; clkid < gxbb_aoclk_onecell_data.num; clkid++) {
+>> +		gxbb_aoclk_gate[clkid]->reg = base;
+>> +
+>> +		ret = devm_clk_hw_register(dev,
+>> +					gxbb_aoclk_onecell_data.hws[clkid]);
+>> +		if (ret)
+>> +			goto iounmap;
+>> +	}
+>> +
+>> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+>> +			&gxbb_aoclk_onecell_data);
+>> +
+>> +iounmap:
+>> +	iounmap(base);
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct of_device_id gxbb_aoclkc_match_table[] = {
+>> +	{ .compatible = "amlogic,gxbb-aoclkc" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
+>> +
+>> +static struct platform_driver gxbb_aoclkc_driver = {
+>> +	.probe		= gxbb_aoclkc_probe,
+> 
+> No remove means leak of iomem mapping.
+> 
+
+It will be non-modular, so no need of remove. The MODULE_* macros and module.h include will be removed like other clk drivers (gxbb and oxnas for instance).
+
+Thanks,
+Neil
