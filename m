@@ -1,88 +1,59 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 1 Aug 2016 11:33:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] clk: bcm: Add driver for Northstar ILP clock
-Message-ID: <20160801163332.GA23920@rob-hp-laptop>
-References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
- <1469832362-13947-1-git-send-email-zajec5@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 16 Aug 2016 10:29:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com
+Subject: Re: [PATCH 1/3] clk: meson: Add GXBB AO Clock and Reset controller
+ driver
+Message-ID: <20160816172945.GZ361@codeaurora.org>
+References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
+ <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
+ <20160813012910.GT361@codeaurora.org>
+ <16163435-1310-043d-804f-3bb1fd33cff4@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1469832362-13947-1-git-send-email-zajec5@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <16163435-1310-043d-804f-3bb1fd33cff4@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 30, 2016 at 12:45:40AM +0200, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
+On 08/16, Neil Armstrong wrote:
+> On 08/13/2016 03:29 AM, Stephen Boyd wrote:
+> > On 08/09, Neil Armstrong wrote:
 > 
-> This clock is present on cheaper Northstar devices like BCM53573 or
-> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
-> to calculate clock rate and allows using it in a generic (clk_*) way.
+> >> +
+> >> +static struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+> > 
+> > can this be const?
 > 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> ---
-> V2: Rebase on top of clk-next
->     Use ALP as parent clock
->     Improve comments
->     Switch from ioremap_nocache to ioremap
->     Check of_clk_add_provide result for error
-> ---
->  .../devicetree/bindings/clock/brcm,ns-ilp.txt      |  26 ++++
->  drivers/clk/bcm/Makefile                           |   1 +
->  drivers/clk/bcm/clk-ns-ilp.c                       | 147 +++++++++++++++++++++
->  3 files changed, 174 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
->  create mode 100644 drivers/clk/bcm/clk-ns-ilp.c
+> It would be awesome, but it will be discarded by of_clk_add_hw_provider :
+
+Ok, right.
+
+> >> +iounmap:
+> >> +	iounmap(base);
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static const struct of_device_id gxbb_aoclkc_match_table[] = {
+> >> +	{ .compatible = "amlogic,gxbb-aoclkc" },
+> >> +	{ }
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
+> >> +
+> >> +static struct platform_driver gxbb_aoclkc_driver = {
+> >> +	.probe		= gxbb_aoclkc_probe,
+> > 
+> > No remove means leak of iomem mapping.
+
+And OF provider registration.
+
+> > 
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> new file mode 100644
-> index 0000000..2c862a0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> @@ -0,0 +1,26 @@
-> +Broadcom Northstar ILP clock
-> +============================
-> +
-> +This binding uses the common clock binding:
-> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +This binding is used for ILP clock on Broadcom Northstar devices using
-> +Corex-A7 CPU. ILP clock depends on ALP one and has to be calculated on
-> +runtime.
-> +
-> +Required properties:
-> +- compatible: "brcm,ns-ilp"
-> +- reg: iomem address range of PMU (Power Management Unit)
+> It will be non-modular, so no need of remove. The MODULE_* macros and module.h include will be removed like other clk drivers (gxbb and oxnas for instance).
 
-PMU would imply to me there is more than just 1 clock the block 
-controls and the compatible should reflect that if so.
+Ok make sure to remove sysfs unbinding then.
 
-> +- reg-names: "pmu", the only needed & supported reg right now
-> +- clocks: has to reference an ALP clock
-> +- #clock-cells: should be <0>
-> +
-> +Example:
-> +
-> +ilp: ilp {
-
-ilp@18012000
-
-> +	compatible = "brcm,ns-ilp";
-> +	reg = <0x18012000 0x1000>;
-> +	reg-names = "pmu";
-> +	clocks = <&alp>;
-> +	#clock-cells = <0>;
-> +};
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
