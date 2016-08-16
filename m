@@ -1,144 +1,67 @@
-Return-Path: <gnaygnil@gmail.com>
-Return-Path: <gnaygnil@gmail.com>
-Date: Mon, 22 Aug 2016 12:50:39 +0800
-From: Yang Ling <gnaygnil@gmail.com>
-To: keguang.zhang@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] CLK: Add Loongson1C clock support
-Message-ID: <20160822045034.GA6545@ly-pc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 01/17] clk: bcm2835: Rename clk_register to avoid name conflict
+Date: Tue, 16 Aug 2016 15:34:58 +0200
+Message-id: <1471354514-24224-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock support to Loongson1C SoC.
+During clk_register_*() API refactoring, macros will be used for hiding
+and narrowing the scope of changes thus leading to a name conflict with
+clk_register found in bcm2835 clk driver.
 
-Signed-off-by: Yang Ling <gnaygnil@gmail.com>
-
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-V2:
-  Use loongson1 generic clock interface.
----
- drivers/clk/loongson1/Makefile         |   1 +
- drivers/clk/loongson1/clk-loongson1c.c | 102 +++++++++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+)
- create mode 100644 drivers/clk/loongson1/clk-loongson1c.c
+ drivers/clk/bcm/clk-bcm2835.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
-index 5a162a1..b7f6a16 100644
---- a/drivers/clk/loongson1/Makefile
-+++ b/drivers/clk/loongson1/Makefile
-@@ -1,2 +1,3 @@
- obj-y				+= clk.o
- obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
-+obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
-diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-new file mode 100644
-index 0000000..7e7e5ff
---- /dev/null
-+++ b/drivers/clk/loongson1/clk-loongson1c.c
-@@ -0,0 +1,102 @@
-+/*
-+ * Copyright (c) 2016 Yang Ling <gnaygnil@gmail.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+
-+#include <loongson1.h>
-+#include "clk.h"
-+
-+#define OSC		(24 * 1000000)
-+#define DIV_APB		1
-+
-+static DEFINE_SPINLOCK(_lock);
-+
-+static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u32 pll, rate;
-+
-+	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
-+	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-+	rate *= OSC;
-+	rate >>= 2;
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops ls1x_pll_clk_ops = {
-+	.enable = ls1x_pll_clk_enable,
-+	.disable = ls1x_pll_clk_disable,
-+	.recalc_rate = ls1x_pll_recalc_rate,
-+};
-+
-+static const char *const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
-+static const char *const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
-+static const char *const dc_parents[] = { "dc_clk_div", "osc_clk", };
-+
-+static const struct clk_div_table ahb_div_table[] = {
-+	[0] = {	.val = 0, .div = 2 },
-+	[1] = {	.val = 1, .div = 4 },
-+	[2] = {	.val = 2, .div = 3 },
-+	[3] = {	.val = 3, .div = 3 },
-+};
-+
-+void __init ls1x_clk_init(void)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
-+	clk_register_clkdev(clk, "osc_clk", NULL);
-+
-+	/* clock derived from 24 MHz OSC clk */
-+	clk = clk_register_pll(NULL, "pll_clk", "osc_clk",
-+				&ls1x_pll_clk_ops, 0);
-+	clk_register_clkdev(clk, "pll_clk", NULL);
-+
-+	clk = clk_register_divider(NULL, "cpu_clk_div", "pll_clk",
-+				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
-+				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
-+				   CLK_DIVIDER_ONE_BASED |
-+				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
-+	clk_register_clkdev(clk, "cpu_clk_div", NULL);
-+	clk = clk_register_fixed_factor(NULL, "cpu_clk", "cpu_clk_div",
-+					0, 1, 1);
-+	clk_register_clkdev(clk, "cpu_clk", NULL);
-+
-+	clk = clk_register_divider(NULL, "dc_clk_div", "pll_clk",
-+				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
-+				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
-+	clk_register_clkdev(clk, "dc_clk_div", NULL);
-+	clk = clk_register_fixed_factor(NULL, "dc_clk", "dc_clk_div", 0, 1, 1);
-+	clk_register_clkdev(clk, "dc_clk", NULL);
-+
-+	clk = clk_register_divider_table(NULL, "ahb_clk_div", "cpu_clk_div",
-+				0, LS1X_CLK_PLL_FREQ, DIV_DDR_SHIFT,
-+				DIV_DDR_WIDTH, CLK_DIVIDER_ALLOW_ZERO,
-+				ahb_div_table, &_lock);
-+	clk_register_clkdev(clk, "ahb_clk_div", NULL);
-+	clk = clk_register_fixed_factor(NULL, "ahb_clk", "ahb_clk_div",
-+					0, 1, 1);
-+	clk_register_clkdev(clk, "ahb_clk", NULL);
-+	clk_register_clkdev(clk, "ls1x-dma", NULL);
-+	clk_register_clkdev(clk, "stmmaceth", NULL);
-+
-+	/* clock derived from AHB clk */
-+	clk = clk_register_fixed_factor(NULL, "apb_clk", "ahb_clk", 0, 1,
-+					DIV_APB);
-+	clk_register_clkdev(clk, "apb_clk", NULL);
-+	clk_register_clkdev(clk, "ls1x-ac97", NULL);
-+	clk_register_clkdev(clk, "ls1x-i2c", NULL);
-+	clk_register_clkdev(clk, "ls1x-nand", NULL);
-+	clk_register_clkdev(clk, "ls1x-pwmtimer", NULL);
-+	clk_register_clkdev(clk, "ls1x-spi", NULL);
-+	clk_register_clkdev(clk, "ls1x-wdt", NULL);
-+	clk_register_clkdev(clk, "serial8250", NULL);
-+}
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 7a7970865c2d..b77a8efbfce7 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1262,12 +1262,12 @@ static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
+ typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
+ 					    const void *data);
+ struct bcm2835_clk_desc {
+-	bcm2835_clk_register clk_register;
++	bcm2835_clk_register bcm2835_clk_register;
+ 	const void *data;
+ };
+ 
+ /* assignment helper macros for different clock types */
+-#define _REGISTER(f, ...) { .clk_register = (bcm2835_clk_register)f, \
++#define _REGISTER(f, ...) { .bcm2835_clk_register = (bcm2835_clk_register)f, \
+ 			    .data = __VA_ARGS__ }
+ #define REGISTER_PLL(...)	_REGISTER(&bcm2835_register_pll,	\
+ 					  &(struct bcm2835_pll_data)	\
+@@ -1825,8 +1825,8 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < asize; i++) {
+ 		desc = &clk_desc_array[i];
+-		if (desc->clk_register && desc->data)
+-			clks[i] = desc->clk_register(cprman, desc->data);
++		if (desc->bcm2835_clk_register && desc->data)
++			clks[i] = desc->bcm2835_clk_register(cprman, desc->data);
+ 	}
+ 
+ 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
 -- 
 1.9.1
