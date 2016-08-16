@@ -1,265 +1,580 @@
-Return-Path: <zajec5@gmail.com>
-Return-Path: <zajec5@gmail.com>
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47477 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753640AbcHPNgw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 16 Aug 2016 09:36:52 -0400
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Eric Anholt <eric@anholt.net>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jonmason@broadcom.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V3] clk: bcm: Add driver for Northstar ILP clock
-Date: Wed, 10 Aug 2016 14:05:40 +0200
-Message-Id: <1470830763-29189-1-git-send-email-zajec5@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	a.hajda@samsung.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 15/17] clk: Use per-controller locking
+Date: Tue, 16 Aug 2016 15:35:12 +0200
+Message-id: <1471354514-24224-16-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rafał Miłecki <rafal@milecki.pl>
+Replace global prepare lock with a more fine-grained solution - per
+clock controller locks.  The global lock is unfortunately still present
+and used on some paths but at least the prepare path could be
+simplified.
 
-This clock is present on cheaper Northstar devices like BCM53573 or
-BCM47189 using Corex-A7. ILP is a part of PMU (Power Management Unit)
-and so it should be defined as one of its subnodes (subdevices). For
-more details see Documentation entry.
+This directly removes the deadlocks mentioned in:
+1. commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by
+   keeping I2C clock prepared"),
+2. commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock by keeping
+   clock prepared").
 
-Unfortunately there isn't a set of registers related to ILP clock only.
-We use registers 0x66c, 0x674 and 0x6dc and between them there are e.g.
-"retention*" and "control_ext" regs. This is why this driver maps all
-0x1000 B of space.
+The locking got unfortunately much more complicated.  Following locking
+design was chosen:
+1. For prepare/unprepare paths: lock only clock controller and its
+   parents.
+2. For recalc rates paths: lock global lock, the controller and its
+   children.
+3. For reparent paths: lock entire tree up down (children and parents)
+   and the global lock as well.
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+In each case of traversing the clock hierarchy, the locking of
+controllers is always from children to parents.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-V2: Rebase on top of clk-next
-    Use ALP as parent clock
-    Improve comments
-    Switch from ioremap_nocache to ioremap
-    Check of_clk_add_provide result for error
-V3: Drop #include <linux/moduleh>
-    Make ILP DT entry part of PMU
-    Describe ILP as subdevice of PMU in Documentation
----
- .../devicetree/bindings/clock/brcm,ns-ilp.txt      |  40 ++++++
- drivers/clk/bcm/Makefile                           |   1 +
- drivers/clk/bcm/clk-ns-ilp.c                       | 146 +++++++++++++++++++++
- 3 files changed, 187 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
- create mode 100644 drivers/clk/bcm/clk-ns-ilp.c
+ drivers/clk/clk.c | 156 ++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 100 insertions(+), 56 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-new file mode 100644
-index 0000000..a18c73f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-@@ -0,0 +1,40 @@
-+Broadcom Northstar ILP clock
-+============================
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ee1cedfbaa29..37113f7cef64 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -710,11 +710,11 @@ EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
+ 
+ static void clk_core_unprepare(struct clk_core *core)
+ {
+-	lockdep_assert_held(&prepare_lock);
+-
+ 	if (!core)
+ 		return;
+ 
++	lockdep_assert_held(&core->ctrl->prepare_lock);
 +
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+This binding is used for ILP clock (sometimes referred as "slow clock")
-+on Broadcom Northstar devices using Corex-A7 CPU.
-+
-+This clock is part of PMU (Power Management Unit), a Broadcom's device
-+handing power-related aspects. Please note PMU contains more subdevices,
-+ILP is only one of them.
-+
-+ILP's rate has to be calculated on runtime and it depends on ALP clock
-+which has to be referenced.
-+
-+Required properties:
-+- compatible: "brcm,ns-ilp"
-+- reg: iomem address range of PMU (Power Management Unit)
-+- reg-names: "pmu", the only needed & supported reg right now
-+- clocks: has to reference an ALP clock
-+- #clock-cells: should be <0>
-+
-+Example:
-+
-+pmu@18012000 {
-+	compatible = "simple-bus";
-+	ranges = <0x00000000 0x18012000 0x00001000>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	ilp: ilp@0 {
-+		compatible = "brcm,ns-ilp";
-+		reg = <0 0x1000>;
-+		reg-names = "pmu";
-+		clocks = <&alp>;
-+		#clock-cells = <0>;
-+		clock-output-names = "ilp";
-+	};
-+};
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index 1d79bd2..1389379 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
- obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
- obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
- obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
-+obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-ns-ilp.o
-diff --git a/drivers/clk/bcm/clk-ns-ilp.c b/drivers/clk/bcm/clk-ns-ilp.c
-new file mode 100644
-index 0000000..53b4a23
---- /dev/null
-+++ b/drivers/clk/bcm/clk-ns-ilp.c
-@@ -0,0 +1,146 @@
-+/*
-+ * Copyright (C) 2016 Rafał Miłecki <rafal@milecki.pl>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#define PMU_XTAL_FREQ_RATIO			0x66c
-+#define  XTAL_ALP_PER_4ILP			0x00001fff
-+#define  XTAL_CTL_EN				0x80000000
-+#define PMU_SLOW_CLK_PERIOD			0x6dc
-+
-+struct ns_ilp {
-+	struct clk *clk;
-+	struct clk_hw hw;
-+	void __iomem *pmu;
-+};
-+
-+static int ns_ilp_enable(struct clk_hw *hw)
-+{
-+	struct ns_ilp *ilp = container_of(hw, struct ns_ilp, hw);
-+
-+	writel(0x10199, ilp->pmu + PMU_SLOW_CLK_PERIOD);
-+	writel(0x10000, ilp->pmu + 0x674);
-+
-+	return 0;
-+}
-+
-+static unsigned long ns_ilp_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ns_ilp *ilp = container_of(hw, struct ns_ilp, hw);
-+	void __iomem *pmu = ilp->pmu;
-+	u32 last_val, cur_val;
-+	u32 sum = 0, num = 0, loop_num = 0;
-+	u32 avg;
-+
-+	/* Enable measurement */
-+	writel(XTAL_CTL_EN, pmu + PMU_XTAL_FREQ_RATIO);
-+
-+	/* Read initial value */
-+	last_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
-+
+ 	if (WARN_ON(core->prepare_count == 0))
+ 		return;
+ 
+@@ -737,9 +737,13 @@ static void clk_core_unprepare(struct clk_core *core)
+ 
+ static void clk_core_unprepare_lock(struct clk_core *core)
+ {
+-	clk_prepare_lock();
 +	/*
-+	 * At minimum we should loop for a bit to let hardware do the
-+	 * measurement. This isn't very accurate however, so for a better
-+	 * precision lets try getting 20 different values for and use average.
++	 * TODO: optimize, no need to lock parent controllers
++	 * if prepare_count > 1
 +	 */
-+	while (num < 20) {
-+		cur_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
++	clk_prepare_lock_parents_locked(core);
+ 	clk_core_unprepare(core);
+-	clk_prepare_unlock();
++	clk_prepare_unlock_parents(core);
+ }
+ 
+ /**
+@@ -766,11 +770,11 @@ static int clk_core_prepare(struct clk_core *core)
+ {
+ 	int ret = 0;
+ 
+-	lockdep_assert_held(&prepare_lock);
+-
+ 	if (!core)
+ 		return 0;
+ 
++	lockdep_assert_held(&core->ctrl->prepare_lock);
 +
-+		if (cur_val != last_val) {
-+			/* Got different value, use it */
-+			sum += cur_val;
-+			num++;
-+			loop_num = 0;
-+			last_val = cur_val;
-+		} else if (++loop_num > 5000) {
-+			/* Same value over and over, give up */
-+			sum += cur_val;
-+			num++;
-+			break;
-+		}
-+	}
+ 	if (core->prepare_count == 0) {
+ 		ret = clk_core_prepare(core->parent);
+ 		if (ret)
+@@ -798,9 +802,13 @@ static int clk_core_prepare_lock(struct clk_core *core)
+ {
+ 	int ret;
+ 
+-	clk_prepare_lock();
++	/*
++	 * TODO: optimize, no need to lock parent controllers
++	 * if prepare_count >= 1 already
++	 */
++	clk_prepare_lock_parents_locked(core);
+ 	ret = clk_core_prepare(core);
+-	clk_prepare_unlock();
++	clk_prepare_unlock_parents(core);
+ 
+ 	return ret;
+ }
+@@ -1055,7 +1063,7 @@ static int clk_disable_unused(void)
+ 		return 0;
+ 	}
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_all();
+ 
+ 	hlist_for_each_entry(core, &clk_root_list, child_node)
+ 		clk_disable_unused_subtree(core);
+@@ -1069,7 +1077,7 @@ static int clk_disable_unused(void)
+ 	hlist_for_each_entry(core, &clk_orphan_list, child_node)
+ 		clk_unprepare_unused_subtree(core);
+ 
+-	clk_prepare_unlock();
++	clk_prepare_unlock_all();
+ 
+ 	return 0;
+ }
+@@ -1081,11 +1089,11 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 	struct clk_core *parent;
+ 	long rate;
+ 
+-	lockdep_assert_held(&prepare_lock);
+-
+ 	if (!core)
+ 		return 0;
+ 
++	lockdep_assert_held(&core->ctrl->prepare_lock);
 +
-+	/* Disable measurement to save power */
-+	writel(0x0, pmu + PMU_XTAL_FREQ_RATIO);
+ 	parent = core->parent;
+ 	if (parent) {
+ 		req->best_parent_hw = parent->hw;
+@@ -1164,13 +1172,13 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
+ 	if (!clk)
+ 		return 0;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_parents(clk->core);
+ 
+ 	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
+ 	req.rate = rate;
+ 
+ 	ret = clk_core_round_rate_nolock(clk->core, &req);
+-	clk_prepare_unlock();
++	clk_prepare_unlock_parents(clk->core);
+ 
+ 	if (ret)
+ 		return ret;
+@@ -1228,7 +1236,7 @@ static void __clk_recalc_accuracies(struct clk_core *core)
+ 	unsigned long parent_accuracy = 0;
+ 	struct clk_core *child;
+ 
+-	lockdep_assert_held(&prepare_lock);
++	lockdep_assert_held(&core->ctrl->prepare_lock);
+ 
+ 	if (core->parent)
+ 		parent_accuracy = core->parent->accuracy;
+@@ -1247,12 +1255,12 @@ static long clk_core_get_accuracy(struct clk_core *core)
+ {
+ 	unsigned long accuracy;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_children(core);
+ 	if (core && (core->flags & CLK_GET_ACCURACY_NOCACHE))
+ 		__clk_recalc_accuracies(core);
+ 
+ 	accuracy = __clk_get_accuracy(core);
+-	clk_prepare_unlock();
++	clk_prepare_unlock_children(core);
+ 
+ 	return accuracy;
+ }
+@@ -1301,7 +1309,7 @@ static void __clk_recalc_rates(struct clk_core *core, unsigned long msg)
+ 	unsigned long parent_rate = 0;
+ 	struct clk_core *child;
+ 
+-	lockdep_assert_held(&prepare_lock);
++	lockdep_assert_held(&core->ctrl->prepare_lock);
+ 
+ 	old_rate = core->rate;
+ 
+@@ -1325,13 +1333,14 @@ static unsigned long clk_core_get_rate(struct clk_core *core)
+ {
+ 	unsigned long rate;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_tree(core);
+ 
+ 	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
+ 		__clk_recalc_rates(core, 0);
+ 
+ 	rate = clk_core_get_rate_nolock(core);
+-	clk_prepare_unlock();
 +
-+	avg = sum / num;
++	clk_prepare_unlock_tree(core);
+ 
+ 	return rate;
+ }
+@@ -1525,7 +1534,7 @@ static int __clk_speculate_rates(struct clk_core *core,
+ 	unsigned long new_rate;
+ 	int ret = NOTIFY_DONE;
+ 
+-	lockdep_assert_held(&prepare_lock);
++	lockdep_assert_held(&core->ctrl->prepare_lock);
+ 
+ 	new_rate = clk_recalc(core, parent_rate);
+ 
+@@ -1867,11 +1876,11 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+ 		return 0;
+ 
+ 	/* prevent racing with updates to the clock topology */
+-	clk_prepare_lock();
++	clk_prepare_lock_tree(clk->core);
+ 
+ 	ret = clk_core_set_rate_nolock(clk->core, rate);
+ 
+-	clk_prepare_unlock();
++	clk_prepare_unlock_tree(clk->core);
+ 
+ 	return ret;
+ }
+@@ -1899,7 +1908,7 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 		return -EINVAL;
+ 	}
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_parents(clk->core);
+ 
+ 	if (min != clk->min_rate || max != clk->max_rate) {
+ 		clk->min_rate = min;
+@@ -1907,7 +1916,7 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
+ 	}
+ 
+-	clk_prepare_unlock();
++	clk_prepare_unlock_parents(clk->core);
+ 
+ 	return ret;
+ }
+@@ -1958,10 +1967,13 @@ struct clk *clk_get_parent(struct clk *clk)
+ 	if (!clk)
+ 		return NULL;
+ 
+-	clk_prepare_lock();
+-	/* TODO: Create a per-user clk and change callers to call clk_put */
++	clk_prepare_lock_ctrl(clk->core);
++	/*
++	 * TODO: Create a per-user clk and change callers to call clk_put.
++	 * Switch to tree locking then.
++	 */
+ 	parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
+-	clk_prepare_unlock();
++	clk_prepare_unlock_ctrl(clk->core);
+ 
+ 	return parent;
+ }
+@@ -1981,8 +1993,11 @@ static void clk_core_reparent(struct clk_core *core,
+ 				  struct clk_core *new_parent)
+ {
+ 	clk_reparent(core, new_parent);
 +
-+	return parent_rate * 4 / avg;
-+}
++	clk_prepare_lock_children(core);
+ 	__clk_recalc_accuracies(core);
+ 	__clk_recalc_rates(core, POST_RATE_CHANGE);
++	clk_prepare_unlock_children(core);
+ }
+ 
+ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
+@@ -2032,26 +2047,31 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 	int ret = 0;
+ 	int p_index = 0;
+ 	unsigned long p_rate = 0;
++	struct clk_core *old_parent;
+ 
+ 	if (!core)
+ 		return 0;
+ 
+ 	/* prevent racing with updates to the clock topology */
+-	clk_prepare_lock();
++	clk_prepare_lock_tree(core);
+ 
++	old_parent = core->parent;
+ 	if (core->parent == parent)
+-		goto out;
++		goto unlock_tree;
 +
-+static const struct clk_ops ns_ilp_clk_ops = {
-+	.enable = ns_ilp_enable,
-+	.recalc_rate = ns_ilp_recalc_rate,
-+};
++	if (parent && (parent->ctrl != core->ctrl))
++		clk_ctrl_prepare_lock(parent->ctrl);
+ 
+ 	/* verify ops for for multi-parent clks */
+ 	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+ 		ret = -ENOSYS;
+-		goto out;
++		goto unlock_new_parent;
+ 	}
+ 
+ 	/* check that we are allowed to re-parent if the clock is in use */
+ 	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+ 		ret = -EBUSY;
+-		goto out;
++		goto unlock_new_parent;
+ 	}
+ 
+ 	/* try finding the new parent index */
+@@ -2061,7 +2081,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 			pr_debug("%s: clk %s can not be parent of clk %s\n",
+ 					__func__, parent->name, core->name);
+ 			ret = p_index;
+-			goto out;
++			goto unlock_new_parent;
+ 		}
+ 		p_rate = parent->rate;
+ 	}
+@@ -2071,7 +2091,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 
+ 	/* abort if a driver objects */
+ 	if (ret & NOTIFY_STOP_MASK)
+-		goto out;
++		goto unlock_new_parent;
+ 
+ 	/* do the re-parent */
+ 	ret = __clk_set_parent(core, parent, p_index);
+@@ -2084,8 +2104,13 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		__clk_recalc_accuracies(core);
+ 	}
+ 
+-out:
+-	clk_prepare_unlock();
 +
-+static void ns_ilp_init(struct device_node *np)
-+{
-+	struct ns_ilp *ilp;
-+	struct resource res;
-+	struct clk_init_data init = { 0 };
-+	const char *parent_name;
-+	int index;
-+	int err;
++unlock_new_parent:
++	if (parent && (parent->ctrl != core->ctrl))
++		clk_ctrl_prepare_unlock(parent->ctrl);
 +
-+	ilp = kzalloc(sizeof(*ilp), GFP_KERNEL);
-+	if (!ilp)
-+		return;
++unlock_tree:
++	clk_prepare_unlock_oldtree(core, old_parent);
+ 
+ 	return ret;
+ }
+@@ -2148,7 +2173,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+ 	if (degrees < 0)
+ 		degrees += 360;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_parents(clk->core);
+ 
+ 	/* bail early if nothing to do */
+ 	if (degrees == clk->core->phase)
+@@ -2165,7 +2190,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+ 		clk->core->phase = degrees;
+ 
+ out:
+-	clk_prepare_unlock();
++	clk_prepare_unlock_parents(clk->core);
+ 
+ 	return ret;
+ }
+@@ -2175,9 +2200,9 @@ static int clk_core_get_phase(struct clk_core *core)
+ {
+ 	int ret;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_parents(core);
+ 	ret = core->phase;
+-	clk_prepare_unlock();
++	clk_prepare_unlock_parents(core);
+ 
+ 	return ret;
+ }
+@@ -2280,13 +2305,13 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	seq_puts(s, "   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n");
+ 	seq_puts(s, "----------------------------------------------------------------------------------------\n");
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_all();
+ 
+ 	for (; *lists; lists++)
+ 		hlist_for_each_entry(c, *lists, child_node)
+ 			clk_summary_show_subtree(s, c, 0);
+ 
+-	clk_prepare_unlock();
++	clk_prepare_unlock_all();
+ 
+ 	return 0;
+ }
+@@ -2343,7 +2368,7 @@ static int clk_dump(struct seq_file *s, void *data)
+ 
+ 	seq_printf(s, "{");
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_all();
+ 
+ 	for (; *lists; lists++) {
+ 		hlist_for_each_entry(c, *lists, child_node) {
+@@ -2354,7 +2379,7 @@ static int clk_dump(struct seq_file *s, void *data)
+ 		}
+ 	}
+ 
+-	clk_prepare_unlock();
++	clk_prepare_unlock_all();
+ 
+ 	seq_puts(s, "}\n");
+ 	return 0;
+@@ -2572,7 +2597,7 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (!core)
+ 		return -EINVAL;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_ctrl(core);
+ 
+ 	/* check to see if a clock with this name is already registered */
+ 	if (clk_core_lookup(core->name)) {
+@@ -2696,10 +2721,12 @@ static int __clk_core_init(struct clk_core *core)
+ 		 * redundant call to the .set_rate op, if it exists
+ 		 */
+ 		if (parent) {
++			clk_prepare_lock_children(orphan);
+ 			__clk_set_parent_before(orphan, parent);
+ 			__clk_set_parent_after(orphan, parent, NULL);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
++			clk_prepare_unlock_children(orphan);
+ 		}
+ 	}
+ 
+@@ -2726,7 +2753,7 @@ static int __clk_core_init(struct clk_core *core)
+ 
+ 	kref_init(&core->ref);
+ out:
+-	clk_prepare_unlock();
++	clk_prepare_unlock_ctrl(core);
+ 
+ 	if (!ret)
+ 		clk_debug_register(core);
+@@ -2752,18 +2779,19 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 	clk->con_id = con_id;
+ 	clk->max_rate = ULONG_MAX;
+ 
+-	clk_prepare_lock();
++	/* FIXME: Check if core->ctrl is always initialized here (in all paths) */
++	clk_prepare_lock_ctrl(clk->core);
+ 	hlist_add_head(&clk->clks_node, &hw->core->clks);
+-	clk_prepare_unlock();
++	clk_prepare_unlock_ctrl(clk->core);
+ 
+ 	return clk;
+ }
+ 
+ void __clk_free_clk(struct clk *clk)
+ {
+-	clk_prepare_lock();
++	clk_prepare_lock_ctrl(clk->core);
+ 	hlist_del(&clk->clks_node);
+-	clk_prepare_unlock();
++	clk_prepare_unlock_ctrl(clk->core);
+ 
+ 	kfree(clk);
+ }
+@@ -2979,12 +3007,18 @@ void clk_unregister(struct clk *clk)
+ 
+ 	clk_debug_unregister(clk->core);
+ 
++	/*
++	 * Take prepare lock again because controller lock
++	 * will have to be released before final clk_release.
++	 */
+ 	clk_prepare_lock();
++	clk_prepare_lock_parents(clk->core);
+ 
+ 	if (clk->core->ops == &clk_nodrv_ops) {
+ 		pr_err("%s: unregistered clock: %s\n", __func__,
+ 		       clk->core->name);
+-		goto unlock;
++		clk_prepare_unlock_parents(clk->core);
++		goto half_unlock;
+ 	}
+ 	/*
+ 	 * Assign empty clock ops for consumers that might still hold
+@@ -3009,8 +3043,10 @@ void clk_unregister(struct clk *clk)
+ 	if (clk->core->prepare_count)
+ 		pr_warn("%s: unregistering prepared clock: %s\n",
+ 					__func__, clk->core->name);
++	clk_prepare_unlock_parents(clk->core);
+ 	kref_put(&clk->core->ref, __clk_release);
+-unlock:
 +
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	if (!parent_name) {
-+		err = -ENOENT;
-+		goto err_free_ilp;
-+	}
++half_unlock:
+ 	clk_prepare_unlock();
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister);
+@@ -3166,7 +3202,12 @@ void __clk_put(struct clk *clk)
+ 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+ 		return;
+ 
++	/*
++	 * Take prepare lock again because controller lock
++	 * will have to be released before final clk_release.
++	 */
+ 	clk_prepare_lock();
++	clk_prepare_lock_parents(clk->core);
+ 
+ 	hlist_del(&clk->clks_node);
+ 	if (clk->min_rate > clk->core->req_rate ||
+@@ -3174,6 +3215,9 @@ void __clk_put(struct clk *clk)
+ 		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
+ 
+ 	owner = clk->core->owner;
 +
-+	/* TODO: This looks generic, try making it OF helper. */
-+	index = of_property_match_string(np, "reg-names", "pmu");
-+	if (index < 0) {
-+		err = index;
-+		goto err_free_ilp;
-+	}
-+	err = of_address_to_resource(np, index, &res);
-+	if (err)
-+		goto err_free_ilp;
-+	ilp->pmu = ioremap(res.start, resource_size(&res));
-+	if (IS_ERR(ilp->pmu)) {
-+		err = PTR_ERR(ilp->pmu);
-+		goto err_free_ilp;
-+	}
++	clk_prepare_unlock_parents(clk->core);
 +
-+	init.name = np->name;
-+	init.ops = &ns_ilp_clk_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	ilp->hw.init = &init;
-+	ilp->clk = clk_register(NULL, &ilp->hw);
-+	if (WARN_ON(IS_ERR(ilp->clk)))
-+		goto err_unmap_pmu;
-+
-+	err = of_clk_add_provider(np, of_clk_src_simple_get, ilp->clk);
-+	if (err)
-+		goto err_clk_unregister;
-+
-+	return;
-+
-+err_clk_unregister:
-+	clk_unregister(ilp->clk);
-+err_unmap_pmu:
-+	iounmap(ilp->pmu);
-+err_free_ilp:
-+	kfree(ilp);
-+	pr_err("Failed to init ILP clock: %d\n", err);
-+}
-+CLK_OF_DECLARE(ns_ilp_clk, "brcm,ns-ilp", ns_ilp_init);
+ 	kref_put(&clk->core->ref, __clk_release);
+ 
+ 	clk_prepare_unlock();
+@@ -3213,7 +3257,7 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
+ 	if (!clk || !nb)
+ 		return -EINVAL;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_ctrl(clk->core);
+ 
+ 	/* search the list of notifiers for this clk */
+ 	list_for_each_entry(cn, &clk_notifier_list, node)
+@@ -3237,7 +3281,7 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
+ 	clk->core->notifier_count++;
+ 
+ out:
+-	clk_prepare_unlock();
++	clk_prepare_unlock_ctrl(clk->core);
+ 
+ 	return ret;
+ }
+@@ -3262,7 +3306,7 @@ int clk_notifier_unregister(struct clk *clk, struct notifier_block *nb)
+ 	if (!clk || !nb)
+ 		return -EINVAL;
+ 
+-	clk_prepare_lock();
++	clk_prepare_lock_ctrl(clk->core);
+ 
+ 	list_for_each_entry(cn, &clk_notifier_list, node)
+ 		if (cn->clk == clk)
+@@ -3284,7 +3328,7 @@ int clk_notifier_unregister(struct clk *clk, struct notifier_block *nb)
+ 		ret = -ENOENT;
+ 	}
+ 
+-	clk_prepare_unlock();
++	clk_prepare_unlock_ctrl(clk->core);
+ 
+ 	return ret;
+ }
 -- 
-1.8.4.5
+1.9.1
+
