@@ -1,61 +1,97 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- bcm-kernel-feedback-list@broadcom.com,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <8519a1cf-ec51-2914-e4aa-27b26b9233de@osg.samsung.com>
-Date: Fri, 19 Aug 2016 15:31:08 -0400
+Return-Path: <lidongpo@hisilicon.com>
+Subject: Re: [PATCH 1/4] net: hix5hd2_gmac: add tx scatter-gather feature
+To: Rob Herring <robh@kernel.org>
+References: <1470906115-155569-1-git-send-email-lidongpo@hisilicon.com>
+ <1470906115-155569-2-git-send-email-lidongpo@hisilicon.com>
+ <20160812184336.GA5706@rob-hp-laptop> <57B1664F.1090708@hisilicon.com>
+ <CAL_JsqLgzaPECHdX8yHC3DAUq0jXhgUFE+xVFbeV0OLQXopqxg@mail.gmail.com>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Yisen Zhuang
+	<yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+        David Miller
+	<davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Lunn
+	<andrew@lunn.ch>, <xuejiancheng@hisilicon.com>,
+        <benjamin.chenhao@hisilicon.com>, <howell.yang@hisilicon.com>,
+        netdev
+	<netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Dongpo Li <lidongpo@hisilicon.com>
+Message-ID: <57B27A3C.5070403@hisilicon.com>
+Date: Tue, 16 Aug 2016 10:28:12 +0800
 MIME-Version: 1.0
-In-Reply-To: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAL_JsqLgzaPECHdX8yHC3DAUq0jXhgUFE+xVFbeV0OLQXopqxg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
 
-On 08/16/2016 09:34 AM, Krzysztof Kozlowski wrote:
-> Hi,
+
+On 2016/8/16 0:18, Rob Herring wrote:
+> On Mon, Aug 15, 2016 at 1:50 AM, Dongpo Li <lidongpo@hisilicon.com> wrote:
+>> Hi Rob,
+>> Many thanks for your review.
+>>
+>> On 2016/8/13 2:43, Rob Herring wrote:
+>>> On Thu, Aug 11, 2016 at 05:01:52PM +0800, Dongpo Li wrote:
+>>>> From: Li Dongpo <lidongpo@hisilicon.com>
+>>>>
+>>>> The "hix5hd2" is SoC name, add the generic ethernet driver name.
+>>>> The "hisi-gemac-v1" is the basic version and "hisi-gemac-v2" adds
+>>>> the SG/TXCSUM/TSO/UFO features.
+>>>> This patch only adds the SG(scatter-gather) driver for transmitting,
+>>>> the drivers of other features will be submitted later.
+>>>
+>>> The compatible string changes should probably be a separate patch.
+>>>
+>> ok, I will split this patch into two patches, one for compatible string changes,
+>> and one for driver feature implementation.
+>>
+>>>> Signed-off-by: Dongpo Li <lidongpo@hisilicon.com>
+>>>> ---
+>>>>  .../bindings/net/hisilicon-hix5hd2-gmac.txt        |   9 +-
+>>>>  drivers/net/ethernet/hisilicon/hix5hd2_gmac.c      | 213 +++++++++++++++++++--
+>>>>  2 files changed, 205 insertions(+), 17 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
+>>>> index 75d398b..3c02fac 100644
+>>>> --- a/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
+>>>> +++ b/Documentation/devicetree/bindings/net/hisilicon-hix5hd2-gmac.txt
+>>>> @@ -1,7 +1,12 @@
+>>>>  Hisilicon hix5hd2 gmac controller
+>>>>
+>>>>  Required properties:
+>>>> -- compatible: should be "hisilicon,hix5hd2-gmac".
+>>>> +- compatible: should contain one of the following version strings:
+>>>> +    * "hisilicon,hisi-gemac-v1"
+>>>> +    * "hisilicon,hisi-gemac-v2"
+>>>> +    and one of the following SoC string:
+>>>> +    * "hisilicon,hix5hd2-gemac"
+>>>> +    * "hisilicon,hi3798cv200-gemac"
+>>>
+>>> Make it clear what the order should be.
+>>>
+>> ok, I will put the SoC strings in alphabetical order.
 > 
-> RFC, please, do not apply, maybe except patch #1 which is harmless.
+> No, I mean the most specific string comes first.
 > 
+ok, I will fix it in next patch version. Thank you.
+
+> Rob
 > 
-> Introduction
-> ============
-> The patchset brings new entity: clock controller representing a hardware
-> block.  The clock controller comes with its own prepare lock which
-> is used then in many places.  The idea is to fix the deadlock mentioned
-> in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
-> I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
-> by keeping clock prepared").
-> 
+> .
 > 
 
-I'm not familiar enough with the common clock framework to do a proper review
-of this patch-set, but I've tested both on an Exynos5800 Peach Pi Chromebook
-and an Exynos5422 Odroid XU4 board and I didn't find any clock regressions.
 
-Also, I confirmed that the possible deadlock in the Odroid XU4 that was fixed
-by reverted commit 10ff4c5239a1 doesn't happen anymore with your patches.
+    Regards,
+    Dongpo
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+.
