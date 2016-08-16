@@ -1,34 +1,261 @@
-Return-Path: <fabio.estevam@nxp.com>
-From: Fabio Estevam <fabio.estevam@nxp.com>
-To: <mturquette@baylibre.com>
-CC: <shawnguo@kernel.org>, <stefan@agner.ch>, <festevam@gmail.com>,
-	<linux-clk@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH] clk: imx7d: Add the clock for SDMA
-Date: Wed, 10 Aug 2016 13:03:31 -0300
-Message-ID: <1470845011-13079-1-git-send-email-fabio.estevam@nxp.com>
-Return-Path: fabio.estevam@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <stephen.boyd@linaro.org>
+Return-Path: <stephen.boyd@linaro.org>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: Migrate to clk_hw based registration and OF APIs
+Date: Tue, 16 Aug 2016 15:38:27 -0700
+Message-Id: <20160816223827.977-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IMX7D_SDMA_CORE_CLK clock so that SDMA can be functional.
+Now that we have clk_hw based provider APIs to register clks, we
+can get rid of struct clk pointers in this driver, allowing us to
+move closer to a clear split of consumer and provider clk APIs.
 
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 ---
- drivers/clk/imx/clk-imx7d.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/clk-regmap.c   |  5 ++--
+ drivers/clk/qcom/clk-regmap.h   |  3 +--
+ drivers/clk/qcom/common.c       | 58 +++++++++++++++++++++++------------------
+ drivers/clk/qcom/gcc-mdm9615.c  |  8 +++---
+ drivers/clk/qcom/gcc-msm8996.c  |  9 +++----
+ drivers/clk/qcom/mmcc-msm8996.c |  9 +++----
+ 6 files changed, 47 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 9257972..c24677d 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -779,6 +779,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
-+	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
- 	clks[IMX7D_PCIE_PHY_ROOT_CLK] = imx_clk_gate4("pcie_phy_root_clk", "pcie_phy_post_div", base + 0x4600, 0);
- 	clks[IMX7D_EPDC_PIXEL_ROOT_CLK] = imx_clk_gate4("epdc_pixel_root_clk", "epdc_pixel_post_div", base + 0x44a0, 0);
+diff --git a/drivers/clk/qcom/clk-regmap.c b/drivers/clk/qcom/clk-regmap.c
+index a58ba39a900c..1c856d330733 100644
+--- a/drivers/clk/qcom/clk-regmap.c
++++ b/drivers/clk/qcom/clk-regmap.c
+@@ -101,14 +101,13 @@ EXPORT_SYMBOL_GPL(clk_disable_regmap);
+  * clk_regmap struct via this function so that the regmap is initialized
+  * and so that the clock is registered with the common clock framework.
+  */
+-struct clk *devm_clk_register_regmap(struct device *dev,
+-				     struct clk_regmap *rclk)
++int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk)
+ {
+ 	if (dev && dev_get_regmap(dev, NULL))
+ 		rclk->regmap = dev_get_regmap(dev, NULL);
+ 	else if (dev && dev->parent)
+ 		rclk->regmap = dev_get_regmap(dev->parent, NULL);
+ 
+-	return devm_clk_register(dev, &rclk->hw);
++	return devm_clk_hw_register(dev, &rclk->hw);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_register_regmap);
+diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
+index 491a63d537df..90d95cd11ec6 100644
+--- a/drivers/clk/qcom/clk-regmap.h
++++ b/drivers/clk/qcom/clk-regmap.h
+@@ -39,7 +39,6 @@ struct clk_regmap {
+ int clk_is_enabled_regmap(struct clk_hw *hw);
+ int clk_enable_regmap(struct clk_hw *hw);
+ void clk_disable_regmap(struct clk_hw *hw);
+-struct clk *
+-devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
++int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
+ 
+ #endif
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index f7c226ab4307..fffcbaf0fba7 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -27,8 +27,8 @@
+ 
+ struct qcom_cc {
+ 	struct qcom_reset_controller reset;
+-	struct clk_onecell_data data;
+-	struct clk *clks[];
++	struct clk_regmap **rclks;
++	size_t num_rclks;
+ };
+ 
+ const
+@@ -102,8 +102,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 	struct device_node *clocks_node;
+ 	struct clk_fixed_factor *factor;
+ 	struct clk_fixed_rate *fixed;
+-	struct clk *clk;
+ 	struct clk_init_data init_data = { };
++	int ret;
+ 
+ 	clocks_node = of_find_node_by_path("/clocks");
+ 	if (clocks_node)
+@@ -121,9 +121,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		init_data.name = path;
+ 		init_data.ops = &clk_fixed_rate_ops;
+ 
+-		clk = devm_clk_register(dev, &fixed->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, &fixed->hw);
++		if (ret)
++			return ret;
+ 	}
+ 	of_node_put(node);
+ 
+@@ -141,9 +141,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		init_data.flags = 0;
+ 		init_data.ops = &clk_fixed_factor_ops;
+ 
+-		clk = devm_clk_register(dev, &factor->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, &factor->hw);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -174,42 +174,48 @@ int qcom_cc_register_sleep_clk(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_register_sleep_clk);
+ 
++static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
++					 void *data)
++{
++	struct qcom_cc *cc = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= cc->num_rclks) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return cc->rclks[idx] ? &cc->rclks[idx]->hw : ERR_PTR(-ENOENT);
++}
++
+ int qcom_cc_really_probe(struct platform_device *pdev,
+ 			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+ {
+ 	int i, ret;
+ 	struct device *dev = &pdev->dev;
+-	struct clk *clk;
+-	struct clk_onecell_data *data;
+-	struct clk **clks;
+ 	struct qcom_reset_controller *reset;
+ 	struct qcom_cc *cc;
+ 	struct gdsc_desc *scd;
+ 	size_t num_clks = desc->num_clks;
+ 	struct clk_regmap **rclks = desc->clks;
+ 
+-	cc = devm_kzalloc(dev, sizeof(*cc) + sizeof(*clks) * num_clks,
+-			  GFP_KERNEL);
++	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+ 	if (!cc)
+ 		return -ENOMEM;
+ 
+-	clks = cc->clks;
+-	data = &cc->data;
+-	data->clks = clks;
+-	data->clk_num = num_clks;
++	cc->rclks = rclks;
++	cc->num_rclks = num_clks;
+ 
+ 	for (i = 0; i < num_clks; i++) {
+-		if (!rclks[i]) {
+-			clks[i] = ERR_PTR(-ENOENT);
++		if (!rclks[i])
+ 			continue;
+-		}
+-		clk = devm_clk_register_regmap(dev, rclks[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
+-		clks[i] = clk;
++
++		ret = devm_clk_register_regmap(dev, rclks[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+-	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get, data);
++	ret = of_clk_add_hw_provider(dev->of_node, qcom_cc_clk_hw_get, cc);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+index 0f648fcb2b65..581a17f67379 100644
+--- a/drivers/clk/qcom/gcc-mdm9615.c
++++ b/drivers/clk/qcom/gcc-mdm9615.c
+@@ -1686,7 +1686,7 @@ static int gcc_mdm9615_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct regmap *regmap;
+-	struct clk *clk;
++	int ret;
+ 	int i;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_mdm9615_desc);
+@@ -1694,9 +1694,9 @@ static int gcc_mdm9615_probe(struct platform_device *pdev)
+ 		return PTR_ERR(regmap);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(gcc_mdm9615_hws); i++) {
+-		clk = devm_clk_register(dev, gcc_mdm9615_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, gcc_mdm9615_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &gcc_mdm9615_desc, regmap);
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index bbf732bbc3fd..3afe42c9d611 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3447,9 +3447,8 @@ MODULE_DEVICE_TABLE(of, gcc_msm8996_match_table);
+ 
+ static int gcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct clk *clk;
+ 	struct device *dev = &pdev->dev;
+-	int i;
++	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
+@@ -3463,9 +3462,9 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
+ 
+ 	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
+-		clk = devm_clk_register(dev, gcc_msm8996_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 847dd9dadeca..384b812a153e 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3305,9 +3305,8 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8996_match_table);
+ 
+ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct clk *clk;
+ 	struct device *dev = &pdev->dev;
+-	int i;
++	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
+@@ -3320,9 +3319,9 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
+-		clk = devm_clk_register(dev, mmcc_msm8996_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
 -- 
-1.9.1
+2.9.0.rc2.8.ga28705d
