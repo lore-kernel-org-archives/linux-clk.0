@@ -1,45 +1,90 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v10 9/9] arm: dts: mt2701: Use real clock for UARTs
+Date: Tue, 16 Aug 2016 15:30:29 +0800
+Message-ID: <1471332629-15722-10-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
+References: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <7hk2fc76xx.fsf@baylibre.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- sboyd@codeaurora.org, devicetree@vger.kernel.org
-References: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
- <1471514928-3341-4-git-send-email-narmstrong@baylibre.com>
- <7hk2fc76xx.fsf@baylibre.com>
-Message-ID: <147208015014.66208.14165603610884470316@resonance>
-Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gxbb: Add GXBB AO Clock and Reset node
-Date: Wed, 24 Aug 2016 16:09:10 -0700
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kevin Hilman (2016-08-19 15:03:06)
-> Neil Armstrong <narmstrong@baylibre.com> writes:
-> =
+We used to use a fixed rate clock for the UARTs. Now that we have clock
+support we can associate the correct clocks to the UARTs and drop the
+26MHz fixed rate UART clock.
 
-> > Add the AO clock controller node for the AmLogic GXBB SoC.
-> >
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > ---
-> =
+Change-Id: Icd44282b859a344b86eccdf4840e9ffb7cee7ec5
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-> Applying this to the amlogic tree, but will need to wait a cycle due to
-> include dependencies on the bindings, which are going through the clock
-> tree.
-
-FYI, for picked patches, Stephen and I create a stable branch for each
-platform. You can pull this into your tree if you want, just let us know
-so we'll be sure not to rebase:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-meson-gxbb-=
-ao
-
-Regards,
-Mike
-
-> =
-
-> Kevin
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index c9a8dbf..7eab6f4 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -73,12 +73,6 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	uart_clk: dummy26m {
+-		compatible = "fixed-clock";
+-		clock-frequency = <26000000>;
+-		#clock-cells = <0>;
+-	};
+-
+ 	clk26m: oscillator@0 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -186,7 +180,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -195,7 +190,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -204,7 +200,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -213,7 +210,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ };
+-- 
+1.9.1
