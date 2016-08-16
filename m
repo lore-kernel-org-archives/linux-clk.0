@@ -1,149 +1,77 @@
-Return-Path: <mw@semihalf.com>
-MIME-Version: 1.0
-In-Reply-To: <20160825001613.GQ19826@codeaurora.org>
-References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
- <1471933609-8456-3-git-send-email-mw@semihalf.com> <20160825001613.GQ19826@codeaurora.org>
-From: Marcin Wojtas <mw@semihalf.com>
-Date: Tue, 30 Aug 2016 17:31:21 +0200
-Message-ID: <CAPv3WKdVX1p3qmUufXE_cd=A0fuS8Eg9ELT0AYnXV6Z=cgJg-w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: mvebu: dynamically allocate resources in Armada
- CP110 system controller
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
-	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
-	Grzegorz Jaszczyk <jaz@semihalf.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 03/17] clk: s2mps11: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:00 +0200
+Message-id: <1471354514-24224-4-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
-2016-08-25 2:16 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 08/23, Marcin Wojtas wrote:
->> Original commit, which added support for Armada CP110 system controller
->> used global variables for storing all clock information. It worked
->> fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
->> was introduced, the data got overwritten and corrupted.
->>
->> This patch fixes the issue by allocating resources dynamically in the
->> driver probe and storing it as platform drvdata.
->>
->> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
->>
->
-> Please drop the space between fixes tag and the signoff.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/clk-s2mps11.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Ok.
-
->
->> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
->> ---
->>  drivers/clk/mvebu/cp110-system-controller.c | 29 ++++++++++++++++++++---------
->>  1 file changed, 20 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
->> index 0835e1d..2bd87d2 100644
->> --- a/drivers/clk/mvebu/cp110-system-controller.c
->> +++ b/drivers/clk/mvebu/cp110-system-controller.c
->> @@ -81,13 +81,6 @@ enum {
->>  #define CP110_GATE_EIP150            25
->>  #define CP110_GATE_EIP197            26
->>
->> -static struct clk *cp110_clks[CP110_CLK_NUM];
->> -
->> -static struct clk_onecell_data cp110_clk_data = {
->> -     .clks = cp110_clks,
->> -     .clk_num = CP110_CLK_NUM,
->> -};
->> -
->>  struct cp110_gate_clk {
->>       struct clk_hw hw;
->>       struct regmap *regmap;
->> @@ -195,7 +188,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->>       struct regmap *regmap;
->>       struct device_node *np = pdev->dev.of_node;
->>       const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
->> -     struct clk *clk;
->> +     struct clk_onecell_data *cp110_clk_data;
->> +     struct clk *clk, **cp110_clks;
->>       u32 nand_clk_ctrl;
->>       int i, ret;
->>
->> @@ -208,6 +202,20 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->>       if (ret)
->>               return ret;
->>
->> +     cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
->> +                               CP110_CLK_NUM, GFP_KERNEL);
->> +     if (IS_ERR(cp110_clks))
->
-> Doesn't that return NULL on error?
-
-Will change to 'if (!cp110clks)'
-
->
->> +             return PTR_ERR(cp110_clks);
->> +
->> +     cp110_clk_data = devm_kzalloc(&pdev->dev,
->> +                                   sizeof(struct clk_onecell_data),
->
-> sizeof(*cp110_clk_data) please
-
-Ok.
-
->
->> +                                   GFP_KERNEL);
->> +     if (IS_ERR(cp110_clk_data))
->
-> Doesn't that return NULL on error?
-
-Same as above, will change.
-
->
->> +             return PTR_ERR(cp110_clk_data);
->> +
->> +     cp110_clk_data->clks = cp110_clks;
->> +     cp110_clk_data->clk_num = CP110_CLK_NUM;
->> +
->>       /* Register the APLL which is the root of the clk tree */
->>       of_property_read_string_index(np, "core-clock-output-names",
->>                                     CP110_CORE_APLL, &apll_name);
->> @@ -335,10 +343,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->>               cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
->>       }
->>
->> -     ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
->> +     ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
->
-> It would be nice if this could be converted to
-> of_clk_add_hw_provider().
-
-Will try it. Shouldn't such change be placed in separate commit?
-
->
->>       if (ret)
->>               goto fail_clk_add;
->>
->> +     platform_set_drvdata(pdev, cp110_clks);
->> +
->>       return 0;
->>
->>  fail_clk_add:
->> @@ -365,6 +375,7 @@ fail0:
->>
->>  static int cp110_syscon_clk_remove(struct platform_device *pdev)
->>  {
->> +     struct clk **cp110_clks = platform_get_drvdata(pdev);
->
-> Is this variable unused now?
-
-No, why? Just below there is a loop using it. Before it was taken from
-global variable, which I got rid of.
-
-Best regards,
-Marcin
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index fbaa84a33c46..881f1e226867 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -41,6 +41,7 @@ struct s2mps11_clk {
+ 	struct clk_hw hw;
+ 	struct clk *clk;
+ 	struct clk_lookup *lookup;
++	struct clk_ctrl *clk_ctrl;
+ 	u32 mask;
+ 	unsigned int reg;
+ };
+@@ -176,6 +177,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(s2mps11_clks->clk_np))
+ 		return PTR_ERR(s2mps11_clks->clk_np);
+ 
++	s2mps11_clks->clk_ctrl = clk_ctrl_register(&pdev->dev);
++	if (IS_ERR(s2mps11_clks->clk_ctrl))
++		return PTR_ERR(s2mps11_clks->clk_ctrl); // FIXME: use devm-like
++
+ 	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+ 		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+ 			continue; /* Skip clocks not present in some devices */
+@@ -184,7 +189,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 		s2mps11_clks[i].mask = 1 << i;
+ 		s2mps11_clks[i].reg = s2mps11_reg;
+ 
+-		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
++		s2mps11_clks[i].clk = devm_clk_register_with_ctrl(&pdev->dev,
++							s2mps11_clks->clk_ctrl,
+ 							&s2mps11_clks[i].hw);
+ 		if (IS_ERR(s2mps11_clks[i].clk)) {
+ 			dev_err(&pdev->dev, "Fail to register : %s\n",
+@@ -233,6 +239,8 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
+ 		clkdev_drop(s2mps11_clks[i].lookup);
+ 	}
+ 
++	clk_ctrl_unregister(s2mps11_clks->clk_ctrl);
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
