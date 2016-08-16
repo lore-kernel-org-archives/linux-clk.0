@@ -1,123 +1,154 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <frank.wang@rock-chips.com>
+Subject: Re: [PATCH v3 2/7] clk: rockchip: rk3399: export 480M_SRC clock id
+ for usbphy0/usbphy1
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+ <1918977.W0kRfKbZsD@diego>
+ <cba79ba6-7f41-5398-389c-7fd3fe5e0089@rock-chips.com>
+ <1570410.dThJclhmJd@diego>
+ <f9312de8-7f7c-b6e1-0eec-ac78813cc2b0@rock-chips.com>
+Cc: Xing Zheng <zhengxing@rock-chips.com>,
+ linux-rockchip@lists.infradead.org, dianders@chromium.org,
+ briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com,
+ wulf@rock-chips.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/2] clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
-Date: Mon, 22 Aug 2016 17:41:48 +0900
-Message-id: <1471855308-12791-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
-References: <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
+ daniel.meng@rock-chips.com, frank.wang@rock-chips.com
+From: Frank Wang <frank.wang@rock-chips.com>
+Message-ID: <f725344c-fffa-fa40-5d75-524bc2f02a8b@rock-chips.com>
+Date: Tue, 16 Aug 2016 14:34:58 +0800
+MIME-Version: 1.0
+In-Reply-To: <f9312de8-7f7c-b6e1-0eec-ac78813cc2b0@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the mux/divider clocks for CMU_CDREX (DRAM Express
-Controller) which generates the clocks for DRAM and NoC (Network on Chip) bus
-clock. But, there is differnet source of MUX_MX_MSPLL_CCORE between exynos5420
-and exynos5422. So, each MUX_MX_MSPLL_CCORE uses the different parent source
-group.
+Hi Heiko,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+On 2016/8/8 17:55, Frank Wang wrote:
+> Hi Heiko,
+>
+> On 2016/8/6 0:05, Heiko Stübner wrote:
+>> Hi Frank,
+>>
+>> Am Freitag, 5. August 2016, 16:34:42 schrieb Frank Wang:
+>>> On 2016/8/5 3:10, Heiko Stübner wrote:
+>>>> Am Dienstag, 2. August 2016, 15:19:56 schrieb Xing Zheng:
+>>>>> Export these source clocks for usbphy.
+>>>>>
+>>>>> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+>>>> can you please provide a rationale why you need manual control over 
+>>>> that
+>>>> intermediate clock?
+>>> Well, From below graph, you can see that 'clk_usbphyX_480m' is 
+>>> generated
+>>> from usb2phy, and 'clk_usbphy_480m' which select from
+>>> clk_usbphyX_480m_src via a gate (G13[12])  provided 480M clock to other
+>>> modules.
+>>>
+>>>     xin24m
+>>>       |__ clk_usb2phy0_ref
+>>>       |     |
+>>>       |     |__ clk_usbphy0_480m
+>>>       |           |
+>>>       |           |__clk_usbphy0_480m_src
+>>>       |                |
+>>>       |                |__clk_usbphy_480m
+>>>       |                     |__ ... ...
+>>>       |
+>>>       |__ clk_usb2phy1_ref
+>>>             |
+>>>             |__ clk_usbphy1_480m
+>>>                   |
+>>>                   |__clk_usbphy1_480m_src
+>>>> The two usbphys seem to use the clk_usb2phyX_ref clocks, generate the
+>>>> 480m
+>>>> clocks, but do not seem to need the clk_usbphyX_480m_src gates.
+>>> Yeah, they used to be. However, the story went something like this,
+>>>
+>>> Some PM suspend process related ehci/ohci controller are base on 480m
+>>> clocks, unfortunately, usb2-phy suspended earlier than ehci/ohci
+>>> (usb2-phy will be auto suspended if no devices plug-in), and the
+>>> clk-480m provided by it was disabled if no module used. As a result, 
+>>> the
+>>> PM suspend process was blocked when it run into ehci/ohci module.
+>> ah, so the ehci controller needs that 480m clock as well? Do you 
+>> happen to
+>> have example patches for the ehci/ohci side already? I'd like to peak 
+>> at what
+>> you mean with "some PM suspend process related" things.
+>
+> Actually, no patches for it, I just make below steps manually :-).
+> 1. set two usb2-phy into suspend mode.
+> 2. disable 480m clock on each usb2-phy (assume only usb2-phy used it).
+> 3. press power button let system into PM suspend.
+>
+> Then, the kernel will be blocked and you can see the following log 
+> from console.
+> ... ....
+> [  123.763848] calling  usb6+ @ 166, parent: xhci-hcd.0.auto
+> [  123.764503] call usb6+ returned 0 after 163 usecs
+> [  123.765106] calling  usb5+ @ 166, parent: xhci-hcd.0.auto
+> [  123.765719] call usb5+ returned 0 after 121 usecs
+> [  123.766294] calling  usb4+ @ 166, parent: fe3e0000.usb
+> [  123.766917] calling  usb3+ @ 55, parent: fe3a0000.usb
+>
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 586a3da515f3..16b7d160fbdf 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -131,6 +131,9 @@
- #define TOP_SPARE2		0x10b08
- #define BPLL_LOCK		0x20010
- #define BPLL_CON0		0x20110
-+#define SRC_CDREX		0x20200
-+#define DIV_CDREX0		0x20500
-+#define DIV_CDREX1		0x20504
- #define KPLL_LOCK		0x28000
- #define KPLL_CON0		0x28100
- #define SRC_KFC			0x28200
-@@ -244,6 +247,9 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	GATE_TOP_SCLK_FSYS,
- 	GATE_TOP_SCLK_PERIC,
- 	TOP_SPARE2,
-+	SRC_CDREX,
-+	DIV_CDREX0,
-+	DIV_CDREX1,
- 	SRC_KFC,
- 	DIV_KFC0,
- };
-@@ -447,6 +453,8 @@ PNAME(mout_maudio0_p) = {"fin_pll", "maudio_clk", "mout_sclk_dpll",
- 			 "mout_sclk_epll", "mout_sclk_rpll"};
- PNAME(mout_mau_epll_clk_p) = {"mout_sclk_epll", "mout_sclk_dpll",
- 				"mout_sclk_mpll", "mout_sclk_spll"};
-+PNAME(mout_mclk_cdrex_p) = {"mout_bpll", "mout_mx_mspll_ccore"};
-+
- /* List of parents specific to exynos5800 */
- PNAME(mout_epll2_5800_p)	= { "mout_sclk_epll", "ff_dout_epll2" };
- PNAME(mout_group1_5800_p)	= { "mout_sclk_cpll", "mout_sclk_dpll",
-@@ -464,6 +472,9 @@ PNAME(mout_group6_5800_p)	= { "mout_sclk_ipll", "mout_sclk_dpll",
- PNAME(mout_group7_5800_p)	= { "mout_sclk_cpll", "mout_sclk_dpll",
- 					"mout_sclk_mpll", "mout_sclk_spll",
- 					"mout_epll2", "mout_sclk_ipll" };
-+PNAME(mout_mx_mspll_ccore_p)	= {"sclk_bpll", "mout_sclk_dpll",
-+					"mout_sclk_mpll", "ff_dout_spll2",
-+					"mout_sclk_spll", "mout_sclk_epll"};
- PNAME(mout_mau_epll_clk_5800_p)	= { "mout_sclk_epll", "mout_sclk_dpll",
- 					"mout_sclk_mpll",
- 					"ff_dout_spll2" };
-@@ -520,6 +531,8 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
- 	MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
- 
-+	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
-+			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
- 	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
- 			20, 2),
- 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
-@@ -598,6 +611,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk300_disp1", mout_group1_p, SRC_TOP2, 24, 2),
- 	MUX(0, "mout_aclk300_gscl", mout_group1_p, SRC_TOP2, 28, 2),
- 
-+	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
-+			mout_group5_5800_p, SRC_TOP7, 16, 2),
- 	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
- 
- 	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
-@@ -741,6 +756,11 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
- 
- 	MUX(0, "mout_fimd1_final", mout_fimd1_final_p, TOP_SPARE2, 8, 1),
- 
-+	/* CDREX block */
-+	MUX(CLK_MOUT_MCLK_CDREX, "mout_mclk_cdrex", mout_mclk_cdrex_p,
-+			SRC_CDREX, 4, 1),
-+	MUX(CLK_MOUT_BPLL, "mout_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
-+
- 	/* MAU Block */
- 	MUX(CLK_MOUT_MAUDIO0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3),
- 
-@@ -833,6 +853,21 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
- 	DIV(CLK_DOUT_ACLK400_DISP1, "dout_aclk400_disp1",
- 			"mout_aclk400_disp1", DIV_TOP2, 4, 3),
- 
-+	/* CDREX Block */
-+	DIV(CLK_DOUT_PCLK_CDREX, "dout_pclk_cdrex", "dout_aclk_cdrex1",
-+			DIV_CDREX0, 28, 3),
-+	DIV(CLK_DOUT_SCLK_CDREX, "dout_sclk_cdrex", "mout_mclk_cdrex",
-+			DIV_CDREX0, 24, 3),
-+	DIV(CLK_DOUT_ACLK_CDREX1, "dout_aclk_cdrex1", "dout_clk2x_phy0",
-+			DIV_CDREX0, 16, 3),
-+	DIV(CLK_DOUT_CCLK_DREX0, "dout_cclk_drex0", "dout_clk2x_phy0",
-+			DIV_CDREX0, 8, 3),
-+	DIV(CLK_DOUT_CLK2X_PHY0, "dout_clk2x_phy0", "dout_sclk_cdrex",
-+			DIV_CDREX0, 3, 5),
-+
-+	DIV(CLK_DOUT_PCLK_CORE_MEM, "dout_pclk_core_mem", "mout_mclk_cdrex",
-+			DIV_CDREX1, 8, 3),
-+
- 	/* Audio Block */
- 	DIV(0, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
- 	DIV(0, "dout_maupcm0", "dout_maudio0", DIV_MAU, 24, 8),
--- 
-1.9.1
+May I know have you tried reproducing on your board or not?
+
+>>
+>> Depending on what is actually needed, you could also pull the usbphy 
+>> out of
+>> autosuspend in a pm-prepare callback of the phy driver itself ... see
+>> http://lxr.free-electrons.com/source/include/linux/pm.h#L86
+>>
+>> Like
+>> - in the .prepare callback make sure to unsuspend the phy
+>>    and deactivate the autosuspend
+>> - ehci/ohci will poweroff the phy in it s suspend callback (already 
+>> does that)
+>
+> Hmm, do you remember that we have previously discussed there are some 
+> oddities in ehci/ohci driver? phy_power_on() gets called twice at 
+> ehci/ohci driver probe time, one is at pdata->power_on(); another is 
+> at usb_add_hcd(), then the power_count of phy increases to 2,  but 
+> phy_power_off() is just invoked one time when ehci/ohci goes to PM 
+> suspend, so phy->ops->power_off is never be invoked.
+>
+> In this way,  the usb-phy maybe never go to suspend.
+>
+>> - suspend -> resume
+>> - ehci/ohci will poweron the phy
+>> - in the phy's .complete callback you can reactivate the autosuspend 
+>> timer
+>>
+>> Because it looks more like you actually need the phy and not the 
+>> clock alone.
+>> So it would be nicer to use mechanisms already in place instead of 
+>> creating
+>> new dependencies.
+>>
+>
+> Theoretically, phy_init() will be invoked when ehci/ohci power on, and 
+> the sm_work will be reactivated (have already implemented) in 
+> phy->ops->init, but unfortunately, the same issue as phy_power_on() 
+> mentioned above, it never run there too .
+>
+
+Would you like to give some comments on above two oddities please?
+
+BR.
+Frank
+
+>>> Hence, we are planing to refer clk_usbphyX_480m_src into each ehci/ohci
+>>> driver. Maybe you will challenge why not refer clk_usbphy_480m 
+>>> directly?
+>>> because there are two ehci/ohci connected in the different usb2phy, and
+>>> only one clk_usbphy_480m clock was selected in clock tree.
+>> Nope, no argument from me as I fully understand that each phy 
+>> provides its own
+>> 480m clock :-) .
+>>
+>>
+>> Heiko
+>>
+>>
