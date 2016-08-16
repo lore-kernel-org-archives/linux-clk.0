@@ -1,67 +1,137 @@
-Return-Path: <Jiada_Wang@mentor.com>
-Message-ID: <57BBF832.8070809@mentor.com>
-Date: Tue, 23 Aug 2016 16:16:02 +0900
-From: Jiada Wang <jiada_wang@mentor.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
-	<vladimir_zapolskiy@mentor.com>
-Subject: Re: [RFC PATCH v2] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
-References: <1468215208-14576-1-git-send-email-jiada_wang@mentor.com> <20160810221931.GF2996@codeaurora.org>
-In-Reply-To: <20160810221931.GF2996@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ alsa-devel@alsa-project.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [RFC 13/17] clk: samsung: audss: samsung: Switch to new clock
+ controller API
+Date: Tue, 16 Aug 2016 15:35:10 +0200
+Message-id: <1471354514-24224-14-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
-On 08/11/2016 07:19 AM, Stephen Boyd wrote:
-> On 07/10, jiada_wang@mentor.com wrote:
->> From: Jiada Wang <jiada_wang@mentor.com>
->>
->> Previously CLK_SET_RATE_GATE flag is only checked in clk_set_rate()
->> which only ensures the clock being called by clk_set_rate() won't
->> change rate when it has been prepared if CLK_SET_RATE_GATE flag is set.
->> But a clk_set_rate() request may propagate rate change to these clocks
->> from the requested clock's topmost parent clock to all its offsprings,
->
-> s/offsprings/children/ please
->
-will update in next version.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos-audss.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
->> when any one of these clocks has CLK_SET_RATE_GATE flag set
->> and it has been prepared, the clk_set_rate() request should fail.
->>
->> This patch moves check of CLK_SET_RATE_GATE flag to
->> clk_propagate_rate_change() to ensure all affected clocks will
->> be checked if their rate will be changed after clk_set_rate().
->>
->> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
->
-> I'm slightly worried that this will break providers that were
-> relying on the previous (mis)behavior of this flag. For example,
-> I think I have this flag set on clks in the qcom/gcc-msm8960.c
-> driver that have so far not triggered but will trigger now with
-> this patch. I suppose we should just delete the flag from those
-> clks because things are working fine so far anyway.
->
-I am also worrying about this, that was why I added RFC tag in my patch.
-I am not sure if remove all existing CLK_SET_RATE_GATE flags will cause
-any issue, for example CLK_SET_RATE_GATE flag still works for these
-clocks directly called by clk_set_rate(). if remove all
-CLK_SET_RATE_GATE flags, will cause functional change for these clocks.
-
-> This also brings up the question about what drivers should do if
-> this flag is set and clk_set_rate() fails. Should drivers need to
-> know if they're on a platform where clk_set_rate() is going to
-> fail because the clk is not gated and take appropriate action?
-> How would they know this? Or should the framework forcibly gate
-> the clk and all the children, change the rate, and then ungate?
->
-IMO, an error message with the error'ing clock to notify user that
-clk_set_rate() is necessary. but clock framework don't need to forcibly
-gate the clock (as the clock with CLK_SET_RATE_GATE flag maybe owned by
-some other module)
-
-Thanks,
-Jiada
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index bdf8b971f332..c13e6ab6f3b6 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -30,6 +30,7 @@ static DEFINE_SPINLOCK(lock);
+ static struct clk **clk_table;
+ static void __iomem *reg_base;
+ static struct clk_onecell_data clk_data;
++static struct clk_ctrl *clk_ctrl;
+ /*
+  * On Exynos5420 this will be a clock which has to be enabled before any
+  * access to audss registers. Typically a child of EPLL.
+@@ -135,6 +136,10 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	if (!clk_table)
+ 		return -ENOMEM;
+ 
++	clk_ctrl = clk_ctrl_register(&pdev->dev); /* FIXME: Use devm-like, leaks now on error path */
++	if (IS_ERR(clk_ctrl))
++		return PTR_ERR(clk_ctrl);
++
+ 	clk_data.clks = clk_table;
+ 	if (variant == TYPE_EXYNOS5420)
+ 		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
+@@ -159,7 +164,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 			}
+ 		}
+ 	}
+-	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
++	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, clk_ctrl, "mout_audss",
+ 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+@@ -170,48 +175,48 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		mout_i2s_p[1] = __clk_get_name(cdclk);
+ 	if (!IS_ERR(sclk_audio))
+ 		mout_i2s_p[2] = __clk_get_name(sclk_audio);
+-	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
++	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, clk_ctrl, "mout_i2s",
+ 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
+ 
+-	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
++	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, clk_ctrl, "dout_srp",
+ 				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
+ 				0, &lock);
+ 
+-	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
++	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL, clk_ctrl,
+ 				"dout_aud_bus", "dout_srp", 0,
+ 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
+ 
+-	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
++	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, clk_ctrl, "dout_i2s",
+ 				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
+ 				&lock);
+ 
+-	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
++	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, clk_ctrl, "srp_clk",
+ 				"dout_srp", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 0, 0, &lock);
+ 
+-	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
++	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, clk_ctrl, "i2s_bus",
+ 				"dout_aud_bus", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 2, 0, &lock);
+ 
+-	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
++	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, clk_ctrl, "sclk_i2s",
+ 				"dout_i2s", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 3, 0, &lock);
+ 
+-	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
++	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, clk_ctrl, "pcm_bus",
+ 				 "sclk_pcm", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
+ 
+ 	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
+ 	if (!IS_ERR(sclk_pcm_in))
+ 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+-	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
++	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, clk_ctrl, "sclk_pcm",
+ 				sclk_pcm_p, CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+ 
+ 	if (variant == TYPE_EXYNOS5420) {
+-		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
++		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, clk_ctrl, "adma",
+ 				"dout_srp", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 9, 0, &lock);
+ 	}
+@@ -261,6 +266,9 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
+ 	if (!IS_ERR(epll))
+ 		clk_disable_unprepare(epll);
+ 
++	clk_ctrl_unregister(clk_ctrl);
++	clk_ctrl = NULL;
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
