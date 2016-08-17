@@ -1,41 +1,616 @@
-Return-Path: <Paul.Burton@imgtec.com>
-Subject: Re: [PATCH 25/26] clk: boston: Add a driver for MIPS Boston board
- clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20160826153725.11629-1-paul.burton@imgtec.com>
- <20160826153725.11629-26-paul.burton@imgtec.com>
- <20160826174144.GW19826@codeaurora.org>
-CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Michael
- Turquette <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-From: Paul Burton <paul.burton@imgtec.com>
-Message-ID: <251ea47c-322c-12d0-4542-8159e878e9d8@imgtec.com>
-Date: Tue, 30 Aug 2016 16:06:12 +0100
-MIME-Version: 1.0
-In-Reply-To: <20160826174144.GW19826@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	alsa-devel@alsa-project.org,
+	broonie@kernel.org,
+	tiwai@suse.de,
+	irina.tirdea@intel.com,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH] clk: x86: Add Atom PMC platform clocks
+Date: Wed, 17 Aug 2016 13:41:16 -0500
+Message-Id: <1471459276-11517-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26/08/16 18:41, Stephen Boyd wrote:
->> +	if (err)
->> +		pr_err("failed to add DT provider: %d\n", err);
->> +}
->> +CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
-> 
-> Please make this into a platform driver.
+From: Irina Tirdea <irina.tirdea@intel.com>
 
-Hi Stephen,
+The Baytral and CherryTrail platforms provide platform clocks
+through their Power Management Controller (PMC).
 
-The problem with this would be that we need to obtain the CPU clock rate
-fairly early during boot in order to set up the clocksource & delay loop
-etc. Using CLK_OF_DECLARE allows for that but if this were a platform
-driver my understanding is that the clocks wouldn't become available
-until some point later in boot. If I'm wrong & there's a way to avoid
-that please let me know.
+The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
+frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL).
+These clocks are available for general system use, where appropriate
+and each have Control & Frequency register fields associated with them.
 
-Also: why? If CLK_OF_DECLARE isn't liked, shouldn't that be documented
-somewhere (ideally next to the declaration of CLK_OF_DECLARE in
-include/linux/clk-provider.h)?
+For example, the usage for platform clocks could be:
+  PLT_CLK[2:0] - Camera
+  PLT_CLK[3] - Audio Codec
+  PLT_CLK[4] -
+  PLT_CLK[5] - COMMs
 
-Thanks,
-    Paul
+Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+
+Notes:
+    Submitting this patch through the clock tree as requested by
+    Mark Brown. This patch specifically enables the audio MCLK
+    required by Baytrail CR devices (support already merged in
+    Mark's tree)
+
+ arch/x86/Kconfig                  |   1 +
+ arch/x86/include/asm/pmc_atom.h   |   6 +
+ arch/x86/platform/atom/pmc_atom.c |  55 ++++-
+ drivers/clk/x86/Makefile          |   1 +
+ drivers/clk/x86/clk-byt-plt.c     | 413 ++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 473 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/x86/clk-byt-plt.c
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c580d8c..8bd50e6 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2745,6 +2745,7 @@ config X86_DMA_REMAP
+ config PMC_ATOM
+ 	def_bool y
+         depends on PCI
++	select COMMON_CLK
+ 
+ config VMD
+ 	depends on PCI_MSI
+diff --git a/arch/x86/include/asm/pmc_atom.h b/arch/x86/include/asm/pmc_atom.h
+index aa8744c..59f9516 100644
+--- a/arch/x86/include/asm/pmc_atom.h
++++ b/arch/x86/include/asm/pmc_atom.h
+@@ -152,6 +152,12 @@
+ #define	SLEEP_TYPE_S5		0x1C00
+ #define	SLEEP_ENABLE		0x2000
+ 
++struct pmc_clk {
++	const char *name;
++	unsigned long freq;
++	const char *parent_name;
++};
++
+ extern int pmc_atom_read(int offset, u32 *value);
+ extern int pmc_atom_write(int offset, u32 value);
+ 
+diff --git a/arch/x86/platform/atom/pmc_atom.c b/arch/x86/platform/atom/pmc_atom.c
+index 964ff4f..e2de3e2 100644
+--- a/arch/x86/platform/atom/pmc_atom.c
++++ b/arch/x86/platform/atom/pmc_atom.c
+@@ -21,6 +21,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/io.h>
++#include <linux/platform_device.h>
+ 
+ #include <asm/pmc_atom.h>
+ 
+@@ -37,6 +38,11 @@ struct pmc_reg_map {
+ 	const struct pmc_bit_map *pss;
+ };
+ 
++struct pmc_data {
++	const struct pmc_reg_map *map;
++	const struct pmc_clk *clks;
++};
++
+ struct pmc_dev {
+ 	u32 base_addr;
+ 	void __iomem *regmap;
+@@ -50,6 +56,29 @@ struct pmc_dev {
+ static struct pmc_dev pmc_device;
+ static u32 acpi_base_addr;
+ 
++static const struct pmc_clk byt_clks[] = {
++	{
++		.name = "xtal",
++		.freq = 25000000,
++		.parent_name = NULL,
++	},
++	{
++		.name = "pll",
++		.freq = 19200000,
++		.parent_name = "xtal",
++	},
++	{},
++};
++
++static const struct pmc_clk cht_clks[] = {
++	{
++		.name = "xtal",
++		.freq = 19200000,
++		.parent_name = NULL,
++	},
++	{},
++};
++
+ static const struct pmc_bit_map d3_sts_0_map[] = {
+ 	{"LPSS1_F0_DMA",	BIT_LPSS1_F0_DMA},
+ 	{"LPSS1_F1_PWM1",	BIT_LPSS1_F1_PWM1},
+@@ -169,6 +198,16 @@ static const struct pmc_reg_map cht_reg_map = {
+ 	.pss		= cht_pss_map,
+ };
+ 
++static const struct pmc_data byt_data = {
++	.map = &byt_reg_map,
++	.clks = byt_clks,
++};
++
++static const struct pmc_data cht_data = {
++	.map = &cht_reg_map,
++	.clks = cht_clks,
++};
++
+ static inline u32 pmc_reg_read(struct pmc_dev *pmc, int reg_offset)
+ {
+ 	return readl(pmc->regmap + reg_offset);
+@@ -384,8 +423,11 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+ 
+ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
++	struct platform_device *clkdev;
+ 	struct pmc_dev *pmc = &pmc_device;
+-	const struct pmc_reg_map *map = (struct pmc_reg_map *)ent->driver_data;
++	const struct pmc_data *data = (struct pmc_data *)ent->driver_data;
++	const struct pmc_reg_map *map = data->map;
++	const struct pmc_clk *clks = data->clks;
+ 	int ret;
+ 
+ 	/* Obtain ACPI base address */
+@@ -414,6 +456,13 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "debugfs register failed\n");
+ 
++	/* Register platform clocks - PMC_PLT_CLK [5:0] */
++	clkdev = platform_device_register_data(NULL, "clk-byt-plt", -1,
++					       &clks, sizeof(clks));
++	if (IS_ERR(clkdev))
++		dev_warn(&pdev->dev, "platform clocks register failed: %ld\n",
++			 PTR_ERR(clkdev));
++
+ 	pmc->init = true;
+ 	return ret;
+ }
+@@ -424,8 +473,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+  * used by pci_match_id() call below.
+  */
+ static const struct pci_device_id pmc_pci_ids[] = {
+-	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_reg_map },
+-	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_reg_map },
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_data },
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_data },
+ 	{ 0, },
+ };
+ 
+diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+index 0478138..cbdc8cc 100644
+--- a/drivers/clk/x86/Makefile
++++ b/drivers/clk/x86/Makefile
+@@ -1,2 +1,3 @@
+ clk-x86-lpss-objs		:= clk-lpt.o
+ obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
++obj-$(CONFIG_PMC_ATOM)		+= clk-byt-plt.o
+diff --git a/drivers/clk/x86/clk-byt-plt.c b/drivers/clk/x86/clk-byt-plt.c
+new file mode 100644
+index 0000000..330cd35
+--- /dev/null
++++ b/drivers/clk/x86/clk-byt-plt.c
+@@ -0,0 +1,413 @@
++/*
++ * Intel Atom platform clocks driver for Baytrail and CherryTrail SoC.
++ *
++ * Copyright (C) 2016, Intel Corporation
++ * Author: Irina Tirdea <irina.tirdea@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/clkdev.h>
++
++#include <asm/pmc_atom.h>
++
++#define PLT_CLK_NAME_BASE	"pmc_plt_clk_"
++#define PLT_CLK_DRIVER_NAME	"clk-byt-plt"
++
++#define PMC_CLK_CTL_0		0x60
++#define PMC_CLK_CTL_SIZE	4
++#define PMC_CLK_NUM		6
++#define PMC_MASK_CLK_CTL	GENMASK(1, 0)
++#define PMC_MASK_CLK_FREQ	BIT(2)
++#define PMC_CLK_CTL_GATED_ON_D3	0x0
++#define PMC_CLK_CTL_FORCE_ON	0x1
++#define PMC_CLK_CTL_FORCE_OFF	0x2
++#define PMC_CLK_CTL_RESERVED	0x3
++#define PMC_CLK_FREQ_XTAL	0x0	/* 25 MHz */
++#define PMC_CLK_FREQ_PLL	0x4	/* 19.2 MHz */
++
++struct clk_plt_fixed {
++	struct clk *clk;
++	struct clk_lookup *lookup;
++};
++
++struct clk_plt {
++	struct clk_hw hw;
++	u8 id;
++	u32 offset;
++	struct clk_lookup *lookup;
++	spinlock_t lock;
++};
++
++#define to_clk_plt(_hw) container_of(_hw, struct clk_plt, hw)
++
++struct clk_plt_data {
++	struct clk_plt_fixed **parents;
++	u8 nparents;
++	struct clk *clks[PMC_CLK_NUM];
++};
++
++static inline int plt_reg_to_parent(int reg)
++{
++	switch (reg & PMC_MASK_CLK_FREQ) {
++	case PMC_CLK_FREQ_XTAL:
++		return 0;	/* index 0 in parents[] */
++	case PMC_CLK_FREQ_PLL:
++		return 1;	/* index 1 in parents[] */
++	}
++
++	return 0;
++}
++
++static inline int plt_parent_to_reg(int index)
++{
++	switch (index) {
++	case 0:	/* index 0 in parents[] */
++		return PMC_CLK_FREQ_XTAL;
++	case 1:	/* index 0 in parents[] */
++		return PMC_CLK_FREQ_PLL;
++	}
++
++	return PMC_CLK_FREQ_XTAL;
++}
++
++static inline int plt_reg_to_enabled(int reg)
++{
++	switch (reg & PMC_MASK_CLK_CTL) {
++	case PMC_CLK_CTL_GATED_ON_D3:
++	case PMC_CLK_CTL_FORCE_ON:
++		return 1;	/* enabled */
++	case PMC_CLK_CTL_FORCE_OFF:
++	case PMC_CLK_CTL_RESERVED:
++	default:
++		return 0;	/* disabled */
++	}
++}
++
++static int plt_pmc_atom_update(struct clk_plt *clk, u32 mask, u32 val)
++{
++	int ret;
++	u32 orig, tmp;
++	unsigned long flags = 0;
++
++	spin_lock_irqsave(&clk->lock, flags);
++
++	ret = pmc_atom_read(clk->offset, &orig);
++	if (ret)
++		goto out;
++
++	tmp = orig & ~mask;
++	tmp |= val & mask;
++
++	if (tmp == orig)
++		goto out;
++
++	ret = pmc_atom_write(clk->offset, tmp);
++	if (ret)
++		goto out;
++
++out:
++	spin_unlock_irqrestore(&clk->lock, flags);
++
++	return ret;
++}
++
++static int plt_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_plt *clk = to_clk_plt(hw);
++
++	return plt_pmc_atom_update(clk, PMC_MASK_CLK_FREQ,
++				   plt_parent_to_reg(index));
++}
++
++static u8 plt_clk_get_parent(struct clk_hw *hw)
++{
++	struct clk_plt *clk = to_clk_plt(hw);
++	u32 value;
++	int ret;
++
++	ret = pmc_atom_read(clk->offset, &value);
++	if (ret)
++		return ret;
++
++	return plt_reg_to_parent(value);
++}
++
++static int plt_clk_enable(struct clk_hw *hw)
++{
++	struct clk_plt *clk = to_clk_plt(hw);
++
++	return plt_pmc_atom_update(clk, PMC_MASK_CLK_CTL, PMC_CLK_CTL_FORCE_ON);
++}
++
++static void plt_clk_disable(struct clk_hw *hw)
++{
++	struct clk_plt *clk = to_clk_plt(hw);
++
++	plt_pmc_atom_update(clk, PMC_MASK_CLK_CTL, PMC_CLK_CTL_FORCE_OFF);
++}
++
++static int plt_clk_is_enabled(struct clk_hw *hw)
++{
++	struct clk_plt *clk = to_clk_plt(hw);
++	u32 value;
++	int ret;
++
++	ret = pmc_atom_read(clk->offset, &value);
++	if (ret)
++		return ret;
++
++	return plt_reg_to_enabled(value);
++}
++
++static const struct clk_ops plt_clk_ops = {
++	.enable = plt_clk_enable,
++	.disable = plt_clk_disable,
++	.is_enabled = plt_clk_is_enabled,
++	.get_parent = plt_clk_get_parent,
++	.set_parent = plt_clk_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
++
++static struct clk *plt_clk_register(struct platform_device *pdev, int id,
++				    const char **parent_names, int num_parents)
++{
++	struct clk_plt *pclk;
++	struct clk *clk;
++	struct clk_init_data init;
++	int ret = 0;
++
++	pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
++	if (!pclk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name =  kasprintf(GFP_KERNEL, "%s%d", PLT_CLK_NAME_BASE, id);
++	init.ops = &plt_clk_ops;
++	init.flags = 0;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++
++	pclk->hw.init = &init;
++	pclk->id = id;
++	pclk->offset = PMC_CLK_CTL_0 + id * PMC_CLK_CTL_SIZE;
++	spin_lock_init(&pclk->lock);
++
++	clk = clk_register(&pdev->dev, &pclk->hw);
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto err_free_pclk;
++	}
++
++	pclk->lookup = clkdev_create(clk, init.name, NULL);
++	if (!pclk->lookup) {
++		ret = -ENOMEM;
++		goto err_clk_unregister;
++	}
++
++	kfree(init.name);
++
++	return clk;
++
++err_clk_unregister:
++	clk_unregister(clk);
++err_free_pclk:
++	kfree(init.name);
++	return ERR_PTR(ret);
++}
++
++static void plt_clk_unregister(struct clk *clk)
++{
++	struct clk_plt *pclk;
++	struct clk_hw *hw;
++
++	hw = __clk_get_hw(clk);
++	if (!hw)
++		return;
++
++	pclk = to_clk_plt(hw);
++
++	clkdev_drop(pclk->lookup);
++	clk_unregister(clk);
++}
++
++static struct clk_plt_fixed *plt_clk_register_fixed_rate(struct platform_device *pdev,
++						 const char *name,
++						 const char *parent_name,
++						 unsigned long fixed_rate)
++{
++	struct clk_plt_fixed *pclk;
++	int ret = 0;
++
++	pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
++	if (!pclk)
++		return ERR_PTR(-ENOMEM);
++
++	pclk->clk = clk_register_fixed_rate(&pdev->dev, name, parent_name,
++					    0, fixed_rate);
++	if (IS_ERR(pclk->clk)) {
++		ret = PTR_ERR(pclk->clk);
++		return ERR_PTR(ret);
++	}
++
++	pclk->lookup = clkdev_create(pclk->clk, name, NULL);
++	if (!pclk->lookup) {
++		ret = -ENOMEM;
++		goto err_clk_unregister;
++	}
++
++	return pclk;
++
++err_clk_unregister:
++	clk_unregister_fixed_rate(pclk->clk);
++	return ERR_PTR(ret);
++}
++
++static void plt_clk_unregister_fixed_rate(struct clk_plt_fixed *pclk)
++{
++	clkdev_drop(pclk->lookup);
++	clk_unregister_fixed_rate(pclk->clk);
++}
++
++static const char **plt_clk_register_parents(struct platform_device *pdev,
++					     struct clk_plt_data *data)
++{
++	struct pmc_clk **pclks, *clks;
++	const char **parent_names;
++	int i, err;
++
++	data->nparents = 0;
++	pclks = dev_get_platdata(&pdev->dev);
++	if (!pclks)
++		return NULL;
++
++	clks = *pclks;
++	while (clks[data->nparents].name)
++		data->nparents++;
++
++	data->parents = devm_kzalloc(&pdev->dev,
++				     sizeof(*data->parents) * data->nparents,
++				     GFP_KERNEL);
++	if (!data->parents) {
++		err = -ENOMEM;
++		goto err_out;
++	}
++
++	parent_names = kcalloc(data->nparents, sizeof(*parent_names),
++			       GFP_KERNEL);
++	if (!parent_names) {
++		err = -ENOMEM;
++		goto err_out;
++	}
++
++	for (i = 0; i < data->nparents; i++) {
++		data->parents[i] =
++			plt_clk_register_fixed_rate(pdev, clks[i].name,
++						    clks[i].parent_name,
++						    clks[i].freq);
++		if (IS_ERR(data->parents[i])) {
++			err = PTR_ERR(data->parents[i]);
++			goto err_unreg;
++		}
++		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
++	}
++
++	return parent_names;
++
++err_unreg:
++	for (i--; i >= 0; i--) {
++		plt_clk_unregister_fixed_rate(data->parents[i]);
++		kfree_const(parent_names[i]);
++	}
++	kfree(parent_names);
++err_out:
++	data->nparents = 0;
++	return ERR_PTR(err);
++}
++
++static void plt_clk_unregister_parents(struct clk_plt_data *data)
++{
++	int i;
++
++	for (i = 0; i < data->nparents; i++)
++		plt_clk_unregister_fixed_rate(data->parents[i]);
++}
++
++static int plt_clk_probe(struct platform_device *pdev)
++{
++	struct clk_plt_data *data;
++	int i, err;
++	const char **parent_names;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	parent_names = plt_clk_register_parents(pdev, data);
++	if (IS_ERR(parent_names))
++		return PTR_ERR(parent_names);
++
++	for (i = 0; i < PMC_CLK_NUM; i++) {
++		data->clks[i] = plt_clk_register(pdev, i, parent_names,
++						 data->nparents);
++		if (IS_ERR(data->clks[i])) {
++			err = PTR_ERR(data->clks[i]);
++			goto err_unreg_clk_plt;
++		}
++	}
++
++	for (i = 0; i < data->nparents; i++)
++		kfree_const(parent_names[i]);
++	kfree(parent_names);
++
++	dev_set_drvdata(&pdev->dev, data);
++	return 0;
++
++err_unreg_clk_plt:
++	for (i--; i >= 0; i--)
++		plt_clk_unregister(data->clks[i]);
++	plt_clk_unregister_parents(data);
++	for (i = 0; i < data->nparents; i++)
++		kfree_const(parent_names[i]);
++	kfree(parent_names);
++	return err;
++}
++
++static int plt_clk_remove(struct platform_device *pdev)
++{
++	struct clk_plt_data *data;
++	int i;
++
++	data = dev_get_drvdata(&pdev->dev);
++	if (!data)
++		return 0;
++
++	for (i = 0; i < PMC_CLK_NUM; i++)
++		plt_clk_unregister(data->clks[i]);
++	plt_clk_unregister_parents(data);
++	return 0;
++}
++
++static struct platform_driver plt_clk_driver = {
++	.driver = {
++		.name = PLT_CLK_DRIVER_NAME,
++	},
++	.probe = plt_clk_probe,
++	.remove = plt_clk_remove,
++};
++module_platform_driver(plt_clk_driver);
++
++MODULE_DESCRIPTION("Intel Atom platform clocks driver");
++MODULE_AUTHOR("Irina Tirdea <irina.tirdea@intel.com>");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
