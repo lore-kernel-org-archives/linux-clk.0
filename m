@@ -1,197 +1,109 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:36060 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756406AbcH2MiY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Aug 2016 08:38:24 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:35323 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753609AbcHQHvF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Aug 2016 03:51:05 -0400
+Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
+To: Jean-Francois Moine <moinejf@free.fr>
+References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
+ <20160815182959.GV361@codeaurora.org>
+ <7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
+ <20160817083438.8c7f336e76bc12205e71e13d@free.fr>
+Cc: shawn.lin@rock-chips.com, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	=?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <65c07ac4-c807-204c-1ba4-6130e1ac24f3@rock-chips.com>
+Date: Wed, 17 Aug 2016 15:50:41 +0800
 MIME-Version: 1.0
-In-Reply-To: <CANqRtoRQ4tUrVyJqOsN_AE8WwXkG71rkQMFKr+6z36wPoQ+PJw@mail.gmail.com>
-References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be> <CANqRtoRQ4tUrVyJqOsN_AE8WwXkG71rkQMFKr+6z36wPoQ+PJw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Aug 2016 14:38:22 +0200
-Message-ID: <CAMuHMdWEUaFOdjzT1pZSX0DmYJSLZHDZtCF6OWPvN5uQEMMa9Q@mail.gmail.com>
-Subject: Re: [PATCH/PROTO 0/9] R-Car H3 MSIOF Parent Clock Control Prototype
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160817083438.8c7f336e76bc12205e71e13d@free.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
++ Heiko
 
-On Thu, Aug 25, 2016 at 7:34 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> On Sat, Aug 13, 2016 at 1:38 AM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> On R-Car H3, the various MSIOF instances (used for SPI) have a common
->> parent clock. This mso clock is a programmable "DIV6" clock (divider
->> 1 - 64). Its rate lies in the range 12.5 to 800 MHz, or 6.25 to 400 MHz
->> (depending on the main crystal).
->> After boot up, the default configuration is the lowest possible rate,
->> which leads to bad performance with devices desiring a higher transfer
->> rate.
->>
->> MSIOF clock tree:
->>
->>     pll1/4 (800 or 400 MHz)
->>       mso clock
->>         msiof0 clock (type MSTP = gate + status)
->>           msiof0 internal divider (divider range 1 - 1024, with holes)
->>         msiof1 clock (type MSTP)
->>           msiof1 internal divider
->>         msiof2 clock (type MSTP)
->>           msiof2 internal divider
->>         msiof3 clock (type MSTP)
->>           msiof3 internal divider
->>
->> To optimize performance, we want to control the mso parent clock.
->>
->>   - Higher parent clock means:
->>       + Better performance for devices wanting high target rates,
->>       + More accurate target rates in MSIOF driver,
->>       - More power consumption (doesn't matter that much with R-Car),
->>       - Cannot support devices needing real low target rates.
->>   - Lower parent clock means:
->>       + Less power consumption (doesn't matter that much with R-Car),
->>       + Can support all devices,
->>       - Worse performance for devices wanting high target rates,
->>       - Less accurate target rates, decreasing performance.
->>
->> Configuring the mso parent clock rate can either be done statically, or
->> dynamically. In both cases, this must be based on individual device
->> requirements. Note that this is not specific to SPI.
->>
->> SPI specific notes:
->>   - The SPI master knows about SPI slave device maximum frequencies only
->>     when spi_master.setup() is called,
->>   - SPI slave device maximum frequencies may change at runtime (through
->>     calling spi_setup(), esp. for spidev),
->>   - Currently the MSIOF driver does not set
->>     spi_master.{min,max}_speed_hz. However, setting it means the SPI
->>     core will never call spi_master.setup() with a rate outside this
->>     range, and thus we will never be informed of such rates.  Hence if
->>     we decide to set this, and we want dynamic configuration, we should
->>     fill in the real minimum and maximum supported by the hardware,
->>     regardless of the current parent clock rate.
->>
->> In this prototype, I'm offering 3 solutions to control the mso parent
->> clock rate.
->>
->>   - Option 1: Static configuration through the "assigned-clocks" and
->>     assigned-clock-rates DT properties.
->>
->>   - Option 2: Dynamic configuration, by changing the mso clock through
->>     the msiofX module clocks from the MSIOF driver.
->>
->>   - Option 2: Dynamic configuration, by changing a dummy clk-divider,
->>     which mimics the capabilities of the MSIOF internal divider.
+On 2016/8/17 14:34, Jean-Francois Moine wrote:
+> On Wed, 17 Aug 2016 09:00:05 +0800
+> Shawn Lin <shawn.lin@rock-chips.com> wrote:
 >
-> Thanks for cooking up these solutions. I dislike putting software
-> policy into DT, but at least Option 1 is simple. Option 2 and 3 seem a
-> bit overly complex to me.
+>> On 2016/8/16 2:29, Stephen Boyd wrote:
+>>> On 08/13, Jean-Francois Moine wrote:
+>>>> The hardware phase delay may depend on some other settings as clock
+>>>> reparenting, so, it has to be set each time.
+>>>> Also, when the delay was the same as previously, an error was returned.
+>>>>
+>>>> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+>>>> ---
+>>>
+>>> This effectively reverts commit 023bd7166be0 (clk: skip
+>>> unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
+>>> to see if Shawn has any comments or if that patch was just a
+>>> broken optimization.
+>>>
+>>> We may want to go another route and get the phase from the
+>>> hardware and compare that to what's requested. That way we don't
+>>> set the phase again unnecessarily.
+>>>
+>>
+>> Sorry for late response.
+>>
+>> If the client calls clk_set_phase to set the same phase ,
+>> why it needs to reparent as *this* parent already support this phase and
+>> we don't need to do it again?
+>>
+>> For some reasons we have to reparent the clock, it should be sub clock
+>> drivers' responsibility to guarantee that we can maintain/restore the
+>> topology structure no matter for rate or for phase. But it shouldn't
+>> make the callers/users be aware of what was happening.
+>>
+>> How do you nofify them that "Oh, reparent now, please call
+>> clk_set_phase again" ? :)
+>>
+>> Plz correct me if my understanding is wrong.
 >
-> May I ask if you considered solving the common case and special case
-> independently?
+> Shawn,
+>
+> Maybe this problem is Allwinner specific.
+>
+> In their SoCs, the phase delays 0..360° must be translated to a
+> hardware shift 0..7 which depends on the ratio of of the rates of the
+> clock and its father. When reparenting the clock, the ratio may change
+> and, with a same phase delay, the hardware shift may have to be
 
-I think all of this is sufficiently generic to apply to other parent clocks and
-devices, too.
+So when reparenting the clock, could you update the clk->core->phase
+as well to match the real phase using?
 
-> Regarding the common case, I think it is sane to assume that everyone
-> wants a high performing solution if possible. So using highest clock
-> rate possible must be a good default to as long as we can be sure to
-> also be able to handle devices wanting low clock rates. In my mind
-> this would mean that a standard unmodified DT should result in highest
-> performance possible. This probably involves programming the CPG/MSSR
-> hardware during boot-up based on some table with maximum supported
-> frequency. The high performing setting may or may not be the default
-> from reset (or boot loader) today, but perhaps it makes sense to rely
-> less on hardware settings performed during boot? At least this seems
-> like a good long term aim to me.
+> changed. As the phase delay is always set after setting the clock,
+> setting the clock hardware in all cases solves the possible mismatch.
+>
+> Now, the problem I had is a bit different: in some devices (MMCs) of
+> some Allwinner SoCs, and under some conditions, the hardware phase
+> delay may be set directly in the client instead of in the clock.
 
-We can easily add default rates to the clock tables in the CPG/MSSR driver,
-and program them during clock driver initialization. This can still be
-overridden from DT using "assigned-clock-rates".
+You mean Allwinner mmc driver hardcode the setting of clk phasse instead
+of calling clk API? Looks strange to me...
 
-Whether this is something we want to do now is another question:
-MSIOF is unusable for SPI on (early) H3, and the Salvator-X development board
-doesn't have any on-board SPI devices connected to MSIOF SPI masters, so we
-don't have a use case for which we can define defaults.
-Hence changes are high the user who develops his own (expansion) board will
-have to configure a different value using "assigned-clock-rates" anyway.
+> Only the clock knows when this capability is used, so the clock must
+> alert the client that this one has to set the phase delay or not.
+> I solved this required synchronization by returning a specific error
+> code when the clock does not set the phase delay on its side.
+> This mechanism works fine when the set_phase() callback function of the
+> clock is always called, even with a same delay.
+>
+> In the Allwinner's SoCs, setting the hardware phase delay asks for only
+> a few machine instructions, so, the overhead is very small.
+> If this is not the case for other machines, it could be simple enough
+> to move the test of same delay to the clock drivers of these machines...
 
-Perhaps it's a better idea to add a comment to the r8a7795.dtsi or
-r8a7795-salvator-x.dts file with an example "assigned-clock-rates" property,
-serving as documentation for board designers, cfr. the clock-frequency values
-to be overridden by the board DTS?
+I understand it now but it's a trick but not a legit way to solve your
+problem from my view.
 
-For other parent clocks related to devices which are used on Salvator-X, we can
-provide sensible defaults in the CPG/MSSR driver.
+>
 
-> As for short term special case handling, the only issue we are having
-> is when more than one MSIOF instance want to use frequencies that are
-> incompatible. The first MSIOF parent clock user should be able to
 
-IMHO there are two issues:
-  1. Incompatible parent clock frequencies, due to the 1-1024 divider,
-  2. Suboptimal clock frequencies, due to granularity of the clock rate.
-      E.g. if the parent clock runs at 31 MHz and the device has an upper limit
-      of 30 MHz, you can not use it at speeds higher than 15.5 MHz.
-      Lowering the parent clock will increase performance here.
+-- 
+Best Regards
+Shawn Lin
 
-Of course the first is worse, as it totally prohibits using the device.
-
-> select whichever rate it wants in theory, but with more than one MSIOF
-> instance then if one MSIOF instance wants to use the highest frequency
-> possible and the other the lowest possible then the 1024 divider is
-> not enough to cover both. From my side I would say it makes sense to
-> cover this special case with "Option 1" above. To avoid probe order
-
-I agree "Option 1" is the best solution to make sure the parent clock rate
-is usable for all SPI slave devices.
-
-> issues the CPG/MSSR driver handling the parent clock could for
-> instance early during boot look for DT frequency properties in the DTB
-> and adjust the shared default rate based on that.
-
-That's an alternative run-time way of determining a suitable parent clock rate.
-This does mean the CPG/MSSR driver must be made aware of consumer devices,
-their divider limitations, and device-specific properties ("spi-max-frequency");
-has to scan for those in DT, and find a suitable parent clock rate.
-It won't work when using DT overlays, while the system integrator can take
- those into account when specifying the global "assigned-clock-rates" property.
-
-> For more long term special case handling, can't each MSIOF instance
-> request the frequency independently and the parent clock CPG/MSSR
-> driver can take all the child frequency requests into consideration
-> and set something that satisfies everyone? clk_set_rate_range() and/or
-> struct clk_rate_request seem to provide some way to pass on this
-> information. During probe of the MSIOF driver perhaps the devices need
-> to be queued up early on and once all the devices are deemed to be
-> loaded then the devices are started in order with the lowest requested
-> frequency first. Of course, if we need to load a new slow speed device
-> later on then the existing ones may need to be ripped out and the
-> whole bunch reinstalled. I believe this is similar to "Option 2"
-> above.
-
-Unfortunately spi_master.setup() is called sequentially for all SPI devices,
-while we need to coordinate them to find a suitable parent clock frequency.
-
-So again I think "Option 1" is the best solution.
-
-Note that if we let software decide the optimal parent clock rate, the CPG/MSSR
-driver should have frequency limits in its tables, to avoid programming
-out-of-range frequencies. The DIV6 clock register layout allows for dividing
-the 400 or 800 MHz clock by 1..64, while the MSO clock itself is limited to 66
-MHz, according to the documentation.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
