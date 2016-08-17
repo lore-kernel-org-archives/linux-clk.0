@@ -1,138 +1,109 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:48172 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751139AbcHQIQM (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Aug 2016 04:16:12 -0400
+Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
+To: Jean-Francois Moine <moinejf@free.fr>
+References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
+ <20160815182959.GV361@codeaurora.org>
+ <7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
+ <20160817083438.8c7f336e76bc12205e71e13d@free.fr>
+Cc: shawn.lin@rock-chips.com, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	=?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <63bc0953-9c64-e7f5-3938-6ecf894c893e@rock-chips.com>
+Date: Wed, 17 Aug 2016 16:15:57 +0800
 MIME-Version: 1.0
-In-Reply-To: <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com> <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Fri, 26 Aug 2016 06:53:59 +0200
-Message-ID: <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160817083438.8c7f336e76bc12205e71e13d@free.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-24 21:54 GMT+02:00 Mirza Krak <mirza.krak@gmail.com>:
-> 2016-08-24 17:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
-> +
->>> +Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
->>> +controllers with a simple-bus node since they are all connected to the same
->>> +chip-select (CS4), in this example external address decoding is provided:
->>> +
->>> +gmi@70090000 {
->>> +     compatible = "nvidia,tegra20-gmi";
->>> +     reg = <0x70009000 0x1000>;
->>> +     #address-cells = <1>;
->>> +     #size-cells = <1>;
->>> +     clocks = <&tegra_car TEGRA20_CLK_NOR>;
->>> +     clock-names = "gmi";
->>> +     resets = <&tegra_car 42>;
->>> +     reset-names = "gmi";
->>> +     ranges = <4 0x48000000 0x7ffffff>;
->>> +
->>> +     status = "disabled";
->>> +
->>> +     bus@4 {
->>> +             compatible = "simple-bus";
->>> +             reg = <4>;
->>> +             #address-cells = <1>;
->>> +             #size-cells = <1>;
->>> +             ranges = <0 4 0x40100>;
->>
->> Does this work? I tried to add an example like this and I got ...
->>
->> Warning (reg_format): "reg" property in /gmi@70009000/bus@4 has invalid
->> length (4 bytes) (#address-cells == 1, #size-cells == 1)
->
-> Shoot, to get rid of the warning it should be
->
-> reg = <4 0 >;
->
-> But it works either way.
->
->>
->> I am wondering if we should just following the arm,pl172 example and
->> have ...
->>
->>         cs4 {
->>                 compatible = "simple-bus";
->>                 #address-cells = <1>;
->>                 #size-cells = <1>;
->>                 ranges;
->>
->>                 nvidia,snor-cs = <4>;
->>                 nvidia,snor-mux-mode;
->>                 nvidia,snor-adv-inv;
->>
->>                 can@0 {
->>                         reg = <0 0x100>;
->>                         ...
->>                 };
->>
->>                 ...
->>         };
->>
->
-> That means to go back to V1 really (almost :)). Which I do not mind.
-> Will give it a test run.
->
-> But I am a little hesitant if will be any better/cleaner. In your example above:
->
-> can@0 {
->          reg = <0 0x100>;
->          ...
-> };
->
-> Would this really translate correctly? In the pl172 example they have
-> multiple ranges and address with "flash@0,0" which a range defined in
-> parent node. "can@0" does not have valid match in parent node in our
-> example. So I probably need add some more logic for it to properly
-> translate.
->
-> I have an idea which is following:
->
-> gmi@70090000 {
->          status = "okay";
->          #address-cells = <2>;
->          #size-cells = <1>;
->          ranges = <4 0 0x48000000 0x00040000>;
->
->          cs4 {
->                  compatible = "simple-bus";
->                  #address-cells = <2>;
->                  #size-cells = <1>;
->                  ranges;
->
->                  nvidia,snor-cs = <4>;
->                  nvidia,snor-mux-mode;
->                  nvidia,snor-adv-inv;
->
->                  can@0 {
->                          compatible = "nxp,sja1000";
->                          reg = <4 0 0x100>;
->                          ...
->                  };
->
->
->                  can@40000 {
->                          compatible = "nxp,sja1000";
->                          reg = <4 0x40000 0x100>;
->                          ...
->                  };
->          };
-> };
->
-> Do not know if above will work at all (not able to test at current
-> location), anyway I will play around with it some more and get back to
-> you.
++ Heiko
 
-Gave above a test run and it works like a charm. Are we happy with that?
+On 2016/8/17 14:34, Jean-Francois Moine wrote:
+> On Wed, 17 Aug 2016 09:00:05 +0800
+> Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>
+>> On 2016/8/16 2:29, Stephen Boyd wrote:
+>>> On 08/13, Jean-Francois Moine wrote:
+>>>> The hardware phase delay may depend on some other settings as clock
+>>>> reparenting, so, it has to be set each time.
+>>>> Also, when the delay was the same as previously, an error was returned.
+>>>>
+>>>> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+>>>> ---
+>>>
+>>> This effectively reverts commit 023bd7166be0 (clk: skip
+>>> unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
+>>> to see if Shawn has any comments or if that patch was just a
+>>> broken optimization.
+>>>
+>>> We may want to go another route and get the phase from the
+>>> hardware and compare that to what's requested. That way we don't
+>>> set the phase again unnecessarily.
+>>>
+>>
+>> Sorry for late response.
+>>
+>> If the client calls clk_set_phase to set the same phase ,
+>> why it needs to reparent as *this* parent already support this phase and
+>> we don't need to do it again?
+>>
+>> For some reasons we have to reparent the clock, it should be sub clock
+>> drivers' responsibility to guarantee that we can maintain/restore the
+>> topology structure no matter for rate or for phase. But it shouldn't
+>> make the callers/users be aware of what was happening.
+>>
+>> How do you nofify them that "Oh, reparent now, please call
+>> clk_set_phase again" ? :)
+>>
+>> Plz correct me if my understanding is wrong.
+>
+> Shawn,
+>
+> Maybe this problem is Allwinner specific.
+>
+> In their SoCs, the phase delays 0..360° must be translated to a
+> hardware shift 0..7 which depends on the ratio of of the rates of the
+> clock and its father. When reparenting the clock, the ratio may change
+> and, with a same phase delay, the hardware shift may have to be
 
+So when reparenting the clock, could you update the clk->core->phase
+as well to match the real phase using?
+
+> changed. As the phase delay is always set after setting the clock,
+> setting the clock hardware in all cases solves the possible mismatch.
+>
+> Now, the problem I had is a bit different: in some devices (MMCs) of
+> some Allwinner SoCs, and under some conditions, the hardware phase
+> delay may be set directly in the client instead of in the clock.
+
+You mean Allwinner mmc driver hardcode the setting of clk phasse instead
+of calling clk API? Looks strange to me...
+
+> Only the clock knows when this capability is used, so the clock must
+> alert the client that this one has to set the phase delay or not.
+> I solved this required synchronization by returning a specific error
+> code when the clock does not set the phase delay on its side.
+> This mechanism works fine when the set_phase() callback function of the
+> clock is always called, even with a same delay.
+>
+> In the Allwinner's SoCs, setting the hardware phase delay asks for only
+> a few machine instructions, so, the overhead is very small.
+> If this is not the case for other machines, it could be simple enough
+> to move the test of same delay to the clock drivers of these machines...
+
+I understand it now but it's a trick but not a legit way to solve your
+problem from my view.
+
+>
+
+
+-- 
 Best Regards
-Mirza
+Shawn Lin
+
