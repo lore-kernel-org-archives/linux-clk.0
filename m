@@ -1,40 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:52:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jongsung Kim <neidhard.kim@lge.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Chanho Min <chanho.min@lge.com>
-Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
-Message-ID: <20160825005221.GK19826@codeaurora.org>
-References: <20160621005910.GN1521@codeaurora.org>
- <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
- <20160628205518.GF3737@rob-hp-laptop>
- <146714872010.89261.1969853552594659808@resonance>
- <5773736D.3060405@lge.com>
- <20160702002030.GF27880@codeaurora.org>
- <5779C056.3020209@lge.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <5779C056.3020209@lge.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.9
+Date: Wed, 17 Aug 2016 17:00:32 +0200
+Message-Id: <1471446032-15206-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/04, Jongsung Kim wrote:
-> On 2016년 07월 02일 09:20, Stephen Boyd wrote:
-> > Do you actually have an IC on the board that is doing some fixed
-> > factor calculation? Or is this a clk driver design where we are
-> > listing out each piece of an SoC's clk controller in DT?
-> >
-> The SoC has several PLLs of identical design, and one of them is divided
-> to half and used for CPUs. The fixed-factor-clock represents the divider.
-> 
+	Hi Mike, Stephen,
 
-Ok, so it sounds like we can have the driver that registers the
-CPU PLL also register the fixed factor clk? I fail to see why we
-need this from DT in that case.
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.9-tag1
+
+for you to fetch changes up to b51d5275016c6edbf4656eaee30d836fef127016:
+
+  clk: renesas: r8a7796: Add watchdog module clock (2016-08-09 09:53:47 +0200)
+
+----------------------------------------------------------------
+clk: renesas: r8a7796: Add watchdog clocks
+
+Add all clocks related to the Watchdog Timer (WDT) controller on the
+Renesas R-Car M3-W (r8a7796) SoC.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      clk: renesas: r8a7796: Add watchdog core clocks
+      clk: renesas: r8a7796: Add watchdog module clock
+
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
