@@ -1,161 +1,44 @@
-Return-Path: <k.kozlowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:64619 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbcHQGFI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Aug 2016 02:05:08 -0400
+Subject: Re: [PATCH v2] clk: max77686: Migrate to clk_hw based OF and
+ registration APIs
+To: Stephen Boyd <stephen.boyd@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <20160816223856.1282-1-stephen.boyd@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 05/17] clk: fixed-rate: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:02 +0200
-Message-id: <1471354514-24224-6-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Message-id: <ab7f86c8-8feb-1512-2046-016b950ce68b@samsung.com>
+Date: Wed, 17 Aug 2016 08:05:03 +0200
+MIME-version: 1.0
+In-reply-to: <20160816223856.1282-1-stephen.boyd@linaro.org>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+On 08/17/2016 12:38 AM, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+>  drivers/clk/clk-max77686.c | 42 +++++++++++++++++++++---------------------
+>  1 file changed, 21 insertions(+), 21 deletions(-)
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-fixed-rate.c | 28 ++++++++++++++++++----------
- drivers/clk/samsung/clk.c    |  2 +-
- include/linux/clk-provider.h | 10 ++++++++--
- 3 files changed, 27 insertions(+), 13 deletions(-)
+Looks correct. The pr_err() could be replaced to dev_err() but first
+pointer to dev should be stored... so this may be fixed on different patch.
 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index 2edb39342a02..0a5c4f2105da 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -55,6 +55,7 @@ EXPORT_SYMBOL_GPL(clk_fixed_rate_ops);
-  * @fixed_accuracy: non-adjustable clock rate
-  */
- struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy)
- {
-@@ -81,7 +82,7 @@ struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
- 
- 	/* register the clock */
- 	hw = &fixed->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = clk_hw_register_with_ctrl(dev, ctrl, hw);
- 	if (ret) {
- 		kfree(fixed);
- 		hw = ERR_PTR(ret);
-@@ -92,13 +93,14 @@ struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
- EXPORT_SYMBOL_GPL(clk_hw_register_fixed_rate_with_accuracy);
- 
- struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy)
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_fixed_rate_with_accuracy(dev, name, parent_name,
--			flags, fixed_rate, fixed_accuracy);
-+	hw = clk_hw_register_fixed_rate_with_accuracy(dev, ctrl, name,
-+			parent_name, flags, fixed_rate, fixed_accuracy);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
- 	return hw->clk;
-@@ -114,21 +116,27 @@ EXPORT_SYMBOL_GPL(clk_register_fixed_rate_with_accuracy);
-  * @flags: framework-specific flags
-  * @fixed_rate: non-adjustable clock rate
-  */
--struct clk_hw *clk_hw_register_fixed_rate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_fixed_rate(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate)
- {
--	return clk_hw_register_fixed_rate_with_accuracy(dev, name, parent_name,
--						     flags, fixed_rate, 0);
-+	return clk_hw_register_fixed_rate_with_accuracy(dev, ctrl, name,
-+							parent_name, flags,
-+							fixed_rate, 0);
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_fixed_rate);
- 
--struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
-+struct clk *clk_register_fixed_rate(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate)
- {
--	return clk_register_fixed_rate_with_accuracy(dev, name, parent_name,
--						     flags, fixed_rate, 0);
-+	return clk_register_fixed_rate_with_accuracy(dev, ctrl, name,
-+						     parent_name, flags,
-+						     fixed_rate, 0);
- }
- EXPORT_SYMBOL_GPL(clk_register_fixed_rate);
- 
-@@ -174,7 +182,7 @@ void of_fixed_clk_setup(struct device_node *node)
- 
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
--	clk = clk_register_fixed_rate_with_accuracy(NULL, clk_name, NULL,
-+	clk = clk_register_fixed_rate_with_accuracy(NULL, NULL, clk_name, NULL,
- 						    0, rate, accuracy);
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index fdeb35a48d3a..cb1e4398d6e5 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -147,7 +147,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_rate(NULL, list->name,
-+		clk = clk_register_fixed_rate(NULL, ctx->clk_ctrl, list->name,
- 			list->parent_name, list->flags, list->fixed_rate);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 3589f164ff94..2ee4e337e784 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -283,17 +283,23 @@ struct clk_fixed_rate {
- #define to_clk_fixed_rate(_hw) container_of(_hw, struct clk_fixed_rate, hw)
- 
- extern const struct clk_ops clk_fixed_rate_ops;
--struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
-+struct clk *clk_register_fixed_rate(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate);
--struct clk_hw *clk_hw_register_fixed_rate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_fixed_rate(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate);
- struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy);
- void clk_unregister_fixed_rate(struct clk *clk);
- struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
-+		struct clk_ctrl *ctrl, // FIXME: re-align
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned long fixed_rate, unsigned long fixed_accuracy);
- void clk_hw_unregister_fixed_rate(struct clk_hw *hw);
--- 
-1.9.1
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
