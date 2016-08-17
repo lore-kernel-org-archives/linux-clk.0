@@ -1,163 +1,83 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 11/17] clk: gpio: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:08 +0200
-Message-id: <1471354514-24224-12-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <moinejf@free.fr>
+Date: Wed, 17 Aug 2016 08:34:38 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
+Message-Id: <20160817083438.8c7f336e76bc12205e71e13d@free.fr>
+In-Reply-To: <7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
+References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
+	<20160815182959.GV361@codeaurora.org>
+	<7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+On Wed, 17 Aug 2016 09:00:05 +0800
+Shawn Lin <shawn.lin@rock-chips.com> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-gpio.c       | 29 +++++++++++++++++------------
- include/linux/clk-provider.h | 12 ++++++++----
- 2 files changed, 25 insertions(+), 16 deletions(-)
+> On 2016/8/16 2:29, Stephen Boyd wrote:
+> > On 08/13, Jean-Francois Moine wrote:
+> >> The hardware phase delay may depend on some other settings as clock
+> >> reparenting, so, it has to be set each time.
+> >> Also, when the delay was the same as previously, an error was returned.
+> >>
+> >> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
+> >> ---
+> >
+> > This effectively reverts commit 023bd7166be0 (clk: skip
+> > unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
+> > to see if Shawn has any comments or if that patch was just a
+> > broken optimization.
+> >
+> > We may want to go another route and get the phase from the
+> > hardware and compare that to what's requested. That way we don't
+> > set the phase again unnecessarily.
+> >
+>=20
+> Sorry for late response.
+>=20
+> If the client calls clk_set_phase to set the same phase ,
+> why it needs to reparent as *this* parent already support this phase and
+> we don't need to do it again?
+>=20
+> For some reasons we have to reparent the clock, it should be sub clock
+> drivers' responsibility to guarantee that we can maintain/restore the
+> topology structure no matter for rate or for phase. But it shouldn't
+> make the callers/users be aware of what was happening.
+>=20
+> How do you nofify them that "Oh, reparent now, please call
+> clk_set_phase again" ? :)
+>=20
+> Plz correct me if my understanding is wrong.
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 86b245746a6b..8ebd520c1aa0 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -94,7 +94,8 @@ const struct clk_ops clk_gpio_mux_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
- 
--static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
-+static struct clk_hw *clk_register_gpio(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags,
- 		const struct clk_ops *clk_gpio_ops)
-@@ -168,25 +169,27 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
-  * @active_low: true if gpio should be set to 0 to enable clock
-  * @flags: clock flags
-  */
--struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags)
- {
--	return clk_register_gpio(dev, name,
-+	return clk_register_gpio(dev, ctrl, name,
- 			(parent_name ? &parent_name : NULL),
- 			(parent_name ? 1 : 0), gpio, active_low, flags,
- 			&clk_gpio_gate_ops);
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
- 
--struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-+struct clk *clk_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags)
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
--				       flags);
-+	hw = clk_hw_register_gpio_gate(dev, ctrl, name, parent_name, gpio,
-+				       active_low, flags);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
- 	return hw->clk;
-@@ -203,7 +206,8 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
-  * @active_low: true if gpio should be set to 0 to enable clock
-  * @flags: clock flags
-  */
--struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags)
- {
-@@ -212,18 +216,19 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	return clk_register_gpio(dev, name, parent_names, num_parents,
-+	return clk_register_gpio(dev, ctrl, name, parent_names, num_parents,
- 			gpio, active_low, flags, &clk_gpio_mux_ops);
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
- 
--struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-+struct clk *clk_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags)
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
-+	hw = clk_hw_register_gpio_mux(dev, ctrl, name, parent_names, num_parents,
- 			gpio, active_low, flags);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
-@@ -271,10 +276,10 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
- 	active_low = of_flags & OF_GPIO_ACTIVE_LOW;
- 
- 	if (is_mux)
--		clk = clk_register_gpio_mux(&pdev->dev, node->name,
-+		clk = clk_register_gpio_mux(&pdev->dev, NULL, node->name,
- 				parent_names, num_parents, gpio, active_low, 0);
- 	else
--		clk = clk_register_gpio_gate(&pdev->dev, node->name,
-+		clk = clk_register_gpio_gate(&pdev->dev, NULL, node->name,
- 				parent_names ?  parent_names[0] : NULL, gpio,
- 				active_low, 0);
- 	if (IS_ERR(clk))
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2bd0a8cb7a9c..c39760cba9ac 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -698,10 +698,12 @@ struct clk_gpio {
- #define to_clk_gpio(_hw) container_of(_hw, struct clk_gpio, hw)
- 
- extern const struct clk_ops clk_gpio_gate_ops;
--struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-+struct clk *clk_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags);
--struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned gpio, bool active_low,
- 		unsigned long flags);
- void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
-@@ -717,10 +719,12 @@ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
-  */
- 
- extern const struct clk_ops clk_gpio_mux_ops;
--struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-+struct clk *clk_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags);
--struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents, unsigned gpio,
- 		bool active_low, unsigned long flags);
- void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
--- 
-1.9.1
+Shawn,
+
+Maybe this problem is Allwinner specific.
+
+In their SoCs, the phase delays 0..360=B0 must be translated to a
+hardware shift 0..7 which depends on the ratio of of the rates of the
+clock and its father. When reparenting the clock, the ratio may change
+and, with a same phase delay, the hardware shift may have to be
+changed. As the phase delay is always set after setting the clock,
+setting the clock hardware in all cases solves the possible mismatch.
+
+Now, the problem I had is a bit different: in some devices (MMCs) of
+some Allwinner SoCs, and under some conditions, the hardware phase
+delay may be set directly in the client instead of in the clock.
+Only the clock knows when this capability is used, so the clock must
+alert the client that this one has to set the phase delay or not.
+I solved this required synchronization by returning a specific error
+code when the clock does not set the phase delay on its side.
+This mechanism works fine when the set_phase() callback function of the
+clock is always called, even with a same delay.
+
+In the Allwinner's SoCs, setting the hardware phase delay asks for only
+a few machine instructions, so, the overhead is very small.
+If this is not the case for other machines, it could be simple enough
+to move the test of same delay to the clock drivers of these machines...
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
