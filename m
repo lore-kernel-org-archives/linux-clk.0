@@ -1,41 +1,47 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 5 Aug 2016 13:22:01 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Wadim Egorov <w.egorov@phytec.de>
-Cc: Andy Yan <andy.yan@rock-chips.com>, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, a.zummo@towertech.it,
-	pawel.moll@arm.com, rtc-linux@googlegroups.com,
-	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org, alexandre.belloni@free-electrons.com,
-	broonie@kernel.org, dianders@chromium.org, galak@codeaurora.org,
-	zyw@rock-chips.com, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH v5 1/5] mfd: RK808: Add RK818 support
-Message-ID: <20160805122201.GW5243@dell>
-References: <1464850228-17244-1-git-send-email-w.egorov@phytec.de>
- <20160608141735.GE14888@dell>
- <5759277D.7090101@phytec.de>
- <577C77DF.9060706@rock-chips.com>
- <577CBB62.8080806@phytec.de>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 17/34] clk: maxgen: Migrate to clk_hw based OF and
+ registration APIs
+To: Stephen Boyd <stephen.boyd@linaro.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-18-stephen.boyd@linaro.org>
+ <CABxcv=mWdwPrGRrP7ay=2FBxzoew6yBdfjZNvgFeDGACnQZdcQ@mail.gmail.com>
+ <665a9824-b0c5-9eb3-d4b6-4821204d5db0@osg.samsung.com>
+ <CAJOFmgzfvUza7DQeMsd0bD_e=+P5=WGT8kOkV7H5CCwVq4Z0RQ@mail.gmail.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Linux Kernel <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <4aacc9ef-16ff-07f2-11f7-91b056855725@osg.samsung.com>
+Date: Tue, 16 Aug 2016 23:00:36 -0400
 MIME-Version: 1.0
+In-Reply-To: <CAJOFmgzfvUza7DQeMsd0bD_e=+P5=WGT8kOkV7H5CCwVq4Z0RQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <577CBB62.8080806@phytec.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-[...]
+Hello Stephen,
 
-> Lee, you have already applied this series. But I can't find the patches
-> in your kernel tree.
-> I would like to read the device ID from the register in the probe function.
-> Do you want me to base my changes on top of this series or send a new
-> version?
+On 08/16/2016 04:06 PM, Stephen Boyd wrote:
+> On Tue, Jun 7, 2016 at 11:55 AM, Javier Martinez Canillas
+>>>
+>>> I tried this patch on top of linux-next and my Peach Pi Chromebook
+>>> (that has a max77802 chip) failed to boot. Following is the relevant
+>>> parts from the boot log:
+>>>
+>>
+>> It seems the mailer did a mess with the line wrapping so here's another attempt:
+>>
+> 
+> Thanks! Found the problem too.
+> 
 
-Please rebase and resend the series.
+Great! Thanks a lot for finding the issue.
+I tested v2 of your patch and it worked well indeed.
 
+Best regards,
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
