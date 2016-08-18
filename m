@@ -1,181 +1,53 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1470203182.17063.3.camel@mtksdaap41>
-Subject: Re: [PATCH v9 01/10] clk: fix initial state of critical clock's
- parents
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
-	John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, "Sascha
- Hauer" <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>
-Date: Wed, 3 Aug 2016 13:46:22 +0800
-In-Reply-To: <1468225452.31247.7.camel@mtksdaap41>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-	 <1466581229-2342-2-git-send-email-erin.lo@mediatek.com>
-	 <20160702012140.GB17071@codeaurora.org>
-	 <1467604308.26485.4.camel@mtksdaap41>
-	 <146802073038.73491.6675612765998057903@resonance>
-	 <1468225452.31247.7.camel@mtksdaap41>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57657 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754457AbcHSBGJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 21:06:09 -0400
+Date: Thu, 18 Aug 2016 16:48:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kelvin Cheung <keguang.zhang@gmail.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH] MIPS: Loongson1B: Change the OSC clock name
+Message-ID: <20160818234812.GI361@codeaurora.org>
+References: <1470999363-9978-1-git-send-email-keguang.zhang@gmail.com>
+ <20160815232825.GW361@codeaurora.org>
+ <CAJhJPsXs9nyR=ZJoMKFvOxR16jZ2n_F8DFmx0A=6Z5T_YxG3ag@mail.gmail.com>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAJhJPsXs9nyR=ZJoMKFvOxR16jZ2n_F8DFmx0A=6Z5T_YxG3ag@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2016-07-11 at 16:24 +0800, James Liao wrote:
-> Hi Mike,
+On 08/16, Kelvin Cheung wrote:
+> Hi Stephen,
 > 
-> On Fri, 2016-07-08 at 16:32 -0700, Michael Turquette wrote:
-> > Hi James,
-> > 
-> > Quoting James Liao (2016-07-03 20:51:48)
-> > > On Fri, 2016-07-01 at 18:21 -0700, Stephen Boyd wrote:
-> > > > (Resending to everyone)
-> > > > 
-> > > > On 06/22, Erin Lo wrote:
-> > > > > From: James Liao <jamesjj.liao@mediatek.com>
-> > > > > 
-> > > > > This patch fixed wrong state of parent clocks if they are registered
-> > > > > after critical clocks.
-> > > > > 
-> > > > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > > 
-> > > > It would be nice if you included the information about the
-> > > > problem from James' previous mail. This says what it does, but
-> > > > doesn't explain what the problem is and how it is fixing it.
-> > > > 
-> > > > > ---
-> > > > >  drivers/clk/clk.c | 9 ++++++++-
-> > > > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > > index d584004..e9f5f89 100644
-> > > > > --- a/drivers/clk/clk.c
-> > > > > +++ b/drivers/clk/clk.c
-> > > > > @@ -2388,8 +2388,15 @@ static int __clk_core_init(struct clk_core *core)
-> > > > >     hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-> > > > >             struct clk_core *parent = __clk_init_parent(orphan);
-> > > > >  
-> > > > > -           if (parent)
-> > > > > +           if (parent) {
-> > > > >                     clk_core_reparent(orphan, parent);
-> > > > > +
-> > > > > +                   if (orphan->prepare_count)
-> > > > > +                           clk_core_prepare(parent);
-> > > > > +
-> > > > > +                   if (orphan->enable_count)
-> > > > > +                           clk_core_enable(parent);
-> > > > > +           }
-> > > > >     }
-> > > > 
-> > > > I'm pretty sure I pointed this problem out to Mike when the
-> > > > critical clk patches were being pushed. I can't recall what the
-> > > > plan was though to fix the problem. I'm pretty sure he said that
-> > > > clk_core_reparent() would take care of it, but obviously it is
-> > > > not doing that. Or perhaps it was that clk handoff should figure
-> > > > out that the parents of a critical clk are also on and thus keep
-> > > > them on.
-> > > 
-> > > Hi Mike
-> > > 
-> > > Is there any other patch to fix this issue? Or did I misuse critical
-> > > clock flag?
-> > 
-> > There is no fix yes. Your fix is basically correct. I was mistaken back
-> > when I told you and Stephen that the framework already took care of
-> > this.
-> > 
-> > However, instead of "open coding" this solution, I would rather re-use
-> > the __clk_set_parent_{before,after} helpers instead. Can you review/test
-> > the following patch and let me know what you think?
-> > 
-> > Thanks,
-> > Mike
-> > 
-> > 
-> > 
-> > From c0163b3f719b1e219b28ad425f94f9ef54a25a8f Mon Sep 17 00:00:00 2001
-> > From: Michael Turquette <mturquette@baylibre.com>
-> > Date: Fri, 8 Jul 2016 16:05:22 -0700
-> > Subject: [PATCH] clk: migrate ref counts when orphans are reunited
-> > 
-> > It's always nice to see families reunited, and this is equally true when
-> > talking about parent clocks and their children. However, if the orphan
-> > clk had a positive prepare_count or enable_count, then we would not
-> > migrate those counts up the parent chain correctly.
-> > 
-> > This has manifested with the recent critical clocks feature, which often
-> > enables clocks very early, before their parents have been registered.
-> > 
-> > Fixed by replacing the call to clk_core_reparent with calls to
-> > __clk_set_parent_{before,after}.
-> > 
-> > Cc: James Liao <jamesjj.liao@mediatek.com>
-> > Cc: Erin Lo <erin.lo@mediatek.com>
-> > Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> > ---
-> >  drivers/clk/clk.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 820a939fb6bb..70efe4c4e0cc 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2449,8 +2449,14 @@ static int __clk_core_init(struct clk_core *core)
-> >  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-> >  		struct clk_core *parent = __clk_init_parent(orphan);
-> >  
-> > -		if (parent)
-> > -			clk_core_reparent(orphan, parent);
+> 2016-08-16 7:28 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
 > 
-> Is it correct to remove clk_core_reparent()? It lacks
-> __clk_recalc_accuracies() and __clk_recalc_rates(), so the new parent's
-> rate will not propagate correctly.
+> > On 08/12, Keguang Zhang wrote:
+> > > From: Kelvin Cheung <keguang.zhang@gmail.com>
+> > >
+> > > This patch changes the OSC clock name to "osc_clk".
+> > >
+> > > Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+> > > ---
+> >
+> > Yes, but why?
+> >
+> >
+> Loongson1C uses a 24MHz oscillator, hence "osc_clk" sounds more appropriate
 > 
-> For example, I set vdec_sel as a critical clock. Without your patch, the
-> result was:
-> 
->     vdecpll         0            0   338000000
->        vdecpll_ck   1            1   338000000
->           vdec_sel  1            1   338000000
-> 
-> With your patch, it became:
-> 
->     vdecpll         1            1   338000000
->        vdecpll_ck   1            1           0
->           vdec_sel  1            1           0
-> 
-> The prepare_count and enable_count are correct with your patch, but the
-> rates of vdecpll_ck and vdec_sel become incorrect.
-> 
-> 
-> Best regards,
-> 
-> James
-> 
-> > +		/*
-> > +		 * we could call __clk_set_parent, but that would result in a
-> > +		 * reducant call to the .set_rate op, if it exists
-> > +		 */
-> > +		if (parent) {
-> > +			__clk_set_parent_before(orphan, parent);
-> > +			__clk_set_parent_after(orphan, parent, NULL);
-> > +		}
-> >  	}
-> >  
-> >  	/*
 > 
 
-Hi Mike,
+So then should we replace all the osc_33m_clk names with osc_clk?
+This patch only modifies one name and it looks like a clkdev
+lookup is created that still has osc_33m_clk for the connection
+name in drivers/clk/clk-ls1x.c, so merging it would mean things
+break? I also wonder what the pin is actually called in the
+datasheet, because that should be what the cpufreq driver uses in
+clk_get() as the connection id. If that's osc_33m_clk then it's
+better to leave it alone even if the frequency is different.
 
-Do you have new patches to fix new clock parents? If not, I think we can
-use my patch first. Is it okay?
-
-
-Best regards,
-
-James
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
