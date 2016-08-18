@@ -1,36 +1,45 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v.1] clk:clk-rockchip:-of_iomap failed to remap then abort clock initialization.
-Date: Tue, 23 Aug 2016 18:15:15 +0200
-Message-ID: <1528160.BtdbmuP27T@diego>
-In-Reply-To: <1471101978-1881-1-git-send-email-arvind.yadav.cs@gmail.com>
-References: <1471101978-1881-1-git-send-email-arvind.yadav.cs@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v2 0/3] clk: Add Meson GXBB Always-On Reset + Clocks
+Date: Thu, 18 Aug 2016 12:08:45 +0200
+Message-Id: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arvind,
+The Amlogic Meson GXBB SoC has an Always-On part that contains pairs on
+clocks and reset controls in a single memory mapped control register.
+Add a separate clocks and reset node with the corresponding driver
+exporting clock nodes and a reset controller.
 
-Am Samstag, 13. August 2016, 20:56:18 schrieb Arvind Yadav:
-> -check return of 'of_iomap'.if It's falied to remap then abort.
-> 
-> -Unmap a region obtained by remap. iounmap frees the mapping when failed
-> to allocate the memory.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/clk/rockchip/clk-rockchip.c | 7 ++++++-
+Changes since v1 at http://lkml.kernel.org/r/1470734008-18849-1-git-send-email-narmstrong@baylibre.com :
+ - Make non-modular
+ - Remove clk.h and include init.h instead of module.h
+ - Use devm_ioremap_resource instead of of_iomap
+ - Rename driver spinlock 
 
-I've applied the patch, after rewording both patch subject and message [0].
+Neil Armstrong (3):
+  clk: meson: Add GXBB AO Clock and Reset controller driver
+  dt-bindings: clock: reset: Add GXBB AO Clock and Reset Bindings
+  ARM64: dts: meson-gxbb: Add GXBB AO Clock and Reset node
 
-That driver is deprecated for quite some time, see
-Documenation/devicetree/bindings/clock/rockchip.txt - so I'm hoping this is
-more of a random find and you're not actually using it?
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  45 +++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |   9 +
+ drivers/clk/meson/Makefile                         |   2 +-
+ drivers/clk/meson/gxbb-aoclk.c                     | 192 +++++++++++++++++++++
+ include/dt-bindings/clock/gxbb-aoclkc.h            |  66 +++++++
+ include/dt-bindings/reset/gxbb-aoclkc.h            |  66 +++++++
+ 6 files changed, 379 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+ create mode 100644 drivers/clk/meson/gxbb-aoclk.c
+ create mode 100644 include/dt-bindings/clock/gxbb-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/gxbb-aoclkc.h
 
-
-Thanks
-Heiko
-
-[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=023a8280b8355a0aebe094299afec8d8b7b264cd
+-- 
+2.7.0
