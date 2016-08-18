@@ -1,74 +1,67 @@
-Return-Path: <moinejf@free.fr>
-Date: Tue, 9 Aug 2016 19:27:07 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Emilio =?ISO-8859-1?Q?L=F3pez?=
- <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel
- <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
- linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 3/7] clk: sunxi: add generic
- multi-parent bus clock gates driver
-Message-Id: <20160809192707.ecb29cd176c29232e1086c82@free.fr>
-In-Reply-To: <CAGb2v64CnRJyQih=DMZ4wfMPjdYNHwm2TxqNjaALsQ+m7bwsbg@mail.gmail.com>
-References: <20160808172149.30861-1-andre.przywara@arm.com>
-	<20160808172149.30861-4-andre.przywara@arm.com>
-	<20160808201527.62ec34beb19b86dcfd3dbf03@free.fr>
-	<CAGb2v64CnRJyQih=DMZ4wfMPjdYNHwm2TxqNjaALsQ+m7bwsbg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:58185 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754263AbcHSAyb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 20:54:31 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by leibniz.telenet-ops.be (Postfix) with ESMTP id 3sFYBq6rbjzMqvLS
+        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2016 19:34:59 +0200 (CEST)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Mark Brown <broonie@kernel.org>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 0/3] MIPS: TXx9: Common Clock Framework Conversion
+Date: Thu, 18 Aug 2016 19:34:24 +0200
+Message-Id: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 9 Aug 2016 18:02:47 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+	Hi Ralf, Nemoto-san, Mark, Wim, Günter,
 
-> > The 'parent's of the bus gates are of no interest.
-> > They are supposed to be (no clear documentation) apb1, apb2, ahb1 and
-> > ahb2, but, as you well noticed in the patch 5/7, these clocks are fixed
-> > and have no gate. Some of them are parents of real clocks, but they
-> > don't bring anything to the bus gates of the other clocks.
->=20
-> Yes they are. Some devices, such as UARTs and I2C controllers, need
-> to get the clock rate of the gate and calculate the proper internal
-> divider.
+This patch series converts the Toshiba TXx9 platforms from their own
+custom minimal clock implementation to the Common Clock Framework.
 
-You are right, the clocks of some subsystems have only a gate, but
-these are exceptions.
+  - Patches 1 and 2 add missing clock (un)prepare calls to TXx9-specific
+    drivers,
+  - Patch 3 replaces the custom clock implementation by a CCF-based one,
+    providing a minimal set of clocks.
 
-Look at an ordinary clock, say the mmc0 of the H3.
-There is a "bus" gate (see below) in the CCU register 0x60, bit 8, and
-the "clock" gate in the CCU register 0x88, bit 31.
+Patches 1 and 2 can be applied independently.
+Patch 3 has a hard dependency on patches 1 and 2.
+I don't know how you prefer to handle this?
 
-The 'simple-gates' says that the "bus gate" is child of ahb1 (in all
-sunxi versions, the one prior to 'simple-gate', in the 'simple-gate',
-in 'sunxi-ng', and now in Andr=E9's patch).
+This has been tested with the watchdog on RBTX4927.
 
-But, where do you see a hardware relation between the mmc0 clock and
-the ahb1 clock?
+Thanks!
 
-> > As I wrote previously, the simplest is to ungate/gate the clocks in
-> > both the bus and clock registers on clk_prepare/unprepare.
-> > Then, your 'multi-bus-gates' would be simply a generic 'multi-gates'.
->=20
-> This is somewhat misleading. What "clock" registers are you referring
-> to? There are no "bus" registers. The reason we call them "bus clock
-> gates" is because they are mashed together, instead of having clearly
-> separated registers for each AHB/APB bus.
->=20
-> And if you want just a generic clock gates driver, we already have
-> the "simple-gates" driver.
+Geert Uytterhoeven (3):
+  spi: spi-txx9: Add missing clock (un)prepare calls for CCF
+  watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
+  MIPS: TXx9: Convert to Common Clock Framework
 
-Maybe I used the wrong words.
+ arch/mips/txx9/Kconfig         |  2 +-
+ arch/mips/txx9/generic/setup.c | 68 ++++++++++++++++++++----------------------
+ drivers/spi/spi-txx9.c         |  6 ++--
+ drivers/watchdog/txx9wdt.c     |  6 ++--
+ 4 files changed, 40 insertions(+), 42 deletions(-)
 
-The "clock" register is the one which defines the parameters of the
-clock (parents, mul/div factors, gate). For the H3 mmc0, it is the
-CCU register 0x60.
+-- 
+1.9.1
 
-The "bus" register is one of the so-called "Bus Clock Gating Register"s.
-For the H3 mmc0, it is the CCU register 0x88.=09
+Gr{oetje,eeting}s,
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
