@@ -1,64 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 23 Aug 2016 21:48:21 -0700
+Date: Thu, 18 Aug 2016 16:51:13 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: York Sun <york.sun@nxp.com>, kbuild-all@01.org,
-	linux-clk@vger.kernel.org, York Sun <yorksun@freescale.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andrey Filippov <andrey@elphel.com>,
-	Paul Bolle <pebolle@tiscali.nl>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Patch v8] driver/clk/clk-si5338: Add common clock framework
- driver for si5338
-Message-ID: <20160824044821.GS6502@codeaurora.org>
-References: <1471991933-29798-1-git-send-email-york.sun@nxp.com>
- <201608240859.Pj8tsDaR%fengguang.wu@intel.com>
+To: yuantian.tang@nxp.com
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, scott.wood@nxp.com
+Subject: Re: [PATCH] clk: qoriq: fix a register offset error
+Message-ID: <20160818235113.GJ361@codeaurora.org>
+References: <1471246100-40713-1-git-send-email-yuantian.tang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <201608240859.Pj8tsDaR%fengguang.wu@intel.com>
+In-Reply-To: <1471246100-40713-1-git-send-email-yuantian.tang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/24, kbuild test robot wrote:
+On 08/15, yuantian.tang@nxp.com wrote:
+> From: Tang Yuantian <Yuantian.Tang@nxp.com>
 > 
->   2827		if (drv_type < 0)
->   2828			return drv_type;
->   2829	
->   2830		drv_vdd =  get_drv_vdd(drvdata, i);
->   2831		if (drv_vdd < 0)
->   2832			return drv_vdd;
->   2833	
->   2834		drv_trim = get_drv_trim(drvdata, i);
->   2835		if (drv_trim < 0)
->   2836			return drv_trim;
->   2837	
->   2838		drv_invert = get_drv_invert(drvdata, i);
->   2839		if (drv_invert < 0)
->   2840			return drv_invert;
->   2841	
->   2842		for (j = 0; drv_configs[j].description; j++) {
-> > 2843			if (drv_configs[j].fmt == drv_type &&
->   2844			    drv_configs[j].vdd == drv_vdd &&
->   2845			    drv_configs[j].trim == drv_trim &&
->   2846			    (drv_invert | (drv_configs[j].invert >> 2)) ==
->   2847				((drv_configs[j].invert & 3) |
->   2848				 (drv_configs[j].invert>>2)))
+> The offset of Core Cluster clock control/status register
+> on cluster group V3 version is different from others, and
+> should be plus 0x70000.
+> 
+> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+> ---
 
-It might be better to write it as a set of continues instead so
-that it isn't one complicated conditional
-
-				config = &drv_configs[j];
-				if (config->fmt != drv_type)
-					continue;
-				if (config->vdd != drv_vdd)
-					continue;
-				...
-				seq_puts()
-				match = 1;
-				break;
-				
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
