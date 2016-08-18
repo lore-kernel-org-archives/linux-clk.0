@@ -1,54 +1,45 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	shawn.lin@rock-chips.com
-Subject: [RESEND PATCH v2 7/8] clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
-Date: Mon,  1 Aug 2016 17:58:09 +0800
-Message-Id: <1470045489-32028-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+	k.kozlowski@samsung.com, kgene@kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS
+Date: Thu, 18 Aug 2016 21:47:19 +0900
+Message-id: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Add the myself to the entry of SAMSUNG SOC CLOCK DRIVERS to review
+and test the patches as supporter. I will help them. I can access the all
+datasheet of Exynos SoC and test it on Exynos-based board. I was implemented
+the exynos4415/5433 clock driver as author and handled the exynos3250 clock
+driver. Lastly, adding the missing information of the exynos clock drivers.
 
-allow aclk_pcie and aclk_perf_pcie disabled when unused.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 580abf1..071eb96 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 4, GFLAGS),
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 20bb1d00098c..442d6f5c65be 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10233,9 +10233,12 @@ F:	drivers/nfc/s3fwrn5
+ SAMSUNG SOC CLOCK DRIVERS
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ M:	Tomasz Figa <tomasz.figa@gmail.com>
++M:	Chanwoo Choi <cw00.choi@samsung.com>
+ S:	Supported
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ F:	drivers/clk/samsung/
++F:	include/dt-bindings/clock/exynos*.h
++F:	Documentation/devicetree/bindings/clock/exynos*.txt
  
--	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 2, GFLAGS),
--	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
- 			RK3399_CLKGATE_CON(20), 10, GFLAGS),
- 	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(20), 12, GFLAGS),
+ SAMSUNG SXGBE DRIVERS
+ M:	Byungho An <bh74.an@samsung.com>
 -- 
-1.7.9.5
+1.9.1
