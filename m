@@ -1,37 +1,53 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- kgene@kernel.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com,
- linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/5] clk: samsung: exynos5410: Expose the peripheral DMA gate
- clocks
-Date: Mon, 22 Aug 2016 18:31:00 +0200
-Message-id: <1471883463-1950-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39642 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753008AbcHSCgL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 22:36:11 -0400
+Date: Thu, 18 Aug 2016 19:11:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-spi@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Message-ID: <20160818181139.GS9347@sirena.org.uk>
+References: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/OxAoNYcURhUkoHv"
+In-Reply-To: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
+Subject: Re: [PATCH 0/3] MIPS: TXx9: Common Clock Framework Conversion
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-These clocks are needed in order to use the PL330 peripheral
-DMA controllers.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5410.c | 2 ++
- 1 file changed, 2 insertions(+)
+--/OxAoNYcURhUkoHv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 54ec486..cf6fb41 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
- 	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
- 	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
- 	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
-+	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
-+	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
- 
- 	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
- 	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
--- 
-1.9.1
+On Thu, Aug 18, 2016 at 07:34:24PM +0200, Geert Uytterhoeven wrote:
+
+> Patches 1 and 2 can be applied independently.
+> Patch 3 has a hard dependency on patches 1 and 2.
+> I don't know how you prefer to handle this?
+
+I can sign a tag for pulling in easily enough for the SPI change.
+
+--/OxAoNYcURhUkoHv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXtfpaAAoJECTWi3JdVIfQUZoH/iQFeSN75ptSllwhU4cxzmL3
+GQuPrk70Ogkv5rX6oZs0n2lxoA5Ag+lECP7QxPIBSK7MMfFABUDr9uI7oNzTS8XY
+Ww7eyY/gx1zha0MUgnjTAmcONgfibXZljnRggHpjvMNfZRrHEnEWAU/jlHksEv39
+Q0aVntPDksyjKKkVv2x16uKZBubyr44axnPq7RltYEK8DH74coKcOeZwHQbslgjO
+/Llj8kshJSsJ3IrEsNBiOCzoW2EFT82S7Cm7cFxmSVJf4Vx7vntR/AYtE85fW6RY
+wEEHt+ObqlDvAPviCZe0Z+zxqG0o8qcXwJNm0lDyB95kJf5ulXOU0DhQDZB04Uc=
+=IkHd
+-----END PGP SIGNATURE-----
+
+--/OxAoNYcURhUkoHv--
