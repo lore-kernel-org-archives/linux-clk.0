@@ -1,25 +1,31 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 18:16:51 -0700
+Date: Thu, 18 Aug 2016 16:42:46 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/8] clk: core: Avoid double initialization of clocks
-Message-ID: <20160813011651.GO361@codeaurora.org>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
- <1467735814-23518-9-git-send-email-ricardo.ribalda@gmail.com>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] clk: max77686: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160818234246.GH361@codeaurora.org>
+References: <20160816223856.1282-1-stephen.boyd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467735814-23518-9-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <20160816223856.1282-1-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Ricardo Ribalda Delgado wrote:
-> Some clock providers can be initialized via of_clk_init() and also via
-> platform device probe.
+On 08/16, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
 > 
-> Avoid double initialization of them by setting the OF_POPULATED flag.
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 > ---
 
 Applied to clk-next
