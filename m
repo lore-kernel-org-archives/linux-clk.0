@@ -1,84 +1,72 @@
-Return-Path: <mirza.krak@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <a7851104-1aa1-fd8d-a594-545a01046cdf@nvidia.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com> <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
- <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com> <a7851104-1aa1-fd8d-a594-545a01046cdf@nvidia.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Mon, 29 Aug 2016 09:38:39 +0200
-Message-ID: <CALw8SCV4a98B0ct483wxf9ZMuCv8qV1BPM_9g6vV3huyp6YdOg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:58409 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753849AbcHSAyc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 20:54:32 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by leibniz.telenet-ops.be (Postfix) with ESMTP id 3sFYBq6sH6zMqvLq
+        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2016 19:34:59 +0200 (CEST)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Mark Brown <broonie@kernel.org>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 2/3] watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
+Date: Thu, 18 Aug 2016 19:34:26 +0200
+Message-Id: <1471541667-30689-3-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
+References: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-26 9:25 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->
-> On 26/08/16 05:53, Mirza Krak wrote:
->
-> ...
->
->>> I have an idea which is following:
->>>
->>> gmi@70090000 {
->>>          status = "okay";
->>>          #address-cells = <2>;
->>>          #size-cells = <1>;
->>>          ranges = <4 0 0x48000000 0x00040000>;
->>>
->>>          cs4 {
->>>                  compatible = "simple-bus";
->>>                  #address-cells = <2>;
->>>                  #size-cells = <1>;
->>>                  ranges;
->>>
->>>                  nvidia,snor-cs = <4>;
->>>                  nvidia,snor-mux-mode;
->>>                  nvidia,snor-adv-inv;
->>>
->>>                  can@0 {
->>>                          compatible = "nxp,sja1000";
->>>                          reg = <4 0 0x100>;
->>>                          ...
->>>                  };
->>>
->>>
->>>                  can@40000 {
->>>                          compatible = "nxp,sja1000";
->>>                          reg = <4 0x40000 0x100>;
->>>                          ...
->>>                  };
->>>          };
->>> };
->>>
->>> Do not know if above will work at all (not able to test at current
->>> location), anyway I will play around with it some more and get back to
->>> you.
->>
->> Gave above a test run and it works like a charm. Are we happy with that?
->
-> Does it not work with #address-cells = <1>? Seems odd to have the cs in
-> the reg for the device.
->
+While the custom minimal TXx9 clock implementation doesn't need or use
+clock (un)prepare calls (they are dummies if !CONFIG_HAVE_CLK_PREPARE),
+they are mandatory when using the Common Clock Framework.
 
-No it does not work with #address-cells = <1> with the current
-structure that we have.
+Hence add them, to prepare for the advent of CCF.
 
-With #address-cells = <2>, we can state that this device is on
-chip-select 4 and on this specific offset of chip-select 4 (that is
-the second address cell). I do not see how we can specify this with
-only one address cell.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Tested on RBTX4927.
+---
+ drivers/watchdog/txx9wdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-And is it really that odd? Looking at other drivers they all use the
-same metod, even the arm,pl172 that you where referring to as a base
-for our implementation.
+diff --git a/drivers/watchdog/txx9wdt.c b/drivers/watchdog/txx9wdt.c
+index c2da880292bc2f32..6f7a9deb27d05d25 100644
+--- a/drivers/watchdog/txx9wdt.c
++++ b/drivers/watchdog/txx9wdt.c
+@@ -112,7 +112,7 @@ static int __init txx9wdt_probe(struct platform_device *dev)
+ 		txx9_imclk = NULL;
+ 		goto exit;
+ 	}
+-	ret = clk_enable(txx9_imclk);
++	ret = clk_prepare_enable(txx9_imclk);
+ 	if (ret) {
+ 		clk_put(txx9_imclk);
+ 		txx9_imclk = NULL;
+@@ -144,7 +144,7 @@ static int __init txx9wdt_probe(struct platform_device *dev)
+ 	return 0;
+ exit:
+ 	if (txx9_imclk) {
+-		clk_disable(txx9_imclk);
++		clk_disable_unprepare(txx9_imclk);
+ 		clk_put(txx9_imclk);
+ 	}
+ 	return ret;
+@@ -153,7 +153,7 @@ exit:
+ static int __exit txx9wdt_remove(struct platform_device *dev)
+ {
+ 	watchdog_unregister_device(&txx9wdt);
+-	clk_disable(txx9_imclk);
++	clk_disable_unprepare(txx9_imclk);
+ 	clk_put(txx9_imclk);
+ 	return 0;
+ }
+-- 
+1.9.1
 
-Best Regards
-Mirza
