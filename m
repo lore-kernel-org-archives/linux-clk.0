@@ -1,32 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:08:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Denis Efremov <yefremov.denis@gmail.com>
-Subject: Re: [PATCH 2/2] clk: fixed-rate: Remove export symbol on setup
- function
-Message-ID: <20160815220810.GI361@codeaurora.org>
-References: <20160813015023.28221-1-sboyd@codeaurora.org>
- <20160813015023.28221-2-sboyd@codeaurora.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1471585331.8551.24.camel@mtksdaap41>
+Subject: Re: [PATCH v10 8/9] arm: dts: mt2701: Add clock controller device
+ nodes
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>, Daniel
+ Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Date: Fri, 19 Aug 2016 13:42:11 +0800
+In-Reply-To: <20160819001805.GR361@codeaurora.org>
+References: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
+	 <1471332629-15722-9-git-send-email-erin.lo@mediatek.com>
+	 <20160819001805.GR361@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160813015023.28221-2-sboyd@codeaurora.org>
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/12, Stephen Boyd wrote:
-> This function is only called by builtin code, but we always
-> exported it and had marked it as __init before commit
-> e4eda8e0654c (clk: remove exported function from __init section,
-> 2013-01-06) removed that marking. Given that it isn't used by
-> modules, lets unexport it and add back __init.
+On Thu, 2016-08-18 at 17:18 -0700, Stephen Boyd wrote:
+> On 08/16, Erin Lo wrote:
+> > From: James Liao <jamesjj.liao@mediatek.com>
+> > 
+> > Add clock controller nodes for MT2701, include topckgen, infracfg,
+> > pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
+> > bdpsys. This patch also add two oscillators that provide clocks for
+> > MT2701.
+> > 
+> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > ---
 > 
-> Cc: Denis Efremov <yefremov.denis@gmail.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> This should go through arm-soc tree, so do you need a stable
+> branch in clk tree to pull through arm-soc, or are we going to
+> wait a release cycle on the dts patches?
 
-Applied to clk-next
+Hi Stephen,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I prefer to wait a release cycle. We may merge clk driver first, then
+merge dts patches in next kernel release.
+
+
+Best regards,
+
+James
