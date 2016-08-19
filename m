@@ -1,167 +1,72 @@
-Return-Path: <serveralex@gmail.com>
-Return-Path: <serveralex@gmail.com>
-From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v5 4/6] clk: meson: Copy meson8b CLKID defines to private header file
-Date: Sat, 27 Aug 2016 19:40:52 +0200
-Message-Id: <1472319654-59048-5-git-send-email-serveralex@gmail.com>
-In-Reply-To: <1472319654-59048-1-git-send-email-serveralex@gmail.com>
-References: <1472319654-59048-1-git-send-email-serveralex@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20160819002826.GT361@codeaurora.org>
+References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
+ <1470112223-24835-3-git-send-email-yamada.masahiro@socionext.com> <20160819002826.GT361@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 20 Aug 2016 02:55:12 +0900
+Message-ID: <CAK7LNAROCdE4tomp6jg4p5Ep-koPjWSchNEXH01Qn0Wn3q-f2g@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] clk: uniphier: add clock data for UniPhier SoCs
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Only expose future CLKID constants if necessary. This patch
-removes CLK_NR_CLKS from the DT bindings but leaves all previously
-defined CLKIDs there to keep backward compatibility.
+Hi Stephen,
 
-Signed-off-by: Alexander Müller <serveralex@gmail.com>
----
- drivers/clk/meson/meson8b.c              |   1 -
- drivers/clk/meson/meson8b.h              | 107 +++++++++++++++++++++++++++++++
- include/dt-bindings/clock/meson8b-clkc.h |   2 -
- 3 files changed, 107 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 24395dc..f815d40 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -23,7 +23,6 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
--#include <dt-bindings/clock/meson8b-clkc.h>
- #include <linux/platform_device.h>
- #include <linux/init.h>
- 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index b2f29f7..86efe6a 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -36,4 +36,111 @@
- #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
- #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
- 
-+/*
-+ * CLKID index values
-+ *
-+ * These indices are entirely contrived and do not map onto the hardware.
-+ * Migrate them out of this header and into the DT header file when they need
-+ * to be exposed to client nodes in DT: include/dt-bindings/clock/meson8b-clkc.h
-+ */
-+
-+/* CLKID_UNUSED */
-+/* CLKID_XTAL */
-+/* CLKID_PLL_FIXED */
-+/* CLKID_PLL_VID */
-+/* CLKID_PLL_SYS */
-+/* CLKID_FCLK_DIV2 */
-+/* CLKID_FCLK_DIV3 */
-+/* CLKID_FCLK_DIV4 */
-+/* CLKID_FCLK_DIV5 */
-+/* CLKID_FCLK_DIV7 */
-+/* CLKID_CLK81 */
-+/* CLKID_MALI */
-+/* CLKID_CPUCLK */
-+/* CLKID_ZERO */
-+/* CLKID_MPEG_SEL */
-+/* CLKID_MPEG_DIV */
-+#define CLKID_DDR		16
-+#define CLKID_DOS		17
-+#define CLKID_ISA		18
-+#define CLKID_PL301		19
-+#define CLKID_PERIPHS		20
-+#define CLKID_SPICC		21
-+#define CLKID_I2C		22
-+#define CLKID_SAR_ADC		23
-+#define CLKID_SMART_CARD	24
-+#define CLKID_RNG0		25
-+#define CLKID_UART0		26
-+#define CLKID_SDHC		27
-+#define CLKID_STREAM		28
-+#define CLKID_ASYNC_FIFO	29
-+#define CLKID_SDIO		30
-+#define CLKID_ABUF		31
-+#define CLKID_HIU_IFACE		32
-+#define CLKID_ASSIST_MISC	33
-+#define CLKID_SPI		34
-+#define CLKID_I2S_SPDIF		35
-+#define CLKID_ETH		36
-+#define CLKID_DEMUX		37
-+#define CLKID_AIU_GLUE		38
-+#define CLKID_IEC958		39
-+#define CLKID_I2S_OUT		40
-+#define CLKID_AMCLK		41
-+#define CLKID_AIFIFO2		42
-+#define CLKID_MIXER		43
-+#define CLKID_MIXER_IFACE	44
-+#define CLKID_ADC		45
-+#define CLKID_BLKMV		46
-+#define CLKID_AIU		47
-+#define CLKID_UART1		48
-+#define CLKID_G2D		49
-+#define CLKID_USB0		50
-+#define CLKID_USB1		51
-+#define CLKID_RESET		52
-+#define CLKID_NAND		53
-+#define CLKID_DOS_PARSER	54
-+#define CLKID_USB		55
-+#define CLKID_VDIN1		56
-+#define CLKID_AHB_ARB0		57
-+#define CLKID_EFUSE		58
-+#define CLKID_BOOT_ROM		59
-+#define CLKID_AHB_DATA_BUS	60
-+#define CLKID_AHB_CTRL_BUS	61
-+#define CLKID_HDMI_INTR_SYNC	62
-+#define CLKID_HDMI_PCLK		63
-+#define CLKID_USB1_DDR_BRIDGE	64
-+#define CLKID_USB0_DDR_BRIDGE	65
-+#define CLKID_MMC_PCLK		66
-+#define CLKID_DVIN		67
-+#define CLKID_UART2		68
-+#define CLKID_SANA		69
-+#define CLKID_VPU_INTR		70
-+#define CLKID_SEC_AHB_AHB3_BRIDGE	71
-+#define CLKID_CLK81_A9		72
-+#define CLKID_VCLK2_VENCI0	73
-+#define CLKID_VCLK2_VENCI1	74
-+#define CLKID_VCLK2_VENCP0	75
-+#define CLKID_VCLK2_VENCP1	76
-+#define CLKID_GCLK_VENCI_INT	77
-+#define CLKID_GCLK_VENCP_INT	78
-+#define CLKID_DAC_CLK		79
-+#define CLKID_AOCLK_GATE	80
-+#define CLKID_IEC958_GATE	81
-+#define CLKID_ENC480P		82
-+#define CLKID_RNG1		83
-+#define CLKID_GCLK_VENCL_INT	84
-+#define CLKID_VCLK2_VENCLMCC	85
-+#define CLKID_VCLK2_VENCL	86
-+#define CLKID_VCLK2_OTHER	87
-+#define CLKID_EDP		88
-+#define CLKID_AO_MEDIA_CPU	89
-+#define CLKID_AO_AHB_SRAM	90
-+#define CLKID_AO_AHB_BUS	91
-+#define CLKID_AO_IFACE		92
-+
-+#define CLK_NR_CLKS		93
-+
-+/* include the CLKIDs that have been made part of the stable DT binding */
-+#include <dt-bindings/clock/meson8b-clkc.h>
-+
- #endif /* __MESON8B_H */
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index 595a58d..a55ff8c 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -22,6 +22,4 @@
- #define CLKID_MPEG_SEL		14
- #define CLKID_MPEG_DIV		15
- 
--#define CLK_NR_CLKS		(CLKID_MPEG_DIV + 1)
--
- #endif /* __MESON8B_CLKC_H */
+2016-08-19 9:28 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+
+>> +
+>> +
+>> +System clock
+>> +------------
+>> +
+>> +Required properties:
+>> +- compatible: should be one of the following:
+>> +    "socionext,uniphier-sld3-clock" - for PH1-sLD3 SoC.
+>> +    "socionext,uniphier-ld4-clock"  - for PH1-LD4 SoC.
+>> +    "socionext,uniphier-pro4-clock" - for PH1-Pro4 SoC.
+>> +    "socionext,uniphier-sld8-clock" - for PH1-sLD8 SoC.
+>> +    "socionext,uniphier-pro5-clock" - for PH1-Pro5 SoC.
+>> +    "socionext,uniphier-pxs2-clock" - for ProXstream2/PH1-LD6b SoC.
+>> +    "socionext,uniphier-ld11-clock" - for PH1-LD11 SoC.
+>> +    "socionext,uniphier-ld20-clock" - for PH1-LD20 SoC.
+>> +- #clock-cells: should be 1.
+>> +
+>> +Example:
+>> +
+>> +     sysctrl@61840000 {
+>> +             compatible = "socionext,uniphier-ld20-sysctrl",
+>> +                          "simple-mfd", "syscon";
+>> +             reg = <0x61840000 0x4000>;
+>> +
+>> +             clock {
+>> +                     compatible = "socionext,uniphier-ld20-clock";
+>> +                     #clock-cells = <1>;
+>> +             };
+>> +
+>> +             other nodes ...
+>
+> What are the other nodes? Is there a document for the rest of the
+> MFD?
+
+At lease there are "clock" and "reset" in this MFD at this point.
+Perhaps, I may want to add more in the future.
+
+That's why I do not want to list all of the sibling nodes.
+
+The reset node is documented in its binding document,
+added by the following patch:
+https://patchwork.kernel.org/patch/9255101/
+
+
 -- 
-2.5.0
+Best Regards
+Masahiro Yamada
