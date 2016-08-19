@@ -1,91 +1,92 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 1/3 v2] clk: versatile add DT bindings for the ICST CM variants
-Date: Mon, 22 Aug 2016 11:19:32 +0200
-Message-Id: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
+	<jamesjj.liao@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v11 2/9] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Fri, 19 Aug 2016 13:34:49 +0800
+Message-ID: <1471584896-9986-3-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The Integrator/AP and Integrator/CP core modules have special
-versions of the ICST525 interface hardcoding some bits. Create
-special compatible strings to identify these variants, also
-explain a bit what is going on.
+From: James Liao <jamesjj.liao@mediatek.com>
 
-Cc: devicetree@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Fix spelling mistakes.
-- Try to be less specific and more general about the ARM system
-  controllers so we do not need to edit the text again for the
-  next variant we discover.
----
- .../devicetree/bindings/clock/arm-syscon-icst.txt  | 34 ++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
-diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-index 8b7177cecb36..27468119fd94 100644
---- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-+++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-@@ -5,20 +5,50 @@ Technology (IDT). ARM integrated these oscillators deeply into their
- reference designs by adding special control registers that manage such
- oscillators to their system controllers.
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 21 +++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 25 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e2d9bd7..4265471 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -210,6 +210,7 @@ config COMMON_CLK_OXNAS
  
--The ARM system controller contains logic to serialize and initialize
-+The various ARM system controllers contain logic to serialize and initialize
- an ICST clock request after a write to the 32 bit register at an offset
- into the system controller. Furthermore, to even be able to alter one of
- these frequencies, the system controller must first be unlocked by
- writing a special token to another offset in the system controller.
- 
-+Some ARM hardware contain special versions of the serial interface that only
-+connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
-+different values and sometimes also hardwire the output divider. They
-+therefore have special compatible strings as per this table (the OD value is
-+the value on the pins, not the resulting output divider):
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+ source "drivers/clk/meson/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..380c372
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,21 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
 +
-+Hardware variant:        RDW     OD          VDW
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
 +
-+Integrator/AP            22      1           Bit 8 0, rest variable
-+integratorap-cm
-+
-+Integrator/AP            46      3           Bit 8 0, rest variable
-+integratorap-sys
-+
-+Integrator/AP            22 or   1           17 or (33 or 25 MHz)
-+integratorap-pci         14      1           14
-+
-+Integrator/CP            22      variable    Bit 8 0, rest variable
-+integratorcp-cm-core
-+
-+Integrator/CP            22      variable    Bit 8 0, rest variable
-+integratorcp-cm-mem
-+
- The ICST oscillator must be provided inside a system controller node.
- 
- Required properties:
-+- compatible: must be one of
-+  "arm,syscon-icst525"
-+  "arm,syscon-icst307"
-+  "arm,syscon-icst525-integratorap-cm"
-+  "arm,syscon-icst525-integratorap-sys"
-+  "arm,syscon-icst525-integratorap-pci"
-+  "arm,syscon-icst525-integratorcp-cm-core"
-+  "arm,syscon-icst525-integratorcp-cm-mem"
- - lock-offset: the offset address into the system controller where the
-   unlocking register is located
- - vco-offset: the offset address into the system controller where the
-   ICST control register is located (even 32 bit address)
--- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
- - #clock-cells: must be <0>
- - clocks: parent clock, since the ICST needs a parent clock to derive its
-   frequency from, this attribute is compulsory.
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
 -- 
-2.7.4
+1.9.1
