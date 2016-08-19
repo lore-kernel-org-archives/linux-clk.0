@@ -1,57 +1,95 @@
-Return-Path: <jorik@kippendief.biz>
-From: jorik@kippendief.biz
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	megous@megous.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Jorik Jonker <jorik@kippendief.biz>
-Subject: [PATCH] clk: sunxi-ng: Fix wrong reset register offsets
-Date: Sat, 27 Aug 2016 21:04:33 +0200
-Message-Id: <1472324673-11233-1-git-send-email-jorik@kippendief.biz>
-In-Reply-To: <20160827121545.GT3165@lukather>
-References: <20160827121545.GT3165@lukather>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Fri, 19 Aug 2016 15:46:40 +0100
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Stephen Warren <swarren@wwwdotorg.org>, Lee Jones
+	<lee@kernel.org>,
+        Eric Anholt <eric@anholt.net>,
+        Florian Fainelli
+	<f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden
+	<sbranden@broadcom.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Sylwester
+ Nawrocki" <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Mark
+ Brown" <broonie@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        <a.hajda@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Message-ID: <20160819144640.GM21682@localhost.localdomain>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+ <65703100-1e16-6c34-babe-40e630180688@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <65703100-1e16-6c34-babe-40e630180688@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jorik Jonker <jorik@kippendief.biz>
+On Tue, Aug 16, 2016 at 03:51:10PM +0200, Krzysztof Kozlowski wrote:
+> On 08/16/2016 03:34 PM, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > RFC, please, do not apply, maybe except patch #1 which is harmless.
+> > 
+> > 
+> > Introduction
+> > ============
+> > The patchset brings new entity: clock controller representing a hardware
+> > block.  The clock controller comes with its own prepare lock which
+> > is used then in many places.  The idea is to fix the deadlock mentioned
+> > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> > by keeping clock prepared").
+> > 
+> 
+> Damn, I forgot to describe the overall idea. :) It is mentioned in patch
+> 15 but probably not many will have enough of patience to reach it.
+> 
+> The locking idea
+> ================
+> Clock controllers representing different hardware blocks, will contain
+> its own prepare lock which protects the clocks inside controller.  The
+> hierarchy itself is protected by global lock.
+> 
+> In prepare path, the global prepare lock is removed.  This is direct
+> solution for the deadlock.
+> 
+> Clock hierarchy imposes also hierarchy between controllers so when a
+> prepare happens, also parents have to be locked.
+> 
+> Following locking design was chosen:
+> 1. For prepare/unprepare paths: lock only clock controller and its
+>    parents.
+> 2. For recalc rates paths: lock global lock, the controller and its
+>    children.
+> 3. For reparent paths: lock entire tree up down (children and parents)
+>    and the global lock as well.
+> 
+> 
+> In each case of traversing the clock hierarchy, the locking of
+> controllers is always from children to parents.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-The reset register offsets for UART*, I2C* and SCR were off by a few bytes.
+I have been playing with these patches on my Arndale board and
+they certainly do seem to resolve the interaction issues I have
+been SPI and the clocking framework, which is awesome and lets me
+sensibly add the clocking framework into our codec drivers. I will
+keep investigating and for what its worth have a little more
+detailed look through the code.
 
-Signed-off-by: Jorik Jonker <jorik@kippendief.biz>
-
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index feabc0f..280ba74 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -783,14 +783,14 @@ static struct ccu_reset_map sun8i_h3_ccu_resets[] = {
- 	[RST_BUS_I2S1]		=  { 0x2d0, BIT(13) },
- 	[RST_BUS_I2S2]		=  { 0x2d0, BIT(14) },
- 
--	[RST_BUS_I2C0]		=  { 0x2d4, BIT(0) },
--	[RST_BUS_I2C1]		=  { 0x2d4, BIT(1) },
--	[RST_BUS_I2C2]		=  { 0x2d4, BIT(2) },
--	[RST_BUS_UART0]		=  { 0x2d4, BIT(16) },
--	[RST_BUS_UART1]		=  { 0x2d4, BIT(17) },
--	[RST_BUS_UART2]		=  { 0x2d4, BIT(18) },
--	[RST_BUS_UART3]		=  { 0x2d4, BIT(19) },
--	[RST_BUS_SCR]		=  { 0x2d4, BIT(20) },
-+	[RST_BUS_I2C0]		=  { 0x2d8, BIT(0) },
-+	[RST_BUS_I2C1]		=  { 0x2d8, BIT(1) },
-+	[RST_BUS_I2C2]		=  { 0x2d8, BIT(2) },
-+	[RST_BUS_UART0]		=  { 0x2d8, BIT(16) },
-+	[RST_BUS_UART1]		=  { 0x2d8, BIT(17) },
-+	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
-+	[RST_BUS_UART3]		=  { 0x2d8, BIT(19) },
-+	[RST_BUS_SCR]		=  { 0x2d8, BIT(20) },
- };
- 
- static const struct sunxi_ccu_desc sun8i_h3_ccu_desc = {
--- 
-2.7.4
+Thanks,
+Charles
