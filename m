@@ -1,35 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Aug 2016 13:30:49 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
-Message-ID: <20160825203049.GT19826@codeaurora.org>
-References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
- <20160804212553.GB15690@codeaurora.org>
- <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
- <20160808233711.GA2996@codeaurora.org>
- <CAK7LNAScz7bJABbOgUuvg9J-ORaiLEfpwA3yMP+bZbLgB+S3uQ@mail.gmail.com>
- <20160810230845.GH2996@codeaurora.org>
- <CAK7LNAQ9wgpHn2LXiFfbyp_j85h8ZkGnAP39eVj+jmKczi=VSA@mail.gmail.com>
- <CAK7LNAThC-oBV5qNRNLnkV_tS7JLZDVoeEYrJo_8LsbRftELew@mail.gmail.com>
- <20160824180806.GE19826@codeaurora.org>
- <CAK7LNAQgzaZH7Ondt9r7yJ1iwSqyzqSOO+1oZvbaq_kmrPQeLQ@mail.gmail.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
+	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v11 7/9] reset: mediatek: Add MT2701 reset driver
+Date: Fri, 19 Aug 2016 13:34:54 +0800
+Message-ID: <1471584896-9986-8-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNAQgzaZH7Ondt9r7yJ1iwSqyzqSOO+1oZvbaq_kmrPQeLQ@mail.gmail.com>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25, Masahiro Yamada wrote:
->
-> Good.
-> Could you post it as a patch file?
-> 
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Sure. I'll write up some commit text.
+In infrasys and perifsys, there are many reset
+control bits for kinds of modules. These bits are
+used as actual reset controllers to be registered
+into kernel's generic reset controller framework.
 
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/mediatek/clk-mt2701-hif.c | 2 ++
+ drivers/clk/mediatek/clk-mt2701.c     | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
+index 33ead83..0ca0537 100644
+--- a/drivers/clk/mediatek/clk-mt2701-hif.c
++++ b/drivers/clk/mediatek/clk-mt2701-hif.c
+@@ -55,6 +55,8 @@ static void mtk_hifsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 1, 0x34);
+ }
+ 
+ static const struct of_device_id of_match_clk_mt2701_hif[] = {
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index f64dc4e..9dab533 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -791,6 +791,8 @@ static void mtk_infrasys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x30);
+ }
+ 
+ static const struct mtk_gate_regs peri0_cg_regs = {
+@@ -911,6 +913,8 @@ static void mtk_pericfg_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x0);
+ }
+ 
+ #define MT8590_PLL_FMAX		(2000 * MHZ)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
