@@ -1,76 +1,40 @@
-Return-Path: <groeck@google.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58555 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbcHSTxx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2016 15:53:53 -0400
+Date: Fri, 19 Aug 2016 12:53:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: imx7d: Add the clock for SDMA
+Message-ID: <20160819195332.GH6502@codeaurora.org>
+References: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5CFmvTCeHmTyp5qYnR-Qiz=27PCCLeZmaD3bDDOz=r32A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
-References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
-From: Guenter Roeck <groeck@google.com>
-Date: Wed, 10 Aug 2016 15:14:06 -0700
-Message-ID: <CABXOdTeDYzOpNxkyScf3WvvFynyTZbKrVdVFzMobMaPAp=f5jw@mail.gmail.com>
-Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as critical
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Xing Zheng <zhengxing@rock-chips.com>, =?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tfiga@chromium.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Douglas Anderson <dianders@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	=?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
-	wulf <wulf@rock-chips.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5CFmvTCeHmTyp5qYnR-Qiz=27PCCLeZmaD3bDDOz=r32A@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 9, 2016 at 11:02 AM, Chris Zhong <zyw@rock-chips.com> wrote:
-> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
-> this modification, the aclk_vio_noc should be put into critical list,
-> since it is required by VOP.
-> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
-> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
->
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> ---
->
->  drivers/clk/rockchip/clk-rk3399.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index b173711a..676b017 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -1073,7 +1073,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->         /* vio */
->         COMPOSITE(ACLK_VIO, "aclk_vio", mux_pll_src_cpll_gpll_ppll_p, CLK_IGNORE_UNUSED,
->                         RK3399_CLKSEL_CON(42), 6, 2, MFLAGS, 0, 5, DFLAGS,
-> -                       RK3399_CLKGATE_CON(11), 10, GFLAGS),
-> +                       RK3399_CLKGATE_CON(11), 0, GFLAGS),
->         COMPOSITE_NOMUX(PCLK_VIO, "pclk_vio", "aclk_vio", 0,
->                         RK3399_CLKSEL_CON(43), 0, 5, DFLAGS,
->                         RK3399_CLKGATE_CON(11), 1, GFLAGS),
-> @@ -1470,6 +1470,9 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
->         "aclk_cci_pre",
->         "aclk_gic",
->         "aclk_gic_noc",
-> +       "aclk_hdcp_noc",
-> +       "hclk_hdcp_noc",
-> +       "pclk_hdcp_noc",
->         "pclk_perilp0",
->         "pclk_perilp0",
->         "hclk_perilp0",
-> @@ -1489,6 +1492,7 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
->         "gpll_hclk_perilp1_src",
->         "gpll_aclk_perilp0_src",
->         "gpll_aclk_perihp_src",
-> +       "aclk_vio_noc",
+On 08/19, Fabio Estevam wrote:
+> Hi Stephen,
+> 
+> On Fri, Aug 12, 2016 at 3:26 PM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+> > Add IMX7D_SDMA_CORE_CLK clock so that SDMA can be functional.
+> >
+> > Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Are you happy with this series?
+> 
+> I have some more patches for the clk-imx7d driver that I would like to
+> send for 4.9.
 
-I think there was a previous comment suggesting that this clock should
-be handled differently. Has this been resolved ?
+Patches look fine. It sounds like you want me to apply them
+directly so I'll do that now.
 
-Otherwise
-
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-
->  };
->
->  static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
-> --
-> 1.9.1
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
