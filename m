@@ -1,204 +1,29 @@
-Return-Path: <jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
-CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<pawel.moll@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <linux@armlinux.org.uk>,
-	<robh+dt@kernel.org>, <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Message-ID: <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
-Date: Mon, 8 Aug 2016 15:44:31 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:36054 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754112AbcHST61 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2016 15:58:27 -0400
+Received: by mail-ua0-f193.google.com with SMTP id 74so6322681uau.3
+        for <linux-clk@vger.kernel.org>; Fri, 19 Aug 2016 12:58:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20160819195332.GH6502@codeaurora.org>
+References: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5CFmvTCeHmTyp5qYnR-Qiz=27PCCLeZmaD3bDDOz=r32A@mail.gmail.com> <20160819195332.GH6502@codeaurora.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 19 Aug 2016 16:58:26 -0300
+Message-ID: <CAOMZO5CjKpx+PnKVpgNKJj3hfHpqJcEcPF-bN5r9NSC=2m1euA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: imx7d: Add the clock for SDMA
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Aug 19, 2016 at 4:53 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-On 06/08/16 20:40, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
-> 
-> Document the devicetree bindings for the Generic Memory Interface (GMI)
-> bus driver found on Tegra SOCs.
-> 
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> ---
->  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 99 ++++++++++++++++++++++
->  1 file changed, 99 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-> new file mode 100644
-> index 0000000..046846e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-> @@ -0,0 +1,99 @@
-> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
-> +
-> +The Generic Memory Interface bus enables memory transfers between internal and
-> +external memory. Can be used to attach various high speed devices such as
-> +synchronous/asynchronous NOR, FPGA, UARTS and more.
-> +
-> +The actual devices are instantiated from the child nodes of a GMI node.
-> +
-> +Required properties:
-> +  - compatible : Should contain one of the following:
-> +        For Tegra20 must contain "nvidia,tegra20-gmi".
-> +        For Tegra30 must contain "nvidia,tegra30-gmi".
-> + - reg: Should contain GMI controller registers location and length.
-> + - clocks: Must contain an entry for each entry in clock-names.
-> + - clock-names: Must include the following entries: "gmi"
-> + - resets : Must contain an entry for each entry in reset-names.
-> + - reset-names : Must include the following entries: "gmi"
-> + - #address-cells: The number of cells used to represent physical base
-> +   addresses in the GMI address space.
-> + - #size-cells: The number of cells used to represent the size of an address
-> +   range in the GMI address space.
-> + - ranges: Mapping of the GMI address space to the CPU address space.
-> +
-> +Note that the GMI controller does not have any internal chip-select address
-> +decoding and if you want to access multiple devices external chip-select
-> +decoding must be provided. Furthermore, if you do have external logic to
+> Patches look fine. It sounds like you want me to apply them
+> directly so I'll do that now.
 
-The above is not 100% accurate. I would say that because there is no
-chip-select address decoding, chip-selects either need to be managed via
-software or by employing external chip-select decoding logic.
-
-> +support multiple devices this would assume that the devices use the same
-> +timing and so are probably the same type. It also assumes that they can fit in
-> +the 256MB address range.
-
-Again this is only true for the case where you have external chip-select
-decoding logic, but would not be the case if software were to manage the
-chip-selects.
-
-> +
-> +Optional properties:
-> +
-> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
-> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
-> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
-> +   If omitted it will be asserted with data.
-> + - nvidia,snor-rdy-inv: RDY signal is active high
-> + - nvidia,snor-adv-inv: ADV signal is active high
-> + - nvidia,snor-oe-inv: WE/OE signal is active high
-> + - nvidia,snor-cs-inv: CS signal is active high
-> + - nvidia,snor-cs-select: CS output pin configuration. Default is CS0
-
-Nit ... I think "nvidia,snor-cs" is sufficient for the name. But I am
-not sure if we even need this. See below.
-
-> + 	<0> : CS0
-> +	<1> : CS1
-> +	<2> : CS2
-> +	<3> : CS3
-> +	<4> : CS4
-> +	<5> : CS5
-> +	<6> : CS6
-> +	<7> : CS7
-> +
-> +  Note that there is some special handling for the timing values.
-> +  From Tegra TRM:
-> +  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
-> +
-> + - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
-> +   bus. Valid values are 0-15, default is 1
-> + - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
-> +   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
-> +   (in case of MASTER Request). Valid values are 0-15, default is 1
-> + - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
-> +   Valid values are 0-15, default is 1.
-> + - nvidia,snor-ce-width: Number of cycles before CE is asserted.
-> +   Valid values are 0-255, default is 4
-
-ce-width only occupies a 4-bit field and so the max is 15.
-
-> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
-> +   Valid values are 0-15, default is 1
-> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
-> +   Valid values are 0-255, default is 1
-> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
-> +   Valid values are 0-255, default is 3
-> +
-> +Example with two SJA1000 CAN controllers connected to the GMI bus:
-> +
-> +  gmi@70090000 {
-> +    #address-cells = <1>;
-> +    #size-cells = <1>;
-
-I think 0 for size makes sense. I know that caused you problems before,
-but I am wondering if ...
-
-> +    ranges;
-
-... ranges is needed here? If we do have it, I am wondering if it should
-be a single entry for the chip-select that is being used. For now we
-could only support a ranges with one entry.
-
-	#address-cells = <1>;
-	#size-cells = <1>;
-	ranges = <4 0x48000000 0x00040000>;
-
-> +    nvidia,snor-mux-mode;
-> +    nvidia,snor-adv-inv;
-> +    nvidia,snor-cs-select = <4>;
-
-I would have expected these under bus@X node as they are specific to the
-GMI CS.
-
-I would also expect that the actual chip-select number is encoded in the
-reg property.
-
-> +
-> +    bus@0,0 {
-
-bus@4
-
-No mention of this bus node in the above documentation.
-
-> +      compatible = "simple-bus";
-> +      reg = <0 0>;
-
-reg = <4>;
-
-We should look up the chip-select from the reg property.
-
-> +      ranges;
-> +
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +
-> +      can@48000000 {
-> +        reg = <0x48000000 0x100>;
-> +        ...
-> +      };
-> +
-> +      can@48040000 {
-> +        reg = <0x48040000 0x100>;
-> +        ...
-> +      };
-
-If we use ranges we could have ...
-
-	can@0 {
-		reg = <0x0 0x100>;
-		...
-	};
-
-	can@40000 {
-		reg = <0x40000 0x100>;
-		...
-	};
-
-Nit ... please use tabs for spacing as we do in the dtsi/dts files.
-
-Cheers
-Jon
-
--- 
-nvpublic
+Excellent, thanks! Will prepare and submit a few more next week.
