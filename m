@@ -1,32 +1,71 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 16:13:29 -0700
+Date: Fri, 19 Aug 2016 12:16:12 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 11/34] clk: cdce: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160824231329.GN19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-12-stephen.boyd@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
+ clock driver
+Message-ID: <20160819191612.GU361@codeaurora.org>
+References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
+ <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
+ <20160819002507.GS361@codeaurora.org>
+ <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-12-stephen.boyd@linaro.org>
+In-Reply-To: <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
+On 08/20, Masahiro Yamada wrote:
+> 2016-08-19 9:25 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> >> +{
+> >> +     struct device *dev = &pdev->dev;
+> >> +     const struct of_device_id *match;
+> >> +     struct clk_hw_onecell_data *hw_data;
+> >> +     struct device_node *parent;
+> >> +     struct regmap *regmap;
+> >> +     const struct uniphier_clk_data *p;
+> >> +     int clk_num = 0;
+> >> +
+> >> +     match = of_match_node(uniphier_clk_match, dev->of_node);
+> >> +     if (!match)
+> >> +             return -ENODEV;
+> >
+> > We can use of_driver_match_device() to make this simpler.
 > 
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+> 
+> I want to use the returned "match".
+> The of_driver_match_device() just checks if it matches or not,
+> so I do not think it can be the replacement.
+> 
+> I can use of_match_device() instead, if you like.
 
-Applied to clk-next
+Sorry I meant of_device_get_match_data().
+
+> 
+> 
+> 
+> >> +
+> >> +     parent = of_get_parent(dev->of_node); /* parent should be syscon node */
+> >> +     regmap = syscon_node_to_regmap(parent);
+> >> +     of_node_put(parent);
+> >
+> > devm_get_regmap(dev->parent) should work then? Why do we need to
+> > use OF APIs?
+> 
+> "git grep devm_get_regmap" did not hit anything.
+> 
+> Where is it defined?
+> 
+
+Sorry I meant dev_get_regmap().
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
