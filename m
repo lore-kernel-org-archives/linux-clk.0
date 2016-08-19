@@ -1,37 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 14:09:41 -0700
+Date: Thu, 18 Aug 2016 17:03:36 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
-	Romain Perier <romain.perier@free-electrons.com>,
-	Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>,
-	Terry Zhou <bjzhou@marvell.com>
-Subject: Re: [PATCH v3 2/6] clk: mvebu: Add the xtal clock for Armada 3700 SoC
-Message-ID: <20160815210941.GA361@codeaurora.org>
-References: <1468935742-11218-1-git-send-email-gregory.clement@free-electrons.com>
- <1468935742-11218-3-git-send-email-gregory.clement@free-electrons.com>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 2/3] clk: Loongson1: Update clocks of Loongson1B
+Message-ID: <20160819000336.GL361@codeaurora.org>
+References: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
+ <1470999108-9851-3-git-send-email-keguang.zhang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1468935742-11218-3-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1470999108-9851-3-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/19, Gregory CLEMENT wrote:
-> This clock is the parent of all the Armada 3700 clocks. It is a fixed
-> rate clock which depends on the gpio configuration read when resetting
-> the SoC.
+On 08/12, Keguang Zhang wrote:
+> From: Kelvin Cheung <keguang.zhang@gmail.com>
 > 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
+> This patch updates some clock names of Loongson1B,
+> and adds AC97, DMA and NAND clock.
+> 
+> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 
-Applied to clk-next
+Ah here's the rewrite of the name. We should squash the other
+patch into this one so that we don't break bisection.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
