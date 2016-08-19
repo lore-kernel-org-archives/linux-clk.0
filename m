@@ -1,11 +1,12 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
  Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
  Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
  Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
@@ -13,80 +14,48 @@ To: Michael Turquette <mturquette@baylibre.com>,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
  alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 10/17] clk: composite: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:07 +0200
-Message-id: <1471354514-24224-11-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, a.hajda@samsung.com,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <8519a1cf-ec51-2914-e4aa-27b26b9233de@osg.samsung.com>
+Date: Fri, 19 Aug 2016 15:31:08 -0400
+MIME-Version: 1.0
+In-Reply-To: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+Hello Krzysztof,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-composite.c  | 8 +++++---
- include/linux/clk-provider.h | 6 ++++--
- 2 files changed, 9 insertions(+), 5 deletions(-)
+On 08/16/2016 09:34 AM, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> RFC, please, do not apply, maybe except patch #1 which is harmless.
+> 
+> 
+> Introduction
+> ============
+> The patchset brings new entity: clock controller representing a hardware
+> block.  The clock controller comes with its own prepare lock which
+> is used then in many places.  The idea is to fix the deadlock mentioned
+> in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> by keeping clock prepared").
+> 
+> 
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 00269de2f390..8ad5c2c4a329 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -211,7 +211,8 @@ static void clk_composite_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
--struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_composite(struct device *dev, struct clk_ctrl *ctrl,
-+			const char *name,
- 			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-@@ -324,7 +325,8 @@ err:
- 	return hw;
- }
- 
--struct clk *clk_register_composite(struct device *dev, const char *name,
-+struct clk *clk_register_composite(struct device *dev, struct clk_ctrl *ctrl,
-+			const char *name,
- 			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-@@ -333,7 +335,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
-+	hw = clk_hw_register_composite(dev, ctrl, name, parent_names, num_parents,
- 			mux_hw, mux_ops, rate_hw, rate_ops, gate_hw, gate_ops,
- 			flags);
- 	if (IS_ERR(hw))
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index cfb3aa3912c5..2bd0a8cb7a9c 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -663,14 +663,16 @@ struct clk_composite {
- 
- #define to_clk_composite(_hw) container_of(_hw, struct clk_composite, hw)
- 
--struct clk *clk_register_composite(struct device *dev, const char *name,
-+struct clk *clk_register_composite(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, int num_parents,
- 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
- 		unsigned long flags);
- void clk_unregister_composite(struct clk *clk);
--struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_composite(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char * const *parent_names, int num_parents,
- 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+I'm not familiar enough with the common clock framework to do a proper review
+of this patch-set, but I've tested both on an Exynos5800 Peach Pi Chromebook
+and an Exynos5422 Odroid XU4 board and I didn't find any clock regressions.
+
+Also, I confirmed that the possible deadlock in the Odroid XU4 that was fixed
+by reverted commit 10ff4c5239a1 doesn't happen anymore with your patches.
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
