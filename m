@@ -1,58 +1,33 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [PATCH] clk: rockchip: rk3399: add pll up and down when change
- pll freq
-To: Doug Anderson <dianders@chromium.org>
-References: <1470143599-8851-1-git-send-email-zhengxing@rock-chips.com>
- <CAD=FV=X1ZAhzBrFukvE9BxdFmgo8dj4GKjZ9EmPLTagHfO-ufg@mail.gmail.com>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Brian Norris <briannorris@chromium.org>, Tao Huang
- <huangtao@rock-chips.com>, zhangqing <zhangqing@rock-chips.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <57A14819.9060309@rock-chips.com>
-Date: Wed, 3 Aug 2016 09:25:45 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58705 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752435AbcHSTy1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2016 15:54:27 -0400
+Date: Fri, 19 Aug 2016 12:54:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: shawnguo@kernel.org, stefan@agner.ch, festevam@gmail.com,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: imx: Introduce clk_register_gate2()
+Message-ID: <20160819195425.GJ6502@codeaurora.org>
+References: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+ <1471026416-11769-2-git-send-email-fabio.estevam@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=X1ZAhzBrFukvE9BxdFmgo8dj4GKjZ9EmPLTagHfO-ufg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471026416-11769-2-git-send-email-fabio.estevam@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Doug,
+On 08/12, Fabio Estevam wrote:
+> Introduce imx_clk_gate2_shared2() which is similar to the existing
+> imx_clk_gate2_shared() and passes CLK_OPS_PARENT_ENABLE flag, which
+> is useful for i.MX7 shared clocks.
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
 
-On 2016年08月03日 08:49, Doug Anderson wrote:
-> Xing,
->
-> On Tue, Aug 2, 2016 at 6:13 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
->> From: Elaine Zhang <zhangqing@rock-chips.com>
->>
->> The suggestion that is from IC designer, the correct pll sequence setting
->> should be like these:
->> ----
->>    set pll to slow mode or other plls
->>    set pll down
->>    set pll params
->>    set pll up
->>    wait pll lock status
->>    set pll to normal mode
->> ----
->>
->> Hence, there are potential risks that we need to fix:
->> rockchip_rk3399_wait_pll_lock - timeout waiting for pll to lock
->> rockchip_rk3399_pll_set_params - pll update unsucessful, trying to restore old params
-> I still don't understand how that groks with the statement in the TRM:
->
->> In most cases the PLL programming can be changed on-the-fly and the PLL will simply slew to the new frequency
-> That makes it sound like these PLLs are super great at dynamic updates.
->
->
-Well, I will report it to IC & Doc folkers to update the TRM and make it 
-clear.
-
-Thanks.
+Applied to clk-next
 
 -- 
-- Xing Zheng
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
