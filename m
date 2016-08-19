@@ -1,113 +1,141 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 3/5] clk: sunxi-ng: mux: Add clk notifier functions
-Date: Mon, 15 Aug 2016 16:13:13 +0800
-Message-Id: <1471248795-17951-4-git-send-email-wens@csie.org>
-In-Reply-To: <1471248795-17951-1-git-send-email-wens@csie.org>
-References: <1471248795-17951-1-git-send-email-wens@csie.org>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH v11 0/9] Add clock support for Mediatek MT2701
+Date: Fri, 19 Aug 2016 13:34:47 +0800
+Message-ID: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On sunxi we support cpufreq by changing the clock rate of PLL-CPU.
-It's possible the clock output of the PLL goes out of the CPU's
-operational limits when the PLL's multipliers / dividers are changed
-and it hasn't stabilized yet. This would result in the CPU hanging.
+This series is based on v4.8-rc1, add clock and reset controller support
+for Mediatek MT2701.
 
-To circumvent this, we temporarily switch the CPU mux clock to another
-stable clock before the rate change, and switch it back after the PLL
-stabilizes. This is done with clk notifiers registered on the PLL.
+This series also refined makefile and Kconfig to support configurable
+multiple SoC clock support.
 
-This patch adds common functions for notifiers to reparent mux clocks.
+changes since v10:
+- Remove COMMON_CLK dependency from clk/mediatek/Kconfig.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes since v1: none
----
- drivers/clk/sunxi-ng/ccu_mux.c | 36 ++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_mux.h | 14 ++++++++++++++
- 2 files changed, 50 insertions(+)
+changes since v9:
+- Rebase to v4.8-rc1.
+- Drop a fix patch of parent clock initial state. It will be replaced by a new
+  patch from Mike/Stephen.
+- Replace clk.h with clk-provider.h.
+- Correct register settings of clocks.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 7b17e0c26b01..a43ad52a957d 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -8,7 +8,9 @@
-  * the License, or (at your option) any later version.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- 
- #include "ccu_gate.h"
- #include "ccu_mux.h"
-@@ -199,3 +201,37 @@ const struct clk_ops ccu_mux_ops = {
- 	.determine_rate	= __clk_mux_determine_rate,
- 	.recalc_rate	= ccu_mux_recalc_rate,
- };
-+
-+/*
-+ * This clock notifier is called when the frequency of the of the parent
-+ * PLL clock is to be changed. The idea is to switch the parent to a
-+ * stable clock, such as the main oscillator, while the PLL frequency
-+ * stabilizes.
-+ */
-+static int ccu_mux_notifier_cb(struct notifier_block *nb,
-+			       unsigned long event, void *data)
-+{
-+	struct ccu_mux_nb *mux = to_ccu_mux_nb(nb);
-+	int ret = 0;
-+
-+	if (event == PRE_RATE_CHANGE) {
-+		mux->original_index = ccu_mux_helper_get_parent(mux->common,
-+								mux->cm);
-+		ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
-+						mux->bypass_index);
-+	} else if (event == POST_RATE_CHANGE) {
-+		ret = ccu_mux_helper_set_parent(mux->common, mux->cm,
-+						mux->original_index);
-+	}
-+
-+	udelay(mux->delay_us);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+int ccu_mux_notifier_register(struct clk *clk, struct ccu_mux_nb *mux_nb)
-+{
-+	mux_nb->clk_nb.notifier_call = ccu_mux_notifier_cb;
-+
-+	return clk_notifier_register(clk, &mux_nb->clk_nb);
-+}
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 5308b41da22a..81a5af92fd4e 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -99,4 +99,18 @@ int ccu_mux_helper_set_parent(struct ccu_common *common,
- 			      struct ccu_mux_internal *cm,
- 			      u8 index);
- 
-+struct ccu_mux_nb {
-+	struct notifier_block	clk_nb;
-+	struct ccu_common	*common;
-+	struct ccu_mux_internal	*cm;
-+
-+	u32	delay_us;	/* How many us to wait after reparenting */
-+	u8	bypass_index;	/* Which parent to temporarily use */
-+	u8	original_index;	/* This is set by the notifier callback */
-+};
-+
-+#define to_ccu_mux_nb(_nb) container_of(_nb, struct ccu_mux_nb, clk_nb)
-+
-+int ccu_mux_notifier_register(struct clk *clk, struct ccu_mux_nb *mux_nb);
-+
- #endif /* _CCU_MUX_H_ */
--- 
-2.8.1
+changes since v8:
+- Rebase to v4.7-rc1.
+- Include mt2701-resets.h in mt2701.dtsi.
+- Remove an unused property from apmixedsys DT node.
+
+changes since v7:
+- Rebase to clk-next.
+- Implement subsystem clocks in seperated files.
+- Replace critical clock enabling with CLK_IS_CRITICAL flag.
+- Reduce most clock registrations in CLK_OF_DECLARE().
+- Remove __init and __initconst from most init fucntions and data,
+  and replace driver registration with platform_driver_register().
+- Replace some common function or variable names with unique names.
+- Use real clock for UARTs.
+
+changes since v6:
+- Rebase to v4.6-rc1.
+- Register subsystem clocks in probe() instead of CLK_OF_DECLARE().
+- Add clocks that referred by subsystem clocks.
+- Fix clk_data size of apmixedsys.
+- Add config options for each subsystem clock provider.
+
+changes since v5:
+- Rebase to v4.5-rc1 and [1].
+- Enable critical clocks for MT2701
+- Refine dt-binding documents, add reset controller support for hifsys.
+
+changes since v4:
+- Rebase to v4.5-rc1.
+- Remove CLK_SET_RATE_PARENT from divider flags.
+- Add img_jpgdec_smi clock.
+- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
+
+changes since v3:
+- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
+
+changes since v2:
+- Fix ethsys definition.
+- Replace read-modify-write with regmap_update_bits() in clock operations.
+- Move mt2701-resets.h to include/dt-bindings/reset/.
+- Add hifsys reset patch from John Crispin.
+
+changes since v1:
+- Document MT2701 compatible strings.
+
+[1] https://patchwork.kernel.org/patch/8147901/
+
+Erin Lo (1):
+  arm: dts: mt2701: Use real clock for UARTs
+
+James Liao (4):
+  clk: mediatek: remove __init from clk registration functions
+  clk: mediatek: Refine the makefile to support multiple clock drivers
+  dt-bindings: ARM: Mediatek: Document bindings for MT2701
+  arm: dts: mt2701: Add clock controller device nodes
+
+Shunli Wang (4):
+  clk: mediatek: Add dt-bindings for MT2701 clocks
+  clk: mediatek: Add MT2701 clock support
+  reset: mediatek: Add MT2701 reset controller dt-binding file
+  reset: mediatek: Add MT2701 reset driver
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    3 +-
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      |   24 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    3 +-
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    3 +-
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    3 +-
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |    3 +-
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    3 +-
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    3 +-
+ arch/arm/boot/dts/mt2701.dtsi                      |   50 +-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/mediatek/Kconfig                       |   64 ++
+ drivers/clk/mediatek/Makefile                      |   13 +-
+ drivers/clk/mediatek/clk-gate.c                    |   54 +-
+ drivers/clk/mediatek/clk-gate.h                    |    2 +
+ drivers/clk/mediatek/clk-mt2701-bdp.c              |  140 +++
+ drivers/clk/mediatek/clk-mt2701-eth.c              |   82 ++
+ drivers/clk/mediatek/clk-mt2701-hif.c              |   81 ++
+ drivers/clk/mediatek/clk-mt2701-img.c              |   82 ++
+ drivers/clk/mediatek/clk-mt2701-mm.c               |  125 +++
+ drivers/clk/mediatek/clk-mt2701-vdec.c             |   93 ++
+ drivers/clk/mediatek/clk-mt2701.c                  | 1037 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |   52 +-
+ drivers/clk/mediatek/clk-mtk.h                     |   41 +-
+ drivers/clk/mediatek/clk-pll.c                     |    3 +-
+ include/dt-bindings/clock/mt2701-clk.h             |  486 +++++++++
+ include/dt-bindings/reset/mt2701-resets.h          |   83 ++
+ 28 files changed, 2550 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+ create mode 100644 drivers/clk/mediatek/Kconfig
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-bdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-hif.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+ create mode 100644 include/dt-bindings/clock/mt2701-clk.h
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+
+--
+1.9.1
