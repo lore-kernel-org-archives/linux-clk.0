@@ -1,54 +1,105 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	devicetree@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 3/3] ARM64: dts: meson-gxbb: Add GXBB AO Clock and Reset node
-Date: Tue,  9 Aug 2016 11:13:28 +0200
-Message-Id: <1470734008-18849-4-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
-References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Fri, 19 Aug 2016 18:58:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	a.hajda@samsung.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Message-ID: <20160819165847.GA7100@kozik-lap>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+ <65703100-1e16-6c34-babe-40e630180688@samsung.com>
+ <20160819144640.GM21682@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160819144640.GM21682@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the AO clock controller node for the AmLogic GXBB SoC.
+On Fri, Aug 19, 2016 at 03:46:40PM +0100, Charles Keepax wrote:
+> On Tue, Aug 16, 2016 at 03:51:10PM +0200, Krzysztof Kozlowski wrote:
+> > On 08/16/2016 03:34 PM, Krzysztof Kozlowski wrote:
+> > > Hi,
+> > > 
+> > > RFC, please, do not apply, maybe except patch #1 which is harmless.
+> > > 
+> > > 
+> > > Introduction
+> > > ============
+> > > The patchset brings new entity: clock controller representing a hardware
+> > > block.  The clock controller comes with its own prepare lock which
+> > > is used then in many places.  The idea is to fix the deadlock mentioned
+> > > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> > > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> > > by keeping clock prepared").
+> > > 
+> > 
+> > Damn, I forgot to describe the overall idea. :) It is mentioned in patch
+> > 15 but probably not many will have enough of patience to reach it.
+> > 
+> > The locking idea
+> > ================
+> > Clock controllers representing different hardware blocks, will contain
+> > its own prepare lock which protects the clocks inside controller.  The
+> > hierarchy itself is protected by global lock.
+> > 
+> > In prepare path, the global prepare lock is removed.  This is direct
+> > solution for the deadlock.
+> > 
+> > Clock hierarchy imposes also hierarchy between controllers so when a
+> > prepare happens, also parents have to be locked.
+> > 
+> > Following locking design was chosen:
+> > 1. For prepare/unprepare paths: lock only clock controller and its
+> >    parents.
+> > 2. For recalc rates paths: lock global lock, the controller and its
+> >    children.
+> > 3. For reparent paths: lock entire tree up down (children and parents)
+> >    and the global lock as well.
+> > 
+> > 
+> > In each case of traversing the clock hierarchy, the locking of
+> > controllers is always from children to parents.
+> > 
+> > 
+> > Best regards,
+> > Krzysztof
+> 
+> I have been playing with these patches on my Arndale board and
+> they certainly do seem to resolve the interaction issues I have
+> been SPI and the clocking framework, which is awesome and lets me
+> sensibly add the clocking framework into our codec drivers. I will
+> keep investigating and for what its worth have a little more
+> detailed look through the code.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I am really happy to hear it!
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index e502c24..c81e1ab 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -45,6 +45,8 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/gpio/meson-gxbb-gpio.h>
- #include <dt-bindings/reset/amlogic,meson-gxbb-reset.h>
-+#include <dt-bindings/clock/gxbb-aoclkc.h>
-+#include <dt-bindings/reset/gxbb-aoclkc.h>
- 
- / {
- 	compatible = "amlogic,meson-gxbb";
-@@ -205,6 +207,13 @@
- 				};
- 			};
- 
-+			clkc_AO: clock-controller@040 {
-+				compatible = "amlogic,gxbb-aoclkc";
-+				reg = <0x0 0x00040 0x0 0x4>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+
- 			uart_AO: serial@4c0 {
- 				compatible = "amlogic,meson-uart";
- 				reg = <0x0 0x004c0 0x0 0x14>;
--- 
-2.7.0
+Along with other Samsung guys from Poland we really spent a lot of time
+figuring out all the locking cases, possible scenarios and new issues
+which could come out of it.
+
+I am glad that it solves also other people's cases, not only ours!
+
+Certainly there is a lot of things to improve in the patchset. Probably
+merging the new "clock controller" entity into clock provider makes
+sense.
+
+Best regards,
+Krzysztof
