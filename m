@@ -1,44 +1,41 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: <yuantian.tang@nxp.com>
-To: <mturquette@baylibre.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<scott.wood@nxp.com>, Tang Yuantian <Yuantian.Tang@nxp.com>, Tang Yuantian
-	<yuantian.tang@nxp.com>
-Subject: [PATCH] clk: qoriq: fix a register offset error
-Date: Mon, 15 Aug 2016 15:28:20 +0800
-Message-ID: <1471246100-40713-1-git-send-email-yuantian.tang@nxp.com>
-Return-Path: yuantian.tang@nxp.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 19 Aug 2016 12:46:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, James Liao <jamesjj.liao@mediatek.com>
+Subject: Re: [PATCH v11 3/9] dt-bindings: ARM: Mediatek: Document bindings
+ for MT2701
+Message-ID: <20160819194623.GC6502@codeaurora.org>
+References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+ <1471584896-9986-4-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471584896-9986-4-git-send-email-erin.lo@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tang Yuantian <Yuantian.Tang@nxp.com>
+On 08/19, Erin Lo wrote:
+> From: James Liao <jamesjj.liao@mediatek.com>
+> 
+> This patch adds the binding documentation for apmixedsys, bdpsys,
+> ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+> vdecsys for Mediatek MT2701.
+> 
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> Tested-by: John Crispin <blogic@openwrt.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-The offset of Core Cluster clock control/status register
-on cluster group V3 version is different from others, and
-should be plus 0x70000.
+Applied to clk-next
 
-Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
----
- drivers/clk/clk-qoriq.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index f4c455a..05e416c 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -774,7 +774,11 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
- 	if (!hwc)
- 		return NULL;
- 
--	hwc->reg = cg->regs + 0x20 * idx;
-+	if (cg->info.flags & CG_VER3)
-+		hwc->reg = cg->regs + 0x70000 + 0x20 * idx;
-+	else
-+		hwc->reg = cg->regs + 0x20 * idx;
-+
- 	hwc->info = cg->info.cmux_groups[cg->info.cmux_to_group[idx]];
- 
- 	/*
 -- 
-2.1.0.27.g96db324
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
