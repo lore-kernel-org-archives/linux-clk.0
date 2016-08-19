@@ -1,52 +1,35 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 3/8] clk: rockchip: rk3399: fix incorrect parent for rk3399's {c, g}pll_aclk_perihp_src
-Date: Mon,  1 Aug 2016 17:53:38 +0800
-Message-Id: <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33269 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752430AbcHSGBu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2016 02:01:50 -0400
+Received: by mail-ua0-f193.google.com with SMTP id u13so4931039uau.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2016 23:01:50 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+References: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 19 Aug 2016 01:52:24 -0300
+Message-ID: <CAOMZO5CFmvTCeHmTyp5qYnR-Qiz=27PCCLeZmaD3bDDOz=r32A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: imx7d: Add the clock for SDMA
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There was a typo, swapping 'c' <--> 'g'.
-(This patch is updated and am from https://patchwork.kernel.org/patch/9254067/)
+Hi Stephen,
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
----
+On Fri, Aug 12, 2016 at 3:26 PM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+> Add IMX7D_SDMA_CORE_CLK clock so that SDMA can be functional.
+>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-Changes in v2: None
+Are you happy with this series?
 
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I have some more patches for the clk-imx7d driver that I would like to
+send for 4.9.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index f55f967f..2182391 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(13), 1, GFLAGS),
- 
- 	/* perihp */
--	GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
-+	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(5), 0, GFLAGS),
--	GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
-+	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(5), 1, GFLAGS),
- 	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
--- 
-1.7.9.5
+Thanks
