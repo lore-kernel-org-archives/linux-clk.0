@@ -1,66 +1,42 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH v2 5/6] ARM: tegra: Add Tegra20 GMI support
-Date: Wed, 24 Aug 2016 15:37:17 +0200
-Message-Id: <1472045838-22628-6-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 18 Aug 2016 17:18:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, James Liao <jamesjj.liao@mediatek.com>
+Subject: Re: [PATCH v10 8/9] arm: dts: mt2701: Add clock controller device
+ nodes
+Message-ID: <20160819001805.GR361@codeaurora.org>
+References: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
+ <1471332629-15722-9-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471332629-15722-9-git-send-email-erin.lo@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+On 08/16, Erin Lo wrote:
+> From: James Liao <jamesjj.liao@mediatek.com>
+> 
+> Add clock controller nodes for MT2701, include topckgen, infracfg,
+> pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
+> bdpsys. This patch also add two oscillators that provide clocks for
+> MT2701.
+> 
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> ---
 
-Add a device node for the GMI controller found on Tegra20.
+This should go through arm-soc tree, so do you need a stable
+branch in clk tree to pull through arm-soc, or are we going to
+wait a release cycle on the dts patches?
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
----
-Changes in v2:
-- added address-cells, size-cells and ranges properties
-
- arch/arm/boot/dts/tegra20.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 2207c08..03eb029 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -376,6 +376,20 @@
- 		status = "disabled";
- 	};
-
-+
-+	gmi@70009000 {
-+		compatible = "nvidia,tegra20-gmi";
-+		reg = <70009000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x48000000 0x7ffffff>;
-+		clocks = <&tegra_car TEGRA20_CLK_NOR>;
-+		clock-names = "gmi";
-+		resets = < &tegra_car 42>;
-+		reset-names = "gmi";
-+		status = "disabled";
-+	};
-+
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
---
-2.1.4
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
