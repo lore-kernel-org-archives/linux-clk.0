@@ -1,62 +1,120 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	Jianqun Xu <jay.xu@rock-chips.com>,
-	frank.wang@rock-chips.com,
-	shawn.lin@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	wulf@rock-chips.com,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/7] fix and optimize some clock configuration for the RK3399 platfom
-Date: Tue,  2 Aug 2016 15:19:54 +0800
-Message-Id: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
+	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v11 1/9] clk: mediatek: remove __init from clk registration functions
+Date: Fri, 19 Aug 2016 13:34:48 +0800
+Message-ID: <1471584896-9986-2-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: James Liao <jamesjj.liao@mediatek.com>
 
-Hi:
-  In the development work, we found that some of the previous
-incorrect clock configuration on the RK3399 platform, we should
-fix and optimize them.
+Remove __init from functions that will be used by init functions
+that support probe deferral.
 
-Changes in v3:
-- list more details of the testing steps
-- add the regresson message "Fixes: 3bd14ae9da91 ..." to track the previous commit
-- remove the patch "clk: rockchip: rk3399: fix incorrect parent for rk3399's {c, g}pll_aclk_perihp_src"
-- add "Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>"
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ drivers/clk/mediatek/clk-gate.c |  2 +-
+ drivers/clk/mediatek/clk-mtk.c  | 12 ++++++------
+ drivers/clk/mediatek/clk-pll.c  |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-Changes in v2:
-- add this patch " clk: rockchip: rk3399: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src" into the patchset
-
-Elaine Zhang (1):
-  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
-
-Xing Zheng (6):
-  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
-  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
-  clk: rockchip: rk3399: fix incorrect GATE bits for {c,
-    g}pll_aclk_perihp_src
-  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
-  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
-  clk: rockchip: rk3399: Add support frac mode frequencies
-
- drivers/clk/rockchip/clk-rk3399.c      |   39 ++++++++++++++++++++++++--------
- include/dt-bindings/clock/rk3399-cru.h |    2 ++
- 2 files changed, 32 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index 2a76901..d8787bf 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -97,7 +97,7 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
+ 	.disable	= mtk_cg_disable_inv,
+ };
+ 
+-struct clk * __init mtk_clk_register_gate(
++struct clk *mtk_clk_register_gate(
+ 		const char *name,
+ 		const char *parent_name,
+ 		struct regmap *regmap,
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 5ada644..bb30f70 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -24,7 +24,7 @@
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+ 
+-struct clk_onecell_data * __init mtk_alloc_clk_data(unsigned int clk_num)
++struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
+ {
+ 	int i;
+ 	struct clk_onecell_data *clk_data;
+@@ -49,7 +49,7 @@ err_out:
+ 	return NULL;
+ }
+ 
+-void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
++void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+ 	int i;
+@@ -72,7 +72,7 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+ 	}
+ }
+ 
+-void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
++void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+ 	int i;
+@@ -95,7 +95,7 @@ void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+ 	}
+ }
+ 
+-int __init mtk_clk_register_gates(struct device_node *node,
++int mtk_clk_register_gates(struct device_node *node,
+ 		const struct mtk_gate *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+@@ -135,7 +135,7 @@ int __init mtk_clk_register_gates(struct device_node *node,
+ 	return 0;
+ }
+ 
+-struct clk * __init mtk_clk_register_composite(const struct mtk_composite *mc,
++struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+ 	struct clk *clk;
+@@ -222,7 +222,7 @@ err_out:
+ 	return ERR_PTR(ret);
+ }
+ 
+-void __init mtk_clk_register_composites(const struct mtk_composite *mcs,
++void mtk_clk_register_composites(const struct mtk_composite *mcs,
+ 		int num, void __iomem *base, spinlock_t *lock,
+ 		struct clk_onecell_data *clk_data)
+ {
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index 966cab1..0c2deac 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -313,7 +313,7 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
+ 	return clk;
+ }
+ 
+-void __init mtk_clk_register_plls(struct device_node *node,
++void mtk_clk_register_plls(struct device_node *node,
+ 		const struct mtk_pll_data *plls, int num_plls, struct clk_onecell_data *clk_data)
+ {
+ 	void __iomem *base;
 -- 
-1.7.9.5
+1.9.1
