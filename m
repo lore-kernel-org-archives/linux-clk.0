@@ -1,50 +1,43 @@
-Return-Path: <zyw@rock-chips.com>
-Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as
- critical
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
- <1721159.V5xB9fz0jT@diego>
-Cc: zhengxing@rock-chips.com, yzq@rock-chips.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux-kernel@vger.kernel.org, tfiga@chromium.org,
- linux-rockchip@lists.infradead.org, dianders@chromium.org,
- groeck@chromium.org, marcheu@chromium.org, wulf@rock-chips.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Chris Zhong <zyw@rock-chips.com>
-Message-ID: <57AD1AC1.5080600@rock-chips.com>
-Date: Fri, 12 Aug 2016 08:39:29 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 19 Aug 2016 12:46:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
+	James Liao <jamesjj.liao@mediatek.com>
+Subject: Re: [PATCH v11 6/9] reset: mediatek: Add MT2701 reset controller
+ dt-binding file
+Message-ID: <20160819194655.GE6502@codeaurora.org>
+References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+ <1471584896-9986-7-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1721159.V5xB9fz0jT@diego>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471584896-9986-7-git-send-email-erin.lo@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko
+On 08/19, Erin Lo wrote:
+> From: Shunli Wang <shunli.wang@mediatek.com>
+> 
+> Dt-binding file about reset controller is used to provide
+> kinds of definition, which is referenced by dts file and
+> IC-specified reset controller driver code.
+> 
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> Tested-by: John Crispin <blogic@openwrt.org>
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
 
+Applied to clk-next
 
-On 08/12/2016 06:17 AM, Heiko Stübner wrote:
-> Am Dienstag, 9. August 2016, 11:02:33 schrieb Chris Zhong:
->> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
->> this modification, the aclk_vio_noc should be put into critical list,
->> since it is required by VOP.
->> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
->> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
->>
->> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> I've split that patch in two and applied them there:
-> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.8-clk/fixes&id=a3f457d9636b3f5ae4fc6502cb0c95f60f5e342b
-> (gate-bit-fix)
-> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.9-clk/next&id=54479449c801e46ee2b6ba08e2f19cd810f74f94
-> (critical clocks)
->
-> with the provided Reviewed-bys.
-with the "gate-bit-fix" patch, probably someone will find the panel can 
-not display, since the aclk_vio_noc would be disabled default, and this 
-noc clk is required by VOP.
-So, if someone want to pick up "gate-bit-fix", please get the one 
-"critical clocks" firstly.
-
->
->
-> Heiko
->
->
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
