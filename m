@@ -1,133 +1,129 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:16:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marcin Wojtas <mw@semihalf.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	sebastian.hesselbarth@gmail.com, andrew@lunn.ch,
-	jason@lakedaemon.net, thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com, nadavh@marvell.com,
-	alior@marvell.com, tn@semihalf.com, jaz@semihalf.com
-Subject: Re: [PATCH 2/2] clk: mvebu: dynamically allocate resources in Armada
- CP110 system controller
-Message-ID: <20160825001613.GQ19826@codeaurora.org>
-References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
- <1471933609-8456-3-git-send-email-mw@semihalf.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
+	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v11 6/9] reset: mediatek: Add MT2701 reset controller dt-binding file
+Date: Fri, 19 Aug 2016 13:34:53 +0800
+Message-ID: <1471584896-9986-7-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471933609-8456-3-git-send-email-mw@semihalf.com>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/23, Marcin Wojtas wrote:
-> Original commit, which added support for Armada CP110 system controller
-> used global variables for storing all clock information. It worked
-> fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
-> was introduced, the data got overwritten and corrupted.
-> 
-> This patch fixes the issue by allocating resources dynamically in the
-> driver probe and storing it as platform drvdata.
-> 
-> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
-> 
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Please drop the space between fixes tag and the signoff.
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
 
-> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
-> ---
->  drivers/clk/mvebu/cp110-system-controller.c | 29 ++++++++++++++++++++---------
->  1 file changed, 20 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-> index 0835e1d..2bd87d2 100644
-> --- a/drivers/clk/mvebu/cp110-system-controller.c
-> +++ b/drivers/clk/mvebu/cp110-system-controller.c
-> @@ -81,13 +81,6 @@ enum {
->  #define CP110_GATE_EIP150		25
->  #define CP110_GATE_EIP197		26
->  
-> -static struct clk *cp110_clks[CP110_CLK_NUM];
-> -
-> -static struct clk_onecell_data cp110_clk_data = {
-> -	.clks = cp110_clks,
-> -	.clk_num = CP110_CLK_NUM,
-> -};
-> -
->  struct cp110_gate_clk {
->  	struct clk_hw hw;
->  	struct regmap *regmap;
-> @@ -195,7 +188,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->  	struct regmap *regmap;
->  	struct device_node *np = pdev->dev.of_node;
->  	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
-> -	struct clk *clk;
-> +	struct clk_onecell_data *cp110_clk_data;
-> +	struct clk *clk, **cp110_clks;
->  	u32 nand_clk_ctrl;
->  	int i, ret;
->  
-> @@ -208,6 +202,20 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
-> +				  CP110_CLK_NUM, GFP_KERNEL);
-> +	if (IS_ERR(cp110_clks))
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
 
-Doesn't that return NULL on error?
-
-> +		return PTR_ERR(cp110_clks);
-> +
-> +	cp110_clk_data = devm_kzalloc(&pdev->dev,
-> +				      sizeof(struct clk_onecell_data),
-
-sizeof(*cp110_clk_data) please
-
-> +				      GFP_KERNEL);
-> +	if (IS_ERR(cp110_clk_data))
-
-Doesn't that return NULL on error?
-
-> +		return PTR_ERR(cp110_clk_data);
-> +
-> +	cp110_clk_data->clks = cp110_clks;
-> +	cp110_clk_data->clk_num = CP110_CLK_NUM;
-> +
->  	/* Register the APLL which is the root of the clk tree */
->  	of_property_read_string_index(np, "core-clock-output-names",
->  				      CP110_CORE_APLL, &apll_name);
-> @@ -335,10 +343,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->  		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
->  	}
->  
-> -	ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
-> +	ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
-
-It would be nice if this could be converted to
-of_clk_add_hw_provider().
-
->  	if (ret)
->  		goto fail_clk_add;
->  
-> +	platform_set_drvdata(pdev, cp110_clks);
-> +
->  	return 0;
->  
->  fail_clk_add:
-> @@ -365,6 +375,7 @@ fail0:
->  
->  static int cp110_syscon_clk_remove(struct platform_device *pdev)
->  {
-> +	struct clk **cp110_clks = platform_get_drvdata(pdev);
-
-Is this variable unused now?
-
->  	int i;
->  
->  	of_clk_del_provider(pdev->dev.of_node);
-> -- 
-> 1.8.3.1
-> 
-
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
+new file mode 100644
+index 0000000..aaf0305
+--- /dev/null
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
++
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
++
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
++
++/* HIFSYS resets */
++#define MT2701_HIFSYS_UHOST0_RST		3
++#define MT2701_HIFSYS_UHOST1_RST		4
++#define MT2701_HIFSYS_UPHY0_RST			21
++#define MT2701_HIFSYS_UPHY1_RST			22
++#define MT2701_HIFSYS_PCIE0_RST			24
++#define MT2701_HIFSYS_PCIE1_RST			25
++#define MT2701_HIFSYS_PCIE2_RST			26
++
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
