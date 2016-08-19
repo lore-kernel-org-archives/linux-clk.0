@@ -1,65 +1,30 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: [PATCH v3 09/14] ARM: DT: STiH418: Enable clock propagation for audio clocks
-Date: Mon, 29 Aug 2016 14:27:01 +0200
-Message-ID: <1472473626-15398-10-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58684 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752435AbcHSTyX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2016 15:54:23 -0400
+Date: Fri, 19 Aug 2016 12:54:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: shawnguo@kernel.org, stefan@agner.ch, festevam@gmail.com,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: imx7d: Add the clock for SDMA
+Message-ID: <20160819195421.GI6502@codeaurora.org>
+References: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471026416-11769-1-git-send-email-fabio.estevam@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 08/12, Fabio Estevam wrote:
+> Add IMX7D_SDMA_CORE_CLK clock so that SDMA can be functional.
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
 
-This patch is used in the clock driver to apply a clock propagation
-flag on the audio clocks of STiH418
+Applied to clk-next
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 0fd0fa5..a183583 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -229,7 +229,7 @@
- 
- 			clk_s_d0_flexgen: clk-s-d0-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-audio", "st,flexgen";
- 
- 				clocks = <&clk_s_d0_quadfs 0>,
- 					 <&clk_s_d0_quadfs 1>,
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
