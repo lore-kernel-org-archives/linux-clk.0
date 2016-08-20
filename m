@@ -1,35 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Aug 2016 16:42:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] clk: max77686: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160818234246.GH361@codeaurora.org>
-References: <20160816223856.1282-1-stephen.boyd@linaro.org>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Sat, 20 Aug 2016 18:03:07 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+	a.hajda@samsung.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Message-ID: <20160820160307.GB6344@kozik-book>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+ <8519a1cf-ec51-2914-e4aa-27b26b9233de@osg.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160816223856.1282-1-stephen.boyd@linaro.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <8519a1cf-ec51-2914-e4aa-27b26b9233de@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/16, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
+On Fri, Aug 19, 2016 at 03:31:08PM -0400, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+> On 08/16/2016 09:34 AM, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > RFC, please, do not apply, maybe except patch #1 which is harmless.
+> > 
+> > 
+> > Introduction
+> > ============
+> > The patchset brings new entity: clock controller representing a hardware
+> > block.  The clock controller comes with its own prepare lock which
+> > is used then in many places.  The idea is to fix the deadlock mentioned
+> > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> > by keeping clock prepared").
+> > 
+> > 
+> 
+> I'm not familiar enough with the common clock framework to do a proper review
+> of this patch-set, but I've tested both on an Exynos5800 Peach Pi Chromebook
+> and an Exynos5422 Odroid XU4 board and I didn't find any clock regressions.
+> 
+> Also, I confirmed that the possible deadlock in the Odroid XU4 that was fixed
+> by reverted commit 10ff4c5239a1 doesn't happen anymore with your patches.
+> 
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Applied to clk-next
+Thanks for testing, I appreciate that!
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
