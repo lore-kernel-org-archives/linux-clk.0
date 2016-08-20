@@ -1,88 +1,92 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 23 Aug 2016 23:26:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v2 10/10] clk: qcom: Fix .set_rate to handle alpha PLLs
- w/wo dynamic update
-Message-ID: <20160824062613.GW6502@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
- <1470904858-11930-11-git-send-email-rnayak@codeaurora.org>
+Return-Path: <nm@ti.com>
+From: Nishanth Menon <nm@ti.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Dave Gerlach <d-gerlach@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Russell
+ King <rmk+kernel@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Nishanth Menon
+	<nm@ti.com>
+Subject: [PATCH 0/3] ARM: K2G: Add support for TI-SCI Clocks
+Date: Fri, 19 Aug 2016 19:33:39 -0500
+Message-ID: <20160820003342.13599-1-nm@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470904858-11930-11-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Rajendra Nayak wrote:
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 2184dc1..68c90f3 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -113,6 +113,11 @@ static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
->  #define PLL_OFFLINE_ACK		BIT(28)
->  #define PLL_ACTIVE_FLAG		BIT(30)
->  
-> +/* alpha pll with dynamic update support */
-> +#define PLL_UPDATE		BIT(22)
-> +#define PLL_HW_LOGIC_BYPASS	BIT(23)
-> +#define PLL_ACK_LATCH		BIT(29)
+Texas Instruments' Keystone generation System on Chips (SoC)
+starting with 66AK2G02[1], now include a dedicated SoC System Control
+entity called PMMC(Power Management Micro Controller) in line with
+ARM architecture recommendations. The function of this module is
+to integrate all system operations in a centralized location.
+Communication with the SoC System Control entity from various
+processing units like ARM/DSP occurs over Message Manager hardware
+block.
 
-These need to move next to associated registers.
+This series adds the base support for clock control using generic
+power domain framework over the TI System Control Interface (TI-SCI)
+protocol[2][3][4].
 
-> +
->  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->  			     const struct alpha_pll_config *config)
->  {
-> @@ -366,6 +402,7 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->  static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  				  unsigned long prate)
->  {
-> +	int enabled;
+Overall architecture is very similar to SCPI[5] as follows:
++--------------+  +-------------+   +------------+
+| TI SCI GENPD |  |TISCI Clk(*) |   |TISCI reset |
++------+-------+  +----+--------+   +----+-------+
+       |               |                 |
+       |          +----v--------------+  |
+       +----------> TISCI Protocol    <--+
+                  +----+--------------+
+                       |
+                   +---v-----------+
+                   | MAILBOX  FWK  |
+                   +---+-----------+
+                       |
+                   +---v-----------+
+                   |  TI MSGMGR    |-> TISCI hardware block
+                   +---------------+
 
-bool
+(*) This series.
 
->  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->  	const struct pll_vco *vco;
->  	u32 l, off = pll->offset;
-> @@ -378,6 +415,11 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  		return -EINVAL;
->  	}
->  
-> +	enabled = hw->init->ops->is_enabled(hw);
+Baseline: v4.8-rc1 + [3] + [4] (the dependency is due to MAINTAINERS update, API, data)
+Bootlog: http://pastebin.ubuntu.com/23071879/ (with the addition of couple of mach patches + dts)
+Integrated series is available:
+https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.9/tisci-clk-v1
 
-We have clk_hw_is_enabled() for this.
+This is the last of the three major blocks to provide functionality for K2G SoC.
+TISCI reset series is a follow on series to enable DSP remoteproc and few other
+peripherals.
 
-> +
-> +	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
-> +		hw->init->ops->disable(hw);
+NOTE: Tero is currently on vacation(till Aug 28) and the series
+is being send on his behalf to provide a complete baseline series
+for review. Obviously, all dependencies must be merged prior to
+this series being merged, but any additional feedback will be much
+appreciated.
 
-Please call the function directly instead of going through the
-init structure to get the clk ops.
+Tero Kristo (3):
+  Documentation: dt: Add TI SCI clock driver
+  dt-binding: clock: Add k2g clock definitions
+  clk: keystone: Add sci-clk driver support
 
-> +
->  	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
->  
->  	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
-> @@ -391,6 +433,12 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL, PLL_ALPHA_EN,
->  			   PLL_ALPHA_EN);
->  
-> +	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
-> +		hw->init->ops->enable(hw);
-> +
-> +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE)
-> +		clk_alpha_pll_dynamic_update(pll);
-> +
+[1] http://www.ti.com/product/66ak2g02
+[2] http://processors.wiki.ti.com/index.php/TISCI
+[3] https://lkml.org/lkml/2016/8/19/768
+[4] https://lkml.org/lkml/2016/8/19/790
+[5] Documentation/devicetree/bindings/arm/arm,scpi.txt
 
-Perhaps write it as
-
-	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE)
-		clk_alpha_pll_dynamic_update()
-	else if (enabled)
-		toggle the enable bit...
+ .../devicetree/bindings/clock/ti,sci-clk.txt       |  51 ++
+ MAINTAINERS                                        |   3 +
+ drivers/clk/Kconfig                                |  13 +
+ drivers/clk/keystone/Makefile                      |   1 +
+ drivers/clk/keystone/sci-clk.c                     | 539 +++++++++++++++++++++
+ include/dt-bindings/clock/k2g.h                    | 234 +++++++++
+ 6 files changed, 841 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+ create mode 100644 drivers/clk/keystone/sci-clk.c
+ create mode 100644 include/dt-bindings/clock/k2g.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.1.200.gb1ec08f
