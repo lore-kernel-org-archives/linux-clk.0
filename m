@@ -1,668 +1,121 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v5 1/2] clk: uniphier: add core support code for UniPhier clock driver
-Date: Tue,  2 Aug 2016 13:14:53 +0900
-Message-Id: <1470111307-21078-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1470111307-21078-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1470111307-21078-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH v12 0/4] Add clock support for Mediatek MT2701
+Date: Mon, 22 Aug 2016 16:29:21 +0800
+Message-ID: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This includes UniPhier clock driver code, except SoC-specific
-data arrays.
+This series is based on clk-next, add clock and reset controller support
+for Mediatek MT2701.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Since some patches in v11 had been applied into clk-next, they were not
+included in v12 series.
 
- MAINTAINERS                                      |   1 +
- drivers/clk/Kconfig                              |   1 +
- drivers/clk/Makefile                             |   1 +
- drivers/clk/uniphier/Kconfig                     |   9 ++
- drivers/clk/uniphier/Makefile                    |   6 ++
- drivers/clk/uniphier/clk-uniphier-core.c         | 124 +++++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier-fixed-factor.c |  49 +++++++++
- drivers/clk/uniphier/clk-uniphier-fixed-rate.c   |  48 +++++++++
- drivers/clk/uniphier/clk-uniphier-gate.c         |  97 ++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier-mux.c          |  95 +++++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h              | 109 ++++++++++++++++++++
- 11 files changed, 540 insertions(+)
- create mode 100644 drivers/clk/uniphier/Kconfig
- create mode 100644 drivers/clk/uniphier/Makefile
- create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+changes since v11:
+- Rebase to clk-next.
+- Return error code from probe() if clock registration fail.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e58e00e..f87eac3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1821,6 +1821,7 @@ F:	arch/arm/mach-uniphier/
- F:	arch/arm/mm/cache-uniphier.c
- F:	arch/arm64/boot/dts/socionext/
- F:	drivers/bus/uniphier-system-bus.c
-+F:	drivers/clk/uniphier/
- F:	drivers/i2c/busses/i2c-uniphier*
- F:	drivers/mmc/host/uniphier-sd.c
- F:	drivers/pinctrl/uniphier/
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e2d9bd7..584c10d 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -218,5 +218,6 @@ source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/sunxi-ng/Kconfig"
- source "drivers/clk/tegra/Kconfig"
- source "drivers/clk/ti/Kconfig"
-+source "drivers/clk/uniphier/Kconfig"
- 
- endmenu
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 3b6f9cf..7d66cef 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -86,6 +86,7 @@ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-y					+= ti/
-+obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
- obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
- obj-$(CONFIG_X86)			+= x86/
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
-new file mode 100644
-index 0000000..a67c133
---- /dev/null
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -0,0 +1,9 @@
-+config CLK_UNIPHIER
-+	tristate "Clock driver for UniPhier SoCs"
-+	depends on ARCH_UNIPHIER || COMPILE_TEST
-+	depends on OF && MFD_SYSCON
-+	default ARCH_UNIPHIER
-+	help
-+	  Support for clock controllers on UniPhier SoCs.
-+	  Say Y if you want to control clocks provided by System Control
-+	  block, Media I/O block, Peripheral Block.
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-new file mode 100644
-index 0000000..8f359aa
---- /dev/null
-+++ b/drivers/clk/uniphier/Makefile
-@@ -0,0 +1,6 @@
-+obj-$(CONFIG_CLK_UNIPHIER)	+= clk-uniphier.o
-+clk-uniphier-y			+= clk-uniphier-core.o
-+clk-uniphier-y			+= clk-uniphier-fixed-factor.o
-+clk-uniphier-y			+= clk-uniphier-fixed-rate.o
-+clk-uniphier-y			+= clk-uniphier-gate.o
-+clk-uniphier-y			+= clk-uniphier-mux.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-new file mode 100644
-index 0000000..d6dfa4d
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-core.c
-@@ -0,0 +1,124 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-uniphier.h"
-+
-+static struct clk_hw *uniphier_clk_register(struct device *dev,
-+					    struct regmap *regmap,
-+					const struct uniphier_clk_data *data)
-+{
-+	switch (data->type) {
-+	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
-+		return uniphier_clk_register_fixed_factor(dev, data->name,
-+							  &data->data.factor);
-+	case UNIPHIER_CLK_TYPE_FIXED_RATE:
-+		return uniphier_clk_register_fixed_rate(dev, data->name,
-+							&data->data.rate);
-+	case UNIPHIER_CLK_TYPE_GATE:
-+		return uniphier_clk_register_gate(dev, regmap, data->name,
-+						  &data->data.gate);
-+	case UNIPHIER_CLK_TYPE_MUX:
-+		return uniphier_clk_register_mux(dev, regmap, data->name,
-+						 &data->data.mux);
-+	default:
-+		dev_err(dev, "unsupported clock type\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+}
-+
-+static const struct of_device_id uniphier_clk_match[] = {
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_clk_match);
-+
-+int uniphier_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct of_device_id *match;
-+	struct clk_hw_onecell_data *hw_data;
-+	struct device_node *parent;
-+	struct regmap *regmap;
-+	const struct uniphier_clk_data *p;
-+	int clk_num = 0;
-+
-+	match = of_match_node(uniphier_clk_match, dev->of_node);
-+	if (!match)
-+		return -ENODEV;
-+
-+	parent = of_get_parent(dev->of_node); /* parent should be syscon node */
-+	regmap = syscon_node_to_regmap(parent);
-+	of_node_put(parent);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "failed to get regmap (error %ld)\n",
-+			PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (p = match->data; p->name; p++)
-+		clk_num = max(clk_num, p->idx + 1);
-+
-+	hw_data = devm_kzalloc(dev,
-+			sizeof(*hw_data) + clk_num * sizeof(struct clk_hw *),
-+			GFP_KERNEL);
-+	if (!hw_data)
-+		return -ENOMEM;
-+
-+	hw_data->num = clk_num;
-+
-+	for (p = match->data; p->name; p++) {
-+		struct clk_hw *hw;
-+
-+		dev_dbg(dev, "register %s (index=%d)\n", p->name, p->idx);
-+		hw = uniphier_clk_register(dev, regmap, p);
-+		if (IS_ERR(hw)) {
-+			dev_err(dev, "failed to register %s (error %ld)\n",
-+				p->name, PTR_ERR(hw));
-+			return PTR_ERR(hw);
-+		}
-+
-+		if (p->idx >= 0)
-+			hw_data->hws[p->idx] = hw;
-+	}
-+
-+	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+				      hw_data);
-+}
-+
-+int uniphier_clk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver uniphier_clk_driver = {
-+	.probe = uniphier_clk_probe,
-+	.remove = uniphier_clk_remove,
-+	.driver = {
-+		.name = "uniphier-clk",
-+		.of_match_table = uniphier_clk_match,
-+	},
-+};
-+module_platform_driver(uniphier_clk_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier Clock Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/uniphier/clk-uniphier-fixed-factor.c b/drivers/clk/uniphier/clk-uniphier-fixed-factor.c
-new file mode 100644
-index 0000000..d64ea61
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-fixed-factor.c
-@@ -0,0 +1,49 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+
-+#include "clk-uniphier.h"
-+
-+struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
-+						  const char *name,
-+			const struct uniphier_clk_fixed_factor_data *data)
-+{
-+	struct clk_fixed_factor *fix;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	fix = devm_kzalloc(dev, sizeof(*fix), GFP_KERNEL);
-+	if (!fix)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_fixed_factor_ops;
-+	init.flags = data->parent_name ? CLK_SET_RATE_PARENT : 0;
-+	init.flags |= CLK_IS_BASIC;
-+	init.parent_names = data->parent_name ? &data->parent_name : NULL;
-+	init.num_parents = data->parent_name ? 1 : 0;
-+
-+	fix->mult = data->mult;
-+	fix->div = data->div;
-+	fix->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &fix->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &fix->hw;
-+}
-diff --git a/drivers/clk/uniphier/clk-uniphier-fixed-rate.c b/drivers/clk/uniphier/clk-uniphier-fixed-rate.c
-new file mode 100644
-index 0000000..e0f55ca
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-fixed-rate.c
-@@ -0,0 +1,48 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+
-+#include "clk-uniphier.h"
-+
-+struct clk_hw *uniphier_clk_register_fixed_rate(struct device *dev,
-+						const char *name,
-+				const struct uniphier_clk_fixed_rate_data *data)
-+{
-+	struct clk_fixed_rate *fixed;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	/* allocate fixed-rate clock */
-+	fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
-+	if (!fixed)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_fixed_rate_ops;
-+	init.flags = CLK_IS_BASIC;
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+
-+	fixed->fixed_rate = data->fixed_rate;
-+	fixed->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &fixed->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &fixed->hw;
-+}
-diff --git a/drivers/clk/uniphier/clk-uniphier-gate.c b/drivers/clk/uniphier/clk-uniphier-gate.c
-new file mode 100644
-index 0000000..49142d4
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-gate.c
-@@ -0,0 +1,97 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-uniphier.h"
-+
-+struct uniphier_clk_gate {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	unsigned int reg;
-+	unsigned int bit;
-+};
-+
-+#define to_uniphier_clk_gate(_hw) \
-+				container_of(_hw, struct uniphier_clk_gate, hw)
-+
-+static int uniphier_clk_gate_endisable(struct clk_hw *hw, int enable)
-+{
-+	struct uniphier_clk_gate *gate = to_uniphier_clk_gate(hw);
-+
-+	return regmap_write_bits(gate->regmap, gate->reg, BIT(gate->bit),
-+				 enable ? BIT(gate->bit) : 0);
-+}
-+
-+static int uniphier_clk_gate_enable(struct clk_hw *hw)
-+{
-+	return uniphier_clk_gate_endisable(hw, 1);
-+}
-+
-+static void uniphier_clk_gate_disable(struct clk_hw *hw)
-+{
-+	if (uniphier_clk_gate_endisable(hw, 0) < 0)
-+		pr_warn("failed to disable clk\n");
-+}
-+
-+static int uniphier_clk_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct uniphier_clk_gate *gate = to_uniphier_clk_gate(hw);
-+	unsigned int val;
-+
-+	if (regmap_read(gate->regmap, gate->reg, &val) < 0)
-+		pr_warn("is_enabled() may return wrong result\n");
-+
-+	return !!(val & BIT(gate->bit));
-+}
-+
-+static const struct clk_ops uniphier_clk_gate_ops = {
-+	.enable = uniphier_clk_gate_enable,
-+	.disable = uniphier_clk_gate_disable,
-+	.is_enabled = uniphier_clk_gate_is_enabled,
-+};
-+
-+struct clk_hw *uniphier_clk_register_gate(struct device *dev,
-+					  struct regmap *regmap,
-+					  const char *name,
-+				const struct uniphier_clk_gate_data *data)
-+{
-+	struct uniphier_clk_gate *gate;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &uniphier_clk_gate_ops;
-+	init.flags = data->parent_name ? CLK_SET_RATE_PARENT : 0;
-+	init.parent_names = data->parent_name ? &data->parent_name : NULL;
-+	init.num_parents = data->parent_name ? 1 : 0;
-+
-+	gate->regmap = regmap;
-+	gate->reg = data->reg;
-+	gate->bit = data->bit;
-+	gate->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &gate->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &gate->hw;
-+}
-diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-new file mode 100644
-index 0000000..15a2f2c
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-@@ -0,0 +1,95 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-uniphier.h"
-+
-+struct uniphier_clk_mux {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	unsigned int reg;
-+	const unsigned int *masks;
-+	const unsigned int *vals;
-+};
-+
-+#define to_uniphier_clk_mux(_hw) container_of(_hw, struct uniphier_clk_mux, hw)
-+
-+static int uniphier_clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
-+
-+	return regmap_write_bits(mux->regmap, mux->reg, mux->masks[index],
-+				 mux->vals[index]);
-+}
-+
-+static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
-+	int ret;
-+	u32 val;
-+	u8 i;
-+
-+	ret = regmap_read(mux->regmap, mux->reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < num_parents; i++)
-+		if ((mux->masks[i] & val) == mux->vals[i])
-+			return i;
-+
-+	return -EINVAL;
-+}
-+
-+static const struct clk_ops uniphier_clk_mux_ops = {
-+	.determine_rate = __clk_mux_determine_rate,
-+	.set_parent = uniphier_clk_mux_set_parent,
-+	.get_parent = uniphier_clk_mux_get_parent,
-+};
-+
-+struct clk_hw *uniphier_clk_register_mux(struct device *dev,
-+					 struct regmap *regmap,
-+					 const char *name,
-+				const struct uniphier_clk_mux_data *data)
-+{
-+	struct uniphier_clk_mux *mux;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &uniphier_clk_mux_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = data->parent_names;
-+	init.num_parents = data->num_parents,
-+
-+	mux->regmap = regmap;
-+	mux->reg = data->reg;
-+	mux->masks = data->masks;
-+	mux->vals = data->vals;
-+	mux->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &mux->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &mux->hw;
-+}
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-new file mode 100644
-index 0000000..3e354e9
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -0,0 +1,109 @@
-+/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __CLK_UNIPHIER_H__
-+#define __CLK_UNIPHIER_H__
-+
-+struct clk_hw;
-+struct device;
-+struct regmap;
-+
-+#define UNIPHIER_CLK_MUX_MAX_PARENTS	8
-+
-+enum uniphier_clk_type {
-+	UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+	UNIPHIER_CLK_TYPE_FIXED_RATE,
-+	UNIPHIER_CLK_TYPE_GATE,
-+	UNIPHIER_CLK_TYPE_MUX,
-+};
-+
-+struct uniphier_clk_fixed_factor_data {
-+	const char *parent_name;
-+	unsigned int mult;
-+	unsigned int div;
-+};
-+
-+struct uniphier_clk_fixed_rate_data {
-+	unsigned long fixed_rate;
-+};
-+
-+struct uniphier_clk_gate_data {
-+	const char *parent_name;
-+	unsigned int reg;
-+	unsigned int bit;
-+};
-+
-+struct uniphier_clk_mux_data {
-+	const char *parent_names[UNIPHIER_CLK_MUX_MAX_PARENTS];
-+	unsigned int num_parents;
-+	unsigned int reg;
-+	unsigned int masks[UNIPHIER_CLK_MUX_MAX_PARENTS];
-+	unsigned int vals[UNIPHIER_CLK_MUX_MAX_PARENTS];
-+};
-+
-+struct uniphier_clk_data {
-+	const char *name;
-+	enum uniphier_clk_type type;
-+	int idx;
-+	union {
-+		struct uniphier_clk_fixed_factor_data factor;
-+		struct uniphier_clk_fixed_rate_data rate;
-+		struct uniphier_clk_gate_data gate;
-+		struct uniphier_clk_mux_data mux;
-+	} data;
-+};
-+
-+#define UNIPHIER_CLK_FACTOR(_name, _idx, _parent, _mult, _div)	\
-+	{							\
-+		.name = (_name),				\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,		\
-+		.idx = (_idx),					\
-+		.data.factor = {				\
-+			.parent_name = (_parent),		\
-+			.mult = (_mult),			\
-+			.div = (_div),				\
-+		},						\
-+	}
-+
-+
-+#define UNIPHIER_CLK_GATE(_name, _idx, _parent, _reg, _bit)	\
-+	{							\
-+		.name = (_name),				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.idx = (_idx),					\
-+		.data.gate = {					\
-+			.parent_name = (_parent),		\
-+			.reg = (_reg),				\
-+			.bit = (_bit),				\
-+		},						\
-+	}
-+
-+
-+struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
-+						  const char *name,
-+			const struct uniphier_clk_fixed_factor_data *data);
-+struct clk_hw *uniphier_clk_register_fixed_rate(struct device *dev,
-+						const char *name,
-+			const struct uniphier_clk_fixed_rate_data *data);
-+struct clk_hw *uniphier_clk_register_gate(struct device *dev,
-+					  struct regmap *regmap,
-+					  const char *name,
-+				const struct uniphier_clk_gate_data *data);
-+struct clk_hw *uniphier_clk_register_mux(struct device *dev,
-+					 struct regmap *regmap,
-+					 const char *name,
-+				const struct uniphier_clk_mux_data *data);
-+
-+#endif /* __CLK_UNIPHIER_H__ */
--- 
+changes since v10:
+- Remove COMMON_CLK dependency from clk/mediatek/Kconfig.
+
+changes since v9:
+- Rebase to v4.8-rc1.
+- Drop a fix patch of parent clock initial state. It will be replaced by a new
+  patch from Mike/Stephen.
+- Replace clk.h with clk-provider.h.
+- Correct register settings of clocks.
+
+changes since v8:
+- Rebase to v4.7-rc1.
+- Include mt2701-resets.h in mt2701.dtsi.
+- Remove an unused property from apmixedsys DT node.
+
+changes since v7:
+- Rebase to clk-next.
+- Implement subsystem clocks in seperated files.
+- Replace critical clock enabling with CLK_IS_CRITICAL flag.
+- Reduce most clock registrations in CLK_OF_DECLARE().
+- Remove __init and __initconst from most init fucntions and data,
+  and replace driver registration with platform_driver_register().
+- Replace some common function or variable names with unique names.
+- Use real clock for UARTs.
+
+changes since v6:
+- Rebase to v4.6-rc1.
+- Register subsystem clocks in probe() instead of CLK_OF_DECLARE().
+- Add clocks that referred by subsystem clocks.
+- Fix clk_data size of apmixedsys.
+- Add config options for each subsystem clock provider.
+
+changes since v5:
+- Rebase to v4.5-rc1 and [1].
+- Enable critical clocks for MT2701
+- Refine dt-binding documents, add reset controller support for hifsys.
+
+changes since v4:
+- Rebase to v4.5-rc1.
+- Remove CLK_SET_RATE_PARENT from divider flags.
+- Add img_jpgdec_smi clock.
+- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
+
+changes since v3:
+- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
+
+changes since v2:
+- Fix ethsys definition.
+- Replace read-modify-write with regmap_update_bits() in clock operations.
+- Move mt2701-resets.h to include/dt-bindings/reset/.
+- Add hifsys reset patch from John Crispin.
+
+changes since v1:
+- Document MT2701 compatible strings.
+
+[1] https://patchwork.kernel.org/patch/8147901/
+
+Erin Lo (1):
+  arm: dts: mt2701: Use real clock for UARTs
+
+James Liao (1):
+  arm: dts: mt2701: Add clock controller device nodes
+
+Shunli Wang (2):
+  clk: mediatek: Add MT2701 clock support
+  reset: mediatek: Add MT2701 reset driver
+
+ arch/arm/boot/dts/mt2701.dtsi          |   50 +-
+ drivers/clk/mediatek/Kconfig           |   43 ++
+ drivers/clk/mediatek/Makefile          |    7 +
+ drivers/clk/mediatek/clk-gate.c        |   52 ++
+ drivers/clk/mediatek/clk-gate.h        |    2 +
+ drivers/clk/mediatek/clk-mt2701-bdp.c  |  141 +++++
+ drivers/clk/mediatek/clk-mt2701-eth.c  |   83 +++
+ drivers/clk/mediatek/clk-mt2701-hif.c  |   84 +++
+ drivers/clk/mediatek/clk-mt2701-img.c  |   83 +++
+ drivers/clk/mediatek/clk-mt2701-mm.c   |  126 ++++
+ drivers/clk/mediatek/clk-mt2701-vdec.c |   94 +++
+ drivers/clk/mediatek/clk-mt2701.c      | 1047 ++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c         |   40 ++
+ drivers/clk/mediatek/clk-mtk.h         |   41 +-
+ drivers/clk/mediatek/clk-pll.c         |    1 +
+ 15 files changed, 1884 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-bdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-hif.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+
+--
 1.9.1
