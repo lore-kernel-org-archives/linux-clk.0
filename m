@@ -1,49 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: Sort Makefile alphabetically
-Date: Mon, 15 Aug 2016 16:11:02 -0700
-Message-Id: <20160815231102.17638-1-sboyd@codeaurora.org>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/5] clk: samsung: exynos: Fix the checkpatch warnings
+To: Chanwoo Choi <cw00.choi@samsung.com>
+References: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <432d1876-d561-6c4e-6808-b7761d128e94@samsung.com>
+Date: Mon, 22 Aug 2016 12:06:20 +0200
+MIME-version: 1.0
+In-reply-to: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-We've started getting out of order, fix it.
+Hi Chanwoo,
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/Makefile | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On 08/22/2016 11:48 AM, Chanwoo Choi wrote:
+> This patches just fix the checkpatch warnings for exynos5433/3250/5260/5420/4
+> series without the behavior changes.
+> 
+> Chanwoo Choi (5):
+>   clk: samsung: exynos5433: Fix the checkpatch warnings
+>   clk: samsung: exynos3250: Fix the checkpatch warnings
+>   clk: samsung: exynos5260: Fix the checkpatch warnings
+>   clk: samsung: exynos5420: Fix the checkpatch warnings
+>   clk: samsung: exynos4: Fix the checkpatch warnings
+> 
+>  drivers/clk/samsung/clk-exynos3250.c | 97 ++++++++++++++++++++----------------
+>  drivers/clk/samsung/clk-exynos4.c    | 51 ++++++++++---------
+>  drivers/clk/samsung/clk-exynos5260.c |  4 +-
+>  drivers/clk/samsung/clk-exynos5420.c | 11 ++--
+>  drivers/clk/samsung/clk-exynos5433.c |  6 ++-
+>  5 files changed, 88 insertions(+), 81 deletions(-)
 
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 15ab44e1b0ed..1fb1f5476cb0 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -12,19 +12,20 @@ clk-qcom-y += clk-regmap-mux.o
- clk-qcom-y += reset.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
- 
-+# Keep alphabetically sorted by config
- obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
- obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
- obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
- obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
- obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
-+obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
-+obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
- obj-$(CONFIG_MSM_GCC_8660) += gcc-msm8660.o
- obj-$(CONFIG_MSM_GCC_8916) += gcc-msm8916.o
- obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
--obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
- obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
-+obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
--obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
--obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
+Sorry, but I have to NAK this whole series.  It's just an unnecessary
+churn and will cause problems when applying real development patches
+that are being worked on.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Sylwester
