@@ -1,121 +1,89 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com
-Subject: Re: [PATCH v3 7/7] clk: rockchip: rk3399: Add support frac mode frequencies
-Date: Fri, 05 Aug 2016 15:26:54 +0200
-Message-ID: <4367690.gXaPoSdE52@diego>
-In-Reply-To: <57A49342.3020309@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1786762.HqNHoLusdi@diego> <57A49342.3020309@rock-chips.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v12 4/4] arm: dts: mt2701: Use real clock for UARTs
+Date: Mon, 22 Aug 2016 16:29:25 +0800
+Message-ID: <1471854565-19810-5-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
+References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 5. August 2016, 21:23:14 schrieb Xing Zheng:
-> Hi Heiko,
->=20
-> On 2016=E5=B9=B408=E6=9C=8805=E6=97=A5 16:48, Heiko St=C3=BCbner wrot=
-e:
-> > Hi Xing,
-> >=20
-> > Am Freitag, 5. August 2016, 10:26:57 schrieb Xing Zheng:
-> >> On 2016=E5=B9=B408=E6=9C=8805=E6=97=A5 03:19, Heiko St=C3=BCbner w=
-rote:
-> >>> Am Dienstag, 2. August 2016, 15:22:59 schrieb Xing Zheng:
-> >>>> We need to support various display resolutions for external
-> >>>> display devices like HDMI/DP, the frac mode can help us to
-> >>>> acquire almost any frequencies, and need higher VCOs to reduce
-> >>>> clock jitters.
-> >>>>=20
-> >>>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
-> >>>=20
-> >>> why does this need to be a separate rate array and cannot live in=
- the
-> >>> general pll rate array?
-> >>>=20
-> >>> The plls are general purpose, so we shouldn't limit them arbitari=
-ly.
-> >>=20
-> >> Yes, I understand your mean. :-)
-> >>=20
-> >>> I currently only see some frequencies (594MHz, 297MHz, 54MHz) tha=
-t are
-> >>> present in both arrays but have different settings. As your patch=
+We used to use a fixed rate clock for the UARTs. Now that we have clock
+support we can associate the correct clocks to the UARTs and drop the
+26MHz fixed rate UART clock.
 
-> >>> description says that these settings reduce clock jitter, wouldn'=
-t the
-> >>> general frequencies also profit from merging these new values int=
-o the
-> >>> general rate array?
-> >>=20
-> >> and here are some of our ideas:
-> >>=20
-> >> "WIth the frac mode and higher VCO to reduce clock jitters" that
-> >> suggestion is from IC designer.
-> >> There are many and various kinds resolution and needed frequencies=
- for
-> >> external disaplay devices. For example, the DP needs:
-> >> 3840x2160 533250KHz
-> >> 3840x2160 297000KHz
-> >> 3840x2160 296703KHz
-> >> 2560x1440 241500KHz
-> >> 1920x1080 148500KHz
-> >> 1920x1080 148352KHz
-> >> 1680x1050 146250KHz
-> >> 1600x900 108000KHz
-> >> 1280x1024 135000KHz
-> >> 1280x1024 108000KHz
-> >> ... and so on
-> >>=20
-> >> There some frequencies must be allocated with frac mode. We separa=
-te
-> >> these frequencies that are only used for display (VPLL) from the g=
-eneral
-> >> rate table, and put them to be classified into a frac mode table, =
-we can
-> >> reduce the frequency of the query time, the two rate tables will n=
-ot
-> >> interfere with each other. Because other PLLs don't need to assgin=
- these
-> >> various frequencies with frac mode.
-> >=20
-> > Hmm, you're adding 14 frequencies to that new table (4 or so of the=
-m
-> > duplicating existing frequencies). So even if the effective number =
-of new
-> > frequencies goes from now 10 to 20, I don't think walking that tabl=
-e will
-> > take an excessive time longer than now.
-> >=20
-> > After the patch introducing the automatic rate calculation, the rat=
-e table
-> > we need to walk, will even get smaller.
-> >=20
-> > Other components might also profit from the updated standard freque=
-ncies
-> > with less jitter you're introducing here.
-> >=20
-> > And of course there is also the possibility somebody might want to =
-build
-> > some rk3399 device without any graphics output at all [arm-server s=
-eem to
-> > be the new hype :-) ], so may want to use the vpll for something el=
-se
-> > completely.
-> >=20
-> > So I still don't see an argument why it needs to be a separate tabl=
-e, as I
-> > currently don't see a case were it will really hurt the other PLLs.=
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-> >=20
-> >=20
-> > Heiko
->=20
-> Yes, sorry to this idea is not comprehensive. I will try to find a
-> better way.
->=20
-> Thanks for your comments. :-)
-
-as I said, to me just merging the new clock rates into the existing pll=
- rate=20
-array looks like it should work just fine :-)
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index c9a8dbf..7eab6f4 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -73,12 +73,6 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	uart_clk: dummy26m {
+-		compatible = "fixed-clock";
+-		clock-frequency = <26000000>;
+-		#clock-cells = <0>;
+-	};
+-
+ 	clk26m: oscillator@0 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -186,7 +180,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -195,7 +190,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -204,7 +200,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -213,7 +210,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ };
+-- 
+1.9.1
