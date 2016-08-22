@@ -1,90 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from nasmtp01.atmel.com ([192.199.1.245]:27566 "EHLO
-	ussmtp01.atmel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751979AbcHHKRc (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2016 06:17:32 -0400
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v6 0/6] ARM: at91: pm: add ULP1 mode support
-Date: Mon, 8 Aug 2016 18:04:59 +0800
-Message-ID: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ kgene@kernel.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com,
+ linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL
+ clocks
+Date: Mon, 22 Aug 2016 18:30:59 +0200
+Message-id: <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
+The PDMA{0,1} and EPLL clock IDs are added separately in this
+patch so the patch can be merged to the arm-soc tree as dependency.
 
-In order to achieve the lowest power consumption, in the ULP1 mode,
-all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ include/dt-bindings/clock/exynos5410.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The fast startup signal is used as a wake up source for ULP1 mode.
-As soon as the wake up event is asserted, the embedded 12MHz RC
-oscillator restarts automatically, which fast startup signal
-to trigger the PMC to wake up the system from the ULP1 mode can be
-configured via DT.
-
-Changes in v6:
- - Add Acked-by tag.
- - Add specific sama5d2_pm_init() for SAMA5D2, which supports ULP1.
-   It is called sama5d2_dt_device_init(). Instead of by reading
-   the PMC version to check if it supports ULP1.
- - Add comment to describe the platform condition of calling
-   at91_pm_ulp1_mode().
- - Update the commit log.
- - Add a new patch to support a new DT_MACHINE for SAMA5D2.
-
-Changes in v5:
- - to improve the scalability, rework the DT expression part, use
-   the child nodes to describe the wake-up input and its active level.
- - due to the DT property expression change, update the binding
-   document.
- - due to the DT property expression change, update the fast restart
-   node's property.
-
-Changes in v4:
- - add Acked-by tag.
- - add fast_restart node to the DT file.
-
-Changes in v3:
- - use 0 and 1, not string, to define the trigger active polarity.
- - update the property description.
-
-Changes in v2:
- - fix label pm_exit to ulp_exit.
- - shorten the pmc-fast-startup property's name.
- - use the value property, instead of bool property for high
-   or low triggered.
- - change the property name and property description.
-
-Wenyou Yang (6):
-  ARM: at91: sama5: Add a new DT_MACHINE for SAMA5D2
-  ARM: at91: pm: Create a procedure for the ULP0 mode
-  ARM: at91: pm: Add ULP1 mode support
-  ARM: at91: pm: Configure PMC fast startup signals
-  Documentation: atmel-pmc: Add DT bindings for fast startup
-  ARM: at91/dt: sama5d2_xplained: Add fast_restart node
-
- .../devicetree/bindings/arm/atmel-pmc.txt          |  52 +++++++
- arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  19 +++
- arch/arm/mach-at91/generic.h                       |   2 +
- arch/arm/mach-at91/pm.c                            |  83 ++++++++++-
- arch/arm/mach-at91/pm.h                            |   7 +
- arch/arm/mach-at91/pm_suspend.S                    | 160 ++++++++++++++++++---
- arch/arm/mach-at91/sama5.c                         |  26 +++-
- include/linux/clk/at91_pmc.h                       |  16 +++
- 8 files changed, 338 insertions(+), 27 deletions(-)
-
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 85b467b..a74442a 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -19,6 +19,7 @@
+ #define CLK_FOUT_MPLL		4
+ #define CLK_FOUT_BPLL		5
+ #define CLK_FOUT_KPLL		6
++#define CLK_FOUT_EPLL		7
+ 
+ /* gate for special clocks (sclk) */
+ #define CLK_SCLK_UART0		128
+@@ -48,6 +49,8 @@
+ #define CLK_USI3		268
+ #define CLK_UART3		260
+ #define CLK_PWM			279
++#define CLK_PDMA0		280
++#define CLK_PDMA1		281
+ #define CLK_MCT			315
+ #define CLK_WDT			316
+ #define CLK_RTC			317
 -- 
-2.7.4
-
+1.9.1
