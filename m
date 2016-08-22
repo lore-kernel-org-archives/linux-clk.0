@@ -1,55 +1,87 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] clkdev: Detect errors in clk_hw_register_clkdev() for mass registration
-Date: Fri, 26 Aug 2016 09:10:09 +0200
-Message-Id: <1472195409-14268-1-git-send-email-geert@linux-m68k.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44915 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751337AbcHVKT6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2016 06:19:58 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <57BAD1C1.9070306@samsung.com>
+Date: Mon, 22 Aug 2016 19:19:45 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, k.kozlowski@samsung.com, kgene@kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, chanwoo@kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS
+References: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20160822100246epcas1p1e9547d592f13fcbeb22daee97e0dd129@epcas1p1.samsung.com>
+ <76aea8a8-cda7-ca9f-54ff-d614d834dde0@samsung.com>
+In-reply-to: <76aea8a8-cda7-ca9f-54ff-d614d834dde0@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Unlike clkdev_create(), clkdev_hw_create() doesn't check for passed
-error objects from a previous registration call. Hence the caller of
-clk_hw_register_*() had to check for errors before calling
-clkdev_hw_create*().
+Hi Sylwester,
 
-Make clkdev_hw_create() more similar to clkdev_create() by adding this
-error check, removing the burden from callers that do mass registration.
+On 2016년 08월 22일 19:01, Sylwester Nawrocki wrote:
+> Hi Chanwoo,
+> 
+> On 08/18/2016 02:47 PM, Chanwoo Choi wrote:
+>> Add the myself to the entry of SAMSUNG SOC CLOCK DRIVERS to review
+>> and test the patches as supporter. I will help them. I can access the all
+>> datasheet of Exynos SoC and test it on Exynos-based board. I was implemented
+>> the exynos4415/5433 clock driver as author and handled the exynos3250 clock
+>> driver. Lastly, adding the missing information of the exynos clock drivers.
+>>
+>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+> I'm going to apply this patch with commit message rephrased as below.
+> 
+> "MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS co-maintainer
+> 
+> Add myself to the SAMSUNG SOC CLOCK DRIVERS entry, I'm going to review
+> and test related patches as supporter.  I can access all the datasheet
+> of Exynos SoC series and can do tests on Exynos based boards.  I have
+> implemented the exynos4415/5433 clock drivers and co-authored the
+> exynos3250 clock driver.  While at it, add missing paths of the exynos
+> clock driver files."
+> 
+> Please let me know if you see any issues with that.
 
-Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
-Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/clk/clkdev.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+There is no issue. Thanks.
 
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 97ae60fa15849954..bb8a77a5985f8627 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -448,12 +448,20 @@ EXPORT_SYMBOL(clk_register_clkdev);
-  *
-  * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-  * clkdev.
-+ *
-+ * To make things easier for mass registration, we detect error clk_hws
-+ * from a previous clk_hw_register_*() call, and return the error code for
-+ * those.  This is to permit this function to be called immediately
-+ * after clk_hw_register_*().
-  */
- int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
- 	const char *dev_id)
- {
- 	struct clk_lookup *cl;
- 
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
- 	/*
- 	 * Since dev_id can be NULL, and NULL is handled specially, we must
- 	 * pass it as either a NULL format string, or with "%s".
--- 
-1.9.1
+Best Regards,
+Chanwoo Choi
+
+> 
+>> ---
+>>  MAINTAINERS | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 20bb1d00098c..442d6f5c65be 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -10233,9 +10233,12 @@ F:	drivers/nfc/s3fwrn5
+>>  SAMSUNG SOC CLOCK DRIVERS
+>>  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>  M:	Tomasz Figa <tomasz.figa@gmail.com>
+>> +M:	Chanwoo Choi <cw00.choi@samsung.com>
+>>  S:	Supported
+>>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>>  F:	drivers/clk/samsung/
+>> +F:	include/dt-bindings/clock/exynos*.h
+>> +F:	Documentation/devicetree/bindings/clock/exynos*.txt
+>>  
+>>  SAMSUNG SXGBE DRIVERS
+>>  M:	Byungho An <bh74.an@samsung.com>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
+
