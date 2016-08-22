@@ -1,58 +1,32 @@
-Return-Path: <jorge.ramirez-ortiz@linaro.org>
-Return-Path: <jorge.ramirez-ortiz@linaro.org>
-Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
-To: Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>
-References: <20160711210852.31553-1-sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
-From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <453b7ea6-b6c9-ae42-6ac5-81faa1eb2b5d@linaro.org>
-Date: Fri, 19 Aug 2016 08:52:35 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160711210852.31553-1-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
+ k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 0/5] clk: samsung: exynos: Fix the checkpatch warnings
+Date: Mon, 22 Aug 2016 18:48:34 +0900
+Message-id: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/2016 11:08 PM, Stephen Boyd wrote:
-> Add the call to of_clk_set_defaults() into the amba probe path so
-> that devices on the amba bus can use the assigned rates and
-> parents feature of the common clock framework.
->
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Jorge Ramirez Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->   drivers/amba/bus.c | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index a5b5c87e2114..a56fa2a1e9aa 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -19,6 +19,7 @@
->   #include <linux/amba/bus.h>
->   #include <linux/sizes.h>
->   #include <linux/limits.h>
-> +#include <linux/clk/clk-conf.h>
->   
->   #include <asm/irq.h>
->   
-> @@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
->   	int ret;
->   
->   	do {
-> +		ret = of_clk_set_defaults(dev->of_node, false);
-> +		if (ret < 0)
-> +			break;
-> +
->   		ret = dev_pm_domain_attach(dev, true);
->   		if (ret == -EPROBE_DEFER)
->   			break;
+This patches just fix the checkpatch warnings for exynos5433/3250/5260/5420/4
+series without the behavior changes.
 
-Stephen/Russell,
+Chanwoo Choi (5):
+  clk: samsung: exynos5433: Fix the checkpatch warnings
+  clk: samsung: exynos3250: Fix the checkpatch warnings
+  clk: samsung: exynos5260: Fix the checkpatch warnings
+  clk: samsung: exynos5420: Fix the checkpatch warnings
+  clk: samsung: exynos4: Fix the checkpatch warnings
 
-what is the status of this patch? has it been merged?
+ drivers/clk/samsung/clk-exynos3250.c | 97 ++++++++++++++++++++----------------
+ drivers/clk/samsung/clk-exynos4.c    | 51 ++++++++++---------
+ drivers/clk/samsung/clk-exynos5260.c |  4 +-
+ drivers/clk/samsung/clk-exynos5420.c | 11 ++--
+ drivers/clk/samsung/clk-exynos5433.c |  6 ++-
+ 5 files changed, 88 insertions(+), 81 deletions(-)
 
-thanks
-
-Jorge
+-- 
+1.9.1
