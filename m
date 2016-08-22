@@ -1,94 +1,112 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: [PATCH v3 00/14] Clock improvement for video playback
-Date: Mon, 29 Aug 2016 14:26:52 +0200
-Message-ID: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
+	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v12 3/4] arm: dts: mt2701: Add clock controller device nodes
+Date: Mon, 22 Aug 2016 16:29:24 +0800
+Message-ID: <1471854565-19810-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
+References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+From: James Liao <jamesjj.liao@mediatek.com>
 
-v3:
-  - Rebase to v4.8-rc1
-  - Tipo fix in st,clkgen-pll.txt
-  - Add Ack of Peter for the series
-  - Add missed patch: "ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms"
+Add clock controller nodes for MT2701, include topckgen, infracfg,
+pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
+bdpsys. This patch also add two oscillators that provide clocks for
+MT2701.
 
-v2:
-  - Simpliflication of clock binding
-    remark from Rob https://lkml.org/lkml/2016/5/25/492
-  - Suppression of stih415-416 support for the clocks (in order
-	to help simplification of clock binding)
-    (others patchs for the machine and drivers will come)
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-This serie allows to increase video resolutions and make audio
-adjustment during a video playback.
-
-Gabriel Fernandez (14):
-  drivers: clk: st: Remove stih415-416 clock support
-  drivers: clk: st: Simplify clock binding of STiH4xx platforms
-  ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms
-  drivers: clk: st: Add fs660c32 synthesizer algorithm
-  drivers: clk: st: Add clock propagation for audio clocks
-  drivers: clk: st: Handle clk synchronous mode for video clocks
-  ARM: DT: STiH407: Enable clock propagation for audio clocks
-  ARM: DT: STiH410: Enable clock propagation for audio clocks
-  ARM: DT: STiH418: Enable clock propagation for audio clocks
-  ARM: DT: STiH407: Enable synchronous clock mode for video clocks
-  ARM: DT: STiH410: Enable synchronous clock mode for video clocks
-  ARM: DT: STiH418: Enable synchronous clock mode for video clocks
-  ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
-  ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-
- .../bindings/clock/st/st,clkgen-divmux.txt         |  49 --
- .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  20 +-
- .../devicetree/bindings/clock/st/st,clkgen-pll.txt |  35 +-
- .../bindings/clock/st/st,clkgen-prediv.txt         |  36 -
- .../devicetree/bindings/clock/st/st,clkgen-vcc.txt |  61 --
- .../devicetree/bindings/clock/st/st,clkgen.txt     |  54 +-
- .../devicetree/bindings/clock/st/st,flexgen.txt    |   4 +
- .../devicetree/bindings/clock/st/st,quadfs.txt     |  31 +-
- arch/arm/boot/dts/stih407-clock.dtsi               |  22 +-
- arch/arm/boot/dts/stih407.dtsi                     |  16 +-
- arch/arm/boot/dts/stih410-clock.dtsi               |  20 +-
- arch/arm/boot/dts/stih410.dtsi                     |  16 +-
- arch/arm/boot/dts/stih418-clock.dtsi               |  20 +-
- drivers/clk/st/clk-flexgen.c                       |  63 +-
- drivers/clk/st/clkgen-fsyn.c                       | 481 ++++---------
- drivers/clk/st/clkgen-mux.c                        | 748 +--------------------
- drivers/clk/st/clkgen-pll.c                        | 472 +------------
- 17 files changed, 323 insertions(+), 1825 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-divmux.txt
- delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-prediv.txt
- delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-vcc.txt
-
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 18596a2..c9a8dbf 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -12,8 +12,10 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <dt-bindings/clock/mt2701-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/mt2701-resets.h>
+ #include "skeleton64.dtsi"
+ #include "mt2701-pinfunc.h"
+ 
+@@ -77,6 +79,20 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
++	rtc32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000>;
++		clock-output-names = "rtc32k";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupt-parent = <&gic>;
+@@ -104,6 +120,26 @@
+ 		reg = <0 0x10005000 0 0x1000>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2701-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2701-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2701-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
+ 	watchdog: watchdog@10007000 {
+ 		compatible = "mediatek,mt2701-wdt",
+ 			     "mediatek,mt6589-wdt";
+@@ -128,6 +164,12 @@
+ 		reg = <0 0x10200100 0 0x1c>;
+ 	};
+ 
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2701-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	gic: interrupt-controller@10211000 {
+ 		compatible = "arm,cortex-a7-gic";
+ 		interrupt-controller;
 -- 
 1.9.1
