@@ -1,72 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 19 Aug 2016 12:16:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
- clock driver
-Message-ID: <20160819191612.GU361@codeaurora.org>
-References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
- <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
- <20160819002507.GS361@codeaurora.org>
- <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
+Return-Path: <cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
+ k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 1/2] dt-bindings: Add the clock id for CMU_CDREX (DRAM Express
+ Controller)
+Date: Mon, 22 Aug 2016 17:41:47 +0900
+Message-id: <1471855308-12791-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
+References: <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/20, Masahiro Yamada wrote:
-> 2016-08-19 9:25 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> >> +{
-> >> +     struct device *dev = &pdev->dev;
-> >> +     const struct of_device_id *match;
-> >> +     struct clk_hw_onecell_data *hw_data;
-> >> +     struct device_node *parent;
-> >> +     struct regmap *regmap;
-> >> +     const struct uniphier_clk_data *p;
-> >> +     int clk_num = 0;
-> >> +
-> >> +     match = of_match_node(uniphier_clk_match, dev->of_node);
-> >> +     if (!match)
-> >> +             return -ENODEV;
-> >
-> > We can use of_driver_match_device() to make this simpler.
-> 
-> 
-> I want to use the returned "match".
-> The of_driver_match_device() just checks if it matches or not,
-> so I do not think it can be the replacement.
-> 
-> I can use of_match_device() instead, if you like.
+This patch adds the new clock id for CMU_CDRES (DRAM Express Controller)
+geneates the clocks for DRAM and NoC (Network on Chip) bus clock.
 
-Sorry I meant of_device_get_match_data().
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ include/dt-bindings/clock/exynos5420.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> 
-> 
-> 
-> >> +
-> >> +     parent = of_get_parent(dev->of_node); /* parent should be syscon node */
-> >> +     regmap = syscon_node_to_regmap(parent);
-> >> +     of_node_put(parent);
-> >
-> > devm_get_regmap(dev->parent) should work then? Why do we need to
-> > use OF APIs?
-> 
-> "git grep devm_get_regmap" did not hit anything.
-> 
-> Where is it defined?
-> 
-
-Sorry I meant dev_get_regmap().
-
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 17ab8394bec7..6fd21c291416 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -214,6 +214,9 @@
+ #define CLK_MOUT_SW_ACLK400     651
+ #define CLK_MOUT_USER_ACLK300_GSCL	652
+ #define CLK_MOUT_SW_ACLK300_GSCL	653
++#define CLK_MOUT_MCLK_CDREX	654
++#define CLK_MOUT_BPLL		655
++#define CLK_MOUT_MX_MSPLL_CCORE	656
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+@@ -239,8 +242,14 @@
+ #define CLK_DOUT_ACLK300_DISP1	788
+ #define CLK_DOUT_ACLK300_GSCL	789
+ #define CLK_DOUT_ACLK400_DISP1	790
++#define CLK_DOUT_PCLK_CDREX	791
++#define CLK_DOUT_SCLK_CDREX	792
++#define CLK_DOUT_ACLK_CDREX1	793
++#define CLK_DOUT_CCLK_DREX0	794
++#define CLK_DOUT_CLK2X_PHY0	795
++#define CLK_DOUT_PCLK_CORE_MEM	796
+ 
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		791
++#define CLK_NR_CLKS		797
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
