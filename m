@@ -1,46 +1,37 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 25 Aug 2016 09:52:47 +0200
-Message-ID: <CAMuHMdUC9d4KNPTDY51DCptmMFQ1F2jLmRDO9WLt=WZA09qRew@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: let clk_disable() return immediately if clk is NULL
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>,
-	Linux MIPS Mailing List <linux-mips@linux-mips.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Eric Miao <eric.y.miao@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"adi-buildroot-devel@lists.sourceforge.net" <adi-buildroot-devel@lists.sourceforge.net>,
-	Greg Ungerer <gerg@linux-m68k.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>,
-	bcm-kernel-feedback-list@broadcom.com, Wan ZongShun <mcuos.com@gmail.com>,
-	Steven Miao <realmz6@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ kgene@kernel.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com,
+ linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 2/5] clk: samsung: exynos5410: Expose the peripheral DMA gate
+ clocks
+Date: Mon, 22 Aug 2016 18:31:00 +0200
+Message-id: <1471883463-1950-3-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 24, 2016 at 7:26 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Many of clk_disable() implementations just return for NULL pointer,
-> but this check is missing from some.  Let's make it tree-wide
-> consistent.  It will allow clock consumers to call clk_disable()
-> without NULL pointer check.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Greg Ungerer <gerg@uclinux.org>
-> Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+These clocks are needed in order to use the PL330 peripheral
+DMA controllers.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5410.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 54ec486..cf6fb41 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+ 	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
+ 	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
+ 	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
++	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
++	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
+ 
+ 	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
+ 	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
+-- 
+1.9.1
