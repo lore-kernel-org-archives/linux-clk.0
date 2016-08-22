@@ -1,39 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40122 "EHLO
-	pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752441AbcHMHiV (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 13 Aug 2016 03:38:21 -0400
-Date: Sat, 13 Aug 2016 08:38:10 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: prevent __of_clk_get_hw_from_provider() from
- returning NULL
-Message-ID: <20160813073809.GA32102@n2100.armlinux.org.uk>
-References: <1468919039-23004-1-git-send-email-yamada.masahiro@socionext.com>
- <20160804205734.GA15690@codeaurora.org>
- <CAK7LNAQL2u1YTxr_SWR6S_2aFPfXAPcaFfkWKSV_D-RU2vq7BQ@mail.gmail.com>
- <20160810232307.GK2996@codeaurora.org>
- <CAK7LNASGVAy1Ff8Hp_s+icDEtYHMmxfJv7La=mFF0haJ0hWrUw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNASGVAy1Ff8Hp_s+icDEtYHMmxfJv7La=mFF0haJ0hWrUw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <57BAE9E8.50703@samsung.com>
+Date: Mon, 22 Aug 2016 21:02:48 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
+ k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: samsung: exynos5420: Add clocks for CMU_CDREX
+ domain
+References: 
+ <CGME20160822084428epcas1p333bb92719d279a64e541ca70bdb7c0f3@epcas1p3.samsung.com>
+ <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1471855308-12791-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 12, 2016 at 03:59:51PM +0900, Masahiro Yamada wrote:
-> But, actually, clk_get returns ERR_PTR(-ENOENT) if "clocks" property
-> is missing.
+Dear all,
 
-Probably because we don't know if that's a case of a partially
-converted platform (which doesn't yet have its clk stuff in DT),
-so we need to fall back to the table-driven code, or if it really
-has no clocks.
+Please ignore this patches because the CMU_CDREX
+should support the 800MHz DRAM clock. But, following clk_summary
+show the 825MHz clock. So, I need to change the clock rate
+of fout_bpll or check it. After setting the DRAM clock
+as 800MHz, I'll send the patches again.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Regards,
+Chanwoo Choi
+
+On 2016=EB=85=84 08=EC=9B=94 22=EC=9D=BC 17:41, Chanwoo Choi wrote:
+> This patches add the clocks for CMU_CDREX (DRAM Express Controller)
+> that generates the clocks for DRAM and NoC (Network on Chip) bus clock.
+> 
+> [Result for clk_summary on exynos5422-odroidxu3 board]
+>     fout_bpll                             0            0   825000000          0 0  
+>        mout_bpll                          0            0   825000000          0 0  
+>           mout_mclk_cdrex                 0            0   825000000          0 0  
+>              dout_pclk_core_mem           0            0   206250000          0 0  
+>              dout_sclk_cdrex              0            0   825000000          0 0  
+>                 dout_clk2x_phy0           0            0   825000000          0 0  
+>                    dout_aclk_cdrex1           0            0   412500000          0 0  
+>                       dout_pclk_cdrex           0            0   103125000          0 0  
+>                    dout_cclk_drex0           0            0   412500000          0 0  
+> 
+> Chanwoo Choi (2):
+>   dt-bindings: Add the clock id for CMU_CDREX (DRAM Express Controller)
+>   clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
+> 
+>  drivers/clk/samsung/clk-exynos5420.c   | 35 ++++++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos5420.h | 11 ++++++++++-
+>  2 files changed, 45 insertions(+), 1 deletion(-)
+> 
