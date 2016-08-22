@@ -1,86 +1,68 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 14/17] clk: samsung: clkout: samsung: Switch to new clock
- controller API
-Date: Tue, 16 Aug 2016 15:35:11 +0200
-Message-id: <1471354514-24224-15-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55088 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752228AbcHVKCZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2016 06:02:25 -0400
+Subject: Re: [PATCH] MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS
+To: Chanwoo Choi <cw00.choi@samsung.com>
+References: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, k.kozlowski@samsung.com, kgene@kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, chanwoo@kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <76aea8a8-cda7-ca9f-54ff-d614d834dde0@samsung.com>
+Date: Mon, 22 Aug 2016 12:01:58 +0200
+MIME-version: 1.0
+In-reply-to: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+Hi Chanwoo,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos-clkout.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+On 08/18/2016 02:47 PM, Chanwoo Choi wrote:
+> Add the myself to the entry of SAMSUNG SOC CLOCK DRIVERS to review
+> and test the patches as supporter. I will help them. I can access the all
+> datasheet of Exynos SoC and test it on Exynos-based board. I was implemented
+> the exynos4415/5433 clock driver as author and handled the exynos3250 clock
+> driver. Lastly, adding the missing information of the exynos clock drivers.
+> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 96fab6cfb202..9c57a623e741 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -26,6 +26,7 @@
- #define EXYNOS5_CLKOUT_MUX_MASK		0x1f
- 
- struct exynos_clkout {
-+	struct clk_ctrl *clk_ctrl;
- 	struct clk_gate gate;
- 	struct clk_mux mux;
- 	spinlock_t slock;
-@@ -66,6 +67,10 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	if (!clkout)
- 		return;
- 
-+	clkout->clk_ctrl = clk_ctrl_register(NULL);
-+	if (IS_ERR(clkout->clk_ctrl))
-+		goto free_clkout;
-+
- 	spin_lock_init(&clkout->slock);
- 
- 	parent_count = 0;
-@@ -84,7 +89,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	}
- 
- 	if (!parent_count)
--		goto free_clkout;
-+		goto free_ctrl;
- 
- 	clkout->reg = of_iomap(node, 0);
- 	if (!clkout->reg)
-@@ -100,7 +105,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
- 	clkout->mux.lock = &clkout->slock;
- 
--	clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
-+	clkout->clk_table[0] = clk_register_composite(NULL, clkout->clk_ctrl, "clkout",
- 				parent_names, parent_count, &clkout->mux.hw,
- 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
- 				&clk_gate_ops, CLK_SET_RATE_PARENT
-@@ -126,6 +131,8 @@ clks_put:
- 	for (i = 0; i < EXYNOS_CLKOUT_PARENTS; ++i)
- 		if (!IS_ERR(parents[i]))
- 			clk_put(parents[i]);
-+free_ctrl:
-+	clk_ctrl_unregister(clkout->clk_ctrl);
- free_clkout:
- 	kfree(clkout);
- 
--- 
-1.9.1
+I'm going to apply this patch with commit message rephrased as below.
+
+"MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS co-maintainer
+
+Add myself to the SAMSUNG SOC CLOCK DRIVERS entry, I'm going to review
+and test related patches as supporter.  I can access all the datasheet
+of Exynos SoC series and can do tests on Exynos based boards.  I have
+implemented the exynos4415/5433 clock drivers and co-authored the
+exynos3250 clock driver.  While at it, add missing paths of the exynos
+clock driver files."
+
+Please let me know if you see any issues with that.
+
+> ---
+>  MAINTAINERS | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 20bb1d00098c..442d6f5c65be 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10233,9 +10233,12 @@ F:	drivers/nfc/s3fwrn5
+>  SAMSUNG SOC CLOCK DRIVERS
+>  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  M:	Tomasz Figa <tomasz.figa@gmail.com>
+> +M:	Chanwoo Choi <cw00.choi@samsung.com>
+>  S:	Supported
+>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  F:	drivers/clk/samsung/
+> +F:	include/dt-bindings/clock/exynos*.h
+> +F:	Documentation/devicetree/bindings/clock/exynos*.txt
+>  
+>  SAMSUNG SXGBE DRIVERS
+>  M:	Byungho An <bh74.an@samsung.com>
+
