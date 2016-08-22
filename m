@@ -1,69 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp5-g21.free.fr ([212.27.42.5]:56844 "EHLO smtp5-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751287AbcHVG3L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Aug 2016 02:29:11 -0400
+Date: Mon, 22 Aug 2016 08:28:56 +0200
 From: Jean-Francois Moine <moinejf@free.fr>
-Date: Wed, 24 Aug 2016 08:32:51 +0200
-Subject: [PATCH RESEND] clk: core: Force setting the phase delay when no change
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Message-ID: <E1bcUOQ-0002Wn-1d@bombadil.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH v2 0/3] clk: sunxi-ng: Add the A83T clocks
+Message-Id: <20160822082856.6ca0aa6705bbadb70edb2330@free.fr>
+In-Reply-To: <CAEzqOZuGbn0Qc62mLpPKuH+n8doVLQec5Lg-cvT2C5tqh1GFzg@mail.gmail.com>
+References: <cover.1465666788.git.moinejf@free.fr>
+        <CAEzqOZuGbn0Qc62mLpPKuH+n8doVLQec5Lg-cvT2C5tqh1GFzg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch reverts the commit 023bd7166be0595d18220dfd5c9765b3970f6ef3
-(clk: skip unnecessary set_phase if nothing to do), fixing two
-problems:
-- in some SoCs, the hardware phase delay depends on the rate ratio of
-  the clock and its parent. So, changing this ratio may imply to set
-  new hardware values, even if the logical delay is the same.
-- when the delay was the same as previously, an error was returned.
+On Mon, 22 Aug 2016 02:23:51 +0800
+Vishnu Patekar <vishnupatekar0510@gmail.com> wrote:
 
-Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
----
-resend:
-- send to the clock maintainers (asked by Maxime Ripard)
-- change the comment adding the reference to the reverted commit
----
- drivers/clk/clk.c | 5 -----
- 1 file changed, 5 deletions(-)
+> Thanks for followup patches for a83t modern clock.
+> 
+> well, this patch series does not apply on sunxi/for-next.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 71cc567..7e8576e 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1908,10 +1908,6 @@ int clk_set_phase(struct clk *clk, int degrees)
- 
- 	clk_prepare_lock();
- 
--	/* bail early if nothing to do */
--	if (degrees == clk->core->phase)
--		goto out;
--
- 	trace_clk_set_phase(clk->core, degrees);
- 
- 	if (clk->core->ops->set_phase)
-@@ -1922,7 +1918,6 @@ int clk_set_phase(struct clk *clk, int degrees)
- 	if (!ret)
- 		clk->core->phase = degrees;
- 
--out:
- 	clk_prepare_unlock();
- 
- 	return ret;
+Hi Vishnu,
+
+This series is rather old!
+Well, at this time, I was thinking that the 'modern' clock (aka
+sunxi-ng) was a good thing, but, just after sending this series, I was
+blocked, mainly because of the 'new timing' of the MMC clocks.
+So, I rewrote and simplified the sunxi clock driver, and I submitted a
+'ccu' patch which was refused by Maxime and Mike.
+
+Actually, my 'ccu' driver is almost finished. The code is only 1200
+lines in one file. It contains optimized computation of the clock
+parameters, handles the H3 CPU frequency, the MMC 'new timing',
+sigma-delta modulation for the audio PLL, the PRCM clocks and more.
+The SoC specific tables (actually H3 and A83T) are about 10kB, but they
+are defined as templates in .init.rodata, so that only the tables of the
+current SoC remain in memory after system init.
+
+This driver works fine for my Allwinner's boards and I will never go
+back to the 'sunxi-ng' which is rather complex and lacks of flexibility.
+If you are interested, the source is available in my site (see below).
+
 -- 
-2.9.3
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Ken ar c'hentañ	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
