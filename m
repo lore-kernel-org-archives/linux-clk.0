@@ -1,130 +1,169 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 17 Aug 2016 11:35:20 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Heiko
- =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
-Message-Id: <20160817113520.c11e03eb1ddb60a7acc2703b@free.fr>
-In-Reply-To: <63bc0953-9c64-e7f5-3938-6ecf894c893e@rock-chips.com>
-References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
-	<20160815182959.GV361@codeaurora.org>
-	<7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
-	<20160817083438.8c7f336e76bc12205e71e13d@free.fr>
-	<63bc0953-9c64-e7f5-3938-6ecf894c893e@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding
+ of STiH4xx platforms
+To: Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20160619150458.GA26824@rob-hp-laptop>
+ <146794221378.73491.2803164814485320331@resonance> <577F6E83.3080006@st.com>
+ <146799410307.73491.9408637761157902031@resonance> <578343A2.6090801@st.com>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas
+ Kandagatla <srinivas.kandagatla@gmail.com>,
+        Maxime Coquelin
+	<maxime.coquelin@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Russell
+ King <linux@armlinux.org.uk>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier
+ Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda
+	<a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen
+	<dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry
+ Reding <treding@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones
+	<lee.jones@linaro.org>,
+        Peter Griffin <peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <7b3f45bf-2fba-7563-f2a2-c74e759f6316@st.com>
+Date: Mon, 22 Aug 2016 18:06:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <578343A2.6090801@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 17 Aug 2016 16:15:57 +0800
-Shawn Lin <shawn.lin@rock-chips.com> wrote:
+Hi Mike,
 
-> + Heiko
->=20
-> On 2016/8/17 14:34, Jean-Francois Moine wrote:
-> > On Wed, 17 Aug 2016 09:00:05 +0800
-> > Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> >
-> >> On 2016/8/16 2:29, Stephen Boyd wrote:
-> >>> On 08/13, Jean-Francois Moine wrote:
-> >>>> The hardware phase delay may depend on some other settings as clock
-> >>>> reparenting, so, it has to be set each time.
-> >>>> Also, when the delay was the same as previously, an error was return=
-ed.
-> >>>>
-> >>>> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> >>>> ---
-> >>>
-> >>> This effectively reverts commit 023bd7166be0 (clk: skip
-> >>> unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
-> >>> to see if Shawn has any comments or if that patch was just a
-> >>> broken optimization.
-> >>>
-> >>> We may want to go another route and get the phase from the
-> >>> hardware and compare that to what's requested. That way we don't
-> >>> set the phase again unnecessarily.
-> >>
-> >> Sorry for late response.
-> >>
-> >> If the client calls clk_set_phase to set the same phase ,
-> >> why it needs to reparent as *this* parent already support this phase a=
-nd
-> >> we don't need to do it again?
-> >>
-> >> For some reasons we have to reparent the clock, it should be sub clock
-> >> drivers' responsibility to guarantee that we can maintain/restore the
-> >> topology structure no matter for rate or for phase. But it shouldn't
-> >> make the callers/users be aware of what was happening.
-> >>
-> >> How do you nofify them that "Oh, reparent now, please call
-> >> clk_set_phase again" ? :)
-> >>
-> >> Plz correct me if my understanding is wrong.
-> >
-> > Shawn,
-> >
-> > Maybe this problem is Allwinner specific.
-> >
-> > In their SoCs, the phase delays 0..360=B0 must be translated to a
-> > hardware shift 0..7 which depends on the ratio of of the rates of the
-> > clock and its father. When reparenting the clock, the ratio may change
-> > and, with a same phase delay, the hardware shift may have to be
->=20
-> So when reparenting the clock, could you update the clk->core->phase
-> as well to match the real phase using?
+you forgot me ?
 
-No so easy: from the old ratio, we should translate back the hardware
-shifts (sample and output) to degrees, and, after reparenting,
-explicitly call the set_phase function of both the sample and output
-clocks and update the hardware.
+Best Regards
 
-While we are sure that the client will call set_phase after reparenting.
+Gabriel
 
-> > changed. As the phase delay is always set after setting the clock,
-> > setting the clock hardware in all cases solves the possible mismatch.
-> >
-> > Now, the problem I had is a bit different: in some devices (MMCs) of
-> > some Allwinner SoCs, and under some conditions, the hardware phase
-> > delay may be set directly in the client instead of in the clock.
->=20
-> You mean Allwinner mmc driver hardcode the setting of clk phasse instead
-> of calling clk API? Looks strange to me...
 
-But not so stupid. In the Allwinner's SoCs, the MMC hardware asks for
-2 clocks, 'sample' and 'output', which have a same rate but different
-phase delays. The phase shift is implemented in the clock hardware.
-So, by software, after setting the (main) clock rate, the MMC driver must
-call the clock driver to update the delays of the clock children.
-
-In newer SoCs, Allwinner developped a 'new timing' mode.
-The hardware phase shift still exists in the clock, but they added the
-same shifting mechanism in the MMC hardware. In this 'new timing' mode,
-there is only one clock, and the MMC driver sets itself the phase delays
-without having to call twice more the clock driver.
-
-(but this would be too simple, in fact, the old timing must still be
-used for rates < 50MHz, and some devices - eMMC - don't work without the
-new timing)
-
-> > Only the clock knows when this capability is used, so the clock must
-> > alert the client that this one has to set the phase delay or not.
-> > I solved this required synchronization by returning a specific error
-> > code when the clock does not set the phase delay on its side.
-> > This mechanism works fine when the set_phase() callback function of the
-> > clock is always called, even with a same delay.
-> >
-> > In the Allwinner's SoCs, setting the hardware phase delay asks for only
-> > a few machine instructions, so, the overhead is very small.
-> > If this is not the case for other machines, it could be simple enough
-> > to move the test of same delay to the clock drivers of these machines...
->=20
-> I understand it now but it's a trick but not a legit way to solve your
-> problem from my view.
-
-Have you arguments about keeping the test of same delay and not calling
-the clock driver?
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+On 07/11/2016 08:58 AM, Gabriel Fernandez wrote:
+>
+>
+> On 07/08/2016 06:08 PM, Michael Turquette wrote:
+>> Quoting Gabriel Fernandez (2016-07-08 02:12:35)
+>>> Hi Mike,
+>>>
+>>> On 07/08/2016 03:43 AM, Michael Turquette wrote:
+>>>> Quoting Rob Herring (2016-06-19 08:04:58)
+>>>>> On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
+>>>>>> This patch reworks the clock binding to avoid too much detail in DT.
+>>>>>> Now we have only compatible string per type of clock
+>>>>>> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
+>>>>>>
+>>>>> I have no idea what the clock trees and clock controller in these 
+>>>>> chips
+>>>>> look like, so it's hard to say if the changes here are good. It still
+>>>>> looks like things are somewhat fine grained clocks in DT. I'll leave
+>>>>> it up to the platform maintainers to decide...
+>>>> Is this series breaking ABI? If yes, why not do what Maxime did for 
+>>>> the
+>>>> Allwinner/sunxi clocks and just fully convert over to a
+>>>> one-node-per-clock-controller binding? This one-node-per-clock 
+>>>> stuff is
+>>>> pretty unfortunate, and if we're deprecating platforms (patch #1) then
+>>>> now might be a good time to re-evaluate the whole thing.
+>>> The goal of my patchset was to be aligned with DRM / KMS development 
+>>> and
+>>> to offer
+>>> the possibility to make a correct video playback on STiH407/STiH410
+>>> platform.
+>>> Our milestone is the 4.8 for that.
+>>>
+>>> Currently people need these patches to work.
+>>> I'm not sure it's a good time to re-evaluate the whole thing.
+>>>
+>>> Is it possible to re-evaluate later ?
+>> Are you OK to break ABI later? Or at a minimum, deprecate the current
+>> binding (maintain it forever for legacy platforms) and create a new
+>> clock controller binding description that supersedes the legacy binding
+>> for all new platforms?
+>>
+>> If the answer to either question is "yes", then I'm OK to put it aside
+>> for now. But if the answer to both is "no", and this patch series is
+>> breaking ABI, then we really should fix it now.
+>
+> Hi Mike,
+> i m ok to break ABI later.
+>
+> Many Thanks !
+>
+> Best Regards
+>
+> Gabriel.
+>
+>> Regards,
+>> Mike
+>>
+>>> Best regards,
+>>> Gabriel
+>>>
+>>>> Regards,
+>>>> Mike
+>>>>
+>>>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>>>>>> ---
+>>>>>>    .../devicetree/bindings/clock/st/st,clkgen-mux.txt | 2 +-
+>>>>>>    .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
+>>>>>>    .../devicetree/bindings/clock/st/st,clkgen.txt     | 2 +-
+>>>>>>    .../devicetree/bindings/clock/st/st,quadfs.txt     | 6 +--
+>>>>>>    drivers/clk/st/clkgen-fsyn.c                       | 41 
+>>>>>> ++++++--------
+>>>>>>    drivers/clk/st/clkgen-mux.c                        | 28 
+>>>>>> ++++------
+>>>>>>    drivers/clk/st/clkgen-pll.c                        | 62 
+>>>>>> ++++++++++------------
+>>>>>>    7 files changed, 65 insertions(+), 87 deletions(-)
+>>>>>>
+>>>>>> diff --git 
+>>>>>> a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt 
+>>>>>> b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+>>>>>> index 4d277d6..9a46cb1d7 100644
+>>>>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
+>>>>>> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
+>>>>>>    Required properties:
+>>>>>>       - compatible : shall be:
+>>>>>> -     "st,stih407-clkgen-a9-mux",     "st,clkgen-mux"
+>>>>>> +     "st,stih407-clkgen-a9-mux"
+>>>>>>       - #clock-cells : from common clock binding; shall be set to 0.
+>>>>>>    diff --git 
+>>>>>> a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt 
+>>>>>> b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+>>>>>> index c9fd674..be0b043 100644
+>>>>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+>>>>>> @@ -9,11 +9,10 @@ Base address is located to the parent node. See 
+>>>>>> clock binding[2]
+>>>>>>    Required properties:
+>>>>>>       - compatible : shall be:
+>>>>>> -     "st,stih407-plls-c32-a0", "st,clkgen-plls-c32"
+>>>>>> -     "st,stih407-plls-c32-a9", "st,clkgen-plls-c32"
+>>>>>> -     "sst,plls-c32-cx_0", "st,clkgen-plls-c32"
+>>>>>> -     "sst,plls-c32-cx_1", "st,clkgen-plls-c32"
+>>>>>> -     "st,stih418-plls-c28-a9", "st,clkgen-plls-c32"
+>>>>>> +     "st,clkgen-pll0"
+>>>>>> +     "st,clkgen-pll0"
+>>>>> Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
+>>>>>
+>>>>>> +     "st,stih407-clkgen-plla9"
+>>>>>> +     "st,stih418-clkgen-plla9"
+>
