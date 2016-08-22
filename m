@@ -1,75 +1,64 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <57BE9E16.7090309@samsung.com>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com> <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com> <20160824044346.GR6502@codeaurora.org>
- <57BD5CFB.5050500@samsung.com> <20160825001109.GO19826@codeaurora.org> <57BE9E16.7090309@samsung.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Thu, 25 Aug 2016 23:43:10 +0900
-Message-ID: <CA+Ln22E7ZeFTuzmAT-S9xDWq5kE1_XhkDp8fp7=odrudgaivYQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
- samsung_cmu_info to init section
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>,
-	=?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
-	chanwoo@kernel.org,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:38801 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752682AbcHVMtn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Aug 2016 08:49:43 -0400
+Received: by mail-wm0-f54.google.com with SMTP id o80so142159039wme.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Aug 2016 05:49:43 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org, carlo@caione.org, khilman@baylibre.com,
+        devicetree@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson-gxbb: Export PWM related clocks for DT
+Date: Mon, 22 Aug 2016 14:49:37 +0200
+Message-Id: <1471870177-10609-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-25 16:28 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> Hi Stephen,
->
-> On 2016=EB=85=84 08=EC=9B=94 25=EC=9D=BC 09:11, Stephen Boyd wrote:
->> On 08/24, Chanwoo Choi wrote:
->>> On 2016=EB=85=84 08=EC=9B=94 24=EC=9D=BC 13:43, Stephen Boyd wrote:
->>>> On 08/23, Sylwester Nawrocki wrote:
->>>>> So the saving is rather insignificant but the patch doesn't make
->>>>> things worse and I'd say it might be worth applying.
->>>>>
->>>>
->>>> Sounds good. This sort of information should be in the commit
->>>> text though. Talking about const doesn't make any sense to me.
->>>
->>> Do you mean that 'const' is initconst secion?
->>
->> No. Marking it as initconst in the patch is correct.
->
-> OK.
->
->>
->>> If possible, could you explain the anything
->>> why you don't make sense about 'const'?
->>>
->>
->> I'm just saying that the reasoning to move it from the text
->> section to the data section shouldn't be because of const. There
->> should be better reasons to do this, like size benefits.
->>
->
-> As I already said, the samsung_cmu_register_on() requires
-> the 'const' type argument for 'struct samsung_cmu_info'.
+Add the PWM related clocks in order to be referenced as PWM source
+clocks.
 
-If a function takes a const pointer as an argument, then it's
-perfectly valid to give a non-const pointer. Casting from non-cost
-into const is valid, other way around not.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.h              | 6 +++---
+ include/dt-bindings/clock/gxbb-clkc.h | 3 +++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
->
-> So, I defined the instance on the out of the exynos5260_clk_aud_init() as=
- following:
->         static const struct samsung_cmu_info aud_cmu __initconst =3D {
->
-> How can i add the 'const' keyword and '__initsecion' to the
-> "struct samsung_cmu_info aud_cmu" in the "static void __init
-> exynos5260_clk_aud_init(struct device_node *np)"?
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index a2adf34..523b494 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -170,11 +170,11 @@
+  */
+ #define CLKID_SYS_PLL		  0
+ /* CLKID_CPUCLK */
+-#define CLKID_HDMI_PLL		  2
++/* CLKID_HDMI_PLL */
+ #define CLKID_FIXED_PLL		  3
+ #define CLKID_FCLK_DIV2		  4
+-#define CLKID_FCLK_DIV3		  5
+-#define CLKID_FCLK_DIV4		  6
++/* CLKID_FCLK_DIV3 */
++/* CLKID_FCLK_DIV4 */
+ #define CLKID_FCLK_DIV5		  7
+ #define CLKID_FCLK_DIV7		  8
+ #define CLKID_GP0_PLL		  9
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index f889d80..a5897f3 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -6,6 +6,9 @@
+ #define __GXBB_CLKC_H
+ 
+ #define CLKID_CPUCLK		1
++#define CLKID_HDMI_PLL		2
++#define CLKID_FCLK_DIV3		5
++#define CLKID_FCLK_DIV4		6
+ #define CLKID_CLK81		12
+ #define CLKID_ETH		36
+ 
+-- 
+1.9.1
 
-Stephen meant that there must be some benefit from a change to make it
-worth being included into the kernel.
-
-Best regards,
-Tomasz
