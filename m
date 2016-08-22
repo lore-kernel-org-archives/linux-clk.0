@@ -1,76 +1,144 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com
-Subject: [PATCH v3 7/7] clk: rockchip: rk3399: Add support frac mode frequencies
-Date: Tue,  2 Aug 2016 15:22:59 +0800
-Message-Id: <1470122579-32083-1-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <gnaygnil@gmail.com>
+Return-Path: <gnaygnil@gmail.com>
+Date: Mon, 22 Aug 2016 12:50:39 +0800
+From: Yang Ling <gnaygnil@gmail.com>
+To: keguang.zhang@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] CLK: Add Loongson1C clock support
+Message-ID: <20160822045034.GA6545@ly-pc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-We need to support various display resolutions for external
-display devices like HDMI/DP, the frac mode can help us to
-acquire almost any frequencies, and need higher VCOs to reduce
-clock jitters.
+This patch adds clock support to Loongson1C SoC.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Yang Ling <gnaygnil@gmail.com>
+
 ---
+V2:
+  Use loongson1 generic clock interface.
+---
+ drivers/clk/loongson1/Makefile         |   1 +
+ drivers/clk/loongson1/clk-loongson1c.c | 102 +++++++++++++++++++++++++++++++++
+ 2 files changed, 103 insertions(+)
+ create mode 100644 drivers/clk/loongson1/clk-loongson1c.c
 
-Changes in v3: None
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3399.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 2792404..ddd209b 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -109,6 +109,25 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
- 	{ /* sentinel */ },
- };
- 
-+static struct rockchip_pll_rate_table rk3399_pll_frates[] = {
-+	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
-+	RK3036_PLL_RATE( 594000000, 1, 123, 5, 1, 0, 12582912),  /* vco = 2970000000 */
-+	RK3036_PLL_RATE( 593406593, 1, 123, 5, 1, 0, 10508804),  /* vco = 2967032965 */
-+	RK3036_PLL_RATE( 297000000, 1, 123, 5, 2, 0, 12582912),  /* vco = 2970000000 */
-+	RK3036_PLL_RATE( 296703297, 1, 123, 5, 2, 0, 10508807),  /* vco = 2967032970 */
-+	RK3036_PLL_RATE( 148500000, 1, 129, 7, 3, 0, 15728640),  /* vco = 3118500000 */
-+	RK3036_PLL_RATE( 148351648, 1, 123, 5, 4, 0, 10508800),  /* vco = 2967032960 */
-+	RK3036_PLL_RATE( 106500000, 1, 124, 7, 4, 0,  4194304),  /* vco = 2982000000 */
-+	RK3036_PLL_RATE(  74250000, 1, 129, 7, 6, 0, 15728640),  /* vco = 3118500000 */
-+	RK3036_PLL_RATE(  74175824, 1, 129, 7, 6, 0, 13550823),  /* vco = 3115384608 */
-+	RK3036_PLL_RATE(  65000000, 1, 113, 7, 6, 0, 12582912),  /* vco = 2730000000 */
-+	RK3036_PLL_RATE(  59340659, 1, 121, 7, 7, 0,  2581098),  /* vco = 2907692291 */
-+	RK3036_PLL_RATE(  54000000, 1, 110, 7, 7, 0,  4194304),  /* vco = 2646000000 */
-+	RK3036_PLL_RATE(  27000000, 1,  55, 7, 7, 0,  2097152),  /* vco = 1323000000 */
-+	RK3036_PLL_RATE(  26973027, 1,  55, 7, 7, 0,  1173232),  /* vco = 1321678323 */
-+	{ /* sentinel */ },
+diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
+index 5a162a1..b7f6a16 100644
+--- a/drivers/clk/loongson1/Makefile
++++ b/drivers/clk/loongson1/Makefile
+@@ -1,2 +1,3 @@
+ obj-y				+= clk.o
+ obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
++obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
+diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
+new file mode 100644
+index 0000000..7e7e5ff
+--- /dev/null
++++ b/drivers/clk/loongson1/clk-loongson1c.c
+@@ -0,0 +1,102 @@
++/*
++ * Copyright (c) 2016 Yang Ling <gnaygnil@gmail.com>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++
++#include <loongson1.h>
++#include "clk.h"
++
++#define OSC		(24 * 1000000)
++#define DIV_APB		1
++
++static DEFINE_SPINLOCK(_lock);
++
++static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	u32 pll, rate;
++
++	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
++	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
++	rate *= OSC;
++	rate >>= 2;
++
++	return rate;
++}
++
++static const struct clk_ops ls1x_pll_clk_ops = {
++	.enable = ls1x_pll_clk_enable,
++	.disable = ls1x_pll_clk_disable,
++	.recalc_rate = ls1x_pll_recalc_rate,
 +};
 +
- /* CRU parents */
- PNAME(mux_pll_p)				= { "xin24m", "xin32k" };
- 
-@@ -229,7 +248,7 @@ static struct rockchip_pll_clock rk3399_pll_clks[] __initdata = {
- 	[npll] = PLL(pll_rk3399, PLL_NPLL, "npll",  mux_pll_p, 0, RK3399_PLL_CON(40),
- 		     RK3399_PLL_CON(43), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
- 	[vpll] = PLL(pll_rk3399, PLL_VPLL, "vpll",  mux_pll_p, 0, RK3399_PLL_CON(48),
--		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_rates),
-+		     RK3399_PLL_CON(51), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rk3399_pll_frates),
- };
- 
- static struct rockchip_pll_clock rk3399_pmu_pll_clks[] __initdata = {
++static const char *const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
++static const char *const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
++static const char *const dc_parents[] = { "dc_clk_div", "osc_clk", };
++
++static const struct clk_div_table ahb_div_table[] = {
++	[0] = {	.val = 0, .div = 2 },
++	[1] = {	.val = 1, .div = 4 },
++	[2] = {	.val = 2, .div = 3 },
++	[3] = {	.val = 3, .div = 3 },
++};
++
++void __init ls1x_clk_init(void)
++{
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
++	clk_register_clkdev(clk, "osc_clk", NULL);
++
++	/* clock derived from 24 MHz OSC clk */
++	clk = clk_register_pll(NULL, "pll_clk", "osc_clk",
++				&ls1x_pll_clk_ops, 0);
++	clk_register_clkdev(clk, "pll_clk", NULL);
++
++	clk = clk_register_divider(NULL, "cpu_clk_div", "pll_clk",
++				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
++				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
++				   CLK_DIVIDER_ONE_BASED |
++				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
++	clk_register_clkdev(clk, "cpu_clk_div", NULL);
++	clk = clk_register_fixed_factor(NULL, "cpu_clk", "cpu_clk_div",
++					0, 1, 1);
++	clk_register_clkdev(clk, "cpu_clk", NULL);
++
++	clk = clk_register_divider(NULL, "dc_clk_div", "pll_clk",
++				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
++				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
++	clk_register_clkdev(clk, "dc_clk_div", NULL);
++	clk = clk_register_fixed_factor(NULL, "dc_clk", "dc_clk_div", 0, 1, 1);
++	clk_register_clkdev(clk, "dc_clk", NULL);
++
++	clk = clk_register_divider_table(NULL, "ahb_clk_div", "cpu_clk_div",
++				0, LS1X_CLK_PLL_FREQ, DIV_DDR_SHIFT,
++				DIV_DDR_WIDTH, CLK_DIVIDER_ALLOW_ZERO,
++				ahb_div_table, &_lock);
++	clk_register_clkdev(clk, "ahb_clk_div", NULL);
++	clk = clk_register_fixed_factor(NULL, "ahb_clk", "ahb_clk_div",
++					0, 1, 1);
++	clk_register_clkdev(clk, "ahb_clk", NULL);
++	clk_register_clkdev(clk, "ls1x-dma", NULL);
++	clk_register_clkdev(clk, "stmmaceth", NULL);
++
++	/* clock derived from AHB clk */
++	clk = clk_register_fixed_factor(NULL, "apb_clk", "ahb_clk", 0, 1,
++					DIV_APB);
++	clk_register_clkdev(clk, "apb_clk", NULL);
++	clk_register_clkdev(clk, "ls1x-ac97", NULL);
++	clk_register_clkdev(clk, "ls1x-i2c", NULL);
++	clk_register_clkdev(clk, "ls1x-nand", NULL);
++	clk_register_clkdev(clk, "ls1x-pwmtimer", NULL);
++	clk_register_clkdev(clk, "ls1x-spi", NULL);
++	clk_register_clkdev(clk, "ls1x-wdt", NULL);
++	clk_register_clkdev(clk, "serial8250", NULL);
++}
 -- 
-1.7.9.5
+1.9.1
