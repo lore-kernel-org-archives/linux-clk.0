@@ -1,24 +1,54 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com
-Subject: Re: [PATCH v3 5/7] clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
-Date: Thu, 04 Aug 2016 21:05:03 +0200
-Message-ID: <3547456.uj6fXio0Ds@diego>
-In-Reply-To: <1470122546-32015-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1470122546-32015-1-git-send-email-zhengxing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mw@semihalf.com>
+Return-Path: <mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: sebastian.hesselbarth@gmail.com,
+	andrew@lunn.ch,
+	jason@lakedaemon.net,
+	thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com,
+	nadavh@marvell.com,
+	alior@marvell.com,
+	tn@semihalf.com,
+	jaz@semihalf.com,
+	Marcin Wojtas <mw@semihalf.com>
+Subject: [PATCH 1/2] clk: mvebu: set flags in CP110 gate clock
+Date: Tue, 23 Aug 2016 08:26:48 +0200
+Message-Id: <1471933609-8456-2-git-send-email-mw@semihalf.com>
+In-Reply-To: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 2. August 2016, 15:22:26 schrieb Xing Zheng:
-> We need to add more clocks for supporting more display resolution
-> for HDMI.
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Armada CP110 system controller comprise its own routine responsble
+for registering gate clocks. Among others 'flags' field in
+struct clk_init_data was not set, using a random values, which
+may cause an unpredicted behavior.
 
-applied to my clock-branch for 4.9
+This patch fixes the problem by setting CLK_IS_BASIC flag for
+all gated clocks of Armada 7k/8k SoCs family.
 
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
 
-Thanks
-Heiko
+Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+---
+ drivers/clk/mvebu/cp110-system-controller.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 7fa42d6..0835e1d 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -144,6 +144,7 @@ static struct clk *cp110_register_gate(const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &cp110_gate_ops;
++	init.flags = CLK_IS_BASIC;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+-- 
+1.8.3.1
