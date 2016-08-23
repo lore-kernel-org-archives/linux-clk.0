@@ -1,148 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:58733 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752444AbcHHKSF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2016 06:18:05 -0400
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v6 2/6] ARM: at91: pm: Create a procedure for the ULP0 mode
-Date: Mon, 8 Aug 2016 18:05:01 +0800
-Message-ID: <1470650705-31418-3-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
-References: <1470650705-31418-1-git-send-email-wenyou.yang@atmel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <hotran@apm.com>
+Return-Path: <hotran@apm.com>
+From: Hoan Tran <hotran@apm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	lho@apm.com,
+	Duc Dang <dhdang@apm.com>,
+	Hoan Tran <hotran@apm.com>
+Subject: [PATCH 0/3] clk: xgene: Add PMD clock support
+Date: Tue, 23 Aug 2016 08:52:38 -0700
+Message-Id: <1471967561-23634-1-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-To make the code more legible and prepare to add the ULP1 mode
-support in the future, create a separate procedure for the ULP0 mode.
+Add X-Gene PMD clock support.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
+PMD clock is implemented for a single register field.
+  Output rate = parent_rate * (denominator - scale) / denominator
+with
+  - denominator = bitmask of register field + 1
+  - scale = value of register field
 
-Changes in v6:
- - Add Acked-by tag.
+For example, for bitmask is 0x7, denominator will be 8 and scale
+will be computed and programmed accordingly.
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+Hoan Tran (3):
+  Documentation: dtb: xgene: Add PMD clock binding
+  clk: xgene: Add PMD clock
+  arm64: dts: xgene: Add DT node for APM X-Gene 2 CPU clocks
 
- arch/arm/mach-at91/pm_suspend.S | 65 +++++++++++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
+ Documentation/devicetree/bindings/clock/xgene.txt |  22 +++
+ arch/arm64/boot/dts/apm/apm-shadowcat.dtsi        |  64 +++++++
+ drivers/clk/clk-xgene.c                           | 223 ++++++++++++++++++++++
+ 3 files changed, 309 insertions(+)
 
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index a25defd..5fcffdc 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
- 
- 	ldr	r0, .pm_mode
- 	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_disable_main_clock
-+	beq	standby_mode
- 
- 	ldr	pmc, .pmc_base
- 
-@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 
--	/* Turn off the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--skip_disable_main_clock:
--	ldr	pmc, .pmc_base
--
--	/* Wait for interrupt */
--	at91_cpu_idle
--
--	ldr	r0, .pm_mode
--	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_enable_main_clock
-+ulp0_mode:
-+	bl	at91_pm_ulp0_mode
-+	b	ulp_exit
- 
-+ulp_exit:
- 	ldr	pmc, .pmc_base
- 
--	/* Turn on the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--	wait_moscrdy
--
- 	/* Restore PLLA setting */
- 	ldr	tmp1, .saved_pllar
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-@@ -177,7 +158,15 @@ skip_disable_main_clock:
- 
- 	wait_mckrdy
- 
--skip_enable_main_clock:
-+	b	pm_exit
-+
-+standby_mode:
-+	ldr	pmc, .pmc_base
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+pm_exit:
- 	/* Exit the self-refresh mode */
- 	mov	r0, #SRAMC_SELF_FRESH_EXIT
- 	bl	at91_sramc_self_refresh
-@@ -311,6 +300,32 @@ exit_sramc_sf:
- 	mov	pc, lr
- ENDPROC(at91_sramc_self_refresh)
- 
-+/*
-+ * void at91_pm_ulp0_mode(void)
-+ */
-+ENTRY(at91_pm_ulp0_mode)
-+	ldr	pmc, .pmc_base
-+
-+	/* Turn off the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+	/* Turn on the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscrdy
-+
-+	mov	pc, lr
-+ENDPROC(at91_pm_ulp0_mode)
-+
- .pmc_base:
- 	.word 0
- .sramc_base:
 -- 
-2.7.4
-
+1.9.1
