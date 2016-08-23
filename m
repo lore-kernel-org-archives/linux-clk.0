@@ -1,64 +1,161 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: Add GXBB AO Clock and Reset controller
- driver
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
- <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
- <CAP=VYLphcuq16vDueOOJ6anrW-ifYAK+1ijSjkGbxw48+m4xrw@mail.gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, linux-amlogic@lists.infradead.org,
- LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
- sboyd@codeaurora.org, mturquette@baylibre.com
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <5529118a-63f0-cb54-f6a4-305603da168f@baylibre.com>
-Date: Tue, 16 Aug 2016 15:35:09 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAP=VYLphcuq16vDueOOJ6anrW-ifYAK+1ijSjkGbxw48+m4xrw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <hotran@apm.com>
+Return-Path: <hotran@apm.com>
+From: Hoan Tran <hotran@apm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	lho@apm.com,
+	Duc Dang <dhdang@apm.com>,
+	Hoan Tran <hotran@apm.com>
+Subject: [PATCH 3/3] arm64: dts: xgene: Add DT node for APM X-Gene 2 CPU clocks
+Date: Tue, 23 Aug 2016 08:52:41 -0700
+Message-Id: <1471967561-23634-4-git-send-email-hotran@apm.com>
+In-Reply-To: <1471967561-23634-1-git-send-email-hotran@apm.com>
+References: <1471967561-23634-1-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/15/2016 02:08 AM, Paul Gortmaker wrote:
-> On Tue, Aug 9, 2016 at 5:13 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
->> Adds a Clock and Reset controller driver for the Always-On part
->> of the Amlogic Meson GXBB SoC.
->>
->> It exports paired Clocks and Resets lines that will be used by
->> peripherals in the Always-On subsystem.
-> 
-> [...]
-> 
->> +static const struct of_device_id gxbb_aoclkc_match_table[] = {
->> +       { .compatible = "amlogic,gxbb-aoclkc" },
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
->> +
->> +static struct platform_driver gxbb_aoclkc_driver = {
->> +       .probe          = gxbb_aoclkc_probe,
->> +       .driver         = {
->> +               .name   = "gxbb-aoclkc",
->> +               .of_match_table = gxbb_aoclkc_match_table,
->> +       },
->> +};
->> +
->> +module_platform_driver(gxbb_aoclkc_driver);
->> +
->> +MODULE_DESCRIPTION("AmLogic Meson GXBB AO Clock Controller Driver");
->> +MODULE_LICENSE("Dual BSD/GPL");
->> +MODULE_ALIAS("platform:gxbb-aoclkc");
->> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
-> 
-> Since this driver is controlled by a bool Kconfig, you can dump the module.h
-> include and all the MODULE_<xyz> tags above.
-> 
-> Or, if there is a genuine use case for it to be modular, then make it tristate?
-> 
-> Thanks,
-> Paul.
-> 
+Add DT nodes to enable APM X-Gene 2 CPU clocks.
 
-It will be non-modular.
+Signed-off-by: Hoan Tran <hotran@apm.com>
+---
+ arch/arm64/boot/dts/apm/apm-shadowcat.dtsi | 64 ++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-Thanks,
-Neil
+diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+index 1425ed4..e656e16 100644
+--- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+@@ -26,6 +26,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_0>;
++			#clock-cells = <1>;
++			clocks = <&pmd0clk 0>;
+ 		};
+ 		cpu@001 {
+ 			device_type = "cpu";
+@@ -34,6 +36,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_0>;
++			#clock-cells = <1>;
++			clocks = <&pmd0clk 0>;
+ 		};
+ 		cpu@100 {
+ 			device_type = "cpu";
+@@ -42,6 +46,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_1>;
++			#clock-cells = <1>;
++			clocks = <&pmd1clk 0>;
+ 		};
+ 		cpu@101 {
+ 			device_type = "cpu";
+@@ -50,6 +56,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_1>;
++			#clock-cells = <1>;
++			clocks = <&pmd1clk 0>;
+ 		};
+ 		cpu@200 {
+ 			device_type = "cpu";
+@@ -58,6 +66,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_2>;
++			#clock-cells = <1>;
++			clocks = <&pmd2clk 0>;
+ 		};
+ 		cpu@201 {
+ 			device_type = "cpu";
+@@ -66,6 +76,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_2>;
++			#clock-cells = <1>;
++			clocks = <&pmd2clk 0>;
+ 		};
+ 		cpu@300 {
+ 			device_type = "cpu";
+@@ -74,6 +86,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_3>;
++			#clock-cells = <1>;
++			clocks = <&pmd3clk 0>;
+ 		};
+ 		cpu@301 {
+ 			device_type = "cpu";
+@@ -82,6 +96,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_3>;
++			#clock-cells = <1>;
++			clocks = <&pmd3clk 0>;
+ 		};
+ 		xgene_L2_0: l2-cache-0 {
+ 			compatible = "cache";
+@@ -223,6 +239,54 @@
+ 				clock-output-names = "refclk";
+ 			};
+ 
++			pmdpll: pmdpll@170000f0 {
++				compatible = "apm,xgene-pcppll-v2-clock";
++				#clock-cells = <1>;
++				clocks = <&refclk 0>;
++				reg = <0x0 0x170000f0 0x0 0x10>;
++				clock-output-names = "pmdpll";
++			};
++
++			pmd0clk: pmd0clk {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7E200200 0x0 0x10>;
++				clock-shift = <8>;
++				clock-width = <3>;
++				clock-output-names = "pmd0clk";
++			};
++
++			pmd1clk: pmd1clk {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7E200210 0x0 0x10>;
++				clock-shift = <8>;
++				clock-width = <3>;
++				clock-output-names = "pmd1clk";
++			};
++
++			pmd2clk: pmd2clk {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7E200220 0x0 0x10>;
++				clock-shift = <8>;
++				clock-width = <3>;
++				clock-output-names = "pmd2clk";
++			};
++
++			pmd3clk: pmd3clk {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7E200230 0x0 0x10>;
++				clock-shift = <8>;
++				clock-width = <3>;
++				clock-output-names = "pmd3clk";
++			};
++
+ 			socpll: socpll@17000120 {
+ 				compatible = "apm,xgene-socpll-v2-clock";
+ 				#clock-cells = <1>;
+-- 
+1.9.1
