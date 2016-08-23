@@ -1,41 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:36617 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751636AbcHLK4V (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 06:56:21 -0400
-From: Keguang Zhang <keguang.zhang@gmail.com>
-To: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: [PATCH] MIPS: Loongson1B: Change the OSC clock name
-Date: Fri, 12 Aug 2016 18:56:03 +0800
-Message-Id: <1470999363-9978-1-git-send-email-keguang.zhang@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH -next] clk: meson: Fix invalid use of sizeof in
+ gxbb_aoclkc_probe()
+To: Wei Yongjun <weiyj.lk@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>
+References: <1471882101-22347-1-git-send-email-weiyj.lk@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <f0eeb1b0-5572-506d-0029-30b676c15a57@baylibre.com>
+Date: Tue, 23 Aug 2016 09:58:14 +0200
+MIME-Version: 1.0
+In-Reply-To: <1471882101-22347-1-git-send-email-weiyj.lk@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kelvin Cheung <keguang.zhang@gmail.com>
+On 08/22/2016 06:08 PM, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> sizeof() when applied to a pointer typed expression gives the
+> size of the pointer, not that of the pointed data.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/clk/meson/gxbb-aoclk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+> index 61ef28a..b45c5fb 100644
+> --- a/drivers/clk/meson/gxbb-aoclk.c
+> +++ b/drivers/clk/meson/gxbb-aoclk.c
+> @@ -142,7 +142,7 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct gxbb_aoclk_reset_controller *rstc;
+>  
+> -	rstc = devm_kzalloc(dev, sizeof(rstc), GFP_KERNEL);
+> +	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
+>  	if (!rstc)
+>  		return -ENOMEM;
+>  
+> 
+> 
+> 
 
-This patch changes the OSC clock name to "osc_clk".
+Aww, my bad.
 
-Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
----
- arch/mips/loongson32/common/platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
-index 4d12e36..fb60602 100644
---- a/arch/mips/loongson32/common/platform.c
-+++ b/arch/mips/loongson32/common/platform.c
-@@ -69,7 +69,7 @@ void __init ls1x_serial_set_uartclk(struct platform_device *pdev)
- /* CPUFreq */
- static struct plat_ls1x_cpufreq ls1x_cpufreq_pdata = {
- 	.clk_name	= "cpu_clk",
--	.osc_clk_name	= "osc_33m_clk",
-+	.osc_clk_name	= "osc_clk",
- 	.max_freq	= 266 * 1000,
- 	.min_freq	= 33 * 1000,
- };
--- 
-1.9.1
-
+Also :
+Fixes: f8c11f79912d ("clk: meson: Add GXBB AO Clock and Reset controller driver")
