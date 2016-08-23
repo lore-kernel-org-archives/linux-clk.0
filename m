@@ -1,42 +1,30 @@
-Return-Path: <hotran@apm.com>
-Return-Path: <hotran@apm.com>
-From: Hoan Tran <hotran@apm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	lho@apm.com,
-	Duc Dang <dhdang@apm.com>,
-	Hoan Tran <hotran@apm.com>
-Subject: [PATCH 0/3] clk: xgene: Add PMD clock support
-Date: Tue, 23 Aug 2016 08:52:38 -0700
-Message-Id: <1471967561-23634-1-git-send-email-hotran@apm.com>
+Return-Path: <Jiada_Wang@mentor.com>
+From: Jiada Wang <jiada_wang@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
+	<vladimir_zapolskiy@mentor.com>, <jiada_wang@mentor.com>
+Subject: [PATCH v3] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
+Date: Tue, 23 Aug 2016 17:10:57 +0900
+Message-ID: <1471939858-20925-1-git-send-email-jiada_wang@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add X-Gene PMD clock support.
+v3:
+- updated commit message
+- only check CLK_SET_RATE_GATE flag in case of 'PRE_RATE_CHANGE' event
+- continue propagate rate change, even when there is error in clk_propagate_rate_change()
 
-PMD clock is implemented for a single register field.
-  Output rate = parent_rate * (denominator - scale) / denominator
-with
-  - denominator = bitmask of register field + 1
-  - scale = value of register field
+v2:
+- changed to return clk_core *core, instead of NULL
 
-For example, for bitmask is 0x7, denominator will be 8 and scale
-will be computed and programmed accordingly.
+Jiada Wang (1):
+  clk: move check of CLK_SET_RATE_GATE flag to
+    clk_propagate_rate_change()
 
-Hoan Tran (3):
-  Documentation: dtb: xgene: Add PMD clock binding
-  clk: xgene: Add PMD clock
-  arm64: dts: xgene: Add DT node for APM X-Gene 2 CPU clocks
-
- Documentation/devicetree/bindings/clock/xgene.txt |  22 +++
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi        |  64 +++++++
- drivers/clk/clk-xgene.c                           | 223 ++++++++++++++++++++++
- 3 files changed, 309 insertions(+)
+ drivers/clk/clk.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 -- 
-1.9.1
+2.4.5
