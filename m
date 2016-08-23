@@ -1,53 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57657 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754457AbcHSBGJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 21:06:09 -0400
-Date: Thu, 18 Aug 2016 16:48:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kelvin Cheung <keguang.zhang@gmail.com>
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH] MIPS: Loongson1B: Change the OSC clock name
-Message-ID: <20160818234812.GI361@codeaurora.org>
-References: <1470999363-9978-1-git-send-email-keguang.zhang@gmail.com>
- <20160815232825.GW361@codeaurora.org>
- <CAJhJPsXs9nyR=ZJoMKFvOxR16jZ2n_F8DFmx0A=6Z5T_YxG3ag@mail.gmail.com>
+Return-Path: <linux@roeck-us.net>
+Date: Tue, 23 Aug 2016 15:17:28 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: york sun <york.sun@nxp.com>
+Cc: "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"pmarrecas@outlook.com" <pmarrecas@outlook.com>,
+	York Sun <yorksun@freescale.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrey Filippov <andrey@elphel.com>,
+	Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [Resend Patch v7] driver/clk/clk-si5338: Add common clock
+ framework driver for si5338
+Message-ID: <20160823221728.GA22992@roeck-us.net>
+References: <AM4PR0401MB17320B3CAE8C6903207778429AEB0@AM4PR0401MB1732.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAJhJPsXs9nyR=ZJoMKFvOxR16jZ2n_F8DFmx0A=6Z5T_YxG3ag@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <AM4PR0401MB17320B3CAE8C6903207778429AEB0@AM4PR0401MB1732.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/16, Kelvin Cheung wrote:
-> Hi Stephen,
+On Tue, Aug 23, 2016 at 05:04:47PM +0000, york sun wrote:
+> SI5338 is a programmable clock generator. It has 4 sets of inputs,
+> PLL, multisynth and dividers to make 4 outputs. This driver splits
+> them into multiple clocks to comply with common clock framework.
 > 
-> 2016-08-16 7:28 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
+> See Documentation/devicetree/bindings/clock/silabs,si5338.txt for
+> details.
 > 
-> > On 08/12, Keguang Zhang wrote:
-> > > From: Kelvin Cheung <keguang.zhang@gmail.com>
-> > >
-> > > This patch changes the OSC clock name to "osc_clk".
-> > >
-> > > Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
-> > > ---
-> >
-> > Yes, but why?
-> >
-> >
-> Loongson1C uses a 24MHz oscillator, hence "osc_clk" sounds more appropriate
-> 
+> Signed-off-by: York Sun <yorksun@freescale.com>
+> CC: Mike Turquette <mturquette@baylibre.com>
+> CC: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> CC: Guenter Roeck <linux@roeck-us.net>
+> CC: Andrey Filippov <andrey@elphel.com>
+> CC: Paul Bolle <pebolle@tiscali.nl>
 > 
 
-So then should we replace all the osc_33m_clk names with osc_clk?
-This patch only modifies one name and it looks like a clkdev
-lookup is created that still has osc_33m_clk for the connection
-name in drivers/clk/clk-ls1x.c, so merging it would mean things
-break? I also wonder what the pin is actually called in the
-datasheet, because that should be what the cpufreq driver uses in
-clk_get() as the connection id. If that's osc_33m_clk then it's
-better to leave it alone even if the frequency is different.
+Your patch is badly corrupted.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Guenter
