@@ -1,29 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 Aug 2016 17:04:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: Loongson1: Make use of GENMASK
-Message-ID: <20160819000408.GM361@codeaurora.org>
-References: <1470999108-9851-1-git-send-email-keguang.zhang@gmail.com>
- <1470999108-9851-4-git-send-email-keguang.zhang@gmail.com>
+Return-Path: <york.sun@nxp.com>
+From: york sun <york.sun@nxp.com>
+To: Guenter Roeck <linux@roeck-us.net>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "pmarrecas@outlook.com" <pmarrecas@outlook.com>,
+	York Sun <yorksun@freescale.com>, Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrey Filippov
+	<andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [Resend Patch v7] driver/clk/clk-si5338: Add common clock
+ framework driver for si5338
+Date: Tue, 23 Aug 2016 22:22:05 +0000
+Message-ID: <AM4PR0401MB1732B669DB6B2406B07BAD459AEB0@AM4PR0401MB1732.eurprd04.prod.outlook.com>
+References: <AM4PR0401MB17320B3CAE8C6903207778429AEB0@AM4PR0401MB1732.eurprd04.prod.outlook.com>
+ <20160823221728.GA22992@roeck-us.net>
+Reply-To: york sun <york.sun@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470999108-9851-4-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/12, Keguang Zhang wrote:
-> From: Kelvin Cheung <keguang.zhang@gmail.com>
-> 
-> Make use of GENMASK instead of open coding the equivalent operation,
-> and update the PLL formula.
-
-Was the old formula broken? I would expect a bug fix like this to
-be first in the series and be backported to any affected stable
-trees.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 08/23/2016 03:17 PM, Guenter Roeck wrote:=0A=
+> On Tue, Aug 23, 2016 at 05:04:47PM +0000, york sun wrote:=0A=
+>> SI5338 is a programmable clock generator. It has 4 sets of inputs,=0A=
+>> PLL, multisynth and dividers to make 4 outputs. This driver splits=0A=
+>> them into multiple clocks to comply with common clock framework.=0A=
+>>=0A=
+>> See Documentation/devicetree/bindings/clock/silabs,si5338.txt for=0A=
+>> details.=0A=
+>>=0A=
+>> Signed-off-by: York Sun <yorksun@freescale.com>=0A=
+>> CC: Mike Turquette <mturquette@baylibre.com>=0A=
+>> CC: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>=0A=
+>> CC: Guenter Roeck <linux@roeck-us.net>=0A=
+>> CC: Andrey Filippov <andrey@elphel.com>=0A=
+>> CC: Paul Bolle <pebolle@tiscali.nl>=0A=
+>>=0A=
+>=0A=
+> Your patch is badly corrupted.=0A=
+>=0A=
+> Guenter=0A=
+>=0A=
+=0A=
+Sorry for that. Let me try to generate the patch again.=0A=
+=0A=
+York=0A=
