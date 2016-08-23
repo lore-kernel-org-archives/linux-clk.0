@@ -1,35 +1,78 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com
-Subject: Re: [PATCH v3 7/7] clk: rockchip: rk3399: Add support frac mode frequencies
-Date: Thu, 04 Aug 2016 21:19:08 +0200
-Message-ID: <12790025.3tRiQgk9GG@diego>
-In-Reply-To: <1470122579-32083-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1470122579-32083-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
+ <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
+ <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <pawel.moll@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux@armlinux.org.uk>, <robh+dt@kernel.org>, "Kumar
+ Gala" <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <07157e79-a22c-2b49-24c8-3a2c266f899f@nvidia.com>
+Date: Tue, 23 Aug 2016 15:48:25 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Xing,
 
-Am Dienstag, 2. August 2016, 15:22:59 schrieb Xing Zheng:
-> We need to support various display resolutions for external
-> display devices like HDMI/DP, the frac mode can help us to
-> acquire almost any frequencies, and need higher VCOs to reduce
-> clock jitters.
+On 23/08/16 11:33, Mirza Krak wrote:
+
+...
+
+> Like we discussed I am now trying to implement this but without
+> success and I am starting to think that it is not that simple unless I
+> am missing something.
 > 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> Below tree
+> 
+> gmi@70009000 {
+>      status = "okay";
+>      #address-cells = <1>;
+>      #size-cells = <1>;
+>      ranges = <4 0x48000000 0x7ffffff>;
+> 
+>      bus@4 {
+>           compatible = "simple-bus";
+>           reg = <4 0>;
 
-why does this need to be a separate rate array and cannot live in the general 
-pll rate array?
+I don't think you want reg here.
 
-The plls are general purpose, so we shouldn't limit them arbitarily.
+>           #address-cells = <1>;
+>           #size-cells = <1>;
 
-I currently only see some frequencies (594MHz, 297MHz, 54MHz) that are present 
-in both arrays but have different settings. As your patch description says 
-that these settings reduce clock jitter, wouldn't the general frequencies also 
-profit from merging these new values into the general rate array?
+May be ranges here?
 
+>          nvidia,snor-mux-mode;
+>          nvidia,snor-adv-inv;
+> 
+>         can@0 {
+>               compatible = "nxp,sja1000";
+>               reg = <0 0x100>;
+>               ....
+>      };
+> 
+>      can@40000 {
+>            compatible = "nxp,sja1000";
+>            reg = <0x40000 0x100>;
+>            ....
+>     };
+> };
+> };
 
-Heiko
+Have a look at some other drivers for example:
+
+Documentation/devicetree/bindings/memory-controllers/arm,pl172.txt
+
+Cheers
+Jon
+
+-- 
+nvpublic
