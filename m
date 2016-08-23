@@ -1,123 +1,154 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 8 Aug 2016 16:37:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
-Message-ID: <20160808233711.GA2996@codeaurora.org>
-References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
- <20160804212553.GB15690@codeaurora.org>
- <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 23 Aug 2016 10:55:34 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] clk: sunxi-ng: mux: support fixed pre-dividers on
+ multiple parents
+Message-ID: <20160823085534.GC2598@lukather>
+References: <1471248795-17951-1-git-send-email-wens@csie.org>
+ <1471248795-17951-3-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Qbvjkv9qwOGw/5Fx"
+In-Reply-To: <1471248795-17951-3-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/08, Masahiro Yamada wrote:
-> Hi Stephen,
-> 
-> 
-> 2016-08-05 6:25 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> > +Rob in case he has any insight
-> >
-> > On 07/09, Masahiro Yamada wrote:
-> >> Hi.
-> >>
-> >> I think the current code allows to add
-> >> clk_providers multiple times against one DT node.
-> >>
-> >> Are there cases that really need to do so?
-> >
-> > If we have clk drivers that have a device driver structure and
-> > also use CLK_OF_DECLARE then we could get into a situation where
-> > they register two providers for the same device node. I can't
-> > think of any other situation where this would happen though.
-> 
-> 
-> What is the benefit for splitting one clock device
-> into CLK_OF_DECLARE() and a platform_driver?
-> 
-> 
-> If we go this way, I think we need to fix the current code.
 
-Sure. Do we have anyone registering two providers for the same
-node? I'm trying to weigh the urgency of this.
+--Qbvjkv9qwOGw/5Fx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> of_clk_add_provider() calls of_clk_del_provider()
-> in its failure path.
-> 
-> Notice of_clk_del_provider() unregister
-> all the providers associated with the device node.
+On Mon, Aug 15, 2016 at 04:13:12PM +0800, Chen-Yu Tsai wrote:
+> Some clocks on the A31 have fixed pre-dividers on multiple parents.
+> Add support for them.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+> Changes since v1:
+>=20
+>   - Add field for number of fixed pre-dividers.
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c |  9 +++++----
+>  drivers/clk/sunxi-ng/ccu_mux.c      |  6 ++++--
+>  drivers/clk/sunxi-ng/ccu_mux.h      | 11 +++++++----
+>  3 files changed, 16 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/c=
+cu-sun8i-h3.c
+> index 9af359544110..a01298881991 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> @@ -184,15 +184,16 @@ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2=
+_parents, 0x058,
+>  			     0);
+> =20
+>  static const char * const ahb2_parents[] =3D { "ahb1" , "pll-periph0" };
+> +static const struct ccu_mux_fixed_prediv ahb2_fixed_predivs[] =3D {
+> +	{ .index =3D 1, .div =3D 2 },
+> +	{ },
+> +};
+>  static struct ccu_mux ahb2_clk =3D {
+>  	.mux		=3D {
+>  		.shift	=3D 0,
+>  		.width	=3D 1,
+> =20
+> -		.fixed_prediv	=3D {
+> -			.index	=3D 1,
+> -			.div	=3D 2,
+> -		},
+> +		.fixed_predivs	=3D ahb2_fixed_predivs,
+>  	},
+> =20
+>  	.common		=3D {
+> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mu=
+x.c
+> index 68b32f168a74..7b17e0c26b01 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mux.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
+> @@ -20,6 +20,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu=
+_common *common,
+>  {
+>  	u16 prediv =3D 1;
+>  	u32 reg;
+> +	int i;
+> =20
+>  	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
+>  	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
+> @@ -32,8 +33,9 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu=
+_common *common,
+>  	}
+> =20
+>  	if (common->features & CCU_FEATURE_FIXED_PREDIV)
+> -		if (parent_index =3D=3D cm->fixed_prediv.index)
+> -			prediv =3D cm->fixed_prediv.div;
+> +		for (i =3D 0; i < cm->n_predivs; i++)
+> +			if (parent_index =3D=3D cm->fixed_predivs[i].index)
+> +				prediv =3D cm->fixed_predivs[i].div;
+> =20
+>  	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
+>  		if (parent_index =3D=3D cm->variable_prediv.index) {
+> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mu=
+x.h
+> index f0078de78712..5308b41da22a 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mux.h
+> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
+> @@ -5,15 +5,18 @@
+> =20
+>  #include "ccu_common.h"
+> =20
+> +struct ccu_mux_fixed_prediv {
+> +	u8	index;
+> +	u16	div;
+> +};
+> +
+>  struct ccu_mux_internal {
+>  	u8		shift;
+>  	u8		width;
+>  	const u8	*table;
+> =20
+> -	struct {
+> -		u8	index;
+> -		u16	div;
+> -	} fixed_prediv;
+> +	const struct ccu_mux_fixed_prediv	*fixed_predivs;
+> +	u8		n_predivs;
 
-Where is that? I see a break statement in the while loop after
-the first matching np is found.
+I don't think you're using it anywhere (at least you don't define it
+in ahb2_clk, and the extra item in the array will introduce an
+off-by-one error.
 
-> 
-> So, if of_clk_add_provider() fails to register a platform driver,
-> it may unregister another provider added by OF_CLK_DECLARE().
+Thanks!
+Maxime
 
-I suppose if we loop over the list in the incorrect order we
-would unregister the wrong one.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> 
-> Some platform drivers call of_clk_del_provider() in a .remove callback,
-> so the same problem could happen.
-> 
-> Why does of_clk_del_provider() take (struct device_node *np) ?
-> Shouldn't it take (struct of_clk_provider *cp)?
-> 
+--Qbvjkv9qwOGw/5Fx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Not sure. Probably someone thought they could hide the structure
-from consumers and just return success or failure. We could make
-it an opaque pointer though and properly cleanup without
-iterating the list. Maybe we should do that for the hw provider
-API so that it simplifies the search.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> 
-> 
-> 
-> > It used to return the last provider's error, but I accidentally
-> > changed that behavior when adding clk_hw providers in commit
-> > 0861e5b8cf80 (clk: Add clk_hw OF clk providers, 2016-02-05).
-> > Nobody seems to have complained though, so you're the first to
-> > have reported this.
-> 
-> 
-> If we allow multiple OF-providers for one device node,
-> I think any error should be treated as EPROBE_DEFER,
-> i.e. the current code is good.
-> 
-> 
-> The scenario is:
-> 
->  - Clocks with ID 0 thru 3 are provided by CLK_OF_DECLARE()
->  - Clocks with ID 4 thru 9 are provided by a platform driver.
-> 
-> What if a clock consumer requests the clk ID 5
-> after CLK_OF_DECLARE(), but before the clk platform driver is registered?
-> 
-> If the clock consumer gets the last provider's error
-> (-EINVAL returned from CLK_OR_DECLARE one in this case)
-> it will lose a chance to retry it after clocks from a platform driver
-> are registered.
-> 
-> A bit nasty...
-> 
+iQIcBAEBAgAGBQJXvA+GAAoJEBx+YmzsjxAgBR8QALnSqFZiLEksLWyb58l8eQhM
+ZOlJPuQgjBoHW2HSIZLoTGlnF0ZM9pC2Xq5VR+BmwcOo6mVE+2wQILTBCNdVHZsZ
+9FAtV32H7Xd3LAHquQsub35iJJZl+7wfALy0VTjIv/kx1gq+yKb544HhVr67LfpO
+0trfiHujtzmAKHha23fJsowolFnvtDFYfBFKRl+jV2wgMN4SouLaB58UqSrZJGeK
+3G3lW3BR6tjZneyZFMKRMUNYCsZuNcukUXFMv6c/8I1GW7bcVM2VsWh1bc+kdb6c
+wzSaSyLIEgRkGDZ7U6YJrIqiXmsQmdXbbAcaptDVeHvTzLUh5QVFT5jfCA7pve5D
+my2P/gkTvSwHripsPimG4rRLQXQfROtzdPi3o2EIrrb9ScVNolX63c9SjSI/fVrG
+AjjbEdWYzFk7bJdWm/W4uMPfw7qliF7HTIJ7CkPbmd6lWBpo1GVMxfOjJbnU0ZE7
+cBrpzu9aZhf/EpCJ2FTcDrGyNERS3b33pAFYsZVr+mWbRGHoCxXZCPhgUf7dTGi1
+lLH5ynA87o296G47104BiWRKbvLWh/F0sk5NQ5s1WrOQLaJ+2MyZcpMyk9aVrkab
+VlQiyKVIlcYjQXu3mPZqkO71C5vZD3L8eGY048aVLfwtWVzOy3kvLBms5V4G9Jjy
+8znNncKEpUyuYgqsxv9K
+=vuFp
+-----END PGP SIGNATURE-----
 
-Yes, but right now if we get an error from a provider and that's
-the only provider in the list we don't return the error. Also,
-this case should be fixed by having the first provider return
-EPROBE_DEFER for clks that aren't populated early on.
-
-The best we can do is have the framework only return probe defer
-if there isn't a provider registered. Once a provider is
-registered, it needs to do the right thing and return the
-appropriate error (invalid or probe defer for example) at the
-right time.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--Qbvjkv9qwOGw/5Fx--
