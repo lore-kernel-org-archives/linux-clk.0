@@ -1,175 +1,86 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 07/17] clk: mux: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:04 +0200
-Message-id: <1471354514-24224-8-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info
+ to init section
+To: Chanwoo Choi <cw00.choi@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+ <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+ <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
+ <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+Date: Tue, 23 Aug 2016 12:07:30 +0200
+MIME-version: 1.0
+In-reply-to: <57BBB66E.2060807@samsung.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
+>>>  
+>>> +static const struct samsung_cmu_info aud_cmu __initconst = {
+>>> +	.mux_clks	= aud_mux_clks,
+>>> +	.nr_mux_clks	= ARRAY_SIZE(aud_mux_clks),
+>>> +	.div_clks	= aud_div_clks,
+>>> +	.nr_div_clks	= ARRAY_SIZE(aud_div_clks),
+>>> +	.gate_clks	= aud_gate_clks,
+>>> +	.nr_gate_clks	= ARRAY_SIZE(aud_gate_clks),
+>>> +	.nr_clk_ids	= AUD_NR_CLK,
+>>> +	.clk_regs	= aud_clk_regs,
+>>> +	.nr_clk_regs	= ARRAY_SIZE(aud_clk_regs),
+>>> +};
+>>> +
+>>>  static void __init exynos5260_clk_aud_init(struct device_node *np)
+>>>  {
+>>> -	struct samsung_cmu_info cmu = { NULL };
+>>> -
+>>
+>> I presume this was done this way to save some initdata space by
+>> only allocating the array that's needed at runtime? I would
+>> expect to see some more kernel image bloat from this change but
+>> runtime memory usage would stay the same. Is there any real
+>> benefit from this patch though?
+>>
+> 
+> After this patch, 'struct samsung_cmu_info' size should be added
+> to kernel image and then the size of deleted code should be removed
+> from kernel image. I think that it is not bloating.
+> (struct samsung_cmu_info includes the pointer and integer value.)
+> 
+> This patch make the code more simple and improve the readability.
+> And, the samsung_cmu_register_on() requires the 'const' type
+> argument for 'struct samsung_cmu_info'.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I checked stripped object files and it seems with the patch there
+is some saving of the kernel image size. Exactly 784 bytes, which
+makes zImage smaller by 480 bytes.
+
+The patch increases .init.rodata section size by 780 bytes but 
+decreases .init.text section size by 1564 bytes.  Looks like 
+a static initializer is cheaper.
+
+$ ls -l  drivers/clk/samsung/clk-exynos5260.o
+
+< -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
 ---
- drivers/clk/clk-mux.c        | 32 ++++++++++++++++++--------------
- drivers/clk/samsung/clk.c    |  4 ++--
- include/linux/clk-provider.h | 12 ++++++++----
- 3 files changed, 28 insertions(+), 20 deletions(-)
+> -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 16a3d5717f4e..a85bbef1992b 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -113,7 +113,8 @@ const struct clk_ops clk_mux_ro_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
- 
--struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_mux_table(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
-@@ -159,7 +160,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 	mux->hw.init = &init;
- 
- 	hw = &mux->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = clk_hw_register_with_ctrl(dev, ctrl, hw);
- 	if (ret) {
- 		kfree(mux);
- 		hw = ERR_PTR(ret);
-@@ -169,7 +170,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_mux_table);
- 
--struct clk *clk_register_mux_table(struct device *dev, const char *name,
-+struct clk *clk_register_mux_table(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
-@@ -177,16 +179,17 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_mux_table(dev, name, parent_names, num_parents,
--				       flags, reg, shift, mask, clk_mux_flags,
--				       table, lock);
-+	hw = clk_hw_register_mux_table(dev, ctrl, name, parent_names,
-+				       num_parents, flags, reg, shift, mask,
-+				       clk_mux_flags, table, lock);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
- 	return hw->clk;
- }
- EXPORT_SYMBOL_GPL(clk_register_mux_table);
- 
--struct clk *clk_register_mux(struct device *dev, const char *name,
-+struct clk *clk_register_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
-@@ -194,13 +197,14 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
- {
- 	u32 mask = BIT(width) - 1;
- 
--	return clk_register_mux_table(dev, name, parent_names, num_parents,
--				      flags, reg, shift, mask, clk_mux_flags,
--				      NULL, lock);
-+	return clk_register_mux_table(dev, ctrl, name, parent_names,
-+				      num_parents, flags, reg, shift, mask,
-+				      clk_mux_flags, NULL, lock);
- }
- EXPORT_SYMBOL_GPL(clk_register_mux);
- 
--struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
-@@ -208,9 +212,9 @@ struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
- {
- 	u32 mask = BIT(width) - 1;
- 
--	return clk_hw_register_mux_table(dev, name, parent_names, num_parents,
--				      flags, reg, shift, mask, clk_mux_flags,
--				      NULL, lock);
-+	return clk_hw_register_mux_table(dev, ctrl, name, parent_names,
-+					 num_parents, flags, reg, shift, mask,
-+					 clk_mux_flags, NULL, lock);
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_mux);
- 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 79332011f258..1a296bbabd47 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -197,8 +197,8 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_mux(NULL, list->name, list->parent_names,
--			list->num_parents, list->flags,
-+		clk = clk_register_mux(NULL, ctx->clk_ctrl, list->name,
-+			list->parent_names, list->num_parents, list->flags,
- 			ctx->reg_base + list->offset,
- 			list->shift, list->width, list->mux_flags, &ctx->lock);
- 		if (IS_ERR(clk)) {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 289290655283..f5f062d267a9 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -493,23 +493,27 @@ struct clk_mux {
- extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
- 
--struct clk *clk_register_mux(struct device *dev, const char *name,
-+struct clk *clk_register_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock);
--struct clk_hw *clk_hw_register_mux(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_mux(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock);
- 
--struct clk *clk_register_mux_table(struct device *dev, const char *name,
-+struct clk *clk_register_mux_table(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
--struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_mux_table(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
--- 
-1.9.1
+
+The section size differences are as below:
+15c15
+<   3 .init.text    000006b8  00000000  00000000  00000034  2**2
+---
+>   3 .init.text    0000009c  00000000  00000000  00000034  2**2
+25c25
+<   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
+---
+>   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
+
+So the saving is rather insignificant but the patch doesn't make
+things worse and I'd say it might be worth applying.
+
+--
+Thanks, 
+Sylwester
