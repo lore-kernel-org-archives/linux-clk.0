@@ -1,60 +1,269 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 23 Aug 2016 21:43:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, tomasz.figa@gmail.com,
-	mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com,
-	chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
- samsung_cmu_info to init section
-Message-ID: <20160824044346.GR6502@codeaurora.org>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
- <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org>
- <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+Return-Path: <zajec5@gmail.com>
+Return-Path: <zajec5@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Eric Anholt <eric@anholt.net>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V5] clk: bcm: Add driver for BCM53573 ILP clock
+Date: Tue, 23 Aug 2016 08:25:59 +0200
+Message-Id: <20160823062613.13865-1-zajec5@gmail.com>
+In-Reply-To: <20160823061745.8162-1-zajec5@gmail.com>
+References: <20160823061745.8162-1-zajec5@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/23, Sylwester Nawrocki wrote:
-> On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
-> I checked stripped object files and it seems with the patch there
-> is some saving of the kernel image size. Exactly 784 bytes, which
-> makes zImage smaller by 480 bytes.
-> 
-> The patch increases .init.rodata section size by 780 bytes but 
-> decreases .init.text section size by 1564 bytes.  Looks like 
-> a static initializer is cheaper.
-> 
-> $ ls -l  drivers/clk/samsung/clk-exynos5260.o
-> 
-> < -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
-> ---
-> > -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
-> 
-> 
-> The section size differences are as below:
-> 15c15
-> <   3 .init.text    000006b8  00000000  00000000  00000034  2**2
-> ---
-> >   3 .init.text    0000009c  00000000  00000000  00000034  2**2
-> 25c25
-> <   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
-> ---
-> >   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
-> 
-> So the saving is rather insignificant but the patch doesn't make
-> things worse and I'd say it might be worth applying.
-> 
+From: Rafał Miłecki <rafal@milecki.pl>
 
-Sounds good. This sort of information should be in the commit
-text though. Talking about const doesn't make any sense to me.
+This clock is present on BCM53573 devices (including BCM47189) that use
+Cortex-A7. ILP is a part of PMU (Power Management Unit) and so it should
+be defined as one of its subnodes (subdevices). For more details see
+Documentation entry.
 
+Unfortunately there isn't a set of registers related to ILP clock only.
+We use registers 0x66c, 0x674 and 0x6dc and between them there are e.g.
+"retention*" and "control_ext" regs. This is why this driver maps all
+0x1000 B of space.
+
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+V2: Rebase on top of clk-next
+    Use ALP as parent clock
+    Improve comments
+    Switch from ioremap_nocache to ioremap
+    Check of_clk_add_provide result for error
+V3: Drop #include <linux/moduleh>
+    Make ILP DT entry part of PMU
+    Describe ILP as subdevice of PMU in Documentation
+V4: Use BCM53573 name as suggested by Jon and Ray. It seems "Northstar"
+    (even if used in some resources) should be used in relation to
+    Cortex-A9 devices only.
+V5: Rename remaining "ns" references to "bcm53573", sorry, I sent V4 too
+    early.
+---
+ .../bindings/clock/brcm,bcm53573-ilp.txt           |  40 ++++++
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-bcm53573-ilp.c                 | 146 +++++++++++++++++++++
+ 3 files changed, 187 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+ create mode 100644 drivers/clk/bcm/clk-bcm53573-ilp.c
+
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+new file mode 100644
+index 0000000..5ab3107
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+@@ -0,0 +1,40 @@
++Broadcom BCM53573 ILP clock
++===========================
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++This binding is used for ILP clock (sometimes referred as "slow clock")
++on Broadcom BCM53573 devices using Cortex-A7 CPU.
++
++This clock is part of PMU (Power Management Unit), a Broadcom's device
++handing power-related aspects. Please note PMU contains more subdevices,
++ILP is only one of them.
++
++ILP's rate has to be calculated on runtime and it depends on ALP clock
++which has to be referenced.
++
++Required properties:
++- compatible: "brcm,bcm53573-ilp"
++- reg: iomem address range of PMU (Power Management Unit)
++- reg-names: "pmu", the only needed & supported reg right now
++- clocks: has to reference an ALP clock
++- #clock-cells: should be <0>
++
++Example:
++
++pmu@18012000 {
++	compatible = "simple-bus";
++	ranges = <0x00000000 0x18012000 0x00001000>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	ilp: ilp@0 {
++		compatible = "brcm,bcm53573-ilp";
++		reg = <0 0x1000>;
++		reg-names = "pmu";
++		clocks = <&alp>;
++		#clock-cells = <0>;
++		clock-output-names = "ilp";
++	};
++};
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 1d79bd2..4b8c56d 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+ obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+ obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
++obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
+new file mode 100644
+index 0000000..b7ac0eb
+--- /dev/null
++++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
+@@ -0,0 +1,146 @@
++/*
++ * Copyright (C) 2016 Rafał Miłecki <rafal@milecki.pl>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++
++#define PMU_XTAL_FREQ_RATIO			0x66c
++#define  XTAL_ALP_PER_4ILP			0x00001fff
++#define  XTAL_CTL_EN				0x80000000
++#define PMU_SLOW_CLK_PERIOD			0x6dc
++
++struct bcm53573_ilp {
++	struct clk *clk;
++	struct clk_hw hw;
++	void __iomem *pmu;
++};
++
++static int bcm53573_ilp_enable(struct clk_hw *hw)
++{
++	struct bcm53573_ilp *ilp = container_of(hw, struct bcm53573_ilp, hw);
++
++	writel(0x10199, ilp->pmu + PMU_SLOW_CLK_PERIOD);
++	writel(0x10000, ilp->pmu + 0x674);
++
++	return 0;
++}
++
++static unsigned long bcm53573_ilp_recalc_rate(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	struct bcm53573_ilp *ilp = container_of(hw, struct bcm53573_ilp, hw);
++	void __iomem *pmu = ilp->pmu;
++	u32 last_val, cur_val;
++	u32 sum = 0, num = 0, loop_num = 0;
++	u32 avg;
++
++	/* Enable measurement */
++	writel(XTAL_CTL_EN, pmu + PMU_XTAL_FREQ_RATIO);
++
++	/* Read initial value */
++	last_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
++
++	/*
++	 * At minimum we should loop for a bit to let hardware do the
++	 * measurement. This isn't very accurate however, so for a better
++	 * precision lets try getting 20 different values for and use average.
++	 */
++	while (num < 20) {
++		cur_val = readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
++
++		if (cur_val != last_val) {
++			/* Got different value, use it */
++			sum += cur_val;
++			num++;
++			loop_num = 0;
++			last_val = cur_val;
++		} else if (++loop_num > 5000) {
++			/* Same value over and over, give up */
++			sum += cur_val;
++			num++;
++			break;
++		}
++	}
++
++	/* Disable measurement to save power */
++	writel(0x0, pmu + PMU_XTAL_FREQ_RATIO);
++
++	avg = sum / num;
++
++	return parent_rate * 4 / avg;
++}
++
++static const struct clk_ops bcm53573_ilp_clk_ops = {
++	.enable = bcm53573_ilp_enable,
++	.recalc_rate = bcm53573_ilp_recalc_rate,
++};
++
++static void bcm53573_ilp_init(struct device_node *np)
++{
++	struct bcm53573_ilp *ilp;
++	struct resource res;
++	struct clk_init_data init = { 0 };
++	const char *parent_name;
++	int index;
++	int err;
++
++	ilp = kzalloc(sizeof(*ilp), GFP_KERNEL);
++	if (!ilp)
++		return;
++
++	parent_name = of_clk_get_parent_name(np, 0);
++	if (!parent_name) {
++		err = -ENOENT;
++		goto err_free_ilp;
++	}
++
++	/* TODO: This looks generic, try making it OF helper. */
++	index = of_property_match_string(np, "reg-names", "pmu");
++	if (index < 0) {
++		err = index;
++		goto err_free_ilp;
++	}
++	err = of_address_to_resource(np, index, &res);
++	if (err)
++		goto err_free_ilp;
++	ilp->pmu = ioremap(res.start, resource_size(&res));
++	if (IS_ERR(ilp->pmu)) {
++		err = PTR_ERR(ilp->pmu);
++		goto err_free_ilp;
++	}
++
++	init.name = np->name;
++	init.ops = &bcm53573_ilp_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	ilp->hw.init = &init;
++	ilp->clk = clk_register(NULL, &ilp->hw);
++	if (WARN_ON(IS_ERR(ilp->clk)))
++		goto err_unmap_pmu;
++
++	err = of_clk_add_provider(np, of_clk_src_simple_get, ilp->clk);
++	if (err)
++		goto err_clk_unregister;
++
++	return;
++
++err_clk_unregister:
++	clk_unregister(ilp->clk);
++err_unmap_pmu:
++	iounmap(ilp->pmu);
++err_free_ilp:
++	kfree(ilp);
++	pr_err("Failed to init ILP clock: %d\n", err);
++}
++CLK_OF_DECLARE(bcm53573_ilp_clk, "brcm,bcm53573-ilp", bcm53573_ilp_init);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
