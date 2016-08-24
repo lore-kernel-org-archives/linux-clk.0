@@ -1,60 +1,75 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: dianders@chromium.org, tfiga@chromium.org, yzq@rock-chips.com, groeck@chromium.org, wulf@rock-chips.com, marcheu@chromium.org, linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: mark rk3399 hdcp_noc and pclk_vio_grf as critical
-Date: Fri, 05 Aug 2016 13:02:48 +0200
-Message-ID: <4055149.Zs66lEhv2I@diego>
-In-Reply-To: <1470209784-2665-1-git-send-email-zyw@rock-chips.com>
-References: <1470209784-2665-1-git-send-email-zyw@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH v2 0/6] Add support for Tegra GMI bus controller
+Date: Wed, 24 Aug 2016 15:37:12 +0200
+Message-Id: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Am Mittwoch, 3. August 2016, 15:36:24 schrieb Chris Zhong:
-> The Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
-> pclk_hdcp_noc, pclk_vio_grf. Mark them as critical to avoid someone
-> close them.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> 
-> ---
-> 
->  drivers/clk/rockchip/clk-rk3399.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c
-> b/drivers/clk/rockchip/clk-rk3399.c index 78e51cb..6c8ed25 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -1466,6 +1466,9 @@ static struct rockchip_clk_branch
-> rk3399_clk_pmu_branches[] __initdata = {
-> 
->  static const char *const rk3399_cru_critical_clocks[] __initconst = {
->  	"aclk_cci_pre",
-> +	"aclk_hdcp_noc",
-> +	"hclk_hdcp_noc",
-> +	"pclk_hdcp_noc",
->  	"pclk_perilp0",
->  	"pclk_perilp0",
->  	"hclk_perilp0",
+Hi.
 
-ok, we have marked all other noc (interconnect) clocks as critical, so this 
-looks good.
+This is a follow up to my previous RFC to add support for Tegra GMI bus
+controller.
 
-> @@ -1485,6 +1488,7 @@ static const char *const rk3399_cru_critical_clocks[]
-> __initconst = { "gpll_hclk_perilp1_src",
->  	"gpll_aclk_perilp0_src",
->  	"gpll_aclk_perihp_src",
-> +	"pclk_vio_grf",
+I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
+carrier board which has multiple CAN controllers (SJA1000) connected to the
+GMI bus.
 
-I don't necessarily agree with this one. It seems for the analogix-dp the 
-preferred way is to have the driver handle its needed clock, see
-	"[PATCH v1 6/6] drm/rockchip: dw_hdmi: introduce the pclk for grf" [0]
+I have rebased on top of latest tegra/for-next in V2. Also see individual
+patches for changes in V2.
+
+See below links for previous discussions.
+
+Comments on RFC:
+https://marc.info/?l=linux-clk&m=146893557629903&w=2
+https://marc.info/?l=linux-tegra&m=146893541829801&w=2
+https://marc.info/?l=linux-tegra&m=146893542429814&w=2
+
+Comments on V1:
+https://marc.info/?l=linux-arm-kernel&m=147051551821122&w=2
+https://marc.info/?l=linux-arm-kernel&m=147051553121150&w=2
+https://marc.info/?l=linux-arm-kernel&m=147194856600627&w=2
+https://marc.info/?l=linux-arm-kernel&m=147072742432211&w=2
 
 
-Heiko
+Mirza Krak (6):
+  clk: tegra: add TEGRA20_CLK_NOR to init table
+  clk: tegra: add TEGRA30_CLK_NOR to init table
+  dt/bindings: Add bindings for Tegra GMI controller
+  ARM: tegra: Add Tegra30 GMI support
+  ARM: tegra: Add Tegra20 GMI support
+  bus: Add support for Tegra Generic Memory Interface
 
-[0] https://patchwork.kernel.org/patch/9223331/
+ .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 ++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |  13 ++
+ arch/arm/boot/dts/tegra30.dtsi                     |  12 ++
+ drivers/bus/Kconfig                                |   8 +
+ drivers/bus/Makefile                               |   1 +
+ drivers/bus/tegra-gmi.c                            | 231 +++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |   1 +
+ drivers/clk/tegra/clk-tegra30.c                    |   1 +
+ 8 files changed, 399 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+ create mode 100644 drivers/bus/tegra-gmi.c
+
+--
+2.1.4
