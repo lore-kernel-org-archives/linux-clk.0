@@ -1,109 +1,65 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: sunxi-ng: mux: support fixed pre-dividers on multiple parents
-Date: Mon, 15 Aug 2016 16:13:12 +0800
-Message-Id: <1471248795-17951-3-git-send-email-wens@csie.org>
-In-Reply-To: <1471248795-17951-1-git-send-email-wens@csie.org>
-References: <1471248795-17951-1-git-send-email-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 23 Aug 2016 21:48:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: York Sun <york.sun@nxp.com>, kbuild-all@01.org,
+	linux-clk@vger.kernel.org, York Sun <yorksun@freescale.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andrey Filippov <andrey@elphel.com>,
+	Paul Bolle <pebolle@tiscali.nl>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Patch v8] driver/clk/clk-si5338: Add common clock framework
+ driver for si5338
+Message-ID: <20160824044821.GS6502@codeaurora.org>
+References: <1471991933-29798-1-git-send-email-york.sun@nxp.com>
+ <201608240859.Pj8tsDaR%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <201608240859.Pj8tsDaR%fengguang.wu@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on the A31 have fixed pre-dividers on multiple parents.
-Add support for them.
+On 08/24, kbuild test robot wrote:
+> 
+>   2827		if (drv_type < 0)
+>   2828			return drv_type;
+>   2829	
+>   2830		drv_vdd =  get_drv_vdd(drvdata, i);
+>   2831		if (drv_vdd < 0)
+>   2832			return drv_vdd;
+>   2833	
+>   2834		drv_trim = get_drv_trim(drvdata, i);
+>   2835		if (drv_trim < 0)
+>   2836			return drv_trim;
+>   2837	
+>   2838		drv_invert = get_drv_invert(drvdata, i);
+>   2839		if (drv_invert < 0)
+>   2840			return drv_invert;
+>   2841	
+>   2842		for (j = 0; drv_configs[j].description; j++) {
+> > 2843			if (drv_configs[j].fmt == drv_type &&
+>   2844			    drv_configs[j].vdd == drv_vdd &&
+>   2845			    drv_configs[j].trim == drv_trim &&
+>   2846			    (drv_invert | (drv_configs[j].invert >> 2)) ==
+>   2847				((drv_configs[j].invert & 3) |
+>   2848				 (drv_configs[j].invert>>2)))
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes since v1:
+It might be better to write it as a set of continues instead so
+that it isn't one complicated conditional
 
-  - Add field for number of fixed pre-dividers.
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c |  9 +++++----
- drivers/clk/sunxi-ng/ccu_mux.c      |  6 ++++--
- drivers/clk/sunxi-ng/ccu_mux.h      | 11 +++++++----
- 3 files changed, 16 insertions(+), 10 deletions(-)
+				config = &drv_configs[j];
+				if (config->fmt != drv_type)
+					continue;
+				if (config->vdd != drv_vdd)
+					continue;
+				...
+				seq_puts()
+				match = 1;
+				break;
+				
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 9af359544110..a01298881991 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -184,15 +184,16 @@ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
- 			     0);
- 
- static const char * const ahb2_parents[] = { "ahb1" , "pll-periph0" };
-+static const struct ccu_mux_fixed_prediv ahb2_fixed_predivs[] = {
-+	{ .index = 1, .div = 2 },
-+	{ },
-+};
- static struct ccu_mux ahb2_clk = {
- 	.mux		= {
- 		.shift	= 0,
- 		.width	= 1,
- 
--		.fixed_prediv	= {
--			.index	= 1,
--			.div	= 2,
--		},
-+		.fixed_predivs	= ahb2_fixed_predivs,
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 68b32f168a74..7b17e0c26b01 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -20,6 +20,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- {
- 	u16 prediv = 1;
- 	u32 reg;
-+	int i;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
- 	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
-@@ -32,8 +33,9 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 	}
- 
- 	if (common->features & CCU_FEATURE_FIXED_PREDIV)
--		if (parent_index == cm->fixed_prediv.index)
--			prediv = cm->fixed_prediv.div;
-+		for (i = 0; i < cm->n_predivs; i++)
-+			if (parent_index == cm->fixed_predivs[i].index)
-+				prediv = cm->fixed_predivs[i].div;
- 
- 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
- 		if (parent_index == cm->variable_prediv.index) {
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index f0078de78712..5308b41da22a 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -5,15 +5,18 @@
- 
- #include "ccu_common.h"
- 
-+struct ccu_mux_fixed_prediv {
-+	u8	index;
-+	u16	div;
-+};
-+
- struct ccu_mux_internal {
- 	u8		shift;
- 	u8		width;
- 	const u8	*table;
- 
--	struct {
--		u8	index;
--		u16	div;
--	} fixed_prediv;
-+	const struct ccu_mux_fixed_prediv	*fixed_predivs;
-+	u8		n_predivs;
- 
- 	struct {
- 		u8	index;
 -- 
-2.8.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
