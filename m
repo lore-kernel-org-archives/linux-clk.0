@@ -1,72 +1,54 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-Date: Mon, 1 Aug 2016 13:20:58 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	dianders@chromium.org, huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 4/8] clk: rockchip: rk3399: fix incorrect GATE
- bits for {c, g}pll_aclk_perihp_src
-Message-ID: <20160801202057.GB129313@google.com>
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
- <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH v2 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
+Date: Wed, 24 Aug 2016 15:37:13 +0200
+Message-Id: <1472045838-22628-2-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 01, 2016 at 05:53:39PM +0800, Xing Zheng wrote:
-> Sorry to refer incorrect clock diagram, we double check it that the
-> bits configuration of the Xpll_aclk_perihp_src need to be fixed:
-> bit 1 - shows aclk_perihp_cpll_src_en
-> bit 0 - shows aclk_perihp_gpll_src_en
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Last time, you confirmed with the IC designers that we had things right.
-What's different this time? Have you, for instance, done more thorough
-testing, to show that the logical parent structure this driver outputs
-is actually what the hardware is doing?
+Add TEGRA20_CLK_NOR to init tabel and set default rate to 92 MHz which
+is max rate.
 
-I think maybe this would qualify as:
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+---
+Changes in v2:
+- no changes
 
-Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src")
+ drivers/clk/tegra/clk-tegra20.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The above is not exactly a pure regression (we really want both
-changes), but apparently it wasn't a complete fix.
-
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> ---
-> 
-> Changes in v2: None
-
-Uhh, isn't this patch brand new in v2? I don't think that means
-"Changes ... None".
-
-Brian
-
->  drivers/clk/rockchip/clk-rk3399.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index 2182391..8bf0d19 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -833,9 +833,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->  
->  	/* perihp */
->  	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
-> -			RK3399_CLKGATE_CON(5), 0, GFLAGS),
-> -	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->  			RK3399_CLKGATE_CON(5), 1, GFLAGS),
-> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
-> +			RK3399_CLKGATE_CON(5), 0, GFLAGS),
->  	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
->  			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
->  			RK3399_CLKGATE_CON(5), 2, GFLAGS),
-> -- 
-> 1.7.9.5
-> 
-> 
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 837e5cb..13d3b5a 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
++	{ TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 92000000, 0 },
+ 	{ TEGRA20_CLK_SBC1, TEGRA20_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA20_CLK_SBC2, TEGRA20_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
+--
+2.1.4
