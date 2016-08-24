@@ -1,163 +1,122 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: Add GXBB AO Clock and Reset controller
- driver
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
- <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
- <20160813012910.GT361@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- mturquette@baylibre.com
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <16163435-1310-043d-804f-3bb1fd33cff4@baylibre.com>
-Date: Tue, 16 Aug 2016 15:34:35 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160813012910.GT361@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mips@linux-mips.org, Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Wan ZongShun <mcuos.com@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Steven Miao <realmz6@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3] clk: let clk_disable() return immediately if clk is NULL
+Date: Thu, 25 Aug 2016 02:26:53 +0900
+Message-Id: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Many of clk_disable() implementations just return for NULL pointer,
+but this check is missing from some.  Let's make it tree-wide
+consistent.  It will allow clock consumers to call clk_disable()
+without NULL pointer check.
 
-On 08/13/2016 03:29 AM, Stephen Boyd wrote:
-> On 08/09, Neil Armstrong wrote:
->> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
->> new file mode 100644
->> index 0000000..56a9186
->> --- /dev/null
->> +++ b/drivers/clk/meson/gxbb-aoclk.c
->> @@ -0,0 +1,203 @@
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Greg Ungerer <gerg@uclinux.org>
+Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+---
 
-[...]
+I came back after a long pause.
+You can see the discussion about the previous version:
+https://www.linux-mips.org/archives/linux-mips/2016-04/msg00063.html
 
->> + */
->> +#include <linux/clk.h>
-> 
-> Is this include used?
 
-No !
+Changes in v3:
+  - Return only when clk is NULL.  Do not take care of error pointer.
 
-> 
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset-controller.h>
->> +#include <linux/module.h>
->> +#include <dt-bindings/clock/gxbb-aoclkc.h>
->> +#include <dt-bindings/reset/gxbb-aoclkc.h>
->> +
->> +static DEFINE_SPINLOCK(clk_lock);
-> 
-> gxbb_clk_lock?
+Changes in v2:
+  - Rebase on Linux 4.6-rc1
 
-Renamed into gxbb_aoclk_lock for sake of clarity
+ arch/arm/mach-mmp/clock.c        | 3 +++
+ arch/arm/mach-w90x900/clock.c    | 3 +++
+ arch/blackfin/mach-bf609/clock.c | 3 +++
+ arch/m68k/coldfire/clk.c         | 4 ++++
+ arch/mips/bcm63xx/clk.c          | 3 +++
+ 5 files changed, 16 insertions(+)
 
-> 
->> +
->> +struct gxbb_aoclk_reset_controller {
->> +	struct reset_controller_dev reset;
->> +	unsigned int *data;
->> +	void __iomem *base;
->> +};
->> +
-
-[...]
-
->> +
->> +static struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
-> 
-> can this be const?
-
-It would be awesome, but it will be discarded by of_clk_add_hw_provider :
-
-drivers/clk/meson/gxbb-aoclk.c:176:4: warning: passing argument 3 of 'of_clk_add_hw_provider' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-    &gxbb_aoclk_onecell_data);
-
-In file included from drivers/clk/meson/gxbb-aoclk.c:55:0:
-./include/linux/clk-provider.h:788:5: note: expected 'void *' but argument is of type 'const struct clk_hw_onecell_data *'
- int of_clk_add_hw_provider(struct device_node *np,
-
-> 
->> +	.hws = {
->> +		[CLKID_AO_REMOTE] = &remote_ao.hw,
->> +		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
->> +		[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao.hw,
->> +		[CLKID_AO_UART1] = &uart1_ao.hw,
->> +		[CLKID_AO_UART2] = &uart2_ao.hw,
->> +		[CLKID_AO_IR_BLASTER] = &ir_blaster_ao.hw,
->> +	},
->> +	.num = ARRAY_SIZE(gxbb_aoclk_gate),
->> +};
->> +
->> +static int gxbb_aoclkc_probe(struct platform_device *pdev)
->> +{
->> +	void __iomem *base;
->> +	int ret, clkid;
->> +	struct device *dev = &pdev->dev;
->> +	struct gxbb_aoclk_reset_controller *rstc;
->> +
->> +	rstc = devm_kzalloc(dev, sizeof(rstc), GFP_KERNEL);
->> +	if (!rstc)
->> +		return -ENOMEM;
->> +
->> +	/*  Generic clocks */
->> +	base = of_iomap(dev->of_node, 0);
-> 
-> use devm_ioremap_resource() please and platform APIs to get the
-> ioresource.
-
-Done.
-
-> 
->> +	if (!base) {
->> +		pr_err("%s: Unable to map clk base\n", __func__);
-> 
-> We don't need error prints here with devm_ioremap_resource().
-> 
->> +		return -ENXIO;
->> +	}
->> +
->> +	/* Reset Controller */
->> +	rstc->base = base;
->> +	rstc->data = gxbb_aoclk_reset;
->> +	rstc->reset.ops = &gxbb_aoclk_reset_ops;
->> +	rstc->reset.nr_resets = ARRAY_SIZE(gxbb_aoclk_reset);
->> +	rstc->reset.of_node = dev->of_node;
->> +	ret = devm_reset_controller_register(dev, &rstc->reset);
->> +
->> +	/*
->> +	 * Populate base address and register all clks
->> +	 */
->> +	for (clkid = 0; clkid < gxbb_aoclk_onecell_data.num; clkid++) {
->> +		gxbb_aoclk_gate[clkid]->reg = base;
->> +
->> +		ret = devm_clk_hw_register(dev,
->> +					gxbb_aoclk_onecell_data.hws[clkid]);
->> +		if (ret)
->> +			goto iounmap;
->> +	}
->> +
->> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->> +			&gxbb_aoclk_onecell_data);
->> +
->> +iounmap:
->> +	iounmap(base);
->> +	return ret;
->> +}
->> +
->> +static const struct of_device_id gxbb_aoclkc_match_table[] = {
->> +	{ .compatible = "amlogic,gxbb-aoclkc" },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
->> +
->> +static struct platform_driver gxbb_aoclkc_driver = {
->> +	.probe		= gxbb_aoclkc_probe,
-> 
-> No remove means leak of iomem mapping.
-> 
-
-It will be non-modular, so no need of remove. The MODULE_* macros and module.h include will be removed like other clk drivers (gxbb and oxnas for instance).
-
-Thanks,
-Neil
+diff --git a/arch/arm/mach-mmp/clock.c b/arch/arm/mach-mmp/clock.c
+index ac6633d..28fe64c 100644
+--- a/arch/arm/mach-mmp/clock.c
++++ b/arch/arm/mach-mmp/clock.c
+@@ -67,6 +67,9 @@ void clk_disable(struct clk *clk)
+ {
+ 	unsigned long flags;
+ 
++	if (!clk)
++		return;
++
+ 	WARN_ON(clk->enabled == 0);
+ 
+ 	spin_lock_irqsave(&clocks_lock, flags);
+diff --git a/arch/arm/mach-w90x900/clock.c b/arch/arm/mach-w90x900/clock.c
+index 2c371ff..ac6fd1a 100644
+--- a/arch/arm/mach-w90x900/clock.c
++++ b/arch/arm/mach-w90x900/clock.c
+@@ -46,6 +46,9 @@ void clk_disable(struct clk *clk)
+ {
+ 	unsigned long flags;
+ 
++	if (!clk)
++		return;
++
+ 	WARN_ON(clk->enabled == 0);
+ 
+ 	spin_lock_irqsave(&clocks_lock, flags);
+diff --git a/arch/blackfin/mach-bf609/clock.c b/arch/blackfin/mach-bf609/clock.c
+index 3783058..392a59b 100644
+--- a/arch/blackfin/mach-bf609/clock.c
++++ b/arch/blackfin/mach-bf609/clock.c
+@@ -97,6 +97,9 @@ EXPORT_SYMBOL(clk_enable);
+ 
+ void clk_disable(struct clk *clk)
+ {
++	if (!clk)
++		return;
++
+ 	if (clk->ops && clk->ops->disable)
+ 		clk->ops->disable(clk);
+ }
+diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c
+index fddfdcc..1e3c7e9 100644
+--- a/arch/m68k/coldfire/clk.c
++++ b/arch/m68k/coldfire/clk.c
+@@ -101,6 +101,10 @@ EXPORT_SYMBOL(clk_enable);
+ void clk_disable(struct clk *clk)
+ {
+ 	unsigned long flags;
++
++	if (!clk)
++		return;
++
+ 	spin_lock_irqsave(&clk_lock, flags);
+ 	if ((--clk->enabled == 0) && clk->clk_ops)
+ 		clk->clk_ops->disable(clk);
+diff --git a/arch/mips/bcm63xx/clk.c b/arch/mips/bcm63xx/clk.c
+index 6375652..b49fc9c 100644
+--- a/arch/mips/bcm63xx/clk.c
++++ b/arch/mips/bcm63xx/clk.c
+@@ -326,6 +326,9 @@ EXPORT_SYMBOL(clk_enable);
+ 
+ void clk_disable(struct clk *clk)
+ {
++	if (!clk)
++		return;
++
+ 	mutex_lock(&clocks_mutex);
+ 	clk_disable_unlocked(clk);
+ 	mutex_unlock(&clocks_mutex);
+-- 
+1.9.1
