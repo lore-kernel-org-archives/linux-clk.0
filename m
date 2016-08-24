@@ -1,28 +1,32 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 23 Aug 2016 23:17:49 -0700
+Date: Wed, 24 Aug 2016 16:09:23 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v2 00/10] clk: qcom: PLL updates
-Message-ID: <20160824061749.GV6502@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Oleksij Rempel <linux@rempel-privat.de>
+Subject: Re: [PATCH 08/34] clk: asm9260: Migrate to clk_hw based registration
+ and OF APIs
+Message-ID: <20160824230923.GJ19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-9-stephen.boyd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <20160601231533.9354-9-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Rajendra Nayak wrote:
-> Hi,
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
 > 
-> This series adds some additional support to the clk-alpha-pll and the
-> clk-pll drivers in preperation to add the CPU clock driver support
-> on msm8996
+> Cc: Oleksij Rempel <linux@rempel-privat.de>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-It would be nice to see the users of this new code. Can that also
-be posted, even if it's just RFC and not for merging at this
-time?
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
