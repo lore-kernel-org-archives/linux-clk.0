@@ -1,63 +1,61 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	gnurou@gmail.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com
-Cc: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH 0/6] Add support for Tegra GMI bus controller
-Date: Sat,  6 Aug 2016 21:40:46 +0200
-Message-Id: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [v.1] clk:clk-rockchip:-of_iomap failed to remap then abort clock initialization.
+Date: Wed, 24 Aug 2016 16:56:08 +0200
+Message-ID: <2854111.gibmD6ORig@diego>
+In-Reply-To: <fa254e23-818c-0698-cbbc-68c983e83203@gmail.com>
+References: <1471101978-1881-1-git-send-email-arvind.yadav.cs@gmail.com> <1528160.BtdbmuP27T@diego> <fa254e23-818c-0698-cbbc-68c983e83203@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+Hi Arvind,
 
-Hi.
+Am Mittwoch, 24. August 2016, 19:52:45 schrieb arvind Yadav:
+> yes, I am referring this code for clock control.
 
-This is a follow up to my previous RFC. Take a look at [1], [2] and [3] for
-previous discussions.
+Please definitly do not use that old gate driver anymore!
 
-I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
-carrier board which has multiple CAN controllers (SJA1000) connected to the
-GMI bus.
+Instead please look at the real clock drivers for specific Rockchip soc=
+s in the=20
+same directory.
+Which Rockchip soc are you working on?
 
-[1]. https://marc.info/?l=linux-clk&m=146893557629903&w=2
-[2]. https://marc.info/?l=linux-tegra&m=146893541829801&w=2
-[3]. https://marc.info/?l=linux-tegra&m=146893542429814&w=2
 
-Mirza Krak (6):
-  clk: tegra: add TEGRA20_CLK_NOR to init table
-  clk: tegra: add TEGRA30_CLK_NOR to init table
-  dt/bindings: Add bindings for Tegra GMI controller
-  ARM: tegra: Add Tegra30 GMI support
-  ARM: tegra: Add Tegra20 GMI support
-  bus: Add support for Tegra Generic Memory Interface
+Heiko
 
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt |  99 +++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |  11 +
- arch/arm/boot/dts/tegra30.dtsi                     |  10 +
- drivers/bus/Kconfig                                |   7 +
- drivers/bus/Makefile                               |   1 +
- drivers/bus/tegra-gmi.c                            | 224 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra20.c                    |   1 +
- drivers/clk/tegra/clk-tegra30.c                    |   1 +
- 8 files changed, 354 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
- create mode 100644 drivers/bus/tegra-gmi.c
-
---
-2.1.4
+> On Tuesday 23 August 2016 09:45 PM, Heiko St=FCbner wrote:
+> > Hi Arvind,
+> >=20
+> > Am Samstag, 13. August 2016, 20:56:18 schrieb Arvind Yadav:
+> >> -check return of 'of_iomap'.if It's falied to remap then abort.
+> >>=20
+> >> -Unmap a region obtained by remap. iounmap frees the mapping when =
+failed
+> >> to allocate the memory.
+> >>=20
+> >> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> >> ---
+> >>=20
+> >>   drivers/clk/rockchip/clk-rockchip.c | 7 ++++++-
+> >=20
+> > I've applied the patch, after rewording both patch subject and mess=
+age
+> > [0].
+> >=20
+> > That driver is deprecated for quite some time, see
+> > Documenation/devicetree/bindings/clock/rockchip.txt - so I'm hoping=
+ this
+> > is
+> > more of a random find and you're not actually using it?
+> >=20
+> >=20
+> > Thanks
+> > Heiko
+> >=20
+> > [0]
+> > https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.g=
+it/com
+> > mit/?id=3D023a8280b8355a0aebe094299afec8d8b7b264cd
