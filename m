@@ -1,233 +1,167 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
-	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v11 3/9] dt-bindings: ARM: Mediatek: Document bindings for MT2701
-Date: Fri, 19 Aug 2016 13:34:50 +0800
-Message-ID: <1471584896-9986-4-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+ <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+CC: <gnurou@gmail.com>, <linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+Date: Wed, 24 Aug 2016 16:56:45 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+In-Reply-To: <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
 
-This patch adds the binding documentation for apmixedsys, bdpsys,
-ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-vdecsys for Mediatek MT2701.
+On 24/08/16 14:37, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
+> 
+> Document the devicetree bindings for the Generic Memory Interface (GMI)
+> bus driver found on Tegra SOCs.
+> 
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> ---
+> Changes in v2:
+> - Updated examples and some information based on comments from Jon Hunter.
+> 
+>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+> new file mode 100644
+> index 0000000..8c1e15f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+> @@ -0,0 +1,132 @@
+> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
+> +
+> +The Generic Memory Interface bus enables memory transfers between internal and
+> +external memory. Can be used to attach various high speed devices such as
+> +synchronous/asynchronous NOR, FPGA, UARTS and more.
+> +
+> +The actual devices are instantiated from the child nodes of a GMI node.
+> +
+> +Required properties:
+> + - compatible : Should contain one of the following:
+> +        For Tegra20 must contain "nvidia,tegra20-gmi".
+> +        For Tegra30 must contain "nvidia,tegra30-gmi".
+> + - reg: Should contain GMI controller registers location and length.
+> + - clocks: Must contain an entry for each entry in clock-names.
+> + - clock-names: Must include the following entries: "gmi"
+> + - resets : Must contain an entry for each entry in reset-names.
+> + - reset-names : Must include the following entries: "gmi"
+> + - #address-cells: The number of cells used to represent physical base
+> +   addresses in the GMI address space. Should be 1.
+> + - #size-cells: The number of cells used to represent the size of an address
+> +   range in the GMI address space. Should be 1.
+> + - ranges: Must be set up to reflect the memory layout with three integer values
+> +   for each chip-select line in use (only one entry is supported, see below
+> +   comments):
+> +   <cs-number> <physical address of mapping> <size>
+> +
+> +Note that the GMI controller does not have any internal chip-select address
+> +decoding, because of that chip-selects either need to be managed via software
+> +or by employing external chip-select decoding logic.
+> +
+> +If external chip-select logic is used to support multiple devices it is assumed
+> +that the devices use the same timing and so are probably the same type. It also
+> +assumes that they can fit in the 256MB address range. In this case only one
+> +child device is supported which represents the active chip-select line, see
+> +examples for more insight.
+> +
+> +Required child cs node properties:
+> + - reg: First entry should contain the active chip-select number
+> +
+> +Optional child cs node properties:
+> +
+> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
+> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
+> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
+> +   If omitted it will be asserted with data.
+> + - nvidia,snor-rdy-inv: RDY signal is active high
+> + - nvidia,snor-adv-inv: ADV signal is active high
+> + - nvidia,snor-oe-inv: WE/OE signal is active high
+> + - nvidia,snor-cs-inv: CS signal is active high
+> +
+> +  Note that there is some special handling for the timing values.
+> +  From Tegra TRM:
+> +  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
+> +
+> + - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
+> +   bus. Valid values are 0-15, default is 1
+> + - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
+> +   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
+> +   (in case of MASTER Request). Valid values are 0-15, default is 1
+> + - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
+> +   Valid values are 0-15, default is 1.
+> + - nvidia,snor-ce-width: Number of cycles before CE is asserted.
+> +   Valid values are 0-15, default is 4
+> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
+> +   Valid values are 0-15, default is 1
+> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
+> +   Valid values are 0-255, default is 1
+> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
+> +   Valid values are 0-255, default is 3
+> +
+> +Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
+> +controllers with a simple-bus node since they are all connected to the same
+> +chip-select (CS4), in this example external address decoding is provided:
+> +
+> +gmi@70090000 {
+> +	compatible = "nvidia,tegra20-gmi";
+> +	reg = <0x70009000 0x1000>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	clocks = <&tegra_car TEGRA20_CLK_NOR>;
+> +	clock-names = "gmi";
+> +	resets = <&tegra_car 42>;
+> +	reset-names = "gmi";
+> +	ranges = <4 0x48000000 0x7ffffff>;
+> +
+> +	status = "disabled";
+> +
+> +	bus@4 {
+> +		compatible = "simple-bus";
+> +		reg = <4>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 4 0x40100>;
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
- 10 files changed, 82 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+Does this work? I tried to add an example like this and I got ...
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index 936166f..cb0054a 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -5,7 +5,8 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
- 	- "mediatek,mt8173-apmixedsys"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-new file mode 100644
-index 0000000..4137196
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek bdpsys controller
-+============================
-+
-+The Mediatek bdpsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-bdpsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The bdpsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+bdpsys: clock-controller@1c000000 {
-+	compatible = "mediatek,mt2701-bdpsys", "syscon";
-+	reg = <0 0x1c000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-new file mode 100644
-index 0000000..768f3a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek ethsys controller
-+============================
-+
-+The Mediatek ethsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-ethsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The ethsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+ethsys: clock-controller@1b000000 {
-+	compatible = "mediatek,mt2701-ethsys", "syscon";
-+	reg = <0 0x1b000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-new file mode 100644
-index 0000000..beed7b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-@@ -0,0 +1,24 @@
-+Mediatek hifsys controller
-+============================
-+
-+The Mediatek hifsys controller provides various clocks and reset
-+outputs to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-hifsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The hifsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+hifsys: clock-controller@1a000000 {
-+	compatible = "mediatek,mt2701-hifsys", "syscon";
-+	reg = <0 0x1a000000 0 0x1000>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index b1f2ce1..f6a9166 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -5,7 +5,8 @@ The Mediatek imgsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index aaf8d14..1620ec2 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -6,7 +6,8 @@ outputs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 4385946..67dd2e4 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -5,7 +5,8 @@ The Mediatek mmsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt8173-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-index 2f6ff86..e494366 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-@@ -6,7 +6,8 @@ outputs to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-pericfg", "syscon"
- 	- "mediatek,mt8135-pericfg", "syscon"
- 	- "mediatek,mt8173-pericfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index f9e9179..9f2fe78 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -5,7 +5,8 @@ The Mediatek topckgen controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-topckgen"
- 	- "mediatek,mt8135-topckgen"
- 	- "mediatek,mt8173-topckgen"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 1faacf1..2440f73 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -5,7 +5,8 @@ The Mediatek vdecsys controller provides various clocks to the system.
- 
- Required Properties:
- 
--- compatible: Should be:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
- - #clock-cells: Must be 1
- 
+Warning (reg_format): "reg" property in /gmi@70009000/bus@4 has invalid
+length (4 bytes) (#address-cells == 1, #size-cells == 1)
+
+I am wondering if we should just following the arm,pl172 example and
+have ...
+
+	cs4 {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		nvidia,snor-cs = <4>;
+		nvidia,snor-mux-mode;
+		nvidia,snor-adv-inv;
+
+		can@0 {
+			reg = <0 0x100>;
+			...
+		};
+
+		...
+	};
+
+Cheers
+Jon
+
 -- 
-1.9.1
+nvpublic
