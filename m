@@ -1,30 +1,49 @@
-Return-Path: <Jiada_Wang@mentor.com>
-From: Jiada Wang <jiada_wang@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <joshua_frkuska@mentor.com>,
-	<vladimir_zapolskiy@mentor.com>, <jiada_wang@mentor.com>
-Subject: [PATCH v3] clk: move check of CLK_SET_RATE_GATE flag to clk_propagate_rate_change()
-Date: Tue, 23 Aug 2016 17:10:57 +0900
-Message-ID: <1471939858-20925-1-git-send-email-jiada_wang@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
+From: Douglas Anderson <dianders@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	Douglas Anderson <dianders@chromium.org>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: mark aclk_emmc_noc as a critical clock on rk3399
+Date: Wed, 24 Aug 2016 11:29:39 -0700
+Message-Id: <1472063379-717-1-git-send-email-dianders@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-v3:
-- updated commit message
-- only check CLK_SET_RATE_GATE flag in case of 'PRE_RATE_CHANGE' event
-- continue propagate rate change, even when there is error in clk_propagate_rate_change()
+From: Xing Zheng <zhengxing@rock-chips.com>
 
-v2:
-- changed to return clk_core *core, instead of NULL
+We don't have code to handle any of the noc clocks in rk3399 and they're
+all just listed as critical clocks.  Let's do the same for
+aclk_emmc_noc.
 
-Jiada Wang (1):
-  clk: move check of CLK_SET_RATE_GATE flag to
-    clk_propagate_rate_change()
+Without this clock being marked as critical we have problems around
+suspend/resume after commit 20c389e656a8 ("clk: rockchip: fix incorrect
+aclk_emmc source gate bits on rk3399").  Before that change we were
+presumably not actually gating any of these clocks because we were
+setting the wrong gate.
 
- drivers/clk/clk.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index e445cd64952a..ede6c475b537 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1489,6 +1489,7 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
+ 	"hclk_perilp1",
+ 	"hclk_perilp1_noc",
+ 	"aclk_dmac0_perilp",
++	"aclk_emmc_noc",
+ 	"gpll_hclk_perilp1_src",
+ 	"gpll_aclk_perilp0_src",
+ 	"gpll_aclk_perihp_src",
 -- 
-2.4.5
+2.8.0.rc3.226.g39d4020
