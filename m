@@ -1,240 +1,38 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42565 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753574AbcHXXLC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Aug 2016 19:11:02 -0400
+Date: Wed, 24 Aug 2016 16:11:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH 09/34] clk: axi-clkgen: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160824231101.GL19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-10-stephen.boyd@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20160830170636.GA8741@rob-hp-laptop>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com> <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com> <20160830170636.GA8741@rob-hp-laptop>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Wed, 31 Aug 2016 13:22:34 +0200
-Message-ID: <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Rob Herring <robh@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160601231533.9354-10-stephen.boyd@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-30 19:06 GMT+02:00 Rob Herring <robh@kernel.org>:
-> On Wed, Aug 24, 2016 at 09:54:47PM +0200, Mirza Krak wrote:
->> 2016-08-24 17:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->> +
->> >> +Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
->> >> +controllers with a simple-bus node since they are all connected to the same
->> >> +chip-select (CS4), in this example external address decoding is provided:
->> >> +
->> >> +gmi@70090000 {
->> >> +     compatible = "nvidia,tegra20-gmi";
->> >> +     reg = <0x70009000 0x1000>;
->> >> +     #address-cells = <1>;
->> >> +     #size-cells = <1>;
->> >> +     clocks = <&tegra_car TEGRA20_CLK_NOR>;
->> >> +     clock-names = "gmi";
->> >> +     resets = <&tegra_car 42>;
->> >> +     reset-names = "gmi";
->> >> +     ranges = <4 0x48000000 0x7ffffff>;
->> >> +
->> >> +     status = "disabled";
->> >> +
->> >> +     bus@4 {
->> >> +             compatible = "simple-bus";
->> >> +             reg = <4>;
->> >> +             #address-cells = <1>;
->> >> +             #size-cells = <1>;
->> >> +             ranges = <0 4 0x40100>;
->> >
->> > Does this work? I tried to add an example like this and I got ...
->> >
->> > Warning (reg_format): "reg" property in /gmi@70009000/bus@4 has invalid
->> > length (4 bytes) (#address-cells == 1, #size-cells == 1)
->>
->> Shoot, to get rid of the warning it should be
->>
->> reg = <4 0 >;
->>
->> But it works either way.
->
-> The CS node should have #address-cells=2 with the first being CS# and
-> the second being the offset (often 0).
->
->>
->> >
->> > I am wondering if we should just following the arm,pl172 example and
->> > have ...
->> >
->> >         cs4 {
->> >                 compatible = "simple-bus";
->> >                 #address-cells = <1>;
->> >                 #size-cells = <1>;
->> >                 ranges;
->
-> Empty ranges is typically wrong and due to laziness...
->
-> This should have the CS# in it.
->
->> >
->> >                 nvidia,snor-cs = <4>;
->> >                 nvidia,snor-mux-mode;
->> >                 nvidia,snor-adv-inv;
->> >
->> >                 can@0 {
->> >                         reg = <0 0x100>;
->
-> This can be 1 cell with just the offset.
->
->> >                         ...
->> >                 };
->> >
->> >                 ...
->> >         };
->> >
->>
->> That means to go back to V1 really (almost :)). Which I do not mind.
->> Will give it a test run.
->>
->> But I am a little hesitant if will be any better/cleaner. In your example above:
->>
->> can@0 {
->>          reg = <0 0x100>;
->>          ...
->> };
->>
->> Would this really translate correctly? In the pl172 example they have
->> multiple ranges and address with "flash@0,0" which a range defined in
->> parent node. "can@0" does not have valid match in parent node in our
->> example. So I probably need add some more logic for it to properly
->> translate.
->
-> pl172 has several things I don't like, so don't follow it. Mainly those
-> are custom CS property and 3 levels of nodes. I'm fine with 3 levels if
-> there is more than one device, but otherwise 2 levels with timing
-> properties in the child device node.
->
->
->>
->> I have an idea which is following:
->>
->> gmi@70090000 {
->>          status = "okay";
->>          #address-cells = <2>;
->>          #size-cells = <1>;
->>          ranges = <4 0 0x48000000 0x00040000>;
->>
->>          cs4 {
->
-> cs@4,0
->
->>                  compatible = "simple-bus";
->>                  #address-cells = <2>;
->
-> 1 cell here.
->
->>                  #size-cells = <1>;
->>                  ranges;
->
-> Fill this in to drop the 2nd cell on child addresses and just have the
-> offset.
->
->>
->>                  nvidia,snor-cs = <4>;
->
-> NAK, no custom CS properties.
->
->>                  nvidia,snor-mux-mode;
->>                  nvidia,snor-adv-inv;
->>
->>                  can@0 {
->>                          compatible = "nxp,sja1000";
->>                          reg = <4 0 0x100>;
->>                          ...
->>                  };
->>
->>
->>                  can@40000 {
->>                          compatible = "nxp,sja1000";
->>                          reg = <4 0x40000 0x100>;
->>                          ...
->>                  };
->>          };
->> };
->>
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-Thank you for your review Rob.
+Applied to clk-next
 
-Taking your comments in to account I end up with this:
-
-gmi@70090000 {
-        compatible = "nvidia,tegra20-gmi";
-        reg = <0x70009000 0x1000>;
-        #address-cells = <2>;
-        #size-cells = <1>;
-        clocks = <&tegra_car TEGRA20_CLK_NOR>;
-        clock-names = "gmi";
-        resets = <&tegra_car 42>;
-        reset-names = "gmi";
-        ranges = <4 0 0xd0000000 0xfffffff>;
-
-        status = "okay";
-
-        bus@4,0 {
-                compatible = "simple-bus";
-                #address-cells = <1>;
-                #size-cells = <1>;
-                ranges = <0 4 0 0x40000>;
-
-                nvidia,snor-mux-mode;
-                nvidia,snor-adv-inv;
-
-                can@0 {
-                        reg = <0 0x100>;
-                        ...
-                };
-
-                can@40000 {
-                        reg = <0x40000 0x100>;
-                        ...
-                };
-        };
-};
-
-Have I understood you correct?
-
-Also wanted to verify the example case where you only have on device
-connected to one CS#, from what I see in other implementations it
-seems OK to put the CS# in the reg property in that case. Is this
-correct?
-
-Example with one SJA1000 CAN controller connected to the GMI bus
-on CS4:
-
-gmi@70090000 {
-        compatible = "nvidia,tegra20-gmi";
-        reg = <0x70009000 0x1000>;
-        #address-cells = <2>;
-        #size-cells = <1>;
-        clocks = <&tegra_car TEGRA20_CLK_NOR>;
-        clock-names = "gmi";
-        resets = <&tegra_car 42>;
-        reset-names = "gmi";
-        ranges = <4 0 0xd0000000 0xfffffff>;
-
-        status = "okay";
-
-        can@4,0 {
-                reg = <4 0 0x100>;
-                nvidia,snor-mux-mode;
-                nvidia,snor-adv-inv;
-                ...
-        };
-};
-
-Jon, to be able to handle both cases in the driver we would first
-attempt to decode the CS# from the ranges property, and fallback to
-reg property if no ranges are defined. Does that sound reasonable?
-
-Best Regards
-Mirza
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
