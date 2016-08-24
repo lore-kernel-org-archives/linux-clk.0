@@ -1,113 +1,62 @@
 Return-Path: <mw@semihalf.com>
-Return-Path: <mw@semihalf.com>
-From: Marcin Wojtas <mw@semihalf.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	andrew@lunn.ch,
-	jason@lakedaemon.net,
-	thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com,
-	nadavh@marvell.com,
-	alior@marvell.com,
-	tn@semihalf.com,
-	jaz@semihalf.com,
-	Marcin Wojtas <mw@semihalf.com>
-Subject: [PATCH 2/2] clk: mvebu: dynamically allocate resources in Armada CP110 system controller
-Date: Tue, 23 Aug 2016 08:26:49 +0200
-Message-Id: <1471933609-8456-3-git-send-email-mw@semihalf.com>
-In-Reply-To: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+MIME-Version: 1.0
+In-Reply-To: <20160823141603.GH20029@lunn.ch>
 References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+ <1471933609-8456-2-git-send-email-mw@semihalf.com> <20160823141603.GH20029@lunn.ch>
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Wed, 24 Aug 2016 10:28:34 +0200
+Message-ID: <CAPv3WKec7+xgy5gxc3e9SwVJ0T649odf+rXybje7SUkEu5gnhg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: mvebu: set flags in CP110 gate clock
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
+	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
+	Grzegorz Jaszczyk <jaz@semihalf.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Original commit, which added support for Armada CP110 system controller
-used global variables for storing all clock information. It worked
-fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
-was introduced, the data got overwritten and corrupted.
+HI Andrew,
 
-This patch fixes the issue by allocating resources dynamically in the
-driver probe and storing it as platform drvdata.
+2016-08-23 16:16 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
+> On Tue, Aug 23, 2016 at 08:26:48AM +0200, Marcin Wojtas wrote:
+>> Armada CP110 system controller comprise its own routine responsble
+>> for registering gate clocks. Among others 'flags' field in
+>> struct clk_init_data was not set, using a random values, which
+>> may cause an unpredicted behavior.
+>>
+>> This patch fixes the problem by setting CLK_IS_BASIC flag for
+>> all gated clocks of Armada 7k/8k SoCs family.
+>>
+>> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
+>>
+>> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+>> ---
+>>  drivers/clk/mvebu/cp110-system-controller.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+>> index 7fa42d6..0835e1d 100644
+>> --- a/drivers/clk/mvebu/cp110-system-controller.c
+>> +++ b/drivers/clk/mvebu/cp110-system-controller.c
+>> @@ -144,6 +144,7 @@ static struct clk *cp110_register_gate(const char *name,
+>>
+>>       init.name = name;
+>>       init.ops = &cp110_gate_ops;
+>> +     init.flags = CLK_IS_BASIC;
+>>       init.parent_names = &parent_name;
+>>       init.num_parents = 1;
+>
+> Hi Marcin
+>
+> How about adding a memset for init? That would also help if new fields
+> every get added to clk_init_data.
+>
 
-Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
+Sure, it can be added.
 
-Signed-off-by: Marcin Wojtas <mw@semihalf.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 0835e1d..2bd87d2 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -81,13 +81,6 @@ enum {
- #define CP110_GATE_EIP150		25
- #define CP110_GATE_EIP197		26
- 
--static struct clk *cp110_clks[CP110_CLK_NUM];
--
--static struct clk_onecell_data cp110_clk_data = {
--	.clks = cp110_clks,
--	.clk_num = CP110_CLK_NUM,
--};
--
- struct cp110_gate_clk {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -195,7 +188,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	struct device_node *np = pdev->dev.of_node;
- 	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
--	struct clk *clk;
-+	struct clk_onecell_data *cp110_clk_data;
-+	struct clk *clk, **cp110_clks;
- 	u32 nand_clk_ctrl;
- 	int i, ret;
- 
-@@ -208,6 +202,20 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
-+				  CP110_CLK_NUM, GFP_KERNEL);
-+	if (IS_ERR(cp110_clks))
-+		return PTR_ERR(cp110_clks);
-+
-+	cp110_clk_data = devm_kzalloc(&pdev->dev,
-+				      sizeof(struct clk_onecell_data),
-+				      GFP_KERNEL);
-+	if (IS_ERR(cp110_clk_data))
-+		return PTR_ERR(cp110_clk_data);
-+
-+	cp110_clk_data->clks = cp110_clks;
-+	cp110_clk_data->clk_num = CP110_CLK_NUM;
-+
- 	/* Register the APLL which is the root of the clk tree */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_APLL, &apll_name);
-@@ -335,10 +343,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
- 	}
- 
--	ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
-+	ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
- 	if (ret)
- 		goto fail_clk_add;
- 
-+	platform_set_drvdata(pdev, cp110_clks);
-+
- 	return 0;
- 
- fail_clk_add:
-@@ -365,6 +375,7 @@ fail0:
- 
- static int cp110_syscon_clk_remove(struct platform_device *pdev)
- {
-+	struct clk **cp110_clks = platform_get_drvdata(pdev);
- 	int i;
- 
- 	of_clk_del_provider(pdev->dev.of_node);
--- 
-1.8.3.1
+Best regards,
+Marcin
