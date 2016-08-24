@@ -1,161 +1,181 @@
 Return-Path: <mirza.krak@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1472569333.5703.24.camel@toradex.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com> <1472569333.5703.24.camel@toradex.com>
+Return-Path: <mirza.krak@gmail.com>
 From: Mirza Krak <mirza.krak@gmail.com>
-Date: Wed, 31 Aug 2016 11:24:50 +0200
-Message-ID: <CALw8SCVeqtG-w5MkdncWj_2K-Z41ddE+TACcO2FZKfVCNjQ_kQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Wed, 24 Aug 2016 15:37:15 +0200
+Message-Id: <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-08-30 17:02 GMT+02:00 Marcel Ziswiler <marcel.ziswiler@toradex.com>:
-> On Wed, 2016-08-24 at 15:37 +0200, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak@gmail.com>
->>
->> Document the devicetree bindings for the Generic Memory Interface
->> (GMI)
->> bus driver found on Tegra SOCs.
->>
->> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->> ---
->> Changes in v2:
->> - Updated examples and some information based on comments from Jon
->> Hunter.
->>
->>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132
->> +++++++++++++++++++++
->>  1 file changed, 132 insertions(+)
->>  create mode 100644
->> Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
->>
->> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-
->> gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-
->> gmi.txt
->> new file mode 100644
->> index 0000000..8c1e15f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
->> @@ -0,0 +1,132 @@
->> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
->> +
->> +The Generic Memory Interface bus enables memory transfers between
->> internal and
->> +external memory. Can be used to attach various high speed devices
->> such as
->> +synchronous/asynchronous NOR, FPGA, UARTS and more.
->> +
->> +The actual devices are instantiated from the child nodes of a GMI
->> node.
->> +
->> +Required properties:
->> + - compatible : Should contain one of the following:
->> +        For Tegra20 must contain "nvidia,tegra20-gmi".
->> +        For Tegra30 must contain "nvidia,tegra30-gmi".
->> + - reg: Should contain GMI controller registers location and length.
->> + - clocks: Must contain an entry for each entry in clock-names.
->> + - clock-names: Must include the following entries: "gmi"
->> + - resets : Must contain an entry for each entry in reset-names.
->> + - reset-names : Must include the following entries: "gmi"
->> + - #address-cells: The number of cells used to represent physical
->> base
->> +   addresses in the GMI address space. Should be 1.
->> + - #size-cells: The number of cells used to represent the size of an
->> address
->> +   range in the GMI address space. Should be 1.
->> + - ranges: Must be set up to reflect the memory layout with three
->> integer values
->> +   for each chip-select line in use (only one entry is supported,
->> see below
->> +   comments):
->> +   <cs-number> <physical address of mapping> <size>
->> +
->> +Note that the GMI controller does not have any internal chip-select
->> address
->> +decoding, because of that chip-selects either need to be managed via
->> software
->> +or by employing external chip-select decoding logic.
->> +
->> +If external chip-select logic is used to support multiple devices it
->> is assumed
->> +that the devices use the same timing and so are probably the same
->> type. It also
->> +assumes that they can fit in the 256MB address range. In this case
->> only one
->> +child device is supported which represents the active chip-select
->> line, see
->> +examples for more insight.
->> +
->> +Required child cs node properties:
->> + - reg: First entry should contain the active chip-select number
->> +
->> +Optional child cs node properties:
->> +
->> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is
->> 16bit.
->> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
->> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle
->> before data.
->> +   If omitted it will be asserted with data.
->> + - nvidia,snor-rdy-inv: RDY signal is active high
->> + - nvidia,snor-adv-inv: ADV signal is active high
->> + - nvidia,snor-oe-inv: WE/OE signal is active high
->> + - nvidia,snor-cs-inv: CS signal is active high
->> +
->> +  Note that there is some special handling for the timing values.
->> +  From Tegra TRM:
->> +  Programming 0 means 1 clock cycle: actual cycle = programmed cycle
->> + 1
->> +
->> + - nvidia,snor-muxed-width: Number of cycles MUX address/data
->> asserted on the
->> +   bus. Valid values are 0-15, default is 1
->> + - nvidia,snor-hold-width: Number of cycles CE stays asserted after
->> the
->> +   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
->> +   (in case of MASTER Request). Valid values are 0-15, default is 1
->> + - nvidia,snor-adv-width: Number of cycles during which ADV stays
->> asserted.
->> +   Valid values are 0-15, default is 1.
->> + - nvidia,snor-ce-width: Number of cycles before CE is asserted.
->> +   Valid values are 0-15, default is 4
->> + - nvidia,snor-we-width: Number of cycles during which WE stays
->> asserted.
->> +   Valid values are 0-15, default is 1
->> + - nvidia,snor-oe-width: Number of cycles during which OE stays
->> asserted.
->> +   Valid values are 0-255, default is 1
->> + - nvidia,snor-wait-width: Number of cycles before READY is
->> asserted.
->> +   Valid values are 0-255, default is 3
->> +
->> +Example with two SJA1000 CAN controllers connected to the GMI bus.
->> We wrap the
->> +controllers with a simple-bus node since they are all connected to
->> the same
->> +chip-select (CS4), in this example external address decoding is
->> provided:
->> +
->> +gmi@70090000 {
->
-> It's actually 70009000.
+From: Mirza Krak <mirza.krak@gmail.com>
 
-I actually noticed this all ready, so should be fixed in the upcoming V3.
+Document the devicetree bindings for the Generic Memory Interface (GMI)
+bus driver found on Tegra SOCs.
 
-Thank you for your review.
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+---
+Changes in v2:
+- Updated examples and some information based on comments from Jon Hunter.
 
-Best Regards
-Mirza
+ .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+new file mode 100644
+index 0000000..8c1e15f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+@@ -0,0 +1,132 @@
++Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
++
++The Generic Memory Interface bus enables memory transfers between internal and
++external memory. Can be used to attach various high speed devices such as
++synchronous/asynchronous NOR, FPGA, UARTS and more.
++
++The actual devices are instantiated from the child nodes of a GMI node.
++
++Required properties:
++ - compatible : Should contain one of the following:
++        For Tegra20 must contain "nvidia,tegra20-gmi".
++        For Tegra30 must contain "nvidia,tegra30-gmi".
++ - reg: Should contain GMI controller registers location and length.
++ - clocks: Must contain an entry for each entry in clock-names.
++ - clock-names: Must include the following entries: "gmi"
++ - resets : Must contain an entry for each entry in reset-names.
++ - reset-names : Must include the following entries: "gmi"
++ - #address-cells: The number of cells used to represent physical base
++   addresses in the GMI address space. Should be 1.
++ - #size-cells: The number of cells used to represent the size of an address
++   range in the GMI address space. Should be 1.
++ - ranges: Must be set up to reflect the memory layout with three integer values
++   for each chip-select line in use (only one entry is supported, see below
++   comments):
++   <cs-number> <physical address of mapping> <size>
++
++Note that the GMI controller does not have any internal chip-select address
++decoding, because of that chip-selects either need to be managed via software
++or by employing external chip-select decoding logic.
++
++If external chip-select logic is used to support multiple devices it is assumed
++that the devices use the same timing and so are probably the same type. It also
++assumes that they can fit in the 256MB address range. In this case only one
++child device is supported which represents the active chip-select line, see
++examples for more insight.
++
++Required child cs node properties:
++ - reg: First entry should contain the active chip-select number
++
++Optional child cs node properties:
++
++ - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
++ - nvidia,snor-mux-mode: Enable address/data MUX mode.
++ - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
++   If omitted it will be asserted with data.
++ - nvidia,snor-rdy-inv: RDY signal is active high
++ - nvidia,snor-adv-inv: ADV signal is active high
++ - nvidia,snor-oe-inv: WE/OE signal is active high
++ - nvidia,snor-cs-inv: CS signal is active high
++
++  Note that there is some special handling for the timing values.
++  From Tegra TRM:
++  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
++
++ - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
++   bus. Valid values are 0-15, default is 1
++ - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
++   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
++   (in case of MASTER Request). Valid values are 0-15, default is 1
++ - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
++   Valid values are 0-15, default is 1.
++ - nvidia,snor-ce-width: Number of cycles before CE is asserted.
++   Valid values are 0-15, default is 4
++ - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
++   Valid values are 0-15, default is 1
++ - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
++   Valid values are 0-255, default is 1
++ - nvidia,snor-wait-width: Number of cycles before READY is asserted.
++   Valid values are 0-255, default is 3
++
++Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
++controllers with a simple-bus node since they are all connected to the same
++chip-select (CS4), in this example external address decoding is provided:
++
++gmi@70090000 {
++	compatible = "nvidia,tegra20-gmi";
++	reg = <0x70009000 0x1000>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++	clocks = <&tegra_car TEGRA20_CLK_NOR>;
++	clock-names = "gmi";
++	resets = <&tegra_car 42>;
++	reset-names = "gmi";
++	ranges = <4 0x48000000 0x7ffffff>;
++
++	status = "disabled";
++
++	bus@4 {
++		compatible = "simple-bus";
++		reg = <4>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 4 0x40100>;
++
++		nvidia,snor-mux-mode;
++		nvidia,snor-adv-inv;
++
++		can@0 {
++			reg = <0 0x100>;
++			...
++		};
++
++		can@40000 {
++			reg = <0x40000 0x100>;
++			...
++		};
++	};
++};
++
++Example with one SJA1000 CAN controller connected to the GMI bus
++on CS4:
++
++gmi@70090000 {
++	compatible = "nvidia,tegra20-gmi";
++	reg = <0x70009000 0x1000>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++	clocks = <&tegra_car TEGRA20_CLK_NOR>;
++	clock-names = "gmi";
++	resets = <&tegra_car 42>;
++	reset-names = "gmi";
++	ranges = <4 0x48000000 0x7ffffff>;
++
++	status = "disabled";
++
++	can@4 {
++		reg = <4 0x100>;
++		...
++		nvidia,snor-mux-mode;
++		nvidia,snor-adv-inv;
++	};
++};
+--
+2.1.4
