@@ -1,74 +1,61 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 01/10] clk: Fix inconsistencies in usage of data types
-Date: Thu, 11 Aug 2016 14:10:49 +0530
-Message-Id: <1470904858-11930-2-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+Date: Wed, 24 Aug 2016 15:56:56 +0200
+Message-Id: <20160824135656.5025-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-index is of type u8 in all places except in clk_hw_get_parent_by_index()
-and return value of all round_rate functions is long except for
-clk_hw_round_rate(). Make them consistent with the rest of the places
+From: Vince Hsu <vinceh@nvidia.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Tegra114 has a HW bug that the PLLD/PLLD2 lock bit cannot be asserted when
+the DIS power domain is during up-powergating process but the clamp to this
+domain is not removed yet. That causes a timeout and aborts the power
+sequence, although the PLLD/PLLD2 has already locked. To remove the false
+alarm, we don't use the lock for PLLD/PLLD2. Just wait 1ms and treat the
+clocks as locked.
+
+Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+Tested-by: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/clk.c            | 4 ++--
- include/linux/clk-provider.h | 5 ++---
- 2 files changed, 4 insertions(+), 5 deletions(-)
+Hi Mike, Stephen,
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939..e768071 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -261,7 +261,7 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
- }
+This patch is part of a fix for a regression that was introduced in
+v4.8-rc1 and it'd be great to see this applied for fixes.
+
+Thanks,
+Thierry
+
+ drivers/clk/tegra/clk-tegra114.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 64da7b79a6e4..933b5dd698b8 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -428,7 +428,7 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+ 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++		 TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
  
- struct clk_hw *
--clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
-+clk_hw_get_parent_by_index(const struct clk_hw *hw, u8 index)
- {
- 	struct clk_core *parent;
+ static struct tegra_clk_pll_params pll_d2_params = {
+@@ -446,7 +446,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+ 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++		 TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
  
-@@ -889,7 +889,7 @@ int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- }
- EXPORT_SYMBOL_GPL(__clk_determine_rate);
- 
--unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
-+long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
- {
- 	int ret;
- 	struct clk_rate_request req;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a39c0c5..230a249 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -732,8 +732,7 @@ const char *clk_hw_get_name(const struct clk_hw *hw);
- struct clk_hw *__clk_get_hw(struct clk *clk);
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
--struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
--					  unsigned int index);
-+struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw, u8 index);
- unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
-@@ -760,7 +759,7 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- /*
-  * FIXME clock api without lock protection
-  */
--unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
-+long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
- 
- struct of_device_id;
- 
+ static const struct pdiv_map pllu_p[] = {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.9.0
