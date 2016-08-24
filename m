@@ -1,67 +1,65 @@
-Return-Path: <mirza.krak@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1472569295.5703.20.camel@toradex.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com> <1472569295.5703.20.camel@toradex.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Wed, 31 Aug 2016 11:23:13 +0200
-Message-ID: <CALw8SCXgKcRPk8qk9GqPiL6sJV6gRt93eFHfxFHj3WJZNHgv7w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] Add support for Tegra GMI bus controller
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <57BD5CFB.5050500@samsung.com>
+Date: Wed, 24 Aug 2016 17:38:19 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info
+ to init section
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+ <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+ <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
+ <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
+ <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+ <20160824044346.GR6502@codeaurora.org>
+In-reply-to: <20160824044346.GR6502@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marcel.
-
-2016-08-30 17:01 GMT+02:00 Marcel Ziswiler <marcel.ziswiler@toradex.com>:
-> Hi Mirza
->
-> Sorry, I long since wanted to give you some feedback on this as well.
->
-> BTW: Thank you very much for taking this on!
-
-It has been and still is a fun project. So gladly doing it.
->
-> On Wed, 2016-08-24 at 15:37 +0200, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak@gmail.com>
+On 2016년 08월 24일 13:43, Stephen Boyd wrote:
+> On 08/23, Sylwester Nawrocki wrote:
+>> On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
+>> I checked stripped object files and it seems with the patch there
+>> is some saving of the kernel image size. Exactly 784 bytes, which
+>> makes zImage smaller by 480 bytes.
 >>
->> Hi.
+>> The patch increases .init.rodata section size by 780 bytes but 
+>> decreases .init.text section size by 1564 bytes.  Looks like 
+>> a static initializer is cheaper.
 >>
->> This is a follow up to my previous RFC to add support for Tegra GMI
->> bus
->> controller.
+>> $ ls -l  drivers/clk/samsung/clk-exynos5260.o
 >>
->> I have tested this series on a Tegra30 using a Colibri T30 SOM on a
->> custom
->> carrier board which has multiple CAN controllers (SJA1000) connected
->> to the
->> GMI bus.
->
-> We once did a nice GMI-Memory Board which mates with the extension
-> connector X3 of our V3.x Colibri Evaluation boards and allows testing
-> SRAM access not only in muxed but also in non-muxed mode albeit 16-bit
-> only. I took your driver for a spin both on Colibri T20 as well as
-> Colibri T30 both in muxed as well as non-muxed mode and it passed all
-> tests being both manual devmem2 type reads/writes as well as memtester
-> runs on the full 128K SRAM giving it the physical address using the -p
-> argument.
->
-> So you may add the following to the whole series:
->
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+>> < -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
+>> ---
+>>> -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
+>>
+>>
+>> The section size differences are as below:
+>> 15c15
+>> <   3 .init.text    000006b8  00000000  00000000  00000034  2**2
+>> ---
+>>>   3 .init.text    0000009c  00000000  00000000  00000034  2**2
+>> 25c25
+>> <   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
+>> ---
+>>>   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
+>>
+>> So the saving is rather insignificant but the patch doesn't make
+>> things worse and I'd say it might be worth applying.
+>>
+> 
+> Sounds good. This sort of information should be in the commit
+> text though. Talking about const doesn't make any sense to me.
 
-Thank you very much for testing. Will add your tags in the upcoming V3.
+Do you mean that 'const' is initconst secion?
+If possible, could you explain the anything
+why you don't make sense about 'const'?
 
-Best Regards
-Mirza
+-- 
+Best Regards,
+Chanwoo Choi
