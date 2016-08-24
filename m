@@ -1,37 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:40:22 -0700
+Date: Wed, 24 Aug 2016 16:08:21 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH V3 2/4] clk: Combine DT binding doc for max77686 and
- max77802
-Message-ID: <20160815224022.GP361@codeaurora.org>
-References: <1466160667-28451-1-git-send-email-ldewangan@nvidia.com>
- <1466160667-28451-3-git-send-email-ldewangan@nvidia.com>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Alex Elder <elder@linaro.org>
+Subject: Re: [PATCH 06/34] clk: bcm: kona: Migrate to clk_hw based
+ registration and OF APIs
+Message-ID: <20160824230821.GI19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-7-stephen.boyd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466160667-28451-3-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <20160601231533.9354-7-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/17, Laxman Dewangan wrote:
-> The clock IP used on the Maxim PMICs max77686 and max77802 are
-> same. The configuration of clock register is also same except
-> the number of clocks.
+On 06/01, Stephen Boyd wrote:
+> Now that we can use clk_hw pointers we don't need to have two
+> duplicate arrays holding the same mapping of clk index to clk_hw
+> pointer. Implement a custom clk_hw provider function to map the
+> OF specifier to the clk_hw instance for it.
 > 
-> Define the common DT binding file for the clocks of Maxim PMICs
-> MAX77686 and MAX77802. For this, remove the separate DT binding
-> document file for maxim,max77802 and move all information to
-> maxim,max77686 DT binding document.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
+> Cc: Alex Elder <elder@linaro.org>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 > ---
 
 Applied to clk-next
