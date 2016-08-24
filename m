@@ -1,53 +1,49 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	frank.wang@rock-chips.com,
-	wulf@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/7] clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
-Date: Tue,  2 Aug 2016 15:19:56 +0800
-Message-Id: <1470122401-31934-3-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 10:50:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
+	James Liao <jamesjj.liao@mediatek.com>
+Subject: Re: [PATCH v12 2/4] reset: mediatek: Add MT2701 reset driver
+Message-ID: <20160824175049.GC19826@codeaurora.org>
+References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
+ <1471854565-19810-3-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471854565-19810-3-git-send-email-erin.lo@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export these source clocks for usbphy.
+On 08/22, Erin Lo wrote:
+> diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
+> index 18b4ab5..702fd74 100644
+> --- a/drivers/clk/mediatek/clk-mt2701-hif.c
+> +++ b/drivers/clk/mediatek/clk-mt2701-hif.c
+> @@ -52,11 +52,15 @@ static int mtk_hifsys_init(struct device_node *node)
+>  						clk_data);
+>  
+>  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> -	if (r)
+> +	if (r) {
+>  		pr_err("%s(): could not register clock provider: %d\n",
+>  			__func__, r);
+> +		return r;
+> +	}
+> +
+> +	mtk_register_reset_controller(node, 1, 0x34);
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+The cleanup here isn't great. mtk_register_reset_controller()
+should really return an error so that we can properly cleanup if
+needed. Fixing that in a later patch would be a good idea.
 
----
 
-Changes in v3: None
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 8059a8d..316f5f4 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -403,9 +403,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
- 
--	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
--	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
- 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
