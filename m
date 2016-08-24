@@ -1,43 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mfdf0151.ocn.ad.jp ([153.128.50.69]:57780 "EHLO
-        mfdf0151.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754717AbcHSMag (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Aug 2016 08:30:36 -0400
-Date: Fri, 19 Aug 2016 21:05:04 +0900 (JST)
-Message-Id: <20160819.210504.65713466261092409.anemo@mba.ocn.ne.jp>
-To: geert@linux-m68k.org
-Cc: ralf@linux-mips.org, broonie@kernel.org, wim@iguana.be,
-        linux@roeck-us.net, linux-clk@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-spi@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 3/3] MIPS: TXx9: Convert to Common Clock Framework
-From: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-In-Reply-To: <1471541667-30689-4-git-send-email-geert@linux-m68k.org>
-References: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
-        <1471541667-30689-4-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 23 Aug 2016 23:31:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v2 07/10] clk: qcom: Add support to enable FSM mode for
+ votable alpha PLLs
+Message-ID: <20160824063152.GY6502@codeaurora.org>
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+ <1470904858-11930-8-git-send-email-rnayak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1470904858-11930-8-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 18 Aug 2016 19:34:27 +0200, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Replace the custom minimal clock implementation for Toshiba TXx9 by a
-> basic implementation using the Common Clock Framework.
+On 08/11, Rajendra Nayak wrote:
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index f7c226a..6bf5abd 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -25,6 +25,14 @@
+>  #include "reset.h"
+>  #include "gdsc.h"
+>  
+> +#define PLL_LOCK_COUNT_SHIFT	8
+> +#define PLL_LOCK_COUNT_MASK	0x3f
+> +#define PLL_BIAS_COUNT_SHIFT	14
+> +#define PLL_BIAS_COUNT_MASK	0x3f
+> +#define PLL_VOTE_FSM_ENA	BIT(20)
+> +#define PLL_DYN_FSM_ENA		BIT(20)
+> +#define PLL_VOTE_FSM_RESET	BIT(21)
 
-Thank you for good cleanup.
+These appear but aren't deleted from anywhere else so I suspect
+now we have two copies of these defines somewhere? Perhaps this
+should go into common.h as well?
 
-> +	if (TX4938_REV_PCODE() == 0x4938) {
-> +		clk = clk_register_fixed_factor(NULL, "spi", "gbus", 0, 1, 4);
-> +		error = clk_register_clkdev(clk, "spi-baseclk", NULL);
-> +		if (error)
-> +			goto fail;
-> +	}
-
-Unfortunately, TX4938_REV_PCODE() can be used only on TX49 based
-platforms.  Please enclose this block with #ifdef CONFIG_CPU_TX49XX.
-
-Or, while registering unused clkdev will not bloat kernel so much,
-just remove this TX4938 checking.
-
----
-Atsushi Nemoto
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
