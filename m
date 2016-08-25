@@ -1,229 +1,224 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	devicetree@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 2/3] dt-bindings: clock: reset: Add GXBB AO Clock and Reset Bindings
-Date: Thu, 18 Aug 2016 12:08:47 +0200
-Message-Id: <1471514928-3341-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
-References: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <zajec5@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160824084738.GB6502@codeaurora.org>
+References: <20160823061745.8162-1-zajec5@gmail.com> <20160823062613.13865-1-zajec5@gmail.com>
+ <20160824084738.GB6502@codeaurora.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 25 Aug 2016 15:28:04 +0200
+Message-ID: <CACna6rwB8bPMqZ8Gz5x8WVMeB83T3J=D7dXsDpMO8YdNHFSKaA@mail.gmail.com>
+Subject: Re: [PATCH V5] clk: bcm: Add driver for BCM53573 ILP clock
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Eric Anholt <eric@anholt.net>,
+	Jon Mason <jonmason@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentations and dt-bindings headers for the AO clock and reset
-controller.
+On 24 August 2016 at 10:47, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 08/23, Rafa=C5=82 Mi=C5=82ecki wrote:
+>> diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bc=
+m53573-ilp.c
+>> new file mode 100644
+>> index 0000000..b7ac0eb
+>> --- /dev/null
+>> +++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
+>> @@ -0,0 +1,146 @@
+>> +/*
+>> + * Copyright (C) 2016 Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>
+> Is this include used?
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         | 45 +++++++++++++++
- include/dt-bindings/clock/gxbb-aoclkc.h            | 66 ++++++++++++++++++++++
- include/dt-bindings/reset/gxbb-aoclkc.h            | 66 ++++++++++++++++++++++
- 3 files changed, 177 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
- create mode 100644 include/dt-bindings/clock/gxbb-aoclkc.h
- create mode 100644 include/dt-bindings/reset/gxbb-aoclkc.h
+No. Good point.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-new file mode 100644
-index 0000000..a55d31b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -0,0 +1,45 @@
-+* Amlogic GXBB AO Clock and Reset Unit
-+
-+The Amlogic GXBB AO clock controller generates and supplies clock to various
-+controllers within the Always-On part of the SoC.
-+
-+Required Properties:
-+
-+- compatible: should be "amlogic,gxbb-aoclkc"
-+- reg: physical base address of the clock controller and length of memory
-+       mapped region.
-+
-+- #clock-cells: should be 1.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/gxbb-aoclkc.h header and can be
-+used in device tree sources.
-+
-+- #reset-cells: should be 1.
-+
-+Each reset is assigned an identifier and client nodes can use this identifier
-+to specify the reset which they consume. All available resets are defined as
-+preprocessor macros in the dt-bindings/reset/gxbb-aoclkc.h header and can be
-+used in device tree sources.
-+
-+Example: AO Clock controller node:
-+
-+	clkc_AO: clock-controller@040 {
-+		compatible = "amlogic,gxbb-aoclkc";
-+		reg = <0x0 0x040 0x0 0x4>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock and reset generated
-+  by the clock controller:
-+
-+	uart_AO: serial@4c0 {
-+		compatible = "amlogic,meson-uart";
-+		reg = <0x4c0 0x14>;
-+		interrupts = <0 90 1>;
-+		clocks = <&clkc_AO CLKID_AO_UART1>;
-+		resets = <&clkc_AO RESET_AO_UART1>;
-+		status = "disabled";
-+	};
-diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
-new file mode 100644
-index 0000000..3175148
---- /dev/null
-+++ b/include/dt-bindings/clock/gxbb-aoclkc.h
-@@ -0,0 +1,66 @@
-+/*
-+ * This file is provided under a dual BSD/GPLv2 license.  When using or
-+ * redistributing this file, you may do so under either license.
-+ *
-+ * GPL LICENSE SUMMARY
-+ *
-+ * Copyright (c) 2016 BayLibre, SAS.
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of version 2 of the GNU General Public License as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
-+ * The full GNU General Public License is included in this distribution
-+ * in the file called COPYING.
-+ *
-+ * BSD LICENSE
-+ *
-+ * Copyright (c) 2016 BayLibre, SAS.
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ *
-+ *   * Redistributions of source code must retain the above copyright
-+ *     notice, this list of conditions and the following disclaimer.
-+ *   * Redistributions in binary form must reproduce the above copyright
-+ *     notice, this list of conditions and the following disclaimer in
-+ *     the documentation and/or other materials provided with the
-+ *     distribution.
-+ *   * Neither the name of Intel Corporation nor the names of its
-+ *     contributors may be used to endorse or promote products derived
-+ *     from this software without specific prior written permission.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_GXBB_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_GXBB_AOCLK
-+
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+
-+#endif
-diff --git a/include/dt-bindings/reset/gxbb-aoclkc.h b/include/dt-bindings/reset/gxbb-aoclkc.h
-new file mode 100644
-index 0000000..9e3fd60
---- /dev/null
-+++ b/include/dt-bindings/reset/gxbb-aoclkc.h
-@@ -0,0 +1,66 @@
-+/*
-+ * This file is provided under a dual BSD/GPLv2 license.  When using or
-+ * redistributing this file, you may do so under either license.
-+ *
-+ * GPL LICENSE SUMMARY
-+ *
-+ * Copyright (c) 2016 BayLibre, SAS.
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of version 2 of the GNU General Public License as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
-+ * The full GNU General Public License is included in this distribution
-+ * in the file called COPYING.
-+ *
-+ * BSD LICENSE
-+ *
-+ * Copyright (c) 2016 BayLibre, SAS.
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ *
-+ *   * Redistributions of source code must retain the above copyright
-+ *     notice, this list of conditions and the following disclaimer.
-+ *   * Redistributions in binary form must reproduce the above copyright
-+ *     notice, this list of conditions and the following disclaimer in
-+ *     the documentation and/or other materials provided with the
-+ *     distribution.
-+ *   * Neither the name of Intel Corporation nor the names of its
-+ *     contributors may be used to endorse or promote products derived
-+ *     from this software without specific prior written permission.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_GXBB_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_GXBB_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
--- 
-2.7.0
+
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#define PMU_XTAL_FREQ_RATIO                  0x66c
+>> +#define  XTAL_ALP_PER_4ILP                   0x00001fff
+>> +#define  XTAL_CTL_EN                         0x80000000
+>> +#define PMU_SLOW_CLK_PERIOD                  0x6dc
+>> +
+>> +struct bcm53573_ilp {
+>> +     struct clk *clk;
+>> +     struct clk_hw hw;
+>> +     void __iomem *pmu;
+>> +};
+>> +
+>> +static int bcm53573_ilp_enable(struct clk_hw *hw)
+>> +{
+>> +     struct bcm53573_ilp *ilp =3D container_of(hw, struct bcm53573_ilp,=
+ hw);
+>> +
+>> +     writel(0x10199, ilp->pmu + PMU_SLOW_CLK_PERIOD);
+>> +     writel(0x10000, ilp->pmu + 0x674);
+>
+> Is there a name for 0x674?
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static unsigned long bcm53573_ilp_recalc_rate(struct clk_hw *hw,
+>> +                                           unsigned long parent_rate)
+>> +{
+>> +     struct bcm53573_ilp *ilp =3D container_of(hw, struct bcm53573_ilp,=
+ hw);
+>> +     void __iomem *pmu =3D ilp->pmu;
+>> +     u32 last_val, cur_val;
+>> +     u32 sum =3D 0, num =3D 0, loop_num =3D 0;
+>
+> Should these just be plain ints? Do we care about sizes for these
+> variables?
+>
+>> +     u32 avg;
+>
+> This one too.
+
+Right.
+
+
+>> +
+>> +     /* Enable measurement */
+>> +     writel(XTAL_CTL_EN, pmu + PMU_XTAL_FREQ_RATIO);
+>> +
+>> +     /* Read initial value */
+>> +     last_val =3D readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PER_4ILP;
+>> +
+>> +     /*
+>> +      * At minimum we should loop for a bit to let hardware do the
+>> +      * measurement. This isn't very accurate however, so for a better
+>> +      * precision lets try getting 20 different values for and use aver=
+age.
+>> +      */
+>> +     while (num < 20) {
+>> +             cur_val =3D readl(pmu + PMU_XTAL_FREQ_RATIO) & XTAL_ALP_PE=
+R_4ILP;
+>> +
+>> +             if (cur_val !=3D last_val) {
+>> +                     /* Got different value, use it */
+>> +                     sum +=3D cur_val;
+>> +                     num++;
+>> +                     loop_num =3D 0;
+>> +                     last_val =3D cur_val;
+>> +             } else if (++loop_num > 5000) {
+>> +                     /* Same value over and over, give up */
+>> +                     sum +=3D cur_val;
+>> +                     num++;
+>> +                     break;
+>> +             }
+>
+> Should there be a udelay() here? Or we're expected to tight loop
+> read the hardware? If so we should throw in a cpu_relax() here to
+> indicate tight loop.
+>
+>> +     }
+>> +
+>> +     /* Disable measurement to save power */
+>> +     writel(0x0, pmu + PMU_XTAL_FREQ_RATIO);
+>> +
+>> +     avg =3D sum / num;
+>> +
+>> +     return parent_rate * 4 / avg;
+>> +}
+>> +
+>> +static const struct clk_ops bcm53573_ilp_clk_ops =3D {
+>> +     .enable =3D bcm53573_ilp_enable,
+>
+> No disable? Or .is_enabled?
+
+The beauty of working without datasheets... I'll compare initial reg
+state with one after enabling and see if there is sth obvious.
+
+
+>> +     .recalc_rate =3D bcm53573_ilp_recalc_rate,
+>> +};
+>> +
+>> +static void bcm53573_ilp_init(struct device_node *np)
+>> +{
+>> +     struct bcm53573_ilp *ilp;
+>> +     struct resource res;
+>> +     struct clk_init_data init =3D { 0 };
+>> +     const char *parent_name;
+>> +     int index;
+>> +     int err;
+>> +
+>> +     ilp =3D kzalloc(sizeof(*ilp), GFP_KERNEL);
+>> +     if (!ilp)
+>> +             return;
+>> +
+>> +     parent_name =3D of_clk_get_parent_name(np, 0);
+>> +     if (!parent_name) {
+>> +             err =3D -ENOENT;
+>> +             goto err_free_ilp;
+>> +     }
+>> +
+>> +     /* TODO: This looks generic, try making it OF helper. */
+>> +     index =3D of_property_match_string(np, "reg-names", "pmu");
+>> +     if (index < 0) {
+>> +             err =3D index;
+>> +             goto err_free_ilp;
+>> +     }
+>> +     err =3D of_address_to_resource(np, index, &res);
+>> +     if (err)
+>> +             goto err_free_ilp;
+>> +     ilp->pmu =3D ioremap(res.start, resource_size(&res));
+>> +     if (IS_ERR(ilp->pmu)) {
+>> +             err =3D PTR_ERR(ilp->pmu);
+>> +             goto err_free_ilp;
+>> +     }
+>> +
+>> +     init.name =3D np->name;
+>> +     init.ops =3D &bcm53573_ilp_clk_ops;
+>> +     init.parent_names =3D &parent_name;
+>> +     init.num_parents =3D 1;
+>> +
+>> +     ilp->hw.init =3D &init;
+>> +     ilp->clk =3D clk_register(NULL, &ilp->hw);
+>
+> please use clk_hw_register() and of_clk_add_hw_provider().
+
+I wasn't aware of this API change, thanks.
+
+
+>> +     if (WARN_ON(IS_ERR(ilp->clk)))
+>> +             goto err_unmap_pmu;
+>> +
+>> +     err =3D of_clk_add_provider(np, of_clk_src_simple_get, ilp->clk);
+>> +     if (err)
+>> +             goto err_clk_unregister;
+>> +
+>> +     return;
+>> +
+>> +err_clk_unregister:
+>> +     clk_unregister(ilp->clk);
+>> +err_unmap_pmu:
+>> +     iounmap(ilp->pmu);
+>> +err_free_ilp:
+>> +     kfree(ilp);
+>> +     pr_err("Failed to init ILP clock: %d\n", err);
+>> +}
+>> +CLK_OF_DECLARE(bcm53573_ilp_clk, "brcm,bcm53573-ilp", bcm53573_ilp_init=
+);
+>
+> Can this be a platform driver instead?
+
+I guess it can. Should it? It's not clear to me when CLK_OF_DECLARE is
+preferred and when it's not.
+
+--=20
+Rafa=C5=82
