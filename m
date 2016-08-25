@@ -1,60 +1,37 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <zajec5@gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160813015023.28221-2-sboyd@codeaurora.org>
-References: <20160813015023.28221-1-sboyd@codeaurora.org> <20160813015023.28221-2-sboyd@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Aug 2016 14:24:42 +0200
-Message-ID: <CAMuHMdU5USf7SHpg5NXJ=G-RBhX4q+5DAQBYUaMYxJk07vPMOg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: fixed-rate: Remove export symbol on setup function
+In-Reply-To: <20160824084738.GB6502@codeaurora.org>
+References: <20160823061745.8162-1-zajec5@gmail.com> <20160823062613.13865-1-zajec5@gmail.com>
+ <20160824084738.GB6502@codeaurora.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 25 Aug 2016 16:11:40 +0200
+Message-ID: <CACna6rzUc2Gz2JJdTC_S3+Fo24X4rTisxRz7-THvnyCt5rk4Xw@mail.gmail.com>
+Subject: Re: [PATCH V5] clk: bcm: Add driver for BCM53573 ILP clock
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Denis Efremov <yefremov.denis@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Eric Anholt <eric@anholt.net>,
+	Jon Mason <jonmason@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On Sat, Aug 13, 2016 at 3:50 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> This function is only called by builtin code, but we always
-> exported it and had marked it as __init before commit
-> e4eda8e0654c (clk: remove exported function from __init section,
-> 2013-01-06) removed that marking. Given that it isn't used by
-> modules, lets unexport it and add back __init.
+On 24 August 2016 at 10:47, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 08/23, Rafa=C5=82 Mi=C5=82ecki wrote:
+>> +static int bcm53573_ilp_enable(struct clk_hw *hw)
+>> +{
+>> +     struct bcm53573_ilp *ilp =3D container_of(hw, struct bcm53573_ilp,=
+ hw);
+>> +
+>> +     writel(0x10199, ilp->pmu + PMU_SLOW_CLK_PERIOD);
+>> +     writel(0x10000, ilp->pmu + 0x674);
 >
-> Cc: Denis Efremov <yefremov.denis@gmail.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clk-fixed-rate.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-> index c735272ed706..b5c46b3f8764 100644
-> --- a/drivers/clk/clk-fixed-rate.c
-> +++ b/drivers/clk/clk-fixed-rate.c
-> @@ -190,11 +190,10 @@ static struct clk *_of_fixed_clk_setup(struct device_node *node)
->  /**
->   * of_fixed_clk_setup() - Setup function for simple fixed rate clock
->   */
-> -void of_fixed_clk_setup(struct device_node *node)
-> +void __init of_fixed_clk_setup(struct device_node *node)
->  {
->         _of_fixed_clk_setup(node);
->  }
-> -EXPORT_SYMBOL_GPL(of_fixed_clk_setup);
->  CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
+> Is there a name for 0x674?
 
-This function is needed to instantiate clocks from DT overlays,
-which I'm using with out-of-tree "clk: add generic driver for fixed rate clock".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+No in any sources published by Broadcom. I was experimenting with bit
+0x10000 in PMU_SLOW_CLK_PERIOD and 0x10000 in 0x674. Both have to be
+set. I was suspecting that maybe one of them is just some trigger and
+it can be switched back to 0, but it's not the case. I definitely need
+to set both of them to get clock working.
