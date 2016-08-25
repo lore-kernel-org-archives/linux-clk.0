@@ -1,67 +1,139 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:58185 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754263AbcHSAyb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Aug 2016 20:54:31 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTP id 3sFYBq6rbjzMqvLS
-        for <linux-clk@vger.kernel.org>; Thu, 18 Aug 2016 19:34:59 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ralf Baechle <ralf@linux-mips.org>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        Mark Brown <broonie@kernel.org>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 0/3] MIPS: TXx9: Common Clock Framework Conversion
-Date: Thu, 18 Aug 2016 19:34:24 +0200
-Message-Id: <1471541667-30689-1-git-send-email-geert@linux-m68k.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+To: Jens Renner <renner@efe-gmbh.de>,  sebastian.hesselbarth@gmail.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1464190261-1660-1-git-send-email-renner@efe-gmbh.de>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ "Jens Renner" <renner@efe-gmbh.de>
+References: <1464190261-1660-1-git-send-email-renner@efe-gmbh.de>
+Message-ID: <147208523240.32728.8544490000662473501@resonance>
+Subject: Re: [PATCH] clk: si5351: Add invert clock output option
+Date: Wed, 24 Aug 2016 17:33:52 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Ralf, Nemoto-san, Mark, Wim, Günter,
+Quoting Jens Renner (2016-05-25 08:31:01)
+> This patch implements the clock invert option for the Silabs Si5351. Clock
+> output invert can be enabled via DT entry "silabs,clk-invert" for each
+> clock child node.
+> =
 
-This patch series converts the Toshiba TXx9 platforms from their own
-custom minimal clock implementation to the Common Clock Framework.
+> The change has been tested with a Si5351A on actual hardware.
+> =
 
-  - Patches 1 and 2 add missing clock (un)prepare calls to TXx9-specific
-    drivers,
-  - Patch 3 replaces the custom clock implementation by a CCF-based one,
-    providing a minimal set of clocks.
+> Signed-off-by: Jens Renner <renner@efe-gmbh.de>
+> ---
+>  .../devicetree/bindings/clock/silabs,si5351.txt    |  1 +
+>  drivers/clk/clk-si5351.c                           | 25 ++++++++++++++++=
+++++++
+>  include/linux/platform_data/si5351.h               |  1 +
+>  3 files changed, 27 insertions(+)
+> =
 
-Patches 1 and 2 can be applied independently.
-Patch 3 has a hard dependency on patches 1 and 2.
-I don't know how you prefer to handle this?
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/=
+Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> index 28b2830..2e23cdd 100644
+> --- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> @@ -45,6 +45,7 @@ Optional child node properties:
+>  - silabs,multisynth-source: source pll A(0) or B(1) of corresponding mul=
+tisynth
+>    divider.
+>  - silabs,pll-master: boolean, multisynth can change pll frequency.
+> +- silabs,clk-invert: boolean, clock output is inverted.
 
-This has been tested with the watchdog on RBTX4927.
+Instead of making this a DT property (of the provider!) can you use the
+existing clk_set_phase(foo_clk, 180) function? Just supply
+_si5351_clkout_set_clk_invert as the .set_phase callback, fail if the
+value is anything other than 0 or a multiple of 180.
 
-Thanks!
+Either your provider driver or the consumer driver can call this
+function.
 
-Geert Uytterhoeven (3):
-  spi: spi-txx9: Add missing clock (un)prepare calls for CCF
-  watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
-  MIPS: TXx9: Convert to Common Clock Framework
+Regards,
+Mike
 
- arch/mips/txx9/Kconfig         |  2 +-
- arch/mips/txx9/generic/setup.c | 68 ++++++++++++++++++++----------------------
- drivers/spi/spi-txx9.c         |  6 ++--
- drivers/watchdog/txx9wdt.c     |  6 ++--
- 4 files changed, 40 insertions(+), 42 deletions(-)
+>  - silabs,disable-state : clock output disable state, shall be
+>    0 =3D clock output is driven LOW when disabled
+>    1 =3D clock output is driven HIGH when disabled
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index b1bc12c..34a9d6f 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -898,6 +898,19 @@ static int _si5351_clkout_set_disable_state(
+>         return 0;
+>  }
+>  =
 
--- 
-1.9.1
+> +static int _si5351_clkout_set_clk_invert(
+> +       struct si5351_driver_data *drvdata, int num,
+> +       bool invert)
+> +{
+> +       if (num > 8)
+> +               return -EINVAL;
+> +
+> +       si5351_set_bits(drvdata, SI5351_CLK0_CTRL + num,
+> +                       SI5351_CLK_INVERT, (invert) ? SI5351_CLK_INVERT :=
+ 0);
+> +
+> +       return 0;
+> +}
+> +
+>  static int si5351_clkout_prepare(struct clk_hw *hw)
+>  {
+>         struct si5351_hw_data *hwdata =3D
+> @@ -1299,6 +1312,9 @@ static int si5351_dt_parse(struct i2c_client *clien=
+t,
+>  =
 
-Gr{oetje,eeting}s,
+>                 pdata->clkout[num].pll_master =3D
+>                         of_property_read_bool(child, "silabs,pll-master");
+> +
+> +               pdata->clkout[num].clk_invert =3D
+> +                       of_property_read_bool(child, "silabs,clk-invert");
+>         }
+>         client->dev.platform_data =3D pdata;
+>  =
 
-						Geert
+> @@ -1420,6 +1436,15 @@ static int si5351_i2c_probe(struct i2c_client *cli=
+ent,
+>                                 n, pdata->clkout[n].disable_state);
+>                         return ret;
+>                 }
+> +
+> +               ret =3D _si5351_clkout_set_clk_invert(drvdata, n,
+> +                                               pdata->clkout[n].clk_inve=
+rt);
+> +               if (ret) {
+> +                       dev_err(&client->dev,
+> +                               "failed set invert of clkout%d to %d\n",
+> +                               n, pdata->clkout[n].clk_invert);
+> +                       return ret;
+> +               }
+>         }
+>  =
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>         if (!IS_ERR(drvdata->pxtal))
+> diff --git a/include/linux/platform_data/si5351.h b/include/linux/platfor=
+m_data/si5351.h
+> index 533d980..38ffda5 100644
+> --- a/include/linux/platform_data/si5351.h
+> +++ b/include/linux/platform_data/si5351.h
+> @@ -94,6 +94,7 @@ struct si5351_clkout_config {
+>         enum si5351_drive_strength drive;
+>         enum si5351_disable_state disable_state;
+>         bool pll_master;
+> +       bool clk_invert;
+>         unsigned long rate;
+>  };
+>  =
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> -- =
+
+> 2.8.1
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
