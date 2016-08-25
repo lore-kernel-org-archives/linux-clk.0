@@ -1,75 +1,34 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] clk: rockchip: rk3399: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src
-Date: Fri, 12 Aug 2016 18:30:16 +0200
-Message-ID: <1511923.bnfOuYbtIQ@diego>
-In-Reply-To: <1470122401-31934-4-git-send-email-zhengxing@rock-chips.com>
-References: <1470122401-31934-1-git-send-email-zhengxing@rock-chips.com> <1470122401-31934-4-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:25:35 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>, Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH 22/34] clk: palmas: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160825002535.GW19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-23-stephen.boyd@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160601231533.9354-23-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 2. August 2016, 15:19:57 schrieb Xing Zheng:
-> Sorry to refer incorrect clock diagram, we double check it that the bits
-> configuration of the Xpll_aclk_perihp_src need to be fixed:
-> bit 1 - shows aclk_perihp_cpll_src_en
-> bit 0 - shows aclk_perihp_gpll_src_en
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
 > 
-> Through the testing that plug/unplug the USB ethernet cable on the RK3399
-> kevin board.
-> 
-> 1. the hclk_host0 and hclk_host1 are endpoint clocks:
-> cpll --> G5[1] --> aclk_perihp_cpll_src --\              |--> hclk_host0
-> 
->                                           | --> ... ---> |
-> 
-> gpll --> G5[0] --> aclk_perihp_gpll_src --/              |--> hclk_host1
-> 
-> 2. there is no clock below the cpll_aclk_perihp_src,
->    and the hclk_hostX are below the gpll_aclk_perihp_src:
->     pll_cpll                              1            1   800000000        
->  0 0 cpll                               7           19   800000000         
-> 0 0 cpll_aclk_perihp_src            0            0   800000000          0 0
-> ...
->     pll_gpll                              1            1   594000000        
->  0 0 gpll                              10           10   594000000         
-> 0 0 gpll_aclk_perihp_src            2            2   594000000          0 0
-> hclk_perihp               5            5    74250000          0 0
-> hclk_host1_arb         2            2    74250000          0 0 hclk_host1  
->           2            2    74250000          0 0 hclk_host0_arb         2 
->           2    74250000          0 0 hclk_host0             2            2 
->   74250000          0 0
-> 
-> 3. by default, G5[0] and G5[1] are enabled:
-> localhost ~ # mem r 0xff760314
-> 0x000003e0
-> 
-> 4. close the G5[1] (aclk_perihp_cpll_src), and plug/unplug USB ethernet
-> cable, the DUT still works well:
-> localhost ~ # mem w 0xff760314 0xffff03e2
-> localhost ~ # mem r 0xff760314
-> 0x000003e2
-> plug/unplug, the work statue is ok
-> 
-> 5. close the G5[0] (aclk_perihp_gpll_src), , and plug/unplug USB ethernet
-> cable, the DUT will be crashed:
-> localhost ~ # mem w 0xff760314 0xffff03e1
-> localhost ~ # mem r 0xff760314
-> 0x000003e1
-> plug/unplug, the DUT is crashed
-> 
-> Summary:
-> bit 1 - shows aclk_perihp_cpll_src_en
-> bit 0 - shows aclk_perihp_gpll_src_en
-> 
-> Fixes: 3bd14ae9da91 ("clk: rockchip: fix incorrect parent for rk3399's
-> {c,g}pll_aclk_perihp_src") Signed-off-by: Xing Zheng
-> <zhengxing@rock-chips.com>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-applied to my clk-fixes branch for 4.8
+Applied to clk-next
 
-
-Thanks
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
