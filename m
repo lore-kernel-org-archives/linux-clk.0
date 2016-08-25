@@ -1,65 +1,33 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Fri, 19 Aug 2016 08:53:21 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
-Message-ID: <20160819075321.GH1041@n2100.armlinux.org.uk>
-References: <20160711210852.31553-1-sboyd@codeaurora.org>
- <453b7ea6-b6c9-ae42-6ac5-81faa1eb2b5d@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:20:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexander Shiyan <shc_work@mail.ru>
+Subject: Re: [PATCH 13/34] clk: clps711x: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160825002027.GS19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-14-stephen.boyd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <453b7ea6-b6c9-ae42-6ac5-81faa1eb2b5d@linaro.org>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+In-Reply-To: <20160601231533.9354-14-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 19, 2016 at 08:52:35AM +0200, Jorge Ramirez wrote:
-> On 07/11/2016 11:08 PM, Stephen Boyd wrote:
-> >Add the call to of_clk_set_defaults() into the amba probe path so
-> >that devices on the amba bus can use the assigned rates and
-> >parents feature of the common clock framework.
-> >
-> >Cc: Michael Turquette <mturquette@baylibre.com>
-> >Cc: Jorge Ramirez Ortiz <jorge.ramirez-ortiz@linaro.org>
-> >Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> >---
-> >  drivers/amba/bus.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> >diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> >index a5b5c87e2114..a56fa2a1e9aa 100644
-> >--- a/drivers/amba/bus.c
-> >+++ b/drivers/amba/bus.c
-> >@@ -19,6 +19,7 @@
-> >  #include <linux/amba/bus.h>
-> >  #include <linux/sizes.h>
-> >  #include <linux/limits.h>
-> >+#include <linux/clk/clk-conf.h>
-> >  #include <asm/irq.h>
-> >@@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
-> >  	int ret;
-> >  	do {
-> >+		ret = of_clk_set_defaults(dev->of_node, false);
-> >+		if (ret < 0)
-> >+			break;
-> >+
-> >  		ret = dev_pm_domain_attach(dev, true);
-> >  		if (ret == -EPROBE_DEFER)
-> >  			break;
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
 > 
-> Stephen/Russell,
-> 
-> what is the status of this patch? has it been merged?
+> Cc: Alexander Shiyan <shc_work@mail.ru>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-I assume by that comment that you don't follow linux-next.  Please
-follow and test linux-next, so you can check for any regressions
-that may occur for your platforms in the next merge window, thanks.
-
-You'll find the above patch in linux-next already.
+Applied to clk-next
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
