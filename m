@@ -1,120 +1,49 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, James Liao
-	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v10 1/9] clk: mediatek: remove __init from clk registration functions
-Date: Tue, 16 Aug 2016 15:30:21 +0800
-Message-ID: <1471332629-15722-2-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
-References: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 1/6] clk: sunxi-ng: nkm: Correct mux clock macro name
+Date: Thu, 25 Aug 2016 14:21:55 +0800
+Message-Id: <20160825062200.17206-2-wens@csie.org>
+In-Reply-To: <20160825062200.17206-1-wens@csie.org>
+References: <20160825062200.17206-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
+Mux support for NKM style clocks was added in commit a36583595c17 ("clk:
+sunxi-ng: nkm: Add mux to support multiple parents"). The macros for mux
+clocks was later changed in commit ad4578dc4cfa ("clk: sunxi-ng: mux:
+Rename mux macro to be consistent"), but the NKM style clock header was
+missed.
 
-Remove __init from functions that will be used by init functions
-that support probe deferral.
+Fix the macro name so NKM with mux compiles correctly.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Fixes: a36583595c17 ("clk: sunxi-ng: nkm: Add mux to support multiple
+		      parents")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/mediatek/clk-gate.c |  2 +-
- drivers/clk/mediatek/clk-mtk.c  | 12 ++++++------
- drivers/clk/mediatek/clk-pll.c  |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+Changes since v2: new patch
+---
+ drivers/clk/sunxi-ng/ccu_nkm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 2a76901..d8787bf 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -97,7 +97,7 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
- 	.disable	= mtk_cg_disable_inv,
- };
- 
--struct clk * __init mtk_clk_register_gate(
-+struct clk *mtk_clk_register_gate(
- 		const char *name,
- 		const char *parent_name,
- 		struct regmap *regmap,
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 5ada644..bb30f70 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -24,7 +24,7 @@
- #include "clk-mtk.h"
- #include "clk-gate.h"
- 
--struct clk_onecell_data * __init mtk_alloc_clk_data(unsigned int clk_num)
-+struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
- {
- 	int i;
- 	struct clk_onecell_data *clk_data;
-@@ -49,7 +49,7 @@ err_out:
- 	return NULL;
- }
- 
--void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
-+void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
- 	int i;
-@@ -72,7 +72,7 @@ void __init mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
- 	}
- }
- 
--void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
-+void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
- 	int i;
-@@ -95,7 +95,7 @@ void __init mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
- 	}
- }
- 
--int __init mtk_clk_register_gates(struct device_node *node,
-+int mtk_clk_register_gates(struct device_node *node,
- 		const struct mtk_gate *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
-@@ -135,7 +135,7 @@ int __init mtk_clk_register_gates(struct device_node *node,
- 	return 0;
- }
- 
--struct clk * __init mtk_clk_register_composite(const struct mtk_composite *mc,
-+struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
- 	struct clk *clk;
-@@ -222,7 +222,7 @@ err_out:
- 	return ERR_PTR(ret);
- }
- 
--void __init mtk_clk_register_composites(const struct mtk_composite *mcs,
-+void mtk_clk_register_composites(const struct mtk_composite *mcs,
- 		int num, void __iomem *base, spinlock_t *lock,
- 		struct clk_onecell_data *clk_data)
- {
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index 966cab1..0c2deac 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -313,7 +313,7 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 	return clk;
- }
- 
--void __init mtk_clk_register_plls(struct device_node *node,
-+void mtk_clk_register_plls(struct device_node *node,
- 		const struct mtk_pll_data *plls, int num_plls, struct clk_onecell_data *clk_data)
- {
- 	void __iomem *base;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
+index fcb152fc4eda..35493fddd8ab 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.h
++++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+@@ -49,7 +49,7 @@ struct ccu_nkm {
+ 		.k		= _SUNXI_CCU_MULT(_kshift, _kwidth),	\
+ 		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
+ 		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
+-		.mux		= SUNXI_CLK_MUX(_muxshift, _muxwidth),	\
++		.mux		= _SUNXI_CCU_MUX(_muxshift, _muxwidth),	\
+ 		.common		= {					\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
 -- 
-1.9.1
+2.9.3
