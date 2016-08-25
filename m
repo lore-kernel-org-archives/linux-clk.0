@@ -1,40 +1,42 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: James Hogan <james.hogan@imgtec.com>,
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: divider: Fix clk_divider_round_rate() to use clk_readl()
-Date: Fri, 12 Aug 2016 14:37:54 +0200
-Message-Id: <1471005474-32301-1-git-send-email-geert+renesas@glider.be>
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 1/2] clk: gcc-msm8996: Fix pcie 2 pipe register offset
+Date: Thu, 25 Aug 2016 12:20:46 +0100
+Message-Id: <1472124047-22627-1-git-send-email-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk-divider uses clk_readl()/clk_writel() everywhere, except in
-clk_divider_round_rate(), where plain readl() is used. Change this to
-clk_readl(), as it makes a difference on powerpc.
+This patch corrects the register offset for pcie2 pipe clock.
+Offset according to datasheet is 0x6e018 instead of 0x6e108.
 
-Fixes: e6d5e7d90be92cee ("clk-divider: Fix READ_ONLY when divider > 1")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
-Found by code inspection, untested on powerpc.
----
- drivers/clk/clk-divider.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/gcc-msm8996.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index a0f55bc1ad3d277f..96386ffc84835f12 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -352,7 +352,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index a1ef12f..456b2f4 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -2592,9 +2592,9 @@ static struct clk_branch gcc_pcie_2_aux_clk = {
+ };
  
- 	/* if read only, just return current value */
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
--		bestdiv = readl(divider->reg) >> divider->shift;
-+		bestdiv = clk_readl(divider->reg) >> divider->shift;
- 		bestdiv &= div_mask(divider->width);
- 		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
- 			divider->width);
+ static struct clk_branch gcc_pcie_2_pipe_clk = {
+-	.halt_reg = 0x6e108,
++	.halt_reg = 0x6e018,
+ 	.clkr = {
+-		.enable_reg = 0x6e108,
++		.enable_reg = 0x6e018,
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_pcie_2_pipe_clk",
 -- 
-1.9.1
+2.7.4
