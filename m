@@ -1,77 +1,50 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 03/17] clk: s2mps11: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:00 +0200
-Message-id: <1471354514-24224-4-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:11:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com,
+	mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com,
+	chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
+ samsung_cmu_info to init section
+Message-ID: <20160825001109.GO19826@codeaurora.org>
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+ <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+ <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
+ <20160823005512.GP6502@codeaurora.org>
+ <57BBB66E.2060807@samsung.com>
+ <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+ <20160824044346.GR6502@codeaurora.org>
+ <57BD5CFB.5050500@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <57BD5CFB.5050500@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+On 08/24, Chanwoo Choi wrote:
+> On 2016년 08월 24일 13:43, Stephen Boyd wrote:
+> > On 08/23, Sylwester Nawrocki wrote:
+> >> So the saving is rather insignificant but the patch doesn't make
+> >> things worse and I'd say it might be worth applying.
+> >>
+> > 
+> > Sounds good. This sort of information should be in the commit
+> > text though. Talking about const doesn't make any sense to me.
+> 
+> Do you mean that 'const' is initconst secion?
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-s2mps11.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+No. Marking it as initconst in the patch is correct.
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index fbaa84a33c46..881f1e226867 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -41,6 +41,7 @@ struct s2mps11_clk {
- 	struct clk_hw hw;
- 	struct clk *clk;
- 	struct clk_lookup *lookup;
-+	struct clk_ctrl *clk_ctrl;
- 	u32 mask;
- 	unsigned int reg;
- };
-@@ -176,6 +177,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(s2mps11_clks->clk_np))
- 		return PTR_ERR(s2mps11_clks->clk_np);
- 
-+	s2mps11_clks->clk_ctrl = clk_ctrl_register(&pdev->dev);
-+	if (IS_ERR(s2mps11_clks->clk_ctrl))
-+		return PTR_ERR(s2mps11_clks->clk_ctrl); // FIXME: use devm-like
-+
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
- 		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
- 			continue; /* Skip clocks not present in some devices */
-@@ -184,7 +189,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 		s2mps11_clks[i].mask = 1 << i;
- 		s2mps11_clks[i].reg = s2mps11_reg;
- 
--		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
-+		s2mps11_clks[i].clk = devm_clk_register_with_ctrl(&pdev->dev,
-+							s2mps11_clks->clk_ctrl,
- 							&s2mps11_clks[i].hw);
- 		if (IS_ERR(s2mps11_clks[i].clk)) {
- 			dev_err(&pdev->dev, "Fail to register : %s\n",
-@@ -233,6 +239,8 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
- 		clkdev_drop(s2mps11_clks[i].lookup);
- 	}
- 
-+	clk_ctrl_unregister(s2mps11_clks->clk_ctrl);
-+
- 	return 0;
- }
- 
+> If possible, could you explain the anything
+> why you don't make sense about 'const'?
+> 
+
+I'm just saying that the reasoning to move it from the text
+section to the data section shouldn't be because of const. There
+should be better reasons to do this, like size benefits.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
