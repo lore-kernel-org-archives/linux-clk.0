@@ -1,65 +1,40 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <57BD5CFB.5050500@samsung.com>
-Date: Wed, 24 Aug 2016 17:38:19 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info
- to init section
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
- <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
- <20160824044346.GR6502@codeaurora.org>
-In-reply-to: <20160824044346.GR6502@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:52:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jongsung Kim <neidhard.kim@lge.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chanho Min <chanho.min@lge.com>
+Subject: Re: [PATCH v2] clk: fixed-factor: add optional dt-binding clock-flags
+Message-ID: <20160825005221.GK19826@codeaurora.org>
+References: <20160621005910.GN1521@codeaurora.org>
+ <1466741572-58802-1-git-send-email-neidhard.kim@lge.com>
+ <20160628205518.GF3737@rob-hp-laptop>
+ <146714872010.89261.1969853552594659808@resonance>
+ <5773736D.3060405@lge.com>
+ <20160702002030.GF27880@codeaurora.org>
+ <5779C056.3020209@lge.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5779C056.3020209@lge.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016년 08월 24일 13:43, Stephen Boyd wrote:
-> On 08/23, Sylwester Nawrocki wrote:
->> On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
->> I checked stripped object files and it seems with the patch there
->> is some saving of the kernel image size. Exactly 784 bytes, which
->> makes zImage smaller by 480 bytes.
->>
->> The patch increases .init.rodata section size by 780 bytes but 
->> decreases .init.text section size by 1564 bytes.  Looks like 
->> a static initializer is cheaper.
->>
->> $ ls -l  drivers/clk/samsung/clk-exynos5260.o
->>
->> < -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
->> ---
->>> -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
->>
->>
->> The section size differences are as below:
->> 15c15
->> <   3 .init.text    000006b8  00000000  00000000  00000034  2**2
->> ---
->>>   3 .init.text    0000009c  00000000  00000000  00000034  2**2
->> 25c25
->> <   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
->> ---
->>>   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
->>
->> So the saving is rather insignificant but the patch doesn't make
->> things worse and I'd say it might be worth applying.
->>
+On 07/04, Jongsung Kim wrote:
+> On 2016년 07월 02일 09:20, Stephen Boyd wrote:
+> > Do you actually have an IC on the board that is doing some fixed
+> > factor calculation? Or is this a clk driver design where we are
+> > listing out each piece of an SoC's clk controller in DT?
+> >
+> The SoC has several PLLs of identical design, and one of them is divided
+> to half and used for CPUs. The fixed-factor-clock represents the divider.
 > 
-> Sounds good. This sort of information should be in the commit
-> text though. Talking about const doesn't make any sense to me.
 
-Do you mean that 'const' is initconst secion?
-If possible, could you explain the anything
-why you don't make sense about 'const'?
+Ok, so it sounds like we can have the driver that registers the
+CPU PLL also register the fixed factor clk? I fail to see why we
+need this from DT in that case.
 
 -- 
-Best Regards,
-Chanwoo Choi
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
