@@ -1,30 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 17:32:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 2/3] clk: versatile/icst: add Integrator core module
- clocks
-Message-ID: <20160813003230.GA25111@codeaurora.org>
-References: <1470820188-12888-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470820188-12888-1-git-send-email-linus.walleij@linaro.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 25 Aug 2016 09:52:47 +0200
+Message-ID: <CAMuHMdUC9d4KNPTDY51DCptmMFQ1F2jLmRDO9WLt=WZA09qRew@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: let clk_disable() return immediately if clk is NULL
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux MIPS Mailing List <linux-mips@linux-mips.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Eric Miao <eric.y.miao@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"adi-buildroot-devel@lists.sourceforge.net" <adi-buildroot-devel@lists.sourceforge.net>,
+	Greg Ungerer <gerg@linux-m68k.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>,
+	bcm-kernel-feedback-list@broadcom.com, Wan ZongShun <mcuos.com@gmail.com>,
+	Steven Miao <realmz6@gmail.com>, Russell King <linux@armlinux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Linus Walleij wrote:
-> @@ -281,18 +422,23 @@ static void __init of_syscon_icst_setup(struct device_node *np)
->  	if (IS_ERR(regclk)) {
->  		pr_err("error setting up syscon ICST clock %s\n", name);
->  		return;
->  	}
->  	of_clk_add_provider(np, of_clk_src_simple_get, regclk);
-> -	pr_debug("registered syscon ICST clock %s\n", name);
-> +	pr_info("registered syscon ICST clock %s\n", name);
+On Wed, Aug 24, 2016 at 7:26 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Many of clk_disable() implementations just return for NULL pointer,
+> but this check is missing from some.  Let's make it tree-wide
+> consistent.  It will allow clock consumers to call clk_disable()
+> without NULL pointer check.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Greg Ungerer <gerg@uclinux.org>
+> Acked-by: Wan Zongshun <mcuos.com@gmail.com>
 
-This shouldn't change?
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
