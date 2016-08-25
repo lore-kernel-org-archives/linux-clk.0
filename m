@@ -1,154 +1,174 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 23 Aug 2016 10:55:34 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] clk: sunxi-ng: mux: support fixed pre-dividers on
- multiple parents
-Message-ID: <20160823085534.GC2598@lukather>
-References: <1471248795-17951-1-git-send-email-wens@csie.org>
- <1471248795-17951-3-git-send-email-wens@csie.org>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <57BEB4D1.8080802@codeaurora.org>
+Date: Thu, 25 Aug 2016 14:35:21 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Qbvjkv9qwOGw/5Fx"
-In-Reply-To: <1471248795-17951-3-git-send-email-wens@csie.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tdas@codeaurora.org
+Subject: Re: [PATCH v2 02/10] clk: qcom: Add support for alpha pll hwfsm ops
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org> <1470904858-11930-3-git-send-email-rnayak@codeaurora.org> <20160824061301.GT6502@codeaurora.org>
+In-Reply-To: <20160824061301.GT6502@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
 
---Qbvjkv9qwOGw/5Fx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/24/2016 11:43 AM, Stephen Boyd wrote:
+> On 08/11, Rajendra Nayak wrote:
+>> Add support to enable/disable the alpha pll using hwfsm
+> 
+> Care to add some more description here about what's going on?
 
-On Mon, Aug 15, 2016 at 04:13:12PM +0800, Chen-Yu Tsai wrote:
-> Some clocks on the A31 have fixed pre-dividers on multiple parents.
-> Add support for them.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> Changes since v1:
->=20
->   - Add field for number of fixed pre-dividers.
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.c |  9 +++++----
->  drivers/clk/sunxi-ng/ccu_mux.c      |  6 ++++--
->  drivers/clk/sunxi-ng/ccu_mux.h      | 11 +++++++----
->  3 files changed, 16 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/c=
-cu-sun8i-h3.c
-> index 9af359544110..a01298881991 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> @@ -184,15 +184,16 @@ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2=
-_parents, 0x058,
->  			     0);
-> =20
->  static const char * const ahb2_parents[] =3D { "ahb1" , "pll-periph0" };
-> +static const struct ccu_mux_fixed_prediv ahb2_fixed_predivs[] =3D {
-> +	{ .index =3D 1, .div =3D 2 },
-> +	{ },
-> +};
->  static struct ccu_mux ahb2_clk =3D {
->  	.mux		=3D {
->  		.shift	=3D 0,
->  		.width	=3D 1,
-> =20
-> -		.fixed_prediv	=3D {
-> -			.index	=3D 1,
-> -			.div	=3D 2,
-> -		},
-> +		.fixed_predivs	=3D ahb2_fixed_predivs,
->  	},
-> =20
->  	.common		=3D {
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mu=
-x.c
-> index 68b32f168a74..7b17e0c26b01 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> @@ -20,6 +20,7 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu=
-_common *common,
->  {
->  	u16 prediv =3D 1;
->  	u32 reg;
-> +	int i;
-> =20
->  	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
->  	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
-> @@ -32,8 +33,9 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu=
-_common *common,
->  	}
-> =20
->  	if (common->features & CCU_FEATURE_FIXED_PREDIV)
-> -		if (parent_index =3D=3D cm->fixed_prediv.index)
-> -			prediv =3D cm->fixed_prediv.div;
-> +		for (i =3D 0; i < cm->n_predivs; i++)
-> +			if (parent_index =3D=3D cm->fixed_predivs[i].index)
-> +				prediv =3D cm->fixed_predivs[i].div;
-> =20
->  	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
->  		if (parent_index =3D=3D cm->variable_prediv.index) {
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mu=
-x.h
-> index f0078de78712..5308b41da22a 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.h
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
-> @@ -5,15 +5,18 @@
-> =20
->  #include "ccu_common.h"
-> =20
-> +struct ccu_mux_fixed_prediv {
-> +	u8	index;
-> +	u16	div;
-> +};
-> +
->  struct ccu_mux_internal {
->  	u8		shift;
->  	u8		width;
->  	const u8	*table;
-> =20
-> -	struct {
-> -		u8	index;
-> -		u16	div;
-> -	} fixed_prediv;
-> +	const struct ccu_mux_fixed_prediv	*fixed_predivs;
-> +	u8		n_predivs;
+Sure, I will add some details on what the additional hwfsm mode
+brings in to the alpha plls.
 
-I don't think you're using it anywhere (at least you don't define it
-in ahb2_clk, and the extra item in the array will introduce an
-off-by-one error.
+> 
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+>>  drivers/clk/qcom/clk-alpha-pll.c | 109 ++++++++++++++++++++++++++++++++++-----
+>>  drivers/clk/qcom/clk-alpha-pll.h |   1 +
+>>  2 files changed, 98 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index e6a03ea..bae31f9 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -62,9 +62,10 @@
+>>  #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), \
+>>  					   struct clk_alpha_pll_postdiv, clkr)
+>>  
+>> -static int wait_for_pll(struct clk_alpha_pll *pll)
+>> +static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+>> +			const char *action)
+>>  {
+>> -	u32 val, mask, off;
+>> +	u32 val, off;
+>>  	int count;
+>>  	int ret;
+>>  	const char *name = clk_hw_get_name(&pll->clkr.hw);
+>> @@ -74,26 +75,101 @@ static int wait_for_pll(struct clk_alpha_pll *pll)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	if (val & PLL_VOTE_FSM_ENA)
+>> -		mask = PLL_ACTIVE_FLAG;
+>> -	else
+>> -		mask = PLL_LOCK_DET;
+>> -
+>> -	/* Wait for pll to enable. */
+> 
+> Perhaps commit text could state why we shouldn't keep extending
+> this model of figuring out what to poll?
 
-Thanks!
-Maxime
+sure, the intention was to make this a more generic poll function, without
+it having to know if its polling for enable/disable/offline or some future
+case that we might end up with.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> 
+>>  	for (count = 100; count > 0; count--) {
+>>  		ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
+>>  		if (ret)
+>>  			return ret;
+>> -		if ((val & mask) == mask)
+>> +		if (inverse && (val & mask))
+>> +			return 0;
+>> +		else if ((val & mask) == mask)
+>>  			return 0;
+>>  
+>>  		udelay(1);
+>>  	}
+>>  
+>> -	WARN(1, "%s didn't enable after voting for it!\n", name);
+>> +	WARN(1, "%s failed to %s!\n", name, action);
+>>  	return -ETIMEDOUT;
+>>  }
+>>  
+>> +static int wait_for_pll_enable(struct clk_alpha_pll *pll, u32 mask)
+>> +{
+>> +	return wait_for_pll(pll, mask, 0, "enable");
+>> +}
+> 
+> This is only called with two masks, so maybe we can have two
+> functions for it or a simple macro to avoid making clients know
+> about the mask?
 
---Qbvjkv9qwOGw/5Fx
-Content-Type: application/pgp-signature; name="signature.asc"
+The idea was to basically make it more future proof by letting the
+caller pass what they want to poll on (there is no reason why we won't
+possibly end up with more masks in future)
+I am fine moving these to 2 functions/macros instead.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> 
+>> +
+>> +static int wait_for_pll_disable(struct clk_alpha_pll *pll, u32 mask)
+>> +{
+>> +	return wait_for_pll(pll, mask, 1, "disable");
+>> +}
+>> +
+>> +static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
+>> +{
+>> +	return wait_for_pll(pll, mask, 0, "offline");
+>> +}
+> 
+> These two are only called with one mask, why have that as a parameter?
 
-iQIcBAEBAgAGBQJXvA+GAAoJEBx+YmzsjxAgBR8QALnSqFZiLEksLWyb58l8eQhM
-ZOlJPuQgjBoHW2HSIZLoTGlnF0ZM9pC2Xq5VR+BmwcOo6mVE+2wQILTBCNdVHZsZ
-9FAtV32H7Xd3LAHquQsub35iJJZl+7wfALy0VTjIv/kx1gq+yKb544HhVr67LfpO
-0trfiHujtzmAKHha23fJsowolFnvtDFYfBFKRl+jV2wgMN4SouLaB58UqSrZJGeK
-3G3lW3BR6tjZneyZFMKRMUNYCsZuNcukUXFMv6c/8I1GW7bcVM2VsWh1bc+kdb6c
-wzSaSyLIEgRkGDZ7U6YJrIqiXmsQmdXbbAcaptDVeHvTzLUh5QVFT5jfCA7pve5D
-my2P/gkTvSwHripsPimG4rRLQXQfROtzdPi3o2EIrrb9ScVNolX63c9SjSI/fVrG
-AjjbEdWYzFk7bJdWm/W4uMPfw7qliF7HTIJ7CkPbmd6lWBpo1GVMxfOjJbnU0ZE7
-cBrpzu9aZhf/EpCJ2FTcDrGyNERS3b33pAFYsZVr+mWbRGHoCxXZCPhgUf7dTGi1
-lLH5ynA87o296G47104BiWRKbvLWh/F0sk5NQ5s1WrOQLaJ+2MyZcpMyk9aVrkab
-VlQiyKVIlcYjQXu3mPZqkO71C5vZD3L8eGY048aVLfwtWVzOy3kvLBms5V4G9Jjy
-8znNncKEpUyuYgqsxv9K
-=vuFp
------END PGP SIGNATURE-----
+Again this was assuming we would end up with more masks perhaps as we go
+along. For now I can get rid of it.
 
---Qbvjkv9qwOGw/5Fx--
+> 
+>> +
+>> +/* alpha pll with hwfsm support */
+>> +#define PLL_OFFLINE_REQ		BIT(7)
+>> +#define PLL_FSM_ENA		BIT(20)
+>> +#define PLL_OFFLINE_ACK		BIT(28)
+>> +#define PLL_ACTIVE_FLAG		BIT(30)
+> 
+> Please put these up top next to the register that they're for.
+
+will do.
+
+> 
+>> +
+>> +static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+>> +{
+>> +	int ret;
+>> +	u32 val, off;
+>> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +
+>> +	off = pll->offset;
+>> +	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Enable HW FSM mode, clear OFFLINE request */
+> 
+> That's pretty obvious.
+
+I can remove it
+
+> 
+>> +	val |= PLL_FSM_ENA;
+>> +	val &= ~PLL_OFFLINE_REQ;
+>> +	ret = regmap_write(pll->clkr.regmap, off + PLL_MODE, val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Make sure enable request goes through before waiting for update */
+>> +	mb();
+>> +
+>> +	ret = wait_for_pll_enable(pll, PLL_ACTIVE_FLAG);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+> 
+> Simplify to return wait_for_pll_enable()?
+
+will do, thanks.
+> 
+> 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
