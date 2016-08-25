@@ -1,32 +1,54 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:25:43 -0700
+Date: Wed, 24 Aug 2016 17:13:40 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jonas Jensen <jonas.jensen@gmail.com>
-Subject: Re: [PATCH 19/34] clk: moxart: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160825002543.GY19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-20-stephen.boyd@linaro.org>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	sebastian.hesselbarth@gmail.com, andrew@lunn.ch,
+	jason@lakedaemon.net, thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com, nadavh@marvell.com,
+	alior@marvell.com, tn@semihalf.com, jaz@semihalf.com
+Subject: Re: [PATCH 1/2] clk: mvebu: set flags in CP110 gate clock
+Message-ID: <20160825001340.GP19826@codeaurora.org>
+References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+ <1471933609-8456-2-git-send-email-mw@semihalf.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-20-stephen.boyd@linaro.org>
+In-Reply-To: <1471933609-8456-2-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
+On 08/23, Marcin Wojtas wrote:
+> Armada CP110 system controller comprise its own routine responsble
+> for registering gate clocks. Among others 'flags' field in
+> struct clk_init_data was not set, using a random values, which
+> may cause an unpredicted behavior.
 > 
-> Cc: Jonas Jensen <jonas.jensen@gmail.com>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> This patch fixes the problem by setting CLK_IS_BASIC flag for
+> all gated clocks of Armada 7k/8k SoCs family.
+> 
+> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
+> 
+> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
 > ---
+>  drivers/clk/mvebu/cp110-system-controller.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+> index 7fa42d6..0835e1d 100644
+> --- a/drivers/clk/mvebu/cp110-system-controller.c
+> +++ b/drivers/clk/mvebu/cp110-system-controller.c
+> @@ -144,6 +144,7 @@ static struct clk *cp110_register_gate(const char *name,
+>  
+>  	init.name = name;
+>  	init.ops = &cp110_gate_ops;
+> +	init.flags = CLK_IS_BASIC;
 
-Applied to clk-next
+Please don't use CLK_IS_BASIC unless you need it (so far only TI
+clks seem to want it?). Just set it to 0 if possible.
+
+>  	init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+>  
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
