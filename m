@@ -1,100 +1,33 @@
-Return-Path: <patrice.chotard@st.com>
-Subject: Re: [RESEND PATCH v2 00/13] Clock improvement for video playback
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-        Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas
- Kandagatla <srinivas.kandagatla@gmail.com>,
-        Maxime Coquelin
-	<maxime.coquelin@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>
-From: Patrice Chotard <patrice.chotard@st.com>
-Message-ID: <b6389057-0c53-7095-81a3-617aff678e28@st.com>
-Date: Fri, 5 Aug 2016 10:11:03 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:25:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jonas Jensen <jonas.jensen@gmail.com>
+Subject: Re: [PATCH 19/34] clk: moxart: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160825002543.GY19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-20-stephen.boyd@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160601231533.9354-20-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Jonas Jensen <jonas.jensen@gmail.com>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-I believe that you and Gabriel found an agreement to include this series in v4.8
+Applied to clk-next
 
-Unfortunately it seems it's not the case, for which reason ?
-
-Thanks
-
-Patrice
-
-
-
-On 06/16/2016 11:20 AM, Gabriel Fernandez wrote:
-> v2:
->   - Simpliflication of clock binding
->     remark from Rob https://lkml.org/lkml/2016/5/25/492
->   - Suppression of stih415-416 support for the clocks (in order
-> 	to help simplification of clock binding)
->     (others patchs for the machine and drivers will come)
->
-> This serie allows to increase video resolutions and make audio
-> adjustment during a video playback.
->
-> Gabriel Fernandez (13):
->   drivers: clk: st: Remove stih415-416 clock support
->   drivers: clk: st: Simplify clock binding of STiH4xx platforms
->   drivers: clk: st: Add fs660c32 synthesizer algorithm
->   drivers: clk: st: Add clock propagation for audio clocks
->   drivers: clk: st: Handle clk synchronous mode for video clocks
->   ARM: DT: STiH407: Enable clock propagation for audio clocks
->   ARM: DT: STiH410: Enable clock propagation for audio clocks
->   ARM: DT: STiH418: Enable clock propagation for audio clocks
->   ARM: DT: STiH407: Enable synchronous clock mode for video clocks
->   ARM: DT: STiH410: Enable synchronous clock mode for video clocks
->   ARM: DT: STiH418: Enable synchronous clock mode for video clocks
->   ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
->   ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
->
->  .../bindings/clock/st/st,clkgen-divmux.txt         |  49 --
->  .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  20 +-
->  .../devicetree/bindings/clock/st/st,clkgen-pll.txt |  35 +-
->  .../bindings/clock/st/st,clkgen-prediv.txt         |  36 -
->  .../devicetree/bindings/clock/st/st,clkgen-vcc.txt |  61 --
->  .../devicetree/bindings/clock/st/st,clkgen.txt     |  54 +-
->  .../devicetree/bindings/clock/st/st,flexgen.txt    |   4 +
->  .../devicetree/bindings/clock/st/st,quadfs.txt     |  31 +-
->  arch/arm/boot/dts/stih407-clock.dtsi               |   4 +-
->  arch/arm/boot/dts/stih407.dtsi                     |  16 +-
->  arch/arm/boot/dts/stih410-clock.dtsi               |   4 +-
->  arch/arm/boot/dts/stih410.dtsi                     |  16 +-
->  arch/arm/boot/dts/stih418-clock.dtsi               |   4 +-
->  drivers/clk/st/clk-flexgen.c                       |  61 +-
->  drivers/clk/st/clkgen-fsyn.c                       | 481 ++++---------
->  drivers/clk/st/clkgen-mux.c                        | 748 +--------------------
->  drivers/clk/st/clkgen-pll.c                        | 470 +------------
->  17 files changed, 297 insertions(+), 1797 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-divmux.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-prediv.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-vcc.txt
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
