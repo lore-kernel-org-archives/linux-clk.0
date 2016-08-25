@@ -1,90 +1,49 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: Paul Burton <paul.burton@imgtec.com>, <devicetree@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH v2 24/26] dt-bindings: Document img,boston-clock binding
-Date: Tue, 30 Aug 2016 18:29:27 +0100
-Message-ID: <20160830172929.16948-25-paul.burton@imgtec.com>
-In-Reply-To: <20160830172929.16948-1-paul.burton@imgtec.com>
-References: <20160830172929.16948-1-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] clk: qcom: select GDSC for msm8996 gcc and mmcc
+Date: Thu, 25 Aug 2016 12:28:07 +0100
+Message-Id: <1472124487-22776-1-git-send-email-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding documentation for the clocks provided by the
-MIPS Boston development board from Imagination Technologies, and a
-header file describing the available clocks for use by device trees &
-driver.
+This patch selects QCOM_GDSC Kconfig for msm8996 GCC and MMCC clock
+controllers, as these provide some of the gdscs on the SOC.
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Also selecting this config will make it align with other drivers which
+do the same.
 
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
+ drivers/clk/qcom/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v2:
-- Add BOSTON_CLK_INPUT to expose the input clock.
-
- .../devicetree/bindings/clock/img,boston-clock.txt | 27 ++++++++++++++++++++++
- include/dt-bindings/clock/boston-clock.h           | 14 +++++++++++
- 2 files changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
- create mode 100644 include/dt-bindings/clock/boston-clock.h
-
-diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-new file mode 100644
-index 0000000..c01ea60
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-@@ -0,0 +1,27 @@
-+Binding for Imagination Technologies MIPS Boston clock sources.
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible : Should be "img,boston-clock".
-+- #clock-cells : Should be set to 1.
-+  Values available for clock consumers can be found in the header file:
-+    <dt-bindings/clock/boston-clock.h>
-+- regmap : Phandle to the Boston platform register system controller.
-+  This should contain a phandle to the system controller node covering the
-+  platform registers provided by the Boston board.
-+
-+Example:
-+
-+	clk_boston: clock {
-+		compatible = "img,boston-clock";
-+		#clock-cells = <1>;
-+		regmap = <&plat_regs>;
-+	};
-+
-+	uart0: uart@17ffe000 {
-+		/* ... */
-+		clocks = <&clk_boston BOSTON_CLK_SYS>;
-+	};
-diff --git a/include/dt-bindings/clock/boston-clock.h b/include/dt-bindings/clock/boston-clock.h
-new file mode 100644
-index 0000000..a6f0098
---- /dev/null
-+++ b/include/dt-bindings/clock/boston-clock.h
-@@ -0,0 +1,14 @@
-+/*
-+ * Copyright (C) 2016 Imagination Technologies
-+ *
-+ * SPDX-License-Identifier:	GPL-2.0
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
-+#define __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
-+
-+#define BOSTON_CLK_INPUT 0
-+#define BOSTON_CLK_SYS 1
-+#define BOSTON_CLK_CPU 2
-+
-+#endif /* __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__ */
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 280436a..28a7542 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -146,6 +146,7 @@ config MSM_MMCC_8974
+ 
+ config MSM_GCC_8996
+ 	tristate "MSM8996 Global Clock Controller"
++	select QCOM_GDSC
+ 	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8996 devices.
+@@ -155,6 +156,7 @@ config MSM_GCC_8996
+ config MSM_MMCC_8996
+ 	tristate "MSM8996 Multimedia Clock Controller"
+ 	select MSM_GCC_8996
++	select QCOM_GDSC
+ 	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the multimedia clock controller on msm8996 devices.
 -- 
-2.9.3
+2.7.4
