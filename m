@@ -1,92 +1,39 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: [PATCH v3 13/14] ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
-Date: Mon, 29 Aug 2016 14:27:05 +0200
-Message-ID: <1472473626-15398-14-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:30:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	=?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH 28/34] clk: si5351: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160825003027.GB19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-29-stephen.boyd@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20160601231533.9354-29-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
+> 
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+> Cc: Mike Looijmans <mike.looijmans@topic.nl>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
 
-It is necessary to properly configure these clocks in order
-to address 720p and 1080p HDMI resolution.
+Applied to clk-next
 
-Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/stih407.dtsi b/arch/arm/boot/dts/stih407.dtsi
-index d60f0d8..291ffac 100644
---- a/arch/arm/boot/dts/stih407.dtsi
-+++ b/arch/arm/boot/dts/stih407.dtsi
-@@ -16,7 +16,10 @@
- 			#size-cells = <1>;
- 
- 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
--					  <&clk_s_d2_quadfs 0>,
-+					  <&clk_s_d2_quadfs 1>,
-+					  <&clk_s_c0_pll1 0>,
-+					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
-+					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
- 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
-@@ -26,14 +29,21 @@
- 
- 			assigned-clock-parents = <0>,
- 						 <0>,
-+						 <0>,
-+						 <&clk_s_c0_pll1 0>,
-+						 <&clk_s_c0_pll1 0>,
- 						 <&clk_s_d2_quadfs 0>,
--						 <&clk_s_d2_quadfs 0>,
-+						 <&clk_s_d2_quadfs 1>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>,
- 						 <&clk_s_d2_quadfs 0>;
- 
--			assigned-clock-rates = <297000000>, <297000000>;
-+			assigned-clock-rates = <297000000>,
-+					       <108000000>,
-+					       <0>,
-+					       <400000000>,
-+					       <400000000>;
- 
- 			ranges;
- 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
