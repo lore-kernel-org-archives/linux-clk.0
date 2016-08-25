@@ -1,56 +1,36 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 1/3] dt-bindings: Add the clock id for CMU_CDREX (DRAM
- Express Controller)
-Date: Thu, 25 Aug 2016 15:57:16 +0900
-Message-id: <1472108238-24309-2-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Aug 2016 12:51:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: select GDSC for msm8996 gcc and mmcc
+Message-ID: <20160825195113.GL19826@codeaurora.org>
+References: <1472124487-22776-1-git-send-email-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472124487-22776-1-git-send-email-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the new clock id for CMU_CDRES (DRAM Express Controller)
-geneates the clocks for DRAM and NoC (Network on Chip) bus clock.
+On 08/25, Srinivas Kandagatla wrote:
+> This patch selects QCOM_GDSC Kconfig for msm8996 GCC and MMCC clock
+> controllers, as these provide some of the gdscs on the SOC.
+> 
+> Also selecting this config will make it align with other drivers which
+> do the same.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- include/dt-bindings/clock/exynos5420.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+This is a bug fix? Needs a fixes tag I think
 
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 17ab8394bec7..6fd21c291416 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -214,6 +214,9 @@
- #define CLK_MOUT_SW_ACLK400     651
- #define CLK_MOUT_USER_ACLK300_GSCL	652
- #define CLK_MOUT_SW_ACLK300_GSCL	653
-+#define CLK_MOUT_MCLK_CDREX	654
-+#define CLK_MOUT_BPLL		655
-+#define CLK_MOUT_MX_MSPLL_CCORE	656
- 
- /* divider clocks */
- #define CLK_DOUT_PIXEL		768
-@@ -239,8 +242,14 @@
- #define CLK_DOUT_ACLK300_DISP1	788
- #define CLK_DOUT_ACLK300_GSCL	789
- #define CLK_DOUT_ACLK400_DISP1	790
-+#define CLK_DOUT_PCLK_CDREX	791
-+#define CLK_DOUT_SCLK_CDREX	792
-+#define CLK_DOUT_ACLK_CDREX1	793
-+#define CLK_DOUT_CCLK_DREX0	794
-+#define CLK_DOUT_CLK2X_PHY0	795
-+#define CLK_DOUT_PCLK_CORE_MEM	796
- 
- /* must be greater than maximal clock id */
--#define CLK_NR_CLKS		791
-+#define CLK_NR_CLKS		797
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
+Fixes: 52111672f791 ("clk: qcom: gdsc: Add GDSCs in msm8996 GCC")
+Fixes: 7e824d507909 ("clk: qcom: gdsc: Add mmcc gdscs for msm8996 family")
+
+I'll queue it up in linux-next.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
