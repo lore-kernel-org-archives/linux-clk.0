@@ -1,26 +1,70 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, "Simon
- Horman" <horms+renesas@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
-Date: Mon, 29 Aug 2016 16:04:01 +0000
-Message-ID: <SG2PR06MB11657A5A030663EF3E905CA38AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160825190518.20764-1-chris.brandt@renesas.com>
- <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
- <SG2PR06MB1165182DE474D907F38694E98AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdXtzSNo84hLDNg=nZpG3HB1YPC2JNk6tiFx5eoFtHZjdg@mail.gmail.com>
- <SG2PR06MB116574538B09E83FAA4F73868AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdWhkz_coGhnN7qmrFEPwVCwFvenrVK4nMr7jkFu9YsL-g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWhkz_coGhnN7qmrFEPwVCwFvenrVK4nMr7jkFu9YsL-g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:58837 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750971AbcHYTGF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2016 15:06:05 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Cc: Chris Brandt <chris.brandt@renesas.com>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+Date: Thu, 25 Aug 2016 15:05:18 -0400
+Message-Id: <20160825190518.20764-1-chris.brandt@renesas.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbiwgQXVnIDI5LCAyMDE2LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
-dGU6DQoNCj4gVW50aWwgeW91IGhhdmUgYSBwcm9wZXIgR1BJTyBkcml2ZXIsIEkgdGhpbmsgdGhl
-IGJlc3Qgc29sdXRpb24gaXMgdG8gaW9yZW1hcCgpIHRoZQ0KPiBoYXJkY29kZWQgcmVnaXN0ZXJz
-IGluIGNsay1yei5jLCBhbmQgcmVhZGluZyB0aGUgbW9kZSBwaW5zLg0KDQpPSy4gVGhhbmsgeW91
-Lg0KDQoNCkNocmlzDQoNCg==
+Instead of hard coding EXTAL only, check if EXTAL was specified. If not,
+then assume the USB clock is used as the main system clock.
+
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/clk-rz.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+index f6312c6..466b9fc 100644
+--- a/drivers/clk/renesas/clk-rz.c
++++ b/drivers/clk/renesas/clk-rz.c
+@@ -37,13 +37,29 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+ 	static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
+ 
+ 	if (strcmp(name, "pll") == 0) {
+-		/* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
+-		unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
+-		const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
+-
+-		mult = cpg_mode ? (32 / 4) : 30;
+-
+-		return clk_register_fixed_factor(NULL, name, parent_name, 0, mult, 1);
++		u32 freq = 0;
++		struct device_node *np;
++
++		/* If a clock-frequency for extal was specified, assume EXTAL boot */
++		np = of_find_node_by_name(NULL, "extal");
++		if( np ) {
++			of_property_read_u32(np, "clock-frequency", &freq);
++			if( freq )
++				return clk_register_fixed_factor(NULL, "pll", "extal",
++					0, 30, 1);
++		}
++
++		/* Must be USB clock boot */
++		np = of_find_node_by_name(NULL, "usb_x1");
++		if( np ) {
++			of_property_read_u32(np, "clock-frequency", &freq);
++			if( freq )
++				return clk_register_fixed_factor(NULL, "pll", "usb_x1",
++					0, (32 / 4), 1);
++		}
++
++		/* No clock frequency set in DT */
++		BUG();
+ 	}
+ 
+ 	/* If mapping regs failed, skip non-pll clocks. System will boot anyhow */
+-- 
+2.9.2
+
+
