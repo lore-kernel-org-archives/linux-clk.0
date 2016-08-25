@@ -1,52 +1,35 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Aug 2016 13:30:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 4/8] clk: rockchip: rk3399: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src
-Date: Mon,  1 Aug 2016 17:53:39 +0800
-Message-Id: <1470045224-31854-5-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
+Message-ID: <20160825203049.GT19826@codeaurora.org>
+References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
+ <20160804212553.GB15690@codeaurora.org>
+ <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+ <20160808233711.GA2996@codeaurora.org>
+ <CAK7LNAScz7bJABbOgUuvg9J-ORaiLEfpwA3yMP+bZbLgB+S3uQ@mail.gmail.com>
+ <20160810230845.GH2996@codeaurora.org>
+ <CAK7LNAQ9wgpHn2LXiFfbyp_j85h8ZkGnAP39eVj+jmKczi=VSA@mail.gmail.com>
+ <CAK7LNAThC-oBV5qNRNLnkV_tS7JLZDVoeEYrJo_8LsbRftELew@mail.gmail.com>
+ <20160824180806.GE19826@codeaurora.org>
+ <CAK7LNAQgzaZH7Ondt9r7yJ1iwSqyzqSOO+1oZvbaq_kmrPQeLQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNAQgzaZH7Ondt9r7yJ1iwSqyzqSOO+1oZvbaq_kmrPQeLQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry to refer incorrect clock diagram, we double check it that the
-bits configuration of the Xpll_aclk_perihp_src need to be fixed:
-bit 1 - shows aclk_perihp_cpll_src_en
-bit 0 - shows aclk_perihp_gpll_src_en
+On 08/25, Masahiro Yamada wrote:
+>
+> Good.
+> Could you post it as a patch file?
+> 
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+Sure. I'll write up some commit text.
 
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3399.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 2182391..8bf0d19 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -833,9 +833,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 
- 	/* perihp */
- 	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
--			RK3399_CLKGATE_CON(5), 0, GFLAGS),
--	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(5), 1, GFLAGS),
-+	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
-+			RK3399_CLKGATE_CON(5), 0, GFLAGS),
- 	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(5), 2, GFLAGS),
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
