@@ -1,110 +1,136 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 08/17] clk: fixed-factor: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:05 +0200
-Message-id: <1471354514-24224-9-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua0-f182.google.com ([209.85.217.182]:35371 "EHLO
+        mail-ua0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757579AbcHYFez (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2016 01:34:55 -0400
+MIME-Version: 1.0
+In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 25 Aug 2016 14:34:53 +0900
+Message-ID: <CANqRtoRQ4tUrVyJqOsN_AE8WwXkG71rkQMFKr+6z36wPoQ+PJw@mail.gmail.com>
+Subject: Re: [PATCH/PROTO 0/9] R-Car H3 MSIOF Parent Clock Control Prototype
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+Hi Geert,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-fixed-factor.c | 11 +++++++----
- drivers/clk/samsung/clk.c      |  2 +-
- include/linux/clk-provider.h   |  4 +++-
- 3 files changed, 11 insertions(+), 6 deletions(-)
+On Sat, Aug 13, 2016 at 1:38 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>         Hi all,
+>
+> On R-Car H3, the various MSIOF instances (used for SPI) have a common
+> parent clock. This mso clock is a programmable "DIV6" clock (divider
+> 1 - 64). Its rate lies in the range 12.5 to 800 MHz, or 6.25 to 400 MHz
+> (depending on the main crystal).
+> After boot up, the default configuration is the lowest possible rate,
+> which leads to bad performance with devices desiring a higher transfer
+> rate.
+>
+> MSIOF clock tree:
+>
+>     pll1/4 (800 or 400 MHz)
+>       mso clock
+>         msiof0 clock (type MSTP = gate + status)
+>           msiof0 internal divider (divider range 1 - 1024, with holes)
+>         msiof1 clock (type MSTP)
+>           msiof1 internal divider
+>         msiof2 clock (type MSTP)
+>           msiof2 internal divider
+>         msiof3 clock (type MSTP)
+>           msiof3 internal divider
+>
+> To optimize performance, we want to control the mso parent clock.
+>
+>   - Higher parent clock means:
+>       + Better performance for devices wanting high target rates,
+>       + More accurate target rates in MSIOF driver,
+>       - More power consumption (doesn't matter that much with R-Car),
+>       - Cannot support devices needing real low target rates.
+>   - Lower parent clock means:
+>       + Less power consumption (doesn't matter that much with R-Car),
+>       + Can support all devices,
+>       - Worse performance for devices wanting high target rates,
+>       - Less accurate target rates, decreasing performance.
+>
+> Configuring the mso parent clock rate can either be done statically, or
+> dynamically. In both cases, this must be based on individual device
+> requirements. Note that this is not specific to SPI.
+>
+> SPI specific notes:
+>   - The SPI master knows about SPI slave device maximum frequencies only
+>     when spi_master.setup() is called,
+>   - SPI slave device maximum frequencies may change at runtime (through
+>     calling spi_setup(), esp. for spidev),
+>   - Currently the MSIOF driver does not set
+>     spi_master.{min,max}_speed_hz. However, setting it means the SPI
+>     core will never call spi_master.setup() with a rate outside this
+>     range, and thus we will never be informed of such rates.  Hence if
+>     we decide to set this, and we want dynamic configuration, we should
+>     fill in the real minimum and maximum supported by the hardware,
+>     regardless of the current parent clock rate.
+>
+> In this prototype, I'm offering 3 solutions to control the mso parent
+> clock rate.
+>
+>   - Option 1: Static configuration through the "assigned-clocks" and
+>     assigned-clock-rates DT properties.
+>
+>   - Option 2: Dynamic configuration, by changing the mso clock through
+>     the msiofX module clocks from the MSIOF driver.
+>
+>   - Option 2: Dynamic configuration, by changing a dummy clk-divider,
+>     which mimics the capabilities of the MSIOF internal divider.
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 4db3be214077..921a99b6e421 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -69,6 +69,7 @@ const struct clk_ops clk_fixed_factor_ops = {
- EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
- 
- struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div)
- {
-@@ -103,13 +104,14 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
- 
--struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
-+struct clk *clk_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div)
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_fixed_factor(dev, name, parent_name, flags, mult,
-+	hw = clk_hw_register_fixed_factor(dev, ctrl, name, parent_name, flags, mult,
- 					  div);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
-@@ -176,8 +178,9 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
- 	if (of_match_node(set_rate_parent_matches, node))
- 		flags |= CLK_SET_RATE_PARENT;
- 
--	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
--					mult, div);
-+	/* TODO: convert to clk_ctrl */
-+	clk = clk_register_fixed_factor(NULL, NULL, clk_name, parent_name,
-+					flags, mult, div);
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- }
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 1a296bbabd47..7bfd895781c5 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -176,7 +176,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
- 	unsigned int idx;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_factor(NULL, list->name,
-+		clk = clk_register_fixed_factor(NULL, ctx->clk_ctrl, list->name,
- 			list->parent_name, list->flags, list->mult, list->div);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f5f062d267a9..26171815948e 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -545,11 +545,13 @@ struct clk_fixed_factor {
- #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
- 
- extern const struct clk_ops clk_fixed_factor_ops;
--struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
-+struct clk *clk_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- void clk_unregister_fixed_factor(struct clk *clk);
- struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
--- 
-1.9.1
+Thanks for cooking up these solutions. I dislike putting software
+policy into DT, but at least Option 1 is simple. Option 2 and 3 seem a
+bit overly complex to me.
+
+May I ask if you considered solving the common case and special case
+independently?
+
+Regarding the common case, I think it is sane to assume that everyone
+wants a high performing solution if possible. So using highest clock
+rate possible must be a good default to as long as we can be sure to
+also be able to handle devices wanting low clock rates. In my mind
+this would mean that a standard unmodified DT should result in highest
+performance possible. This probably involves programming the CPG/MSSR
+hardware during boot-up based on some table with maximum supported
+frequency. The high performing setting may or may not be the default
+from reset (or boot loader) today, but perhaps it makes sense to rely
+less on hardware settings performed during boot? At least this seems
+like a good long term aim to me.
+
+As for short term special case handling, the only issue we are having
+is when more than one MSIOF instance want to use frequencies that are
+incompatible. The first MSIOF parent clock user should be able to
+select whichever rate it wants in theory, but with more than one MSIOF
+instance then if one MSIOF instance wants to use the highest frequency
+possible and the other the lowest possible then the 1024 divider is
+not enough to cover both. From my side I would say it makes sense to
+cover this special case with "Option 1" above. To avoid probe order
+issues the CPG/MSSR driver handling the parent clock could for
+instance early during boot look for DT frequency properties in the DTB
+and adjust the shared default rate based on that.
+
+For more long term special case handling, can't each MSIOF instance
+request the frequency independently and the parent clock CPG/MSSR
+driver can take all the child frequency requests into consideration
+and set something that satisfies everyone? clk_set_rate_range() and/or
+struct clk_rate_request seem to provide some way to pass on this
+information. During probe of the MSIOF driver perhaps the devices need
+to be queued up early on and once all the devices are deemed to be
+loaded then the devices are started in order with the lowest requested
+frequency first. Of course, if we need to load a new slow speed device
+later on then the existing ones may need to be ripped out and the
+whole bunch reinstalled. I believe this is similar to "Option 2"
+above.
+
+Thanks,
+
+/ magnus
