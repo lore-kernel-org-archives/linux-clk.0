@@ -1,54 +1,56 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH v2 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Date: Wed, 24 Aug 2016 15:37:13 +0200
-Message-Id: <1472045838-22628-2-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
+ k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 1/3] dt-bindings: Add the clock id for CMU_CDREX (DRAM
+ Express Controller)
+Date: Thu, 25 Aug 2016 15:57:16 +0900
+Message-id: <1472108238-24309-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+This patch adds the new clock id for CMU_CDRES (DRAM Express Controller)
+geneates the clocks for DRAM and NoC (Network on Chip) bus clock.
 
-Add TEGRA20_CLK_NOR to init tabel and set default rate to 92 MHz which
-is max rate.
-
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
-Changes in v2:
-- no changes
+ include/dt-bindings/clock/exynos5420.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
- drivers/clk/tegra/clk-tegra20.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cb..13d3b5a 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-+	{ TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 92000000, 0 },
- 	{ TEGRA20_CLK_SBC1, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC2, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
---
-2.1.4
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 17ab8394bec7..6fd21c291416 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -214,6 +214,9 @@
+ #define CLK_MOUT_SW_ACLK400     651
+ #define CLK_MOUT_USER_ACLK300_GSCL	652
+ #define CLK_MOUT_SW_ACLK300_GSCL	653
++#define CLK_MOUT_MCLK_CDREX	654
++#define CLK_MOUT_BPLL		655
++#define CLK_MOUT_MX_MSPLL_CCORE	656
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+@@ -239,8 +242,14 @@
+ #define CLK_DOUT_ACLK300_DISP1	788
+ #define CLK_DOUT_ACLK300_GSCL	789
+ #define CLK_DOUT_ACLK400_DISP1	790
++#define CLK_DOUT_PCLK_CDREX	791
++#define CLK_DOUT_SCLK_CDREX	792
++#define CLK_DOUT_ACLK_CDREX1	793
++#define CLK_DOUT_CCLK_DREX0	794
++#define CLK_DOUT_CLK2X_PHY0	795
++#define CLK_DOUT_PCLK_CORE_MEM	796
+ 
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		791
++#define CLK_NR_CLKS		797
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
+-- 
+1.9.1
