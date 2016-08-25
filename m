@@ -1,59 +1,63 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	Jianqun Xu <jay.xu@rock-chips.com>,
-	frank.wang@rock-chips.com,
-	shawn.lin@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	wulf@rock-chips.com,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v2 0/8] fix and optimize some clock configuration for the RK3399 platfom
-Date: Mon,  1 Aug 2016 17:53:35 +0800
-Message-Id: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 25 Aug 2016 22:27:04 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] clk: sunxi-ng: mux: Add support for mux tables
+Message-ID: <20160825202704.GC32598@lukather>
+References: <20160825062200.17206-1-wens@csie.org>
+ <20160825062200.17206-3-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
+In-Reply-To: <20160825062200.17206-3-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
-Hi:
-  In the development work, we found that some of the previous
-incorrect clock configuration on the RK3399 platform, we should
-fix and optimize them.
+--3siQDZowHQqNOShm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-- add the patch "fix incorrect parent for rk3399's {c,g}pll_aclk_perihp_src"
-- add the patch "fix incorrect GATE bits for {c, g}pll_aclk_perihp_src"
+On Thu, Aug 25, 2016 at 02:21:56PM +0800, Chen-Yu Tsai wrote:
+> Some clock muxes have holes, i.e. invalid or unconnected inputs,
+> between parent mux values.
+>=20
+> Add support for specifying a mux table to map clock parents to
+> mux values.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Elaine Zhang (1):
-  clk: rockchip: rk3399: delete the CLK_IGNORE_UNUSED for aclk_pcie
+Applied, thanks!
+Maxime
 
-Xing Zheng (7):
-  clk: rockchip: rk3399: export USBPHYx_480M_SRC clock IDs
-  clk: rockchip: rk3399: export 480M_SRC clock id for usbphy0/usbphy1
-  clk: rockchip: rk3399: fix incorrect parent for rk3399's {c,
-    g}pll_aclk_perihp_src
-  clk: rockchip: rk3399: fix incorrect GATE bits for {c,
-    g}pll_aclk_perihp_src
-  clk: rockchip: rk3399: fix incorrect aclk_emmc source gate bits
-  clk: rockchip: rk3399: add 65MHz and 106.5MHz clocks for HDMI
-  clk: rockchip: rk3399: Add support frac mode frequencies
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
- drivers/clk/rockchip/clk-rk3399.c      |   41 ++++++++++++++++++++++++--------
- include/dt-bindings/clock/rk3399-cru.h |    2 ++
- 2 files changed, 33 insertions(+), 10 deletions(-)
+--3siQDZowHQqNOShm
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-1.7.9.5
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXv1SYAAoJEBx+YmzsjxAgEYQP/0r8kd26zTesOgMayp955SQN
+erEwSWA4pT77R7OzRqq27SqBMjpY96EK4misr48LTd1unJcVynQ/DjFKvJJAaneR
+9upNZY18Mv9PPFcbuYj/tKkR3BDB2y2KDPgvYTZSzZ6/x/uhyh3qlwpHXpc3hefd
+Y6JPxNI3CGnkj74secT5E5HfICc+5jR8oR+TDx0kN4nzuHkoXx+x1RZW9kjFJx/F
+WlY2LSbLhskbdIbN953CIbv6OwtjWoKOcLkvekJ+/Y+j0mFuJWOouuGAQwPtjvul
+7oCFJ5wtG6rkolsY1eWhNdPWOP2fg1zXmc0KzUXCy4OC0+6hqBBqkLtmrky0wtX2
+V/xbLG9y9YBCPrI0yTYgT9MnRdwXpBHquqhAwQmFDdqIq7PbZhaD0KQEhgwMKHlP
+Ej/2EO2yCarbA/ijq5rnKmOMTL+Vnnr0k3/WCPZrEN0qM3UX/t2g02ivEZKXce63
+GK6M+Ml1d6iJvLj/2cxmsTYPIAmYhJOOFORwS6VS71DPi2vwkRvUWSKvcb3C0tnB
+tVnDfPTMpfSJf+XUG7ndc2Z53dkbC3/RB0ClmMd50x/K/uQyX3Fpy9m5BqCVZk+y
+h5uzoO600QXLIRx1fEpawQkk6ELYROMjJzgJ21CrEDqL3dJhiv94kUnyzklgt3TZ
+t6Kvizgdj0BpE8HhGnE9
+=/zyL
+-----END PGP SIGNATURE-----
+
+--3siQDZowHQqNOShm--
