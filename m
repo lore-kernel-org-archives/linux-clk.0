@@ -1,32 +1,34 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 17:57:54 -0700
+Date: Wed, 24 Aug 2016 17:25:33 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v2 08/10] clk: qcom: Cleanup some macro defs
-Message-ID: <20160813005754.GF361@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
- <1470904858-11930-9-git-send-email-rnayak@codeaurora.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Janusz Uzycki <j.uzycki@elproma.com.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 23/34] clk: pwm: Migrate to clk_hw based OF and
+ registration APIs
+Message-ID: <20160825002533.GV19826@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-24-stephen.boyd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470904858-11930-9-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <20160601231533.9354-24-stephen.boyd@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Rajendra Nayak wrote:
-> From: Taniya Das <tdas@codeaurora.org>
+On 06/01, Stephen Boyd wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in
+> these drivers, allowing us to move closer to a clear split of
+> consumer and provider clk APIs.
 > 
-> Move all
-> '# define XYZ'
-> to
-> '#define XYZ'
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: Janusz Uzycki <j.uzycki@elproma.com.pl>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 > ---
 
-This was done on purpose. Please drop this patch
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
