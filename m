@@ -1,61 +1,43 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Subject: Re: [RESEND PATCH 5/6] clk: rockchip: rk3399: delete the
- CLK_IGNORE_UNUSED for aclk_pcie
-To: Xing Zheng <zhengxing@rock-chips.com>, heiko@sntech.de
-References: <1470025389-4094-1-git-send-email-zhengxing@rock-chips.com>
- <1470025485-4218-1-git-send-email-zhengxing@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com,
- zhangqing@rock-chips.com
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <8ee66f8c-f758-45ef-6e21-f757157d2fe4@rock-chips.com>
-Date: Mon, 1 Aug 2016 16:47:32 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Aug 2016 13:06:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH 3/3 v2] clk: versatile/icst: support for AP baseboard
+ clocks
+Message-ID: <20160825200632.GQ19826@codeaurora.org>
+References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
+ <1471857574-13125-3-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1470025485-4218-1-git-send-email-zhengxing@rock-chips.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1471857574-13125-3-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016/8/1 12:24, Xing Zheng wrote:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
->
-> allow aclk_pcie and aclk_perf_pcie disabled when unused.
->
+On 08/22, Linus Walleij wrote:
+> @@ -143,6 +180,17 @@ static int vco_set(struct clk_icst *icst, struct icst_vco vco)
+>  		if (vco.r != 22)
+>  			pr_err("ICST error: tried to use RDW != 22\n");
+>  		break;
+> +	case ICST_INTEGRATOR_AP_SYS:
+> +		mask = INTEGRATOR_AP_SYS_BITS;
+> +		val &= ~0xFF; /* Uses 8 bits */
 
-Thanks for landing it. Yes, my pcie driver will control it
-manually, and this patch looks the same as what we land on
-the downstream tree, so
+drivers/clk/versatile/clk-icst.c: In function ‘icst_set_rate’:
+drivers/clk/versatile/clk-icst.c:185:7: warning: ‘val’ may be used uninitialized in this function [-Wuninitialized]
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
-
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->
-> ---
->
->  drivers/clk/rockchip/clk-rk3399.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> index 74afec0..4a15ce5b 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -848,9 +848,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->  			RK3399_CLKSEL_CON(14), 12, 2, DFLAGS,
->  			RK3399_CLKGATE_CON(5), 4, GFLAGS),
->
-> -	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-> +	GATE(ACLK_PERF_PCIE, "aclk_perf_pcie", "aclk_perihp", 0,
->  			RK3399_CLKGATE_CON(20), 2, GFLAGS),
-> -	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", CLK_IGNORE_UNUSED,
-> +	GATE(ACLK_PCIE, "aclk_pcie", "aclk_perihp", 0,
->  			RK3399_CLKGATE_CON(20), 10, GFLAGS),
->  	GATE(0, "aclk_perihp_noc", "aclk_perihp", CLK_IGNORE_UNUSED,
->  			RK3399_CLKGATE_CON(20), 12, GFLAGS),
->
-
+> +		val |= vco.v & 0xFF;
+> +		if (vco.v & 0x100)
+> +			pr_err("ICST error: tried to set bit 8 of VDW\n");
+> +		if (vco.s != 3)
+> +			pr_err("ICST error: tried to use VOD != 1\n");
+> +		if (vco.r != 46)
+> +			pr_err("ICST error: tried to use RDW != 22\n");
+> +		break;
+>  	case ICST_INTEGRATOR_CP_CM_CORE:
+>  		mask = INTEGRATOR_CP_CM_CORE_BITS; /* Uses 12 bits */
+>  		val = (vco.v & 0xFF) | vco.s << 8;
 
 -- 
-Best Regards
-Shawn Lin
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
