@@ -1,75 +1,66 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 17:44:38 -0700
+Date: Thu, 25 Aug 2016 12:57:10 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
-	James Liao <jamesjj.liao@mediatek.com>
-Subject: Re: [PATCH v9 06/10] clk: mediatek: Add MT2701 clock support
-Message-ID: <20160813004438.GC361@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
- <1466581229-2342-7-git-send-email-erin.lo@mediatek.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Eric Anholt <eric@anholt.net>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V5] clk: bcm: Add driver for BCM53573 ILP clock
+Message-ID: <20160825195710.GM19826@codeaurora.org>
+References: <20160823061745.8162-1-zajec5@gmail.com>
+ <20160823062613.13865-1-zajec5@gmail.com>
+ <20160824084738.GB6502@codeaurora.org>
+ <CACna6rwB8bPMqZ8Gz5x8WVMeB83T3J=D7dXsDpMO8YdNHFSKaA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466581229-2342-7-git-send-email-erin.lo@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CACna6rwB8bPMqZ8Gz5x8WVMeB83T3J=D7dXsDpMO8YdNHFSKaA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22, Erin Lo wrote:
-> diff --git a/drivers/clk/mediatek/clk-mt2701-bdp.c b/drivers/clk/mediatek/clk-mt2701-bdp.c
-> new file mode 100644
-> index 0000000..81f628c
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt2701-bdp.c
-> @@ -0,0 +1,140 @@
-> +/*
-> + * Copyright (c) 2014 MediaTek Inc.
-> + * Author: Shunli Wang <shunli.wang@mediatek.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk.h>
+On 08/25, Rafał Miłecki wrote:
+> On 24 August 2016 at 10:47, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 08/23, Rafał Miłecki wrote:
+> >> +     }
+> >> +
+> >> +     /* Disable measurement to save power */
+> >> +     writel(0x0, pmu + PMU_XTAL_FREQ_RATIO);
+> >> +
+> >> +     avg = sum / num;
+> >> +
+> >> +     return parent_rate * 4 / avg;
+> >> +}
+> >> +
+> >> +static const struct clk_ops bcm53573_ilp_clk_ops = {
+> >> +     .enable = bcm53573_ilp_enable,
+> >
+> > No disable? Or .is_enabled?
+> 
+> The beauty of working without datasheets... I'll compare initial reg
+> state with one after enabling and see if there is sth obvious.
+> 
+> 
 
-Is this include used? I would expect clk-provider.h instead.
+Ok.
 
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-gate.h"
-> +
-> +#include <dt-bindings/clock/mt2701-clk.h>
-> +
-[..]
-> +
-> +static void mtk_bdpsys_init(struct device_node *node)
-> +{
-> +	struct clk_onecell_data *clk_data;
-> +	int r;
-> +
-> +	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
-> +
-> +	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
-> +						clk_data);
-> +
-> +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> >
+> > Can this be a platform driver instead?
+> 
+> I guess it can. Should it? It's not clear to me when CLK_OF_DECLARE is
+> preferred and when it's not.
 
-Is it possible to move to of_clk_add_hw_provider()? It can be
-done later if that would mean changing all
-mtk_clk_register_gates() users.
+We've been taking an approach of using CLK_OF_DECLARE() for clks
+that must be registered for timers and interrupt controllers (as
+these things are done before the device model is initialized),
+and struct drivers otherwise. If the DT node has a mix of
+timer/interrupt controller clks and other clks then
+CLK_OF_DECLARE_DRIVER() can be used and then we can still have a
+builtin driver.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
