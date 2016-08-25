@@ -1,200 +1,88 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 02/10] clk: qcom: Add support for alpha pll hwfsm ops
-Date: Thu, 11 Aug 2016 14:10:50 +0530
-Message-Id: <1470904858-11930-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <20160824180806.GE19826@codeaurora.org>
+References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
+ <20160804212553.GB15690@codeaurora.org> <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
+ <20160808233711.GA2996@codeaurora.org> <CAK7LNAScz7bJABbOgUuvg9J-ORaiLEfpwA3yMP+bZbLgB+S3uQ@mail.gmail.com>
+ <20160810230845.GH2996@codeaurora.org> <CAK7LNAQ9wgpHn2LXiFfbyp_j85h8ZkGnAP39eVj+jmKczi=VSA@mail.gmail.com>
+ <CAK7LNAThC-oBV5qNRNLnkV_tS7JLZDVoeEYrJo_8LsbRftELew@mail.gmail.com> <20160824180806.GE19826@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 25 Aug 2016 11:36:47 +0900
+Message-ID: <CAK7LNAQgzaZH7Ondt9r7yJ1iwSqyzqSOO+1oZvbaq_kmrPQeLQ@mail.gmail.com>
+Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support to enable/disable the alpha pll using hwfsm
+Hi Stephen,
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 109 ++++++++++++++++++++++++++++++++++-----
- drivers/clk/qcom/clk-alpha-pll.h |   1 +
- 2 files changed, 98 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index e6a03ea..bae31f9 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -62,9 +62,10 @@
- #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), \
- 					   struct clk_alpha_pll_postdiv, clkr)
- 
--static int wait_for_pll(struct clk_alpha_pll *pll)
-+static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
-+			const char *action)
- {
--	u32 val, mask, off;
-+	u32 val, off;
- 	int count;
- 	int ret;
- 	const char *name = clk_hw_get_name(&pll->clkr.hw);
-@@ -74,26 +75,101 @@ static int wait_for_pll(struct clk_alpha_pll *pll)
- 	if (ret)
- 		return ret;
- 
--	if (val & PLL_VOTE_FSM_ENA)
--		mask = PLL_ACTIVE_FLAG;
--	else
--		mask = PLL_LOCK_DET;
--
--	/* Wait for pll to enable. */
- 	for (count = 100; count > 0; count--) {
- 		ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
- 		if (ret)
- 			return ret;
--		if ((val & mask) == mask)
-+		if (inverse && (val & mask))
-+			return 0;
-+		else if ((val & mask) == mask)
- 			return 0;
- 
- 		udelay(1);
- 	}
- 
--	WARN(1, "%s didn't enable after voting for it!\n", name);
-+	WARN(1, "%s failed to %s!\n", name, action);
- 	return -ETIMEDOUT;
- }
- 
-+static int wait_for_pll_enable(struct clk_alpha_pll *pll, u32 mask)
-+{
-+	return wait_for_pll(pll, mask, 0, "enable");
-+}
-+
-+static int wait_for_pll_disable(struct clk_alpha_pll *pll, u32 mask)
-+{
-+	return wait_for_pll(pll, mask, 1, "disable");
-+}
-+
-+static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
-+{
-+	return wait_for_pll(pll, mask, 0, "offline");
-+}
-+
-+/* alpha pll with hwfsm support */
-+#define PLL_OFFLINE_REQ		BIT(7)
-+#define PLL_FSM_ENA		BIT(20)
-+#define PLL_OFFLINE_ACK		BIT(28)
-+#define PLL_ACTIVE_FLAG		BIT(30)
-+
-+static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
-+{
-+	int ret;
-+	u32 val, off;
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+
-+	off = pll->offset;
-+	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable HW FSM mode, clear OFFLINE request */
-+	val |= PLL_FSM_ENA;
-+	val &= ~PLL_OFFLINE_REQ;
-+	ret = regmap_write(pll->clkr.regmap, off + PLL_MODE, val);
-+	if (ret)
-+		return ret;
-+
-+	/* Make sure enable request goes through before waiting for update */
-+	mb();
-+
-+	ret = wait_for_pll_enable(pll, PLL_ACTIVE_FLAG);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
-+{
-+	int ret;
-+	u32 val, off;
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+
-+	off = pll->offset;
-+	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
-+	if (ret)
-+		return;
-+
-+	/* Request PLL_OFFLINE and wait for ack */
-+	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
-+				 PLL_OFFLINE_REQ, PLL_OFFLINE_REQ);
-+	if (ret)
-+		return;
-+
-+	ret = wait_for_pll_offline(pll, PLL_OFFLINE_ACK);
-+	if (ret)
-+		return;
-+
-+	/* Disable hwfsm */
-+	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
-+				 PLL_FSM_ENA, 0);
-+	if (ret)
-+		return;
-+
-+	wait_for_pll_disable(pll, PLL_ACTIVE_FLAG);
-+}
-+
- static int clk_alpha_pll_enable(struct clk_hw *hw)
- {
- 	int ret;
-@@ -112,7 +188,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
- 		ret = clk_enable_regmap(hw);
- 		if (ret)
- 			return ret;
--		return wait_for_pll(pll);
-+		return wait_for_pll_enable(pll, PLL_ACTIVE_FLAG);
- 	}
- 
- 	/* Skip if already enabled */
-@@ -136,7 +212,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
- 	if (ret)
- 		return ret;
- 
--	ret = wait_for_pll(pll);
-+	ret = wait_for_pll_enable(pll, PLL_LOCK_DET);
- 	if (ret)
- 		return ret;
- 
-@@ -300,6 +376,15 @@ const struct clk_ops clk_alpha_pll_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_ops);
- 
-+const struct clk_ops clk_alpha_pll_hwfsm_ops = {
-+	.enable = clk_alpha_pll_hwfsm_enable,
-+	.disable = clk_alpha_pll_hwfsm_disable,
-+	.recalc_rate = clk_alpha_pll_recalc_rate,
-+	.round_rate = clk_alpha_pll_round_rate,
-+	.set_rate = clk_alpha_pll_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
-+
- static unsigned long
- clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- {
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 90ce201..f78bf4c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -52,6 +52,7 @@ struct clk_alpha_pll_postdiv {
- };
- 
- extern const struct clk_ops clk_alpha_pll_ops;
-+extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
- 
- #endif
+2016-08-25 3:08 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> (Please trim replies)
+>
+> On 08/24, Masahiro Yamada wrote:
+>>
+>> Looks like the whole of my series was rejected,
+>> but I was not sure why the following one was rejected.
+>> https://patchwork.kernel.org/patch/9236563/
+>>
+>
+> Replying to that patch would have been better.
+>
+>>
+>> Could you explain why -EPROBE_DEFER should be returned
+>> if both .get_hw and .get are missing.
+>
+> That's just a bug. Perhaps this patch would be better, and look,
+> it saves 5 lines.
+>
+> ---8<----
+>  drivers/clk/clk.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 71cc56712666..d3d26148cdfb 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3174,19 +3174,14 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
+>                               struct of_phandle_args *clkspec)
+>  {
+>         struct clk *clk;
+> -       struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
+>
+> -       if (provider->get_hw) {
+> -               hw = provider->get_hw(clkspec, provider->data);
+> -       } else if (provider->get) {
+> -               clk = provider->get(clkspec, provider->data);
+> -               if (!IS_ERR(clk))
+> -                       hw = __clk_get_hw(clk);
+> -               else
+> -                       hw = ERR_CAST(clk);
+> -       }
+> +       if (provider->get_hw)
+> +               return provider->get_hw(clkspec, provider->data);
+>
+> -       return hw;
+> +       clk = provider->get(clkspec, provider->data);
+> +       if (IS_ERR(clk))
+> +               return ERR_CAST(clk);
+> +       return __clk_get_hw(clk);
+>  }
+>
+>  struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+
+
+Good.
+Could you post it as a patch file?
+
+
+Thanks!
+
+
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Best Regards
+Masahiro Yamada
