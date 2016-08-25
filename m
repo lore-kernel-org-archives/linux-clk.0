@@ -1,66 +1,133 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 16 Aug 2016 11:51:58 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <20160816105158.GQ9347@sirena.org.uk>
-References: <1470915049-15249-1-git-send-email-broonie@kernel.org>
- <20160815220610.GG361@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 24 Aug 2016 17:16:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	sebastian.hesselbarth@gmail.com, andrew@lunn.ch,
+	jason@lakedaemon.net, thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com, nadavh@marvell.com,
+	alior@marvell.com, tn@semihalf.com, jaz@semihalf.com
+Subject: Re: [PATCH 2/2] clk: mvebu: dynamically allocate resources in Armada
+ CP110 system controller
+Message-ID: <20160825001613.GQ19826@codeaurora.org>
+References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+ <1471933609-8456-3-git-send-email-mw@semihalf.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="suroagWEfFHnktSq"
-In-Reply-To: <20160815220610.GG361@codeaurora.org>
-Subject: Re: [PATCH] clk: Make clock framework user selectable
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471933609-8456-3-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 08/23, Marcin Wojtas wrote:
+> Original commit, which added support for Armada CP110 system controller
+> used global variables for storing all clock information. It worked
+> fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
+> was introduced, the data got overwritten and corrupted.
+> 
+> This patch fixes the issue by allocating resources dynamically in the
+> driver probe and storing it as platform drvdata.
+> 
+> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
+> 
 
---suroagWEfFHnktSq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please drop the space between fixes tag and the signoff.
 
-On Mon, Aug 15, 2016 at 03:06:10PM -0700, Stephen Boyd wrote:
-> On 08/11, Mark Brown wrote:
+> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+> ---
+>  drivers/clk/mvebu/cp110-system-controller.c | 29 ++++++++++++++++++++---------
+>  1 file changed, 20 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+> index 0835e1d..2bd87d2 100644
+> --- a/drivers/clk/mvebu/cp110-system-controller.c
+> +++ b/drivers/clk/mvebu/cp110-system-controller.c
+> @@ -81,13 +81,6 @@ enum {
+>  #define CP110_GATE_EIP150		25
+>  #define CP110_GATE_EIP197		26
+>  
+> -static struct clk *cp110_clks[CP110_CLK_NUM];
+> -
+> -static struct clk_onecell_data cp110_clk_data = {
+> -	.clks = cp110_clks,
+> -	.clk_num = CP110_CLK_NUM,
+> -};
+> -
+>  struct cp110_gate_clk {
+>  	struct clk_hw hw;
+>  	struct regmap *regmap;
+> @@ -195,7 +188,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+>  	struct regmap *regmap;
+>  	struct device_node *np = pdev->dev.of_node;
+>  	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
+> -	struct clk *clk;
+> +	struct clk_onecell_data *cp110_clk_data;
+> +	struct clk *clk, **cp110_clks;
+>  	u32 nand_clk_ctrl;
+>  	int i, ret;
+>  
+> @@ -208,6 +202,20 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
+> +				  CP110_CLK_NUM, GFP_KERNEL);
+> +	if (IS_ERR(cp110_clks))
 
-> >  config COMMON_CLK
-> > -	bool
-> > +	bool "Common Clock Framework Support"
-> > +	depends on !HAVE_CUSTOM_CLK
+Doesn't that return NULL on error?
 
-> Is the plan that architectures will keep selecting this when they
-> want to enforce common clk framework on their arch? We could move
+> +		return PTR_ERR(cp110_clks);
+> +
+> +	cp110_clk_data = devm_kzalloc(&pdev->dev,
+> +				      sizeof(struct clk_onecell_data),
 
-I think that's a per-architecture thing - if the architecture doesn't
-need control of clocks then there's no reason for it to force the API
-on, but if the architecture is unlikely to do anything useful without
-then it's a different story.
+sizeof(*cp110_clk_data) please
 
-> enabling this config to the defconfigs if we make of_clk_init() a
-> stub when this config is disabled. Interestingly arm already has
-> that ifdefed out so nothing fails to compile there, but not every
-> arch is following that design.
+> +				      GFP_KERNEL);
+> +	if (IS_ERR(cp110_clk_data))
 
-That's probably a good idea anyway.
+Doesn't that return NULL on error?
 
-> Also, are there patches for all the users to select
-> HAVE_CUSTOM_CLK? Otherwise we can get randconfig failures when
-> two places define clk API functions.
+> +		return PTR_ERR(cp110_clk_data);
+> +
+> +	cp110_clk_data->clks = cp110_clks;
+> +	cp110_clk_data->clk_num = CP110_CLK_NUM;
+> +
+>  	/* Register the APLL which is the root of the clk tree */
+>  	of_property_read_string_index(np, "core-clock-output-names",
+>  				      CP110_CORE_APLL, &apll_name);
+> @@ -335,10 +343,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+>  		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
+>  	}
+>  
+> -	ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
+> +	ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
 
-They're trivial to make if you apply this.
+It would be nice if this could be converted to
+of_clk_add_hw_provider().
 
---suroagWEfFHnktSq
-Content-Type: application/pgp-signature; name="signature.asc"
+>  	if (ret)
+>  		goto fail_clk_add;
+>  
+> +	platform_set_drvdata(pdev, cp110_clks);
+> +
+>  	return 0;
+>  
+>  fail_clk_add:
+> @@ -365,6 +375,7 @@ fail0:
+>  
+>  static int cp110_syscon_clk_remove(struct platform_device *pdev)
+>  {
+> +	struct clk **cp110_clks = platform_get_drvdata(pdev);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Is this variable unused now?
 
-iQEcBAEBCAAGBQJXsvBNAAoJECTWi3JdVIfQQpwH/3gq9WQXwCmjPDCoc67Mlbig
-i8KNdbT5Xoj6IQ771ExYAZhdOAejiEB2z87MeXuM1HhZdQ6T0yGsNTv3ViJ375Jt
-EHQi8PlVCresSdj9y3ziqQP3gp7xYu0shIvolxyNpfI19hLhCVALlnWi82IYVzVg
-lVBL1S6LDstLxuij1/6AarkYP2rV4B8JdpA/dSncyW9SinxtDh2R0LRa9kX0SiiT
-iHxw6uc3jcCieMAbe4HsT5gzB7erx+zSlwLPRZuQMY3x+ZahbsMjU9HrgbI46l/o
-ZNNYqP3jcFsHozfYzFFLAuagOvyarCzo1kJm0i4DABrlyFpXlb10FL8vG6WemzM=
-=sN9d
------END PGP SIGNATURE-----
+>  	int i;
+>  
+>  	of_clk_del_provider(pdev->dev.of_node);
+> -- 
+> 1.8.3.1
+> 
 
---suroagWEfFHnktSq--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
