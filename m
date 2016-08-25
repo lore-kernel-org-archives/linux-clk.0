@@ -1,65 +1,75 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        <gabriel.fernandez@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: [PATCH v3 12/14] ARM: DT: STiH418: Enable synchronous clock mode for video clocks
-Date: Mon, 29 Aug 2016 14:27:04 +0200
-Message-ID: <1472473626-15398-13-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <tomasz.figa@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <57BE9E16.7090309@samsung.com>
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+ <1471834185-20249-2-git-send-email-cw00.choi@samsung.com> <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
+ <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
+ <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com> <20160824044346.GR6502@codeaurora.org>
+ <57BD5CFB.5050500@samsung.com> <20160825001109.GO19826@codeaurora.org> <57BE9E16.7090309@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Date: Thu, 25 Aug 2016 23:43:10 +0900
+Message-ID: <CA+Ln22E7ZeFTuzmAT-S9xDWq5kE1_XhkDp8fp7=odrudgaivYQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
+ samsung_cmu_info to init section
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>,
+	=?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>,
+	chanwoo@kernel.org,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+2016-08-25 16:28 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+> Hi Stephen,
+>
+> On 2016=EB=85=84 08=EC=9B=94 25=EC=9D=BC 09:11, Stephen Boyd wrote:
+>> On 08/24, Chanwoo Choi wrote:
+>>> On 2016=EB=85=84 08=EC=9B=94 24=EC=9D=BC 13:43, Stephen Boyd wrote:
+>>>> On 08/23, Sylwester Nawrocki wrote:
+>>>>> So the saving is rather insignificant but the patch doesn't make
+>>>>> things worse and I'd say it might be worth applying.
+>>>>>
+>>>>
+>>>> Sounds good. This sort of information should be in the commit
+>>>> text though. Talking about const doesn't make any sense to me.
+>>>
+>>> Do you mean that 'const' is initconst secion?
+>>
+>> No. Marking it as initconst in the patch is correct.
+>
+> OK.
+>
+>>
+>>> If possible, could you explain the anything
+>>> why you don't make sense about 'const'?
+>>>
+>>
+>> I'm just saying that the reasoning to move it from the text
+>> section to the data section shouldn't be because of const. There
+>> should be better reasons to do this, like size benefits.
+>>
+>
+> As I already said, the samsung_cmu_register_on() requires
+> the 'const' type argument for 'struct samsung_cmu_info'.
 
-This patch enables the synchronous clock mode for video clocks
-on STiH418 board.
+If a function takes a const pointer as an argument, then it's
+perfectly valid to give a non-const pointer. Casting from non-cost
+into const is valid, other way around not.
 
-Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> So, I defined the instance on the out of the exynos5260_clk_aud_init() as=
+ following:
+>         static const struct samsung_cmu_info aud_cmu __initconst =3D {
+>
+> How can i add the 'const' keyword and '__initsecion' to the
+> "struct samsung_cmu_info aud_cmu" in the "static void __init
+> exynos5260_clk_aud_init(struct device_node *np)"?
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index a183583..ee6614b7 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -271,7 +271,7 @@
- 
- 			clk_s_d2_flexgen: clk-s-d2-flexgen {
- 				#clock-cells = <1>;
--				compatible = "st,flexgen";
-+				compatible = "st,flexgen-video", "st,flexgen";
- 
- 				clocks = <&clk_s_d2_quadfs 0>,
- 					 <&clk_s_d2_quadfs 1>,
--- 
-1.9.1
+Stephen meant that there must be some benefit from a change to make it
+worth being included into the kernel.
+
+Best regards,
+Tomasz
