@@ -1,90 +1,105 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v10 9/9] arm: dts: mt2701: Use real clock for UARTs
-Date: Tue, 16 Aug 2016 15:30:29 +0800
-Message-ID: <1471332629-15722-10-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
-References: <1471332629-15722-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <57BEB6AF.3070206@codeaurora.org>
+Date: Thu, 25 Aug 2016 14:43:19 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tdas@codeaurora.org
+Subject: Re: [PATCH v2 10/10] clk: qcom: Fix .set_rate to handle alpha PLLs
+ w/wo dynamic update
+References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org> <1470904858-11930-11-git-send-email-rnayak@codeaurora.org> <20160824062613.GW6502@codeaurora.org>
+In-Reply-To: <20160824062613.GW6502@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
 
-Change-Id: Icd44282b859a344b86eccdf4840e9ffb7cee7ec5
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index c9a8dbf..7eab6f4 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -73,12 +73,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -186,7 +180,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -195,7 +190,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -204,7 +200,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -213,7 +210,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
+On 08/24/2016 11:56 AM, Stephen Boyd wrote:
+> On 08/11, Rajendra Nayak wrote:
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 2184dc1..68c90f3 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -113,6 +113,11 @@ static int wait_for_pll_offline(struct clk_alpha_pll *pll, u32 mask)
+>>  #define PLL_OFFLINE_ACK		BIT(28)
+>>  #define PLL_ACTIVE_FLAG		BIT(30)
+>>  
+>> +/* alpha pll with dynamic update support */
+>> +#define PLL_UPDATE		BIT(22)
+>> +#define PLL_HW_LOGIC_BYPASS	BIT(23)
+>> +#define PLL_ACK_LATCH		BIT(29)
+> 
+> These need to move next to associated registers.
+
+will do
+
+> 
+>> +
+>>  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>  			     const struct alpha_pll_config *config)
+>>  {
+>> @@ -366,6 +402,7 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>>  static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  				  unsigned long prate)
+>>  {
+>> +	int enabled;
+> 
+> bool
+
+sure
+
+> 
+>>  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>>  	const struct pll_vco *vco;
+>>  	u32 l, off = pll->offset;
+>> @@ -378,6 +415,11 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> +	enabled = hw->init->ops->is_enabled(hw);
+> 
+> We have clk_hw_is_enabled() for this.
+
+sure, will change it to use clk_hw_is_enabled
+
+> 
+>> +
+>> +	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
+>> +		hw->init->ops->disable(hw);
+> 
+> Please call the function directly instead of going through the
+> init structure to get the clk ops.
+
+okay
+
+> 
+>> +
+>>  	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+>>  
+>>  	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
+>> @@ -391,6 +433,12 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL, PLL_ALPHA_EN,
+>>  			   PLL_ALPHA_EN);
+>>  
+>> +	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
+>> +		hw->init->ops->enable(hw);
+>> +
+>> +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE)
+>> +		clk_alpha_pll_dynamic_update(pll);
+>> +
+> 
+> Perhaps write it as
+> 
+> 	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE)
+> 		clk_alpha_pll_dynamic_update()
+> 	else if (enabled)
+> 		toggle the enable bit...
+
+okay will update, thanks
+> 
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
