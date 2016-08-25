@@ -1,56 +1,31 @@
-Return-Path: <moinejf@free.fr>
-Date: Mon, 1 Aug 2016 14:11:39 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: =?ISO-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>, Maxime
- Ripard <maxime.ripard@free-electrons.com>, Rob Herring
- <robh+dt@kernel.org>, Mike Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, linux-clk
- <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 00/13] arm64: Allwinner A64 support based on sunxi-ng
-Message-Id: <20160801141139.f8458f31c6c7b5c081653a93@free.fr>
-In-Reply-To: <CAGb2v66bvtY5qtkSJ_BgyPtA+Mi-3m06NwVnntcwaNnbdwYC6w@mail.gmail.com>
-References: <20160726203041.29366-1-maxime.ripard@free-electrons.com>
-	<fb559224-561c-3476-1146-96f7aea427f0@arm.com>
-	<20160801103024.cc74c093466d7fdfd91a2587@free.fr>
-	<CAGb2v67+1rG1kj+7cGO=TMwSgpktP4xMAeZ9Zfy8PRWXyRLi+g@mail.gmail.com>
-	<20160801140012.41b8609b69faa1fe1d7d2a4a@free.fr>
-	<CAGb2v66bvtY5qtkSJ_BgyPtA+Mi-3m06NwVnntcwaNnbdwYC6w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Aug 2016 13:06:37 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH 1/3 v2] clk: versatile add DT bindings for the ICST CM
+ variants
+Message-ID: <20160825200637.GR19826@codeaurora.org>
+References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 1 Aug 2016 20:01:49 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+On 08/22, Linus Walleij wrote:
+> The Integrator/AP and Integrator/CP core modules have special
+> versions of the ICST525 interface hardcoding some bits. Create
+> special compatible strings to identify these variants, also
+> explain a bit what is going on.
+> 
+> Cc: devicetree@vger.kernel.org
+> Cc: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
-> On Mon, Aug 1, 2016 at 8:00 PM, Jean-Francois Moine <moinejf@free.fr> wro=
-te:
-> > On Mon, 1 Aug 2016 17:13:34 +0800
-> > Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> >> > But I don't see why you are keeping the simple-gates. The bus gate m=
-ay
-> >> > be ungated/gated when the clock is enabled/disabled, and that's what
-> >> > Allwinner's software does.
-> >>
-> >> For peripherals that have a separate mod clock, having them separate
-> >> is a good thing. One example might be the audio codecs. You could unga=
-te
-> >> the bus gate to access its registers to program it, but only enable
-> >> the mod clock when you actually play something.
-> >
-> > The roles of the bus gate and the clock gate are the same. I don't see
-> > any reason to set one gate without setting the other one. More, the
-> > spec says what the bus gate must be enabled before the clock gate (and
-> > reverse order while disabling). So, setting both gates in one function
-> > call seems safer.
->=20
-> Wha? Aren't bus gates and clock gates the same thing in this context?
+Applied to clk-next
 
-Yes. What is the problem?
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
