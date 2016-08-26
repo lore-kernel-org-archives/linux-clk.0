@@ -1,32 +1,77 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: zhengxing@rock-chips.com, yzq@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, tfiga@chromium.org, linux-rockchip@lists.infradead.org, dianders@chromium.org, groeck@chromium.org, marcheu@chromium.org, wulf@rock-chips.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [v2 PATCH] clk: rockchip: mark rk3399 hdcp_noc and vio_noc as critical
-Date: Fri, 12 Aug 2016 00:17:15 +0200
-Message-ID: <1721159.V5xB9fz0jT@diego>
-In-Reply-To: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
-References: <1470765753-11619-1-git-send-email-zyw@rock-chips.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+ <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+ <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+ <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
+ <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a7851104-1aa1-fd8d-a594-545a01046cdf@nvidia.com>
+Date: Fri, 26 Aug 2016 08:25:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 9. August 2016, 11:02:33 schrieb Chris Zhong:
-> Fix incorrect rk3399 aclk_vio gating bit, it should be 0, not 10. With
-> this modification, the aclk_vio_noc should be put into critical list,
-> since it is required by VOP.
-> And the Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
-> pclk_hdcp_noc. Mark them as critical to avoid someone close them.
+
+On 26/08/16 05:53, Mirza Krak wrote:
+
+...
+
+>> I have an idea which is following:
+>>
+>> gmi@70090000 {
+>>          status = "okay";
+>>          #address-cells = <2>;
+>>          #size-cells = <1>;
+>>          ranges = <4 0 0x48000000 0x00040000>;
+>>
+>>          cs4 {
+>>                  compatible = "simple-bus";
+>>                  #address-cells = <2>;
+>>                  #size-cells = <1>;
+>>                  ranges;
+>>
+>>                  nvidia,snor-cs = <4>;
+>>                  nvidia,snor-mux-mode;
+>>                  nvidia,snor-adv-inv;
+>>
+>>                  can@0 {
+>>                          compatible = "nxp,sja1000";
+>>                          reg = <4 0 0x100>;
+>>                          ...
+>>                  };
+>>
+>>
+>>                  can@40000 {
+>>                          compatible = "nxp,sja1000";
+>>                          reg = <4 0x40000 0x100>;
+>>                          ...
+>>                  };
+>>          };
+>> };
+>>
+>> Do not know if above will work at all (not able to test at current
+>> location), anyway I will play around with it some more and get back to
+>> you.
 > 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> Gave above a test run and it works like a charm. Are we happy with that?
 
-I've split that patch in two and applied them there:
-https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.8-clk/fixes&id=a3f457d9636b3f5ae4fc6502cb0c95f60f5e342b
-(gate-bit-fix)
-https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.9-clk/next&id=54479449c801e46ee2b6ba08e2f19cd810f74f94
-(critical clocks)
+Does it not work with #address-cells = <1>? Seems odd to have the cs in
+the reg for the device.
 
-with the provided Reviewed-bys.
+Cheers
+Jon
 
-
-Heiko
+-- 
+nvpublic
