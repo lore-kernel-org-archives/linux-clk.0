@@ -1,37 +1,55 @@
-Return-Path: <horms@verge.net.au>
-Date: Thu, 11 Aug 2016 10:57:20 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a7795: Fix SD clocks
-Message-ID: <20160811085720.GG30475@verge.net.au>
-References: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] clkdev: Detect errors in clk_hw_register_clkdev() for mass registration
+Date: Fri, 26 Aug 2016 09:10:09 +0200
+Message-Id: <1472195409-14268-1-git-send-email-geert@linux-m68k.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 10, 2016 at 09:29:43AM +0200, Geert Uytterhoeven wrote:
-> From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> 
-> According to the datasheet, SDn clocks are from the SDSRC clock. And
-> the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
-> core clock. Otherwise, since the sdhi driver will calculate clock for
-> a sd card using the wrong parent clock rate, and then performance will
-> be not good.
-> 
-> Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: stable@vger.kernel.org
-> ---
-> SDHI was enabled on r8a7795/salvator-x in v4.6.
-> Please apply as a fix for v4.8.
+Unlike clkdev_create(), clkdev_hw_create() doesn't check for passed
+error objects from a previous registration call. Hence the caller of
+clk_hw_register_*() had to check for errors before calling
+clkdev_hw_create*().
 
-Thanks, done.
+Make clkdev_hw_create() more similar to clkdev_create() by adding this
+error check, removing the burden from callers that do mass registration.
+
+Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
+Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/clk/clkdev.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 97ae60fa15849954..bb8a77a5985f8627 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -448,12 +448,20 @@ EXPORT_SYMBOL(clk_register_clkdev);
+  *
+  * con_id or dev_id may be NULL as a wildcard, just as in the rest of
+  * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clk_hws
++ * from a previous clk_hw_register_*() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_hw_register_*().
+  */
+ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
+ 	const char *dev_id)
+ {
+ 	struct clk_lookup *cl;
+ 
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
+ 	/*
+ 	 * Since dev_id can be NULL, and NULL is handled specially, we must
+ 	 * pass it as either a NULL format string, or with "%s".
+-- 
+1.9.1
