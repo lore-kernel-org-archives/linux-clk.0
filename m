@@ -1,26 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 18:16:40 -0700
+Date: Fri, 26 Aug 2016 12:27:32 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/8] clk: sunxi: mod0: Use new macro
- CLK_OF_DECLARE_DRIVER
-Message-ID: <20160813011640.GK361@codeaurora.org>
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
- <1467735814-23518-5-git-send-email-ricardo.ribalda@gmail.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: return unsigned int in dummy non-OF
+ of_clk_get_parent_count()
+Message-ID: <20160826192732.GZ19826@codeaurora.org>
+References: <20160826125811.26843-1-zajec5@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1467735814-23518-5-git-send-email-ricardo.ribalda@gmail.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160826125811.26843-1-zajec5@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Ricardo Ribalda Delgado wrote:
-> This driver initializes a clock provider via sun4i_a10_mod0_setup
-> and then continues the initialization on sun4i_a10_mod0_clk_probe.
+On 08/26, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
 > 
-> Use the new macro to notify the clk subsystem about this behaviour.
+> In the commit 929e7f3bc7b82 ("clk: Make of_clk_get_parent_count() return
+> unsigned ints") of_clk_get_parent_count has been modified to return
+> unsigned int. There is also a dummy implementation of the same function
+> for configs without CONFIG_OF. For the consistency it should be updated
+> as well.
 > 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 > ---
 
 Applied to clk-next
