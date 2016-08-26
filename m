@@ -1,64 +1,200 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 16 Aug 2016 15:13:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	a.hajda@samsung.com,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <20160816141345.GT9347@sirena.org.uk>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
- <1471354514-24224-13-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 25/26] clk: boston: Add a driver for MIPS Boston board clocks
+Date: Fri, 26 Aug 2016 16:37:24 +0100
+Message-ID: <20160826153725.11629-26-paul.burton@imgtec.com>
+In-Reply-To: <20160826153725.11629-1-paul.burton@imgtec.com>
+References: <20160826153725.11629-1-paul.burton@imgtec.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rePSHXHJe0GetUdz"
-In-Reply-To: <1471354514-24224-13-git-send-email-k.kozlowski@samsung.com>
-Subject: Re: [RFC 12/17] ASoC: samsung: Switch to new clock controller API
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Add a driver for the clocks provided by the MIPS Boston board from
+Imagination Technologies. 2 clocks are provided - the system clock & the
+CPU clock - and each is a simple fixed rate clock whose frequency can be
+determined by reading a register provided by the board.
 
---rePSHXHJe0GetUdz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+---
 
-On Tue, Aug 16, 2016 at 03:35:09PM +0200, Krzysztof Kozlowski wrote:
-> Allocate a clock controller and use new clk_register_with_ctrl() API.
+ drivers/clk/Kconfig      |   9 ++++
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-boston.c | 131 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 141 insertions(+)
+ create mode 100644 drivers/clk/clk-boston.c
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
->  	i2s_unregister_clocks(i2s);
-> +	clk_ctrl_unregister(i2s->clk_ctrl);
-
-devm?
-
---rePSHXHJe0GetUdz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXsx+YAAoJECTWi3JdVIfQtXkH/iuQ4LWIduWwXQhaP0MDv7bv
-D4skQGj8vnnKjTNLSjxJaC5ozrwCOStLomdUmHsv9imnx5c5Ynr+ZJJttj2XrWOD
-T25EVIJdolAgYIFvi1VqG5P+K38mvpDD1Ku5zMc5LGoQSr7gflSDZujLqR47L/I8
-ISCbZ3tR02qdIQTFjSyC1NfRQJk2+p6KWsZVfPw64Gpce3/UrOziZzGAyCm7oDOz
-mxEJPuWxoGxOBdvznAx/T5bRgkxu9A8sAjoZ4KylH8xbmB6jPzHqWEsJOHc7Pt5e
-ByWqwA5SgiY4on1zD+SQ+VqhqlubXA/csSwVe1NBn50XbpXMiECryyWcH63bijM=
-=VovP
------END PGP SIGNATURE-----
-
---rePSHXHJe0GetUdz--
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e2d9bd7..2680343 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -208,6 +208,15 @@ config COMMON_CLK_OXNAS
+ 	---help---
+ 	  Support for the OXNAS SoC Family clocks.
+ 
++config COMMON_CLK_BOSTON
++	bool "Clock driver for MIPS Boston boards"
++	select MFD_SYSCON
++	---help---
++	  Enable this to support the system & CPU clocks on the MIPS Boston
++	  development board from Imagination Technologies. These are simple
++	  fixed rate clocks whose rate is determined by reading a platform
++	  provided register.
++
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/meson/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3b6f9cf..3b78e515 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -20,6 +20,7 @@ endif
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
++obj-$(CONFIG_COMMON_CLK_BOSTON)		+= clk-boston.o
+ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+diff --git a/drivers/clk/clk-boston.c b/drivers/clk/clk-boston.c
+new file mode 100644
+index 0000000..4fa3fad
+--- /dev/null
++++ b/drivers/clk/clk-boston.c
+@@ -0,0 +1,131 @@
++/*
++ * Copyright (C) 2016 Imagination Technologies
++ * Author: Paul Burton <paul.burton@imgtec.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/mfd/syscon.h>
++
++#include <dt-bindings/clock/boston-clock.h>
++
++#define BOSTON_CLK_COUNT 2
++
++struct clk_boston {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	unsigned int id;
++};
++
++struct clk_boston_state {
++	struct clk *clk[BOSTON_CLK_COUNT];
++	struct clk_boston clk_boston[BOSTON_CLK_COUNT];
++	struct clk_onecell_data onecell_data[BOSTON_CLK_COUNT];
++};
++
++static const char *clk_names[BOSTON_CLK_COUNT] = {
++	[BOSTON_CLK_SYS] = "sys",
++	[BOSTON_CLK_CPU] = "cpu",
++};
++
++#define BOSTON_PLAT_MMCMDIV		0x30
++# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
++# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
++# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
++# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
++
++static struct clk_boston *to_clk_boston(struct clk_hw *hw)
++{
++	return container_of(hw, struct clk_boston, hw);
++}
++
++static uint32_t ext_field(uint32_t val, uint32_t mask)
++{
++	return (val & mask) >> (ffs(mask) - 1);
++}
++
++static unsigned long clk_boston_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct clk_boston *state = to_clk_boston(hw);
++	uint32_t in_rate, mul, div;
++	uint mmcmdiv;
++	int err;
++
++	err = regmap_read(state->regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
++	if (err)
++		return 0;
++
++	in_rate = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT);
++	mul = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
++
++	switch (state->id) {
++	case BOSTON_CLK_SYS:
++		div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
++		break;
++	case BOSTON_CLK_CPU:
++		div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
++		break;
++	default:
++		return 0;
++	}
++
++	return (in_rate * mul * 1000000) / div;
++}
++
++static const struct clk_ops clk_boston_ops = {
++	.recalc_rate = clk_boston_recalc_rate,
++};
++
++static void __init clk_boston_setup(struct device_node *np)
++{
++	struct clk_boston_state *state;
++	struct clk_init_data init;
++	struct regmap *regmap;
++	int i, err;
++
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return;
++
++	regmap = syscon_regmap_lookup_by_phandle(np, "regmap");
++	if (IS_ERR(regmap)) {
++		pr_err("failed to find regmap\n");
++		return;
++	}
++
++	for (i = 0; i < BOSTON_CLK_COUNT; i++) {
++		memset(&init, 0, sizeof(init));
++		init.flags = CLK_IS_BASIC;
++		init.name = clk_names[i];
++		init.ops = &clk_boston_ops;
++
++		state->clk_boston[i].hw.init = &init;
++		state->clk_boston[i].id = i;
++		state->clk_boston[i].regmap = regmap;
++
++		state->clk[i] = clk_register(NULL, &state->clk_boston[i].hw);
++		if (IS_ERR(state->clk[i])) {
++			pr_err("failed to register clock: %ld\n",
++			       PTR_ERR(state->clk[i]));
++			return;
++		}
++	}
++
++	state->onecell_data->clks = state->clk;
++	state->onecell_data->clk_num = BOSTON_CLK_COUNT;
++
++	err = of_clk_add_provider(np, of_clk_src_onecell_get,
++				  state->onecell_data);
++	if (err)
++		pr_err("failed to add DT provider: %d\n", err);
++}
++CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
+-- 
+2.9.3
