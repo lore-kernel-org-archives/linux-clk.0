@@ -10,13 +10,18 @@ To: mturquette@baylibre.com,
 	linux-kernel@vger.kernel.org
 Cc: Jorik Jonker <jorik@kippendief.biz>
 Subject: [PATCH] clk: sunxi-ng: Fix wrong reset register offsets
-Date: Fri, 26 Aug 2016 13:24:13 +0200
-Message-Id: <1472210653-32170-1-git-send-email-jorik@kippendief.biz>
+Date: Sat, 27 Aug 2016 21:04:33 +0200
+Message-Id: <1472324673-11233-1-git-send-email-jorik@kippendief.biz>
+In-Reply-To: <20160827121545.GT3165@lukather>
+References: <20160827121545.GT3165@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Jorik Jonker <jorik@kippendief.biz>
 
 The reset register offsets for UART*, I2C* and SCR were off by a few bytes.
+
+Signed-off-by: Jorik Jonker <jorik@kippendief.biz>
+
 ---
  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 16 ++++++++--------
  1 file changed, 8 insertions(+), 8 deletions(-)
