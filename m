@@ -1,30 +1,36 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: Simplify __of_clk_get_hw_from_provider()
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <20160825203536.27235-1-sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <6cd278de-f9f4-74ae-71a0-2cc5601659b1@samsung.com>
-Date: Fri, 26 Aug 2016 10:52:00 +0200
-MIME-version: 1.0
-In-reply-to: <20160825203536.27235-1-sboyd@codeaurora.org>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20160825200632.GQ19826@codeaurora.org>
+References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
+ <1471857574-13125-3-git-send-email-linus.walleij@linaro.org> <20160825200632.GQ19826@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 27 Aug 2016 14:02:39 +0200
+Message-ID: <CACRpkdZkzz_TTnw1wYwLdc__SRh_-wvAPgnhPKcV18ZKd4tQcg@mail.gmail.com>
+Subject: Re: [PATCH 3/3 v2] clk: versatile/icst: support for AP baseboard clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25/2016 10:35 PM, Stephen Boyd wrote:
-> __of_clk_get_hw_from_provider() is confusing because it will
-> return EPROBE_DEFER if there isn't a ->get() or ->get_hw()
-> function pointer in a provider. That's just a bug though, and we
-> used to NULL pointer exception when ->get() was missing anyway,
-> so let's make this more obvious that they're not optional. The
-> assumption is that most providers will implement ->get_hw() so we
-> only fallback to the ->get() function if necessary. This
-> clarifies the intent and removes any possibility of probe defer
-> happening if clk providers are buggy.
-> 
-> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+On Thu, Aug 25, 2016 at 10:06 PM, Stephen Boyd <sboyd@codeaurora.org> wrote=
+:
+> On 08/22, Linus Walleij wrote:
+>> @@ -143,6 +180,17 @@ static int vco_set(struct clk_icst *icst, struct ic=
+st_vco vco)
+>>               if (vco.r !=3D 22)
+>>                       pr_err("ICST error: tried to use RDW !=3D 22\n");
+>>               break;
+>> +     case ICST_INTEGRATOR_AP_SYS:
+>> +             mask =3D INTEGRATOR_AP_SYS_BITS;
+>> +             val &=3D ~0xFF; /* Uses 8 bits */
+>
+> drivers/clk/versatile/clk-icst.c: In function =E2=80=98icst_set_rate=E2=
+=80=99:
+> drivers/clk/versatile/clk-icst.c:185:7: warning: =E2=80=98val=E2=80=99 ma=
+y be used uninitialized in this function [-Wuninitialized]
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Sorry, a dangling oneliner. Resent only this patch as v3.
+
+Yours,
+Linus Walleij
