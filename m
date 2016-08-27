@@ -1,328 +1,238 @@
-Return-Path: <jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 6/6] bus: Add support for Tegra Generic Memory Interface
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-7-git-send-email-mirza.krak@gmail.com>
-CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<pawel.moll@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <linux@armlinux.org.uk>,
-	<robh+dt@kernel.org>, <galak@codeaurora.org>, <linux-tegra@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Message-ID: <fae8dbaf-53e9-dcfe-f755-32f7b28f4c9f@nvidia.com>
-Date: Mon, 8 Aug 2016 14:47:51 +0100
-MIME-Version: 1.0
-In-Reply-To: <1470512452-8322-7-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 3/3 v3] clk: versatile/icst: support for AP baseboard clocks
+Date: Sat, 27 Aug 2016 14:01:19 +0200
+Message-Id: <1472299279-27560-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds support for the two ICST525-based clocks on the
+Integrator/AP baseboard, as documented in the board manual
+"Integrator/AP ASIC Development Motherboard", ARM DUI0098 B,
+pages 3-15 thru 3-18.
 
-On 06/08/16 20:40, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
-> 
-> The Generic Memory Interface bus can be used to connect high-speed
-> devices such as NOR flash, FPGAs, DSPs...
-> 
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> ---
->  drivers/bus/Kconfig     |   7 ++
->  drivers/bus/Makefile    |   1 +
->  drivers/bus/tegra-gmi.c | 224 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 232 insertions(+)
->  create mode 100644 drivers/bus/tegra-gmi.c
-> 
-> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> index 3b205e2..88bbf2c 100644
-> --- a/drivers/bus/Kconfig
-> +++ b/drivers/bus/Kconfig
-> @@ -145,6 +145,13 @@ config TEGRA_ACONNECT
->  	  Driver for the Tegra ACONNECT bus which is used to interface with
->  	  the devices inside the Audio Processing Engine (APE) for Tegra210.
->  
-> +config TEGRA_GMI
-> +	tristate "Tegra Generic Memory Interface bus driver"
-> +		depends on ARCH_TEGRA
-> +		help
-> +			Driver for the Tegra Generic Memory Interface bus which can be used
-> +			to attach devices such as NOR, UART, FPGA and more.
-> +
->  config UNIPHIER_SYSTEM_BUS
->  	tristate "UniPhier System Bus driver"
->  	depends on ARCH_UNIPHIER && OF
-> diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-> index ac84cc4..34e2bab 100644
-> --- a/drivers/bus/Makefile
-> +++ b/drivers/bus/Makefile
-> @@ -18,5 +18,6 @@ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
->  obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
->  obj-$(CONFIG_SIMPLE_PM_BUS)	+= simple-pm-bus.o
->  obj-$(CONFIG_TEGRA_ACONNECT)	+= tegra-aconnect.o
-> +obj-$(CONFIG_TEGRA_GMI)		+= tegra-gmi.o
->  obj-$(CONFIG_UNIPHIER_SYSTEM_BUS)	+= uniphier-system-bus.o
->  obj-$(CONFIG_VEXPRESS_CONFIG)	+= vexpress-config.o
-> diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
-> new file mode 100644
-> index 0000000..7a45442
-> --- /dev/null
-> +++ b/drivers/bus/tegra-gmi.c
-> @@ -0,0 +1,224 @@
-> +/*
-> + * Driver for NVIDIA Generic Memory Interface
-> + *
-> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2. This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/reset.h>
-> +
-> +#define TEGRA_GMI_CONFIG			0x00
-> +#define TEGRA_GMI_CONFIG_GO			BIT(31)
-> +#define TEGRA_GMI_BUS_WIDTH_32BIT	BIT(30)
-> +#define TEGRA_GMI_MUX_MODE			BIT(28)
-> +#define TEGRA_GMI_RDY_BEFORE_DATA	BIT(24)
-> +#define TEGRA_GMI_RDY_ACTIVE_HIGH	BIT(23)
-> +#define TEGRA_GMI_ADV_ACTIVE_HIGH	BIT(22)
-> +#define TEGRA_GMI_OE_ACTIVE_HIGH	BIT(21)
-> +#define TEGRA_GMI_CS_ACTIVE_HIGH	BIT(20)
-> +#define TEGRA_GMI_CS_SELECT(x)		((x & 0x7) << 4)
-> +
-> +#define TEGRA_GMI_TIMING0			0x10
-> +#define TEGRA_GMI_MUXED_WIDTH(x)	((x & 0xf) << 12)
-> +#define TEGRA_GMI_HOLD_WIDTH(x)		((x & 0xf) << 8)
-> +#define TEGRA_GMI_ADV_WIDTH(x)		((x & 0xf) << 4)
-> +#define TEGRA_GMI_CE_WIDTH(x)		(x & 0xf)
-> +
-> +#define TEGRA_GMI_TIMING1			0x14
-> +#define TEGRA_GMI_WE_WIDTH(x)		((x & 0xff) << 16)
-> +#define TEGRA_GMI_OE_WIDTH(x)		((x & 0xff) << 8)
-> +#define TEGRA_GMI_WAIT_WIDTH(x)		(x & 0xff)
-> +
-> +struct tegra_gmi_priv {
-> +	void __iomem *base;
-> +
-> +	u32 snor_config;
-> +	u32 snor_timing0;
-> +	u32 snor_timing1;
-> +
-> +	struct clk *clk;
-> +};
-> +
-> +static void tegra_gmi_init(struct device *dev, struct tegra_gmi_priv *priv)
-> +{
-> +	writel(priv->snor_timing0, priv->base + TEGRA_GMI_TIMING0);
-> +	writel(priv->snor_timing1, priv->base + TEGRA_GMI_TIMING1);
-> +
-> +	priv->snor_config |= TEGRA_GMI_CONFIG_GO;
-> +	writel(priv->snor_config, priv->base + TEGRA_GMI_CONFIG);
-> +}
-> +
-> +static int tegra_gmi_parse_dt(struct device *dev, struct tegra_gmi_priv *priv)
-> +{
-> +	struct device_node *of_node = dev->of_node;
-> +	u32 property;
-> +
-> +	/* configuration */
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-data-width-32bit"))
-> +		priv->snor_config |= TEGRA_GMI_BUS_WIDTH_32BIT;
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-mux-mode"))
-> +		priv->snor_config |= TEGRA_GMI_MUX_MODE;
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-rdy-active-before-data"))
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v2->v3:
+- Delete a remnant val &= 0xff mask that was just dangling and
+  generating warnings.
+- Resending only 3/3 since 1, 2 are applied.
+ChangeLog v1->v2:
+- Drop DTS patch hunk that need to go into a separate patch.
+---
+ drivers/clk/versatile/clk-icst.c | 136 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
 
-Line is over 80 characters.
-
-> +		priv->snor_config |= TEGRA_GMI_RDY_BEFORE_DATA;
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-rdy-inv"))
-> +		priv->snor_config |= TEGRA_GMI_RDY_ACTIVE_HIGH;
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-adv-inv"))
-> +		priv->snor_config |= TEGRA_GMI_ADV_ACTIVE_HIGH;
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-oe-inv"))
-> +		priv->snor_config |= TEGRA_GMI_OE_ACTIVE_HIGH;
-> +
-> +	if (of_property_read_bool(of_node, "nvidia,snor-cs-inv"))
-> +		priv->snor_config |= TEGRA_GMI_CS_ACTIVE_HIGH;
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-cs-select", &property))
-> +		priv->snor_config |= TEGRA_GMI_CS_SELECT(property);
-> +
-> +	/* Timing, the default values that are provided are reset values */
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-muxed-width", &property))
-
-Line is over 80 characters.
-
-> +		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(property);
-> +	else
-> +		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(1);
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-hold-width", &property))
-> +		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(property);
-> +	else
-> +		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(1);
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-adv-width", &property))
-> +		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(property);
-> +	else
-> +		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(1);
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-ce-width", &property))
-> +		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(property);
-> +	else
-> +		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(4);
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-we-width", &property))
-> +		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(property);
-> +	else
-> +		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(1);
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-oe-width", &property))
-> +		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(property);
-> +	else
-> +		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(1);
-> +
-> +	if (!of_property_read_u32(of_node, "nvidia,snor-wait-width", &property))
-> +		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(property);
-> +	else
-> +		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(3);
-> +
-> +	return of_platform_default_populate(of_node, NULL, dev);
-
-Seems odd to do this here. Why not as the last thing in probe once the
-GMI has been setup correctly?
-
-> +}
-> +
-> +static int tegra_gmi_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res;
-> +	struct clk *clk;
-> +	struct device *dev = &pdev->dev;
-> +	struct reset_control *rst;
-> +	struct tegra_gmi_priv *priv;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->base = base;
-
-If you allocate the memory first, you can get rid of this extra base
-variable.
-
-> +	clk = devm_clk_get(dev, "gmi");
-> +	if (IS_ERR(clk)) {
-> +		dev_err(dev, "can not get clock\n");
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	priv->clk = clk;
-
-Why not set priv->clk directly from calling devm_clk_get? Then you don't
-this extra clk variable.
-
-> +
-> +	rst = devm_reset_control_get(dev, "gmi");
-> +	if (IS_ERR(rst)) {
-> +		dev_err(dev, "can not get reset\n");
-> +		return PTR_ERR(rst);
-> +	}
-> +
-> +	ret = tegra_gmi_parse_dt(dev, priv);
-> +	if (ret) {
-> +		dev_err(dev, "fail to create devices.\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_prepare_enable(clk);
-> +	if (ret) {
-> +		dev_err(dev, "fail to enable clock.\n");
-> +		return ret;
-> +	}
-> +
-> +	reset_control_assert(rst);
-> +	udelay(2);
-> +	reset_control_deassert(rst);
-> +
-> +	tegra_gmi_init(dev, priv);
-> +
-> +	dev_set_drvdata(dev, priv);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_gmi_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-
-Do you really need this dev variable?
-
-> +	struct tegra_gmi_priv *priv = dev_get_drvdata(dev);
-> +	void __iomem *base = priv->base;
-
-Do you really need this base variable?
-
-> +	u32 config;
-> +
-> +	of_platform_depopulate(dev);
-> +
-> +	config = readl(base + TEGRA_GMI_CONFIG);
-> +	config &= ~TEGRA_GMI_CONFIG_GO;
-> +	writel(config, base + TEGRA_GMI_CONFIG);
-> +
-> +	clk_disable_unprepare(priv->clk);
-
-What about asserting the reset?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id tegra_gmi_id_table[] = {
-> +	{ .compatible = "nvidia,tegra20-gmi", },
-> +	{ .compatible = "nvidia,tegra30-gmi", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_gmi_id_table);
-> +
-> +static struct platform_driver tegra_gmi_driver = {
-> +	.probe = tegra_gmi_probe,
-> +	.remove = tegra_gmi_remove,
-> +	.driver = {
-> +		.name		= "tegra-gmi",
-> +		.of_match_table	= tegra_gmi_id_table,
-> +	},
-> +};
-> +module_platform_driver(tegra_gmi_driver);
-> +
-> +MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
-> +MODULE_DESCRIPTION("NVIDIA Tegra GMI Bus Driver");
-> +MODULE_LICENSE("GPL v2");
-> 
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 8f06473b72ff..b74a69ecbf08 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -29,15 +29,20 @@
+ 
+ #define VERSATILE_AUX_OSC_BITS 0x7FFFF
+ #define INTEGRATOR_AP_CM_BITS 0xFF
++#define INTEGRATOR_AP_SYS_BITS 0xFF
+ #define INTEGRATOR_CP_CM_CORE_BITS 0x7FF
+ #define INTEGRATOR_CP_CM_MEM_BITS 0x7FF000
+ 
++#define INTEGRATOR_AP_PCI_25_33_MHZ BIT(8)
++
+ /**
+  * enum icst_control_type - the type of ICST control register
+  */
+ enum icst_control_type {
+ 	ICST_VERSATILE, /* The standard type, all control bits available */
+ 	ICST_INTEGRATOR_AP_CM, /* Only 8 bits of VDW available */
++	ICST_INTEGRATOR_AP_SYS, /* Only 8 bits of VDW available */
++	ICST_INTEGRATOR_AP_PCI, /* Odd bit pattern storage */
+ 	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
+ 	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
+ };
+@@ -93,6 +98,38 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
+ 	}
+ 
+ 	/*
++	 * The Integrator/AP system clock on the base board can only
++	 * access the low eight bits of the v PLL divider. Bit 8 is tied low
++	 * and always zero, r is hardwired to 46, and the output divider is
++	 * hardwired to 3 (divide by 4) according to the document
++	 * "Integrator AP ASIC Development Motherboard" ARM DUI 0098B,
++	 * page 3-16.
++	 */
++	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
++		vco->v = val & INTEGRATOR_AP_SYS_BITS;
++		vco->r = 46;
++		vco->s = 3;
++		return 0;
++	}
++
++	/*
++	 * The Integrator/AP PCI clock is using an odd pattern to create
++	 * the child clock, basically a single bit called DIVX/Y is used
++	 * to select between two different hardwired values: setting the
++	 * bit to 0 yields v = 17, r = 22 and OD = 1, whereas setting the
++	 * bit to 1 yields v = 14, r = 14 and OD = 1 giving the frequencies
++	 * 33 or 25 MHz respectively.
++	 */
++	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
++		bool divxy = !!(val & INTEGRATOR_AP_PCI_25_33_MHZ);
++
++		vco->v = divxy ? 17 : 14;
++		vco->r = divxy ? 22 : 14;
++		vco->s = 1;
++		return 0;
++	}
++
++	/*
+ 	 * The Integrator/CP core clock can access the low eight bits
+ 	 * of the v PLL divider. Bit 8 is tied low and always zero,
+ 	 * r is hardwired to 22 and the output divider s is accessible
+@@ -143,6 +180,16 @@ static int vco_set(struct clk_icst *icst, struct icst_vco vco)
+ 		if (vco.r != 22)
+ 			pr_err("ICST error: tried to use RDW != 22\n");
+ 		break;
++	case ICST_INTEGRATOR_AP_SYS:
++		mask = INTEGRATOR_AP_SYS_BITS;
++		val |= vco.v & 0xFF;
++		if (vco.v & 0x100)
++			pr_err("ICST error: tried to set bit 8 of VDW\n");
++		if (vco.s != 3)
++			pr_err("ICST error: tried to use VOD != 1\n");
++		if (vco.r != 46)
++			pr_err("ICST error: tried to use RDW != 22\n");
++		break;
+ 	case ICST_INTEGRATOR_CP_CM_CORE:
+ 		mask = INTEGRATOR_CP_CM_CORE_BITS; /* Uses 12 bits */
+ 		val = (vco.v & 0xFF) | vco.s << 8;
+@@ -225,6 +272,27 @@ static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		return DIV_ROUND_CLOSEST(rate, 500000) * 500000;
+ 	}
+ 
++	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
++		/* Divides between 3 and 50 MHz in steps of 0.25 MHz */
++		if (rate <= 3000000)
++			return 3000000;
++		if (rate >= 50000000)
++			return 5000000;
++		/* Slam to closest 0.25 MHz */
++		return DIV_ROUND_CLOSEST(rate, 250000) * 250000;
++	}
++
++	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
++		/*
++		 * If we're below or less than halfway from 25 to 33 MHz
++		 * select 25 MHz
++		 */
++		if (rate <= 25000000 || rate < 29000000)
++			return 25000000;
++		/* Else just return the default frequency */
++		return 33000000;
++	}
++
+ 	vco = icst_hz_to_vco(icst->params, rate);
+ 	return icst_hz(icst->params, vco);
+ }
+@@ -235,6 +303,36 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_icst *icst = to_icst(hw);
+ 	struct icst_vco vco;
+ 
++	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
++		/* This clock is especially primitive */
++		unsigned int val;
++		int ret;
++
++		if (rate == 25000000) {
++			val = 0;
++		} else if (rate == 33000000) {
++			val = INTEGRATOR_AP_PCI_25_33_MHZ;
++		} else {
++			pr_err("ICST: cannot set PCI frequency %lu\n",
++			       rate);
++			return -EINVAL;
++		}
++		ret = regmap_write(icst->map, icst->lockreg_off,
++				   VERSATILE_LOCK_VAL);
++		if (ret)
++			return ret;
++		ret = regmap_update_bits(icst->map, icst->vcoreg_off,
++					 INTEGRATOR_AP_PCI_25_33_MHZ,
++					 val);
++		if (ret)
++			return ret;
++		/* This locks the VCO again */
++		ret = regmap_write(icst->map, icst->lockreg_off, 0);
++		if (ret)
++			return ret;
++		return 0;
++	}
++
+ 	if (parent_rate)
+ 		icst->params->ref = parent_rate;
+ 	vco = icst_hz_to_vco(icst->params, rate);
+@@ -368,6 +466,34 @@ static const struct icst_params icst525_apcp_cm_params = {
+ 	.idx2s		= icst525_idx2s,
+ };
+ 
++static const struct icst_params icst525_ap_sys_params = {
++	.vco_max	= ICST525_VCO_MAX_5V,
++	.vco_min	= ICST525_VCO_MIN,
++	/* Minimum 3 MHz, VDW = 4 */
++	.vd_min		= 3,
++	/* Maximum 50 MHz, VDW = 192 */
++	.vd_max		= 50,
++	/* r is hardcoded to 46 and this is the actual divisor, +2 */
++	.rd_min		= 48,
++	.rd_max		= 48,
++	.s2div		= icst525_s2div,
++	.idx2s		= icst525_idx2s,
++};
++
++static const struct icst_params icst525_ap_pci_params = {
++	.vco_max	= ICST525_VCO_MAX_5V,
++	.vco_min	= ICST525_VCO_MIN,
++	/* Minimum 25 MHz */
++	.vd_min		= 25,
++	/* Maximum 33 MHz */
++	.vd_max		= 33,
++	/* r is hardcoded to 14 or 22 and this is the actual divisors +2 */
++	.rd_min		= 16,
++	.rd_max		= 24,
++	.s2div		= icst525_s2div,
++	.idx2s		= icst525_idx2s,
++};
++
+ static void __init of_syscon_icst_setup(struct device_node *np)
+ {
+ 	struct device_node *parent;
+@@ -408,6 +534,12 @@ static void __init of_syscon_icst_setup(struct device_node *np)
+ 	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-cm")) {
+ 		icst_desc.params = &icst525_apcp_cm_params;
+ 		ctype = ICST_INTEGRATOR_AP_CM;
++	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-sys")) {
++		icst_desc.params = &icst525_ap_sys_params;
++		ctype = ICST_INTEGRATOR_AP_SYS;
++	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-pci")) {
++		icst_desc.params = &icst525_ap_pci_params;
++		ctype = ICST_INTEGRATOR_AP_PCI;
+ 	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-core")) {
+ 		icst_desc.params = &icst525_apcp_cm_params;
+ 		ctype = ICST_INTEGRATOR_CP_CM_CORE;
+@@ -437,6 +569,10 @@ CLK_OF_DECLARE(arm_syscon_icst307_clk,
+ 	       "arm,syscon-icst307", of_syscon_icst_setup);
+ CLK_OF_DECLARE(arm_syscon_integratorap_cm_clk,
+ 	       "arm,syscon-icst525-integratorap-cm", of_syscon_icst_setup);
++CLK_OF_DECLARE(arm_syscon_integratorap_sys_clk,
++	       "arm,syscon-icst525-integratorap-sys", of_syscon_icst_setup);
++CLK_OF_DECLARE(arm_syscon_integratorap_pci_clk,
++	       "arm,syscon-icst525-integratorap-pci", of_syscon_icst_setup);
+ CLK_OF_DECLARE(arm_syscon_integratorcp_cm_core_clk,
+ 	       "arm,syscon-icst525-integratorcp-cm-core", of_syscon_icst_setup);
+ CLK_OF_DECLARE(arm_syscon_integratorcp_cm_mem_clk,
 -- 
-nvpublic
+2.7.4
