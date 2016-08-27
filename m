@@ -1,44 +1,75 @@
-Return-Path: <andi.shyti@samsung.com>
-Date: Tue, 16 Aug 2016 15:06:07 +0900
-From: Andi Shyti <andi.shyti@samsung.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation: clk: update file names containing
- referenced structures
-Message-id: <20160816060552.2kqetu6kgrsflvyu@samsunx.samsung>
-References: 
- <CGME20160812124132epcas1p41e2e94ea2d3929882b2cb0d4ba5efb15@epcas1p4.samsung.com>
- <1471005685-505-1-git-send-email-geert+renesas@glider.be>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-In-reply-to: <1471005685-505-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Sat, 27 Aug 2016 18:33:10 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block
+ 800Mhz on exynos5422-odroidxu3
+Message-ID: <20160827163310.GA8616@kozik-book>
+References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+ <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On Thu, Aug 25, 2016 at 03:57:18PM +0900, Chanwoo Choi wrote:
+> This patch sets the clock rate for DREX (DRAM Express) block
+> on exynos5422-odroidxu3 board. In the exynos5422 TRM,
+> DRAM clocks use BPLL clock and CMU_CDREX generates
+> the 800MHz DRAM clock.
+> 
 
-> Commit 'b09d6d991' removes include/linux/clk-private.h and
-> re-arranges the clock related structures contained in it in
-> different files. The documentation has not been updated
-> accordingly, thus it wasn't anymore consistent.
-> 
-> Place the structures referenced by Documentation/clk.txt in the
-> correct files and update their contents to the latest status.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> [geert: Fix path to clk.c, whitespace, more clk_core, ...]
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>From the commit message I don't get two things:
+1. Why setting this on XU3-family of boards, not all 542x/5800?
+2. Why this is needed? The commit msg lacks the answer to the "why".
+
+> [clk_summary on exynos5422-odroidxu3 board]
+> fout_bpll                             0            0   800000000          0 0
+>     mout_bpll                          0            0   800000000          0 0
+>        mout_mclk_cdrex                 0            0   800000000          0 0
+>           dout_pclk_core_mem           0            0   200000000          0 0
+>           dout_sclk_cdrex              0            0   800000000          0 0
+>
+
+What is the purpose of this dump of clk_summary? Is it a state before or
+after the change? After it is quite obvious that it should have
+800MHz...
+
+Best regards,
+Krzysztof
+
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
-> v2:
->   - Take over from Andi,
->   - Correct path to clk.c,
->   - Drop whitespace changes,
->   - Replace clk by clk_core where appropriate,
->   - Update to_clk_gate(),
->   - Drop final reference to clk-private.h.
-
-Thanks for taking care! Somehow it disappeared from my todo list :)
-
-Andi
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index d56253049ccb..fd3f67c72039 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -229,6 +229,11 @@
+>  	status = "okay";
+>  };
+>  
+> +&clock {
+> +	assigned-clocks = <&clock CLK_DOUT_SCLK_CDREX>;
+> +	assigned-clock-rates = <800000000>;
+> +};
+> +
+>  &clock_audss {
+>  	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
+>  			<&clock_audss EXYNOS_MOUT_I2S>,
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
