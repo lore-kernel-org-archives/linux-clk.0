@@ -1,29 +1,39 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <serveralex@gmail.com>
+Return-Path: <serveralex@gmail.com>
+From: =?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v5 1/6] clk: meson: Rename meson8b-clkc.c to reflect gxbb naming convention
+Date: Sat, 27 Aug 2016 19:40:49 +0200
+Message-Id: <1472319654-59048-2-git-send-email-serveralex@gmail.com>
+In-Reply-To: <1472319654-59048-1-git-send-email-serveralex@gmail.com>
+References: <1472319654-59048-1-git-send-email-serveralex@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160829183809.GE19826@codeaurora.org>
-References: <1472299279-27560-1-git-send-email-linus.walleij@linaro.org>
- <20160829174940.GC19826@codeaurora.org> <CACRpkdYZiFhGV5sOvoXyHAYfx5kPsE_KPPL8XWuYd3XQ=-dYEw@mail.gmail.com>
- <20160829183809.GE19826@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 29 Aug 2016 20:39:03 +0200
-Message-ID: <CACRpkdZqfThwHme8304=j0otnhiAEryfbb32TwLAT-UD-x2-YQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3 v3] clk: versatile/icst: support for AP baseboard clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Russell King <linux@armlinux.org.uk>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 29, 2016 at 8:38 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 08/29, Linus Walleij wrote:
+Signed-off-by: Alexander Müller <serveralex@gmail.com>
+---
+ drivers/clk/meson/Makefile                      | 2 +-
+ drivers/clk/meson/{meson8b-clkc.c => meson8b.c} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/clk/meson/{meson8b-clkc.c => meson8b.c} (100%)
 
->> My biggest worry right now is why I'm not seeing these warnings.
->>
->> I'll figure out how to get them and fix it.
->
-> Ok I squashed in that fix and merged into clk-next.
-
-OK thanks a lot!
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index d4cd4a3..3495834 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -3,5 +3,5 @@
+ #
+ 
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o
+-obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b-clkc.o
++obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o
+diff --git a/drivers/clk/meson/meson8b-clkc.c b/drivers/clk/meson/meson8b.c
+similarity index 100%
+rename from drivers/clk/meson/meson8b-clkc.c
+rename to drivers/clk/meson/meson8b.c
+-- 
+2.5.0
