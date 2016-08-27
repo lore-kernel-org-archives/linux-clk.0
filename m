@@ -1,236 +1,64 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 18:29:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Subject: Re: [PATCH 1/3] clk: meson: Add GXBB AO Clock and Reset controller
- driver
-Message-ID: <20160813012910.GT361@codeaurora.org>
-References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com>
- <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sat, 27 Aug 2016 14:15:45 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: jorik@kippendief.biz
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
+	megous@megous.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: Fix wrong reset register offsets
+Message-ID: <20160827121545.GT3165@lukather>
+References: <1472210653-32170-1-git-send-email-jorik@kippendief.biz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eu12+zRL7gQwOC+E"
+In-Reply-To: <1472210653-32170-1-git-send-email-jorik@kippendief.biz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09, Neil Armstrong wrote:
-> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-> new file mode 100644
-> index 0000000..56a9186
-> --- /dev/null
-> +++ b/drivers/clk/meson/gxbb-aoclk.c
-> @@ -0,0 +1,203 @@
-> +/*
-> + * This file is provided under a dual BSD/GPLv2 license.  When using or
-> + * redistributing this file, you may do so under either license.
-> + *
-> + * GPL LICENSE SUMMARY
-> + *
-> + * Copyright (c) 2016 BayLibre, SAS.
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of version 2 of the GNU General Public License as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful, but
-> + * WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> + * General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> + * The full GNU General Public License is included in this distribution
-> + * in the file called COPYING.
-> + *
-> + * BSD LICENSE
-> + *
-> + * Copyright (c) 2016 BayLibre, SAS.
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions
-> + * are met:
-> + *
-> + *   * Redistributions of source code must retain the above copyright
-> + *     notice, this list of conditions and the following disclaimer.
-> + *   * Redistributions in binary form must reproduce the above copyright
-> + *     notice, this list of conditions and the following disclaimer in
-> + *     the documentation and/or other materials provided with the
-> + *     distribution.
-> + *   * Neither the name of Intel Corporation nor the names of its
-> + *     contributors may be used to endorse or promote products derived
-> + *     from this software without specific prior written permission.
-> + *
-> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-> + * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-> + * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-> + * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-> + * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-> + * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-> + * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-> + * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-> + * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-> + * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-> + * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-> + */
-> +#include <linux/clk.h>
 
-Is this include used?
+--eu12+zRL7gQwOC+E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/module.h>
-> +#include <dt-bindings/clock/gxbb-aoclkc.h>
-> +#include <dt-bindings/reset/gxbb-aoclkc.h>
-> +
-> +static DEFINE_SPINLOCK(clk_lock);
+Hi,
 
-gxbb_clk_lock?
+Thanks a lot for your patch.
 
-> +
-> +struct gxbb_aoclk_reset_controller {
-> +	struct reset_controller_dev reset;
-> +	unsigned int *data;
-> +	void __iomem *base;
-> +};
-> +
-> +static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	struct gxbb_aoclk_reset_controller *reset =
-> +		container_of(rcdev, struct gxbb_aoclk_reset_controller, reset);
-> +
-> +	writel(BIT(reset->data[id]), reset->base);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct reset_control_ops gxbb_aoclk_reset_ops = {
-> +	.reset = gxbb_aoclk_do_reset,
-> +};
-> +
-> +#define GXBB_AO_GATE(_name, _bit)					\
-> +static struct clk_gate _name##_ao = {					\
-> +	.reg = (void __iomem *)0,					\
-> +	.bit_idx = (_bit),						\
-> +	.lock = &clk_lock,						\
-> +	.hw.init = &(struct clk_init_data) {				\
-> +		.name = #_name "_ao",					\
-> +		.ops = &clk_gate_ops,					\
-> +		.parent_names = (const char *[]){ "clk81" },		\
-> +		.num_parents = 1,					\
-> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-> +	},								\
-> +}
-> +
-> +GXBB_AO_GATE(remote, 0);
-> +GXBB_AO_GATE(i2c_master, 1);
-> +GXBB_AO_GATE(i2c_slave, 2);
-> +GXBB_AO_GATE(uart1, 3);
-> +GXBB_AO_GATE(uart2, 5);
-> +GXBB_AO_GATE(ir_blaster, 6);
-> +
-> +static unsigned int gxbb_aoclk_reset[] = {
-> +	[RESET_AO_REMOTE] = 16,
-> +	[RESET_AO_I2C_MASTER] = 18,
-> +	[RESET_AO_I2C_SLAVE] = 19,
-> +	[RESET_AO_UART1] = 17,
-> +	[RESET_AO_UART2] = 22,
-> +	[RESET_AO_IR_BLASTER] = 23,
-> +};
-> +
-> +static struct clk_gate *gxbb_aoclk_gate[] = {
-> +	[CLKID_AO_REMOTE] = &remote_ao,
-> +	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
-> +	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
-> +	[CLKID_AO_UART1] = &uart1_ao,
-> +	[CLKID_AO_UART2] = &uart2_ao,
-> +	[CLKID_AO_IR_BLASTER] = &ir_blaster_ao,
-> +};
-> +
-> +static struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+On Fri, Aug 26, 2016 at 01:24:13PM +0200, jorik@kippendief.biz wrote:
+> From: Jorik Jonker <jorik@kippendief.biz>
+>=20
+> The reset register offsets for UART*, I2C* and SCR were off by a few byte=
+s.
 
-can this be const?
+You're missing your signed-off-by though. Could you resend it with it?
 
-> +	.hws = {
-> +		[CLKID_AO_REMOTE] = &remote_ao.hw,
-> +		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
-> +		[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao.hw,
-> +		[CLKID_AO_UART1] = &uart1_ao.hw,
-> +		[CLKID_AO_UART2] = &uart2_ao.hw,
-> +		[CLKID_AO_IR_BLASTER] = &ir_blaster_ao.hw,
-> +	},
-> +	.num = ARRAY_SIZE(gxbb_aoclk_gate),
-> +};
-> +
-> +static int gxbb_aoclkc_probe(struct platform_device *pdev)
-> +{
-> +	void __iomem *base;
-> +	int ret, clkid;
-> +	struct device *dev = &pdev->dev;
-> +	struct gxbb_aoclk_reset_controller *rstc;
-> +
-> +	rstc = devm_kzalloc(dev, sizeof(rstc), GFP_KERNEL);
-> +	if (!rstc)
-> +		return -ENOMEM;
-> +
-> +	/*  Generic clocks */
-> +	base = of_iomap(dev->of_node, 0);
+Thanks!
+Maxime
 
-use devm_ioremap_resource() please and platform APIs to get the
-ioresource.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> +	if (!base) {
-> +		pr_err("%s: Unable to map clk base\n", __func__);
+--eu12+zRL7gQwOC+E
+Content-Type: application/pgp-signature; name="signature.asc"
 
-We don't need error prints here with devm_ioremap_resource().
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> +		return -ENXIO;
-> +	}
-> +
-> +	/* Reset Controller */
-> +	rstc->base = base;
-> +	rstc->data = gxbb_aoclk_reset;
-> +	rstc->reset.ops = &gxbb_aoclk_reset_ops;
-> +	rstc->reset.nr_resets = ARRAY_SIZE(gxbb_aoclk_reset);
-> +	rstc->reset.of_node = dev->of_node;
-> +	ret = devm_reset_controller_register(dev, &rstc->reset);
-> +
-> +	/*
-> +	 * Populate base address and register all clks
-> +	 */
-> +	for (clkid = 0; clkid < gxbb_aoclk_onecell_data.num; clkid++) {
-> +		gxbb_aoclk_gate[clkid]->reg = base;
-> +
-> +		ret = devm_clk_hw_register(dev,
-> +					gxbb_aoclk_onecell_data.hws[clkid]);
-> +		if (ret)
-> +			goto iounmap;
-> +	}
-> +
-> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-> +			&gxbb_aoclk_onecell_data);
-> +
-> +iounmap:
-> +	iounmap(base);
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id gxbb_aoclkc_match_table[] = {
-> +	{ .compatible = "amlogic,gxbb-aoclkc" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
-> +
-> +static struct platform_driver gxbb_aoclkc_driver = {
-> +	.probe		= gxbb_aoclkc_probe,
+iQIcBAEBAgAGBQJXwYRxAAoJEBx+YmzsjxAgKL0P/3UidqANTqKn22NK0OEQYqMx
+XW6vfI3bilLoNgswlQ083gLsIsD1OfR2ytDnz7DfuKLNHT9r3EQG+kMyB2hjKvRW
+EGYN8oRojwlib9XulW6w1G/YdB+3TuQNOL4Qx0dznqpMF5hRxkfMRCvoZFF9kfqu
+8nJfkcNvyprm/hzMedihQocTlvGt/FpmEblYSj+Oib1rdx2O9cWHJ3KrkkzJoy4y
+W7skG1G6yFj+kKsATDg6m1gE9gVFk5PYMbGk7Y+xClGQ5VXunVYFMxwXErCMH7oS
+SZSn0dTsmkrKl6nDAzLghoOHdy2A2nt0k5/dA/204uEaTUw2YdJqJE6FuuuhQ02q
+zxkRY3Z9q4qXjatrAOsi3XVZXoTDgsPE6fF4YLHglHAWDhsBWaMaa82KXp2xYJ5u
+XTCjELV8ps5srm7fhnPIZl5nqyN7p1u77uU3wTREBQt/nWd8k6oWavjmG4I7+VD2
+KxeafXTavW6TNxfC4IuhcpkyQJ8yx09T1C2gU6JKMJUVHBdbkGb4jnAYiwGJeXuR
+4q6Bcw/mPkl0T56CSgubXhoyXXIz5+S0x2gfMcwaQk29zkWNCiJ9sCfQXE4J2ERp
+hbSv1KNPJXE5aMRqMDxUm/y1f2t6n+sgtPGtA1dpxiF+b3UhFgzPtOPIBIV8JpgC
+F2CFED+qXrTsw4WNsiGX
+=ZIxb
+-----END PGP SIGNATURE-----
 
-No remove means leak of iomem mapping.
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--eu12+zRL7gQwOC+E--
