@@ -1,141 +1,295 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH v11 0/9] Add clock support for Mediatek MT2701
-Date: Fri, 19 Aug 2016 13:34:47 +0800
-Message-ID: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, dianders@chromium.org, briannorris@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: Re: [RFC PATCH] clk: rockchip: rk3399: support pll setting automatically
+Date: Sun, 28 Aug 2016 17:21:08 +0200
+Message-ID: <4830789.1bI8OsvZy1@phil>
+In-Reply-To: <1470144852-20708-1-git-send-email-zhengxing@rock-chips.com>
+References: <1470144852-20708-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is based on v4.8-rc1, add clock and reset controller support
-for Mediatek MT2701.
+Hi Xing, Elaine,
 
-This series also refined makefile and Kconfig to support configurable
-multiple SoC clock support.
+Am Dienstag, 2. August 2016, 21:34:12 schrieb Xing Zheng:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
+> 
+> The goal is that we can configure the most suitable pll params
+> automatically.
+> 
+> If setting freq is not supported in rockchip_pll_rate_table
+> rk3399_pll_rates[], we can set pll params automatically.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-changes since v10:
-- Remove COMMON_CLK dependency from clk/mediatek/Kconfig.
+first off, I really like that idea of calculating the generic pll frequencies 
+instead of duplicating these entries in every soc clock driver.
 
-changes since v9:
-- Rebase to v4.8-rc1.
-- Drop a fix patch of parent clock initial state. It will be replaced by a new
-  patch from Mike/Stephen.
-- Replace clk.h with clk-provider.h.
-- Correct register settings of clocks.
+Please also provide a follow up patch, removing the then unneeded frequencies 
+from the rate tables.
 
-changes since v8:
-- Rebase to v4.7-rc1.
-- Include mt2701-resets.h in mt2701.dtsi.
-- Remove an unused property from apmixedsys DT node.
+I still have some comments inline below:
 
-changes since v7:
-- Rebase to clk-next.
-- Implement subsystem clocks in seperated files.
-- Replace critical clock enabling with CLK_IS_CRITICAL flag.
-- Reduce most clock registrations in CLK_OF_DECLARE().
-- Remove __init and __initconst from most init fucntions and data,
-  and replace driver registration with platform_driver_register().
-- Replace some common function or variable names with unique names.
-- Use real clock for UARTs.
+> ---
+> 
+>  drivers/clk/rockchip/clk-pll.c |  213
+> +++++++++++++++++++++++++++++++++++++--- 1 file changed, 200 insertions(+),
+> 13 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index 35994e8..08979f9 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/regmap.h>
+>  #include <linux/clk.h>
+> +#include <linux/gcd.h>
+>  #include "clk.h"
+> 
+>  #define PLL_MODE_MASK		0x3
+> @@ -54,6 +55,200 @@ struct rockchip_clk_pll {
+>  #define to_rockchip_clk_pll_nb(nb) \
+>  			container_of(nb, struct rockchip_clk_pll, clk_nb)
+> 
+> +#define MHZ			(1000UL * 1000UL)
+> +#define KHZ			(1000UL)
+> +
+> +/* CLK_PLL_TYPE_RK3066_AUTO type ops */
 
-changes since v6:
-- Rebase to v4.6-rc1.
-- Register subsystem clocks in probe() instead of CLK_OF_DECLARE().
-- Add clocks that referred by subsystem clocks.
-- Fix clk_data size of apmixedsys.
-- Add config options for each subsystem clock provider.
+wouldn't that better be 
+/* rk3066 pll frequency ranges */
 
-changes since v5:
-- Rebase to v4.5-rc1 and [1].
-- Enable critical clocks for MT2701
-- Refine dt-binding documents, add reset controller support for hifsys.
+> +#define PLL_FREF_MIN		(269 * KHZ)
+> +#define PLL_FREF_MAX		(2200 * MHZ)
+> +
+> +#define PLL_FVCO_MIN		(440 * MHZ)
+> +#define PLL_FVCO_MAX		(2200 * MHZ)
+> +
+> +#define PLL_FOUT_MIN		(27500 * KHZ)
+> +#define PLL_FOUT_MAX		(2200 * MHZ)
+> +
+> +#define PLL_NF_MAX		(4096)
+> +#define PLL_NR_MAX		(64)
+> +#define PLL_NO_MAX		(16)
 
-changes since v4:
-- Rebase to v4.5-rc1.
-- Remove CLK_SET_RATE_PARENT from divider flags.
-- Add img_jpgdec_smi clock.
-- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
+instead of using a comment, please prefix these constants accordingly, like
+	RK3066_PLL_FVCO_MIN
+etc, especially as some of those contstraints actually _are different_ between 
+implementations. See rk3188 vs. rk3288 for example. With the current static 
+rate table we just have matching values already, so never had to care about 
+that.
 
-changes since v3:
-- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
+Another idea might be to have the constraints as table in the soc clock-
+drivers, similar to how we transfer we handle the rate tables right now.
 
-changes since v2:
-- Fix ethsys definition.
-- Replace read-modify-write with regmap_update_bits() in clock operations.
-- Move mt2701-resets.h to include/dt-bindings/reset/.
-- Add hifsys reset patch from John Crispin.
+> +
+> +/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
+> +#define MIN_FOUTVCO_FREQ	(800 * MHZ)
+> +#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
 
-changes since v1:
-- Document MT2701 compatible strings.
+same here, RK3036_PLL_FOUTVCO_MIN etc.
 
-[1] https://patchwork.kernel.org/patch/8147901/
+> +
+> +static struct rockchip_pll_rate_table auto_table;
+> +
+> +static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
+> +{
+> +	return &auto_table;
+> +}
+> +
+> +static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
 
-Erin Lo (1):
-  arm: dts: mt2701: Use real clock for UARTs
+the rk3036, rk3366, rk3399 pll type won't be the last one Rockchip will use, 
+so please add a prefix. Same for everything else below :-) .
 
-James Liao (4):
-  clk: mediatek: remove __init from clk registration functions
-  clk: mediatek: Refine the makefile to support multiple clock drivers
-  dt-bindings: ARM: Mediatek: Document bindings for MT2701
-  arm: dts: mt2701: Add clock controller device nodes
+> +					u32 *postdiv1,
+> +					u32 *postdiv2,
+> +					u32 *foutvco)
+> +{
+> +	unsigned long freq;
+> +
+> +	if (fout_hz < MIN_FOUTVCO_FREQ) {
+> +		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
+> +			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
+> +				freq = fout_hz * (*postdiv1) * (*postdiv2);
+> +				if (freq >= MIN_FOUTVCO_FREQ &&
+> +				    freq <= MAX_FOUTVCO_FREQ) {
+> +					*foutvco = freq;
+> +					return 0;
+> +				}
+> +			}
+> +			pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to
+> 2000M,fout = %lu\n", +			       fout_hz);
+> +		}
+> +	} else {
+> +		*postdiv1 = 1;
+> +		*postdiv2 = 1;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static struct rockchip_pll_rate_table *
+> +rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
+> +			     unsigned long fin_hz,
+> +			     unsigned long fout_hz)
+> +{
+> +	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
+> +	/* FIXME set postdiv1/2 always 1*/
+> +	u32 foutvco = fout_hz;
+> +	u64 fin_64, frac_64;
+> +	u32 f_frac, postdiv1, postdiv2;
+> +	unsigned long clk_gcd = 0;
+> +
+> +	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
+> +		return NULL;
+> +
+> +	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
+> +	rate_table->postdiv1 = postdiv1;
+> +	rate_table->postdiv2 = postdiv2;
+> +	rate_table->dsmpd = 1;
+> +
+> +	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
+> +		fin_hz /= MHZ;
+> +		foutvco /= MHZ;
+> +		clk_gcd = gcd(fin_hz, foutvco);
+> +		rate_table->refdiv = fin_hz / clk_gcd;
+> +		rate_table->fbdiv = foutvco / clk_gcd;
+> +
+> +		rate_table->frac = 0;
+> +
+> +		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = 
+%u,
+> postdiv1 = %u, postdiv2 = %u, frac = %u\n", +			 fin_hz, fout_hz, 
+clk_gcd,
+> rate_table->refdiv,
+> +			 rate_table->fbdiv, rate_table->postdiv1,
+> +			 rate_table->postdiv2, rate_table->frac);
+> +	} else {
+> +		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz =
+> %lu, fout_INT_mhz = %lu\n", +			 fin_hz, fout_hz,
+> +			 fin_hz / MHZ * MHZ,
+> +			 fout_hz / MHZ * MHZ);
+> +		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
+> +			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
+> +		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
+> +		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
+> +		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
+> +		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
+> +			 rate_table->refdiv, rate_table->fbdiv);
+> +
+> +		rate_table->frac = 0;
+> +
+> +		f_frac = (foutvco % MHZ);
+> +		fin_64 = fin_hz;
+> +		do_div(fin_64, (u64)rate_table->refdiv);
+> +		frac_64 = (u64)f_frac << 24;
+> +		do_div(frac_64, fin_64);
+> +		rate_table->frac = (u32)frac_64;
+> +		if (rate_table->frac > 0)
+> +			rate_table->dsmpd = 0;
+> +		pr_debug("frac = %x\n", rate_table->frac);
+> +	}
+> +	return rate_table;
+> +}
+> +
+> +static struct rockchip_pll_rate_table *
+> +rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
+> +				    unsigned long fin_hz,
+> +				    unsigned long fout_hz)
+> +{
+> +	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
+> +	u32 nr, nf, no, nonr;
+> +	u32 nr_out, nf_out, no_out;
+> +	u32 n;
+> +	u32 numerator, denominator;
+> +	u64 fref, fvco, fout;
+> +	unsigned long clk_gcd = 0;
+> +
+> +	nr_out = PLL_NR_MAX + 1;
+> +	nf_out = 0;
+> +	no_out = 0;
+> +
+> +	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
+> +		return NULL;
+> +
+> +	clk_gcd = gcd(fin_hz, fout_hz);
+> +
+> +	numerator = fout_hz / clk_gcd;
+> +	denominator = fin_hz / clk_gcd;
+> +
+> +	for (n = 1;; n++) {
+> +		nf = numerator * n;
+> +		nonr = denominator * n;
+> +		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
+> +			break;
+> +
+> +		for (no = 1; no <= PLL_NO_MAX; no++) {
+> +			if (!(no == 1 || !(no % 2)))
+> +				continue;
+> +
+> +			if (nonr % no)
+> +				continue;
+> +			nr = nonr / no;
+> +
+> +			if (nr > PLL_NR_MAX)
+> +				continue;
+> +
+> +			fref = fin_hz / nr;
+> +			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
+> +				continue;
+> +
+> +			fvco = fref * nf;
+> +			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
+> +				continue;
+> +
+> +			fout = fvco / no;
+> +			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
+> +				continue;
+> +
+> +			/* select the best from all available PLL settings */
+> +			if ((no > no_out) ||
+> +			    ((no == no_out) && (nr < nr_out))) {
+> +				nr_out = nr;
+> +				nf_out = nf;
+> +				no_out = no;
+> +			}
+> +		}
+> +	}
+> +
+> +	/* output the best PLL setting */
+> +	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
+> +		if (rate_table->nr && rate_table->nf && rate_table->no) {
+> +			rate_table->nr = nr_out;
+> +			rate_table->nf = nf_out;
+> +			rate_table->no = no_out;
+> +		}
+> +	} else {
+> +		return NULL;
+> +	}
+> +
+> +	return rate_table;
+> +}
+> +
+>  static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
+>  			    struct rockchip_clk_pll *pll, unsigned long rate)
+>  {
+> @@ -65,24 +260,16 @@ static const struct rockchip_pll_rate_table
+> *rockchip_get_pll_settings( return &rate_table[i];
+>  	}
+> 
+> -	return NULL;
+> +	if (pll->type == pll_rk3066)
 
-Shunli Wang (4):
-  clk: mediatek: Add dt-bindings for MT2701 clocks
-  clk: mediatek: Add MT2701 clock support
-  reset: mediatek: Add MT2701 reset controller dt-binding file
-  reset: mediatek: Add MT2701 reset driver
+this should be a switch as well, to prepare for other pll types.
 
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    3 +-
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,hifsys.txt      |   24 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    3 +-
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    3 +-
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    3 +-
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |    3 +-
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    3 +-
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    3 +-
- arch/arm/boot/dts/mt2701.dtsi                      |   50 +-
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/mediatek/Kconfig                       |   64 ++
- drivers/clk/mediatek/Makefile                      |   13 +-
- drivers/clk/mediatek/clk-gate.c                    |   54 +-
- drivers/clk/mediatek/clk-gate.h                    |    2 +
- drivers/clk/mediatek/clk-mt2701-bdp.c              |  140 +++
- drivers/clk/mediatek/clk-mt2701-eth.c              |   82 ++
- drivers/clk/mediatek/clk-mt2701-hif.c              |   81 ++
- drivers/clk/mediatek/clk-mt2701-img.c              |   82 ++
- drivers/clk/mediatek/clk-mt2701-mm.c               |  125 +++
- drivers/clk/mediatek/clk-mt2701-vdec.c             |   93 ++
- drivers/clk/mediatek/clk-mt2701.c                  | 1037 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c                     |   52 +-
- drivers/clk/mediatek/clk-mtk.h                     |   41 +-
- drivers/clk/mediatek/clk-pll.c                     |    3 +-
- include/dt-bindings/clock/mt2701-clk.h             |  486 +++++++++
- include/dt-bindings/reset/mt2701-resets.h          |   83 ++
- 28 files changed, 2550 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
- create mode 100644 drivers/clk/mediatek/Kconfig
- create mode 100644 drivers/clk/mediatek/clk-mt2701-bdp.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-eth.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-hif.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701.c
- create mode 100644 include/dt-bindings/clock/mt2701-clk.h
- create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+> +		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
+> +	else
+> +		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
+>  }
+> 
 
---
-1.9.1
+Heiko
