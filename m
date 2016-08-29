@@ -1,64 +1,99 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:06:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH] clk: Make clock framework user selectable
-Message-ID: <20160815220610.GG361@codeaurora.org>
-References: <1470915049-15249-1-git-send-email-broonie@kernel.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, Tao Huang <huangtao@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: Re: [RFC PATCH] clk: rockchip: rk3399: support pll setting automatically
+Date: Mon, 29 Aug 2016 19:54:09 +0200
+Message-ID: <13164913.BHiQzGsdBU@diego>
+In-Reply-To: <CAD=FV=VMqHrKHThSNoz_i=SCwgw=OeOfaww3Ote1id66LXO8JQ@mail.gmail.com>
+References: <1470144852-20708-1-git-send-email-zhengxing@rock-chips.com> <4830789.1bI8OsvZy1@phil> <CAD=FV=VMqHrKHThSNoz_i=SCwgw=OeOfaww3Ote1id66LXO8JQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470915049-15249-1-git-send-email-broonie@kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Mark Brown wrote:
-> Some architectures like x86 don't use the clock API in architecture code
-> but one of the advantages of the common clock API is that it can be used
-> by regular devices to represent their clocking structures so we should
-> allow users to enable the clock API themselves even if the architecture
-> doesn't need it. This is more straightforward than going round every
-> architecture and convincing their maintainers to add the select.
-> 
-> Unfortunately some architectures do still provide a custom implementation
-> of the clock API which is incompatible with common clock. Provide a config
-> option HAS_CUSTOM_CLK which these architectures can select in order to
+Am Montag, 29. August 2016, 10:35:44 schrieb Doug Anderson:
+> Hi,
+>=20
+> On Sun, Aug 28, 2016 at 8:21 AM, Heiko St=FCbner <heiko@sntech.de> wr=
+ote:
+> > Hi Xing, Elaine,
+> >=20
+> > Am Dienstag, 2. August 2016, 21:34:12 schrieb Xing Zheng:
+> >> From: Elaine Zhang <zhangqing@rock-chips.com>
+> >>=20
+> >> The goal is that we can configure the most suitable pll params
+> >> automatically.
+> >>=20
+> >> If setting freq is not supported in rockchip_pll_rate_table
+> >> rk3399_pll_rates[], we can set pll params automatically.
+> >>=20
+> >> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> >> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> >=20
+> > first off, I really like that idea of calculating the generic pll
+> > frequencies instead of duplicating these entries in every soc clock=
 
-s/HAS/HAVE/
+> > driver.
+>=20
+> I probably won't have time to look at this any time soon, but when I
+> saw this patch fly by I was a little hesitant because:
+>=20
+> * Not all PLL settings produce the same jitter.  On rk3288 I spent
+> loads of time searching for PLL settings that would be low jitter
+> enough to make a pixel clock that was happy with lots of different TV=
+s
+> / monitors.  It's true that there were certain heuristics that could
+> be followed but certainly my predictions didn't always match what
+> happened.
+>=20
+> * Depending on what's using the PLL, you might want very different
+> settings.  One can optimize for lock time, power usage, jitter,
+> accuracy, etc.  For instance for a CPU clock that you change a lot yo=
+u
+> probably don't care about hitting an exact frequency and you probably=
 
-> prevent COMMON_CLK being enabled.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> don't care overly much about jitter, but you want low lock times.  Fo=
+r
+> HDMI you don't care about lock times and and probably don't care abou=
+t
+> power usage, but you care about meeting an exact clock and really
+> really care about jitter.
+>=20
+> * I know that in the past the way I found to make some of the best
+> rates for HDMI was to have the PLL make a rate that was several times=
 
-Concept seems fine.
+> what I wanted and then activate a divider later in the clock tree.
+> That gave me the best jitter / clock accuracy.  I have no idea how to=
 
-> ---
->  drivers/clk/Kconfig | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index e2d9bd760c84..08a0b2cd49c6 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -7,7 +7,8 @@ config HAVE_CLK_PREPARE
->  	bool
->  
->  config COMMON_CLK
-> -	bool
-> +	bool "Common Clock Framework Support"
-> +	depends on !HAVE_CUSTOM_CLK
+> do that automatically, but in the past I relied on the PLL only havin=
+g
+> a fixed set of rates it could make so it would fail to make the lower=
 
-Is the plan that architectures will keep selecting this when they
-want to enforce common clk framework on their arch? We could move
-enabling this config to the defconfigs if we make of_clk_init() a
-stub when this config is disabled. Interestingly arm already has
-that ifdefed out so nothing fails to compile there, but not every
-arch is following that design.
+> clock rate (higher jitter) and eventually end up with the better one.=
 
-Also, are there patches for all the users to select
-HAVE_CUSTOM_CLK? Otherwise we can get randconfig failures when
-two places define clk API functions.
+>=20
+>=20
+> Anyway, I don't know how to solve all of the above, but I just wanted=
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> to bring it up as a concern.
+
+after talking with Doug on irc, I realized that this really can become =
+a=20
+problem, as right now we have a list with known-good rates, can adjust =
+those=20
+as needed and have the clock framework select the best for a certain ta=
+rget=20
+rate.
+
+But with the automatic calculation it would open up nearly unlimited di=
+fferent=20
+rates with possible negative effects and no way to eliminate or even te=
+st most=20
+of them.
+
+So it may very well be best to stay with static rates, in a component a=
+s core=20
+as the PLLs are?
+
+
+Heiko
