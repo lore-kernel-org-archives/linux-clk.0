@@ -1,102 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51428 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752871AbcHLQiz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 12 Aug 2016 12:38:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/PROTO 3/9 common] arm64: dts: r8a7795: Add all MSIOF nodes
-Date: Fri, 12 Aug 2016 18:38:39 +0200
-Message-Id: <1471019925-29083-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20160829174940.GC19826@codeaurora.org>
+References: <1472299279-27560-1-git-send-email-linus.walleij@linaro.org> <20160829174940.GC19826@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 29 Aug 2016 20:33:49 +0200
+Message-ID: <CACRpkdYZiFhGV5sOvoXyHAYfx5kPsE_KPPL8XWuYd3XQ=-dYEw@mail.gmail.com>
+Subject: Re: [PATCH 3/3 v3] clk: versatile/icst: support for AP baseboard clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the device nodes for all MSIOF SPI controllers, incl. clocks, clock
-domain, and dma properties.
+On Mon, Aug 29, 2016 at 7:49 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 08/27, Linus Walleij wrote:
+>> @@ -143,6 +180,16 @@ static int vco_set(struct clk_icst *icst, struct ic=
+st_vco vco)
+>>               if (vco.r !=3D 22)
+>>                       pr_err("ICST error: tried to use RDW !=3D 22\n");
+>>               break;
+>> +     case ICST_INTEGRATOR_AP_SYS:
+>> +             mask =3D INTEGRATOR_AP_SYS_BITS;
+>> +             val |=3D vco.v & 0xFF;
+>
+> drivers/clk/versatile/clk-icst.c: In function =E2=80=98icst_set_rate=E2=
+=80=99:
+> drivers/clk/versatile/clk-icst.c:185:7: warning: =E2=80=98val=E2=80=99 ma=
+y be used uninitialized in this function [-Wuninitialized]
+> drivers/clk/versatile/clk-icst.c:168:6: note: =E2=80=98val=E2=80=99 was d=
+eclared here
+>
+>
+> I assume it should just be val =3D instead?
 
-Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
+Yeah :/
 
-R-Car H3 ES1.0 has a hardware bug preventing MSIOF from being used with
-real SPI devices. However, this does not affect the generation of clock
-signals on the SPI bus.
+My biggest worry right now is why I'm not seeing these warnings.
 
-v2:
-  - Rebased,
-  - Switch to final CPG/MSSR bindings,
-  - Change one-line summary prefix to match current arm-soc practices.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 52 ++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+I'll figure out how to get them and fix it.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 80af0ba68750f346..41549faec07bae3d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -838,6 +838,58 @@
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a7795";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 211>;
-+			dmas = <&dmac1 0x41>, <&dmac1 0x40>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a7795";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 210>;
-+			dmas = <&dmac1 0x43>, <&dmac1 0x42>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a7795";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 209>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a7795";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a7795",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
--- 
-1.9.1
-
+Yours,
+Linus Walleij
