@@ -1,195 +1,29 @@
-Return-Path: <mturquette@baylibre.com>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, "Simon
+ Horman" <horms+renesas@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+Date: Mon, 29 Aug 2016 14:53:34 +0000
+Message-ID: <SG2PR06MB1165182DE474D907F38694E98AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com>
+ <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Gabriel Fernandez <gabriel.fernandez@st.com>, "Rob Herring" <robh@kernel.org>,
- "Gabriel Fernandez" <gabriel.fernandez@linaro.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <7b3f45bf-2fba-7563-f2a2-c74e759f6316@st.com>
-Cc: "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>,
- "Srinivas Kandagatla" <srinivas.kandagatla@gmail.com>,
- "Maxime Coquelin" <maxime.coquelin@st.com>,
- "Patrice Chotard" <patrice.chotard@st.com>,
- "Russell King" <linux@armlinux.org.uk>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Olivier Bideau" <olivier.bideau@st.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Andrzej Hajda" <a.hajda@samsung.com>, "Pankaj Dev" <pankaj.dev@st.com>,
- "Dinh Nguyen" <dinguyen@opensource.altera.com>,
- "Arnd Bergmann" <arnd@arndb.de>, "Thierry Reding" <treding@nvidia.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
- linux-clk@vger.kernel.org, "Lee Jones" <lee.jones@linaro.org>,
- "Peter Griffin" <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
- benjamin.gaignard@st.com, vincent.abriou@st.com
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
- <1466068833-5055-3-git-send-email-gabriel.fernandez@linaro.org>
- <20160619150458.GA26824@rob-hp-laptop>
- <146794221378.73491.2803164814485320331@resonance> <577F6E83.3080006@st.com>
- <146799410307.73491.9408637761157902031@resonance>
- <578343A2.6090801@st.com> <7b3f45bf-2fba-7563-f2a2-c74e759f6316@st.com>
-Message-ID: <147208387070.66208.10807364446051184867@resonance>
-Subject: Re: [RESEND PATCH v2 02/13] drivers: clk: st: Simplify clock binding of
- STiH4xx platforms
-Date: Wed, 24 Aug 2016 17:11:11 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Gabriel Fernandez (2016-08-22 09:06:20)
-> Hi Mike,
-> =
-
-> you forgot me ?
-> =
-
-> Best Regards
-> =
-
-> Gabriel
-> =
-
-> =
-
-> On 07/11/2016 08:58 AM, Gabriel Fernandez wrote:
-> >
-> >
-> > On 07/08/2016 06:08 PM, Michael Turquette wrote:
-> >> Quoting Gabriel Fernandez (2016-07-08 02:12:35)
-> >>> Hi Mike,
-> >>>
-> >>> On 07/08/2016 03:43 AM, Michael Turquette wrote:
-> >>>> Quoting Rob Herring (2016-06-19 08:04:58)
-> >>>>> On Thu, Jun 16, 2016 at 11:20:22AM +0200, Gabriel Fernandez wrote:
-> >>>>>> This patch reworks the clock binding to avoid too much detail in D=
-T.
-> >>>>>> Now we have only compatible string per type of clock
-> >>>>>> (remark from Rob https://lkml.org/lkml/2016/5/25/492)
-> >>>>>>
-> >>>>> I have no idea what the clock trees and clock controller in these =
-
-> >>>>> chips
-> >>>>> look like, so it's hard to say if the changes here are good. It sti=
-ll
-> >>>>> looks like things are somewhat fine grained clocks in DT. I'll leave
-> >>>>> it up to the platform maintainers to decide...
-> >>>> Is this series breaking ABI? If yes, why not do what Maxime did for =
-
-> >>>> the
-> >>>> Allwinner/sunxi clocks and just fully convert over to a
-> >>>> one-node-per-clock-controller binding? This one-node-per-clock =
-
-> >>>> stuff is
-> >>>> pretty unfortunate, and if we're deprecating platforms (patch #1) th=
-en
-> >>>> now might be a good time to re-evaluate the whole thing.
-> >>> The goal of my patchset was to be aligned with DRM / KMS development =
-
-> >>> and
-> >>> to offer
-> >>> the possibility to make a correct video playback on STiH407/STiH410
-> >>> platform.
-> >>> Our milestone is the 4.8 for that.
-> >>>
-> >>> Currently people need these patches to work.
-> >>> I'm not sure it's a good time to re-evaluate the whole thing.
-> >>>
-> >>> Is it possible to re-evaluate later ?
-> >> Are you OK to break ABI later? Or at a minimum, deprecate the current
-> >> binding (maintain it forever for legacy platforms) and create a new
-> >> clock controller binding description that supersedes the legacy binding
-> >> for all new platforms?
-> >>
-> >> If the answer to either question is "yes", then I'm OK to put it aside
-> >> for now. But if the answer to both is "no", and this patch series is
-> >> breaking ABI, then we really should fix it now.
-> >
-> > Hi Mike,
-> > i m ok to break ABI later.
-
-Hi Gabriel,
-
-This change never received any other reviews, and no pings before v4.7
-was released. Sorry that it fell through the cracks, but always feel
-free to re-ping leading up to the merge window.
-
-Can you rebase this against -rc1? Also, do you have a plan to rework the
-binding to move away from the one-node-per-clock style?
-
-Regards,
-Mike
-
-> >
-> > Many Thanks !
-> >
-> > Best Regards
-> >
-> > Gabriel.
-> >
-> >> Regards,
-> >> Mike
-> >>
-> >>> Best regards,
-> >>> Gabriel
-> >>>
-> >>>> Regards,
-> >>>> Mike
-> >>>>
-> >>>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> >>>>>> ---
-> >>>>>>    .../devicetree/bindings/clock/st/st,clkgen-mux.txt | 2 +-
-> >>>>>>    .../devicetree/bindings/clock/st/st,clkgen-pll.txt | 11 ++--
-> >>>>>>    .../devicetree/bindings/clock/st/st,clkgen.txt     | 2 +-
-> >>>>>>    .../devicetree/bindings/clock/st/st,quadfs.txt     | 6 +--
-> >>>>>>    drivers/clk/st/clkgen-fsyn.c                       | 41 =
-
-> >>>>>> ++++++--------
-> >>>>>>    drivers/clk/st/clkgen-mux.c                        | 28 =
-
-> >>>>>> ++++------
-> >>>>>>    drivers/clk/st/clkgen-pll.c                        | 62 =
-
-> >>>>>> ++++++++++------------
-> >>>>>>    7 files changed, 65 insertions(+), 87 deletions(-)
-> >>>>>>
-> >>>>>> diff --git =
-
-> >>>>>> a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt =
-
-> >>>>>> b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
-> >>>>>> index 4d277d6..9a46cb1d7 100644
-> >>>>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
-> >>>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-mux.txt
-> >>>>>> @@ -10,7 +10,7 @@ This binding uses the common clock binding[1].
-> >>>>>>    Required properties:
-> >>>>>>       - compatible : shall be:
-> >>>>>> -     "st,stih407-clkgen-a9-mux",     "st,clkgen-mux"
-> >>>>>> +     "st,stih407-clkgen-a9-mux"
-> >>>>>>       - #clock-cells : from common clock binding; shall be set to =
-0.
-> >>>>>>    diff --git =
-
-> >>>>>> a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt =
-
-> >>>>>> b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> >>>>>> index c9fd674..be0b043 100644
-> >>>>>> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> >>>>>> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> >>>>>> @@ -9,11 +9,10 @@ Base address is located to the parent node. See =
-
-> >>>>>> clock binding[2]
-> >>>>>>    Required properties:
-> >>>>>>       - compatible : shall be:
-> >>>>>> -     "st,stih407-plls-c32-a0", "st,clkgen-plls-c32"
-> >>>>>> -     "st,stih407-plls-c32-a9", "st,clkgen-plls-c32"
-> >>>>>> -     "sst,plls-c32-cx_0", "st,clkgen-plls-c32"
-> >>>>>> -     "sst,plls-c32-cx_1", "st,clkgen-plls-c32"
-> >>>>>> -     "st,stih418-plls-c28-a9", "st,clkgen-plls-c32"
-> >>>>>> +     "st,clkgen-pll0"
-> >>>>>> +     "st,clkgen-pll0"
-> >>>>> Repeated. Supposed to be 0 and 1? This seems a bit generic, too.
-> >>>>>
-> >>>>>> +     "st,stih407-clkgen-plla9"
-> >>>>>> +     "st,stih418-clkgen-plla9"
-> >
->=20
+SGkgR2VlcnQsDQoNCk9uIEF1ZyAyOSwgMjAxNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0K
+Pj4gSW5zdGVhZCBvZiBoYXJkIGNvZGluZyBFWFRBTCBvbmx5LCBjaGVjayBpZiBFWFRBTCB3YXMg
+c3BlY2lmaWVkLiBJZiANCj4+IG5vdCwgdGhlbiBhc3N1bWUgdGhlIFVTQiBjbG9jayBpcyB1c2Vk
+IGFzIHRoZSBtYWluIHN5c3RlbSBjbG9jay4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBC
+cmFuZHQgPGNocmlzLmJyYW5kdEByZW5lc2FzLmNvbT4NCj4NCj4gV2hhdCdzIHRoZSByYXRpb25h
+bGUgYmVoaW5kIHRoaXMgY2hhbmdlPw0KDQoNCkknbSB0aGlua2luZyBhYm91dCBiZXlvbmQgUmVu
+ZXNhcyBib2FyZHMuIFBlb3BsZSBhcmUgbWFraW5nIFJaL0ExIGJvYXJkcyB3aXRoIGp1c3QgdGhl
+IFVTQiBjbG9jayB0byBzYXZlIG9uIEJPTSBjb3N0cyBzaW5jZSAzODRNSHogdnMgNDAwTUh6IGlz
+IG5vdCBlbm91Z2ggb2YgYSBkcm9wIHRvIGNhcmUgYWJvdXQuDQpBbmQgb2YgY291cnNlLCBoYXZp
+bmcgc29tZW9uZSBtYWtlIHRoaXMga2luZCBvZiBzZWxlY3Rpb24gaW4gdGhlIERUIGlzIGJldHRl
+ciB0aGFuIGZvcmNpbmcgdGhlbSB0byBoYWNrIHRoZSBjbG9jayBmaWxlLg0KDQoNCg0KQ2hyaXMN
+Cg==
