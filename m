@@ -1,73 +1,45 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [RESEND PATCH v2 3/8] clk: rockchip: rk3399: fix incorrect parent
- for rk3399's {c, g}pll_aclk_perihp_src
-To: Brian Norris <briannorris@chromium.org>
-References: <1470045224-31854-1-git-send-email-zhengxing@rock-chips.com>
- <1470045224-31854-4-git-send-email-zhengxing@rock-chips.com>
- <20160801201349.GA129313@google.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
- dianders@chromium.org, huangtao@rock-chips.com, zhangqing@rock-chips.com,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <579FFC4D.2070406@rock-chips.com>
-Date: Tue, 2 Aug 2016 09:50:05 +0800
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160801201349.GA129313@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <SG2PR06MB1165182DE474D907F38694E98AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com>
+ <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com> <SG2PR06MB1165182DE474D907F38694E98AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 17:13:38 +0200
+Message-ID: <CAMuHMdXtzSNo84hLDNg=nZpG3HB1YPC2JNk6tiFx5eoFtHZjdg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Brain,
+Hi Chris,
 
-On 2016年08月02日 04:13, Brian Norris wrote:
-> On Mon, Aug 01, 2016 at 05:53:38PM +0800, Xing Zheng wrote:
->> There was a typo, swapping 'c' <--> 'g'.
->> (This patch is updated and am from https://patchwork.kernel.org/patch/9254067/)
+On Mon, Aug 29, 2016 at 4:53 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Aug 29, 2016, Geert Uytterhoeven wrote:
+>>> Instead of hard coding EXTAL only, check if EXTAL was specified. If
+>>> not, then assume the USB clock is used as the main system clock.
+>>>
+>>> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 >>
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> Signed-off-by: Brian Norris <briannorris@chromium.org>
->> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>
->> Changes in v2: None
-> I believe this patch was already applied upstream; otherwise, it
-> wouldn't make sense to have both this patch and patch 4 -- we would
-> probably squash them together.
+>> What's the rationale behind this change?
 >
-> Brian
->
-Yes, this patch is applied in mmind/linux-rockchip.git v4.7-clk/fixes, I 
-arm sorry to tracked on v4.8-clk/next so that didn't note it.
-This patch will be abandoned.
+> I'm thinking about beyond Renesas boards. People are making RZ/A1 boards with just the USB clock to save on BOM costs since 384MHz vs 400MHz is not enough of a drop to care about.
+> And of course, having someone make this kind of selection in the DT is better than forcing them to hack the clock file.
 
-Thanks.
+We really need to get the GPIO driver upstream, and add support for
+reading the MD_* pins.
 
->>   drivers/clk/rockchip/clk-rk3399.c |    4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
->> index f55f967f..2182391 100644
->> --- a/drivers/clk/rockchip/clk-rk3399.c
->> +++ b/drivers/clk/rockchip/clk-rk3399.c
->> @@ -832,9 +832,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
->>   			RK3399_CLKGATE_CON(13), 1, GFLAGS),
->>   
->>   	/* perihp */
->> -	GATE(0, "cpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->> +	GATE(0, "cpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
->>   			RK3399_CLKGATE_CON(5), 0, GFLAGS),
->> -	GATE(0, "gpll_aclk_perihp_src", "cpll", CLK_IGNORE_UNUSED,
->> +	GATE(0, "gpll_aclk_perihp_src", "gpll", CLK_IGNORE_UNUSED,
->>   			RK3399_CLKGATE_CON(5), 1, GFLAGS),
->>   	COMPOSITE(ACLK_PERIHP, "aclk_perihp", mux_aclk_perihp_p, CLK_IGNORE_UNUSED,
->>   			RK3399_CLKSEL_CON(14), 7, 1, MFLAGS, 0, 5, DFLAGS,
->> -- 
->> 1.7.9.5
->>
->>
->
->
+Gr{oetje,eeting}s,
 
--- 
-- Xing Zheng
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
