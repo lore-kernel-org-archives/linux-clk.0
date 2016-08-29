@@ -1,57 +1,68 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: dianders@chromium.org,
-	tfiga@chromium.org,
-	heiko@sntech.de,
-	yzq@rock-chips.com,
-	groeck@chromium.org,
-	wulf@rock-chips.com,
-	marcheu@chromium.org
-Cc: linux-rockchip@lists.infradead.org,
-	Chris Zhong <zyw@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: mark rk3399 hdcp_noc and pclk_vio_grf as critical
-Date: Wed,  3 Aug 2016 15:36:24 +0800
-Message-Id: <1470209784-2665-1-git-send-email-zyw@rock-chips.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160825190518.20764-1-chris.brandt@renesas.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 15:18:10 +0200
+Message-ID: <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Type-C DP need these clocks: aclk_hdcp_noc, hclk_hdcp_noc,
-pclk_hdcp_noc, pclk_vio_grf. Mark them as critical to avoid someone
-close them.
+Hi Chris,
 
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+On Thu, Aug 25, 2016 at 9:05 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Instead of hard coding EXTAL only, check if EXTAL was specified. If not,
+> then assume the USB clock is used as the main system clock.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
----
+What's the rationale behind this change?
 
- drivers/clk/rockchip/clk-rk3399.c | 4 ++++
- 1 file changed, 4 insertions(+)
+According to the schematics, all of Genmai, RSK, and GR-Peach have both EXTAL
+and USB_X1 populated. So they can only use EXTAL, both with and without your
+patch.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 78e51cb..6c8ed25 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1466,6 +1466,9 @@ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
- 
- static const char *const rk3399_cru_critical_clocks[] __initconst = {
- 	"aclk_cci_pre",
-+	"aclk_hdcp_noc",
-+	"hclk_hdcp_noc",
-+	"pclk_hdcp_noc",
- 	"pclk_perilp0",
- 	"pclk_perilp0",
- 	"hclk_perilp0",
-@@ -1485,6 +1488,7 @@ static const char *const rk3399_cru_critical_clocks[] __initconst = {
- 	"gpll_hclk_perilp1_src",
- 	"gpll_aclk_perilp0_src",
- 	"gpll_aclk_perihp_src",
-+	"pclk_vio_grf",
- };
- 
- static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
--- 
-2.6.3
+But both Genmai and RSK have a DIP switch to control MD_CLK, and select the
+clock to use, while GR-Peach has MD_CLK hardwired to GND.
+
+> ---
+>  drivers/clk/renesas/clk-rz.c | 30 +++++++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+> index f6312c6..466b9fc 100644
+> --- a/drivers/clk/renesas/clk-rz.c
+> +++ b/drivers/clk/renesas/clk-rz.c
+> @@ -37,13 +37,29 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+>         static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
+>
+>         if (strcmp(name, "pll") == 0) {
+> -               /* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
+> -               unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
+> -               const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
+> -
+> -               mult = cpg_mode ? (32 / 4) : 30;
+> -
+> -               return clk_register_fixed_factor(NULL, name, parent_name, 0, mult, 1);
+> +               u32 freq = 0;
+> +               struct device_node *np;
+> +
+> +               /* If a clock-frequency for extal was specified, assume EXTAL boot */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
