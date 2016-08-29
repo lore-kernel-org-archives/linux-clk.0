@@ -1,54 +1,70 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 11:16:04 -0700
+Date: Mon, 29 Aug 2016 10:46:23 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
 To: James Liao <jamesjj.liao@mediatek.com>
 Cc: Erin Lo <erin.lo@mediatek.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
 	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, John Crispin <blogic@openwrt.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
 	Daniel Kurtz <djkurtz@chromium.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
 	srv_heupstream@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>
-Subject: Re: [PATCH v9 06/10] clk: mediatek: Add MT2701 clock support
-Message-ID: <20160815181604.GU361@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
- <1466581229-2342-7-git-send-email-erin.lo@mediatek.com>
- <20160813004438.GC361@codeaurora.org>
- <1471230034.8551.22.camel@mtksdaap41>
+Subject: Re: [PATCH v12 1/4] clk: mediatek: Add MT2701 clock support
+Message-ID: <20160829174623.GB19826@codeaurora.org>
+References: <1471854565-19810-1-git-send-email-erin.lo@mediatek.com>
+ <1471854565-19810-2-git-send-email-erin.lo@mediatek.com>
+ <20160824174917.GB19826@codeaurora.org>
+ <1472271377.21203.12.camel@mtksdaap41>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471230034.8551.22.camel@mtksdaap41>
+In-Reply-To: <1472271377.21203.12.camel@mtksdaap41>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/15, James Liao wrote:
-> On Fri, 2016-08-12 at 17:44 -0700, Stephen Boyd wrote:
-> > On 06/22, Erin Lo wrote:
+On 08/27, James Liao wrote:
+> On Wed, 2016-08-24 at 10:49 -0700, Stephen Boyd wrote:
+> > On 08/22, Erin Lo wrote:
 > > > +
-> > > +static void mtk_bdpsys_init(struct device_node *node)
+> > > +static void __init mtk_infrasys_init_early(struct device_node *node)
 > > > +{
-> > > +	struct clk_onecell_data *clk_data;
-> > > +	int r;
+> > > +	int r, i;
 > > > +
-> > > +	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
+> > > +	if (!infra_clk_data) {
+> > > +		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
 > > > +
-> > > +	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
-> > > +						clk_data);
+> > > +		for (i = 0; i < CLK_INFRA_NR; i++)
+> > > +			infra_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
+> > > +	}
 > > > +
-> > > +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> > > +	mtk_clk_register_factors(infra_fixed_divs, ARRAY_SIZE(infra_fixed_divs),
+> > > +						infra_clk_data);
+> > > +
+> > > +	r = of_clk_add_provider(node, of_clk_src_onecell_get, infra_clk_data);
+> > > +	if (r)
+> > > +		pr_err("%s(): could not register clock provider: %d\n",
+> > > +			__func__, r);
+> > > +}
+> > > +CLK_OF_DECLARE(mtk_infra, "mediatek,mt2701-infracfg", mtk_infrasys_init_early);
 > > 
-> > Is it possible to move to of_clk_add_hw_provider()? It can be
-> > done later if that would mean changing all
-> > mtk_clk_register_gates() users.
+> > This should use CLK_OF_DECLARE_DRIVER? Has this been tested on
+> > latest clk-next? Some recent patches make it so that
+> > CLK_OF_DECLARE() prevents platform devices from being created for
+> > the associated DT nodes that match during of_clk_init().
 > 
-> I would like to keep current implementation due to test/integration
-> effort. I prefer to apply clk_hw related APIs on new clk drivers instead
-> of modify existing drivers.
+> Oops, you are right. Clocks in infra_clks are gone on clk-next, but they
+> are good on v4.8-rc1.
 > 
+> I register clk13m in infra_fixed_divs through CLK_OF_DECLARE() so that
+> it can be registered as early as possible because it will be referred by
+> the timer driver. Is there a formal way to separate clock registrations
+> on the same clock provider? Or should I move infra_clks registration
+> into CLK_OF_DECLARE()?
 
-Sure, no problem.
+The way to do this is use CLK_OF_DECLARE_DRIVER() and then do the
+early clks in the CLK_OF callback and the rest of them in the
+driver probe.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
