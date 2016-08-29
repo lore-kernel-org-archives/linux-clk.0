@@ -1,105 +1,65 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [RFC 06/17] clk: gate: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:03 +0200
-Message-id: <1471354514-24224-7-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian
+ Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        <gabriel.fernandez@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Subject: [PATCH v3 09/14] ARM: DT: STiH418: Enable clock propagation for audio clocks
+Date: Mon, 29 Aug 2016 14:27:01 +0200
+Message-ID: <1472473626-15398-10-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH418
+
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/clk/clk-gate.c       | 8 +++++---
- drivers/clk/samsung/clk.c    | 5 +++--
- include/linux/clk-provider.h | 6 ++++--
- 3 files changed, 12 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 4e691e35483a..5eea0457778d 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -120,7 +120,8 @@ EXPORT_SYMBOL_GPL(clk_gate_ops);
-  * @clk_gate_flags: gate-specific flags for this clock
-  * @lock: shared register lock for this clock
-  */
--struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock)
-@@ -166,14 +167,15 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_gate);
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index 0fd0fa5..a183583 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -229,7 +229,7 @@
  
--struct clk *clk_register_gate(struct device *dev, const char *name,
-+struct clk *clk_register_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock)
- {
- 	struct clk_hw *hw;
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-audio", "st,flexgen";
  
--	hw = clk_hw_register_gate(dev, name, parent_name, flags, reg,
-+	hw = clk_hw_register_gate(dev, ctrl, name, parent_name, flags, reg,
- 				  bit_idx, clk_gate_flags, lock);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index cb1e4398d6e5..79332011f258 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -268,8 +268,9 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_gate(NULL, list->name, list->parent_name,
--				list->flags, ctx->reg_base + list->offset,
-+		clk = clk_register_gate(NULL, ctx->clk_ctrl, list->name,
-+				list->parent_name, list->flags,
-+				ctx->reg_base + list->offset,
- 				list->bit_idx, list->gate_flags, &ctx->lock);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2ee4e337e784..289290655283 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -340,11 +340,13 @@ struct clk_gate {
- #define CLK_GATE_HIWORD_MASK		BIT(1)
- 
- extern const struct clk_ops clk_gate_ops;
--struct clk *clk_register_gate(struct device *dev, const char *name,
-+struct clk *clk_register_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock);
--struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_gate(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock);
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
 -- 
 1.9.1
