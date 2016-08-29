@@ -1,40 +1,92 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian
+ Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        <gabriel.fernandez@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Subject: [PATCH v3 14/14] ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+Date: Mon, 29 Aug 2016 14:27:06 +0200
+Message-ID: <1472473626-15398-15-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <88d5c57d3047176ebf2eec0f21e86613@agner.ch>
-References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
- <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com>
- <20160811222842.GM2996@codeaurora.org> <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
- <88d5c57d3047176ebf2eec0f21e86613@agner.ch>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 11 Aug 2016 22:35:56 -0300
-Message-ID: <CAOMZO5AYVbobwxyNippO_AviZhNjCS0hhC2NmLHiPEt8MoP-5Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx7d: do not set the parent of IMX7D_ENET_AXI_ROOT_SRC
-To: Stefan Agner <stefan@agner.ch>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On Thu, Aug 11, 2016 at 8:57 PM, Stefan Agner <stefan@agner.ch> wrote:
+It is necessary to properly configure these clocks in order
+to address 720p and 1080p HDMI resolution.
 
-> I don't think so, at least not that root clock.
->
-> Otherwise grep -e IMX7D_PLL_ENET_MAIN_250M_CLK arch/arm/boot/dts/imx7*
-> should return something...
+Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Yes, you are right. The enet root clock parent assignment is missing in dts.
-
-Other enet clocks are assigned.
-
-> I guess in practice it is not a problem because the boot loader
-> configures the clock selection already. Still, I think we should also
-> fix our device trees and select the root clock there...
-
-Yes, I didn't see any error on mx7d-sdb when I tested this patch, but
-to be on the safe side I will update all the mx7 fec users to assign
-enet root clk in the dts.
-
-Thanks
+diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
+index 18ed1ad..7eec729 100644
+--- a/arch/arm/boot/dts/stih410.dtsi
++++ b/arch/arm/boot/dts/stih410.dtsi
+@@ -103,7 +103,10 @@
+ 			#size-cells = <1>;
+ 
+ 			assigned-clocks	= <&clk_s_d2_quadfs 0>,
+-					  <&clk_s_d2_quadfs 0>,
++					  <&clk_s_d2_quadfs 1>,
++					  <&clk_s_c0_pll1 0>,
++					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
++					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
+ 					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
+@@ -113,14 +116,21 @@
+ 
+ 			assigned-clock-parents = <0>,
+ 						 <0>,
++						 <0>,
++						 <&clk_s_c0_pll1 0>,
++						 <&clk_s_c0_pll1 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+-						 <&clk_s_d2_quadfs 0>,
++						 <&clk_s_d2_quadfs 1>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>,
+ 						 <&clk_s_d2_quadfs 0>;
+ 
+-			assigned-clock-rates = <297000000>, <297000000>;
++			assigned-clock-rates = <297000000>,
++					       <108000000>,
++					       <0>,
++					       <400000000>,
++					       <400000000>;
+ 
+ 			ranges;
+ 
+-- 
+1.9.1
