@@ -1,76 +1,37 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 29 Aug 2016 10:42:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Hoan Tran <hotran@apm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, lho@apm.com,
-	Duc Dang <dhdang@apm.com>
-Subject: Re: [PATCH 1/3] Documentation: dtb: xgene: Add PMD clock binding
-Message-ID: <20160829154228.GA23350@rob-hp-laptop>
-References: <1471967561-23634-1-git-send-email-hotran@apm.com>
- <1471967561-23634-2-git-send-email-hotran@apm.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471967561-23634-2-git-send-email-hotran@apm.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <2f74597a-de90-884e-6878-cbe60c48af24@cogentembedded.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com> <2f74597a-de90-884e-6878-cbe60c48af24@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 20:41:37 +0200
+Message-ID: <CAMuHMdU5BhqOfGhpn2K7B0imTVxYrnewDWzC3sk2wZ-rFysLLA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 23, 2016 at 08:52:39AM -0700, Hoan Tran wrote:
-> Add APM X-Gene clock binding documentation for PMD clock.
-> 
-> Signed-off-by: Hoan Tran <hotran@apm.com>
-> ---
->  Documentation/devicetree/bindings/clock/xgene.txt | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
-> index 82f9638..c381733 100644
-> --- a/Documentation/devicetree/bindings/clock/xgene.txt
-> +++ b/Documentation/devicetree/bindings/clock/xgene.txt
-> @@ -8,6 +8,7 @@ Required properties:
->  - compatible : shall be one of the following:
->  	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
->  	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
-> +	"apm,xgene-pmd-clock" - for a X-Gene PMD clock
->  	"apm,xgene-device-clock" - for a X-Gene device clock
->  	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
->  	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
-> @@ -22,6 +23,17 @@ Required properties for SoC or PCP PLL clocks:
->  Optional properties for PLL clocks:
->  - clock-names : shall be the name of the PLL. If missing, use the device name.
->  
-> +Required properties for PMD clocks:
-> +- reg : shall be the physical register address for the pmd clock.
-> +- clocks : shall be the input parent clock phandle for the clock.
-> +- #clock-cells : shall be set to 1.
-> +- clock-output-names : shall be the name of the clock referenced by derive
-> +  clock.
-> +- clock-shift: Bit shift of the clock register. Default is 0.
-> +- clock-width: Width of the clock register. Default is 32.
-> +Optional properties for PLL clocks:
-> +- clock-names : shall be the name of the clock. If missing, use the device name.
-> +
->  Required properties for device clocks:
->  - reg : shall be a list of address and length pairs describing the CSR
->           reset and/or the divider. Either may be omitted, but at least
-> @@ -59,6 +71,16 @@ For example:
->  		type = <0>;
->  	};
->  
-> +	pmd0clk: pmd0clk {
-> +		compatible = "apm,xgene-pmd-clock";
-> +		#clock-cells = <1>;
-> +		clocks = <&pmdpll 0>;
-> +		reg = <0x0 0x7E200200 0x0 0x10>;
-> +		clock-shift = <8>;
-> +		clock-width = <3>;
+On Mon, Aug 29, 2016 at 8:39 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+>> +               np = of_find_node_by_name(NULL, "usb_x1");
+>
+>
+>    "usb_x1" looks like a board specific name too much. Previously on R-Car
+> we had the USB_EXTAL pin, maybe that one would be better?
 
-These should be implied by the compatible string. It's not a big deal 
-for just adding this clock, but if you have lots more clocks to add then 
-it is a problem. We only want leaf clocks (the ones going to devices) in 
-DT unless there is only a few clocks.
+See Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
 
-Rob
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
