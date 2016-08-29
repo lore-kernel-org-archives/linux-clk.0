@@ -1,53 +1,65 @@
-Return-Path: <paul.gortmaker@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian
+ Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        <gabriel.fernandez@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Subject: [PATCH v3 07/14] ARM: DT: STiH407: Enable clock propagation for audio clocks
+Date: Mon, 29 Aug 2016 14:26:59 +0200
+Message-ID: <1472473626-15398-8-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Sender: paul.gortmaker@gmail.com
-In-Reply-To: <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
-References: <1470734008-18849-1-git-send-email-narmstrong@baylibre.com> <1470734008-18849-2-git-send-email-narmstrong@baylibre.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date: Sun, 14 Aug 2016 20:08:57 -0400
-Message-ID: <CAP=VYLphcuq16vDueOOJ6anrW-ifYAK+1ijSjkGbxw48+m4xrw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: meson: Add GXBB AO Clock and Reset controller driver
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-amlogic@lists.infradead.org,
-	LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 9, 2016 at 5:13 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> Adds a Clock and Reset controller driver for the Always-On part
-> of the Amlogic Meson GXBB SoC.
->
-> It exports paired Clocks and Resets lines that will be used by
-> peripherals in the Always-On subsystem.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-[...]
+This patch is used in the clock driver to apply a clock propagation
+flag on the audio clocks of STiH407
 
-> +static const struct of_device_id gxbb_aoclkc_match_table[] = {
-> +       { .compatible = "amlogic,gxbb-aoclkc" },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
-> +
-> +static struct platform_driver gxbb_aoclkc_driver = {
-> +       .probe          = gxbb_aoclkc_probe,
-> +       .driver         = {
-> +               .name   = "gxbb-aoclkc",
-> +               .of_match_table = gxbb_aoclkc_match_table,
-> +       },
-> +};
-> +
-> +module_platform_driver(gxbb_aoclkc_driver);
-> +
-> +MODULE_DESCRIPTION("AmLogic Meson GXBB AO Clock Controller Driver");
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_ALIAS("platform:gxbb-aoclkc");
-> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ arch/arm/boot/dts/stih407-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since this driver is controlled by a bool Kconfig, you can dump the module.h
-include and all the MODULE_<xyz> tags above.
-
-Or, if there is a genuine use case for it to be modular, then make it tristate?
-
-Thanks,
-Paul.
+diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
+index 38a56d7..c4a8f1c 100644
+--- a/arch/arm/boot/dts/stih407-clock.dtsi
++++ b/arch/arm/boot/dts/stih407-clock.dtsi
+@@ -216,7 +216,7 @@
+ 
+ 			clk_s_d0_flexgen: clk-s-d0-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-audio", "st,flexgen";
+ 
+ 				clocks = <&clk_s_d0_quadfs 0>,
+ 					 <&clk_s_d0_quadfs 1>,
+-- 
+1.9.1
