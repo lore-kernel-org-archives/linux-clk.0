@@ -1,85 +1,49 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 0/6] clk: sunxi-ng: Support A31/A31s CCU
-Date: Thu, 25 Aug 2016 14:21:54 +0800
-Message-Id: <20160825062200.17206-1-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <SG2PR06MB116574538B09E83FAA4F73868AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com>
+ <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
+ <SG2PR06MB1165182DE474D907F38694E98AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdXtzSNo84hLDNg=nZpG3HB1YPC2JNk6tiFx5eoFtHZjdg@mail.gmail.com> <SG2PR06MB116574538B09E83FAA4F73868AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 17:41:49 +0200
+Message-ID: <CAMuHMdWhkz_coGhnN7qmrFEPwVCwFvenrVK4nMr7jkFu9YsL-g@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Hi Chris,
 
-This is v3 of the sunxi-ng clk driver for A31/A31s CCU, consisting of
-the remaining patches that haven't been merged, with some minor changes
-addressing review comments. Changelog is inline in each patch.
+On Mon, Aug 29, 2016 at 5:32 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Aug 29, 2016, Geert Uytterhoeven wrote:
+>> We really need to get the GPIO driver upstream, and add support for reading the MD_* pins.
+>
+> OK, we can just read the mode pin instead of looking at the DT.
+>
+> In setup-r8a7779.c, they use ioremap to read the mode and then pass the mode into r8a7779_clocks_init() in the clock file.
+> Looks like setup-rcar-gen2.c does the same thing.
+>
+> So, can we do the same in setup-r7s72100.c and clk-rz.c? No GPIO driver is needed and it would match the other platforms are doing.
 
-This series adds support for the A31/A31s CCU (clock control unit) with
-the new sunxi-ng binding/driver. This is a near complete driver, with a
-few features unimplemented or might need reworking:
+Please don't: we're trying to get rid of reading the mode pins (a) in setup-*.c
+and passing them to the clock driver, (b) without a proper driver.
 
-  - The HDMI mode of the PLL-MIPI clock is unsupported.
+Until you have a proper GPIO driver, I think the best solution is to ioremap()
+the hardcoded registers in clk-rz.c, and reading the mode pins.
 
-  - The EMAC clock is unimplemented. In the past we modelled this as a
-    clock. Unforunately that doesn't work very well. While it is sort
-    of a clock control, with clock inverters and delay chains, it also
-    controls the interface mode of the EMAC. On later SoCs this register
-    is moved out of the CCU, into the system control register range.
-    Other platforms consider this a part of the ethernet controller glue
-    logic, and map and use it directly as part of the controller bindings.
-    I would like to do the same.
+Gr{oetje,eeting}s,
 
-  - The A31 has 2 SDRAM clocks and 2 MBUS clocks. As such we can't have
-    them all as the DRAM gate clocks' parent. Instead I'm using the MDFS
-    clock as their parent. It is unclear what MDFS actually is, but the
-    close proximity of the registers to the DRAM bits, and hints about
-    this tied to DRAM DVFS suggest this is a common memory bus. If we're
-    wrong we can always fix this as the relationship is part of the driver,
-    not the binding. Also, all 5 clocks are marked as critical.
+                        Geert
 
-Various changes were made to the common (to sunxi-ng) clock types to make
-them compatible with the A31/A31s' CCU's design.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Also new is support for clk notifiers for mux clocks. This is needed for
-the cpu clock, which should be muxed to the stable main oscillator when
-the PLL-CPU clock rate is changed, to avoid any instabilities in the PLL
-which result in the CPU crashing. This is similar to what the meson
-platform does.
-
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (6):
-  clk: sunxi-ng: nkm: Correct mux clock macro name
-  clk: sunxi-ng: mux: Add support for mux tables
-  clk: sunxi-ng: mux: support fixed pre-dividers on multiple parents
-  clk: sunxi-ng: mux: Add clk notifier functions
-  clk: sunxi-ng: Add A31/A31s clocks
-  ARM: dts: sun6i: switch A31/A31s to new CCU clock bindings
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    3 +-
- arch/arm/boot/dts/sun6i-a31.dtsi                   |  424 ++-----
- drivers/clk/sunxi-ng/Kconfig                       |   10 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               | 1235 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun6i-a31.h               |   72 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   10 +-
- drivers/clk/sunxi-ng/ccu_mux.c                     |   54 +-
- drivers/clk/sunxi-ng/ccu_mux.h                     |   42 +-
- drivers/clk/sunxi-ng/ccu_nkm.h                     |    2 +-
- include/dt-bindings/clock/sun6i-a31-ccu.h          |  187 +++
- include/dt-bindings/reset/sun6i-a31-ccu.h          |  106 ++
- 12 files changed, 1800 insertions(+), 346 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-a31.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-a31.h
- create mode 100644 include/dt-bindings/clock/sun6i-a31-ccu.h
- create mode 100644 include/dt-bindings/reset/sun6i-a31-ccu.h
-
--- 
-2.9.3
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
