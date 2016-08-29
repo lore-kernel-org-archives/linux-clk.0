@@ -1,61 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37548 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754968AbcHYLo3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Aug 2016 07:44:29 -0400
-Received: by mail-wm0-f51.google.com with SMTP id i5so67492005wmg.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Aug 2016 04:44:28 -0700 (PDT)
-Date: Thu, 25 Aug 2016 12:44:24 +0100
-From: Peter Griffin <peter.griffin@linaro.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian
+ Campbell <ijc+devicetree@hellion.org.uk>,
         Kumar Gala <galak@codeaurora.org>,
         Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Maxime Coquelin <maxime.coquelin@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
         Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Pankaj Dev <pankaj.dev@st.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
         Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <treding@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-        linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
-        vincent.abriou@st.com, gabriel.fernandez@st.com
-Subject: Re: [RESEND PATCH v2 00/13] Clock improvement for video playback
-Message-ID: <20160825114424.GB3281@griffinp-ThinkPad-X1-Carbon-2nd>
-References: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        <gabriel.fernandez@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Subject: [PATCH v3 11/14] ARM: DT: STiH410: Enable synchronous clock mode for video clocks
+Date: Mon, 29 Aug 2016 14:27:03 +0200
+Message-ID: <1472473626-15398-12-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466068833-5055-1-git-send-email-gabriel.fernandez@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gabriel,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On Thu, 16 Jun 2016, Gabriel Fernandez wrote:
+This patch enables the synchronous clock mode for video clocks
+on STiH410 board.
 
-> v2:
->   - Simpliflication of clock binding
->     remark from Rob https://lkml.org/lkml/2016/5/25/492
->   - Suppression of stih415-416 support for the clocks (in order
-> 	to help simplification of clock binding)
->     (others patchs for the machine and drivers will come)
-> 
-> This serie allows to increase video resolutions and make audio
-> adjustment during a video playback.
-
-For the series: -
-
+Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 Acked-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Peter.
+diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
+index aec2aa7..8598eff 100644
+--- a/arch/arm/boot/dts/stih410-clock.dtsi
++++ b/arch/arm/boot/dts/stih410-clock.dtsi
+@@ -277,7 +277,7 @@
+ 
+ 			clk_s_d2_flexgen: clk-s-d2-flexgen {
+ 				#clock-cells = <1>;
+-				compatible = "st,flexgen";
++				compatible = "st,flexgen-video", "st,flexgen";
+ 
+ 				clocks = <&clk_s_d2_quadfs 0>,
+ 					 <&clk_s_d2_quadfs 1>,
+-- 
+1.9.1
