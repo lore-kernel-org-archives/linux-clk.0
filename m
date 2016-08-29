@@ -1,37 +1,76 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 29 Aug 2016 10:42:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Hoan Tran <hotran@apm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, lho@apm.com,
+	Duc Dang <dhdang@apm.com>
+Subject: Re: [PATCH 1/3] Documentation: dtb: xgene: Add PMD clock binding
+Message-ID: <20160829154228.GA23350@rob-hp-laptop>
+References: <1471967561-23634-1-git-send-email-hotran@apm.com>
+ <1471967561-23634-2-git-send-email-hotran@apm.com>
 MIME-Version: 1.0
-In-Reply-To: <20160811222842.GM2996@codeaurora.org>
-References: <1468590782-8436-1-git-send-email-fabio.estevam@nxp.com>
- <CAOMZO5BjdhCDNU-Vr7OT81ag0LqgFQ3+oP1D_o0FUOZVafneqQ@mail.gmail.com> <20160811222842.GM2996@codeaurora.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 11 Aug 2016 20:53:06 -0300
-Message-ID: <CAOMZO5Dns1eNwzo2qz+Zh506D+JzdgJGYOzL8URTMfrxLq1XxQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx7d: do not set the parent of IMX7D_ENET_AXI_ROOT_SRC
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stefan Agner <stefan@agner.ch>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471967561-23634-2-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Tue, Aug 23, 2016 at 08:52:39AM -0700, Hoan Tran wrote:
+> Add APM X-Gene clock binding documentation for PMD clock.
+> 
+> Signed-off-by: Hoan Tran <hotran@apm.com>
+> ---
+>  Documentation/devicetree/bindings/clock/xgene.txt | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
+> index 82f9638..c381733 100644
+> --- a/Documentation/devicetree/bindings/clock/xgene.txt
+> +++ b/Documentation/devicetree/bindings/clock/xgene.txt
+> @@ -8,6 +8,7 @@ Required properties:
+>  - compatible : shall be one of the following:
+>  	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
+>  	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
+> +	"apm,xgene-pmd-clock" - for a X-Gene PMD clock
+>  	"apm,xgene-device-clock" - for a X-Gene device clock
+>  	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
+>  	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
+> @@ -22,6 +23,17 @@ Required properties for SoC or PCP PLL clocks:
+>  Optional properties for PLL clocks:
+>  - clock-names : shall be the name of the PLL. If missing, use the device name.
+>  
+> +Required properties for PMD clocks:
+> +- reg : shall be the physical register address for the pmd clock.
+> +- clocks : shall be the input parent clock phandle for the clock.
+> +- #clock-cells : shall be set to 1.
+> +- clock-output-names : shall be the name of the clock referenced by derive
+> +  clock.
+> +- clock-shift: Bit shift of the clock register. Default is 0.
+> +- clock-width: Width of the clock register. Default is 32.
+> +Optional properties for PLL clocks:
+> +- clock-names : shall be the name of the clock. If missing, use the device name.
+> +
+>  Required properties for device clocks:
+>  - reg : shall be a list of address and length pairs describing the CSR
+>           reset and/or the divider. Either may be omitted, but at least
+> @@ -59,6 +71,16 @@ For example:
+>  		type = <0>;
+>  	};
+>  
+> +	pmd0clk: pmd0clk {
+> +		compatible = "apm,xgene-pmd-clock";
+> +		#clock-cells = <1>;
+> +		clocks = <&pmdpll 0>;
+> +		reg = <0x0 0x7E200200 0x0 0x10>;
+> +		clock-shift = <8>;
+> +		clock-width = <3>;
 
-On Thu, Aug 11, 2016 at 7:28 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+These should be implied by the compatible string. It's not a big deal 
+for just adding this clock, but if you have lots more clocks to add then 
+it is a problem. We only want leaf clocks (the ones going to devices) in 
+DT unless there is only a few clocks.
 
-> Is there a "Fixes:" tag that can be applied here? Does this
-
-This parent assignment exists since the mx7d clk driver was introduced
-in commit 8f6d8094b21 ("ARM: imx: add imx7d clk tree support").
-
-> depend on some sort of DTS changes to add assigned clocks and
-> parents?
-
-All the mx7 dts users assign the ENET clocks in their dts files.
-
-As imx7s-warp is the only affected board and it will be only available
-in 4.9, I think it is OK to apply this one into clk-next if you are
-happt with it.
-
-Thanks,
-
-Fabio Estevam
+Rob
