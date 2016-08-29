@@ -1,87 +1,50 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1471230034.8551.22.camel@mtksdaap41>
-Subject: Re: [PATCH v9 06/10] clk: mediatek: Add MT2701 clock support
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>,
-	John Crispin <blogic@openwrt.org>, "Arnd Bergmann" <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, "Daniel Kurtz" <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>
-Date: Mon, 15 Aug 2016 11:00:34 +0800
-In-Reply-To: <20160813004438.GC361@codeaurora.org>
-References: <1466581229-2342-1-git-send-email-erin.lo@mediatek.com>
-	 <1466581229-2342-7-git-send-email-erin.lo@mediatek.com>
-	 <20160813004438.GC361@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clk fixes for 4.8
+Date: Tue, 30 Aug 2016 00:23:56 +0200
+Message-ID: <5043281.GVRln4Xh5N@diego>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Mike, Stephen,
 
-On Fri, 2016-08-12 at 17:44 -0700, Stephen Boyd wrote:
-> On 06/22, Erin Lo wrote:
-> > diff --git a/drivers/clk/mediatek/clk-mt2701-bdp.c b/drivers/clk/mediatek/clk-mt2701-bdp.c
-> > new file mode 100644
-> > index 0000000..81f628c
-> > --- /dev/null
-> > +++ b/drivers/clk/mediatek/clk-mt2701-bdp.c
-> > @@ -0,0 +1,140 @@
-> > +/*
-> > + * Copyright (c) 2014 MediaTek Inc.
-> > + * Author: Shunli Wang <shunli.wang@mediatek.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> 
-> Is this include used? I would expect clk-provider.h instead.
+please find below some fixes for rk3399 clocks.
+Really only wrong register bits where the manual contained (now fixed)
+mistakes and one needed critical clock.
 
-Yes, it can be replaced with clk-provider.h. I'll change it in next
-patch series.
+So if nothing stands out please pull
 
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include "clk-mtk.h"
-> > +#include "clk-gate.h"
-> > +
-> > +#include <dt-bindings/clock/mt2701-clk.h>
-> > +
-> [..]
-> > +
-> > +static void mtk_bdpsys_init(struct device_node *node)
-> > +{
-> > +	struct clk_onecell_data *clk_data;
-> > +	int r;
-> > +
-> > +	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
-> > +
-> > +	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
-> > +						clk_data);
-> > +
-> > +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> 
-> Is it possible to move to of_clk_add_hw_provider()? It can be
-> done later if that would mean changing all
-> mtk_clk_register_gates() users.
-
-I would like to keep current implementation due to test/integration
-effort. I prefer to apply clk_hw related APIs on new clk drivers instead
-of modify existing drivers.
+Thanks
+Heiko
 
 
-Best regards,
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-James
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.8-rockchip-clk-fixes1
+
+for you to fetch changes up to a45f9d41c9dd2c28e38b9b88f69c39bc63807de9:
+
+  clk: rockchip: mark aclk_emmc_noc as a critical clock on rk3399 (2016-08-24 23:44:49 +0200)
+
+----------------------------------------------------------------
+Some fixes for rk3399 register errors that revealed themself
+during actual use.
+
+----------------------------------------------------------------
+Chris Zhong (1):
+      clk: rockchip: fix rk3399 aclk_vio gate bit
+
+Xing Zheng (3):
+      clk: rockchip: fix incorrect aclk_emmc source gate bits on rk3399
+      clk: rockchip: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src on rk3399
+      clk: rockchip: mark aclk_emmc_noc as a critical clock on rk3399
+
+ drivers/clk/rockchip/clk-rk3399.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
