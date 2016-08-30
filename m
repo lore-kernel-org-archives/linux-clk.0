@@ -1,86 +1,54 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 11:08:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rob Herring <robh@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: of_clk_add_(hw_)providers multipule times for one node?
-Message-ID: <20160824180806.GE19826@codeaurora.org>
-References: <CAK7LNAQ5uRoSEEuKys9Gs-2HFAJCbmnFDjxajWfK9ng_dtZ8yw@mail.gmail.com>
- <20160804212553.GB15690@codeaurora.org>
- <CAK7LNAQfwh3Z_=VWHvDi6EXFtVLuRMFVYzKMq8qCaZ30jfCq8g@mail.gmail.com>
- <20160808233711.GA2996@codeaurora.org>
- <CAK7LNAScz7bJABbOgUuvg9J-ORaiLEfpwA3yMP+bZbLgB+S3uQ@mail.gmail.com>
- <20160810230845.GH2996@codeaurora.org>
- <CAK7LNAQ9wgpHn2LXiFfbyp_j85h8ZkGnAP39eVj+jmKczi=VSA@mail.gmail.com>
- <CAK7LNAThC-oBV5qNRNLnkV_tS7JLZDVoeEYrJo_8LsbRftELew@mail.gmail.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 30 Aug 2016 16:15:32 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+ sebastian.hesselbarth@gmail.com, andrew@lunn.ch, jason@lakedaemon.net,
+ gregory.clement@free-electrons.com, nadavh@marvell.com, alior@marvell.com,
+ tn@semihalf.com, jaz@semihalf.com
+Subject: Re: [PATCH 2/2] clk: mvebu: dynamically allocate resources in
+ Armada CP110 system controller
+Message-ID: <20160830161532.0770bdff@free-electrons.com>
+In-Reply-To: <1471933609-8456-3-git-send-email-mw@semihalf.com>
+References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+	<1471933609-8456-3-git-send-email-mw@semihalf.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNAThC-oBV5qNRNLnkV_tS7JLZDVoeEYrJo_8LsbRftELew@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-(Please trim replies)
+Hello,
 
-On 08/24, Masahiro Yamada wrote:
+On Tue, 23 Aug 2016 08:26:49 +0200, Marcin Wojtas wrote:
+> Original commit, which added support for Armada CP110 system controller
+> used global variables for storing all clock information. It worked
+> fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
+> was introduced, the data got overwritten and corrupted.
 > 
-> Looks like the whole of my series was rejected,
-> but I was not sure why the following one was rejected.
-> https://patchwork.kernel.org/patch/9236563/
+> This patch fixes the issue by allocating resources dynamically in the
+> driver probe and storing it as platform drvdata.
 > 
+> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
 
-Replying to that patch would have been better.
+Adding:
 
-> 
-> Could you explain why -EPROBE_DEFER should be returned
-> if both .get_hw and .get are missing.
+CC: <stable@vger.kernel.org>
 
-That's just a bug. Perhaps this patch would be better, and look,
-it saves 5 lines.
-
----8<----
- drivers/clk/clk.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 71cc56712666..d3d26148cdfb 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3174,19 +3174,14 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
- 			      struct of_phandle_args *clkspec)
- {
- 	struct clk *clk;
--	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
- 
--	if (provider->get_hw) {
--		hw = provider->get_hw(clkspec, provider->data);
--	} else if (provider->get) {
--		clk = provider->get(clkspec, provider->data);
--		if (!IS_ERR(clk))
--			hw = __clk_get_hw(clk);
--		else
--			hw = ERR_CAST(clk);
--	}
-+	if (provider->get_hw)
-+		return provider->get_hw(clkspec, provider->data);
- 
--	return hw;
-+	clk = provider->get(clkspec, provider->data);
-+	if (IS_ERR(clk))
-+		return ERR_CAST(clk);
-+	return __clk_get_hw(clk);
- }
- 
- struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+here would be useful.
 
 > 
-> 
-> Is there a way to register an OF clk provider without .get(_hw),
-> but fill it later or something?
-> 
+> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
 
-No.
+Other than that:
 
+Tested-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+ (on Armada 8K hardware)
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+
+Thanks a lot for fixing the crap that I initially wrote :-/
+
+Thomas
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
