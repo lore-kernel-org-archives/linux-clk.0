@@ -1,69 +1,41 @@
-Return-Path: <york.sun@nxp.com>
-From: york sun <york.sun@nxp.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, kbuild test robot <lkp@intel.com>
-CC: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, York Sun <yorksun@freescale.com>, Mike Turquette
-	<mturquette@baylibre.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch v8] driver/clk/clk-si5338: Add common clock framework
- driver for si5338
-Date: Wed, 24 Aug 2016 16:32:24 +0000
-Message-ID: <AM4PR0401MB173245474074F2BE98C1BA249AEA0@AM4PR0401MB1732.eurprd04.prod.outlook.com>
-References: <1471991933-29798-1-git-send-email-york.sun@nxp.com>
- <201608240859.Pj8tsDaR%fengguang.wu@intel.com>
- <20160824044821.GS6502@codeaurora.org>
-Reply-To: york sun <york.sun@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <Paul.Burton@imgtec.com>
+Subject: Re: [PATCH 25/26] clk: boston: Add a driver for MIPS Boston board
+ clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20160826153725.11629-1-paul.burton@imgtec.com>
+ <20160826153725.11629-26-paul.burton@imgtec.com>
+ <20160826174144.GW19826@codeaurora.org>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Michael
+ Turquette <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+From: Paul Burton <paul.burton@imgtec.com>
+Message-ID: <251ea47c-322c-12d0-4542-8159e878e9d8@imgtec.com>
+Date: Tue, 30 Aug 2016 16:06:12 +0100
 MIME-Version: 1.0
+In-Reply-To: <20160826174144.GW19826@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/23/2016 09:48 PM, Stephen Boyd wrote:=0A=
-> On 08/24, kbuild test robot wrote:=0A=
->>=0A=
->>   2827		if (drv_type < 0)=0A=
->>   2828			return drv_type;=0A=
->>   2829	=0A=
->>   2830		drv_vdd =3D  get_drv_vdd(drvdata, i);=0A=
->>   2831		if (drv_vdd < 0)=0A=
->>   2832			return drv_vdd;=0A=
->>   2833	=0A=
->>   2834		drv_trim =3D get_drv_trim(drvdata, i);=0A=
->>   2835		if (drv_trim < 0)=0A=
->>   2836			return drv_trim;=0A=
->>   2837	=0A=
->>   2838		drv_invert =3D get_drv_invert(drvdata, i);=0A=
->>   2839		if (drv_invert < 0)=0A=
->>   2840			return drv_invert;=0A=
->>   2841	=0A=
->>   2842		for (j =3D 0; drv_configs[j].description; j++) {=0A=
->>> 2843			if (drv_configs[j].fmt =3D=3D drv_type &&=0A=
->>   2844			    drv_configs[j].vdd =3D=3D drv_vdd &&=0A=
->>   2845			    drv_configs[j].trim =3D=3D drv_trim &&=0A=
->>   2846			    (drv_invert | (drv_configs[j].invert >> 2)) =3D=3D=0A=
->>   2847				((drv_configs[j].invert & 3) |=0A=
->>   2848				 (drv_configs[j].invert>>2)))=0A=
->=0A=
-> It might be better to write it as a set of continues instead so=0A=
-> that it isn't one complicated conditional=0A=
->=0A=
-> 				config =3D &drv_configs[j];=0A=
-> 				if (config->fmt !=3D drv_type)=0A=
-> 					continue;=0A=
-> 				if (config->vdd !=3D drv_vdd)=0A=
-> 					continue;=0A=
-> 				...=0A=
-> 				seq_puts()=0A=
-> 				match =3D 1;=0A=
-> 				break;=0A=
-> 				=0A=
-=0A=
-Stephen,=0A=
-=0A=
-Thanks for the suggestion. I will send an update.=0A=
-=0A=
-York=0A=
-=0A=
+On 26/08/16 18:41, Stephen Boyd wrote:
+>> +	if (err)
+>> +		pr_err("failed to add DT provider: %d\n", err);
+>> +}
+>> +CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
+> 
+> Please make this into a platform driver.
+
+Hi Stephen,
+
+The problem with this would be that we need to obtain the CPU clock rate
+fairly early during boot in order to set up the clocksource & delay loop
+etc. Using CLK_OF_DECLARE allows for that but if this were a platform
+driver my understanding is that the clocks wouldn't become available
+until some point later in boot. If I'm wrong & there's a way to avoid
+that please let me know.
+
+Also: why? If CLK_OF_DECLARE isn't liked, shouldn't that be documented
+somewhere (ideally next to the declaration of CLK_OF_DECLARE in
+include/linux/clk-provider.h)?
+
+Thanks,
+    Paul
