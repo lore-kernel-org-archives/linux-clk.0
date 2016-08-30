@@ -1,69 +1,71 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] clk: renesas: rz: Select EXTAL vs USB clock
-Date: Mon, 29 Aug 2016 23:13:58 -0400
-Message-Id: <20160830031358.19468-1-chris.brandt@renesas.com>
-In-Reply-To: <20160825190518.20764-1-chris.brandt@renesas.com>
-References: <20160825190518.20764-1-chris.brandt@renesas.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 4/5] clk: samsung: Add support for EPLL on exynos5410
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+ <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <74d97f1b-6a3a-78f1-6d96-b0d0b9717ab2@samsung.com>
+Date: Tue, 30 Aug 2016 12:36:13 +0200
+MIME-version: 1.0
+In-reply-to: <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Check the MD_CLK pin to determine the current clock mode in order to set
-the pll clock parent correctly.
+On 08/22/2016 06:31 PM, Sylwester Nawrocki wrote:
+> This patch adds code instantiating the EPLL, which is used as the
+> audio subsystem's root clock.
+> The requirement to specify the external root clock in clocks property
+> is also added.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* Switched to reading MD_CLK pin to determine mode
----
- drivers/clk/renesas/clk-rz.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+I think the requirement was there already but explained little bit
+differently:
+19 External clock:
+20
+21 There is clock that is generated outside the SoC. It
+22 is expected that it is defined using standard clock bindings
+23 with following clock-output-name:
+24
+25  - "fin_pll" - PLL input clock from XXTI
 
-diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
-index f6312c6..2fc8aae 100644
---- a/drivers/clk/renesas/clk-rz.c
-+++ b/drivers/clk/renesas/clk-rz.c
-@@ -25,6 +25,9 @@ struct rz_cpg {
- #define CPG_FRQCR	0x10
- #define CPG_FRQCR2	0x14
- 
-+#define PPR0 0xFCFE3200
-+#define PIBC0 0xFCFE7000
-+
- /* -----------------------------------------------------------------------------
-  * Initialization
-  */
-@@ -37,10 +40,20 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
- 	static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
- 
- 	if (strcmp(name, "pll") == 0) {
--		/* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
--		unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
--		const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
--
-+		unsigned int cpg_mode;
-+		const char *parent_name;
-+		void __iomem *ppr0, *pibc0;
-+
-+		/* MD_CLK is on P0_2 */
-+		ppr0 = ioremap_nocache(PPR0, 2);
-+		pibc0 = ioremap_nocache(PIBC0, 2);
-+		BUG_ON(!ppr0 || !pibc0);
-+		iowrite16(4, pibc0);	/* Enable input buffer */
-+		cpg_mode = ioread16(ppr0) & 4;
-+		iounmap(ppr0);
-+		iounmap(pibc0);
-+
-+		parent_name = cpg_mode ? "usb_x1" : "extal";
- 		mult = cpg_mode ? (32 / 4) : 30;
- 
- 		return clk_register_fixed_factor(NULL, name, parent_name, 0, mult, 1);
--- 
-2.9.2
+so you can just combine them. Driver now will require the fin_pll in two
+ways:
+1. Old lookup by "fin_pll" name.
+2. of_clk_get of yours.
+
+
+>  That ensures proper initialization order by explicitly
+> specifying dependencies in devicetree.  It prevents situations when the
+> SoC's clock controller driver has initialized, the external oscillator
+> clock is not yet registered and setting clock frequencies through
+> assigned-clock-rates property doesn't work properly due to unknown
+> external oscillator frequency.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos5410-clock.txt |  14 +++
+>  drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
+>  drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
+>  drivers/clk/samsung/clk-pll.h                      |   1 +
+>  4 files changed, 145 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> index aeab635..2aefc07 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> @@ -12,6 +12,9 @@ Required Properties:
+>  
+>  - #clock-cells: should be 1.
+>  
+> +- clocks: should contain an entry specifying the root oscillator clock
+> +  on XXTI pin (fin_pll).
+
+Combine with "external clock".
+
+Rest looks ok:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
