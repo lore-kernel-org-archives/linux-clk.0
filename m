@@ -1,332 +1,225 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 2/3 v2] clk: versatile/icst: add Integrator core module clocks
-Date: Mon, 22 Aug 2016 11:19:33 +0200
-Message-Id: <1471857574-13125-2-git-send-email-linus.walleij@linaro.org>
-In-Reply-To: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
-References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 5/5] clk: samsung: Add support for exynos5410 AUDSS clock
+ controller
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+ <1471883463-1950-6-git-send-email-s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <94535e9f-7c13-8be2-3bdf-8c3d3354c688@samsung.com>
+Date: Tue, 30 Aug 2016 12:38:32 +0200
+MIME-version: 1.0
+In-reply-to: <1471883463-1950-6-git-send-email-s.nawrocki@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The Integrator/AP and Integrator/CP have special derivatives
-of the ICST525 control registers, where some bits have been
-hardwired but others are possible to adjust, resulting in a
-control register that makes it possible to set an even,
-desired megahertz value.
+On 08/22/2016 06:31 PM, Sylwester Nawrocki wrote:
+> Exynos5410 Audio Subsystem Clock Controller, comparing to the already
+> supported by the driver IP block revisions, has additionally an I2S_MST
+> divider so a new compatible string is added.
+> While at it, the variant handling is reworked to avoid scattered testing
+> for the controller's variant.
 
-The Integrator/AP and Integrator/CP have slightly different
-layout so we support them using different compatible
-strings.
+Please split it into simple changes:
+1. Whitespace cleanup (below you do it).
+2. Variant handling rework.
+3. New compatible added.
 
-After adding these clocks, the Integrator-specific cpufreq
-driver can be switched over to use the generic operating
-point device tree cpufreq driver.
+This would make easy to spot changes and new features.
 
-Instead of simply writing a value to the oscillator control
-register we switch to the more elaborate method of providing
-a bitmask and use regmap_update_bits() to poke the right bits
-for the desired frequency, this is needed since these control
-registers sometimes control more than one clock.
+Best regards,
+Krzysztof
 
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Restore a pr_debug() from pr_info() that was used during
-  development.
----
- drivers/clk/versatile/clk-icst.c | 174 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 160 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 5e9b65278e4c..8f06473b72ff 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -27,6 +27,21 @@
- /* Magic unlocking token used on all Versatile boards */
- #define VERSATILE_LOCK_VAL	0xA05F
- 
-+#define VERSATILE_AUX_OSC_BITS 0x7FFFF
-+#define INTEGRATOR_AP_CM_BITS 0xFF
-+#define INTEGRATOR_CP_CM_CORE_BITS 0x7FF
-+#define INTEGRATOR_CP_CM_MEM_BITS 0x7FF000
-+
-+/**
-+ * enum icst_control_type - the type of ICST control register
-+ */
-+enum icst_control_type {
-+	ICST_VERSATILE, /* The standard type, all control bits available */
-+	ICST_INTEGRATOR_AP_CM, /* Only 8 bits of VDW available */
-+	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
-+	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
-+};
-+
- /**
-  * struct clk_icst - ICST VCO clock wrapper
-  * @hw: corresponding clock hardware entry
-@@ -34,6 +49,7 @@
-  * @lockreg: VCO lock register address
-  * @params: parameters for this ICST instance
-  * @rate: current rate
-+ * @ctype: the type of control register for the ICST
-  */
- struct clk_icst {
- 	struct clk_hw hw;
-@@ -42,6 +58,7 @@ struct clk_icst {
- 	u32 lockreg_off;
- 	struct icst_params *params;
- 	unsigned long rate;
-+	enum icst_control_type ctype;
- };
- 
- #define to_icst(_hw) container_of(_hw, struct clk_icst, hw)
-@@ -59,6 +76,44 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
- 	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
- 	if (ret)
- 		return ret;
-+
-+	/*
-+	 * The Integrator/AP core clock can only access the low eight
-+	 * bits of the v PLL divider. Bit 8 is tied low and always zero,
-+	 * r is hardwired to 22 and output divider s is hardwired to 1
-+	 * (divide by 2) according to the document
-+	 * "Integrator CM926EJ-S, CM946E-S, CM966E-S, CM1026EJ-S and
-+	 * CM1136JF-S User Guide" ARM DUI 0138E, page 3-13 thru 3-14.
-+	 */
-+	if (icst->ctype == ICST_INTEGRATOR_AP_CM) {
-+		vco->v = val & INTEGRATOR_AP_CM_BITS;
-+		vco->r = 22;
-+		vco->s = 1;
-+		return 0;
-+	}
-+
-+	/*
-+	 * The Integrator/CP core clock can access the low eight bits
-+	 * of the v PLL divider. Bit 8 is tied low and always zero,
-+	 * r is hardwired to 22 and the output divider s is accessible
-+	 * in bits 8 thru 10 according to the document
-+	 * "Integrator/CM940T, CM920T, CM740T, and CM720T User Guide"
-+	 * ARM DUI 0157A, page 3-20 thru 3-23 and 4-10.
-+	 */
-+	if (icst->ctype == ICST_INTEGRATOR_CP_CM_CORE) {
-+		vco->v = val & 0xFF;
-+		vco->r = 22;
-+		vco->s = (val >> 8) & 7;
-+		return 0;
-+	}
-+
-+	if (icst->ctype == ICST_INTEGRATOR_CP_CM_MEM) {
-+		vco->v = (val >> 12) & 0xFF;
-+		vco->r = 22;
-+		vco->s = (val >> 20) & 7;
-+		return 0;
-+	}
-+
- 	vco->v = val & 0x1ff;
- 	vco->r = (val >> 9) & 0x7f;
- 	vco->s = (val >> 16) & 03;
-@@ -72,22 +127,52 @@ static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
-  */
- static int vco_set(struct clk_icst *icst, struct icst_vco vco)
- {
-+	u32 mask;
- 	u32 val;
- 	int ret;
- 
--	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
--	if (ret)
--		return ret;
-+	/* Mask the bits used by the VCO */
-+	switch (icst->ctype) {
-+	case ICST_INTEGRATOR_AP_CM:
-+		mask = INTEGRATOR_AP_CM_BITS;
-+		val = vco.v & 0xFF;
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.s != 1)
-+			pr_err("ICST error: tried to use VOD != 1\n");
-+		if (vco.r != 22)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
-+	case ICST_INTEGRATOR_CP_CM_CORE:
-+		mask = INTEGRATOR_CP_CM_CORE_BITS; /* Uses 12 bits */
-+		val = (vco.v & 0xFF) | vco.s << 8;
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.r != 22)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
-+	case ICST_INTEGRATOR_CP_CM_MEM:
-+		mask = INTEGRATOR_CP_CM_MEM_BITS; /* Uses 12 bits */
-+		val = ((vco.v & 0xFF) << 12) | (vco.s << 20);
-+		if (vco.v & 0x100)
-+			pr_err("ICST error: tried to set bit 8 of VDW\n");
-+		if (vco.r != 22)
-+			pr_err("ICST error: tried to use RDW != 22\n");
-+		break;
-+	default:
-+		/* Regular auxilary oscillator */
-+		mask = VERSATILE_AUX_OSC_BITS;
-+		val = vco.v | (vco.r << 9) | (vco.s << 16);
-+		break;
-+	}
- 
--	/* Mask the 18 bits used by the VCO */
--	val &= ~0x7ffff;
--	val |= vco.v | (vco.r << 9) | (vco.s << 16);
-+	pr_debug("ICST: new val = 0x%08x\n", val);
- 
- 	/* This magic unlocks the VCO so it can be controlled */
- 	ret = regmap_write(icst->map, icst->lockreg_off, VERSATILE_LOCK_VAL);
- 	if (ret)
- 		return ret;
--	ret = regmap_write(icst->map, icst->vcoreg_off, val);
-+	ret = regmap_update_bits(icst->map, icst->vcoreg_off, mask, val);
- 	if (ret)
- 		return ret;
- 	/* This locks the VCO again */
-@@ -121,6 +206,25 @@ static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_icst *icst = to_icst(hw);
- 	struct icst_vco vco;
- 
-+	if (icst->ctype == ICST_INTEGRATOR_AP_CM ||
-+	    icst->ctype == ICST_INTEGRATOR_CP_CM_CORE) {
-+		if (rate <= 12000000)
-+			return 12000000;
-+		if (rate >= 160000000)
-+			return 160000000;
-+		/* Slam to closest megahertz */
-+		return DIV_ROUND_CLOSEST(rate, 1000000) * 1000000;
-+	}
-+
-+	if (icst->ctype == ICST_INTEGRATOR_CP_CM_MEM) {
-+		if (rate <= 6000000)
-+			return 6000000;
-+		if (rate >= 66000000)
-+			return 66000000;
-+		/* Slam to closest 0.5 megahertz */
-+		return DIV_ROUND_CLOSEST(rate, 500000) * 500000;
-+	}
-+
- 	vco = icst_hz_to_vco(icst->params, rate);
- 	return icst_hz(icst->params, vco);
- }
-@@ -148,7 +252,8 @@ static struct clk *icst_clk_setup(struct device *dev,
- 				  const struct clk_icst_desc *desc,
- 				  const char *name,
- 				  const char *parent_name,
--				  struct regmap *map)
-+				  struct regmap *map,
-+				  enum icst_control_type ctype)
- {
- 	struct clk *clk;
- 	struct clk_icst *icst;
-@@ -178,6 +283,7 @@ static struct clk *icst_clk_setup(struct device *dev,
- 	icst->params = pclone;
- 	icst->vcoreg_off = desc->vco_offset;
- 	icst->lockreg_off = desc->lock_offset;
-+	icst->ctype = ctype;
- 
- 	clk = clk_register(dev, &icst->hw);
- 	if (IS_ERR(clk)) {
-@@ -206,7 +312,8 @@ struct clk *icst_clk_register(struct device *dev,
- 		pr_err("could not initialize ICST regmap\n");
- 		return ERR_CAST(map);
- 	}
--	return icst_clk_setup(dev, desc, name, parent_name, map);
-+	return icst_clk_setup(dev, desc, name, parent_name, map,
-+			      ICST_VERSATILE);
- }
- EXPORT_SYMBOL_GPL(icst_clk_register);
- 
-@@ -239,6 +346,28 @@ static const struct icst_params icst307_params = {
- 	.idx2s		= icst307_idx2s,
- };
- 
-+/**
-+ * The core modules on the Integrator/AP and Integrator/CP have
-+ * especially crippled ICST525 control.
-+ */
-+static const struct icst_params icst525_apcp_cm_params = {
-+	.vco_max	= ICST525_VCO_MAX_5V,
-+	.vco_min	= ICST525_VCO_MIN,
-+	/* Minimum 12 MHz, VDW = 4 */
-+	.vd_min		= 12,
-+	/*
-+	 * Maximum 160 MHz, VDW = 152 for all core modules, but
-+	 * CM926EJ-S, CM1026EJ-S and CM1136JF-S can actually
-+	 * go to 200 MHz (max VDW = 192).
-+	 */
-+	.vd_max		= 192,
-+	/* r is hardcoded to 22 and this is the actual divisor, +2 */
-+	.rd_min		= 24,
-+	.rd_max		= 24,
-+	.s2div		= icst525_s2div,
-+	.idx2s		= icst525_idx2s,
-+};
-+
- static void __init of_syscon_icst_setup(struct device_node *np)
- {
- 	struct device_node *parent;
-@@ -247,6 +376,7 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 	const char *name = np->name;
- 	const char *parent_name;
- 	struct clk *regclk;
-+	enum icst_control_type ctype;
- 
- 	/* We do not release this reference, we are using it perpetually */
- 	parent = of_get_parent(np);
-@@ -269,11 +399,22 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 		return;
- 	}
- 
--	if (of_device_is_compatible(np, "arm,syscon-icst525"))
-+	if (of_device_is_compatible(np, "arm,syscon-icst525")) {
- 		icst_desc.params = &icst525_params;
--	else if (of_device_is_compatible(np, "arm,syscon-icst307"))
-+		ctype = ICST_VERSATILE;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst307")) {
- 		icst_desc.params = &icst307_params;
--	else {
-+		ctype = ICST_VERSATILE;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorap-cm")) {
-+		icst_desc.params = &icst525_apcp_cm_params;
-+		ctype = ICST_INTEGRATOR_AP_CM;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-core")) {
-+		icst_desc.params = &icst525_apcp_cm_params;
-+		ctype = ICST_INTEGRATOR_CP_CM_CORE;
-+	} else if (of_device_is_compatible(np, "arm,syscon-icst525-integratorcp-cm-mem")) {
-+		icst_desc.params = &icst525_apcp_cm_params;
-+		ctype = ICST_INTEGRATOR_CP_CM_MEM;
-+	} else {
- 		pr_err("unknown ICST clock %s\n", name);
- 		return;
- 	}
-@@ -281,7 +422,7 @@ static void __init of_syscon_icst_setup(struct device_node *np)
- 	/* Parent clock name is not the same as node parent */
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
--	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map);
-+	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map, ctype);
- 	if (IS_ERR(regclk)) {
- 		pr_err("error setting up syscon ICST clock %s\n", name);
- 		return;
-@@ -294,5 +435,10 @@ CLK_OF_DECLARE(arm_syscon_icst525_clk,
- 	       "arm,syscon-icst525", of_syscon_icst_setup);
- CLK_OF_DECLARE(arm_syscon_icst307_clk,
- 	       "arm,syscon-icst307", of_syscon_icst_setup);
--
-+CLK_OF_DECLARE(arm_syscon_integratorap_cm_clk,
-+	       "arm,syscon-icst525-integratorap-cm", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_integratorcp_cm_core_clk,
-+	       "arm,syscon-icst525-integratorcp-cm-core", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_integratorcp_cm_mem_clk,
-+	       "arm,syscon-icst525-integratorcp-cm-mem", of_syscon_icst_setup);
- #endif
--- 
-2.7.4
+> The I2S_MST divider clock will be added in a subsequent patch.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |  4 +-
+>  drivers/clk/samsung/clk-exynos-audss.c             | 78 ++++++++++++----------
+>  2 files changed, 47 insertions(+), 35 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> index 180e883..0c3d601 100644
+> --- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> +++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> @@ -10,6 +10,8 @@ Required Properties:
+>    - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
+>    - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
+>      SoCs.
+> +  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
+> +    SoCs.
+>    - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
+>      SoCs.
+>  - reg: physical base address and length of the controller's register set.
+> @@ -91,5 +93,5 @@ i2s0: i2s@03830000 {
+>  		<&clock_audss EXYNOS_MOUT_AUDSS>,
+>  		<&clock_audss EXYNOS_MOUT_I2S>;
+>  	clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
+> -	"mout_audss", "mout_i2s";
+> +		      "mout_audss", "mout_i2s";
+>  };
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index bdf8b97..328260c 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -14,18 +14,13 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+>  #include <linux/syscore_ops.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  
+>  #include <dt-bindings/clock/exynos-audss-clk.h>
+>  
+> -enum exynos_audss_clk_type {
+> -	TYPE_EXYNOS4210,
+> -	TYPE_EXYNOS5250,
+> -	TYPE_EXYNOS5420,
+> -};
+> -
+>  static DEFINE_SPINLOCK(lock);
+>  static struct clk **clk_table;
+>  static void __iomem *reg_base;
+> @@ -44,9 +39,9 @@ static struct clk *epll;
+>  
+>  #ifdef CONFIG_PM_SLEEP
+>  static unsigned long reg_save[][2] = {
+> -	{ASS_CLK_SRC,  0},
+> -	{ASS_CLK_DIV,  0},
+> -	{ASS_CLK_GATE, 0},
+> +	{ ASS_CLK_SRC,  0 },
+> +	{ ASS_CLK_DIV,  0 },
+> +	{ ASS_CLK_GATE, 0 },
+>  };
+>  
+>  static int exynos_audss_clk_suspend(void)
+> @@ -73,14 +68,37 @@ static struct syscore_ops exynos_audss_clk_syscore_ops = {
+>  };
+>  #endif /* CONFIG_PM_SLEEP */
+>  
+> +struct exynos_audss_clk_drvdata {
+> +	unsigned int has_adma_clk:1;
+> +	unsigned int enable_epll:1;
+> +	unsigned int num_clks;
+> +};
+> +
+> +static const struct exynos_audss_clk_drvdata exynos4210_drvdata = {
+> +	.num_clks	= EXYNOS_AUDSS_MAX_CLKS - 1,
+> +};
+> +
+> +static const struct exynos_audss_clk_drvdata exynos5420_drvdata = {
+> +	.num_clks	= EXYNOS_AUDSS_MAX_CLKS,
+> +	.has_adma_clk	= 1,
+> +	.enable_epll	= 1,
+> +};
+> +
+>  static const struct of_device_id exynos_audss_clk_of_match[] = {
+> -	{ .compatible = "samsung,exynos4210-audss-clock",
+> -	  .data = (void *)TYPE_EXYNOS4210, },
+> -	{ .compatible = "samsung,exynos5250-audss-clock",
+> -	  .data = (void *)TYPE_EXYNOS5250, },
+> -	{ .compatible = "samsung,exynos5420-audss-clock",
+> -	  .data = (void *)TYPE_EXYNOS5420, },
+> -	{},
+> +	{
+> +		.compatible	= "samsung,exynos4210-audss-clock",
+> +		.data		= &exynos4210_drvdata,
+> +	}, {
+> +		.compatible	= "samsung,exynos5250-audss-clock",
+> +		.data		= &exynos4210_drvdata,
+> +	}, {
+> +		.compatible	= "samsung,exynos5410-audss-clock",
+> +		.data		= &exynos4210_drvdata,
+> +	}, {
+> +		.compatible	= "samsung,exynos5420-audss-clock",
+> +		.data		= &exynos5420_drvdata,
+> +	},
+> +	{ },
+>  };
+>  
+>  static void exynos_audss_clk_teardown(void)
+> @@ -106,19 +124,17 @@ static void exynos_audss_clk_teardown(void)
+>  /* register exynos_audss clocks */
+>  static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  {
+> -	int i, ret = 0;
+> -	struct resource *res;
+>  	const char *mout_audss_p[] = {"fin_pll", "fout_epll"};
+>  	const char *mout_i2s_p[] = {"mout_audss", "cdclk0", "sclk_audio0"};
+>  	const char *sclk_pcm_p = "sclk_pcm0";
+>  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+> -	const struct of_device_id *match;
+> -	enum exynos_audss_clk_type variant;
+> +	const struct exynos_audss_clk_drvdata *variant;
+> +	struct resource *res;
+> +	int i, ret = 0;
+>  
+> -	match = of_match_node(exynos_audss_clk_of_match, pdev->dev.of_node);
+> -	if (!match)
+> +	variant = of_device_get_match_data(&pdev->dev);
+> +	if (!variant)
+>  		return -EINVAL;
+> -	variant = (enum exynos_audss_clk_type)match->data;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	reg_base = devm_ioremap_resource(&pdev->dev, res);
+> @@ -126,7 +142,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		dev_err(&pdev->dev, "failed to map audss registers\n");
+>  		return PTR_ERR(reg_base);
+>  	}
+> -	/* EPLL don't have to be enabled for boards other than Exynos5420 */
+> +
+>  	epll = ERR_PTR(-ENODEV);
+>  
+>  	clk_table = devm_kzalloc(&pdev->dev,
+> @@ -136,10 +152,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	clk_data.clks = clk_table;
+> -	if (variant == TYPE_EXYNOS5420)
+> -		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
+> -	else
+> -		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS - 1;
+> +	clk_data.clk_num = variant->num_clks;
+>  
+>  	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
+>  	pll_in = devm_clk_get(&pdev->dev, "pll_in");
+> @@ -148,13 +161,13 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  	if (!IS_ERR(pll_in)) {
+>  		mout_audss_p[1] = __clk_get_name(pll_in);
+>  
+> -		if (variant == TYPE_EXYNOS5420) {
+> +		if (variant->enable_epll) {
+>  			epll = pll_in;
+>  
+>  			ret = clk_prepare_enable(epll);
+>  			if (ret) {
+>  				dev_err(&pdev->dev,
+> -						"failed to prepare the epll clock\n");
+> +					"failed to prepare the epll clock\n");
+>  				return ret;
+>  			}
+>  		}
+> @@ -210,7 +223,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  				sclk_pcm_p, CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+>  
+> -	if (variant == TYPE_EXYNOS5420) {
+> +	if (variant->has_adma_clk) {
+>  		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
+>  				"dout_srp", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 9, 0, &lock);
+> @@ -234,9 +247,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  #ifdef CONFIG_PM_SLEEP
+>  	register_syscore_ops(&exynos_audss_clk_syscore_ops);
+>  #endif
+> -
+> -	dev_info(&pdev->dev, "setup completed\n");
+> -
+>  	return 0;
+>  
+>  unregister:
+> 
