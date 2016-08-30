@@ -1,34 +1,30 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:27:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 18/34] clk: mb86s7x: Migrate to clk_hw based OF and
- registration APIs
-Message-ID: <20160825002706.GZ19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-19-stephen.boyd@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-19-stephen.boyd@linaro.org>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/5] clk: samsung: exynos5410: Expose the peripheral DMA
+ gate clocks
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+ <1471883463-1950-3-git-send-email-s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <bf796084-3187-7095-8a9c-022153198f9c@samsung.com>
+Date: Tue, 30 Aug 2016 11:56:07 +0200
+MIME-version: 1.0
+In-reply-to: <1471883463-1950-3-git-send-email-s.nawrocki@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
+On 08/22/2016 06:31 PM, Sylwester Nawrocki wrote:
+> These clocks are needed in order to use the PL330 peripheral
+> DMA controllers.
 > 
-> Cc: Jassi Brar <jaswinder.singh@linaro.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
+>  drivers/clk/samsung/clk-exynos5410.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Applied to clk-next, but this driver doesn't even compile in
-mainline...
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
