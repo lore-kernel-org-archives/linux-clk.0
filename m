@@ -1,47 +1,55 @@
-Return-Path: <moinejf@free.fr>
-Date: Mon, 8 Aug 2016 20:15:27 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai
- <wens@csie.org>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 3/7] clk: sunxi: add generic multi-parent bus clock
- gates driver
-Message-Id: <20160808201527.62ec34beb19b86dcfd3dbf03@free.fr>
-In-Reply-To: <20160808172149.30861-4-andre.przywara@arm.com>
-References: <20160808172149.30861-1-andre.przywara@arm.com>
-	<20160808172149.30861-4-andre.przywara@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and
+ EPLL clocks
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+ <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
+Date: Tue, 30 Aug 2016 11:54:16 +0200
+MIME-version: 1.0
+In-reply-to: <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon,  8 Aug 2016 18:21:45 +0100
-Andre Przywara <andre.przywara@arm.com> wrote:
+On 08/22/2016 06:30 PM, Sylwester Nawrocki wrote:
+> The PDMA{0,1} and EPLL clock IDs are added separately in this
+> patch so the patch can be merged to the arm-soc tree as dependency.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  include/dt-bindings/clock/exynos5410.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+> index 85b467b..a74442a 100644
+> --- a/include/dt-bindings/clock/exynos5410.h
+> +++ b/include/dt-bindings/clock/exynos5410.h
+> @@ -19,6 +19,7 @@
+>  #define CLK_FOUT_MPLL		4
+>  #define CLK_FOUT_BPLL		5
+>  #define CLK_FOUT_KPLL		6
+> +#define CLK_FOUT_EPLL		7
+>  
+>  /* gate for special clocks (sclk) */
+>  #define CLK_SCLK_UART0		128
+> @@ -48,6 +49,8 @@
+>  #define CLK_USI3		268
+>  #define CLK_UART3		260
+>  #define CLK_PWM			279
+> +#define CLK_PDMA0		280
+> +#define CLK_PDMA1		281
 
-> The Allwinner H3 SoC introduced bus clock gates with potentially
-> different parents per clock gate register. The H3 driver chose to
-> hardcode the actual parent clock relation in the code.
-> Add a new driver (which has the potential to drive the H3 and also
-> the simple clock gates as well) which uses the power of DT to describe
-> this relationship in an elegant and flexible way.
-> Using one subnode for every parent clock we get away with a single
-> DT compatible match, which can be used as a fallback value in the
-> actual DTs without the need to add specific compatible strings to the
-> code.  This avoids adding a new driver or function for every new SoC.
+How about making the IDs the same as in exynos5420? This way those
+drivers could be merged someday in the future (if someone would be
+bored...).
 
-The 'parent's of the bus gates are of no interest.
-They are supposed to be (no clear documentation) apb1, apb2, ahb1 and
-ahb2, but, as you well noticed in the patch 5/7, these clocks are fixed
-and have no gate. Some of them are parents of real clocks, but they
-don't bring anything to the bus gates of the other clocks.
+Best regards,
+Krzysztof
 
-As I wrote previously, the simplest is to ungate/gate the clocks in
-both the bus and clock registers on clk_prepare/unprepare.
-Then, your 'multi-bus-gates' would be simply a generic 'multi-gates'.
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+>  #define CLK_MCT			315
+>  #define CLK_WDT			316
+>  #define CLK_RTC			317
+> 
