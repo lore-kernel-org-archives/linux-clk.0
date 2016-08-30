@@ -1,35 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 17:36:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: Re: [PATCH 33/34] clk: vt8500: Migrate to clk_hw based registration
- APIs
-Message-ID: <20160825003625.GH19826@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-34-stephen.boyd@linaro.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 30 Aug 2016 15:10:10 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+ andrew@lunn.ch, jason@lakedaemon.net, tn@semihalf.com, nadavh@marvell.com,
+ alior@marvell.com, jaz@semihalf.com, gregory.clement@free-electrons.com,
+ sebastian.hesselbarth@gmail.com
+Subject: Re: [PATCH 1/2] clk: mvebu: set flags in CP110 gate clock
+Message-ID: <20160830151010.0f85dfd7@free-electrons.com>
+In-Reply-To: <1471933609-8456-2-git-send-email-mw@semihalf.com>
+References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+	<1471933609-8456-2-git-send-email-mw@semihalf.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160601231533.9354-34-stephen.boyd@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Stephen Boyd wrote:
-> Now that we have clk_hw based provider APIs to register clks, we
-> can get rid of struct clk pointers while registering clks in
-> these drivers, allowing us to move closer to a clear split of
-> consumer and provider clk APIs.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Tony Prisk <linux@prisktech.co.nz>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
+Hello,
 
-Applied to clk-next
+On Tue, 23 Aug 2016 08:26:48 +0200, Marcin Wojtas wrote:
 
+> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+> index 7fa42d6..0835e1d 100644
+> --- a/drivers/clk/mvebu/cp110-system-controller.c
+> +++ b/drivers/clk/mvebu/cp110-system-controller.c
+> @@ -144,6 +144,7 @@ static struct clk *cp110_register_gate(const char *name,
+>  
+>  	init.name = name;
+>  	init.ops = &cp110_gate_ops;
+> +	init.flags = CLK_IS_BASIC;
+
+Is this really correct?
+
+The documentation for CLK_IS_BASIC is pretty slim, but it says:
+
+   #define CLK_IS_BASIC            BIT(5) /* Basic clk, can't do a to_clk_foo() */
+
+However, we *do* have a to_clk_*() macro in this driver:
+
+struct cp110_gate_clk {
+        struct clk_hw hw;
+        struct regmap *regmap;
+        u8 bit_idx;
+};
+
+#define to_cp110_gate_clk(clk) container_of(clk, struct cp110_gate_clk, hw)
+
+If you read the commit log of commit
+f7d8caadfd2813cbada82ce9041b13c38e8e5282, which introduced the flag, it
+says:
+
+    clk: Add CLK_IS_BASIC flag to identify basic clocks
+    
+    Most platforms end up using a mix of basic clock types and
+    some which use clk_hw_foo struct for filling in custom platform
+    information when the clocks don't fit into basic types supported.
+    
+    In platform code, its useful to know if a clock is using a basic
+    type or clk_hw_foo, which helps platforms know if they can
+    safely use to_clk_hw_foo to derive the clk_hw_foo pointer from
+    clk_hw.
+    
+    Mark all basic clocks with a CLK_IS_BASIC flag.
+    
+    Signed-off-by: Rajendra Nayak <rnayak@ti.com>
+    Signed-off-by: Mike Turquette <mturquette@linaro.org>
+
+We are in the case where we have our own clk_hw_foo structure, and a
+to_clk_hw_foo macro to derive the clk_hw_foo from clk_hw.
+
+According to this, the CP110 clocks are *not* basic clocks, and
+therefore we shouldn't have this flag. Perhaps just the memset() is
+missing.
+
+Thanks,
+
+Thomas
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
