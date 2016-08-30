@@ -1,94 +1,140 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com"
+	<mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "pdeschrijver@nvidia.com"
+	<pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Tue, 30 Aug 2016 15:02:14 +0000
+Message-ID: <1472569333.5703.24.camel@toradex.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+	 <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160830031358.19468-1-chris.brandt@renesas.com>
-References: <20160825190518.20764-1-chris.brandt@renesas.com> <20160830031358.19468-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Aug 2016 09:23:06 +0200
-Message-ID: <CAMuHMdUEK47vKF2qO-_p4i0xEqnWG9Vu2AH_1f=eQ_mz4mwDjA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: rz: Select EXTAL vs USB clock
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
-
-On Tue, Aug 30, 2016 at 5:13 AM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Check the MD_CLK pin to determine the current clock mode in order to set
-> the pll clock parent correctly.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-
-Thanks for your patch!
-
-> ---
-> v2:
-> * Switched to reading MD_CLK pin to determine mode
-> ---
->  drivers/clk/renesas/clk-rz.c | 21 +++++++++++++++++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
-> index f6312c6..2fc8aae 100644
-> --- a/drivers/clk/renesas/clk-rz.c
-> +++ b/drivers/clk/renesas/clk-rz.c
-> @@ -25,6 +25,9 @@ struct rz_cpg {
->  #define CPG_FRQCR      0x10
->  #define CPG_FRQCR2     0x14
->
-> +#define PPR0 0xFCFE3200
-> +#define PIBC0 0xFCFE7000
-> +
->  /* -----------------------------------------------------------------------------
->   * Initialization
->   */
-> @@ -37,10 +40,20 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
->         static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
->
->         if (strcmp(name, "pll") == 0) {
-> -               /* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
-> -               unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
-> -               const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
-> -
-> +               unsigned int cpg_mode;
-> +               const char *parent_name;
-> +               void __iomem *ppr0, *pibc0;
-> +
-> +               /* MD_CLK is on P0_2 */
-> +               ppr0 = ioremap_nocache(PPR0, 2);
-> +               pibc0 = ioremap_nocache(PIBC0, 2);
-> +               BUG_ON(!ppr0 || !pibc0);
-> +               iowrite16(4, pibc0);    /* Enable input buffer */
-> +               cpg_mode = ioread16(ppr0) & 4;
-> +               iounmap(ppr0);
-> +               iounmap(pibc0);
-> +
-> +               parent_name = cpg_mode ? "usb_x1" : "extal";
-
-If you would use "cpg_mode = (ioread16(ppr0) >> 2) & 1;", the value of
-cpg_mode would be in sync with Table 6.2. Then you can avoid relying on actual
-clock names in DT, and keep
-
-    parent_name = of_clk_get_parent_name(np, cpg_mode);
-
-The bindings already dictate the parent clocks must match clock modes in the
-datasheet, i.e. Table 6.2.
-
-For easier maintenance, I would factor out reading the mode pins in a separate
-function. When a proper GPIO driver is added, the function can be removed,
-and its callsite updated.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gV2VkLCAyMDE2LTA4LTI0IGF0IDE1OjM3ICswMjAwLCBNaXJ6YSBLcmFrIHdyb3RlOg0KPiBG
+cm9tOiBNaXJ6YSBLcmFrIDxtaXJ6YS5rcmFrQGdtYWlsLmNvbT4NCj4gDQo+IERvY3VtZW50IHRo
+ZSBkZXZpY2V0cmVlIGJpbmRpbmdzIGZvciB0aGUgR2VuZXJpYyBNZW1vcnkgSW50ZXJmYWNlDQo+
+IChHTUkpDQo+IGJ1cyBkcml2ZXIgZm91bmQgb24gVGVncmEgU09Dcy4NCj4gDQo+IFNpZ25lZC1v
+ZmYtYnk6IE1pcnphIEtyYWsgPG1pcnphLmtyYWtAZ21haWwuY29tPg0KPiAtLS0NCj4gQ2hhbmdl
+cyBpbiB2MjoNCj4gLSBVcGRhdGVkIGV4YW1wbGVzIGFuZCBzb21lIGluZm9ybWF0aW9uIGJhc2Vk
+IG9uIGNvbW1lbnRzIGZyb20gSm9uDQo+IEh1bnRlci4NCj4gDQo+IMKgLi4uL2RldmljZXRyZWUv
+YmluZGluZ3MvYnVzL252aWRpYSx0ZWdyYTIwLWdtaS50eHQgfCAxMzINCj4gKysrKysrKysrKysr
+KysrKysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDEzMiBpbnNlcnRpb25zKCspDQo+IMKgY3Jl
+YXRlIG1vZGUgMTAwNjQ0DQo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9idXMv
+bnZpZGlhLHRlZ3JhMjAtZ21pLnR4dA0KPiANCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9idXMvbnZpZGlhLHRlZ3JhMjAtDQo+IGdtaS50eHQgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYnVzL252aWRpYSx0ZWdyYTIwLQ0KPiBnbWku
+dHh0DQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4IDAwMDAwMDAuLjhjMWUxNWYNCj4g
+LS0tIC9kZXYvbnVsbA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+YnVzL252aWRpYSx0ZWdyYTIwLWdtaS50eHQNCj4gQEAgLTAsMCArMSwxMzIgQEANCj4gK0Rldmlj
+ZSB0cmVlIGJpbmRpbmdzIGZvciBOVklESUEgVGVncmEgR2VuZXJpYyBNZW1vcnkgSW50ZXJmYWNl
+IGJ1cw0KPiArDQo+ICtUaGUgR2VuZXJpYyBNZW1vcnkgSW50ZXJmYWNlIGJ1cyBlbmFibGVzIG1l
+bW9yeSB0cmFuc2ZlcnMgYmV0d2Vlbg0KPiBpbnRlcm5hbCBhbmQNCj4gK2V4dGVybmFsIG1lbW9y
+eS4gQ2FuIGJlIHVzZWQgdG8gYXR0YWNoIHZhcmlvdXMgaGlnaCBzcGVlZCBkZXZpY2VzDQo+IHN1
+Y2ggYXMNCj4gK3N5bmNocm9ub3VzL2FzeW5jaHJvbm91cyBOT1IsIEZQR0EsIFVBUlRTIGFuZCBt
+b3JlLg0KPiArDQo+ICtUaGUgYWN0dWFsIGRldmljZXMgYXJlIGluc3RhbnRpYXRlZCBmcm9tIHRo
+ZSBjaGlsZCBub2RlcyBvZiBhIEdNSQ0KPiBub2RlLg0KPiArDQo+ICtSZXF1aXJlZCBwcm9wZXJ0
+aWVzOg0KPiArIC0gY29tcGF0aWJsZSA6IFNob3VsZCBjb250YWluIG9uZSBvZiB0aGUgZm9sbG93
+aW5nOg0KPiArwqDCoMKgwqDCoMKgwqDCoEZvciBUZWdyYTIwIG11c3QgY29udGFpbiAibnZpZGlh
+LHRlZ3JhMjAtZ21pIi4NCj4gK8KgwqDCoMKgwqDCoMKgwqBGb3IgVGVncmEzMCBtdXN0IGNvbnRh
+aW4gIm52aWRpYSx0ZWdyYTMwLWdtaSIuDQo+ICsgLSByZWc6IFNob3VsZCBjb250YWluIEdNSSBj
+b250cm9sbGVyIHJlZ2lzdGVycyBsb2NhdGlvbiBhbmQgbGVuZ3RoLg0KPiArIC0gY2xvY2tzOiBN
+dXN0IGNvbnRhaW4gYW4gZW50cnkgZm9yIGVhY2ggZW50cnkgaW4gY2xvY2stbmFtZXMuDQo+ICsg
+LSBjbG9jay1uYW1lczogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dpbmcgZW50cmllczogImdtaSIN
+Cj4gKyAtIHJlc2V0cyA6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBpbiBy
+ZXNldC1uYW1lcy4NCj4gKyAtIHJlc2V0LW5hbWVzIDogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dp
+bmcgZW50cmllczogImdtaSINCj4gKyAtICNhZGRyZXNzLWNlbGxzOiBUaGUgbnVtYmVyIG9mIGNl
+bGxzIHVzZWQgdG8gcmVwcmVzZW50IHBoeXNpY2FsDQo+IGJhc2UNCj4gK8KgwqDCoGFkZHJlc3Nl
+cyBpbiB0aGUgR01JIGFkZHJlc3Mgc3BhY2UuIFNob3VsZCBiZSAxLg0KPiArIC0gI3NpemUtY2Vs
+bHM6IFRoZSBudW1iZXIgb2YgY2VsbHMgdXNlZCB0byByZXByZXNlbnQgdGhlIHNpemUgb2YgYW4N
+Cj4gYWRkcmVzcw0KPiArwqDCoMKgcmFuZ2UgaW4gdGhlIEdNSSBhZGRyZXNzIHNwYWNlLiBTaG91
+bGQgYmUgMS4NCj4gKyAtIHJhbmdlczogTXVzdCBiZSBzZXQgdXAgdG8gcmVmbGVjdCB0aGUgbWVt
+b3J5IGxheW91dCB3aXRoIHRocmVlDQo+IGludGVnZXIgdmFsdWVzDQo+ICvCoMKgwqBmb3IgZWFj
+aCBjaGlwLXNlbGVjdCBsaW5lIGluIHVzZSAob25seSBvbmUgZW50cnkgaXMgc3VwcG9ydGVkLA0K
+PiBzZWUgYmVsb3cNCj4gK8KgwqDCoGNvbW1lbnRzKToNCj4gK8KgwqDCoDxjcy1udW1iZXI+IDxw
+aHlzaWNhbCBhZGRyZXNzIG9mIG1hcHBpbmc+IDxzaXplPg0KPiArDQo+ICtOb3RlIHRoYXQgdGhl
+IEdNSSBjb250cm9sbGVyIGRvZXMgbm90IGhhdmUgYW55IGludGVybmFsIGNoaXAtc2VsZWN0DQo+
+IGFkZHJlc3MNCj4gK2RlY29kaW5nLCBiZWNhdXNlIG9mIHRoYXQgY2hpcC1zZWxlY3RzIGVpdGhl
+ciBuZWVkIHRvIGJlIG1hbmFnZWQgdmlhDQo+IHNvZnR3YXJlDQo+ICtvciBieSBlbXBsb3lpbmcg
+ZXh0ZXJuYWwgY2hpcC1zZWxlY3QgZGVjb2RpbmcgbG9naWMuDQo+ICsNCj4gK0lmIGV4dGVybmFs
+IGNoaXAtc2VsZWN0IGxvZ2ljIGlzIHVzZWQgdG8gc3VwcG9ydCBtdWx0aXBsZSBkZXZpY2VzIGl0
+DQo+IGlzIGFzc3VtZWQNCj4gK3RoYXQgdGhlIGRldmljZXMgdXNlIHRoZSBzYW1lIHRpbWluZyBh
+bmQgc28gYXJlIHByb2JhYmx5IHRoZSBzYW1lDQo+IHR5cGUuIEl0IGFsc28NCj4gK2Fzc3VtZXMg
+dGhhdCB0aGV5IGNhbiBmaXQgaW4gdGhlIDI1Nk1CIGFkZHJlc3MgcmFuZ2UuIEluIHRoaXMgY2Fz
+ZQ0KPiBvbmx5IG9uZQ0KPiArY2hpbGQgZGV2aWNlIGlzIHN1cHBvcnRlZCB3aGljaCByZXByZXNl
+bnRzIHRoZSBhY3RpdmUgY2hpcC1zZWxlY3QNCj4gbGluZSwgc2VlDQo+ICtleGFtcGxlcyBmb3Ig
+bW9yZSBpbnNpZ2h0Lg0KPiArDQo+ICtSZXF1aXJlZCBjaGlsZCBjcyBub2RlIHByb3BlcnRpZXM6
+DQo+ICsgLSByZWc6IEZpcnN0IGVudHJ5IHNob3VsZCBjb250YWluIHRoZSBhY3RpdmUgY2hpcC1z
+ZWxlY3QgbnVtYmVyDQo+ICsNCj4gK09wdGlvbmFsIGNoaWxkIGNzIG5vZGUgcHJvcGVydGllczoN
+Cj4gKw0KPiArIC0gbnZpZGlhLHNub3ItZGF0YS13aWR0aC0zMmJpdDogVXNlIDMyYml0IGRhdGEt
+YnVzLCBkZWZhdWx0IGlzDQo+IDE2Yml0Lg0KPiArIC0gbnZpZGlhLHNub3ItbXV4LW1vZGU6IEVu
+YWJsZSBhZGRyZXNzL2RhdGEgTVVYIG1vZGUuDQo+ICsgLSBudmlkaWEsc25vci1yZHktYWN0aXZl
+LWJlZm9yZS1kYXRhOiBBc3NlcnQgUkRZIHNpZ25hbCBvbmUgY3ljbGUNCj4gYmVmb3JlIGRhdGEu
+DQo+ICvCoMKgwqBJZiBvbWl0dGVkIGl0IHdpbGwgYmUgYXNzZXJ0ZWQgd2l0aCBkYXRhLg0KPiAr
+IC0gbnZpZGlhLHNub3ItcmR5LWludjogUkRZIHNpZ25hbCBpcyBhY3RpdmUgaGlnaA0KPiArIC0g
+bnZpZGlhLHNub3ItYWR2LWludjogQURWIHNpZ25hbCBpcyBhY3RpdmUgaGlnaA0KPiArIC0gbnZp
+ZGlhLHNub3Itb2UtaW52OiBXRS9PRSBzaWduYWwgaXMgYWN0aXZlIGhpZ2gNCj4gKyAtIG52aWRp
+YSxzbm9yLWNzLWludjogQ1Mgc2lnbmFsIGlzIGFjdGl2ZSBoaWdoDQo+ICsNCj4gK8KgwqBOb3Rl
+IHRoYXQgdGhlcmUgaXMgc29tZSBzcGVjaWFsIGhhbmRsaW5nIGZvciB0aGUgdGltaW5nIHZhbHVl
+cy4NCj4gK8KgwqBGcm9tIFRlZ3JhIFRSTToNCj4gK8KgwqBQcm9ncmFtbWluZyAwIG1lYW5zIDEg
+Y2xvY2sgY3ljbGU6IGFjdHVhbCBjeWNsZSA9IHByb2dyYW1tZWQgY3ljbGUNCj4gKyAxDQo+ICsN
+Cj4gKyAtIG52aWRpYSxzbm9yLW11eGVkLXdpZHRoOiBOdW1iZXIgb2YgY3ljbGVzIE1VWCBhZGRy
+ZXNzL2RhdGENCj4gYXNzZXJ0ZWQgb24gdGhlDQo+ICvCoMKgwqBidXMuIFZhbGlkIHZhbHVlcyBh
+cmUgMC0xNSwgZGVmYXVsdCBpcyAxDQo+ICsgLSBudmlkaWEsc25vci1ob2xkLXdpZHRoOiBOdW1i
+ZXIgb2YgY3ljbGVzIENFIHN0YXlzIGFzc2VydGVkIGFmdGVyDQo+IHRoZQ0KPiArwqDCoMKgZGUt
+YXNzZXJ0aW9uIG9mIFdSX04gKGluIGNhc2Ugb2YgU0xBVkUvTUFTVEVSIFJlcXVlc3QpIG9yIE9F
+X04NCj4gK8KgwqDCoChpbiBjYXNlIG9mIE1BU1RFUiBSZXF1ZXN0KS4gVmFsaWQgdmFsdWVzIGFy
+ZSAwLTE1LCBkZWZhdWx0IGlzIDENCj4gKyAtIG52aWRpYSxzbm9yLWFkdi13aWR0aDogTnVtYmVy
+IG9mIGN5Y2xlcyBkdXJpbmcgd2hpY2ggQURWIHN0YXlzDQo+IGFzc2VydGVkLg0KPiArwqDCoMKg
+VmFsaWQgdmFsdWVzIGFyZSAwLTE1LCBkZWZhdWx0IGlzIDEuDQo+ICsgLSBudmlkaWEsc25vci1j
+ZS13aWR0aDogTnVtYmVyIG9mIGN5Y2xlcyBiZWZvcmUgQ0UgaXMgYXNzZXJ0ZWQuDQo+ICvCoMKg
+wqBWYWxpZCB2YWx1ZXMgYXJlIDAtMTUsIGRlZmF1bHQgaXMgNA0KPiArIC0gbnZpZGlhLHNub3It
+d2Utd2lkdGg6IE51bWJlciBvZiBjeWNsZXMgZHVyaW5nIHdoaWNoIFdFIHN0YXlzDQo+IGFzc2Vy
+dGVkLg0KPiArwqDCoMKgVmFsaWQgdmFsdWVzIGFyZSAwLTE1LCBkZWZhdWx0IGlzIDENCj4gKyAt
+IG52aWRpYSxzbm9yLW9lLXdpZHRoOiBOdW1iZXIgb2YgY3ljbGVzIGR1cmluZyB3aGljaCBPRSBz
+dGF5cw0KPiBhc3NlcnRlZC4NCj4gK8KgwqDCoFZhbGlkIHZhbHVlcyBhcmUgMC0yNTUsIGRlZmF1
+bHQgaXMgMQ0KPiArIC0gbnZpZGlhLHNub3Itd2FpdC13aWR0aDogTnVtYmVyIG9mIGN5Y2xlcyBi
+ZWZvcmUgUkVBRFkgaXMNCj4gYXNzZXJ0ZWQuDQo+ICvCoMKgwqBWYWxpZCB2YWx1ZXMgYXJlIDAt
+MjU1LCBkZWZhdWx0IGlzIDMNCj4gKw0KPiArRXhhbXBsZSB3aXRoIHR3byBTSkExMDAwIENBTiBj
+b250cm9sbGVycyBjb25uZWN0ZWQgdG8gdGhlIEdNSSBidXMuDQo+IFdlIHdyYXAgdGhlDQo+ICtj
+b250cm9sbGVycyB3aXRoIGEgc2ltcGxlLWJ1cyBub2RlIHNpbmNlIHRoZXkgYXJlIGFsbCBjb25u
+ZWN0ZWQgdG8NCj4gdGhlIHNhbWUNCj4gK2NoaXAtc2VsZWN0IChDUzQpLCBpbiB0aGlzIGV4YW1w
+bGUgZXh0ZXJuYWwgYWRkcmVzcyBkZWNvZGluZyBpcw0KPiBwcm92aWRlZDoNCj4gKw0KPiArZ21p
+QDcwMDkwMDAwIHsNCg0KSXQncyBhY3R1YWxseSA3MDAwOTAwMC4NCg0KPiArCWNvbXBhdGlibGUg
+PSAibnZpZGlhLHRlZ3JhMjAtZ21pIjsNCj4gKwlyZWcgPSA8MHg3MDAwOTAwMCAweDEwMDA+Ow0K
+PiArCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiArCSNzaXplLWNlbGxzID0gPDE+Ow0KPiArCWNs
+b2NrcyA9IDwmdGVncmFfY2FyIFRFR1JBMjBfQ0xLX05PUj47DQo+ICsJY2xvY2stbmFtZXMgPSAi
+Z21pIjsNCj4gKwlyZXNldHMgPSA8JnRlZ3JhX2NhciA0Mj47DQo+ICsJcmVzZXQtbmFtZXMgPSAi
+Z21pIjsNCj4gKwlyYW5nZXMgPSA8NCAweDQ4MDAwMDAwIDB4N2ZmZmZmZj47DQo+ICsNCj4gKwlz
+dGF0dXMgPSAiZGlzYWJsZWQiOw0KDQpJIGd1ZXNzIGluIGFuIGV4YW1wbGUgb25lIGNvdWxkIGV2
+ZW4gc2V0IHRoaXMgdG8gb2theS4NCg0KPiArDQo+ICsJYnVzQDQgew0KPiArCQljb21wYXRpYmxl
+ID0gInNpbXBsZS1idXMiOw0KPiArCQlyZWcgPSA8ND47DQo+ICsJCSNhZGRyZXNzLWNlbGxzID0g
+PDE+Ow0KPiArCQkjc2l6ZS1jZWxscyA9IDwxPjsNCj4gKwkJcmFuZ2VzID0gPDAgNCAweDQwMTAw
+PjsNCj4gKw0KPiArCQludmlkaWEsc25vci1tdXgtbW9kZTsNCj4gKwkJbnZpZGlhLHNub3ItYWR2
+LWludjsNCj4gKw0KPiArCQljYW5AMCB7DQo+ICsJCQlyZWcgPSA8MCAweDEwMD47DQo+ICsJCQku
+Li4NCj4gKwkJfTsNCj4gKw0KPiArCQljYW5ANDAwMDAgew0KPiArCQkJcmVnID0gPDB4NDAwMDAg
+MHgxMDA+Ow0KPiArCQkJLi4uDQo+ICsJCX07DQo+ICsJfTsNCj4gK307DQo+ICsNCj4gK0V4YW1w
+bGUgd2l0aCBvbmUgU0pBMTAwMCBDQU4gY29udHJvbGxlciBjb25uZWN0ZWQgdG8gdGhlIEdNSSBi
+dXMNCj4gK29uIENTNDoNCj4gKw0KPiArZ21pQDcwMDkwMDAwIHsNCg0KU2FtZSBoZXJlLg0KDQo+
+ICsJY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEyMC1nbWkiOw0KPiArCXJlZyA9IDwweDcwMDA5
+MDAwIDB4MTAwMD47DQo+ICsJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+ICsJI3NpemUtY2VsbHMg
+PSA8MT47DQo+ICsJY2xvY2tzID0gPCZ0ZWdyYV9jYXIgVEVHUkEyMF9DTEtfTk9SPjsNCj4gKwlj
+bG9jay1uYW1lcyA9ICJnbWkiOw0KPiArCXJlc2V0cyA9IDwmdGVncmFfY2FyIDQyPjsNCj4gKwly
+ZXNldC1uYW1lcyA9ICJnbWkiOw0KPiArCXJhbmdlcyA9IDw0IDB4NDgwMDAwMDAgMHg3ZmZmZmZm
+PjsNCj4gKw0KPiArCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQoNClNhbWUgaGVyZS4NCg0KPiArDQo+
+ICsJY2FuQDQgew0KPiArCQlyZWcgPSA8NCAweDEwMD47DQo+ICsJCS4uLg0KPiArCQludmlkaWEs
+c25vci1tdXgtbW9kZTsNCj4gKwkJbnZpZGlhLHNub3ItYWR2LWludjsNCj4gKwl9Ow0KPiArfTsN
+Cj4gLS0NCj4gMi4xLjQ=
