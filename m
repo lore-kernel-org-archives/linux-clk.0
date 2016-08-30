@@ -1,89 +1,87 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v11 9/9] arm: dts: mt2701: Use real clock for UARTs
-Date: Fri, 19 Aug 2016 13:34:56 +0800
-Message-ID: <1471584896-9986-10-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <Paul.Burton@imgtec.com>
+Subject: Re: [PATCH 24/26] dt-bindings: Document img,boston-clock binding
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20160826153725.11629-1-paul.burton@imgtec.com>
+ <20160826153725.11629-25-paul.burton@imgtec.com>
+ <20160826174446.GX19826@codeaurora.org>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+	<devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+From: Paul Burton <paul.burton@imgtec.com>
+Message-ID: <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
+Date: Tue, 30 Aug 2016 16:53:01 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+In-Reply-To: <20160826174446.GX19826@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
+On 26/08/16 18:44, Stephen Boyd wrote:
+> On 08/26, Paul Burton wrote:
+>> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>> new file mode 100644
+>> index 0000000..c01ea60
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>> @@ -0,0 +1,27 @@
+>> +Binding for Imagination Technologies MIPS Boston clock sources.
+>> +
+>> +This binding uses the common clock binding[1].
+>> +
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Required properties:
+>> +- compatible : Should be "img,boston-clock".
+>> +- #clock-cells : Should be set to 1.
+>> +  Values available for clock consumers can be found in the header file:
+>> +    <dt-bindings/clock/boston-clock.h>
+>> +- regmap : Phandle to the Boston platform register system controller.
+>> +  This should contain a phandle to the system controller node covering the
+>> +  platform registers provided by the Boston board.
+>> +
+>> +Example:
+>> +
+>> +	clk_boston: clock {
+>> +		compatible = "img,boston-clock";
+>> +		#clock-cells = <1>;
+>> +		regmap = <&plat_regs>;
+> 
+> Isn't syscon more standard than regmap as the property name? Is
+> there a binding for the plat_regs device? Is there any reason the
+> clks can't be populated in that syscon driver?
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Hi Stephen,
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index c9a8dbf..7eab6f4 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -73,12 +73,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -186,7 +180,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -195,7 +190,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -204,7 +200,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -213,7 +210,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
--- 
-1.9.1
+The plat_regs device doesn't have a custom driver, it simply makes use
+of the generic "syscon" driver which can provide a regmap.
+
+It would be possible to register the clocks from a register for the
+plat_regs device, but I don't think it would make much sense. The
+platform registers in question are essentially just a convenient place
+where various bits of information about the system are exposed,
+including the clock frequencies but also other bits & pieces like
+connectivity of PCIe controllers or I/O coherence units, the RTL
+revision of the CPU or the wrapper RTL that runs on this FPGA-based
+board, a register that allows for resetting the board, etc. It's not a
+single piece of hardware, more a dumping ground for miscellanea. So in
+my opinion using the syscon approach works best here, and drivers for
+well defined pieces of hardware or functionality can reference that
+syscon to retrieve the regmap.
+
+As for whether "syscon" is a more standard property name than "regmap",
+both seem to be used based on a grep of
+Documentation/devicetree/bindings/. I believe I picked up use of
+"regmap" from the generic syscon-poweroff & syscon-reboot drivers, which
+both use "regmap" as a property name.
+
+Thanks,
+    Paul
+
+> 
+>> +	};
+>> +
+>> +	uart0: uart@17ffe000 {
+>> +		/* ... */
+>> +		clocks = <&clk_boston BOSTON_CLK_SYS>;
+>> +	};
+> 
