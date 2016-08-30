@@ -1,61 +1,70 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 12 Aug 2016 17:59:52 -0700
+Date: Tue, 30 Aug 2016 11:43:09 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v2 01/10] clk: Fix inconsistencies in usage of data types
-Message-ID: <20160813005952.GG361@codeaurora.org>
-References: <1470904858-11930-1-git-send-email-rnayak@codeaurora.org>
- <1470904858-11930-2-git-send-email-rnayak@codeaurora.org>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Gregory =?iso-8859-1?Q?Cl=E9ment?= <gregory.clement@free-electrons.com>,
+	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>,
+	Tomasz Nowicki <tn@semihalf.com>,
+	Grzegorz Jaszczyk <jaz@semihalf.com>
+Subject: Re: [PATCH 2/2] clk: mvebu: dynamically allocate resources in Armada
+ CP110 system controller
+Message-ID: <20160830184309.GB12510@codeaurora.org>
+References: <1471933609-8456-1-git-send-email-mw@semihalf.com>
+ <1471933609-8456-3-git-send-email-mw@semihalf.com>
+ <20160825001613.GQ19826@codeaurora.org>
+ <CAPv3WKdVX1p3qmUufXE_cd=A0fuS8Eg9ELT0AYnXV6Z=cgJg-w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1470904858-11930-2-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <CAPv3WKdVX1p3qmUufXE_cd=A0fuS8Eg9ELT0AYnXV6Z=cgJg-w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Rajendra Nayak wrote:
-> index is of type u8 in all places except in clk_hw_get_parent_by_index()
-> and return value of all round_rate functions is long except for
-> clk_hw_round_rate(). Make them consistent with the rest of the places
+On 08/30, Marcin Wojtas wrote:
+> 2016-08-25 2:16 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
+> > On 08/23, Marcin Wojtas wrote:
+> >> @@ -335,10 +343,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+> >>               cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
+> >>       }
+> >>
+> >> -     ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
+> >> +     ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
+> >
+> > It would be nice if this could be converted to
+> > of_clk_add_hw_provider().
 > 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/clk.c            | 4 ++--
->  include/linux/clk-provider.h | 5 ++---
->  2 files changed, 4 insertions(+), 5 deletions(-)
+> Will try it. Shouldn't such change be placed in separate commit?
+
+Yes, of course.
+
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939..e768071 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -261,7 +261,7 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
->  }
->  
->  struct clk_hw *
-> -clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
-> +clk_hw_get_parent_by_index(const struct clk_hw *hw, u8 index)
+> >
+> >>       if (ret)
+> >>               goto fail_clk_add;
+> >>
+> >> +     platform_set_drvdata(pdev, cp110_clks);
+> >> +
+> >>       return 0;
+> >>
+> >>  fail_clk_add:
+> >> @@ -365,6 +375,7 @@ fail0:
+> >>
+> >>  static int cp110_syscon_clk_remove(struct platform_device *pdev)
+> >>  {
+> >> +     struct clk **cp110_clks = platform_get_drvdata(pdev);
+> >
+> > Is this variable unused now?
+> 
+> No, why? Just below there is a loop using it. Before it was taken from
+> global variable, which I got rid of.
+> 
 
-I guess this is ok, but u8 seems limiting for no reason and we
-may want to expand the parent array at some point in the future
-(although it would be a huge change). So I'd like to leave this
-alone. Inconsistent as it is.
-
->  {
->  	struct clk_core *parent;
->  
-> @@ -889,7 +889,7 @@ int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
->  }
->  EXPORT_SYMBOL_GPL(__clk_determine_rate);
->  
-> -unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
-> +long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
->  {
->  	int ret;
->  	struct clk_rate_request req;
-
-This function should never return a negative value, so the return
-type is unsigned.
+Ok. I was just looking at the patch context.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
