@@ -1,278 +1,87 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	briannorris@chromium.org,
-	huangtao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] clk: rockchip: rk3399: support pll setting automatically
-Date: Tue,  2 Aug 2016 21:34:12 +0800
-Message-Id: <1470144852-20708-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com"
+	<mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "pdeschrijver@nvidia.com"
+	<pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] Add support for Tegra GMI bus controller
+Date: Tue, 30 Aug 2016 15:01:37 +0000
+Message-ID: <1472569295.5703.20.camel@toradex.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
-
-The goal is that we can configure the most suitable pll params automatically.
-
-If setting freq is not supported in rockchip_pll_rate_table rk3399_pll_rates[],
-we can set pll params automatically.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
-
- drivers/clk/rockchip/clk-pll.c |  213 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 200 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 35994e8..08979f9 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -23,6 +23,7 @@
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include <linux/clk.h>
-+#include <linux/gcd.h>
- #include "clk.h"
- 
- #define PLL_MODE_MASK		0x3
-@@ -54,6 +55,200 @@ struct rockchip_clk_pll {
- #define to_rockchip_clk_pll_nb(nb) \
- 			container_of(nb, struct rockchip_clk_pll, clk_nb)
- 
-+#define MHZ			(1000UL * 1000UL)
-+#define KHZ			(1000UL)
-+
-+/* CLK_PLL_TYPE_RK3066_AUTO type ops */
-+#define PLL_FREF_MIN		(269 * KHZ)
-+#define PLL_FREF_MAX		(2200 * MHZ)
-+
-+#define PLL_FVCO_MIN		(440 * MHZ)
-+#define PLL_FVCO_MAX		(2200 * MHZ)
-+
-+#define PLL_FOUT_MIN		(27500 * KHZ)
-+#define PLL_FOUT_MAX		(2200 * MHZ)
-+
-+#define PLL_NF_MAX		(4096)
-+#define PLL_NR_MAX		(64)
-+#define PLL_NO_MAX		(16)
-+
-+/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
-+#define MIN_FOUTVCO_FREQ	(800 * MHZ)
-+#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
-+
-+static struct rockchip_pll_rate_table auto_table;
-+
-+static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
-+{
-+	return &auto_table;
-+}
-+
-+static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
-+					u32 *postdiv1,
-+					u32 *postdiv2,
-+					u32 *foutvco)
-+{
-+	unsigned long freq;
-+
-+	if (fout_hz < MIN_FOUTVCO_FREQ) {
-+		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
-+			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
-+				freq = fout_hz * (*postdiv1) * (*postdiv2);
-+				if (freq >= MIN_FOUTVCO_FREQ &&
-+				    freq <= MAX_FOUTVCO_FREQ) {
-+					*foutvco = freq;
-+					return 0;
-+				}
-+			}
-+			pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to 2000M,fout = %lu\n",
-+			       fout_hz);
-+		}
-+	} else {
-+		*postdiv1 = 1;
-+		*postdiv2 = 1;
-+	}
-+	return 0;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+			     unsigned long fin_hz,
-+			     unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	/* FIXME set postdiv1/2 always 1*/
-+	u32 foutvco = fout_hz;
-+	u64 fin_64, frac_64;
-+	u32 f_frac, postdiv1, postdiv2;
-+	unsigned long clk_gcd = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
-+	rate_table->postdiv1 = postdiv1;
-+	rate_table->postdiv2 = postdiv2;
-+	rate_table->dsmpd = 1;
-+
-+	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
-+		fin_hz /= MHZ;
-+		foutvco /= MHZ;
-+		clk_gcd = gcd(fin_hz, foutvco);
-+		rate_table->refdiv = fin_hz / clk_gcd;
-+		rate_table->fbdiv = foutvco / clk_gcd;
-+
-+		rate_table->frac = 0;
-+
-+		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = %u, postdiv1 = %u, postdiv2 = %u, frac = %u\n",
-+			 fin_hz, fout_hz, clk_gcd, rate_table->refdiv,
-+			 rate_table->fbdiv, rate_table->postdiv1,
-+			 rate_table->postdiv2, rate_table->frac);
-+	} else {
-+		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz = %lu, fout_INT_mhz = %lu\n",
-+			 fin_hz, fout_hz,
-+			 fin_hz / MHZ * MHZ,
-+			 fout_hz / MHZ * MHZ);
-+		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
-+			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
-+		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
-+		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
-+		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
-+		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
-+			 rate_table->refdiv, rate_table->fbdiv);
-+
-+		rate_table->frac = 0;
-+
-+		f_frac = (foutvco % MHZ);
-+		fin_64 = fin_hz;
-+		do_div(fin_64, (u64)rate_table->refdiv);
-+		frac_64 = (u64)f_frac << 24;
-+		do_div(frac_64, fin_64);
-+		rate_table->frac = (u32)frac_64;
-+		if (rate_table->frac > 0)
-+			rate_table->dsmpd = 0;
-+		pr_debug("frac = %x\n", rate_table->frac);
-+	}
-+	return rate_table;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+				    unsigned long fin_hz,
-+				    unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	u32 nr, nf, no, nonr;
-+	u32 nr_out, nf_out, no_out;
-+	u32 n;
-+	u32 numerator, denominator;
-+	u64 fref, fvco, fout;
-+	unsigned long clk_gcd = 0;
-+
-+	nr_out = PLL_NR_MAX + 1;
-+	nf_out = 0;
-+	no_out = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	clk_gcd = gcd(fin_hz, fout_hz);
-+
-+	numerator = fout_hz / clk_gcd;
-+	denominator = fin_hz / clk_gcd;
-+
-+	for (n = 1;; n++) {
-+		nf = numerator * n;
-+		nonr = denominator * n;
-+		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
-+			break;
-+
-+		for (no = 1; no <= PLL_NO_MAX; no++) {
-+			if (!(no == 1 || !(no % 2)))
-+				continue;
-+
-+			if (nonr % no)
-+				continue;
-+			nr = nonr / no;
-+
-+			if (nr > PLL_NR_MAX)
-+				continue;
-+
-+			fref = fin_hz / nr;
-+			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
-+				continue;
-+
-+			fvco = fref * nf;
-+			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
-+				continue;
-+
-+			fout = fvco / no;
-+			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
-+				continue;
-+
-+			/* select the best from all available PLL settings */
-+			if ((no > no_out) ||
-+			    ((no == no_out) && (nr < nr_out))) {
-+				nr_out = nr;
-+				nf_out = nf;
-+				no_out = no;
-+			}
-+		}
-+	}
-+
-+	/* output the best PLL setting */
-+	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
-+		if (rate_table->nr && rate_table->nf && rate_table->no) {
-+			rate_table->nr = nr_out;
-+			rate_table->nf = nf_out;
-+			rate_table->no = no_out;
-+		}
-+	} else {
-+		return NULL;
-+	}
-+
-+	return rate_table;
-+}
-+
- static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			    struct rockchip_clk_pll *pll, unsigned long rate)
- {
-@@ -65,24 +260,16 @@ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			return &rate_table[i];
- 	}
- 
--	return NULL;
-+	if (pll->type == pll_rk3066)
-+		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
-+	else
-+		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
- }
- 
- static long rockchip_pll_round_rate(struct clk_hw *hw,
- 			    unsigned long drate, unsigned long *prate)
- {
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
--	int i;
--
--	/* Assumming rate_table is in descending order */
--	for (i = 0; i < pll->rate_count; i++) {
--		if (drate >= rate_table[i].rate)
--			return rate_table[i].rate;
--	}
--
--	/* return minimum supported value */
--	return rate_table[i - 1].rate;
-+	return drate;
- }
- 
- /*
--- 
-1.7.9.5
+SGkgTWlyemENCg0KU29ycnksIEkgbG9uZyBzaW5jZSB3YW50ZWQgdG8gZ2l2ZSB5b3Ugc29tZSBm
+ZWVkYmFjayBvbiB0aGlzIGFzIHdlbGwuDQoNCkJUVzogVGhhbmsgeW91IHZlcnkgbXVjaCBmb3Ig
+dGFraW5nIHRoaXMgb24hDQoNCk9uIFdlZCwgMjAxNi0wOC0yNCBhdCAxNTozNyArMDIwMCwgTWly
+emEgS3JhayB3cm90ZToNCj4gRnJvbTogTWlyemEgS3JhayA8bWlyemEua3Jha0BnbWFpbC5jb20+
+DQo+IA0KPiBIaS4NCj4gDQo+IFRoaXMgaXMgYSBmb2xsb3cgdXAgdG8gbXkgcHJldmlvdXMgUkZD
+IHRvIGFkZCBzdXBwb3J0IGZvciBUZWdyYSBHTUkNCj4gYnVzDQo+IGNvbnRyb2xsZXIuDQo+IA0K
+PiBJIGhhdmUgdGVzdGVkIHRoaXMgc2VyaWVzIG9uIGEgVGVncmEzMCB1c2luZyBhIENvbGlicmkg
+VDMwIFNPTSBvbiBhDQo+IGN1c3RvbQ0KPiBjYXJyaWVyIGJvYXJkIHdoaWNoIGhhcyBtdWx0aXBs
+ZSBDQU4gY29udHJvbGxlcnMgKFNKQTEwMDApIGNvbm5lY3RlZA0KPiB0byB0aGUNCj4gR01JIGJ1
+cy4NCg0KV2Ugb25jZSBkaWQgYSBuaWNlIEdNSS1NZW1vcnkgQm9hcmQgd2hpY2ggbWF0ZXMgd2l0
+aCB0aGUgZXh0ZW5zaW9uDQpjb25uZWN0b3IgWDMgb2Ygb3VyIFYzLnggQ29saWJyaSBFdmFsdWF0
+aW9uIGJvYXJkcyBhbmQgYWxsb3dzIHRlc3RpbmcNClNSQU0gYWNjZXNzIG5vdCBvbmx5IGluIG11
+eGVkIGJ1dCBhbHNvIGluIG5vbi1tdXhlZCBtb2RlIGFsYmVpdCAxNi1iaXQNCm9ubHkuIEkgdG9v
+ayB5b3VyIGRyaXZlciBmb3IgYSBzcGluIGJvdGggb24gQ29saWJyaSBUMjAgYXMgd2VsbCBhcw0K
+Q29saWJyaSBUMzAgYm90aCBpbiBtdXhlZCBhcyB3ZWxsIGFzIG5vbi1tdXhlZCBtb2RlIGFuZCBp
+dCBwYXNzZWQgYWxsDQp0ZXN0cyBiZWluZyBib3RoIG1hbnVhbCBkZXZtZW0yIHR5cGUgcmVhZHMv
+d3JpdGVzIGFzIHdlbGwgYXMgbWVtdGVzdGVyDQpydW5zIG9uIHRoZSBmdWxsIDEyOEsgU1JBTSBn
+aXZpbmcgaXQgdGhlIHBoeXNpY2FsIGFkZHJlc3MgdXNpbmcgdGhlIC1wDQphcmd1bWVudC4NCg0K
+U28geW91IG1heSBhZGQgdGhlIGZvbGxvd2luZyB0byB0aGUgd2hvbGUgc2VyaWVzOg0KDQpUZXN0
+ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KVGVz
+dGVkLW9uOiBDb2xpYnJpIFQyMC9UMzAgb24gRXZhbEJvYXJkIFYzLnggYW5kIEdNSS1NZW1vcnkg
+Qm9hcmQNCg0KSSB3aWxsIGxlYXZlIGZ1cnRoZXIgY29tbWVudHMgb24gdGhlIGluZGl2aWR1YWwg
+cGF0Y2hlcy4NCg0KQlRXOiBPZiBjb3Vyc2UgZm9yIG5vbi1tdXhlZCBtb2RlIEkgYWxzbyBoYWQg
+dG8gYWRqdXN0IHRoZSBwaW4gbXV4aW5nDQphcyB0aGV5IGRlZmF1bHQgdG8gbXV4ZWQuDQoNCj4g
+SSBoYXZlIHJlYmFzZWQgb24gdG9wIG9mIGxhdGVzdCB0ZWdyYS9mb3ItbmV4dCBpbiBWMi4gQWxz
+byBzZWUNCj4gaW5kaXZpZHVhbA0KPiBwYXRjaGVzIGZvciBjaGFuZ2VzIGluIFYyLg0KPiANCj4g
+U2VlIGJlbG93IGxpbmtzIGZvciBwcmV2aW91cyBkaXNjdXNzaW9ucy4NCj4gDQo+IENvbW1lbnRz
+IG9uIFJGQzoNCj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtY2xrJm09MTQ2ODkzNTU3NjI5
+OTAzJnc9Mg0KPiBodHRwczovL21hcmMuaW5mby8/bD1saW51eC10ZWdyYSZtPTE0Njg5MzU0MTgy
+OTgwMSZ3PTINCj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtdGVncmEmbT0xNDY4OTM1NDI0
+Mjk4MTQmdz0yDQo+IA0KPiBDb21tZW50cyBvbiBWMToNCj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9
+bGludXgtYXJtLWtlcm5lbCZtPTE0NzA1MTU1MTgyMTEyMiZ3PTINCj4gaHR0cHM6Ly9tYXJjLmlu
+Zm8vP2w9bGludXgtYXJtLWtlcm5lbCZtPTE0NzA1MTU1MzEyMTE1MCZ3PTINCj4gaHR0cHM6Ly9t
+YXJjLmluZm8vP2w9bGludXgtYXJtLWtlcm5lbCZtPTE0NzE5NDg1NjYwMDYyNyZ3PTINCj4gaHR0
+cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtYXJtLWtlcm5lbCZtPTE0NzA3Mjc0MjQzMjIxMSZ3PTIN
+Cj4gDQo+IA0KPiBNaXJ6YSBLcmFrICg2KToNCj4gwqAgY2xrOiB0ZWdyYTogYWRkIFRFR1JBMjBf
+Q0xLX05PUiB0byBpbml0IHRhYmxlDQo+IMKgIGNsazogdGVncmE6IGFkZCBURUdSQTMwX0NMS19O
+T1IgdG8gaW5pdCB0YWJsZQ0KPiDCoCBkdC9iaW5kaW5nczogQWRkIGJpbmRpbmdzIGZvciBUZWdy
+YSBHTUkgY29udHJvbGxlcg0KPiDCoCBBUk06IHRlZ3JhOiBBZGQgVGVncmEzMCBHTUkgc3VwcG9y
+dA0KPiDCoCBBUk06IHRlZ3JhOiBBZGQgVGVncmEyMCBHTUkgc3VwcG9ydA0KPiDCoCBidXM6IEFk
+ZCBzdXBwb3J0IGZvciBUZWdyYSBHZW5lcmljIE1lbW9yeSBJbnRlcmZhY2UNCj4gDQo+IMKgLi4u
+L2RldmljZXRyZWUvYmluZGluZ3MvYnVzL252aWRpYSx0ZWdyYTIwLWdtaS50eHQgfCAxMzINCj4g
+KysrKysrKysrKysrDQo+IMKgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEyMC5kdHNpwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqAxMyArKw0KPiDCoGFyY2gvYXJt
+L2Jvb3QvZHRzL3RlZ3JhMzAuZHRzacKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHzCoMKgMTIgKysNCj4gwqBkcml2ZXJzL2J1cy9LY29uZmlnwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqA4
+ICsNCj4gwqBkcml2ZXJzL2J1cy9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqDCoDEgKw0KPiDCoGRyaXZlcnMv
+YnVzL3RlZ3JhLWdtaS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqB8IDIzMQ0KPiArKysrKysrKysrKysrKysrKysrKysNCj4gwqBkcml2ZXJz
+L2Nsay90ZWdyYS9jbGstdGVncmEyMC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHzCoMKgwqAxICsNCj4gwqBkcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEzMC5jwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqAxICsNCj4gwqA4IGZp
+bGVzIGNoYW5nZWQsIDM5OSBpbnNlcnRpb25zKCspDQo+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9idXMvbnZpZGlhLHRlZ3JhMjAtZ21p
+LnR4dA0KPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2J1cy90ZWdyYS1nbWkuYw0KPiAN
+Cj4gLS0NCj4gMi4xLjQNCj4gDQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1jbGsiDQo+IGluDQo+IHRoZSBib2R5
+IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jk
+b21vIGluZm8gYXTCoMKgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+DQoNCkNoZWVycw0KDQpNYXJjZWwNCg==
