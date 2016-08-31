@@ -1,108 +1,67 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mirza.krak@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160823085305.GB2598@lukather>
-References: <1471248795-17951-1-git-send-email-wens@csie.org>
- <1471248795-17951-2-git-send-email-wens@csie.org> <20160823085305.GB2598@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 23 Aug 2016 17:57:41 +0800
-Message-ID: <CAGb2v66SDxjubqyyVGHFVQUYnQdB_F-RwY6MgALDJquMWgKJZw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: sunxi-ng: mux: Add support for mux tables
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+In-Reply-To: <1472569295.5703.20.camel@toradex.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com> <1472569295.5703.20.camel@toradex.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+Date: Wed, 31 Aug 2016 11:23:13 +0200
+Message-ID: <CALw8SCXgKcRPk8qk9GqPiL6sJV6gRt93eFHfxFHj3WJZNHgv7w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Add support for Tegra GMI bus controller
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 23, 2016 at 4:53 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Mon, Aug 15, 2016 at 04:13:11PM +0800, Chen-Yu Tsai wrote:
->> Some clock muxes have holes, i.e. invalid or unconnected inputs,
->> between parent mux values.
->>
->> Add support for specifying a mux table to map clock parents to
->> mux values.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->> Changes since v1: none
->> ---
->>  drivers/clk/sunxi-ng/ccu_mux.c | 12 ++++++++++++
->>  drivers/clk/sunxi-ng/ccu_mux.h | 12 ++++++++++--
->>  2 files changed, 22 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
->> index 1329b9ab481e..68b32f168a74 100644
->> --- a/drivers/clk/sunxi-ng/ccu_mux.c
->> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
->> @@ -107,6 +107,15 @@ u8 ccu_mux_helper_get_parent(struct ccu_common *common,
->>       parent = reg >> cm->shift;
->>       parent &= (1 << cm->width) - 1;
->>
->> +     if (cm->table) {
->> +             int num_parents = clk_hw_get_num_parents(&common->hw);
->> +             int i;
->> +
->> +             for (i = 0; i < num_parents; i++)
->> +                     if (cm->table[i] == parent)
->> +                             return i;
->> +     }
->> +
->>       return parent;
->>  }
->>
->> @@ -117,6 +126,9 @@ int ccu_mux_helper_set_parent(struct ccu_common *common,
->>       unsigned long flags;
->>       u32 reg;
->>
->> +     if (cm->table)
->> +             index = cm->table[index];
->> +
->>       spin_lock_irqsave(common->lock, flags);
->>
->>       reg = readl(common->base + common->reg);
->> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
->> index d35ce5e93840..f0078de78712 100644
->> --- a/drivers/clk/sunxi-ng/ccu_mux.h
->> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
->> @@ -6,8 +6,9 @@
->>  #include "ccu_common.h"
->>
->>  struct ccu_mux_internal {
->> -     u8      shift;
->> -     u8      width;
->> +     u8              shift;
->> +     u8              width;
->> +     const u8        *table;
->>
->>       struct {
->>               u8      index;
->> @@ -21,6 +22,13 @@ struct ccu_mux_internal {
->>       } variable_prediv;
->>  };
->>
->> +#define SUNXI_CLK_MUX_TABLE(_shift, _width, _table)  \
->> +     {                                               \
->> +             .shift  = _shift,                       \
->> +             .width  = _width,                       \
->> +             .table  = _table,                       \
->> +     }
->> +
->>  #define SUNXI_CLK_MUX(_shift, _width)        \
->>       {                                       \
->>               .shift  = _shift,               \
+Hi Marcel.
+
+2016-08-30 17:01 GMT+02:00 Marcel Ziswiler <marcel.ziswiler@toradex.com>:
+> Hi Mirza
 >
-> I'd prefer if you also converted the SUNXI_CLK_MUX to use the MUX
-> table version.
+> Sorry, I long since wanted to give you some feedback on this as well.
+>
+> BTW: Thank you very much for taking this on!
 
-You mean expanding SUNXI_CLK_MUX to SUNXI_CLK_MUX_TABLE right?
-Sure.
+It has been and still is a fun project. So gladly doing it.
+>
+> On Wed, 2016-08-24 at 15:37 +0200, Mirza Krak wrote:
+>> From: Mirza Krak <mirza.krak@gmail.com>
+>>
+>> Hi.
+>>
+>> This is a follow up to my previous RFC to add support for Tegra GMI
+>> bus
+>> controller.
+>>
+>> I have tested this series on a Tegra30 using a Colibri T30 SOM on a
+>> custom
+>> carrier board which has multiple CAN controllers (SJA1000) connected
+>> to the
+>> GMI bus.
+>
+> We once did a nice GMI-Memory Board which mates with the extension
+> connector X3 of our V3.x Colibri Evaluation boards and allows testing
+> SRAM access not only in muxed but also in non-muxed mode albeit 16-bit
+> only. I took your driver for a spin both on Colibri T20 as well as
+> Colibri T30 both in muxed as well as non-muxed mode and it passed all
+> tests being both manual devmem2 type reads/writes as well as memtester
+> runs on the full 128K SRAM giving it the physical address using the -p
+> argument.
+>
+> So you may add the following to the whole series:
+>
+> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
 
-> I've just merged the renaming patch for those macros to be consistent
-> with the other internal structures macro, so that name will have to be
-> adjusted..
+Thank you very much for testing. Will add your tags in the upcoming V3.
 
-Please push and I'll do a follow up.
-
-ChenYu
+Best Regards
+Mirza
