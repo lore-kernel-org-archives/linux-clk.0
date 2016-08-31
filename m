@@ -1,34 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Aug 2016 10:29:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH -next] clk: meson: Fix invalid use of sizeof in
- gxbb_aoclkc_probe()
-Message-ID: <20160824172944.GA19826@codeaurora.org>
-References: <1471882101-22347-1-git-send-email-weiyj.lk@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471882101-22347-1-git-send-email-weiyj.lk@gmail.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] MAINTAINERS: Add section for Renesas clock drivers
+Date: Wed, 31 Aug 2016 11:49:30 +0200
+Message-Id: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22, Wei Yongjun wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> sizeof() when applied to a pointer typed expression gives the
-> size of the pointer, not that of the pointed data.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
+Add a section for Renesas clock drivers, as found on Renesas ARM SoCs,
+and list myself as the maintainer.
 
-Applied to clk-next
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e220af2344e6233b..cabe74e526d4d305 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9963,6 +9963,12 @@ F:	drivers/rpmsg/
+ F:	Documentation/rpmsg.txt
+ F:	include/linux/rpmsg.h
+ 
++RENESAS CLOCK DRIVERS
++M:	Geert Uytterhoeven <geert+renesas@glider.be>
++L:	linux-renesas-soc@vger.kernel.org
++S:	Supported
++F:	drivers/clk/renesas/
++
+ RENESAS ETHERNET DRIVERS
+ R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+ L:	netdev@vger.kernel.org
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
