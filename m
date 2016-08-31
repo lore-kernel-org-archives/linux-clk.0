@@ -1,46 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Aug 2016 13:07:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 2/3 v2] clk: versatile/icst: add Integrator core module
- clocks
-Message-ID: <20160825200744.GS19826@codeaurora.org>
-References: <1471857574-13125-1-git-send-email-linus.walleij@linaro.org>
- <1471857574-13125-2-git-send-email-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1471857574-13125-2-git-send-email-linus.walleij@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH 0/3] arm64: Hikey: enable CPUFreq and thermal drivers
+Date: Wed, 31 Aug 2016 16:50:14 +0800
+Message-Id: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22, Linus Walleij wrote:
-> The Integrator/AP and Integrator/CP have special derivatives
-> of the ICST525 control registers, where some bits have been
-> hardwired but others are possible to adjust, resulting in a
-> control register that makes it possible to set an even,
-> desired megahertz value.
-> 
-> The Integrator/AP and Integrator/CP have slightly different
-> layout so we support them using different compatible
-> strings.
-> 
-> After adding these clocks, the Integrator-specific cpufreq
-> driver can be switched over to use the generic operating
-> point device tree cpufreq driver.
-> 
-> Instead of simply writing a value to the oscillator control
-> register we switch to the more elaborate method of providing
-> a bitmask and use regmap_update_bits() to poke the right bits
-> for the desired frequency, this is needed since these control
-> registers sometimes control more than one clock.
-> 
-> Cc: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+Currently most power management code of 96boards Hikey have been merged
+into mainline kernel, but some of them have not been built by default;
+So this patch series is to build all these modules properly.
 
-Applied to clk-next
+The software layer is as below:
+
+                        set constraint
+    cpufreq-dt driver  <--------------  thermal/cpu_cooling driver
+           |                                       |
+	   V                                       V
+  hi6220 stub clock driver                hisi thermal driver
+
+So first two patches are two enable fundamental modules for hi6220 stub
+clock driver and hisilicon thermal driver. Based on these two drivers,
+we also need enable common drivers for cpufreq-dt.c and cpu_cooling.c;
+these two drivers are commonly used by other platforms, so enable these
+two common drivers in arm64's defconfig. arm32's defconfig has enabled
+these two configurations yet.
+
+Leo Yan (3):
+  clk: Hi6220: enable stub clock driver for ARCH_HISI
+  thermal: hisilicon: fix for dependency
+  arm64: defconfig: enable two common modules for power management
+
+ arch/arm64/configs/defconfig  | 2 ++
+ drivers/clk/hisilicon/Kconfig | 1 +
+ drivers/thermal/Kconfig       | 4 +++-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
