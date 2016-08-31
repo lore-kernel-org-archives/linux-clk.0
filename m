@@ -1,93 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:26:14 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
-	galak@codeaurora.org, pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org, varada@codeaurora.org,
-	sricharan@codeaurora.org, architt@codeaurora.org,
-	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] clk: qcom: ipq4019: Added the cpu clock frequency
- change notifier
-Message-ID: <20160815222614.GL361@codeaurora.org>
-References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
- <1466516962-18087-6-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466516962-18087-6-git-send-email-absahu@codeaurora.org>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH 3/3] arm64: defconfig: enable two common modules for power management
+Date: Wed, 31 Aug 2016 16:50:17 +0800
+Message-Id: <1472633417-9330-4-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, Abhishek Sahu wrote:
-> The current driver code gives the crash or gets hang while switching
-> the CPU frequency some time. The APSS CPU Clock divider is not glitch
-> free so it the APPS clock need to be switched for stable clock during
-> the change.
-> 
-> This patch adds the frequency change notifier for APSS CPU clock. It
-> changes the parent of this clock to stable PLL FEPLL500 when it gets
-> for PRE_RATE_CHANGE event. This event will be generated before actual
-> clock set operations. The clock set operation will again change its
-> corresponding parent by getting the same from frequency table.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/clk/qcom/gcc-ipq4019.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-> index df159c2..3c014f7 100644
-> --- a/drivers/clk/qcom/gcc-ipq4019.c
-> +++ b/drivers/clk/qcom/gcc-ipq4019.c
-> @@ -1740,9 +1740,34 @@ static const struct of_device_id gcc_ipq4019_match_table[] = {
->  };
->  MODULE_DEVICE_TABLE(of, gcc_ipq4019_match_table);
->  
-> +int cpu_clk_notifier_fn(struct notifier_block *nb,
+Enable two common modules for power management, one is to enable
+CPUFREQ_DT driver; this CPUFreq driver is used by many platforms by
+passing OPP table from device tree.
 
-static?
+Also enables CPU_THERMAL for CPU cooling device driver; so after we
+enabled thermal framework and can bind thermal zone with CPU cooling
+device driver.
 
-Please come up with a better name that is not so generic.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +			unsigned long action, void *data)
-> +{
-> +	int err = 0;
-> +
-> +	if (action == PRE_RATE_CHANGE) {
-> +		err = clk_rcg2_ops.set_parent(&apps_clk_src.clkr.hw,
-> +							P_FEPLL500);
-> +	}
-> +
-> +	return notifier_from_errno(err);
-> +}
-> +
-> +struct notifier_block cpu_clk_notifier = {
-
-static?
-
-> +	.notifier_call = cpu_clk_notifier_fn,
-> +};
-> +
->  static int gcc_ipq4019_probe(struct platform_device *pdev)
->  {
-> -	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
-> +	int err;
-> +
-> +	err = qcom_cc_probe(pdev, &gcc_ipq4019_desc);
-> +
-> +	if (!err)
-> +		clk_notifier_register(apps_clk_src.clkr.hw.clk,
-> +					&cpu_clk_notifier);
-
-This has to be unregistered on driver remove.
-
-> +
-> +	return err;
->  }
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index eadf485..9fd2681 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -82,6 +82,7 @@ CONFIG_COMPAT=y
+ CONFIG_CPU_IDLE=y
+ CONFIG_ARM_CPUIDLE=y
+ CONFIG_CPU_FREQ=y
++CONFIG_CPUFREQ_DT=y
+ CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
+ CONFIG_ARM_SCPI_CPUFREQ=y
+ CONFIG_NET=y
+@@ -252,6 +253,7 @@ CONFIG_SENSORS_INA2XX=m
+ CONFIG_SENSORS_ARM_SCPI=y
+ CONFIG_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
++CONFIG_CPU_THERMAL=y
+ CONFIG_EXYNOS_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_RENESAS_WDT=y
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
