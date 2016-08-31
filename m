@@ -1,76 +1,47 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Shunli Wang
-	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v11 7/9] reset: mediatek: Add MT2701 reset driver
-Date: Fri, 19 Aug 2016 13:34:54 +0800
-Message-ID: <1471584896-9986-8-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
-References: <1471584896-9986-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com"
+	<mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "pdeschrijver@nvidia.com"
+	<pdeschrijver@nvidia.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 5/6] ARM: tegra: Add Tegra20 GMI support
+Date: Wed, 31 Aug 2016 07:18:47 +0000
+Message-ID: <1472627926.31008.7.camel@toradex.com>
+References: <1472569349.5703.25.camel@toradex.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
-
-In infrasys and perifsys, there are many reset
-control bits for kinds of modules. These bits are
-used as actual reset controllers to be registered
-into kernel's generic reset controller framework.
-
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/mediatek/clk-mt2701-hif.c | 2 ++
- drivers/clk/mediatek/clk-mt2701.c     | 4 ++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-index 33ead83..0ca0537 100644
---- a/drivers/clk/mediatek/clk-mt2701-hif.c
-+++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-@@ -55,6 +55,8 @@ static void mtk_hifsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 1, 0x34);
- }
- 
- static const struct of_device_id of_match_clk_mt2701_hif[] = {
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index f64dc4e..9dab533 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -791,6 +791,8 @@ static void mtk_infrasys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x30);
- }
- 
- static const struct mtk_gate_regs peri0_cg_regs = {
-@@ -911,6 +913,8 @@ static void mtk_pericfg_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x0);
- }
- 
- #define MT8590_PLL_FMAX		(2000 * MHZ)
--- 
-1.9.1
+T24gV2VkLCAyMDE2LTA4LTI0IGF0IDE1OjM3ICswMjAwLCBNaXJ6YSBLcmFrIHdyb3RlOg0KPiAN
+Cj4gRnJvbTogTWlyemEgS3JhayA8bWlyemEua3Jhay1SZTVKUUVlUXFlOEF2eHRpdU13eDN3QHB1
+YmxpYy5nbWFuZS5vcmc+DQo+IA0KPiBBZGQgYSBkZXZpY2Ugbm9kZSBmb3IgdGhlIEdNSSBjb250
+cm9sbGVyIGZvdW5kIG9uIFRlZ3JhMjAuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNaXJ6YSBLcmFr
+IDxtaXJ6YS5rcmFrLVJlNUpRRWVRcWU4QXZ4dGl1TXd4M3dAcHVibGljLmcNCj4gbWFuZS5vcmc+
+DQo+IC0tLQ0KPiBDaGFuZ2VzIGluIHYyOg0KPiAtIGFkZGVkIGFkZHJlc3MtY2VsbHMsIHNpemUt
+Y2VsbHMgYW5kIHJhbmdlcyBwcm9wZXJ0aWVzDQo+IA0KPiDCoGFyY2gvYXJtL2Jvb3QvZHRzL3Rl
+Z3JhMjAuZHRzaSB8IDE0ICsrKysrKysrKysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDE0IGlu
+c2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYTIw
+LmR0c2kNCj4gYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTIwLmR0c2kNCj4gaW5kZXggMjIwN2Mw
+OC4uMDNlYjAyOSAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEyMC5kdHNp
+DQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAuZHRzaQ0KPiBAQCAtMzc2LDYgKzM3
+NiwyMCBAQA0KPiDCoAkJc3RhdHVzID0gImRpc2FibGVkIjsNCj4gwqAJfTsNCj4gDQo+ICsNCj4g
+KwlnbWlANzAwMDkwMDAgew0KPiArCQljb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIwLWdtaSI7
+DQo+ICsJCXJlZyA9IDw3MDAwOTAwMCAweDEwMDA+Ow0KPiArCQkjYWRkcmVzcy1jZWxscyA9IDwx
+PjsNCj4gKwkJI3NpemUtY2VsbHMgPSA8MT47DQo+ICsJCXJhbmdlcyA9IDwwIDB4NDgwMDAwMDAg
+MHg3ZmZmZmZmPjsNCg0KT24gVDIwIGl0IGlzIGFjdHVhbGx5IHJhdGhlciAweGQwMDAwMDAwLg0K
+DQo+IA0KPiArCQljbG9ja3MgPSA8JnRlZ3JhX2NhciBURUdSQTIwX0NMS19OT1I+Ow0KPiArCQlj
+bG9jay1uYW1lcyA9ICJnbWkiOw0KPiArCQlyZXNldHMgPSA8ICZ0ZWdyYV9jYXIgNDI+Ow0KPiAr
+CQlyZXNldC1uYW1lcyA9ICJnbWkiOw0KPiArCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiArCX07
+DQo+ICsNCj4gwqAJcHdtOiBwd21ANzAwMGEwMDAgew0KPiDCoAkJY29tcGF0aWJsZSA9ICJudmlk
+aWEsdGVncmEyMC1wd20iOw0KPiDCoAkJcmVnID0gPDB4NzAwMGEwMDAgMHgxMDA+Ow0KPiAtLQ0K
+PiAyLjEuNA==
