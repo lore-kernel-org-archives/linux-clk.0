@@ -1,111 +1,143 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Mon, 1 Aug 2016 13:36:29 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 31 Aug 2016 22:25:22 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+Cc: dev@linux-sunxi.org, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
 	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
 	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: bcm: Add driver for Northstar ILP clock
-Message-ID: <20160801123428.GA13179@leverpostej>
-References: <1469797120-29298-1-git-send-email-zajec5@gmail.com>
- <20160729131513.GB13080@leverpostej>
- <CACna6rxiPx_7R1AwwvV40Wi6j+X=gUw1ChJY8R=oiXVNK1cDgw@mail.gmail.com>
+Subject: Re: Changed: sunxi-ng clock code - NKMP clock implementation is wrong
+Message-ID: <20160831202522.GB20462@lukather>
+References: <20160715085356.GR4761@lukather>
+ <085e185a-ac76-dd3f-9b0e-a7dc9c0c09f3@megous.com>
+ <20160721094852.GI5993@lukather>
+ <c46d1af5-9410-402a-7144-48b396ef6da7@megous.com>
+ <20160726063253.GW7419@lukather>
+ <e1b8127f-c422-46ab-384b-aeee85aa940b@megous.com>
+ <20160728210011.GJ6682@lukather>
+ <7c5f2835-f044-7c18-def9-52af5ce4afc3@megous.com>
+ <20160731103114.GY6215@lukather>
+ <9175af7e-e1b1-df88-de2b-16f0e8d719c1@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CACna6rxiPx_7R1AwwvV40Wi6j+X=gUw1ChJY8R=oiXVNK1cDgw@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
+In-Reply-To: <9175af7e-e1b1-df88-de2b-16f0e8d719c1@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 29, 2016 at 11:24:50PM +0200, Rafał Miłecki wrote:
-> On 29 July 2016 at 15:15, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Fri, Jul 29, 2016 at 02:58:32PM +0200, Rafał Miłecki wrote:
-> >> From: Rafał Miłecki <rafal@milecki.pl>
+
+--FkmkrVfFsRoUs1wW
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Ondrej,
+
+Sorry for the (very) belated reply.
+
+On Mon, Aug 01, 2016 at 12:01:39AM +0200, Ond=C5=99ej Jirman wrote:
+> >>>> In the vendor code M is never anything else but 0, and P is used only
+> >>>> for frequencies below 288MHz, which matches the H3 datasheet, which =
+says:
+> >>>
+> >>> In the vendor code, P is never used either. All the boards we had so
+> >>> far don't go that low, so we cannot make any of these assumptions,
+> >>> especially since the vendor code has had the bad habit of doing
+> >>> something wrong and / or useless in the past.
 > >>
-> >> This clock is present on cheaper Northstar devices like BCM53573 or
-> >> BCM47189 using Corex-A7. This driver uses PMU (Power Management Unit)
-> >> to calculate clock rate and allows using it in a generic (clk_*) way.
+> >> P is used in the arisc firmware according to the spec for the lower
+> >> frequencies.
+> >=20
+> > Yes, but has anyone actually tested those frequencies? Judging from
+> > the FEX files I could gather, cpufreq never actually goes lower than
+> > 480 MHz.
+> >=20
+>=20
+> I tested it. It works well down to 60MHz. You can even run on 24MHz if
+> you run directly from 24mhz osc. It's terribly slow, but it works ok.
+
+Ok, it's good to know (and yeah, I wouldn't expect a CPU at 24MHz to
+be very fast :))
+
+> I've rebased my working branch over the mainline kernel, which now
+> contains the sunxi-ng, and tested it. Cpufreq seems to work on orange pi
+> pc without any changes discussed in this thread. I didn't do any
+> extensive testing though. But it doesn't hang on boot or cpufreq config
+> changes.
+>=20
+> You can see it here:
+>=20
+> https://github.com/megous/linux/commits/orange-pi-4.8
+
+Thanks a lot. That's good to know as well.
+
+> >>>> "The P factor only use in the condition that PLL output less than 288
+> >>>> MHz."
+> >>>
+> >>> And the datasheet also had some issues, either misleading or wrong
+> >>> comments in the past. Don't get me wrong, I'm not saying that this is
+> >>> wrong, just that we should not follow it religiously, and that we
+> >>> should trust more the experiments than the datasheet.
 > >>
-> >> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> >> ---
-> >>  .../devicetree/bindings/clock/brcm,ns-ilp.txt      |  28 ++++
-> >>  drivers/clk/bcm/Makefile                           |   1 +
-> >>  drivers/clk/bcm/clk-ns-ilp.c                       | 146 +++++++++++++++++++++
-> >>  3 files changed, 175 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> >>  create mode 100644 drivers/clk/bcm/clk-ns-ilp.c
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> >> new file mode 100644
-> >> index 0000000..c4df38e
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/brcm,ns-ilp.txt
-> >> @@ -0,0 +1,28 @@
-> >> +Broadcom Northstar ILP clock
-> >> +============================
-> >> +
-> >> +This binding uses the common clock binding:
-> >> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >> +
-> >> +This binding is used for ILP clock on Broadcom Northstar devices using
-> >> +Corex-A7 CPU. ILP clock depends on ALP one and has to be calculated on
-> >> +runtime.
-> >> +
-> >> +Required properties:
-> >> +- compatible: "brcm,ns-ilp"
-> >> +- reg: iomem address range of PMU (Power Management Unit)
-> >> +- reg-names: "pmu", the only needed & supported reg right now
-> >
-> > From the commit message and binding description, it sounds like there
-> > should be a binding for the PMU, and that should cover the clocks
-> > required/exported by the PMU.
-> 
-> This is a bit of problem, because PMU handles a lot of different stuff
-> and is used by various drivers. Some examples of what you can do
-> with/find on a PMU:
-> 1) Power management
-> 2) Watchdog
-> 3) Timer
-> 4) XTAL
-> 5) PLLs
-> 6) Control registers for some ARM debugging (whatever it is), UART, JTAG, more
+> >> I can believe that. :) Regardless, I think the reasons given for
+> >> avoiding dividers are quite reasonable. It's based on how PLL block
+> >> works, not what manual says.
+> >=20
+> > Yes, indeed.
+> >=20
+> > Would replacing the current factors computation function by something
+> > like:
+> >=20
+> > for (m =3D 1; m < max_m; m++)
+> >     for (p =3D 1; p < max_p; p++)
+> >         for (n =3D 1; n < max_n; n++)
+> > 	     for (k =3D 1; k < max_k; k++)
+> > 	         if rate =3D=3D computed rate
+> > 		     break;
+> >=20
+> > work for you?
+>=20
+> This would be better.
 
-The organisation of subsystems in Libnux shouldn't affect the binding in
-this manner.
+Ok, I'll try to cook something up when I get the time. If you feel
+like it's not done fast enough, feel free to do it.
 
-There'll likely be shared resources (e.g. register ranges), and you need
-knowledge of the entire PMU to operate the sub-resources (and their
-potentially shared dependencies) without conflict.
+Note that we also ended up merging for the A31 some code that reparent
+CPUx temporarily while setting the PLL-CPUX rate, and it should be
+somewhat generic. But of course, it's not exclusive.
 
-While you might one sub-nodes on a larger PMU node, these should
-certainly not be entirely separate nodes and/or bindings.
+Thanks again for all your tests, it's very appreciated.
 
-> >> +- clocks: should reference an ALP clock
-> >> +- clock-names: "alp", the only needed & supported clock right now
-> >> +- #clock-cells: should be <0>
-> >
-> > How many clocks does the PMU output, including the ILP clock?
-> 
-> Well, ALP clock (AKA XTAL clock) is definitely part of PMU. It's a
-> fixed rate clock with rate specific to the chip.
-> 
-> I think ILP is also part of PMU (again: I don't have datasheets) as
-> PMU has this ALP_PER_4ILP register.
+Maxime
 
-Ok. Is that output from the PMU, or is it strictly internal?
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> From Broadcom's SDK I can say they also have "ARM debug unit" on some
-> chipsets. It requires enabling "ARM debug clk" to operate which is
-> handled by PMU as well.
+--FkmkrVfFsRoUs1wW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Likewise?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Thanks,
-Mark.
+iQIcBAEBAgAGBQJXxz0yAAoJEBx+YmzsjxAghv4P/1atWvA2BYC6XIG2HdccL3rg
+ApTBzeA7n9LZbt/+4WsWjeOxoOL6dkGmhV37xK6Jt5MoRBpIK2vk+SRqea1hmuYg
+xlcsO9LG3HRI0whHfe0PpOXjWJSYx3vybBxShWvObDeiVidVxinBA+AvK/8V/hVd
+pT0t9AWKOfyro4HgFMYLD7x1wB+Cl5+0pAXMKylJxu9EQFPDD8+s5hQIOZqmpGaU
+2ZtCq42D6nh+jJ+itaCYTBB5gY7m/qiBra90AEzq1mLZwebCGl9jCe4ZGqpP7CqN
+4RVQr/Xl0wRk7WgIqgaJRtkdRkOsTC1FupEgEF63xw0Pbv9rXAaHe2TXellQbjZy
+3xdZw9I/RtQfRB0bb+57VwpjGT5rWgCHMwI8lfteKEOYSEL/OJ40md6cOgT7BtBM
+toFTsNmgqu5akDDfWUSO6y/VxcO3sWWZ8xJLYzBWeB9Sdv/k0R1/G17a3ok+BYUP
+s/tNQxQo0olFFMtbo2hLwyfLj+Clk25lQaZDED1CkVp/EhULIrealgSSXTtG7N2n
+P/iU64RLtO5zFkCMAwLzZda9BgoLsyn7O5xSZz/QVhiFi/T7GfCm5+68D6f57nmO
+hyMWpB8goqaWNav/TiO4ZNLMimlyYLjrTEH7WBLa7sALUbZuFLRVOsx3hcOmRIJm
+bI0lFF/jgGcSrY2z9H73
+=MCv2
+-----END PGP SIGNATURE-----
+
+--FkmkrVfFsRoUs1wW--
