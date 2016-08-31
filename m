@@ -1,54 +1,86 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	devicetree@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 3/3] ARM64: dts: meson-gxbb: Add GXBB AO Clock and Reset node
-Date: Thu, 18 Aug 2016 12:08:48 +0200
-Message-Id: <1471514928-3341-4-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
-References: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 31 Aug 2016 15:31:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Michael Turquette <mturquette@baylibre.com>,
+	Dave Gerlach <d-gerlach@ti.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
+Message-ID: <20160831223101.GI12510@codeaurora.org>
+References: <20160820003342.13599-1-nm@ti.com>
+ <20160820003342.13599-4-nm@ti.com>
+ <20160824083415.GA6502@codeaurora.org>
+ <c1a66f45-fa81-8137-4d9b-73e84141f67f@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c1a66f45-fa81-8137-4d9b-73e84141f67f@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the AO clock controller node for the AmLogic GXBB SoC.
+On 08/31, Tero Kristo wrote:
+> On 24/08/16 11:34, Stephen Boyd wrote:
+> >On 08/19, Nishanth Menon wrote:
+> >>diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> >>new file mode 100644
+> >>index 000000000000..6c43e097e6d6
+> >>--- /dev/null
+> >>+++ b/drivers/clk/keystone/sci-clk.c
+> >>@@ -0,0 +1,539 @@
+> >>+	return (int)new_rate;
+> >
+> >determine rate should return a negative number on failure and 0
+> >on success. The actual rate that was found should go into
+> >req->rate. This looks broken.
+> 
+> Yea it seems broken, I wonder how we haven't seen any issues with
+> this in testing.... Apparently positive return values from this are
+> interpreted as success. Having a quick look at clk.c seems to
+> confirm this.
+> 
+> Anyway, will fix.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+True, perhaps we should fix that so we don't use a long to hold
+the int return value either.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index e502c24..c81e1ab 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -45,6 +45,8 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/gpio/meson-gxbb-gpio.h>
- #include <dt-bindings/reset/amlogic,meson-gxbb-reset.h>
-+#include <dt-bindings/clock/gxbb-aoclkc.h>
-+#include <dt-bindings/reset/gxbb-aoclkc.h>
- 
- / {
- 	compatible = "amlogic,meson-gxbb";
-@@ -205,6 +207,13 @@
- 				};
- 			};
- 
-+			clkc_AO: clock-controller@040 {
-+				compatible = "amlogic,gxbb-aoclkc";
-+				reg = <0x0 0x00040 0x0 0x4>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+
- 			uart_AO: serial@4c0 {
- 				compatible = "amlogic,meson-uart";
- 				reg = <0x0 0x004c0 0x0 0x14>;
+> >>+ *
+> >>+ * Gets a handle to an existing TI SCI clock, or builds a new clock
+> >>+ * entry and registers it with the common clock framework. Called from
+> >>+ * the common clock framework, when a corresponding of_clk_get call is
+> >>+ * executed, or recursively from itself when parsing parent clocks.
+> >>+ * Returns a pointer to the clock struct, or ERR_PTR value in failure.
+> >>+ */
+> >
+> >Please move this driver to clk_hw_register() and friends. This on
+> >the fly clk generation is scary considering how we hold locks
+> >while the provider is asked to give us the pointer, so allocating
+> >and registering clks (basically reentering the CCF again) could
+> >lead to a locking nightmare. Best to avoid that.
+> 
+> Ok, so just converting the driver to use provider->get_hw should be
+> enough? This seems to be a relatively new API in the CCF. Will look
+> at that.
+
+Hopefully it will simplify things greatly.
+
+> 
+> >>+	}
+> >>+
+> >>+	snprintf(name, 20, "%s:%d:%d", dev_name(provider->dev), sci_clk->dev_id,
+> >>+		 sci_clk->clk_id);
+> >
+> >I hope we don't make dev_name() longer than 20 characters
+> 
+> Shall I just increase the size of the buffer and add a length check?
+> Using kmalloc or something here seems overkill, as the name gets
+> copied by CCF anyway.
+
+There's kasprintf() which would always make it long enough. I
+don't know if it really matters though.
+
 -- 
-2.7.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
