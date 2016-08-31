@@ -1,83 +1,58 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 17 Aug 2016 08:34:38 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: core: Force setting the phase delay when no change
-Message-Id: <20160817083438.8c7f336e76bc12205e71e13d@free.fr>
-In-Reply-To: <7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
-References: <20160813164656.DD30A61A06@smtp.codeaurora.org>
-	<20160815182959.GV361@codeaurora.org>
-	<7e871c7e-d7fb-92f4-aacc-092c67a1ec1f@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 31 Aug 2016 18:08:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, alsa-devel@alsa-project.org, tiwai@suse.de,
+	irina.tirdea@intel.com
+Message-ID: <20160831170858.GA6560@sirena.org.uk>
+References: <1471459276-11517-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <20160831003722.GH12510@codeaurora.org>
+ <7c15a844-1351-f1ac-2ad0-3c41455fcc2e@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+In-Reply-To: <7c15a844-1351-f1ac-2ad0-3c41455fcc2e@linux.intel.com>
+Subject: Re: [PATCH] clk: x86: Add Atom PMC platform clocks
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 17 Aug 2016 09:00:05 +0800
-Shawn Lin <shawn.lin@rock-chips.com> wrote:
 
-> On 2016/8/16 2:29, Stephen Boyd wrote:
-> > On 08/13, Jean-Francois Moine wrote:
-> >> The hardware phase delay may depend on some other settings as clock
-> >> reparenting, so, it has to be set each time.
-> >> Also, when the delay was the same as previously, an error was returned.
-> >>
-> >> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> >> ---
-> >
-> > This effectively reverts commit 023bd7166be0 (clk: skip
-> > unnecessary set_phase if nothing to do, 2016-02-26), so I'd like
-> > to see if Shawn has any comments or if that patch was just a
-> > broken optimization.
-> >
-> > We may want to go another route and get the phase from the
-> > hardware and compare that to what's requested. That way we don't
-> > set the phase again unnecessarily.
-> >
->=20
-> Sorry for late response.
->=20
-> If the client calls clk_set_phase to set the same phase ,
-> why it needs to reparent as *this* parent already support this phase and
-> we don't need to do it again?
->=20
-> For some reasons we have to reparent the clock, it should be sub clock
-> drivers' responsibility to guarantee that we can maintain/restore the
-> topology structure no matter for rate or for phase. But it shouldn't
-> make the callers/users be aware of what was happening.
->=20
-> How do you nofify them that "Oh, reparent now, please call
-> clk_set_phase again" ? :)
->=20
-> Plz correct me if my understanding is wrong.
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Shawn,
+On Tue, Aug 30, 2016 at 08:35:55PM -0500, Pierre-Louis Bossart wrote:
+> On 8/30/16 7:37 PM, Stephen Boyd wrote:
 
-Maybe this problem is Allwinner specific.
+> > It's sad that this can't be compiled on any platform. Has there
+> > been any move towards making this into a regmap provider so that
+> > this clk driver can use cross platform regmap APIs instead? Or
 
-In their SoCs, the phase delays 0..360=B0 must be translated to a
-hardware shift 0..7 which depends on the ratio of of the rates of the
-clock and its father. When reparenting the clock, the ratio may change
-and, with a same phase delay, the hardware shift may have to be
-changed. As the phase delay is always set after setting the clock,
-setting the clock hardware in all cases solves the possible mismatch.
+> it's not clear to me what cross-platform goals you are hinting at and what
+> the concern is. We can add more framework stuff and make the code more
+> elegant but at the end of the day we will write in a very limited set of
+> registers (2 for audio - on/off and 19.2/25MHz selection) and the use of
+> this functionality is restricted to Baytrail and Cherrytrail.
 
-Now, the problem I had is a bit different: in some devices (MMCs) of
-some Allwinner SoCs, and under some conditions, the hardware phase
-delay may be set directly in the client instead of in the clock.
-Only the clock knows when this capability is used, so the clock must
-alert the client that this one has to set the phase delay or not.
-I solved this required synchronization by returning a specific error
-code when the clock does not set the phase delay on its side.
-This mechanism works fine when the set_phase() callback function of the
-clock is always called, even with a same delay.
+If code can be compiled on a wide range of platforms then that means
+that it's much easier to get build coverage of the code.  This is
+helpful for anyone doing any kind of cross tree updates - things like
+updating APIs for example.  The fewer configurations they have to touch
+to get everything built the easier it is for them.
 
-In the Allwinner's SoCs, setting the hardware phase delay asks for only
-a few machine instructions, so, the overhead is very small.
-If this is not the case for other machines, it could be simple enough
-to move the test of same delay to the clock drivers of these machines...
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXxw8pAAoJECTWi3JdVIfQ00oIAIWAl1ODhtK28ysDr78ek/9M
+CsSNAuuC+EFhJ9w4xbwyZWNMfRl+2WPnjWAyqHnQlrkjt3yDi31mP94FWwNSvEgB
+n65Bia9mSAcuaIXIXUrinBMVz66WheW44yj423lF8ef5QatTVLKOH/gocYQCfZDK
+XzCz7iRw3aM7qViE2CxB/K30jsf6zU0oNjcz4xo3rrQp6q/9QVuNHwGoLd5Yzxyv
+69Ag+hxxIgQtlnSm3IaNtSKw0s7zCMWefZBqywuheuANyGRx+iDvOyugYyjZl24d
+ecK3X2azq60DEOjQSCzuOrDsMD5g/egg2QzCAaoVEbRICUuhGnk8l4O7fTIyMTM=
+=bss6
+-----END PGP SIGNATURE-----
+
+--ZGiS0Q5IWpPtfppv--
