@@ -1,177 +1,45 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 15 Aug 2016 15:31:32 -0700
+Date: Wed, 31 Aug 2016 15:40:49 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
-	galak@codeaurora.org, pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org, varada@codeaurora.org,
-	sricharan@codeaurora.org, architt@codeaurora.org,
-	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] clk: qcom: ipq4019: Added the apss cpu pll
- divider clock node
-Message-ID: <20160815223132.GN361@codeaurora.org>
-References: <1466516962-18087-1-git-send-email-absahu@codeaurora.org>
- <1466516962-18087-3-git-send-email-absahu@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
+Message-ID: <20160831224049.GK12510@codeaurora.org>
+References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+ <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1466516962-18087-3-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, Abhishek Sahu wrote:
-> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-> index 17ca6d3..4c8a97f 100644
-> --- a/drivers/clk/qcom/gcc-ipq4019.c
-> +++ b/drivers/clk/qcom/gcc-ipq4019.c
-> @@ -154,7 +154,7 @@ static const char * const gcc_xo_ddr_500_200[] = {
->  	"xo",
->  	"gcc_fepll200_clk",
->  	"gcc_fepll500_clk",
-> -	"ddrpllapss",
-> +	"gcc_apps_cpu_plldiv_clk",
->  };
->  
->  #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-> @@ -571,6 +571,7 @@ static struct clk_rcg2 apps_clk_src = {
->  		.parent_names = gcc_xo_ddr_500_200,
->  		.num_parents = 4,
->  		.ops = &clk_rcg2_ops,
-> +		.flags = CLK_SET_RATE_PARENT,
->  	},
->  };
->  
-> @@ -1273,6 +1274,114 @@ static struct clk_pll_vco gcc_fepll_vco = {
->  	},
->  };
->  
-> +/*
-> + * Round rate function for APPS CPU PLL Clock divider.
-> + * It Returns the input rate without changing it. The hardware supported rate
-> + * will be calculated in set function by getting the same from frequency table.
-> + */
-> +static long clk_cpu_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *p_rate)
-> +{
-> +	return rate;
+On 08/31, Leo Yan wrote:
+> In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
+> default, as result stub clock driver has not been registered and
+> CPUFreq driver cannot work.
+> 
+> This patch is to enable stub clock driver in config for ARCH_HISI.
+> 
+> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
 
-This needs to calculate what the rate will be if clk_set_rate()
-is called with the rate parameter. Blindly returning rate back is not
-acceptable.
-
-> +};
-> +
-> +/*
-> + * Clock set rate function for APPS CPU PLL Clock divider.
-> + * It looks up the frequency table and updates the PLL divider to corresponding
-> + * divider value.
-> + */
-> +static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			      unsigned long parent_rate)
-> +{
-> +	struct clk_pll_div *rcg = to_clk_pll_div(hw);
-> +	const struct freq_tbl *f;
-> +	u32 mask;
-> +	int ret;
-> +
-> +	f = qcom_find_freq(rcg->freq_tbl, rate);
-> +	if (!f)
-> +		return -EINVAL;
-> +
-> +	mask = (BIT(rcg->cdiv.width) - 1) << rcg->cdiv.shift;
-> +	ret = regmap_update_bits(rcg->cdiv.clkr.regmap,
-> +				rcg->cdiv.reg, mask,
-> +				(f->pre_div << rcg->cdiv.shift) & mask);
-
-Why are we masking a value that will be masked by
-regmap_update_bits()?
-
-> +	udelay(1);
-
-Why do we wait? Please add some comment.
-
-> +
-> +	return 0;
-> +};
-> +
-> +/*
-> + * Clock frequency calculation function for APPS CPU PLL Clock divider.
-> + * This clock divider is nonlinear so this function calculates the actual
-> + * divider and returns the output frequency by dividing VCO Frequency
-> + * with this actual divider value.
-> + */
-> +static unsigned long clk_cpu_div_recalc_rate(struct clk_hw *hw,
-> +					   unsigned long parent_rate)
-> +{
-> +	struct clk_pll_div *rcg = to_clk_pll_div(hw);
-> +	u32 cdiv, pre_div;
-> +
-> +	regmap_read(rcg->cdiv.clkr.regmap, rcg->cdiv.reg, &cdiv);
-> +	cdiv = (cdiv >> rcg->cdiv.shift) & (BIT(rcg->cdiv.width) - 1);
-> +
-> +	/*
-> +	 * Some dividers have value in 0.5 fraction so multiply both VCO
-> +	 * frequency(parent_rate) and pre_div with 2 to make integer
-> +	 * calculation.
-> +	 */
-> +	if (cdiv > 10)
-> +		pre_div = (cdiv + 1) * 2;
-> +	else
-> +		pre_div = cdiv + 12;
-> +
-> +	return clk_calc_divider_rate(parent_rate * 2, pre_div);
-> +};
-> +
-> +const struct clk_ops clk_regmap_cpu_div_ops = {
-
-static?
-
-> +	.round_rate = clk_cpu_div_round_rate,
-> +	.set_rate = clk_cpu_div_set_rate,
-> +	.recalc_rate = clk_cpu_div_recalc_rate,
-> +};
-> +
-> +static const struct freq_tbl ftbl_apps_ddr_pll[] = {
-> +	{380000000, P_XO, 0xD, 0},
-> +	{409000000, P_XO, 0xC, 0, 0},
-> +	{444000000, P_XO, 0xB, 0, 0},
-> +	{484000000, P_XO, 0xA, 0, 0},
-> +	{507000000, P_XO, 0x9, 0, 0},
-> +	{532000000, P_XO, 0x8, 0, 0},
-> +	{560000000, P_XO, 0x7, 0, 0},
-> +	{592000000, P_XO, 0x6, 0, 0},
-> +	{626000000, P_XO, 0x5, 0, 0},
-> +	{666000000, P_XO, 0x4, 0, 0},
-> +	{710000000, P_XO, 0x3, 0, 0},
-> +	{761000000, P_XO, 0x2, 0, 0},
-> +	{819000000, P_XO, 0x1, 0, 0},
-> +	{888000000, P_XO, 0x0, 0, 0},
-
-Style nits from before apply here (lowercase, spaces)
-
-> +	{}
-> +};
-> +
-> +static struct clk_pll_div gcc_apps_cpu_plldiv_clk = {
-> +	.cdiv.reg = 0x2E020,
-> +	.cdiv.shift = 4,
-> +	.cdiv.width = 4,
-> +	.cdiv.clkr = {
-> +		.enable_reg = 0x2E000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_apps_cpu_plldiv_clk",
-> +			.parent_names = (const char *[]){
-> +				"gcc_apps_ddrpll_vco",
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_regmap_cpu_div_ops,
-> +		},
-> +	},
-> +	.freq_tbl = ftbl_apps_ddr_pll,
-> +};
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
