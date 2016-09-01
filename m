@@ -1,58 +1,44 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 3/3] clk: keystone: Add sci-clk driver support
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
- <1472733635-22661-4-git-send-email-t-kristo@ti.com>
- <20160902233235.GM12510@codeaurora.org>
-CC: <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <ssantosh@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <nm@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <827e0a46-3771-67a8-1414-0cbaf0e2548e@ti.com>
-Date: Mon, 5 Sep 2016 10:07:05 +0300
+Return-Path: <fengguang.wu@intel.com>
+Date: Thu, 1 Sep 2016 23:10:39 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: kbuild-all@01.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/5] clk: add support for runtime pm
+Message-ID: <201609012326.7939xqBY%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20160902233235.GM12510@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/09/16 02:32, Stephen Boyd wrote:
-> On 09/01, Tero Kristo wrote:
->> +
->> +/**
->> + * _sci_clk_get - Gets a handle for an SCI clock
->> + * @provider: Handle to SCI clock provider
->> + * @dev_id: device ID for the clock to register
->> + * @clk_id: clock ID for the clock to register
->> + * @parse_parents: indicator whether parents for this clock should be handled
->> + *
->> + * Gets a handle to an existing TI SCI hw clock, or builds a new clock
->> + * entry and registers it with the common clock framework. Called from
->> + * the common clock framework, when a corresponding of_clk_get call is
->> + * executed, or recursively from itself when parsing parent clocks.
->> + * Returns a pointer to the hw clock struct, or ERR_PTR value in failure.
->> + */
->> +static struct clk_hw *_sci_clk_get(struct sci_clk_provider *provider,
->> +				   u16 dev_id, u8 clk_id, bool parse_parents)
->
-> I still don't get it. We should be registering hw pointers in
-> probe and handing them out in the xlate function. Not register
-> hws in the xlate function and then handing them out as well. I
-> haven't reviewed anything else in this patch.
+Hi Marek,
 
-Ok, let me try to explain the functionality.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v4.8-rc4 next-20160825]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+[Suggest to use git(>=2.9.0) format-patch --base=<commit> (or --base=auto for convenience) to record what (public, well-known) commit your patch series was built on]
+[Check https://git-scm.com/docs/git-format-patch for more information]
 
-Probe time hw pointer registration is only needed for special clocks 
-that require extra flags, like adding the spread spectrum flag. There is 
-ever going to be only handful of these.
+url:    https://github.com/0day-ci/linux/commits/Marek-Szyprowski/Add-runtime-PM-support-for-clocks-on-Exynos-SoC-example/20160901-215042
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 
-Xlate checks out the sci_clk list, and picks up an existing hw clock if 
-it is there. If not, it will create a new one. The reason this is done 
-like this, the device IDs / clock IDs don't mean anything to the driver 
-itself, the driver just passes these forward to the underlying SCI fwk. 
-And, we don't have inherent knowledge of valid device / clock IDs 
-either, the SCI fwk returns a failure if a specific clock ID is bad. The 
-device / clock IDs are going to be different between different 
-generations of SoC also, and in addition there can be holes in the ID 
-ranges.
 
--Tero
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/clk/clk.c:123:9-10: WARNING: return of 0/1 in function 'clk_pm_runtime_suspended' with return type bool
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
