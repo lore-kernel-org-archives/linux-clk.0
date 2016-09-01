@@ -1,50 +1,82 @@
-Return-Path: <horms@verge.net.au>
-Date: Thu, 1 Sep 2016 15:54:33 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add section for Renesas clock drivers
-Message-ID: <20160901135432.GD14300@verge.net.au>
-References: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/5] Add runtime PM support for clocks (on Exynos SoC example)
+Date: Thu, 01 Sep 2016 15:45:46 +0200
+Message-id: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 31, 2016 at 11:49:30AM +0200, Geert Uytterhoeven wrote:
-> Add a section for Renesas clock drivers, as found on Renesas ARM SoCs,
-> and list myself as the maintainer.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Dear All,
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+This patchset adds runtime PM support to common clock framework. This is an
+attempt to implement support for clock controllers, which belongs to a power
+domain. This approach works surprisingly well on Exynos 4412 and 5433 SoCs,
+what allowed us to solve various freeze/crash issues related to power
+management.
 
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e220af2344e6233b..cabe74e526d4d305 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9963,6 +9963,12 @@ F:	drivers/rpmsg/
->  F:	Documentation/rpmsg.txt
->  F:	include/linux/rpmsg.h
->  
-> +RENESAS CLOCK DRIVERS
-> +M:	Geert Uytterhoeven <geert+renesas@glider.be>
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/clk/renesas/
-> +
->  RENESAS ETHERNET DRIVERS
->  R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->  L:	netdev@vger.kernel.org
-> -- 
-> 1.9.1
-> 
+The main idea behind this patchset is to keep clock's controller power domain
+enabled every time when at least one of its clock is enabled or access to its
+registers is being made. Clock controller driver (clock provider) can
+supply a struct device pointer, which is the used by clock core for tracking and
+managing clock's controller runtime pm state. Each clk_prepare() operation will
+first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+will do pm_runtime_put() at the end.
+
+This runtime PM feature has been tested with Exynos4412 and Exynos5433 clocks
+drivers. Both have some clocks, which belongs to respective power domains and
+need special handling during power on/off procedures. Till now it wasn't handled
+at all, what caused various problems.
+
+Patches for exynos 4412 and 5433 clocks drivers change the way the clock
+provider is initialized. Instead of CLK_OF_DECLARE based initialization, a
+complete platform device driver infrastructure is being used. This is needed to
+let driver to use runtime pm feature and integrate with generic power domains.
+The side-effect of this change is a delay in clock provider registeration
+during system boot, so early initialized drivers might get EPROBEDEFER error
+when requesting their clocks. This is an issue for IOMMU drivers, so
+this patchset will be fully functional once the deferred probe for IOMMU
+will be merged.
+
+The side-effect of this patchset is the one can finally read
+/sys/kernel/debug/clk/clk_summary on all Exynos4412 boards without any freeze.
+
+If one wants to test this patchset (on Exynos4412 Trats2 device with FIMC-IS
+driver), I've provided a branch with all needed patches (fixes for Exynos,
+FIMC-IS driver and IOMMU deferred probe):
+https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.8-clocks-pm
+
+Patches are based on vanilla v4.8-rc4 kernel.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Marek Szyprowski (5):
+  clk: add support for runtime pm
+  clock: samsung: add support for runtime pm
+  clocks: exynos4x12: add runtime pm support for ISP clocks
+  ARM: dts: exynos: add support for ISP power domain to exynos4x12
+    clocks device
+  clocks: exynos5433: add runtime pm support
+
+ .../devicetree/bindings/clock/exynos4-clock.txt    |  22 +
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   5 +
+ drivers/clk/clk.c                                  |  84 +++-
+ drivers/clk/samsung/clk-exynos4.c                  | 228 +++++++---
+ drivers/clk/samsung/clk-exynos5433.c               | 462 ++++++++++++++++-----
+ drivers/clk/samsung/clk-pll.c                      |   2 +-
+ drivers/clk/samsung/clk.c                          |  12 +-
+ drivers/clk/samsung/clk.h                          |   1 +
+ 8 files changed, 641 insertions(+), 175 deletions(-)
+
+-- 
+1.9.1
