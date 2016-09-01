@@ -1,56 +1,59 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	dianders@chromium.org
+Cc: linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	ykk@rock-chips.com,
+	Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v3 08/11] clk: qcom: mmcc-8996: Add capability flags for some alpha PLLs
-Date: Thu, 29 Sep 2016 14:05:49 +0530
-Message-Id: <1475138152-859-9-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/3] clk: rockchip: use the dclk_vop_frac clock ids
+Date: Thu,  1 Sep 2016 15:53:28 -0700
+Message-Id: <1472770408-32278-3-git-send-email-zyw@rock-chips.com>
+In-Reply-To: <1472770408-32278-1-git-send-email-zyw@rock-chips.com>
+References: <1472770408-32278-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Flag alpha PLLs which support fsmmode, dynamic update and the ones
-with latched input interface.
+From: Yakir Yang <ykk@rock-chips.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Export the dclk_vop_frac out, so we can set the dclk_vop as the
+child of dclk_vop_frac, and then we can start to take use of
+the fractional dividers.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 ---
- drivers/clk/qcom/mmcc-msm8996.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 847dd9d..f2f40ce 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -269,6 +269,7 @@ static struct clk_alpha_pll mmpll0_early = {
- 	.offset = 0x0,
- 	.vco_table = mmpll_p_vco,
- 	.num_vco = ARRAY_SIZE(mmpll_p_vco),
-+	.flags = SUPPORTS_FSM_MODE,
- 	.clkr = {
- 		.enable_reg = 0x100,
- 		.enable_mask = BIT(0),
-@@ -297,6 +298,7 @@ static struct clk_alpha_pll mmpll1_early = {
- 	.offset = 0x30,
- 	.vco_table = mmpll_p_vco,
- 	.num_vco = ARRAY_SIZE(mmpll_p_vco),
-+	.flags = SUPPORTS_FSM_MODE,
- 	.clkr = {
- 		.enable_reg = 0x100,
- 		.enable_mask = BIT(1),
-@@ -445,6 +447,8 @@ static struct clk_alpha_pll mmpll9_early = {
- 	.offset = 0x4200,
- 	.vco_table = mmpll_t_vco,
- 	.num_vco = ARRAY_SIZE(mmpll_t_vco),
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_LATCHED_INPUT,
-+	.latch_ack_bit = 29,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "mmpll9_early",
- 		.parent_names = (const char *[]){ "xo" },
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 4c59f2b..2c7cba7 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1168,7 +1168,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
+ 			RK3399_CLKGATE_CON(10), 12, GFLAGS),
+ 
+-	COMPOSITE_FRACMUX_NOGATE(0, "dclk_vop0_frac", "dclk_vop0_div", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX_NOGATE(DCLK_VOP0_FRAC, "dclk_vop0_frac", "dclk_vop0_div", 0,
+ 			RK3399_CLKSEL_CON(106), 0,
+ 			&rk3399_dclk_vop0_fracmux),
+ 
+@@ -1198,7 +1198,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKSEL_CON(50), 8, 2, MFLAGS, 0, 8, DFLAGS,
+ 			RK3399_CLKGATE_CON(10), 13, GFLAGS),
+ 
+-	COMPOSITE_FRACMUX_NOGATE(0, "dclk_vop1_frac", "dclk_vop1_div", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX_NOGATE(DCLK_VOP1_FRAC, "dclk_vop1_frac", "dclk_vop1_div", 0,
+ 			RK3399_CLKSEL_CON(107), 0,
+ 			&rk3399_dclk_vop1_fracmux),
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
