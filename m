@@ -1,81 +1,25 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 1/6] clk: sunxi-ng: div: Add mux table macros
-Date: Thu,  1 Sep 2016 16:16:12 +0200
-Message-Id: <20160901141617.9777-2-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160901141617.9777-1-maxime.ripard@free-electrons.com>
-References: <20160901141617.9777-1-maxime.ripard@free-electrons.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/2] clk: samsung: exynos5410: Use
+ samsung_cmu_register_one() to simplify code
+To: Chanwoo Choi <cw00.choi@samsung.com>
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+ <1471834185-20249-3-git-send-email-cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <cf7b4b6f-f156-3460-761c-2268203c7593@samsung.com>
+Date: Thu, 01 Sep 2016 19:07:30 +0200
+MIME-version: 1.0
+In-reply-to: <1471834185-20249-3-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add some macros to ease the declaration of clocks that are using them.
+On 08/22/2016 04:49 AM, Chanwoo Choi wrote:
+> This patch uses the samsung_cmu_register_one() to simplify code
+> and move the pll/mux/div/gate data to initconst section.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_div.h | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 5d98549e23a6..a5c9eaf90e84 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -77,13 +77,16 @@ struct ccu_div {
- 				      _shift, _width, _table, 0,	\
- 				      _flags)
- 
--#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
--				  _mshift, _mwidth, _muxshift, _muxwidth, \
--				  _gate, _flags)			\
-+#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
-+					_parents, _table,		\
-+					_reg,				\
-+					_mshift, _mwidth,		\
-+					_muxshift, _muxwidth,		\
-+					_gate, _flags)			\
- 	struct ccu_div _struct = {					\
- 		.enable	= _gate,					\
- 		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
--		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
-+		.mux	= _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, _table), \
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-@@ -93,12 +96,23 @@ struct ccu_div {
- 		},							\
- 	}
- 
-+#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  _gate, _flags)			\
-+	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
-+					_parents, NULL,			\
-+					_reg, _mshift, _mwidth,		\
-+					_muxshift, _muxwidth,		\
-+					_gate, _flags)
-+
- #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
- 			     _mshift, _mwidth, _muxshift, _muxwidth,	\
- 			     _flags)					\
--	SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
--				  _mshift, _mwidth, _muxshift, _muxwidth, \
--				  0, _flags)
-+	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
-+					_parents, NULL,			\
-+					_reg, _mshift, _mwidth,		\
-+					_muxshift, _muxwidth,		\
-+					0, _flags)
- 
- 
- #define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
--- 
-2.9.2
+Applied, thanks.
