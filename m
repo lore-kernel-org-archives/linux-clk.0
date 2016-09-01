@@ -1,117 +1,99 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>
+CC: <ssantosh@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <nm@ti.com>
+Subject: [PATCHv2 1/3] Documentation: dt: Add TI SCI clock driver
+Date: Thu, 1 Sep 2016 15:40:33 +0300
+Message-ID: <1472733635-22661-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
+References: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <76bb5b71-dd4e-e1ad-df0b-b84833812502@samsung.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
- <CGME20160913084956eucas1p2433fb17456cea4620de2729efbbf78c7@eucas1p2.samsung.com>
- <CAPDyKFo7R1f1H1R5Q78L4e_nHfngRYfo8jP_Dfi3uf_OGWvZCg@mail.gmail.com> <76bb5b71-dd4e-e1ad-df0b-b84833812502@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 13 Sep 2016 17:03:07 +0200
-Message-ID: <CAPDyKFqufBW0TmPVBx-noSnCvk26WBk9jP4PjgS5wKVuq6cJmA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: add support for runtime pm
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-[...]
+Add a clock implementation, TI SCI clock, that will hook to the common
+clock framework, and allow each clock to be controlled via TI SCI
+protocol.
 
->>
->> This needs to be clarified. I agree we need to cover system PM as
->> well, but let's try be a bit more precise about it.
->
->
-> Right, I wasn't precise here. I've developed this code on older (v4.1 and
-> v4.6)
-> kernels, which had a code which disables runtime pm during system sleep
-> transition
-> time. Maybe I need to revisit it and consider your change merged to
-> v4.8-rc1, which
-> keeps runtime pm enabled during system sleep transitions.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Tested-by: Dave Gerlach <d-gerlach@ti.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+ .../devicetree/bindings/clock/ti,sci-clk.txt       | 51 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
 
-Right, I see.
-
->>>   static bool clk_core_is_prepared(struct clk_core *core)
->>>   {
->>> +       if (clk_pm_runtime_suspended(core))
->>> +               return false;
->>> +
->>
->> This isn't safe, as even if the clock controller is runtime resumed at
->> this point, that's *not* a guarantee that is stays runtime resumed
->> while invoking the ->ops->is_prepared().
->>
->> Instead you must call a pm_runtime_get_noresume() before you check the
->> runtime PM status, as that should avoid the device from being runtime
->> suspended. Then when the ->ops->is_prepared() has been invoked, we
->> should call pm_runtime_put().
->>
->> Although, I am not sure the above change becomes entirely correct as I
->> think we are mixing the runtime PM status with the clock prepare
->> status here. In other words, the next time the clock controller
->> becomes runtime resumed, it may very well restore some register
->> context which may prepare the clock, unless someone explicitly has
->> unprepared it.
->>
->> Of course, it all depends on how clk_core_is_prepared() is used by the
->> clock framework.
->
->
-> clk_core_is_prepared() is mainly used by disable_unused_tree_*. You are
-> right that it mixes a bit clock prepared state with runtime pm active
-> state of clock controller's, but I assumed here that clock cannot be
-> prepared if runtime pm state of controller is suspended. Other approach
-> here would be to call pm_runtime_get(), check status and then
-> pm_runtime_put(). If you prefer such approach, I will change it.
-
-Using pm_runtime_get|put() would work for the clk_core_is_prepared()
-case, although perhaps not for the clk_core_is_enabled() case.
-
-The reason is that I guess the clk_core_is_enabled() API may be called
-from atomic context? Thus we would need to enable
-pm_runtime_irq_safe() for the clock provider device, which I *really*
-would like to avoid.
-
-[...]
-
->>
->> I believe we are also accessing the clock controller HW from the
->> late_initcall_sync(clk_disable_unused) function.
->
->
-> This was indirectly handled by the runtime pm state check in is_prepared
-> and is_enabled().
-
-I see.
-
-Although, I was thinking that you explicitly would like to
-disable/unprepare unused clocks in this phase, so then it isn't
-sufficient to rely on the runtime PM status to know whether the clock
-is prepared/enabled.
-
-Perhaps, this is the only case when you actually need a
-pm_runtime_get|put() around the ->is_enabled|prepared()!?
-
->
->> More precisely, in clk_disable_unused_subtree(), we probably need a
->> pm_runtime_get_sync() before calling clk_core_is_enabled(). And then
->> restore that with a pm_runtime_put() after the clock has been
->> disabled.
->> The similar is needed in clk_unprepare_unused_subtree().
->
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
-
-Kind regards
-Uffe
+diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+new file mode 100644
+index 0000000..231cb80
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+@@ -0,0 +1,51 @@
++Texas Instruments TI-SCI Clocks
++===============================
++
++All clocks on Texas Instruments' SoCs that contain a System Controller,
++are only controlled by this entity. Communication between a host processor
++running an OS and the System Controller happens through a protocol known
++as TI-SCI[1]. This clock implementation plugs into the common clock
++framework and makes use of the TI-SCI protocol on clock API requests.
++
++[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
++
++Required properties:
++-------------------
++- compatible: Must be "ti,sci-clk"
++- #clock-cells: Shall be 2.
++  In clock consumers, this cell represents the device ID and clock ID
++  exposed by the PM firmware. The assignments can be found in the header
++  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
++  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
++  is the SoC involved, for example 'k2g'.
++- ti,sci: Phandle to the TI SCI device to use for managing the clocks
++
++Optional properties:
++-------------------
++- ti,ssc-clocks: Array of phandle clocks that shall enable spread spectrum
++		 clocking while enabled
++- ti,allow-freq-change-clocks: Array of phandle clocks that shall allow
++			       dynamic clock frequency changes by firmware
++- ti,input-term-clocks: Array of phandle clocks that shall enable input
++			termination
++
++Examples:
++--------
++
++k2g_clks: k2g_clks {
++	compatible = "ti,sci-clk";
++	ti,sci = <&pmmc>;
++	#clock-cells = <2>;
++};
++
++dummy_node@1234 {
++	clocks = <&k2g_clks K2G_DEV_DUMMY K2G_DEV_DUMMY_FCK>;
++};
++
++dummy_node2@2345 {
++	clocks = <&k2g_clks K2G_DEV_DUMMY2 K2G_DEV_DUMMY_X1_CLK>;
++};
++
++&k2g_clks {
++	ti,ssc-clocks = <&k2g_clks K2G_DEV_DUMMY K2G_DEV_DUMMY_FCK>;
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0c5e3d1..ef88726 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11573,6 +11573,7 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+ F:	drivers/firmware/ti_sci*
+ F:	include/linux/soc/ti/ti_sci_protocol.h
++F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+ 
+ THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+ M:	Hans Verkuil <hverkuil@xs4all.nl>
+-- 
+1.9.1
