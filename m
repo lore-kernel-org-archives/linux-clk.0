@@ -1,73 +1,117 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 8 Sep 2016 22:09:08 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 0/8] clk: sunxi-ng: Introduce support for A23 and A33
- CCUs
-Message-ID: <20160908200908.GS8913@lukather>
-References: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z4IKABJTiQIqPwmW"
-In-Reply-To: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160901131036.17241-1-chris.brandt@renesas.com>
+References: <20160830031358.19468-1-chris.brandt@renesas.com> <20160901131036.17241-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Sep 2016 21:21:38 +0200
+Message-ID: <CAMuHMdXd8WxTtpiQ5rujKKVP04oEriF62K9d3iTh1zVakVtTog@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: renesas: rz: Select EXTAL vs USB clock
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Chris,
 
---z4IKABJTiQIqPwmW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 1, 2016 at 3:10 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Check the MD_CLK pin to determine the current clock mode in order to set
+> the pll clock parent correctly.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-On Thu, Sep 08, 2016 at 11:48:35AM +0200, Maxime Ripard wrote:
-> Hi everyone,
->=20
-> Here is the migration for the A23 and A33 clocks to the sunxi-ng
-> framework.
->=20
-> It has been tested on SinA33 board, and I made sure that everything
-> was reported at the exact same rate, that the MMC was still working in
-> DDR, etc.
->=20
-> This has also been tested to implement the DRM driver, so I'm
-> confident things will work just fine.
->=20
-> Let me know what you think,
-> Maxime
+Thanks for the update!
 
-Applied.
+> ---
+> v3:
+> * move reading GPIO port into separate function
+> v2:
+> * Switched to reading MD_CLK pin to determine mode
+> ---
+>  drivers/clk/renesas/clk-rz.c | 31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+> index f6312c6..29a8638 100644
+> --- a/drivers/clk/renesas/clk-rz.c
+> +++ b/drivers/clk/renesas/clk-rz.c
+> @@ -25,10 +25,34 @@ struct rz_cpg {
+>  #define CPG_FRQCR      0x10
+>  #define CPG_FRQCR2     0x14
+>
+> +#define PPR0 0xFCFE3200
+> +#define PIBC0 0xFCFE7000
+> +
+> +#define MD_BOOT0(x) ((x >> 0) & 1)     /* P0_0 */
+> +#define MD_BOOT1(x) ((x >> 1) & 1)     /* P0_1 */
+> +#define MD_CLK(x)   ((x >> 2) & 1)     /* P0_2 */
 
-Maxime
+Good idea to use a macro for that!
+However, adding more (unused) macros may trigger more questions from reviewers,
+cfr. below ;-)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> +#define MD_CLKS(x)  ((x >> 3) & 1)     /* P0_3 */
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Initialization
+>   */
+>
+> +u16 rz_cpg_read_mode_pins(void)
 
---z4IKABJTiQIqPwmW
-Content-Type: application/pgp-signature; name="signature.asc"
+static u16 __init rz_cpg_read_mode_pins(void)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Or do you intend to make this a global function?
+There's also MD_BOOT2 at P7_0. To read that, you have to map and read a
+different set of registers, though...
 
-iQIcBAEBAgAGBQJX0cVkAAoJEBx+YmzsjxAgTMoQAJAqpIOZBDxMxxQyPUUoaChK
-bmNDKSAymHqX2NgrEgLkVPS0pKrRFGDL3Bz3JOn1CUDKXdJRTegrDj89IbhW3mnB
-Uz9fCHGvnLJF2Dh+lB/TsKQBN3lMymX1AGVdKnG6TuJ/qJwUJIynZKLgJ0gef5IH
-wjQEDUqEtLLzD3CEp+7MxhVaVLmqqPbzrWmo6AVPjy0G+O22/9yR7iEefoTnY5me
-cI4b/t+Ff75JfclTDvy1N5Ve8VEMctBtnWAzlSKwGly1piKgewGAewKxK/hemmNe
-JFU2+frLkJY84z85FtwVez+yhJrmc+A61kFDFRaAT3guUE1W9WzXQCHqPz9gh0yN
-qzSOpGSvLImk3/lPo7uwEJtJYU7MpFhoyl5BqthTjeIcY8BgKQ/UfLzBvUEAMhHB
-hV8C5Ikw+4G2oukFoJHBd0O/Q1REnqaGGPsRfXK4BA1qQFtGGlRWLVlN2XzMXxX3
-i50EvIPZitAA+YQoCvkoTqVyXWVvhlo5iRyDgL2I1PZd+Wj4/QUddaTZBxendEtl
-gwd8JwnY9j1XT1xAidrSG0/FGzKfHhcLiFGmCf3604B9mFcHlgPUCB31lgS5MGv3
-1l1t9q+Jmea2WeVciHrwTzCvYEhVbyF1eREdRUnaUY2z4cGJYGobaKuUDhiIYPU0
-CWkKODAhnQukGJgQ+LjP
-=g9je
------END PGP SIGNATURE-----
+> +{
+> +       void __iomem *ppr0, *pibc0;
+> +       u16 modes;
+> +
+> +       ppr0 = ioremap_nocache(PPR0, 2);
+> +       pibc0 = ioremap_nocache(PIBC0, 2);
+> +       BUG_ON(!ppr0 || !pibc0);
+> +       iowrite16(4, pibc0);    /* enable input buffer */
+> +       modes = ioread16(ppr0);
+> +       iounmap(ppr0);
+> +       iounmap(pibc0);
+> +
+> +       return modes;
+> +}
+> +
+>  static struct clk * __init
+>  rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *name)
+>  {
+> @@ -37,10 +61,11 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+>         static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
+>
+>         if (strcmp(name, "pll") == 0) {
+> -               /* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
+> -               unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
 
---z4IKABJTiQIqPwmW--
+I'd just assign "MD_CLK(rz_cpg_read_mode_pins())" to cpg_mode here...
+
+> -               const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
+> +               unsigned int cpg_mode;
+> +               const char *parent_name;
+>
+> +               cpg_mode = MD_CLK(rz_cpg_read_mode_pins());
+> +               parent_name = of_clk_get_parent_name(np, cpg_mode);
+
+... and not bother splitting the lines, as they don't break the
+80-chars-per-line
+limit.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
