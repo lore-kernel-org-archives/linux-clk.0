@@ -1,31 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 13:55:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Hoan Tran <hotran@apm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, lho@apm.com,
-	Duc Dang <dhdang@apm.com>
-Subject: Re: [PATCH v3 1/3] Documentation: dtb: xgene: Add PMD clock binding
-Message-ID: <20160914205539.GA7243@codeaurora.org>
-References: <1473704605-28126-1-git-send-email-hotran@apm.com>
- <1473704605-28126-2-git-send-email-hotran@apm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473704605-28126-2-git-send-email-hotran@apm.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 0/6] clk: sunxi-ng: Introduce support for A23 and A33 CCUs
+Date: Thu,  1 Sep 2016 16:16:11 +0200
+Message-Id: <20160901141617.9777-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/12, Hoan Tran wrote:
-> Add APM X-Gene clock binding documentation for PMD clock.
-> 
-> Signed-off-by: Hoan Tran <hotran@apm.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+Hi everyone,
 
-Applied to clk-next
+Here is the migration for the A23 and A33 clocks to the sunxi-ng
+framework.
+
+It has been tested on SinA33 board, and I made sure that everything
+was reported at the exact same rate, that the MMC was still working in
+DDR, etc.
+
+This has also been tested to implement the DRM driver, so I'm
+confident things will work just fine.
+
+Let me know what you think,
+Maxime
+
+Maxime Ripard (6):
+  clk: sunxi-ng: div: Add mux table macros
+  clk: sunxi-ng: mux: Add mux table macro
+  clk: sunxi-ng: Add N-class clocks support
+  clk: sunxi-ng: Add A33 CCU support
+  clk: sunxi-ng: Add A23 CCU
+  ARM: sun8i: Convert the A23 and A33 to the CCU
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi               | 257 ++-----
+ arch/arm/boot/dts/sun8i-a23.dtsi                   |  51 +-
+ arch/arm/boot/dts/sun8i-a33.dtsi                   |  73 +-
+ drivers/clk/sunxi-ng/Kconfig                       |  28 +
+ drivers/clk/sunxi-ng/Makefile                      |   3 +
+ drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h           |  63 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c               | 723 +++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c               | 772 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_div.h                     |  28 +-
+ drivers/clk/sunxi-ng/ccu_mult.c                    | 133 ++++
+ drivers/clk/sunxi-ng/ccu_mult.h                    |  35 +
+ drivers/clk/sunxi-ng/ccu_mux.h                     |  26 +-
+ include/dt-bindings/clock/sun8i-a23-a33-ccu.h      | 127 ++++
+ include/dt-bindings/reset/sun8i-a23-a33-ccu.h      |  87 +++
+ 15 files changed, 2082 insertions(+), 326 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mult.c
+ create mode 100644 include/dt-bindings/clock/sun8i-a23-a33-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-a23-a33-ccu.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.2
