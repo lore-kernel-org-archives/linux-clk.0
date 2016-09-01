@@ -1,36 +1,28 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 4/4] ARM: sa11x0/pxa: get rid of get_clock_tick_rate
-To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
- Wim Van Sebroeck <wim@iguana.be>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-5-git-send-email-robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <06a58a7f-63c1-b0a0-2b94-5805cc97b811@linaro.org>
-Date: Mon, 19 Sep 2016 21:58:12 +0200
-MIME-Version: 1.0
-In-Reply-To: <1474312335-20997-5-git-send-email-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 2/3] clk: samsung: exynos5420: Add clocks for CMU_CDREX
+ domain
+To: Chanwoo Choi <cw00.choi@samsung.com>
+References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+ <1472108238-24309-3-git-send-email-cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <5c3c5a13-ca2b-272d-e137-d7eaaffaafac@samsung.com>
+Date: Thu, 01 Sep 2016 19:32:18 +0200
+MIME-version: 1.0
+In-reply-to: <1472108238-24309-3-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/09/2016 21:12, Robert Jarzmik wrote:
-> The last user of this function is gone, so remove it. The clock API
-> should now be used to get clock rates.
+On 08/25/2016 08:57 AM, Chanwoo Choi wrote:
+> This patch adds the mux/divider clocks for CMU_CDREX (DRAM Express
+> Controller) which generates the clocks for DRAM and NoC (Network on Chip) bus
+> clock. But, there is differnet source of MUX_MX_MSPLL_CCORE between exynos5420
+> and exynos5422. So, each MUX_MX_MSPLL_CCORE uses the different parent source
+> group.
 > 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Applied, thanks,
