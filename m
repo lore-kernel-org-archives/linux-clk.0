@@ -1,81 +1,37 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 18 Sep 2016 22:30:02 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] clk: sunxi-ng: sun6i-a31: Register offset and clk
- flag fixes
-Message-ID: <20160918203002.GN17518@lukather>
-References: <20160915065740.13664-1-wens@csie.org>
- <20160915083436.GC10128@lukather>
- <daee8cd5-c1a1-49c3-e0f8-e83bb9ed3263@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sy9WyBOsCRoUO165"
-In-Reply-To: <daee8cd5-c1a1-49c3-e0f8-e83bb9ed3263@codeaurora.org>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: Add the clock id for CMU_CDREX (DRAM
+ Express Controller)
+To: Chanwoo Choi <cw00.choi@samsung.com>
+References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+ <1472108238-24309-2-git-send-email-cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <0dfc9f01-1cda-a1e2-c1f2-6e119a7c1a84@samsung.com>
+Date: Thu, 01 Sep 2016 19:28:37 +0200
+MIME-version: 1.0
+In-reply-to: <1472108238-24309-2-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 08/25/2016 08:57 AM, Chanwoo Choi wrote:
+> This patch adds the new clock id for CMU_CDRES (DRAM Express Controller)
+> geneates the clocks for DRAM and NoC (Network on Chip) bus clock.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
---sy9WyBOsCRoUO165
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied with the commit message changed as below, thanks.
 
-On Thu, Sep 15, 2016 at 04:11:32PM -0700, Stephen Boyd wrote:
-> On 09/15/2016 01:34 AM, Maxime Ripard wrote:
-> > Hi,
-> >
-> > On Thu, Sep 15, 2016 at 02:57:37PM +0800, Chen-Yu Tsai wrote:
-> >> Hi,
-> >>
-> >> Here are 3 fixes for the new sunxi-ng clk driver for sun6i-a31 recently
-> >> introduced for 4.9. The issues were noticed while working on the displ=
-ay
-> >> pipeline for the A31/A31s. The second patch follows what Maxime has do=
-ne
-> >> for the A33 CCU driver. The third issue was noticed while doing the fi=
-rst
-> >> patch.
-> >>
-> >> I hope we can get this into 4.9 as well, either right in -rc1, or in a
-> >> later -rc.
-> > Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> >
-> > Stephen, could you apply those patches directly on top of my previous
-> > PR, or do you want me to send another one?
-> >
->=20
-> I can apply directly to clk-next.
+commit 9c605fbc299d31b482aefae547d126062c7a8792
+Author: Chanwoo Choi <cw00.choi@samsung.com>
+Date:   Thu Aug 25 15:57:16 2016 +0900
 
-Awesome, thanks!
-Maxime
+ dt-bindings: Add clock IDs for the CMU_CDREX (DRAM Express Controller)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+ This patch adds missing clock IDs for CMU_CDREX (DRAM Express Controller)
+ which generates clocks for DRAM and NoC (Network on Chip) busses.
 
---sy9WyBOsCRoUO165
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX3vlKAAoJEBx+YmzsjxAgdUQP/0d3moEGZ+PneSkqpUaYbuBJ
-lSE7jNFzQnXokHYXV0eOuqAA1ljrtzZsBqesEg06uIF1vJI0eGIsrp3ZS0/b6RrY
-UkVrn8YhuVxSz/DDVA+ChiE7vpx3Ib6OTb8D35wnvQZISgQJTKiBina4RjNYqZmw
-VswxpsncouJv+9Z8TN1c1PnyUcTJ6UtFmnv3aFRq53/MeEsjJp+Ix1Sxj3zkQmMv
-rXs+CPvkwcuNpa2Cd3CLpM+e7FGi5tvnDmpzQln6w1ep3TwUAn/iHBZ4qukSihBg
-HiAZD8IuuL3klbvTx1JTHe8qC264LmenRh3t2ktO7Spt4c+DXPq2svuzSduT/Do3
-EWdqJdqM5idhMfV6BDMOxz5p3/CtXu6aGOTiiyp8KsTaQeA0lc6ES6TayyiStkXn
-qpF2Mx9I939Ewxl+ohnywxgXMRSLAwhHLmjLLndnKVw/5WoNUSsHO4RWbN36Qw81
-N+rWzd19/8zc6mF90nXk+y8JXmqI8vxzV+1Ohoz2F9PUc0SXr0hbGhW2mZn5x2rT
-Rp7aZ0JSUilQD9wS9L0bz5Y1I0HZJ+m9+QsQqkc8HvgNaQ5VNFJJLJlwOFwmyaBT
-ZFTcGJYm6Vbp/yohEH/YCcE3VlPVs129Oyk+dVdh3Hgo20RsuVWyjYs6y0QuNZk7
-KKSEae2HqMvTVfkj3WOu
-=EpW0
------END PGP SIGNATURE-----
-
---sy9WyBOsCRoUO165--
+ Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+ Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
