@@ -1,86 +1,92 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 4/5] clk: samsung: Add support for EPLL on exynos5410
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
- <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
- <74d97f1b-6a3a-78f1-6d96-b0d0b9717ab2@samsung.com>
-Cc: linux-clk@vger.kernel.org, tomasz.figa@gmail.com, sboyd@codeaurora.org,
- mturquette@baylibre.com, kgene@kernel.org, b.zolnierkie@samsung.com,
- linux-samsung-soc@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <fe67f53a-b5cd-1ff2-ae9f-7bce6b3d33b8@samsung.com>
-Date: Fri, 02 Sep 2016 17:15:31 +0200
-MIME-version: 1.0
-In-reply-to: <74d97f1b-6a3a-78f1-6d96-b0d0b9717ab2@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20160820003342.13599-1-nm@ti.com>
+ <20160820003342.13599-4-nm@ti.com> <20160824083415.GA6502@codeaurora.org>
+ <c1a66f45-fa81-8137-4d9b-73e84141f67f@ti.com>
+ <20160831223101.GI12510@codeaurora.org>
+CC: Nishanth Menon <nm@ti.com>, Michael Turquette <mturquette@baylibre.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <7b74dc9f-54f3-3081-72b7-116d4c44e98a@ti.com>
+Date: Thu, 1 Sep 2016 15:27:33 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160831223101.GI12510@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/30/2016 12:36 PM, Krzysztof Kozlowski wrote:
-> On 08/22/2016 06:31 PM, Sylwester Nawrocki wrote:
->> This patch adds code instantiating the EPLL, which is used as the
->> audio subsystem's root clock.
->> The requirement to specify the external root clock in clocks property
->> is also added.
-> 
-> I think the requirement was there already but explained little bit
-> differently:
-> 19 External clock:
-> 20
-> 21 There is clock that is generated outside the SoC. It
-> 22 is expected that it is defined using standard clock bindings
-> 23 with following clock-output-name:
-> 24
-> 25  - "fin_pll" - PLL input clock from XXTI
+On 01/09/16 01:31, Stephen Boyd wrote:
+> On 08/31, Tero Kristo wrote:
+>> On 24/08/16 11:34, Stephen Boyd wrote:
+>>> On 08/19, Nishanth Menon wrote:
+>>>> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+>>>> new file mode 100644
+>>>> index 000000000000..6c43e097e6d6
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/keystone/sci-clk.c
+>>>> @@ -0,0 +1,539 @@
+>>>> +	return (int)new_rate;
+>>>
+>>> determine rate should return a negative number on failure and 0
+>>> on success. The actual rate that was found should go into
+>>> req->rate. This looks broken.
+>>
+>> Yea it seems broken, I wonder how we haven't seen any issues with
+>> this in testing.... Apparently positive return values from this are
+>> interpreted as success. Having a quick look at clk.c seems to
+>> confirm this.
+>>
+>> Anyway, will fix.
 >
-> so you can just combine them. Driver now will require the fin_pll in two
-> ways:
-> 1. Old lookup by "fin_pll" name.
-> 2. of_clk_get of yours.
-
-I'm not sure what do you mean exactly, I'm also adding in this patch a sentence
-right after the text as quoted above saying that:
-
-"This clock should be listed in the clocks property of the controller node."
-
-The description of the consumer clock (the main clock controller's parent clock)
-was not in the binding so far, there is no "clocks" property in the list of
-required properties.
-
->>  That ensures proper initialization order by explicitly
->> specifying dependencies in devicetree.  It prevents situations when the
->> SoC's clock controller driver has initialized, the external oscillator
->> clock is not yet registered and setting clock frequencies through
->> assigned-clock-rates property doesn't work properly due to unknown
->> external oscillator frequency.
+> True, perhaps we should fix that so we don't use a long to hold
+> the int return value either.
+>
+>>>> + *
+>>>> + * Gets a handle to an existing TI SCI clock, or builds a new clock
+>>>> + * entry and registers it with the common clock framework. Called from
+>>>> + * the common clock framework, when a corresponding of_clk_get call is
+>>>> + * executed, or recursively from itself when parsing parent clocks.
+>>>> + * Returns a pointer to the clock struct, or ERR_PTR value in failure.
+>>>> + */
+>>>
+>>> Please move this driver to clk_hw_register() and friends. This on
+>>> the fly clk generation is scary considering how we hold locks
+>>> while the provider is asked to give us the pointer, so allocating
+>>> and registering clks (basically reentering the CCF again) could
+>>> lead to a locking nightmare. Best to avoid that.
 >>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  .../devicetree/bindings/clock/exynos5410-clock.txt |  14 +++
->>  drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
->>  drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
->>  drivers/clk/samsung/clk-pll.h                      |   1 +
->>  4 files changed, 145 insertions(+), 2 deletions(-)
+>> Ok, so just converting the driver to use provider->get_hw should be
+>> enough? This seems to be a relatively new API in the CCF. Will look
+>> at that.
+>
+> Hopefully it will simplify things greatly.
+
+Well, it didn't simplify things greatly, but somewhat. I still need to 
+use of_parse_phandle_with_args with one of the helpers for example. Will 
+send out v2 in a bit.
+
+>
 >>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->> index aeab635..2aefc07 100644
->> --- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->> @@ -12,6 +12,9 @@ Required Properties:
->>  
->>  - #clock-cells: should be 1.
->>  
->> +- clocks: should contain an entry specifying the root oscillator clock
->> +  on XXTI pin (fin_pll).
-> 
-> Combine with "external clock".
+>>>> +	}
+>>>> +
+>>>> +	snprintf(name, 20, "%s:%d:%d", dev_name(provider->dev), sci_clk->dev_id,
+>>>> +		 sci_clk->clk_id);
+>>>
+>>> I hope we don't make dev_name() longer than 20 characters
+>>
+>> Shall I just increase the size of the buffer and add a length check?
+>> Using kmalloc or something here seems overkill, as the name gets
+>> copied by CCF anyway.
+>
+> There's kasprintf() which would always make it long enough. I
+> don't know if it really matters though.
 
-Do you mean rephrasing this to something like:
+Ok, I will use this one.
 
-- clocks: should contain an entry specifying the external clock (fin_pll),
-  i.e. the root clock on XXTI pin.
-
-?
-
---
-Thanks,
-Sylwester
+-Tero
