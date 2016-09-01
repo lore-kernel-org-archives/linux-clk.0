@@ -1,70 +1,47 @@
-Return-Path: <mars.cheng@mediatek.com>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland
-	<mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>, James Liao
-	<jamesjj.liao@mediatek.com>
-CC: <linux-clk@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Choui
-	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Scott Shu
-	<scott.shu@mediatek.com>, Jades Shih <jades.shih@mediatek.com>, Yingjoe Chen
-	<yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Subject: [PATCH 0/4] Add MT6797 SoC basic support
-Date: Thu, 8 Sep 2016 18:49:49 +0800
-Message-ID: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: mars.cheng@mediatek.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:34174 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752127AbcIAKwU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Sep 2016 06:52:20 -0400
+Received: by mail-pf0-f172.google.com with SMTP id p64so30292710pfb.1
+        for <linux-clk@vger.kernel.org>; Thu, 01 Sep 2016 03:52:20 -0700 (PDT)
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: mturquette@baylibre.com, sboyd@codeaurora.org,
+        maxime.ripard@free-electrons.com, wens@csie.org
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, baoyou.xie@linaro.org,
+        xie.baoyou@zte.com.cn
+Subject: [PATCH] clk: sunxi-ng: mark ccu_nk_find_best() static
+Date: Thu,  1 Sep 2016 18:51:48 +0800
+Message-Id: <1472727108-18388-1-git-send-email-baoyou.xie@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds basic chip support for mediatek's first 10-core
-chip, X20, also known as MT6797.
+We get 1 warning when building kernel with W=1:
+drivers/clk/sunxi-ng/ccu_nk.c:17:6: warning: no previous prototype for 'ccu_nk_find_best' [-Wmissing-prototypes]
 
-- Based on 4.8-rc1
-- Based on the MT2701 patch by Erin Lo[1]
-- Modify irq-mtk-sysirq to support 2 base address
+In fact, this function is only used in the file in which it is
+declared and don't need a declaration, but can be made static.
+So this patch marks it 'static'.
 
-[1] https://lkml.org/lkml/2016/8/22/128
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ drivers/clk/sunxi-ng/ccu_nk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Mars Cheng (4):
-  Document: DT: Add bindings for mediatek MT6797 SoC Platform
-  irqchip: mtk-sysirq: support second intpol base
-  arm64: dts: mediatek: add mt6797 support
-  clk: mediatek: Add MT6797 clock support
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index 4470ffc..2adb62e 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -14,7 +14,7 @@
+ #include "ccu_gate.h"
+ #include "ccu_nk.h"
+ 
+-void ccu_nk_find_best(unsigned long parent, unsigned long rate,
++static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
+ 		      unsigned int max_n, unsigned int max_k,
+ 		      unsigned int *n, unsigned int *k)
+ {
+-- 
+2.7.4
 
- Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
- .../interrupt-controller/mediatek,sysirq.txt       |    4 +-
- .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
- arch/arm64/boot/dts/mediatek/Makefile              |    1 +
- arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
- arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  237 +++++++
- drivers/clk/mediatek/Kconfig                       |   36 +
- drivers/clk/mediatek/Makefile                      |    5 +
- drivers/clk/mediatek/clk-mt6797-img.c              |   87 +++
- drivers/clk/mediatek/clk-mt6797-mm.c               |  146 ++++
- drivers/clk/mediatek/clk-mt6797-vdec.c             |  102 +++
- drivers/clk/mediatek/clk-mt6797-venc.c             |   86 +++
- drivers/clk/mediatek/clk-mt6797.c                  |  716 ++++++++++++++++++++
- drivers/irqchip/irq-mtk-sysirq.c                   |   42 +-
- include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
- 22 files changed, 1784 insertions(+), 9 deletions(-)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
- create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797.c
- create mode 100644 include/dt-bindings/clock/mt6797-clk.h
-
---
-1.7.9.5
