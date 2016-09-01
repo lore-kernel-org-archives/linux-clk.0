@@ -1,68 +1,67 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-In-Reply-To: <1473842240.6816.1.camel@pengutronix.de>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
- <m260q6jibf.fsf@baylibre.com> <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
- <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk> <m2eg4ui0nl.fsf@baylibre.com>
- <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk> <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
- <m2sht9gkau.fsf@baylibre.com> <CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
- <1473780508.10237.22.camel@pengutronix.de> <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
- <7hzinbmh40.fsf@baylibre.com> <1473842240.6816.1.camel@pengutronix.de>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 14 Sep 2016 23:09:52 +0200
-Message-ID: <CAFBinCDzJWZuFZz+1NqbsH--2u+0B6jQkHjQw6xpBabLaOV1Lw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Kevin Hilman <khilman@baylibre.com>, hdegoede@redhat.com,
-	Ben Dooks <ben.dooks@codethink.co.uk>, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, gregkh@linuxfoundation.org, johnyoun@synopsys.com,
-	will.deacon@arm.com, mturquette@baylibre.com, linux-usb@vger.kernel.org,
-	sboyd@codeaurora.org, kishon@ti.com, robh+dt@kernel.org,
-	catalin.marinas@arm.com, carlo@caione.org, linux-amlogic@lists.infradead.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 1 Sep 2016 21:54:14 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Baoyou Xie <baoyou.xie@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
 	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	jbrunet@baylibre.com
-Content-Type: text/plain; charset=UTF-8
+	linux-kernel@vger.kernel.org, arnd@arndb.de, xie.baoyou@zte.com.cn
+Subject: Re: [PATCH] clk: sunxi-ng: mark ccu_nk_find_best() static
+Message-ID: <20160901195414.GH20462@lukather>
+References: <1472727108-18388-1-git-send-email-baoyou.xie@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RwGu8mu1E+uYXPWP"
+In-Reply-To: <1472727108-18388-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 10:37 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> Am Dienstag, den 13.09.2016, 17:59 -0700 schrieb Kevin Hilman:
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->>
->> > On Tue, Sep 13, 2016 at 5:28 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
->>
->> [...]
->>
->> >>> I added Philipp and Hans to this thread - maybe they can comment on this.
->> >>> To sum it up, our problem is:
->> >>> - there are two separate USB PHYs on Meson GXBB
->> >>> - both are sharing the same reset line (provided by the reset-meson driver)
->> >>> - during initialization of the PHYs we must only call
->> >>> reset_control_reset(rstc) once (if we do it for the first *and* second
->> >>> PHY then the first PHY gets confused once the second PHY uses the
->> >>> reset because the first PHY's state is reset as well)
->> >>
->> >> If you have an initially asserted reset line and you can enable the
->> >> first module by deasserting the reset via reset_control_deassert (and
->> >> reset_control_assert to signal when the module may be disabled again
->> >> after use), shared resets are for you.
->> >>
->> >> If you need a reset pulse or have no direct control over the reset line,
->> >> (device_reset), the reset framework currently has no solution for this.
->> >> The ugly thing about reset_control_once would be that it can't re-reset
->> >> modules when unloading and reloading driver modules.
->> >
->> > The corresponding reset driver in question is reset-meson, which only
->> > implements reset (assert/deassert are not implemented). However, I
->> > don't know if this is due to hardware design.
->> > I think the hardware implements the latter, but maybe Neil can give
->> > more information here (I currently don't have access to my board so I
->> > cannot test how the hardware actually behaves).
->>
->> It's implemented that way because the hardware only supports a reset
->> pulse.
->
-> Would it be possible to bring down both PHYs drivers, pull the reset
-> line once, and then bring the drivers back up again?
-I guess that this is the rmmod case: I haven't tested it yet but that
-should work (even with the current code and .dts)
+
+--RwGu8mu1E+uYXPWP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Thu, Sep 01, 2016 at 06:51:48PM +0800, Baoyou Xie wrote:
+> We get 1 warning when building kernel with W=3D1:
+> drivers/clk/sunxi-ng/ccu_nk.c:17:6: warning: no previous prototype for 'c=
+cu_nk_find_best' [-Wmissing-prototypes]
+>=20
+> In fact, this function is only used in the file in which it is
+> declared and don't need a declaration, but can be made static.
+> So this patch marks it 'static'.
+>=20
+> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+
+A similar patch has been merged already.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--RwGu8mu1E+uYXPWP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXyIdmAAoJEBx+YmzsjxAgZXsP/2uwWtrrD4UmQQ6LBh4jY3mz
+QdLWpxHSKxvy+NuETho0g65dFAvqDERGsoUDFi/TH0YdtQL6WG1WRdgbJiTXBxSo
+Z7t760BoNRpQJc5qs/egl+pS2Ky3VsQboWKXGSv8s0g6L9xjWRt4GUR7TaB7H3m5
+BEuakosopnRnllVNBVihoRJ7B+7zS65RALPqYVKINF/2NsgmYnlBoKtMUFfjkFHj
+9CuQMwD9Tm2A/bKzjWqaKypJkdJjeTqLc6nUcs5yF+ReQEytTqTTMVx9WyS2BbOS
+0RRcyrLdG99ayE8fEMFxB1DBeb60+uh6sc7Et4z8m+CTq6k4rldKQQAV0sHqJGK3
+u+6950hKkTs6z+WLL6toLz8FKYezE1Ot92elZq6Ozz1QtFks/5bRopFVp+nrotOW
+ey243w2E+pvVW5hFR0pVkwW6St/mO4hzEcxTz2Aoz/7Xz1iSfOZN2OdQjfqRqHaR
+fxl9dj8eokNMP1DdooWaDO8+ocMZhwEiTEBXGEQ5YwapSmP2J+alcz6siKBWPeH4
+ZNaH8xeKgimjTKyKmfd0KBpKb6sCJrjzhTDJnEMrW+0c01/cbEAx4Zvav+hNinnv
+zcY3vzPBH4MOb3csSr1czqYSGNT0Nal31JboU/cPT2LMTb51puasPum8CP3SDMyX
+7IlPariMvReYeBXm3TDb
+=sS/1
+-----END PGP SIGNATURE-----
+
+--RwGu8mu1E+uYXPWP--
