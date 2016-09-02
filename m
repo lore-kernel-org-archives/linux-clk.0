@@ -1,82 +1,26 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 0/5] Add runtime PM support for clocks (on Exynos SoC example)
-Date: Thu, 01 Sep 2016 15:45:46 +0200
-Message-id: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20160901141617.9777-3-maxime.ripard@free-electrons.com>
+References: <20160901141617.9777-1-maxime.ripard@free-electrons.com> <20160901141617.9777-3-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 2 Sep 2016 15:26:54 +0800
+Message-ID: <CAGb2v66xaxcbOAFhgnbdTjF98aPW6-W95k6gRxU=OZj6uiFs6A@mail.gmail.com>
+Subject: Re: [PATCH 2/6] clk: sunxi-ng: mux: Add mux table macro
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+On Thu, Sep 1, 2016 at 10:16 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Add a new macro to declare muxes based on a table and a gate.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-This patchset adds runtime PM support to common clock framework. This is an
-attempt to implement support for clock controllers, which belongs to a power
-domain. This approach works surprisingly well on Exynos 4412 and 5433 SoCs,
-what allowed us to solve various freeze/crash issues related to power
-management.
-
-The main idea behind this patchset is to keep clock's controller power domain
-enabled every time when at least one of its clock is enabled or access to its
-registers is being made. Clock controller driver (clock provider) can
-supply a struct device pointer, which is the used by clock core for tracking and
-managing clock's controller runtime pm state. Each clk_prepare() operation will
-first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-will do pm_runtime_put() at the end.
-
-This runtime PM feature has been tested with Exynos4412 and Exynos5433 clocks
-drivers. Both have some clocks, which belongs to respective power domains and
-need special handling during power on/off procedures. Till now it wasn't handled
-at all, what caused various problems.
-
-Patches for exynos 4412 and 5433 clocks drivers change the way the clock
-provider is initialized. Instead of CLK_OF_DECLARE based initialization, a
-complete platform device driver infrastructure is being used. This is needed to
-let driver to use runtime pm feature and integrate with generic power domains.
-The side-effect of this change is a delay in clock provider registeration
-during system boot, so early initialized drivers might get EPROBEDEFER error
-when requesting their clocks. This is an issue for IOMMU drivers, so
-this patchset will be fully functional once the deferred probe for IOMMU
-will be merged.
-
-The side-effect of this patchset is the one can finally read
-/sys/kernel/debug/clk/clk_summary on all Exynos4412 boards without any freeze.
-
-If one wants to test this patchset (on Exynos4412 Trats2 device with FIMC-IS
-driver), I've provided a branch with all needed patches (fixes for Exynos,
-FIMC-IS driver and IOMMU deferred probe):
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.8-clocks-pm
-
-Patches are based on vanilla v4.8-rc4 kernel.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-Marek Szyprowski (5):
-  clk: add support for runtime pm
-  clock: samsung: add support for runtime pm
-  clocks: exynos4x12: add runtime pm support for ISP clocks
-  ARM: dts: exynos: add support for ISP power domain to exynos4x12
-    clocks device
-  clocks: exynos5433: add runtime pm support
-
- .../devicetree/bindings/clock/exynos4-clock.txt    |  22 +
- arch/arm/boot/dts/exynos4x12.dtsi                  |   5 +
- drivers/clk/clk.c                                  |  84 +++-
- drivers/clk/samsung/clk-exynos4.c                  | 228 +++++++---
- drivers/clk/samsung/clk-exynos5433.c               | 462 ++++++++++++++++-----
- drivers/clk/samsung/clk-pll.c                      |   2 +-
- drivers/clk/samsung/clk.c                          |  12 +-
- drivers/clk/samsung/clk.h                          |   1 +
- 8 files changed, 641 insertions(+), 175 deletions(-)
-
--- 
-1.9.1
+Acked-by: Chen-Yu Tsai <wens@csie.org>
