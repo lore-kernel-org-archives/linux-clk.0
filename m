@@ -1,77 +1,79 @@
-Return-Path: <Orson.Zhai@spreadtrum.com>
-From: Orson Zhai <orson.zhai@spreadtrum.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <baolin.wang@spreadtrum.com>, <xiaolong.zhang@spreadtrum.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <ben.li@spreadturm.com>, Orson Zhai <orson.zhai@spreadtrum.com>
-Subject: [PATCH] clk: Register clkdev after setup of fixed-rate and fixed-factor clocks
-Date: Tue, 11 Oct 2016 19:13:44 +0800
-Message-ID: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
+ carlo@caione.org, khilman@baylibre.com, devicetree@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1471870177-10609-1-git-send-email-narmstrong@baylibre.com>
+Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <1471870177-10609-1-git-send-email-narmstrong@baylibre.com>
+Message-ID: <147285925618.69079.14195001640916253279@resonance>
+Subject: Re: [PATCH] clk: meson-gxbb: Export PWM related clocks for DT
+Date: Fri, 02 Sep 2016 16:34:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Quoting Neil Armstrong (2016-08-22 05:49:37)
+> Add the PWM related clocks in order to be referenced as PWM source
+> clocks.
+> =
 
-When common kernel setups fixed clock, of_clk_provider will be registerred.
-But there is no clkdev being registerred at the same time. This will make
-it difficult to get the clock by using clk_get(NULL, con_id).
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Add clkdev register for fixed-rate and fixed-factor clock and ignore
-the error if any.
+Applied.
 
-Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
----
- drivers/clk/clk-fixed-factor.c | 5 +++++
- drivers/clk/clk-fixed-rate.c   | 5 +++++
- 2 files changed, 10 insertions(+)
+Regards,
+Mike
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index a5d402d..b81656a 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -9,6 +9,7 @@
-  */
- #include <linux/module.h>
- #include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
-@@ -186,6 +187,10 @@ static struct clk *_of_fixed_factor_clk_setup(struct device_node *node)
- 		return ERR_PTR(ret);
- 	}
- 
-+#ifdef CONFIG_CLKDEV_LOOKUP
-+	clk_register_clkdev(clk, clk_name, 0);
-+#endif
-+
- 	return clk;
- }
- 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index b5c46b3..d42c8e7 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-@@ -184,6 +185,10 @@ static struct clk *_of_fixed_clk_setup(struct device_node *node)
- 		return ERR_PTR(ret);
- 	}
- 
-+#ifdef CONFIG_CLKDEV_LOOKUP
-+	clk_register_clkdev(clk, clk_name, 0);
-+#endif
-+
- 	return clk;
- }
- 
--- 
-1.9.1
+> ---
+>  drivers/clk/meson/gxbb.h              | 6 +++---
+>  include/dt-bindings/clock/gxbb-clkc.h | 3 +++
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> =
+
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index a2adf34..523b494 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -170,11 +170,11 @@
+>   */
+>  #define CLKID_SYS_PLL            0
+>  /* CLKID_CPUCLK */
+> -#define CLKID_HDMI_PLL           2
+> +/* CLKID_HDMI_PLL */
+>  #define CLKID_FIXED_PLL                  3
+>  #define CLKID_FCLK_DIV2                  4
+> -#define CLKID_FCLK_DIV3                  5
+> -#define CLKID_FCLK_DIV4                  6
+> +/* CLKID_FCLK_DIV3 */
+> +/* CLKID_FCLK_DIV4 */
+>  #define CLKID_FCLK_DIV5                  7
+>  #define CLKID_FCLK_DIV7                  8
+>  #define CLKID_GP0_PLL            9
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/=
+clock/gxbb-clkc.h
+> index f889d80..a5897f3 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -6,6 +6,9 @@
+>  #define __GXBB_CLKC_H
+>  =
+
+>  #define CLKID_CPUCLK           1
+> +#define CLKID_HDMI_PLL         2
+> +#define CLKID_FCLK_DIV3                5
+> +#define CLKID_FCLK_DIV4                6
+>  #define CLKID_CLK81            12
+>  #define CLKID_ETH              36
+>  =
+
+> -- =
+
+> 1.9.1
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
