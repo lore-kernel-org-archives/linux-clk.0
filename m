@@ -1,83 +1,89 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 16:11:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-mips@linux-mips.org,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Wan ZongShun <mcuos.com@gmail.com>, Steven Miao <realmz6@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	adi-buildroot-devel@lists.sourceforge.net,
-	linux-m68k@lists.linux-m68k.org,
-	Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3] clk: let clk_disable() return immediately if clk is
- NULL
-Message-ID: <20160916231125.GW7243@codeaurora.org>
-References: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
- <194aebe5-38dd-f43d-fb4d-16ce592a68e8@gmail.com>
- <CAK7LNARaV6Ga5G1GnYf9hywrr+YwOqqm-v1AzBpfXtM4u9ofBA@mail.gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNARaV6Ga5G1GnYf9hywrr+YwOqqm-v1AzBpfXtM4u9ofBA@mail.gmail.com>
+In-Reply-To: <20160901141617.9777-2-maxime.ripard@free-electrons.com>
+References: <20160901141617.9777-1-maxime.ripard@free-electrons.com> <20160901141617.9777-2-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 2 Sep 2016 15:25:14 +0800
+Message-ID: <CAGb2v65LC_r_ppfm48xt8gsomGQPaTHg+F6CwFdeq9mvBiAGBg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: sunxi-ng: div: Add mux table macros
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Masahiro Yamada wrote:
-> Hi Stephen, Michael,
-> 
-> 2016-08-26 0:27 GMT+09:00 Florian Fainelli <f.fainelli@gmail.com>:
-> > On 08/24/2016 10:26 AM, Masahiro Yamada wrote:
-> >> Many of clk_disable() implementations just return for NULL pointer,
-> >> but this check is missing from some.  Let's make it tree-wide
-> >> consistent.  It will allow clock consumers to call clk_disable()
-> >> without NULL pointer check.
-> >>
-> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >> Acked-by: Greg Ungerer <gerg@uclinux.org>
-> >> Acked-by: Wan Zongshun <mcuos.com@gmail.com>
-> >> ---
-> >>
-> >> I came back after a long pause.
-> >> You can see the discussion about the previous version:
-> >> https://www.linux-mips.org/archives/linux-mips/2016-04/msg00063.html
-> >>
-> >>
-> >> Changes in v3:
-> >>   - Return only when clk is NULL.  Do not take care of error pointer.
-> >>
-> >> Changes in v2:
-> >>   - Rebase on Linux 4.6-rc1
-> >>
-> >>  arch/arm/mach-mmp/clock.c        | 3 +++
-> >>  arch/arm/mach-w90x900/clock.c    | 3 +++
-> >>  arch/blackfin/mach-bf609/clock.c | 3 +++
-> >>  arch/m68k/coldfire/clk.c         | 4 ++++
-> >>  arch/mips/bcm63xx/clk.c          | 3 +++
-> >
-> 
-> 
-> Gentle ping...
-> 
-> 
-> If you are not keen on this,
-> shall I split it per-arch and send to each arch subsystem?
-> 
+On Thu, Sep 1, 2016 at 10:16 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Add some macros to ease the declaration of clocks that are using them.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-If we get acks from more arch maintainers we could take it
-through clk tree, but we really don't maintain these other clk
-implementations so it isn't very appropriate to take it through
-clk tree anyway. Perhaps splitting it up per arch and sending it
-that way and then Ccing akpm (aka the patch collector) would make
-sure things get merged in a timely manner. Or Andrew could just
-pick up this patch as is.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ---
+>  drivers/clk/sunxi-ng/ccu_div.h | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+> index 5d98549e23a6..a5c9eaf90e84 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.h
+> +++ b/drivers/clk/sunxi-ng/ccu_div.h
+> @@ -77,13 +77,16 @@ struct ccu_div {
+>                                       _shift, _width, _table, 0,        \
+>                                       _flags)
+>
+> -#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,      \
+> -                                 _mshift, _mwidth, _muxshift, _muxwidth, \
+> -                                 _gate, _flags)                        \
+> +#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,                        \
+> +                                       _parents, _table,               \
+> +                                       _reg,                           \
+> +                                       _mshift, _mwidth,               \
+> +                                       _muxshift, _muxwidth,           \
+> +                                       _gate, _flags)                  \
+>         struct ccu_div _struct = {                                      \
+>                 .enable = _gate,                                        \
+>                 .div    = _SUNXI_CCU_DIV(_mshift, _mwidth),             \
+> -               .mux    = _SUNXI_CCU_MUX(_muxshift, _muxwidth),         \
+> +               .mux    = _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, _table), \
+>                 .common = {                                             \
+>                         .reg            = _reg,                         \
+>                         .hw.init        = CLK_HW_INIT_PARENTS(_name,    \
+> @@ -93,12 +96,23 @@ struct ccu_div {
+>                 },                                                      \
+>         }
+>
+> +#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,      \
+> +                                 _mshift, _mwidth, _muxshift, _muxwidth, \
+> +                                 _gate, _flags)                        \
+> +       SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,                 \
+> +                                       _parents, NULL,                 \
+> +                                       _reg, _mshift, _mwidth,         \
+> +                                       _muxshift, _muxwidth,           \
+> +                                       _gate, _flags)
+> +
+>  #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,           \
+>                              _mshift, _mwidth, _muxshift, _muxwidth,    \
+>                              _flags)                                    \
+> -       SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,       \
+> -                                 _mshift, _mwidth, _muxshift, _muxwidth, \
+> -                                 0, _flags)
+> +       SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,                 \
+> +                                       _parents, NULL,                 \
+> +                                       _reg, _mshift, _mwidth,         \
+> +                                       _muxshift, _muxwidth,           \
+> +                                       0, _flags)
+
+You probably didn't need to change this one though.
+
+>
+>
+>  #define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,           \
+> --
+> 2.9.2
+>
