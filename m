@@ -1,116 +1,63 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 4 Oct 2016 17:42:18 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com,
-	vinod.koul@intel.com, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, tiwai@suse.com, sboyd@codeaurora.org,
-	lgirdwood@gmail.com, robh+dt@kernel.org, perex@perex.cz,
-	wens@csie.org, broonie@kernel.org,
-	alexandre.belloni@free-electrons.com, dmaengine@vger.kernel.org,
-	lee.jones@linaro.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 03/14] ASoC: sun4i-i2s: Add apb reset
-Message-ID: <20161004154218.GM5228@lukather>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
- <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004141516.53c6fa8c@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JfVplkuTfB13Rsg5"
-In-Reply-To: <20161004141516.53c6fa8c@free-electrons.com>
+To: Kevin Hilman <khilman@baylibre.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <m260qjjx26.fsf@baylibre.com>
+Cc: "Neil Armstrong" <narmstrong@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ sboyd@codeaurora.org, devicetree@vger.kernel.org
+References: <1471514928-3341-1-git-send-email-narmstrong@baylibre.com>
+ <1471514928-3341-4-git-send-email-narmstrong@baylibre.com>
+ <7hk2fc76xx.fsf@baylibre.com>
+ <147208015014.66208.14165603610884470316@resonance>
+ <m260qjjx26.fsf@baylibre.com>
+Message-ID: <147285935146.69079.16726192933831918899@resonance>
+Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gxbb: Add GXBB AO Clock and Reset node
+Date: Fri, 02 Sep 2016 16:35:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Kevin Hilman (2016-08-29 10:37:37)
+> Michael Turquette <mturquette@baylibre.com> writes:
+> =
 
---JfVplkuTfB13Rsg5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > Quoting Kevin Hilman (2016-08-19 15:03:06)
+> >> Neil Armstrong <narmstrong@baylibre.com> writes:
+> >> =
 
-Hi,
+> >> > Add the AO clock controller node for the AmLogic GXBB SoC.
+> >> >
+> >> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> >> > ---
+> >> =
 
-On Tue, Oct 04, 2016 at 02:15:16PM +0200, Thomas Petazzoni wrote:
-> Hello,
->=20
-> On Tue,  4 Oct 2016 11:46:16 +0200, Myl=E8ne Josserand wrote:
->=20
-> >  #include <sound/dmaengine_pcm.h>
-> >  #include <sound/pcm_params.h>
-> > @@ -589,6 +590,7 @@ static int sun4i_i2s_probe(struct platform_device *=
-pdev)
-> >  {
-> >  	struct sun4i_i2s *i2s;
-> >  	struct resource *res;
-> > +	struct reset_control *reset_apb;
-> >  	void __iomem *regs;
-> >  	int irq, ret;
-> > =20
-> > @@ -626,7 +628,19 @@ static int sun4i_i2s_probe(struct platform_device =
-*pdev)
-> >  		dev_err(&pdev->dev, "Can't get our mod clock\n");
-> >  		return PTR_ERR(i2s->mod_clk);
-> >  	}
-> > -=09
-> > +
-> > +	reset_apb =3D devm_reset_control_get(&pdev->dev, "apb_reset");
->=20
-> I believe this is a change in the Device Tree binding, since you're
-> adding support for a new resource. Perhaps the Device Tree binding
-> documentation should be updated accordingly?
+> >> Applying this to the amlogic tree, but will need to wait a cycle due to
+> >> include dependencies on the bindings, which are going through the clock
+> >> tree.
+> >
+> > FYI, for picked patches, Stephen and I create a stable branch for each
+> > platform. You can pull this into your tree if you want, just let us know
+> > so we'll be sure not to rebase:
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-meson-g=
+xbb-ao
+> >
+> =
 
-Indeed.
+> OK, I'll be using clk-meson-gxb and clk-meson-gxbb-ao.
 
-You have two solutions to do that:
-  - Either mark it as optional and use reset_control_get_optional
-    (because here, you broke the other SoCs that have that controller
-    but no reset line)
-  - Or introduce a new compatible, and make the reset property
-    mandatory for that new compatible.
+Heads up, I merged clk-meson-gxbb-ao into clk-meson-gxbb yesterday to
+make it easier to merge the emmc clock gate patches. If you haven't
+pulled clk-meson-gxbb-ao already then you can just re-pull
+clk-meson-gxbb and you'll get it.
 
-I prefer the latter, since you get a stricter error check, and you
-cannot end up in a situation where your driver probes but is
-useless. But you'll find both in our drivers.
+Regards,
+Mike
 
-> > +	}
-> > +
-> > +	ret =3D reset_control_deassert(reset_apb);
-> > +	if (ret < 0) {
-> > +		dev_err(&pdev->dev, "Can't deassert apb reset (%d)\n", ret);
-> > +		return ret;
-> > +	}
->=20
-> Do you need to re-assert the reset line in the ->remove() hook?
+> =
 
-Even better, you can add it to the runtime_pm hooks! :)
+> Thanks,
+> =
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---JfVplkuTfB13Rsg5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX883aAAoJEBx+YmzsjxAgTc4QAL62RJw5dXv9CTB06fQ8erFG
-KRm7cM35mifXfs6oCfG+eFX3gzlvcvUbDc/+5GBa9VWa+0eY9++0Mc98NWGdl8A+
-8l1W2immpdfDILgk+4Qi2stMyHDMFaV5sqZirNCDVhRnxGAV7KqO9DSd+9EZgb+E
-7sj3iy/4E9Jhd5F0LLGcu0VVbIkb0Nv1RmD/ankvCKICycdVVGAo/iZZ3YtLY6sP
-G+HRnNtK87VP5+x5sVS+VazQB8nfZFUv77DS3ms8VtwMjk+w7J139iv10iGFghgS
-OVJbSxVAiELq0ipxezO/Zi8DAI5u0EwYjp1LxHiwaKUPttaJViYpoc0DGcPHugu5
-/39Z3K6EP9sbf/dqySARo4BX9gj+9EAXkrKADJW2UVI3r0Xj4P482J52+f53x4qY
-ihiuYnZ4bxqz3GNf2HW3fdzVCvr5fQidmr74hXY/I+VoZtUH4+oBSTcKV07mAVuU
-ArAUPzfQpM3n2MZmEDpsJpmZB+Ba/xEeOPCrRF9wfXmGdyxA+uhfrykZNPjsGdv2
-OpesbVGybZoyB5uF/C7P9YC4zgtFh0hhB91it1AMQ6MhQ/L46Br3yD/AWP90HwsP
-722A1MNqajt1WDvmuspZPsvjP93COKCFJ1YPv1c967xSR1hsPESizbv7FGcGZfxa
-gxZSfN+PV+yoI8vcJNVu
-=9ZGk
------END PGP SIGNATURE-----
-
---JfVplkuTfB13Rsg5--
+> Kevin
