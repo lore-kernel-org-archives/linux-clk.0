@@ -1,75 +1,56 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH v2 0/6] Add support for Tegra GMI bus controller
-Date: Wed, 24 Aug 2016 15:37:12 +0200
-Message-Id: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and
+ EPLL clocks
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+ <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
+ <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
+Cc: linux-clk@vger.kernel.org, tomasz.figa@gmail.com, sboyd@codeaurora.org,
+ mturquette@baylibre.com, kgene@kernel.org, b.zolnierkie@samsung.com,
+ linux-samsung-soc@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <74653ed5-827b-1ad6-e17a-0c8e173da29f@samsung.com>
+Date: Fri, 02 Sep 2016 16:09:08 +0200
+MIME-version: 1.0
+In-reply-to: <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+On 08/30/2016 11:54 AM, Krzysztof Kozlowski wrote:
+> On 08/22/2016 06:30 PM, Sylwester Nawrocki wrote:
+>> > The PDMA{0,1} and EPLL clock IDs are added separately in this
+>> > patch so the patch can be merged to the arm-soc tree as dependency.
+>> > 
+>> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> > ---
+>> >  include/dt-bindings/clock/exynos5410.h | 3 +++
+>> >  1 file changed, 3 insertions(+)
+>> > 
+>> > diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+>> > index 85b467b..a74442a 100644
+>> > --- a/include/dt-bindings/clock/exynos5410.h
+>> > +++ b/include/dt-bindings/clock/exynos5410.h
+>> > @@ -19,6 +19,7 @@
+>> >  #define CLK_FOUT_MPLL		4
+>> >  #define CLK_FOUT_BPLL		5
+>> >  #define CLK_FOUT_KPLL		6
+>> > +#define CLK_FOUT_EPLL		7
+>> >  
+>> >  /* gate for special clocks (sclk) */
+>> >  #define CLK_SCLK_UART0		128
+>> > @@ -48,6 +49,8 @@
+>> >  #define CLK_USI3		268
+>> >  #define CLK_UART3		260
+>> >  #define CLK_PWM			279
+>> > +#define CLK_PDMA0		280
+>> > +#define CLK_PDMA1		281
+>
+> How about making the IDs the same as in exynos5420? This way those
+> drivers could be merged someday in the future (if someone would be
+> bored...).
 
-Hi.
-
-This is a follow up to my previous RFC to add support for Tegra GMI bus
-controller.
-
-I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
-carrier board which has multiple CAN controllers (SJA1000) connected to the
-GMI bus.
-
-I have rebased on top of latest tegra/for-next in V2. Also see individual
-patches for changes in V2.
-
-See below links for previous discussions.
-
-Comments on RFC:
-https://marc.info/?l=linux-clk&m=146893557629903&w=2
-https://marc.info/?l=linux-tegra&m=146893541829801&w=2
-https://marc.info/?l=linux-tegra&m=146893542429814&w=2
-
-Comments on V1:
-https://marc.info/?l=linux-arm-kernel&m=147051551821122&w=2
-https://marc.info/?l=linux-arm-kernel&m=147051553121150&w=2
-https://marc.info/?l=linux-arm-kernel&m=147194856600627&w=2
-https://marc.info/?l=linux-arm-kernel&m=147072742432211&w=2
-
-
-Mirza Krak (6):
-  clk: tegra: add TEGRA20_CLK_NOR to init table
-  clk: tegra: add TEGRA30_CLK_NOR to init table
-  dt/bindings: Add bindings for Tegra GMI controller
-  ARM: tegra: Add Tegra30 GMI support
-  ARM: tegra: Add Tegra20 GMI support
-  bus: Add support for Tegra Generic Memory Interface
-
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 ++++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |  13 ++
- arch/arm/boot/dts/tegra30.dtsi                     |  12 ++
- drivers/bus/Kconfig                                |   8 +
- drivers/bus/Makefile                               |   1 +
- drivers/bus/tegra-gmi.c                            | 231 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra20.c                    |   1 +
- drivers/clk/tegra/clk-tegra30.c                    |   1 +
- 8 files changed, 399 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
- create mode 100644 drivers/bus/tegra-gmi.c
+OK, I will do it, but there is already mismatch in the PLL indices.
 
 --
-2.1.4
+Thanks,
+Sylwester
