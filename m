@@ -1,72 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:64320 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754369AbcINUDH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Sep 2016 16:03:07 -0400
-Subject: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in
- cpg_mstp_clocks_init() after error detection
-To: linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Julia Lawall <julia.lawall@lip6.fr>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 22:03:02 +0200
-MIME-Version: 1.0
-In-Reply-To: <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.8-rc4
+Date: Thu,  1 Sep 2016 18:56:00 -0700
+Message-Id: <20160902015600.21873-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 21:30:27 +0200
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-The kfree() function was called in up to two cases
-by the cpg_mstp_clocks_init() function during error handling even if
-the passed variable contained a null pointer.
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
 
-* Split a condition check for memory allocation failures so that
-  each pointer from these function calls will be checked immediately.
+are available in the git repository at:
 
-  See also background information:
-  Topic "CWE-754: Improper check for unusual or exceptional conditions"
-  Link: https://cwe.mitre.org/data/definitions/754.html
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
+for you to fetch changes up to dc7066c54107255f5f9a11bf3f82417c9b1aef51:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/renesas/clk-mstp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+  Merge tag 'v4.8-rockchip-clk-fixes1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-fixes (2016-08-29 17:08:35 -0700)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 1fdc44b..6c82e0e 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -167,10 +167,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 	unsigned int i;
- 
- 	group = kzalloc(sizeof(*group), GFP_KERNEL);
-+	if (!group)
-+		return;
-+
- 	clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
--	if (group == NULL || clks == NULL) {
-+	if (!clks) {
- 		kfree(group);
--		kfree(clks);
- 		return;
- 	}
- 
+----------------------------------------------------------------
+A collection of small fixes for various SoC vendor clk drivers.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      clk: sunxi-ng: Fix inverted test condition in ccu_helper_wait_for_lock
+
+Chris Zhong (1):
+      clk: rockchip: fix rk3399 aclk_vio gate bit
+
+Stephen Boyd (1):
+      Merge tag 'v4.8-rockchip-clk-fixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
+
+Vince Hsu (1):
+      clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+
+Xing Zheng (3):
+      clk: rockchip: fix incorrect aclk_emmc source gate bits on rk3399
+      clk: rockchip: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src on rk3399
+      clk: rockchip: mark aclk_emmc_noc as a critical clock on rk3399
+
+Yoshihiro Shimoda (1):
+      clk: renesas: r8a7795: Fix SD clocks
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c |  9 +++++----
+ drivers/clk/rockchip/clk-rk3399.c      | 11 ++++++-----
+ drivers/clk/sunxi-ng/ccu_common.c      |  2 +-
+ drivers/clk/tegra/clk-tegra114.c       |  4 ++--
+ 4 files changed, 14 insertions(+), 12 deletions(-)
+
 -- 
-2.10.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
