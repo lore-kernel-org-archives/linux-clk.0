@@ -1,50 +1,91 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 2 Sep 2016 07:54:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-mips@linux-mips.org,
+	Ralf Baechle <ralf@linux-mips.org>, devicetree@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 1/4] clk: pxa25x: OSTIMER0 clocks from the main oscillator
-Date: Mon, 19 Sep 2016 21:12:12 +0200
-Message-Id: <1474312335-20997-2-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 24/26] dt-bindings: Document img,boston-clock binding
+Message-ID: <20160902125433.GA4066@rob-hp-laptop>
+References: <20160826153725.11629-1-paul.burton@imgtec.com>
+ <20160826153725.11629-25-paul.burton@imgtec.com>
+ <20160826174446.GX19826@codeaurora.org>
+ <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
+On Tue, Aug 30, 2016 at 04:53:01PM +0100, Paul Burton wrote:
+> On 26/08/16 18:44, Stephen Boyd wrote:
+> > On 08/26, Paul Burton wrote:
+> >> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+> >> new file mode 100644
+> >> index 0000000..c01ea60
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+> >> @@ -0,0 +1,27 @@
+> >> +Binding for Imagination Technologies MIPS Boston clock sources.
+> >> +
+> >> +This binding uses the common clock binding[1].
+> >> +
+> >> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >> +
+> >> +Required properties:
+> >> +- compatible : Should be "img,boston-clock".
+> >> +- #clock-cells : Should be set to 1.
+> >> +  Values available for clock consumers can be found in the header file:
+> >> +    <dt-bindings/clock/boston-clock.h>
+> >> +- regmap : Phandle to the Boston platform register system controller.
+> >> +  This should contain a phandle to the system controller node covering the
+> >> +  platform registers provided by the Boston board.
+> >> +
+> >> +Example:
+> >> +
+> >> +	clk_boston: clock {
+> >> +		compatible = "img,boston-clock";
+> >> +		#clock-cells = <1>;
+> >> +		regmap = <&plat_regs>;
+> > 
+> > Isn't syscon more standard than regmap as the property name? Is
+> > there a binding for the plat_regs device? Is there any reason the
+> > clks can't be populated in that syscon driver?
+> 
+> Hi Stephen,
+> 
+> The plat_regs device doesn't have a custom driver, it simply makes use
+> of the generic "syscon" driver which can provide a regmap.
+> 
+> It would be possible to register the clocks from a register for the
+> plat_regs device, but I don't think it would make much sense. The
+> platform registers in question are essentially just a convenient place
+> where various bits of information about the system are exposed,
+> including the clock frequencies but also other bits & pieces like
+> connectivity of PCIe controllers or I/O coherence units, the RTL
+> revision of the CPU or the wrapper RTL that runs on this FPGA-based
+> board, a register that allows for resetting the board, etc. It's not a
+> single piece of hardware, more a dumping ground for miscellanea. So in
+> my opinion using the syscon approach works best here, and drivers for
+> well defined pieces of hardware or functionality can reference that
+> syscon to retrieve the regmap.
 
-The OSTIMER0 clock ticks at the main oscillator rate, not the 32kHz
-oscillator rate.  Ensure that it is parented to the main oscillator.
+That is all quite common for any SoC. Whether it's 2 nodes or 2 drivers 
+are independent questions. You can easily have 1 node and 2 drivers. The 
+decision factor is really how many registers we're dealing with. We 
+don't want to end up with a node per register or register field. That's 
+too fine grained.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/clk/pxa/clk-pxa25x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> As for whether "syscon" is a more standard property name than "regmap",
+> both seem to be used based on a grep of
+> Documentation/devicetree/bindings/. I believe I picked up use of
+> "regmap" from the generic syscon-poweroff & syscon-reboot drivers, which
+> both use "regmap" as a property name.
 
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index a98b98e2a9e4..56b0a6027e38 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -230,7 +230,7 @@ static struct dummy_clk dummy_clks[] __initdata = {
- 	DUMMY_CLK("GPIO11_CLK", NULL, "osc_3_6864mhz"),
- 	DUMMY_CLK("GPIO12_CLK", NULL, "osc_32_768khz"),
- 	DUMMY_CLK(NULL, "sa1100-rtc", "osc_32_768khz"),
--	DUMMY_CLK("OSTIMER0", NULL, "osc_32_768khz"),
-+	DUMMY_CLK("OSTIMER0", NULL, "osc_3_6864mhz"),
- 	DUMMY_CLK("UARTCLK", "pxa2xx-ir", "STUART"),
- };
- 
--- 
-2.1.4
+syscon is much more common.
+
+Avoid the phandle altogether and make this a child node.
+
+Rob
