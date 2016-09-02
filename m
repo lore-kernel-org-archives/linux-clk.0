@@ -1,74 +1,81 @@
-Return-Path: <>
-Return-Path: <>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] clk:mmp:clk-of-pxa910: Free memory and Unmap region obtained by kzmalloc and of_iomap
-Date: Tue, 20 Sep 2016 16:03:11 +0530
-Message-Id: <1474367591-15750-1-git-send-email-arvind.yadav.cs@gmail.com>
+	linux-renesas-soc@vger.kernel.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4] clk: renesas: rz: Select EXTAL vs USB clock
+Date: Thu,  1 Sep 2016 22:32:25 -0400
+Message-Id: <20160902023225.13898-1-chris.brandt@renesas.com>
+In-Reply-To: <20160901131036.17241-1-chris.brandt@renesas.com>
+References: <20160901131036.17241-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Check the MD_CLK pin to determine the current clock mode in order to set
+the pll clock parent correctly.
 
-Free memory and memory mapping , if pxa910_clk_init is not successful.
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/clk/mmp/clk-of-pxa910.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+V4:
+* added static and __init to rz_cpg_read_mode_pins
+* set cpg_mode during declaration 
+v3:
+* move reading GPIO port into separate function
+v2:
+* Switched to reading MD_CLK pin to determine mode
+---
+ drivers/clk/renesas/clk-rz.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-pxa910.c b/drivers/clk/mmp/clk-of-pxa910.c
-index e22a67f..a50d42a 100644
---- a/drivers/clk/mmp/clk-of-pxa910.c
-+++ b/drivers/clk/mmp/clk-of-pxa910.c
-@@ -278,25 +278,25 @@ static void __init pxa910_clk_init(struct device_node *np)
- 	pxa_unit->mpmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map mpmu registers\n");
--		return;
-+		goto free_memory;
- 	}
+diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+index f6312c6..6dd490c 100644
+--- a/drivers/clk/renesas/clk-rz.c
++++ b/drivers/clk/renesas/clk-rz.c
+@@ -25,10 +25,31 @@ struct rz_cpg {
+ #define CPG_FRQCR	0x10
+ #define CPG_FRQCR2	0x14
  
- 	pxa_unit->apmu_base = of_iomap(np, 1);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map apmu registers\n");
--		return;
-+		goto unmap_mpmu_region;
- 	}
- 
- 	pxa_unit->apbc_base = of_iomap(np, 2);
- 	if (!pxa_unit->apbc_base) {
- 		pr_err("failed to map apbc registers\n");
--		return;
-+		goto unmap_apmu_region;
- 	}
- 
- 	pxa_unit->apbcp_base = of_iomap(np, 3);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map apbcp registers\n");
--		return;
-+		goto unmap_apbc_region;
- 	}
- 
- 	mmp_clk_init(np, &pxa_unit->unit, PXA910_NR_CLKS);
-@@ -308,6 +308,15 @@ static void __init pxa910_clk_init(struct device_node *np)
- 	pxa910_axi_periph_clk_init(pxa_unit);
- 
- 	pxa910_clk_reset_init(np, pxa_unit);
++#define PPR0 0xFCFE3200
++#define PIBC0 0xFCFE7000
 +
-+unmap_apbc_region:
-+	iounmap(pxa_unit->apbc_base);
-+unmap_apmu_region:
-+	iounmap(pxa_unit->apmu_base);
-+unmap_mpmu_region:
-+	iounmap(pxa_unit->mpmu_base);
-+free_memory:
-+	kfree(pxa_unit);
- }
++#define MD_CLK(x)   ((x >> 2) & 1)	/* P0_2 */
++
+ /* -----------------------------------------------------------------------------
+  * Initialization
+  */
  
- CLK_OF_DECLARE(pxa910_clk, "marvell,pxa910-clock", pxa910_clk_init);
++static u16 __init rz_cpg_read_mode_pins(void)
++{
++	void __iomem *ppr0, *pibc0;
++	u16 modes;
++
++	ppr0 = ioremap_nocache(PPR0, 2);
++	pibc0 = ioremap_nocache(PIBC0, 2);
++	BUG_ON(!ppr0 || !pibc0);
++	iowrite16(4, pibc0);	/* enable input buffer */
++	modes = ioread16(ppr0);
++	iounmap(ppr0);
++	iounmap(pibc0);
++
++	return modes;
++}
++
+ static struct clk * __init
+ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *name)
+ {
+@@ -37,8 +58,7 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+ 	static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
+ 
+ 	if (strcmp(name, "pll") == 0) {
+-		/* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
+-		unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
++		unsigned int cpg_mode = MD_CLK(rz_cpg_read_mode_pins());
+ 		const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
+ 
+ 		mult = cpg_mode ? (32 / 4) : 30;
 -- 
-1.7.9.5
+2.9.2
