@@ -1,30 +1,41 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 20 Sep 2016 17:04:24 -0700
+Date: Fri, 2 Sep 2016 16:32:35 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] clk: at91: sckc: optimize boot time
-Message-ID: <20160921000424.GJ8319@codeaurora.org>
-References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
- <20160920205833.19638-4-alexandre.belloni@free-electrons.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, ssantosh@kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	nm@ti.com
+Subject: Re: [PATCHv2 3/3] clk: keystone: Add sci-clk driver support
+Message-ID: <20160902233235.GM12510@codeaurora.org>
+References: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
+ <1472733635-22661-4-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160920205833.19638-4-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1472733635-22661-4-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/20, Alexandre Belloni wrote:
-> Assume that if the oscillator is enabled (OSC32EN bit is present), the
-> delay has already elapsed as the bootloader probably waited for the
-> oscillator to settle. This could waste up to 1.2s.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
+On 09/01, Tero Kristo wrote:
+> +
+> +/**
+> + * _sci_clk_get - Gets a handle for an SCI clock
+> + * @provider: Handle to SCI clock provider
+> + * @dev_id: device ID for the clock to register
+> + * @clk_id: clock ID for the clock to register
+> + * @parse_parents: indicator whether parents for this clock should be handled
+> + *
+> + * Gets a handle to an existing TI SCI hw clock, or builds a new clock
+> + * entry and registers it with the common clock framework. Called from
+> + * the common clock framework, when a corresponding of_clk_get call is
+> + * executed, or recursively from itself when parsing parent clocks.
+> + * Returns a pointer to the hw clock struct, or ERR_PTR value in failure.
+> + */
+> +static struct clk_hw *_sci_clk_get(struct sci_clk_provider *provider,
+> +				   u16 dev_id, u8 clk_id, bool parse_parents)
 
-Applied to clk-next
+I still don't get it. We should be registering hw pointers in
+probe and handing them out in the xlate function. Not register
+hws in the xlate function and then handing them out as well. I
+haven't reviewed anything else in this patch.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
