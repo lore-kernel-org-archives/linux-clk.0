@@ -1,68 +1,256 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 2 Sep 2016 09:04:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: York Sun <york.sun@nxp.com>
+Cc: linux-clk@vger.kernel.org, York Sun <yorksun@freescale.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andrey Filippov <andrey@elphel.com>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Patch v9] driver/clk/clk-si5338: Add common clock framework
+ driver for si5338
+Message-ID: <20160902140444.GA13679@rob-hp-laptop>
+References: <1472247978-29312-1-git-send-email-york.sun@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <b9730890-d98c-2c3a-8af1-96b8c394c30f@codethink.co.uk>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
- <m260q6jibf.fsf@baylibre.com> <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
- <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk> <m2eg4ui0nl.fsf@baylibre.com>
- <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk> <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
- <m2sht9gkau.fsf@baylibre.com> <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
- <b9730890-d98c-2c3a-8af1-96b8c394c30f@codethink.co.uk>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 9 Sep 2016 22:37:25 +0200
-Message-ID: <CAFBinCCWFcy1h-28=xie-2Op79UTXvawDuem_YYypTCYHCgLKQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Kevin Hilman <khilman@baylibre.com>, mark.rutland@arm.com, devicetree@vger.kernel.org,
-	gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
-	mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
-	kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472247978-29312-1-git-send-email-york.sun@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 9, 2016 at 7:21 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> On 09/09/16 17:14, Martin Blumenstingl wrote:
->>
->> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->>>
->>> However, the problem with all of the solutions proposed (runtime PM ones
->>> included) is that we're forcing a board-specific design issue (2 devices
->>> sharing a reset line) into a driver that should not have any
->>> board-specific assumptions in it.
->>>
->>> For example, if this driver is used on another platform where different
->>> PHYs have different reset lines, then one of them (the unlucky one who
->>> is not probed first) will never get reset.  So any form of per-device
->>> ref-counting is not a portable solution.
->>
->> maybe we should also consider Ben's solution: he played with the USB
->> PHY on his Meson8b board. His approach was to have only one USB PHY
->> driver instance which exposes two PHYs.
->> The downside of this: the driver would have to know the offset of the
->> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
->> the reset using runtime PM without any hacks.
->>
->> I checked the USB PHY reference driver: it seems that there will be a
->> new USB PHY with the GXL/GXM SoCs.
->> So maybe we could live with the assumption that the PHYs are at
->> consecutive addresses.
->>
->>> I'm not sure yet how the reset framework is supposed to handle shared
->>> reset lines, but that needs some investigation.  I quick glance and it
->>> seems that reset controllers can have shared lines, so that should be
->>> investigated.
->>
->> unfortunately shared resets are not allowed to use reset_control_reset,
->> see [0]
->>
->>
->> [0] http://lxr.free-electrons.com/source/drivers/reset/core.c#L102
->
->
-> If we didn't have the shared reset, we'd have one of node per phy
-> and not have to have two sub-nodes... I don't think any other bits
-> of the PHY framework are shared.
-okay, sounds reasonable - so we should try to get this scenario
-supported through by the reset framework -> see my other mail.
+On Fri, Aug 26, 2016 at 02:45:49PM -0700, York Sun wrote:
+> From: York Sun <yorksun@freescale.com>
+> 
+> SI5338 is a programmable clock generator. It has 4 sets of inputs,
+> PLL, multisynth and dividers to make 4 outputs. This driver splits
+> them into multiple clocks to comply with common clock framework.
+> 
+> See Documentation/devicetree/bindings/clock/silabs,si5338.txt for
+> details.
+> 
+> Signed-off-by: York Sun <yorksun@freescale.com>
+> CC: Mike Turquette <mturquette@baylibre.com>
+> CC: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> CC: Guenter Roeck <linux@roeck-us.net>
+> CC: Andrey Filippov <andrey@elphel.com>
+> CC: Paul Bolle <pebolle@tiscali.nl>
+
+7 versions before you decide to start cc'ing DT list?
+
+[...]
+
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5338.txt b/Documentation/devicetree/bindings/clock/silabs,si5338.txt
+> new file mode 100644
+> index 0000000..cc7ae8e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si5338.txt
+> @@ -0,0 +1,192 @@
+> +Binding for Silicon Labs Si5338 programmable i2c clock generator.
+> +
+> +Reference
+> +[1] Si5338 Data Sheet
+> +    http://www.silabs.com/Support%20Documents/TechnicalDocs/Si5338.pdf
+> +
+> +The Si5338 is a programmable i2c clock generators with up to 4 output
+> +clocks. It has 4 sets of possible input clocks
+> +
+> +IN1/IN2: differential
+> +IN3: single-ended
+> +IN4: single-ended
+> +IN5/IN6: differential
+> +
+> +Additionally, IN1/IN2 can be used as XTAL with different setting.
+> +The clock tree looks like below (without support of zero-delay)
+> +
+> +
+> +      IN1/IN2 IN3         IN4 IN5/IN6
+> +         |     |           |     |
+> +   ------|     |           |     |
+> +   |     |     |           |     |
+> +   |     \     /           \     /
+> +   |      \   /             \   /
+> +   |       \ /               \ /
+> + XTAL     REFCLK            FBCLK
+> +   |       |  \             /   |
+> +   |       |   \           /    |
+> +   |       | DIVREFCLK DIVFBCLK |
+> +   |       |     \       /      |
+> +   |       |      \     /       |
+> +   |       |       \   /        |
+> +   |       |        PLL         |
+> +   |       |      / | | \       |
+> +   |       |     /  / \  \      |
+> +   |       |    /  /   \  \     |
+> +   |       |   /   |   |   \    |
+> +   |       |   |   |   |   |    |
+> +   |       |  MS0 MS1 MS2 MS3   |
+> +   |       |   |   |   |   |    |
+> +
+> +       OUT0  OUT1  OUT2  OUT3
+> +
+> +The output clock can choose from any of the above clock as its source, with
+> +exceptions: MS1 can only be used for OUT1, MS2 can only be used for OUT2, MS3
+> +can only be used for OUT3.
+> +
+> +==I2C device node==
+> +
+> +Required properties:
+> +- compatible: shall be "silabs,si5338".
+> +- reg: i2c device address, shall be 0x60, 0x61, 0x70, or 0x71
+> +- #clock-cells: shall be set to 1 for multiple outputs
+> +- clocks: list of parent clocks in the order of <xtal>, <in1/2>, <in3>, <in4>,
+> +	 <in5/6>.
+> +	Note, xtal and in1/2 are mutually exclusive. Only one can be set.
+> +- clock-names: The name of the clocks in the same order.
+> +- #address-cells: shall be set to 1.
+> +- #size-cells: shall be set to 0.
+> +- silabs,pll-master: If PLL is used, pick one MS (0, 1, 2, or 3) to allow
+> +	chaning PLL rate. This is arbitrary since MS0/1/2/3 share one PLL.
+> +	PLL can be calculated backward to satisfy MS. This node is not
+> +	required if PLL is not used, or if silabs,pll-vco is set.
+> +
+> +Optional properties if not set by platform driver:
+> +- silab,name-prefix: name prefix for si5338
+> +        If multiple si5338 chips exist, use name-prefix to form unique names.
+> +	If omitted, i2c bus name will be used as the prefix.
+
+Drop this please. There should not be any need for it.
+
+> +- silab,ref-source: source of refclk, valid value is defined as
+> +	#define SI5338_REF_SRC_CLKIN12          0
+> +	#define SI5338_REF_SRC_CLKIN3           1
+> +	#define SI5338_REF_SRC_XTAL             4
+> +- silab,fb-source:  source of fbclk, valid value is defined as
+> +	#define SI5338_FB_SRC_CLKIN4            2
+> +	#define SI5338_FB_SRC_CLKIN56           3
+> +	#define SI5338_FB_SRC_NOCLK             5
+> +- silabs,pll-source: source of pll, valid value is defined as
+> +	#define SI5338_PFD_IN_REF_REFCLK           0
+> +	#define SI5338_PFD_IN_REF_FBCLK            1
+> +	#define SI5338_PFD_IN_REF_DIVREFCLK        2
+> +	#define SI5338_PFD_IN_REF_DIVFBCLK         3
+> +	#define SI5338_PFD_IN_REF_XOCLK            4
+> +	#define SI5338_PFD_IN_REF_NOCLK            5
+> +- silabs,pll-vco: Specify VCO frequency for optimal ratios for all outputs.
+> +	If specified, silabs,pll-master is ignored.
+> +
+> +==Child nodes==
+> +
+> +Each of the clock outputs can be configured individually by
+> +using a child node to the I2C device node. If a child node for a clock
+> +output is not set, platform driver has to set up.
+> +
+> +Required child node properties:
+> +- name: name for the child node
+> +        It has to be unique. The name prefix is ignored.
+> +	If using platform data and the name is not specificed,
+> +        clkout0/1/2/3 will be used with name prefix.
+> +- reg: number of clock output.
+> +
+> +Optional child node properties:
+> +- silabs,drive-config: the configuration of output driver
+> +  The valid value list is long. Please refer to soruce code.
+
+May be long, but needs to be documented here. I don't follow why you are 
+using strings for the values here.
+
+> +- silabs,clock-source: source clock of the output divider
+> +	#define SI5338_OUT_MUX_FBCLK            0
+> +	#define SI5338_OUT_MUX_REFCLK           1
+> +	#deinfe SI5338_OUT_MUX_DIVFBCLK         2
+> +	#deinfe SI5338_OUT_MUX_DIVREFCLK        3
+> +	#deinfe SI5338_OUT_MUX_XOCLK            4
+> +	#deinfe SI5338_OUT_MUX_MS0              5
+> +	#deinfe SI5338_OUT_MUX_MSN              6 /* MS0/1/2/3 */
+> +	#deinfe SI5338_OUT_MUX_NOCLK            7
+> +- silabs,disable-state : clock output disable state, shall be
+> +	#define SI5338_OUT_DIS_HIZ              0
+> +	#define SI5338_OUT_DIS_LOW              1
+> +	#define SI5338_OUT_DIS_HI               2
+> +	#define SI5338_OUT_DIS_ALWAYS_ON        3
+> +- enabled: the output is enabled by default
+> +	The existence of this node enables the output when the driver is loaded
+> +	otherwise the clock is only enabled when used
+
+Drop this. Either platform code should claim this and enable the clock 
+or use the critical clocks binding.
+
+> +
+> +==Example==
+> +
+> +/* 25MHz reference crystal */
+> +ref25: ref25M {
+> +	compatible = "fixed-clock";
+> +	#clock-cells = <0>;
+> +	clock-frequency = <25000000>;
+> +};
+> +clkin56: ref100M {
+> +	compatible = "fixed-clock";
+> +	#clock-cells = <0>;
+> +	clock-frequency = <100000000>;
+> +};
+> +i2c-master-node {
+> +	si5338: clock-generator@70 {
+> +		compatible = "silabs,si5338";
+> +		reg = <0x70>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		#clock-cells = <1>;
+> +
+> +		/* connect xtal to 25MHz, in5/in6 to 100MHz */
+> +		clocks = <&ref25>, <0>, <0>, <0>, <&clkin56>;
+> +		clock-names = "xtal", "in12", "in3", "in4", "in56";
+> +
+> +		/* connect xtal as source of refclk */
+> +		silab,ref-source = <SI5338_REF_SRC_XTAL>;
+> +
+> +		/* connect in5/in6 as source of fbclk */
+> +		silab,fb-source = <SI5338_FB_SRC_CLKIN56>;
+> +
+> +		/* connect divrefclk as source of pll */
+> +		silab,pll-source = <SI5338_PFD_IN_REF_DIVREFCLK>;
+> +
+> +		/* Choose one MS for pll master */
+> +		silabs,pll-master = <0>;
+> +
+> +		/* Specify pll-vco frequency. pll-master is ignored. */
+> +		silabs,pll-vco = <2450000000>;
+> +
+> +		/* output */
+> +		clkout0 {
+
+reg property means you need a unit address.
+
+> +			reg = <0>;
+> +			silabs,drive-config = "1V8_LVDS";
+> +			silabs,clock-source = <SI5338_OUT_MUX_MS0>;
+> +			silabs,disable-state = <SI5338_OUT_DIS_HIZ>;
+> +			clock-frequency = <125000000>;
+> +		};
+> +		clkout1 {
+> +			reg = <1>;
+> +			silabs,drive-config = "1V8_LVDS";
+> +			silabs,clock-source = <SI5338_OUT_MUX_MSN>;
+> +			silabs,disable-state = <SI5338_OUT_DIS_HIZ>;
+> +			clock-frequency = <125000000>;
+> +		};
+> +		clkout2 {
+> +			reg = <2>;
+> +			silabs,drive-config = "1V8_LVDS";
+> +			silabs,clock-source = <SI5338_OUT_MUX_MSN>;
+> +			silabs,disable-state = <SI5338_OUT_DIS_HIZ>;
+> +			clock-frequency = <125000000>;
+> +		};
+> +		clkout3 {
+> +			reg = <3>;
+> +			silabs,drive-config = "1V8_LVDS";
+> +			silabs,clock-source = <SI5338_OUT_MUX_MSN>;
+> +			silabs,disable-state = <SI5338_OUT_DIS_HIZ>;
+> +			clock-frequency = <125000000>;
+> +		};
+> +
+> +	};
+> +};
