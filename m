@@ -1,39 +1,73 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
+Return-Path: <hotran@apm.com>
+Return-Path: <hotran@apm.com>
+From: Hoan Tran <hotran@apm.com>
 To: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chao Xie <chao.xie@marvell.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: mmp: mmp2: fix return value check in mmp2_clk_init()
-Date: Sat, 17 Sep 2016 15:54:13 +0000
-Message-Id: <1474127653-14529-1-git-send-email-weiyj.lk@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	lho@apm.com,
+	Duc Dang <dhdang@apm.com>,
+	Hoan Tran <hotran@apm.com>
+Subject: [PATCH v2 1/3] Documentation: dtb: xgene: Add PMD clock binding
+Date: Fri,  2 Sep 2016 17:40:53 -0700
+Message-Id: <1472863255-32337-2-git-send-email-hotran@apm.com>
+In-Reply-To: <1472863255-32337-1-git-send-email-hotran@apm.com>
+References: <1472863255-32337-1-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Add APM X-Gene clock binding documentation for PMD clock.
 
-Fix the retrn value check which testing the wrong variable
-in mmp2_clk_init().
-
-Fixes: 1ec770d92a62 ("clk: mmp: add mmp2 DT support for clock driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Hoan Tran <hotran@apm.com>
 ---
- drivers/clk/mmp/clk-of-mmp2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/xgene.txt | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 3a51fff..9adaf48 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -313,7 +313,7 @@ static void __init mmp2_clk_init(struct device_node *np)
- 	}
+diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
+index 82f9638..e6e12ae 100644
+--- a/Documentation/devicetree/bindings/clock/xgene.txt
++++ b/Documentation/devicetree/bindings/clock/xgene.txt
+@@ -8,6 +8,7 @@ Required properties:
+ - compatible : shall be one of the following:
+ 	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
+ 	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
++	"apm,xgene-pmd-clock" - for a X-Gene PMD clock
+ 	"apm,xgene-device-clock" - for a X-Gene device clock
+ 	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
+ 	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
+@@ -22,6 +23,15 @@ Required properties for SoC or PCP PLL clocks:
+ Optional properties for PLL clocks:
+ - clock-names : shall be the name of the PLL. If missing, use the device name.
  
- 	pxa_unit->apmu_base = of_iomap(np, 1);
--	if (!pxa_unit->mpmu_base) {
-+	if (!pxa_unit->apmu_base) {
- 		pr_err("failed to map apmu registers\n");
- 		return;
- 	}
++Required properties for PMD clocks:
++- reg : shall be the physical register address for the pmd clock.
++- clocks : shall be the input parent clock phandle for the clock.
++- #clock-cells : shall be set to 1.
++- clock-output-names : shall be the name of the clock referenced by derive
++  clock.
++Optional properties for PLL clocks:
++- clock-names : shall be the name of the clock. If missing, use the device name.
++
+ Required properties for device clocks:
+ - reg : shall be a list of address and length pairs describing the CSR
+          reset and/or the divider. Either may be omitted, but at least
+@@ -59,6 +69,14 @@ For example:
+ 		type = <0>;
+ 	};
+ 
++	pmd0clk: pmd0clk {
++		compatible = "apm,xgene-pmd-clock";
++		#clock-cells = <1>;
++		clocks = <&pmdpll 0>;
++		reg = <0x0 0x7E200200 0x0 0x10>;
++		clock-output-names = "pmd0clk";
++	};
++
+ 	socpll: socpll@17000120 {
+ 		compatible = "apm,xgene-socpll-clock";
+ 		#clock-cells = <1>;
+-- 
+1.9.1
