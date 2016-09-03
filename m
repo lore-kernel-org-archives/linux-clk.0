@@ -1,75 +1,54 @@
-Return-Path: <patrice.chotard@st.com>
-Subject: Re: [PATCH v3 10/14] ARM: DT: STiH407: Enable synchronous clock mode
- for video clocks
-To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar
- Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert
- Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
- <1472473626-15398-11-git-send-email-gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@linaro.org>
-From: Patrice Chotard <patrice.chotard@st.com>
-Message-ID: <bf808310-1b77-0914-991a-fb8ac6a97718@st.com>
-Date: Thu, 15 Sep 2016 09:47:32 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Sep 2016 17:31:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+	irina.tirdea@intel.com, tiwai@suse.de, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH] clk: x86: Add Atom PMC platform clocks
+Message-ID: <20160903003146.GO12510@codeaurora.org>
+References: <1471459276-11517-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <20160831003722.GH12510@codeaurora.org>
+ <7c15a844-1351-f1ac-2ad0-3c41455fcc2e@linux.intel.com>
+ <20160831170858.GA6560@sirena.org.uk>
+ <9df1be06-8415-8cff-9468-0c4938f6e0fc@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1472473626-15398-11-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <9df1be06-8415-8cff-9468-0c4938f6e0fc@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 08/29/2016 02:27 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 09/01, Pierre-Louis Bossart wrote:
+> On 8/31/16 12:08 PM, Mark Brown wrote:
+> >On Tue, Aug 30, 2016 at 08:35:55PM -0500, Pierre-Louis Bossart wrote:
+> >>On 8/30/16 7:37 PM, Stephen Boyd wrote:
+> >
+> >>>It's sad that this can't be compiled on any platform. Has there
+> >>>been any move towards making this into a regmap provider so that
+> >>>this clk driver can use cross platform regmap APIs instead? Or
+> >
+> >>it's not clear to me what cross-platform goals you are hinting at and what
+> >>the concern is. We can add more framework stuff and make the code more
+> >>elegant but at the end of the day we will write in a very limited set of
+> >>registers (2 for audio - on/off and 19.2/25MHz selection) and the use of
+> >>this functionality is restricted to Baytrail and Cherrytrail.
+> >
+> >If code can be compiled on a wide range of platforms then that means
+> >that it's much easier to get build coverage of the code.  This is
+> >helpful for anyone doing any kind of cross tree updates - things like
+> >updating APIs for example.  The fewer configurations they have to touch
+> >to get everything built the easier it is for them.
 > 
-> This patch enables the synchronous clock mode for video clocks
-> on STiH407 board.
-> 
-> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  arch/arm/boot/dts/stih407-clock.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
-> index c4a8f1c..13029c0 100644
-> --- a/arch/arm/boot/dts/stih407-clock.dtsi
-> +++ b/arch/arm/boot/dts/stih407-clock.dtsi
-> @@ -256,7 +256,7 @@
->  
->  			clk_s_d2_flexgen: clk-s-d2-flexgen {
->  				#clock-cells = <1>;
-> -				compatible = "st,flexgen";
-> +				compatible = "st,flexgen-video", "st,flexgen";
->  
->  				clocks = <&clk_s_d2_quadfs 0>,
->  					 <&clk_s_d2_quadfs 1>,
-> 
-Hi Gabriel
+> ok, we can add a dummy pmc_write/read for non atom platforms so that
+> changes in the clock framework API can be handled without
+> configuration.
+> Using regmap to hide the IPC requests to the PCM seems a bit
+> over-engineered - we are talking about 2 registers per clock - and
+> bring limited benefits.
 
-Applied on STi tree for v4.9
+Sure regmap may not be helpful. Even passing the iomem pointer
+through platform data and then using readl/writel would be good
+though.
 
-Thanks
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
