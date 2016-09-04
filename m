@@ -1,39 +1,72 @@
-Return-Path: <>
-Return-Path: <>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: mturquette@baylibre.com,
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	sboyd@codeaurora.org,
-	vz@mleia.com,
-	slemieux.tyco@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] clk: nxp: clk-lpc32xx: Unmap region obtained by of_iomap
-Date: Tue, 20 Sep 2016 16:24:06 +0530
-Message-Id: <1474368846-15916-1-git-send-email-arvind.yadav.cs@gmail.com>
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/7] Documentation: dt-bindings: Add documentation for the Meson USB2 PHYs
+Date: Sun,  4 Sep 2016 23:31:48 +0200
+Message-Id: <20160904213152.25837-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Add the documentation for the bindings for the Meson8b and GXBB USB2
+PHYs.
 
-Free memory mapping, if lpc32xx_clk_init is not successful.
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/nxp/clk-lpc32xx.c |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/phy/meson-usb2-phy.txt     | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 90d740a..34c9735 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -1513,6 +1513,7 @@ static void __init lpc32xx_clk_init(struct device_node *np)
- 	if (IS_ERR(clk_regmap)) {
- 		pr_err("failed to regmap system control block: %ld\n",
- 			PTR_ERR(clk_regmap));
-+		iounmap(base);
- 		return;
- 	}
- 
+diff --git a/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+new file mode 100644
+index 0000000..662b537
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+@@ -0,0 +1,27 @@
++* Amlogic USB2 PHY
++
++Required properties:
++- compatible:	Depending on the platform this should be one of:
++	"amlogic,meson8b-usb2-phy"
++	"amlogic,meson-gxbb-usb2-phy"
++- reg:		The base address and length of the registers
++- #phys-cells:	should be 0 (see phy-bindings.txt in this directory)
++- resets:	reference to the reset controller
++- clocks:	phandle and clock identifier for the phy clocks
++- clock-names:	"usb_general" and "usb"
++
++Optional properties:
++- phy-supply:	see phy-bindings.txt in this directory
++
++
++Example:
++
++usb0_phy: usb_phy@0 {
++	compatible = "amlogic,meson-gxbb-usb2-phy";
++	#phy-cells = <0>;
++	reg = <0x0 0x0 0x0 0x20>;
++	resets = <&reset 34>;
++	clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
++	clock-names = "usb_general", "usb";
++	phy-supply = <&usb_vbus>;
++};
 -- 
-1.7.9.5
+2.9.3
