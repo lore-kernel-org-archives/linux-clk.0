@@ -1,43 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:38382 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932358AbcIFMFf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:35 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 2/7] clk: samsung: exynos5410: Expose the peripheral DMA
- gate clocks
-Date: Tue, 06 Sep 2016 14:04:51 +0200
-Message-id: <1473163496-17820-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: dianders@chromium.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, ykk@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [v2 PATCH 1/3] clk: rockchip: Fractional dividers can't set parent rates
+Date: Sun, 04 Sep 2016 23:50:21 +0200
+Message-ID: <3040422.nFj5Be1ODN@phil>
+In-Reply-To: <1472786785-2393-1-git-send-email-zyw@rock-chips.com>
+References: <1472786785-2393-1-git-send-email-zyw@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-These clocks are needed in order to use the PL330 peripheral
-DMA controllers.
+Am Donnerstag, 1. September 2016, 20:26:23 CEST schrieb Chris Zhong:
+> From: Douglas Anderson <dianders@chromium.org>
+> 
+> Currently the fractional divider clock time can't handle the
+> CLK_SET_RATE_PARENT flag. This is because, unlike normal dividers,
+> there is no clk_divider_bestdiv() function to try speeding up the parent
+> to see if it helps things.
+> 
+> Eventually someone could try to figure out how to make fractional
+> dividers able to use CLK_SET_RATE_PARENT, but until they do let's not
+> confuse the common clock framework (and anyone using it) by setting the
+> flag.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5410.c | 2 ++
- 1 file changed, 2 insertions(+)
+applied to my clk-branch for 4.9, after changing the subject to
+    clk: rockchip: drop CLK_SET_RATE_PARENT from rk3399 fractional dividers
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 54ec486..cf6fb41 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
- 	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
- 	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
- 	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
-+	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
-+	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
 
- 	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
- 	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
---
-1.9.1
-
+Heiko
