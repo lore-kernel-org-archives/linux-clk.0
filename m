@@ -1,41 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 17:46:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] AT91: sckc improvements
-Message-ID: <20160915004642.GL7243@codeaurora.org>
-References: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 7/7] ARM64: meson-gxbb-vega-s95: Enable USB Nodes
+Date: Sun,  4 Sep 2016 23:31:52 +0200
+Message-Id: <20160904213152.25837-8-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/08, Alexandre Belloni wrote:
-> Hi,
-> 
-> This patch set improves the slow clock controller driver.
-> 
-> The first patch simply moves some code around to avoid having extern
-> functions declared.
-> 
-> The second patch adds support for the SCKC found on sama5d4 and later.
-> It is notably missing the OSC32EN bit.
-> The third and fourth patches make use of this new driver (DT ABI is not
-> broken \o/)
-> 
-> Finally, there is an optimization. Trying to find wether the slow
-> oscillator is already stable to avoid waiting 1.2s twice in the boot
-> process.
+Enable both gxbb USB controller and add a 5V regulator for the OTG port
+VBUS
 
-clk patches look ok. We'll need to move this to use clk_hw
-registration based APIs some time, but that isn't critical to
-handle now. Will you resend?
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+index 463185d..bad32e6 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+@@ -77,6 +77,19 @@
+ 		compatible = "mmc-pwrseq-emmc";
+ 		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
+ 	};
++
++	usb_vbus: regulator-usb0-vbus {
++		compatible = "regulator-fixed";
++
++		regulator-name = "USB0_VBUS";
++
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++
++		gpio = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ };
+ 
+ &uart_AO {
+@@ -133,3 +146,20 @@
+ 	vmmc-supply = <&vcc_3v3>;
+ 	vmmcq-sumpply = <&vcc_1v8>;
+ };
++
++&usb0_phy {
++	status = "okay";
++	phy-supply = <&usb_vbus>;
++};
++
++&usb1_phy {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
