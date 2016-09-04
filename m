@@ -1,82 +1,110 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:6973 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752532AbcIMCqI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2016 22:46:08 -0400
-Subject: Re: [PATCH] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
-References: <201609122155.oR2E2oL7%fengguang.wu@intel.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yanhaifeng@hisilicon.com>,
-        <gaofei@hisilicon.com>, <hermit.wangheming@hisilicon.com>,
-        <scott.bambrough@linaro.org>, <mark.gregotski@linaro.org>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <57D76853.4080900@hisilicon.com>
-Date: Tue, 13 Sep 2016 10:45:39 +0800
-MIME-Version: 1.0
-In-Reply-To: <201609122155.oR2E2oL7%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 5/7] ARM64: meson-gxbb: add USB Nodes
+Date: Sun,  4 Sep 2016 23:31:50 +0200
+Message-Id: <20160904213152.25837-6-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+Add the nodes for the dwc2 USB controller and the related USB PHYs.
+Currently we force usb0 to host mode because OTG is currently not
+working in our PHY driver.
 
-Sorry. I'll fixed this compiling error in the next version.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 52 +++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-Regards,
-Jiancheng
-
-On 2016/9/12 21:55, kbuild test robot wrote:
-> Hi Jiancheng,
-> 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v4.8-rc6 next-20160912]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> [Suggest to use git(>=2.9.0) format-patch --base=<commit> (or --base=auto for convenience) to record what (public, well-known) commit your patch series was built on]
-> [Check https://git-scm.com/docs/git-format-patch for more information]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jiancheng-Xue/clk-hisilicon-add-CRG-driver-for-Hi3798CV200-SoC/20160912-175733
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 5.4.0-6) 5.4.0 20160609
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    In file included from drivers/clk/hisilicon/crg-hi3798cv200.c:22:0:
->>> drivers/clk/hisilicon/crg-hi3798cv200.c:245:25: error: 'hi3798cv200_clk_match_table' undeclared here (not in a function)
->     MODULE_DEVICE_TABLE(of, hi3798cv200_clk_match_table);
->                             ^
->    include/linux/module.h:213:21: note: in definition of macro 'MODULE_DEVICE_TABLE'
->     extern const typeof(name) __mod_##type##__##name##_device_table  \
->                         ^
->>> include/linux/module.h:213:27: error: '__mod_of__hi3798cv200_clk_match_table_device_table' aliased to undefined symbol 'hi3798cv200_clk_match_table'
->     extern const typeof(name) __mod_##type##__##name##_device_table  \
->                               ^
->>> drivers/clk/hisilicon/crg-hi3798cv200.c:245:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
->     MODULE_DEVICE_TABLE(of, hi3798cv200_clk_match_table);
->     ^
-> 
-> vim +/hi3798cv200_clk_match_table +245 drivers/clk/hisilicon/crg-hi3798cv200.c
-> 
->    239		{ .compatible = "hisilicon,hi3798cv200-crg",
->    240			.data = &hi3798cv200_crg_funcs},
->    241		{ .compatible = "hisilicon,hi3798cv200-sysctrl",
->    242			.data = &hi3798cv200_sysctrl_funcs},
->    243		{ }
->    244	};
->  > 245	MODULE_DEVICE_TABLE(of, hi3798cv200_clk_match_table);
->    246	
->    247	static int hi3798cv200_crg_probe(struct platform_device *pdev)
->    248	{
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 2e8a3d9..02dfc54 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -151,6 +151,34 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		usb-phys@c0000000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xc0000000 0x0 0x40>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xc0000000 0x0 0x40>;
++
++			usb0_phy: usb_phy@0 {
++				compatible = "amlogic,meson-gxbb-usb2-phy";
++				#phy-cells = <0>;
++				reg = <0x0 0x0 0x0 0x20>;
++				resets = <&reset 34>;
++				clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
++				clock-names = "usb_general", "usb";
++				status = "disabled";
++			};
++
++			usb1_phy: usb_phy@20 {
++				compatible = "amlogic,meson-gxbb-usb2-phy";
++				#phy-cells = <0>;
++				reg = <0x0 0x20 0x0 0x20>;
++				resets = <&reset 34>;
++				clocks = <&clkc CLKID_USB &clkc CLKID_USB1>;
++				clock-names = "usb_general", "usb";
++				status = "disabled";
++			};
++		};
++
+ 		cbus: cbus@c1100000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc1100000 0x0 0x100000>;
+@@ -496,6 +524,30 @@
+ 			};
+ 		};
+ 
++		usb0: usb-controller@c9000000 {
++			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
++			reg = <0x0 0xc9000000 0x0 0x40000>;
++			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clkc CLKID_USB0_DDR_BRIDGE>;
++			clock-names = "otg";
++			phys = <&usb0_phy>;
++			phy-names = "usb2-phy";
++			dr_mode = "host";
++			status = "disabled";
++		};
++
++		usb1: usb-controller@c9100000 {
++			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
++			reg = <0x0 0xc9100000 0x0 0x40000>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
++			clock-names = "otg";
++			phys = <&usb1_phy>;
++			phy-names = "usb2-phy";
++			dr_mode = "host";
++			status = "disabled";
++		};
++
+ 		ethmac: ethernet@c9410000 {
+ 			compatible = "amlogic,meson-gxbb-dwmac", "snps,dwmac";
+ 			reg = <0x0 0xc9410000 0x0 0x10000
+-- 
+2.9.3
