@@ -1,52 +1,106 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info
- to init section
-To: Chanwoo Choi <cw00.choi@samsung.com>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <b541e8a7-5ed0-6e02-dc05-26a5ab8a64e4@samsung.com>
-Date: Thu, 01 Sep 2016 19:06:52 +0200
-MIME-version: 1.0
-In-reply-to: <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v3 00/14] Clock improvement for video playback
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar
+ Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert
+ Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        Gabriel Fernandez
+	<gabriel.fernandez@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <3588e4a5-7f80-a71d-9b56-a65dc8e5630d@st.com>
+Date: Mon, 5 Sep 2016 15:20:23 +0200
+MIME-Version: 1.0
+In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22/2016 04:49 AM, Chanwoo Choi wrote:
-> This patch moves the all samsung_cmu_info struct to initconst section
-> because they are used only in initconst section.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Hi Gabriel
 
-Applied with the commit message changed as below, thanks.
+For the whole series
 
---------8<--------
-clk: samsung: exynos5260: Move struct samsung_cmu_info to init section
-    
- This patch moves the samsung_cmu_info struct instances to initconst section,
- this decreases the kernel image size by 784 bytes, which makes zImage smaller
- by 480 bytes.
-    
- The patch increases .init.rodata section size by 780 bytes but decreases
- .init.text section size by 1564 bytes.
-    
- Size of the drivers/clk/samsung/clk-exynos5260.o object file is 29100 bytes
- without the patch and 28316 after applying the patch.
-    
- The section size differences are as below:
- 15c15
- <   3 .init.text    000006b8  00000000  00000000  00000034  2**2
- ---
- >   3 .init.text    0000009c  00000000  00000000  00000034  2**2
- 25c25
- <   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
- ---
- >   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
-    
- Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
- Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
---------8<--------
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+
+Thanks
+
+
+
+On 08/29/2016 02:26 PM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>
+> v3:
+>   - Rebase to v4.8-rc1
+>   - Tipo fix in st,clkgen-pll.txt
+>   - Add Ack of Peter for the series
+>   - Add missed patch: "ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms"
+>
+> v2:
+>   - Simpliflication of clock binding
+>     remark from Rob https://lkml.org/lkml/2016/5/25/492
+>   - Suppression of stih415-416 support for the clocks (in order
+> 	to help simplification of clock binding)
+>     (others patchs for the machine and drivers will come)
+>
+> This serie allows to increase video resolutions and make audio
+> adjustment during a video playback.
+>
+> Gabriel Fernandez (14):
+>   drivers: clk: st: Remove stih415-416 clock support
+>   drivers: clk: st: Simplify clock binding of STiH4xx platforms
+>   ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms
+>   drivers: clk: st: Add fs660c32 synthesizer algorithm
+>   drivers: clk: st: Add clock propagation for audio clocks
+>   drivers: clk: st: Handle clk synchronous mode for video clocks
+>   ARM: DT: STiH407: Enable clock propagation for audio clocks
+>   ARM: DT: STiH410: Enable clock propagation for audio clocks
+>   ARM: DT: STiH418: Enable clock propagation for audio clocks
+>   ARM: DT: STiH407: Enable synchronous clock mode for video clocks
+>   ARM: DT: STiH410: Enable synchronous clock mode for video clocks
+>   ARM: DT: STiH418: Enable synchronous clock mode for video clocks
+>   ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
+>   ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+>
+>  .../bindings/clock/st/st,clkgen-divmux.txt         |  49 --
+>  .../devicetree/bindings/clock/st/st,clkgen-mux.txt |  20 +-
+>  .../devicetree/bindings/clock/st/st,clkgen-pll.txt |  35 +-
+>  .../bindings/clock/st/st,clkgen-prediv.txt         |  36 -
+>  .../devicetree/bindings/clock/st/st,clkgen-vcc.txt |  61 --
+>  .../devicetree/bindings/clock/st/st,clkgen.txt     |  54 +-
+>  .../devicetree/bindings/clock/st/st,flexgen.txt    |   4 +
+>  .../devicetree/bindings/clock/st/st,quadfs.txt     |  31 +-
+>  arch/arm/boot/dts/stih407-clock.dtsi               |  22 +-
+>  arch/arm/boot/dts/stih407.dtsi                     |  16 +-
+>  arch/arm/boot/dts/stih410-clock.dtsi               |  20 +-
+>  arch/arm/boot/dts/stih410.dtsi                     |  16 +-
+>  arch/arm/boot/dts/stih418-clock.dtsi               |  20 +-
+>  drivers/clk/st/clk-flexgen.c                       |  63 +-
+>  drivers/clk/st/clkgen-fsyn.c                       | 481 ++++---------
+>  drivers/clk/st/clkgen-mux.c                        | 748 +--------------------
+>  drivers/clk/st/clkgen-pll.c                        | 472 +------------
+>  17 files changed, 323 insertions(+), 1825 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-divmux.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-prediv.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/st/st,clkgen-vcc.txt
+>
