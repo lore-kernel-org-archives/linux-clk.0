@@ -1,27 +1,268 @@
-Return-Path: <wens@csie.org>
+Return-Path: <zajec5@gmail.com>
+Return-Path: <zajec5@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V7] clk: bcm: Add driver for BCM53573 ILP clock
+Date: Mon,  5 Sep 2016 16:29:27 +0200
+Message-Id: <20160905142935.4550-1-zajec5@gmail.com>
+In-Reply-To: <20160826122511.19047-1-zajec5@gmail.com>
+References: <20160826122511.19047-1-zajec5@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160908094843.14710-8-maxime.ripard@free-electrons.com>
-References: <20160908094843.14710-1-maxime.ripard@free-electrons.com> <20160908094843.14710-8-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 8 Sep 2016 21:35:00 +0800
-Message-ID: <CAGb2v67KCDbv8KjdudR6Z0p34QNgXvC-Md-CJfdX8ABLXRFegA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] clk: sunxi-ng: Add A23 CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 8, 2016 at 5:48 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add support for the clock unit found in the A23. Due to the similarities
-> with the A33, it also shares its clock IDs to allow sharing the DTSI.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+This clock is present on BCM53573 devices (including BCM47189) that use
+Cortex-A7. ILP is a part of PMU (Power Management Unit) multi-function
+device so we use syscon (and regmap) for it.
+
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+V2: Rebase on top of clk-next
+    Use ALP as parent clock
+    Improve comments
+    Switch from ioremap_nocache to ioremap
+    Check of_clk_add_provide result for error
+V3: Drop #include <linux/moduleh>
+    Make ILP DT entry part of PMU
+    Describe ILP as subdevice of PMU in Documentation
+V4: Use BCM53573 name as suggested by Jon and Ray. It seems "Northstar"
+    (even if used in some resources) should be used in relation to
+    Cortex-A9 devices only.
+V5: Rename remaining "ns" references to "bcm53573", sorry, I sent V4 too
+    early.
+V6: Drop #include <linux/clk.h>
+    Use "int" as type where it matches usage
+    Add cpu_relax() in the loop
+    Add disable callback
+    Use _hw_ functions for registering struct clk_hw (new API)
+
+    Thanks a lot Stephen!
+V7: Use syscon and regmap (thanks Rob!)
+---
+ .../bindings/clock/brcm,bcm53573-ilp.txt           |  36 +++++
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-bcm53573-ilp.c                 | 148 +++++++++++++++++++++
+ 3 files changed, 185 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+ create mode 100644 drivers/clk/bcm/clk-bcm53573-ilp.c
+
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+new file mode 100644
+index 0000000..4554f70
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+@@ -0,0 +1,36 @@
++Broadcom BCM53573 ILP clock
++===========================
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++This binding is used for ILP clock (sometimes referred as "slow clock")
++on Broadcom BCM53573 devices using Cortex-A7 CPU.
++
++ILP's rate has to be calculated on runtime and it depends on ALP clock
++which has to be referenced.
++
++This clock is part of PMU (Power Management Unit), a Broadcom's device
++handing power-related aspects. Its node must be sub-node of the PMU
++device.
++
++Required properties:
++- compatible: "brcm,bcm53573-ilp"
++- reg: iomem address range of PMU (Power Management Unit)
++- reg-names: "pmu", the only needed & supported reg right now
++- clocks: has to reference an ALP clock
++- #clock-cells: should be <0>
++
++Example:
++
++pmu@18012000 {
++	compatible = "simple-mfd", "syscon";
++	reg = <0x18012000 0x00001000>;
++
++	ilp: ilp@0 {
++		compatible = "brcm,bcm53573-ilp";
++		clocks = <&alp>;
++		#clock-cells = <0>;
++		clock-output-names = "ilp";
++	};
++};
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 1d79bd2..4b8c56d 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+ obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+ obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
++obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
+new file mode 100644
+index 0000000..1f4e30d
+--- /dev/null
++++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
+@@ -0,0 +1,148 @@
++/*
++ * Copyright (C) 2016 Rafał Miłecki <rafal@milecki.pl>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#define PMU_XTAL_FREQ_RATIO			0x66c
++#define  XTAL_ALP_PER_4ILP			0x00001fff
++#define  XTAL_CTL_EN				0x80000000
++#define PMU_SLOW_CLK_PERIOD			0x6dc
++
++struct bcm53573_ilp {
++	struct clk_hw hw;
++	struct regmap *regmap;
++};
++
++static int bcm53573_ilp_enable(struct clk_hw *hw)
++{
++	struct bcm53573_ilp *ilp = container_of(hw, struct bcm53573_ilp, hw);
++
++	regmap_write(ilp->regmap, PMU_SLOW_CLK_PERIOD, 0x10199);
++	regmap_write(ilp->regmap, 0x674, 0x10000);
++
++	return 0;
++}
++
++static void bcm53573_ilp_disable(struct clk_hw *hw)
++{
++	struct bcm53573_ilp *ilp = container_of(hw, struct bcm53573_ilp, hw);
++
++	regmap_write(ilp->regmap, PMU_SLOW_CLK_PERIOD, 0);
++	regmap_write(ilp->regmap, 0x674, 0);
++}
++
++static unsigned long bcm53573_ilp_recalc_rate(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	struct bcm53573_ilp *ilp = container_of(hw, struct bcm53573_ilp, hw);
++	struct regmap *regmap = ilp->regmap;
++	u32 last_val, cur_val;
++	int sum = 0, num = 0, loop_num = 0;
++	int avg;
++
++	/* Enable measurement */
++	regmap_write(regmap, PMU_XTAL_FREQ_RATIO, XTAL_CTL_EN);
++
++	/* Read initial value */
++	regmap_read(regmap, PMU_XTAL_FREQ_RATIO, &last_val);
++	last_val &= XTAL_ALP_PER_4ILP;
++
++	/*
++	 * At minimum we should loop for a bit to let hardware do the
++	 * measurement. This isn't very accurate however, so for a better
++	 * precision lets try getting 20 different values for and use average.
++	 */
++	while (num < 20) {
++		regmap_read(regmap, PMU_XTAL_FREQ_RATIO, &cur_val);
++		cur_val &= XTAL_ALP_PER_4ILP;
++
++		if (cur_val != last_val) {
++			/* Got different value, use it */
++			sum += cur_val;
++			num++;
++			loop_num = 0;
++			last_val = cur_val;
++		} else if (++loop_num > 5000) {
++			/* Same value over and over, give up */
++			sum += cur_val;
++			num++;
++			break;
++		}
++
++		cpu_relax();
++	}
++
++	/* Disable measurement to save power */
++	regmap_write(regmap, PMU_XTAL_FREQ_RATIO, 0x0);
++
++	avg = sum / num;
++
++	return parent_rate * 4 / avg;
++}
++
++static const struct clk_ops bcm53573_ilp_clk_ops = {
++	.enable = bcm53573_ilp_enable,
++	.disable = bcm53573_ilp_disable,
++	.recalc_rate = bcm53573_ilp_recalc_rate,
++};
++
++static void bcm53573_ilp_init(struct device_node *np)
++{
++	struct bcm53573_ilp *ilp;
++	struct clk_init_data init = { 0 };
++	const char *parent_name;
++	int err;
++
++	ilp = kzalloc(sizeof(*ilp), GFP_KERNEL);
++	if (!ilp)
++		return;
++
++	parent_name = of_clk_get_parent_name(np, 0);
++	if (!parent_name) {
++		err = -ENOENT;
++		goto err_free_ilp;
++	}
++
++	ilp->regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(ilp->regmap)) {
++		err = PTR_ERR(ilp->regmap);
++		goto err_free_ilp;
++	}
++
++	init.name = np->name;
++	init.ops = &bcm53573_ilp_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	ilp->hw.init = &init;
++	err = clk_hw_register(NULL, &ilp->hw);
++	if (err)
++		goto err_free_ilp;
++
++	err = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &ilp->hw);
++	if (err)
++		goto err_clk_hw_unregister;
++
++	return;
++
++err_clk_hw_unregister:
++	clk_hw_unregister(&ilp->hw);
++err_free_ilp:
++	kfree(ilp);
++	pr_err("Failed to init ILP clock: %d\n", err);
++}
++
++/* We need it very early for arch code, before device model gets ready */
++CLK_OF_DECLARE(bcm53573_ilp_clk, "brcm,bcm53573-ilp", bcm53573_ilp_init);
+-- 
+2.9.3
