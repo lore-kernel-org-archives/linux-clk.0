@@ -1,84 +1,168 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-clk@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	johnyoun@synopsys.com,
-	kishon@ti.com,
-	khilman@baylibre.com,
-	carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 7/7] ARM64: meson-gxbb-vega-s95: Enable USB Nodes
-Date: Sun,  4 Sep 2016 23:31:52 +0200
-Message-Id: <20160904213152.25837-8-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:65071 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750720AbcIEECe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2016 00:02:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160829182200.GD19826@codeaurora.org>
+References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
+ <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
+ <20160819002507.GS361@codeaurora.org> <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
+ <20160819191612.GU361@codeaurora.org> <CAK7LNAQownrE0n8rAYGgUs9_byvok8W0V=c6gts_C=8Wvio86g@mail.gmail.com>
+ <20160829182200.GD19826@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 5 Sep 2016 13:02:26 +0900
+Message-ID: <CAK7LNAQ9byodJTu-itbnhFrUGDQS5bxYUydyJ3zyZ+aLroQ6FA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
+ clock driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable both gxbb USB controller and add a 5V regulator for the OTG port
-VBUS
+Hi Stephen,
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-index 463185d..bad32e6 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-@@ -77,6 +77,19 @@
- 		compatible = "mmc-pwrseq-emmc";
- 		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
- 	};
-+
-+	usb_vbus: regulator-usb0-vbus {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "USB0_VBUS";
-+
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+
-+		gpio = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
- };
- 
- &uart_AO {
-@@ -133,3 +146,20 @@
- 	vmmc-supply = <&vcc_3v3>;
- 	vmmcq-sumpply = <&vcc_1v8>;
- };
-+
-+&usb0_phy {
-+	status = "okay";
-+	phy-supply = <&usb_vbus>;
-+};
-+
-+&usb1_phy {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+};
+2016-08-30 3:22 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 08/29, Masahiro Yamada wrote:
+>> Hi Stephen,
+>>
+>>
+>> 2016-08-20 4:16 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> >>
+>> >> >> +
+>> >> >> +     parent = of_get_parent(dev->of_node); /* parent should be syscon node */
+>> >> >> +     regmap = syscon_node_to_regmap(parent);
+>> >> >> +     of_node_put(parent);
+>> >> >
+>> >> > devm_get_regmap(dev->parent) should work then? Why do we need to
+>> >> > use OF APIs?
+>> >>
+>> >> "git grep devm_get_regmap" did not hit anything.
+>> >>
+>> >> Where is it defined?
+>> >>
+>> >
+>> > Sorry I meant dev_get_regmap().
+>> >
+>>
+>> I tried this, but it did not work.
+>>
+>> To make dev_get_regmap() work,
+>> the parent device needs to call dev_regmap_init_mmio() beforehand.
+>>
+>>
+>> Since commit bdb0066df96e74a4002125467ebe459feff1ebef
+>> (mfd: syscon: Decouple syscon interface from platform devices),
+>> syscon_probe() is not called for platform devices,
+>> so that never happens.
+>>
+>
+> Ok. Is the syscon also a simple-mfd?
+>
+> It sounds like there's a device for the parent, but we've failed
+> to attach a regmap to it. Maybe the core DT code should assign
+> the regmap to the parent device when it creates it so that child
+> devices don't need to know this detail? It could look for
+> simple-mfd devices with compatible = "syscon" and then create the
+> regmap? Here's a totally untested patch for that.
+>
+> ----8<----
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index 2f2225e845ef..5f7d3f015b82 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -136,6 +136,17 @@ struct regmap *syscon_node_to_regmap(struct device_node *np)
+>  }
+>  EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
+>
+> +int device_attach_syscon(struct device *dev)
+> +{
+> +       struct regmap *regmap;
+> +
+> +       regmap = syscon_node_to_regmap(dev->of_node);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       return regmap_attach_dev(dev, regmap, &syscon_regmap_config);
+> +}
+> +
+>  struct regmap *syscon_regmap_lookup_by_compatible(const char *s)
+>  {
+>         struct device_node *syscon_np;
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 8aa197691074..58a018e15006 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/mfd/syscon.h>
+>
+>  const struct of_device_id of_default_bus_match_table[] = {
+>         { .compatible = "simple-bus", },
+> @@ -383,7 +384,12 @@ static int of_platform_bus_create(struct device_node *bus,
+>                 return 0;
+>         }
+>
+> +
+>         dev = of_platform_device_create_pdata(bus, bus_id, platform_data, parent);
+> +       if (of_device_is_compatible(bus, "simple-mfd") &&
+> +           of_device_is_compatible(bus, "syscon"))
+> +               device_attach_syscon(&dev->dev);
+> +
+>         if (!dev || !of_match_node(matches, bus))
+>                 return 0;
+>
+> diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
+> index 40a76b97b7ab..e19e5d15f4e6 100644
+> --- a/include/linux/mfd/syscon.h
+> +++ b/include/linux/mfd/syscon.h
+> @@ -18,9 +18,11 @@
+>  #include <linux/err.h>
+>  #include <linux/errno.h>
+>
+> +struct device;
+>  struct device_node;
+>
+>  #ifdef CONFIG_MFD_SYSCON
+> +extern int device_attach_syscon(struct device *dev);
+>  extern struct regmap *syscon_node_to_regmap(struct device_node *np);
+>  extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
+>  extern struct regmap *syscon_regmap_lookup_by_pdevname(const char *s);
+> @@ -28,6 +30,11 @@ extern struct regmap *syscon_regmap_lookup_by_phandle(
+>                                         struct device_node *np,
+>                                         const char *property);
+>  #else
+> +static inline int device_attach_syscon(struct device *dev)
+> +{
+> +       return 0;
+> +}
+> +
+>  static inline struct regmap *syscon_node_to_regmap(struct device_node *np)
+>  {
+>         return ERR_PTR(-ENOTSUPP);
+
+
+I was not quire sure about this,
+but maybe worth submitting to DT subsystem?
+
+Anyway, I will go with syscon_node_to_regmap() for v7.
+Of course, I am happy to replace it with dev_get_regmap()
+when the issue is solved in the mainline.
+
+
+
 -- 
-2.9.3
+Best Regards
+Masahiro Yamada
