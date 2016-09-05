@@ -1,115 +1,135 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-To: Mirza Krak <mirza.krak@gmail.com>, Rob Herring <robh@kernel.org>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
- <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
- <20160830170636.GA8741@rob-hp-laptop>
- <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <a3a2371b-5d98-db2d-b7e4-be6d08cb7271@nvidia.com>
-Date: Tue, 6 Sep 2016 11:32:14 +0100
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH 5/7] ARM64: meson-gxbb: add USB Nodes
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-6-martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
+ jbrunet@baylibre.com, johnyoun@synopsys.com, kishon@ti.com,
+ khilman@baylibre.com, carlo@caione.org, mark.rutland@arm.com,
+ devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+ sboyd@codeaurora.org, mturquette@baylibre.com, will.deacon@arm.com,
+ robh+dt@kernel.org, catalin.marinas@arm.com,
+ linux-arm-kernel@lists.infradead.org
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <aa1ff8df-ab18-73e3-c39e-a1f75ab3eba0@suse.de>
+Date: Mon, 5 Sep 2016 02:23:33 +0200
 MIME-Version: 1.0
-In-Reply-To: <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20160904213152.25837-6-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Martin,
 
-On 31/08/16 12:22, Mirza Krak wrote:
-> 2016-08-30 19:06 GMT+02:00 Rob Herring <robh@kernel.org>:
+Am 04.09.2016 um 23:31 schrieb Martin Blumenstingl:
+> Add the nodes for the dwc2 USB controller and the related USB PHYs.
+> Currently we force usb0 to host mode because OTG is currently not
+> working in our PHY driver.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 52 +++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 2e8a3d9..02dfc54 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -151,6 +151,34 @@
+>  		#size-cells = <2>;
+>  		ranges;
+>  
+> +		usb-phys@c0000000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xc0000000 0x0 0x40>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xc0000000 0x0 0x40>;
 
-...
+Does this correspond to any physical bus or could we drop this layer?
 
->>>                  nvidia,snor-cs = <4>;
->>
->> NAK, no custom CS properties.
+> +
+> +			usb0_phy: usb_phy@0 {
 
-Ok, so ...
+phy@0 to avoid the underscore in node name? dash otherwise.
+If dropping the bus, *phy@c0000000 obviously.
 
-> gmi@70090000 {
->         compatible = "nvidia,tegra20-gmi";
->         reg = <0x70009000 0x1000>;
->         #address-cells = <2>;
->         #size-cells = <1>;
->         clocks = <&tegra_car TEGRA20_CLK_NOR>;
->         clock-names = "gmi";
->         resets = <&tegra_car 42>;
->         reset-names = "gmi";
->         ranges = <4 0 0xd0000000 0xfffffff>;
-> 
->         status = "okay";
-> 
->         bus@4,0 {
->                 compatible = "simple-bus";
->                 #address-cells = <1>;
->                 #size-cells = <1>;
->                 ranges = <0 4 0 0x40000>;
-> 
->                 nvidia,snor-mux-mode;
->                 nvidia,snor-adv-inv;
-> 
->                 can@0 {
->                         reg = <0 0x100>;
->                         ...
->                 };
-> 
->                 can@40000 {
->                         reg = <0x40000 0x100>;
->                         ...
->                 };
->         };
-> };
-> 
-> Have I understood you correct?
-> 
-> Also wanted to verify the example case where you only have on device
-> connected to one CS#, from what I see in other implementations it
-> seems OK to put the CS# in the reg property in that case. Is this
-> correct?
-> 
-> Example with one SJA1000 CAN controller connected to the GMI bus
-> on CS4:
-> 
-> gmi@70090000 {
->         compatible = "nvidia,tegra20-gmi";
->         reg = <0x70009000 0x1000>;
->         #address-cells = <2>;
->         #size-cells = <1>;
->         clocks = <&tegra_car TEGRA20_CLK_NOR>;
->         clock-names = "gmi";
->         resets = <&tegra_car 42>;
->         reset-names = "gmi";
->         ranges = <4 0 0xd0000000 0xfffffff>;
-> 
->         status = "okay";
-> 
->         can@4,0 {
->                 reg = <4 0 0x100>;
->                 nvidia,snor-mux-mode;
->                 nvidia,snor-adv-inv;
->                 ...
->         };
-> };
-> 
-> Jon, to be able to handle both cases in the driver we would first
-> attempt to decode the CS# from the ranges property, and fallback to
-> reg property if no ranges are defined. Does that sound reasonable?
+> +				compatible = "amlogic,meson-gxbb-usb2-phy";
+> +				#phy-cells = <0>;
+> +				reg = <0x0 0x0 0x0 0x20>;
+> +				resets = <&reset 34>;
+> +				clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
 
-Given the above examples that may be supported, is there a
-better/simpler way to extract the CS# than what Mirza is proposing? For
-example, from the node-name unit-address?
+<&clkc CLKID_USB>, <&clkc CLKID_USB0> please.
 
-Cheers
-Jon
+> +				clock-names = "usb_general", "usb";
+> +				status = "disabled";
+> +			};
+> +
+> +			usb1_phy: usb_phy@20 {
+> +				compatible = "amlogic,meson-gxbb-usb2-phy";
+> +				#phy-cells = <0>;
+> +				reg = <0x0 0x20 0x0 0x20>;
+> +				resets = <&reset 34>;
+> +				clocks = <&clkc CLKID_USB &clkc CLKID_USB1>;
+
+Ditto
+
+> +				clock-names = "usb_general", "usb";
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+>  		cbus: cbus@c1100000 {
+>  			compatible = "simple-bus";
+>  			reg = <0x0 0xc1100000 0x0 0x100000>;
+> @@ -496,6 +524,30 @@
+>  			};
+>  		};
+>  
+> +		usb0: usb-controller@c9000000 {
+
+usb@c9000000 by convention.
+
+> +			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
+> +			reg = <0x0 0xc9000000 0x0 0x40000>;
+> +			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clkc CLKID_USB0_DDR_BRIDGE>;
+> +			clock-names = "otg";
+> +			phys = <&usb0_phy>;
+> +			phy-names = "usb2-phy";
+> +			dr_mode = "host";
+> +			status = "disabled";
+> +		};
+> +
+> +		usb1: usb-controller@c9100000 {
+
+usb@c9100000
+
+> +			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
+> +			reg = <0x0 0xc9100000 0x0 0x40000>;
+> +			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
+> +			clock-names = "otg";
+> +			phys = <&usb1_phy>;
+> +			phy-names = "usb2-phy";
+> +			dr_mode = "host";
+> +			status = "disabled";
+> +		};
+> +
+>  		ethmac: ethernet@c9410000 {
+>  			compatible = "amlogic,meson-gxbb-dwmac", "snps,dwmac";
+>  			reg = <0x0 0xc9410000 0x0 0x10000
+
+Thanks for the huge progress you guys have been making.
+
+This patchset will probably clash with Neil's GXL preparations?
+
+Regards,
+Andreas
 
 -- 
-nvpublic
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
