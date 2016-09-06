@@ -1,28 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 16:33:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 1/2] clk: uniphier: add core support code for UniPhier
- clock driver
-Message-ID: <20160916233304.GC7243@codeaurora.org>
-References: <1474011604-12577-1-git-send-email-yamada.masahiro@socionext.com>
- <1474011604-12577-2-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474011604-12577-2-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 1/7] clk: sunxi-ng: div: Add mux table macros
+Date: Tue,  6 Sep 2016 14:18:31 +0200
+Message-Id: <20160906121837.7517-2-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Masahiro Yamada wrote:
-> This includes UniPhier clock driver code, except SoC-specific
-> data arrays.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Add some macros to ease the declaration of clocks that are using them.
 
-Applied to clk-next
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_div.h | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index 5d98549e23a6..a5c9eaf90e84 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -77,13 +77,16 @@ struct ccu_div {
+ 				      _shift, _width, _table, 0,	\
+ 				      _flags)
+ 
+-#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
+-				  _mshift, _mwidth, _muxshift, _muxwidth, \
+-				  _gate, _flags)			\
++#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
++					_parents, _table,		\
++					_reg,				\
++					_mshift, _mwidth,		\
++					_muxshift, _muxwidth,		\
++					_gate, _flags)			\
+ 	struct ccu_div _struct = {					\
+ 		.enable	= _gate,					\
+ 		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+-		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
++		.mux	= _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, _table), \
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+@@ -93,12 +96,23 @@ struct ccu_div {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				  _mshift, _mwidth, _muxshift, _muxwidth, \
++				  _gate, _flags)			\
++	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
++					_parents, NULL,			\
++					_reg, _mshift, _mwidth,		\
++					_muxshift, _muxwidth,		\
++					_gate, _flags)
++
+ #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
+ 			     _mshift, _mwidth, _muxshift, _muxwidth,	\
+ 			     _flags)					\
+-	SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
+-				  _mshift, _mwidth, _muxshift, _muxwidth, \
+-				  0, _flags)
++	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
++					_parents, NULL,			\
++					_reg, _mshift, _mwidth,		\
++					_muxshift, _muxwidth,		\
++					0, _flags)
+ 
+ 
+ #define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
