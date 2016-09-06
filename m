@@ -1,56 +1,34 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 20 Sep 2016 21:00:19 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Anson Huang <Anson.Huang@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: imx6: initialize GPU clocks
-Message-ID: <20160920130018.GE3744@tiger>
-References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
- <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
- <20160918001723.GC15478@tiger>
- <1474276031.31321.0.camel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474276031.31321.0.camel@pengutronix.de>
+Return-Path: <jun.nie@linaro.org>
+Return-Path: <jun.nie@linaro.org>
+From: Jun Nie <jun.nie@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+Cc: shawn.guo@linaro.org,
+	jason.liu@linaro.org,
+	Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH v3 0/2] Add ZX296718 clock driver
+Date: Tue,  6 Sep 2016 14:02:40 +0800
+Message-Id: <1473141762-4775-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 19, 2016 at 11:07:11AM +0200, Lucas Stach wrote:
-> > > diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> > > index 64c243173395..751c3e7d5843 100644
-> > > --- a/drivers/clk/imx/clk-imx6q.c
-> > > +++ b/drivers/clk/imx/clk-imx6q.c
-> > > @@ -633,6 +633,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
-> > >  	if (IS_ENABLED(CONFIG_PCI_IMX6))
-> > >  		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
-> > >  
-> > > +	/*
-> > > +	 * Initialize the GPU clock muxes, so that the maximum specified clock
-> > > +	 * rates for the respective SoC are not exceeded.
-> > > +	 */
-> > > +	if (clk_on_imx6dl()) {
-> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
-> > > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
-> > > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-> > > +	} else if (clk_on_imx6q()) {
-> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
-> > > +		               clk[IMX6QDL_CLK_MMDC_CH0_AXI]);
-> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_SHADER_SEL],
-> > > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
-> > > +		               clk[IMX6QDL_CLK_PLL3_USB_OTG]);
-> > > +	}
-> > > +
-> > 
-> > Can we handle these with assigned-clock-parents from device tree?
-> > 
-> No, we want to get rid of the GPU overclocking even with old DTs. DT
-> stability rules and all that...
+Changes vs version 2:
+  - Use platform driver to initilize instead of CLK_OF_DECLARE.
 
-Fair point.  For both patches,
+Jun Nie (2):
+  clk: zx: reform pll config info to ease code extension
+  clk: zx: register ZX296718 clocks
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+ .../devicetree/bindings/clock/zx296718-clk.txt     |  35 +
+ drivers/clk/zte/Makefile                           |   1 +
+ drivers/clk/zte/clk-zx296718.c                     | 924 +++++++++++++++++++++
+ drivers/clk/zte/clk.c                              |  21 +-
+ drivers/clk/zte/clk.h                              | 129 +++
+ include/dt-bindings/clock/zx296718-clock.h         | 164 ++++
+ 6 files changed, 1265 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/zx296718-clk.txt
+ create mode 100644 drivers/clk/zte/clk-zx296718.c
+ create mode 100644 include/dt-bindings/clock/zx296718-clock.h
+
+-- 
+1.9.1
