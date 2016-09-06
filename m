@@ -1,46 +1,50 @@
-Return-Path: <keguang.zhang@gmail.com>
-Return-Path: <keguang.zhang@gmail.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-To: linux-clk@vger.kernel.org,
-	linux-mips@linux-mips.org,
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	=?UTF-8?q?Alexander=20M=C3=BCller?= <serveralex@gmail.com>,
+	Paul Gortmaker <paul.gortmaker@windriver.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: [PATCH V1 0/3] Refactor Loongson1 clock
-Date: Mon, 19 Sep 2016 12:38:53 +0800
-Message-Id: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
+Subject: [PATCH] clk: meson: fix CLKID_GCLK_VENCI_INT typo
+Date: Tue,  6 Sep 2016 15:01:10 +0200
+Message-Id: <20160906130130.1645496-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kelvin Cheung <keguang.zhang@gmail.com>
+The addition of many gate clocks added two entries in an array for
+the same value:
 
-This patchset is to refactor Loongson1 clock,
-and update Loongson1B clocks.
+drivers/clk/meson/meson8b.c:479:10: error: initialized field overwritten [-Werror=override-init]
+   [CLKID_GCLK_VENCI_INT]     = &meson8b_gclk_venci_int.hw,
+   [CLKID_GCLK_VENCI_INT]     = &meson8b_gclk_vencp_int.hw,
 
-This applies on top of clk-next.
+This was clearly an accident, and since all other identifiers are
+listed in the order in which they are defined, I'm changing the
+first one to CLKID_GCLK_VENCI_INT0, making it all consistent again.
 
-Thanks!
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: e31a1900c1ff ("meson: clk: Add support for clock gates")
+---
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changelog:
-v1:
-   Rebase the patch on clk: ls1x: Migrate to clk_hw based OF
-   and registration APIs.
-
-Kelvin Cheung (3):
-  clk: Loongson1: Refactor Loongson1 clock
-  clk: Loongson1: Update clocks of Loongson1B
-  clk: Loongson1: Make use of GENMASK
-
- drivers/clk/Makefile                               |  2 +-
- drivers/clk/loongson1/Makefile                     |  2 +
- .../clk/{clk-ls1x.c => loongson1/clk-loongson1b.c} | 74 +++++-----------------
- drivers/clk/loongson1/clk.c                        | 43 +++++++++++++
- drivers/clk/loongson1/clk.h                        | 19 ++++++
- 5 files changed, 82 insertions(+), 58 deletions(-)
- create mode 100644 drivers/clk/loongson1/Makefile
- rename drivers/clk/{clk-ls1x.c => loongson1/clk-loongson1b.c} (67%)
- create mode 100644 drivers/clk/loongson1/clk.c
- create mode 100644 drivers/clk/loongson1/clk.h
-
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index e1d4aa145a03..0d45ec20c737 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -476,7 +476,7 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
+ 		[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
+ 		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
+-		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_vencp_int.hw,
++		[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
+ 		[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
+ 		[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
+ 		[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
 -- 
-1.9.1
+2.9.0
