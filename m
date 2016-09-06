@@ -1,249 +1,89 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: add Pine64 support
-To: Chen-Yu Tsai <wens@csie.org>,
-   Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
- <20160909201029.24530-5-maxime.ripard@free-electrons.com>
- <CAGb2v65JZ7gnOZ_LkkvGv5-bqXeK1E1O3eno85zYBSndNpN=Qw@mail.gmail.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-   Stephen Boyd <sboyd@codeaurora.org>,
-   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-   linux-clk <linux-clk@vger.kernel.org>,
-   linux-kernel <linux-kernel@vger.kernel.org>,
-   linux-sunxi <linux-sunxi@googlegroups.com>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <c7ad213f-e5d1-d5c5-a83c-af1c38d9c1d6@arm.com>
-Date: Mon, 12 Sep 2016 11:11:44 +0100
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v11,
+ 3/8] dt: bindings: move guts devicetree doc out of powerpc directory
+Date: Tue, 6 Sep 2016 16:28:18 +0800
+Message-ID: <1473150503-9550-4-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v65JZ7gnOZ_LkkvGv5-bqXeK1E1O3eno85zYBSndNpN=Qw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
+ xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
+ Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
+ linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
+since it's used by not only PowerPC but also ARM. And add a specification
+for 'little-endian' property.
 
-On 10/09/16 03:33, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> On Sat, Sep 10, 2016 at 4:10 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> From: Andre Przywara <andre.przywara@arm.com>
->>
->> The Pine64 is a cost-efficient development board based on the
->> Allwinner A64 SoC.
->> There are three models: the basic version with Fast Ethernet and
->> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
->> feature Gigabit Ethernet and additional connectors for touchscreens
->> and a camera. Or as my son put it: "Those are smaller and these are
->> missing." ;-)
->> The two Pine64+ models just differ in the amount of DRAM
->> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
->> patches the DT accordingly we just need to provide one DT for the
->> Pine64+.
->>
->> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->>  arch/arm64/boot/dts/Makefile                       |  1 +
->>  arch/arm64/boot/dts/allwinner/Makefile             |  5 ++
->>  .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  | 50 ++++++++++++++++
->>  .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 70 ++++++++++++++++++++++
->>  4 files changed, 126 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
->>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
->>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->>
->> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
->> index 6e199c903676..ddcbf5a2c17e 100644
->> --- a/arch/arm64/boot/dts/Makefile
->> +++ b/arch/arm64/boot/dts/Makefile
->> @@ -1,4 +1,5 @@
->>  dts-dirs += al
->> +dts-dirs += allwinner
->>  dts-dirs += altera
->>  dts-dirs += amd
->>  dts-dirs += amlogic
->> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
->> new file mode 100644
->> index 000000000000..1e29a5ae8282
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/Makefile
->> @@ -0,0 +1,5 @@
->> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
->> +
->> +always         := $(dtb-y)
->> +subdir-y       := $(dts-dirs)
->> +clean-files    := *.dtb
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
->> new file mode 100644
->> index 000000000000..790d14daaa6a
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
->> @@ -0,0 +1,50 @@
->> +/*
->> + * Copyright (c) 2016 ARM Ltd.
->> + *
->> + * This file is dual-licensed: you can use it either under the terms
->> + * of the GPL or the X11 license, at your option. Note that this dual
->> + * licensing only applies to this file, and not this project as a
->> + * whole.
->> + *
->> + *  a) This library is free software; you can redistribute it and/or
->> + *     modify it under the terms of the GNU General Public License as
->> + *     published by the Free Software Foundation; either version 2 of the
->> + *     License, or (at your option) any later version.
->> + *
->> + *     This library is distributed in the hope that it will be useful,
->> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + *     GNU General Public License for more details.
->> + *
->> + * Or, alternatively,
->> + *
->> + *  b) Permission is hereby granted, free of charge, to any person
->> + *     obtaining a copy of this software and associated documentation
->> + *     files (the "Software"), to deal in the Software without
->> + *     restriction, including without limitation the rights to use,
->> + *     copy, modify, merge, publish, distribute, sublicense, and/or
->> + *     sell copies of the Software, and to permit persons to whom the
->> + *     Software is furnished to do so, subject to the following
->> + *     conditions:
->> + *
->> + *     The above copyright notice and this permission notice shall be
->> + *     included in all copies or substantial portions of the Software.
->> + *
->> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
->> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
->> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
->> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
->> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
->> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
->> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + *     OTHER DEALINGS IN THE SOFTWARE.
->> + */
->> +
->> +#include "sun50i-a64-pine64.dts"
->> +
->> +/ {
->> +       model = "Pine64+";
->> +       compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
->> +
->> +       /* TODO: Camera, Ethernet PHY, touchscreen, etc. */
->> +};
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> new file mode 100644
->> index 000000000000..da9bca51f5a9
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> @@ -0,0 +1,70 @@
->> +/*
->> + * Copyright (c) 2016 ARM Ltd.
->> + *
->> + * This file is dual-licensed: you can use it either under the terms
->> + * of the GPL or the X11 license, at your option. Note that this dual
->> + * licensing only applies to this file, and not this project as a
->> + * whole.
->> + *
->> + *  a) This library is free software; you can redistribute it and/or
->> + *     modify it under the terms of the GNU General Public License as
->> + *     published by the Free Software Foundation; either version 2 of the
->> + *     License, or (at your option) any later version.
->> + *
->> + *     This library is distributed in the hope that it will be useful,
->> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + *     GNU General Public License for more details.
->> + *
->> + * Or, alternatively,
->> + *
->> + *  b) Permission is hereby granted, free of charge, to any person
->> + *     obtaining a copy of this software and associated documentation
->> + *     files (the "Software"), to deal in the Software without
->> + *     restriction, including without limitation the rights to use,
->> + *     copy, modify, merge, publish, distribute, sublicense, and/or
->> + *     sell copies of the Software, and to permit persons to whom the
->> + *     Software is furnished to do so, subject to the following
->> + *     conditions:
->> + *
->> + *     The above copyright notice and this permission notice shall be
->> + *     included in all copies or substantial portions of the Software.
->> + *
->> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
->> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
->> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
->> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
->> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
->> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
->> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + *     OTHER DEALINGS IN THE SOFTWARE.
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include "sun50i-a64.dtsi"
->> +
->> +/ {
->> +       model = "Pine64";
->> +       compatible = "pine64,pine64", "allwinner,sun50i-a64";
->> +
->> +       aliases {
->> +               serial0 = &uart0;
->> +       };
->> +
->> +       chosen {
->> +               stdout-path = "serial0:115200n8";
->> +       };
->> +};
->> +
->> +&uart0 {
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&uart0_pins_a>;
->> +       status = "okay";
->> +};
->> +
->> +&i2c1 {
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&i2c1_pins>;
->> +       status = "okay";
-> 
-> Schematics say this is missing an external pull-up. Has anyone tried it?
-> Without a pull-up any access on the i2c bus should just block.
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v4:
+	- Added this patch
+Changes for v5:
+	- Modified the description for little-endian property
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+	- Added 'Acked-by: Rob Herring'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- None
+---
+ Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+ rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
 
-I tried it a while ago (with an older kernel), though I had an external
-pull-up on the device side, I think. I can give it a try again with
-Maxime's branch once I find this I2C test device in one of my moving
-boxes ;-)
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+similarity index 91%
+rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
+rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
+index b71b203..07adca9 100644
+--- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
++++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
+@@ -25,6 +25,9 @@ Recommended properties:
+  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
+    registers, for those SOCs that have a PAMU device.
+ 
++ - little-endian : Indicates that the global utilities block is little
++   endian. The default is big endian.
++
+ Examples:
+ 	global-utilities@e0000 {	/* global utilities block */
+ 		compatible = "fsl,mpc8548-guts";
+-- 
+2.1.0.27.g96db324
 
-Do other boards providing a Raspi-compatible header have an on-board
-pull-up here? So will (some) hardware extensions for the Raspi fail on
-the Pine64?
 
-> Also this is on the RPi-2 compatible header. There's also an UART and SPI
-> that are standard for the RPi-2 header. We should consider enabling them
-> as well.
-
-Interesting topic ;-)
-As both interfaces can be configured for GPIO as well, I think Maxime
-voted to not declare them as special function in the upstream DT.
-UART0 is used for the console, so I guess some people may decide to use
-those UART2 header pins for GPIO. Similarly for SPI: if you don't need
-it, you get four (or five) additional GPIO.
-
-A kind of related issue arises for those BT/Wifi headers. 99.9% of the
-users will plug the Pine64 BT/WiFi module in there, at which point we
-could declare MMC1 as SDIO and UART1 as enabled to cover this.
-But then again nothing prevents people from building a custom module
-which uses those pins for something else. Port G at least does not
-multiplex any other IP to those pins - apart from GPIO, of course.
-
-So what is the exact policy here? In the end I think any pin (including
-UART0's PB8 and PB9) can be configured as GPIO, so do we make some
-assumptions about "sensible" or predominant usage?
-
-Does "# echo $DEVICE > /sys/devices/platform/$DEVICE/driver/unbind" work
-to get those pins free later in case one wants to configure them as
-GPIOs? In this case we may consider being more generous in declaring
-common use cases in the upstream DT for the sake of the majority of users.
-
-Cheers,
-Andre.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
