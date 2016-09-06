@@ -1,196 +1,215 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v11, 4/8] powerpc/fsl: move mpc85xx.h to include/linux/fsl
+Date: Tue, 6 Sep 2016 16:28:19 +0800
+Message-ID: <1473150503-9550-5-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20160906121837.7517-7-maxime.ripard@free-electrons.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com> <20160906121837.7517-7-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 7 Sep 2016 15:24:11 +0800
-Message-ID: <CAGb2v64jDTWB4faaBdCBCcFrt1WNf=PYwc16kpgsUhaMRudHnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] clk: sunxi-ng: Add A23 CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
+ xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
+ Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
+ linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add support for the clock unit found in the A23. Due to the similarities
-> with the A33, it also shares its clock IDs to allow sharing the DTSI.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Move mpc85xx.h to include/linux/fsl and rename it to svr.h as a common
+header file.  This SVR numberspace is used on some ARM chips as well as
+PPC, and even to check for a PPC SVR multi-arch drivers would otherwise
+need to ifdef the header inclusion and all references to the SVR symbols.
 
-[...]
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Joerg Roedel <jroedel@suse.de>
+[scottwood: update description]
+Signed-off-by: Scott Wood <oss@buserror.net>
+---
+Changes for v2:
+	- None
+Changes for v3:
+	- None
+Changes for v4:
+	- None
+Changes for v5:
+	- Changed to Move mpc85xx.h to include/linux/fsl/
+	- Adjusted '#include <linux/fsl/svr.h>' position in file
+Changes for v6:
+	- None
+Changes for v7:
+	- Added 'Acked-by: Wolfram Sang' for I2C part
+	- Also applied to arch/powerpc/kernel/cpu_setup_fsl_booke.S
+Changes for v8:
+	- Added 'Acked-by: Stephen Boyd' for clk part
+	- Added 'Acked-by: Scott Wood'
+	- Added 'Acked-by: Joerg Roedel' for iommu part
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- Updated description by Scott
+---
+ arch/powerpc/kernel/cpu_setup_fsl_booke.S                     | 2 +-
+ arch/powerpc/sysdev/fsl_pci.c                                 | 2 +-
+ drivers/clk/clk-qoriq.c                                       | 3 +--
+ drivers/i2c/busses/i2c-mpc.c                                  | 2 +-
+ drivers/iommu/fsl_pamu.c                                      | 3 +--
+ drivers/net/ethernet/freescale/gianfar.c                      | 2 +-
+ arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h | 4 ++--
+ 7 files changed, 8 insertions(+), 10 deletions(-)
+ rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> new file mode 100644
-> index 000000000000..e9f2d7785001
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> @@ -0,0 +1,732 @@
+diff --git a/arch/powerpc/kernel/cpu_setup_fsl_booke.S b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
+index 462aed9..2b0284e 100644
+--- a/arch/powerpc/kernel/cpu_setup_fsl_booke.S
++++ b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
+@@ -13,13 +13,13 @@
+  *
+  */
+ 
++#include <linux/fsl/svr.h>
+ #include <asm/page.h>
+ #include <asm/processor.h>
+ #include <asm/cputable.h>
+ #include <asm/ppc_asm.h>
+ #include <asm/mmu-book3e.h>
+ #include <asm/asm-offsets.h>
+-#include <asm/mpc85xx.h>
+ 
+ _GLOBAL(__e500_icache_setup)
+ 	mfspr	r0, SPRN_L1CSR1
+diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
+index 0ef9df4..0fd1895 100644
+--- a/arch/powerpc/sysdev/fsl_pci.c
++++ b/arch/powerpc/sysdev/fsl_pci.c
+@@ -22,6 +22,7 @@
+ #include <linux/delay.h>
+ #include <linux/string.h>
+ #include <linux/fsl/edac.h>
++#include <linux/fsl/svr.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/memblock.h>
+@@ -37,7 +38,6 @@
+ #include <asm/pci-bridge.h>
+ #include <asm/ppc-pci.h>
+ #include <asm/machdep.h>
+-#include <asm/mpc85xx.h>
+ #include <asm/disassemble.h>
+ #include <asm/ppc-opcode.h>
+ #include <sysdev/fsl_soc.h>
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 58566a17..4b6c438 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -13,6 +13,7 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/fsl/guts.h>
++#include <linux/fsl/svr.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -1149,8 +1150,6 @@ bad_args:
+ }
+ 
+ #ifdef CONFIG_PPC
+-#include <asm/mpc85xx.h>
+-
+ static const u32 a4510_svrs[] __initconst = {
+ 	(SVR_P2040 << 8) | 0x10,	/* P2040 1.0 */
+ 	(SVR_P2040 << 8) | 0x11,	/* P2040 1.1 */
+diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
+index 48ecffe..600704c 100644
+--- a/drivers/i2c/busses/i2c-mpc.c
++++ b/drivers/i2c/busses/i2c-mpc.c
+@@ -27,9 +27,9 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
++#include <linux/fsl/svr.h>
+ 
+ #include <asm/mpc52xx.h>
+-#include <asm/mpc85xx.h>
+ #include <sysdev/fsl_soc.h>
+ 
+ #define DRV_NAME "mpc-i2c"
+diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
+index a34355f..af8fb27 100644
+--- a/drivers/iommu/fsl_pamu.c
++++ b/drivers/iommu/fsl_pamu.c
+@@ -21,11 +21,10 @@
+ #include "fsl_pamu.h"
+ 
+ #include <linux/fsl/guts.h>
++#include <linux/fsl/svr.h>
+ #include <linux/interrupt.h>
+ #include <linux/genalloc.h>
+ 
+-#include <asm/mpc85xx.h>
+-
+ /* define indexes for each operation mapping scenario */
+ #define OMI_QMAN        0x00
+ #define OMI_FMAN        0x01
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index d20935d..b8dac84 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -86,11 +86,11 @@
+ #include <linux/udp.h>
+ #include <linux/in.h>
+ #include <linux/net_tstamp.h>
++#include <linux/fsl/svr.h>
+ 
+ #include <asm/io.h>
+ #ifdef CONFIG_PPC
+ #include <asm/reg.h>
+-#include <asm/mpc85xx.h>
+ #endif
+ #include <asm/irq.h>
+ #include <asm/uaccess.h>
+diff --git a/arch/powerpc/include/asm/mpc85xx.h b/include/linux/fsl/svr.h
+similarity index 97%
+rename from arch/powerpc/include/asm/mpc85xx.h
+rename to include/linux/fsl/svr.h
+index 213f3a8..8d13836 100644
+--- a/arch/powerpc/include/asm/mpc85xx.h
++++ b/include/linux/fsl/svr.h
+@@ -9,8 +9,8 @@
+  * (at your option) any later version.
+  */
+ 
+-#ifndef __ASM_PPC_MPC85XX_H
+-#define __ASM_PPC_MPC85XX_H
++#ifndef FSL_SVR_H
++#define FSL_SVR_H
+ 
+ #define SVR_REV(svr)	((svr) & 0xFF)		/* SOC design resision */
+ #define SVR_MAJ(svr)	(((svr) >>  4) & 0xF)	/* Major revision field*/
+-- 
+2.1.0.27.g96db324
 
-[...]
 
-> +static struct clk_hw_onecell_data sun8i_a23_hw_clks = {
-> +       .hws    = {
-> +               [CLK_PLL_CPUX]          = &pll_cpux_clk.common.hw,
-> +               [CLK_PLL_AUDIO_BASE]    = &pll_audio_base_clk.common.hw,
-> +               [CLK_PLL_AUDIO]         = &pll_audio_clk.hw,
-> +               [CLK_PLL_AUDIO_2X]      = &pll_audio_2x_clk.hw,
-> +               [CLK_PLL_AUDIO_4X]      = &pll_audio_4x_clk.hw,
-> +               [CLK_PLL_AUDIO_8X]      = &pll_audio_8x_clk.hw,
-> +               [CLK_PLL_VIDEO]         = &pll_video_clk.common.hw,
-> +               [CLK_PLL_VIDEO_2X]      = &pll_video_2x_clk.hw,
-> +               [CLK_PLL_VE]            = &pll_ve_clk.common.hw,
-> +               [CLK_PLL_DDR0]          = &pll_ddr_clk.common.hw,
-> +               [CLK_PLL_PERIPH]        = &pll_periph_clk.common.hw,
-> +               [CLK_PLL_PERIPH_2X]     = &pll_periph_2x_clk.hw,
-> +               [CLK_PLL_GPU]           = &pll_gpu_clk.common.hw,
-> +               [CLK_PLL_MIPI]          = &pll_mipi_clk.common.hw,
-> +               [CLK_PLL_HSIC]          = &pll_hsic_clk.common.hw,
-> +               [CLK_PLL_DE]            = &pll_de_clk.common.hw,
-> +               [CLK_CPUX]              = &cpux_clk.common.hw,
-> +               [CLK_AXI]               = &axi_clk.common.hw,
-> +               [CLK_AHB1]              = &ahb1_clk.common.hw,
-> +               [CLK_APB1]              = &apb1_clk.common.hw,
-> +               [CLK_APB2]              = &apb2_clk.common.hw,
-> +               [CLK_BUS_MIPI_DSI]      = &bus_mipi_dsi_clk.common.hw,
-> +               [CLK_BUS_DMA]           = &bus_dma_clk.common.hw,
-> +               [CLK_BUS_MMC0]          = &bus_mmc0_clk.common.hw,
-> +               [CLK_BUS_MMC1]          = &bus_mmc1_clk.common.hw,
-> +               [CLK_BUS_MMC2]          = &bus_mmc2_clk.common.hw,
-> +               [CLK_BUS_NAND]          = &bus_nand_clk.common.hw,
-> +               [CLK_BUS_DRAM]          = &bus_dram_clk.common.hw,
-> +               [CLK_BUS_HSTIMER]       = &bus_hstimer_clk.common.hw,
-> +               [CLK_BUS_SPI0]          = &bus_spi0_clk.common.hw,
-> +               [CLK_BUS_SPI1]          = &bus_spi1_clk.common.hw,
-> +               [CLK_BUS_OTG]           = &bus_otg_clk.common.hw,
-> +               [CLK_BUS_EHCI]          = &bus_ehci_clk.common.hw,
-> +               [CLK_BUS_OHCI]          = &bus_ohci_clk.common.hw,
-> +               [CLK_BUS_VE]            = &bus_ve_clk.common.hw,
-> +               [CLK_BUS_LCD]           = &bus_lcd_clk.common.hw,
-> +               [CLK_BUS_CSI]           = &bus_csi_clk.common.hw,
-> +               [CLK_BUS_DE_BE]         = &bus_de_be_clk.common.hw,
-> +               [CLK_BUS_DE_FE]         = &bus_de_fe_clk.common.hw,
-> +               [CLK_BUS_GPU]           = &bus_gpu_clk.common.hw,
-> +               [CLK_BUS_MSGBOX]        = &bus_msgbox_clk.common.hw,
-
-A23 manual and Allwinner sources say there is a bus gate for SPINLOCK.
-Tested it myself, and it indeed exists.
-
-> +               [CLK_BUS_DRC]           = &bus_drc_clk.common.hw,
-> +               [CLK_BUS_CODEC]         = &bus_codec_clk.common.hw,
-> +               [CLK_BUS_PIO]           = &bus_pio_clk.common.hw,
-> +               [CLK_BUS_I2S0]          = &bus_i2s0_clk.common.hw,
-> +               [CLK_BUS_I2S1]          = &bus_i2s1_clk.common.hw,
-> +               [CLK_BUS_I2C0]          = &bus_i2c0_clk.common.hw,
-> +               [CLK_BUS_I2C1]          = &bus_i2c1_clk.common.hw,
-> +               [CLK_BUS_I2C2]          = &bus_i2c2_clk.common.hw,
-> +               [CLK_BUS_UART0]         = &bus_uart0_clk.common.hw,
-> +               [CLK_BUS_UART1]         = &bus_uart1_clk.common.hw,
-> +               [CLK_BUS_UART2]         = &bus_uart2_clk.common.hw,
-> +               [CLK_BUS_UART3]         = &bus_uart3_clk.common.hw,
-> +               [CLK_BUS_UART4]         = &bus_uart4_clk.common.hw,
-> +               [CLK_NAND]              = &nand_clk.common.hw,
-> +               [CLK_MMC0]              = &mmc0_clk.common.hw,
-> +               [CLK_MMC0_SAMPLE]       = &mmc0_sample_clk.common.hw,
-> +               [CLK_MMC0_OUTPUT]       = &mmc0_output_clk.common.hw,
-> +               [CLK_MMC1]              = &mmc1_clk.common.hw,
-> +               [CLK_MMC1_SAMPLE]       = &mmc1_sample_clk.common.hw,
-> +               [CLK_MMC1_OUTPUT]       = &mmc1_output_clk.common.hw,
-> +               [CLK_MMC2]              = &mmc2_clk.common.hw,
-> +               [CLK_MMC2_SAMPLE]       = &mmc2_sample_clk.common.hw,
-> +               [CLK_MMC2_OUTPUT]       = &mmc2_output_clk.common.hw,
-> +               [CLK_SPI0]              = &spi0_clk.common.hw,
-> +               [CLK_SPI1]              = &spi1_clk.common.hw,
-> +               [CLK_I2S0]              = &i2s0_clk.common.hw,
-> +               [CLK_I2S1]              = &i2s1_clk.common.hw,
-> +               [CLK_USB_PHY0]          = &usb_phy0_clk.common.hw,
-> +               [CLK_USB_PHY1]          = &usb_phy1_clk.common.hw,
-> +               [CLK_USB_HSIC]          = &usb_hsic_clk.common.hw,
-> +               [CLK_USB_HSIC_12M]      = &usb_hsic_12M_clk.common.hw,
-> +               [CLK_USB_OHCI]          = &usb_ohci_clk.common.hw,
-> +               [CLK_DRAM_VE]           = &dram_ve_clk.common.hw,
-> +               [CLK_DRAM_CSI]          = &dram_csi_clk.common.hw,
-> +               [CLK_DRAM_DRC]          = &dram_drc_clk.common.hw,
-> +               [CLK_DRAM_DE_FE]        = &dram_de_fe_clk.common.hw,
-> +               [CLK_DRAM_DE_BE]        = &dram_de_be_clk.common.hw,
-> +               [CLK_DE_BE]             = &de_be_clk.common.hw,
-> +               [CLK_DE_FE]             = &de_fe_clk.common.hw,
-> +               [CLK_LCD_CH0]           = &lcd_ch0_clk.common.hw,
-> +               [CLK_LCD_CH1]           = &lcd_ch1_clk.common.hw,
-> +               [CLK_CSI_SCLK]          = &csi_sclk_clk.common.hw,
-> +               [CLK_CSI_MCLK]          = &csi_mclk_clk.common.hw,
-> +               [CLK_VE]                = &ve_clk.common.hw,
-> +               [CLK_AC_DIG]            = &ac_dig_clk.common.hw,
-> +               [CLK_AVS]               = &avs_clk.common.hw,
-> +               [CLK_MBUS]              = &mbus_clk.common.hw,
-> +               [CLK_DSI_SCLK]          = &dsi_sclk_clk.common.hw,
-> +               [CLK_DSI_DPHY]          = &dsi_dphy_clk.common.hw,
-> +               [CLK_DRC]               = &drc_clk.common.hw,
-> +               [CLK_GPU]               = &gpu_clk.common.hw,
-> +               [CLK_ATS]               = &ats_clk.common.hw,
-> +       },
-> +       .num    = CLK_NUMBER,
-> +};
-> +
-> +static struct ccu_reset_map sun8i_a23_ccu_resets[] = {
-> +       [RST_USB_PHY0]          =  { 0x0cc, BIT(0) },
-> +       [RST_USB_PHY1]          =  { 0x0cc, BIT(1) },
-> +       [RST_USB_HSIC]          =  { 0x0cc, BIT(2) },
-> +
-> +       [RST_MBUS]              =  { 0x0fc, BIT(31) },
-> +
-> +       [RST_BUS_MIPI_DSI]      =  { 0x2c0, BIT(1) },
-> +       [RST_BUS_DMA]           =  { 0x2c0, BIT(6) },
-> +       [RST_BUS_MMC0]          =  { 0x2c0, BIT(8) },
-> +       [RST_BUS_MMC1]          =  { 0x2c0, BIT(9) },
-> +       [RST_BUS_MMC2]          =  { 0x2c0, BIT(10) },
-> +       [RST_BUS_NAND]          =  { 0x2c0, BIT(13) },
-> +       [RST_BUS_DRAM]          =  { 0x2c0, BIT(14) },
-> +       [RST_BUS_HSTIMER]       =  { 0x2c0, BIT(19) },
-> +       [RST_BUS_SPI0]          =  { 0x2c0, BIT(20) },
-> +       [RST_BUS_SPI1]          =  { 0x2c0, BIT(21) },
-> +       [RST_BUS_OTG]           =  { 0x2c0, BIT(24) },
-> +       [RST_BUS_EHCI]          =  { 0x2c0, BIT(26) },
-> +       [RST_BUS_OHCI]          =  { 0x2c0, BIT(29) },
-> +
-> +       [RST_BUS_VE]            =  { 0x2c4, BIT(0) },
-> +       [RST_BUS_LCD]           =  { 0x2c4, BIT(4) },
-> +       [RST_BUS_CSI]           =  { 0x2c4, BIT(8) },
-> +       [RST_BUS_DE_BE]         =  { 0x2c4, BIT(12) },
-> +       [RST_BUS_DE_FE]         =  { 0x2c4, BIT(14) },
-> +       [RST_BUS_GPU]           =  { 0x2c4, BIT(20) },
-
-Allwinner sources say there is a reset control for MSGBOX.
-Tested it myself, and it indeed exists.
-
-> +       [RST_BUS_SPINLOCK]      =  { 0x2c4, BIT(22) },
-> +       [RST_BUS_DRC]           =  { 0x2c4, BIT(25) },
-> +
-> +       [RST_BUS_LVDS]          =  { 0x2c8, BIT(0) },
-> +
-> +       [RST_BUS_CODEC]         =  { 0x2d0, BIT(0) },
-> +       [RST_BUS_I2S0]          =  { 0x2d0, BIT(12) },
-> +       [RST_BUS_I2S1]          =  { 0x2d0, BIT(13) },
-> +
-> +       [RST_BUS_I2C0]          =  { 0x2d4, BIT(0) },
-> +       [RST_BUS_I2C1]          =  { 0x2d4, BIT(1) },
-> +       [RST_BUS_I2C2]          =  { 0x2d4, BIT(2) },
-> +       [RST_BUS_UART0]         =  { 0x2d4, BIT(16) },
-> +       [RST_BUS_UART1]         =  { 0x2d4, BIT(17) },
-> +       [RST_BUS_UART2]         =  { 0x2d4, BIT(18) },
-> +       [RST_BUS_UART3]         =  { 0x2d4, BIT(19) },
-> +       [RST_BUS_UART4]         =  { 0x2d4, BIT(20) },
-> +};
-
-[...]
-
-Other than these 2 bits, this patch looks good.
-
-Regards
-ChenYu
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
