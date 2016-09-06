@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1473805463.30217.206.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: "Y.B. Lu" <yangbo.lu@nxp.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, "X.B. Xie" <xiaobo.xie@nxp.com>
-Date: Tue, 13 Sep 2016 17:24:23 -0500
-In-Reply-To: <HE1PR04MB08892E63EB2D579D6F0A7550F8FE0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-         <1473150503-9550-6-git-send-email-yangbo.lu@nxp.com>
-         <1473392840.30217.170.camel@buserror.net>
-         <HE1PR04MB08892D8354E38EC32F549E98F8FF0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-         <1473722714.30217.196.camel@buserror.net>
-         <HE1PR04MB08892E63EB2D579D6F0A7550F8FE0@HE1PR04MB0889.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [v11, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <mw@semihalf.com>
+Return-Path: <mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: sebastian.hesselbarth@gmail.com,
+	andrew@lunn.ch,
+	jason@lakedaemon.net,
+	thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com,
+	nadavh@marvell.com,
+	alior@marvell.com,
+	tn@semihalf.com,
+	jaz@semihalf.com,
+	Marcin Wojtas <mw@semihalf.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2 2/3] clk: mvebu: dynamically allocate resources in Armada CP110 system controller
+Date: Tue,  6 Sep 2016 19:31:56 +0200
+Message-Id: <1473183117-11889-3-git-send-email-mw@semihalf.com>
+In-Reply-To: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2016-09-13 at 07:23 +0000, Y.B. Lu wrote:
-> > 
+Original commit, which added support for Armada CP110 system controller
+used global variables for storing all clock information. It worked
+fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
+was introduced, the data got overwritten and corrupted.
 
+This patch fixes the issue by allocating resources dynamically in the
+driver probe and storing it as platform drvdata.
 
-> > 
-> > -----Original Message-----
-> > From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
-> > owner@vger.kernel.org] On Behalf Of Scott Wood
-> > Sent: Tuesday, September 13, 2016 7:25 AM
-> > To: Y.B. Lu; linux-mmc@vger.kernel.org; ulf.hansson@linaro.org; Arnd
-> > Bergmann
-> > Cc: linuxppc-dev@lists.ozlabs.org; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> > clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
-> > foundation.org; netdev@vger.kernel.org; Mark Rutland; Rob Herring;
-> > Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil; Bhupesh
-> > Sharma; Qiang Zhao; Kumar Gala; Santosh Shilimkar; Leo Li; X.B. Xie
-> > Subject: Re: [v11, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-> > 
-> > BTW, aren't ls2080a and ls2085a the same die?  And is there no non-E
-> > version of LS2080A/LS2040A?
-> [Lu Yangbo-B47093] I checked all the svr values in chip errata doc "Revision
-> level to part marking cross-reference" table.
-> I found ls2080a and ls2085a were in two separate doc. And I didn’t find non-
-> E version of LS2080A/LS2040A in chip errata doc.
-> Do you know is there any other doc we can confirm this?
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
+Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+CC: <stable@vger.kernel.org>
+---
+ drivers/clk/mvebu/cp110-system-controller.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
-No.  Traditionally we've always had E and non-E versions of each chip, but I
-have no knowledge of whether that has changed (I do note that the way that E-
-status is indicated in SVR has changed).
-
-But please label LS2080A and LS2085A as the same die (or provide strong
-evidence that they are not).
-
-> 
-> > 
-> > 
-> > > 
-> > > > > 
-> > > > > +	do {
-> > > > > +		if (!matches->soc_id)
-> > > > > +			return NULL;
-> > > > > +		if (glob_match(svr_match, matches->soc_id))
-> > > > > +			break;
-> > > > > +	} while (matches++);
-> > > > Are you expecting "matches++" to ever evaluate as false?
-> > > [Lu Yangbo-B47093] Yes, this is used to match the soc we use in
-> > > qoriq_soc array until getting true.
-> > > We need to get the name and die information defined in array.
-> > I'm not asking whether the glob_match will ever return true.  I'm saying
-> > that "matches++" will never become NULL.
-> [Lu Yangbo-B47093] The matches++ will never become NULL while it will return
-> NULL after matching for all the members in array.
-
-"matches++" will never "return NULL".  It's just an incrementing address.  It
-won't be null until you wrap around the address space, and even if the other
-loop terminators never kicked in you'd crash long before that happens.
-
-Please rewrite the loop as something like:
-
-	while (matches->soc_id) {
-		if (glob_match(...))
-			return matches;
-
-		matches++;
-	}
-
-	return NULL;
-
-
-> > > > > +	/* Register soc device */
-> > > > > +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> > > > > +	if (!soc_dev_attr) {
-> > > > > +		ret = -ENOMEM;
-> > > > > +		goto out_unmap;
-> > > > > +	}
-> > > > Couldn't this be statically allocated?
-> > > [Lu Yangbo-B47093] Do you mean we define this struct statically ?
-> > > 
-> > > static struct soc_device_attribute soc_dev_attr;
-> > Yes.
-> > 
-> [Lu Yangbo-B47093] It's ok to define it statically. Is there any need to do
-> that?
-
-It's simpler.
-
--Scott
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 59fe76e..5e68d24 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -81,13 +81,6 @@ enum {
+ #define CP110_GATE_EIP150		25
+ #define CP110_GATE_EIP197		26
+ 
+-static struct clk *cp110_clks[CP110_CLK_NUM];
+-
+-static struct clk_onecell_data cp110_clk_data = {
+-	.clks = cp110_clks,
+-	.clk_num = CP110_CLK_NUM,
+-};
+-
+ struct cp110_gate_clk {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -196,7 +189,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
+-	struct clk *clk;
++	struct clk_onecell_data *cp110_clk_data;
++	struct clk *clk, **cp110_clks;
+ 	u32 nand_clk_ctrl;
+ 	int i, ret;
+ 
+@@ -209,6 +203,20 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
++				  CP110_CLK_NUM, GFP_KERNEL);
++	if (!cp110_clks)
++		return PTR_ERR(cp110_clks);
++
++	cp110_clk_data = devm_kzalloc(&pdev->dev,
++				      sizeof(*cp110_clk_data),
++				      GFP_KERNEL);
++	if (!cp110_clk_data)
++		return PTR_ERR(cp110_clk_data);
++
++	cp110_clk_data->clks = cp110_clks;
++	cp110_clk_data->clk_num = CP110_CLK_NUM;
++
+ 	/* Register the APLL which is the root of the clk tree */
+ 	of_property_read_string_index(np, "core-clock-output-names",
+ 				      CP110_CORE_APLL, &apll_name);
+@@ -336,10 +344,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
+ 	}
+ 
+-	ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
++	ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
+ 	if (ret)
+ 		goto fail_clk_add;
+ 
++	platform_set_drvdata(pdev, cp110_clks);
++
+ 	return 0;
+ 
+ fail_clk_add:
+@@ -366,6 +376,7 @@ fail0:
+ 
+ static int cp110_syscon_clk_remove(struct platform_device *pdev)
+ {
++	struct clk **cp110_clks = platform_get_drvdata(pdev);
+ 	int i;
+ 
+ 	of_clk_del_provider(pdev->dev.of_node);
+-- 
+1.8.3.1
