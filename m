@@ -1,43 +1,79 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v11, 1/8] dt: bindings: update Freescale DCFG compatible
+Date: Tue, 6 Sep 2016 16:28:16 +0800
+Message-ID: <1473150503-9550-2-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <4134529.ol6KhRYAQp@wuerfel>
-References: <87a8fabikx.fsf@free-electrons.com> <4134529.ol6KhRYAQp@wuerfel>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 20 Sep 2016 23:51:40 +0200
-Message-ID: <CACRpkdZCt9n6c6FKEPgX85yhgWGfcNY1HoyEFXFY-5s1eCQByA@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM: mvebu: drivers for v4.9 (#1)
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Olof Johansson <olof@lixom.net>,
-	"arm@kernel.org" <arm@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
+ xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
+ Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
+ linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 20, 2016 at 12:16 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday, September 14, 2016 5:35:10 PM CEST Gregory CLEMENT wrote:
->> mvebu drivers for 4.9 (part 1)
->>
->> - Add pinctrl and clk support for the Orion5x SoC mv88f5181 variant
->>
->> ----------------------------------------------------------------
->> Jamie Lentin (2):
->>       clk: mvebu: Add clk support for the orion5x SoC mv88f5181
->>       pinctrl: mvebu: orion5x: Generalise mv88f5181l support for 88f5181
->>
->>  .../devicetree/bindings/clock/mvebu-core-clock.txt |  1 +
->>  .../bindings/pinctrl/marvell,orion-pinctrl.txt     |  4 +-
->>  drivers/clk/mvebu/orion.c                          | 70 ++++++++++++++++++++++
->>  drivers/pinctrl/mvebu/pinctrl-orion.c              | 23 +++----
->>  4 files changed, 86 insertions(+), 12 deletions(-)
->
-> I see this touches pinctrl and clk drivers, but none of the maintainers are
-> on Cc for this pull request, nor have they provided an Ack for the patches
-> according to your git log.
+Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
+of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
+ls1043a, and ls2080a.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Scott Wood <oss@buserror.net>
+---
+Changes for v8:
+	- Added this patch
+Changes for v9:
+	- Added a list for the possible compatibles
+Changes for v10:
+	- None
+Changes for v11:
+	- Added 'Acked-by: Rob Herring'
+	- Updated commit message by Scott
+---
+ Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index dbbc095..713c1ae 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -119,7 +119,11 @@ Freescale DCFG
+ configuration and status for the device. Such as setting the secondary
+ core start address and release the secondary core from holdoff and startup.
+   Required properties:
+-  - compatible: should be "fsl,ls1021a-dcfg"
++  - compatible: should be "fsl,<chip>-dcfg"
++    Possible compatibles:
++	"fsl,ls1021a-dcfg"
++	"fsl,ls1043a-dcfg"
++	"fsl,ls2080a-dcfg"
+   - reg : should contain base address and length of DCFG memory-mapped registers
+ 
+ Example:
+-- 
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
