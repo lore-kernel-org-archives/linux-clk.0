@@ -1,42 +1,115 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+To: Mirza Krak <mirza.krak@gmail.com>, Rob Herring <robh@kernel.org>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+ <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+ <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+ <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
+ <20160830170636.GA8741@rob-hp-laptop>
+ <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a3a2371b-5d98-db2d-b7e4-be6d08cb7271@nvidia.com>
+Date: Tue, 6 Sep 2016 11:32:14 +0100
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <573166A8.1030101@rvc.renesas.com>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be> <573166A8.1030101@rvc.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Sep 2016 10:32:56 +0200
-Message-ID: <CAMuHMdVsPCBqx9aykJCMmedbHJJsg+te=HG=FwTwow4UPXXuLQ@mail.gmail.com>
-Subject: Re: [RFC 1/4] clk: renesas: rcar-gen3-cpg: Add Z clock
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Toru Oishi <toru.oishi.zj@rvc.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Khiem,
 
-On Tue, May 10, 2016 at 6:42 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -28,6 +28,146 @@
+On 31/08/16 12:22, Mirza Krak wrote:
+> 2016-08-30 19:06 GMT+02:00 Rob Herring <robh@kernel.org>:
 
-> +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+...
 
-Please use readl()/writel() instead of clk_readl/()/clk_writel().
+>>>                  nvidia,snor-cs = <4>;
+>>
+>> NAK, no custom CS properties.
 
-Gr{oetje,eeting}s,
+Ok, so ...
 
-                        Geert
+> gmi@70090000 {
+>         compatible = "nvidia,tegra20-gmi";
+>         reg = <0x70009000 0x1000>;
+>         #address-cells = <2>;
+>         #size-cells = <1>;
+>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
+>         clock-names = "gmi";
+>         resets = <&tegra_car 42>;
+>         reset-names = "gmi";
+>         ranges = <4 0 0xd0000000 0xfffffff>;
+> 
+>         status = "okay";
+> 
+>         bus@4,0 {
+>                 compatible = "simple-bus";
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
+>                 ranges = <0 4 0 0x40000>;
+> 
+>                 nvidia,snor-mux-mode;
+>                 nvidia,snor-adv-inv;
+> 
+>                 can@0 {
+>                         reg = <0 0x100>;
+>                         ...
+>                 };
+> 
+>                 can@40000 {
+>                         reg = <0x40000 0x100>;
+>                         ...
+>                 };
+>         };
+> };
+> 
+> Have I understood you correct?
+> 
+> Also wanted to verify the example case where you only have on device
+> connected to one CS#, from what I see in other implementations it
+> seems OK to put the CS# in the reg property in that case. Is this
+> correct?
+> 
+> Example with one SJA1000 CAN controller connected to the GMI bus
+> on CS4:
+> 
+> gmi@70090000 {
+>         compatible = "nvidia,tegra20-gmi";
+>         reg = <0x70009000 0x1000>;
+>         #address-cells = <2>;
+>         #size-cells = <1>;
+>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
+>         clock-names = "gmi";
+>         resets = <&tegra_car 42>;
+>         reset-names = "gmi";
+>         ranges = <4 0 0xd0000000 0xfffffff>;
+> 
+>         status = "okay";
+> 
+>         can@4,0 {
+>                 reg = <4 0 0x100>;
+>                 nvidia,snor-mux-mode;
+>                 nvidia,snor-adv-inv;
+>                 ...
+>         };
+> };
+> 
+> Jon, to be able to handle both cases in the driver we would first
+> attempt to decode the CS# from the ranges property, and fallback to
+> reg property if no ranges are defined. Does that sound reasonable?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Given the above examples that may be supported, is there a
+better/simpler way to extract the CS# than what Mirza is proposing? For
+example, from the node-name unit-address?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers
+Jon
+
+-- 
+nvpublic
