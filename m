@@ -1,34 +1,33 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: arm@kernel.org, Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] Allwinner DT changes for 4.9, take 2
-Date: Tue, 13 Sep 2016 17:53:55 +0200
-Message-ID: <3492284.FjaSmsNYuk@wuerfel>
-In-Reply-To: <20160911204420.GA11949@lukather>
-References: <20160911204420.GA11949@lukather>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160906121837.7517-8-maxime.ripard@free-electrons.com>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com> <20160906121837.7517-8-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 6 Sep 2016 22:08:05 +0800
+Message-ID: <CAGb2v64r-vURPZNhPhKv2+7kByckdxW=fPH-9qAfBLxH992qWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] ARM: sun8i: Convert the A23 and A33 to the CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sunday, September 11, 2016 10:44:20 PM CEST Maxime Ripard wrote:
-> Allwinner DT changes for 4.9, take 2
-> 
-> A second set of device tree changes, this time switching a few SoCs to the
-> new sunxi-ng clock framework. We also added the support for a new SoC
-> (NextThing GR8 and its evaluation board), and the support for the DRM
-> driver in the A33.
-> 
-> 
+On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Now that we have support for the CCU driver in sunxi-ng, convert the A23
+> and A33 DTs to that driver.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Pulled into *next/late* because of the dependency, rather than next/dt.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-I think this is better so we can send off the other next/dt changes
-early on during the merge window without considering the dependency.
+TODO note for later:
 
-If the clk git gets sent before our pull requests, we might just
-merge next/late back into next/dt.
-
-Thanks,
-
-	Arnd
+    The usb_otg and usbphy node definitions can be moved to the common dtsi
+    file, and there compatibles and regs (for usbphy) defined in the SoC
+    dtsi.
