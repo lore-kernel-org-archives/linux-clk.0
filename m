@@ -1,93 +1,82 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-clk@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	johnyoun@synopsys.com,
-	kishon@ti.com,
-	khilman@baylibre.com,
-	carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/6] usb/phy: Add Amlogic Meson8b and GXBB USB support
-Date: Sun, 11 Sep 2016 15:41:05 +0200
-Message-Id: <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v11, 2/8] ARM64: dts: ls2080a: add device configuration node
+Date: Tue, 6 Sep 2016 16:28:17 +0800
+Message-ID: <1473150503-9550-3-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
+ xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
+ Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
+ linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds initial support for the DWC2 USB controllers and Meson
-specific USB PHYs found in Meson8b and GXBB SoCs, which means:
-- new DWC2 bindings and platform specific core configuration
-- a PHY driver supporting the USB2 PHY on Meson8b and GXBB SoCs
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
-The first DWC2 controller is usually configured in OTG mode, whereas
-the second DWC2 controller is usually configured in host(-only) mode.
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- None
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Unfortunately no (public) datasheet is available and the reference PHY
-driver does not contain comments or speaking register name definitions.
-The nice people from BayLibre have already requested the datasheets
-(currently we can for example only guess that there is a mux clock
-inside the PHY, but we don't know it's parents).
-
-With this series both DWC2 controllers are configure in host mode,
-because the reference driver polls some of the PHY registers in OTG
-mode and then re-configures the dwc2 driver instance accordingly (if
-anyone is interested, this is the relevant piece of code: [0]). This
-seems good enough for the beginning though.
-
-
-Changes since v1:
-- the patch "clk: gxbb: expose USB clocks" was not sent again as it was
-  already applied by Kevin Hilman (thanks!)
-- dropped (unnecessary) USB PHY bus from .dts
-- remove underscores from PHY node names in .dts
-- rename the dwc2 nodes in the .dts to usb (as per convention)
-- remove unused struct reset_control from phy_meson_usb2_priv
-- removed refcounting "reset" workaround and only specify the reset for
-  the first PHY in the .dts (Jerome has reported that his boards don't
-  need the explicit reset, while my board needs it). In addition (to
-  make this work) the driver now treats the reset as optional
-- use the RESET_USB_OTG definition (from
-  <dt-bindings/reset/amlogic,meson-gxbb-reset.h>) instead of a magic
-  number in the .dts
-
-
-[0] https://github.com/150balbes/Amlogic_s905-kernel/blob/master/drivers/amlogic/usb/dwc_otg/310/dwc_otg_driver.c#L642
-
-
-Jerome Brunet (2):
-  usb: dwc2: add support for Meson8b and GXBB SoCs
-  ARM64: meson-gxbb-p20x: Enable USB Nodes
-
-Martin Blumenstingl (4):
-  Documentation: dt-bindings: Add documentation for the Meson USB2 PHYs
-  phy: meson: add USB2 PHY support for Meson8b and GXBB
-  ARM64: meson-gxbb: add USB Nodes
-  ARM64: meson-gxbb-vega-s95: Enable USB Nodes
-
- .../devicetree/bindings/phy/meson-usb2-phy.txt     |  27 ++
- Documentation/devicetree/bindings/usb/dwc2.txt     |   2 +
- arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi   |  29 +++
- .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      |  30 +++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  43 ++++
- drivers/phy/Kconfig                                |  11 +
- drivers/phy/Makefile                               |   1 +
- drivers/phy/phy-meson-usb2.c                       | 280 +++++++++++++++++++++
- drivers/usb/dwc2/platform.c                        |  34 +++
- 9 files changed, 457 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
- create mode 100644 drivers/phy/phy-meson-usb2.c
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index 21023a3..39f7743 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -215,6 +215,12 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
 -- 
-2.9.3
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
