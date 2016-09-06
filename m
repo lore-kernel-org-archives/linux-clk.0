@@ -1,59 +1,43 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH] clk: bcm2835: Clamp the PLL's requested rate to the hardware limits.
-Date: Wed, 28 Sep 2016 19:23:34 -0700
-Message-Id: <20160929022334.25537-1-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:38382 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932358AbcIFMFf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:35 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 2/7] clk: samsung: exynos5410: Expose the peripheral DMA
+ gate clocks
+Date: Tue, 06 Sep 2016 14:04:51 +0200
+Message-id: <1473163496-17820-3-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fixes setting low-resolution video modes on HDMI.  Now the PLLH_PIX
-divider adjusts itself until the PLLH is within bounds.
+These clocks are needed in order to use the PL330 peripheral
+DMA controllers.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/clk/samsung/clk-exynos5410.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7a7970865c2d..fedc88908e61 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -499,8 +499,13 @@ static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
- static long bcm2835_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				   unsigned long *parent_rate)
- {
-+	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
-+	const struct bcm2835_pll_data *data = pll->data;
- 	u32 ndiv, fdiv;
- 
-+	rate = max(data->min_rate, rate);
-+	rate = min(data->max_rate, rate);
-+
- 	bcm2835_pll_choose_ndiv_and_fdiv(rate, *parent_rate, &ndiv, &fdiv);
- 
- 	return bcm2835_pll_rate_from_divisors(*parent_rate, ndiv, fdiv, 1);
-@@ -605,13 +610,6 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	u32 ana[4];
- 	int i;
- 
--	if (rate < data->min_rate || rate > data->max_rate) {
--		dev_err(cprman->dev, "%s: rate out of spec: %lu vs (%lu, %lu)\n",
--			clk_hw_get_name(hw), rate,
--			data->min_rate, data->max_rate);
--		return -EINVAL;
--	}
--
- 	if (rate > data->max_fb_rate) {
- 		use_fb_prediv = true;
- 		rate /= 2;
--- 
-2.9.3
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 54ec486..cf6fb41 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+ 	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
+ 	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
+ 	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
++	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
++	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
+
+ 	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
+ 	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
+--
+1.9.1
+
