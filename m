@@ -1,40 +1,54 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: change the type of clk_hw_onecell_data.num to unsigned int
-Date: Fri, 23 Sep 2016 21:29:36 +0900
-Message-Id: <1474633776-11586-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:45207 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932358AbcIFMFd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:33 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 1/7] clk: samsung: exynos5410: Add clock IDs for PDMA and
+ EPLL clocks
+Date: Tue, 06 Sep 2016 14:04:50 +0200
+Message-id: <1473163496-17820-2-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The "num" is the number of clk_hw entries in the structure, so
-"unsigned int" would be a better fit.  (size_t looks like data
-size we count by byte.)
+The PDMA{0,1} and EPLL clock IDs are added separately in this
+patch so the patch can be merged to the arm-soc tree as dependency.
 
-Besides, struct clk_onecell_data already uses unsigned int for
-"clk_num".
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
+Changes since v1:
+ - used same index values as for exynos5420.
+---
+ include/dt-bindings/clock/exynos5410.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
- include/linux/clk-provider.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 85b467b..6cb4e90 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -19,6 +19,7 @@
+ #define CLK_FOUT_MPLL		4
+ #define CLK_FOUT_BPLL		5
+ #define CLK_FOUT_KPLL		6
++#define CLK_FOUT_EPLL		7
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a39c0c5..e91d31f 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -772,7 +772,7 @@ struct clk_onecell_data {
- };
- 
- struct clk_hw_onecell_data {
--	size_t num;
-+	unsigned int num;
- 	struct clk_hw *hws[];
- };
- 
--- 
+ /* gate for special clocks (sclk) */
+ #define CLK_SCLK_UART0		128
+@@ -55,6 +56,8 @@
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
++#define CLK_PDMA0		362
++#define CLK_PDMA1		363
+ #define CLK_USBH20		365
+ #define CLK_USBD300		366
+ #define CLK_USBD301		367
+--
 1.9.1
+
