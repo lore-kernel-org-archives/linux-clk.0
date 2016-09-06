@@ -1,41 +1,45 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Mon, 26 Sep 2016 22:57:41 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 2/4] ARM: sa11x0/pxa: acquire timer rate from the clock
- rate
-Message-ID: <20160926215741.GH1041@n2100.armlinux.org.uk>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-3-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <baruch@tkos.co.il>
+Date: Tue, 6 Sep 2016 20:59:51 +0300
+From: Baruch Siach <baruch@tkos.co.il>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, thomas.petazzoni@free-electrons.com,
+	andrew@lunn.ch, jason@lakedaemon.net, tn@semihalf.com,
+	stable@vger.kernel.org, nadavh@marvell.com, alior@marvell.com,
+	jaz@semihalf.com, gregory.clement@free-electrons.com,
+	sebastian.hesselbarth@gmail.com
+Subject: Re: [PATCH v2 2/3] clk: mvebu: dynamically allocate resources in
+ Armada CP110 system controller
+Message-ID: <20160906175951.etybwtilfvyclrdb@tarshish>
+References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+ <1473183117-11889-3-git-send-email-mw@semihalf.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474312335-20997-3-git-send-email-robert.jarzmik@free.fr>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+In-Reply-To: <1473183117-11889-3-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 19, 2016 at 09:12:13PM +0200, Robert Jarzmik wrote:
-> As both pxa and sa1100 provide a clock to the timer, the rate can be
-> inferred from the clock rather than hard encoded in a functional call.
-> 
-> This patch changes the pxa timer to have a mandatory clock which is used
-> as the timer rate.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Hi Marcin,
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+On Tue, Sep 06, 2016 at 07:31:56PM +0200, Marcin Wojtas wrote:
+> +	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
+> +				  CP110_CLK_NUM, GFP_KERNEL);
+> +	if (!cp110_clks)
+> +		return PTR_ERR(cp110_clks);
 
-Thanks.
+PTR_ERR(NULL) translates to 0. Should probably just return -ENOMEM.
+
+> +	cp110_clk_data = devm_kzalloc(&pdev->dev,
+> +				      sizeof(*cp110_clk_data),
+> +				      GFP_KERNEL);
+> +	if (!cp110_clk_data)
+> +		return PTR_ERR(cp110_clk_data);
+
+Ditto.
+
+baruch
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
