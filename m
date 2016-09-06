@@ -1,135 +1,271 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH 5/7] ARM64: meson-gxbb: add USB Nodes
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160904213152.25837-6-martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
- jbrunet@baylibre.com, johnyoun@synopsys.com, kishon@ti.com,
- khilman@baylibre.com, carlo@caione.org, mark.rutland@arm.com,
- devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
- sboyd@codeaurora.org, mturquette@baylibre.com, will.deacon@arm.com,
- robh+dt@kernel.org, catalin.marinas@arm.com,
- linux-arm-kernel@lists.infradead.org
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <aa1ff8df-ab18-73e3-c39e-a1f75ab3eba0@suse.de>
-Date: Mon, 5 Sep 2016 02:23:33 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160904213152.25837-6-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 2/7] clk: sunxi-ng: div: Allow to set a maximum
+Date: Tue,  6 Sep 2016 14:18:32 +0200
+Message-Id: <20160906121837.7517-3-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+Some dividers might have a maximum value that is lower than the width of
+the register.
 
-Am 04.09.2016 um 23:31 schrieb Martin Blumenstingl:
-> Add the nodes for the dwc2 USB controller and the related USB PHYs.
-> Currently we force usb0 to host mode because OTG is currently not
-> working in our PHY driver.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 52 +++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> index 2e8a3d9..02dfc54 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-> @@ -151,6 +151,34 @@
->  		#size-cells = <2>;
->  		ranges;
->  
-> +		usb-phys@c0000000 {
-> +			compatible = "simple-bus";
-> +			reg = <0x0 0xc0000000 0x0 0x40>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges = <0x0 0x0 0x0 0xc0000000 0x0 0x40>;
+Add a field to _ccu_div to handle those case properly. If the field is set
+to 0, the code will assume that the maximum value is the maximum one that
+can be used with the field register width.
 
-Does this correspond to any physical bus or could we drop this layer?
+Otherwise, we'll use whatever value has been set.
 
-> +
-> +			usb0_phy: usb_phy@0 {
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_div.h  | 21 +++++++++++++++++----
+ drivers/clk/sunxi-ng/ccu_mp.c   | 23 +++++++++++++----------
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  4 ++--
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++-----------
+ drivers/clk/sunxi-ng/ccu_nm.c   | 16 ++++++++++------
+ 5 files changed, 52 insertions(+), 33 deletions(-)
 
-phy@0 to avoid the underscore in node name? dash otherwise.
-If dropping the bus, *phy@c0000000 obviously.
-
-> +				compatible = "amlogic,meson-gxbb-usb2-phy";
-> +				#phy-cells = <0>;
-> +				reg = <0x0 0x0 0x0 0x20>;
-> +				resets = <&reset 34>;
-> +				clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
-
-<&clkc CLKID_USB>, <&clkc CLKID_USB0> please.
-
-> +				clock-names = "usb_general", "usb";
-> +				status = "disabled";
-> +			};
-> +
-> +			usb1_phy: usb_phy@20 {
-> +				compatible = "amlogic,meson-gxbb-usb2-phy";
-> +				#phy-cells = <0>;
-> +				reg = <0x0 0x20 0x0 0x20>;
-> +				resets = <&reset 34>;
-> +				clocks = <&clkc CLKID_USB &clkc CLKID_USB1>;
-
-Ditto
-
-> +				clock-names = "usb_general", "usb";
-> +				status = "disabled";
-> +			};
-> +		};
-> +
->  		cbus: cbus@c1100000 {
->  			compatible = "simple-bus";
->  			reg = <0x0 0xc1100000 0x0 0x100000>;
-> @@ -496,6 +524,30 @@
->  			};
->  		};
->  
-> +		usb0: usb-controller@c9000000 {
-
-usb@c9000000 by convention.
-
-> +			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
-> +			reg = <0x0 0xc9000000 0x0 0x40000>;
-> +			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clkc CLKID_USB0_DDR_BRIDGE>;
-> +			clock-names = "otg";
-> +			phys = <&usb0_phy>;
-> +			phy-names = "usb2-phy";
-> +			dr_mode = "host";
-> +			status = "disabled";
-> +		};
-> +
-> +		usb1: usb-controller@c9100000 {
-
-usb@c9100000
-
-> +			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
-> +			reg = <0x0 0xc9100000 0x0 0x40000>;
-> +			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
-> +			clock-names = "otg";
-> +			phys = <&usb1_phy>;
-> +			phy-names = "usb2-phy";
-> +			dr_mode = "host";
-> +			status = "disabled";
-> +		};
-> +
->  		ethmac: ethernet@c9410000 {
->  			compatible = "amlogic,meson-gxbb-dwmac", "snps,dwmac";
->  			reg = <0x0 0xc9410000 0x0 0x10000
-
-Thanks for the huge progress you guys have been making.
-
-This patchset will probably clash with Neil's GXL preparations?
-
-Regards,
-Andreas
-
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index a5c9eaf90e84..ea693d00be81 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -23,6 +23,8 @@ struct _ccu_div {
+ 	u8			shift;
+ 	u8			width;
+ 
++	u32			max;
++
+ 	u32			flags;
+ 
+ 	struct clk_div_table	*table;
+@@ -36,14 +38,25 @@ struct _ccu_div {
+ 		.table	= _table,					\
+ 	}
+ 
+-#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
+-	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, _flags)
+-
+ #define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)			\
+ 	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
+ 
++#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags) \
++	{								\
++		.shift	= _shift,					\
++		.width	= _width,					\
++		.flags	= _flags,					\
++		.max	= _max,						\
++	}
++
++#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
++	_SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, 0, _flags)
++
++#define _SUNXI_CCU_DIV_MAX(_shift, _width, _max)			\
++	_SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, 0)
++
+ #define _SUNXI_CCU_DIV(_shift, _width)					\
+-	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, 0)
++	_SUNXI_CCU_DIV_FLAGS(_shift, _width, 0)
+ 
+ struct ccu_div {
+ 	u32			enable;
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index cbf33ef5faa9..ebb1b31568a5 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -21,9 +21,9 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
+ 	unsigned int best_m = 0, best_p = 0;
+ 	unsigned int _m, _p;
+ 
+-	for (_p = 0; _p <= max_p; _p++) {
++	for (_p = 1; _p <= max_p; _p <<= 1) {
+ 		for (_m = 1; _m <= max_m; _m++) {
+-			unsigned long tmp_rate = (parent >> _p) / _m;
++			unsigned long tmp_rate = parent / _p / _m;
+ 
+ 			if (tmp_rate > rate)
+ 				continue;
+@@ -46,13 +46,15 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+ 				       void *data)
+ {
+ 	struct ccu_mp *cmp = data;
++	unsigned int max_m, max_p;
+ 	unsigned int m, p;
+ 
+-	ccu_mp_find_best(parent_rate, rate,
+-			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
+-			 &m, &p);
++	max_m = cmp->m.max ?: 1 << cmp->m.width;
++	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ 
+-	return (parent_rate >> p) / m;
++	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
++
++	return parent_rate / p / m;
+ }
+ 
+ static void ccu_mp_disable(struct clk_hw *hw)
+@@ -108,13 +110,14 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+ 	unsigned long flags;
++	unsigned int max_m, max_p;
+ 	unsigned int m, p;
+ 	u32 reg;
+ 
+-	ccu_mp_find_best(parent_rate, rate,
+-			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
+-			 &m, &p);
++	max_m = cmp->m.max ?: 1 << cmp->m.width;
++	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ 
++	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
+ 
+ 	spin_lock_irqsave(cmp->common.lock, flags);
+ 
+@@ -122,7 +125,7 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+ 	reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
+ 
+-	writel(reg | (p << cmp->p.shift) | ((m - 1) << cmp->m.shift),
++	writel(reg | (ilog2(p) << cmp->p.shift) | ((m - 1) << cmp->m.shift),
+ 	       cmp->common.base + cmp->common.reg);
+ 
+ 	spin_unlock_irqrestore(cmp->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 182452919ede..059fdc3b4f96 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -103,7 +103,7 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 
+ 	_nkm.max_n = 1 << nkm->n.width;
+ 	_nkm.max_k = 1 << nkm->k.width;
+-	_nkm.max_m = 1 << nkm->m.width;
++	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+ 	ccu_nkm_find_best(parent_rate, rate, &_nkm);
+ 
+@@ -129,7 +129,7 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	_nkm.max_n = 1 << nkm->n.width;
+ 	_nkm.max_k = 1 << nkm->k.width;
+-	_nkm.max_m = 1 << nkm->m.width;
++	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+ 	ccu_nkm_find_best(parent_rate, rate, &_nkm);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index 9f2b98e19dc9..9769dee99511 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -29,14 +29,14 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
+ 	unsigned long _n, _k, _m, _p;
+ 
+ 	for (_k = 1; _k <= nkmp->max_k; _k++) {
+-		for (_p = 0; _p <= nkmp->max_p; _p++) {
++		for (_p = 1; _p <= nkmp->max_p; _p <<= 1) {
+ 			unsigned long tmp_rate;
+ 
+-			rational_best_approximation(rate / _k, parent >> _p,
++			rational_best_approximation(rate / _k, parent / _p,
+ 						    nkmp->max_n, nkmp->max_m,
+ 						    &_n, &_m);
+ 
+-			tmp_rate = (parent * _n * _k >> _p) / _m;
++			tmp_rate = parent * _n * _k / (_m * _p);
+ 
+ 			if (tmp_rate > rate)
+ 				continue;
+@@ -110,13 +110,12 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	_nkmp.max_n = 1 << nkmp->n.width;
+ 	_nkmp.max_k = 1 << nkmp->k.width;
+-	_nkmp.max_m = 1 << nkmp->m.width;
+-	_nkmp.max_p = (1 << nkmp->p.width) - 1;
++	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
++	_nkmp.max_p = nkmp->p.max ?: 1 << ((1 << nkmp->p.width) - 1);
+ 
+-	ccu_nkmp_find_best(*parent_rate, rate,
+-			   &_nkmp);
++	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
+ 
+-	return (*parent_rate * _nkmp.n * _nkmp.k >> _nkmp.p) / _nkmp.m;
++	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
+ }
+ 
+ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -129,8 +128,8 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	_nkmp.max_n = 1 << nkmp->n.width;
+ 	_nkmp.max_k = 1 << nkmp->k.width;
+-	_nkmp.max_m = 1 << nkmp->m.width;
+-	_nkmp.max_p = (1 << nkmp->p.width) - 1;
++	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
++	_nkmp.max_p = nkmp->p.max ?: 1 << ((1 << nkmp->p.width) - 1);
+ 
+ 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
+ 
+@@ -145,7 +144,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg |= (_nkmp.n - 1) << nkmp->n.shift;
+ 	reg |= (_nkmp.k - 1) << nkmp->k.shift;
+ 	reg |= (_nkmp.m - 1) << nkmp->m.shift;
+-	reg |= _nkmp.p << nkmp->p.shift;
++	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
+ 
+ 	writel(reg, nkmp->common.base + nkmp->common.reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index e35ddd8eec8b..b61bdd8c7a7f 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -61,11 +61,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *parent_rate)
+ {
+ 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
++	unsigned long max_n, max_m;
+ 	unsigned long n, m;
+ 
+-	rational_best_approximation(rate, *parent_rate,
+-				    1 << nm->n.width, 1 << nm->m.width,
+-				    &n, &m);
++	max_n = 1 << nm->n.width;
++	max_m = nm->m.max ?: 1 << nm->m.width;
++
++	rational_best_approximation(rate, *parent_rate, max_n, max_m, &n, &m);
+ 
+ 	return *parent_rate * n / m;
+ }
+@@ -75,6 +77,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
+ 	unsigned long flags;
++	unsigned long max_n, max_m;
+ 	unsigned long n, m;
+ 	u32 reg;
+ 
+@@ -83,9 +86,10 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		ccu_frac_helper_disable(&nm->common, &nm->frac);
+ 
+-	rational_best_approximation(rate, parent_rate,
+-				    1 << nm->n.width, 1 << nm->m.width,
+-				    &n, &m);
++	max_n = 1 << nm->n.width;
++	max_m = nm->m.max ?: 1 << nm->m.width;
++
++	rational_best_approximation(rate, parent_rate, max_n, max_m, &n, &m);
+ 
+ 	spin_lock_irqsave(nm->common.lock, flags);
+ 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.9.3
