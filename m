@@ -1,26 +1,155 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 20 Sep 2016 17:04:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: Fix reset offset for the A23 and A33
-Message-ID: <20160921000433.GK8319@codeaurora.org>
-References: <20160919200015.23641-1-maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v11, 8/8] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Date: Tue, 6 Sep 2016 16:28:23 +0800
+Message-ID: <1473150503-9550-9-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160919200015.23641-1-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
+ Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
+ xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
+ Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
+ linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19, Maxime Ripard wrote:
-> There's been a copy and paste mistake in the A23 and A33 from the H3,
-> leading in the reset offset for the UART and I2C.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
+The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
+Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
+This patch adds the GUTS driver support for eSDHC driver to match SoC.
+And fix host version to avoid that incorrect version numbers break down
+the ADMA data transfer.
 
-Applied to clk-next
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v2:
+	- Got SVR through iomap instead of dts
+Changes for v3:
+	- Managed GUTS through syscon instead of iomap in eSDHC driver
+Changes for v4:
+	- Got SVR by GUTS driver instead of SYSCON
+Changes for v5:
+	- Changed to get SVR through API fsl_guts_get_svr()
+	- Combined patch 4, patch 5 and patch 6 into one
+Changes for v6:
+	- Added 'Acked-by: Ulf Hansson'
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- Changed to use soc_device_match
+---
+ drivers/mmc/host/Kconfig          |  1 +
+ drivers/mmc/host/sdhci-of-esdhc.c | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 5274f50..a1135a9 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -144,6 +144,7 @@ config MMC_SDHCI_OF_ESDHC
+ 	depends on MMC_SDHCI_PLTFM
+ 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
+ 	select MMC_SDHCI_IO_ACCESSORS
++	select FSL_GUTS
+ 	help
+ 	  This selects the Freescale eSDHC controller support.
+ 
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index fb71c86..0a31aa5 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -18,6 +18,7 @@
+ #include <linux/of.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
++#include <linux/sys_soc.h>
+ #include <linux/mmc/host.h>
+ #include "sdhci-pltfm.h"
+ #include "sdhci-esdhc.h"
+@@ -28,6 +29,7 @@
+ struct sdhci_esdhc {
+ 	u8 vendor_ver;
+ 	u8 spec_ver;
++	bool quirk_incorrect_hostver;
+ };
+ 
+ /**
+@@ -73,6 +75,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
+ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 				     int spec_reg, u32 value)
+ {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
+ 	u16 ret;
+ 	int shift = (spec_reg & 0x2) * 8;
+ 
+@@ -80,6 +84,12 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 		ret = value & 0xffff;
+ 	else
+ 		ret = (value >> shift) & 0xffff;
++	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
++	 * vendor version and spec version information.
++	 */
++	if ((spec_reg == SDHCI_HOST_VERSION) &&
++	    (esdhc->quirk_incorrect_hostver))
++		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
+ 	return ret;
+ }
+ 
+@@ -558,6 +568,12 @@ static const struct sdhci_pltfm_data sdhci_esdhc_le_pdata = {
+ 	.ops = &sdhci_esdhc_le_ops,
+ };
+ 
++static struct soc_device_attribute soc_incorrect_hostver[] = {
++	{ .soc_id = "*name:T4240*", .revision = "1.0", },
++	{ .soc_id = "*name:T4240*", .revision = "2.0", },
++	{ },
++};
++
+ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host;
+@@ -571,6 +587,10 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
+ 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
+ 			     SDHCI_VENDOR_VER_SHIFT;
+ 	esdhc->spec_ver = host_ver & SDHCI_SPEC_VER_MASK;
++	if (soc_device_match(soc_incorrect_hostver))
++		esdhc->quirk_incorrect_hostver = true;
++	else
++		esdhc->quirk_incorrect_hostver = false;
+ }
+ 
+ static int sdhci_esdhc_probe(struct platform_device *pdev)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
