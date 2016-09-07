@@ -1,59 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:52383 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753866AbcINSki (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Sep 2016 14:40:38 -0400
-To: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Alex Elder <elder@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matt Porter <mporter@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Vaishali Thakkar <vaishali.thakkar@oracle.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] clk-kona-setup: Use kmalloc_array() in parent_process()
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Julia Lawall <julia.lawall@lip6.fr>
-Message-ID: <1fb2e894-93d3-3dbe-ca05-7e29e4c60e2a@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 20:40:20 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v6 0/3] Add support for Qualcomm A53 CPU clock
+Date: Wed,  7 Sep 2016 16:13:28 +0300
+Message-Id: <20160907131331.18638-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 20:26:05 +0200
+This patchset adds support for the A53 CPU clock and allows scaling
+of the CPU frequency on msm8916 based platforms.
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
+ * Rebase to clk-next and update according to the recent API changes.
 
-This issue was detected by using the Coccinelle software.
+Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
+ * Convert to builtin drivers as now __clk_lookup() is used
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/bcm/clk-kona-setup.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
+ * Split driver into two parts - and separate A53 PLL and
+   A53 clock controller drivers.
+ * Drop the safe switch hook patch. Add a clock notifier in
+   the clock provider to handle switching via safe mux and
+   divider configuration.
 
-diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
-index 526b0b0..a2e7e91 100644
---- a/drivers/clk/bcm/clk-kona-setup.c
-+++ b/drivers/clk/bcm/clk-kona-setup.c
-@@ -586,8 +586,9 @@ static u32 *parent_process(const char *clocks[],
- 	}
- 
- 	/* There is at least one parent, so allocate a selector array */
--
--	parent_sel = kmalloc(parent_count * sizeof(*parent_sel), GFP_KERNEL);
-+	parent_sel = kmalloc_array(parent_count,
-+				   sizeof(*parent_sel),
-+				   GFP_KERNEL);
- 	if (!parent_sel) {
- 		pr_err("%s: error allocating %u parent selectors\n", __func__,
- 				parent_count);
--- 
-2.10.0
+Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
+ * Drop gpll0_vote patch.
+ * Switch to the new clk_hw_* APIs.
+ * Rebase to the current clk-next.
 
+Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
+ * Drop SR2 PLL patch, as it is already applied.
+ * Add gpll0_vote rate propagation patch.
+ * Update/rebase patches to the current clk-next.
+
+
+Georgi Djakov (3):
+  clk: qcom: Add A53 PLL support
+  clk: qcom: Add regmap mux-div clocks support
+  clk: qcom: Add A53 clock driver
+
+ .../devicetree/bindings/clock/qcom,a53-pll.txt     |  18 ++
+ .../devicetree/bindings/clock/qcom,a53cc.txt       |  23 ++
+ drivers/clk/qcom/Kconfig                           |  17 ++
+ drivers/clk/qcom/Makefile                          |   3 +
+ drivers/clk/qcom/a53-pll.c                         |  94 ++++++++
+ drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.c              | 254 +++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |  58 +++++
+ 8 files changed, 622 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
+ create mode 100644 drivers/clk/qcom/a53cc.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
