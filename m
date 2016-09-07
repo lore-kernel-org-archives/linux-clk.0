@@ -1,664 +1,156 @@
-Return-Path: <irina.tirdea@intel.com>
-From: Irina Tirdea <irina.tirdea@intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v4] clk: x86: Add Atom PMC platform clocks
-Date: Thu, 15 Sep 2016 18:36:00 +0300
-Message-Id: <1473953760-30670-1-git-send-email-irina.tirdea@intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:10392 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754265AbcIGI1v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2016 04:27:51 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Subject: Re: [PATCH v2 4/7] clk: samsung: Add support for EPLL on exynos5410
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20160906120551epcas1p1296ff11fa56842df249f5b6520fe0ab8@epcas1p1.samsung.com>
+ <1473163496-17820-5-git-send-email-s.nawrocki@samsung.com>
+ <57CF942C.1030808@samsung.com>
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <a7316c24-2b57-7006-6564-fe25cbec252a@samsung.com>
+Date: Wed, 07 Sep 2016 10:27:41 +0200
+In-reply-to: <57CF942C.1030808@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The BayTrail and CherryTrail platforms provide platform clocks
-through their Power Management Controller (PMC).
+On 09/07/2016 06:14 AM, Chanwoo Choi wrote:
+> On 2016년 09월 06일 21:04, Sylwester Nawrocki wrote:
+...
+>> -static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
+>> +static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
+>> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
+> 
+> In the Exynos5410's TRM, the EPLL PMS table has the 
+> 'P' state is 3 instead of 2 when target is 400MHz as following:
+> 
+> 	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
 
-The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
-frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-an a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-are available for general system use, where appropriate, and each
-have Control & Frequency register fields associated with them.
+Indeed, thanks for pointing out.
 
-For example, the usage for platform clocks suggested in the datasheet
-is the following:
-  PLT_CLK[2:0] - Camera
-  PLT_CLK[3] - Audio Codec
-  PLT_CLK[4] -
-  PLT_CLK[5] - COMMs
+>> +	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
+>> +	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
+>> +	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
+>> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
+>> +	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
+>> +	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
+>> +	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
+>> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
+>> +	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
+> 
+> The all entry of EPLL PMS table has the zero(0) for 'K' value.
+> How about using the PLL_35XX_RATE() which has the P,M,S entry without K entry?
 
-Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
+Don't have a strong opinion on that, I'm inclined to stay with
+PLL_36XX_RATE() though, to indicate the K value is valid for this
+PLL type.
 
-Notes:
-    Submitting this patch through the clock tree as requested by
-    Mark Brown. This patch specifically enables the audio MCLK
-    required by Baytrail CR devices (support already merged in
-    Mark's tree)
+>> @@ -237,6 +258,7 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>>  {
+>>  	struct samsung_clk_provider *ctx;
+>>  	void __iomem *reg_base;
+>> +	struct clk *xxti;
+>>  
+>>  	reg_base = of_iomap(np, 0);
+>>  	if (!reg_base)
+>> @@ -244,6 +266,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>>  
+>>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+>>  
+>> +	xxti = of_clk_get(np, 0);
+>> +	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
+>> +		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
+>> +
+> 
+> I sent the patch to use the samsung_cmu_register_one()
+> 
+> and applied it[1]. I think that you need to rebase this patch on patch[1].
+> [1] https://lkml.org/lkml/2016/9/1/602
+> - Re: [PATCH 2/2] clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
 
-Changes from v3:
- - replace devm_kzalloc with devm_kcalloc
- - add x86 architecture maintainers
+Yes, I need to rebase onto latest tree.
 
-Changes from v2:
- - move clk platform data structures to a separate include file
- - store clk_hw pointer for the fixed rate clocks
+>> +/* Maximum lock time can be 3000 * PDIV cycles */
+>> +#define PLL2650X_LOCK_FACTOR		3000
+>> +
+>> +#define PLL2650X_M_MASK			0x3FF
+> 
+> 1FF instead of 0x3FF because the MDIV [24:16]?
 
-Changes from v1:
- - register the clk device as child of pmc device
- - pass iomem pointer from pmc driver to clk driver to avoid using
-pmc_atom_read()/write() and use readl/writel API instead
- - use devm_clk_hw_register/clkdev_hw_create instead of
-clk_register/clkdev_create
+Right, my bad, I'll correct this.
 
- arch/x86/Kconfig                          |   1 +
- arch/x86/include/asm/pmc_atom.h           |   3 +
- arch/x86/platform/atom/pmc_atom.c         |  78 +++++-
- drivers/clk/x86/Makefile                  |   1 +
- drivers/clk/x86/clk-byt-plt.c             | 380 ++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-byt-plt.h |  31 +++
- 6 files changed, 491 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/x86/clk-byt-plt.c
- create mode 100644 include/linux/platform_data/clk-byt-plt.h
+>> +#define PLL2650X_P_MASK			0x3F
+>> +#define PLL2650X_S_MASK			0x7
+>> +#define PLL2650X_K_MASK			0xFFFF
+>> +#define PLL2650X_LOCK_STAT_MASK		0x1
+>> +#define PLL2650X_M_SHIFT		16
+>> +#define PLL2650X_P_SHIFT		8
+>> +#define PLL2650X_S_SHIFT		0
+>> +#define PLL2650X_K_SHIFT		0
+>> +#define PLL2650X_LOCK_STAT_SHIFT	29
+>> +#define PLL2650X_PLL_ENABLE_SHIFT	31
+>> +
+>> +static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
+>> +				unsigned long parent_rate)
+>> +{
+>> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+>> +	u64 fout = parent_rate;
+>> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
+>> +	s16 kdiv;
+>> +
+>> +	pll_con0 = readl_relaxed(pll->con_reg);
+>> +	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
+>> +	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
+>> +	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
+>> +
+>> +	pll_con1 = readl_relaxed(pll->con_reg + 4);
+>> +	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
+>> +
+>> +	fout *= (mdiv << 16) + kdiv;
+>> +	do_div(fout, (pdiv << sdiv));
+>> +	fout >>= 16;
+>> +
+>> +	return (unsigned long)fout;
+> 
+> I got some confusion because the EPLL_CON1 register don't include
+> the 'K' value. Instead, the name is 'DSM' which is PLL DSM(Delta-Sigma 
+> Modulator).
+> But, I knew that DSM means the 'K' value as your implementation.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2a1f0ce..3e603a8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2744,6 +2744,7 @@ config X86_DMA_REMAP
- config PMC_ATOM
- 	def_bool y
-         depends on PCI
-+	select COMMON_CLK
- 
- config VMD
- 	depends on PCI_MSI
-diff --git a/arch/x86/include/asm/pmc_atom.h b/arch/x86/include/asm/pmc_atom.h
-index aa8744c..2d310cf 100644
---- a/arch/x86/include/asm/pmc_atom.h
-+++ b/arch/x86/include/asm/pmc_atom.h
-@@ -50,6 +50,9 @@
- 				BIT_ORED_DEDICATED_IRQ_GPSC | \
- 				BIT_SHARED_IRQ_GPSS)
- 
-+/* Platform clock control registers */
-+#define PMC_CLK_CTL_0		0x60
-+
- /* The timers acumulate time spent in sleep state */
- #define	PMC_S0IR_TMR		0x80
- #define	PMC_S0I1_TMR		0x84
-diff --git a/arch/x86/platform/atom/pmc_atom.c b/arch/x86/platform/atom/pmc_atom.c
-index 964ff4f..b353893 100644
---- a/arch/x86/platform/atom/pmc_atom.c
-+++ b/arch/x86/platform/atom/pmc_atom.c
-@@ -21,6 +21,8 @@
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
- #include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/platform_data/clk-byt-plt.h>
- 
- #include <asm/pmc_atom.h>
- 
-@@ -37,6 +39,11 @@ struct pmc_reg_map {
- 	const struct pmc_bit_map *pss;
- };
- 
-+struct pmc_data {
-+	const struct pmc_reg_map *map;
-+	const struct pmc_clk *clks;
-+};
-+
- struct pmc_dev {
- 	u32 base_addr;
- 	void __iomem *regmap;
-@@ -50,6 +57,29 @@ struct pmc_dev {
- static struct pmc_dev pmc_device;
- static u32 acpi_base_addr;
- 
-+static const struct pmc_clk byt_clks[] = {
-+	{
-+		.name = "xtal",
-+		.freq = 25000000,
-+		.parent_name = NULL,
-+	},
-+	{
-+		.name = "pll",
-+		.freq = 19200000,
-+		.parent_name = "xtal",
-+	},
-+	{},
-+};
-+
-+static const struct pmc_clk cht_clks[] = {
-+	{
-+		.name = "xtal",
-+		.freq = 19200000,
-+		.parent_name = NULL,
-+	},
-+	{},
-+};
-+
- static const struct pmc_bit_map d3_sts_0_map[] = {
- 	{"LPSS1_F0_DMA",	BIT_LPSS1_F0_DMA},
- 	{"LPSS1_F1_PWM1",	BIT_LPSS1_F1_PWM1},
-@@ -169,6 +199,16 @@ static const struct pmc_reg_map cht_reg_map = {
- 	.pss		= cht_pss_map,
- };
- 
-+static const struct pmc_data byt_data = {
-+	.map = &byt_reg_map,
-+	.clks = byt_clks,
-+};
-+
-+static const struct pmc_data cht_data = {
-+	.map = &cht_reg_map,
-+	.clks = cht_clks,
-+};
-+
- static inline u32 pmc_reg_read(struct pmc_dev *pmc, int reg_offset)
- {
- 	return readl(pmc->regmap + reg_offset);
-@@ -382,10 +422,36 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
- }
- #endif /* CONFIG_DEBUG_FS */
- 
-+static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
-+			  const struct pmc_data *pmc_data)
-+{
-+	struct platform_device *clkdev;
-+	struct pmc_clk_data *clk_data;
-+
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->base = pmc_regmap + PMC_CLK_CTL_0;
-+	clk_data->clks = pmc_data->clks;
-+
-+	clkdev = platform_device_register_data(&pdev->dev, "clk-byt-plt", -1,
-+					       clk_data, sizeof(*clk_data));
-+	if (IS_ERR(clkdev)) {
-+		kfree(clk_data);
-+		return PTR_ERR(clkdev);
-+	}
-+
-+	kfree(clk_data);
-+
-+	return 0;
-+}
-+
- static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	struct pmc_dev *pmc = &pmc_device;
--	const struct pmc_reg_map *map = (struct pmc_reg_map *)ent->driver_data;
-+	const struct pmc_data *data = (struct pmc_data *)ent->driver_data;
-+	const struct pmc_reg_map *map = data->map;
- 	int ret;
- 
- 	/* Obtain ACPI base address */
-@@ -414,6 +480,12 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (ret)
- 		dev_warn(&pdev->dev, "debugfs register failed\n");
- 
-+	/* Register platform clocks - PMC_PLT_CLK [5:0] */
-+	ret = pmc_setup_clks(pdev, pmc->regmap, data);
-+	if (ret)
-+		dev_warn(&pdev->dev, "platform clocks register failed: %d\n",
-+			 ret);
-+
- 	pmc->init = true;
- 	return ret;
- }
-@@ -424,8 +496,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
-  * used by pci_match_id() call below.
-  */
- static const struct pci_device_id pmc_pci_ids[] = {
--	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_reg_map },
--	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_reg_map },
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_data },
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_data },
- 	{ 0, },
- };
- 
-diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-index 0478138..cbdc8cc 100644
---- a/drivers/clk/x86/Makefile
-+++ b/drivers/clk/x86/Makefile
-@@ -1,2 +1,3 @@
- clk-x86-lpss-objs		:= clk-lpt.o
- obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
-+obj-$(CONFIG_PMC_ATOM)		+= clk-byt-plt.o
-diff --git a/drivers/clk/x86/clk-byt-plt.c b/drivers/clk/x86/clk-byt-plt.c
-new file mode 100644
-index 0000000..7bd6c0d
---- /dev/null
-+++ b/drivers/clk/x86/clk-byt-plt.c
-@@ -0,0 +1,380 @@
-+/*
-+ * Intel Atom platform clocks driver for BayTrail and CherryTrail SoC.
-+ *
-+ * Copyright (C) 2016, Intel Corporation
-+ * Author: Irina Tirdea <irina.tirdea@intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/clkdev.h>
-+#include <linux/platform_data/clk-byt-plt.h>
-+
-+#define PLT_CLK_NAME_BASE	"pmc_plt_clk_"
-+#define PLT_CLK_DRIVER_NAME	"clk-byt-plt"
-+
-+#define PMC_CLK_CTL_SIZE	4
-+#define PMC_CLK_NUM		6
-+#define PMC_MASK_CLK_CTL	GENMASK(1, 0)
-+#define PMC_MASK_CLK_FREQ	BIT(2)
-+#define PMC_CLK_CTL_GATED_ON_D3	0x0
-+#define PMC_CLK_CTL_FORCE_ON	0x1
-+#define PMC_CLK_CTL_FORCE_OFF	0x2
-+#define PMC_CLK_CTL_RESERVED	0x3
-+#define PMC_CLK_FREQ_XTAL	0x0	/* 25 MHz */
-+#define PMC_CLK_FREQ_PLL	0x4	/* 19.2 MHz */
-+
-+struct clk_plt_fixed {
-+	struct clk_hw *clk;
-+	struct clk_lookup *lookup;
-+};
-+
-+struct clk_plt {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+	struct clk_lookup *lookup;
-+	spinlock_t lock;
-+};
-+
-+#define to_clk_plt(_hw) container_of(_hw, struct clk_plt, hw)
-+
-+struct clk_plt_data {
-+	struct clk_plt_fixed **parents;
-+	u8 nparents;
-+	struct clk_plt *clks[PMC_CLK_NUM];
-+};
-+
-+static inline int plt_reg_to_parent(int reg)
-+{
-+	switch (reg & PMC_MASK_CLK_FREQ) {
-+	case PMC_CLK_FREQ_XTAL:
-+		return 0;	/* index 0 in parents[] */
-+	case PMC_CLK_FREQ_PLL:
-+		return 1;	/* index 1 in parents[] */
-+	}
-+
-+	return 0;
-+}
-+
-+static inline int plt_parent_to_reg(int index)
-+{
-+	switch (index) {
-+	case 0:	/* index 0 in parents[] */
-+		return PMC_CLK_FREQ_XTAL;
-+	case 1:	/* index 0 in parents[] */
-+		return PMC_CLK_FREQ_PLL;
-+	}
-+
-+	return PMC_CLK_FREQ_XTAL;
-+}
-+
-+static inline int plt_reg_to_enabled(int reg)
-+{
-+	switch (reg & PMC_MASK_CLK_CTL) {
-+	case PMC_CLK_CTL_GATED_ON_D3:
-+	case PMC_CLK_CTL_FORCE_ON:
-+		return 1;	/* enabled */
-+	case PMC_CLK_CTL_FORCE_OFF:
-+	case PMC_CLK_CTL_RESERVED:
-+	default:
-+		return 0;	/* disabled */
-+	}
-+}
-+
-+static void plt_clk_reg_update(struct clk_plt *clk, u32 mask, u32 val)
-+{
-+	u32 orig, tmp;
-+	unsigned long flags = 0;
-+
-+	spin_lock_irqsave(&clk->lock, flags);
-+
-+	orig = readl(clk->reg);
-+
-+	tmp = orig & ~mask;
-+	tmp |= val & mask;
-+
-+	if (tmp != orig)
-+		writel(tmp, clk->reg);
-+
-+	spin_unlock_irqrestore(&clk->lock, flags);
-+}
-+
-+static int plt_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_plt *clk = to_clk_plt(hw);
-+
-+	plt_clk_reg_update(clk, PMC_MASK_CLK_FREQ, plt_parent_to_reg(index));
-+
-+	return 0;
-+}
-+
-+static u8 plt_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_plt *clk = to_clk_plt(hw);
-+	u32 value;
-+
-+	value = readl(clk->reg);
-+
-+	return plt_reg_to_parent(value);
-+}
-+
-+static int plt_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_plt *clk = to_clk_plt(hw);
-+
-+	plt_clk_reg_update(clk, PMC_MASK_CLK_CTL, PMC_CLK_CTL_FORCE_ON);
-+
-+	return 0;
-+}
-+
-+static void plt_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_plt *clk = to_clk_plt(hw);
-+
-+	plt_clk_reg_update(clk, PMC_MASK_CLK_CTL, PMC_CLK_CTL_FORCE_OFF);
-+}
-+
-+static int plt_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_plt *clk = to_clk_plt(hw);
-+	u32 value;
-+
-+	value = readl(clk->reg);
-+
-+	return plt_reg_to_enabled(value);
-+}
-+
-+static const struct clk_ops plt_clk_ops = {
-+	.enable = plt_clk_enable,
-+	.disable = plt_clk_disable,
-+	.is_enabled = plt_clk_is_enabled,
-+	.get_parent = plt_clk_get_parent,
-+	.set_parent = plt_clk_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+
-+static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
-+					void __iomem *base,
-+					const char **parent_names,
-+					int num_parents)
-+{
-+	struct clk_plt *pclk;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
-+	if (!pclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name =  kasprintf(GFP_KERNEL, "%s%d", PLT_CLK_NAME_BASE, id);
-+	init.ops = &plt_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	pclk->hw.init = &init;
-+	pclk->reg = base + id * PMC_CLK_CTL_SIZE;
-+	spin_lock_init(&pclk->lock);
-+
-+	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
-+	if (ret)
-+		goto err_free_init;
-+
-+	pclk->lookup = clkdev_hw_create(&pclk->hw, init.name, NULL);
-+	if (!pclk->lookup) {
-+		ret = -ENOMEM;
-+		goto err_free_init;
-+	}
-+
-+	kfree(init.name);
-+
-+	return pclk;
-+
-+err_free_init:
-+	kfree(init.name);
-+	return ERR_PTR(ret);
-+}
-+
-+static void plt_clk_unregister(struct clk_plt *pclk)
-+{
-+	clkdev_drop(pclk->lookup);
-+}
-+
-+static struct clk_plt_fixed *plt_clk_register_fixed_rate(struct platform_device *pdev,
-+						 const char *name,
-+						 const char *parent_name,
-+						 unsigned long fixed_rate)
-+{
-+	struct clk_plt_fixed *pclk;
-+	int ret = 0;
-+
-+	pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
-+	if (!pclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pclk->clk = clk_hw_register_fixed_rate(&pdev->dev, name, parent_name,
-+					       0, fixed_rate);
-+	if (IS_ERR(pclk->clk))
-+		return ERR_CAST(pclk->clk);
-+
-+	pclk->lookup = clkdev_hw_create(pclk->clk, name, NULL);
-+	if (!pclk->lookup) {
-+		ret = -ENOMEM;
-+		goto err_clk_unregister;
-+	}
-+
-+	return pclk;
-+
-+err_clk_unregister:
-+	clk_hw_unregister_fixed_rate(pclk->clk);
-+	return ERR_PTR(ret);
-+}
-+
-+static void plt_clk_unregister_fixed_rate(struct clk_plt_fixed *pclk)
-+{
-+	clkdev_drop(pclk->lookup);
-+	clk_hw_unregister_fixed_rate(pclk->clk);
-+}
-+
-+static const char **plt_clk_register_parents(struct platform_device *pdev,
-+					     struct clk_plt_data *data,
-+					     const struct pmc_clk *clks)
-+{
-+	const char **parent_names;
-+	int i, err;
-+
-+	data->nparents = 0;
-+	while (clks[data->nparents].name)
-+		data->nparents++;
-+
-+	data->parents = devm_kcalloc(&pdev->dev, data->nparents,
-+				     sizeof(*data->parents), GFP_KERNEL);
-+	if (!data->parents) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	parent_names = kcalloc(data->nparents, sizeof(*parent_names),
-+			       GFP_KERNEL);
-+	if (!parent_names) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	for (i = 0; i < data->nparents; i++) {
-+		data->parents[i] =
-+			plt_clk_register_fixed_rate(pdev, clks[i].name,
-+						    clks[i].parent_name,
-+						    clks[i].freq);
-+		if (IS_ERR(data->parents[i])) {
-+			err = PTR_ERR(data->parents[i]);
-+			goto err_unreg;
-+		}
-+		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-+	}
-+
-+	return parent_names;
-+
-+err_unreg:
-+	for (i--; i >= 0; i--) {
-+		plt_clk_unregister_fixed_rate(data->parents[i]);
-+		kfree_const(parent_names[i]);
-+	}
-+	kfree(parent_names);
-+err_out:
-+	data->nparents = 0;
-+	return ERR_PTR(err);
-+}
-+
-+static void plt_clk_unregister_parents(struct clk_plt_data *data)
-+{
-+	int i;
-+
-+	for (i = 0; i < data->nparents; i++)
-+		plt_clk_unregister_fixed_rate(data->parents[i]);
-+}
-+
-+static int plt_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_plt_data *data;
-+	int i, err;
-+	const char **parent_names;
-+	const struct pmc_clk_data *pmc_data;
-+
-+	pmc_data = dev_get_platdata(&pdev->dev);
-+	if (!pmc_data || !pmc_data->clks)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	parent_names = plt_clk_register_parents(pdev, data, pmc_data->clks);
-+	if (IS_ERR(parent_names))
-+		return PTR_ERR(parent_names);
-+
-+	for (i = 0; i < PMC_CLK_NUM; i++) {
-+		data->clks[i] = plt_clk_register(pdev, i, pmc_data->base,
-+						 parent_names, data->nparents);
-+		if (IS_ERR(data->clks[i])) {
-+			err = PTR_ERR(data->clks[i]);
-+			goto err_unreg_clk_plt;
-+		}
-+	}
-+
-+	for (i = 0; i < data->nparents; i++)
-+		kfree_const(parent_names[i]);
-+	kfree(parent_names);
-+
-+	dev_set_drvdata(&pdev->dev, data);
-+	return 0;
-+
-+err_unreg_clk_plt:
-+	for (i--; i >= 0; i--)
-+		plt_clk_unregister(data->clks[i]);
-+	plt_clk_unregister_parents(data);
-+	for (i = 0; i < data->nparents; i++)
-+		kfree_const(parent_names[i]);
-+	kfree(parent_names);
-+	return err;
-+}
-+
-+static int plt_clk_remove(struct platform_device *pdev)
-+{
-+	struct clk_plt_data *data;
-+	int i;
-+
-+	data = dev_get_drvdata(&pdev->dev);
-+	if (!data)
-+		return 0;
-+
-+	for (i = 0; i < PMC_CLK_NUM; i++)
-+		plt_clk_unregister(data->clks[i]);
-+	plt_clk_unregister_parents(data);
-+	return 0;
-+}
-+
-+static struct platform_driver plt_clk_driver = {
-+	.driver = {
-+		.name = PLT_CLK_DRIVER_NAME,
-+	},
-+	.probe = plt_clk_probe,
-+	.remove = plt_clk_remove,
-+};
-+module_platform_driver(plt_clk_driver);
-+
-+MODULE_DESCRIPTION("Intel Atom platform clocks driver");
-+MODULE_AUTHOR("Irina Tirdea <irina.tirdea@intel.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/platform_data/clk-byt-plt.h b/include/linux/platform_data/clk-byt-plt.h
-new file mode 100644
-index 0000000..e6bca9c
---- /dev/null
-+++ b/include/linux/platform_data/clk-byt-plt.h
-@@ -0,0 +1,31 @@
-+/*
-+ * Intel Atom platform clocks for BayTrail and CherryTrail SoC.
-+ *
-+ * Copyright (C) 2016, Intel Corporation
-+ * Author: Irina Tirdea <irina.tirdea@intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#ifndef __CLK_BYT_PLT_H
-+#define __CLK_BYT_PLT_H
-+
-+struct pmc_clk {
-+	const char *name;
-+	unsigned long freq;
-+	const char *parent_name;
-+};
-+
-+struct pmc_clk_data {
-+	void __iomem *base;
-+	const struct pmc_clk *clks;
-+};
-+
-+#endif /* __CLK_BYT_PLT_H */
+Yes, the documentation seems incomplete, the K coefficient is used
+in the PLL output frequency equations and I found that register
+bit field used in some downstream kernel.
+Perhaps this is corrected in newer User Manual version than
+the "Preeliminary" I have.
+
+> I have a question.
+> When I check the calculation fomula as following:
+> 	FFOUT = ((m+k/65536) x FFIN) / (p x 2^S);
+> 
+> So, pll2560x might shift the kdiv instead of mdiv.
+> 	fout *= mdiv + (kdiv << 16);
+
+First we multiply both sides of the equation by 65536 (2^16):
+
+ 65536 * FFOUT = 65536 * ((M + K/65536) x FFIN) / (P x 2^S);
+
+That means M needs to be multiplied by 2^16, not K:
+
+ 65536 * FFOUT = (65536 * M + K) x FFIN) / (P x 2^S);
+
+K is the "fractional" coefficient here, with least impact on FFOUT.
+Finally we divide fout by 2^16 to reverse previous multiplication.
+
+I tested this code with audio playback, if it had been incorrect
+in such a way the sampling rate would certainly have been incorrect
+and it would have been heard.
+
 -- 
-1.9.1
+Thanks,
+Sylwester
