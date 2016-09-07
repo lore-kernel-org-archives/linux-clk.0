@@ -1,90 +1,179 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v12, 6/8] MAINTAINERS: add entry for Freescale SoC drivers
-Date: Wed, 21 Sep 2016 14:57:18 +0800
-Message-ID: <1474441040-11946-7-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
- Minghuan Lian <minghuan.lian@nxp.com>, linux-i2c@vger.kernel.org,
- linux-clk@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>,
- Russell King <linux@arm.linux.org.uk>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Yangbo Lu <yangbo.lu@nxp.com>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v6 1/3] clk: qcom: Add A53 PLL support
+Date: Wed,  7 Sep 2016 16:13:29 +0300
+Message-Id: <20160907131331.18638-2-georgi.djakov@linaro.org>
+In-Reply-To: <20160907131331.18638-1-georgi.djakov@linaro.org>
+References: <20160907131331.18638-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add maintainer entry for Freescale SoC drivers including
-the QE library and the GUTS driver now. Also add maintainer
-for QE library.
+Add support for the PLL, which generates the higher range of CPU
+frequencies on MSM8916 platforms.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Qiang Zhao <qiang.zhao@nxp.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added linux-arm mail list
-	- Removed GUTS driver entry
-Changes for v10:
-	- Changed 'DRIVER' to 'DRIVERS'
-	- Added 'Acked-by' of Scott and Qiang
-Changes for v11:
-	- None
-Changes for v12:
-	- None
----
- MAINTAINERS | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/clock/qcom,a53-pll.txt     | 18 +++++
+ drivers/clk/qcom/Kconfig                           |  9 +++
+ drivers/clk/qcom/Makefile                          |  1 +
+ drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
+ 4 files changed, 122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 644ff65..33d3683 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4971,9 +4971,18 @@ F:	drivers/net/ethernet/freescale/fec_ptp.c
- F:	drivers/net/ethernet/freescale/fec.h
- F:	Documentation/devicetree/bindings/net/fsl-fec.txt
- 
-+FREESCALE SOC DRIVERS
-+M:	Scott Wood <oss@buserror.net>
-+L:	linuxppc-dev@lists.ozlabs.org
-+L:	linux-arm-kernel@lists.infradead.org
-+S:	Maintained
-+F:	drivers/soc/fsl/
-+F:	include/linux/fsl/
+diff --git a/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+new file mode 100644
+index 000000000000..5cf0af1eecf9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+@@ -0,0 +1,18 @@
++A53 PLL Binding
++---------------
++The A53 PLL is the main CPU PLL used for frequencies above 1GHz.
 +
- FREESCALE QUICC ENGINE LIBRARY
-+M:	Qiang Zhao <qiang.zhao@nxp.com>
- L:	linuxppc-dev@lists.ozlabs.org
--S:	Orphan
-+S:	Maintained
- F:	drivers/soc/fsl/qe/
- F:	include/soc/fsl/*qe*.h
- F:	include/soc/fsl/*ucc*.h
--- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
++Required properties :
++- compatible : Shall contain only one of the following:
++
++		"qcom,a53-pll"
++
++- reg : shall contain base register location and length
++
++Example:
++
++	a53pll: a53pll@0b016000 {
++		compatible = "qcom,a53-pll";
++		reg = <0x0b016000 0x40>;
++	};
++
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 0146d3c2547f..a889f0b14b54 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -150,3 +150,12 @@ config MSM_MMCC_8996
+ 	  Support for the multimedia clock controller on msm8996 devices.
+ 	  Say Y if you want to support multimedia devices such as display,
+ 	  graphics, video encode/decode, camera, etc.
++
++config QCOM_A53PLL
++	bool "A53 PLL"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the A53 PLL on some Qualcomm devices. It provides
++	  support for CPU frequencies above 1GHz.
++	  Say Y if you want to support CPU frequency scaling on devices
++	  such as MSM8916.
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 1fb1f5476cb0..7d27f47f0c92 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -29,3 +29,4 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
++obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+new file mode 100644
+index 000000000000..43902080f34b
+--- /dev/null
++++ b/drivers/clk/qcom/a53-pll.c
+@@ -0,0 +1,94 @@
++/*
++ * Copyright (c) 2016, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include "clk-pll.h"
++#include "clk-regmap.h"
++
++static struct pll_freq_tbl a53pll_freq[] = {
++	{  998400000, 52, 0x0, 0x1, 0 },
++	{ 1094400000, 57, 0x0, 0x1, 0 },
++	{ 1152000000, 62, 0x0, 0x1, 0 },
++	{ 1209600000, 65, 0x0, 0x1, 0 },
++	{ 1401600000, 73, 0x0, 0x1, 0 },
++};
++
++static const struct regmap_config a53pll_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x40,
++	.fast_io		= true,
++	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
++};
++
++static const struct of_device_id qcom_a53pll_match_table[] = {
++	{ .compatible = "qcom,a53-pll" },
++	{ }
++};
++
++static int qcom_a53pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *node = dev->of_node;
++	struct clk_pll *pll;
++	struct resource *res;
++	void __iomem *base;
++	struct regmap *regmap;
++	struct clk_init_data init;
++
++	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	pll->l_reg = 0x04,
++	pll->m_reg = 0x08,
++	pll->n_reg = 0x0c,
++	pll->config_reg = 0x14,
++	pll->mode_reg = 0x00,
++	pll->status_reg = 0x1c,
++	pll->status_bit = 16,
++	pll->freq_tbl = a53pll_freq,
++
++	init.name = node->name;
++	init.parent_names = (const char *[]){ "xo" },
++	init.num_parents = 1,
++	init.ops = &clk_pll_sr2_ops,
++	init.flags = CLK_IS_CRITICAL;
++	pll->clkr.hw.init = &init;
++
++	return devm_clk_register_regmap(dev, &pll->clkr);
++}
++
++static struct platform_driver qcom_a53pll_driver = {
++	.probe = qcom_a53pll_probe,
++	.driver = {
++		.name = "qcom-a53pll",
++		.of_match_table = qcom_a53pll_match_table,
++	},
++};
++
++builtin_platform_driver(qcom_a53pll_driver);
