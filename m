@@ -1,36 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 20 Sep 2016 16:58:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 2/2] clk: imx6: initialize GPU clocks
-Message-ID: <20160920235842.GG8319@codeaurora.org>
-References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
- <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <20160906121837.7517-5-maxime.ripard@free-electrons.com>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com> <20160906121837.7517-5-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 7 Sep 2016 14:45:21 +0800
+Message-ID: <CAGb2v67tM_3Q81=Mb1Nf0cja+oxBjJi=6mhkkpnvRM2i0BAmiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] clk: sunxi-ng: Add N-class clocks support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Lucas Stach wrote:
-> Initialize the GPU clock muxes to sane inputs. Until now they have
-> not been changed from their default values, which means that both
-> GPU3D shader and GPU2D core were fed by clock inputs whose rates
-> exceed the maximium allowed frequency of the cores by as much as
-> 200MHz.
-> 
-> This fixes a severe GPU stability issue on i.MX6DL.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Add support for the class with a single factor, N, being a multiplier.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
 > ---
 
-Applied to clk-next
+[...]
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+> new file mode 100644
+> index 000000000000..119b190c0eb5
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu_mult.c
+
+[...]
+
+> +static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                          unsigned long parent_rate)
+> +{
+> +       struct ccu_mult *cm = hw_to_ccu_mult(hw);
+> +       unsigned long flags;
+> +       unsigned int n;
+> +       u32 reg;
+> +
+> +       ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+> +                                               &parent_rate);
+> +
+
+Git complains about extra whitespace here.
+You can keep my ack after fixing it.
+
+ChenYu
+
+> +       ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
+> +
+> +       spin_lock_irqsave(cm->common.lock, flags);
+> +
+> +       reg = readl(cm->common.base + cm->common.reg);
+> +       reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
+> +
+> +       writel(reg | ((n - 1) << cm->mult.shift),
+> +              cm->common.base + cm->common.reg);
+> +
+> +       spin_unlock_irqrestore(cm->common.lock, flags);
+> +
+> +       return 0;
+> +}
