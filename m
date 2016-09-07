@@ -1,83 +1,55 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
-References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Sep 2016 21:11:07 +0200
-Message-ID: <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in
- cpg_mstp_clocks_init() after error detection
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>,
-	Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <john@metanate.com>
+From: John Keeping <john@metanate.com>
+To: linux-kernel@vger.kernel.org
+Cc: John Keeping <john@metanate.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/2] clk: rockchip: use identifiers for rk3288 I2S clocks
+Date: Wed,  7 Sep 2016 17:53:30 +0100
+Message-Id: <20160907165330.14607-2-john@metanate.com>
+In-Reply-To: <20160907165330.14607-1-john@metanate.com>
+References: <20160907165330.14607-1-john@metanate.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Markus,
+Export these so that the rates can be set via the device tree.
 
-On Wed, Sep 14, 2016 at 10:03 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Sep 2016 21:30:27 +0200
->
-> The kfree() function was called in up to two cases
-> by the cpg_mstp_clocks_init() function during error handling even if
-> the passed variable contained a null pointer.
+Signed-off-by: John Keeping <john@metanate.com>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-It's perfectly legal to call kfree() on a NULL pointer.
-
-> * Split a condition check for memory allocation failures so that
->   each pointer from these function calls will be checked immediately.
->
->   See also background information:
->   Topic "CWE-754: Improper check for unusual or exceptional conditions"
->   Link: https://cwe.mitre.org/data/definitions/754.html
->
-> * Return directly after a call of the function "kzalloc" failed
->   at the beginning.
-
-Both calls are already close together.
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/clk/renesas/clk-mstp.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-
-In addition, your patch increases the LoC, IMHO without improving the code.
-
->
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 1fdc44b..6c82e0e 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -167,10 +167,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
->         unsigned int i;
->
->         group = kzalloc(sizeof(*group), GFP_KERNEL);
-> +       if (!group)
-> +               return;
-> +
->         clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
-> -       if (group == NULL || clks == NULL) {
-> +       if (!clks) {
->                 kfree(group);
-> -               kfree(clks);
->                 return;
->         }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 39af05a589b3..8817a5b3bd0f 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -229,7 +229,7 @@ static struct clk_div_table div_hclk_cpu_t[] = {
+ #define IFLAGS ROCKCHIP_INVERTER_HIWORD_MASK
+ 
+ static struct rockchip_clk_branch rk3288_i2s_fracmux __initdata =
+-	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
++	MUX(SCLK_I2S_PRE, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(4), 8, 2, MFLAGS);
+ 
+ static struct rockchip_clk_branch rk3288_spdif_fracmux __initdata =
+@@ -338,10 +338,10 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 
+ 	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+ 
+-	COMPOSITE(0, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
++	COMPOSITE(SCLK_I2S_SRC, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(4), 15, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(4), 1, GFLAGS),
+-	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(SCLK_I2S_FRAC, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(8), 0,
+ 			RK3288_CLKGATE_CON(4), 2, GFLAGS,
+ 			&rk3288_i2s_fracmux),
+-- 
+2.9.3.728.g30b24b4.dirty
