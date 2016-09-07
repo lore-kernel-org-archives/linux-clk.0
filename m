@@ -1,108 +1,54 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>,  mark.rutland@arm.com,  devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,  johnyoun@synopsys.com,  will.deacon@arm.com,  mturquette@baylibre.com,  linux-usb@vger.kernel.org,  sboyd@codeaurora.org,  kishon@ti.com,  robh+dt@kernel.org,  catalin.marinas@arm.com,  carlo@caione.org,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  jbrunet@baylibre.com
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-	<m260q6jibf.fsf@baylibre.com>
-	<CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
-	<e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
-	<m2eg4ui0nl.fsf@baylibre.com>
-	<ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-	<CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-Date: Fri, 09 Sep 2016 08:33:13 -0700
-In-Reply-To: <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-	(Martin Blumenstingl's message of "Thu, 8 Sep 2016 23:48:53 +0200")
-Message-ID: <m2sht9gkau.fsf@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 6 Sep 2016 18:17:37 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] rockchip clock changes for 4.9 part 1
+Message-ID: <20160907011737.GU12510@codeaurora.org>
+References: <2115968.yvb8ppzjmL@phil>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2115968.yvb8ppzjmL@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+On 09/06, Heiko Stuebner wrote:
+> Hi Mike, Stephen,
+> 
+> please find below the pull request with main Rockchip-releated clock
+> changes for 4.9.
+> 
+> The signed tag should hopefully explain the contents sufficiently,
+> so if nothing stands out please pull.
+> 
+> On the matter of critical clocks, I'm still hoping for the handover type
+> to materialize soonish and am hoping of doing the conversion in one go,
+> instead of making everything critical now and then having to go through
+> the list yet again.
 
-> On Thu, Sep 8, 2016 at 10:53 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->> On 08/09/16 21:42, Kevin Hilman wrote:
->>>
->>> Ben Dooks <ben.dooks@codethink.co.uk> writes:
->>>
->>>> On 08/09/16 20:52, Martin Blumenstingl wrote:
->>>>>
->>>>> On Thu, Sep 8, 2016 at 9:35 PM, Kevin Hilman <khilman@baylibre.com>
->>>>> wrote:
->>>>>>>
->>>>>>> +     phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
->>>>>>> +     if (IS_ERR(phy)) {
->>>>>>> +             dev_err(&pdev->dev, "failed to create PHY\n");
->>>>>>> +             return PTR_ERR(phy);
->>>>>>> +     }
->>>>>>> +
->>>>>>> +     if (usb_reset_refcnt++ == 0) {
->>>>>>> +             ret = device_reset(&pdev->dev);
->>>>>>> +             if (ret) {
->>>>>>> +                     dev_err(&phy->dev, "Failed to reset USB PHY\n");
->>>>>>> +                     return ret;
->>>>>>> +             }
->>>>>>> +     }
->>>>>>
->>>>>>
->>>>>> The ref count + reset here looks like something that could/should be
->>>>>> handled in a runtime PM callback.
->>>>>
->>>>> Unfortunately that doesn't work (as Jerome found out) because both
->>>>> PHYs are sharing the same reset line.
->>>>> So if the second PHY would call device_reset then it would also reset
->>>>> the first PHY!
->>>>>
->>>>> There's a comment above the declaration of usb_reset_refcnt which
->>>>> tries to explain this:
->>>>> "The PHYs are sharing a common reset line -> we are only allowed to
->>>>> reset once for all PHYs."
->>>>> Maybe I should move this comment to the "if (usb_reset_refcnt++ == 0)
->>>>> {" line to make it easier to see?
->>>>>
->>>>
->>>> pm-runtime has refcounting in it. When one of the nodes turns on,
->>>> the pm-runtime will call your driver to say there is a user when
->>>> this first use turns up.
->>>>
->>>> If all the sub-phys turn off and drop their refcount then the driver
->>>> is called to say there are no more users and you can go to sleep.
->>>
->>>
->>> After a chat w/Martin on IRC, It turns out runtime PM wont help here.
->>>
->>> The reason is because there are physically two PHY devices[1].  Those 2
->>> devices will be treated independely by runtime PM, and have separate
->>> use-counting, which means doing what I proposed would cause a reset to
->>> happen when either device was probed.
->>>
->>> So, I think it's OK as it is.
->>
->>
->> Surely you can do pm_runtime_get/put on the phy's parent platform
->> device and do it that way?
-> could you please be more specific with that (do you mean pdev->dev.parent)?
-> so we would use pm_runtime_{get_sync,put} with the parent, while we
-> would still define the runtime_resume in our driver.
+Hmm... ok it sounds like we should look into finishing that off
+then. I can't seem to recall why we didn't merge the handoff part
+though so I'll have to go look back on that.
 
-You'd also need to do get/put on the children, but yes, that's what Ben
-is suggesting.
+> 
+> Thanks
+> Heiko
+> 
+> 
+> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+> 
+>   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.9-rockchip-clk1
+> 
+> for you to fetch changes up to 7b0f9e357ac838f640b10fb3db1ac35d9a5fa8de:
+> 
+>   clk: rockchip: use the dclk_vop_frac clock ids on rk3399 (2016-09-04 23:48:19 +0200)
 
-However, the problem with all of the solutions proposed (runtime PM ones
-included) is that we're forcing a board-specific design issue (2 devices
-sharing a reset line) into a driver that should not have any
-board-specific assumptions in it.
+Pulled, thanks.
 
-For example, if this driver is used on another platform where different
-PHYs have different reset lines, then one of them (the unlucky one who
-is not probed first) will never get reset.  So any form of per-device
-ref-counting is not a portable solution.
-
-I'm not sure yet how the reset framework is supposed to handle shared
-reset lines, but that needs some investigation.  I quick glance and it
-seems that reset controllers can have shared lines, so that should be
-investigated.
-
-Kevin
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
