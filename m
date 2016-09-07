@@ -1,90 +1,80 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 21 Sep 2016 10:03:10 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] clk: at91: move slow clock controller clocks to
- sckc.c
-Message-ID: <20160921080310.szxig3mzebq2oseo@piout.net>
-References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
- <20160920205833.19638-2-alexandre.belloni@free-electrons.com>
- <20160921000211.GH8319@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 7 Sep 2016 22:37:14 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 7/7] ARM: sun8i: Convert the A23 and A33 to the CCU
+Message-ID: <20160907203714.GG28134@lukather>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+ <20160906121837.7517-8-maxime.ripard@free-electrons.com>
+ <CAGb2v64r-vURPZNhPhKv2+7kByckdxW=fPH-9qAfBLxH992qWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160921000211.GH8319@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7SAgGoIHugoKhRwh"
+In-Reply-To: <CAGb2v64r-vURPZNhPhKv2+7kByckdxW=fPH-9qAfBLxH992qWQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/09/2016 at 17:02:11 -0700, Stephen Boyd wrote :
-> On 09/20, Alexandre Belloni wrote:
-> > Move all clocks related to the slow clock controller to sckc.c. This avoids
-> > extern definitions and allows to remove sckc.h
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > ---
-> 
-> Applied to clk-next
-> 
 
-Thanks for the fix!
+--7SAgGoIHugoKhRwh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> drivers/clk/at91/sckc.c:146:13:
-> warning: symbol 'of_at91sam9x5_clk_slow_osc_setup' was not
-> declared. Should it be static?
-> drivers/clk/at91/sckc.c:260:13:
-> warning: symbol 'of_at91sam9x5_clk_slow_rc_osc_setup' was not
-> declared. Should it be static?
-> drivers/clk/at91/sckc.c:359:13:
-> warning: symbol 'of_at91sam9x5_clk_slow_setup' was not declared.
-> Should it be static?
-> 
-> ----8<----
-> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-> index f6ed711af738..311956abf4aa 100644
-> --- a/drivers/clk/at91/sckc.c
-> +++ b/drivers/clk/at91/sckc.c
-> @@ -143,8 +143,8 @@ at91_clk_register_slow_osc(void __iomem *sckcr,
->  	return hw;
->  }
->  
-> -void __init of_at91sam9x5_clk_slow_osc_setup(struct device_node *np,
-> -					     void __iomem *sckcr)
-> +static void __init
-> +of_at91sam9x5_clk_slow_osc_setup(struct device_node *np, void __iomem *sckcr)
->  {
->  	struct clk_hw *hw;
->  	const char *parent_name;
-> @@ -257,8 +257,8 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
->  	return hw;
->  }
->  
-> -void __init of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np,
-> -						void __iomem *sckcr)
-> +static void __init
-> +of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np, void __iomem *sckcr)
->  {
->  	struct clk_hw *hw;
->  	u32 frequency = 0;
-> @@ -356,8 +356,8 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
->  	return hw;
->  }
->  
-> -void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
-> -					 void __iomem *sckcr)
-> +static void __init
-> +of_at91sam9x5_clk_slow_setup(struct device_node *np, void __iomem *sckcr)
->  {
->  	struct clk_hw *hw;
->  	const char *parent_names[2];
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Hi,
 
--- 
-Alexandre Belloni, Free Electrons
+On Tue, Sep 06, 2016 at 10:08:05PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Now that we have support for the CCU driver in sunxi-ng, convert the A23
+> > and A33 DTs to that driver.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+>=20
+> TODO note for later:
+>=20
+>     The usb_otg and usbphy node definitions can be moved to the common dt=
+si
+>     file, and there compatibles and regs (for usbphy) defined in the SoC
+>     dtsi.
+
+Yes, I noticed that too :)
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
+
+--7SAgGoIHugoKhRwh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0Hp6AAoJEBx+YmzsjxAghWYP/AxZaW88XQ1UPoaHs+F2iPS9
+O3/Lli+0rvKgWT4f1vtvM2k1I0WFafBmXNl6u/MzMTb8BlyoBHzp/JeIitiYivKC
+KzrIaRSLNgyhJDRd1RlsUk+pcc68bz7roYv3x9cERbtcY685H5nYlssUnytKzO36
+MxVv1TsTr+RhLLawo6OLDd/Wv/bUFPNw5rFG5xUSt4jSegEbLlikVKd59VMTj+1g
+2AufvfZ1A8RT0LH9SoZ9VDldDDC8kORfGxd9+jBMhJpz8j/tJ9NuwGpnqsxvrUFS
+Ts8Y+XQzr48uvCEwzItKtNrbnphkIuUcUcj710jNLGYaTsfwKIwiZwXasXGaW84Z
+J0IXg88QlDFM8qCfEjuccmtW6TU0saNaun2WOE3BeXCRb7X1ZuMdOBUHxoYBJfgT
+JVS4ydZfjEaD456yrbB9XG1ovaSQMOms7kut9dZuMYAo/7vJvjLKpsCcltkWKF6P
+nlE6rA0lIGrOkE1QNbMn1Dve1bN38SfVbnf2vgtMo1U06mexbQkvGh9FCOkXHCxz
+GtQ1wjHkCVvhLnmmVkhao+AJjvvsza7W8UJPYOY47ZiE5qeFWaf8tA4fIgb5fnY8
+dY8UctaHQoTkUtgtr6C+moKYp9s/7Tw/HKeYWgGyjMKvkVkCVIgpTQBD3J+H2drD
+/+mcFNmcOA/3FHoDwPLN
+=n14z
+-----END PGP SIGNATURE-----
+
+--7SAgGoIHugoKhRwh--
