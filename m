@@ -1,101 +1,53 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-Date: Mon, 19 Sep 2016 12:55:20 +0200
-Message-id: <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com>
-References: 
- <CGME20160919105545eucas1p1026e435bbaeb1f5c866a9abcdd051464@eucas1p1.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45901 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751093AbcIGEa7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2016 00:30:59 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <57CF9801.3080107@samsung.com>
+Date: Wed, 07 Sep 2016 13:30:57 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org
+Subject: Re: [PATCH v2 2/7] clk: samsung: exynos5410: Expose the peripheral DMA
+ gate clocks
+References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20160906120548epcas1p3b2313939979423df06127e02ee640fa4@epcas1p3.samsung.com>
+ <1473163496-17820-3-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1473163496-17820-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+On 2016년 09월 06일 21:04, Sylwester Nawrocki wrote:
+> These clocks are needed in order to use the PL330 peripheral
+> DMA controllers.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5410.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+> index 54ec486..cf6fb41 100644
+> --- a/drivers/clk/samsung/clk-exynos5410.c
+> +++ b/drivers/clk/samsung/clk-exynos5410.c
+> @@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+>  	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
+>  	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
+>  	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
+> +	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
+> +	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
+> 
+>  	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
+>  	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
 
-This patchset adds runtime PM support to common clock framework. This is an
-attempt to implement support for clock controllers, which belongs to a power
-domain. This approach works surprisingly well on Exynos 4412 and 5433 SoCs,
-what allowed us to solve various freeze/crash issues related to power
-management.
+Looks good to me.
 
-The main idea behind this patchset is to keep clock's controller power domain
-enabled every time when at least one of its clock is enabled or access to its
-registers is being made. Clock controller driver (clock provider) can
-supply a struct device pointer, which is the used by clock core for tracking and
-managing clock's controller runtime pm state. Each clk_prepare() operation will
-first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-will do pm_runtime_put() at the end.
-
-This runtime PM feature has been tested with Exynos4412 and Exynos5433 clocks
-drivers. Both have some clocks, which belongs to respective power domains and
-need special handling during power on/off procedures. Till now it wasn't handled
-at all, what caused various problems.
-
-Patches for exynos 4412 and 5433 clocks drivers change the way the clock
-provider is initialized. Instead of CLK_OF_DECLARE based initialization, a
-complete platform device driver infrastructure is being used. This is needed to
-let driver to use runtime pm feature and integrate with generic power domains.
-The side-effect of this change is a delay in clock provider registeration
-during system boot, so early initialized drivers might get EPROBEDEFER error
-when requesting their clocks. This is an issue for IOMMU drivers, so
-this patchset will be fully functional once the deferred probe for IOMMU
-will be merged.
-
-The side-effect of this patchset is the one can finally read
-/sys/kernel/debug/clk/clk_summary on all Exynos4412 boards without any freeze.
-
-If one wants to test this patchset (on Exynos4412 Trats2 device with FIMC-IS
-driver), I've provided a branch with all needed patches (fixes for Exynos,
-FIMC-IS driver and IOMMU deferred probe):
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.8-clocks-pm-v2
-
-Patches are based on vanilla v4.8-rc7 kernel.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-Changelog:
-v2:
-- Simplified clk_pm_runtime_get/put functions, removed workaround for devices
-  with disabled runtime pm. Such workaround is no longer needed since commit
-  4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
-  during system PM phases").
-- Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
-  call runtime pm functions. This solves problem with clocks, for which struct
-  device is already registered, but no runtime pm is enabled.
-- Extended commit messages according to Ulf suggestions.
-- Fixed some style issues pointed by Barlomiej.
-
-v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
-- initial version
-
-Marek Szyprowski (5):
-  clk: add support for runtime pm
-  clock: samsung: add support for runtime pm
-  clocks: exynos4x12: add runtime pm support for ISP clocks
-  ARM: dts: exynos: add support for ISP power domain to exynos4x12
-    clocks device
-  clocks: exynos5433: add runtime pm support
-
- .../devicetree/bindings/clock/exynos4-clock.txt    |  22 ++
- arch/arm/boot/dts/exynos4x12.dtsi                  |   5 +
- drivers/clk/clk.c                                  | 107 +++++-
- drivers/clk/samsung/clk-exynos4.c                  | 227 ++++++++----
- drivers/clk/samsung/clk-exynos5433.c               | 385 ++++++++++++++++-----
- drivers/clk/samsung/clk-pll.c                      |   4 +-
- drivers/clk/samsung/clk.c                          |  36 +-
- drivers/clk/samsung/clk.h                          |   7 +
- include/linux/clk-provider.h                       |   1 +
- 9 files changed, 632 insertions(+), 162 deletions(-)
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-1.9.1
+Best Regards,
+Chanwoo Choi
