@@ -1,63 +1,56 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.9 (take three)
-Date: Wed, 14 Sep 2016 09:59:46 +0200
-Message-Id: <1473839986-7934-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: John Keeping <john@metanate.com>
+Cc: linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: rockchip: add I2S internal clock IDs for rk3288
+Date: Wed, 07 Sep 2016 19:58:31 +0200
+Message-ID: <2003903.QOgKKA6m1b@phil>
+In-Reply-To: <20160907165330.14607-1-john@metanate.com>
+References: <20160907165330.14607-1-john@metanate.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Hi John,
 
-The following changes since commit 074969813350cda4c624a585489cc1b3550414bc:
+Am Mittwoch, 7. September 2016, 17:53:29 CEST schrieb John Keeping:
+> To minimize jitter on the I2S clocks, it is important that the
+> denominator in the fractional divider is much greater than the
+> numerator.  Add identifiers for these internal clocks so that the
+> specific clock topology and rates can be specified in the device tree.
 
-  clk: renesas: r8a7796: Add SDIF clocks (2016-08-23 10:30:41 +0200)
+The TRM states that the denominator must be bigger than 20. Is this the one 
+you found or did you find further constraints?
 
-are available in the git repository at:
+Did you try teaching the fractional divider to handle these constraints before 
+going this way?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.9-tag3
+Exporting the internal clocks really would be sort of plan d or e, after 
+handling this in the clock framework failed. Especially as i2s rates are 
+probably dependant on the media being handled (frequencies and such), so 
+setting fractional rates statically in the dts won't help you much in the 
+general case, as any new playback could trigger a clk_set_rate call anyway?
 
-for you to fetch changes up to 5fad71f58f4c236118358c98f65a7251e9c718f7:
 
-  clk: renesas: r8a7796: Add CMT clocks (2016-09-12 11:08:01 +0200)
+Heiko
 
-----------------------------------------------------------------
-clk: renesas: Updates for v4.9 (take three)
-
-  - External crystal selection for RZ/A1,
-  - CMT clocks for R-Car H3 and M3-W,
-  - RAVB and Thermal clocks for R-Car M3-W.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Bui Duc Phuc (2):
-      clk: renesas: r8a7795: Add CMT clocks
-      clk: renesas: r8a7796: Add CMT clocks
-
-Chris Brandt (1):
-      clk: renesas: rz: Select EXTAL vs USB clock
-
-Khiem Nguyen (1):
-      clk: renesas: r8a7796: Add THS/TSC clock
-
-Laurent Pinchart (1):
-      clk: renesas: r8a7796: Add RAVB clock
-
- drivers/clk/renesas/clk-rz.c           | 24 ++++++++++++++++++++++--
- drivers/clk/renesas/r8a7795-cpg-mssr.c |  4 ++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c |  6 ++++++
- 3 files changed, 32 insertions(+), 2 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> Signed-off-by: John Keeping <john@metanate.com>
+> ---
+>  include/dt-bindings/clock/rk3288-cru.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/rk3288-cru.h
+> b/include/dt-bindings/clock/rk3288-cru.h index 9a586e2d9c91..9526653383d9
+> 100644
+> --- a/include/dt-bindings/clock/rk3288-cru.h
+> +++ b/include/dt-bindings/clock/rk3288-cru.h
+> @@ -88,6 +88,9 @@
+>  #define SCLK_PVTM_GPU		124
+>  #define SCLK_CRYPTO		125
+>  #define SCLK_MIPIDSI_24M	126
+> +#define SCLK_I2S_PRE		127
+> +#define SCLK_I2S_SRC		128
+> +#define SCLK_I2S_FRAC		129
+> 
+>  #define SCLK_MAC		151
+>  #define SCLK_MACREF_OUT		152
