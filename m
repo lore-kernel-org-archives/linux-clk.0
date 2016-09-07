@@ -1,250 +1,157 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v6 3/3] clk: qcom: Add A53 clock driver
-Date: Wed,  7 Sep 2016 16:13:31 +0300
-Message-Id: <20160907131331.18638-4-georgi.djakov@linaro.org>
-In-Reply-To: <20160907131331.18638-1-georgi.djakov@linaro.org>
-References: <20160907131331.18638-1-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 7 Sep 2016 16:52:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Irina Tirdea <irina.tirdea@intel.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH v2] clk: x86: Add Atom PMC platform clocks
+Message-ID: <20160907235227.GB13062@codeaurora.org>
+References: <1473266524-14786-1-git-send-email-irina.tirdea@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473266524-14786-1-git-send-email-irina.tirdea@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver for the A53 Clock Controller. It is a hardware block that
-implements a combined mux and half integer divider functionality. It can
-choose between a fixed-rate clock or the dedicated A53 PLL. The source
-and the divider can be set both at the same time.
+On 09/07, Irina Tirdea wrote:
+> @@ -152,6 +155,17 @@
+>  #define	SLEEP_TYPE_S5		0x1C00
+>  #define	SLEEP_ENABLE		0x2000
+>  
+> +struct pmc_clk {
+> +	const char *name;
+> +	unsigned long freq;
+> +	const char *parent_name;
+> +};
+> +
+> +struct pmc_clk_data {
+> +	void __iomem *base;
+> +	const struct pmc_clk *clks;
+> +};
 
-This is required for enabling CPU frequency scaling on platforms like
-MSM8916.
+Can you please put these structures in
+include/linux/platform_data/ with some new file? That way we
+don't need to have any architecture specific configuration to
+test build the clk driver and we can drop the asm include fro
+mthe clk driver too.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,a53cc.txt       |  23 +++
- drivers/clk/qcom/Kconfig                           |   8 ++
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
- 4 files changed, 187 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
- create mode 100644 drivers/clk/qcom/a53cc.c
+> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+> index 0478138..cbdc8cc 100644
+> --- a/drivers/clk/x86/Makefile
+> +++ b/drivers/clk/x86/Makefile
+> @@ -1,2 +1,3 @@
+>  clk-x86-lpss-objs		:= clk-lpt.o
+>  obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
+> +obj-$(CONFIG_PMC_ATOM)		+= clk-byt-plt.o
+> diff --git a/drivers/clk/x86/clk-byt-plt.c b/drivers/clk/x86/clk-byt-plt.c
+> new file mode 100644
+> index 0000000..ec98bdf
+> --- /dev/null
+> +++ b/drivers/clk/x86/clk-byt-plt.c
+> @@ -0,0 +1,387 @@
+> +/*
+> + * Intel Atom platform clocks driver for BayTrail and CherryTrail SoC.
+> + *
+> + * Copyright (C) 2016, Intel Corporation
+> + * Author: Irina Tirdea <irina.tirdea@intel.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/clkdev.h>
+> +
+> +#include <asm/pmc_atom.h>
+> +
+> +#define PLT_CLK_NAME_BASE	"pmc_plt_clk_"
+> +#define PLT_CLK_DRIVER_NAME	"clk-byt-plt"
+> +
+> +#define PMC_CLK_CTL_SIZE	4
+> +#define PMC_CLK_NUM		6
+> +#define PMC_MASK_CLK_CTL	GENMASK(1, 0)
+> +#define PMC_MASK_CLK_FREQ	BIT(2)
+> +#define PMC_CLK_CTL_GATED_ON_D3	0x0
+> +#define PMC_CLK_CTL_FORCE_ON	0x1
+> +#define PMC_CLK_CTL_FORCE_OFF	0x2
+> +#define PMC_CLK_CTL_RESERVED	0x3
+> +#define PMC_CLK_FREQ_XTAL	0x0	/* 25 MHz */
+> +#define PMC_CLK_FREQ_PLL	0x4	/* 19.2 MHz */
+> +
+> +struct clk_plt_fixed {
+> +	struct clk *clk;
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-new file mode 100644
-index 000000000000..3a1e8e6675ab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-@@ -0,0 +1,23 @@
-+Qualcomm A53 CPU Clock Controller Binding
-+------------------------------------------------
-+The A53 CPU Clock Controller is hardware, which provides a combined
-+mux and divider functionality for the CPU clocks. It can choose between
-+a fixed rate clock and the dedicated A53 PLL.
-+
-+Required properties :
-+- compatible : shall contain:
-+
-+			"qcom,a53cc"
-+
-+- reg : shall contain base register location and length
-+	of the APCS region
-+- #clock-cells : shall contain 1
-+
-+Example:
-+
-+	apcs: syscon@b011000 {
-+		compatible = "qcom,a53cc", "syscon";
-+		reg = <0x0b011000 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a889f0b14b54..59dfcdc340e4 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -159,3 +159,11 @@ config QCOM_A53PLL
- 	  support for CPU frequencies above 1GHz.
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as MSM8916.
-+
-+config QCOM_A53CC
-+	bool "A53 Clock Controller"
-+	depends on COMMON_CLK_QCOM && QCOM_A53PLL
-+	help
-+	  Support for the A53 clock controller on some Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8916.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index d3e142e577b0..980a5d729aa4 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -30,4 +30,5 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53CC) += a53cc.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-diff --git a/drivers/clk/qcom/a53cc.c b/drivers/clk/qcom/a53cc.c
-new file mode 100644
-index 000000000000..4d20db9da407
---- /dev/null
-+++ b/drivers/clk/qcom/a53cc.c
-@@ -0,0 +1,155 @@
-+/*
-+ * Copyright (c) 2016, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/cpu.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-regmap-mux-div.h"
-+
-+enum {
-+	P_GPLL0,
-+	P_A53PLL,
-+};
-+
-+static const struct parent_map gpll0_a53cc_map[] = {
-+	{ P_GPLL0, 4 },
-+	{ P_A53PLL, 5 },
-+};
-+
-+static const char * const gpll0_a53cc[] = {
-+	"gpll0_vote",
-+	"a53pll",
-+};
-+
-+static const struct regmap_config a53cc_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x1000,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static const struct of_device_id qcom_a53cc_match_table[] = {
-+	{ .compatible = "qcom,a53cc" },
-+	{ }
-+};
-+
-+/*
-+ * We use the notifier function for switching to a temporary safe configuration
-+ * (mux and divider), while the a53 pll is reconfigured.
-+ */
-+static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			     void *data)
-+{
-+	int ret = 0;
-+	struct clk_regmap_mux_div *md = container_of(nb,
-+						     struct clk_regmap_mux_div,
-+						     clk_nb);
-+
-+	if (event == PRE_RATE_CHANGE)
-+		ret = __mux_div_set_src_div(md, md->safe_src, md->safe_div);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int qcom_a53cc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_regmap_mux_div *a53cc;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct clk *pclk;
-+	struct regmap *regmap;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
-+	if (!a53cc)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	a53cc->reg_offset = 0x50,
-+	a53cc->hid_width = 5,
-+	a53cc->hid_shift = 0,
-+	a53cc->src_width = 3,
-+	a53cc->src_shift = 8,
-+	a53cc->safe_src = 4,
-+	a53cc->safe_div = 3,
-+	a53cc->parent_map = gpll0_a53cc_map,
-+
-+	init.name = "a53mux",
-+	init.parent_names = gpll0_a53cc,
-+	init.num_parents = 2,
-+	init.ops = &clk_regmap_mux_div_ops,
-+	init.flags = CLK_SET_RATE_PARENT;
-+	a53cc->clkr.hw.init = &init;
-+
-+	pclk = __clk_lookup(gpll0_a53cc[1]);
-+	if (!pclk)
-+		return -EPROBE_DEFER;
-+
-+	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
-+	ret = clk_notifier_register(pclk, &a53cc->clk_nb);
-+	if (ret) {
-+		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-+		return ret;
-+	}
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
-+		goto err;
-+	}
-+
-+	a53cc->clkr.regmap = regmap;
-+
-+	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-+				     &a53cc->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		goto err;
-+	}
-+
-+	return 0;
-+err:
-+	clk_notifier_unregister(pclk, &a53cc->clk_nb);
-+	return ret;
-+}
-+
-+static struct platform_driver qcom_a53cc_driver = {
-+	.probe = qcom_a53cc_probe,
-+	.driver = {
-+		.name = "qcom-a53cc",
-+		.of_match_table = qcom_a53cc_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_a53cc_driver);
+Hopefully this can be a clk_hw pointer instead.
+
+> +	struct clk_lookup *lookup;
+> +};
+> +
+[..]
+> +
+> +static void plt_clk_reg_update(struct clk_plt *clk, u32 mask, u32 val)
+> +{
+> +	u32 orig, tmp;
+> +	unsigned long flags = 0;
+> +
+> +	spin_lock_irqsave(&clk->lock, flags);
+> +
+> +	orig = readl(clk->reg);
+> +
+> +	tmp = orig & ~mask;
+> +	tmp |= val & mask;
+> +
+> +	if (tmp == orig)
+> +		goto out;
+> +
+> +	writel(tmp, clk->reg);
+
+Or just
+
+	if (tmp != orig)
+		writel(..)
+
+> +
+> +out:
+> +	spin_unlock_irqrestore(&clk->lock, flags);
+> +}
+> +
+[..]
+> +
+> +static struct clk_plt_fixed *plt_clk_register_fixed_rate(struct platform_device *pdev,
+> +						 const char *name,
+> +						 const char *parent_name,
+> +						 unsigned long fixed_rate)
+> +{
+> +	struct clk_plt_fixed *pclk;
+> +	int ret = 0;
+> +
+> +	pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
+> +	if (!pclk)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pclk->clk = clk_register_fixed_rate(&pdev->dev, name, parent_name,
+
+clk_hw_register_fixed_rate?
+
+> +					    0, fixed_rate);
+> +	if (IS_ERR(pclk->clk)) {
+> +		ret = PTR_ERR(pclk->clk);
+> +		return ERR_PTR(ret);
+
+Could be simplified to return ERR_CAST(pclk->clk);
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
