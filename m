@@ -1,65 +1,30 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-To: =?UTF-8?B?WWFuZ2JvIEx1?= <yangbo.lu@nxp.com>
-Subject: =?UTF-8?B?UmU6IFt2MTIsIDcvOF0gYmFzZTogc29jOiBpbnRyb2R1Y2Ugc29jX2Rldmlj?=
- =?UTF-8?B?ZV9tYXRjaCgpIGludGVyZmFjZQ==?=
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Date: Wed, 21 Sep 2016 10:56:14 +0300
-Message-ID: <1474444574.270880035@f136.i.mail.ru>
-In-Reply-To: <1474441040-11946-8-git-send-email-yangbo.lu@nxp.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
- <1474441040-11946-8-git-send-email-yangbo.lu@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Cc: =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>, ulf.hansson@linaro.org,
- =?UTF-8?B?WGlhb2JvIFhpZQ==?= <xiaobo.xie@nxp.com>,
- =?UTF-8?B?TWluZ2h1YW4gTGlhbg==?= <minghuan.lian@nxp.com>,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- =?UTF-8?B?UWlhbmcgWmhhbw==?= <qiang.zhao@nxp.com>,
- =?UTF-8?B?UnVzc2VsbCBLaW5n?= <linux@arm.linux.org.uk>,
- =?UTF-8?B?Qmh1cGVzaCBTaGFybWE=?= <bhupesh.sharma@freescale.com>,
- =?UTF-8?B?Sm9lcmcgUm9lZGVs?= <joro@8bytes.org>,
- =?UTF-8?B?Sm9jaGVuIEZyaWVkcmljaA==?= <jochen@scram.de>,
- =?UTF-8?B?Q2xhdWRpdSBNYW5vaWw=?= <claudiu.manoil@freescale.com>,
- devicetree@vger.kernel.org, =?UTF-8?B?QXJuZCBCZXJnbWFubg==?= <arnd@arndb.de>,
- =?UTF-8?B?U2NvdHQgV29vZA==?= <oss@buserror.net>,
- =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>,
- =?UTF-8?B?U2FudG9zaCBTaGlsaW1rYXI=?= <ssantosh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?TGVvIExp?= <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- =?UTF-8?B?S3VtYXIgR2FsYQ==?= <galak@codeaurora.org>,
- linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20160906121837.7517-6-maxime.ripard@free-electrons.com>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com> <20160906121837.7517-6-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 7 Sep 2016 15:06:14 +0800
+Message-ID: <CAGb2v64Sviufr4j20W_GL6N87WSstsfnBqkU-4hovMigbHuhjA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] clk: sunxi-ng: Add A33 CCU support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-PtCh0YDQtdC00LAsIDIxINGB0LXQvdGC0Y/QsdGA0Y8gMjAxNiwgOTo1NyArMDM6MDAg0L7RgiBZ
-YW5nYm8gTHUgPHlhbmdiby5sdUBueHAuY29tPjoKPgo+RnJvbTogQXJuZCBCZXJnbWFubiA8IGFy
-bmRAYXJuZGIuZGUgPgo+Cj5XZSBrZWVwIHJ1bm5pbmcgaW50byBjYXNlcyB3aGVyZSBkZXZpY2Ug
-ZHJpdmVycyB3YW50IHRvIGtub3cgdGhlIGV4YWN0Cj52ZXJzaW9uIG9mIHRoZSBhIFNvQyB0aGV5
-IGFyZSBjdXJyZW50bHkgcnVubmluZyBvbi4gSW4gdGhlIHBhc3QsIHRoaXMgaGFzCj51c3VhbGx5
-IGJlZW4gZG9uZSB0aHJvdWdoIGEgdmVuZG9yIHNwZWNpZmljIEFQSSB0aGF0IGNhbiBiZSBjYWxs
-ZWQgYnkgYQo+ZHJpdmVyLCBvciBieSBkaXJlY3RseSBhY2Nlc3Npbmcgc29tZSBraW5kIG9mIHZl
-cnNpb24gcmVnaXN0ZXIgdGhhdCBpcwo+bm90IHBhcnQgb2YgdGhlIGRldmljZSBpdHNlbGYgYnV0
-IHRoYXQgYmVsb25ncyB0byBhIGdsb2JhbCByZWdpc3RlciBhcmVhCj5vZiB0aGUgY2hpcC4KLi4u
-Cj4rY29uc3Qgc3RydWN0IHNvY19kZXZpY2VfYXR0cmlidXRlICpzb2NfZGV2aWNlX21hdGNoKAo+
-K2NvbnN0IHN0cnVjdCBzb2NfZGV2aWNlX2F0dHJpYnV0ZSAqbWF0Y2hlcykKPit7Cj4raW50IHJl
-dCA9IDA7Cj4rCj4raWYgKCFtYXRjaGVzKQo+K3JldHVybiBOVUxMOwo+Kwo+K3doaWxlICghcmV0
-KSB7Cj4raWYgKCEobWF0Y2hlcy0+bWFjaGluZSB8fCBtYXRjaGVzLT5mYW1pbHkgfHwKPisgICAg
-ICBtYXRjaGVzLT5yZXZpc2lvbiB8fCBtYXRjaGVzLT5zb2NfaWQpKQo+K2JyZWFrOwo+K3JldCA9
-IGJ1c19mb3JfZWFjaF9kZXYoJnNvY19idXNfdHlwZSwgTlVMTCwgKHZvaWQgKiltYXRjaGVzLAo+
-KyAgICAgICBzb2NfZGV2aWNlX21hdGNoX29uZSk7Cj4raWYgKCFyZXQpCj4rbWF0Y2hlcysrOwoK
-U28sIHdoYXQgaGFwcGVuIGlmIG5leHQgIm1hdGNoZXMiIChhZnRlciBpbmNyZW1lbnQpIHdpbGwg
-YmUgTlVMTD8KCkkgdGhpbmsgeW91IHNob3VsZCB1c2Ugd2hpbGUobWF0Y2hlcykgYXQgdGhlIHN0
-YXJ0IG9mIHRoaXMgcHJvY2VkdXJlLgoKLS0tCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> This commit introduces the clocks found in the Allwinner A33 CCU.
+>
+> Since this SoC is very similar to the A23, and we share a significant share
+> of the DTSI, the clock IDs that are going to be used will also be shared
+> with the A23, hence the name of the various header files.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
