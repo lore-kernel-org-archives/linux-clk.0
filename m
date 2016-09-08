@@ -1,113 +1,39 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v3 3/7] clk: qcom: ipq4019: Added the nodes for pcnoc
-Date: Wed, 21 Sep 2016 17:51:48 +0530
-Message-Id: <1474460512-31994-4-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
-References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk: sunxi-ng: Add hardware dependency
+To: Jean Delvare <jdelvare@suse.de>, linux-clk@vger.kernel.org
+References: <20160908173651.769b6829@endymion>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <178b95fe-e479-0274-0f81-1284a7eb4a81@codeaurora.org>
+Date: Thu, 8 Sep 2016 12:32:07 -0700
+MIME-Version: 1.0
+In-Reply-To: <20160908173651.769b6829@endymion>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The current ipq4019 clock driver does not have the node for
-PCNOC so this patch adds and registers the PCNOC clock nodes.
-This PCNOC clock is critical and should not be turned off so
-setting CRITICAL flag also.
+On 09/08/2016 08:36 AM, Jean Delvare wrote:
+> The sunxi-ng clock driver is useless for other architectures.
+>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-4.8-rc5.orig/drivers/clk/sunxi-ng/Kconfig	2016-09-04 23:31:46.000000000 +0200
+> +++ linux-4.8-rc5/drivers/clk/sunxi-ng/Kconfig	2016-09-08 17:29:46.179508283 +0200
+> @@ -1,6 +1,6 @@
+>  config SUNXI_CCU
+>  	bool "Clock support for Allwinner SoCs"
+> -	default ARCH_SUNXI
+> +	depends on ARCH_SUNXI || COMPILE_TEST
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq4019.c               | 39 ++++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq4019.h |  1 +
- 2 files changed, 40 insertions(+)
+Please leave the default there and just add the depends and compile test
+part.
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 74f7ba8..211c68c 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1550,6 +1550,43 @@ static struct clk_pll_div gcc_fepllwcss5g_clk = {
- 	.div_table = fepllwcss_clk_div_table
- };
- 
-+static const struct freq_tbl ftbl_gcc_pcnoc_ahb_clk[] = {
-+	F(48000000,  P_XO,	 1, 0, 0),
-+	F(100000000, P_FEPLL200, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gcc_pcnoc_ahb_clk_src = {
-+	.cmd_rcgr = 0x21024,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_200_500_map,
-+	.freq_tbl = ftbl_gcc_pcnoc_ahb_clk,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gcc_pcnoc_ahb_clk_src",
-+		.parent_names = gcc_xo_200_500,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_branch pcnoc_clk_src = {
-+	.halt_reg = 0x21030,
-+	.clkr = {
-+		.enable_reg = 0x21030,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcnoc_clk_src",
-+			.parent_names = (const char *[]){
-+				"gcc_pcnoc_ahb_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+			.flags = CLK_SET_RATE_PARENT |
-+				CLK_IS_CRITICAL,
-+		},
-+	},
-+};
-+
- static struct clk_regmap *gcc_ipq4019_clocks[] = {
- 	[AUDIO_CLK_SRC] = &audio_clk_src.clkr,
- 	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
-@@ -1620,6 +1657,8 @@ static struct clk_regmap *gcc_ipq4019_clocks[] = {
- 	[GCC_FEPLL_WCSS2G_CLK] = &gcc_fepllwcss2g_clk.cdiv.clkr,
- 	[GCC_FEPLL_WCSS5G_CLK] = &gcc_fepllwcss5g_clk.cdiv.clkr,
- 	[GCC_APPS_CPU_PLLDIV_CLK] = &gcc_apps_cpu_plldiv_clk.cdiv.clkr,
-+	[GCC_PCNOC_AHB_CLK_SRC] = &gcc_pcnoc_ahb_clk_src.clkr,
-+	[GCC_PCNOC_AHB_CLK] = &pcnoc_clk_src.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq4019_resets[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq4019.h b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
-index 921565d..3b98498 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq4019.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
-@@ -91,6 +91,7 @@
- #define GCC_FEPLL_WCSS2G_CLK				72
- #define GCC_FEPLL_WCSS5G_CLK				73
- #define GCC_APPS_CPU_PLLDIV_CLK				74
-+#define GCC_PCNOC_AHB_CLK_SRC				75
- 
- #define WIFI0_CPU_INIT_RESET				0
- #define WIFI0_RADIO_SRIF_RESET				1
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
