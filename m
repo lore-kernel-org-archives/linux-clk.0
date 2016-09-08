@@ -1,142 +1,27 @@
-Return-Path: <gnaygnil@gmail.com>
-Return-Path: <gnaygnil@gmail.com>
-Date: Tue, 20 Sep 2016 23:54:56 +0800
-From: Yang Ling <gnaygnil@gmail.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, keguang.zhang@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-mips@linux-mips.org, gnaygnil@gmail.com
-Subject: [PATCH v3] CLK: Add Loongson1C clock support
-Message-ID: <20160920155439.GA26095@ubuntu>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160908094843.14710-8-maxime.ripard@free-electrons.com>
+References: <20160908094843.14710-1-maxime.ripard@free-electrons.com> <20160908094843.14710-8-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 8 Sep 2016 21:35:00 +0800
+Message-ID: <CAGb2v67KCDbv8KjdudR6Z0p34QNgXvC-Md-CJfdX8ABLXRFegA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] clk: sunxi-ng: Add A23 CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock support to Loongson1C SoC.
+On Thu, Sep 8, 2016 at 5:48 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Add support for the clock unit found in the A23. Due to the similarities
+> with the A33, it also shares its clock IDs to allow sharing the DTSI.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Signed-off-by: Yang Ling <gnaygnil@gmail.com>
-
----
-V3:
- clk: loongson1c: Migrate to clk_hw based OF and registration APIs.
----
-V2:
- Use loongson1 generic clock interface.
----
- drivers/clk/loongson1/Makefile         |  1 +
- drivers/clk/loongson1/clk-loongson1c.c | 97 ++++++++++++++++++++++++++++++++++
- 2 files changed, 98 insertions(+)
- create mode 100644 drivers/clk/loongson1/clk-loongson1c.c
-
-diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
-index 5a162a1..b7f6a16 100644
---- a/drivers/clk/loongson1/Makefile
-+++ b/drivers/clk/loongson1/Makefile
-@@ -1,2 +1,3 @@
- obj-y				+= clk.o
- obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
-+obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
-diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-new file mode 100644
-index 0000000..3466f73
---- /dev/null
-+++ b/drivers/clk/loongson1/clk-loongson1c.c
-@@ -0,0 +1,97 @@
-+/*
-+ * Copyright (c) 2016 Yang Ling <gnaygnil@gmail.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+
-+#include <loongson1.h>
-+#include "clk.h"
-+
-+#define OSC		(24 * 1000000)
-+#define DIV_APB		1
-+
-+static DEFINE_SPINLOCK(_lock);
-+
-+static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	u32 pll, rate;
-+
-+	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
-+	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-+	rate *= OSC;
-+	rate >>= 2;
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops ls1x_pll_clk_ops = {
-+	.recalc_rate = ls1x_pll_recalc_rate,
-+};
-+
-+static const struct clk_div_table ahb_div_table[] = {
-+	[0] = { .val = 0, .div = 2 },
-+	[1] = { .val = 1, .div = 4 },
-+	[2] = { .val = 2, .div = 3 },
-+	[3] = { .val = 3, .div = 3 },
-+};
-+
-+void __init ls1x_clk_init(void)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
-+	clk_hw_register_clkdev(hw, "osc_clk", NULL);
-+
-+	/* clock derived from 24 MHz OSC clk */
-+	hw = clk_hw_register_pll(NULL, "pll_clk", "osc_clk",
-+				&ls1x_pll_clk_ops, 0);
-+	clk_hw_register_clkdev(hw, "pll_clk", NULL);
-+
-+	hw = clk_hw_register_divider(NULL, "cpu_clk_div", "pll_clk",
-+				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
-+				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
-+				   CLK_DIVIDER_ONE_BASED |
-+				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
-+	clk_hw_register_clkdev(hw, "cpu_clk_div", NULL);
-+	hw = clk_hw_register_fixed_factor(NULL, "cpu_clk", "cpu_clk_div",
-+					0, 1, 1);
-+	clk_hw_register_clkdev(hw, "cpu_clk", NULL);
-+
-+	hw = clk_hw_register_divider(NULL, "dc_clk_div", "pll_clk",
-+				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
-+				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
-+	clk_hw_register_clkdev(hw, "dc_clk_div", NULL);
-+	hw = clk_hw_register_fixed_factor(NULL, "dc_clk", "dc_clk_div",
-+					0, 1, 1);
-+	clk_hw_register_clkdev(hw, "dc_clk", NULL);
-+
-+	hw = clk_hw_register_divider_table(NULL, "ahb_clk_div", "cpu_clk_div",
-+				0, LS1X_CLK_PLL_FREQ, DIV_DDR_SHIFT,
-+				DIV_DDR_WIDTH, CLK_DIVIDER_ALLOW_ZERO,
-+				ahb_div_table, &_lock);
-+	clk_hw_register_clkdev(hw, "ahb_clk_div", NULL);
-+	hw = clk_hw_register_fixed_factor(NULL, "ahb_clk", "ahb_clk_div",
-+					0, 1, 1);
-+	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
-+	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
-+
-+	/* clock derived from AHB clk */
-+	hw = clk_hw_register_fixed_factor(NULL, "apb_clk", "ahb_clk", 0, 1,
-+					DIV_APB);
-+	clk_hw_register_clkdev(hw, "apb_clk", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-ac97", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-i2c", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-nand", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-pwmtimer", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-spi", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-wdt", NULL);
-+	clk_hw_register_clkdev(hw, "serial8250", NULL);
-+}
--- 
-1.9.1
+Acked-by: Chen-Yu Tsai <wens@csie.org>
