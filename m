@@ -1,41 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 23 Sep 2016 14:44:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marcin Wojtas <mw@semihalf.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	sebastian.hesselbarth@gmail.com, andrew@lunn.ch,
-	jason@lakedaemon.net, thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com, nadavh@marvell.com,
-	alior@marvell.com, tn@semihalf.com, jaz@semihalf.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: mvebu: dynamically allocate resources in
- Armada CP110 system controller
-Message-ID: <20160923214450.GE21232@codeaurora.org>
-References: <1474448759-24482-1-git-send-email-mw@semihalf.com>
- <1474448759-24482-3-git-send-email-mw@semihalf.com>
+Return-Path: <khilman@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474448759-24482-3-git-send-email-mw@semihalf.com>
+In-Reply-To: <20160907221403.GA13062@codeaurora.org>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-2-martin.blumenstingl@googlemail.com>
+ <20160907003355.GQ12510@codeaurora.org> <CAFBinCBwcVkXi9wVt1FGaEFdK+fsxz-r12ao89HwqozqLGtd7A@mail.gmail.com>
+ <20160907221403.GA13062@codeaurora.org>
+From: Kevin Hilman <khilman@baylibre.com>
+Date: Wed, 7 Sep 2016 19:24:50 -0700
+Message-ID: <CAOi56cVD-ijetJ0rn=D2DNCVYaGVV7EfdfsSdQQB-Z1p5QSXUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] clk: gxbb: expose USB clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-amlogic <linux-amlogic@lists.infradead.org>,
+	=?UTF-8?B?SsOpcsO0bWUgQnJ1bmV0?= <jbrunet@baylibre.com>,
+	johnyoun@synopsys.com, Kishon Vijay Abraham I <kishon@ti.com>, Carlo Caione <carlo@caione.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21, Marcin Wojtas wrote:
-> Original commit, which added support for Armada CP110 system controller
-> used global variables for storing all clock information. It worked
-> fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
-> was introduced, the data got overwritten and corrupted.
-> 
-> This patch fixes the issue by allocating resources dynamically in the
-> driver probe and storing it as platform drvdata.
-> 
-> Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
-> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> CC: <stable@vger.kernel.org>
-> ---
+On Wed, Sep 7, 2016 at 3:14 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/07, Martin Blumenstingl wrote:
+>> On Wed, Sep 7, 2016 at 2:33 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 09/04, Martin Blumenstingl wrote:
+>> >> USB0_DDR_BRIDGE and USB1_DDR_BRIDGE1 are needed for the related
+>> >> dwc2 usb controller. USB, USB0 and USB1 are needed for the PHYs.
+>> >> Expose these clocks to DT and comment out in clk driver.
+>> >>
+>> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> >> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> >
+>> > Is authorship correct on this patch? Did Jerome author it
+>> > instead?
+>> We (Jerome and I) have both worked on this patch, that's why you have
+>> two signed-off-by's.
+>> Or is this simply about the order (author = from address should be
+>> listed first)?
+>
+> Yes. Typically author is listed first in the signed-off-by chain.
+>
 
-Applied to clk-next
+And if you use git-format-patch + git-send-email, there would also be a
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+From: Jerome Brunet <jbrunet@baylibre.com>
+
+at the beginning so that when it gets applied by the maintainer,
+authorship is correct.
+
+Kevin
