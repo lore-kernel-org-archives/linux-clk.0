@@ -1,83 +1,44 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, geert+renesas@glider.be, horms+renesas@verge.net.au, ulf.hansson@linaro.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: clk-mstp: Free memory and Unmap region obtained by kzalloc and of_iomap
-Date: Tue, 20 Sep 2016 15:49:03 +0300
-Message-ID: <21075147.gpvqaLID3A@avalon>
-In-Reply-To: <1474375159-16568-1-git-send-email-arvind.yadav.cs@gmail.com>
-References: <1474375159-16568-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <jdelvare@suse.de>
+Date: Thu, 8 Sep 2016 21:52:16 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai
+ <wens@csie.org>
+Subject: Re: [PATCH] clk: sunxi-ng: Add hardware dependency
+Message-ID: <20160908215216.09eca6c6@endymion>
+In-Reply-To: <178b95fe-e479-0274-0f81-1284a7eb4a81@codeaurora.org>
+References: <20160908173651.769b6829@endymion>
+	<178b95fe-e479-0274-0f81-1284a7eb4a81@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Arvind,
-
-Thank you for the patch.
-
-On Tuesday 20 Sep 2016 18:09:19 Arvind Yadav wrote:
-> From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+On Thu, 8 Sep 2016 12:32:07 -0700, Stephen Boyd wrote:
+> On 09/08/2016 08:36 AM, Jean Delvare wrote:
+> > The sunxi-ng clock driver is useless for other architectures.
+> >
+> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > ---
+> >  drivers/clk/sunxi-ng/Kconfig |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > --- linux-4.8-rc5.orig/drivers/clk/sunxi-ng/Kconfig	2016-09-04 23:31:46.000000000 +0200
+> > +++ linux-4.8-rc5/drivers/clk/sunxi-ng/Kconfig	2016-09-08 17:29:46.179508283 +0200
+> > @@ -1,6 +1,6 @@
+> >  config SUNXI_CCU
+> >  	bool "Clock support for Allwinner SoCs"
+> > -	default ARCH_SUNXI
+> > +	depends on ARCH_SUNXI || COMPILE_TEST
 > 
-> Free memory and memory mapping , if cpg_mstp_clocks_init is not successful.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/clk/renesas/clk-mstp.c |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 5093a25..19e73c8 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -179,14 +179,20 @@ static void __init cpg_mstp_clocks_init(struct
-> device_node *np) group->data.clks = clks;
-> 
->  	group->smstpcr = of_iomap(np, 0);
-> -	group->mstpsr = of_iomap(np, 1);
-> -
->  	if (group->smstpcr == NULL) {
->  		pr_err("%s: failed to remap SMSTPCR\n", __func__);
->  		kfree(group);
->  		kfree(clks);
->  		return;
->  	}
-> +	group->mstpsr = of_iomap(np, 1);
-> +	if (group->mstpsr == NULL) {
-> +		pr_err("%s: failed to remap MSTPCR\n", __func__);
-> +		iounmap(group->smstpcr);
-> +		kfree(group);
-> +		kfree(clks);
-> +		return;
+> Please leave the default there and just add the depends and compile test
+> part.
 
-If you really want to do this (and I don't think that's worth it, an error 
-here will render the system completely unbootable anyway, I'd rather remove 
-the kfree() calls), you can test both group->smstpcr and group->mstpsr in a 
-single go, with a single error path. You can then call iounmap() on both 
-variables in the error path, either unconditionally if iounmap() is safe to be 
-called on NULL pointers (to be checked, I haven't verified that personally), 
-or conditionally based on the pointer value.
+Yes, makes sense sorry. Will send v2 shortly.
 
-> +	}
-> 
->  	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
->  		clks[i] = ERR_PTR(-ENOENT);
-> @@ -236,6 +242,10 @@ static void __init cpg_mstp_clocks_init(struct
-> device_node *np) } else {
->  			pr_err("%s: failed to register %s %s clock (%ld)\n",
->  			       __func__, np->name, name, 
-PTR_ERR(clks[clkidx]));
-> +			iounmap(group->smstpcr);
-> +			iounmap(group->mstpsr);
-> +			kfree(group);
-> +			kfree(clks);
-
-This is wrong, a single clock failing to be registered is not a fatal error, 
-and should not free resources used by all other clocks in the group.
-
->  		}
->  	}
-
+Thanks for the review,
 -- 
-Regards,
-
-Laurent Pinchart
+Jean Delvare
+SUSE L3 Support
