@@ -1,155 +1,154 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v11, 8/8] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Tue, 6 Sep 2016 16:28:23 +0800
-Message-ID: <1473150503-9550-9-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
- Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
- xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
- Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
- linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2 2/5] clk: at91: Add sama5d4 sckc support
+Date: Thu,  8 Sep 2016 16:51:43 +0200
+Message-Id: <20160908145146.20422-3-alexandre.belloni@free-electrons.com>
+In-Reply-To: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
+References: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
-Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
-This patch adds the GUTS driver support for eSDHC driver to match SoC.
-And fix host version to avoid that incorrect version numbers break down
-the ADMA data transfer.
+Starting with sama5d4, the crystal oscillator is always enabled at startup
+and the SCKC doesn't have an OSC32EN bit anymore.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Scott Wood <oss@buserror.net>
----
-Changes for v2:
-	- Got SVR through iomap instead of dts
-Changes for v3:
-	- Managed GUTS through syscon instead of iomap in eSDHC driver
-Changes for v4:
-	- Got SVR by GUTS driver instead of SYSCON
-Changes for v5:
-	- Changed to get SVR through API fsl_guts_get_svr()
-	- Combined patch 4, patch 5 and patch 6 into one
-Changes for v6:
-	- Added 'Acked-by: Ulf Hansson'
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- Changed to use soc_device_match
----
- drivers/mmc/host/Kconfig          |  1 +
- drivers/mmc/host/sdhci-of-esdhc.c | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+Add support for that new controller.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 5274f50..a1135a9 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -144,6 +144,7 @@ config MMC_SDHCI_OF_ESDHC
- 	depends on MMC_SDHCI_PLTFM
- 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select FSL_GUTS
- 	help
- 	  This selects the Freescale eSDHC controller support.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ .../devicetree/bindings/clock/at91-clock.txt       |  3 +-
+ drivers/clk/at91/sckc.c                            | 95 ++++++++++++++++++++++
+ 2 files changed, 97 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+index 181bc8ac4e3a..5f3ad65daf69 100644
+--- a/Documentation/devicetree/bindings/clock/at91-clock.txt
++++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+@@ -6,7 +6,8 @@ This binding uses the common clock binding[1].
  
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index fb71c86..0a31aa5 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -18,6 +18,7 @@
- #include <linux/of.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-+#include <linux/sys_soc.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
-@@ -28,6 +29,7 @@
- struct sdhci_esdhc {
- 	u8 vendor_ver;
- 	u8 spec_ver;
-+	bool quirk_incorrect_hostver;
- };
+ Required properties:
+ - compatible : shall be one of the following:
+-	"atmel,at91sam9x5-sckc":
++	"atmel,at91sam9x5-sckc" or
++	"atmel,sama5d4-sckc":
+ 		at91 SCKC (Slow Clock Controller)
+ 		This node contains the slow clock definitions.
  
- /**
-@@ -73,6 +75,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
- static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 				     int spec_reg, u32 value)
- {
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
- 	u16 ret;
- 	int shift = (spec_reg & 0x2) * 8;
+diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+index f1b00b1d7132..04059ea761c2 100644
+--- a/drivers/clk/at91/sckc.c
++++ b/drivers/clk/at91/sckc.c
+@@ -36,6 +36,15 @@ struct clk_slow_osc {
  
-@@ -80,6 +84,12 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 		ret = value & 0xffff;
- 	else
- 		ret = (value >> shift) & 0xffff;
-+	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
-+	 * vendor version and spec version information.
-+	 */
-+	if ((spec_reg == SDHCI_HOST_VERSION) &&
-+	    (esdhc->quirk_incorrect_hostver))
-+		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
- 	return ret;
- }
+ #define to_clk_slow_osc(hw) container_of(hw, struct clk_slow_osc, hw)
  
-@@ -558,6 +568,12 @@ static const struct sdhci_pltfm_data sdhci_esdhc_le_pdata = {
- 	.ops = &sdhci_esdhc_le_ops,
- };
- 
-+static struct soc_device_attribute soc_incorrect_hostver[] = {
-+	{ .soc_id = "*name:T4240*", .revision = "1.0", },
-+	{ .soc_id = "*name:T4240*", .revision = "2.0", },
-+	{ },
++struct clk_sama5d4_slow_osc {
++	struct clk_hw hw;
++	void __iomem *sckcr;
++	unsigned long startup_usec;
++	bool prepared;
 +};
 +
- static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host;
-@@ -571,6 +587,10 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
- 	esdhc->spec_ver = host_ver & SDHCI_SPEC_VER_MASK;
-+	if (soc_device_match(soc_incorrect_hostver))
-+		esdhc->quirk_incorrect_hostver = true;
-+	else
-+		esdhc->quirk_incorrect_hostver = false;
++#define to_clk_sama5d4_slow_osc(hw) container_of(hw, struct clk_sama5d4_slow_osc, hw)
++
+ struct clk_slow_rc_osc {
+ 	struct clk_hw hw;
+ 	void __iomem *sckcr;
+@@ -405,3 +414,89 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
  }
- 
- static int sdhci_esdhc_probe(struct platform_device *pdev)
+ CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
+ 	       of_at91sam9x5_sckc_setup);
++
++static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
++{
++	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
++
++	if (osc->prepared)
++		return 0;
++
++	/*
++	 * Assume that if it has already been selected (for example by the
++	 * bootloader), enough time has aready passed.
++	 */
++	if ((readl(osc->sckcr) & AT91_SCKC_OSCSEL)) {
++		osc->prepared = true;
++		return 0;
++	}
++
++	usleep_range(osc->startup_usec, osc->startup_usec + 1);
++	osc->prepared = true;
++
++	return 0;
++}
++
++static int clk_sama5d4_slow_osc_is_prepared(struct clk_hw *hw)
++{
++	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
++
++	return osc->prepared;
++}
++
++static const struct clk_ops sama5d4_slow_osc_ops = {
++	.prepare = clk_sama5d4_slow_osc_prepare,
++	.is_prepared = clk_sama5d4_slow_osc_is_prepared,
++};
++
++static void __init of_sama5d4_sckc_setup(struct device_node *np)
++{
++	void __iomem *regbase = of_iomap(np, 0);
++	struct clk *clk = NULL;
++	struct clk_sama5d4_slow_osc *osc;
++	struct clk_init_data init;
++	const char *xtal_name;
++	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
++	bool bypass;
++
++	if (!regbase)
++		return;
++
++	xtal_name = of_clk_get_parent_name(np, 0);
++
++	bypass = of_property_read_bool(np, "atmel,osc-bypass");
++
++	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
++	if (!osc)
++		return;
++
++	init.name = parent_names[1];
++	init.ops = &sama5d4_slow_osc_ops;
++	init.parent_names = &xtal_name;
++	init.num_parents = 1;
++	init.flags = CLK_IGNORE_UNUSED;
++
++	osc->hw.init = &init;
++	osc->sckcr = regbase;
++	osc->startup_usec = 1200000;
++
++	if (bypass)
++		writel((readl(regbase) | AT91_SCKC_OSC32BYP), regbase);
++
++	clk = clk_register(NULL, &osc->hw);
++	if (IS_ERR(clk))
++		kfree(osc);
++
++	clk = at91_clk_register_slow_rc_osc(regbase, parent_names[0], 32768,
++					    250000000, 75);
++	if (IS_ERR(clk))
++		return;
++
++	clk = at91_clk_register_sam9x5_slow(regbase, "slowck", parent_names, 2);
++	if (IS_ERR(clk))
++		return;
++
++	of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(sama5d4_clk_sckc, "atmel,sama5d4-sckc",
++	       of_sama5d4_sckc_setup);
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.9.3
