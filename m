@@ -1,74 +1,105 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 2/6] clk: sunxi-ng: mux: Add mux table macro
-Date: Thu,  1 Sep 2016 16:16:13 +0200
-Message-Id: <20160901141617.9777-3-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160901141617.9777-1-maxime.ripard@free-electrons.com>
-References: <20160901141617.9777-1-maxime.ripard@free-electrons.com>
+Return-Path: <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, kishon@ti.com
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+ <m260q6jibf.fsf@baylibre.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
+ mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
+ robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Message-ID: <7d631565-287c-ab38-c152-d65b5ace1e0e@codethink.co.uk>
+Date: Thu, 8 Sep 2016 20:40:58 +0100
+MIME-Version: 1.0
+In-Reply-To: <m260q6jibf.fsf@baylibre.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a new macro to declare muxes based on a table and a gate.
+On 08/09/16 20:35, Kevin Hilman wrote:
+> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+>
+>> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>
+> I tested this on meson-gxbb-p200 with USB host and a mass storage
+> device.
+>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+>
+> A minor question/comment below, for you and for Kishon...
+>
+> [...]
+>
+>> +static int phy_meson_usb2_probe(struct platform_device *pdev)
+>> +{
+>> +	struct phy_meson_usb2_priv *priv;
+>> +	struct resource *res;
+>> +	struct phy *phy;
+>> +	struct phy_provider *phy_provider;
+>> +	int ret;
+>> +
+>> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	priv->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(priv->regs))
+>> +		return PTR_ERR(priv->regs);
+>> +
+>> +	priv->clk_usb_general = devm_clk_get(&pdev->dev, "usb_general");
+>> +	if (IS_ERR(priv->clk_usb_general))
+>> +		return PTR_ERR(priv->clk_usb_general);
+>> +
+>> +	priv->clk_usb = devm_clk_get(&pdev->dev, "usb");
+>> +	if (IS_ERR(priv->clk_usb))
+>> +		return PTR_ERR(priv->clk_usb);
+>> +
+>> +	priv->dr_mode = of_usb_get_dr_mode_by_phy(pdev->dev.of_node, -1);
+>> +	if (priv->dr_mode == USB_DR_MODE_UNKNOWN) {
+>> +		dev_err(&pdev->dev,
+>> +			"missing dual role configuration of the controller\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
+>> +	if (IS_ERR(phy)) {
+>> +		dev_err(&pdev->dev, "failed to create PHY\n");
+>> +		return PTR_ERR(phy);
+>> +	}
+>> +
+>> +	if (usb_reset_refcnt++ == 0) {
+>> +		ret = device_reset(&pdev->dev);
+>> +		if (ret) {
+>> +			dev_err(&phy->dev, "Failed to reset USB PHY\n");
+>> +			return ret;
+>> +		}
+>> +	}
+>
+> The ref count + reset here looks like something that could/should be
+> handled in a runtime PM callback.
+>
+> IOW, there should be a pm_runtime_get_sync() here, and in the
+> ->runtime_resume() callback, the device_reset() would be called.
+> Runtime PM does the refcounting, and only calls ->runtime_resume() on
+> the 0 -> 1 transition.
+>
+> This isn't a big deal for now, so I'll let Kishon decide, but using
+> runtime PM from the start will help enabling other PM features later.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mux.h | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+I agree, pm_runtime would probably be the best place to handle >1
+device with shared items such as reset.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index f5123a1a6603..47aba3a48245 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -43,9 +43,12 @@ struct ccu_mux {
- 	struct ccu_common	common;
- };
- 
--#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
-+#define SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, _table,	\
-+				     _reg, _shift, _width, _gate,	\
-+				     _flags)				\
- 	struct ccu_mux _struct = {					\
--		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
-+		.enable	= _gate,					\
-+		.mux	= _SUNXI_CCU_MUX_TABLE(_shift, _width, _table),	\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-@@ -57,17 +60,14 @@ struct ccu_mux {
- 
- #define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
- 				_shift, _width, _gate, _flags)		\
--	struct ccu_mux _struct = {					\
--		.enable	= _gate,					\
--		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
--		.common	= {						\
--			.reg		= _reg,				\
--			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
--							      _parents, \
--							      &ccu_mux_ops, \
--							      _flags),	\
--		}							\
--	}
-+	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
-+				      _reg, _shift, _width, _gate,	\
-+				      _flags)
-+
-+#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width,	\
-+		      _flags)						\
-+	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
-+				      _reg, _shift, _width, 0, _flags)
- 
- static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
- {
+The version I wrote, I simply enabled the clocks and reset the device
+when probed to work around the shared reset.
+
+
 -- 
-2.9.2
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
