@@ -1,103 +1,53 @@
-Return-Path: <Paul.Burton@imgtec.com>
-Subject: Re: [PATCH 24/26] dt-bindings: Document img,boston-clock binding
-To: Rob Herring <robh@kernel.org>
-References: <20160826153725.11629-1-paul.burton@imgtec.com>
- <20160826153725.11629-25-paul.burton@imgtec.com>
- <20160826174446.GX19826@codeaurora.org>
- <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
- <20160902125433.GA4066@rob-hp-laptop>
-CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-mips@linux-mips.org>, Ralf
- Baechle <ralf@linux-mips.org>, <devicetree@vger.kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-From: Paul Burton <paul.burton@imgtec.com>
-Message-ID: <4646ff43-93bf-57d7-d01e-aa6132ba9fb0@imgtec.com>
-Date: Fri, 2 Sep 2016 14:33:34 +0100
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.8
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Mike Turquette <mturquette@baylibre.com>
+References: <20160907193335.GA4283@lukather>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <b03d92eb-ac69-506d-d05a-e28bca5ca284@codeaurora.org>
+Date: Thu, 8 Sep 2016 12:56:53 -0700
 MIME-Version: 1.0
-In-Reply-To: <20160902125433.GA4066@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20160907193335.GA4283@lukather>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/09/16 13:54, Rob Herring wrote:
-> On Tue, Aug 30, 2016 at 04:53:01PM +0100, Paul Burton wrote:
->> On 26/08/16 18:44, Stephen Boyd wrote:
->>> On 08/26, Paul Burton wrote:
->>>> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
->>>> new file mode 100644
->>>> index 0000000..c01ea60
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
->>>> @@ -0,0 +1,27 @@
->>>> +Binding for Imagination Technologies MIPS Boston clock sources.
->>>> +
->>>> +This binding uses the common clock binding[1].
->>>> +
->>>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->>>> +
->>>> +Required properties:
->>>> +- compatible : Should be "img,boston-clock".
->>>> +- #clock-cells : Should be set to 1.
->>>> +  Values available for clock consumers can be found in the header file:
->>>> +    <dt-bindings/clock/boston-clock.h>
->>>> +- regmap : Phandle to the Boston platform register system controller.
->>>> +  This should contain a phandle to the system controller node covering the
->>>> +  platform registers provided by the Boston board.
->>>> +
->>>> +Example:
->>>> +
->>>> +	clk_boston: clock {
->>>> +		compatible = "img,boston-clock";
->>>> +		#clock-cells = <1>;
->>>> +		regmap = <&plat_regs>;
->>>
->>> Isn't syscon more standard than regmap as the property name? Is
->>> there a binding for the plat_regs device? Is there any reason the
->>> clks can't be populated in that syscon driver?
->>
->> Hi Stephen,
->>
->> The plat_regs device doesn't have a custom driver, it simply makes use
->> of the generic "syscon" driver which can provide a regmap.
->>
->> It would be possible to register the clocks from a register for the
->> plat_regs device, but I don't think it would make much sense. The
->> platform registers in question are essentially just a convenient place
->> where various bits of information about the system are exposed,
->> including the clock frequencies but also other bits & pieces like
->> connectivity of PCIe controllers or I/O coherence units, the RTL
->> revision of the CPU or the wrapper RTL that runs on this FPGA-based
->> board, a register that allows for resetting the board, etc. It's not a
->> single piece of hardware, more a dumping ground for miscellanea. So in
->> my opinion using the syscon approach works best here, and drivers for
->> well defined pieces of hardware or functionality can reference that
->> syscon to retrieve the regmap.
-> 
-> That is all quite common for any SoC. Whether it's 2 nodes or 2 drivers 
-> are independent questions. You can easily have 1 node and 2 drivers. The 
-> decision factor is really how many registers we're dealing with. We 
-> don't want to end up with a node per register or register field. That's 
-> too fine grained.
+On 09/07/2016 12:33 PM, Maxime Ripard wrote:
+> Hi Mike, Stephen,
+>
+> Please pull the following tag for the 4.8 release.
+>
+> Thanks!
+> Maxime
+>
+> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+>
+>   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-fixes-for-4.8
+>
+> for you to fetch changes up to 6654674cb7b5953ac04fc9d7f5f511676ae97e29:
+>
+>   clk: sunxi-ng: Fix wrong reset register offsets (2016-08-29 08:38:55 +0200)
+>
+> ----------------------------------------------------------------
+> Clock Fixes for the Allwinner SoCs, 4.8 Edition
+>
+> The usual bunch of fixes to the our clock drivers, mostly targetted to the
+> brand new sunxi-ng drivers.
 
-Absolutely, I don't think we disagree there.
+Pulled, thanks. But,
 
->> As for whether "syscon" is a more standard property name than "regmap",
->> both seem to be used based on a grep of
->> Documentation/devicetree/bindings/. I believe I picked up use of
->> "regmap" from the generic syscon-poweroff & syscon-reboot drivers, which
->> both use "regmap" as a property name.
-> 
-> syscon is much more common.
-> 
-> Avoid the phandle altogether and make this a child node.
+>
+> ----------------------------------------------------------------
+> Chen-Yu Tsai (2):
+>       clk: sunxi-ng: Fix inverted test condition in ccu_helper_wait_for_lock
 
-I could do that, but it would feel rather odd to describe the clock
-hardware as a child of a bunch of miscellaneous registers that happen to
-expose some information about those clocks. Is that really what you
-prefer? I think as-is the DT is a better description of the hardware.
+we already had this one in clk-fixes. Git figured it out of course.
 
-Thanks,
-    Paul
-
-> 
-> Rob
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
