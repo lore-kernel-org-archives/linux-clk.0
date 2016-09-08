@@ -1,58 +1,44 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2] clk: bcm2835: Clamp the PLL's requested rate to the hardware limits.
-Date: Fri, 30 Sep 2016 10:07:27 -0700
-Message-Id: <20160930170727.32544-1-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:57316 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757681AbcIHJab (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2016 05:30:31 -0400
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
+Date: Thu,  8 Sep 2016 11:30:21 +0200
+Message-Id: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fixes setting low-resolution video modes on HDMI.  Now the PLLH_PIX
-divider adjusts itself until the PLLH is within bounds.
+This fixes
+	[    0.000000] i.MX clk 82: register failed with -17
+because the name is duplicated.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/clk/imx/clk-imx35.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7a7970865c2d..69a1849d140c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -499,8 +499,12 @@ static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
- static long bcm2835_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				   unsigned long *parent_rate)
- {
-+	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
-+	const struct bcm2835_pll_data *data = pll->data;
- 	u32 ndiv, fdiv;
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index b0978d3b83e2..d302ed3b8225 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -115,7 +115,7 @@ static void __init _mx35_clocks_init(void)
+ 	}
  
-+	rate = clamp(rate, data->min_rate, data->max_rate);
-+
- 	bcm2835_pll_choose_ndiv_and_fdiv(rate, *parent_rate, &ndiv, &fdiv);
+ 	clk[ckih] = imx_clk_fixed("ckih", 24000000);
+-	clk[ckil] = imx_clk_fixed("ckih", 32768);
++	clk[ckil] = imx_clk_fixed("ckil", 32768);
+ 	clk[mpll] = imx_clk_pllv1(IMX_PLLV1_IMX35, "mpll", "ckih", base + MX35_CCM_MPCTL);
+ 	clk[ppll] = imx_clk_pllv1(IMX_PLLV1_IMX35, "ppll", "ckih", base + MX35_CCM_PPCTL);
  
- 	return bcm2835_pll_rate_from_divisors(*parent_rate, ndiv, fdiv, 1);
-@@ -605,13 +609,6 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	u32 ana[4];
- 	int i;
- 
--	if (rate < data->min_rate || rate > data->max_rate) {
--		dev_err(cprman->dev, "%s: rate out of spec: %lu vs (%lu, %lu)\n",
--			clk_hw_get_name(hw), rate,
--			data->min_rate, data->max_rate);
--		return -EINVAL;
--	}
--
- 	if (rate > data->max_fb_rate) {
- 		use_fb_prediv = true;
- 		rate /= 2;
 -- 
-2.9.3
+2.8.1
+
