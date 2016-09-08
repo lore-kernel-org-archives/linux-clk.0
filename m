@@ -1,157 +1,305 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH 1/4] Document: DT: Add bindings for mediatek MT6797 SoC
- Platform
-To: Mars Cheng <mars.cheng@mediatek.com>
-References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
- <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
- <57D15B6C.6080305@arm.com> <1473343735.1896.15.camel@mtkswgap22>
- <57D17667.1020201@arm.com> <1473645103.27628.6.camel@mtkswgap22>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>,
- James Liao <jamesjj.liao@mediatek.com>, linux-clk@vger.kernel.org,
- CC Hwang <cc.hwang@mediatek.com>, Loda Choui <loda.chou@mediatek.com>,
- Miles Chen <miles.chen@mediatek.com>, Scott Shu <scott.shu@mediatek.com>,
- Jades Shih <jades.shih@mediatek.com>,
- Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
- <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- wsd_upstream@mediatek.com
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <57D65FE6.5040706@arm.com>
-Date: Mon, 12 Sep 2016 08:57:26 +0100
-MIME-Version: 1.0
-In-Reply-To: <1473645103.27628.6.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:32922 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966432AbcIHO4n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2016 10:56:43 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: cw00.choi@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: Add support for EPLL on exynos5410
+Date: Thu, 08 Sep 2016 16:56:14 +0200
+Message-id: <1473346574-538-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/09/16 02:51, Mars Cheng wrote:
-> On Thu, 2016-09-08 at 15:32 +0100, Marc Zyngier wrote:
->> On 08/09/16 15:08, Mars Cheng wrote:
->>> Hi Marc
->>>
->>> Thanks for your review. the response inlined.
->>>
->>> On Thu, 2016-09-08 at 13:37 +0100, Marc Zyngier wrote:
->>>> On 08/09/16 11:49, Mars Cheng wrote:
->>>>> This adds DT binding documentation for Mediatek MT6797.
->>>>>
->>>>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
->>>>> ---
->>> [...]
->>>>
->>>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
->>>>> index 9d1d72c..3d97eb4 100644
->>>>> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
->>>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
->>>>> @@ -8,6 +8,7 @@ Required properties:
->>>>>  	"mediatek,mt8173-sysirq"
->>>>>  	"mediatek,mt8135-sysirq"
->>>>>  	"mediatek,mt8127-sysirq"
->>>>> +	"mediatek,mt6797-sysirq"
->>>>>  	"mediatek,mt6795-sysirq"
->>>>>  	"mediatek,mt6755-sysirq"
->>>>>  	"mediatek,mt6592-sysirq"
->>>>> @@ -21,7 +22,8 @@ Required properties:
->>>>>  - interrupt-parent: phandle of irq parent for sysirq. The parent must
->>>>>    use the same interrupt-cells format as GIC.
->>>>>  - reg: Physical base address of the intpol registers and length of memory
->>>>> -  mapped region.
->>>>> +  mapped region. Could be up to 2 registers here at max. Ex: 6797 needs 2 reg,
->>>>> +  others need 1.
->>>>
->>>> Two things:
->>>>
->>>> - Please make this a separate patch that can be reviewed independently
->>>> of the rest of the changes, which are just adding new compatible
->>>> identifiers.
->>>
->>> Will fix this in the next patch set.
->>>
->>>>
->>>> - Why can't you simply expose it as a separate controller? Looking at
->>>> the way you're changing the corresponding driver, it looks like you're
->>>> simply adding an extra base/size. If you simply had a base for the
->>>> corresponding GIC interrupts, you could handle as many region as you
->>>> want, and have a more generic driver.
->>>>
->>>
->>> May I know the meaning of "simply expose it as a separate controller"?
->>
->> At the moment, you have something like this:
->>
->> 	sysirq: intpol-controller@10200620 {
->> 		compatible = "mediatek,mt6755-sysirq",
->> 			     "mediatek,mt6577-sysirq";
->> 		interrupt-controller;
->> 		#interrupt-cells = <3>;
->> 		interrupt-parent = <&gic>;
->> 		reg = <0 0x10200620 0 0x20>;
->> 	};
->>
->> I suggest that, when you have a second base (which is effectively
->> another controller), you add:
->>
->> 	sysirq2: intpol-controller@10201620 {
->> 		compatible = "mediatek,mt6755-sysirq",
->> 			     "mediatek,mt6577-sysirq";
->> 		interrupt-controller;
->> 		#interrupt-cells = <3>;
->> 		interrupt-parent = <&gic>;
->> 		irq-base = <32>;
->> 		reg = <0 0x10201620 0 0x20>;
->> 	};
->>
->> Where irq-base is the first SPI this is connected to (the lack of
->> property indicates implies that irq-base is 0). This becomes a very
->> simple change in the driver.
->>
->>> Or you might like to suggest me any similar driver as a reference? I
->>> will examine it. Current design is based on the fact: We expect
->>> irq-mtk-sysirq needs the optional second base but the third one will not
->>> happen.
->>>
->>> If we really need more than 2 bases, we can figure out a more generic
->>> driver at the time, right?
->>
->> I'd rather fix the driver and the binding to do the right thing once and
->> for all. In my experience, you will need to add a third base in six
->> months, and a fourth soon after. I'd rather either support an arbitrary
->> number of bases, or a single one per controller (and have multiple
->> controllers).
-> Hi Marc
-> 
-> Thanks for suggesting this approach I never thought.
-> 
-> However, I will modify the irq-mtk-sysirq driver to handle as many bases
-> as we specify in current node in the next patch set. Will not use the
-> second interrupt node in DT. The main reason is to simplify the writing
-> of DT. Or we need to know which interrupt node to be specified for other
-> nodes. As you said that might be the third or fourth bases, that will
-> complicate the writing of DT more.
-> 
-> Would you think this is OK?
+This patch adds code instantiating the EPLL, which is used as the
+audio subsystem's root clock.
+The requirement to specify the external root clock in clocks property
+is documented.  Having the consumer 'clocks' property ensures proper
+initialization order by explicitly specifying dependencies in DT.
+It prevents situations when the SoC's clock controller driver has
+initialized, the external oscillator clock is not yet registered
+and setting clock frequencies through assigned-clock-rates property
+doesn't work properly due to unknown external oscillator frequency.
 
-There is still one thing that is not completely obvious to me: How do
-you map a new set of registers to the corresponding base GIC SPI?
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v2:
+ - corrected exynos5410_pll2550x_24mhz_tbl table entry for
+   fout=400MHz, corrected PLL2650X_M_MASK mask value.
 
-At the moment, this is an implicit SPI0 (hwirq 32 on the GIC). I don't
-think assuming that all the banks will forever be contiguous is a safe
-bet, so introducing some form of sparseness support seems beneficial.
+Changes since v1:
+ - rephrased paragraph of the DT binding describing the external
+   XXTI clock.
+---
+ .../devicetree/bindings/clock/exynos5410-clock.txt |  21 +++--
+ drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
+ drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.h                      |   1 +
+ 4 files changed, 144 insertions(+), 10 deletions(-)
 
-As for simplifying the DT, I'm not convinced either. You already deal
-with two interrupt controllers (the GIC and this intpol), which means
-you need to locally annotate some DT nodes to point to the GIC. With my
-scheme, you keep annotating more (or use the extended interrupt
-specifier notation), but that doesn't feel like a massive burden. How
-often do you write a DT from scratch?
-
-Anyway, this is up to you. My only requirements is about being able to
-support an arbitrary numbers of register sets, with arbitrary SPI bases.
-
-Thanks,
-
-	M.
+diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+index aeab635..4527de3 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+@@ -12,24 +12,29 @@ Required Properties:
+ 
+ - #clock-cells: should be 1.
+ 
++- clocks: should contain an entry specifying the root clock from external
++  oscillator supplied through XXTI or XusbXTI pin.  This clock should be
++  defined using standard clock bindings with "fin_pll" clock-output-name.
++  That clock is being passed internally to the 9 PLLs.
++
+ All available clocks are defined as preprocessor macros in
+ dt-bindings/clock/exynos5410.h header and can be used in device
+ tree sources.
+ 
+-External clock:
+-
+-There is clock that is generated outside the SoC. It
+-is expected that it is defined using standard clock bindings
+-with following clock-output-name:
+-
+- - "fin_pll" - PLL input clock from XXTI
+-
+ Example 1: An example of a clock controller node is listed below.
+ 
++	fin_pll: xxti {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "fin_pll";
++		#clock-cells = <0>;
++	};
++
+ 	clock: clock-controller@0x10010000 {
+ 		compatible = "samsung,exynos5410-clock";
+ 		reg = <0x10010000 0x30000>;
+ 		#clock-cells = <1>;
++		clocks = <&fin_pll>;
+ 	};
+ 
+ Example 2: UART controller node that consumes the clock generated by the clock
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index eefed92..fc471a4 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -14,6 +14,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/clk.h>
+ 
+ #include "clk.h"
+ 
+@@ -21,6 +22,8 @@
+ #define APLL_CON0               0x100
+ #define CPLL_LOCK               0x10020
+ #define CPLL_CON0               0x10120
++#define EPLL_LOCK               0x10040
++#define EPLL_CON0               0x10130
+ #define MPLL_LOCK               0x4000
+ #define MPLL_CON0               0x4100
+ #define BPLL_LOCK               0x20010
+@@ -58,7 +61,7 @@
+ 
+ /* list of PLLs */
+ enum exynos5410_plls {
+-	apll, cpll, mpll,
++	apll, cpll, epll, mpll,
+ 	bpll, kpll,
+ 	nr_plls                 /* number of PLLs */
+ };
+@@ -67,6 +70,7 @@ enum exynos5410_plls {
+ PNAME(apll_p)		= { "fin_pll", "fout_apll", };
+ PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
+ PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
++PNAME(epll_p)		= { "fin_pll", "fout_epll" };
+ PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
+ PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
+ 
+@@ -95,6 +99,8 @@ static const struct samsung_mux_clock exynos5410_mux_clks[] __initconst = {
+ 	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
+ 	MUX(0, "sclk_bpll_muxed", bpll_user_p, SRC_TOP2, 24, 1),
+ 
++	MUX(0, "sclk_epll", epll_p, SRC_TOP2, 12, 1),
++
+ 	MUX(0, "sclk_cpll", cpll_p, SRC_TOP2, 8, 1),
+ 
+ 	MUX(0, "sclk_mpll_bpll", mpll_bpll_p, SRC_TOP1, 20, 1),
+@@ -219,11 +225,26 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+ 	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
+ };
+ 
+-static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
++static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
++	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
++	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
++	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
++	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
++	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
++	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
++	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
++	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
++	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
++	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
++};
++
++static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+ 	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
+ 		CPLL_CON0, NULL),
++	[epll] = PLL(pll_2650x, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
++		EPLL_CON0, NULL),
+ 	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
+ 		MPLL_CON0, NULL),
+ 	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+@@ -247,6 +268,11 @@ static const struct samsung_cmu_info cmu __initconst = {
+ /* register exynos5410 clocks */
+ static void __init exynos5410_clk_init(struct device_node *np)
+ {
++	struct clk *xxti = of_clk_get(np, 0);
++
++	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
++		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
++
+ 	samsung_cmu_register_one(np, &cmu);
+ 
+ 	pr_debug("Exynos5410: clock setup completed.\n");
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index b5ab055..9617825 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1018,6 +1018,102 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
+ };
+ 
+ /*
++ * PLL2650x Clock Type
++ */
++
++/* Maximum lock time can be 3000 * PDIV cycles */
++#define PLL2650X_LOCK_FACTOR		3000
++
++#define PLL2650X_M_MASK			0x1ff
++#define PLL2650X_P_MASK			0x3f
++#define PLL2650X_S_MASK			0x7
++#define PLL2650X_K_MASK			0xffff
++#define PLL2650X_LOCK_STAT_MASK		0x1
++#define PLL2650X_M_SHIFT		16
++#define PLL2650X_P_SHIFT		8
++#define PLL2650X_S_SHIFT		0
++#define PLL2650X_K_SHIFT		0
++#define PLL2650X_LOCK_STAT_SHIFT	29
++#define PLL2650X_PLL_ENABLE_SHIFT	31
++
++static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u64 fout = parent_rate;
++	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
++	s16 kdiv;
++
++	pll_con0 = readl_relaxed(pll->con_reg);
++	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
++	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
++	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
++
++	pll_con1 = readl_relaxed(pll->con_reg + 4);
++	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
++
++	fout *= (mdiv << 16) + kdiv;
++	do_div(fout, (pdiv << sdiv));
++	fout >>= 16;
++
++	return (unsigned long)fout;
++}
++
++static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	const struct samsung_pll_rate_table *rate;
++	u32 con0, con1;
++
++	/* Get required rate settings from table */
++	rate = samsung_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, clk_hw_get_name(hw));
++		return -EINVAL;
++	}
++
++	con0 = readl_relaxed(pll->con_reg);
++	con1 = readl_relaxed(pll->con_reg + 4);
++
++	/* Set PLL lock time. */
++	writel_relaxed(rate->pdiv * PLL2650X_LOCK_FACTOR, pll->lock_reg);
++
++	/* Change PLL PMS values */
++	con0 &= ~((PLL2650X_M_MASK << PLL2650X_M_SHIFT) |
++			(PLL2650X_P_MASK << PLL2650X_P_SHIFT) |
++			(PLL2650X_S_MASK << PLL2650X_S_SHIFT));
++	con0 |= (rate->mdiv << PLL2650X_M_SHIFT) |
++			(rate->pdiv << PLL2650X_P_SHIFT) |
++			(rate->sdiv << PLL2650X_S_SHIFT);
++	con0 |= (1 << PLL2650X_PLL_ENABLE_SHIFT);
++	writel_relaxed(con0, pll->con_reg);
++
++	con1 &= ~(PLL2650X_K_MASK << PLL2650X_K_SHIFT);
++	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
++	writel_relaxed(con1, pll->con_reg + 4);
++
++	do {
++		cpu_relax();
++		con0 = readl_relaxed(pll->con_reg);
++	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
++			<< PLL2650X_LOCK_STAT_SHIFT)));
++
++	return 0;
++}
++
++static const struct clk_ops samsung_pll2650x_clk_ops = {
++	.recalc_rate = samsung_pll2650x_recalc_rate,
++	.round_rate = samsung_pll_round_rate,
++	.set_rate = samsung_pll2650x_set_rate,
++};
++
++static const struct clk_ops samsung_pll2650x_clk_min_ops = {
++	.recalc_rate = samsung_pll2650x_recalc_rate,
++};
++
++/*
+  * PLL2650XX Clock Type
+  */
+ 
+@@ -1227,6 +1323,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		else
+ 			init.ops = &samsung_pll2550xx_clk_ops;
+ 		break;
++	case pll_2650x:
++		if (!pll->rate_table)
++			init.ops = &samsung_pll2650x_clk_min_ops;
++		else
++			init.ops = &samsung_pll2650x_clk_ops;
++		break;
+ 	case pll_2650xx:
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll2650xx_clk_min_ops;
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index df4ad8a..a1ca023 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -33,6 +33,7 @@ enum samsung_pll_type {
+ 	pll_s3c2440_mpll,
+ 	pll_2550x,
+ 	pll_2550xx,
++	pll_2650x,
+ 	pll_2650xx,
+ 	pll_1450x,
+ 	pll_1451x,
 -- 
-Jazz is not dead. It just smells funny...
+1.9.1
+
