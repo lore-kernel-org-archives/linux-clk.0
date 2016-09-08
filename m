@@ -1,88 +1,82 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
 	linux-clk@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH 4/4] ARM: sa11x0/pxa: get rid of get_clock_tick_rate
-Date: Mon, 19 Sep 2016 21:12:15 +0200
-Message-Id: <1474312335-20997-5-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 1/8] clk: sunxi-ng: div: Add mux table macros
+Date: Thu,  8 Sep 2016 11:48:36 +0200
+Message-Id: <20160908094843.14710-2-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
+References: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The last user of this function is gone, so remove it. The clock API
-should now be used to get clock rates.
+Add some macros to ease the declaration of clocks that are using them.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/mach-pxa/generic.c                  | 15 ---------------
- arch/arm/mach-pxa/include/mach/hardware.h    |  2 --
- arch/arm/mach-sa1100/include/mach/hardware.h |  4 ----
- 3 files changed, 21 deletions(-)
+ drivers/clk/sunxi-ng/ccu_div.h | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
-index 2a9297991d74..cb73a9723d0e 100644
---- a/arch/arm/mach-pxa/generic.c
-+++ b/arch/arm/mach-pxa/generic.c
-@@ -43,21 +43,6 @@ void clear_reset_status(unsigned int mask)
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index 5d98549e23a6..a5c9eaf90e84 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -77,13 +77,16 @@ struct ccu_div {
+ 				      _shift, _width, _table, 0,	\
+ 				      _flags)
+ 
+-#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
+-				  _mshift, _mwidth, _muxshift, _muxwidth, \
+-				  _gate, _flags)			\
++#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
++					_parents, _table,		\
++					_reg,				\
++					_mshift, _mwidth,		\
++					_muxshift, _muxwidth,		\
++					_gate, _flags)			\
+ 	struct ccu_div _struct = {					\
+ 		.enable	= _gate,					\
+ 		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+-		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
++		.mux	= _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, _table), \
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+@@ -93,12 +96,23 @@ struct ccu_div {
+ 		},							\
  	}
- }
  
--unsigned long get_clock_tick_rate(void)
--{
--	unsigned long clock_tick_rate;
--
--	if (cpu_is_pxa25x())
--		clock_tick_rate = 3686400;
--	else if (machine_is_mainstone())
--		clock_tick_rate = 3249600;
--	else
--		clock_tick_rate = 3250000;
--
--	return clock_tick_rate;
--}
--EXPORT_SYMBOL(get_clock_tick_rate);
--
- /*
-  * For non device-tree builds, keep legacy timer init
-  */
-diff --git a/arch/arm/mach-pxa/include/mach/hardware.h b/arch/arm/mach-pxa/include/mach/hardware.h
-index 8d63c211b22f..55064124ca4e 100644
---- a/arch/arm/mach-pxa/include/mach/hardware.h
-+++ b/arch/arm/mach-pxa/include/mach/hardware.h
-@@ -303,8 +303,6 @@
-  */
- extern unsigned int get_memclk_frequency_10khz(void);
++#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				  _mshift, _mwidth, _muxshift, _muxwidth, \
++				  _gate, _flags)			\
++	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
++					_parents, NULL,			\
++					_reg, _mshift, _mwidth,		\
++					_muxshift, _muxwidth,		\
++					_gate, _flags)
++
+ #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
+ 			     _mshift, _mwidth, _muxshift, _muxwidth,	\
+ 			     _flags)					\
+-	SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
+-				  _mshift, _mwidth, _muxshift, _muxwidth, \
+-				  0, _flags)
++	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
++					_parents, NULL,			\
++					_reg, _mshift, _mwidth,		\
++					_muxshift, _muxwidth,		\
++					0, _flags)
  
--/* return the clock tick rate of the OS timer */
--extern unsigned long get_clock_tick_rate(void);
- #endif
  
- #endif  /* _ASM_ARCH_HARDWARE_H */
-diff --git a/arch/arm/mach-sa1100/include/mach/hardware.h b/arch/arm/mach-sa1100/include/mach/hardware.h
-index cbedd75a9d65..474844a93e29 100644
---- a/arch/arm/mach-sa1100/include/mach/hardware.h
-+++ b/arch/arm/mach-sa1100/include/mach/hardware.h
-@@ -61,10 +61,6 @@
- # define __REG(x)	(*((volatile unsigned long __iomem *)io_p2v(x)))
- # define __PREG(x)	(io_v2p((unsigned long)&(x)))
- 
--static inline unsigned long get_clock_tick_rate(void)
--{
--	return 3686400;
--}
- #else
- 
- # define __REG(x)	io_p2v(x)
+ #define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
 -- 
-2.1.4
+2.9.3
