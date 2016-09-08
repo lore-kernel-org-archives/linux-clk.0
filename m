@@ -1,65 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:59505 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932358AbcIFMFq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:46 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 7/7] clk: samsung: clk-exynos-audss: Whitespace and debug
- trace cleanup
-Date: Tue, 06 Sep 2016 14:04:56 +0200
-Message-id: <1473163496-17820-8-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20160908082939.GJ8913@lukather>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+ <20160906121837.7517-7-maxime.ripard@free-electrons.com> <CAGb2v64jDTWB4faaBdCBCcFrt1WNf=PYwc16kpgsUhaMRudHnQ@mail.gmail.com>
+ <20160908082939.GJ8913@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 8 Sep 2016 16:32:25 +0800
+Message-ID: <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] clk: sunxi-ng: Add A23 CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-There is no need to log probe() completion in normal conditions
-so the "setup completed" log is removed.
+On Thu, Sep 8, 2016 at 4:29 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Wed, Sep 07, 2016 at 03:24:11PM +0800, Chen-Yu Tsai wrote:
+>> > +               [CLK_BUS_MSGBOX]        = &bus_msgbox_clk.common.hw,
+>>
+>> A23 manual and Allwinner sources say there is a bus gate for SPINLOCK.
+>> Tested it myself, and it indeed exists.
+>
+> Yes, sorry. It was supposed to be spinlock instead of msgbox.
+>
+>> > +       [RST_BUS_SPINLOCK]      =  { 0x2c4, BIT(22) },
+>>
+>> Allwinner sources say there is a reset control for MSGBOX.
+>> Tested it myself, and it indeed exists.
+>
+> However, the msgbox is mentionned nowhere in the datasheet.
+>
+> I'd prefer to be able to test that it actually works before adding it
+> to the clock driver.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+I did in fact test it. With reset asserted, writes get ignored,
+and reads produce all 0s. With the reset deasserted and clock
+enabled, reads give the default value and writes stick. Afterwards
+when I toggle the reset, the values revert to the default.
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 628f86b..51d152f 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -39,9 +39,9 @@ static struct clk *epll;
- 
- #ifdef CONFIG_PM_SLEEP
- static unsigned long reg_save[][2] = {
--	{ASS_CLK_SRC,  0},
--	{ASS_CLK_DIV,  0},
--	{ASS_CLK_GATE, 0},
-+	{ ASS_CLK_SRC,  0 },
-+	{ ASS_CLK_DIV,  0 },
-+	{ ASS_CLK_GATE, 0 },
- };
- 
- static int exynos_audss_clk_suspend(void)
-@@ -173,7 +173,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 			ret = clk_prepare_enable(epll);
- 			if (ret) {
- 				dev_err(&pdev->dev,
--						"failed to prepare the epll clock\n");
-+					"failed to prepare the epll clock\n");
- 				return ret;
- 			}
- 		}
-@@ -253,9 +253,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- 	register_syscore_ops(&exynos_audss_clk_syscore_ops);
- #endif
--
--	dev_info(&pdev->dev, "setup completed\n");
--
- 	return 0;
- 
- unregister:
--- 
-1.9.1
-
+ChenYu
