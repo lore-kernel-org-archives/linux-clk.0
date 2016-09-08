@@ -1,92 +1,85 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
 	linux-clk@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
-Date: Mon, 19 Sep 2016 21:12:14 +0200
-Message-Id: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 0/8] clk: sunxi-ng: Introduce support for A23 and A33 CCUs
+Date: Thu,  8 Sep 2016 11:48:35 +0200
+Message-Id: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The OS timer rate used for the watchdog can now be fetched from the
-standard clock API. This will remove the last user of
-get_clock_tick_rate() in both pxa and sa11x0 architectures.
+Hi everyone,
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/watchdog/sa1100_wdt.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+Here is the migration for the A23 and A33 clocks to the sunxi-ng
+framework.
 
-diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
-index e1d39a1e9628..8965e3f536c3 100644
---- a/drivers/watchdog/sa1100_wdt.c
-+++ b/drivers/watchdog/sa1100_wdt.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-+#include <linux/clk.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
- #include <linux/fs.h>
-@@ -155,12 +156,27 @@ static struct miscdevice sa1100dog_miscdev = {
- };
- 
- static int margin __initdata = 60;		/* (secs) Default is 1 minute */
-+static struct clk *clk;
- 
- static int __init sa1100dog_init(void)
- {
- 	int ret;
- 
--	oscr_freq = get_clock_tick_rate();
-+	clk = clk_get(NULL, "OSTIMER0");
-+	if (IS_ERR(clk)) {
-+		pr_err("SA1100/PXA2xx Watchdog Timer: clock not found: %d\n",
-+		       (int) PTR_ERR(clk));
-+		return PTR_ERR(clk);
-+	}
-+
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		pr_err("SA1100/PXA2xx Watchdog Timer: clock failed to prepare+enable: %d\n",
-+		       ret);
-+		goto err;
-+	}
-+
-+	oscr_freq = clk_get_rate(clk);
- 
- 	/*
- 	 * Read the reset status, and save it for later.  If
-@@ -176,11 +192,17 @@ static int __init sa1100dog_init(void)
- 		pr_info("SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
- 			margin);
- 	return ret;
-+err:
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
-+	return ret;
- }
- 
- static void __exit sa1100dog_exit(void)
- {
- 	misc_deregister(&sa1100dog_miscdev);
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
- }
- 
- module_init(sa1100dog_init);
+It has been tested on SinA33 board, and I made sure that everything
+was reported at the exact same rate, that the MMC was still working in
+DDR, etc.
+
+This has also been tested to implement the DRM driver, so I'm
+confident things will work just fine.
+
+Let me know what you think,
+Maxime
+
+Changes from v2:
+  - Added the msgbox reset and spinlock clocks
+  - Added some doc for the max value for the dividers
+  - Removed whitespace error
+
+Changes from v1:
+  - Allowed to set a maximum on the dividers, and used that on the CPU
+    clocks
+  - Renamed the CE (crypto engine) clocks to SS (security system) to
+    stick to what's being used in the datasheet
+  - Added a TODO to mention that we don't really know whose parents
+    are linked to the USB clocks.		  
+
+Maxime Ripard (8):
+  clk: sunxi-ng: div: Add mux table macros
+  clk: sunxi-ng: div: Add kerneldoc for the _ccu_div structure
+  clk: sunxi-ng: div: Allow to set a maximum
+  clk: sunxi-ng: mux: Add mux table macro
+  clk: sunxi-ng: Add N-class clocks support
+  clk: sunxi-ng: Add A33 CCU support
+  clk: sunxi-ng: Add A23 CCU
+  ARM: sun8i: Convert the A23 and A33 to the CCU
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi               | 257 ++-----
+ arch/arm/boot/dts/sun8i-a23.dtsi                   |  51 +-
+ arch/arm/boot/dts/sun8i-a33.dtsi                   |  73 +-
+ drivers/clk/sunxi-ng/Kconfig                       |  28 +
+ drivers/clk/sunxi-ng/Makefile                      |   3 +
+ drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h           |  63 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c               | 736 +++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c               | 780 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_div.h                     |  66 +-
+ drivers/clk/sunxi-ng/ccu_mp.c                      |  23 +-
+ drivers/clk/sunxi-ng/ccu_mult.c                    | 133 ++++
+ drivers/clk/sunxi-ng/ccu_mult.h                    |  35 +
+ drivers/clk/sunxi-ng/ccu_mux.h                     |  26 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                     |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  21 +-
+ drivers/clk/sunxi-ng/ccu_nm.c                      |  16 +-
+ include/dt-bindings/clock/sun8i-a23-a33-ccu.h      | 127 ++++
+ include/dt-bindings/reset/sun8i-a23-a33-ccu.h      |  87 +++
+ 19 files changed, 2172 insertions(+), 359 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mult.c
+ create mode 100644 include/dt-bindings/clock/sun8i-a23-a33-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-a23-a33-ccu.h
+
 -- 
-2.1.4
+2.9.3
