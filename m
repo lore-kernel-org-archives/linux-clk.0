@@ -1,39 +1,75 @@
-Return-Path: <hotran@apm.com>
-MIME-Version: 1.0
-In-Reply-To: <20160914205556.GC7243@codeaurora.org>
-References: <1473704605-28126-1-git-send-email-hotran@apm.com>
- <1473704605-28126-4-git-send-email-hotran@apm.com> <20160914205556.GC7243@codeaurora.org>
-From: Hoan Tran <hotran@apm.com>
-Date: Wed, 14 Sep 2016 14:05:31 -0700
-Message-ID: <CAFHUOYyMHfTSGRBL7LVFJvwOKT7mgbg_N1hG6xkmjduzFCdfkg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: xgene: Add DT node for APM X-Gene 2
- CPU clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Devicetree List <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, Loc Ho <lho@apm.com>,
-	Duc Dang <dhdang@apm.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 4/8] clk: sunxi-ng: mux: Add mux table macro
+Date: Thu,  8 Sep 2016 11:48:39 +0200
+Message-Id: <20160908094843.14710-5-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
+References: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Add a new macro to declare muxes based on a table and a gate.
 
-On Wed, Sep 14, 2016 at 1:55 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 09/12, Hoan Tran wrote:
->> Add DT nodes to enable APM X-Gene 2 CPU clocks.
->>
->> Signed-off-by: Hoan Tran <hotran@apm.com>
->> ---
->
-> This can go through arm-soc? I'm not applying this.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_mux.h | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-Yes, I can go through arm-soc.
-
-Thanks
-Hoan
-
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index f5123a1a6603..47aba3a48245 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -43,9 +43,12 @@ struct ccu_mux {
+ 	struct ccu_common	common;
+ };
+ 
+-#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
++#define SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, _table,	\
++				     _reg, _shift, _width, _gate,	\
++				     _flags)				\
+ 	struct ccu_mux _struct = {					\
+-		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
++		.enable	= _gate,					\
++		.mux	= _SUNXI_CCU_MUX_TABLE(_shift, _width, _table),	\
+ 		.common	= {						\
+ 			.reg		= _reg,				\
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+@@ -57,17 +60,14 @@ struct ccu_mux {
+ 
+ #define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
+ 				_shift, _width, _gate, _flags)		\
+-	struct ccu_mux _struct = {					\
+-		.enable	= _gate,					\
+-		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
+-		.common	= {						\
+-			.reg		= _reg,				\
+-			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+-							      _parents, \
+-							      &ccu_mux_ops, \
+-							      _flags),	\
+-		}							\
+-	}
++	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
++				      _reg, _shift, _width, _gate,	\
++				      _flags)
++
++#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width,	\
++		      _flags)						\
++	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
++				      _reg, _shift, _width, 0, _flags)
+ 
+ static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
+ {
+-- 
+2.9.3
