@@ -1,118 +1,51 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Message-id: <57C93F3E.4030802@samsung.com>
-Date: Fri, 02 Sep 2016 17:58:38 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com,
- linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux-kernel@vger.kernel.org, kgene@kernel.org,
- chanwoo@kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block 800Mhz
- on exynos5422-odroidxu3
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
- <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
- <CGME20160827163323epcas1p36e8aa80709136d2784f38f4531a5dab8@epcas1p3.samsung.com>
- <20160827163310.GA8616@kozik-book>
-In-reply-to: <20160827163310.GA8616@kozik-book>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59085 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbcIHBS1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2016 21:18:27 -0400
+Date: Wed, 7 Sep 2016 18:18:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, Xing Wu <xing.xu@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        Jerry Cao <jerry.cao@amlogic.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] MMC: meson: initial support for GXBB platforms
+Message-ID: <20160908011825.GA19921@codeaurora.org>
+References: <20160803231843.23012-1-khilman@baylibre.com>
+ <20160803231843.23012-2-khilman@baylibre.com>
+ <20160823012124.GQ6502@codeaurora.org>
+ <7hy433qpoo.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <7hy433qpoo.fsf@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016=EB=85=84 08=EC=9B=94 28=EC=9D=BC 01:33, Krzysztof Kozlowski wrote:
-> On Thu, Aug 25, 2016 at 03:57:18PM +0900, Chanwoo Choi wrote:
->> This patch sets the clock rate for DREX (DRAM Express) block
->> on exynos5422-odroidxu3 board. In the exynos5422 TRM,
->> DRAM clocks use BPLL clock and CMU_CDREX generates
->> the 800MHz DRAM clock.
->>
+On 09/07, Kevin Hilman wrote:
+> Stephen Boyd <sboyd@codeaurora.org> writes:
+> > On 08/03, Kevin Hilman wrote:
+> >> +	host->mux.hw.init = &init;
+> >> +
+> >> +	host->mux_clk = devm_clk_register(host->dev, &host->mux.hw);
+> >
+> > Hmm I was hoping to get rid of devm_clk_register() and replace it
+> > with devm_clk_hw_register() instead. All part of my grand plan to
+> > split providers from consumers, but this driver is different in
+> > the sense that it registers clks to provide to itself. Maybe we
+> > should make __clk_create_clk() into a real clk provider API so
+> > that we can use devm_clk_hw_register() here and then generate a
+> > clk for this device from the hw structure.
 > 
->>From the commit message I don't get two things:
-> 1. Why setting this on XU3-family of boards, not all 542x/5800=3F
-
-I have the only xu3 board. I cannot test it on other boards.
-
-> 2. Why this is needed=3F The commit msg lacks the answer to the "why".
-
-In the exynos5422's TRM, CMU_CDREX generates the 800MHz DRAM clock
-as above commit message. But, I'm missing what there is different
-before applying this patch. I add comment why we should set the 
-clock rate for DRAM on below.
-
+> So is there something else I should do here, or can we rework this later
+> after you rework the framework a bit?
 > 
->> [clk_summary on exynos5422-odroidxu3 board]
->> fout_bpll                             0            0   800000000          0 0
->>     mout_bpll                          0            0   800000000          0 0
->>        mout_mclk_cdrex                 0            0   800000000          0 0
->>           dout_pclk_core_mem           0            0   200000000          0 0
->>           dout_sclk_cdrex              0            0   800000000          0 0
->>
-> 
-> What is the purpose of this dump of clk_summary=3F Is it a state before or
-> after the change=3F After it is quite obvious that it should have
-> 800MHz...
 
-I'm missing the difference before applying this patch.
+That can wait for later. If nobody takes care of it I'll do it
+when I get around to it.
 
-As I mentioned on v1[1] patch, if I don't set the clock rate for CDREX,
-the default clock is 825MHz instead of 800MHz. So, I set the clock rate
-on this patch.
-[1] https://lkml.org/lkml/2016/8/22/255
-
-If I don't apply this patch, the DREX clock is 825MHz.
-fout_bpll                             0            0   825000000          0 0  
-       mout_bpll                          0            0   825000000          0 0  
-          mout_mclk_cdrex                 0            0   825000000          0 0  
-             dout_pclk_core_mem           0            0   206250000          0 0  
-             dout_sclk_cdrex              0            0   825000000          0 0  
-                dout_clk2x_phy0           0            0   825000000          0 0  
-                   dout_aclk_cdrex1           0            0   412500000          0 0  
-                      dout_pclk_cdrex           0            0   103125000          0 0  
-                   dout_cclk_drex0           0            0   412500000          0 0  
-
-
-If you want to edit the commit message, I'll resend the v3 patch.
-
-Best Regards,
-Chanwoo Choi
-
-> 
-> Best regards,
-> Krzysztof
-> 
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index d56253049ccb..fd3f67c72039 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -229,6 +229,11 @@
->>  	status =3D "okay";
->>  };
->>  
->> +&clock {
->> +	assigned-clocks =3D <&clock CLK_DOUT_SCLK_CDREX>;
->> +	assigned-clock-rates =3D <800000000>;
->> +};
->> +
->>  &clock_audss {
->>  	assigned-clocks =3D <&clock_audss EXYNOS_MOUT_AUDSS>,
->>  			<&clock_audss EXYNOS_MOUT_I2S>,
->> -- 
->> 1.9.1
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
