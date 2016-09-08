@@ -1,53 +1,90 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>,  mark.rutland@arm.com,  devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,  johnyoun@synopsys.com,  will.deacon@arm.com,  mturquette@baylibre.com,  linux-usb@vger.kernel.org,  sboyd@codeaurora.org,  kishon@ti.com,  robh+dt@kernel.org,  catalin.marinas@arm.com,  carlo@caione.org,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  jbrunet@baylibre.com
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-	<m260q6jibf.fsf@baylibre.com>
-	<CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
-	<e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
-	<m2eg4ui0nl.fsf@baylibre.com>
-	<ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-	<CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-	<m2sht9gkau.fsf@baylibre.com>
-	<CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
-Date: Fri, 09 Sep 2016 10:04:19 -0700
-In-Reply-To: <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
-	(Martin Blumenstingl's message of "Fri, 9 Sep 2016 18:14:03 +0200")
-Message-ID: <m2k2elgg30.fsf@baylibre.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 8 Sep 2016 11:20:24 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 6/7] clk: sunxi-ng: Add A23 CCU
+Message-ID: <20160908092024.GM8913@lukather>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+ <20160906121837.7517-7-maxime.ripard@free-electrons.com>
+ <CAGb2v64jDTWB4faaBdCBCcFrt1WNf=PYwc16kpgsUhaMRudHnQ@mail.gmail.com>
+ <20160908082939.GJ8913@lukather>
+ <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zROEGoKAXsG5UqGB"
+In-Reply-To: <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->> However, the problem with all of the solutions proposed (runtime PM ones
->> included) is that we're forcing a board-specific design issue (2 devices
->> sharing a reset line) into a driver that should not have any
->> board-specific assumptions in it.
->>
->> For example, if this driver is used on another platform where different
->> PHYs have different reset lines, then one of them (the unlucky one who
->> is not probed first) will never get reset.  So any form of per-device
->> ref-counting is not a portable solution.
->
-> maybe we should also consider Ben's solution: he played with the USB
-> PHY on his Meson8b board. His approach was to have only one USB PHY
-> driver instance which exposes two PHYs.
-> The downside of this: the driver would have to know the offset of the
-> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
-> the reset using runtime PM without any hacks.
+--zROEGoKAXsG5UqGB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I checked the USB PHY reference driver: it seems that there will be a
-> new USB PHY with the GXL/GXM SoCs.
-> So maybe we could live with the assumption that the PHYs are at
-> consecutive addresses.
+On Thu, Sep 08, 2016 at 04:32:25PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Sep 8, 2016 at 4:29 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Wed, Sep 07, 2016 at 03:24:11PM +0800, Chen-Yu Tsai wrote:
+> >> > +               [CLK_BUS_MSGBOX]        =3D &bus_msgbox_clk.common.h=
+w,
+> >>
+> >> A23 manual and Allwinner sources say there is a bus gate for SPINLOCK.
+> >> Tested it myself, and it indeed exists.
+> >
+> > Yes, sorry. It was supposed to be spinlock instead of msgbox.
+> >
+> >> > +       [RST_BUS_SPINLOCK]      =3D  { 0x2c4, BIT(22) },
+> >>
+> >> Allwinner sources say there is a reset control for MSGBOX.
+> >> Tested it myself, and it indeed exists.
+> >
+> > However, the msgbox is mentionned nowhere in the datasheet.
+> >
+> > I'd prefer to be able to test that it actually works before adding it
+> > to the clock driver.
+>=20
+> I did in fact test it. With reset asserted, writes get ignored,
+> and reads produce all 0s. With the reset deasserted and clock
+> enabled, reads give the default value and writes stick. Afterwards
+> when I toggle the reset, the values revert to the default.
 
-But isn't that also forcing us to make board-specific assumptions inside
-the driver.
+Ok.
 
-Kevin
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--zROEGoKAXsG5UqGB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0S1YAAoJEBx+YmzsjxAgXAYP/jzUSAfOuCqc41/KtxjhF4x+
+LJRqSqzyo4dRaEA74kOIFh7nCy3v9J+RBztCO01EHvxWPMS6hVmYUD2swoZU67zU
+wpmKLDneaBSvHWX+nc43Vfdl6IAsuymIkEZTyLt6Z82blPRJC1yD3WfgzuUmynDi
+s4lhBVUSNye8xOWTYyRpsNZaD1oXky1L110kR75O4SHdIFReB4ypUy4qhqhSuq6P
+Dl6ABIJOTsDlGiMirraKa96QjzPDw6ukv6PTkjZjmHaXnpVhsUVY76OSSbcw++an
+RYpnXyTQoRpTbiB/dWPcLVoNw34VjouUfHaR0vSFAbAKfdeGV3v0yrH4bencOA+Q
+52/mS1jj/6ecBsMrHpKNBaCu4x2lhfbwy/Gnur6XV1Cb+n/wFwIYPQ2PmJzdeSxK
+Sluz3jeWqyZ9FqY5uz0b1l+IP9DzmtabGo88SIO7sZyIhlEKr5fjr0Xz0s3e5uZr
+2NecoNRELN7E/kShE+xir80Gdh/qFQLL9VyHph7aSxfG3geZ+ZDR67W9VxlGXqgv
+/eODUWWwrLmrID0bg2oceGE1T+EclyPweDTfdSyxzPNJhb78HuU17HE+7134/p4M
+Jf5Hm+ou27Kyyf42pk/jejrSPfmzXOAB1ZryL302nQvztxvq0AOz4ivxT+pXgyE9
+LiMOdGTZfCX+OMT42Rdi
+=qHX/
+-----END PGP SIGNATURE-----
+
+--zROEGoKAXsG5UqGB--
