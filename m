@@ -1,74 +1,54 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Jamie Lentin <jm@lentin.co.uk>
-Subject: Re: [PATCH] clk: mvebu: Add clk support for the orion5x SoC mv88f5181
-References: <20160920162450.4046-1-gregory.clement@free-electrons.com>
-	<20160920195919.GD8319@codeaurora.org>
-Date: Wed, 21 Sep 2016 12:16:50 +0200
-In-Reply-To: <20160920195919.GD8319@codeaurora.org> (Stephen Boyd's message of
-	"Tue, 20 Sep 2016 12:59:19 -0700")
-Message-ID: <8760pp5zhp.fsf@free-electrons.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
+References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+ <20160906121837.7517-7-maxime.ripard@free-electrons.com> <CAGb2v64jDTWB4faaBdCBCcFrt1WNf=PYwc16kpgsUhaMRudHnQ@mail.gmail.com>
+ <20160908082939.GJ8913@lukather> <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 8 Sep 2016 16:35:04 +0800
+Message-ID: <CAGb2v646Qv8biTNP1ryfoLMpt=40i0m9D4EVCFhZ767WkbfwhA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] clk: sunxi-ng: Add A23 CCU
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
- 
- On mar., sept. 20 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On Thu, Sep 8, 2016 at 4:32 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Thu, Sep 8, 2016 at 4:29 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> On Wed, Sep 07, 2016 at 03:24:11PM +0800, Chen-Yu Tsai wrote:
+>>> > +               [CLK_BUS_MSGBOX]        = &bus_msgbox_clk.common.hw,
+>>>
+>>> A23 manual and Allwinner sources say there is a bus gate for SPINLOCK.
+>>> Tested it myself, and it indeed exists.
+>>
+>> Yes, sorry. It was supposed to be spinlock instead of msgbox.
 
-> On 09/20, Gregory CLEMENT wrote:
->> From: Jamie Lentin <jm@lentin.co.uk>
->> 
->> Referring to the u-boot sources for the Netgear WNR854T, add support
->> for the mv88f5181.
->> 
->> [gregory.clement@free-electrons.com: fix commit title]
->> Signed-off-by: Jamie Lentin <jm@lentin.co.uk>
->> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
->> ---
->> 
->> Hi Stephen and Mike,
->> 
->> do you agree to give your acked-by on this patch. It is part of a
->> convertion of old orion5x Socv to the device tree. If you acked-by
->> this one, then I will be able to take it in my tree and avoiding
->> breaking the git bisect.
+There is also a gate for msgbox, in case I'm not clear.
+
+ChenYu
+
+>>
+>>> > +       [RST_BUS_SPINLOCK]      =  { 0x2c4, BIT(22) },
+>>>
+>>> Allwinner sources say there is a reset control for MSGBOX.
+>>> Tested it myself, and it indeed exists.
+>>
+>> However, the msgbox is mentionned nowhere in the datasheet.
+>>
+>> I'd prefer to be able to test that it actually works before adding it
+>> to the clock driver.
 >
-> Is the problem that we're changing some dts files somewhere and
-> those platforms would stop booting if this change wasn't present?
-> Given that we're adding a new compatible it seems like we're
-> adding new SoC support, so having the clk patch and the dts patch
-> come together in -next via a merge instead of basing the dts
-> patch on top of the clk patch would be how things are normally
-> done.
-
-The problem appear if the dts for the board using the clock driver is
-merged in Linus tree before the support in the driver. At this point the
-board won't be able to boot.
-
-It introduces a hole in the git bisect between the merge of the clock
-subsystem and the arm-soc subsystem.
-
+> I did in fact test it. With reset asserted, writes get ignored,
+> and reads produce all 0s. With the reset deasserted and clock
+> enabled, reads give the default value and writes stick. Afterwards
+> when I toggle the reset, the values revert to the default.
 >
-> If we're really changing some dts to be backwards incompatible,
-> then I understand the bisect problem and you can have my ack.
->
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org.
-
-Thanks,
-
-Gregory
-
->
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+> ChenYu
