@@ -1,48 +1,88 @@
-Return-Path: <wens@csie.org>
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160906121837.7517-3-maxime.ripard@free-electrons.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com> <20160906121837.7517-3-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 7 Sep 2016 00:20:10 +0800
-Message-ID: <CAGb2v66C9GJ5Svm+7NE2cStc5KiNgoriB329K4fhZJMTSbZ8Kw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] clk: sunxi-ng: div: Allow to set a maximum
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+In-Reply-To: <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+ <m260q6jibf.fsf@baylibre.com> <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+ <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk> <m2eg4ui0nl.fsf@baylibre.com>
+ <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 8 Sep 2016 23:48:53 +0200
+Message-ID: <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Kevin Hilman <khilman@baylibre.com>, mark.rutland@arm.com, devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
+	mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
+	kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Some dividers might have a maximum value that is lower than the width of
-> the register.
+On Thu, Sep 8, 2016 at 10:53 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> On 08/09/16 21:42, Kevin Hilman wrote:
+>>
+>> Ben Dooks <ben.dooks@codethink.co.uk> writes:
+>>
+>>> On 08/09/16 20:52, Martin Blumenstingl wrote:
+>>>>
+>>>> On Thu, Sep 8, 2016 at 9:35 PM, Kevin Hilman <khilman@baylibre.com>
+>>>> wrote:
+>>>>>>
+>>>>>> +     phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
+>>>>>> +     if (IS_ERR(phy)) {
+>>>>>> +             dev_err(&pdev->dev, "failed to create PHY\n");
+>>>>>> +             return PTR_ERR(phy);
+>>>>>> +     }
+>>>>>> +
+>>>>>> +     if (usb_reset_refcnt++ == 0) {
+>>>>>> +             ret = device_reset(&pdev->dev);
+>>>>>> +             if (ret) {
+>>>>>> +                     dev_err(&phy->dev, "Failed to reset USB PHY\n");
+>>>>>> +                     return ret;
+>>>>>> +             }
+>>>>>> +     }
+>>>>>
+>>>>>
+>>>>> The ref count + reset here looks like something that could/should be
+>>>>> handled in a runtime PM callback.
+>>>>
+>>>> Unfortunately that doesn't work (as Jerome found out) because both
+>>>> PHYs are sharing the same reset line.
+>>>> So if the second PHY would call device_reset then it would also reset
+>>>> the first PHY!
+>>>>
+>>>> There's a comment above the declaration of usb_reset_refcnt which
+>>>> tries to explain this:
+>>>> "The PHYs are sharing a common reset line -> we are only allowed to
+>>>> reset once for all PHYs."
+>>>> Maybe I should move this comment to the "if (usb_reset_refcnt++ == 0)
+>>>> {" line to make it easier to see?
+>>>>
+>>>
+>>> pm-runtime has refcounting in it. When one of the nodes turns on,
+>>> the pm-runtime will call your driver to say there is a user when
+>>> this first use turns up.
+>>>
+>>> If all the sub-phys turn off and drop their refcount then the driver
+>>> is called to say there are no more users and you can go to sleep.
+>>
+>>
+>> After a chat w/Martin on IRC, It turns out runtime PM wont help here.
+>>
+>> The reason is because there are physically two PHY devices[1].  Those 2
+>> devices will be treated independely by runtime PM, and have separate
+>> use-counting, which means doing what I proposed would cause a reset to
+>> happen when either device was probed.
+>>
+>> So, I think it's OK as it is.
 >
-> Add a field to _ccu_div to handle those case properly. If the field is set
-> to 0, the code will assume that the maximum value is the maximum one that
-> can be used with the field register width.
-
-This is a bit confusing. What is the maximum referring to? The raw value
-in the register? Or the actual divider?
-
-Personally I'd go with the maximum valid value of the register. You
-could get rid of the special power-of-2 handling code you added.
-
-Either way I think the message and the field name should be more explicit.
-
 >
-> Otherwise, we'll use whatever value has been set.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Surely you can do pm_runtime_get/put on the phy's parent platform
+> device and do it that way?
+could you please be more specific with that (do you mean pdev->dev.parent)?
+so we would use pm_runtime_{get_sync,put} with the parent, while we
+would still define the runtime_resume in our driver.
 
-[...]
-
-The code looks correct.
-
-
-Regards
-ChenYu
+I'd be happy if that works and we can remove that refcounting hack
