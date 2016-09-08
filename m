@@ -1,102 +1,90 @@
-Return-Path: <patrice.chotard@st.com>
-Subject: Re: [PATCH v3 14/14] ARM: DT: STi: STiH410: clock configuration to
- address 720p and 1080p
-To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar
- Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert
- Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
- <1472473626-15398-15-git-send-email-gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@linaro.org>
-From: Patrice Chotard <patrice.chotard@st.com>
-Message-ID: <8042275a-1699-d6f8-b425-e2947e196889@st.com>
-Date: Thu, 15 Sep 2016 09:48:03 +0200
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, kishon@ti.com,
+Cc: linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  jbrunet@baylibre.com,  johnyoun@synopsys.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  sboyd@codeaurora.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+Date: Thu, 08 Sep 2016 12:35:32 -0700
+In-Reply-To: <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+	(Martin Blumenstingl's message of "Sun, 4 Sep 2016 23:31:49 +0200")
+Message-ID: <m260q6jibf.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <1472473626-15398-15-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
+> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-On 08/29/2016 02:27 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> It is necessary to properly configure these clocks in order
-> to address 720p and 1080p HDMI resolution.
-> 
-> Signed-off-by: Vincent Abriou <vincent.abriou@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  arch/arm/boot/dts/stih410.dtsi | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.dtsi
-> index 18ed1ad..7eec729 100644
-> --- a/arch/arm/boot/dts/stih410.dtsi
-> +++ b/arch/arm/boot/dts/stih410.dtsi
-> @@ -103,7 +103,10 @@
->  			#size-cells = <1>;
->  
->  			assigned-clocks	= <&clk_s_d2_quadfs 0>,
-> -					  <&clk_s_d2_quadfs 0>,
-> +					  <&clk_s_d2_quadfs 1>,
-> +					  <&clk_s_c0_pll1 0>,
-> +					  <&clk_s_c0_flexgen CLK_COMPO_DVP>,
-> +					  <&clk_s_c0_flexgen CLK_MAIN_DISP>,
->  					  <&clk_s_d2_flexgen CLK_PIX_MAIN_DISP>,
->  					  <&clk_s_d2_flexgen CLK_PIX_AUX_DISP>,
->  					  <&clk_s_d2_flexgen CLK_PIX_GDP1>,
-> @@ -113,14 +116,21 @@
->  
->  			assigned-clock-parents = <0>,
->  						 <0>,
-> +						 <0>,
-> +						 <&clk_s_c0_pll1 0>,
-> +						 <&clk_s_c0_pll1 0>,
->  						 <&clk_s_d2_quadfs 0>,
-> -						 <&clk_s_d2_quadfs 0>,
-> +						 <&clk_s_d2_quadfs 1>,
->  						 <&clk_s_d2_quadfs 0>,
->  						 <&clk_s_d2_quadfs 0>,
->  						 <&clk_s_d2_quadfs 0>,
->  						 <&clk_s_d2_quadfs 0>;
->  
-> -			assigned-clock-rates = <297000000>, <297000000>;
-> +			assigned-clock-rates = <297000000>,
-> +					       <108000000>,
-> +					       <0>,
-> +					       <400000000>,
-> +					       <400000000>;
->  
->  			ranges;
->  
-> 
-Hi Gabriel
+I tested this on meson-gxbb-p200 with USB host and a mass storage
+device.
 
-Applied on STi tree for v4.9
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 
-Thanks
+A minor question/comment below, for you and for Kishon...
+
+[...]
+
+> +static int phy_meson_usb2_probe(struct platform_device *pdev)
+> +{
+> +	struct phy_meson_usb2_priv *priv;
+> +	struct resource *res;
+> +	struct phy *phy;
+> +	struct phy_provider *phy_provider;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	priv->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(priv->regs))
+> +		return PTR_ERR(priv->regs);
+> +
+> +	priv->clk_usb_general = devm_clk_get(&pdev->dev, "usb_general");
+> +	if (IS_ERR(priv->clk_usb_general))
+> +		return PTR_ERR(priv->clk_usb_general);
+> +
+> +	priv->clk_usb = devm_clk_get(&pdev->dev, "usb");
+> +	if (IS_ERR(priv->clk_usb))
+> +		return PTR_ERR(priv->clk_usb);
+> +
+> +	priv->dr_mode = of_usb_get_dr_mode_by_phy(pdev->dev.of_node, -1);
+> +	if (priv->dr_mode == USB_DR_MODE_UNKNOWN) {
+> +		dev_err(&pdev->dev,
+> +			"missing dual role configuration of the controller\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
+> +	if (IS_ERR(phy)) {
+> +		dev_err(&pdev->dev, "failed to create PHY\n");
+> +		return PTR_ERR(phy);
+> +	}
+> +
+> +	if (usb_reset_refcnt++ == 0) {
+> +		ret = device_reset(&pdev->dev);
+> +		if (ret) {
+> +			dev_err(&phy->dev, "Failed to reset USB PHY\n");
+> +			return ret;
+> +		}
+> +	}
+
+The ref count + reset here looks like something that could/should be
+handled in a runtime PM callback.
+
+IOW, there should be a pm_runtime_get_sync() here, and in the
+->runtime_resume() callback, the device_reset() would be called.
+Runtime PM does the refcounting, and only calls ->runtime_resume() on
+the 0 -> 1 transition.
+
+This isn't a big deal for now, so I'll let Kishon decide, but using
+runtime PM from the start will help enabling other PM features later.
+
+Kevin
