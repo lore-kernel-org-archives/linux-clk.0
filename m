@@ -1,49 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 16:03:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
-	benjamin.gaignard@st.com, vincent.abriou@st.com,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: Re: [PATCH v3 05/14] drivers: clk: st: Add clock propagation for
- audio clocks
-Message-ID: <20160916230302.GQ7243@codeaurora.org>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
- <1472473626-15398-6-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <mars.cheng@mediatek.com>
+Message-ID: <1473343836.1896.17.camel@mtkswgap22>
+Subject: Re: [PATCH 3/4] arm64: dts: mediatek: add mt6797 support
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Erin Lo <erin.lo@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>,
+	<linux-clk@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Choui
+	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Scott Shu
+	<scott.shu@mediatek.com>, Jades Shih <jades.shih@mediatek.com>, "Yingjoe
+ Chen" <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Date: Thu, 8 Sep 2016 22:10:36 +0800
+In-Reply-To: <57D16470.6050100@arm.com>
+References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
+	 <1473331794-27542-4-git-send-email-mars.cheng@mediatek.com>
+	 <57D16470.6050100@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472473626-15398-6-git-send-email-gabriel.fernandez@st.com>
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/29, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Thu, 2016-09-08 at 14:15 +0100, Marc Zyngier wrote:
+> On 08/09/16 11:49, Mars Cheng wrote:
+> > This adds basic chip support for MT6797 SoC.
+> > 
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > ---
+[...]
 > 
-> This patch allows fine tuning of the quads FS for audio clocks
-> accuracy.
+> > +	gic: interrupt-controller@19000000 {
+> > +		compatible = "arm,gic-v3";
+> > +		#interrupt-cells = <3>;
+> > +		interrupt-parent = <&gic>;
+> > +		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> > +		interrupt-controller;
+> > +		reg = <0 0x19000000 0 0x10000>,    /* GICD */
+> > +		      <0 0x19200000 0 0x200000>,   /* GICR */
+> > +		      <0 0x10240000 0 0x2000>;     /* GICC */
 > 
-> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+> Where are the GICV and GICH regions? No ITS?
 
-Applied to clk-next
+Have confirmed with our HW guys, there is no GICV, GICH, nor ITS in our
+GIC design.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks.
+> 
+> Thanks,
+> 
+> 	M.
