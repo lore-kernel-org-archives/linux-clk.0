@@ -1,105 +1,125 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-To: Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, kishon@ti.com
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
- <m260q6jibf.fsf@baylibre.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
- mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
- robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Message-ID: <7d631565-287c-ab38-c152-d65b5ace1e0e@codethink.co.uk>
-Date: Thu, 8 Sep 2016 20:40:58 +0100
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH 1/4] Document: DT: Add bindings for mediatek MT6797 SoC
+ Platform
+To: Mars Cheng <mars.cheng@mediatek.com>
+References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
+ <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
+ <57D15B6C.6080305@arm.com> <1473343735.1896.15.camel@mtkswgap22>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>,
+ James Liao <jamesjj.liao@mediatek.com>, linux-clk@vger.kernel.org,
+ CC Hwang <cc.hwang@mediatek.com>, Loda Choui <loda.chou@mediatek.com>,
+ Miles Chen <miles.chen@mediatek.com>, Scott Shu <scott.shu@mediatek.com>,
+ Jades Shih <jades.shih@mediatek.com>,
+ Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
+ <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ wsd_upstream@mediatek.com
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <57D17667.1020201@arm.com>
+Date: Thu, 8 Sep 2016 15:32:07 +0100
 MIME-Version: 1.0
-In-Reply-To: <m260q6jibf.fsf@baylibre.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <1473343735.1896.15.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/16 20:35, Kevin Hilman wrote:
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->
->> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
->>
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->
-> I tested this on meson-gxbb-p200 with USB host and a mass storage
-> device.
->
-> Tested-by: Kevin Hilman <khilman@baylibre.com>
->
-> A minor question/comment below, for you and for Kishon...
->
+On 08/09/16 15:08, Mars Cheng wrote:
+> Hi Marc
+> 
+> Thanks for your review. the response inlined.
+> 
+> On Thu, 2016-09-08 at 13:37 +0100, Marc Zyngier wrote:
+>> On 08/09/16 11:49, Mars Cheng wrote:
+>>> This adds DT binding documentation for Mediatek MT6797.
+>>>
+>>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+>>> ---
 > [...]
->
->> +static int phy_meson_usb2_probe(struct platform_device *pdev)
->> +{
->> +	struct phy_meson_usb2_priv *priv;
->> +	struct resource *res;
->> +	struct phy *phy;
->> +	struct phy_provider *phy_provider;
->> +	int ret;
->> +
->> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
->> +	if (!priv)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	priv->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(priv->regs))
->> +		return PTR_ERR(priv->regs);
->> +
->> +	priv->clk_usb_general = devm_clk_get(&pdev->dev, "usb_general");
->> +	if (IS_ERR(priv->clk_usb_general))
->> +		return PTR_ERR(priv->clk_usb_general);
->> +
->> +	priv->clk_usb = devm_clk_get(&pdev->dev, "usb");
->> +	if (IS_ERR(priv->clk_usb))
->> +		return PTR_ERR(priv->clk_usb);
->> +
->> +	priv->dr_mode = of_usb_get_dr_mode_by_phy(pdev->dev.of_node, -1);
->> +	if (priv->dr_mode == USB_DR_MODE_UNKNOWN) {
->> +		dev_err(&pdev->dev,
->> +			"missing dual role configuration of the controller\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
->> +	if (IS_ERR(phy)) {
->> +		dev_err(&pdev->dev, "failed to create PHY\n");
->> +		return PTR_ERR(phy);
->> +	}
->> +
->> +	if (usb_reset_refcnt++ == 0) {
->> +		ret = device_reset(&pdev->dev);
->> +		if (ret) {
->> +			dev_err(&phy->dev, "Failed to reset USB PHY\n");
->> +			return ret;
->> +		}
->> +	}
->
-> The ref count + reset here looks like something that could/should be
-> handled in a runtime PM callback.
->
-> IOW, there should be a pm_runtime_get_sync() here, and in the
-> ->runtime_resume() callback, the device_reset() would be called.
-> Runtime PM does the refcounting, and only calls ->runtime_resume() on
-> the 0 -> 1 transition.
->
-> This isn't a big deal for now, so I'll let Kishon decide, but using
-> runtime PM from the start will help enabling other PM features later.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+>>> index 9d1d72c..3d97eb4 100644
+>>> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+>>> @@ -8,6 +8,7 @@ Required properties:
+>>>  	"mediatek,mt8173-sysirq"
+>>>  	"mediatek,mt8135-sysirq"
+>>>  	"mediatek,mt8127-sysirq"
+>>> +	"mediatek,mt6797-sysirq"
+>>>  	"mediatek,mt6795-sysirq"
+>>>  	"mediatek,mt6755-sysirq"
+>>>  	"mediatek,mt6592-sysirq"
+>>> @@ -21,7 +22,8 @@ Required properties:
+>>>  - interrupt-parent: phandle of irq parent for sysirq. The parent must
+>>>    use the same interrupt-cells format as GIC.
+>>>  - reg: Physical base address of the intpol registers and length of memory
+>>> -  mapped region.
+>>> +  mapped region. Could be up to 2 registers here at max. Ex: 6797 needs 2 reg,
+>>> +  others need 1.
+>>
+>> Two things:
+>>
+>> - Please make this a separate patch that can be reviewed independently
+>> of the rest of the changes, which are just adding new compatible
+>> identifiers.
+> 
+> Will fix this in the next patch set.
+> 
+>>
+>> - Why can't you simply expose it as a separate controller? Looking at
+>> the way you're changing the corresponding driver, it looks like you're
+>> simply adding an extra base/size. If you simply had a base for the
+>> corresponding GIC interrupts, you could handle as many region as you
+>> want, and have a more generic driver.
+>>
+> 
+> May I know the meaning of "simply expose it as a separate controller"?
 
-I agree, pm_runtime would probably be the best place to handle >1
-device with shared items such as reset.
+At the moment, you have something like this:
 
-The version I wrote, I simply enabled the clocks and reset the device
-when probed to work around the shared reset.
+	sysirq: intpol-controller@10200620 {
+		compatible = "mediatek,mt6755-sysirq",
+			     "mediatek,mt6577-sysirq";
+		interrupt-controller;
+		#interrupt-cells = <3>;
+		interrupt-parent = <&gic>;
+		reg = <0 0x10200620 0 0x20>;
+	};
 
+I suggest that, when you have a second base (which is effectively
+another controller), you add:
 
+	sysirq2: intpol-controller@10201620 {
+		compatible = "mediatek,mt6755-sysirq",
+			     "mediatek,mt6577-sysirq";
+		interrupt-controller;
+		#interrupt-cells = <3>;
+		interrupt-parent = <&gic>;
+		irq-base = <32>;
+		reg = <0 0x10201620 0 0x20>;
+	};
+
+Where irq-base is the first SPI this is connected to (the lack of
+property indicates implies that irq-base is 0). This becomes a very
+simple change in the driver.
+
+> Or you might like to suggest me any similar driver as a reference? I
+> will examine it. Current design is based on the fact: We expect
+> irq-mtk-sysirq needs the optional second base but the third one will not
+> happen.
+> 
+> If we really need more than 2 bases, we can figure out a more generic
+> driver at the time, right?
+
+I'd rather fix the driver and the binding to do the right thing once and
+for all. In my experience, you will need to add a third base in six
+months, and a fourth soon after. I'd rather either support an arbitrary
+number of bases, or a single one per controller (and have multiple
+controllers).
+
+Thanks,
+
+	M.
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+Jazz is not dead. It just smells funny...
