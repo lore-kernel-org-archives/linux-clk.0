@@ -1,62 +1,36 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH 2/2] clk: imx6: initialize GPU clocks
-Date: Fri, 16 Sep 2016 11:16:11 +0200
-Message-Id: <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
-References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  jbrunet@baylibre.com,  johnyoun@synopsys.com,  kishon@ti.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org
+Subject: Re: [PATCH 1/7] clk: gxbb: expose USB clocks
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160904213152.25837-2-martin.blumenstingl@googlemail.com>
+	<20160907212836.GC12510@codeaurora.org>
+Date: Thu, 08 Sep 2016 12:24:44 -0700
+In-Reply-To: <20160907212836.GC12510@codeaurora.org> (Stephen Boyd's message
+	of "Wed, 7 Sep 2016 14:28:36 -0700")
+Message-ID: <m2eg4ujitf.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Initialize the GPU clock muxes to sane inputs. Until now they have
-not been changed from their default values, which means that both
-GPU3D shader and GPU2D core were fed by clock inputs whose rates
-exceed the maximium allowed frequency of the cores by as much as
-200MHz.
+Stephen Boyd <sboyd@codeaurora.org> writes:
 
-This fixes a severe GPU stability issue on i.MX6DL.
+> On 09/04, Martin Blumenstingl wrote:
+>> USB0_DDR_BRIDGE and USB1_DDR_BRIDGE1 are needed for the related
+>> dwc2 usb controller. USB, USB0 and USB1 are needed for the PHYs.
+>> Expose these clocks to DT and comment out in clk driver.
+>> 
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> ---
+>
+> Assuming authorship is resolved:
+>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx6q.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+After some clarification from Jerome (Martin is the primary author),
+I've applied this, with the SoB order swapped.
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 64c243173395..751c3e7d5843 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -633,6 +633,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	if (IS_ENABLED(CONFIG_PCI_IMX6))
- 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
- 
-+	/*
-+	 * Initialize the GPU clock muxes, so that the maximum specified clock
-+	 * rates for the respective SoC are not exceeded.
-+	 */
-+	if (clk_on_imx6dl()) {
-+		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
-+		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-+		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
-+		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-+	} else if (clk_on_imx6q()) {
-+		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
-+		               clk[IMX6QDL_CLK_MMDC_CH0_AXI]);
-+		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_SHADER_SEL],
-+		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-+		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
-+		               clk[IMX6QDL_CLK_PLL3_USB_OTG]);
-+	}
-+
- 	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
--- 
-2.8.1
+Kevin
