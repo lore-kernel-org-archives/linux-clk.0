@@ -1,95 +1,66 @@
-Return-Path: <linux@roeck-us.net>
-Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
-To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Wim Van Sebroeck <wim@iguana.be>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c87359e7-7d0c-6889-af9d-c2136cb46074@roeck-us.net>
-Date: Mon, 19 Sep 2016 21:35:46 -0700
-MIME-Version: 1.0
-In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2 3/5] ARM: dts: at91: sama5d4: use proper sckc compatible
+Date: Thu,  8 Sep 2016 16:51:44 +0200
+Message-Id: <20160908145146.20422-4-alexandre.belloni@free-electrons.com>
+In-Reply-To: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
+References: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19/2016 12:12 PM, Robert Jarzmik wrote:
-> The OS timer rate used for the watchdog can now be fetched from the
-> standard clock API. This will remove the last user of
-> get_clock_tick_rate() in both pxa and sa11x0 architectures.
->
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Now that there is support for the sama5d4 slow clock controller, use its
+driver.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ arch/arm/boot/dts/sama5d4.dtsi | 27 ++++-----------------------
+ 1 file changed, 4 insertions(+), 23 deletions(-)
 
-> ---
->  drivers/watchdog/sa1100_wdt.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
-> index e1d39a1e9628..8965e3f536c3 100644
-> --- a/drivers/watchdog/sa1100_wdt.c
-> +++ b/drivers/watchdog/sa1100_wdt.c
-> @@ -22,6 +22,7 @@
->
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
-> +#include <linux/clk.h>
->  #include <linux/types.h>
->  #include <linux/kernel.h>
->  #include <linux/fs.h>
-> @@ -155,12 +156,27 @@ static struct miscdevice sa1100dog_miscdev = {
->  };
->
->  static int margin __initdata = 60;		/* (secs) Default is 1 minute */
-> +static struct clk *clk;
->
->  static int __init sa1100dog_init(void)
->  {
->  	int ret;
->
-> -	oscr_freq = get_clock_tick_rate();
-> +	clk = clk_get(NULL, "OSTIMER0");
-> +	if (IS_ERR(clk)) {
-> +		pr_err("SA1100/PXA2xx Watchdog Timer: clock not found: %d\n",
-> +		       (int) PTR_ERR(clk));
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	ret = clk_prepare_enable(clk);
-> +	if (ret) {
-> +		pr_err("SA1100/PXA2xx Watchdog Timer: clock failed to prepare+enable: %d\n",
-> +		       ret);
-> +		goto err;
-> +	}
-> +
-> +	oscr_freq = clk_get_rate(clk);
->
->  	/*
->  	 * Read the reset status, and save it for later.  If
-> @@ -176,11 +192,17 @@ static int __init sa1100dog_init(void)
->  		pr_info("SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
->  			margin);
->  	return ret;
-> +err:
-> +	clk_disable_unprepare(clk);
-> +	clk_put(clk);
-> +	return ret;
->  }
->
->  static void __exit sa1100dog_exit(void)
->  {
->  	misc_deregister(&sa1100dog_miscdev);
-> +	clk_disable_unprepare(clk);
-> +	clk_put(clk);
->  }
->
->  module_init(sa1100dog_init);
->
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index 65e725fb5679..fe094263595c 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -1314,30 +1314,11 @@
+ 				status = "disabled";
+ 			};
+ 
+-			sckc@fc068650 {
+-				compatible = "atmel,at91sam9x5-sckc";
++			clk32k: sckc@fc068650 {
++				compatible = "atmel,sama5d4-sckc";
+ 				reg = <0xfc068650 0x4>;
+-
+-				slow_rc_osc: slow_rc_osc {
+-					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
+-					#clock-cells = <0>;
+-					clock-frequency = <32768>;
+-					clock-accuracy = <250000000>;
+-					atmel,startup-time-usec = <75>;
+-				};
+-
+-				slow_osc: slow_osc {
+-					compatible = "atmel,at91sam9x5-clk-slow-osc";
+-					#clock-cells = <0>;
+-					clocks = <&slow_xtal>;
+-					atmel,startup-time-usec = <1200000>;
+-				};
+-
+-				clk32k: slowck {
+-					compatible = "atmel,at91sam9x5-clk-slow";
+-					#clock-cells = <0>;
+-					clocks = <&slow_rc_osc &slow_osc>;
+-				};
++				#clock-cells = <0>;
++				clocks = <&slow_xtal>;
+ 			};
+ 
+ 			rtc@fc0686b0 {
+-- 
+2.9.3
