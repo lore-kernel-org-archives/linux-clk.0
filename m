@@ -1,62 +1,63 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 9 Sep 2016 21:12:21 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 7 Sep 2016 17:22:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: sunxi-ng: a23: Assign base address for
- bus_spinlock_clk
-Message-ID: <20160909191221.GI8881@lukather>
-References: <20160909035421.16119-1-wens@csie.org>
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: add support for ISP power domain
+ to exynos4x12 clocks device
+Message-ID: <20160908002254.GD13062@codeaurora.org>
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YhFoJY/gx7awiIuK"
-In-Reply-To: <20160909035421.16119-1-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 09/01, Marek Szyprowski wrote:
+> Exynos4412 clock controller contains some additional clocks for FIMC-ISP
+> (Camera ISP) subsystem. Registers for those clocks are partially located
+> in the SOC area, which belongs to ISP power domain.
+> 
+> This patch extends clock controller node with ISP clock sub-node and link
+> (phandle) to ISP power domain.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index 3394bdcf10ae..4daea67546b9 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -74,6 +74,11 @@
+>  		compatible = "samsung,exynos4412-clock";
+>  		reg = <0x10030000 0x20000>;
+>  		#clock-cells = <1>;
+> +
+> +		isp-clock-controller {
+> +			compatible = "samsung,exynos4412-isp-clock";
+> +			power-domains = <&pd_isp>;
+> +		};
 
---YhFoJY/gx7awiIuK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Why can't we extend support in power domains code to have
+multiple domains for a single device node? i.e. power-domains =
+<&pd_isp>, <&pd_foo>, <&pd_bar>, and then pick the right one with
+power-domain-names or something like that? Making a subnode
+(which seems to turn into a child platform device?) seems like a
+quick solution for larger problems.
 
-On Fri, Sep 09, 2016 at 11:54:21AM +0800, Chen-Yu Tsai wrote:
-> bus_spinlock_clk was accidentally left out of the list of clks that
-> need to be assigned the register base address.
->=20
-> Fixes: 8c9214b0e525 ("clk: sunxi-ng: Add A23 CCU")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-I squashed it into the A23 CCU patch.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---YhFoJY/gx7awiIuK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0wmVAAoJEBx+YmzsjxAgdtoP/jH5lRZhbpBLUXARhIUi5XN3
-L/pc2tqYU92RMtV8bGmF6RTQ/RXu3t3UndwpYDjuD4ptAqN/ZaBT7ZRvVjrk0iot
-XB1JMpeVoYYRaKU6lAtPoiENfHR55rnXo77DrLJvH8jIqedFd0XqPmfpRznOTWdz
-JrC2nuveNYSGMd4QpIy6B3yED4e+ppSzm1sDXNI9A5ZYxx07vgvk3c3pcPBMZneb
-tWwIE+lshzh0oO8Ehy3Iyk0btu/o/Y4AWNWHU/dySdplfUqO3Q9uTxrGgVwmknrR
-lrZ/Nj+p0OvbsF93O8jgFXbUV+2ii1U6nhn5y3tMw/ssx8S8sNDkUOn6Qr1dO1JH
-rgKGR17uuZI/Hyqh0adVQwijp+GZCfwFC2uKwfrUOtlu3Fsk4cg4PFRxxEZNAwga
-Ro5X+b7brDGRMz8F/R+ORc66CEbfInBFJ6eE+aWJs+rNOyW8TWe5Ve0KSD1Yvsmu
-N0AxsrKa3kela5DXO1mLq7R4mv6qS5JMSub+FyZFtCfz7rU9fqlTAUgomIG4G/6w
-a/dY8HSQ+qeY81MPZMlSzQTxYZxSzW76gix2MTguv4GnbTwqZwL5uHQufS2NWbOk
-zHWm8MLCYzTEFQEcMfm7M2KgWyIv+BTkZa6nUI4cIyXl4PPoe+YqjI0R12UxCM24
-IfDyCyCKRfKfx4R+gJWz
-=7W8U
------END PGP SIGNATURE-----
-
---YhFoJY/gx7awiIuK--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
