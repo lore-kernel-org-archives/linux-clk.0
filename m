@@ -1,352 +1,108 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40207 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751510AbcIGEOj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2016 00:14:39 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Message-id: <57CF942C.1030808@samsung.com>
-Date: Wed, 07 Sep 2016 13:14:36 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org
-Subject: Re: [PATCH v2 4/7] clk: samsung: Add support for EPLL on exynos5410
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20160906120551epcas1p1296ff11fa56842df249f5b6520fe0ab8@epcas1p1.samsung.com>
- <1473163496-17820-5-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1473163496-17820-5-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  mark.rutland@arm.com,  devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,  johnyoun@synopsys.com,  will.deacon@arm.com,  mturquette@baylibre.com,  linux-usb@vger.kernel.org,  sboyd@codeaurora.org,  kishon@ti.com,  robh+dt@kernel.org,  catalin.marinas@arm.com,  carlo@caione.org,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  jbrunet@baylibre.com
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+	<m260q6jibf.fsf@baylibre.com>
+	<CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+	<e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+Date: Thu, 08 Sep 2016 13:42:22 -0700
+In-Reply-To: <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk> (Ben
+	Dooks's message of "Thu, 8 Sep 2016 21:20:12 +0100")
+Message-ID: <m2eg4ui0nl.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+Ben Dooks <ben.dooks@codethink.co.uk> writes:
 
-On 2016년 09월 06일 21:04, Sylwester Nawrocki wrote:
-> This patch adds code instantiating the EPLL, which is used as the
-> audio subsystem's root clock.
-> The requirement to specify the external root clock in clocks property
-> is documented.  Having the consumer 'clocks' property ensures proper
-> initialization order by explicitly specifying dependencies in DT.
-> It prevents situations when the SoC's clock controller driver has
-> initialized, the external oscillator clock is not yet registered
-> and setting clock frequencies through assigned-clock-rates property
-> doesn't work properly due to unknown external oscillator frequency.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v1:
->  - rephrased paragraph of the DT binding describing the external
->    XXTI clock.
-> ---
->  .../devicetree/bindings/clock/exynos5410-clock.txt |  21 +++--
->  drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
->  drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
->  drivers/clk/samsung/clk-pll.h                      |   1 +
->  4 files changed, 144 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> index aeab635..4527de3 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> @@ -12,24 +12,29 @@ Required Properties:
->  
->  - #clock-cells: should be 1.
->  
-> +- clocks: should contain an entry specifying the root clock from external
-> +  oscillator supplied through XXTI or XusbXTI pin.  This clock should be
-> +  defined using standard clock bindings with "fin_pll" clock-output-name.
-> +  That clock is being passed internally to the 9 PLLs.
-> +
->  All available clocks are defined as preprocessor macros in
->  dt-bindings/clock/exynos5410.h header and can be used in device
->  tree sources.
->  
-> -External clock:
-> -
-> -There is clock that is generated outside the SoC. It
-> -is expected that it is defined using standard clock bindings
-> -with following clock-output-name:
-> -
-> - - "fin_pll" - PLL input clock from XXTI
-> -
->  Example 1: An example of a clock controller node is listed below.
->  
-> +	fin_pll: xxti {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <24000000>;
-> +		clock-output-names = "fin_pll";
-> +		#clock-cells = <0>;
-> +	};
-> +
->  	clock: clock-controller@0x10010000 {
->  		compatible = "samsung,exynos5410-clock";
->  		reg = <0x10010000 0x30000>;
->  		#clock-cells = <1>;
-> +		clocks = <&fin_pll>;
->  	};
->  
->  Example 2: UART controller node that consumes the clock generated by the clock
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index cf6fb41..113ce7d 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -14,6 +14,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/clk.h>
->  
->  #include "clk.h"
->  
-> @@ -21,6 +22,8 @@
->  #define APLL_CON0               0x100
->  #define CPLL_LOCK               0x10020
->  #define CPLL_CON0               0x10120
-> +#define EPLL_LOCK               0x10040
-> +#define EPLL_CON0               0x10130
->  #define MPLL_LOCK               0x4000
->  #define MPLL_CON0               0x4100
->  #define BPLL_LOCK               0x20010
-> @@ -58,7 +61,7 @@
->  
->  /* list of PLLs */
->  enum exynos5410_plls {
-> -	apll, cpll, mpll,
-> +	apll, cpll, epll, mpll,
->  	bpll, kpll,
->  	nr_plls                 /* number of PLLs */
->  };
-> @@ -67,6 +70,7 @@ enum exynos5410_plls {
->  PNAME(apll_p)		= { "fin_pll", "fout_apll", };
->  PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
->  PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
-> +PNAME(epll_p)		= { "fin_pll", "fout_epll" };
->  PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
->  PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
->  
-> @@ -95,6 +99,8 @@ static const struct samsung_mux_clock exynos5410_mux_clks[] __initconst = {
->  	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
->  	MUX(0, "sclk_bpll_muxed", bpll_user_p, SRC_TOP2, 24, 1),
->  
-> +	MUX(0, "sclk_epll", epll_p, SRC_TOP2, 12, 1),
-> +
->  	MUX(0, "sclk_cpll", cpll_p, SRC_TOP2, 8, 1),
->  
->  	MUX(0, "sclk_mpll_bpll", mpll_bpll_p, SRC_TOP1, 20, 1),
-> @@ -219,11 +225,26 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
->  	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
->  };
->  
-> -static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
-> +static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
-> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
+> On 08/09/16 20:52, Martin Blumenstingl wrote:
+>> On Thu, Sep 8, 2016 at 9:35 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>>>> +     phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
+>>>> +     if (IS_ERR(phy)) {
+>>>> +             dev_err(&pdev->dev, "failed to create PHY\n");
+>>>> +             return PTR_ERR(phy);
+>>>> +     }
+>>>> +
+>>>> +     if (usb_reset_refcnt++ == 0) {
+>>>> +             ret = device_reset(&pdev->dev);
+>>>> +             if (ret) {
+>>>> +                     dev_err(&phy->dev, "Failed to reset USB PHY\n");
+>>>> +                     return ret;
+>>>> +             }
+>>>> +     }
+>>>
+>>> The ref count + reset here looks like something that could/should be
+>>> handled in a runtime PM callback.
+>> Unfortunately that doesn't work (as Jerome found out) because both
+>> PHYs are sharing the same reset line.
+>> So if the second PHY would call device_reset then it would also reset
+>> the first PHY!
+>>
+>> There's a comment above the declaration of usb_reset_refcnt which
+>> tries to explain this:
+>> "The PHYs are sharing a common reset line -> we are only allowed to
+>> reset once for all PHYs."
+>> Maybe I should move this comment to the "if (usb_reset_refcnt++ == 0)
+>> {" line to make it easier to see?
+>>
+>
+> pm-runtime has refcounting in it. When one of the nodes turns on,
+> the pm-runtime will call your driver to say there is a user when
+> this first use turns up.
+>
+> If all the sub-phys turn off and drop their refcount then the driver
+> is called to say there are no more users and you can go to sleep.
 
-In the Exynos5410's TRM, the EPLL PMS table has the 
-'P' state is 3 instead of 2 when target is 400MHz as following:
+After a chat w/Martin on IRC, It turns out runtime PM wont help here.
 
-	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
+The reason is because there are physically two PHY devices[1].  Those 2
+devices will be treated independely by runtime PM, and have separate
+use-counting, which means doing what I proposed would cause a reset to
+happen when either device was probed.
 
-> +	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
-> +	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
-> +	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
-> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
-> +	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
-> +	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
-> +	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
-> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-> +	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
+So, I think it's OK as it is.
 
-The all entry of EPLL PMS table has the zero(0) for 'K' value.
-How about using the PLL_35XX_RATE() which has the P,M,S entry without K entry?
+Kevin
 
-> +};
-> +
-> +static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
->  	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
->  		APLL_CON0, NULL),
->  	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
->  		CPLL_CON0, NULL),
-> +	[epll] = PLL(pll_2650x, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-> +		EPLL_CON0, NULL),
->  	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
->  		MPLL_CON0, NULL),
->  	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
-> @@ -237,6 +258,7 @@ static void __init exynos5410_clk_init(struct device_node *np)
->  {
->  	struct samsung_clk_provider *ctx;
->  	void __iomem *reg_base;
-> +	struct clk *xxti;
->  
->  	reg_base = of_iomap(np, 0);
->  	if (!reg_base)
-> @@ -244,6 +266,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
->  
->  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
->  
-> +	xxti = of_clk_get(np, 0);
-> +	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
-> +		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
-> +
+[1] from the DT patch:
 
-I sent the patch to use the samsung_cmu_register_one()
-
-and applied it[1]. I think that you need to rebase this patch on patch[1].
-[1] https://lkml.org/lkml/2016/9/1/602
-- Re: [PATCH 2/2] clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
-
->  	samsung_clk_register_pll(ctx, exynos5410_plls,
->  			ARRAY_SIZE(exynos5410_plls), reg_base);
->  
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index b5ab055..d61fd80 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -1018,6 +1018,102 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
->  };
->  
->  /*
-> + * PLL2650x Clock Type
-> + */
-> +
-> +/* Maximum lock time can be 3000 * PDIV cycles */
-> +#define PLL2650X_LOCK_FACTOR		3000
-> +
-> +#define PLL2650X_M_MASK			0x3FF
-
-1FF instead of 0x3FF because the MDIV [24:16]?
-
-> +#define PLL2650X_P_MASK			0x3F
-> +#define PLL2650X_S_MASK			0x7
-> +#define PLL2650X_K_MASK			0xFFFF
-> +#define PLL2650X_LOCK_STAT_MASK		0x1
-> +#define PLL2650X_M_SHIFT		16
-> +#define PLL2650X_P_SHIFT		8
-> +#define PLL2650X_S_SHIFT		0
-> +#define PLL2650X_K_SHIFT		0
-> +#define PLL2650X_LOCK_STAT_SHIFT	29
-> +#define PLL2650X_PLL_ENABLE_SHIFT	31
-> +
-> +static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
-> +				unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u64 fout = parent_rate;
-> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
-> +	s16 kdiv;
-> +
-> +	pll_con0 = readl_relaxed(pll->con_reg);
-> +	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
-> +	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
-> +	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
-> +
-> +	pll_con1 = readl_relaxed(pll->con_reg + 4);
-> +	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
-> +
-> +	fout *= (mdiv << 16) + kdiv;
-> +	do_div(fout, (pdiv << sdiv));
-> +	fout >>= 16;
-> +
-> +	return (unsigned long)fout;
-
-I got some confusion because the EPLL_CON1 register don't include
-the 'K' value. Instead, the name is 'DSM' which is PLL DSM(Delta-Sigma Modulator).
-But, I knew that DSM means the 'K' value as your implementation.
-
-I have a question.
-When I check the calculation fomula as following:
-	FFOUT = ((m+k/6536) x FFIN) / (p x 2^S);
-
-So, pll2560x might shift the kdiv instead of mdiv.
-	fout *= mdiv + (kdiv << 16);
-
-
-> +}
-> +
-> +static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
-> +					unsigned long prate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	const struct samsung_pll_rate_table *rate;
-> +	u32 con0, con1;
-> +
-> +	/* Get required rate settings from table */
-> +	rate = samsung_get_pll_settings(pll, drate);
-> +	if (!rate) {
-> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-> +			drate, clk_hw_get_name(hw));
-> +		return -EINVAL;
-> +	}
-> +
-> +	con0 = readl_relaxed(pll->con_reg);
-> +	con1 = readl_relaxed(pll->con_reg + 4);
-> +
-> +	/* Set PLL lock time. */
-> +	writel_relaxed(rate->pdiv * PLL2650X_LOCK_FACTOR, pll->lock_reg);
-> +
-> +	/* Change PLL PMS values */
-> +	con0 &= ~((PLL2650X_M_MASK << PLL2650X_M_SHIFT) |
-> +			(PLL2650X_P_MASK << PLL2650X_P_SHIFT) |
-> +			(PLL2650X_S_MASK << PLL2650X_S_SHIFT));
-> +	con0 |= (rate->mdiv << PLL2650X_M_SHIFT) |
-> +			(rate->pdiv << PLL2650X_P_SHIFT) |
-> +			(rate->sdiv << PLL2650X_S_SHIFT);
-> +	con0 |= (1 << PLL2650X_PLL_ENABLE_SHIFT);
-> +	writel_relaxed(con0, pll->con_reg);
-> +
-> +	con1 &= ~(PLL2650X_K_MASK << PLL2650X_K_SHIFT);
-> +	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
-> +	writel_relaxed(con1, pll->con_reg + 4);
-> +
-> +	do {
-> +		cpu_relax();
-> +		con0 = readl_relaxed(pll->con_reg);
-> +	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
-> +			<< PLL2650X_LOCK_STAT_SHIFT)));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops samsung_pll2650x_clk_ops = {
-> +	.recalc_rate = samsung_pll2650x_recalc_rate,
-> +	.round_rate = samsung_pll_round_rate,
-> +	.set_rate = samsung_pll2650x_set_rate,
-> +};
-> +
-> +static const struct clk_ops samsung_pll2650x_clk_min_ops = {
-> +	.recalc_rate = samsung_pll2650x_recalc_rate,
-> +};
-> +
-> +/*
->   * PLL2650XX Clock Type
->   */
->  
-> @@ -1227,6 +1323,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  		else
->  			init.ops = &samsung_pll2550xx_clk_ops;
->  		break;
-> +	case pll_2650x:
-> +		if (!pll->rate_table)
-> +			init.ops = &samsung_pll2650x_clk_min_ops;
-> +		else
-> +			init.ops = &samsung_pll2650x_clk_ops;
-> +		break;
->  	case pll_2650xx:
->  		if (!pll->rate_table)
->  			init.ops = &samsung_pll2650xx_clk_min_ops;
-> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-> index df4ad8a..a1ca023 100644
-> --- a/drivers/clk/samsung/clk-pll.h
-> +++ b/drivers/clk/samsung/clk-pll.h
-> @@ -33,6 +33,7 @@ enum samsung_pll_type {
->  	pll_s3c2440_mpll,
->  	pll_2550x,
->  	pll_2550xx,
-> +	pll_2650x,
->  	pll_2650xx,
->  	pll_1450x,
->  	pll_1451x,
-> 
-
--- 
-Best Regards,
-Chanwoo Choi
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 2e8a3d9..02dfc54 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -151,6 +151,34 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		usb-phys@c0000000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xc0000000 0x0 0x40>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xc0000000 0x0 0x40>;
++
++			usb0_phy: usb_phy@0 {
++				compatible = "amlogic,meson-gxbb-usb2-phy";
++				#phy-cells = <0>;
++				reg = <0x0 0x0 0x0 0x20>;
++				resets = <&reset 34>;
++				clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
++				clock-names = "usb_general", "usb";
++				status = "disabled";
++			};
++
++			usb1_phy: usb_phy@20 {
++				compatible = "amlogic,meson-gxbb-usb2-phy";
++				#phy-cells = <0>;
++				reg = <0x0 0x20 0x0 0x20>;
++				resets = <&reset 34>;
++				clocks = <&clkc CLKID_USB &clkc CLKID_USB1>;
++				clock-names = "usb_general", "usb";
++				status = "disabled";
++			};
++		};
++
