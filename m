@@ -1,48 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39072 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753456AbcIFMFc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:32 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 0/7] clk/samsung: exynos5410: Add sound subsystem related
- clocks
-Date: Tue, 06 Sep 2016 14:04:49 +0200
-Message-id: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+In-Reply-To: <m260q6jibf.fsf@baylibre.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com> <m260q6jibf.fsf@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 8 Sep 2016 21:52:45 +0200
+Message-ID: <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: kishon@ti.com, linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+	johnyoun@synopsys.com, carlo@caione.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+	will.deacon@arm.com, catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+	mark.rutland@arm.com, robh+dt@kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for the EPLL and the peripheral DMA clocks required
-for sound support on Odroid-XU board.
+On Thu, Sep 8, 2016 at 9:35 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>> +     phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
+>> +     if (IS_ERR(phy)) {
+>> +             dev_err(&pdev->dev, "failed to create PHY\n");
+>> +             return PTR_ERR(phy);
+>> +     }
+>> +
+>> +     if (usb_reset_refcnt++ == 0) {
+>> +             ret = device_reset(&pdev->dev);
+>> +             if (ret) {
+>> +                     dev_err(&phy->dev, "Failed to reset USB PHY\n");
+>> +                     return ret;
+>> +             }
+>> +     }
+>
+> The ref count + reset here looks like something that could/should be
+> handled in a runtime PM callback.
+Unfortunately that doesn't work (as Jerome found out) because both
+PHYs are sharing the same reset line.
+So if the second PHY would call device_reset then it would also reset
+the first PHY!
 
-The clk-exynos-audss driver has been reworked to support
-"samsung,exynos5412-audss-clock" compatible.
+There's a comment above the declaration of usb_reset_refcnt which
+tries to explain this:
+"The PHYs are sharing a common reset line -> we are only allowed to
+reset once for all PHYs."
+Maybe I should move this comment to the "if (usb_reset_refcnt++ == 0)
+{" line to make it easier to see?
 
-This series also includes a cleanup patch consolidating the PLL clocks
-code, i.e. switching exynos5440 to use common code.
 
-Sylwester Nawrocki (7):
-  clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks
-  clk: samsung: exynos5410: Expose the peripheral DMA gate clocks
-  clk: samsung: Use common registration function for pll2550x
-  clk: samsung: Add support for EPLL on exynos5410
-  clk: samsung: clk-exynos-audss: controller variant handling rework
-  clk: samsung: clk-exynos-audss: Add exynos5410 compatible
-  clk: samsung: clk-exynos-audss: Whitespace and debug trace cleanup
-
- .../devicetree/bindings/clock/clk-exynos-audss.txt |   4 +-
- .../devicetree/bindings/clock/exynos5410-clock.txt |  21 +--
- drivers/clk/samsung/clk-exynos-audss.c             |  84 ++++++-----
- drivers/clk/samsung/clk-exynos5410.c               |  32 ++++-
- drivers/clk/samsung/clk-exynos5440.c               |   9 +-
- drivers/clk/samsung/clk-pll.c                      | 154 ++++++++++++++-------
- drivers/clk/samsung/clk-pll.h                      |   2 +
- include/dt-bindings/clock/exynos5410.h             |   3 +
- include/dt-bindings/clock/exynos5440.h             |   2 +
- 9 files changed, 217 insertions(+), 94 deletions(-)
-
---
-1.9.1
-
+Regards,
+Martin
