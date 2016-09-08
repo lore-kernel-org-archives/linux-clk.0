@@ -1,327 +1,87 @@
-Return-Path: <mw@semihalf.com>
-Return-Path: <mw@semihalf.com>
-From: Marcin Wojtas <mw@semihalf.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	andrew@lunn.ch,
-	jason@lakedaemon.net,
-	thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com,
-	nadavh@marvell.com,
-	alior@marvell.com,
-	tn@semihalf.com,
-	jaz@semihalf.com,
-	Marcin Wojtas <mw@semihalf.com>
-Subject: [PATCH v2 3/3] clk: mvebu: migrate CP110 system controller to clk_hw API and registration
-Date: Tue,  6 Sep 2016 19:31:57 +0200
-Message-Id: <1473183117-11889-4-git-send-email-mw@semihalf.com>
-In-Reply-To: <1473183117-11889-1-git-send-email-mw@semihalf.com>
-References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+Return-Path: <mars.cheng@mediatek.com>
+Message-ID: <1473343735.1896.15.camel@mtkswgap22>
+Subject: Re: [PATCH 1/4] Document: DT: Add bindings for mediatek MT6797 SoC
+ Platform
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Erin Lo <erin.lo@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>,
+	<linux-clk@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Choui
+	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Scott Shu
+	<scott.shu@mediatek.com>, Jades Shih <jades.shih@mediatek.com>, "Yingjoe
+ Chen" <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Date: Thu, 8 Sep 2016 22:08:55 +0800
+In-Reply-To: <57D15B6C.6080305@arm.com>
+References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
+	 <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
+	 <57D15B6C.6080305@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have clk_hw based provider APIs to register clks, we
-can get rid of struct clk pointers while registering clks in Armada
-CP110 system controller driver. This commit introduces new
-API and registration for all clocks in CP110 HW blocks.
+Hi Marc
 
-Signed-off-by: Marcin Wojtas <mw@semihalf.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
- 1 file changed, 72 insertions(+), 78 deletions(-)
+Thanks for your review. the response inlined.
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 5e68d24..fd27df0 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -87,7 +87,7 @@ struct cp110_gate_clk {
- 	u8 bit_idx;
- };
- 
--#define to_cp110_gate_clk(clk) container_of(clk, struct cp110_gate_clk, hw)
-+#define to_cp110_gate_clk(hw) container_of(hw, struct cp110_gate_clk, hw)
- 
- static int cp110_gate_enable(struct clk_hw *hw)
- {
-@@ -123,13 +123,14 @@ static const struct clk_ops cp110_gate_ops = {
- 	.is_enabled = cp110_gate_is_enabled,
- };
- 
--static struct clk *cp110_register_gate(const char *name,
--				       const char *parent_name,
--				       struct regmap *regmap, u8 bit_idx)
-+static struct clk_hw *cp110_register_gate(const char *name,
-+					  const char *parent_name,
-+					  struct regmap *regmap, u8 bit_idx)
- {
- 	struct cp110_gate_clk *gate;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init;
-+	int ret;
- 
- 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
- 	if (!gate)
-@@ -146,39 +147,37 @@ static struct clk *cp110_register_gate(const char *name,
- 	gate->bit_idx = bit_idx;
- 	gate->hw.init = &init;
- 
--	clk = clk_register(NULL, &gate->hw);
--	if (IS_ERR(clk))
-+	hw = &gate->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
- 		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
- 
--	return clk;
-+	return hw;
- }
- 
--static void cp110_unregister_gate(struct clk *clk)
-+static void cp110_unregister_gate(struct clk_hw *hw)
- {
--	struct clk_hw *hw;
--
--	hw = __clk_get_hw(clk);
--	if (!hw)
--		return;
--
--	clk_unregister(clk);
-+	clk_hw_unregister(hw);
- 	kfree(to_cp110_gate_clk(hw));
- }
- 
--static struct clk *cp110_of_clk_get(struct of_phandle_args *clkspec, void *data)
-+static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
-+				       void *data)
- {
--	struct clk_onecell_data *clk_data = data;
-+	struct clk_hw_onecell_data *clk_data = data;
- 	unsigned int type = clkspec->args[0];
- 	unsigned int idx = clkspec->args[1];
- 
- 	if (type == CP110_CLK_TYPE_CORE) {
- 		if (idx > CP110_MAX_CORE_CLOCKS)
- 			return ERR_PTR(-EINVAL);
--		return clk_data->clks[idx];
-+		return clk_data->hws[idx];
- 	} else if (type == CP110_CLK_TYPE_GATABLE) {
- 		if (idx > CP110_MAX_GATABLE_CLOCKS)
- 			return ERR_PTR(-EINVAL);
--		return clk_data->clks[CP110_MAX_CORE_CLOCKS + idx];
-+		return clk_data->hws[CP110_MAX_CORE_CLOCKS + idx];
- 	}
- 
- 	return ERR_PTR(-EINVAL);
-@@ -189,8 +188,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	struct device_node *np = pdev->dev.of_node;
- 	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
--	struct clk_onecell_data *cp110_clk_data;
--	struct clk *clk, **cp110_clks;
-+	struct clk_hw_onecell_data *cp110_clk_data;
-+	struct clk_hw *hw, **cp110_clks;
- 	u32 nand_clk_ctrl;
- 	int i, ret;
- 
-@@ -203,80 +202,75 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
--				  CP110_CLK_NUM, GFP_KERNEL);
--	if (!cp110_clks)
--		return PTR_ERR(cp110_clks);
--
--	cp110_clk_data = devm_kzalloc(&pdev->dev,
--				      sizeof(*cp110_clk_data),
-+	cp110_clk_data = devm_kcalloc(&pdev->dev, sizeof(*cp110_clk_data),
-+				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
- 				      GFP_KERNEL);
- 	if (!cp110_clk_data)
- 		return PTR_ERR(cp110_clk_data);
- 
--	cp110_clk_data->clks = cp110_clks;
--	cp110_clk_data->clk_num = CP110_CLK_NUM;
-+	cp110_clks = cp110_clk_data->hws;
-+	cp110_clk_data->num = CP110_CLK_NUM;
- 
--	/* Register the APLL which is the root of the clk tree */
-+	/* Register the APLL which is the root of the hw tree */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_APLL, &apll_name);
--	clk = clk_register_fixed_rate(NULL, apll_name, NULL, 0,
--				      1000 * 1000 * 1000);
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
-+	hw = clk_hw_register_fixed_rate(NULL, apll_name, NULL, 0,
-+					1000 * 1000 * 1000);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
- 		goto fail0;
- 	}
- 
--	cp110_clks[CP110_CORE_APLL] = clk;
-+	cp110_clks[CP110_CORE_APLL] = hw;
- 
- 	/* PPv2 is APLL/3 */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_PPV2, &ppv2_name);
--	clk = clk_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
-+	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
- 		goto fail1;
- 	}
- 
--	cp110_clks[CP110_CORE_PPV2] = clk;
-+	cp110_clks[CP110_CORE_PPV2] = hw;
- 
- 	/* EIP clock is APLL/2 */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_EIP, &eip_name);
--	clk = clk_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
-+	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
- 		goto fail2;
- 	}
- 
--	cp110_clks[CP110_CORE_EIP] = clk;
-+	cp110_clks[CP110_CORE_EIP] = hw;
- 
- 	/* Core clock is EIP/2 */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_CORE, &core_name);
--	clk = clk_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
-+	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
- 		goto fail3;
- 	}
- 
--	cp110_clks[CP110_CORE_CORE] = clk;
-+	cp110_clks[CP110_CORE_CORE] = hw;
- 
- 	/* NAND can be either APLL/2.5 or core clock */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_NAND, &nand_name);
- 	if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
--		clk = clk_register_fixed_factor(NULL, nand_name,
--						apll_name, 0, 2, 5);
-+		hw = clk_hw_register_fixed_factor(NULL, nand_name,
-+						   apll_name, 0, 2, 5);
- 	else
--		clk = clk_register_fixed_factor(NULL, nand_name,
--						core_name, 0, 1, 1);
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
-+		hw = clk_hw_register_fixed_factor(NULL, nand_name,
-+						   core_name, 0, 1, 1);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
- 		goto fail4;
- 	}
- 
--	cp110_clks[CP110_CORE_NAND] = clk;
-+	cp110_clks[CP110_CORE_NAND] = hw;
- 
- 	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
- 		const char *parent, *name;
-@@ -335,16 +329,16 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 			break;
- 		}
- 
--		clk = cp110_register_gate(name, parent, regmap, i);
--		if (IS_ERR(clk)) {
--			ret = PTR_ERR(clk);
-+		hw = cp110_register_gate(name, parent, regmap, i);
-+		if (IS_ERR(hw)) {
-+			ret = PTR_ERR(hw);
- 			goto fail_gate;
- 		}
- 
--		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
-+		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = hw;
- 	}
- 
--	ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
-+	ret = of_clk_add_hw_provider(np, cp110_of_clk_get, cp110_clk_data);
- 	if (ret)
- 		goto fail_clk_add;
- 
-@@ -355,44 +349,44 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- fail_clk_add:
- fail_gate:
- 	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
--		clk = cp110_clks[CP110_MAX_CORE_CLOCKS + i];
-+		hw = cp110_clks[CP110_MAX_CORE_CLOCKS + i];
- 
--		if (clk)
--			cp110_unregister_gate(clk);
-+		if (hw)
-+			cp110_unregister_gate(hw);
- 	}
- 
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
- fail4:
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
- fail3:
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
- fail2:
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
- fail1:
--	clk_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
-+	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
- fail0:
- 	return ret;
- }
- 
- static int cp110_syscon_clk_remove(struct platform_device *pdev)
- {
--	struct clk **cp110_clks = platform_get_drvdata(pdev);
-+	struct clk_hw **cp110_clks = platform_get_drvdata(pdev);
- 	int i;
- 
- 	of_clk_del_provider(pdev->dev.of_node);
- 
- 	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
--		struct clk *clk = cp110_clks[CP110_MAX_CORE_CLOCKS + i];
-+		struct clk_hw *hw = cp110_clks[CP110_MAX_CORE_CLOCKS + i];
- 
--		if (clk)
--			cp110_unregister_gate(clk);
-+		if (hw)
-+			cp110_unregister_gate(hw);
- 	}
- 
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
--	clk_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
--	clk_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
-+	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
- 
- 	return 0;
- }
--- 
-1.8.3.1
+On Thu, 2016-09-08 at 13:37 +0100, Marc Zyngier wrote:
+> On 08/09/16 11:49, Mars Cheng wrote:
+> > This adds DT binding documentation for Mediatek MT6797.
+> > 
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > ---
+[...]
+> 
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> > index 9d1d72c..3d97eb4 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> > @@ -8,6 +8,7 @@ Required properties:
+> >  	"mediatek,mt8173-sysirq"
+> >  	"mediatek,mt8135-sysirq"
+> >  	"mediatek,mt8127-sysirq"
+> > +	"mediatek,mt6797-sysirq"
+> >  	"mediatek,mt6795-sysirq"
+> >  	"mediatek,mt6755-sysirq"
+> >  	"mediatek,mt6592-sysirq"
+> > @@ -21,7 +22,8 @@ Required properties:
+> >  - interrupt-parent: phandle of irq parent for sysirq. The parent must
+> >    use the same interrupt-cells format as GIC.
+> >  - reg: Physical base address of the intpol registers and length of memory
+> > -  mapped region.
+> > +  mapped region. Could be up to 2 registers here at max. Ex: 6797 needs 2 reg,
+> > +  others need 1.
+> 
+> Two things:
+> 
+> - Please make this a separate patch that can be reviewed independently
+> of the rest of the changes, which are just adding new compatible
+> identifiers.
+
+Will fix this in the next patch set.
+
+> 
+> - Why can't you simply expose it as a separate controller? Looking at
+> the way you're changing the corresponding driver, it looks like you're
+> simply adding an extra base/size. If you simply had a base for the
+> corresponding GIC interrupts, you could handle as many region as you
+> want, and have a more generic driver.
+> 
+
+May I know the meaning of "simply expose it as a separate controller"?
+Or you might like to suggest me any similar driver as a reference? I
+will examine it. Current design is based on the fact: We expect
+irq-mtk-sysirq needs the optional second base but the third one will not
+happen.
+
+If we really need more than 2 bases, we can figure out a more generic
+driver at the time, right?
+
+Thanks.
+> Thanks,
+> 
+> 	M.
