@@ -1,66 +1,53 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 3/5] ARM: dts: at91: sama5d4: use proper sckc compatible
-Date: Thu,  8 Sep 2016 13:57:21 +0200
-Message-Id: <20160908115723.11878-4-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160908115723.11878-1-alexandre.belloni@free-electrons.com>
-References: <20160908115723.11878-1-alexandre.belloni@free-electrons.com>
+Return-Path: <ukl@pengutronix.de>
+Date: Fri, 9 Sep 2016 21:15:54 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
+Message-ID: <20160909191554.p5heukzkidwqiwpf@pengutronix.de>
+References: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20160909061631.GI16911@tiger>
+ <20160909062034.tim2tzcihui6inoa@pengutronix.de>
+ <20160909181138.GD7243@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20160909181138.GD7243@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that there is support for the sama5d4 slow clock controller, use its
-driver.
+On Fri, Sep 09, 2016 at 11:11:38AM -0700, Stephen Boyd wrote:
+> On 09/09, Uwe Kleine-König wrote:
+> > To += mturquette, sboyd
+> > 
+> > Hello Shawn, hello Michael, hello Stephen,
+> > 
+> > On Fri, Sep 09, 2016 at 02:16:31PM +0800, Shawn Guo wrote:
+> > > On Thu, Sep 08, 2016 at 11:30:21AM +0200, Uwe Kleine-König wrote:
+> > > > This fixes
+> > > > 	[    0.000000] i.MX clk 82: register failed with -17
+> > > > because the name is duplicated.
+> > > > 
+> > > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > > 
+> > > I did not queue any clock patches for this cycle.  Can you please send
+> > > the patches directly to clock maintainers?
+> > 
+> > @shawnguo: Is this an ack?
+> > @mturquette, sboyd: should I resend? IMHO the first patch should go in
+> > soon.
+> 
+> Does the first patch need a fixes tag? We can apply them
+> directly.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/boot/dts/sama5d4.dtsi | 27 ++++-----------------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
+The breakage was introduced by v4.3-rc2~4^2~71^2, i.e.
+3713e3f5e927 (clk: imx35: define two clocks for rtc).
 
-diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 65e725fb5679..fe094263595c 100644
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -1314,30 +1314,11 @@
- 				status = "disabled";
- 			};
- 
--			sckc@fc068650 {
--				compatible = "atmel,at91sam9x5-sckc";
-+			clk32k: sckc@fc068650 {
-+				compatible = "atmel,sama5d4-sckc";
- 				reg = <0xfc068650 0x4>;
--
--				slow_rc_osc: slow_rc_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--					#clock-cells = <0>;
--					clock-frequency = <32768>;
--					clock-accuracy = <250000000>;
--					atmel,startup-time-usec = <75>;
--				};
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--					atmel,startup-time-usec = <1200000>;
--				};
--
--				clk32k: slowck {
--					compatible = "atmel,at91sam9x5-clk-slow";
--					#clock-cells = <0>;
--					clocks = <&slow_rc_osc &slow_osc>;
--				};
-+				#clock-cells = <0>;
-+				clocks = <&slow_xtal>;
- 			};
- 
- 			rtc@fc0686b0 {
+Best regards
+Uwe
+
 -- 
-2.9.3
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
