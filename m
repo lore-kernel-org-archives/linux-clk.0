@@ -1,56 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:54840 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753427AbcINUCA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Sep 2016 16:02:00 -0400
-Subject: [PATCH 2/4] clk/Renesas-MSTP: Delete an error message for a failed
- memory allocation
-To: linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Wolfram Sang <wsa@the-dreams.de>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <04cf79a5-df91-d8c2-83b2-ad9e9130ee7a@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 22:01:41 +0200
+Return-Path: <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Kevin Hilman <khilman@baylibre.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+ <m260q6jibf.fsf@baylibre.com>
+ <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+ <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+ <m2eg4ui0nl.fsf@baylibre.com>
+ <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+ <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+ <m2sht9gkau.fsf@baylibre.com>
+ <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
+ mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
+ kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com,
+ carlo@caione.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ jbrunet@baylibre.com
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Message-ID: <b9730890-d98c-2c3a-8af1-96b8c394c30f@codethink.co.uk>
+Date: Fri, 9 Sep 2016 18:21:14 +0100
 MIME-Version: 1.0
-In-Reply-To: <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 21:17:18 +0200
+On 09/09/16 17:14, Martin Blumenstingl wrote:
+> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>> However, the problem with all of the solutions proposed (runtime PM ones
+>> included) is that we're forcing a board-specific design issue (2 devices
+>> sharing a reset line) into a driver that should not have any
+>> board-specific assumptions in it.
+>>
+>> For example, if this driver is used on another platform where different
+>> PHYs have different reset lines, then one of them (the unlucky one who
+>> is not probed first) will never get reset.  So any form of per-device
+>> ref-counting is not a portable solution.
+> maybe we should also consider Ben's solution: he played with the USB
+> PHY on his Meson8b board. His approach was to have only one USB PHY
+> driver instance which exposes two PHYs.
+> The downside of this: the driver would have to know the offset of the
+> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
+> the reset using runtime PM without any hacks.
+>
+> I checked the USB PHY reference driver: it seems that there will be a
+> new USB PHY with the GXL/GXM SoCs.
+> So maybe we could live with the assumption that the PHYs are at
+> consecutive addresses.
+>
+>> I'm not sure yet how the reset framework is supposed to handle shared
+>> reset lines, but that needs some investigation.  I quick glance and it
+>> seems that reset controllers can have shared lines, so that should be
+>> investigated.
+> unfortunately shared resets are not allowed to use reset_control_reset, see [0]
+>
+>
+> [0] http://lxr.free-electrons.com/source/drivers/reset/core.c#L102
 
-Omit an extra message for a memory allocation failure in this function.
+If we didn't have the shared reset, we'd have one of node per phy
+and not have to have two sub-nodes... I don't think any other bits
+of the PHY framework are shared.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/renesas/clk-mstp.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 9375777..1fdc44b 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -171,7 +171,6 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 	if (group == NULL || clks == NULL) {
- 		kfree(group);
- 		kfree(clks);
--		pr_err("%s: failed to allocate group\n", __func__);
- 		return;
- 	}
- 
 -- 
-2.10.0
-
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
