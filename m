@@ -1,72 +1,30 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-clk@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	johnyoun@synopsys.com,
-	kishon@ti.com,
-	khilman@baylibre.com,
-	carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 3/7] Documentation: dt-bindings: Add documentation for the Meson USB2 PHYs
-Date: Sun,  4 Sep 2016 23:31:48 +0200
-Message-Id: <20160904213152.25837-4-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 9 Sep 2016 11:07:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: rk808: Pass the right pointer as the get_hw context
+Message-ID: <20160909180718.GC7243@codeaurora.org>
+References: <1473427506-28244-1-git-send-email-tomeu.vizoso@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473427506-28244-1-git-send-email-tomeu.vizoso@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the documentation for the bindings for the Meson8b and GXBB USB2
-PHYs.
+On 09/09, Tomeu Vizoso wrote:
+> Right now we are passing a pointer to a pointer to the structure that
+> will be used to fetch the clk hw, which gets casted later to a pointer
+> to the structure, thus getting garbage in the hw structs.
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Fixes: a8b6e85db6a6 ("clk: rk808: Migrate to clk_hw based OF and
+> registration APIs")
+> ---
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- .../devicetree/bindings/phy/meson-usb2-phy.txt     | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+Applied to clk-next
 
-diff --git a/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
-new file mode 100644
-index 0000000..662b537
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
-@@ -0,0 +1,27 @@
-+* Amlogic USB2 PHY
-+
-+Required properties:
-+- compatible:	Depending on the platform this should be one of:
-+	"amlogic,meson8b-usb2-phy"
-+	"amlogic,meson-gxbb-usb2-phy"
-+- reg:		The base address and length of the registers
-+- #phys-cells:	should be 0 (see phy-bindings.txt in this directory)
-+- resets:	reference to the reset controller
-+- clocks:	phandle and clock identifier for the phy clocks
-+- clock-names:	"usb_general" and "usb"
-+
-+Optional properties:
-+- phy-supply:	see phy-bindings.txt in this directory
-+
-+
-+Example:
-+
-+usb0_phy: usb_phy@0 {
-+	compatible = "amlogic,meson-gxbb-usb2-phy";
-+	#phy-cells = <0>;
-+	reg = <0x0 0x0 0x0 0x20>;
-+	resets = <&reset 34>;
-+	clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
-+	clock-names = "usb_general", "usb";
-+	phy-supply = <&usb_vbus>;
-+};
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
