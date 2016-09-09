@@ -1,56 +1,69 @@
-Return-Path: <mw@semihalf.com>
-Return-Path: <mw@semihalf.com>
-From: Marcin Wojtas <mw@semihalf.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>,
 	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	andrew@lunn.ch,
-	jason@lakedaemon.net,
-	thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com,
-	nadavh@marvell.com,
-	alior@marvell.com,
-	tn@semihalf.com,
-	jaz@semihalf.com,
-	Marcin Wojtas <mw@semihalf.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2 1/3] clk: mvebu: fix setting unwanted flags in CP110 gate clock
-Date: Tue,  6 Sep 2016 19:31:55 +0200
-Message-Id: <1473183117-11889-2-git-send-email-mw@semihalf.com>
-In-Reply-To: <1473183117-11889-1-git-send-email-mw@semihalf.com>
-References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 0/4] arm64: Allwinner A64 support based on sunxi-ng
+Date: Fri,  9 Sep 2016 22:10:25 +0200
+Message-Id: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Armada CP110 system controller comprises its own routine responsble
-for registering gate clocks. Among others 'flags' field in
-struct clk_init_data was not set, using a random values, which
-may cause an unpredicted behavior.
+Hi,
 
-This patch fixes the problem by resetting all fields of clk_init_data
-before assigning values for all gated clocks of Armada 7k/8k SoCs family.
+As it was in the first iteration, this is the A64 support based on the
+new sunxi-ng clock framework.
 
-Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
-Signed-off-by: Marcin Wojtas <mw@semihalf.com>
-CC: <stable@vger.kernel.org>
----
- drivers/clk/mvebu/cp110-system-controller.c | 2 ++
- 1 file changed, 2 insertions(+)
+The support for it is quite minimal at the moment, but it should be
+fairly easy to add new devices, as most of the design is shared with
+older SoCs.
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 7fa42d6..59fe76e 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -142,6 +142,8 @@ static struct clk *cp110_register_gate(const char *name,
- 	if (!gate)
- 		return ERR_PTR(-ENOMEM);
- 
-+	memset(&init, 0, sizeof(init));
-+
- 	init.name = name;
- 	init.ops = &cp110_gate_ops;
- 	init.parent_names = &parent_name;
+Let me know what you think,
+Maxime
+
+Changes from v1:
+  - Split the A64 CCU support out of the H3 driver
+  - Added the PMU support
+  - Removed the clocks node
+  - Rebased on top of current sunxi/clk-for-4.9 branch
+
+Andre Przywara (3):
+  Documentation: devicetree: add vendor prefix for Pine64
+  arm64: dts: add Allwinner A64 SoC .dtsi
+  arm64: dts: add Pine64 support
+
+Maxime Ripard (1):
+  clk: sunxi-ng: Add A64 clocks
+
+ Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ MAINTAINERS                                        |   1 +
+ arch/arm64/boot/dts/Makefile                       |   1 +
+ arch/arm64/boot/dts/allwinner/Makefile             |   5 +
+ .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  |  50 ++
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  70 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 279 +++++++
+ drivers/clk/sunxi-ng/Kconfig                       |  11 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 870 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h              |  68 ++
+ include/dt-bindings/clock/sun50i-a64-ccu.h         | 132 ++++
+ include/dt-bindings/reset/sun50i-a64-ccu.h         |  97 +++
+ 15 files changed, 1588 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+ create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
+
 -- 
-1.8.3.1
+2.9.3
