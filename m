@@ -1,46 +1,45 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 17:39:33 -0700
+Date: Fri, 9 Sep 2016 11:11:38 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Boyd <stephen.boyd@linaro.org>,
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/34] clk: at91: Migrate to clk_hw based registration
- and OF APIs
-Message-ID: <20160915003933.GK7243@codeaurora.org>
-References: <20160601231533.9354-1-stephen.boyd@linaro.org>
- <20160601231533.9354-3-stephen.boyd@linaro.org>
- <20160607163621.GN3363@piout.net>
- <20160607184059.6c83477f@bbrezillon>
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
+Message-ID: <20160909181138.GD7243@codeaurora.org>
+References: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20160909061631.GI16911@tiger>
+ <20160909062034.tim2tzcihui6inoa@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160607184059.6c83477f@bbrezillon>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20160909062034.tim2tzcihui6inoa@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07, Boris Brezillon wrote:
-> On Tue, 7 Jun 2016 18:36:21 +0200
-> Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
+On 09/09, Uwe Kleine-König wrote:
+> To += mturquette, sboyd
 > 
-> > On 01/06/2016 at 16:15:01 -0700, Stephen Boyd wrote :
-> > > Now that we have clk_hw based provider APIs to register clks, we
-> > > can get rid of struct clk pointers in this driver, allowing us to
-> > > move closer to a clear split of consumer and provider clk APIs.
+> Hello Shawn, hello Michael, hello Stephen,
+> 
+> On Fri, Sep 09, 2016 at 02:16:31PM +0800, Shawn Guo wrote:
+> > On Thu, Sep 08, 2016 at 11:30:21AM +0200, Uwe Kleine-König wrote:
+> > > This fixes
+> > > 	[    0.000000] i.MX clk 82: register failed with -17
+> > > because the name is duplicated.
 > > > 
-> > > Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > > Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>  
+> > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 > > 
-> > Well, apart the same comment about alignement:
-> > 
-> > Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > Tested-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > I did not queue any clock patches for this cycle.  Can you please send
+> > the patches directly to clock maintainers?
 > 
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
+> @shawnguo: Is this an ack?
+> @mturquette, sboyd: should I resend? IMHO the first patch should go in
+> soon.
 
-Ok I fixed the alignment and pushed to clk-next.
+Does the first patch need a fixes tag? We can apply them
+directly.
+
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
