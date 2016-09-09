@@ -1,128 +1,127 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 5/5] clocks: exynos5433: add runtime pm support
-Date: Thu, 01 Sep 2016 18:55:38 +0200
-Message-id: <2519946.fIx2ZfLU7C@amdc1976>
-In-reply-to: <1472737551-15272-6-git-send-email-m.szyprowski@samsung.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-6-git-send-email-m.szyprowski@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH] clk: stm32f4: don't assume 48MHz clock is derived from
+ primary PLL
+To: Andrea Merello <andrea.merello@gmail.com>, <linux-clk@vger.kernel.org>,
+        Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+References: <1473318063-21782-1-git-send-email-andrea.merello@gmail.com>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Bruno Herrera <bruherrera@gmail.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <b39d3544-9512-9e0b-2f5b-4135835009f9@st.com>
+Date: Fri, 9 Sep 2016 11:57:15 +0200
+MIME-Version: 1.0
+In-Reply-To: <1473318063-21782-1-git-send-email-andrea.merello@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Andrea,
 
-Hi,
+On 09/08/2016 09:01 AM, Andrea Merello wrote:
+> This driver just look at the PLLs configurations set by the
+> bootloader, but it assumes the 48MHz clock is derived from the primary
+> PLL; however using PLLSAI is another option for generating the 48MHz
+> clock.
+>
+> This patch make the driver to check for this, and eventually adjust the
+> clock tree accordingly
 
-On Thursday, September 01, 2016 03:45:51 PM Marek Szyprowski wrote:
-> Add runtime pm support for all clock controller units (CMU), which belongs
-> to power domains and require special handling during on/off operations.
-> Typically special values has to be written to MUX registers to change
-> internal clocks parents to OSC clock before turning power off. During such
-> operation all clocks, which enters CMU has to be enabled to let MUX to
-> stabilize. Also for each CMU there is one special parent clock, which has
-> to be enabled all the time when any access to CMU registers is done.
-> 
-> This patch solves most of the mysterious external abort and freeze issues
-> caused by a lack of proper parent CMU clock enabled or incorrect turn off
-> procedure.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Another patch-set is ongoing concerning RTC clock for stm32f4. It is 
+developed by Gabriel Fernandez (I add him directly in this reply).
+Can you check with him how he plans to manage this RTC clock in order to 
+have something similar / coherent for SAI clocks, 48MHz ....
+
+Concerning this patch,
+When I look at the clock tree I see that 48 MHz is only provided by pll 
+named "PLL". So If you use PLL SAI to provide a clock at 48 MHz, you 
+actually use SAI_A or SAI_B clock. I'm right ?
+
+I think we need to have something more configurable. Each special clock 
+(SAI / RTC /LCd ...) have to be configurable and each "parents" (PLL / 
+PLLI2S / PLLSAI) should be described at least in the driver.
+
+Gabriel,
+
+Can you send a draft of your patch-set for RTC clock to Andrea, in order 
+to discuss about this topic.
+
+Thanks
+
+Alex
+
+
+>
+> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: Bruno Herrera <bruherrera@gmail.com>
 > ---
->  drivers/clk/samsung/clk-exynos5433.c | 462 +++++++++++++++++++++++++++--------
->  1 file changed, 363 insertions(+), 99 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index ea1608682d7f..9fb896b56ddf 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -9,9 +9,14 @@
->   * Common Clock Framework support for Exynos5443 SoC.
->   */
->  
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
+>  drivers/clk/clk-stm32f4.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index 02d6810..7f1ba8f 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -24,6 +24,7 @@
 >  #include <linux/of.h>
 >  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/slab.h>
->  
->  #include <dt-bindings/clock/exynos5433.h>
->  
-> @@ -19,6 +24,37 @@
->  #include "clk-cpu.h"
->  #include "clk-pll.h"
->  
-> +struct exynos5433_cmu_info {
-> +	/* total number of clocks with IDs assigned*/
-> +	unsigned int nr_clk_ids;
-> +	/* list of pll clocks and respective count */
-> +	const struct samsung_pll_clock *pll_clks;
-> +	unsigned int nr_pll_clks;
-> +	/* list of mux clocks and respective count */
-> +	const struct samsung_mux_clock *mux_clks;
-> +	unsigned int nr_mux_clks;
-> +	/* list of div clocks and respective count */
-> +	const struct samsung_div_clock *div_clks;
-> +	unsigned int nr_div_clks;
-> +	/* list of gate clocks and respective count */
-> +	const struct samsung_gate_clock *gate_clks;
-> +	unsigned int nr_gate_clks;
-> +	/* list of fixed clocks and respective count */
-> +	const struct samsung_fixed_rate_clock *fixed_clks;
-> +	unsigned int nr_fixed_clks;
-> +	/* list of fixed factor clocks and respective count */
-> +	const struct samsung_fixed_factor_clock *fixed_factor_clks;
-> +	unsigned int nr_fixed_factor_clks;
-> +	/* list and number of clocks registers */
-> +	const unsigned long *clk_regs;
-> +	unsigned int nr_clk_regs;
-> +	/* list and number of clocks registers to set before suspend */
-> +	const struct samsung_clk_reg_dump *suspend_regs;
-> +	unsigned int nr_suspend_regs;
-> +	/* name of the parent clock needed for CMU register access */
-> +	const char *clk_name;
-> +};
-
-Have you considered extending struct samsung_cmu_info instead
-(all instances are __initdata anyway so slight increase of struct's
-size shouldn't be a problem)?
-
-> +static const struct samsung_clk_reg_dump g2d_suspend_regs[] = {
-> +	{MUX_SEL_G2D0, 0},
-
-Minor nit: preferred CodingStyle is:
-
-	{ MUX_SEL_G2D0, 0 },
-
-( ditto for other struct samsung_clk_reg_dump instances )
-
-> +	clk_table = devm_kcalloc(dev, info->nr_clk_ids, sizeof(struct clk *),
-> +				 GFP_KERNEL);
-> +	if (!clk_table) {
-> +		dev_err(dev, "could not allocate clock lookup table\n");
-> +		return -ENOMEM;
+>
+> +#define STM32F4_RCC_CR			0x00
+>  #define STM32F4_RCC_PLLCFGR		0x04
+>  #define STM32F4_RCC_CFGR		0x08
+>  #define STM32F4_RCC_AHB1ENR		0x30
+> @@ -31,6 +32,8 @@
+>  #define STM32F4_RCC_AHB3ENR		0x38
+>  #define STM32F4_RCC_APB1ENR		0x40
+>  #define STM32F4_RCC_APB2ENR		0x44
+> +#define STM32F4_RCC_PLLSAICFGR		0x88
+> +#define STM32F4_RCC_DCKCFGR		0x8C
+>
+>  struct stm32f4_gate_data {
+>  	u8	offset;
+> @@ -238,16 +241,35 @@ static struct clk *clk_register_apb_mul(struct device *dev, const char *name,
+>  static void stm32f4_rcc_register_pll(const char *hse_clk, const char *hsi_clk)
+>  {
+>  	unsigned long pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
+> -
+> +	unsigned long pllsaicfgr = readl(base + STM32F4_RCC_PLLSAICFGR);
+> +	unsigned long dckcfgr = readl(base + STM32F4_RCC_DCKCFGR);
+> +	unsigned long rcccr = readl(base + STM32F4_RCC_CR);
+> +	bool saien = rcccr & BIT(28);
+>  	unsigned long pllm   = pllcfgr & 0x3f;
+>  	unsigned long plln   = (pllcfgr >> 6) & 0x1ff;
+>  	unsigned long pllp   = BIT(((pllcfgr >> 16) & 3) + 1);
+>  	const char   *pllsrc = pllcfgr & BIT(22) ? hse_clk : hsi_clk;
+>  	unsigned long pllq   = (pllcfgr >> 24) & 0xf;
+> +	bool src48_sai = dckcfgr & BIT(27);
+> +	unsigned long pllsain = (pllsaicfgr >> 6) & 0x1ff;
+> +	unsigned long pllsaip = BIT(((pllsaicfgr >> 16) & 3) + 1);
+>
+>  	clk_register_fixed_factor(NULL, "vco", pllsrc, 0, plln, pllm);
+>  	clk_register_fixed_factor(NULL, "pll", "vco", 0, 1, pllp);
+> -	clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1, pllq);
+> +
+> +	if (src48_sai && !saien) {
+> +		pr_err("48MHz derived from SAI PLL, but SAI PLL disabled (blame the bootloader)\n");
+> +		return;
 > +	}
-
-checkpatch.pl complains with:
-
-WARNING: Possible unnecessary 'out of memory' message
-#681: FILE: drivers/clk/samsung/clk-exynos5433.c:5541:
-+       if (!clk_table) {
-+               dev_err(dev, "could not allocate clock lookup table\n");
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> +
+> +	if (saien)
+> +		clk_register_fixed_factor(NULL, "sai",
+> +					pllsrc, 0, pllsain, pllm);
+> +
+> +	if (src48_sai)
+> +		clk_register_fixed_factor(NULL, "pll48", "sai", 0, 1, pllsaip);
+> +	else
+> +		clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1, pllq);
+>  }
+>
+>  /*
+>
