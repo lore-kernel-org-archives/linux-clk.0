@@ -1,166 +1,158 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>
-CC: linux-mmc <linux-mmc@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        "Bhupesh Sharma" <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        "Kumar Gala" <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, "X.B. Xie" <xiaobo.xie@nxp.com>
-Subject: RE: [v11, 7/8] base: soc: introduce soc_device_match() interface
-Date: Wed, 7 Sep 2016 04:10:32 +0000
-Message-ID: <HE1PR04MB088939A28A68035F3393A441F8F80@HE1PR04MB0889.eurprd04.prod.outlook.com>
-References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
- <1473150503-9550-8-git-send-email-yangbo.lu@nxp.com>
- <CAPDyKFrvg3Qr5m3xXvywsCoVvaiF7ggHAj0Aw=WCOXg65Pt0PQ@mail.gmail.com>
- <6515108.aCEls7dUuW@wuerfel>
-In-Reply-To: <6515108.aCEls7dUuW@wuerfel>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Sep 2016 17:24:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	a.hajda@samsung.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Message-ID: <20160909002432.GE13062@codeaurora.org>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Anrd and Uffe,
+On 08/16, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> RFC, please, do not apply, maybe except patch #1 which is harmless.
+> 
+> 
+> Introduction
+> ============
+> The patchset brings new entity: clock controller representing a hardware
+> block.  The clock controller comes with its own prepare lock which
+> is used then in many places.  The idea is to fix the deadlock mentioned
+> in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> by keeping clock prepared").
+> 
+> 
+> Disclaimer
+> ==========
+> Request for comments, so:
+> 1. Only exynos_defconfig builds,
+> 2. A lot of FIXME/TODO note still,
+> 3. Checkpatch not run, lines not aligned,
+> 4. Other (non-exynos) drivers not converted,
+> 5. Probably not yet bisectable,
+> 6. Locking became quite complex.
+>    The previous one lock was simple.  Inefficient and dead-lock prone but
+>    simple.  Because of clock hierarchy spanning through controllers, the
+>    new locking became quite complicated.  I don't like it but...
+> 
+> 
+> Details
+> =======
+> In Exynos-based boards case the deadlock occurs between clock's
+> prepare_lock and regmap-i2c's lock:
+> 
+> CPU #0:                             CPU #1:
+> lock(regmap)
+>                                     s2mps11-clk: clk_prepare_lock()
+> 
+> i2c-exynos: clk_prepare_lock() - wait
+>                                     lock(regmap) - wait
+> 
+> The clk_prepare_lock() on both CPUs come from different clock drivers
+> and components:
+> 1. I2C clock is part of SoC block and is required by i2c-s3c2410/i2c-exynos5
+>    driver,
+> 2. S2MPS11 clock is separate device, however driver uses I2C regmap.
+> 
+> The deadlock was reported by lockdep (always) and was happening
+> in 20% of boots of Odroid XU3 with multi_v7 defconfig.  Workaround for
+> deadlock was implemented by removing prepare/unprepare calls from I2C
+> transfers.  However these are just workarounds... which after applying
+> this patch can be reverted.
+> 
+> Additionally Marek Szyprowski's work on domains/clocks/pinctrl exposed
+> the deadlock again in different configuration.
+> 
 
-Thank you for your comment.
-Please see my comment inline.
+Per-controller locks seems to be a misnomer. These patches look
+more like per-clk_register() locks. The clk registrant can decide
+how fine grained to make the prepare locking scheme. They can
+decide to have one lock per clk, one lock for the entire tree, or
+one lock per arbitrary subtree. I'd prefer to drop the controller
+concept unless it's really done that way, by attaching to the OF
+clk provider or device pointer.
 
+Given that, it seems that conceptually these patches allow clk
+registrants to carve out a set of clks that they want to be
+treated as an atomic unit with regards to the prepare lock.
+TL;DR trees of per-process recursive prepare mutex locks where
+the locks cover one or more clks.
 
+The locks are recursive per-process to simplify the problem where
+we need to acquire the same lock multiple times while traversing
+a tree that shares the same lock, right? Otherwise we would need
+to track which locks we've already grabbed and refcount and we
+wouldn't be able to re-enter the framework from within the clk
+ops of the same atomic unit.
 
-Best regards,
-Yangbo Lu
+As long as we can guarantee that we always take the locks in the
+same order we'll be fine. The burden to ensure that would be
+placed on the clk registrants though, and verifying that will be
+left up to humans? That seems fragile and error prone. We can
+always say that we take the global lock and then traverse the
+children up to the roots, but we can't be sure that during the
+tree traversal we don't take locks in different order because of
+how the clk registrant has structured things.
 
-> -----Original Message-----
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: Tuesday, September 06, 2016 8:46 PM
-> To: Ulf Hansson
-> Cc: Y.B. Lu; linux-mmc; Scott Wood; linuxppc-dev@lists.ozlabs.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; linux-clk; linux-i2c@vger.kernel.org;
-> iommu@lists.linux-foundation.org; netdev@vger.kernel.org; Mark Rutland;
-> Rob Herring; Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil=
-;
-> Bhupesh Sharma; Qiang Zhao; Kumar Gala; Santosh Shilimkar; Leo Li; X.B.
-> Xie
-> Subject: Re: [v11, 7/8] base: soc: introduce soc_device_match() interface
->=20
-> On Tuesday, September 6, 2016 1:44:23 PM CEST Ulf Hansson wrote:
-> > On 6 September 2016 at 10:28, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> > > We keep running into cases where device drivers want to know the
-> > > exact version of the a SoC they are currently running on. In the
-> > > past, this has usually been done through a vendor specific API that
-> > > can be called by a driver, or by directly accessing some kind of
-> > > version register that is not part of the device itself but that
-> > > belongs to a global register area of the chip.
->=20
-> Please add "From: Arnd Bergmann <arnd@arndb.de>" as the first line, to
-> preserve authorship. If you use "git send-email" or "git format-patch",
-> that should happen automatically if the author field is set right (if not=
-,
-> use 'git commit --amend --author=3D"Arnd Bergmann <arnd@arndb.de>"'
-> to fix it).
->=20
+It would be great if the different clk APIs were listed, with the
+order of how locks are taken BTW. And really overall just more
+information about how the locking scheme works. I had to read
+this patch series quite a few times to come to (hopefully the
+right) conclusions.
 
-[Lu Yangbo-B47093] Oh, I'm sorry for my careless. Will correct it in next v=
-ersion.
+So I'm not very fond of this design because the locking scheme is
+pretty much out of the hands of the framework and can be easily
+broken. I'm biased of course, because I'd prefer we go with my
+wwmutex design of per-clk locks[1]. Taking locks in any order
+works fine there, and we resolve quite a few long standing
+locking problems that we have while improving scalability. The
+problem there is that we don't get the recursive mutex design
+(maybe that's a benefit!). Once a clk_op reenters the framework
+with consumer APIs and tries to grab the same lock we deadlock.
+This is why I've been slowly splitting consumers from providers
+so we can easily identify these cases. If we had something like
+coordinated clk rate switching, we could get rid of clk_ops
+reentering the framework and avoid this problem (and we really do
+need to do that).
 
-> > > +
-> > > +/*
-> > > + * soc_device_match - identify the SoC in the machine
-> > > + * @matches: zero-terminated array of possible matches
-> >
-> > Perhaps also express the constraint on the matching entries. As you
-> > need at least one of the ->machine(), ->family(), ->revision() or
-> > ->soc_id() callbacks implemented, right!?
->=20
-> They are not callbacks, just strings. Having an empty entry indicates the
-> end of the array, and this is not called.
->=20
-> > > + *
-> > > + * returns the first matching entry of the argument array, or NULL
-> > > + * if none of them match.
-> > > + *
-> > > + * This function is meant as a helper in place of of_match_node()
-> > > + * in cases where either no device tree is available or the
-> > > + information
-> > > + * in a device node is insufficient to identify a particular
-> > > + variant
-> > > + * by its compatible strings or other properties. For new devices,
-> > > + * the DT binding should always provide unique compatible strings
-> > > + * that allow the use of of_match_node() instead.
-> > > + *
-> > > + * The calling function can use the .data entry of the
-> > > + * soc_device_attribute to pass a structure or function pointer for
-> > > + * each entry.
-> >
-> > I don't get the use case behind this, could you elaborate?
-> >
-> > Perhaps we should postpone adding the .data entry until we actually
-> > see a need for it?
->=20
-> I think the interface is rather useless without a way to figure out which
-> entry you got. Almost all users of of_match_node() actually use the
-> returned ->data field, and I expect this to be the same here.
->=20
-> > > + */
-> > > +const struct soc_device_attribute *soc_device_match(
-> > > +       const struct soc_device_attribute *matches) {
-> > > +       struct device *dev;
-> > > +       int ret;
-> > > +
-> > > +       for (ret =3D 0; ret =3D=3D 0; matches++) {
-> >
-> > This loop looks a bit weird and unsafe.
->=20
-> Ah, and I thought I was being clever ;-)
->=20
-> > 1) Perhaps using a while loop makes this more readable?
-> > 2) As this is an exported API, I guess validation of the ->matches
-> > pointer needs to be done before accessing it.
->=20
-> Sounds fine.
+The one thing I do like about this patch series though is the
+gradual movement of providers to the new locking scheme. Maybe if
+we combined that idea with per-clk wwmutex locks we could have
+the best of both worlds and fix reentrancy later when we need it?
+There's wwmutex_trylock() that we could use. Perhaps always pass
+a NULL context if some clk flag isn't set (CLK_USE_PER_CLK_LOCK).
+Plus we could assign the same wwmutex all over the place when
+that flag isn't set and allocate a unique wwmutex at clk_register
+time otherwise. I haven't thought about it deeply, so there may
+be some glaring problem that I'm missing like when we have half
+the clks in a tree with the flag set or something. This is where
+driving home from the office for 45 minutes helps.
 
-[Lu Yangbo-B47093] Ok, Will change this according to Uffe.=20
-And actually there is issue with this for() when I verified it again this m=
-orning.
-We will get matches++ rather than matches which is correct finally :)
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-April/251039.html
 
->=20
-> > > +               if (!(matches->machine || matches->family ||
-> > > +                     matches->revision || matches->soc_id))
-> > > +                       return NULL;
-> > > +               dev =3D NULL;
-> >
-> > There's no need to use a struct device just to assign it to NULL.
-> > Instead just provide the function below with NULL.
-> >
-> > > +               ret =3D bus_for_each_dev(&soc_bus_type, dev, (void
-> *)matches,
-> > > +                                      soc_device_match_one);
->=20
->=20
-> I don't remember what led to this, I think you are right, we should just
-> pass NULL as most other callers.
-
-[Lu Yangbo-B47093] Will correct it. Thanks. :)
-
->=20
-> Thanks for the review.
->=20
-> 	ARnd
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
