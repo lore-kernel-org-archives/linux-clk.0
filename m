@@ -1,39 +1,62 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
-To: Jun Nie <jun.nie@linaro.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 9 Sep 2016 21:12:21 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH -next] clk: zx296718: use builtin_platform_driver to simplify the code
-Date: Fri, 16 Sep 2016 13:03:31 +0000
-Message-Id: <1474031011-6700-1-git-send-email-weiyj.lk@gmail.com>
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: sunxi-ng: a23: Assign base address for
+ bus_spinlock_clk
+Message-ID: <20160909191221.GI8881@lukather>
+References: <20160909035421.16119-1-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YhFoJY/gx7awiIuK"
+In-Reply-To: <20160909035421.16119-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Use the builtin_platform_driver() macro to make the code simpler.
+--YhFoJY/gx7awiIuK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/zte/clk-zx296718.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+On Fri, Sep 09, 2016 at 11:54:21AM +0800, Chen-Yu Tsai wrote:
+> bus_spinlock_clk was accidentally left out of the list of clks that
+> need to be assigned the register base address.
+>=20
+> Fixes: 8c9214b0e525 ("clk: sunxi-ng: Add A23 CCU")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index 025e324..b4fe8dd 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -917,8 +917,4 @@ static struct platform_driver zx_clk_driver = {
- 	},
- };
- 
--static int __init zx_clkc_init(void)
--{
--	return platform_driver_register(&zx_clk_driver);
--}
--device_initcall(zx_clkc_init);
-+builtin_platform_driver(zx_clk_driver);
+I squashed it into the A23 CCU patch.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--YhFoJY/gx7awiIuK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0wmVAAoJEBx+YmzsjxAgdtoP/jH5lRZhbpBLUXARhIUi5XN3
+L/pc2tqYU92RMtV8bGmF6RTQ/RXu3t3UndwpYDjuD4ptAqN/ZaBT7ZRvVjrk0iot
+XB1JMpeVoYYRaKU6lAtPoiENfHR55rnXo77DrLJvH8jIqedFd0XqPmfpRznOTWdz
+JrC2nuveNYSGMd4QpIy6B3yED4e+ppSzm1sDXNI9A5ZYxx07vgvk3c3pcPBMZneb
+tWwIE+lshzh0oO8Ehy3Iyk0btu/o/Y4AWNWHU/dySdplfUqO3Q9uTxrGgVwmknrR
+lrZ/Nj+p0OvbsF93O8jgFXbUV+2ii1U6nhn5y3tMw/ssx8S8sNDkUOn6Qr1dO1JH
+rgKGR17uuZI/Hyqh0adVQwijp+GZCfwFC2uKwfrUOtlu3Fsk4cg4PFRxxEZNAwga
+Ro5X+b7brDGRMz8F/R+ORc66CEbfInBFJ6eE+aWJs+rNOyW8TWe5Ve0KSD1Yvsmu
+N0AxsrKa3kela5DXO1mLq7R4mv6qS5JMSub+FyZFtCfz7rU9fqlTAUgomIG4G/6w
+a/dY8HSQ+qeY81MPZMlSzQTxYZxSzW76gix2MTguv4GnbTwqZwL5uHQufS2NWbOk
+zHWm8MLCYzTEFQEcMfm7M2KgWyIv+BTkZa6nUI4cIyXl4PPoe+YqjI0R12UxCM24
+IfDyCyCKRfKfx4R+gJWz
+=7W8U
+-----END PGP SIGNATURE-----
+
+--YhFoJY/gx7awiIuK--
