@@ -1,110 +1,72 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 11 Sep 2016 22:44:20 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: arm@kernel.org
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner DT changes for 4.9, take 2
-Message-ID: <20160911204420.GA11949@lukather>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Return-Path: <s.nawrocki@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] Samsung clock updates for 4.9
+Message-id: <5763a275-eb8a-6911-6a15-2e0b434d066c@samsung.com>
+Date: Fri, 09 Sep 2016 17:45:27 +0200
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-Hi,
-
-Please pull the following branch for 4.9, based on top of the previous
-one.
-
-To maintain bisectability, while avoiding some un-trivial merge
-conflicts, I had to merge the clk branch that I've sent a PR to Mike
-and Stephen. This branch will of course be stable.
-
-Thanks!
-Maxime
-
-The following changes since commit bdc2601b02d31974b5765b93ac263b2eeab2e07c:
-
-  Merge branch 'sunxi/clk-for-4.9' into sunxi/dt-for-4.9 (2016-09-10 11:45:=
-28 +0200)
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
-nxi-dt-for-4.9-2
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-samsung
 
-for you to fetch changes up to 7a988a4dd29a8cfcf405a12441533d765d25a6b8:
+for you to fetch changes up to be95d2c7d918b2b7b973378a1e92bdc6559c21f9:
 
-  ARM: dts: gr8: Add support for the GR8 evaluation board (2016-09-11 22:23=
-:17 +0200)
+  clk: samsung: Add support for EPLL on exynos5410 (2016-09-09 17:35:13 +0200)
 
 ----------------------------------------------------------------
-Allwinner DT changes for 4.9, take 2
-
-A second set of device tree changes, this time switching a few SoCs to the
-new sunxi-ng clock framework. We also added the support for a new SoC
-(NextThing GR8 and its evaluation board), and the support for the DRM
-driver in the A33.
+In addition to a few clean up and code consolidation patches this
+includes:
+- addition of sound subsystem related clocks for Exynos5410 SoC
+  (EPLL, PDMA) and support for "samsung,exynos5410-audss-clock"
+  compatible in the clk-exynos-audss driver,
+- addition of DRAM controller related clocks for exynos5420,
+- MAINTAINERS update adding Chanwoo Choi as the Samsung SoC
+  clock drivers co-maintainer.
 
 ----------------------------------------------------------------
-Chen-Yu Tsai (2):
-      ARM: dts: sun6i: switch A31/A31s to new CCU clock bindings
-      ARM: dts: sun8i: Move A23/A33 usbphy and usb_otg nodes to common dtsi
+Chanwoo Choi (5):
+      clk: samsung: Add clock IDs for the CMU_CDREX (DRAM Express Controller)
+      MAINTAINERS: Add myself as Samsung SoC clock drivers co-maintainer
+      clk: samsung: exynos5260: Move struct samsung_cmu_info to init section
+      clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
+      clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
 
-Maxime Ripard (3):
-      ARM: sun8i: Convert the A23 and A33 to the CCU
-      ARM: sun8i: a33: Add display pipeline
-      ARM: sun8i: a23/a33: Add RGB666 pins
+Sylwester Nawrocki (7):
+      clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks
+      clk: samsung: exynos5410: Expose the peripheral DMA gate clocks
+      clk: samsung: Use common registration function for pll2550x
+      clk: samsung: clk-exynos-audss: controller variant handling rework
+      clk: samsung: clk-exynos-audss: Add exynos5410 compatible
+      clk: samsung: clk-exynos-audss: Whitespace and debug trace cleanup
+      clk: samsung: Add support for EPLL on exynos5410
 
-Myl=E8ne Josserand (2):
-      ARM: dts: Add NextThing GR8 dtsi
-      ARM: dts: gr8: Add support for the GR8 evaluation board
+ .../devicetree/bindings/clock/clk-exynos-audss.txt  |   4 +-
+ .../devicetree/bindings/clock/exynos5410-clock.txt  |  21 +-
+ MAINTAINERS                                         |   3 +
+ drivers/clk/samsung/clk-exynos-audss.c              |  84 +++--
+ drivers/clk/samsung/clk-exynos5260.c                | 350 ++++++++++-----------
+ drivers/clk/samsung/clk-exynos5410.c                |  61 ++--
+ drivers/clk/samsung/clk-exynos5420.c                |  37 +++
+ drivers/clk/samsung/clk-exynos5440.c                |   9 +-
+ drivers/clk/samsung/clk-pll.c                       | 154 ++++++---
+ drivers/clk/samsung/clk-pll.h                       |   2 +
+ include/dt-bindings/clock/exynos5410.h              |   3 +
+ include/dt-bindings/clock/exynos5420.h              |  11 +-
+ include/dt-bindings/clock/exynos5440.h              |   2 +
+ 13 files changed, 453 insertions(+), 288 deletions(-)
 
- arch/arm/boot/dts/Makefile           |    1 +
- arch/arm/boot/dts/ntc-gr8-evb.dts    |  342 +++++++++++
- arch/arm/boot/dts/ntc-gr8.dtsi       | 1087 ++++++++++++++++++++++++++++++=
-++++
- arch/arm/boot/dts/sun6i-a31.dtsi     |  424 +++----------
- arch/arm/boot/dts/sun8i-a23-a33.dtsi |  295 +++------
- arch/arm/boot/dts/sun8i-a23.dtsi     |   80 +--
- arch/arm/boot/dts/sun8i-a33.dtsi     |  236 +++++---
- 7 files changed, 1791 insertions(+), 674 deletions(-)
- create mode 100644 arch/arm/boot/dts/ntc-gr8-evb.dts
- create mode 100644 arch/arm/boot/dts/ntc-gr8.dtsi
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX1cIjAAoJEBx+YmzsjxAg87QP/1BytHbO73xXMPl7+b1/BjOC
-uZ6AG9RvRNTjcypnHeTyiJZsh2WOJ2DH5NNNgh5RyAmz8f0OgGT0Vzer95x3mDO4
-2wnF29VJVx5PvWh7JpORT+pW25g19dz5O6lZLp7ua3aheOSiF8WGLmTy/9PJE28g
-5InAPkU5sLXGaZ70HwgNXM5Vh0uB6emk5+LEm06X8sBB0h13mvhn25ZjIr0v300a
-dc9Gp87S0qalSqBYR8tppZlYNxN3d/kKBRCaNe2hJxPejH7A5nThHwARd1mD6t6I
-/+xVpiSh/nwdxa1rkHgvPReXILERdtM/6QmHS3lRBlhTIN0jYFo0SIXoSoWywsRa
-jdvFDb0BKta0DrZf/y9bKSApRxjKnWqi5qJoXuSGgHHJKEykhZ9CArZAB8YwUw42
-c9b+QMeW3VnhN1S8XFNGb4ih2XeNMyzt5qUnxmnItU94m1iknhU/Pk8MSc0qh9CK
-iGo8KzpEq9B2IB3gRIEAaTj0bQbLD2FUPYJdbzpkBPbUCi3GNGdi58DqiMaJw55f
-r4Ke7RHobmlWsGf7mfZN7yjcO7YeQFYZW3l0mumSppHcGDW/hob8lPCCdLKljws2
-XLUEI/Sg93WV6aYlWoZBe9Xy9K+VEKUUw+WKswRigctZVycBd2SbxM95b/bOpgEu
-HZNF5gKZ9eSVJUltDeLV
-=q4/x
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+-- 
+Thanks,
+Sylwester
