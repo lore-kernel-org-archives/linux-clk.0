@@ -1,85 +1,58 @@
-Return-Path: <irina.tirdea@intel.com>
-From: "Tirdea, Irina" <irina.tirdea@intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, "alsa-devel@alsa-project.org"
-	<alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai
-	<tiwai@suse.com>, "Bossart, Pierre-louis" <pierre-louis.bossart@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: RE: [PATCH v3] clk: x86: Add Atom PMC platform clocks
-Date: Thu, 15 Sep 2016 15:44:37 +0000
-Message-ID: <1F3AC3675D538145B1661F571FE1805F2F33FD26@irsmsx105.ger.corp.intel.com>
-References: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
- <20160914213025.GE7243@codeaurora.org>
-In-Reply-To: <20160914213025.GE7243@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:58102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750841AbcIIGRF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Sep 2016 02:17:05 -0400
+Date: Fri, 9 Sep 2016 14:16:31 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
+Message-ID: <20160909061631.GI16911@tiger>
+References: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Sep 08, 2016 at 11:30:21AM +0200, Uwe Kleine-König wrote:
+> This fixes
+> 	[    0.000000] i.MX clk 82: register failed with -17
+> because the name is duplicated.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
+I did not queue any clock patches for this cycle.  Can you please send
+the patches directly to clock maintainers?
 
-> -----Original Message-----
-> From: linux-clk-owner@vger.kernel.org [mailto:linux-clk-owner@vger.kernel=
-.org] On Behalf Of Stephen Boyd
-> Sent: 15 September, 2016 0:30
-> To: Tirdea, Irina
-> Cc: linux-clk@vger.kernel.org; Michael Turquette; alsa-devel@alsa-project=
-.org; Mark Brown; Takashi Iwai; Bossart, Pierre-louis; Pierre-
-> Louis Bossart
-> Subject: Re: [PATCH v3] clk: x86: Add Atom PMC platform clocks
->=20
-> On 09/09, Irina Tirdea wrote:
-> > The BayTrail and CherryTrail platforms provide platform clocks
-> > through their Power Management Controller (PMC).
-> >
-> > The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
-> > frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-> > an a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-> > are available for general system use, where appropriate, and each
-> > have Control & Frequency register fields associated with them.
-> >
-> > For example, the usage for platform clocks suggested in the datasheet
-> > is the following:
-> >   PLT_CLK[2:0] - Camera
-> >   PLT_CLK[3] - Audio Codec
-> >   PLT_CLK[4] -
-> >   PLT_CLK[5] - COMMs
-> >
-> > Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-> > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.c=
-om>
-> > ---
-> >
-> > Notes:
-> >     Submitting this patch through the clock tree as requested by
-> >     Mark Brown. This patch specifically enables the audio MCLK
-> >     required by Baytrail CR devices (support already merged in
-> >     Mark's tree)
-> >
-> > Changes from v2:
-> >  - move clk platform data structures to a separate include file
-> >  - store clk_hw pointer for the fixed rate clocks
-> >
-> > Changes from v1:
-> >  - register the clk device as child of pmc device
-> >  - pass iomem pointer from pmc driver to clk driver to avoid using
-> > pmc_atom_read()/write() and use readl/writel API instead
-> >  - use devm_clk_hw_register/clkdev_hw_create instead of
-> > clk_register/clkdev_create
-> >
-> >  arch/x86/Kconfig                          |   1 +
-> >  arch/x86/include/asm/pmc_atom.h           |   3 +
-> >  arch/x86/platform/atom/pmc_atom.c         |  78 +++++-
->=20
-> Will there be problems if this merges through clk tree? If so we
-> could take the clk driver part and the platform data include part
-> could be duplicated into both trees. Or clk tree could be pulled
-> into x86?
->=20
-> The patch looks fine to me.
+Shawn
 
-Oops... Seems I forgot to add the x86 architecture maintainers.
-Sorry about that. I will send v4 and add them.
-
-Thanks,
-Irina
+> ---
+>  drivers/clk/imx/clk-imx35.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+> index b0978d3b83e2..d302ed3b8225 100644
+> --- a/drivers/clk/imx/clk-imx35.c
+> +++ b/drivers/clk/imx/clk-imx35.c
+> @@ -115,7 +115,7 @@ static void __init _mx35_clocks_init(void)
+>  	}
+>  
+>  	clk[ckih] = imx_clk_fixed("ckih", 24000000);
+> -	clk[ckil] = imx_clk_fixed("ckih", 32768);
+> +	clk[ckil] = imx_clk_fixed("ckil", 32768);
+>  	clk[mpll] = imx_clk_pllv1(IMX_PLLV1_IMX35, "mpll", "ckih", base + MX35_CCM_MPCTL);
+>  	clk[ppll] = imx_clk_pllv1(IMX_PLLV1_IMX35, "ppll", "ckih", base + MX35_CCM_PPCTL);
+>  
+> -- 
+> 2.8.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
