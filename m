@@ -1,223 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 14:01:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yanhaifeng@hisilicon.com,
-	gaofei@hisilicon.com, hermit.wangheming@hisilicon.com,
-	scott.bambrough@linaro.org, mark.gregotski@linaro.org
-Subject: Re: [PATCH] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
-Message-ID: <20160914210134.GD7243@codeaurora.org>
-References: <1473670888-17997-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473670888-17997-1-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <b9730890-d98c-2c3a-8af1-96b8c394c30f@codethink.co.uk>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+ <m260q6jibf.fsf@baylibre.com> <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+ <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk> <m2eg4ui0nl.fsf@baylibre.com>
+ <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk> <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+ <m2sht9gkau.fsf@baylibre.com> <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+ <b9730890-d98c-2c3a-8af1-96b8c394c30f@codethink.co.uk>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Fri, 9 Sep 2016 22:37:25 +0200
+Message-ID: <CAFBinCCWFcy1h-28=xie-2Op79UTXvawDuem_YYypTCYHCgLKQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Kevin Hilman <khilman@baylibre.com>, mark.rutland@arm.com, devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
+	mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
+	kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/12, Jiancheng Xue wrote:
-> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
-> Generator) module generates clock and reset signals used
-> by other module blocks on SoC.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-
-Overall looks fine. Just a few nitpicks.
-
-> ---
->  .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ----
->  .../devicetree/bindings/clock/hisi-crg.txt         |  49 ++++
-
-I wonder if git format-patch -M would make it more apparent about
-what's changed across the file rename?
-
->  drivers/clk/hisilicon/Kconfig                      |   8 +
->  drivers/clk/hisilicon/Makefile                     |   1 +
->  drivers/clk/hisilicon/crg-hi3798cv200.c            | 304 +++++++++++++++++++++
->  drivers/clk/hisilicon/crg.h                        |  39 +++
->  include/dt-bindings/clock/histb-clock.h            |  64 +++++
->  7 files changed, 465 insertions(+), 46 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.txt
->  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
->  create mode 100644 drivers/clk/hisilicon/crg.h
->  create mode 100644 include/dt-bindings/clock/histb-clock.h
-> 
-> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
-> index e169ec7..233d809 100644
-> --- a/drivers/clk/hisilicon/Makefile
-> +++ b/drivers/clk/hisilicon/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
->  obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
->  obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
->  obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
-> +obj-$(CONFIG_COMMON_CLK_HI3798CV200) += crg-hi3798cv200.o
-
-Tab this out?
-
->  obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
->  obj-$(CONFIG_RESET_HISI)	+= reset.o
->  obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
-> diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-> new file mode 100644
-> index 0000000..b763b99
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-> @@ -0,0 +1,304 @@
-[...]
-> +
-> +static struct hisi_crg_funcs hi3798cv200_crg_funcs = {
-
-const?
-
-> +	.register_clks = hi3798cv200_clk_register,
-> +	.unregister_clks = hi3798cv200_clk_unregister,
-> +};
-> +
-> +/* hi3798CV200 sysctrl CRG */
-> +
-> +#define HI3798CV200_SYSCTRL_NR_CLKS 16
-> +
-> +static const struct hisi_gate_clock hi3798cv200_sysctrl_gate_clks[] = {
-> +	{ IR_CLK, "clk_ir", "100m",
-> +		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
-> +	{ TIMER01_CLK, "clk_timer01", "24m",
-> +		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
-> +	{ UART0_CLK, "clk_uart0", "75m",
-> +		CLK_SET_RATE_PARENT, 0x48, 10, 0, },
-> +};
-> +
-> +static struct hisi_clock_data *hi3798cv200_sysctrl_clk_register(
-> +					struct platform_device *pdev)
-> +{
-> +	struct hisi_clock_data *clk_data;
-> +	int ret;
-> +
-> +	clk_data = hisi_clk_alloc(pdev, HI3798CV200_SYSCTRL_NR_CLKS);
-> +	if (!clk_data)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = hisi_clk_register_gate(hi3798cv200_sysctrl_gate_clks,
-> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
-> +				clk_data);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	ret = of_clk_add_provider(pdev->dev.of_node,
-> +			of_clk_src_onecell_get, &clk_data->clk_data);
-> +	if (ret)
-> +		goto unregister_gate;
-> +
-> +	return clk_data;
-> +
-> +unregister_gate:
-> +	hisi_clk_unregister_gate(hi3798cv200_sysctrl_gate_clks,
-> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
-> +				clk_data);
-> +	return ERR_PTR(ret);
-> +}
-> +
-> +static void hi3798cv200_sysctrl_clk_unregister(struct platform_device *pdev)
-> +{
-> +	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(pdev->dev.of_node);
-> +
-> +	hisi_clk_unregister_gate(hi3798cv200_sysctrl_gate_clks,
-> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
-> +				crg->clk_data);
-> +}
-> +
-> +static struct hisi_crg_funcs hi3798cv200_sysctrl_funcs = {
-
-const?
-
-> +	.register_clks = hi3798cv200_sysctrl_clk_register,
-> +	.unregister_clks = hi3798cv200_sysctrl_clk_unregister,
-> +};
-> +
-> +static const struct of_device_id hi3798cv200_crg_match_table[] = {
-> +	{ .compatible = "hisilicon,hi3798cv200-crg",
-> +		.data = &hi3798cv200_crg_funcs},
-
-Nitpick: please add a space before }
-
-> +	{ .compatible = "hisilicon,hi3798cv200-sysctrl",
-> +		.data = &hi3798cv200_sysctrl_funcs},
-
-Nitpick: please add a space before }
-
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, hi3798cv200_clk_match_table);
-> +
-> +static int hi3798cv200_crg_probe(struct platform_device *pdev)
-> +{
-> +	struct hisi_crg_dev *crg;
-> +	const struct of_device_id *match;
-> +
-> +	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
-> +	if (!crg)
-> +		return -ENOMEM;
-> +
-> +	match = of_match_node(hi3798cv200_crg_match_table, pdev->dev.of_node);
-> +	crg->funcs = (struct hisi_crg_funcs *)match->data;
-
-We can use of_device_get_match_data() here to simplify things.
-
-> +
-> +	crg->rstc = hisi_reset_init(pdev);
-> +	if (!crg->rstc)
-> +		return -ENOMEM;
-> +
-> diff --git a/drivers/clk/hisilicon/crg.h b/drivers/clk/hisilicon/crg.h
-> new file mode 100644
-> index 0000000..145b929
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/crg.h
-> @@ -0,0 +1,39 @@
-> +/*
-> + * HiSilicon Clock and Reset Driver Header
-> + *
-> + * Copyright (c) 2016 HiSilicon Limited.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License along
-> + * with this program; if not, write to the Free Software Foundation, Inc.,
-> + * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-> + *
-> + */
-> +
-> +#ifndef	__HISI_CRG_H
-> +#define	__HISI_CRG_H
-
-Weird tab here. Please replace with space.
-
-> +
-> +struct hisi_clock_data;
-> +struct hisi_reset_controller;
-> +
-> +struct hisi_crg_funcs {
-> +	struct hisi_clock_data*	(*register_clks)(struct platform_device *pdev);
-> +	void (*unregister_clks)(struct platform_device *pdev);
-> +};
-> +
-> +struct hisi_crg_dev {
-> +	struct hisi_clock_data *clk_data;
-> +	struct hisi_reset_controller *rstc;
-> +	struct hisi_crg_funcs	*funcs;
-> +};
-> +
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Fri, Sep 9, 2016 at 7:21 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> On 09/09/16 17:14, Martin Blumenstingl wrote:
+>>
+>> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>>>
+>>> However, the problem with all of the solutions proposed (runtime PM ones
+>>> included) is that we're forcing a board-specific design issue (2 devices
+>>> sharing a reset line) into a driver that should not have any
+>>> board-specific assumptions in it.
+>>>
+>>> For example, if this driver is used on another platform where different
+>>> PHYs have different reset lines, then one of them (the unlucky one who
+>>> is not probed first) will never get reset.  So any form of per-device
+>>> ref-counting is not a portable solution.
+>>
+>> maybe we should also consider Ben's solution: he played with the USB
+>> PHY on his Meson8b board. His approach was to have only one USB PHY
+>> driver instance which exposes two PHYs.
+>> The downside of this: the driver would have to know the offset of the
+>> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
+>> the reset using runtime PM without any hacks.
+>>
+>> I checked the USB PHY reference driver: it seems that there will be a
+>> new USB PHY with the GXL/GXM SoCs.
+>> So maybe we could live with the assumption that the PHYs are at
+>> consecutive addresses.
+>>
+>>> I'm not sure yet how the reset framework is supposed to handle shared
+>>> reset lines, but that needs some investigation.  I quick glance and it
+>>> seems that reset controllers can have shared lines, so that should be
+>>> investigated.
+>>
+>> unfortunately shared resets are not allowed to use reset_control_reset,
+>> see [0]
+>>
+>>
+>> [0] http://lxr.free-electrons.com/source/drivers/reset/core.c#L102
+>
+>
+> If we didn't have the shared reset, we'd have one of node per phy
+> and not have to have two sub-nodes... I don't think any other bits
+> of the PHY framework are shared.
+okay, sounds reasonable - so we should try to get this scenario
+supported through by the reset framework -> see my other mail.
