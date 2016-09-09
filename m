@@ -1,80 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Sep 2016 15:31:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/5] clk: add support for runtime pm
-Message-ID: <20160912223105.GI7243@codeaurora.org>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
- <20160908001943.GC13062@codeaurora.org>
- <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
- <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>,  mark.rutland@arm.com,  devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,  johnyoun@synopsys.com,  will.deacon@arm.com,  mturquette@baylibre.com,  linux-usb@vger.kernel.org,  sboyd@codeaurora.org,  kishon@ti.com,  robh+dt@kernel.org,  catalin.marinas@arm.com,  carlo@caione.org,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  jbrunet@baylibre.com
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+	<m260q6jibf.fsf@baylibre.com>
+	<CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+	<e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+	<m2eg4ui0nl.fsf@baylibre.com>
+	<ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+	<CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+	<m2sht9gkau.fsf@baylibre.com>
+	<CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+Date: Fri, 09 Sep 2016 10:04:19 -0700
+In-Reply-To: <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+	(Martin Blumenstingl's message of "Fri, 9 Sep 2016 18:14:03 +0200")
+Message-ID: <m2k2elgg30.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/12, Marek Szyprowski wrote:
-> Hi Stephen,
-> 
-> 
-> On 2016-09-08 02:19, Stephen Boyd wrote:
-> >On 09/01, Marek Szyprowski wrote:
-> >>Registers for some clocks might be located in the SOC area, which are under the
-> >>power domain. To enable access to those registers respective domain has to be
-> >>turned on. Additionally, registers for such clocks will usually loose its
-> >>contents when power domain is turned off, so additional saving and restoring of
-> >>them might be needed in the clock controller driver.
-> >>
-> >>This patch adds basic infrastructure in the clocks core to allow implementing
-> >>driver for such clocks under power domains. Clock provider can supply a
-> >>struct device pointer, which is the used by clock core for tracking and managing
-> >>clock's controller runtime pm state. Each clk_prepare() operation
-> >>will first call pm_runtime_get_sync() on the supplied device, while
-> >>clk_unprepare() will do pm_runtime_put() at the end.
-> >>
-> >>Additional calls to pm_runtime_get/put functions are required to ensure that any
-> >>register access (like calculating/chaning clock rates) will be done with clock
-> >>controller in active runtime state.
-> >>
-> >>Special handling of the case when runtime pm is disabled for clock controller's
-> >>device is needed to let this feature work properly also during system sleep
-> >>suspend/resume operations (runtime pm is first disabled before entering sleep
-> >>state's, but controller is usually still operational until its suspend pm
-> >>callback is called).
-> >>
-> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >My "knee jerk" concern is that we're going to take a runtime PM
-> >lock underneath the prepare lock. That seems like a situation
-> >where we could hit a lock inversion if the runtime PM callbacks
-> >themselves acquire the prepare lock by calling clk APIs? But this
-> >concern is false right? We release the runtime PM lock before
-> >calling the PM callback, so we shouldn't hit any deadlock and
-> >lockdep won't complain?
-> 
-> Runtime PM uses fine grained locking based on per-device locks, so there
-> should be no problem with global clock prepare lock. The only lock
-> interaction
-> is between clock controller device's rpm lock and clocks global
-> prepare lock, but
-> it always done with the same access pattern. I've tested it
-> extensively (also
-> with lock dep) with various use cases and found no problems.
-> 
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-Great! So you have runtime PM callbacks that are calling
-clk_prepare/unprepare?
+> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>> However, the problem with all of the solutions proposed (runtime PM ones
+>> included) is that we're forcing a board-specific design issue (2 devices
+>> sharing a reset line) into a driver that should not have any
+>> board-specific assumptions in it.
+>>
+>> For example, if this driver is used on another platform where different
+>> PHYs have different reset lines, then one of them (the unlucky one who
+>> is not probed first) will never get reset.  So any form of per-device
+>> ref-counting is not a portable solution.
+>
+> maybe we should also consider Ben's solution: he played with the USB
+> PHY on his Meson8b board. His approach was to have only one USB PHY
+> driver instance which exposes two PHYs.
+> The downside of this: the driver would have to know the offset of the
+> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
+> the reset using runtime PM without any hacks.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> I checked the USB PHY reference driver: it seems that there will be a
+> new USB PHY with the GXL/GXM SoCs.
+> So maybe we could live with the assumption that the PHYs are at
+> consecutive addresses.
+
+But isn't that also forcing us to make board-specific assumptions inside
+the driver.
+
+Kevin
