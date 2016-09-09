@@ -1,35 +1,28 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Sep 2016 18:16:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v2] clk: sunxi-ng: Add hardware dependency
+Message-ID: <20160909011632.GB7243@codeaurora.org>
+References: <20160908232829.07adc10b@endymion>
 MIME-Version: 1.0
-In-Reply-To: <4600074.xAL28UziL1@wuerfel>
-References: <1473834587-22526-1-git-send-email-baoyou.xie@linaro.org> <4600074.xAL28UziL1@wuerfel>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 14 Sep 2016 11:04:29 +0200
-Message-ID: <CACRpkdb2BK2_CeSJ8kbuZH6_WwDRqabhcuMqRb+etCBwT80K7A@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile: add missing header dependencies
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Baoyou Xie <baoyou.xie@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, xie.baoyou@zte.com.cn
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160908232829.07adc10b@endymion>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 9:31 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday, September 14, 2016 2:29:47 PM CEST Baoyou Xie wrote:
->> We get 1 warning when building kernel with W=1:
->> drivers/clk/versatile/clk-realview.c:54:13: warning: no previous prototype for 'realview_clk_init' [-Wmissing-prototypes]
->>
->> In fact, this function is declared in clk-realview.h,
->> so this patch add missing header dependencies.
->>
->> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
->>
->
-> Please leave this one for now. We are in the process of removing the
-> last caller of this function, and should just remove the header file
-> and the function definition in the next release.
+On 09/08, Jean Delvare wrote:
+> The sunxi-ng clock driver is useless for other architectures.
+> 
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> ---
 
-+1 on this, leave it. I can clean it up for v4.10 or even
-for an -rc if you want it real neat in v4.9.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
