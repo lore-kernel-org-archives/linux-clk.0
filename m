@@ -1,83 +1,213 @@
-Return-Path: <wsa@the-dreams.de>
-Date: Thu, 15 Sep 2016 21:41:03 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	SF Markus Elfring <elfring@users.sourceforge.net>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 2/4] clk/Renesas-MSTP: Delete an error message for a
- failed memory allocation
-Message-ID: <20160915194103.GA7863@katana>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <04cf79a5-df91-d8c2-83b2-ad9e9130ee7a@users.sourceforge.net>
- <CAMuHMdVtvg99JY=_+Wj7jpd82=5rKDKOVxg0TYW3wUQsUQzAOA@mail.gmail.com>
- <2927869.3rNkSDiBcX@avalon>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-In-Reply-To: <2927869.3rNkSDiBcX@avalon>
+In-Reply-To: <20160909201029.24530-5-maxime.ripard@free-electrons.com>
+References: <20160909201029.24530-1-maxime.ripard@free-electrons.com> <20160909201029.24530-5-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 10 Sep 2016 10:33:22 +0800
+Message-ID: <CAGb2v65JZ7gnOZ_LkkvGv5-bqXeK1E1O3eno85zYBSndNpN=Qw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] arm64: dts: add Pine64 support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Andre Przywara <andre.przywara@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, Sep 10, 2016 at 4:10 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> From: Andre Przywara <andre.przywara@arm.com>
+>
+> The Pine64 is a cost-efficient development board based on the
+> Allwinner A64 SoC.
+> There are three models: the basic version with Fast Ethernet and
+> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+> feature Gigabit Ethernet and additional connectors for touchscreens
+> and a camera. Or as my son put it: "Those are smaller and these are
+> missing." ;-)
+> The two Pine64+ models just differ in the amount of DRAM
+> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+> patches the DT accordingly we just need to provide one DT for the
+> Pine64+.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm64/boot/dts/Makefile                       |  1 +
+>  arch/arm64/boot/dts/allwinner/Makefile             |  5 ++
+>  .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  | 50 ++++++++++++++++
+>  .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 70 ++++++++++++++++++++++
+>  4 files changed, 126 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 6e199c903676..ddcbf5a2c17e 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -1,4 +1,5 @@
+>  dts-dirs += al
+> +dts-dirs += allwinner
+>  dts-dirs += altera
+>  dts-dirs += amd
+>  dts-dirs += amlogic
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> new file mode 100644
+> index 000000000000..1e29a5ae8282
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -0,0 +1,5 @@
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
+> +
+> +always         := $(dtb-y)
+> +subdir-y       := $(dts-dirs)
+> +clean-files    := *.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+> new file mode 100644
+> index 000000000000..790d14daaa6a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+> @@ -0,0 +1,50 @@
+> +/*
+> + * Copyright (c) 2016 ARM Ltd.
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This library is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This library is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include "sun50i-a64-pine64.dts"
+> +
+> +/ {
+> +       model = "Pine64+";
+> +       compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
+> +
+> +       /* TODO: Camera, Ethernet PHY, touchscreen, etc. */
+> +};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> new file mode 100644
+> index 000000000000..da9bca51f5a9
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> @@ -0,0 +1,70 @@
+> +/*
+> + * Copyright (c) 2016 ARM Ltd.
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This library is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This library is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sun50i-a64.dtsi"
+> +
+> +/ {
+> +       model = "Pine64";
+> +       compatible = "pine64,pine64", "allwinner,sun50i-a64";
+> +
+> +       aliases {
+> +               serial0 = &uart0;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +};
+> +
+> +&uart0 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&uart0_pins_a>;
+> +       status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&i2c1_pins>;
+> +       status = "okay";
 
-On Thu, Sep 15, 2016 at 10:13:17PM +0300, Laurent Pinchart wrote:
-> On Thursday 15 Sep 2016 21:07:17 Geert Uytterhoeven wrote:
-> > On Wed, Sep 14, 2016 at 10:01 PM, SF Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Wed, 14 Sep 2016 21:17:18 +0200
-> > >=20
-> > > Omit an extra message for a memory allocation failure in this functio=
-n.
-> > >=20
-> > > Link:
-> > > http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Ref=
-acto
-> > > r_Strings-WSang_0.pdf
-> > >=20
-> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> >=20
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> There are two other memory allocation failures printed by drivers in the =
-same=20
-> directory that, you'll get my ack if you extend this patch to remove the =
-three=20
-> messages in one go.
+Schematics say this is missing an external pull-up. Has anyone tried it?
+Without a pull-up any access on the i2c bus should just block.
 
-I agree.
+Also this is on the RPi-2 compatible header. There's also an UART and SPI
+that are standard for the RPi-2 header. We should consider enabling them
+as well.
 
+ChenYu
 
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX2vlPAAoJEBQN5MwUoCm2fSAP/jXm99UeSF2DXDRuSiuTtP4s
-JuRY4fqFF+/cXgt+5R6Ml5sZHmUvxt+5c6HLVPH7AUNvZ1bHEPBjJgsJz7FIaO9K
-GH1HbcIS+e9X+eOBWByW+daSUltPcZddcBbx680im0PP5kHdKQJvAmpRpp7MDYab
-0hOydixB78m5Z3kJB8uqqLcINcNYbicINC/FhXa9gRthuJO72KAuLRc0WEbVM2e4
-tXL2lpA4JyTZp6prJ4ciheaXwDo3TFY5zlFt4WTAmykdjYSfwgSCysuVxD1u8N/q
-osR9F3E2oNajsM9/cL62+lZoy4tdpUvCLVx9ckRuVKfrDcXJ+4u4fdjTtbeKN6SF
-/hZCqLJNMdiVLda425Px3Rm5lJxe6KngX96M9/ToBYrAB8ooRyfDn7G4oe1NAI9o
-h3xgzmRz91+wiXrQe29ovbOqSU3FEBFTsgdAGaE89v+2lSLrKpLN82KZjb4VfkHb
-6utt09HtlCSqSdQhfkNpDbOmOWxXDQ8wv7zFwa1dv+d1h7mYwz97XSATFBysr4pC
-r2gmFHCZCLgNxmmwUDSKNYp4PglmUo/L4n6/XykgVXSHqtyVrFfZppOrW0mUdaIB
-ZX++VfXxUPyP+S9ggTICUd0ROi1R5bglPc2uFErBEMHRkvQ++0qeQNXp9gcmm/gB
-6Um/cljQ/tSDoNL+d2jv
-=Bkse
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
+> +};
+> --
+> 2.9.3
+>
