@@ -1,79 +1,358 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: John Keeping <john@metanate.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: rockchip: add I2S internal clock IDs for rk3288
-Date: Sun, 25 Sep 2016 23:50:29 +0200
-Message-ID: <21692410.II2VYnELL8@phil>
-In-Reply-To: <20160907191823.7f955ae2.john@metanate.com>
-References: <20160907165330.14607-1-john@metanate.com> <2003903.QOgKKA6m1b@phil> <20160907191823.7f955ae2.john@metanate.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/6] phy: meson: add USB2 PHY support for Meson8b and GXBB
+Date: Sun, 11 Sep 2016 15:41:08 +0200
+Message-Id: <20160911134111.31141-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi John,
+This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
 
-sorry this took so long,
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+---
+ drivers/phy/Kconfig          |  11 ++
+ drivers/phy/Makefile         |   1 +
+ drivers/phy/phy-meson-usb2.c | 280 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 292 insertions(+)
+ create mode 100644 drivers/phy/phy-meson-usb2.c
 
-Am Mittwoch, 7. September 2016, 19:18:23 CEST schrieb John Keeping:
-> On Wed, 07 Sep 2016 19:58:31 +0200, Heiko Stuebner wrote:
-> > Am Mittwoch, 7. September 2016, 17:53:29 CEST schrieb John Keeping:
-> > > To minimize jitter on the I2S clocks, it is important that the
-> > > denominator in the fractional divider is much greater than the
-> > > numerator.  Add identifiers for these internal clocks so that the
-> > > specific clock topology and rates can be specified in the device tree.
-> > 
-> > The TRM states that the denominator must be bigger than 20. Is this the
-> > one
-> > you found or did you find further constraints?
-> 
-> Is it not that the denominator must be bigger than 20 times the
-> numerator?  That's what we found, although it seems that the greater the
-> divisor the better, so our aim is dividing down from 594MHz from GPLL to
-> the target rate in i2s_frac.
-
-That is good to know ... the TRM probably lost the real information during 
-translation or so and only states that hard value. Looking at the rk3368 TRM 
-just now, the value really is 20 times greater than the numerator.
-
-
-> > Did you try teaching the fractional divider to handle these constraints
-> > before going this way?
-> 
-> No, I hadn't looked at doing that.  I'm not sure how that would work,
-> we'd need to add support for fractional divider changing the parent rate
-> wouldn't we?
-
-Doug had a somewhat similar problem, mentioning the lack of a "bestdiv" 
-equivalent that the standard divider provides. I'm not sure if there isn't a 
-way to provide something like this and/or make the fractional clock honor 
-specific requirments concerning numerator/denominator - any mathematicians 
-around? :-)
-
-One could also replace the generic fraction divider use with a rockchip-
-specific implementation that somehow handles that.
-
-
-> > Exporting the internal clocks really would be sort of plan d or e, after
-> > handling this in the clock framework failed. Especially as i2s rates are
-> > probably dependant on the media being handled (frequencies and such), so
-> > setting fractional rates statically in the dts won't help you much in the
-> > general case, as any new playback could trigger a clk_set_rate call
-> > anyway?
-> 
-> We're not setting the fractional rate specifically, instead we're
-> setting the i2s_pre rate and parent explicitly and banning the i2s_src
-> mux setting to i2s_pre, which means that clk_set_rate on sclk_i2s0 will
-> always change i2s_frac but leave i2s_pre alone.
-
-But then you are again in the situation where some requested rate can ignore 
-those fractional-divider constraints? In general I really don't like encoding 
-such board-specific behaviour into the generic clock tree, like needing to 
-disable parent relationships.
-
-It works for your board now but does not necessarily for all other boards, 
-which might require other "hacks" and also doesn't solve the general problem 
-for all other fractional dividers we have.
-
-
-Heiko
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 19bff3a..6ad87ec 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -453,4 +453,15 @@ config PHY_NS2_PCIE
+ 	help
+ 	  Enable this to support the Broadcom Northstar2 PCIe PHY.
+ 	  If unsure, say N.
++
++config PHY_MESON_USB2
++	tristate "Meson USB2 PHY driver"
++	default ARCH_MESON
++	depends on OF && (ARCH_MESON || COMPILE_TEST)
++	select GENERIC_PHY
++	help
++	  Enable this to support the Meson USB2 PHYs found in Meson8b
++	  and GXBB SoCs.
++	  If unsure, say N.
++
+ endmenu
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 90ae198..dd507ac 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -56,3 +56,4 @@ obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
+ obj-$(CONFIG_PHY_CYGNUS_PCIE)		+= phy-bcm-cygnus-pcie.o
+ obj-$(CONFIG_ARCH_TEGRA) += tegra/
+ obj-$(CONFIG_PHY_NS2_PCIE)		+= phy-bcm-ns2-pcie.o
++obj-$(CONFIG_PHY_MESON_USB2)		+= phy-meson-usb2.o
+diff --git a/drivers/phy/phy-meson-usb2.c b/drivers/phy/phy-meson-usb2.c
+new file mode 100644
+index 0000000..eece521
+--- /dev/null
++++ b/drivers/phy/phy-meson-usb2.c
+@@ -0,0 +1,280 @@
++/*
++ * Meson USB2 PHY driver
++ *
++ * Copyright (C) 2016 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/reset.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/usb/of.h>
++
++#define REG_CONFIG					0x00
++	#define REG_CONFIG_CLK_EN			BIT(0)
++	#define REG_CONFIG_CLK_SEL_MASK			GENMASK(3, 1)
++	#define REG_CONFIG_CLK_DIV_MASK			GENMASK(10, 4)
++	#define REG_CONFIG_CLK_32k_ALTSEL		BIT(15)
++	#define REG_CONFIG_TEST_TRIG			BIT(31)
++
++#define REG_CTRL					0x04
++	#define REG_CTRL_SOFT_PRST			BIT(0)
++	#define REG_CTRL_SOFT_HRESET			BIT(1)
++	#define REG_CTRL_SS_SCALEDOWN_MODE_MASK		GENMASK(3, 2)
++	#define REG_CTRL_CLK_DET_RST			BIT(4)
++	#define REG_CTRL_INTR_SEL			BIT(5)
++	#define REG_CTRL_CLK_DETECTED			BIT(8)
++	#define REG_CTRL_SOF_SENT_RCVD_TGL		BIT(9)
++	#define REG_CTRL_SOF_TOGGLE_OUT			BIT(10)
++	#define REG_CTRL_POWER_ON_RESET			BIT(15)
++	#define REG_CTRL_SLEEPM				BIT(16)
++	#define REG_CTRL_TX_BITSTUFF_ENN_H		BIT(17)
++	#define REG_CTRL_TX_BITSTUFF_ENN		BIT(18)
++	#define REG_CTRL_COMMON_ON			BIT(19)
++	#define REG_CTRL_REF_CLK_SEL_MASK		GENMASK(21, 20)
++	#define REG_CTRL_REF_CLK_SEL_SHIFT		20
++	#define REG_CTRL_FSEL_MASK			GENMASK(24, 22)
++	#define REG_CTRL_FSEL_SHIFT			22
++	#define REG_CTRL_PORT_RESET			BIT(25)
++	#define REG_CTRL_THREAD_ID_MASK			GENMASK(31, 26)
++
++#define REG_ENDP_INTR					0x08
++
++/* bits [31:26], [24:21] and [15:3] seem to be read-only */
++#define REG_ADP_BC					0x0c
++	#define REG_ADP_BC_VBUS_VLD_EXT_SEL		BIT(0)
++	#define REG_ADP_BC_VBUS_VLD_EXT			BIT(1)
++	#define REG_ADP_BC_OTG_DISABLE			BIT(2)
++	#define REG_ADP_BC_ID_PULLUP			BIT(3)
++	#define REG_ADP_BC_DRV_VBUS			BIT(4)
++	#define REG_ADP_BC_ADP_PRB_EN			BIT(5)
++	#define REG_ADP_BC_ADP_DISCHARGE		BIT(6)
++	#define REG_ADP_BC_ADP_CHARGE			BIT(7)
++	#define REG_ADP_BC_SESS_END			BIT(8)
++	#define REG_ADP_BC_DEVICE_SESS_VLD		BIT(9)
++	#define REG_ADP_BC_B_VALID			BIT(10)
++	#define REG_ADP_BC_A_VALID			BIT(11)
++	#define REG_ADP_BC_ID_DIG			BIT(12)
++	#define REG_ADP_BC_VBUS_VALID			BIT(13)
++	#define REG_ADP_BC_ADP_PROBE			BIT(14)
++	#define REG_ADP_BC_ADP_SENSE			BIT(15)
++	#define REG_ADP_BC_ACA_ENABLE			BIT(16)
++	#define REG_ADP_BC_DCD_ENABLE			BIT(17)
++	#define REG_ADP_BC_VDAT_DET_EN_B		BIT(18)
++	#define REG_ADP_BC_VDAT_SRC_EN_B		BIT(19)
++	#define REG_ADP_BC_CHARGE_SEL			BIT(20)
++	#define REG_ADP_BC_CHARGE_DETECT		BIT(21)
++	#define REG_ADP_BC_ACA_PIN_RANGE_C		BIT(22)
++	#define REG_ADP_BC_ACA_PIN_RANGE_B		BIT(23)
++	#define REG_ADP_BC_ACA_PIN_RANGE_A		BIT(24)
++	#define REG_ADP_BC_ACA_PIN_GND			BIT(25)
++	#define REG_ADP_BC_ACA_PIN_FLOAT		BIT(26)
++
++#define REG_DBG_UART					0x14
++
++#define REG_TEST					0x18
++	#define REG_TEST_DATA_IN_MASK			GENMASK(3, 0)
++	#define REG_TEST_EN_MASK			GENMASK(7, 4)
++	#define REG_TEST_ADDR_MASK			GENMASK(11, 8)
++	#define REG_TEST_DATA_OUT_SEL			BIT(12)
++	#define REG_TEST_CLK				BIT(13)
++	#define REG_TEST_VA_TEST_EN_B_MASK		GENMASK(15, 14)
++	#define REG_TEST_DATA_OUT_MASK			GENMASK(19, 16)
++	#define REG_TEST_DISABLE_ID_PULLUP		BIT(20)
++
++#define REG_TUNE					0x1c
++	#define REG_TUNE_TX_RES_TUNE_MASK		GENMASK(1, 0)
++	#define REG_TUNE_TX_HSXV_TUNE_MASK		GENMASK(3, 2)
++	#define REG_TUNE_TX_VREF_TUNE_MASK		GENMASK(7, 4)
++	#define REG_TUNE_TX_RISE_TUNE_MASK		GENMASK(9, 8)
++	#define REG_TUNE_TX_PREEMP_PULSE_TUNE		BIT(10)
++	#define REG_TUNE_TX_PREEMP_AMP_TUNE_MASK	GENMASK(12, 11)
++	#define REG_TUNE_TX_FSLS_TUNE_MASK		GENMASK(16, 13)
++	#define REG_TUNE_SQRX_TUNE_MASK			GENMASK(19, 17)
++	#define REG_TUNE_OTG_TUNE			GENMASK(22, 20)
++	#define REG_TUNE_COMP_DIS_TUNE			GENMASK(25, 23)
++	#define REG_TUNE_HOST_DM_PULLDOWN		BIT(26)
++	#define REG_TUNE_HOST_DP_PULLDOWN		BIT(27)
++
++#define RESET_COMPLETE_TIME				500
++#define ACA_ENABLE_COMPLETE_TIME			50
++
++struct phy_meson_usb2_priv {
++	void __iomem		*regs;
++	enum usb_dr_mode	dr_mode;
++	struct clk		*clk_usb_general;
++	struct clk		*clk_usb;
++};
++
++static u32 phy_meson_usb2_read(struct phy_meson_usb2_priv *phy_priv, u32 reg)
++{
++	return readl(phy_priv->regs + reg);
++}
++
++static void phy_meson_usb2_mask_bits(struct phy_meson_usb2_priv *phy_priv,
++				     u32 reg, u32 mask, u32 value)
++{
++	u32 data;
++
++	data = phy_meson_usb2_read(phy_priv, reg);
++	data &= ~mask;
++	data |= (value & mask);
++
++	writel(data, phy_priv->regs + reg);
++}
++
++static int phy_meson_usb2_power_on(struct phy *phy)
++{
++	struct phy_meson_usb2_priv *priv = phy_get_drvdata(phy);
++	int ret;
++
++	ret = clk_prepare_enable(priv->clk_usb_general);
++	if (ret) {
++		dev_err(&phy->dev, "Failed to enable USB general clock\n");
++		return ret;
++	}
++
++	ret = clk_prepare_enable(priv->clk_usb);
++	if (ret) {
++		dev_err(&phy->dev, "Failed to enable USB DDR clock\n");
++		return ret;
++	}
++
++	phy_meson_usb2_mask_bits(priv, REG_CONFIG, REG_CONFIG_CLK_32k_ALTSEL,
++				 REG_CONFIG_CLK_32k_ALTSEL);
++
++	phy_meson_usb2_mask_bits(priv, REG_CTRL, REG_CTRL_REF_CLK_SEL_MASK,
++				 0x2 << REG_CTRL_REF_CLK_SEL_SHIFT);
++
++	phy_meson_usb2_mask_bits(priv, REG_CTRL, REG_CTRL_FSEL_MASK,
++				 0x5 << REG_CTRL_FSEL_SHIFT);
++
++	/* reset the PHY */
++	phy_meson_usb2_mask_bits(priv, REG_CTRL, REG_CTRL_POWER_ON_RESET,
++				 REG_CTRL_POWER_ON_RESET);
++	udelay(RESET_COMPLETE_TIME);
++	phy_meson_usb2_mask_bits(priv, REG_CTRL, REG_CTRL_POWER_ON_RESET, 0);
++	udelay(RESET_COMPLETE_TIME);
++
++	phy_meson_usb2_mask_bits(priv, REG_CTRL, REG_CTRL_SOF_TOGGLE_OUT,
++				 REG_CTRL_SOF_TOGGLE_OUT);
++
++	if (priv->dr_mode == USB_DR_MODE_HOST) {
++		phy_meson_usb2_mask_bits(priv, REG_ADP_BC,
++					 REG_ADP_BC_ACA_ENABLE,
++					 REG_ADP_BC_ACA_ENABLE);
++
++		udelay(ACA_ENABLE_COMPLETE_TIME);
++
++		if (phy_meson_usb2_read(priv, REG_ADP_BC) &
++			REG_ADP_BC_ACA_PIN_FLOAT) {
++			dev_warn(&phy->dev, "USB ID detect failed!\n");
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static int phy_meson_usb2_power_off(struct phy *phy)
++{
++	struct phy_meson_usb2_priv *priv = phy_get_drvdata(phy);
++
++	clk_disable_unprepare(priv->clk_usb);
++	clk_disable_unprepare(priv->clk_usb_general);
++
++	return 0;
++}
++
++static const struct phy_ops phy_meson_usb2_ops = {
++	.power_on	= phy_meson_usb2_power_on,
++	.power_off	= phy_meson_usb2_power_off,
++	.owner		= THIS_MODULE,
++};
++
++static int phy_meson_usb2_probe(struct platform_device *pdev)
++{
++	struct phy_meson_usb2_priv *priv;
++	struct resource *res;
++	struct phy *phy;
++	struct phy_provider *phy_provider;
++	int ret;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(priv->regs))
++		return PTR_ERR(priv->regs);
++
++	priv->clk_usb_general = devm_clk_get(&pdev->dev, "usb_general");
++	if (IS_ERR(priv->clk_usb_general))
++		return PTR_ERR(priv->clk_usb_general);
++
++	priv->clk_usb = devm_clk_get(&pdev->dev, "usb");
++	if (IS_ERR(priv->clk_usb))
++		return PTR_ERR(priv->clk_usb);
++
++	priv->dr_mode = of_usb_get_dr_mode_by_phy(pdev->dev.of_node, -1);
++	if (priv->dr_mode == USB_DR_MODE_UNKNOWN) {
++		dev_err(&pdev->dev,
++			"missing dual role configuration of the controller\n");
++		return -EINVAL;
++	}
++
++	phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
++	if (IS_ERR(phy)) {
++		dev_err(&pdev->dev, "failed to create PHY\n");
++		return PTR_ERR(phy);
++	}
++
++	/*
++	 * No actual error check here because the hardware only has one reset
++	 * line for both PHYs. Using a shared reset is not possible because we
++	 * must call reset_control_reset to trigger the reset (which is not
++	 * allowed for shared resets in the reset framework).
++	 */
++	ret = device_reset_optional(&pdev->dev);
++	if (ret == -EPROBE_DEFER)
++		return ret;
++
++	phy_set_drvdata(phy, priv);
++
++	phy_provider =
++		devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
++
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static const struct of_device_id phy_meson_usb2_of_match[] = {
++	{ .compatible = "amlogic,meson8b-usb2-phy", },
++	{ .compatible = "amlogic,meson-gxbb-usb2-phy", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, phy_meson_usb2_of_match);
++
++static struct platform_driver phy_meson_usb2_driver = {
++	.probe	= phy_meson_usb2_probe,
++	.driver	= {
++		.name		= "phy-meson-usb2",
++		.of_match_table	= phy_meson_usb2_of_match,
++	},
++};
++module_platform_driver(phy_meson_usb2_driver);
++
++MODULE_AUTHOR("Martin Blumenstingl <martin.blumenstingl@googlemail.com>");
++MODULE_DESCRIPTION("Meson USB2 PHY driver");
++MODULE_LICENSE("GPL");
+-- 
+2.9.3
