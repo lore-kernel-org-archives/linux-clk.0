@@ -1,51 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:56793 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752293AbcIPFdA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Sep 2016 01:33:00 -0400
-Subject: Re: clk/Renesas-MSTP: Less function calls in cpg_mstp_clocks_init()
- after error detection
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
- <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
- <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
- <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <4a7d20c9-d080-80a4-6529-bc9fa1b7a186@users.sourceforge.net>
-Date: Fri, 16 Sep 2016 07:32:33 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 4/6] ARM64: meson-gxbb: add USB Nodes
+Date: Sun, 11 Sep 2016 15:41:09 +0200
+Message-Id: <20160911134111.31141-5-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
->> * Should it usually be determined quicker if a required resource like
->>   memory could be acquired before trying the next allocation?
-> 
-> Note that if memory allocation fails in this driver, the system won't
-> boot at all.
+Add the nodes for the dwc2 USB controller and the related USB PHYs.
+Currently we force usb0 to host mode because OTG is currently not
+working in our PHY driver.
 
-Thanks for this information.
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 43 +++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-
-> So even not checking for allocation failures at all could be acceptable.
-
-I find this opinion interesting somehow.
-
-I would generally prefer to check return values from various function calls
-immediately instead of keeping the discussed source code structure unchanged.
-
-Regards,
-Markus
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 2e8a3d9..30a8661 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -151,6 +151,25 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		usb0_phy: phy@c0000000 {
++			compatible = "amlogic,meson-gxbb-usb2-phy";
++			#phy-cells = <0>;
++			reg = <0x0 0xc0000000 0x0 0x20>;
++			resets = <&reset RESET_USB_OTG>;
++			clocks = <&clkc CLKID_USB>, <&clkc CLKID_USB0>;
++			clock-names = "usb_general", "usb";
++			status = "disabled";
++		};
++
++		usb1_phy: phy@c0000020 {
++			compatible = "amlogic,meson-gxbb-usb2-phy";
++			#phy-cells = <0>;
++			reg = <0x0 0xc0000020 0x0 0x20>;
++			clocks = <&clkc CLKID_USB>, <&clkc CLKID_USB1>;
++			clock-names = "usb_general", "usb";
++			status = "disabled";
++		};
++
+ 		cbus: cbus@c1100000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc1100000 0x0 0x100000>;
+@@ -496,6 +515,30 @@
+ 			};
+ 		};
+ 
++		usb0: usb@c9000000 {
++			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
++			reg = <0x0 0xc9000000 0x0 0x40000>;
++			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clkc CLKID_USB0_DDR_BRIDGE>;
++			clock-names = "otg";
++			phys = <&usb0_phy>;
++			phy-names = "usb2-phy";
++			dr_mode = "host";
++			status = "disabled";
++		};
++
++		usb1: usb@c9100000 {
++			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
++			reg = <0x0 0xc9100000 0x0 0x40000>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
++			clock-names = "otg";
++			phys = <&usb1_phy>;
++			phy-names = "usb2-phy";
++			dr_mode = "host";
++			status = "disabled";
++		};
++
+ 		ethmac: ethernet@c9410000 {
+ 			compatible = "amlogic,meson-gxbb-dwmac", "snps,dwmac";
+ 			reg = <0x0 0xc9410000 0x0 0x10000
+-- 
+2.9.3
