@@ -1,131 +1,108 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v3 06/11] clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
-Date: Thu, 29 Sep 2016 14:05:47 +0530
-Message-Id: <1475138152-859-7-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 1/6] usb: dwc2: add support for Meson8b and GXBB SoCs
+Date: Sun, 11 Sep 2016 15:41:06 +0200
+Message-Id: <20160911134111.31141-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Alpha PLLs which do not support dynamic update feature
-need to be explicitly disabled before a rate change.
-The ones which do support dynamic update do so within a
-single vco range, so add a min/max freq check for such
-PLLs so they fall in the vco range.
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Add compatible strings for amlogic Meson8b and GXBB SoCs with the
+corresponding configuration parameters.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 49 +++++++++++++++++++++++++++++++++-------
- drivers/clk/qcom/clk-alpha-pll.h |  3 +++
- 2 files changed, 44 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/usb/dwc2.txt |  2 ++
+ drivers/usb/dwc2/platform.c                    | 34 ++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 89c7fdb..6f90a86 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -382,16 +382,41 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long prate)
- {
-+	bool enabled;
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
- 	u32 l, off = pll->offset;
- 	u64 a;
- 
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a);
--	vco = alpha_pll_find_vco(pll, rate);
--	if (!vco) {
--		pr_err("alpha pll not in a valid vco range\n");
--		return -EINVAL;
-+	enabled = clk_hw_is_enabled(hw);
-+
-+	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-+		/*
-+		 * PLLs which support dynamic updates support one single
-+		 * vco range, between min_rate and max_rate supported
-+		 */
-+		if (rate < pll->min_rate || rate > pll->max_rate) {
-+			pr_err("alpha pll rate outside supported min/max range\n");
-+			return -EINVAL;
-+		}
-+	} else {
-+		/*
-+		 * All alpha PLLs which do not support dynamic update,
-+		 * should be disabled before a vco update.
-+		 */
-+		if (enabled)
-+			hw->init->ops->disable(hw);
-+
-+		vco = alpha_pll_find_vco(pll, rate);
-+		if (!vco) {
-+			pr_err("alpha pll not in a valid vco range\n");
-+			return -EINVAL;
-+		}
-+
-+		regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
-+				   PLL_VCO_MASK << PLL_VCO_SHIFT,
-+				   vco->val << PLL_VCO_SHIFT);
- 	}
- 
- 	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
-@@ -404,13 +429,12 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		regmap_write(pll->clkr.regmap, off + PLL_ALPHA_VAL_U, a >> 32);
- 	}
- 
--	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
--			   PLL_VCO_MASK << PLL_VCO_SHIFT,
--			   vco->val << PLL_VCO_SHIFT);
--
- 	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL, PLL_ALPHA_EN,
- 			   PLL_ALPHA_EN);
- 
-+	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
-+		hw->init->ops->enable(hw);
-+
- 	return 0;
- }
- 
-@@ -423,6 +447,15 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long min_freq, max_freq;
- 
- 	rate = alpha_pll_round_rate(rate, *prate, &l, &a);
-+
-+	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-+		if (rate < pll->min_rate)
-+			rate = pll->min_rate;
-+		else if (rate > pll->max_rate)
-+			rate = pll->max_rate;
-+		return rate;
-+	}
-+
- 	if (alpha_pll_find_vco(pll, rate))
- 		return rate;
- 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index d6e1ee2..e43a9c0 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -37,8 +37,11 @@ struct clk_alpha_pll {
- #define SUPPORTS_OFFLINE_REQ	BIT(0)
- #define SUPPORTS_16BIT_ALPHA	BIT(1)
- #define SUPPORTS_FSM_MODE	BIT(2)
-+#define SUPPORTS_DYNAMIC_UPDATE	BIT(3)
- 	u8 flags;
- 
-+	unsigned long min_rate;
-+	unsigned long max_rate;
- 	struct clk_regmap clkr;
+diff --git a/Documentation/devicetree/bindings/usb/dwc2.txt b/Documentation/devicetree/bindings/usb/dwc2.txt
+index 20a68bf..2c30a54 100644
+--- a/Documentation/devicetree/bindings/usb/dwc2.txt
++++ b/Documentation/devicetree/bindings/usb/dwc2.txt
+@@ -10,6 +10,8 @@ Required properties:
+   - "rockchip,rk3288-usb", "rockchip,rk3066-usb", "snps,dwc2": for rk3288 Soc;
+   - "lantiq,arx100-usb": The DWC2 USB controller instance in Lantiq ARX SoCs;
+   - "lantiq,xrx200-usb": The DWC2 USB controller instance in Lantiq XRX SoCs;
++  - "amlogic,meson8b-usb": The DWC2 USB controller instance in Amlogic Meson8b SoCs;
++  - "amlogic,meson-gxbb-usb": The DWC2 USB controller instance in Amlogic S905 SoCs;
+   - snps,dwc2: A generic DWC2 USB controller with default parameters.
+ - reg : Should contain 1 register range (address and length)
+ - interrupts : Should contain 1 interrupt
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index fc6f525..8f7b34c 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -181,6 +181,38 @@ static const struct dwc2_core_params params_ltq = {
+ 	.hibernation			= -1,
  };
  
++static const struct dwc2_core_params params_amlogic = {
++	.otg_cap			= DWC2_CAP_PARAM_NO_HNP_SRP_CAPABLE,
++	.otg_ver			= -1,
++	.dma_enable			= 1,
++	.dma_desc_enable		= 0,
++	.dma_desc_fs_enable		= 0,
++	.speed				= DWC2_SPEED_PARAM_HIGH,
++	.enable_dynamic_fifo		= 1,
++	.en_multiple_tx_fifo		= -1,
++	.host_rx_fifo_size		= 512,
++	.host_nperio_tx_fifo_size	= 500,
++	.host_perio_tx_fifo_size	= 500,
++	.max_transfer_size		= -1,
++	.max_packet_count		= -1,
++	.host_channels			= 16,
++	.phy_type			= DWC2_PHY_TYPE_PARAM_UTMI,
++	.phy_utmi_width			= -1,
++	.phy_ulpi_ddr			= -1,
++	.phy_ulpi_ext_vbus		= -1,
++	.i2c_enable			= -1,
++	.ulpi_fs_ls			= -1,
++	.host_support_fs_ls_low_power	= -1,
++	.host_ls_low_power_phy_clk	= -1,
++	.ts_dline			= -1,
++	.reload_ctl			= 1,
++	.ahbcfg				= GAHBCFG_HBSTLEN_INCR8 <<
++					  GAHBCFG_HBSTLEN_SHIFT,
++	.uframe_sched			= 0,
++	.external_id_pin_ctl		= -1,
++	.hibernation			= -1,
++};
++
+ /*
+  * Check the dr_mode against the module configuration and hardware
+  * capabilities.
+@@ -464,6 +496,8 @@ static const struct of_device_id dwc2_of_match_table[] = {
+ 	{ .compatible = "lantiq,xrx200-usb", .data = &params_ltq },
+ 	{ .compatible = "snps,dwc2", .data = NULL },
+ 	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
++	{ .compatible = "amlogic,meson8b-usb", .data = &params_amlogic },
++	{ .compatible = "amlogic,meson-gxbb-usb", .data = &params_amlogic },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.9.3
