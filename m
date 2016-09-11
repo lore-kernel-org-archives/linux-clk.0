@@ -1,86 +1,71 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
-Date: Fri, 23 Sep 2016 10:32:32 +0200
-Message-Id: <1474619552-29703-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
-References: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:40357 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752381AbcIKI76 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Sep 2016 04:59:58 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Wim Van Sebroeck <wim@iguana.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 1/2] watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
+Date: Sun, 11 Sep 2016 10:59:57 +0200
+Message-Id: <1473584398-12942-2-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
+References: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The R-Car Gen3 CPG/MSSR driver uses a mix of clk_readl()/clk_writel()
-and readl()/writel() to access the clock registers. Settle on the
-generic readl()/writel().
+While the custom minimal TXx9 clock implementation doesn't need or use
+clock (un)prepare calls (they are dummies if !CONFIG_HAVE_CLK_PREPARE),
+they are mandatory when using the Common Clock Framework.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hence add them, to prepare for the advent of CCF.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Tested on RBTX4927.
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 9d76076da4948fc4..742f6dc7c15653ef 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -98,7 +98,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
- 	u32 val, sd_fc;
- 	unsigned int i;
- 
--	val = clk_readl(clock->reg);
-+	val = readl(clock->reg);
- 
- 	sd_fc = val & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
-@@ -111,7 +111,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
- 	val &= ~(CPG_SD_STP_MASK);
- 	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
- 
--	clk_writel(val, clock->reg);
-+	writel(val, clock->reg);
- 
+v2:
+  - Add Reviewed-by.
+---
+ drivers/watchdog/txx9wdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/watchdog/txx9wdt.c b/drivers/watchdog/txx9wdt.c
+index c2da880292bc2f32..6f7a9deb27d05d25 100644
+--- a/drivers/watchdog/txx9wdt.c
++++ b/drivers/watchdog/txx9wdt.c
+@@ -112,7 +112,7 @@ static int __init txx9wdt_probe(struct platform_device *dev)
+ 		txx9_imclk = NULL;
+ 		goto exit;
+ 	}
+-	ret = clk_enable(txx9_imclk);
++	ret = clk_prepare_enable(txx9_imclk);
+ 	if (ret) {
+ 		clk_put(txx9_imclk);
+ 		txx9_imclk = NULL;
+@@ -144,7 +144,7 @@ static int __init txx9wdt_probe(struct platform_device *dev)
  	return 0;
- }
-@@ -120,14 +120,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
+ exit:
+ 	if (txx9_imclk) {
+-		clk_disable(txx9_imclk);
++		clk_disable_unprepare(txx9_imclk);
+ 		clk_put(txx9_imclk);
+ 	}
+ 	return ret;
+@@ -153,7 +153,7 @@ exit:
+ static int __exit txx9wdt_remove(struct platform_device *dev)
  {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
-+	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
- }
- 
- static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
-+	return !(readl(clock->reg) & CPG_SD_STP_MASK);
- }
- 
- static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
-@@ -138,7 +138,7 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
- 	u32 val, sd_fc;
- 	unsigned int i;
- 
--	val = clk_readl(clock->reg);
-+	val = readl(clock->reg);
- 
- 	sd_fc = val & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
-@@ -189,10 +189,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= clock->div_num)
- 		return -EINVAL;
- 
--	val = clk_readl(clock->reg);
-+	val = readl(clock->reg);
- 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
- 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	clk_writel(val, clock->reg);
-+	writel(val, clock->reg);
- 
+ 	watchdog_unregister_device(&txx9wdt);
+-	clk_disable(txx9_imclk);
++	clk_disable_unprepare(txx9_imclk);
+ 	clk_put(txx9_imclk);
  	return 0;
  }
 -- 
 1.9.1
+
