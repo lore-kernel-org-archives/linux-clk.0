@@ -1,67 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:21426 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752152AbcIRQZd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Sep 2016 12:25:33 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160917085606.GA17799@kroah.com>
-References: <1463755793-9131-1-git-send-email-yamada.masahiro@socionext.com>
- <CAK7LNATY9wTjHjsLtGHAJ-DueqXcCHdrw_uoSfyTOEmpp-ZPGw@mail.gmail.com>
- <20160916231245.GX7243@codeaurora.org> <20160917085606.GA17799@kroah.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 19 Sep 2016 01:25:01 +0900
-Message-ID: <CAK7LNASJjef7-Brn+uuan+cZtpBSjYwL-wgtcrv7vuYAFLEs-w@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: probe common clock drivers earlier
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jay Sternberg <jay.e.sternberg@intel.com>,
-        Jens Axboe <axboe@fb.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
-        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-        Alan Tull <atull@opensource.altera.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	johnyoun@synopsys.com,
+	kishon@ti.com,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 6/6] ARM64: meson-gxbb-vega-s95: Enable USB Nodes
+Date: Sun, 11 Sep 2016 15:41:11 +0200
+Message-Id: <20160911134111.31141-7-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Greg,
+Enable both gxbb USB controller and add a 5V regulator for the OTG port
+VBUS
 
-2016-09-17 17:56 GMT+09:00 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
-> On Fri, Sep 16, 2016 at 04:12:45PM -0700, Stephen Boyd wrote:
->> On 09/16, Masahiro Yamada wrote:
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
->> >
->> >
->> > What do you think of this patch?
->> >
->>
->> I assumed Greg would pick it up given that Mike already acked it.
->
-> I was going to take it?  It's not in my queue, sorry, can someone please
-> resend it with the acks and I will pick it up...
->
-> thanks,
->
-> greg k-h
-
-
-
-I did so with Michael's Acked-by:
-
-https://patchwork.kernel.org/patch/9337959/
-
-
-Thanks!
-
-
-
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+index 463185d..bad32e6 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+@@ -77,6 +77,19 @@
+ 		compatible = "mmc-pwrseq-emmc";
+ 		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
+ 	};
++
++	usb_vbus: regulator-usb0-vbus {
++		compatible = "regulator-fixed";
++
++		regulator-name = "USB0_VBUS";
++
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++
++		gpio = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ };
+ 
+ &uart_AO {
+@@ -133,3 +146,20 @@
+ 	vmmc-supply = <&vcc_3v3>;
+ 	vmmcq-sumpply = <&vcc_1v8>;
+ };
++
++&usb0_phy {
++	status = "okay";
++	phy-supply = <&usb_vbus>;
++};
++
++&usb1_phy {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
 -- 
-Best Regards
-Masahiro Yamada
+2.9.3
