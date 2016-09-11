@@ -1,43 +1,60 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH] clk: x86: Add Atom PMC platform clocks
-To: Mark Brown <broonie@kernel.org>
-References: <1471459276-11517-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <20160831003722.GH12510@codeaurora.org>
- <7c15a844-1351-f1ac-2ad0-3c41455fcc2e@linux.intel.com>
- <20160831170858.GA6560@sirena.org.uk>
-Cc: alsa-devel@alsa-project.org, irina.tirdea@intel.com, tiwai@suse.de,
- mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <9df1be06-8415-8cff-9468-0c4938f6e0fc@linux.intel.com>
-Date: Thu, 1 Sep 2016 18:32:44 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:58613 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755728AbcIKOXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Sep 2016 10:23:35 -0400
+Subject: Re: [PATCH v2 0/2] MIPS: TXx9: Common Clock Framework Conversion
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Wim Van Sebroeck <wim@iguana.be>
+References: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
+Cc: linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-watchdog@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <c00b671b-8824-b054-5ee1-fbd02e993e1e@roeck-us.net>
+Date: Sun, 11 Sep 2016 07:22:58 -0700
 MIME-Version: 1.0
-In-Reply-To: <20160831170858.GA6560@sirena.org.uk>
+In-Reply-To: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
 Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 8/31/16 12:08 PM, Mark Brown wrote:
-> On Tue, Aug 30, 2016 at 08:35:55PM -0500, Pierre-Louis Bossart wrote:
->> On 8/30/16 7:37 PM, Stephen Boyd wrote:
+On 09/11/2016 01:59 AM, Geert Uytterhoeven wrote:
+> 	Hi Ralf, Nemoto-san, Wim,
 >
->>> It's sad that this can't be compiled on any platform. Has there
->>> been any move towards making this into a regmap provider so that
->>> this clk driver can use cross platform regmap APIs instead? Or
+> This patch series converts the Toshiba TXx9 platforms from their own
+> custom minimal clock implementation to the Common Clock Framework.
 >
->> it's not clear to me what cross-platform goals you are hinting at and what
->> the concern is. We can add more framework stuff and make the code more
->> elegant but at the end of the day we will write in a very limited set of
->> registers (2 for audio - on/off and 19.2/25MHz selection) and the use of
->> this functionality is restricted to Baytrail and Cherrytrail.
+>   - Patch 1 adds missing clock (un)prepare calls to the TXx9 watchdog
+>     driver,
+>   - Patch 2 replaces the custom clock implementation by a CCF-based one,
+>     providing a minimal set of clocks.
 >
-> If code can be compiled on a wide range of platforms then that means
-> that it's much easier to get build coverage of the code.  This is
-> helpful for anyone doing any kind of cross tree updates - things like
-> updating APIs for example.  The fewer configurations they have to touch
-> to get everything built the easier it is for them.
+> This has been tested with the watchdog on RBTX4927.
+>
+> Changes since v1:
+>   - Dropped "spi: spi-txx9: Add missing clock (un)prepare calls for
+>     CCF", which has been accepted in spi/for-next,
+>   - Protect the TX4938_REV_PCODE() check by #ifdef CONFIG_CPU_TX49XX,
+>   - Use new clk_hw-centric clock registration API,
+>   - Add Reviewed-by.
+>
+> Dependencies:
+>   - Patch 1 can be applied independently,
+>   - Patch 2 depends on patch 1 and on "spi: spi-txx9: Add missing clock
+>     (un)prepare calls for CCF" in spi/for-next,
+>   - The error path in patch 2 depends on "clkdev: Detect errors in
+>     clk_hw_register_clkdev() for mass registration", but this is less
+>     critical.
+>
+> Wim: Can you please appply patch 1 directly, so we can get at least the
+> hard dependencies in v4.9?
+>
 
-ok, we can add a dummy pmc_write/read for non atom platforms so that 
-changes in the clock framework API can be handled without configuration.
-Using regmap to hide the IPC requests to the PCM seems a bit 
-over-engineered - we are talking about 2 registers per clock - and bring 
-limited benefits.
+It is in my watchdog-next branch, and it has my Reviewed-by:, which
+normally means that Wim will apply it.
+
+Thanks,
+Guenter
+
