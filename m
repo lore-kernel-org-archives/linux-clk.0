@@ -1,75 +1,72 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 4/5] clk: samsung: Add support for EPLL on exynos5410
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
- <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
- <74d97f1b-6a3a-78f1-6d96-b0d0b9717ab2@samsung.com>
- <fe67f53a-b5cd-1ff2-ae9f-7bce6b3d33b8@samsung.com>
- <20160902173241.GB9022@kozik-lap>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-clk@vger.kernel.org,
- tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <fa9b00c6-d33c-cb24-c230-01669a69ec03@samsung.com>
-Date: Mon, 05 Sep 2016 09:48:51 +0200
-MIME-version: 1.0
-In-reply-to: <20160902173241.GB9022@kozik-lap>
-Content-type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:39254 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751425AbcIKI76 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Sep 2016 04:59:58 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Wim Van Sebroeck <wim@iguana.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 0/2] MIPS: TXx9: Common Clock Framework Conversion
+Date: Sun, 11 Sep 2016 10:59:56 +0200
+Message-Id: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/02/2016 07:32 PM, Krzysztof Kozlowski wrote:
-> On Fri, Sep 02, 2016 at 05:15:31PM +0200, Sylwester Nawrocki wrote:
->> > On 08/30/2016 12:36 PM, Krzysztof Kozlowski wrote:
->>> > > On 08/22/2016 06:31 PM, Sylwester Nawrocki wrote:
->>>> > >> This patch adds code instantiating the EPLL, which is used as the
->>>> > >> audio subsystem's root clock.
->>>> > >> The requirement to specify the external root clock in clocks property
->>>> > >> is also added.
->>> > > 
->>> > > I think the requirement was there already but explained little bit
->>> > > differently:
->>> > > 19 External clock:
->>> > > 20
->>> > > 21 There is clock that is generated outside the SoC. It
->>> > > 22 is expected that it is defined using standard clock bindings
->>> > > 23 with following clock-output-name:
->>> > > 24
->>> > > 25  - "fin_pll" - PLL input clock from XXTI
->>> > >
->>> > > so you can just combine them. Driver now will require the fin_pll in two
->>> > > ways:
->>> > > 1. Old lookup by "fin_pll" name.
->>> > > 2. of_clk_get of yours.
->> > 
->> > I'm not sure what do you mean exactly, I'm also adding in this patch a sentence
->> > right after the text as quoted above saying that:
->> > 
->> > "This clock should be listed in the clocks property of the controller node."
->> > 
->> > The description of the consumer clock (the main clock controller's parent clock)
->> > was not in the binding so far, there is no "clocks" property in the list of
->> > required properties.
->
-> First of all, in commit message, you are not adding the requirement...
-> it was present already, I think. Wasn't it?
+	Hi Ralf, Nemoto-san, Wim,
 
-I guess we could say it was there, but the documentation was unclear
-enough so that link between the oscillator clock and the main clocks
-controller is missing in many dts files.
+This patch series converts the Toshiba TXx9 platforms from their own
+custom minimal clock implementation to the Common Clock Framework.
 
-> As for the code, I am saying that you are duplicating the information.
-> There is already an paragraph for external clock. You are adding a new
-> one before and extending it... just make it simpler - mention external
-> clock in one place.
+  - Patch 1 adds missing clock (un)prepare calls to the TXx9 watchdog
+    driver,
+  - Patch 2 replaces the custom clock implementation by a CCF-based one,
+    providing a minimal set of clocks.
 
-Ah, now I see, indeed it makes sense to delete the "External clock"
-paragraph.  I'll reword then the clocks property description to:
+This has been tested with the watchdog on RBTX4927.
 
-- clocks: should contain an entry specifying the root clock from external
-  oscillator supplied through XXTI or XusbXTI pin.  This clock should be
-  defined using standard clock bindings with "fin_pll" clock-output-name.
-  The "fin_pll" clock is being passed internally to the 9 PLLs.
+Changes since v1:
+  - Dropped "spi: spi-txx9: Add missing clock (un)prepare calls for
+    CCF", which has been accepted in spi/for-next,
+  - Protect the TX4938_REV_PCODE() check by #ifdef CONFIG_CPU_TX49XX,
+  - Use new clk_hw-centric clock registration API,
+  - Add Reviewed-by.
+
+Dependencies:
+  - Patch 1 can be applied independently,
+  - Patch 2 depends on patch 1 and on "spi: spi-txx9: Add missing clock
+    (un)prepare calls for CCF" in spi/for-next,
+  - The error path in patch 2 depends on "clkdev: Detect errors in
+    clk_hw_register_clkdev() for mass registration", but this is less
+    critical.
+
+Wim: Can you please appply patch 1 directly, so we can get at least the
+hard dependencies in v4.9?
+
+Thanks!
+
+Geert Uytterhoeven (2):
+  watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
+  MIPS: TXx9: Convert to Common Clock Framework
+
+ arch/mips/txx9/Kconfig         |  2 +-
+ arch/mips/txx9/generic/setup.c | 70 +++++++++++++++++++++---------------------
+ drivers/watchdog/txx9wdt.c     |  6 ++--
+ 3 files changed, 39 insertions(+), 39 deletions(-)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
 
 --
-Thanks,
-Sylwester
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
