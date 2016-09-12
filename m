@@ -1,50 +1,157 @@
-Return-Path: <julia.lawall@lip6.fr>
-Date: Tue, 20 Sep 2016 19:32:52 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: question about clk_hw_register_fixed_factor
-In-Reply-To: <20160920173105.GA8319@codeaurora.org>
-Message-ID: <alpine.DEB.2.10.1609201932362.2914@hadrien>
-References: <alpine.DEB.2.10.1609200811560.3346@hadrien> <20160920173105.GA8319@codeaurora.org>
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH 1/4] Document: DT: Add bindings for mediatek MT6797 SoC
+ Platform
+To: Mars Cheng <mars.cheng@mediatek.com>
+References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
+ <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
+ <57D15B6C.6080305@arm.com> <1473343735.1896.15.camel@mtkswgap22>
+ <57D17667.1020201@arm.com> <1473645103.27628.6.camel@mtkswgap22>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>,
+ James Liao <jamesjj.liao@mediatek.com>, linux-clk@vger.kernel.org,
+ CC Hwang <cc.hwang@mediatek.com>, Loda Choui <loda.chou@mediatek.com>,
+ Miles Chen <miles.chen@mediatek.com>, Scott Shu <scott.shu@mediatek.com>,
+ Jades Shih <jades.shih@mediatek.com>,
+ Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
+ <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ wsd_upstream@mediatek.com
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <57D65FE6.5040706@arm.com>
+Date: Mon, 12 Sep 2016 08:57:26 +0100
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1473645103.27628.6.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 12/09/16 02:51, Mars Cheng wrote:
+> On Thu, 2016-09-08 at 15:32 +0100, Marc Zyngier wrote:
+>> On 08/09/16 15:08, Mars Cheng wrote:
+>>> Hi Marc
+>>>
+>>> Thanks for your review. the response inlined.
+>>>
+>>> On Thu, 2016-09-08 at 13:37 +0100, Marc Zyngier wrote:
+>>>> On 08/09/16 11:49, Mars Cheng wrote:
+>>>>> This adds DT binding documentation for Mediatek MT6797.
+>>>>>
+>>>>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+>>>>> ---
+>>> [...]
+>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+>>>>> index 9d1d72c..3d97eb4 100644
+>>>>> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+>>>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+>>>>> @@ -8,6 +8,7 @@ Required properties:
+>>>>>  	"mediatek,mt8173-sysirq"
+>>>>>  	"mediatek,mt8135-sysirq"
+>>>>>  	"mediatek,mt8127-sysirq"
+>>>>> +	"mediatek,mt6797-sysirq"
+>>>>>  	"mediatek,mt6795-sysirq"
+>>>>>  	"mediatek,mt6755-sysirq"
+>>>>>  	"mediatek,mt6592-sysirq"
+>>>>> @@ -21,7 +22,8 @@ Required properties:
+>>>>>  - interrupt-parent: phandle of irq parent for sysirq. The parent must
+>>>>>    use the same interrupt-cells format as GIC.
+>>>>>  - reg: Physical base address of the intpol registers and length of memory
+>>>>> -  mapped region.
+>>>>> +  mapped region. Could be up to 2 registers here at max. Ex: 6797 needs 2 reg,
+>>>>> +  others need 1.
+>>>>
+>>>> Two things:
+>>>>
+>>>> - Please make this a separate patch that can be reviewed independently
+>>>> of the rest of the changes, which are just adding new compatible
+>>>> identifiers.
+>>>
+>>> Will fix this in the next patch set.
+>>>
+>>>>
+>>>> - Why can't you simply expose it as a separate controller? Looking at
+>>>> the way you're changing the corresponding driver, it looks like you're
+>>>> simply adding an extra base/size. If you simply had a base for the
+>>>> corresponding GIC interrupts, you could handle as many region as you
+>>>> want, and have a more generic driver.
+>>>>
+>>>
+>>> May I know the meaning of "simply expose it as a separate controller"?
+>>
+>> At the moment, you have something like this:
+>>
+>> 	sysirq: intpol-controller@10200620 {
+>> 		compatible = "mediatek,mt6755-sysirq",
+>> 			     "mediatek,mt6577-sysirq";
+>> 		interrupt-controller;
+>> 		#interrupt-cells = <3>;
+>> 		interrupt-parent = <&gic>;
+>> 		reg = <0 0x10200620 0 0x20>;
+>> 	};
+>>
+>> I suggest that, when you have a second base (which is effectively
+>> another controller), you add:
+>>
+>> 	sysirq2: intpol-controller@10201620 {
+>> 		compatible = "mediatek,mt6755-sysirq",
+>> 			     "mediatek,mt6577-sysirq";
+>> 		interrupt-controller;
+>> 		#interrupt-cells = <3>;
+>> 		interrupt-parent = <&gic>;
+>> 		irq-base = <32>;
+>> 		reg = <0 0x10201620 0 0x20>;
+>> 	};
+>>
+>> Where irq-base is the first SPI this is connected to (the lack of
+>> property indicates implies that irq-base is 0). This becomes a very
+>> simple change in the driver.
+>>
+>>> Or you might like to suggest me any similar driver as a reference? I
+>>> will examine it. Current design is based on the fact: We expect
+>>> irq-mtk-sysirq needs the optional second base but the third one will not
+>>> happen.
+>>>
+>>> If we really need more than 2 bases, we can figure out a more generic
+>>> driver at the time, right?
+>>
+>> I'd rather fix the driver and the binding to do the right thing once and
+>> for all. In my experience, you will need to add a third base in six
+>> months, and a fourth soon after. I'd rather either support an arbitrary
+>> number of bases, or a single one per controller (and have multiple
+>> controllers).
+> Hi Marc
+> 
+> Thanks for suggesting this approach I never thought.
+> 
+> However, I will modify the irq-mtk-sysirq driver to handle as many bases
+> as we specify in current node in the next patch set. Will not use the
+> second interrupt node in DT. The main reason is to simplify the writing
+> of DT. Or we need to know which interrupt node to be specified for other
+> nodes. As you said that might be the third or fourth bases, that will
+> complicate the writing of DT more.
+> 
+> Would you think this is OK?
 
+There is still one thing that is not completely obvious to me: How do
+you map a new set of registers to the corresponding base GIC SPI?
 
-On Tue, 20 Sep 2016, Stephen Boyd wrote:
+At the moment, this is an implicit SPI0 (hwirq 32 on the GIC). I don't
+think assuming that all the banks will forever be contiguous is a safe
+bet, so introducing some form of sparseness support seems beneficial.
 
-> On 09/20, Julia Lawall wrote:
-> > Hello,
-> >
-> > The function clk_hw_register_fixed_factor from
-> > drivers/clk/clk-fixed-factor.c contains:
-> >
-> > struct clk_init_data init;
-> > ...
-> > fix->hw.init = &init;
-> > ...
-> > hw = &fix->hw;
-> > ...
-> > return hw;
-> >
-> > It looks like hw would then contain a dangling pointer, to init.  Should
-> > this be nulled out, or does it not matter because it is certain that no
-> > one will look at it anyway?  Or did I miss a null assignment elsewhere?
-> >
->
-> Yes this is a common pattern in clk drivers. The init structure
-> is not used after clk_register() (or its variants) is called, so
-> there will typically be a dangling pointer in clk_hw to the
-> clk_init_data structure. Sometimes that structure is allocated on
-> the stack, which leads to other problems like people forgetting
-> to initialize all the members. Usually they forgot to set flags
-> to something and then clk framework does very odd things. We
-> could null out the init pointer if we really cared, but so far
-> this hasn't been a problem.
+As for simplifying the DT, I'm not convinced either. You already deal
+with two interrupt controllers (the GIC and this intpol), which means
+you need to locally annotate some DT nodes to point to the GIC. With my
+scheme, you keep annotating more (or use the extended interrupt
+specifier notation), but that doesn't feel like a massive burden. How
+often do you write a DT from scratch?
 
-OK, thanks for the clarification.
+Anyway, this is up to you. My only requirements is about being able to
+support an arbitrary numbers of register sets, with arbitrary SPI bases.
 
-julia
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
