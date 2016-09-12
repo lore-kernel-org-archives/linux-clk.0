@@ -1,63 +1,74 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  jbrunet@baylibre.com,  johnyoun@synopsys.com,  kishon@ti.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  sboyd@codeaurora.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org
-Subject: Re: [PATCH v2 5/6] ARM64: meson-gxbb-p20x: Enable USB Nodes
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	<20160911134111.31141-1-martin.blumenstingl@googlemail.com>
-	<20160911134111.31141-6-martin.blumenstingl@googlemail.com>
-Date: Wed, 14 Sep 2016 11:05:17 -0700
-In-Reply-To: <20160911134111.31141-6-martin.blumenstingl@googlemail.com>
-	(Martin Blumenstingl's message of "Sun, 11 Sep 2016 15:41:10 +0200")
-Message-ID: <7h37l2mk6a.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <hotran@apm.com>
+Return-Path: <hotran@apm.com>
+From: Hoan Tran <hotran@apm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	lho@apm.com,
+	Duc Dang <dhdang@apm.com>,
+	Hoan Tran <hotran@apm.com>
+Subject: [PATCH v3 1/3] Documentation: dtb: xgene: Add PMD clock binding
+Date: Mon, 12 Sep 2016 11:23:23 -0700
+Message-Id: <1473704605-28126-2-git-send-email-hotran@apm.com>
+In-Reply-To: <1473704605-28126-1-git-send-email-hotran@apm.com>
+References: <1473704605-28126-1-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+Add APM X-Gene clock binding documentation for PMD clock.
 
-> From: Jerome Brunet <jbrunet@baylibre.com>
->
-> Enable both gxbb USB controller and add a 5V regulator for the OTG port
-> VBUS
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Hoan Tran <hotran@apm.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/xgene.txt | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-nit: subject should have "ARM64: dts:" prefix.
-
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi | 29 ++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-> index ce105fe..4493bce 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-> @@ -93,6 +93,18 @@
->  		compatible = "mmc-pwrseq-emmc";
->  		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
->  	};
-> +
-> +	usb_vbus: regulator-usb0-vbus {
-
-nit: I like to use the signal name from the schematics for the node name
-(and for regulator-name below).  In the schematics, that signal is named
-USB_PWR.
-
-
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "USB0_VBUS";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +
-> +		gpio = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
-
-Please add a comment above this line with the schematic signal name: USB_PWR_EN.
-
-> +		enable-active-high;
-> +	};
->  };
-
-Kevin
+diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
+index 82f9638..8233e77 100644
+--- a/Documentation/devicetree/bindings/clock/xgene.txt
++++ b/Documentation/devicetree/bindings/clock/xgene.txt
+@@ -8,6 +8,7 @@ Required properties:
+ - compatible : shall be one of the following:
+ 	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
+ 	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
++	"apm,xgene-pmd-clock" - for a X-Gene PMD clock
+ 	"apm,xgene-device-clock" - for a X-Gene device clock
+ 	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
+ 	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
+@@ -22,6 +23,15 @@ Required properties for SoC or PCP PLL clocks:
+ Optional properties for PLL clocks:
+ - clock-names : shall be the name of the PLL. If missing, use the device name.
+ 
++Required properties for PMD clocks:
++- reg : shall be the physical register address for the pmd clock.
++- clocks : shall be the input parent clock phandle for the clock.
++- #clock-cells : shall be set to 1.
++- clock-output-names : shall be the name of the clock referenced by derive
++  clock.
++Optional properties for PLL clocks:
++- clock-names : shall be the name of the clock. If missing, use the device name.
++
+ Required properties for device clocks:
+ - reg : shall be a list of address and length pairs describing the CSR
+          reset and/or the divider. Either may be omitted, but at least
+@@ -59,6 +69,14 @@ For example:
+ 		type = <0>;
+ 	};
+ 
++	pmd0clk: pmd0clk@7e200200 {
++		compatible = "apm,xgene-pmd-clock";
++		#clock-cells = <1>;
++		clocks = <&pmdpll 0>;
++		reg = <0x0 0x7e200200 0x0 0x10>;
++		clock-output-names = "pmd0clk";
++	};
++
+ 	socpll: socpll@17000120 {
+ 		compatible = "apm,xgene-socpll-clock";
+ 		#clock-cells = <1>;
+-- 
+1.9.1
