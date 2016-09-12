@@ -1,79 +1,249 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-co1nam03on0056.outbound.protection.outlook.com ([104.47.40.56]:17521
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754683AbcIUHJj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Sep 2016 03:09:39 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        "Bhupesh Sharma" <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        "Kumar Gala" <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v12, 1/8] dt: bindings: update Freescale DCFG compatible
-Date: Wed, 21 Sep 2016 14:57:13 +0800
-Message-ID: <1474441040-11946-2-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH v2 4/4] arm64: dts: add Pine64 support
+To: Chen-Yu Tsai <wens@csie.org>,
+   Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
+ <20160909201029.24530-5-maxime.ripard@free-electrons.com>
+ <CAGb2v65JZ7gnOZ_LkkvGv5-bqXeK1E1O3eno85zYBSndNpN=Qw@mail.gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+   Stephen Boyd <sboyd@codeaurora.org>,
+   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+   linux-clk <linux-clk@vger.kernel.org>,
+   linux-kernel <linux-kernel@vger.kernel.org>,
+   linux-sunxi <linux-sunxi@googlegroups.com>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <c7ad213f-e5d1-d5c5-a83c-af1c38d9c1d6@arm.com>
+Date: Mon, 12 Sep 2016 11:11:44 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAGb2v65JZ7gnOZ_LkkvGv5-bqXeK1E1O3eno85zYBSndNpN=Qw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
-of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
-ls1043a, and ls2080a.
+Hi,
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Scott Wood <oss@buserror.net>
----
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added a list for the possible compatibles
-Changes for v10:
-	- None
-Changes for v11:
-	- Added 'Acked-by: Rob Herring'
-	- Updated commit message by Scott
-Changes for v12:
-	- None
----
- Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+On 10/09/16 03:33, Chen-Yu Tsai wrote:
+> Hi,
+> 
+> On Sat, Sep 10, 2016 at 4:10 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> From: Andre Przywara <andre.przywara@arm.com>
+>>
+>> The Pine64 is a cost-efficient development board based on the
+>> Allwinner A64 SoC.
+>> There are three models: the basic version with Fast Ethernet and
+>> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+>> feature Gigabit Ethernet and additional connectors for touchscreens
+>> and a camera. Or as my son put it: "Those are smaller and these are
+>> missing." ;-)
+>> The two Pine64+ models just differ in the amount of DRAM
+>> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+>> patches the DT accordingly we just need to provide one DT for the
+>> Pine64+.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
+>> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> ---
+>>  arch/arm64/boot/dts/Makefile                       |  1 +
+>>  arch/arm64/boot/dts/allwinner/Makefile             |  5 ++
+>>  .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  | 50 ++++++++++++++++
+>>  .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 70 ++++++++++++++++++++++
+>>  4 files changed, 126 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+>>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+>> index 6e199c903676..ddcbf5a2c17e 100644
+>> --- a/arch/arm64/boot/dts/Makefile
+>> +++ b/arch/arm64/boot/dts/Makefile
+>> @@ -1,4 +1,5 @@
+>>  dts-dirs += al
+>> +dts-dirs += allwinner
+>>  dts-dirs += altera
+>>  dts-dirs += amd
+>>  dts-dirs += amlogic
+>> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+>> new file mode 100644
+>> index 000000000000..1e29a5ae8282
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+>> @@ -0,0 +1,5 @@
+>> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
+>> +
+>> +always         := $(dtb-y)
+>> +subdir-y       := $(dts-dirs)
+>> +clean-files    := *.dtb
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>> new file mode 100644
+>> index 000000000000..790d14daaa6a
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>> @@ -0,0 +1,50 @@
+>> +/*
+>> + * Copyright (c) 2016 ARM Ltd.
+>> + *
+>> + * This file is dual-licensed: you can use it either under the terms
+>> + * of the GPL or the X11 license, at your option. Note that this dual
+>> + * licensing only applies to this file, and not this project as a
+>> + * whole.
+>> + *
+>> + *  a) This library is free software; you can redistribute it and/or
+>> + *     modify it under the terms of the GNU General Public License as
+>> + *     published by the Free Software Foundation; either version 2 of the
+>> + *     License, or (at your option) any later version.
+>> + *
+>> + *     This library is distributed in the hope that it will be useful,
+>> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + *     GNU General Public License for more details.
+>> + *
+>> + * Or, alternatively,
+>> + *
+>> + *  b) Permission is hereby granted, free of charge, to any person
+>> + *     obtaining a copy of this software and associated documentation
+>> + *     files (the "Software"), to deal in the Software without
+>> + *     restriction, including without limitation the rights to use,
+>> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>> + *     sell copies of the Software, and to permit persons to whom the
+>> + *     Software is furnished to do so, subject to the following
+>> + *     conditions:
+>> + *
+>> + *     The above copyright notice and this permission notice shall be
+>> + *     included in all copies or substantial portions of the Software.
+>> + *
+>> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+>> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>> + *     OTHER DEALINGS IN THE SOFTWARE.
+>> + */
+>> +
+>> +#include "sun50i-a64-pine64.dts"
+>> +
+>> +/ {
+>> +       model = "Pine64+";
+>> +       compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
+>> +
+>> +       /* TODO: Camera, Ethernet PHY, touchscreen, etc. */
+>> +};
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> new file mode 100644
+>> index 000000000000..da9bca51f5a9
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> @@ -0,0 +1,70 @@
+>> +/*
+>> + * Copyright (c) 2016 ARM Ltd.
+>> + *
+>> + * This file is dual-licensed: you can use it either under the terms
+>> + * of the GPL or the X11 license, at your option. Note that this dual
+>> + * licensing only applies to this file, and not this project as a
+>> + * whole.
+>> + *
+>> + *  a) This library is free software; you can redistribute it and/or
+>> + *     modify it under the terms of the GNU General Public License as
+>> + *     published by the Free Software Foundation; either version 2 of the
+>> + *     License, or (at your option) any later version.
+>> + *
+>> + *     This library is distributed in the hope that it will be useful,
+>> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + *     GNU General Public License for more details.
+>> + *
+>> + * Or, alternatively,
+>> + *
+>> + *  b) Permission is hereby granted, free of charge, to any person
+>> + *     obtaining a copy of this software and associated documentation
+>> + *     files (the "Software"), to deal in the Software without
+>> + *     restriction, including without limitation the rights to use,
+>> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>> + *     sell copies of the Software, and to permit persons to whom the
+>> + *     Software is furnished to do so, subject to the following
+>> + *     conditions:
+>> + *
+>> + *     The above copyright notice and this permission notice shall be
+>> + *     included in all copies or substantial portions of the Software.
+>> + *
+>> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+>> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>> + *     OTHER DEALINGS IN THE SOFTWARE.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "sun50i-a64.dtsi"
+>> +
+>> +/ {
+>> +       model = "Pine64";
+>> +       compatible = "pine64,pine64", "allwinner,sun50i-a64";
+>> +
+>> +       aliases {
+>> +               serial0 = &uart0;
+>> +       };
+>> +
+>> +       chosen {
+>> +               stdout-path = "serial0:115200n8";
+>> +       };
+>> +};
+>> +
+>> +&uart0 {
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&uart0_pins_a>;
+>> +       status = "okay";
+>> +};
+>> +
+>> +&i2c1 {
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&i2c1_pins>;
+>> +       status = "okay";
+> 
+> Schematics say this is missing an external pull-up. Has anyone tried it?
+> Without a pull-up any access on the i2c bus should just block.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index dbbc095..713c1ae 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -119,7 +119,11 @@ Freescale DCFG
- configuration and status for the device. Such as setting the secondary
- core start address and release the secondary core from holdoff and startup.
-   Required properties:
--  - compatible: should be "fsl,ls1021a-dcfg"
-+  - compatible: should be "fsl,<chip>-dcfg"
-+    Possible compatibles:
-+	"fsl,ls1021a-dcfg"
-+	"fsl,ls1043a-dcfg"
-+	"fsl,ls2080a-dcfg"
-   - reg : should contain base address and length of DCFG memory-mapped registers
- 
- Example:
--- 
-2.1.0.27.g96db324
+I tried it a while ago (with an older kernel), though I had an external
+pull-up on the device side, I think. I can give it a try again with
+Maxime's branch once I find this I2C test device in one of my moving
+boxes ;-)
 
+Do other boards providing a Raspi-compatible header have an on-board
+pull-up here? So will (some) hardware extensions for the Raspi fail on
+the Pine64?
+
+> Also this is on the RPi-2 compatible header. There's also an UART and SPI
+> that are standard for the RPi-2 header. We should consider enabling them
+> as well.
+
+Interesting topic ;-)
+As both interfaces can be configured for GPIO as well, I think Maxime
+voted to not declare them as special function in the upstream DT.
+UART0 is used for the console, so I guess some people may decide to use
+those UART2 header pins for GPIO. Similarly for SPI: if you don't need
+it, you get four (or five) additional GPIO.
+
+A kind of related issue arises for those BT/Wifi headers. 99.9% of the
+users will plug the Pine64 BT/WiFi module in there, at which point we
+could declare MMC1 as SDIO and UART1 as enabled to cover this.
+But then again nothing prevents people from building a custom module
+which uses those pins for something else. Port G at least does not
+multiplex any other IP to those pins - apart from GPIO, of course.
+
+So what is the exact policy here? In the end I think any pin (including
+UART0's PB8 and PB9) can be configured as GPIO, so do we make some
+assumptions about "sensible" or predominant usage?
+
+Does "# echo $DEVICE > /sys/devices/platform/$DEVICE/driver/unbind" work
+to get those pins free later in case one wants to configure them as
+GPIOs? In this case we may consider being more generous in declaring
+common use cases in the upstream DT for the sake of the majority of users.
+
+Cheers,
+Andre.
