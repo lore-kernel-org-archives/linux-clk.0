@@ -1,82 +1,80 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH 1/4] Document: DT: Add bindings for mediatek MT6797 SoC
- Platform
-To: Mars Cheng <mars.cheng@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Erin Lo <erin.lo@mediatek.com>,
- James Liao <jamesjj.liao@mediatek.com>
-References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
- <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
-Cc: linux-clk@vger.kernel.org, CC Hwang <cc.hwang@mediatek.com>,
- Loda Choui <loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>,
- Scott Shu <scott.shu@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
- Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
- <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- wsd_upstream@mediatek.com
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <57D15B6C.6080305@arm.com>
-Date: Thu, 8 Sep 2016 13:37:00 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 12 Sep 2016 15:31:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/5] clk: add support for runtime pm
+Message-ID: <20160912223105.GI7243@codeaurora.org>
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
+ <20160908001943.GC13062@codeaurora.org>
+ <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
+ <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/16 11:49, Mars Cheng wrote:
-> This adds DT binding documentation for Mediatek MT6797.
+On 09/12, Marek Szyprowski wrote:
+> Hi Stephen,
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.txt |    4 ++++
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 ++-
->  .../interrupt-controller/mediatek,sysirq.txt       |    4 +++-
->  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
->  10 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> On 2016-09-08 02:19, Stephen Boyd wrote:
+> >On 09/01, Marek Szyprowski wrote:
+> >>Registers for some clocks might be located in the SOC area, which are under the
+> >>power domain. To enable access to those registers respective domain has to be
+> >>turned on. Additionally, registers for such clocks will usually loose its
+> >>contents when power domain is turned off, so additional saving and restoring of
+> >>them might be needed in the clock controller driver.
+> >>
+> >>This patch adds basic infrastructure in the clocks core to allow implementing
+> >>driver for such clocks under power domains. Clock provider can supply a
+> >>struct device pointer, which is the used by clock core for tracking and managing
+> >>clock's controller runtime pm state. Each clk_prepare() operation
+> >>will first call pm_runtime_get_sync() on the supplied device, while
+> >>clk_unprepare() will do pm_runtime_put() at the end.
+> >>
+> >>Additional calls to pm_runtime_get/put functions are required to ensure that any
+> >>register access (like calculating/chaning clock rates) will be done with clock
+> >>controller in active runtime state.
+> >>
+> >>Special handling of the case when runtime pm is disabled for clock controller's
+> >>device is needed to let this feature work properly also during system sleep
+> >>suspend/resume operations (runtime pm is first disabled before entering sleep
+> >>state's, but controller is usually still operational until its suspend pm
+> >>callback is called).
+> >>
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >My "knee jerk" concern is that we're going to take a runtime PM
+> >lock underneath the prepare lock. That seems like a situation
+> >where we could hit a lock inversion if the runtime PM callbacks
+> >themselves acquire the prepare lock by calling clk APIs? But this
+> >concern is false right? We release the runtime PM lock before
+> >calling the PM callback, so we shouldn't hit any deadlock and
+> >lockdep won't complain?
+> 
+> Runtime PM uses fine grained locking based on per-device locks, so there
+> should be no problem with global clock prepare lock. The only lock
+> interaction
+> is between clock controller device's rpm lock and clocks global
+> prepare lock, but
+> it always done with the same access pattern. I've tested it
+> extensively (also
+> with lock dep) with various use cases and found no problems.
+> 
 
-[...]
+Great! So you have runtime PM callbacks that are calling
+clk_prepare/unprepare?
 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> index 9d1d72c..3d97eb4 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> @@ -8,6 +8,7 @@ Required properties:
->  	"mediatek,mt8173-sysirq"
->  	"mediatek,mt8135-sysirq"
->  	"mediatek,mt8127-sysirq"
-> +	"mediatek,mt6797-sysirq"
->  	"mediatek,mt6795-sysirq"
->  	"mediatek,mt6755-sysirq"
->  	"mediatek,mt6592-sysirq"
-> @@ -21,7 +22,8 @@ Required properties:
->  - interrupt-parent: phandle of irq parent for sysirq. The parent must
->    use the same interrupt-cells format as GIC.
->  - reg: Physical base address of the intpol registers and length of memory
-> -  mapped region.
-> +  mapped region. Could be up to 2 registers here at max. Ex: 6797 needs 2 reg,
-> +  others need 1.
-
-Two things:
-
-- Please make this a separate patch that can be reviewed independently
-of the rest of the changes, which are just adding new compatible
-identifiers.
-
-- Why can't you simply expose it as a separate controller? Looking at
-the way you're changing the corresponding driver, it looks like you're
-simply adding an extra base/size. If you simply had a base for the
-corresponding GIC interrupts, you could handle as many region as you
-want, and have a more generic driver.
-
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
