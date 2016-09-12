@@ -1,59 +1,39 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 0/5] AT91: sckc improvements
-Date: Tue, 20 Sep 2016 22:58:28 +0200
-Message-Id: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57210 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756541AbcILWc7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Sep 2016 18:32:59 -0400
+Date: Mon, 12 Sep 2016 15:32:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] MIPS: TXx9: Convert to Common Clock Framework
+Message-ID: <20160912223257.GJ7243@codeaurora.org>
+References: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
+ <1473584398-12942-3-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473584398-12942-3-git-send-email-geert@linux-m68k.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 09/11, Geert Uytterhoeven wrote:
+> Replace the custom minimal clock implementation for Toshiba TXx9 by a
+> basic implementation using the Common Clock Framework.
+> 
+> The only clocks that are provided are those needed by TXx9-specific
+> drivers ("imbus" and "spi" (TX4938 only)), and their common parent
+> clock "gbus". Other clocks can be added when needed.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
 
-This patch set improves the slow clock controller driver.
-
-The first patch simply moves some code around to avoid having extern
-functions declared.
-
-The second patch adds support for the SCKC found on sama5d4 and later.
-It is notably missing the OSC32EN bit.
-
-The third patch is an optimization. Trying to find wether the slow
-oscillator is already stable to avoid waiting 1.2s twice in the boot
-process.
-
-Like discussed on IRC, the clk patches can probably go in v4.9 through the clk
-tree. I'll take both dtsi patches through the at91 tree for v4.10.
-
-Changes in v3:
- - rebased on clk-next to get the clk_hw rework
- - use a fixed clock for the rc oscillator on sama5d4
- - reordered patches
-
-Changes in v2:
- - Fixed a typo pointed by Boris
-
-
-Alexandre Belloni (5):
-  clk: at91: move slow clock controller clocks to sckc.c
-  clk: at91: Add sama5d4 sckc support
-  clk: at91: sckc: optimize boot time
-  ARM: dts: at91: sama5d4: use proper sckc compatible
-  ARM: dts: at91: sama5d2: use correct sckc compatible
-
- .../devicetree/bindings/clock/at91-clock.txt       |   3 +-
- arch/arm/boot/dts/sama5d2.dtsi                     |  26 +-
- arch/arm/boot/dts/sama5d4.dtsi                     |  27 +-
- drivers/clk/at91/clk-slow.c                        | 365 ----------------
- drivers/clk/at91/sckc.c                            | 464 ++++++++++++++++++++-
- drivers/clk/at91/sckc.h                            |  22 -
- 6 files changed, 473 insertions(+), 434 deletions(-)
- delete mode 100644 drivers/clk/at91/sckc.h
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
