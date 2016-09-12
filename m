@@ -1,39 +1,153 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Sep 2016 12:23:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 1/4] clk: pxa25x: OSTIMER0 clocks from the main oscillator
-Message-ID: <20160919192334.GF7243@codeaurora.org>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-2-git-send-email-robert.jarzmik@free.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474312335-20997-2-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <hotran@apm.com>
+Return-Path: <hotran@apm.com>
+From: Hoan Tran <hotran@apm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	lho@apm.com,
+	Duc Dang <dhdang@apm.com>,
+	Hoan Tran <hotran@apm.com>
+Subject: [PATCH v3 3/3] arm64: dts: xgene: Add DT node for APM X-Gene 2 CPU clocks
+Date: Mon, 12 Sep 2016 11:23:25 -0700
+Message-Id: <1473704605-28126-4-git-send-email-hotran@apm.com>
+In-Reply-To: <1473704605-28126-1-git-send-email-hotran@apm.com>
+References: <1473704605-28126-1-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19, Robert Jarzmik wrote:
-> From: Russell King - ARM Linux <linux@armlinux.org.uk>
-> 
-> The OSTIMER0 clock ticks at the main oscillator rate, not the 32kHz
-> oscillator rate.  Ensure that it is parented to the main oscillator.
-> 
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
+Add DT nodes to enable APM X-Gene 2 CPU clocks.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Hoan Tran <hotran@apm.com>
+---
+ arch/arm64/boot/dts/apm/apm-shadowcat.dtsi | 56 ++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+index 1425ed4..7b31895 100644
+--- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+@@ -26,6 +26,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_0>;
++			#clock-cells = <1>;
++			clocks = <&pmd0clk 0>;
+ 		};
+ 		cpu@001 {
+ 			device_type = "cpu";
+@@ -34,6 +36,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_0>;
++			#clock-cells = <1>;
++			clocks = <&pmd0clk 0>;
+ 		};
+ 		cpu@100 {
+ 			device_type = "cpu";
+@@ -42,6 +46,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_1>;
++			#clock-cells = <1>;
++			clocks = <&pmd1clk 0>;
+ 		};
+ 		cpu@101 {
+ 			device_type = "cpu";
+@@ -50,6 +56,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_1>;
++			#clock-cells = <1>;
++			clocks = <&pmd1clk 0>;
+ 		};
+ 		cpu@200 {
+ 			device_type = "cpu";
+@@ -58,6 +66,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_2>;
++			#clock-cells = <1>;
++			clocks = <&pmd2clk 0>;
+ 		};
+ 		cpu@201 {
+ 			device_type = "cpu";
+@@ -66,6 +76,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_2>;
++			#clock-cells = <1>;
++			clocks = <&pmd2clk 0>;
+ 		};
+ 		cpu@300 {
+ 			device_type = "cpu";
+@@ -74,6 +86,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_3>;
++			#clock-cells = <1>;
++			clocks = <&pmd3clk 0>;
+ 		};
+ 		cpu@301 {
+ 			device_type = "cpu";
+@@ -82,6 +96,8 @@
+ 			enable-method = "spin-table";
+ 			cpu-release-addr = <0x1 0x0000fff8>;
+ 			next-level-cache = <&xgene_L2_3>;
++			#clock-cells = <1>;
++			clocks = <&pmd3clk 0>;
+ 		};
+ 		xgene_L2_0: l2-cache-0 {
+ 			compatible = "cache";
+@@ -223,6 +239,46 @@
+ 				clock-output-names = "refclk";
+ 			};
+ 
++			pmdpll: pmdpll@170000f0 {
++				compatible = "apm,xgene-pcppll-v2-clock";
++				#clock-cells = <1>;
++				clocks = <&refclk 0>;
++				reg = <0x0 0x170000f0 0x0 0x10>;
++				clock-output-names = "pmdpll";
++			};
++
++			pmd0clk: pmd0clk@7e200200 {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7e200200 0x0 0x10>;
++				clock-output-names = "pmd0clk";
++			};
++
++			pmd1clk: pmd1clk@7e200210 {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7e200210 0x0 0x10>;
++				clock-output-names = "pmd1clk";
++			};
++
++			pmd2clk: pmd2clk@7e200220 {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7e200220 0x0 0x10>;
++				clock-output-names = "pmd2clk";
++			};
++
++			pmd3clk: pmd3clk@7e200230 {
++				compatible = "apm,xgene-pmd-clock";
++				#clock-cells = <1>;
++				clocks = <&pmdpll 0>;
++				reg = <0x0 0x7e200230 0x0 0x10>;
++				clock-output-names = "pmd3clk";
++			};
++
+ 			socpll: socpll@17000120 {
+ 				compatible = "apm,xgene-socpll-v2-clock";
+ 				#clock-cells = <1>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
