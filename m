@@ -1,62 +1,50 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,  hdegoede@redhat.com,  Ben Dooks <ben.dooks@codethink.co.uk>,  mark.rutland@arm.com,  devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,  johnyoun@synopsys.com,  will.deacon@arm.com,  mturquette@baylibre.com,  linux-usb@vger.kernel.org,  sboyd@codeaurora.org,  kishon@ti.com,  robh+dt@kernel.org,  catalin.marinas@arm.com,  carlo@caione.org,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  jbrunet@baylibre.com
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-	<m260q6jibf.fsf@baylibre.com>
-	<CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
-	<e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
-	<m2eg4ui0nl.fsf@baylibre.com>
-	<ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-	<CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-	<m2sht9gkau.fsf@baylibre.com>
-	<CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
-	<1473780508.10237.22.camel@pengutronix.de>
-	<CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
-Date: Tue, 13 Sep 2016 17:59:11 -0700
-In-Reply-To: <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
-	(Martin Blumenstingl's message of "Tue, 13 Sep 2016 20:38:06 +0200")
-Message-ID: <7hzinbmh40.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.8-rc6
+Date: Mon, 12 Sep 2016 14:25:27 -0700
+Message-Id: <20160912212527.28064-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+The following changes since commit dc7066c54107255f5f9a11bf3f82417c9b1aef51:
 
-> On Tue, Sep 13, 2016 at 5:28 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+  Merge tag 'v4.8-rockchip-clk-fixes1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-fixes (2016-08-29 17:08:35 -0700)
 
-[...]
+are available in the git repository at:
 
->>> I added Philipp and Hans to this thread - maybe they can comment on this.
->>> To sum it up, our problem is:
->>> - there are two separate USB PHYs on Meson GXBB
->>> - both are sharing the same reset line (provided by the reset-meson driver)
->>> - during initialization of the PHYs we must only call
->>> reset_control_reset(rstc) once (if we do it for the first *and* second
->>> PHY then the first PHY gets confused once the second PHY uses the
->>> reset because the first PHY's state is reset as well)
->>
->> If you have an initially asserted reset line and you can enable the
->> first module by deasserting the reset via reset_control_deassert (and
->> reset_control_assert to signal when the module may be disabled again
->> after use), shared resets are for you.
->>
->> If you need a reset pulse or have no direct control over the reset line,
->> (device_reset), the reset framework currently has no solution for this.
->> The ugly thing about reset_control_once would be that it can't re-reset
->> modules when unloading and reloading driver modules.
->
-> The corresponding reset driver in question is reset-meson, which only
-> implements reset (assert/deassert are not implemented). However, I
-> don't know if this is due to hardware design.
-> I think the hardware implements the latter, but maybe Neil can give
-> more information here (I currently don't have access to my board so I
-> cannot test how the hardware actually behaves).
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-It's implemented that way because the hardware only supports a reset
-pulse.
+for you to fetch changes up to e4abe2b9ab3ac79537d99dfceff7302739a586bc:
 
-Kevin
+  Merge tag 'sunxi-clk-fixes-for-4.8' of https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux into clk-fixes (2016-09-08 12:54:24 -0700)
+
+----------------------------------------------------------------
+Some small fixes for the new sunxi clk driver introduced this merge window.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (2):
+      clk: sunxi-ng: Fix inverted test condition in ccu_helper_wait_for_lock
+      clk: sunxi-ng: nk: Make ccu_nk_find_best static
+
+Jorik Jonker (1):
+      clk: sunxi-ng: Fix wrong reset register offsets
+
+Stephen Boyd (1):
+      Merge tag 'sunxi-clk-fixes-for-4.8' of https://git.kernel.org/.../mripard/linux into clk-fixes
+
+Wei Yongjun (2):
+      clk: sunxi: pll2: Fix return value check in sun4i_pll2_setup()
+      clk: sunxi: Fix return value check in sun8i_a23_mbus_setup()
+
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 16 ++++++++--------
+ drivers/clk/sunxi-ng/ccu_nk.c       |  6 +++---
+ drivers/clk/sunxi/clk-a10-pll2.c    |  4 ++--
+ drivers/clk/sunxi/clk-sun8i-mbus.c  |  2 +-
+ 4 files changed, 14 insertions(+), 14 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
