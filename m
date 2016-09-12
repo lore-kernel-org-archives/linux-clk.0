@@ -1,88 +1,129 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41963 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932358AbcIFMFo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:44 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 6/7] clk: samsung: clk-exynos-audss: Add exynos5410
- compatible
-Date: Tue, 06 Sep 2016 14:04:55 +0200
-Message-id: <1473163496-17820-7-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: add support for ISP power domain to
+ exynos4x12 clocks device
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Frank Rowand <frowand.list@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <f340cca5-6cd6-6bd1-3b9a-ccd58cbc0091@samsung.com>
+Date: Mon, 12 Sep 2016 12:23:30 +0200
+MIME-version: 1.0
+In-reply-to: <20160908002254.GD13062@codeaurora.org>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
+ <20160908002254.GD13062@codeaurora.org>
+ <CGME20160912102332eucas1p145e79669788329b44343da62dcbe50ca@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos5410 Audio Subsystem Clock Controller, comparing to the already
-supported IP block revisions, has additionally an I2S_MST divider
-so a new compatible string is added.
-It is not clear from the Exynos5410 User's Manual released on 2012.03.09
-where in the clock tree the I2S_MST clock divider can be found exactly
-so this clock is left unimplemented for now.
+Hi Stephen,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- Documentation/devicetree/bindings/clock/clk-exynos-audss.txt | 4 +++-
- drivers/clk/samsung/clk-exynos-audss.c                       | 9 +++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-index 180e883..0c3d601 100644
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-+++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-@@ -10,6 +10,8 @@ Required Properties:
-   - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
-   - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
-     SoCs.
-+  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
-+    SoCs.
-   - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
-     SoCs.
- - reg: physical base address and length of the controller's register set.
-@@ -91,5 +93,5 @@ i2s0: i2s@03830000 {
- 		<&clock_audss EXYNOS_MOUT_AUDSS>,
- 		<&clock_audss EXYNOS_MOUT_I2S>;
- 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
--	"mout_audss", "mout_i2s";
-+		      "mout_audss", "mout_i2s";
- };
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 7d4026b..628f86b 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -70,6 +70,7 @@ static struct syscore_ops exynos_audss_clk_syscore_ops = {
- 
- struct exynos_audss_clk_drvdata {
- 	unsigned int has_adma_clk:1;
-+	unsigned int has_mst_clk:1;
- 	unsigned int enable_epll:1;
- 	unsigned int num_clks;
- };
-@@ -78,6 +79,11 @@ static const struct exynos_audss_clk_drvdata exynos4210_drvdata = {
- 	.num_clks	= EXYNOS_AUDSS_MAX_CLKS - 1,
- };
- 
-+static const struct exynos_audss_clk_drvdata exynos5410_drvdata = {
-+	.num_clks	= EXYNOS_AUDSS_MAX_CLKS - 1,
-+	.has_mst_clk	= 1,
-+};
+On 2016-09-08 02:22, Stephen Boyd wrote:
+> On 09/01, Marek Szyprowski wrote:
+>> Exynos4412 clock controller contains some additional clocks for FIMC-ISP
+>> (Camera ISP) subsystem. Registers for those clocks are partially located
+>> in the SOC area, which belongs to ISP power domain.
+>>
+>> This patch extends clock controller node with ISP clock sub-node and link
+>> (phandle) to ISP power domain.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+>> index 3394bdcf10ae..4daea67546b9 100644
+>> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+>> @@ -74,6 +74,11 @@
+>>   		compatible = "samsung,exynos4412-clock";
+>>   		reg = <0x10030000 0x20000>;
+>>   		#clock-cells = <1>;
+>> +
+>> +		isp-clock-controller {
+>> +			compatible = "samsung,exynos4412-isp-clock";
+>> +			power-domains = <&pd_isp>;
+>> +		};
+> Why can't we extend support in power domains code to have
+> multiple domains for a single device node? i.e. power-domains =
+> <&pd_isp>, <&pd_foo>, <&pd_bar>, and then pick the right one with
+> power-domain-names or something like that? Making a subnode
+> (which seems to turn into a child platform device?) seems like a
+> quick solution for larger problems.
+
+The larger problem here is the fact that clock controller is partially 
+located
+in different power areas of SoC. Majority of the clock controllers is 
+located
+in the area which is typically always powered (besides system sleep case),
+while a few Camera ISP registers are located in the ISP block, which have
+separate power domain. Having a separate nodes for sub-parts of the 
+device is
+rather common approach, already practices by some more complex devices.
+
+I see some serious design problems with multiple entries in power domains
+property. First how to show that some part of the device IS NOT in any 
+domain?
+The question is how the automated assignment to domains would be handled for
+such case?
+
+The second is related to Linux kernel internals. Right now device 
+drivers are
+not aware of the power domains - there are no direct calls to power domains
+code, everything is hidden behind runtime pm which does all the hard work.
+
+Similar situation is on Exynos 542x/5800, which will look more or less like
+this:
+
+         clock: clock-controller@10010000 {
+              compatible = "samsung,exynos5420-clock";
+              reg = <0x10010000 0x30000>;
+              #clock-cells = <1>;
 +
- static const struct exynos_audss_clk_drvdata exynos5420_drvdata = {
- 	.num_clks	= EXYNOS_AUDSS_MAX_CLKS,
- 	.has_adma_clk	= 1,
-@@ -92,6 +98,9 @@ static const struct of_device_id exynos_audss_clk_of_match[] = {
- 		.compatible	= "samsung,exynos5250-audss-clock",
- 		.data		= &exynos4210_drvdata,
- 	}, {
-+		.compatible	= "samsung,exynos5410-audss-clock",
-+		.data		= &exynos5410_drvdata,
-+	}, {
- 		.compatible	= "samsung,exynos5420-audss-clock",
- 		.data		= &exynos5420_drvdata,
- 	},
--- 
-1.9.1
++            gsc-clock-controller {
++                 compatible = "samsung,exynos5420-gsc-clock";
++                 power-domains = <&gsc_pd>;
++            };
++
++            isp-clock-controller {
++                 compatible = "samsung,exynos5420-isp-clock";
++                 power-domains = <&isp_pd>;
++            };
++
++            mfc-clock-controller {
++                 compatible = "samsung,exynos5420-mfc-clock";
++                 power-domains = <&mfc_pd>;
++            };
++
++            msc-clock-controller {
++                 compatible = "samsung,exynos5420-msc-clock";
++                 power-domains = <&msc_pd>;
++            };
++
++            disp-clock-controller {
++                 compatible = "samsung,exynos5420-disp-clock";
++                 power-domains = <&disp_pd>;
++            };
+          };
 
+The patch is not yet ready, so I didn't include it in this patchset.
+
+The clock controller evolved and in the latest Exynos 5433 it is divided in
+several parts (each related to given hw block and its power domains), which
+each is now modeled by a separate device node. This allows to bind power
+domains cleanly without any need for sub-nodes for the clock controllers.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
