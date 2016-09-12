@@ -1,54 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45207 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932358AbcIFMFd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 08:05:33 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 1/7] clk: samsung: exynos5410: Add clock IDs for PDMA and
- EPLL clocks
-Date: Tue, 06 Sep 2016 14:04:50 +0200
-Message-id: <1473163496-17820-2-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/5] clk: add support for runtime pm
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
+Date: Mon, 12 Sep 2016 12:18:56 +0200
+MIME-version: 1.0
+In-reply-to: <20160908001943.GC13062@codeaurora.org>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
+ <20160908001943.GC13062@codeaurora.org>
+ <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PDMA{0,1} and EPLL clock IDs are added separately in this
-patch so the patch can be merged to the arm-soc tree as dependency.
+Hi Stephen,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-Changes since v1:
- - used same index values as for exynos5420.
----
- include/dt-bindings/clock/exynos5410.h | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 85b467b..6cb4e90 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -19,6 +19,7 @@
- #define CLK_FOUT_MPLL		4
- #define CLK_FOUT_BPLL		5
- #define CLK_FOUT_KPLL		6
-+#define CLK_FOUT_EPLL		7
+On 2016-09-08 02:19, Stephen Boyd wrote:
+> On 09/01, Marek Szyprowski wrote:
+>> Registers for some clocks might be located in the SOC area, which are under the
+>> power domain. To enable access to those registers respective domain has to be
+>> turned on. Additionally, registers for such clocks will usually loose its
+>> contents when power domain is turned off, so additional saving and restoring of
+>> them might be needed in the clock controller driver.
+>>
+>> This patch adds basic infrastructure in the clocks core to allow implementing
+>> driver for such clocks under power domains. Clock provider can supply a
+>> struct device pointer, which is the used by clock core for tracking and managing
+>> clock's controller runtime pm state. Each clk_prepare() operation
+>> will first call pm_runtime_get_sync() on the supplied device, while
+>> clk_unprepare() will do pm_runtime_put() at the end.
+>>
+>> Additional calls to pm_runtime_get/put functions are required to ensure that any
+>> register access (like calculating/chaning clock rates) will be done with clock
+>> controller in active runtime state.
+>>
+>> Special handling of the case when runtime pm is disabled for clock controller's
+>> device is needed to let this feature work properly also during system sleep
+>> suspend/resume operations (runtime pm is first disabled before entering sleep
+>> state's, but controller is usually still operational until its suspend pm
+>> callback is called).
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> My "knee jerk" concern is that we're going to take a runtime PM
+> lock underneath the prepare lock. That seems like a situation
+> where we could hit a lock inversion if the runtime PM callbacks
+> themselves acquire the prepare lock by calling clk APIs? But this
+> concern is false right? We release the runtime PM lock before
+> calling the PM callback, so we shouldn't hit any deadlock and
+> lockdep won't complain?
 
- /* gate for special clocks (sclk) */
- #define CLK_SCLK_UART0		128
-@@ -55,6 +56,8 @@
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
-+#define CLK_PDMA0		362
-+#define CLK_PDMA1		363
- #define CLK_USBH20		365
- #define CLK_USBD300		366
- #define CLK_USBD301		367
---
-1.9.1
+Runtime PM uses fine grained locking based on per-device locks, so there
+should be no problem with global clock prepare lock. The only lock 
+interaction
+is between clock controller device's rpm lock and clocks global prepare 
+lock, but
+it always done with the same access pattern. I've tested it extensively 
+(also
+with lock dep) with various use cases and found no problems.
 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
