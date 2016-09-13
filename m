@@ -1,75 +1,64 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 18 Sep 2016 08:17:23 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Anson Huang <Anson.Huang@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: imx6: initialize GPU clocks
-Message-ID: <20160918001723.GC15478@tiger>
-References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
- <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <20160908001943.GC13062@codeaurora.org>
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com> <20160908001943.GC13062@codeaurora.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 13 Sep 2016 09:24:44 +0200
+Message-ID: <CAPDyKFrSYkke8LsQ68oxdarxg1mMeiEEwqYKVTqDLAEApEEHYA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: add support for runtime pm
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 16, 2016 at 11:16:11AM +0200, Lucas Stach wrote:
-> Initialize the GPU clock muxes to sane inputs. Until now they have
-> not been changed from their default values, which means that both
-> GPU3D shader and GPU2D core were fed by clock inputs whose rates
-> exceed the maximium allowed frequency of the cores by as much as
-> 200MHz.
-> 
-> This fixes a severe GPU stability issue on i.MX6DL.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/clk/imx/clk-imx6q.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index 64c243173395..751c3e7d5843 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -633,6 +633,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  	if (IS_ENABLED(CONFIG_PCI_IMX6))
->  		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
->  
-> +	/*
-> +	 * Initialize the GPU clock muxes, so that the maximum specified clock
-> +	 * rates for the respective SoC are not exceeded.
-> +	 */
-> +	if (clk_on_imx6dl()) {
-> +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
-> +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-> +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
-> +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-> +	} else if (clk_on_imx6q()) {
-> +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
-> +		               clk[IMX6QDL_CLK_MMDC_CH0_AXI]);
-> +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_SHADER_SEL],
-> +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
-> +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
-> +		               clk[IMX6QDL_CLK_PLL3_USB_OTG]);
-> +	}
-> +
+On 8 September 2016 at 02:19, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/01, Marek Szyprowski wrote:
+>> Registers for some clocks might be located in the SOC area, which are under the
+>> power domain. To enable access to those registers respective domain has to be
+>> turned on. Additionally, registers for such clocks will usually loose its
+>> contents when power domain is turned off, so additional saving and restoring of
+>> them might be needed in the clock controller driver.
+>>
+>> This patch adds basic infrastructure in the clocks core to allow implementing
+>> driver for such clocks under power domains. Clock provider can supply a
+>> struct device pointer, which is the used by clock core for tracking and managing
+>> clock's controller runtime pm state. Each clk_prepare() operation
+>> will first call pm_runtime_get_sync() on the supplied device, while
+>> clk_unprepare() will do pm_runtime_put() at the end.
+>>
+>> Additional calls to pm_runtime_get/put functions are required to ensure that any
+>> register access (like calculating/chaning clock rates) will be done with clock
+>> controller in active runtime state.
+>>
+>> Special handling of the case when runtime pm is disabled for clock controller's
+>> device is needed to let this feature work properly also during system sleep
+>> suspend/resume operations (runtime pm is first disabled before entering sleep
+>> state's, but controller is usually still operational until its suspend pm
+>> callback is called).
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> My "knee jerk" concern is that we're going to take a runtime PM
+> lock underneath the prepare lock. That seems like a situation
+> where we could hit a lock inversion if the runtime PM callbacks
+> themselves acquire the prepare lock by calling clk APIs? But this
+> concern is false right? We release the runtime PM lock before
+> calling the PM callback, so we shouldn't hit any deadlock and
+> lockdep won't complain?
 
-Can we handle these with assigned-clock-parents from device tree?
+You assumption is correct!
 
-Shawn
+Before the runtime PM core invokes a runtime PM callback it will
+unlock the -">dev->power.lock" spinlock. When the callback returns it
+will re-lock the spinlock.
 
->  	imx_register_uart_clocks(uart_clks);
->  }
->  CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
-> -- 
-> 2.8.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Kind regards
+Uffe
