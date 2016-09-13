@@ -1,61 +1,129 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-From: vivek.gautam@codeaurora.org
-To: sboyd@codeaurora.org
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	mturquette@baylibre.com,
-	srinivas.kandagatla@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH] clk: Add USB3 PHY reset lines
-Date: Thu, 15 Sep 2016 10:15:33 +0530
-Message-Id: <1473914733-4182-1-git-send-email-vivek.gautam@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1473805463.30217.206.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: "Y.B. Lu" <yangbo.lu@nxp.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, "X.B. Xie" <xiaobo.xie@nxp.com>
+Date: Tue, 13 Sep 2016 17:24:23 -0500
+In-Reply-To: <HE1PR04MB08892E63EB2D579D6F0A7550F8FE0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
+         <1473150503-9550-6-git-send-email-yangbo.lu@nxp.com>
+         <1473392840.30217.170.camel@buserror.net>
+         <HE1PR04MB08892D8354E38EC32F549E98F8FF0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+         <1473722714.30217.196.camel@buserror.net>
+         <HE1PR04MB08892E63EB2D579D6F0A7550F8FE0@HE1PR04MB0889.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [v11, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
+On Tue, 2016-09-13 at 07:23 +0000, Y.B. Lu wrote:
+> > 
 
-Adding missing reset lines for USB 3.0 PHY.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
+> > 
+> > -----Original Message-----
+> > From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
+> > owner@vger.kernel.org] On Behalf Of Scott Wood
+> > Sent: Tuesday, September 13, 2016 7:25 AM
+> > To: Y.B. Lu; linux-mmc@vger.kernel.org; ulf.hansson@linaro.org; Arnd
+> > Bergmann
+> > Cc: linuxppc-dev@lists.ozlabs.org; devicetree@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> > clk@vger.kernel.org; linux-i2c@vger.kernel.org; iommu@lists.linux-
+> > foundation.org; netdev@vger.kernel.org; Mark Rutland; Rob Herring;
+> > Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil; Bhupesh
+> > Sharma; Qiang Zhao; Kumar Gala; Santosh Shilimkar; Leo Li; X.B. Xie
+> > Subject: Re: [v11, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+> > 
+> > BTW, aren't ls2080a and ls2085a the same die?  And is there no non-E
+> > version of LS2080A/LS2040A?
+> [Lu Yangbo-B47093] I checked all the svr values in chip errata doc "Revision
+> level to part marking cross-reference" table.
+> I found ls2080a and ls2085a were in two separate doc. And I didn’t find non-
+> E version of LS2080A/LS2040A in chip errata doc.
+> Do you know is there any other doc we can confirm this?
 
- - Build tested on clk-next branch.
- - Tested with my wip branch for usbphy that is available @[1].
+No.  Traditionally we've always had E and non-E versions of each chip, but I
+have no knowledge of whether that has changed (I do note that the way that E-
+status is indicated in SVR has changed).
 
-[1]https://github.com/vivekgautam1/linux/tree/linaro/integration-linux-qcomlt-usbphy-wip
+But please label LS2080A and LS2085A as the same die (or provide strong
+evidence that they are not).
 
- drivers/clk/qcom/gcc-msm8996.c               | 2 ++
- include/dt-bindings/clock/qcom,gcc-msm8996.h | 2 ++
- 2 files changed, 4 insertions(+)
+> 
+> > 
+> > 
+> > > 
+> > > > > 
+> > > > > +	do {
+> > > > > +		if (!matches->soc_id)
+> > > > > +			return NULL;
+> > > > > +		if (glob_match(svr_match, matches->soc_id))
+> > > > > +			break;
+> > > > > +	} while (matches++);
+> > > > Are you expecting "matches++" to ever evaluate as false?
+> > > [Lu Yangbo-B47093] Yes, this is used to match the soc we use in
+> > > qoriq_soc array until getting true.
+> > > We need to get the name and die information defined in array.
+> > I'm not asking whether the glob_match will ever return true.  I'm saying
+> > that "matches++" will never become NULL.
+> [Lu Yangbo-B47093] The matches++ will never become NULL while it will return
+> NULL after matching for all the members in array.
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index ebe5d18..fe03e6f 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -3329,6 +3329,8 @@ static const struct qcom_reset_map gcc_msm8996_resets[] = {
- 	[GCC_USB_20_BCR] = { 0x12000 },
- 	[GCC_QUSB2PHY_PRIM_BCR] = { 0x12038 },
- 	[GCC_QUSB2PHY_SEC_BCR] = { 0x1203c },
-+	[GCC_USB3_PHY_BCR] = { 0x50020 },
-+	[GCC_USB3PHY_PHY_BCR] = { 0x50024 },
- 	[GCC_USB_PHY_CFG_AHB2PHY_BCR] = { 0x6a000 },
- 	[GCC_SDCC1_BCR] = { 0x13000 },
- 	[GCC_SDCC2_BCR] = { 0x14000 },
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8996.h b/include/dt-bindings/clock/qcom,gcc-msm8996.h
-index b7ea1e8..1828723 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8996.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8996.h
-@@ -337,6 +337,8 @@
- #define GCC_QREFS_VBG_CAL_BCR					100
- #define GCC_PCIE_PHY_COM_BCR					101
- #define GCC_PCIE_PHY_COM_NOCSR_BCR				102
-+#define GCC_USB3_PHY_BCR					103
-+#define GCC_USB3PHY_PHY_BCR					104
- 
- 
- /* Indexes for GDSCs */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+"matches++" will never "return NULL".  It's just an incrementing address.  It
+won't be null until you wrap around the address space, and even if the other
+loop terminators never kicked in you'd crash long before that happens.
+
+Please rewrite the loop as something like:
+
+	while (matches->soc_id) {
+		if (glob_match(...))
+			return matches;
+
+		matches++;
+	}
+
+	return NULL;
+
+
+> > > > > +	/* Register soc device */
+> > > > > +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> > > > > +	if (!soc_dev_attr) {
+> > > > > +		ret = -ENOMEM;
+> > > > > +		goto out_unmap;
+> > > > > +	}
+> > > > Couldn't this be statically allocated?
+> > > [Lu Yangbo-B47093] Do you mean we define this struct statically ?
+> > > 
+> > > static struct soc_device_attribute soc_dev_attr;
+> > Yes.
+> > 
+> [Lu Yangbo-B47093] It's ok to define it statically. Is there any need to do
+> that?
+
+It's simpler.
+
+-Scott
