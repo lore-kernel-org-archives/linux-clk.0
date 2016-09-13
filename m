@@ -1,65 +1,34 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 5/5] ARM: dts: at91: sama5d2: use correct sckc compatible
-Date: Tue, 20 Sep 2016 22:58:33 +0200
-Message-Id: <20160920205833.19638-6-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
-References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: arm@kernel.org, Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner DT changes for 4.9, take 2
+Date: Tue, 13 Sep 2016 17:53:55 +0200
+Message-ID: <3492284.FjaSmsNYuk@wuerfel>
+In-Reply-To: <20160911204420.GA11949@lukather>
+References: <20160911204420.GA11949@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-the sama5d2 sckc is actually sama5d4 compatible
+On Sunday, September 11, 2016 10:44:20 PM CEST Maxime Ripard wrote:
+> Allwinner DT changes for 4.9, take 2
+> 
+> A second set of device tree changes, this time switching a few SoCs to the
+> new sunxi-ng clock framework. We also added the support for a new SoC
+> (NextThing GR8 and its evaluation board), and the support for the DRM
+> driver in the A33.
+> 
+> 
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/boot/dts/sama5d2.dtsi | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+Pulled into *next/late* because of the dependency, rather than next/dt.
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 353d0e5ec83b..2e49f10f93fa 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -1059,30 +1059,12 @@
- 				status = "disabled";
- 			};
- 
--			sckc@f8048050 {
--				compatible = "atmel,at91sam9x5-sckc";
-+			clk32k: sckc@f8048050 {
-+				compatible = "atmel,sama5d4-sckc";
- 				reg = <0xf8048050 0x4>;
- 
--				slow_rc_osc: slow_rc_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--					#clock-cells = <0>;
--					clock-frequency = <32768>;
--					clock-accuracy = <250000000>;
--					atmel,startup-time-usec = <75>;
--				};
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--					atmel,startup-time-usec = <1200000>;
--				};
--
--				clk32k: slowck {
--					compatible = "atmel,at91sam9x5-clk-slow";
--					#clock-cells = <0>;
--					clocks = <&slow_rc_osc &slow_osc>;
--				};
-+				clocks = <&slow_xtal>;
-+				#clock-cells = <0>;
- 			};
- 
- 			rtc@f80480b0 {
--- 
-2.9.3
+I think this is better so we can send off the other next/dt changes
+early on during the merge window without considering the dependency.
+
+If the clk git gets sent before our pull requests, we might just
+merge next/late back into next/dt.
+
+Thanks,
+
+	Arnd
