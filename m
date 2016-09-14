@@ -1,38 +1,75 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 16:23:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jon Mason <jonmason@broadcom.com>, Eric Anholt <eric@anholt.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V8] clk: bcm: Add driver for BCM53573 ILP clock
-Message-ID: <20160916232332.GB7243@codeaurora.org>
-References: <20160905142935.4550-1-zajec5@gmail.com>
- <20160913070722.5867-1-zajec5@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160913070722.5867-1-zajec5@gmail.com>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1473842240.6816.1.camel@pengutronix.de>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and
+ GXBB
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ hdegoede@redhat.com, Ben Dooks <ben.dooks@codethink.co.uk>,
+ mark.rutland@arm.com,  devicetree@vger.kernel.org,
+ gregkh@linuxfoundation.org, johnyoun@synopsys.com,  will.deacon@arm.com,
+ mturquette@baylibre.com, linux-usb@vger.kernel.org,  sboyd@codeaurora.org,
+ kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com,
+ carlo@caione.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ jbrunet@baylibre.com
+Date: Wed, 14 Sep 2016 10:37:20 +0200
+In-Reply-To: <7hzinbmh40.fsf@baylibre.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	 <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+	 <m260q6jibf.fsf@baylibre.com>
+	 <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+	 <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+	 <m2eg4ui0nl.fsf@baylibre.com>
+	 <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+	 <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+	 <m2sht9gkau.fsf@baylibre.com>
+	 <CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
+	 <1473780508.10237.22.camel@pengutronix.de>
+	 <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
+	 <7hzinbmh40.fsf@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/13, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
+Am Dienstag, den 13.09.2016, 17:59 -0700 schrieb Kevin Hilman:
+> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 > 
-> This clock is present on BCM53573 devices (including BCM47189) that use
-> Cortex-A7. ILP is a part of PMU (Power Management Unit) multi-function
-> device so we use syscon (and regmap) for it.
+> > On Tue, Sep 13, 2016 at 5:28 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 > 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> ---
+> [...]
+> 
+> >>> I added Philipp and Hans to this thread - maybe they can comment on this.
+> >>> To sum it up, our problem is:
+> >>> - there are two separate USB PHYs on Meson GXBB
+> >>> - both are sharing the same reset line (provided by the reset-meson driver)
+> >>> - during initialization of the PHYs we must only call
+> >>> reset_control_reset(rstc) once (if we do it for the first *and* second
+> >>> PHY then the first PHY gets confused once the second PHY uses the
+> >>> reset because the first PHY's state is reset as well)
+> >>
+> >> If you have an initially asserted reset line and you can enable the
+> >> first module by deasserting the reset via reset_control_deassert (and
+> >> reset_control_assert to signal when the module may be disabled again
+> >> after use), shared resets are for you.
+> >>
+> >> If you need a reset pulse or have no direct control over the reset line,
+> >> (device_reset), the reset framework currently has no solution for this.
+> >> The ugly thing about reset_control_once would be that it can't re-reset
+> >> modules when unloading and reloading driver modules.
+> >
+> > The corresponding reset driver in question is reset-meson, which only
+> > implements reset (assert/deassert are not implemented). However, I
+> > don't know if this is due to hardware design.
+> > I think the hardware implements the latter, but maybe Neil can give
+> > more information here (I currently don't have access to my board so I
+> > cannot test how the hardware actually behaves).
+> 
+> It's implemented that way because the hardware only supports a reset
+> pulse.
 
-Applied to clk-next
+Would it be possible to bring down both PHYs drivers, pull the reset
+line once, and then bring the drivers back up again?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards
+Philipp
