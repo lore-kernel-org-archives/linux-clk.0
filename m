@@ -1,25 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 11:17:06 -0700
+Date: Wed, 14 Sep 2016 11:14:38 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: mturquette@baylibre.com, arnd@arndb.de, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xie.baoyou@zte.com.cn
-Subject: Re: [PATCH] clk: mmp: add missing header dependencies
-Message-ID: <20160914181706.GP7243@codeaurora.org>
-References: <1473834208-25896-1-git-send-email-baoyou.xie@linaro.org>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, carlo@caione.org,
+	khilman@baylibre.com, serveralex@gmail.com,
+	paul.gortmaker@windriver.com, Wei Yongjun <weiyongjun1@huawei.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH -next] meson: clk: Use builtin_platform_driver to
+ simplify the code
+Message-ID: <20160914181438.GN7243@codeaurora.org>
+References: <1473508969-2776-1-git-send-email-weiyj.lk@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473834208-25896-1-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <1473508969-2776-1-git-send-email-weiyj.lk@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/14, Baoyou Xie wrote:
-> We get 1 warning when building kernel with W=1:
-> drivers/clk/mmp/clk-mmp2.c:75:13: warning: no previous prototype for 'mmp2_clk_init' [-Wmissing-prototypes]
+On 09/10, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 > 
-> In fact, this function is declared in linux/clk/mmp.h,
-> so this patch add missing header dependencies.
+> Use the builtin_platform_driver() macro to make the code simpler.
 > 
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
 
 Applied to clk-next
