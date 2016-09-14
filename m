@@ -1,42 +1,36 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>,  Thomas Gleixner <tglx@linutronix.de>,  Wim Van Sebroeck <wim@iguana.be>,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 0/4] kill get_clock_tick_rate()
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
-Date: Mon, 26 Sep 2016 21:29:26 +0200
-In-Reply-To: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
-	(Robert Jarzmik's message of "Mon, 19 Sep 2016 21:12:11 +0200")
-Message-ID: <87twd2bgtl.fsf@belgarion.home>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:40054 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbcINSZN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2016 14:25:13 -0400
+Date: Wed, 14 Sep 2016 11:25:06 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: gxbb: expose i2c clocks
+Message-ID: <20160914182506.GS7243@codeaurora.org>
+References: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
+ <1473847568-20163-2-git-send-email-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473847568-20163-2-git-send-email-jbrunet@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Robert Jarzmik <robert.jarzmik@free.fr> writes:
+On 09/14, Jerome Brunet wrote:
+> I2C and AO_I2C clocks are needed for the i2c driver, expose to DT
+> (and comment out in clk driver)
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
 
-> Hi,
->
-> This serie aims at killing get_clock_tick_rate() from pxa and sa1100 and replace
-> it by clock API calls.
->
-> I'd like to have this reviewed and acked afterwards at least by :
->  - Russell for the mach-sa1100 and sa1100_wdt.c
->  - Stephen or Michael for the clk-pxa25x.c
->  - Thomas or Daniel for the clocksource part
->  - Wim for sa1100_wdt.c
->
-> If the review converges, I'd also like to take it through the pxa/for-next tree,
-> or alternatively Russell's tree if there is a dependency I'm not seeing, for
-> v4.10 cycle.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Hi Russell,
-
-Would you have time within the next 2 weeks to give this serie a review and
-maybe an Ack from the sa1100 impacted parts (that would be patches 2, 3 and 4) ?
-
-I can also resend the serie if it's easier in your workflow.
-
-Cheers.
-
---
-Robert
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
