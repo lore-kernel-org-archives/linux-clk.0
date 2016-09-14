@@ -1,48 +1,54 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 16:02:54 -0700
+Date: Wed, 14 Sep 2016 14:39:03 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@armlinux.org.uk>,
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
-	benjamin.gaignard@st.com, vincent.abriou@st.com,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: Re: [PATCH v3 01/14] drivers: clk: st: Remove stih415-416 clock
- support
-Message-ID: <20160916230254.GN7243@codeaurora.org>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
- <1472473626-15398-2-git-send-email-gabriel.fernandez@st.com>
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/5] clk: add support for runtime pm
+Message-ID: <20160914213903.GG7243@codeaurora.org>
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
+ <20160908001943.GC13062@codeaurora.org>
+ <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
+ <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
+ <20160912223105.GI7243@codeaurora.org>
+ <e3cceb9a-7a30-c662-dba4-bc453f6fddb6@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472473626-15398-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <e3cceb9a-7a30-c662-dba4-bc453f6fddb6@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/29, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 09/13, Marek Szyprowski wrote:
+> On 2016-09-13 00:31, Stephen Boyd wrote:
+> >
+> >Great! So you have runtime PM callbacks that are calling
+> >clk_prepare/unprepare?
 > 
-> STiH415 and STiH416 platforms are no longer used.
-> these platforms will be deprecated for the next kernel.
+> Well, not really. clock controller's runtime pm functions must not call
+> clk_prepare/unprepare yet.
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+> I didn't get your question. I thought that you are asking if my change
+> won't introduce any deadlock related to prepare and dev->pm locks. My
+> runtime pm functions doesn't do any call to clk_prepare/unprepare.
+> Although global clock prepare lock is re-entrant from the same process, it
+> would cause deadlock if called from runtime pm functions, because runtime
+> pm functions might be called from the worker running on the different
+> cpu/process.
 
-Applied to clk-next
+I mean non-clk controller driver based runtime PM callbacks that
+call clk_prepare/unprepare in them. For example, some i2c or spi
+device driver that has clk operations in the runtime PM
+callbacks. That would allow lockdep to see any potential deadlock
+because of aliasing lock classes for the device power lock and
+the global prepare lock.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
