@@ -1,45 +1,77 @@
-Return-Path: <baruch@tkos.co.il>
-Date: Tue, 6 Sep 2016 20:59:51 +0300
-From: Baruch Siach <baruch@tkos.co.il>
-To: Marcin Wojtas <mw@semihalf.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, thomas.petazzoni@free-electrons.com,
-	andrew@lunn.ch, jason@lakedaemon.net, tn@semihalf.com,
-	stable@vger.kernel.org, nadavh@marvell.com, alior@marvell.com,
-	jaz@semihalf.com, gregory.clement@free-electrons.com,
-	sebastian.hesselbarth@gmail.com
-Subject: Re: [PATCH v2 2/3] clk: mvebu: dynamically allocate resources in
- Armada CP110 system controller
-Message-ID: <20160906175951.etybwtilfvyclrdb@tarshish>
-References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
- <1473183117-11889-3-git-send-email-mw@semihalf.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473183117-11889-3-git-send-email-mw@semihalf.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:36281 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761155AbcINKGX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2016 06:06:23 -0400
+Received: by mail-wm0-f52.google.com with SMTP id b187so38634782wme.1
+        for <linux-clk@vger.kernel.org>; Wed, 14 Sep 2016 03:06:23 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 1/4] clk: gxbb: expose i2c clocks
+Date: Wed, 14 Sep 2016 12:06:05 +0200
+Message-Id: <1473847568-20163-2-git-send-email-jbrunet@baylibre.com>
+In-Reply-To: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
+References: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marcin,
+I2C and AO_I2C clocks are needed for the i2c driver, expose to DT
+(and comment out in clk driver)
 
-On Tue, Sep 06, 2016 at 07:31:56PM +0200, Marcin Wojtas wrote:
-> +	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
-> +				  CP110_CLK_NUM, GFP_KERNEL);
-> +	if (!cp110_clks)
-> +		return PTR_ERR(cp110_clks);
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.h              | 4 ++--
+ include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-PTR_ERR(NULL) translates to 0. Should probably just return -ENOMEM.
-
-> +	cp110_clk_data = devm_kzalloc(&pdev->dev,
-> +				      sizeof(*cp110_clk_data),
-> +				      GFP_KERNEL);
-> +	if (!cp110_clk_data)
-> +		return PTR_ERR(cp110_clk_data);
-
-Ditto.
-
-baruch
-
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 044fc44e9144..0252939ba58f 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -190,7 +190,7 @@
+ #define CLKID_PL301		  19
+ #define CLKID_PERIPHS		  20
+ #define CLKID_SPICC		  21
+-#define CLKID_I2C		  22
++/* CLKID_I2C */
+ #define CLKID_SAR_ADC		  23
+ #define CLKID_SMART_CARD	  24
+ #define CLKID_RNG0		  25
+@@ -261,7 +261,7 @@
+ #define CLKID_AO_AHB_SRAM	  90
+ #define CLKID_AO_AHB_BUS	  91
+ #define CLKID_AO_IFACE		  92
+-#define CLKID_AO_I2C		  93
++/* CLKID_AO_I2C */
+ /* CLKID_SD_EMMC_A */
+ /* CLKID_SD_EMMC_B */
+ /* CLKID_SD_EMMC_C */
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 743c45b40361..baade6f429d0 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -13,12 +13,14 @@
+ #define CLKID_CLK81		12
+ #define CLKID_MPLL2		15
+ #define CLKID_SPI		34
++#define CLKID_I2C		22
+ #define CLKID_ETH		36
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+ #define CLKID_USB		55
+ #define CLKID_USB1_DDR_BRIDGE	64
+ #define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
+ #define CLKID_SD_EMMC_C		96
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+2.7.4
+
