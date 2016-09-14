@@ -1,98 +1,223 @@
-Return-Path: <fabien.lahoudere@collabora.co.uk>
-From: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
-To: 
-Cc: Kalle Kankare <kalle.kankare@vincit.fi>,
-	Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-Subject: [PATCH v2 1/1] clk: imx53: Add clocks configuration
-Date: Mon, 19 Sep 2016 12:30:00 +0200
-Message-Id: <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
-In-Reply-To: <20160918002451.GE15478@tiger>
-References: <20160918002451.GE15478@tiger>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Sep 2016 14:01:34 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yanhaifeng@hisilicon.com,
+	gaofei@hisilicon.com, hermit.wangheming@hisilicon.com,
+	scott.bambrough@linaro.org, mark.gregotski@linaro.org
+Subject: Re: [PATCH] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
+Message-ID: <20160914210134.GD7243@codeaurora.org>
+References: <1473670888-17997-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473670888-17997-1-git-send-email-xuejiancheng@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kalle Kankare <kalle.kankare@vincit.fi>
+On 09/12, Jiancheng Xue wrote:
+> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
+> Generator) module generates clock and reset signals used
+> by other module blocks on SoC.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 
-Add clocks configuration for CSI, FIRI and IEEE1588.
+Overall looks fine. Just a few nitpicks.
 
-Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
----
- drivers/clk/imx/clk-imx51-imx53.c      | 20 ++++++++++++++++++++
- include/dt-bindings/clock/imx5-clock.h | 15 ++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+> ---
+>  .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ----
+>  .../devicetree/bindings/clock/hisi-crg.txt         |  49 ++++
 
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
-index 29d4c44..1e3c9ea 100644
---- a/drivers/clk/imx/clk-imx51-imx53.c
-+++ b/drivers/clk/imx/clk-imx51-imx53.c
-@@ -126,6 +126,7 @@ static const char *spdif0_com_sel[] = { "spdif0_podf", "ssi1_root_gate", };
- static const char *mx51_spdif1_com_sel[] = { "spdif1_podf", "ssi2_root_gate", };
- static const char *step_sels[] = { "lp_apm", };
- static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
-+static const char *ieee1588_sels[] = { "pll3_sw", "pll4_sw", "dummy" /* usbphy2_clk */, "dummy" /* fec_phy_clk */ };
- 
- static struct clk *clk[IMX5_CLK_END];
- static struct clk_onecell_data clk_data;
-@@ -543,6 +544,25 @@ static void __init mx53_clocks_init(struct device_node *np)
- 	clk[IMX5_CLK_I2C3_GATE]		= imx_clk_gate2("i2c3_gate", "per_root", MXC_CCM_CCGR1, 22);
- 	clk[IMX5_CLK_SATA_GATE]		= imx_clk_gate2("sata_gate", "ipg", MXC_CCM_CCGR4, 2);
- 
-+	clk[IMX5_CLK_FIRI_SEL]		= imx_clk_mux("firi_sel", MXC_CCM_CSCMR2, 12, 2,
-+						standard_pll_sel, ARRAY_SIZE(standard_pll_sel));
-+	clk[IMX5_CLK_FIRI_PRED]		= imx_clk_divider("firi_pred", "firi_sel", MXC_CCM_CSCDR3, 6, 3);
-+	clk[IMX5_CLK_FIRI_PODF]		= imx_clk_divider("firi_podf", "firi_pred", MXC_CCM_CSCDR3, 0, 6);
-+	clk[IMX5_CLK_FIRI_SERIAL_GATE]	= imx_clk_gate2("firi_serial_gate", "firi_podf", MXC_CCM_CCGR1, 28);
-+	clk[IMX5_CLK_FIRI_IPG_GATE]	= imx_clk_gate2("firi_ipg_gate", "ipg", MXC_CCM_CCGR1, 26);
-+
-+	clk[IMX5_CLK_CSI0_MCLK1_SEL]	= imx_clk_mux("csi0_mclk1_sel", MXC_CCM_CSCMR2, 22, 2,
-+						standard_pll_sel, ARRAY_SIZE(standard_pll_sel));
-+	clk[IMX5_CLK_CSI0_MCLK1_PRED]	= imx_clk_divider("csi0_mclk1_pred", "csi0_mclk1_sel", MXC_CCM_CSCDR4, 6, 3);
-+	clk[IMX5_CLK_CSI0_MCLK1_PODF]	= imx_clk_divider("csi0_mclk1_podf", "csi0_mclk1_pred", MXC_CCM_CSCDR4, 0, 6);
-+	clk[IMX5_CLK_CSI0_MCLK1_GATE]	= imx_clk_gate2("csi0_mclk1_serial_gate", "csi0_mclk1_podf", MXC_CCM_CCGR6, 4);
-+
-+	clk[IMX5_CLK_IEEE1588_SEL]	= imx_clk_mux("ieee1588_sel", MXC_CCM_CSCMR2, 14, 2,
-+						ieee1588_sels, ARRAY_SIZE(ieee1588_sels));
-+	clk[IMX5_CLK_IEEE1588_PRED]	= imx_clk_divider("ieee1588_pred", "ieee1588_sel", MXC_CCM_CSCDR2, 6, 3);
-+	clk[IMX5_CLK_IEEE1588_PODF]	= imx_clk_divider("ieee1588_podf", "ieee1588_pred", MXC_CCM_CSCDR2, 0, 6);
-+	clk[IMX5_CLK_IEEE1588_GATE]	= imx_clk_gate2("ieee1588_serial_gate", "ieee1588_podf", MXC_CCM_CCGR7, 6);
-+
- 	clk[IMX5_CLK_CKO1_SEL]		= imx_clk_mux("cko1_sel", MXC_CCM_CCOSR, 0, 4,
- 						mx53_cko1_sel, ARRAY_SIZE(mx53_cko1_sel));
- 	clk[IMX5_CLK_CKO1_PODF]		= imx_clk_divider("cko1_podf", "cko1_sel", MXC_CCM_CCOSR, 4, 3);
-diff --git a/include/dt-bindings/clock/imx5-clock.h b/include/dt-bindings/clock/imx5-clock.h
-index f4b7478..d382fc7 100644
---- a/include/dt-bindings/clock/imx5-clock.h
-+++ b/include/dt-bindings/clock/imx5-clock.h
-@@ -201,6 +201,19 @@
- #define IMX5_CLK_STEP_SEL		189
- #define IMX5_CLK_CPU_PODF_SEL		190
- #define IMX5_CLK_ARM			191
--#define IMX5_CLK_END			192
-+#define IMX5_CLK_FIRI_PRED		192
-+#define IMX5_CLK_FIRI_SEL		193
-+#define IMX5_CLK_FIRI_PODF		194
-+#define IMX5_CLK_FIRI_SERIAL_GATE	195
-+#define IMX5_CLK_FIRI_IPG_GATE		196
-+#define IMX5_CLK_CSI0_MCLK1_PRED	197
-+#define IMX5_CLK_CSI0_MCLK1_SEL		198
-+#define IMX5_CLK_CSI0_MCLK1_PODF	199
-+#define IMX5_CLK_CSI0_MCLK1_GATE	200
-+#define IMX5_CLK_IEEE1588_PRED		201
-+#define IMX5_CLK_IEEE1588_SEL		202
-+#define IMX5_CLK_IEEE1588_PODF		203
-+#define IMX5_CLK_IEEE1588_GATE		204
-+#define IMX5_CLK_END			205
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX5_H */
+I wonder if git format-patch -M would make it more apparent about
+what's changed across the file rename?
+
+>  drivers/clk/hisilicon/Kconfig                      |   8 +
+>  drivers/clk/hisilicon/Makefile                     |   1 +
+>  drivers/clk/hisilicon/crg-hi3798cv200.c            | 304 +++++++++++++++++++++
+>  drivers/clk/hisilicon/crg.h                        |  39 +++
+>  include/dt-bindings/clock/histb-clock.h            |  64 +++++
+>  7 files changed, 465 insertions(+), 46 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.txt
+>  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
+>  create mode 100644 drivers/clk/hisilicon/crg.h
+>  create mode 100644 include/dt-bindings/clock/histb-clock.h
+> 
+> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+> index e169ec7..233d809 100644
+> --- a/drivers/clk/hisilicon/Makefile
+> +++ b/drivers/clk/hisilicon/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+>  obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+>  obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+>  obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+> +obj-$(CONFIG_COMMON_CLK_HI3798CV200) += crg-hi3798cv200.o
+
+Tab this out?
+
+>  obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+>  obj-$(CONFIG_RESET_HISI)	+= reset.o
+>  obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+> diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
+> new file mode 100644
+> index 0000000..b763b99
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
+> @@ -0,0 +1,304 @@
+[...]
+> +
+> +static struct hisi_crg_funcs hi3798cv200_crg_funcs = {
+
+const?
+
+> +	.register_clks = hi3798cv200_clk_register,
+> +	.unregister_clks = hi3798cv200_clk_unregister,
+> +};
+> +
+> +/* hi3798CV200 sysctrl CRG */
+> +
+> +#define HI3798CV200_SYSCTRL_NR_CLKS 16
+> +
+> +static const struct hisi_gate_clock hi3798cv200_sysctrl_gate_clks[] = {
+> +	{ IR_CLK, "clk_ir", "100m",
+> +		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
+> +	{ TIMER01_CLK, "clk_timer01", "24m",
+> +		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
+> +	{ UART0_CLK, "clk_uart0", "75m",
+> +		CLK_SET_RATE_PARENT, 0x48, 10, 0, },
+> +};
+> +
+> +static struct hisi_clock_data *hi3798cv200_sysctrl_clk_register(
+> +					struct platform_device *pdev)
+> +{
+> +	struct hisi_clock_data *clk_data;
+> +	int ret;
+> +
+> +	clk_data = hisi_clk_alloc(pdev, HI3798CV200_SYSCTRL_NR_CLKS);
+> +	if (!clk_data)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ret = hisi_clk_register_gate(hi3798cv200_sysctrl_gate_clks,
+> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
+> +				clk_data);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	ret = of_clk_add_provider(pdev->dev.of_node,
+> +			of_clk_src_onecell_get, &clk_data->clk_data);
+> +	if (ret)
+> +		goto unregister_gate;
+> +
+> +	return clk_data;
+> +
+> +unregister_gate:
+> +	hisi_clk_unregister_gate(hi3798cv200_sysctrl_gate_clks,
+> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
+> +				clk_data);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static void hi3798cv200_sysctrl_clk_unregister(struct platform_device *pdev)
+> +{
+> +	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+> +
+> +	of_clk_del_provider(pdev->dev.of_node);
+> +
+> +	hisi_clk_unregister_gate(hi3798cv200_sysctrl_gate_clks,
+> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
+> +				crg->clk_data);
+> +}
+> +
+> +static struct hisi_crg_funcs hi3798cv200_sysctrl_funcs = {
+
+const?
+
+> +	.register_clks = hi3798cv200_sysctrl_clk_register,
+> +	.unregister_clks = hi3798cv200_sysctrl_clk_unregister,
+> +};
+> +
+> +static const struct of_device_id hi3798cv200_crg_match_table[] = {
+> +	{ .compatible = "hisilicon,hi3798cv200-crg",
+> +		.data = &hi3798cv200_crg_funcs},
+
+Nitpick: please add a space before }
+
+> +	{ .compatible = "hisilicon,hi3798cv200-sysctrl",
+> +		.data = &hi3798cv200_sysctrl_funcs},
+
+Nitpick: please add a space before }
+
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, hi3798cv200_clk_match_table);
+> +
+> +static int hi3798cv200_crg_probe(struct platform_device *pdev)
+> +{
+> +	struct hisi_crg_dev *crg;
+> +	const struct of_device_id *match;
+> +
+> +	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
+> +	if (!crg)
+> +		return -ENOMEM;
+> +
+> +	match = of_match_node(hi3798cv200_crg_match_table, pdev->dev.of_node);
+> +	crg->funcs = (struct hisi_crg_funcs *)match->data;
+
+We can use of_device_get_match_data() here to simplify things.
+
+> +
+> +	crg->rstc = hisi_reset_init(pdev);
+> +	if (!crg->rstc)
+> +		return -ENOMEM;
+> +
+> diff --git a/drivers/clk/hisilicon/crg.h b/drivers/clk/hisilicon/crg.h
+> new file mode 100644
+> index 0000000..145b929
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/crg.h
+> @@ -0,0 +1,39 @@
+> +/*
+> + * HiSilicon Clock and Reset Driver Header
+> + *
+> + * Copyright (c) 2016 HiSilicon Limited.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along
+> + * with this program; if not, write to the Free Software Foundation, Inc.,
+> + * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+> + *
+> + */
+> +
+> +#ifndef	__HISI_CRG_H
+> +#define	__HISI_CRG_H
+
+Weird tab here. Please replace with space.
+
+> +
+> +struct hisi_clock_data;
+> +struct hisi_reset_controller;
+> +
+> +struct hisi_crg_funcs {
+> +	struct hisi_clock_data*	(*register_clks)(struct platform_device *pdev);
+> +	void (*unregister_clks)(struct platform_device *pdev);
+> +};
+> +
+> +struct hisi_crg_dev {
+> +	struct hisi_clock_data *clk_data;
+> +	struct hisi_reset_controller *rstc;
+> +	struct hisi_crg_funcs	*funcs;
+> +};
+> +
+
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
