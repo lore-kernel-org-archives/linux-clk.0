@@ -1,54 +1,57 @@
-Return-Path: <wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Sep 2016 14:33:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Irina Tirdea <irina.tirdea@intel.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH v3] clk: x86: Add Atom PMC platform clocks
+Message-ID: <20160914213324.GF7243@codeaurora.org>
+References: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
- <20160906121837.7517-7-maxime.ripard@free-electrons.com> <CAGb2v64jDTWB4faaBdCBCcFrt1WNf=PYwc16kpgsUhaMRudHnQ@mail.gmail.com>
- <20160908082939.GJ8913@lukather> <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 8 Sep 2016 16:35:04 +0800
-Message-ID: <CAGb2v646Qv8biTNP1ryfoLMpt=40i0m9D4EVCFhZ767WkbfwhA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] clk: sunxi-ng: Add A23 CCU
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 8, 2016 at 4:32 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Thu, Sep 8, 2016 at 4:29 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> On Wed, Sep 07, 2016 at 03:24:11PM +0800, Chen-Yu Tsai wrote:
->>> > +               [CLK_BUS_MSGBOX]        = &bus_msgbox_clk.common.hw,
->>>
->>> A23 manual and Allwinner sources say there is a bus gate for SPINLOCK.
->>> Tested it myself, and it indeed exists.
->>
->> Yes, sorry. It was supposed to be spinlock instead of msgbox.
+On 09/09, Irina Tirdea wrote:
+> +
+> +static const char **plt_clk_register_parents(struct platform_device *pdev,
+> +					     struct clk_plt_data *data,
+> +					     const struct pmc_clk *clks)
+> +{
+> +	const char **parent_names;
+> +	int i, err;
+> +
+> +	data->nparents = 0;
+> +	while (clks[data->nparents].name)
+> +		data->nparents++;
+> +
+> +	data->parents = devm_kzalloc(&pdev->dev,
+> +				     sizeof(*data->parents) * data->nparents,
+> +				     GFP_KERNEL);
 
-There is also a gate for msgbox, in case I'm not clear.
+This could be devm_kcalloc()
 
-ChenYu
+---8<----
+diff --git a/drivers/clk/x86/clk-byt-plt.c b/drivers/clk/x86/clk-byt-plt.c
+index 9dbf4b04ae47..7bd6c0dded00 100644
+--- a/drivers/clk/x86/clk-byt-plt.c
++++ b/drivers/clk/x86/clk-byt-plt.c
+@@ -259,9 +259,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 	while (clks[data->nparents].name)
+ 		data->nparents++;
+ 
+-	data->parents = devm_kzalloc(&pdev->dev,
+-				     sizeof(*data->parents) * data->nparents,
+-				     GFP_KERNEL);
++	data->parents = devm_kcalloc(&pdev->dev, data->nparents,
++				     sizeof(*data->parents), GFP_KERNEL);
+ 	if (!data->parents) {
+ 		err = -ENOMEM;
+ 		goto err_out;
 
->>
->>> > +       [RST_BUS_SPINLOCK]      =  { 0x2c4, BIT(22) },
->>>
->>> Allwinner sources say there is a reset control for MSGBOX.
->>> Tested it myself, and it indeed exists.
->>
->> However, the msgbox is mentionned nowhere in the datasheet.
->>
->> I'd prefer to be able to test that it actually works before adding it
->> to the clock driver.
->
-> I did in fact test it. With reset asserted, writes get ignored,
-> and reads produce all 0s. With the reset deasserted and clock
-> enabled, reads give the default value and writes stick. Afterwards
-> when I toggle the reset, the values revert to the default.
->
-> ChenYu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
