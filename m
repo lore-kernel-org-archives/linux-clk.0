@@ -1,69 +1,53 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+Message-ID: <57d92940.6329c80a.3d959.9d78@mx.google.com>
+From: arvind.yadav.cs@gmail.com
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: a.hajda@samsung.com,
+	lee.jones@linaro.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: mvebu: armada-37xx-periph: Fix the clock provider registration
-Date: Thu, 29 Sep 2016 16:28:55 +0200
-Message-Id: <20160929142855.30408-1-gregory.clement@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] clk: st: clk-flexgen: Unmap region obtained by of_iomap
+Date: Wed, 14 Sep 2016 16:08:31 +0530
+In-Reply-To: <y>
+References: <y>
 List-ID: <linux-clk.vger.kernel.org>
 
-While trying using a peripheral clock on a driver, I saw that the clock
-pointer returned by the provider was NULL.
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-The problem was a missing indirection. It was the pointer stored in the
-hws array which needed to be updated not the value it contains.
+Free memory mapping, if probe is not successful.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/clk/mvebu/armada-37xx-periph.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/st/clk-flexgen.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 45905fc0d75b..d5dfbad4ceab 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -305,7 +305,7 @@ static const struct of_device_id armada_3700_periph_clock_of_match[] = {
- };
- static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
- 					 void __iomem *reg, spinlock_t *lock,
--					 struct device *dev, struct clk_hw *hw)
-+					 struct device *dev, struct clk_hw **hw)
- {
- 	const struct clk_ops *mux_ops = NULL, *gate_ops = NULL,
- 		*rate_ops = NULL;
-@@ -353,13 +353,13 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
- 		}
- 	}
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 546bd79..af8df7b 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -278,8 +278,10 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 		return;
  
--	hw = clk_hw_register_composite(dev, data->name, data->parent_names,
-+	*hw = clk_hw_register_composite(dev, data->name, data->parent_names,
- 				       data->num_parents, mux_hw,
- 				       mux_ops, rate_hw, rate_ops,
- 				       gate_hw, gate_ops, CLK_IGNORE_UNUSED);
+ 	parents = flexgen_get_parents(np, &num_parents);
+-	if (!parents)
++	if (!parents) {
++		iounmap(reg);
+ 		return;
++	}
  
--	if (IS_ERR(hw))
--		return PTR_ERR(hw);
-+	if (IS_ERR(*hw))
-+		return PTR_ERR(*hw);
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -337,6 +339,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	return;
  
- 	return 0;
- }
-@@ -400,7 +400,7 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	spin_lock_init(&driver_data->lock);
- 
- 	for (i = 0; i < num_periph; i++) {
--		struct clk_hw *hw = driver_data->hw_data->hws[i];
-+		struct clk_hw **hw = &driver_data->hw_data->hws[i];
- 
- 		if (armada_3700_add_composite_clk(&data[i], reg,
- 						  &driver_data->lock, dev, hw))
+ err:
++	if (reg)
++		iounmap(reg);
+ 	if (clk_data)
+ 		kfree(clk_data->clks);
+ 	kfree(clk_data);
 -- 
-2.9.3
+1.7.9.5
