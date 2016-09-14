@@ -1,52 +1,75 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: boris.brezillon@free-electrons.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] clk: at91: Fix a return value in case of error
-Date: Sat, 24 Sep 2016 23:57:26 +0200
-Message-Id: <1474754246-27226-1-git-send-email-christophe.jaillet@wanadoo.fr>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1473842204.2954.13.camel@pengutronix.de>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and
+ GXBB
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ hdegoede@redhat.com, Ben Dooks <ben.dooks@codethink.co.uk>,
+ mark.rutland@arm.com,  devicetree@vger.kernel.org,
+ gregkh@linuxfoundation.org, johnyoun@synopsys.com,  will.deacon@arm.com,
+ mturquette@baylibre.com, linux-usb@vger.kernel.org,  sboyd@codeaurora.org,
+ kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com,
+ carlo@caione.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ jbrunet@baylibre.com
+Date: Wed, 14 Sep 2016 10:36:44 +0200
+In-Reply-To: <7hzinbmh40.fsf@baylibre.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	 <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+	 <m260q6jibf.fsf@baylibre.com>
+	 <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+	 <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+	 <m2eg4ui0nl.fsf@baylibre.com>
+	 <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+	 <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+	 <m2sht9gkau.fsf@baylibre.com>
+	 <CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
+	 <1473780508.10237.22.camel@pengutronix.de>
+	 <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
+	 <7hzinbmh40.fsf@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-If 'clk_hw_register()' fails, it is likely that we expect to return an
-error instead of a valid pointer (which would mean success).
-'clk_hw_register()' returns a bool, so we don't have the detail of the
-error. Return -ENOMEM instead, as it seems to be the most common error
-returned by clk_register().
+Am Dienstag, den 13.09.2016, 17:59 -0700 schrieb Kevin Hilman:
+> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+> 
+> > On Tue, Sep 13, 2016 at 5:28 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> 
+> [...]
+> 
+> >>> I added Philipp and Hans to this thread - maybe they can comment on this.
+> >>> To sum it up, our problem is:
+> >>> - there are two separate USB PHYs on Meson GXBB
+> >>> - both are sharing the same reset line (provided by the reset-meson driver)
+> >>> - during initialization of the PHYs we must only call
+> >>> reset_control_reset(rstc) once (if we do it for the first *and* second
+> >>> PHY then the first PHY gets confused once the second PHY uses the
+> >>> reset because the first PHY's state is reset as well)
+> >>
+> >> If you have an initially asserted reset line and you can enable the
+> >> first module by deasserting the reset via reset_control_deassert (and
+> >> reset_control_assert to signal when the module may be disabled again
+> >> after use), shared resets are for you.
+> >>
+> >> If you need a reset pulse or have no direct control over the reset line,
+> >> (device_reset), the reset framework currently has no solution for this.
+> >> The ugly thing about reset_control_once would be that it can't re-reset
+> >> modules when unloading and reloading driver modules.
+> >
+> > The corresponding reset driver in question is reset-meson, which only
+> > implements reset (assert/deassert are not implemented). However, I
+> > don't know if this is due to hardware design.
+> > I think the hardware implements the latter, but maybe Neil can give
+> > more information here (I currently don't have access to my board so I
+> > cannot test how the hardware actually behaves).
+> 
+> It's implemented that way because the hardware only supports a reset
+> pulse.
 
-Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
-and OF APIs")
+Would it be possible to bring down both PHYs drivers, pull the reset
+line once, and then bring the drivers back up again on this hardware?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It is likely that a bigger change is needed. For example using clk_register
-instead of clk_hw_register would return the error instead of a bool.
-We could then propagate this error to the caller without the need to choose
-an arbitrary error value.
-
-This proposal is un-compiled and un-tested.
-I get an error when I run 'make drivers/clk/at91/' which is likely due to
-my building environment. 
----
- drivers/clk/at91/clk-programmable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 190122e64a3a..2cf200e22d48 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -203,7 +203,7 @@ at91_clk_register_programmable(struct regmap *regmap,
- 	ret = clk_hw_register(NULL, &prog->hw);
- 	if (ret) {
- 		kfree(prog);
--		hw = &prog->hw;
-+		hw = ERR_PTR(-ENOMEM);
- 	}
- 
- 	return hw;
--- 
-2.7.4
+regards
+Philipp
