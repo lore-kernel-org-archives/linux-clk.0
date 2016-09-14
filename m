@@ -1,50 +1,75 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 4/5] ARM: dts: exynos: add support for ISP power domain to
- exynos4x12 clocks device
-Date: Mon, 19 Sep 2016 12:55:24 +0200
-Message-id: <1474282525-30441-5-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com>
-References: <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20160919105552eucas1p2964f3f16b0d0b38379e4f97abebf2785@eucas1p2.samsung.com>
+Return-Path: <khilman@baylibre.com>
+MIME-Version: 1.0
+In-Reply-To: <40e49082-3635-5b99-863b-f51f97258864@synopsys.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-2-martin.blumenstingl@googlemail.com>
+ <m24m5ixxyu.fsf@baylibre.com> <0d587b46-4c6e-c2ec-a62e-5d0c5a5bd902@synopsys.com>
+ <CAOi56cW+zJ8_Gf6xKMyKNk7YB1+MpWHrtmv=+Xxs0PZy9rAXqQ@mail.gmail.com> <40e49082-3635-5b99-863b-f51f97258864@synopsys.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Date: Wed, 14 Sep 2016 11:36:38 -0700
+Message-ID: <CAOi56cWOwRJWJMhKDmnY0KdaOBMM3Cz2ZS2gTzGd-Hi1wig3jg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] usb: dwc2: add support for Meson8b and GXBB SoCs
+To: John Youn <John.Youn@synopsys.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
+	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, "kishon@ti.com" <kishon@ti.com>,
+	"carlo@caione.org" <carlo@caione.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos4412 clock controller contains some additional clocks for FIMC-ISP
-(Camera ISP) subsystem. Registers for those clocks are partially located
-in the SOC area, which belongs to ISP power domain.
+On Wed, Sep 14, 2016 at 11:26 AM, John Youn <John.Youn@synopsys.com> wrote:
+> On 9/14/2016 11:17 AM, Kevin Hilman wrote:
+>> On Wed, Sep 14, 2016 at 11:12 AM, John Youn <John.Youn@synopsys.com> wrote:
+>>> On 9/14/2016 9:11 AM, Kevin Hilman wrote:
+>>>> Hi John,
+>>>>
+>>>> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+>>>>
+>>>>> From: Jerome Brunet <jbrunet@baylibre.com>
+>>>>>
+>>>>> Add compatible strings for amlogic Meson8b and GXBB SoCs with the
+>>>>> corresponding configuration parameters.
+>>>>>
+>>>>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>>>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>>>
+>>>> Are you OK with adding this platform for v4.9?  I know you mentioned
+>>>> you're working on new bindings to replace the current way, but since
+>>>> that hasn't been posted AFAICT, it would be nice to get this merged now
+>>>> and we can help test the new bindings when you're ready.
+>>>>
+>>>> If you're OK with that, and with your Ack, I can take merge the driver
+>>>> changes through the arm-soc tree along with the rest of the DT patches.
+>>>>
+>>>
+>>> Sure. Unfortunately, I wasn't able to complete it for 4.9.
+>>>
+>>> You can add my acked-by on this:
+>>>
+>>> Acked-by: John Youn <johnyoun@synopsys.com>
+>>
+>> Great, thanks!  I assume you're OK with PATCH 2/2 for the bindings as
+>> well (at least for now until you rework them?)
+>>
+>> Kevin
+>>
+>
+> Do you mean PATCH 2/6 from this series?
 
-This patch implements integration of ISP clocks with ISP power domain.
+Yes.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+> It doesn't seem to add or remove any bindings in dwc2 so I'm fine with
+> it.
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 3394bdcf10ae..4daea67546b9 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -74,6 +74,11 @@
- 		compatible = "samsung,exynos4412-clock";
- 		reg = <0x10030000 0x20000>;
- 		#clock-cells = <1>;
-+
-+		isp-clock-controller {
-+			compatible = "samsung,exynos4412-isp-clock";
-+			power-domains = <&pd_isp>;
-+		};
- 	};
- 
- 	mct@10050000 {
--- 
-1.9.1
+Thanks.
+
+Kevin
