@@ -1,69 +1,27 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 0/4] arm64: Allwinner A64 support based on sunxi-ng
-Date: Fri,  9 Sep 2016 22:10:25 +0200
-Message-Id: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Sep 2016 13:53:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	shawn.guo@linaro.org, jason.liu@linaro.org
+Subject: Re: [PATCH v3 2/2] clk: zx: register ZX296718 clocks
+Message-ID: <20160914205342.GZ7243@codeaurora.org>
+References: <1473141762-4775-1-git-send-email-jun.nie@linaro.org>
+ <1473141762-4775-3-git-send-email-jun.nie@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473141762-4775-3-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 09/06, Jun Nie wrote:
+> The ZX296718 clocks are statically listed and registered. More
+> clock will be added later.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
 
-As it was in the first iteration, this is the A64 support based on the
-new sunxi-ng clock framework.
-
-The support for it is quite minimal at the moment, but it should be
-fairly easy to add new devices, as most of the design is shared with
-older SoCs.
-
-Let me know what you think,
-Maxime
-
-Changes from v1:
-  - Split the A64 CCU support out of the H3 driver
-  - Added the PMU support
-  - Removed the clocks node
-  - Rebased on top of current sunxi/clk-for-4.9 branch
-
-Andre Przywara (3):
-  Documentation: devicetree: add vendor prefix for Pine64
-  arm64: dts: add Allwinner A64 SoC .dtsi
-  arm64: dts: add Pine64 support
-
-Maxime Ripard (1):
-  clk: sunxi-ng: Add A64 clocks
-
- Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- MAINTAINERS                                        |   1 +
- arch/arm64/boot/dts/Makefile                       |   1 +
- arch/arm64/boot/dts/allwinner/Makefile             |   5 +
- .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  |  50 ++
- .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  70 ++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 279 +++++++
- drivers/clk/sunxi-ng/Kconfig                       |  11 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 870 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h              |  68 ++
- include/dt-bindings/clock/sun50i-a64-ccu.h         | 132 ++++
- include/dt-bindings/reset/sun50i-a64-ccu.h         |  97 +++
- 15 files changed, 1588 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
- create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
+Applied to clk-zte and merged into clk-next.
 
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
