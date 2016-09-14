@@ -1,41 +1,35 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 5/5] clk: at91: sckc: optimize boot time
-Date: Thu,  8 Sep 2016 16:51:46 +0200
-Message-Id: <20160908145146.20422-6-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
-References: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Sep 2016 11:09:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [GIT PULL] Samsung clock updates for 4.9
+Message-ID: <20160914180924.GL7243@codeaurora.org>
+References: <5763a275-eb8a-6911-6a15-2e0b434d066c@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5763a275-eb8a-6911-6a15-2e0b434d066c@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Assume that if the oscillator is enabled (OSC32EN bit is present), the
-delay has already elapsed as the bootloader probably waited for the
-oscillator to settle. This could waste up to 1.2s.
+On 09/09, Sylwester Nawrocki wrote:
+> 
+> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+> 
+>   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-samsung
+> 
+> for you to fetch changes up to be95d2c7d918b2b7b973378a1e92bdc6559c21f9:
+> 
+>   clk: samsung: Add support for EPLL on exynos5410 (2016-09-09 17:35:13 +0200)
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/sckc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks. Pulled.
 
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index 04059ea761c2..d669f5ca4dac 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -69,7 +69,7 @@ static int clk_slow_osc_prepare(struct clk_hw *hw)
- 	void __iomem *sckcr = osc->sckcr;
- 	u32 tmp = readl(sckcr);
- 
--	if (tmp & AT91_SCKC_OSC32BYP)
-+	if (tmp & (AT91_SCKC_OSC32BYP | AT91_SCKC_OSC32EN))
- 		return 0;
- 
- 	writel(tmp | AT91_SCKC_OSC32EN, sckcr);
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
