@@ -1,36 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 13:47:57 -0700
+Date: Wed, 14 Sep 2016 13:55:39 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	Alex Elder <elder@linaro.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Matt Porter <mporter@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Vaishali Thakkar <vaishali.thakkar@oracle.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH] clk-kona-setup: Use kmalloc_array() in parent_process()
-Message-ID: <20160914204757.GX7243@codeaurora.org>
-References: <1fb2e894-93d3-3dbe-ca05-7e29e4c60e2a@users.sourceforge.net>
+To: Hoan Tran <hotran@apm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, lho@apm.com,
+	Duc Dang <dhdang@apm.com>
+Subject: Re: [PATCH v3 1/3] Documentation: dtb: xgene: Add PMD clock binding
+Message-ID: <20160914205539.GA7243@codeaurora.org>
+References: <1473704605-28126-1-git-send-email-hotran@apm.com>
+ <1473704605-28126-2-git-send-email-hotran@apm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1fb2e894-93d3-3dbe-ca05-7e29e4c60e2a@users.sourceforge.net>
+In-Reply-To: <1473704605-28126-2-git-send-email-hotran@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/14, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Sep 2016 20:26:05 +0200
+On 09/12, Hoan Tran wrote:
+> Add APM X-Gene clock binding documentation for PMD clock.
 > 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Hoan Tran <hotran@apm.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 > ---
 
 Applied to clk-next
