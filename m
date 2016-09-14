@@ -1,53 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45901 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751093AbcIGEa7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Sep 2016 00:30:59 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <57CF9801.3080107@samsung.com>
-Date: Wed, 07 Sep 2016 13:30:57 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org
-Subject: Re: [PATCH v2 2/7] clk: samsung: exynos5410: Expose the peripheral DMA
- gate clocks
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20160906120548epcas1p3b2313939979423df06127e02ee640fa4@epcas1p3.samsung.com>
- <1473163496-17820-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1473163496-17820-3-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160911134111.31141-4-martin.blumenstingl@googlemail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com> <20160911134111.31141-4-martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 14 Sep 2016 23:30:06 +0200
+Message-ID: <CAFBinCAJnhOSt8KHcPn4Wpc1DL6S3EUWViQxbsjw7Cv0TDNBPg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+	johnyoun@synopsys.com, kishon@ti.com, khilman@baylibre.com, carlo@caione.org,
+	arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com, will.deacon@arm.com,
+	catalin.marinas@arm.com, gregkh@linuxfoundation.org, mark.rutland@arm.com,
+	robh+dt@kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016년 09월 06일 21:04, Sylwester Nawrocki wrote:
-> These clocks are needed in order to use the PL330 peripheral
-> DMA controllers.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Sun, Sep 11, 2016 at 3:41 PM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
 > ---
->  drivers/clk/samsung/clk-exynos5410.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index 54ec486..cf6fb41 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
->  	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
->  	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
->  	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
-> +	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
-> +	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
-> 
->  	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
->  	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
+>  drivers/phy/Kconfig          |  11 ++
+>  drivers/phy/Makefile         |   1 +
+>  drivers/phy/phy-meson-usb2.c | 280 +++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 292 insertions(+)
+>  create mode 100644 drivers/phy/phy-meson-usb2.c
+>
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 19bff3a..6ad87ec 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -453,4 +453,15 @@ config PHY_NS2_PCIE
+>         help
+>           Enable this to support the Broadcom Northstar2 PCIe PHY.
+>           If unsure, say N.
+> +
+> +config PHY_MESON_USB2
+> +       tristate "Meson USB2 PHY driver"
+> +       default ARCH_MESON
+> +       depends on OF && (ARCH_MESON || COMPILE_TEST)
+> +       select GENERIC_PHY
+as pointed out by Arnd Bergmann (see [0]) this is missing a "select
+USB_COMMON", just like the PHY_SUN4I_USB and PHY_SUN9I_USB drivers as
+we use of_usb_get_dr_mode_by_phy() to get the mode of the USB
+controller (as the PHY needs special configuration for host-mode).
 
-Looks good to me.
+I will send an update on Sunday.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
--- 
-Best Regards,
-Chanwoo Choi
+Regards,
+Martin
+
+
+[0] http://marc.info/?l=linux-usb&m=147386117604824&w=2
