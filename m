@@ -1,251 +1,109 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 4/7] clk: sunxi-ng: Add N-class clocks support
-Date: Tue,  6 Sep 2016 14:18:34 +0200
-Message-Id: <20160906121837.7517-5-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: John Youn <johnyoun@synopsys.com>
+Cc: linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  jbrunet@baylibre.com,  johnyoun@synopsys.com,  kishon@ti.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  sboyd@codeaurora.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+Subject: Re: [PATCH v2 1/6] usb: dwc2: add support for Meson8b and GXBB SoCs
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+	<20160911134111.31141-2-martin.blumenstingl@googlemail.com>
+Date: Wed, 14 Sep 2016 09:11:53 -0700
+In-Reply-To: <20160911134111.31141-2-martin.blumenstingl@googlemail.com>
+	(Martin Blumenstingl's message of "Sun, 11 Sep 2016 15:41:06 +0200")
+Message-ID: <m24m5ixxyu.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the class with a single factor, N, being a multiplier.
+Hi John,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/Kconfig    |   4 ++
- drivers/clk/sunxi-ng/Makefile   |   1 +
- drivers/clk/sunxi-ng/ccu_mult.c | 133 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_mult.h |  35 +++++++++++
- 4 files changed, 173 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_mult.c
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index a1dee861474c..c7258779daa8 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -19,6 +19,10 @@ config SUNXI_CCU_GATE
- config SUNXI_CCU_MUX
- 	bool
- 
-+config SUNXI_CCU_MULT
-+	bool
-+	select SUNXI_CCU_MUX
-+
- config SUNXI_CCU_PHASE
- 	bool
- 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 261438b00215..462a5f8383ed 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_SUNXI_CCU_DIV)	+= ccu_div.o
- obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
- obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
- obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
-+obj-$(CONFIG_SUNXI_CCU_MULT)	+= ccu_mult.o
- obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
- 
- # Multi-factor clocks
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-new file mode 100644
-index 000000000000..119b190c0eb5
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -0,0 +1,133 @@
-+/*
-+ * Copyright (C) 2016 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_gate.h"
-+#include "ccu_mult.h"
-+
-+static void ccu_mult_find_best(unsigned long parent, unsigned long rate,
-+			       unsigned int max_n, unsigned int *n)
-+{
-+	*n = rate / parent;
-+}
-+
-+static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
-+					unsigned long parent_rate,
-+					unsigned long rate,
-+					void *data)
-+{
-+	struct ccu_mult *cm = data;
-+	unsigned int n;
-+
-+	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-+
-+	return parent_rate * n;
-+}
-+
-+static void ccu_mult_disable(struct clk_hw *hw)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+
-+	return ccu_gate_helper_disable(&cm->common, cm->enable);
-+}
-+
-+static int ccu_mult_enable(struct clk_hw *hw)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+
-+	return ccu_gate_helper_enable(&cm->common, cm->enable);
-+}
-+
-+static int ccu_mult_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+
-+	return ccu_gate_helper_is_enabled(&cm->common, cm->enable);
-+}
-+
-+static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+	unsigned long val;
-+	u32 reg;
-+
-+	reg = readl(cm->common.base + cm->common.reg);
-+	val = reg >> cm->mult.shift;
-+	val &= (1 << cm->mult.width) - 1;
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
-+						&parent_rate);
-+
-+	return parent_rate * (val + 1);
-+}
-+
-+static int ccu_mult_determine_rate(struct clk_hw *hw,
-+				struct clk_rate_request *req)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+
-+	return ccu_mux_helper_determine_rate(&cm->common, &cm->mux,
-+					     req, ccu_mult_round_rate, cm);
-+}
-+
-+static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+	unsigned long flags;
-+	unsigned int n;
-+	u32 reg;
-+
-+	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
-+						&parent_rate);
-+	
-+	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-+
-+	spin_lock_irqsave(cm->common.lock, flags);
-+
-+	reg = readl(cm->common.base + cm->common.reg);
-+	reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
-+
-+	writel(reg | ((n - 1) << cm->mult.shift),
-+	       cm->common.base + cm->common.reg);
-+
-+	spin_unlock_irqrestore(cm->common.lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 ccu_mult_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+
-+	return ccu_mux_helper_get_parent(&cm->common, &cm->mux);
-+}
-+
-+static int ccu_mult_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+
-+	return ccu_mux_helper_set_parent(&cm->common, &cm->mux, index);
-+}
-+
-+const struct clk_ops ccu_mult_ops = {
-+	.disable	= ccu_mult_disable,
-+	.enable		= ccu_mult_enable,
-+	.is_enabled	= ccu_mult_is_enabled,
-+
-+	.get_parent	= ccu_mult_get_parent,
-+	.set_parent	= ccu_mult_set_parent,
-+
-+	.determine_rate	= ccu_mult_determine_rate,
-+	.recalc_rate	= ccu_mult_recalc_rate,
-+	.set_rate	= ccu_mult_set_rate,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index 609db6610880..5d2c8dc14073 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -1,6 +1,9 @@
- #ifndef _CCU_MULT_H_
- #define _CCU_MULT_H_
- 
-+#include "ccu_common.h"
-+#include "ccu_mux.h"
-+
- struct _ccu_mult {
- 	u8	shift;
- 	u8	width;
-@@ -12,4 +15,36 @@ struct _ccu_mult {
- 		.width	= _width,		\
- 	}
- 
-+struct ccu_mult {
-+	u32			enable;
-+
-+	struct _ccu_mult	mult;
-+	struct ccu_mux_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+#define SUNXI_CCU_N_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
-+				   _mshift, _mwidth, _gate, _lock,	\
-+				   _flags)				\
-+	struct ccu_mult _struct = {					\
-+		.enable	= _gate,					\
-+		.mult	= _SUNXI_CCU_MULT(_mshift, _mwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_mult_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
-+static inline struct ccu_mult *hw_to_ccu_mult(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_mult, common);
-+}
-+
-+extern const struct clk_ops ccu_mult_ops;
-+
- #endif /* _CCU_MULT_H_ */
--- 
-2.9.3
+> From: Jerome Brunet <jbrunet@baylibre.com>
+>
+> Add compatible strings for amlogic Meson8b and GXBB SoCs with the
+> corresponding configuration parameters.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+Are you OK with adding this platform for v4.9?  I know you mentioned
+you're working on new bindings to replace the current way, but since
+that hasn't been posted AFAICT, it would be nice to get this merged now
+and we can help test the new bindings when you're ready.
+
+If you're OK with that, and with your Ack, I can take merge the driver
+changes through the arm-soc tree along with the rest of the DT patches.
+
+Kevin
+
+> ---
+>  Documentation/devicetree/bindings/usb/dwc2.txt |  2 ++
+>  drivers/usb/dwc2/platform.c                    | 34 ++++++++++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/usb/dwc2.txt b/Documentation/devicetree/bindings/usb/dwc2.txt
+> index 20a68bf..2c30a54 100644
+> --- a/Documentation/devicetree/bindings/usb/dwc2.txt
+> +++ b/Documentation/devicetree/bindings/usb/dwc2.txt
+> @@ -10,6 +10,8 @@ Required properties:
+>    - "rockchip,rk3288-usb", "rockchip,rk3066-usb", "snps,dwc2": for rk3288 Soc;
+>    - "lantiq,arx100-usb": The DWC2 USB controller instance in Lantiq ARX SoCs;
+>    - "lantiq,xrx200-usb": The DWC2 USB controller instance in Lantiq XRX SoCs;
+> +  - "amlogic,meson8b-usb": The DWC2 USB controller instance in Amlogic Meson8b SoCs;
+> +  - "amlogic,meson-gxbb-usb": The DWC2 USB controller instance in Amlogic S905 SoCs;
+>    - snps,dwc2: A generic DWC2 USB controller with default parameters.
+>  - reg : Should contain 1 register range (address and length)
+>  - interrupts : Should contain 1 interrupt
+> diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+> index fc6f525..8f7b34c 100644
+> --- a/drivers/usb/dwc2/platform.c
+> +++ b/drivers/usb/dwc2/platform.c
+> @@ -181,6 +181,38 @@ static const struct dwc2_core_params params_ltq = {
+>  	.hibernation			= -1,
+>  };
+>  
+> +static const struct dwc2_core_params params_amlogic = {
+> +	.otg_cap			= DWC2_CAP_PARAM_NO_HNP_SRP_CAPABLE,
+> +	.otg_ver			= -1,
+> +	.dma_enable			= 1,
+> +	.dma_desc_enable		= 0,
+> +	.dma_desc_fs_enable		= 0,
+> +	.speed				= DWC2_SPEED_PARAM_HIGH,
+> +	.enable_dynamic_fifo		= 1,
+> +	.en_multiple_tx_fifo		= -1,
+> +	.host_rx_fifo_size		= 512,
+> +	.host_nperio_tx_fifo_size	= 500,
+> +	.host_perio_tx_fifo_size	= 500,
+> +	.max_transfer_size		= -1,
+> +	.max_packet_count		= -1,
+> +	.host_channels			= 16,
+> +	.phy_type			= DWC2_PHY_TYPE_PARAM_UTMI,
+> +	.phy_utmi_width			= -1,
+> +	.phy_ulpi_ddr			= -1,
+> +	.phy_ulpi_ext_vbus		= -1,
+> +	.i2c_enable			= -1,
+> +	.ulpi_fs_ls			= -1,
+> +	.host_support_fs_ls_low_power	= -1,
+> +	.host_ls_low_power_phy_clk	= -1,
+> +	.ts_dline			= -1,
+> +	.reload_ctl			= 1,
+> +	.ahbcfg				= GAHBCFG_HBSTLEN_INCR8 <<
+> +					  GAHBCFG_HBSTLEN_SHIFT,
+> +	.uframe_sched			= 0,
+> +	.external_id_pin_ctl		= -1,
+> +	.hibernation			= -1,
+> +};
+> +
+>  /*
+>   * Check the dr_mode against the module configuration and hardware
+>   * capabilities.
+> @@ -464,6 +496,8 @@ static const struct of_device_id dwc2_of_match_table[] = {
+>  	{ .compatible = "lantiq,xrx200-usb", .data = &params_ltq },
+>  	{ .compatible = "snps,dwc2", .data = NULL },
+>  	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
+> +	{ .compatible = "amlogic,meson8b-usb", .data = &params_amlogic },
+> +	{ .compatible = "amlogic,meson-gxbb-usb", .data = &params_amlogic },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
