@@ -1,39 +1,51 @@
-Return-Path: <axel.lin@ingics.com>
-Return-Path: <axel.lin@ingics.com>
-From: Axel Lin <axel.lin@ingics.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH RFT] clk: qcom: lcc-ipq806x: Fixup overriding val in regmap_read call
-Date: Sat, 10 Sep 2016 11:47:30 +0800
-Message-Id: <1473479250-2225-1-git-send-email-axel.lin@ingics.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:35196 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761138AbcINKGS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2016 06:06:18 -0400
+Received: by mail-wm0-f41.google.com with SMTP id i130so39598728wmf.0
+        for <linux-clk@vger.kernel.org>; Wed, 14 Sep 2016 03:06:18 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 0/4] ARM: amlogic: add i2c support to Amlogic's gxbb family
+Date: Wed, 14 Sep 2016 12:06:04 +0200
+Message-Id: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Drop the assignment of regmap_read return code to val, so the code checks
-the value read.
+Add support for the meson i2c controller found on the gxbb SoC family
+This patchset adds 1 i2c in the AO domain and 3 in the EE domain (A,B,C).
+There is 1 last i2c in the EE domain (D) but it is actually not connected
+to the pad of the SoC, so there is no point in adding it here.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/clk/qcom/lcc-ipq806x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patches for the i2c [0] driver and pinctrl [1] have been sent in
+dedicated series
 
-diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
-index db3998e..977e98e 100644
---- a/drivers/clk/qcom/lcc-ipq806x.c
-+++ b/drivers/clk/qcom/lcc-ipq806x.c
-@@ -443,7 +443,7 @@ static int lcc_ipq806x_probe(struct platform_device *pdev)
- 		return PTR_ERR(regmap);
- 
- 	/* Configure the rate of PLL4 if the bootloader hasn't already */
--	val = regmap_read(regmap, 0x0, &val);
-+	regmap_read(regmap, 0x0, &val);
- 	if (!val)
- 		clk_pll_configure_sr(&pll4, regmap, &pll4_config, true);
- 	/* Enable PLL4 source on the LPASS Primary PLL Mux */
+[0]: http://lkml.kernel.org/r/1473846557-18123-1-git-send-email-jbrunet@baylibre.com
+[1]: http://lkml.kernel.org/r/1473846328-17339-1-git-send-email-jbrunet@baylibre.com
+
+Jerome Brunet (3):
+  clk: gxbb: expose i2c clocks
+  ARM64: dts: meson-gxbb: add pins for I2C
+  ARM64: dts: gxbb: add i2c bus
+
+Neil Armstrong (1):
+  ARM64: dts: meson-gxbb: add I2C nodes
+
+ .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |  6 ++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts    |  6 ++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        | 72 ++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h                           |  4 +-
+ include/dt-bindings/clock/gxbb-clkc.h              |  2 +
+ 5 files changed, 88 insertions(+), 2 deletions(-)
+
 -- 
 2.7.4
+
