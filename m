@@ -1,82 +1,35 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 1/8] clk: sunxi-ng: div: Add mux table macros
-Date: Thu,  8 Sep 2016 11:48:36 +0200
-Message-Id: <20160908094843.14710-2-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
-References: <20160908094843.14710-1-maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Sep 2016 11:24:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: arvind.yadav.cs@gmail.com
+Cc: mturquette@baylibre.com, a.hajda@samsung.com, lee.jones@linaro.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: st: clk-flexgen: Unmap region obtained by of_iomap
+Message-ID: <20160914182454.GR7243@codeaurora.org>
+References: <y>
+ <57d92940.6329c80a.3d959.9d78@mx.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <57d92940.6329c80a.3d959.9d78@mx.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add some macros to ease the declaration of clocks that are using them.
+On 09/14, arvind.yadav.cs@gmail.com wrote:
+> @@ -337,6 +339,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+>  	return;
+>  
+>  err:
+> +	if (reg)
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_div.h | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+This is always true? Why check?
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 5d98549e23a6..a5c9eaf90e84 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -77,13 +77,16 @@ struct ccu_div {
- 				      _shift, _width, _table, 0,	\
- 				      _flags)
- 
--#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
--				  _mshift, _mwidth, _muxshift, _muxwidth, \
--				  _gate, _flags)			\
-+#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
-+					_parents, _table,		\
-+					_reg,				\
-+					_mshift, _mwidth,		\
-+					_muxshift, _muxwidth,		\
-+					_gate, _flags)			\
- 	struct ccu_div _struct = {					\
- 		.enable	= _gate,					\
- 		.div	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
--		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
-+		.mux	= _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, _table), \
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-@@ -93,12 +96,23 @@ struct ccu_div {
- 		},							\
- 	}
- 
-+#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				  _mshift, _mwidth, _muxshift, _muxwidth, \
-+				  _gate, _flags)			\
-+	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
-+					_parents, NULL,			\
-+					_reg, _mshift, _mwidth,		\
-+					_muxshift, _muxwidth,		\
-+					_gate, _flags)
-+
- #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,		\
- 			     _mshift, _mwidth, _muxshift, _muxwidth,	\
- 			     _flags)					\
--	SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
--				  _mshift, _mwidth, _muxshift, _muxwidth, \
--				  0, _flags)
-+	SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,			\
-+					_parents, NULL,			\
-+					_reg, _mshift, _mwidth,		\
-+					_muxshift, _muxwidth,		\
-+					0, _flags)
- 
- 
- #define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,		\
+> +		iounmap(reg);
+>  	if (clk_data)
+>  		kfree(clk_data->clks);
+>  	kfree(clk_data);
+> -- 
+> 1.7.9.5
+> 
+
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
