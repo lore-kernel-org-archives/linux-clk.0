@@ -1,28 +1,40 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 2/3] clk: samsung: exynos5420: Add clocks for CMU_CDREX
- domain
-To: Chanwoo Choi <cw00.choi@samsung.com>
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
- <1472108238-24309-3-git-send-email-cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5c3c5a13-ca2b-272d-e137-d7eaaffaafac@samsung.com>
-Date: Thu, 01 Sep 2016 19:32:18 +0200
-MIME-version: 1.0
-In-reply-to: <1472108238-24309-3-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] clk: sunxi-ng: sun6i-a31: Register offset and clk flag fixes
+Date: Thu, 15 Sep 2016 14:57:37 +0800
+Message-Id: <20160915065740.13664-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25/2016 08:57 AM, Chanwoo Choi wrote:
-> This patch adds the mux/divider clocks for CMU_CDREX (DRAM Express
-> Controller) which generates the clocks for DRAM and NoC (Network on Chip) bus
-> clock. But, there is differnet source of MUX_MX_MSPLL_CCORE between exynos5420
-> and exynos5422. So, each MUX_MX_MSPLL_CCORE uses the different parent source
-> group.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Hi,
 
-Applied, thanks,
+Here are 3 fixes for the new sunxi-ng clk driver for sun6i-a31 recently
+introduced for 4.9. The issues were noticed while working on the display
+pipeline for the A31/A31s. The second patch follows what Maxime has done
+for the A33 CCU driver. The third issue was noticed while doing the first
+patch.
+
+I hope we can get this into 4.9 as well, either right in -rc1, or in a
+later -rc.
+
+Thanks!
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (3):
+  clk: sunxi-ng: sun6i-a31: Set CLK_SET_RATE_PARENT for display output
+    clocks
+  clk: sunxi-ng: sun6i-a31: set CLK_SET_RATE_UNGATE for all PLLs
+  clk: sunxi-ng: sun6i-a31: Fix register offset for mipi-csi clk
+
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 44 ++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
+
+-- 
+2.9.3
