@@ -1,206 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:59473 "EHLO
-        host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752041AbcIIDrv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Sep 2016 23:47:51 -0400
-Message-ID: <1473392840.30217.170.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
-        ulf.hansson@linaro.org, Arnd Bergmann <arnd@arndb.de>
-Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>, leoyang.li@nxp.com,
-        xiaobo.xie@nxp.com
-Date: Thu, 08 Sep 2016 22:47:20 -0500
-In-Reply-To: <1473150503-9550-6-git-send-email-yangbo.lu@nxp.com>
-References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-         <1473150503-9550-6-git-send-email-yangbo.lu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [v11, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 15 Sep 2016 10:34:36 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] clk: sunxi-ng: sun6i-a31: Register offset and clk
+ flag fixes
+Message-ID: <20160915083436.GC10128@lukather>
+References: <20160915065740.13664-1-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="o0ZfoUVt4BxPQnbU"
+In-Reply-To: <20160915065740.13664-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2016-09-06 at 16:28 +0800, Yangbo Lu wrote:
-> The global utilities block controls power management, I/O device
-> enabling, power-onreset(POR) configuration monitoring, alternate
-> function selection for multiplexed signals,and clock control.
-> 
-> This patch adds a driver to manage and access global utilities block.
-> Initially only reading SVR and registering soc device are supported.
-> Other guts accesses, such as reading RCW, should eventually be moved
-> into this driver as well.
-> 
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> Signed-off-by: Scott Wood <oss@buserror.net>
 
-Don't put my signoff on patches that I didn't put it on myself.  Definitely
-don't put mine *after* yours on patches that were last modified by you.
+--o0ZfoUVt4BxPQnbU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you want to mention that the soc_id encoding was my suggestion, then do so
-explicitly.
+Hi,
 
-> +/* SoC attribute definition for QorIQ platform */
-> +static const struct soc_device_attribute qoriq_soc[] = {
-> +#ifdef CONFIG_PPC
-> +	/*
-> +	 * Power Architecture-based SoCs T Series
-> +	 */
-> +
-> +	/* SoC: T1024/T1014/T1023/T1013 Rev: 1.0 */
-> +	{ .soc_id	= "svr:0x85400010,name:T1024,die:T1024",
-> +	  .revision	= "1.0",
-> +	},
-> +	{ .soc_id	= "svr:0x85480010,name:T1024E,die:T1024",
-> +	  .revision	= "1.0",
-> +	},
+On Thu, Sep 15, 2016 at 02:57:37PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> Here are 3 fixes for the new sunxi-ng clk driver for sun6i-a31 recently
+> introduced for 4.9. The issues were noticed while working on the display
+> pipeline for the A31/A31s. The second patch follows what Maxime has done
+> for the A33 CCU driver. The third issue was noticed while doing the first
+> patch.
+>=20
+> I hope we can get this into 4.9 as well, either right in -rc1, or in a
+> later -rc.
 
-Revision could be computed from the low 8 bits of SVR (just as you do for unknown SVRs).
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-We could move the die name into .family:
+Stephen, could you apply those patches directly on top of my previous
+PR, or do you want me to send another one?
 
-	{
-		.soc_id = "svr:0x85490010,name:T1023E,",
-		.family = "QorIQ T1024",
-	}
+Thanks,
+Maxime
 
-I see you dropped svre (and the trailing comma), though I guess the vast
-majority of potential users will be looking at .family.  In which case do we
-even need name?  If we just make the soc_id be "svr:0xnnnnnnnn" then we could
-shrink the table to an svr+mask that identifies each die.  I'd still want to
-keep the "svr:" even if we're giving up on the general tagging system, to make
-it clear what the number refers to, and to provide some defense against users
-who match only against soc_id rather than soc_id+family.  Or we could go
-further and format soc_id as "QorIQ SVR 0xnnnnnnnn" so that soc_id-only
-matches are fully acceptable rather than just less dangerous.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> +static const struct soc_device_attribute *fsl_soc_device_match(
-> +	unsigned int svr, const struct soc_device_attribute *matches)
-> +{
-> +	char svr_match[50];
-> +	int n;
-> +
-> +	n = sprintf(svr_match, "*%08x*", svr);
+--o0ZfoUVt4BxPQnbU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-n = sprintf(svr_match, "svr:0x%08x,*", svr);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-(according to the current encoding)
+iQIcBAEBAgAGBQJX2l0cAAoJEBx+YmzsjxAgndIQALJ/+FGWOe9YLOUESBj9S+iJ
+tkMo4dVNOs0gshgCGT0Oz93fbo3VVIUOhgTgqQtWedpiX8MFeziKuTozgjQQWEsr
+NrkY7Kq/CX+UMr7ap797FGBivanDSGMcCmOgG/2WAUjpnYJajIE63+NraVBk4Iai
+QZ1oTa7xfgiD8NFqIzAl1/dEQfu/m0pv/rLe3KqZMbR41AQiHqa8KSKimTe/gy3J
+7iy3jBfrwNMUo0+himgLvj3wRjgfLElCaLPBAm82NpUMgjb0+g/bd4sTppcxZH+e
+NDOCEAOHiZRtOgMFJooILQkRSXabo9M6+BoaxEzVJibmkUVrEtuwMue4KDDRbFb5
+A0+KMg3wkoOdB0eqIzgRp1TlxYzecnSuSkx7fAMlqhIFwIfNVbyWuxiOWNr7xAha
+qEpl3+Kn0vtnnptuUB4CLWrb9CLT7QD23eR2BT8yZsAC2prxLBk/jlAxi4WFd7ms
+CkZiIxGZqeh6YkLkHV1zKs9CYWKpeRgunlzDSfoJbnzEXcHI8YHG6L6tA50O/SWU
+w9RF6wP/+0NMp07r+w5OieoYTLnhK3HT8u2iaJnn2z6KHd5OlNkAQgXRpbFzRxAF
+3Ljna5xRjloHuo4U8FzpX1E9q/F4HKXdv4UnA9TMJ8M9L0qaRZgOyJe1l2eg/Cyq
+uORYHD1DZCbCjRFgeWjS
+=N49m
+-----END PGP SIGNATURE-----
 
-> +
-> +	do {
-> +		if (!matches->soc_id)
-> +			return NULL;
-> +		if (glob_match(svr_match, matches->soc_id))
-> +			break;
-> +	} while (matches++);
-
-Are you expecting "matches++" to ever evaluate as false?
-
-> +	/* Register soc device */
-> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> +	if (!soc_dev_attr) {
-> +		ret = -ENOMEM;
-> +		goto out_unmap;
-> +	}
-
-Couldn't this be statically allocated?
-
-> +
-> +	machine = of_flat_dt_get_machine_name();
-> +	if (machine)
-> +		soc_dev_attr->machine = kasprintf(GFP_KERNEL, "%s",
-> machine);
-> +
-> +	soc_dev_attr->family = kasprintf(GFP_KERNEL, "QorIQ");
-> +
-> +	svr = fsl_guts_get_svr();
-> +	fsl_soc = fsl_soc_device_match(svr, qoriq_soc);
-> +	if (fsl_soc) {
-> +		soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%s",
-> +						 fsl_soc->soc_id);
-
-You can use kstrdup() if you're just copying the string as is.
-
-> +		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%s",
-> +						   fsl_soc->revision);
-> +	} else {
-> +		soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "0x%08x",
-> svr);
-
-	kasprintf(GFP_KERNEL, "svr:0x%08x,", svr);
-
-
-> +
-> +	soc_dev = soc_device_register(soc_dev_attr);
-> +	if (IS_ERR(soc_dev)) {
-> +		ret = -ENODEV;
-
-Why are you changing the error code?
-
-> +		goto out;
-> +	} else {
-
-Unnecessary "else".
-
-> +		pr_info("Detected: %s\n", soc_dev_attr->machine);
-
-Machine: %s
-
-> +		pr_info("Detected SoC family: %s\n", soc_dev_attr->family);
-> +		pr_info("Detected SoC ID: %s, revision: %s\n",
-> +			soc_dev_attr->soc_id, soc_dev_attr->revision);
-
-s/Detected //g
-
-
-> +	}
-> +	return 0;
-> +out:
-> +	kfree(soc_dev_attr->machine);
-> +	kfree(soc_dev_attr->family);
-> +	kfree(soc_dev_attr->soc_id);
-> +	kfree(soc_dev_attr->revision);
-> +	kfree(soc_dev_attr);
-> +out_unmap:
-> +	iounmap(guts->regs);
-> +out_free:
-> +	kfree(guts);
-
-devm
-
-> +static int fsl_guts_remove(struct platform_device *dev)
-> +{
-> +	kfree(soc_dev_attr->machine);
-> +	kfree(soc_dev_attr->family);
-> +	kfree(soc_dev_attr->soc_id);
-> +	kfree(soc_dev_attr->revision);
-> +	kfree(soc_dev_attr);
-> +	soc_device_unregister(soc_dev);
-> +	iounmap(guts->regs);
-> +	kfree(guts);
-> +	return 0;
-> +}
-
-Don't free the memory before you unregister the device that uses it (moot if
-you use devm).
-
->  
-> +#ifdef CONFIG_FSL_GUTS
-> +unsigned int fsl_guts_get_svr(void);
-> +#endif
-
-Don't ifdef prototypes (unless you're going to provide a stub alternative).
-
--Scott
-
+--o0ZfoUVt4BxPQnbU--
