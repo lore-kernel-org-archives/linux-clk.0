@@ -1,72 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:39254 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751425AbcIKI76 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Sep 2016 04:59:58 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ralf Baechle <ralf@linux-mips.org>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 0/2] MIPS: TXx9: Common Clock Framework Conversion
-Date: Sun, 11 Sep 2016 10:59:56 +0200
-Message-Id: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/3] clk: sunxi-ng: sun6i-a31: Fix register offset for mipi-csi clk
+Date: Thu, 15 Sep 2016 14:57:40 +0800
+Message-Id: <20160915065740.13664-4-wens@csie.org>
+In-Reply-To: <20160915065740.13664-1-wens@csie.org>
+References: <20160915065740.13664-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Ralf, Nemoto-san, Wim,
+The register offset for the mipi-csi clk is off by 4, a copy paste
+error from the mipi-dsi clk.
 
-This patch series converts the Toshiba TXx9 platforms from their own
-custom minimal clock implementation to the Common Clock Framework.
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  - Patch 1 adds missing clock (un)prepare calls to the TXx9 watchdog
-    driver,
-  - Patch 2 replaces the custom clock implementation by a CCF-based one,
-    providing a minimal set of clocks.
-
-This has been tested with the watchdog on RBTX4927.
-
-Changes since v1:
-  - Dropped "spi: spi-txx9: Add missing clock (un)prepare calls for
-    CCF", which has been accepted in spi/for-next,
-  - Protect the TX4938_REV_PCODE() check by #ifdef CONFIG_CPU_TX49XX,
-  - Use new clk_hw-centric clock registration API,
-  - Add Reviewed-by.
-
-Dependencies:
-  - Patch 1 can be applied independently,
-  - Patch 2 depends on patch 1 and on "spi: spi-txx9: Add missing clock
-    (un)prepare calls for CCF" in spi/for-next,
-  - The error path in patch 2 depends on "clkdev: Detect errors in
-    clk_hw_register_clkdev() for mass registration", but this is less
-    critical.
-
-Wim: Can you please appply patch 1 directly, so we can get at least the
-hard dependencies in v4.9?
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
-  MIPS: TXx9: Convert to Common Clock Framework
-
- arch/mips/txx9/Kconfig         |  2 +-
- arch/mips/txx9/generic/setup.c | 70 +++++++++++++++++++++---------------------
- drivers/watchdog/txx9wdt.c     |  6 ++--
- 3 files changed, 39 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index ff0d621495fd..79596463e0d9 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -633,7 +633,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_dphy_clk, "mipi-dsi-dphy",
+ 				 lcd_ch1_parents, 0x168, 0, 3, 8, 2,
+ 				 BIT(15), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(mipi_csi_dphy_clk, "mipi-csi-dphy",
+-				 lcd_ch1_parents, 0x168, 0, 3, 8, 2,
++				 lcd_ch1_parents, 0x16c, 0, 3, 8, 2,
+ 				 BIT(15), 0);
+ 
+ static SUNXI_CCU_M_WITH_MUX_GATE(iep_drc0_clk, "iep-drc0", de_parents,
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.9.3
