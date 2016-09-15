@@ -1,49 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:59255 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750975AbcINJIw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2016 05:08:52 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Baoyou Xie <baoyou.xie@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        xie.baoyou@zte.com.cn
-Subject: Re: [PATCH] clk: versatile: add missing header dependencies
-Date: Wed, 14 Sep 2016 11:08:28 +0200
-Message-ID: <2862092.ohvOYo10Tb@wuerfel>
-In-Reply-To: <CACRpkdb2BK2_CeSJ8kbuZH6_WwDRqabhcuMqRb+etCBwT80K7A@mail.gmail.com>
-References: <1473834587-22526-1-git-send-email-baoyou.xie@linaro.org> <4600074.xAL28UziL1@wuerfel> <CACRpkdb2BK2_CeSJ8kbuZH6_WwDRqabhcuMqRb+etCBwT80K7A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/3] clk: sunxi-ng: sun6i-a31: Set CLK_SET_RATE_PARENT for display output clocks
+Date: Thu, 15 Sep 2016 14:57:38 +0800
+Message-Id: <20160915065740.13664-2-wens@csie.org>
+In-Reply-To: <20160915065740.13664-1-wens@csie.org>
+References: <20160915065740.13664-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday, September 14, 2016 11:04:29 AM CEST Linus Walleij wrote:
-> On Wed, Sep 14, 2016 at 9:31 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Wednesday, September 14, 2016 2:29:47 PM CEST Baoyou Xie wrote:
-> >> We get 1 warning when building kernel with W=1:
-> >> drivers/clk/versatile/clk-realview.c:54:13: warning: no previous prototype for 'realview_clk_init' [-Wmissing-prototypes]
-> >>
-> >> In fact, this function is declared in clk-realview.h,
-> >> so this patch add missing header dependencies.
-> >>
-> >> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
-> >>
-> >
-> > Please leave this one for now. We are in the process of removing the
-> > last caller of this function, and should just remove the header file
-> > and the function definition in the next release.
-> 
-> +1 on this, leave it. I can clean it up for v4.10 or even
-> for an -rc if you want it real neat in v4.9.
-> 
+The LCD controller and HDMI controller use the LCDx-CHy and HDMI clocks
+to generate their dot clocks. To be able to generate a full range of
+possible clock rates, the parent PLL clock rates should also be changed.
 
-I think v4.10 is fine: Baoyou has done a great job so far fixing a lot
-of those warnings, but we already know that there will be a lot remaining
-after v4.9, so v4.10 is the earliest possible version in which we
-can turn on the warning by default.
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-	Arnd
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index f1d61faa5bd9..bb488e8baea8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -543,17 +543,19 @@ static const char * const lcd_ch0_parents[] = { "pll-video0", "pll-video1",
+ 						"pll-video0-2x",
+ 						"pll-video1-2x", "pll-mipi" };
+ static SUNXI_CCU_MUX_WITH_GATE(lcd0_ch0_clk, "lcd0-ch0", lcd_ch0_parents,
+-			       0x118, 24, 2, BIT(31), 0);
++			       0x118, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_MUX_WITH_GATE(lcd1_ch0_clk, "lcd1-ch0", lcd_ch0_parents,
+-			       0x11c, 24, 2, BIT(31), 0);
++			       0x11c, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static const char * const lcd_ch1_parents[] = { "pll-video0", "pll-video1",
+ 						"pll-video0-2x",
+ 						"pll-video1-2x" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(lcd0_ch1_clk, "lcd0-ch1", lcd_ch1_parents,
+-				 0x12c, 0, 4, 24, 3, BIT(31), 0);
++				 0x12c, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(lcd1_ch1_clk, "lcd1-ch1", lcd_ch1_parents,
+-				 0x12c, 0, 4, 24, 3, BIT(31), 0);
++				 0x12c, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const csi_sclk_parents[] = { "pll-video0", "pll-video1",
+ 						 "pll9", "pll10", "pll-mipi",
+@@ -601,7 +603,8 @@ static SUNXI_CCU_GATE(digital_mic_clk,	"digital-mic",	"pll-audio",
+ 		      0x148, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", lcd_ch1_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(31), 0);
+ 
+@@ -624,10 +627,11 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(mbus1_clk, "mbus1", mbus_parents, 0x160,
+ 				  CLK_IS_CRITICAL);
+ 
+ static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_clk, "mipi-dsi", lcd_ch1_parents,
+-				 0x168, 16, 3, 24, 2, BIT(31), 0);
++				 0x168, 16, 3, 24, 2, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_dphy_clk, "mipi-dsi-dphy",
+ 				 lcd_ch1_parents, 0x168, 0, 3, 8, 2,
+-				 BIT(15), 0);
++				 BIT(15), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(mipi_csi_dphy_clk, "mipi-csi-dphy",
+ 				 lcd_ch1_parents, 0x168, 0, 3, 8, 2,
+ 				 BIT(15), 0);
+@@ -956,9 +960,9 @@ static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
+ static CLK_FIXED_FACTOR(pll_periph_2x_clk, "pll-periph-2x",
+ 			"pll-periph", 1, 2, 0);
+ static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
+-			"pll-video0", 1, 2, 0);
++			"pll-video0", 1, 2, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR(pll_video1_2x_clk, "pll-video1-2x",
+-			"pll-video1", 1, 2, 0);
++			"pll-video1", 1, 2, CLK_SET_RATE_PARENT);
+ 
+ static struct clk_hw_onecell_data sun6i_a31_hw_clks = {
+ 	.hws	= {
+-- 
+2.9.3
