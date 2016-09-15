@@ -1,43 +1,63 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	sboyd@codeaurora.org,
-	carlo@caione.org,
-	khilman@baylibre.com,
-	serveralex@gmail.com,
-	paul.gortmaker@windriver.com
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH -next] meson: clk: Use builtin_platform_driver to simplify the code
-Date: Sat, 10 Sep 2016 12:02:49 +0000
-Message-Id: <1473508969-2776-1-git-send-email-weiyj.lk@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1473935450.5624.12.camel@pengutronix.de>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and
+ GXBB
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, hdegoede@redhat.com, Ben Dooks
+ <ben.dooks@codethink.co.uk>, mark.rutland@arm.com,
+ devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,
+ johnyoun@synopsys.com, will.deacon@arm.com,  mturquette@baylibre.com,
+ linux-usb@vger.kernel.org, sboyd@codeaurora.org,  kishon@ti.com,
+ robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
+Date: Thu, 15 Sep 2016 12:30:50 +0200
+In-Reply-To: <CAFBinCDuj_nHtQ9xs0LMmqZT7Yr9SUw24_H2nAwULT7e9kRXag@mail.gmail.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	 <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+	 <m260q6jibf.fsf@baylibre.com>
+	 <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+	 <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+	 <m2eg4ui0nl.fsf@baylibre.com>
+	 <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+	 <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+	 <m2sht9gkau.fsf@baylibre.com>
+	 <CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
+	 <1473780508.10237.22.camel@pengutronix.de>
+	 <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
+	 <1473842236.6816.0.camel@pengutronix.de>
+	 <CAFBinCDuj_nHtQ9xs0LMmqZT7Yr9SUw24_H2nAwULT7e9kRXag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Hi Martin,
 
-Use the builtin_platform_driver() macro to make the code simpler.
+Am Mittwoch, den 14.09.2016, 23:23 +0200 schrieb Martin Blumenstingl:
+[...]
+> > We could add a triggered flag or a counter to struct reset_control, and
+> > have reset_control_reset_once do nothing if it is already set /
+> > incremented. Since the reset_control goes away with the last consumer,
+> > the shared reset line would get triggered again after unbinding both PHY
+> > devices.
+> I guess that'd do the trick for us:
+> - we could use devm_reset_control_get_optional_shared() during probe
+> - power_on would then call reset_control_reset()
+> - the code in reset_control_reset would be changed: the if
+> (WARN_ON(rstc->shared)) would be removed. then we return 0 if
+> (rstc->shared && atomic_read(&rstc->shared_triggered)). otherwise we
+> proceed with the old logic, except that we use
+> atomic_set(&rstc->shared_triggerred, 1) in case of success (if an
+> error was returned we leave it as "not triggered").
+> 
+> Let me know if you want me to (at least try to) implement that and send an RFC.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/meson/meson8b.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Yes, please give it a try. reset_control_reset should still WARN if the
+deassert count is set, and reset_(de)assert should do so if triggered is
+set. Mixing the two won't work. And it should be documented that shared
+reset_control_reset may do nothing if the reset was already triggered by
+another consumer.
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e1d4aa1..aaa3e39 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -673,8 +673,4 @@ static struct platform_driver meson8b_driver = {
- 	},
- };
- 
--static int __init meson8b_clkc_init(void)
--{
--	return platform_driver_register(&meson8b_driver);
--}
--device_initcall(meson8b_clkc_init);
-+builtin_platform_driver(meson8b_driver);
+regards
+Philipp
