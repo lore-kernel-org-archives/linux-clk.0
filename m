@@ -1,88 +1,77 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v3 07/14] ARM: DT: STiH407: Enable clock propagation for
+ audio clocks
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar
+ Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert
+ Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+ <1472473626-15398-8-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        Gabriel Fernandez
+	<gabriel.fernandez@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <c3b2a919-ada1-bc5c-d2b8-b7b36e907fee@st.com>
+Date: Thu, 15 Sep 2016 09:46:56 +0200
 MIME-Version: 1.0
-In-Reply-To: <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
- <m260q6jibf.fsf@baylibre.com> <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
- <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk> <m2eg4ui0nl.fsf@baylibre.com>
- <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Thu, 8 Sep 2016 23:48:53 +0200
-Message-ID: <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Kevin Hilman <khilman@baylibre.com>, mark.rutland@arm.com, devicetree@vger.kernel.org,
-	gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
-	mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
-	kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1472473626-15398-8-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 8, 2016 at 10:53 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> On 08/09/16 21:42, Kevin Hilman wrote:
->>
->> Ben Dooks <ben.dooks@codethink.co.uk> writes:
->>
->>> On 08/09/16 20:52, Martin Blumenstingl wrote:
->>>>
->>>> On Thu, Sep 8, 2016 at 9:35 PM, Kevin Hilman <khilman@baylibre.com>
->>>> wrote:
->>>>>>
->>>>>> +     phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
->>>>>> +     if (IS_ERR(phy)) {
->>>>>> +             dev_err(&pdev->dev, "failed to create PHY\n");
->>>>>> +             return PTR_ERR(phy);
->>>>>> +     }
->>>>>> +
->>>>>> +     if (usb_reset_refcnt++ == 0) {
->>>>>> +             ret = device_reset(&pdev->dev);
->>>>>> +             if (ret) {
->>>>>> +                     dev_err(&phy->dev, "Failed to reset USB PHY\n");
->>>>>> +                     return ret;
->>>>>> +             }
->>>>>> +     }
->>>>>
->>>>>
->>>>> The ref count + reset here looks like something that could/should be
->>>>> handled in a runtime PM callback.
->>>>
->>>> Unfortunately that doesn't work (as Jerome found out) because both
->>>> PHYs are sharing the same reset line.
->>>> So if the second PHY would call device_reset then it would also reset
->>>> the first PHY!
->>>>
->>>> There's a comment above the declaration of usb_reset_refcnt which
->>>> tries to explain this:
->>>> "The PHYs are sharing a common reset line -> we are only allowed to
->>>> reset once for all PHYs."
->>>> Maybe I should move this comment to the "if (usb_reset_refcnt++ == 0)
->>>> {" line to make it easier to see?
->>>>
->>>
->>> pm-runtime has refcounting in it. When one of the nodes turns on,
->>> the pm-runtime will call your driver to say there is a user when
->>> this first use turns up.
->>>
->>> If all the sub-phys turn off and drop their refcount then the driver
->>> is called to say there are no more users and you can go to sleep.
->>
->>
->> After a chat w/Martin on IRC, It turns out runtime PM wont help here.
->>
->> The reason is because there are physically two PHY devices[1].  Those 2
->> devices will be treated independely by runtime PM, and have separate
->> use-counting, which means doing what I proposed would cause a reset to
->> happen when either device was probed.
->>
->> So, I think it's OK as it is.
->
->
-> Surely you can do pm_runtime_get/put on the phy's parent platform
-> device and do it that way?
-could you please be more specific with that (do you mean pdev->dev.parent)?
-so we would use pm_runtime_{get_sync,put} with the parent, while we
-would still define the runtime_resume in our driver.
 
-I'd be happy if that works and we can remove that refcounting hack
+
+On 08/29/2016 02:26 PM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch is used in the clock driver to apply a clock propagation
+> flag on the audio clocks of STiH407
+> 
+> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-clock.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
+> index 38a56d7..c4a8f1c 100644
+> --- a/arch/arm/boot/dts/stih407-clock.dtsi
+> +++ b/arch/arm/boot/dts/stih407-clock.dtsi
+> @@ -216,7 +216,7 @@
+>  
+>  			clk_s_d0_flexgen: clk-s-d0-flexgen {
+>  				#clock-cells = <1>;
+> -				compatible = "st,flexgen";
+> +				compatible = "st,flexgen-audio", "st,flexgen";
+>  
+>  				clocks = <&clk_s_d0_quadfs 0>,
+>  					 <&clk_s_d0_quadfs 1>,
+> 
+
+
+Hi Gabriel
+
+Applied on STi tree for v4.9
+
+Thanks
