@@ -1,84 +1,75 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: Re: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in
- cpg_mstp_clocks_init() after error detection
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
- <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Simon Horman <horms+renesas@verge.net.au>,
- Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- Julia Lawall <julia.lawall@lip6.fr>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
-Date: Thu, 15 Sep 2016 22:40:22 +0200
+Return-Path: <irina.tirdea@intel.com>
+From: "Tirdea, Irina" <irina.tirdea@intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai
+	<tiwai@suse.com>, "Bossart, Pierre-louis" <pierre-louis.bossart@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: RE: [PATCH v3] clk: x86: Add Atom PMC platform clocks
+Date: Thu, 15 Sep 2016 15:44:38 +0000
+Message-ID: <1F3AC3675D538145B1661F571FE1805F2F33FD2D@irsmsx105.ger.corp.intel.com>
+References: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
+ <20160914213324.GF7243@codeaurora.org>
+In-Reply-To: <20160914213324.GF7243@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-> It's perfectly legal to call kfree() on a NULL pointer.
-
-I know this function property well.
 
 
->> * Split a condition check for memory allocation failures so that
->>   each pointer from these function calls will be checked immediately.
->>
->>   See also background information:
->>   Topic "CWE-754: Improper check for unusual or exceptional conditions"
->>   Link: https://cwe.mitre.org/data/definitions/754.html
->>
->> * Return directly after a call of the function "kzalloc" failed
->>   at the beginning.
-> 
-> Both calls are already close together.
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
+> Sent: 15 September, 2016 0:33
+> To: Tirdea, Irina
+> Cc: linux-clk@vger.kernel.org; Michael Turquette; alsa-devel@alsa-project=
+.org; Mark Brown; Takashi Iwai; Bossart, Pierre-louis; Pierre-
+> Louis Bossart
+> Subject: Re: [PATCH v3] clk: x86: Add Atom PMC platform clocks
+>=20
+> On 09/09, Irina Tirdea wrote:
+> > +
+> > +static const char **plt_clk_register_parents(struct platform_device *p=
+dev,
+> > +					     struct clk_plt_data *data,
+> > +					     const struct pmc_clk *clks)
+> > +{
+> > +	const char **parent_names;
+> > +	int i, err;
+> > +
+> > +	data->nparents =3D 0;
+> > +	while (clks[data->nparents].name)
+> > +		data->nparents++;
+> > +
+> > +	data->parents =3D devm_kzalloc(&pdev->dev,
+> > +				     sizeof(*data->parents) * data->nparents,
+> > +				     GFP_KERNEL);
+>=20
+> This could be devm_kcalloc()
+>=20
 
-Can it be that an other software development concern is eventually
-overlooked because of this "neighbourship" (or is categorised with
-a lower priority)?
+OK, will send v4 with this change.
 
-I suggest to reconsider this design detail if it is really acceptable
-for the safe implementation of such a software module.
-
-* How much will it matter in general that one function call was performed
-  in this use case without checking its return values immediately?
-
-* Should it usually be determined quicker if a required resource like
-  memory could be acquired before trying the next allocation?
-
-
-> In addition, your patch increases the LoC, IMHO without improving the code.
-
-I find this consequence still debatable.
-
-
->> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
->> index 1fdc44b..6c82e0e 100644
->> --- a/drivers/clk/renesas/clk-mstp.c
->> +++ b/drivers/clk/renesas/clk-mstp.c
->> @@ -167,10 +167,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
->>         unsigned int i;
->>
->>         group = kzalloc(sizeof(*group), GFP_KERNEL);
->> +       if (!group)
->> +               return;
->> +
->>         clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
->> -       if (group == NULL || clks == NULL) {
->> +       if (!clks) {
->>                 kfree(group);
->> -               kfree(clks);
->>                 return;
->>         }
-
-Is this update suggestion worth for another look?
-
-Regards,
-Markus
+> ---8<----
+> diff --git a/drivers/clk/x86/clk-byt-plt.c b/drivers/clk/x86/clk-byt-plt.=
+c
+> index 9dbf4b04ae47..7bd6c0dded00 100644
+> --- a/drivers/clk/x86/clk-byt-plt.c
+> +++ b/drivers/clk/x86/clk-byt-plt.c
+> @@ -259,9 +259,8 @@ static const char **plt_clk_register_parents(struct p=
+latform_device *pdev,
+>  	while (clks[data->nparents].name)
+>  		data->nparents++;
+>=20
+> -	data->parents =3D devm_kzalloc(&pdev->dev,
+> -				     sizeof(*data->parents) * data->nparents,
+> -				     GFP_KERNEL);
+> +	data->parents =3D devm_kcalloc(&pdev->dev, data->nparents,
+> +				     sizeof(*data->parents), GFP_KERNEL);
+>  	if (!data->parents) {
+>  		err =3D -ENOMEM;
+>  		goto err_out;
+>=20
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
