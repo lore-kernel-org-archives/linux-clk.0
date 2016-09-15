@@ -1,146 +1,45 @@
-Return-Path: <andrea.merello@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Reply-To: andrea.merello@gmail.com
-In-Reply-To: <b39d3544-9512-9e0b-2f5b-4135835009f9@st.com>
-References: <1473318063-21782-1-git-send-email-andrea.merello@gmail.com> <b39d3544-9512-9e0b-2f5b-4135835009f9@st.com>
-From: Andrea Merello <andrea.merello@gmail.com>
-Date: Mon, 12 Sep 2016 08:48:00 +0200
-Message-ID: <CAN8YU5MFX0cwUv34fAL3PSaRQNhgPZFO3PiXBdE+fVeLgGJ8ZQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: stm32f4: don't assume 48MHz clock is derived from
- primary PLL
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: linux-clk@vger.kernel.org, Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Bruno Herrera <bruherrera@gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <2f96a36e-fae9-5992-7259-67c92692bbc3@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+ <2f96a36e-fae9-5992-7259-67c92692bbc3@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 21:11:56 +0200
+Message-ID: <CAMuHMdWga6cdCK84Q+aXFhrEG-CLuG=a1v1Ani2ODUotA=jgfA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk/Renesas-MSTP: Use kmalloc_array() in cpg_mstp_clocks_init()
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>,
+	Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 9, 2016 at 11:57 AM, Alexandre Torgue
-<alexandre.torgue@st.com> wrote:
-> Hi Andrea,
+On Wed, Sep 14, 2016 at 10:00 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 14 Sep 2016 21:10:47 +0200
 >
-> On 09/08/2016 09:01 AM, Andrea Merello wrote:
->>
->> This driver just look at the PLLs configurations set by the
->> bootloader, but it assumes the 48MHz clock is derived from the primary
->> PLL; however using PLLSAI is another option for generating the 48MHz
->> clock.
->>
->> This patch make the driver to check for this, and eventually adjust the
->> clock tree accordingly
+> A multiplication for the size determination of a memory allocation
+> indicated that an array data structure should be processed.
+> Thus use the corresponding function "kmalloc_array".
 >
+> This issue was detected by using the Coccinelle software.
 >
-> Another patch-set is ongoing concerning RTC clock for stm32f4. It is
-> developed by Gabriel Fernandez (I add him directly in this reply).
-> Can you check with him how he plans to manage this RTC clock in order to
-> have something similar / coherent for SAI clocks, 48MHz ....
->
-> Concerning this patch,
-> When I look at the clock tree I see that 48 MHz is only provided by pll
-> named "PLL". So If you use PLL SAI to provide a clock at 48 MHz, you
-> actually use SAI_A or SAI_B clock. I'm right ?
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-No, SAI_A and SAI_B are two other clocks output, that comes from
-PLLSAI through other divisors and muxes; here I simply look at if the
-bootloader selected the "PLL48CLK" output of the SAI PLL instead of
-the "PLL48CLK" of the primary PLL.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> I think we need to have something more configurable. Each special clock (SAI
-> / RTC /LCd ...) have to be configurable and each "parents" (PLL / PLLI2S /
-> PLLSAI) should be described at least in the driver.
+Gr{oetje,eeting}s,
 
-Yes, there are probably other possible clock configurations that the
-driver does not recognize yet; I just added this one because I found
-it useful in real-world scenario (USB/SDcard working and core running
-at the max speed at the same time).
+                        Geert
 
->
-> Gabriel,
->
-> Can you send a draft of your patch-set for RTC clock to Andrea, in order to
-> discuss about this topic.
->
-> Thanks
->
-> Alex
->
->
->
->>
->> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> Cc: Alexandre Torgue <alexandre.torgue@st.com>
->> Cc: Bruno Herrera <bruherrera@gmail.com>
->> ---
->>  drivers/clk/clk-stm32f4.c | 26 ++++++++++++++++++++++++--
->>  1 file changed, 24 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
->> index 02d6810..7f1ba8f 100644
->> --- a/drivers/clk/clk-stm32f4.c
->> +++ b/drivers/clk/clk-stm32f4.c
->> @@ -24,6 +24,7 @@
->>  #include <linux/of.h>
->>  #include <linux/of_address.h>
->>
->> +#define STM32F4_RCC_CR                 0x00
->>  #define STM32F4_RCC_PLLCFGR            0x04
->>  #define STM32F4_RCC_CFGR               0x08
->>  #define STM32F4_RCC_AHB1ENR            0x30
->> @@ -31,6 +32,8 @@
->>  #define STM32F4_RCC_AHB3ENR            0x38
->>  #define STM32F4_RCC_APB1ENR            0x40
->>  #define STM32F4_RCC_APB2ENR            0x44
->> +#define STM32F4_RCC_PLLSAICFGR         0x88
->> +#define STM32F4_RCC_DCKCFGR            0x8C
->>
->>  struct stm32f4_gate_data {
->>         u8      offset;
->> @@ -238,16 +241,35 @@ static struct clk *clk_register_apb_mul(struct
->> device *dev, const char *name,
->>  static void stm32f4_rcc_register_pll(const char *hse_clk, const char
->> *hsi_clk)
->>  {
->>         unsigned long pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
->> -
->> +       unsigned long pllsaicfgr = readl(base + STM32F4_RCC_PLLSAICFGR);
->> +       unsigned long dckcfgr = readl(base + STM32F4_RCC_DCKCFGR);
->> +       unsigned long rcccr = readl(base + STM32F4_RCC_CR);
->> +       bool saien = rcccr & BIT(28);
->>         unsigned long pllm   = pllcfgr & 0x3f;
->>         unsigned long plln   = (pllcfgr >> 6) & 0x1ff;
->>         unsigned long pllp   = BIT(((pllcfgr >> 16) & 3) + 1);
->>         const char   *pllsrc = pllcfgr & BIT(22) ? hse_clk : hsi_clk;
->>         unsigned long pllq   = (pllcfgr >> 24) & 0xf;
->> +       bool src48_sai = dckcfgr & BIT(27);
->> +       unsigned long pllsain = (pllsaicfgr >> 6) & 0x1ff;
->> +       unsigned long pllsaip = BIT(((pllsaicfgr >> 16) & 3) + 1);
->>
->>         clk_register_fixed_factor(NULL, "vco", pllsrc, 0, plln, pllm);
->>         clk_register_fixed_factor(NULL, "pll", "vco", 0, 1, pllp);
->> -       clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1, pllq);
->> +
->> +       if (src48_sai && !saien) {
->> +               pr_err("48MHz derived from SAI PLL, but SAI PLL disabled
->> (blame the bootloader)\n");
->> +               return;
->> +       }
->> +
->> +       if (saien)
->> +               clk_register_fixed_factor(NULL, "sai",
->> +                                       pllsrc, 0, pllsain, pllm);
->> +
->> +       if (src48_sai)
->> +               clk_register_fixed_factor(NULL, "pll48", "sai", 0, 1,
->> pllsaip);
->> +       else
->> +               clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1,
->> pllq);
->>  }
->>
->>  /*
->>
->
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
