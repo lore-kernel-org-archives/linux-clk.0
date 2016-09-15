@@ -1,55 +1,83 @@
-Return-Path: <mw@semihalf.com>
-MIME-Version: 1.0
-In-Reply-To: <20160923214730.GF21232@codeaurora.org>
-References: <1474448759-24482-1-git-send-email-mw@semihalf.com>
- <1474448759-24482-4-git-send-email-mw@semihalf.com> <20160923214730.GF21232@codeaurora.org>
-From: Marcin Wojtas <mw@semihalf.com>
-Date: Sat, 24 Sep 2016 00:00:01 +0200
-Message-ID: <CAPv3WKfDrtDDMPi4oBmpNN_+b4mvG6cVnZT7pNTo8tcNUyzwyA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: mvebu: migrate CP110 system controller to
- clk_hw API and registration
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+Return-Path: <wsa@the-dreams.de>
+Date: Thu, 15 Sep 2016 21:41:03 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	SF Markus Elfring <elfring@users.sourceforge.net>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
-	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
-	Grzegorz Jaszczyk <jaz@semihalf.com>
-Content-Type: text/plain; charset=UTF-8
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH 2/4] clk/Renesas-MSTP: Delete an error message for a
+ failed memory allocation
+Message-ID: <20160915194103.GA7863@katana>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <04cf79a5-df91-d8c2-83b2-ad9e9130ee7a@users.sourceforge.net>
+ <CAMuHMdVtvg99JY=_+Wj7jpd82=5rKDKOVxg0TYW3wUQsUQzAOA@mail.gmail.com>
+ <2927869.3rNkSDiBcX@avalon>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+In-Reply-To: <2927869.3rNkSDiBcX@avalon>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
-2016-09-23 23:47 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 09/21, Marcin Wojtas wrote:
->> @@ -203,80 +202,75 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
->>       if (ret)
->>               return ret;
->>
->> -     cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
->> -                               CP110_CLK_NUM, GFP_KERNEL);
->> -     if (!cp110_clks)
->> -             return -ENOMEM;
->> -
->> -     cp110_clk_data = devm_kzalloc(&pdev->dev,
->> -                                   sizeof(*cp110_clk_data),
->> +     cp110_clk_data = devm_kcalloc(&pdev->dev, sizeof(*cp110_clk_data),
->> +                                   sizeof(struct clk_hw *) * CP110_CLK_NUM,
->>                                     GFP_KERNEL);
->
-> This doesn't look right. Why are calloc()ing clk_hw_onecell_data this
-> way?
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After some time, at a first sight it seems I should've used following:
-cp110_clk_data = devm_kzalloc(&pdev->dev, sizeof(*cp110_clk_data) +
-                                                    sizeof(struct
-clk_hw *) * CP110_CLK_NUM,
-                                                    GFP_KERNEL);
+On Thu, Sep 15, 2016 at 10:13:17PM +0300, Laurent Pinchart wrote:
+> On Thursday 15 Sep 2016 21:07:17 Geert Uytterhoeven wrote:
+> > On Wed, Sep 14, 2016 at 10:01 PM, SF Markus Elfring wrote:
+> > > From: Markus Elfring <elfring@users.sourceforge.net>
+> > > Date: Wed, 14 Sep 2016 21:17:18 +0200
+> > >=20
+> > > Omit an extra message for a memory allocation failure in this functio=
+n.
+> > >=20
+> > > Link:
+> > > http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Ref=
+acto
+> > > r_Strings-WSang_0.pdf
+> > >=20
+> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> >=20
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> There are two other memory allocation failures printed by drivers in the =
+same=20
+> directory that, you'll get my ack if you extend this patch to remove the =
+three=20
+> messages in one go.
 
-I'll re-check, but is that what you meant?
+I agree.
 
-Best regards,
-Marcin
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX2vlPAAoJEBQN5MwUoCm2fSAP/jXm99UeSF2DXDRuSiuTtP4s
+JuRY4fqFF+/cXgt+5R6Ml5sZHmUvxt+5c6HLVPH7AUNvZ1bHEPBjJgsJz7FIaO9K
+GH1HbcIS+e9X+eOBWByW+daSUltPcZddcBbx680im0PP5kHdKQJvAmpRpp7MDYab
+0hOydixB78m5Z3kJB8uqqLcINcNYbicINC/FhXa9gRthuJO72KAuLRc0WEbVM2e4
+tXL2lpA4JyTZp6prJ4ciheaXwDo3TFY5zlFt4WTAmykdjYSfwgSCysuVxD1u8N/q
+osR9F3E2oNajsM9/cL62+lZoy4tdpUvCLVx9ckRuVKfrDcXJ+4u4fdjTtbeKN6SF
+/hZCqLJNMdiVLda425Px3Rm5lJxe6KngX96M9/ToBYrAB8ooRyfDn7G4oe1NAI9o
+h3xgzmRz91+wiXrQe29ovbOqSU3FEBFTsgdAGaE89v+2lSLrKpLN82KZjb4VfkHb
+6utt09HtlCSqSdQhfkNpDbOmOWxXDQ8wv7zFwa1dv+d1h7mYwz97XSATFBysr4pC
+r2gmFHCZCLgNxmmwUDSKNYp4PglmUo/L4n6/XykgVXSHqtyVrFfZppOrW0mUdaIB
+ZX++VfXxUPyP+S9ggTICUd0ROi1R5bglPc2uFErBEMHRkvQ++0qeQNXp9gcmm/gB
+6Um/cljQ/tSDoNL+d2jv
+=Bkse
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
