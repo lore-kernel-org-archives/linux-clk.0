@@ -1,57 +1,63 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: imx31: fix clock control module interrupts description
-Date: Mon, 19 Sep 2016 04:54:34 +0300
-Message-Id: <1474250074-11430-1-git-send-email-vz@mleia.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+ <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
+ <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com> <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 22:48:06 +0200
+Message-ID: <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in
+ cpg_mstp_clocks_init() after error detection
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>,
+	Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The type of AVIC interrupt controller found on i.MX31 is one-cell,
-namely 31 for CCM DVFS and 53 for CCM, however for clock control
-module its interrupts are specified as 3-cells, fix it.
+On Thu, Sep 15, 2016 at 10:40 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+>>> * Split a condition check for memory allocation failures so that
+>>>   each pointer from these function calls will be checked immediately.
+>>>
+>>>   See also background information:
+>>>   Topic "CWE-754: Improper check for unusual or exceptional conditions"
+>>>   Link: https://cwe.mitre.org/data/definitions/754.html
+>>>
+>>> * Return directly after a call of the function "kzalloc" failed
+>>>   at the beginning.
+>>
+>> Both calls are already close together.
+>
+> Can it be that an other software development concern is eventually
+> overlooked because of this "neighbourship" (or is categorised with
+> a lower priority)?
+>
+> I suggest to reconsider this design detail if it is really acceptable
+> for the safe implementation of such a software module.
+>
+> * How much will it matter in general that one function call was performed
+>   in this use case without checking its return values immediately?
+>
+> * Should it usually be determined quicker if a required resource like
+>   memory could be acquired before trying the next allocation?
 
-Fixes: ef0e4a606fb6 ("ARM: mx31: Replace clk_register_clkdev with clock DT lookup")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- Documentation/devicetree/bindings/clock/imx31-clock.txt | 2 +-
- arch/arm/boot/dts/imx31.dtsi                            | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Note that if memory allocation fails in this driver, the system won't
+boot at all. So even not checking for allocation failures at all could be
+acceptable.
 
-diff --git a/Documentation/devicetree/bindings/clock/imx31-clock.txt b/Documentation/devicetree/bindings/clock/imx31-clock.txt
-index 19df842..8163d56 100644
---- a/Documentation/devicetree/bindings/clock/imx31-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx31-clock.txt
-@@ -77,7 +77,7 @@ Examples:
- clks: ccm@53f80000{
- 	compatible = "fsl,imx31-ccm";
- 	reg = <0x53f80000 0x4000>;
--	interrupts = <0 31 0x04 0 53 0x04>;
-+	interrupts = <31>, <53>;
- 	#clock-cells = <1>;
- };
- 
-diff --git a/arch/arm/boot/dts/imx31.dtsi b/arch/arm/boot/dts/imx31.dtsi
-index 1ce7ae9..3e0893e 100644
---- a/arch/arm/boot/dts/imx31.dtsi
-+++ b/arch/arm/boot/dts/imx31.dtsi
-@@ -122,7 +122,7 @@
- 			clks: ccm@53f80000{
- 				compatible = "fsl,imx31-ccm";
- 				reg = <0x53f80000 0x4000>;
--				interrupts = <0 31 0x04 0 53 0x04>;
-+				interrupts = <31>, <53>;
- 				#clock-cells = <1>;
- 			};
- 		};
--- 
-2.8.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
