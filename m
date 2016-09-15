@@ -1,96 +1,83 @@
-Return-Path: <fabien.lahoudere@collabora.co.uk>
-From: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
-To: 
-Cc: Kalle Kankare <kalle.kankare@vincit.fi>,
-	Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
-Subject: [PATCH 1/1] ARM: imx5: Add clocks configuration
-Date: Thu, 15 Sep 2016 12:13:22 +0200
-Message-Id: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+ <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 21:11:07 +0200
+Message-ID: <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in
+ cpg_mstp_clocks_init() after error detection
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>,
+	Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kalle Kankare <kalle.kankare@vincit.fi>
+Hi Markus,
 
-Add clocks configuration for CSI, FIRI and IEEE1588.
+On Wed, Sep 14, 2016 at 10:03 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 14 Sep 2016 21:30:27 +0200
+>
+> The kfree() function was called in up to two cases
+> by the cpg_mstp_clocks_init() function during error handling even if
+> the passed variable contained a null pointer.
 
-Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
----
- drivers/clk/imx/clk-imx51-imx53.c      | 20 ++++++++++++++++++++
- include/dt-bindings/clock/imx5-clock.h | 15 ++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+It's perfectly legal to call kfree() on a NULL pointer.
 
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
-index 29d4c44..1e3c9ea 100644
---- a/drivers/clk/imx/clk-imx51-imx53.c
-+++ b/drivers/clk/imx/clk-imx51-imx53.c
-@@ -126,6 +126,7 @@ static const char *spdif0_com_sel[] = { "spdif0_podf", "ssi1_root_gate", };
- static const char *mx51_spdif1_com_sel[] = { "spdif1_podf", "ssi2_root_gate", };
- static const char *step_sels[] = { "lp_apm", };
- static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
-+static const char *ieee1588_sels[] = { "pll3_sw", "pll4_sw", "dummy" /* usbphy2_clk */, "dummy" /* fec_phy_clk */ };
- 
- static struct clk *clk[IMX5_CLK_END];
- static struct clk_onecell_data clk_data;
-@@ -543,6 +544,25 @@ static void __init mx53_clocks_init(struct device_node *np)
- 	clk[IMX5_CLK_I2C3_GATE]		= imx_clk_gate2("i2c3_gate", "per_root", MXC_CCM_CCGR1, 22);
- 	clk[IMX5_CLK_SATA_GATE]		= imx_clk_gate2("sata_gate", "ipg", MXC_CCM_CCGR4, 2);
- 
-+	clk[IMX5_CLK_FIRI_SEL]		= imx_clk_mux("firi_sel", MXC_CCM_CSCMR2, 12, 2,
-+						standard_pll_sel, ARRAY_SIZE(standard_pll_sel));
-+	clk[IMX5_CLK_FIRI_PRED]		= imx_clk_divider("firi_pred", "firi_sel", MXC_CCM_CSCDR3, 6, 3);
-+	clk[IMX5_CLK_FIRI_PODF]		= imx_clk_divider("firi_podf", "firi_pred", MXC_CCM_CSCDR3, 0, 6);
-+	clk[IMX5_CLK_FIRI_SERIAL_GATE]	= imx_clk_gate2("firi_serial_gate", "firi_podf", MXC_CCM_CCGR1, 28);
-+	clk[IMX5_CLK_FIRI_IPG_GATE]	= imx_clk_gate2("firi_ipg_gate", "ipg", MXC_CCM_CCGR1, 26);
-+
-+	clk[IMX5_CLK_CSI0_MCLK1_SEL]	= imx_clk_mux("csi0_mclk1_sel", MXC_CCM_CSCMR2, 22, 2,
-+						standard_pll_sel, ARRAY_SIZE(standard_pll_sel));
-+	clk[IMX5_CLK_CSI0_MCLK1_PRED]	= imx_clk_divider("csi0_mclk1_pred", "csi0_mclk1_sel", MXC_CCM_CSCDR4, 6, 3);
-+	clk[IMX5_CLK_CSI0_MCLK1_PODF]	= imx_clk_divider("csi0_mclk1_podf", "csi0_mclk1_pred", MXC_CCM_CSCDR4, 0, 6);
-+	clk[IMX5_CLK_CSI0_MCLK1_GATE]	= imx_clk_gate2("csi0_mclk1_serial_gate", "csi0_mclk1_podf", MXC_CCM_CCGR6, 4);
-+
-+	clk[IMX5_CLK_IEEE1588_SEL]	= imx_clk_mux("ieee1588_sel", MXC_CCM_CSCMR2, 14, 2,
-+						ieee1588_sels, ARRAY_SIZE(ieee1588_sels));
-+	clk[IMX5_CLK_IEEE1588_PRED]	= imx_clk_divider("ieee1588_pred", "ieee1588_sel", MXC_CCM_CSCDR2, 6, 3);
-+	clk[IMX5_CLK_IEEE1588_PODF]	= imx_clk_divider("ieee1588_podf", "ieee1588_pred", MXC_CCM_CSCDR2, 0, 6);
-+	clk[IMX5_CLK_IEEE1588_GATE]	= imx_clk_gate2("ieee1588_serial_gate", "ieee1588_podf", MXC_CCM_CCGR7, 6);
-+
- 	clk[IMX5_CLK_CKO1_SEL]		= imx_clk_mux("cko1_sel", MXC_CCM_CCOSR, 0, 4,
- 						mx53_cko1_sel, ARRAY_SIZE(mx53_cko1_sel));
- 	clk[IMX5_CLK_CKO1_PODF]		= imx_clk_divider("cko1_podf", "cko1_sel", MXC_CCM_CCOSR, 4, 3);
-diff --git a/include/dt-bindings/clock/imx5-clock.h b/include/dt-bindings/clock/imx5-clock.h
-index f4b7478..d382fc7 100644
---- a/include/dt-bindings/clock/imx5-clock.h
-+++ b/include/dt-bindings/clock/imx5-clock.h
-@@ -201,6 +201,19 @@
- #define IMX5_CLK_STEP_SEL		189
- #define IMX5_CLK_CPU_PODF_SEL		190
- #define IMX5_CLK_ARM			191
--#define IMX5_CLK_END			192
-+#define IMX5_CLK_FIRI_PRED		192
-+#define IMX5_CLK_FIRI_SEL		193
-+#define IMX5_CLK_FIRI_PODF		194
-+#define IMX5_CLK_FIRI_SERIAL_GATE	195
-+#define IMX5_CLK_FIRI_IPG_GATE		196
-+#define IMX5_CLK_CSI0_MCLK1_PRED	197
-+#define IMX5_CLK_CSI0_MCLK1_SEL		198
-+#define IMX5_CLK_CSI0_MCLK1_PODF	199
-+#define IMX5_CLK_CSI0_MCLK1_GATE	200
-+#define IMX5_CLK_IEEE1588_PRED		201
-+#define IMX5_CLK_IEEE1588_SEL		202
-+#define IMX5_CLK_IEEE1588_PODF		203
-+#define IMX5_CLK_IEEE1588_GATE		204
-+#define IMX5_CLK_END			205
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX5_H */
--- 
-2.1.4
+> * Split a condition check for memory allocation failures so that
+>   each pointer from these function calls will be checked immediately.
+>
+>   See also background information:
+>   Topic "CWE-754: Improper check for unusual or exceptional conditions"
+>   Link: https://cwe.mitre.org/data/definitions/754.html
+>
+> * Return directly after a call of the function "kzalloc" failed
+>   at the beginning.
+
+Both calls are already close together.
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/clk/renesas/clk-mstp.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+
+In addition, your patch increases the LoC, IMHO without improving the code.
+
+>
+> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+> index 1fdc44b..6c82e0e 100644
+> --- a/drivers/clk/renesas/clk-mstp.c
+> +++ b/drivers/clk/renesas/clk-mstp.c
+> @@ -167,10 +167,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+>         unsigned int i;
+>
+>         group = kzalloc(sizeof(*group), GFP_KERNEL);
+> +       if (!group)
+> +               return;
+> +
+>         clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
+> -       if (group == NULL || clks == NULL) {
+> +       if (!clks) {
+>                 kfree(group);
+> -               kfree(clks);
+>                 return;
+>         }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
