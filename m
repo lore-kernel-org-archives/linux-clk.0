@@ -1,86 +1,50 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v3 00/14] Clock improvement for video playback
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
- <20160914183620.GV7243@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ian
- Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <2239e64e-6cfd-1508-8d9f-f6f866bcc7c8@st.com>
-Date: Thu, 15 Sep 2016 09:47:02 +0200
+Return-Path: <elfring@users.sourceforge.net>
+Subject: Re: clk/Renesas-MSTP: Delete an error message for a failed memory
+ allocation
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <04cf79a5-df91-d8c2-83b2-ad9e9130ee7a@users.sourceforge.net>
+ <CAMuHMdVtvg99JY=_+Wj7jpd82=5rKDKOVxg0TYW3wUQsUQzAOA@mail.gmail.com>
+ <2927869.3rNkSDiBcX@avalon>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Simon Horman <horms+renesas@verge.net.au>,
+ Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <bd139d45-f7c1-ac79-6b38-93b1eb1f3e9a@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 22:17:41 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160914183620.GV7243@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <2927869.3rNkSDiBcX@avalon>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/14/2016 08:36 PM, Stephen Boyd wrote:
-> On 08/29, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>> Omit an extra message for a memory allocation failure in this function.
+>>>
+>>> Link:
+>>> http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refacto
+>>> r_Strings-WSang_0.pdf
+>>>
+>>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 >>
->> v3:
->>    - Rebase to v4.8-rc1
->>    - Tipo fix in st,clkgen-pll.txt
->>    - Add Ack of Peter for the series
->>    - Add missed patch: "ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms"
->>
->> v2:
->>    - Simpliflication of clock binding
->>      remark from Rob https://lkml.org/lkml/2016/5/25/492
->>    - Suppression of stih415-416 support for the clocks (in order
->> 	to help simplification of clock binding)
->>      (others patchs for the machine and drivers will come)
->>
->> This serie allows to increase video resolutions and make audio
->> adjustment during a video playback.
->>
->> Gabriel Fernandez (14):
->>    drivers: clk: st: Remove stih415-416 clock support
->>    drivers: clk: st: Simplify clock binding of STiH4xx platforms
->>    ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms
->>    drivers: clk: st: Add fs660c32 synthesizer algorithm
->>    drivers: clk: st: Add clock propagation for audio clocks
->>    drivers: clk: st: Handle clk synchronous mode for video clocks
->>    ARM: DT: STiH407: Enable clock propagation for audio clocks
->>    ARM: DT: STiH410: Enable clock propagation for audio clocks
->>    ARM: DT: STiH418: Enable clock propagation for audio clocks
->>    ARM: DT: STiH407: Enable synchronous clock mode for video clocks
->>    ARM: DT: STiH410: Enable synchronous clock mode for video clocks
->>    ARM: DT: STiH418: Enable synchronous clock mode for video clocks
->>    ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
->>    ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
-> The order of patches intermingles clk changes and dts changes.
-> I'd prefer to not take any patches for dts through the clk tree,
-> so can those be deferred to an arm-soc PR? Assuming that works,
-> I'd just pick 1-2, and 4-6 into the clk tree and the rest can go
-> on top through arm-soc.
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> There are two other memory allocation failures printed by drivers in the same 
+> directory that, you'll get my ack
 
-Hi Stephen,
+Does this kind of feedback express a general acceptance for the deletion
+of similar error messages?
 
-Many thanks !
 
-BR
+> if you extend this patch to remove the three messages in one go.
 
-Gabriel
+Does this wish influence the handling of suggested changes for the source file
+"drivers/clk/renesas/clk-mstp.c" anyhow?
+https://patchwork.kernel.org/patch/9332363/
+
+Regards,
+Markus
