@@ -1,75 +1,53 @@
-Return-Path: <fabien.lahoudere@collabora.co.uk>
-Subject: Re: [PATCH 1/1] ARM: imx5: Add clocks configuration
-To: Shawn Guo <shawnguo@kernel.org>, Alexander Shiyan <shc_work@mail.ru>
-References: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
- <1473961353.68713919@f429.i.mail.ru> <20160918002159.GD15478@tiger>
- <20160918002451.GE15478@tiger>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, Kalle Kankare <kalle.kankare@vincit.fi>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, open list
- <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>
-From: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
-Message-ID: <1b8d9b99-ef47-734e-a232-88fa8860304c@collabora.co.uk>
-Date: Mon, 19 Sep 2016 09:33:16 +0200
+Return-Path: <shc_work@mail.ru>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+To: =?UTF-8?B?RmFiaWVuIExhaG91ZGVyZQ==?= <fabien.lahoudere@collabora.co.uk>
+Cc: =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>,
+	=?UTF-8?B?b3BlbiBsaXN0Ok9QRU4gRklSTVdBUkUgQU5EIEZMQVRURU5FRCBERVZJQ0Ug?=
+ =?UTF-8?B?VFJFRSBCSU5ESU5HUw==?= <devicetree@vger.kernel.org>,
+	=?UTF-8?B?S2FsbGUgS2Fua2FyZQ==?= <kalle.kankare@vincit.fi>,
+	=?UTF-8?B?TWljaGFlbCBUdXJxdWV0dGU=?= <mturquette@baylibre.com>,
+	=?UTF-8?B?U3RlcGhlbiBCb3lk?= <sboyd@codeaurora.org>,
+	=?UTF-8?B?b3BlbiBsaXN0?= <linux-kernel@vger.kernel.org>,
+	=?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>,
+	=?UTF-8?B?U2FzY2hhIEhhdWVy?= <kernel@pengutronix.de>,
+	=?UTF-8?B?RmFiaW8gRXN0ZXZhbQ==?= <fabio.estevam@nxp.com>,
+	=?UTF-8?B?U2hhd24gR3Vv?= <shawnguo@kernel.org>,
+	=?UTF-8?B?b3BlbiBsaXN0OkNPTU1PTiBDTEsgRlJBTUVXT1JL?= <linux-clk@vger.kernel.org>,
+	=?UTF-8?B?bW9kZXJhdGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRSBJTVggLyBNWEMgQVJNIEFS?=
+ =?UTF-8?B?Q0hJVEVDVFVSRQ==?= <linux-arm-kernel@lists.infradead.org>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzFdIEFSTTogaW14NTogQWRkIGNsb2NrcyBjb25maWd1?=
+ =?UTF-8?B?cmF0aW9u?=
 MIME-Version: 1.0
-In-Reply-To: <20160918002451.GE15478@tiger>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Date: Thu, 15 Sep 2016 20:42:33 +0300
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Message-ID: <1473961353.68713919@f429.i.mail.ru>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+References: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 18/09/16 02:24, Shawn Guo wrote:
-> On Sun, Sep 18, 2016 at 08:21:59AM +0800, Shawn Guo wrote:
->> On Thu, Sep 15, 2016 at 08:42:33PM +0300, Alexander Shiyan wrote:
->>>> Четверг, 15 сентября 2016, 13:13 +03:00 от Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>:
->>>>
->>>> From: Kalle Kankare < kalle.kankare@vincit.fi >
->>>>
->>>> Add clocks configuration for CSI, FIRI and IEEE1588.
->>>>
->>>> Signed-off-by: Fabien Lahoudere < fabien.lahoudere@collabora.co.uk >
->>>> ---
->>>>  drivers/clk/imx/clk-imx51-imx53.c      | 20 ++++++++++++++++++++
->>>>  include/dt-bindings/clock/imx5-clock.h | 15 ++++++++++++++-
->>>>  2 files changed, 34 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
->>>> index 29d4c44..1e3c9ea 100644
->>>> --- a/drivers/clk/imx/clk-imx51-imx53.c
->>>> +++ b/drivers/clk/imx/clk-imx51-imx53.c
->>>> @@ -126,6 +126,7 @@ static const char *spdif0_com_sel[] = { "spdif0_podf", "ssi1_root_gate", };
->>>>  static const char *mx51_spdif1_com_sel[] = { "spdif1_podf", "ssi2_root_gate", };
->>>>  static const char *step_sels[] = { "lp_apm", };
->>>>  static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
->>>> +static const char *ieee1588_sels[] = { "pll3_sw", "pll4_sw", "dummy" /* usbphy2_clk */, "dummy" /* fec_phy_clk */ };
->>>>
->>>>  static struct clk *clk[IMX5_CLK_END];
->>>>  static struct clk_onecell_data clk_data;
->>>> @@ -543,6 +544,25 @@ static void __init mx53_clocks_init(struct device_node *np)
->>> ...
->>>
->>> 2 Shawn Guo: Since the change affects only on i.MX53 architecture,
->>> I would ask to change the subject to i.MX53 if it possible.
->>
->> Yes.  Actually, since clock driver is not moved to drivers/clk, we
->
-> s/not/now
->
->> shouldn't prefix it with "ARM: " any longer.
-
-
-Ok is "clk: imx53: Add clocks configuration" ok?
-
->
-> Shawn
->
-
-Thanks
-
-Fabien
+PtCn0LXRgtCy0LXRgNCzLCAxNSDRgdC10L3RgtGP0LHRgNGPIDIwMTYsIDEzOjEzICswMzowMCDQ
+vtGCIEZhYmllbiBMYWhvdWRlcmUgPGZhYmllbi5sYWhvdWRlcmVAY29sbGFib3JhLmNvLnVrPjoK
+Pgo+RnJvbTogS2FsbGUgS2Fua2FyZSA8IGthbGxlLmthbmthcmVAdmluY2l0LmZpID4KPgo+QWRk
+IGNsb2NrcyBjb25maWd1cmF0aW9uIGZvciBDU0ksIEZJUkkgYW5kIElFRUUxNTg4Lgo+Cj5TaWdu
+ZWQtb2ZmLWJ5OiBGYWJpZW4gTGFob3VkZXJlIDwgZmFiaWVuLmxhaG91ZGVyZUBjb2xsYWJvcmEu
+Y28udWsgPgo+LS0tCj7CoGRyaXZlcnMvY2xrL2lteC9jbGstaW14NTEtaW14NTMuYyAgICAgIHwg
+MjAgKysrKysrKysrKysrKysrKysrKysKPsKgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9pbXg1
+LWNsb2NrLmggfCAxNSArKysrKysrKysrKysrKy0KPsKgMiBmaWxlcyBjaGFuZ2VkLCAzNCBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4KPmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgv
+Y2xrLWlteDUxLWlteDUzLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDUxLWlteDUzLmMKPmlu
+ZGV4IDI5ZDRjNDQuLjFlM2M5ZWEgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlt
+eDUxLWlteDUzLmMKPisrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14NTEtaW14NTMuYwo+QEAg
+LTEyNiw2ICsxMjYsNyBAQCBzdGF0aWMgY29uc3QgY2hhciAqc3BkaWYwX2NvbV9zZWxbXSA9IHsg
+InNwZGlmMF9wb2RmIiwgInNzaTFfcm9vdF9nYXRlIiwgfTsKPsKgc3RhdGljIGNvbnN0IGNoYXIg
+Km14NTFfc3BkaWYxX2NvbV9zZWxbXSA9IHsgInNwZGlmMV9wb2RmIiwgInNzaTJfcm9vdF9nYXRl
+IiwgfTsKPsKgc3RhdGljIGNvbnN0IGNoYXIgKnN0ZXBfc2Vsc1tdID0geyAibHBfYXBtIiwgfTsK
+PsKgc3RhdGljIGNvbnN0IGNoYXIgKmNwdV9wb2RmX3NlbHNbXSA9IHsgInBsbDFfc3ciLCAic3Rl
+cF9zZWwiIH07Cj4rc3RhdGljIGNvbnN0IGNoYXIgKmllZWUxNTg4X3NlbHNbXSA9IHsgInBsbDNf
+c3ciLCAicGxsNF9zdyIsICJkdW1teSIgLyogdXNicGh5Ml9jbGsgKi8sICJkdW1teSIgLyogZmVj
+X3BoeV9jbGsgKi8gfTsKPsKgCj7CoHN0YXRpYyBzdHJ1Y3QgY2xrICpjbGtbSU1YNV9DTEtfRU5E
+XTsKPsKgc3RhdGljIHN0cnVjdCBjbGtfb25lY2VsbF9kYXRhIGNsa19kYXRhOwo+QEAgLTU0Myw2
+ICs1NDQsMjUgQEAgc3RhdGljIHZvaWQgX19pbml0IG14NTNfY2xvY2tzX2luaXQoc3RydWN0IGRl
+dmljZV9ub2RlICpucCkKLi4uCgoyIFNoYXduIEd1bzogU2luY2UgdGhlIGNoYW5nZSBhZmZlY3Rz
+IG9ubHkgb24gaS5NWDUzIGFyY2hpdGVjdHVyZSwKSSB3b3VsZCBhc2sgdG8gY2hhbmdlIHRoZSBz
+dWJqZWN0IHRvIGkuTVg1MyBpZiBpdCBwb3NzaWJsZS4KCi0tLQoK
