@@ -1,33 +1,29 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 2/4] ARM: sa11x0/pxa: acquire timer rate from the clock
- rate
-To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
- Wim Van Sebroeck <wim@iguana.be>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-3-git-send-email-robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <4a9fbd3b-7250-20e3-02af-c8a15d10bfd8@linaro.org>
-Date: Mon, 19 Sep 2016 21:48:35 +0200
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  jbrunet@baylibre.com,  johnyoun@synopsys.com,  kishon@ti.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  sboyd@codeaurora.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org
+Subject: Re: [PATCH v2 4/6] ARM64: meson-gxbb: add USB Nodes
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+	<20160911134111.31141-5-martin.blumenstingl@googlemail.com>
+Date: Thu, 15 Sep 2016 15:10:23 -0700
+In-Reply-To: <20160911134111.31141-5-martin.blumenstingl@googlemail.com>
+	(Martin Blumenstingl's message of "Sun, 11 Sep 2016 15:41:09 +0200")
+Message-ID: <7hintwke5s.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <1474312335-20997-3-git-send-email-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/09/2016 21:12, Robert Jarzmik wrote:
-> As both pxa and sa1100 provide a clock to the timer, the rate can be
-> inferred from the clock rather than hard encoded in a functional call.
-> 
-> This patch changes the pxa timer to have a mandatory clock which is used
-> as the timer rate.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Add the nodes for the dwc2 USB controller and the related USB PHYs.
+> Currently we force usb0 to host mode because OTG is currently not
+> working in our PHY driver.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+
+Applied (after adding a "dts: " to the subject.
+
+Kevin
