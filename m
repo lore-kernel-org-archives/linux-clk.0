@@ -1,52 +1,86 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman
-	<horms+renesas@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3] clk: renesas: rz: Select EXTAL vs USB clock
-Date: Thu, 1 Sep 2016 19:41:22 +0000
-Message-ID: <SG2PR06MB1165E96781DE628E27DCF7AE8AE20@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160830031358.19468-1-chris.brandt@renesas.com>
- <20160901131036.17241-1-chris.brandt@renesas.com>
- <CAMuHMdXd8WxTtpiQ5rujKKVP04oEriF62K9d3iTh1zVakVtTog@mail.gmail.com>
-In-Reply-To: <CAMuHMdXd8WxTtpiQ5rujKKVP04oEriF62K9d3iTh1zVakVtTog@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v3 00/14] Clock improvement for video playback
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+ <20160914183620.GV7243@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian
+ Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        Gabriel Fernandez
+	<gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <2239e64e-6cfd-1508-8d9f-f6f866bcc7c8@st.com>
+Date: Thu, 15 Sep 2016 09:47:02 +0200
 MIME-Version: 1.0
+In-Reply-To: <20160914183620.GV7243@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDkvMS8yMDE2LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4g
-KyNkZWZpbmUgTURfQk9PVDAoeCkgKCh4ID4+IDApICYgMSkgICAgIC8qIFAwXzAgKi8NCj4gPiAr
-I2RlZmluZSBNRF9CT09UMSh4KSAoKHggPj4gMSkgJiAxKSAgICAgLyogUDBfMSAqLw0KPiA+ICsj
-ZGVmaW5lIE1EX0NMSyh4KSAgICgoeCA+PiAyKSAmIDEpICAgICAvKiBQMF8yICovDQo+DQo+IEdv
-b2QgaWRlYSB0byB1c2UgYSBtYWNybyBmb3IgdGhhdCENCj4gSG93ZXZlciwgYWRkaW5nIG1vcmUg
-KHVudXNlZCkgbWFjcm9zIG1heSB0cmlnZ2VyIG1vcmUgcXVlc3Rpb25zDQo+IGZyb20gcmV2aWV3
-ZXJzLCBjZnIuIGJlbG93IDstKQ0KDQpPSywgSSBjYW4gcHVsbCB0aGUgb3RoZXIgb25lcyBvdXQu
-IEknbSBPSyB3aXRoIHRoYXQuDQoNCg0KPiA+ICsjZGVmaW5lIE1EX0NMS1MoeCkgICgoeCA+PiAz
-KSAmIDEpICAgICAvKiBQMF8zICovDQo+ID4gKw0KPiA+ICAvKiAtLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQ0KPiA+ICAgKiBJbml0aWFsaXphdGlvbg0KPiA+ICAgKi8NCj4gPg0KPiA+ICt1MTYgcnpfY3Bn
-X3JlYWRfbW9kZV9waW5zKHZvaWQpDQo+DQo+IHN0YXRpYyB1MTYgX19pbml0IHJ6X2NwZ19yZWFk
-X21vZGVfcGlucyh2b2lkKQ0KPg0KPiBPciBkbyB5b3UgaW50ZW5kIHRvIG1ha2UgdGhpcyBhIGds
-b2JhbCBmdW5jdGlvbj8NCg0KT29vcHMuIEknbGwgbWFrZSBpdCBzdGF0aWMuDQoNCg0KDQo+IFRo
-ZXJlJ3MgYWxzbyBNRF9CT09UMiBhdCBQN18wLiBUbyByZWFkIHRoYXQsIHlvdSBoYXZlIHRvIG1h
-cCBhbmQgcmVhZA0KPiBhIGRpZmZlcmVudCBzZXQgb2YgcmVnaXN0ZXJzLCB0aG91Z2guLi4NCg0K
-R29vZCBwb2ludC4gU28uLi5nb2luZyBiYWNrIHRvIHlvdXIgZmlyc3QgY29tbWVudCwgdGhlcmUg
-aXMgbm8gcmVhc29uIGZvciBtYWtpbmcgbWFjcm9zIG9yIGRpc2N1c3NpbmcgbW9kZSBwaW5zIHRo
-YXQgeW91IGhhdmUgbm8gcGxhbiBvbiBkZWFsaW5nIHdpdGguDQoNCg0KPiA+ICAgICAgICAgaWYg
-KHN0cmNtcChuYW1lLCAicGxsIikgPT0gMCkgew0KPiA+IC0gICAgICAgICAgICAgICAvKiBGSVhN
-RTogY3BnX21vZGUgc2hvdWxkIGJlIHJlYWQgZnJvbSBHUElPLiBCdXQgbm8gR1BJTyBzdXBwb3J0
-IHlldCAqLw0KPiA+IC0gICAgICAgICAgICAgICB1bnNpZ25lZCBjcGdfbW9kZSA9IDA7IC8qIGhh
-cmRjb2RlZCB0byBFWFRBTCBmb3Igbm93ICovDQo+DQo+IEknZCBqdXN0IGFzc2lnbiAiTURfQ0xL
-KHJ6X2NwZ19yZWFkX21vZGVfcGlucygpKSIgdG8gY3BnX21vZGUgaGVyZS4uLg0KPg0KPiA+IC0g
-ICAgICAgICAgICAgICBjb25zdCBjaGFyICpwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50
-X25hbWUobnAsIGNwZ19tb2RlKTsNCj4gPiArICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IGNw
-Z19tb2RlOw0KPiA+ICsgICAgICAgICAgICAgICBjb25zdCBjaGFyICpwYXJlbnRfbmFtZTsNCj4g
-Pg0KPiA+ICsgICAgICAgICAgICAgICBjcGdfbW9kZSA9IE1EX0NMSyhyel9jcGdfcmVhZF9tb2Rl
-X3BpbnMoKSk7DQo+ID4gKyAgICAgICAgICAgICAgIHBhcmVudF9uYW1lID0gb2ZfY2xrX2dldF9w
-YXJlbnRfbmFtZShucCwgY3BnX21vZGUpOw0KPg0KPi4uLiBhbmQgbm90IGJvdGhlciBzcGxpdHRp
-bmcgdGhlIGxpbmVzLCBhcyB0aGV5IGRvbid0IGJyZWFrIHRoZSA4MC1jaGFycy1wZXItbGluZSBs
-aW1pdC4NCg0KQnV0IEkgZ2V0IHBhaWQgcGVyIGxpbmUgb2YgY29kZSEhISAgIChqdXN0IGtpZGRp
-bmcpDQpJJ2xsIG1ha2UgdGhlIGNoYW5nZXMgYW5kIHJlc2VuZC4NCg0KDQpUaGFua3MgZm9yIHlv
-dXIgcmV2aWV3IQ0KDQoNCkNocmlzDQo=
+On 09/14/2016 08:36 PM, Stephen Boyd wrote:
+> On 08/29, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> v3:
+>>    - Rebase to v4.8-rc1
+>>    - Tipo fix in st,clkgen-pll.txt
+>>    - Add Ack of Peter for the series
+>>    - Add missed patch: "ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms"
+>>
+>> v2:
+>>    - Simpliflication of clock binding
+>>      remark from Rob https://lkml.org/lkml/2016/5/25/492
+>>    - Suppression of stih415-416 support for the clocks (in order
+>> 	to help simplification of clock binding)
+>>      (others patchs for the machine and drivers will come)
+>>
+>> This serie allows to increase video resolutions and make audio
+>> adjustment during a video playback.
+>>
+>> Gabriel Fernandez (14):
+>>    drivers: clk: st: Remove stih415-416 clock support
+>>    drivers: clk: st: Simplify clock binding of STiH4xx platforms
+>>    ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms
+>>    drivers: clk: st: Add fs660c32 synthesizer algorithm
+>>    drivers: clk: st: Add clock propagation for audio clocks
+>>    drivers: clk: st: Handle clk synchronous mode for video clocks
+>>    ARM: DT: STiH407: Enable clock propagation for audio clocks
+>>    ARM: DT: STiH410: Enable clock propagation for audio clocks
+>>    ARM: DT: STiH418: Enable clock propagation for audio clocks
+>>    ARM: DT: STiH407: Enable synchronous clock mode for video clocks
+>>    ARM: DT: STiH410: Enable synchronous clock mode for video clocks
+>>    ARM: DT: STiH418: Enable synchronous clock mode for video clocks
+>>    ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
+>>    ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+> The order of patches intermingles clk changes and dts changes.
+> I'd prefer to not take any patches for dts through the clk tree,
+> so can those be deferred to an arm-soc PR? Assuming that works,
+> I'd just pick 1-2, and 4-6 into the clk tree and the rest can go
+> on top through arm-soc.
+
+Hi Stephen,
+
+Many thanks !
+
+BR
+
+Gabriel
