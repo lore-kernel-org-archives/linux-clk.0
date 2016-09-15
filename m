@@ -1,73 +1,46 @@
-Return-Path: <hotran@apm.com>
-Return-Path: <hotran@apm.com>
-From: Hoan Tran <hotran@apm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	lho@apm.com,
-	Duc Dang <dhdang@apm.com>,
-	Hoan Tran <hotran@apm.com>
-Subject: [PATCH v2 1/3] Documentation: dtb: xgene: Add PMD clock binding
-Date: Fri,  2 Sep 2016 17:40:53 -0700
-Message-Id: <1472863255-32337-2-git-send-email-hotran@apm.com>
-In-Reply-To: <1472863255-32337-1-git-send-email-hotran@apm.com>
-References: <1472863255-32337-1-git-send-email-hotran@apm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Sep 2016 17:39:33 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/34] clk: at91: Migrate to clk_hw based registration
+ and OF APIs
+Message-ID: <20160915003933.GK7243@codeaurora.org>
+References: <20160601231533.9354-1-stephen.boyd@linaro.org>
+ <20160601231533.9354-3-stephen.boyd@linaro.org>
+ <20160607163621.GN3363@piout.net>
+ <20160607184059.6c83477f@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160607184059.6c83477f@bbrezillon>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add APM X-Gene clock binding documentation for PMD clock.
+On 06/07, Boris Brezillon wrote:
+> On Tue, 7 Jun 2016 18:36:21 +0200
+> Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
+> 
+> > On 01/06/2016 at 16:15:01 -0700, Stephen Boyd wrote :
+> > > Now that we have clk_hw based provider APIs to register clks, we
+> > > can get rid of struct clk pointers in this driver, allowing us to
+> > > move closer to a clear split of consumer and provider clk APIs.
+> > > 
+> > > Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > > Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>  
+> > 
+> > Well, apart the same comment about alignement:
+> > 
+> > Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > Tested-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> 
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> 
 
-Signed-off-by: Hoan Tran <hotran@apm.com>
----
- Documentation/devicetree/bindings/clock/xgene.txt | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
-index 82f9638..e6e12ae 100644
---- a/Documentation/devicetree/bindings/clock/xgene.txt
-+++ b/Documentation/devicetree/bindings/clock/xgene.txt
-@@ -8,6 +8,7 @@ Required properties:
- - compatible : shall be one of the following:
- 	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
- 	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
-+	"apm,xgene-pmd-clock" - for a X-Gene PMD clock
- 	"apm,xgene-device-clock" - for a X-Gene device clock
- 	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
- 	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
-@@ -22,6 +23,15 @@ Required properties for SoC or PCP PLL clocks:
- Optional properties for PLL clocks:
- - clock-names : shall be the name of the PLL. If missing, use the device name.
- 
-+Required properties for PMD clocks:
-+- reg : shall be the physical register address for the pmd clock.
-+- clocks : shall be the input parent clock phandle for the clock.
-+- #clock-cells : shall be set to 1.
-+- clock-output-names : shall be the name of the clock referenced by derive
-+  clock.
-+Optional properties for PLL clocks:
-+- clock-names : shall be the name of the clock. If missing, use the device name.
-+
- Required properties for device clocks:
- - reg : shall be a list of address and length pairs describing the CSR
-          reset and/or the divider. Either may be omitted, but at least
-@@ -59,6 +69,14 @@ For example:
- 		type = <0>;
- 	};
- 
-+	pmd0clk: pmd0clk {
-+		compatible = "apm,xgene-pmd-clock";
-+		#clock-cells = <1>;
-+		clocks = <&pmdpll 0>;
-+		reg = <0x0 0x7E200200 0x0 0x10>;
-+		clock-output-names = "pmd0clk";
-+	};
-+
- 	socpll: socpll@17000120 {
- 		compatible = "apm,xgene-socpll-clock";
- 		#clock-cells = <1>;
+Ok I fixed the alignment and pushed to clk-next.
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
