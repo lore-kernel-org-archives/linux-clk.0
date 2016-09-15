@@ -1,94 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 7 Sep 2016 21:33:35 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] Allwinner clock fixes for 4.8
-Message-ID: <20160907193335.GA4283@lukather>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v3 09/14] ARM: DT: STiH418: Enable clock propagation for
+ audio clocks
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar
+ Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Olivier Bideau <olivier.bideau@st.com>,
+        Geert
+ Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+ <1472473626-15398-10-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Peter Griffin
+	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        Gabriel Fernandez
+	<gabriel.fernandez@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <8f48a7cc-bc23-8ee0-f02a-e74180ab9f74@st.com>
+Date: Thu, 15 Sep 2016 09:47:24 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+In-Reply-To: <1472473626-15398-10-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
 
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mike, Stephen,
+On 08/29/2016 02:27 PM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch is used in the clock driver to apply a clock propagation
+> flag on the audio clocks of STiH418
+> 
+> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+> index 0fd0fa5..a183583 100644
+> --- a/arch/arm/boot/dts/stih418-clock.dtsi
+> +++ b/arch/arm/boot/dts/stih418-clock.dtsi
+> @@ -229,7 +229,7 @@
+>  
+>  			clk_s_d0_flexgen: clk-s-d0-flexgen {
+>  				#clock-cells = <1>;
+> -				compatible = "st,flexgen";
+> +				compatible = "st,flexgen-audio", "st,flexgen";
+>  
+>  				clocks = <&clk_s_d0_quadfs 0>,
+>  					 <&clk_s_d0_quadfs 1>,
+> 
+Hi Gabriel
 
-Please pull the following tag for the 4.8 release.
+Applied on STi tree for v4.9
 
-Thanks!
-Maxime
-
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
-
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
-nxi-clk-fixes-for-4.8
-
-for you to fetch changes up to 6654674cb7b5953ac04fc9d7f5f511676ae97e29:
-
-  clk: sunxi-ng: Fix wrong reset register offsets (2016-08-29 08:38:55 +020=
-0)
-
-----------------------------------------------------------------
-Clock Fixes for the Allwinner SoCs, 4.8 Edition
-
-The usual bunch of fixes to the our clock drivers, mostly targetted to the
-brand new sunxi-ng drivers.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (2):
-      clk: sunxi-ng: Fix inverted test condition in ccu_helper_wait_for_lock
-      clk: sunxi-ng: nk: Make ccu_nk_find_best static
-
-Jorik Jonker (1):
-      clk: sunxi-ng: Fix wrong reset register offsets
-
-Wei Yongjun (2):
-      clk: sunxi: pll2: Fix return value check in sun4i_pll2_setup()
-      clk: sunxi: Fix return value check in sun8i_a23_mbus_setup()
-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 16 ++++++++--------
- drivers/clk/sunxi-ng/ccu_common.c   |  2 +-
- drivers/clk/sunxi-ng/ccu_nk.c       |  6 +++---
- drivers/clk/sunxi/clk-a10-pll2.c    |  4 ++--
- drivers/clk/sunxi/clk-sun8i-mbus.c  |  2 +-
- 5 files changed, 15 insertions(+), 15 deletions(-)
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0GuPAAoJEBx+YmzsjxAglMQP/07Umfq0BYQlrCiLuMKPRMwa
-UhAVd0lvZS7IHpIHDuZGuNtFlNlUDLFa7W29YwIUFqLpfHF66827kZge4SlzV4Oc
-lMWq9PZoj8Mb6kagn8UeolfuIazMGqdHCxRkFIe7XuqHwX9ZGvCn6cywrPkkIbS1
-2O0RGiF6jKn7hcuiCy8DtChAKIzF4StCdMB15mYZDDFo6Istp999MiK4wEwJ3SNC
-8wgSOP5u5p4IV2pY1KavaMXKZqMzBQeTcuASdYqwZqPX284E5VHyzuffvDKMlJs/
-H++A0+blt9jxaD1ZSbWohY3RffMB0Vcq2OGR8P/bUacz3/jfPyHM6cWcG+Wj9A2h
-onjqhoTIknWqkpuPhCNmyYoNBNQC27izWKcSAivFcNBE7Ign3TT2SugQc2HCHDLv
-jYYW2rtVZHnLEDCTfPFhRbrag1vfDUK47WyV7EmumSJljh62NknguPUp2TQFLrKj
-BP5i2WI7NWr3tE9LB9cpE0M1HL/zyWGTgHRwSc/wn69thbgCgQpe4rN/DRroWQ90
-u/+Y2Q2Qphwi72AdewtZ9VFQ+QVcaGiqSvy4OkqAAQmczZBBUYUuG/b8FOwGe9FV
-+QUHnLc4lDQmEvqIy4yU+HiTG1OeBYlDJGiku/RCTmVwi05FEWYimIyMTsgNLeXY
-sx+nVYbOIBPSi3SpqbIE
-=YjYr
------END PGP SIGNATURE-----
-
---lrZ03NoBR/3+SXJZ--
+Thanks
