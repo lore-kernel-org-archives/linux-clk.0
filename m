@@ -1,65 +1,68 @@
-Return-Path: <>
-Return-Path: <>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] clk:mmp:clk-of-mmp2: Free memory and Unmap region obtained by kzalloc and of_iomap
-Date: Tue, 20 Sep 2016 15:48:35 +0530
-Message-Id: <1474366715-15608-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,  linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  johnyoun@synopsys.com,  kishon@ti.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  sboyd@codeaurora.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org
+Subject: Re: [PATCH v2 5/6] ARM64: meson-gxbb-p20x: Enable USB Nodes
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+	<20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+	<20160911134111.31141-6-martin.blumenstingl@googlemail.com>
+	<7h37l2mk6a.fsf@baylibre.com>
+Date: Thu, 15 Sep 2016 15:09:46 -0700
+In-Reply-To: <7h37l2mk6a.fsf@baylibre.com> (Kevin Hilman's message of "Wed, 14
+	Sep 2016 11:05:17 -0700")
+Message-ID: <7hmvj8ke6t.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Kevin Hilman <khilman@baylibre.com> writes:
 
-Free memory and memory mapping , if mmp2_clk_init is not successful.
+> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+>
+>> From: Jerome Brunet <jbrunet@baylibre.com>
+>>
+>> Enable both gxbb USB controller and add a 5V regulator for the OTG port
+>> VBUS
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>
+> nit: subject should have "ARM64: dts:" prefix.
+>
+>> ---
+>>  arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi | 29 ++++++++++++++++++++++++
+>>  1 file changed, 29 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+>> index ce105fe..4493bce 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+>> @@ -93,6 +93,18 @@
+>>  		compatible = "mmc-pwrseq-emmc";
+>>  		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
+>>  	};
+>> +
+>> +	usb_vbus: regulator-usb0-vbus {
+>
+> nit: I like to use the signal name from the schematics for the node name
+> (and for regulator-name below).  In the schematics, that signal is named
+> USB_PWR.
+>
+>
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "USB0_VBUS";
+>> +		regulator-min-microvolt = <5000000>;
+>> +		regulator-max-microvolt = <5000000>;
+>> +
+>> +		gpio = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
+>
+> Please add a comment above this line with the schematic signal name: USB_PWR_EN.
+>
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/mmp/clk-of-mmp2.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+For the record... after a chat with Martin on IRC, I just fixed these up
+myself locally, so...
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 3a51fff..3757287 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -309,19 +309,19 @@ static void __init mmp2_clk_init(struct device_node *np)
- 	pxa_unit->mpmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map mpmu registers\n");
--		return;
-+		goto free_memory;
- 	}
- 
- 	pxa_unit->apmu_base = of_iomap(np, 1);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map apmu registers\n");
--		return;
-+		goto unmap_mpmu_region;
- 	}
- 
- 	pxa_unit->apbc_base = of_iomap(np, 2);
- 	if (!pxa_unit->apbc_base) {
- 		pr_err("failed to map apbc registers\n");
--		return;
-+		goto unmap_apmu_region;
- 	}
- 
- 	mmp_clk_init(np, &pxa_unit->unit, MMP2_NR_CLKS);
-@@ -333,6 +333,13 @@ static void __init mmp2_clk_init(struct device_node *np)
- 	mmp2_axi_periph_clk_init(pxa_unit);
- 
- 	mmp2_clk_reset_init(np, pxa_unit);
-+
-+unmap_apmu_region:
-+	iounmap(pxa_unit->apmu_base);
-+unmap_mpmu_region:
-+	iounmap(pxa_unit->mpmu_base);
-+free_memory:
-+	kfree(pxa_unit);
- }
- 
- CLK_OF_DECLARE(mmp2_clk, "marvell,mmp2-clock", mmp2_clk_init);
--- 
-1.7.9.5
+Applied,
+
+Kevin
