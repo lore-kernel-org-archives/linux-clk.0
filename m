@@ -1,65 +1,126 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 14:45:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Andre Przywara <andre.przywara@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 1/4] clk: sunxi-ng: Add A64 clocks
-Message-ID: <20160914214554.GH7243@codeaurora.org>
-References: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
- <20160909201029.24530-2-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160909201029.24530-2-maxime.ripard@free-electrons.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/3] clk: sunxi-ng: sun6i-a31: set CLK_SET_RATE_UNGATE for all PLLs
+Date: Thu, 15 Sep 2016 14:57:39 +0800
+Message-Id: <20160915065740.13664-3-wens@csie.org>
+In-Reply-To: <20160915065740.13664-1-wens@csie.org>
+References: <20160915065740.13664-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/09, Maxime Ripard wrote:
-> index 106cba27c331..964f22091a10 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -22,3 +22,4 @@ obj-$(CONFIG_SUN6I_A31_CCU)	+= ccu-sun6i-a31.o
->  obj-$(CONFIG_SUN8I_A23_CCU)	+= ccu-sun8i-a23.o
->  obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
->  obj-$(CONFIG_SUN8I_H3_CCU)	+= ccu-sun8i-h3.o
-> +obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
+The PLLs have a "lock" bit in their configuration registers which
+indicate if the PLL has locked on to the requested clock rate. We
+check this bit in the .set_rate op. The PLL cannot lock on if it's
+not running, which might be a false positive (warning).
 
-Maybe do alphanumeric ordering?
+Set the CLK_SET_RATE_UNGATE flag for all PLLs so whenever clk_set_rate
+is called on them, they get enabled and the "lock" check is really
+checking the PLL.
 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> new file mode 100644
-> index 000000000000..d51ee416f515
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> @@ -0,0 +1,870 @@
-> +
-> +static void __init sun50i_a64_ccu_setup(struct device_node *node)
-> +{
-> +	void __iomem *reg;
-> +	u32 val;
-> +
-> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("%s: Could not map the clock registers\n",
-> +		       of_node_full_name(node));
-> +		return;
-> +	}
-> +
-> +	/* Force the PLL-Audio-1x divider to 4 */
-> +	val = readl(reg + SUN50I_A64_PLL_AUDIO_REG);
-> +	val &= ~GENMASK(19, 16);
-> +	writel(val | (3 << 16), reg + SUN50I_A64_PLL_AUDIO_REG);
-> +
-> +	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
-> +
-> +	sunxi_ccu_probe(node, reg, &sun50i_a64_ccu_desc);
-> +}
-> +CLK_OF_DECLARE(sun50i_a64_ccu, "allwinner,sun50i-a64-ccu",
-> +	       sun50i_a64_ccu_setup);
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Is there a reason it can't be a platform driver?
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index bb488e8baea8..ff0d621495fd 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -59,7 +59,7 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   0, 5,	/* M */
+ 				   BIT(31),	/* gate */
+ 				   BIT(28),	/* lock */
+-				   0);
++				   CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
+ 					"osc24M", 0x010,
+@@ -71,7 +71,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x018,
+@@ -83,7 +83,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
+ 				    "osc24M", 0x020,
+@@ -92,7 +92,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
+ 				    0, 2,	/* M */
+ 				    BIT(31),	/* gate */
+ 				    BIT(28),	/* lock */
+-				    0);
++				    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph_clk, "pll-periph",
+ 					   "osc24M", 0x028,
+@@ -101,7 +101,7 @@ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph_clk, "pll-periph",
+ 					   BIT(31),	/* gate */
+ 					   BIT(28),	/* lock */
+ 					   2,		/* post-div */
+-					   0);
++					   CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
+ 					"osc24M", 0x030,
+@@ -113,7 +113,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					"osc24M", 0x038,
+@@ -125,7 +125,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ /*
+  * The MIPI PLL has 2 modes: "MIPI" and "HDMI".
+@@ -145,7 +145,7 @@ static SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+ 					21, 0,	/* mux */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll9_clk, "pll9",
+ 					"osc24M", 0x044,
+@@ -157,7 +157,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll9_clk, "pll9",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll10_clk, "pll10",
+ 					"osc24M", 0x048,
+@@ -169,7 +169,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll10_clk, "pll10",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static const char * const cpux_parents[] = { "osc32k", "osc24M",
+ 					     "pll-cpu", "pll-cpu" };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
