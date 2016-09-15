@@ -1,91 +1,61 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 2 Sep 2016 07:54:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-mips@linux-mips.org,
-	Ralf Baechle <ralf@linux-mips.org>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 24/26] dt-bindings: Document img,boston-clock binding
-Message-ID: <20160902125433.GA4066@rob-hp-laptop>
-References: <20160826153725.11629-1-paul.burton@imgtec.com>
- <20160826153725.11629-25-paul.burton@imgtec.com>
- <20160826174446.GX19826@codeaurora.org>
- <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f0633969-1df4-64c9-a003-8745ad331bc8@imgtec.com>
+Return-Path: <vivek.gautam@codeaurora.org>
+From: vivek.gautam@codeaurora.org
+To: sboyd@codeaurora.org
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	mturquette@baylibre.com,
+	srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH] clk: Add USB3 PHY reset lines
+Date: Thu, 15 Sep 2016 10:15:33 +0530
+Message-Id: <1473914733-4182-1-git-send-email-vivek.gautam@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 30, 2016 at 04:53:01PM +0100, Paul Burton wrote:
-> On 26/08/16 18:44, Stephen Boyd wrote:
-> > On 08/26, Paul Burton wrote:
-> >> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> >> new file mode 100644
-> >> index 0000000..c01ea60
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> >> @@ -0,0 +1,27 @@
-> >> +Binding for Imagination Technologies MIPS Boston clock sources.
-> >> +
-> >> +This binding uses the common clock binding[1].
-> >> +
-> >> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >> +
-> >> +Required properties:
-> >> +- compatible : Should be "img,boston-clock".
-> >> +- #clock-cells : Should be set to 1.
-> >> +  Values available for clock consumers can be found in the header file:
-> >> +    <dt-bindings/clock/boston-clock.h>
-> >> +- regmap : Phandle to the Boston platform register system controller.
-> >> +  This should contain a phandle to the system controller node covering the
-> >> +  platform registers provided by the Boston board.
-> >> +
-> >> +Example:
-> >> +
-> >> +	clk_boston: clock {
-> >> +		compatible = "img,boston-clock";
-> >> +		#clock-cells = <1>;
-> >> +		regmap = <&plat_regs>;
-> > 
-> > Isn't syscon more standard than regmap as the property name? Is
-> > there a binding for the plat_regs device? Is there any reason the
-> > clks can't be populated in that syscon driver?
-> 
-> Hi Stephen,
-> 
-> The plat_regs device doesn't have a custom driver, it simply makes use
-> of the generic "syscon" driver which can provide a regmap.
-> 
-> It would be possible to register the clocks from a register for the
-> plat_regs device, but I don't think it would make much sense. The
-> platform registers in question are essentially just a convenient place
-> where various bits of information about the system are exposed,
-> including the clock frequencies but also other bits & pieces like
-> connectivity of PCIe controllers or I/O coherence units, the RTL
-> revision of the CPU or the wrapper RTL that runs on this FPGA-based
-> board, a register that allows for resetting the board, etc. It's not a
-> single piece of hardware, more a dumping ground for miscellanea. So in
-> my opinion using the syscon approach works best here, and drivers for
-> well defined pieces of hardware or functionality can reference that
-> syscon to retrieve the regmap.
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-That is all quite common for any SoC. Whether it's 2 nodes or 2 drivers 
-are independent questions. You can easily have 1 node and 2 drivers. The 
-decision factor is really how many registers we're dealing with. We 
-don't want to end up with a node per register or register field. That's 
-too fine grained.
+Adding missing reset lines for USB 3.0 PHY.
 
-> As for whether "syscon" is a more standard property name than "regmap",
-> both seem to be used based on a grep of
-> Documentation/devicetree/bindings/. I believe I picked up use of
-> "regmap" from the generic syscon-poweroff & syscon-reboot drivers, which
-> both use "regmap" as a property name.
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
 
-syscon is much more common.
+ - Build tested on clk-next branch.
+ - Tested with my wip branch for usbphy that is available @[1].
 
-Avoid the phandle altogether and make this a child node.
+[1]https://github.com/vivekgautam1/linux/tree/linaro/integration-linux-qcomlt-usbphy-wip
 
-Rob
+ drivers/clk/qcom/gcc-msm8996.c               | 2 ++
+ include/dt-bindings/clock/qcom,gcc-msm8996.h | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index ebe5d18..fe03e6f 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3329,6 +3329,8 @@ static const struct qcom_reset_map gcc_msm8996_resets[] = {
+ 	[GCC_USB_20_BCR] = { 0x12000 },
+ 	[GCC_QUSB2PHY_PRIM_BCR] = { 0x12038 },
+ 	[GCC_QUSB2PHY_SEC_BCR] = { 0x1203c },
++	[GCC_USB3_PHY_BCR] = { 0x50020 },
++	[GCC_USB3PHY_PHY_BCR] = { 0x50024 },
+ 	[GCC_USB_PHY_CFG_AHB2PHY_BCR] = { 0x6a000 },
+ 	[GCC_SDCC1_BCR] = { 0x13000 },
+ 	[GCC_SDCC2_BCR] = { 0x14000 },
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8996.h b/include/dt-bindings/clock/qcom,gcc-msm8996.h
+index b7ea1e8..1828723 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8996.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8996.h
+@@ -337,6 +337,8 @@
+ #define GCC_QREFS_VBG_CAL_BCR					100
+ #define GCC_PCIE_PHY_COM_BCR					101
+ #define GCC_PCIE_PHY_COM_NOCSR_BCR				102
++#define GCC_USB3_PHY_BCR					103
++#define GCC_USB3PHY_PHY_BCR					104
+ 
+ 
+ /* Indexes for GDSCs */
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
