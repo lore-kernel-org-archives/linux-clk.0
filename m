@@ -1,57 +1,109 @@
-Return-Path: <mw@semihalf.com>
-Return-Path: <mw@semihalf.com>
-From: Marcin Wojtas <mw@semihalf.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	andrew@lunn.ch,
-	jason@lakedaemon.net,
-	thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com,
-	nadavh@marvell.com,
-	alior@marvell.com,
-	tn@semihalf.com,
-	jaz@semihalf.com,
-	Marcin Wojtas <mw@semihalf.com>
-Subject: [PATCH v4 0/1] Armada 7k/8k CP110 system controller fixes
-Date: Sun, 25 Sep 2016 09:47:52 +0200
-Message-Id: <1474789673-3837-1-git-send-email-mw@semihalf.com>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v3 00/14] Clock improvement for video playback
+To: Stephen Boyd <sboyd@codeaurora.org>, <gabriel.fernandez@st.com>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+ <20160914183620.GV7243@codeaurora.org>
+ <af43c05e-4485-d756-3362-19a76aa40307@st.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ian
+ Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Olivier
+ Bideau <olivier.bideau@st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andrzej Hajda
+	<a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+        Dinh Nguyen
+	<dinguyen@opensource.altera.com>,
+        Arnd Bergmann <arnd@arndb.de>, Thierry
+ Reding <treding@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+        <linux-clk@vger.kernel.org>, Lee Jones
+	<lee.jones@linaro.org>,
+        Peter Griffin <peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
+        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <8257df40-272d-af63-d9b7-13d6aaea39a2@st.com>
+Date: Thu, 15 Sep 2016 13:42:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <af43c05e-4485-d756-3362-19a76aa40307@st.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Two patches from the third version of the patchset have already been
-applied, so I re-send the last one with corrected allocation of
-clock data, which was pointed in the review.
-
-Any feedback would be very welcome.
-
-Best regards,
-Marcin
-
-Changelog:
-v4 <- v3
-* fix allocation of clock data
-
-v3 <- v2
-* return -ENOMEM on alloc failures
-
-v1 <- v2
-* replace setting CLK_IS_BASIC flag with clearing init structure fields
-  with memset
-* minor improvements of allocation and error checking
-* add migration to clk_hw
 
 
-Marcin Wojtas (1):
-  clk: mvebu: migrate CP110 system controller to clk_hw API and
-    registration
+On 09/15/2016 08:57 AM, Patrice Chotard wrote:
+> 
+> 
+> On 09/14/2016 08:36 PM, Stephen Boyd wrote:
+>> On 08/29, gabriel.fernandez@st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>
+>>> v3:
+>>>   - Rebase to v4.8-rc1
+>>>   - Tipo fix in st,clkgen-pll.txt
+>>>   - Add Ack of Peter for the series
+>>>   - Add missed patch: "ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms"
+>>>
+>>> v2:
+>>>   - Simpliflication of clock binding
+>>>     remark from Rob https://lkml.org/lkml/2016/5/25/492
+>>>   - Suppression of stih415-416 support for the clocks (in order
+>>> 	to help simplification of clock binding)
+>>>     (others patchs for the machine and drivers will come)
+>>>
+>>> This serie allows to increase video resolutions and make audio
+>>> adjustment during a video playback.
+>>>
+>>> Gabriel Fernandez (14):
+>>>   drivers: clk: st: Remove stih415-416 clock support
+>>>   drivers: clk: st: Simplify clock binding of STiH4xx platforms
+>>>   ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms
+>>>   drivers: clk: st: Add fs660c32 synthesizer algorithm
+>>>   drivers: clk: st: Add clock propagation for audio clocks
+>>>   drivers: clk: st: Handle clk synchronous mode for video clocks
+>>>   ARM: DT: STiH407: Enable clock propagation for audio clocks
+>>>   ARM: DT: STiH410: Enable clock propagation for audio clocks
+>>>   ARM: DT: STiH418: Enable clock propagation for audio clocks
+>>>   ARM: DT: STiH407: Enable synchronous clock mode for video clocks
+>>>   ARM: DT: STiH410: Enable synchronous clock mode for video clocks
+>>>   ARM: DT: STiH418: Enable synchronous clock mode for video clocks
+>>>   ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
+>>>   ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+>>
+> 
+> Hi Stephen
+> 
+>> The order of patches intermingles clk changes and dts changes.
+>> I'd prefer to not take any patches for dts through the clk tree,
+>> so can those be deferred to an arm-soc PR? 
+> 
+> No problem, i will take all DTS patches and submit a pull request to arm-soc.
+> 
+> Assuming that works,
+>> I'd just pick 1-2, and 4-6 into the clk tree and the rest can go
+>> on top through arm-soc.
 
- drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
- 1 file changed, 72 insertions(+), 78 deletions(-)
+Stephen
 
--- 
-1.8.3.1
+Just to confirm, these patches will be merged into clk-next tree ? so dedicated for v4.9 ?
+
+Thanks
+
+Patrice
+
+>>
+> 
+> Perfect 
+> 
+> Thanks
+> 
+> 
+> 
