@@ -1,26 +1,31 @@
-Return-Path: <wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:04:07 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] clk: sunxi-ng: sun6i-a31: Set CLK_SET_RATE_PARENT
+ for display output clocks
+Message-ID: <20160916230407.GS7243@codeaurora.org>
+References: <20160915065740.13664-1-wens@csie.org>
+ <20160915065740.13664-2-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20160901141617.9777-3-maxime.ripard@free-electrons.com>
-References: <20160901141617.9777-1-maxime.ripard@free-electrons.com> <20160901141617.9777-3-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 2 Sep 2016 15:26:54 +0800
-Message-ID: <CAGb2v66xaxcbOAFhgnbdTjF98aPW6-W95k6gRxU=OZj6uiFs6A@mail.gmail.com>
-Subject: Re: [PATCH 2/6] clk: sunxi-ng: mux: Add mux table macro
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160915065740.13664-2-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 1, 2016 at 10:16 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add a new macro to declare muxes based on a table and a gate.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On 09/15, Chen-Yu Tsai wrote:
+> The LCD controller and HDMI controller use the LCDx-CHy and HDMI clocks
+> to generate their dot clocks. To be able to generate a full range of
+> possible clock rates, the parent PLL clock rates should also be changed.
+> 
+> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
