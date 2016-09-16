@@ -1,43 +1,85 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 26 Sep 2016 08:23:18 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] clk: imx31: fix rewritten input argument of
- mx31_clocks_init()
-Message-ID: <20160926062318.c6tipjjktvmxpwed@pengutronix.de>
-References: <1474848223-19728-1-git-send-email-vz@mleia.com>
- <1474848223-19728-4-git-send-email-vz@mleia.com>
+Return-Path: <kishon@ti.com>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman
+	<khilman@baylibre.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+ <m260q6jibf.fsf@baylibre.com>
+ <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+ <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+ <m2eg4ui0nl.fsf@baylibre.com>
+ <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+ <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+ <m2sht9gkau.fsf@baylibre.com>
+ <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+CC: Ben Dooks <ben.dooks@codethink.co.uk>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <johnyoun@synopsys.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <linux-usb@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <jbrunet@baylibre.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <57DBAB2F.3040905@ti.com>
+Date: Fri, 16 Sep 2016 13:49:59 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1474848223-19728-4-git-send-email-vz@mleia.com>
+In-Reply-To: <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi,
 
-On Mon, Sep 26, 2016 at 03:03:42AM +0300, Vladimir Zapolskiy wrote:
-> Function mx31_clocks_init() is called during clock intialization on
-> legacy boards with reference clock frequency passed as its input
-> argument, this can be verified by examination of the function
-> declaration found in arch/arm/mach-imx/common.h and actual function
-> users which include that header file.
-> 
-> Inside CCF driver the function ignores its input argument, by chance
-> the used value in the function body is the same as input arguments on
-> side of all callers.
-> 
-> Fixes: d9388c843237 ("clk: imx31: Do not call mxc_timer_init twice when booting with DT")
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On Friday 09 September 2016 09:44 PM, Martin Blumenstingl wrote:
+> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>> However, the problem with all of the solutions proposed (runtime PM ones
+>> included) is that we're forcing a board-specific design issue (2 devices
+>> sharing a reset line) into a driver that should not have any
+>> board-specific assumptions in it.
+>>
+>> For example, if this driver is used on another platform where different
+>> PHYs have different reset lines, then one of them (the unlucky one who
+>> is not probed first) will never get reset.  So any form of per-device
+>> ref-counting is not a portable solution.
+> maybe we should also consider Ben's solution: he played with the USB
+> PHY on his Meson8b board. His approach was to have only one USB PHY
+> driver instance which exposes two PHYs.
+> The downside of this: the driver would have to know the offset of the
+> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
+> the reset using runtime PM without any hacks.
+
+I think the offset information can come from the devicetree too. The phy can be
+modeled something like below.
+
+		usb-phys@c0000000 {
+			compatible = "amlogic,meson-gxbb-usb2-phy";
+			reg = <0x0 0xc0000000 0x0 0x40>;
+			#address-cells = <2>;
+			#size-cells = <2>;
+			ranges = <0x0 0x0 0x0 0xc0000000 0x0 0x40>;
+			resets = <&reset 34>;
+
+			usb0_phy: usb_phy@0 {
+				#phy-cells = <0>;
+				reg = <0x0 0x0 0x0 0x20>;
+				clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
+				clock-names = "usb_general", "usb";
+				status = "disabled";
+			};
+
+			usb1_phy: usb_phy@20 {
+				#phy-cells = <0>;
+				reg = <0x0 0x20 0x0 0x20>;
+				clocks = <&clkc CLKID_USB &clkc CLKID_USB1>;
+				clock-names = "usb_general", "usb";
+				status = "disabled";
+			};
+		};
+
+This way the driver will be probed only once (the reset can be done during
+probe). The phy driver should scan the dt node and for every sub-node it
+invokes phy_create?
 
 Thanks
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Kishon
