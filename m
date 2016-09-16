@@ -1,146 +1,88 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jamie Lentin <jm@lentin.co.uk>
-Subject: [PATCH] clk: mvebu: Add clk support for the orion5x SoC mv88f5181
-Date: Tue, 20 Sep 2016 18:24:50 +0200
-Message-Id: <20160920162450.4046-1-gregory.clement@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
+Date: Fri, 16 Sep 2016 16:40:02 +0900
+Message-Id: <1474011604-12577-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jamie Lentin <jm@lentin.co.uk>
+I split into two patches to make review easier.
 
-Referring to the u-boot sources for the Netgear WNR854T, add support
-for the mv88f5181.
-
-[gregory.clement@free-electrons.com: fix commit title]
-Signed-off-by: Jamie Lentin <jm@lentin.co.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
-
-Hi Stephen and Mike,
-
-do you agree to give your acked-by on this patch. It is part of a
-convertion of old orion5x Socv to the device tree. If you acked-by
-this one, then I will be able to take it in my tree and avoiding
-breaking the git bisect.
-
-This patch is really about adding a new variant, teh logic remains the
-same and also it won't produce any conflict.
-
-Sorry to not have asked this before.
-
-Thanks,
-
-Gregory
+ 1/2: core support code
+ 2/2: data arrays
 
 
- .../devicetree/bindings/clock/mvebu-core-clock.txt |  1 +
- drivers/clk/mvebu/orion.c                          | 70 ++++++++++++++++++++++
- 2 files changed, 71 insertions(+)
+Changes in v7:
+  - Add static to probe/remove callbacks
+  - Fill unused idx of clk array with ERR_PTR(-EINVAL)
+  - Use of_device_get_match_data() instead of of_match_node()
+  - Remove CLK_IS_BASIC flag
+  - Make drivers built-in only
+  - Remove bogus  #include <linux/bitops.h>
 
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-index 670c2af3e931..eb985a633d59 100644
---- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-@@ -52,6 +52,7 @@ Required properties:
- 	"marvell,dove-core-clock" - for Dove SoC core clocks
- 	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
- 	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
-+	"marvell,mv88f5181-core-clock" - for Orion MV88F5181 SoC
- 	"marvell,mv88f5182-core-clock" - for Orion MV88F5182 SoC
- 	"marvell,mv88f5281-core-clock" - for Orion MV88F5281 SoC
- 	"marvell,mv88f6183-core-clock" - for Orion MV88F6183 SoC
-diff --git a/drivers/clk/mvebu/orion.c b/drivers/clk/mvebu/orion.c
-index fd129566c1ce..a6e5bee23385 100644
---- a/drivers/clk/mvebu/orion.c
-+++ b/drivers/clk/mvebu/orion.c
-@@ -21,6 +21,76 @@ static const struct coreclk_ratio orion_coreclk_ratios[] __initconst = {
- };
- 
- /*
-+ * Orion 5181
-+ */
-+
-+#define SAR_MV88F5181_TCLK_FREQ      8
-+#define SAR_MV88F5181_TCLK_FREQ_MASK 0x3
-+
-+static u32 __init mv88f5181_get_tclk_freq(void __iomem *sar)
-+{
-+	u32 opt = (readl(sar) >> SAR_MV88F5181_TCLK_FREQ) &
-+		SAR_MV88F5181_TCLK_FREQ_MASK;
-+	if (opt == 0)
-+		return 133333333;
-+	else if (opt == 1)
-+		return 150000000;
-+	else if (opt == 2)
-+		return 166666667;
-+	else
-+		return 0;
-+}
-+
-+#define SAR_MV88F5181_CPU_FREQ       4
-+#define SAR_MV88F5181_CPU_FREQ_MASK  0xf
-+
-+static u32 __init mv88f5181_get_cpu_freq(void __iomem *sar)
-+{
-+	u32 opt = (readl(sar) >> SAR_MV88F5181_CPU_FREQ) &
-+		SAR_MV88F5181_CPU_FREQ_MASK;
-+	if (opt == 0)
-+		return 333333333;
-+	else if (opt == 1 || opt == 2)
-+		return 400000000;
-+	else if (opt == 3)
-+		return 500000000;
-+	else
-+		return 0;
-+}
-+
-+static void __init mv88f5181_get_clk_ratio(void __iomem *sar, int id,
-+					   int *mult, int *div)
-+{
-+	u32 opt = (readl(sar) >> SAR_MV88F5181_CPU_FREQ) &
-+		SAR_MV88F5181_CPU_FREQ_MASK;
-+	if (opt == 0 || opt == 1) {
-+		*mult = 1;
-+		*div  = 2;
-+	} else if (opt == 2 || opt == 3) {
-+		*mult = 1;
-+		*div  = 3;
-+	} else {
-+		*mult = 0;
-+		*div  = 1;
-+	}
-+}
-+
-+static const struct coreclk_soc_desc mv88f5181_coreclks = {
-+	.get_tclk_freq = mv88f5181_get_tclk_freq,
-+	.get_cpu_freq = mv88f5181_get_cpu_freq,
-+	.get_clk_ratio = mv88f5181_get_clk_ratio,
-+	.ratios = orion_coreclk_ratios,
-+	.num_ratios = ARRAY_SIZE(orion_coreclk_ratios),
-+};
-+
-+static void __init mv88f5181_clk_init(struct device_node *np)
-+{
-+	return mvebu_coreclk_setup(np, &mv88f5181_coreclks);
-+}
-+
-+CLK_OF_DECLARE(mv88f5181_clk, "marvell,mv88f5181-core-clock", mv88f5181_clk_init);
-+
-+/*
-  * Orion 5182
-  */
- 
+Changes in v6:
+  - Fix provided clock description a bit
+
+Changes in v5:
+  - Assign each gating register bit with a separate clk
+  - Fix examples in binding document to add specific compatible
+  - Document provided clocks for system clock
+
+Changes in v4:
+  - Unify module_platform_driver() boilerplate into a single place
+  - Add binding document
+  - Add USB3 clocks
+
+Changes in v3:
+  - Change to platform drivers instead of OF_CLK_DECLARE
+  - Split into a core part + SoC drivers
+    SoC drivers just consist of tables of SoC-specific data.
+    This allows reviewer to concentrate on the core-part
+  - Hard-code parent clock names for cascading
+
+Changes in v2:
+  - split emmc_hw_reset
+  - make SD clock rate-controllable
+  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
+
+Masahiro Yamada (2):
+  clk: uniphier: add core support code for UniPhier clock driver
+  clk: uniphier: add clock data for UniPhier SoCs
+
+ .../devicetree/bindings/clock/uniphier-clock.txt   | 134 +++++++++++++
+ MAINTAINERS                                        |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/uniphier/Kconfig                       |   9 +
+ drivers/clk/uniphier/Makefile                      |   8 +
+ drivers/clk/uniphier/clk-uniphier-core.c           | 214 +++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  48 +++++
+ drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  47 +++++
+ drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-mio.c            | 101 ++++++++++
+ drivers/clk/uniphier/clk-uniphier-mux.c            |  95 +++++++++
+ drivers/clk/uniphier/clk-uniphier-peri.c           |  57 ++++++
+ drivers/clk/uniphier/clk-uniphier-sys.c            | 151 +++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h                | 122 ++++++++++++
+ 15 files changed, 1086 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
+ create mode 100644 drivers/clk/uniphier/Kconfig
+ create mode 100644 drivers/clk/uniphier/Makefile
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
+ create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+
 -- 
-2.9.3
+1.9.1
