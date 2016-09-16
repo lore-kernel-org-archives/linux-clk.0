@@ -1,60 +1,42 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 1/4] ARM: dts: imx31: fix clock control module interrupts description
-Date: Mon, 26 Sep 2016 03:03:40 +0300
-Message-Id: <1474848223-19728-2-git-send-email-vz@mleia.com>
-In-Reply-To: <1474848223-19728-1-git-send-email-vz@mleia.com>
-References: <1474848223-19728-1-git-send-email-vz@mleia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:18:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jun Nie <jun.nie@linaro.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: zx: fix pointer case warnings
+Message-ID: <20160916231816.GZ7243@codeaurora.org>
+References: <20160915154618.3007024-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160915154618.3007024-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The type of AVIC interrupt controller found on i.MX31 is one-cell,
-namely 31 for CCM DVFS and 53 for CCM, however for clock control
-module its interrupts are specified as 3-cells, fix it.
+On 09/15, Arnd Bergmann wrote:
+> The zx296718 clock driver has a creative way of assigning the register
+> values for each clock, by initializing an __iomem pointer to an
+> offset and then later adding the base (from ioremap) on top
+> with a cast to u64. This fail on all 32-bit architectures during
+> compile testing:
+> 
+> drivers/clk/zte/clk-zx296718.c: In function 'top_clocks_init':
+> drivers/clk/zte/clk-zx296718.c:554:35: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>    zx296718_pll_clk[i].reg_base += (u64)reg_base;
+> drivers/clk/zte/clk-zx296718.c:579:29: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+> drivers/clk/zte/clk-zx296718.c:592:31: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+> 
+> It would be nice to avoid all the casts, but I decided to simply
+> shut up the warnings by changing the type from u64 to uintptr_t,
+> which does the right thing in practice.
 
-Fixes: ef0e4a606fb6 ("ARM: mx31: Replace clk_register_clkdev with clock DT lookup")
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
-Changes from v1 to v2:
-* added Rob's Acked-by tag.
+Thanks. I usually push people to have descriptor structures that
+they use to create these things at runtime but that isn't working
+out so great all the time and we don't really have a precedent
+for one way or the other. This will work for now.
 
- Documentation/devicetree/bindings/clock/imx31-clock.txt | 2 +-
- arch/arm/boot/dts/imx31.dtsi                            | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Applied to clk-next.
 
-diff --git a/Documentation/devicetree/bindings/clock/imx31-clock.txt b/Documentation/devicetree/bindings/clock/imx31-clock.txt
-index 19df842..8163d56 100644
---- a/Documentation/devicetree/bindings/clock/imx31-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx31-clock.txt
-@@ -77,7 +77,7 @@ Examples:
- clks: ccm@53f80000{
- 	compatible = "fsl,imx31-ccm";
- 	reg = <0x53f80000 0x4000>;
--	interrupts = <0 31 0x04 0 53 0x04>;
-+	interrupts = <31>, <53>;
- 	#clock-cells = <1>;
- };
- 
-diff --git a/arch/arm/boot/dts/imx31.dtsi b/arch/arm/boot/dts/imx31.dtsi
-index 1ce7ae9..3e0893e 100644
---- a/arch/arm/boot/dts/imx31.dtsi
-+++ b/arch/arm/boot/dts/imx31.dtsi
-@@ -122,7 +122,7 @@
- 			clks: ccm@53f80000{
- 				compatible = "fsl,imx31-ccm";
- 				reg = <0x53f80000 0x4000>;
--				interrupts = <0 31 0x04 0 53 0x04>;
-+				interrupts = <31>, <53>;
- 				#clock-cells = <1>;
- 			};
- 		};
 -- 
-2.8.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
