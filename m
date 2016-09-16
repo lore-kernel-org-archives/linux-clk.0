@@ -1,48 +1,49 @@
-Return-Path: <shawn.guo@linaro.org>
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jun Nie <jun.nie@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH] clk: zx296718: register driver earlier with core_initcall
-Date: Fri, 23 Sep 2016 09:45:08 +0800
-Message-Id: <1474595108-15790-1-git-send-email-shawn.guo@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:03:02 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
+	benjamin.gaignard@st.com, vincent.abriou@st.com,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Subject: Re: [PATCH v3 05/14] drivers: clk: st: Add clock propagation for
+ audio clocks
+Message-ID: <20160916230302.GQ7243@codeaurora.org>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+ <1472473626-15398-6-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472473626-15398-6-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock driver should be registered with an earlier initcall than
-module_init which is used by most of client device drivers.  Otherwise,
-probing of these client drivers will likely be deferred due to that
-calls into clk API will return -EPROBE_DEFER.
+On 08/29, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch allows fine tuning of the quads FS for audio clocks
+> accuracy.
+> 
+> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
-Deferred probing is not a problem for most subsystems, but could bring
-some side effect for particular subsystem, like display.  On ZX296718
-platform, we get Linux logo and boot log lost from display device, just
-because the DRM/KMS driver gets -EPROBE_DEFER from devm_clk_get() call.
+Applied to clk-next
 
-Let's use core_initcall (qcom and a few other clk drivers use that) for
-driver registration to avoid those unnecessary -EPROBE_DEFER and get rid
-of the side effect with ZX296718 display system.
-
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/clk/zte/clk-zx296718.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index c7716c17f302..707d62956e9b 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -917,4 +917,8 @@ static int zx_clkc_probe(struct platform_device *pdev)
- 	},
- };
- 
--builtin_platform_driver(zx_clk_driver);
-+static int __init zx_clk_init(void)
-+{
-+	return platform_driver_register(&zx_clk_driver);
-+}
-+core_initcall(zx_clk_init);
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
