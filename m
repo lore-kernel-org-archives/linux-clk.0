@@ -1,38 +1,62 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
-To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
- Wim Van Sebroeck <wim@iguana.be>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c29cd7d6-bc45-1207-0133-271a35ad2c4d@linaro.org>
-Date: Mon, 19 Sep 2016 21:55:26 +0200
-MIME-Version: 1.0
-In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH 2/2] clk: imx6: initialize GPU clocks
+Date: Fri, 16 Sep 2016 11:16:11 +0200
+Message-Id: <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
+References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/09/2016 21:12, Robert Jarzmik wrote:
-> The OS timer rate used for the watchdog can now be fetched from the
-> standard clock API. This will remove the last user of
-> get_clock_tick_rate() in both pxa and sa11x0 architectures.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
+Initialize the GPU clock muxes to sane inputs. Until now they have
+not been changed from their default values, which means that both
+GPU3D shader and GPU2D core were fed by clock inputs whose rates
+exceed the maximium allowed frequency of the cores by as much as
+200MHz.
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+This fixes a severe GPU stability issue on i.MX6DL.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx6q.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 64c243173395..751c3e7d5843 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -633,6 +633,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	if (IS_ENABLED(CONFIG_PCI_IMX6))
+ 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
+ 
++	/*
++	 * Initialize the GPU clock muxes, so that the maximum specified clock
++	 * rates for the respective SoC are not exceeded.
++	 */
++	if (clk_on_imx6dl()) {
++		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
++		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
++		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
++		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
++	} else if (clk_on_imx6q()) {
++		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
++		               clk[IMX6QDL_CLK_MMDC_CH0_AXI]);
++		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_SHADER_SEL],
++		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
++		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
++		               clk[IMX6QDL_CLK_PLL3_USB_OTG]);
++	}
++
+ 	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.8.1
