@@ -1,77 +1,83 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 20 Sep 2016 09:29:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-	johnyoun@synopsys.com, kishon@ti.com, khilman@baylibre.com,
-	carlo@caione.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, will.deacon@arm.com,
-	catalin.marinas@arm.com, gregkh@linuxfoundation.org,
-	mark.rutland@arm.com
-Subject: Re: [PATCH v2 2/6] Documentation: dt-bindings: Add documentation for
- the Meson USB2 PHYs
-Message-ID: <20160920142944.GA16016@rob-hp-laptop>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-3-martin.blumenstingl@googlemail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:11:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-mips@linux-mips.org,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Wan ZongShun <mcuos.com@gmail.com>, Steven Miao <realmz6@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	adi-buildroot-devel@lists.sourceforge.net,
+	linux-m68k@lists.linux-m68k.org,
+	Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Ungerer <gerg@linux-m68k.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] clk: let clk_disable() return immediately if clk is
+ NULL
+Message-ID: <20160916231125.GW7243@codeaurora.org>
+References: <1472059613-30551-1-git-send-email-yamada.masahiro@socionext.com>
+ <194aebe5-38dd-f43d-fb4d-16ce592a68e8@gmail.com>
+ <CAK7LNARaV6Ga5G1GnYf9hywrr+YwOqqm-v1AzBpfXtM4u9ofBA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160911134111.31141-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <CAK7LNARaV6Ga5G1GnYf9hywrr+YwOqqm-v1AzBpfXtM4u9ofBA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 11, 2016 at 03:41:07PM +0200, Martin Blumenstingl wrote:
-> Add the documentation for the bindings for the Meson8b and GXBB USB2
-> PHYs.
+On 09/16, Masahiro Yamada wrote:
+> Hi Stephen, Michael,
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  .../devicetree/bindings/phy/meson-usb2-phy.txt     | 27 ++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+> 2016-08-26 0:27 GMT+09:00 Florian Fainelli <f.fainelli@gmail.com>:
+> > On 08/24/2016 10:26 AM, Masahiro Yamada wrote:
+> >> Many of clk_disable() implementations just return for NULL pointer,
+> >> but this check is missing from some.  Let's make it tree-wide
+> >> consistent.  It will allow clock consumers to call clk_disable()
+> >> without NULL pointer check.
+> >>
+> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >> Acked-by: Greg Ungerer <gerg@uclinux.org>
+> >> Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+> >> ---
+> >>
+> >> I came back after a long pause.
+> >> You can see the discussion about the previous version:
+> >> https://www.linux-mips.org/archives/linux-mips/2016-04/msg00063.html
+> >>
+> >>
+> >> Changes in v3:
+> >>   - Return only when clk is NULL.  Do not take care of error pointer.
+> >>
+> >> Changes in v2:
+> >>   - Rebase on Linux 4.6-rc1
+> >>
+> >>  arch/arm/mach-mmp/clock.c        | 3 +++
+> >>  arch/arm/mach-w90x900/clock.c    | 3 +++
+> >>  arch/blackfin/mach-bf609/clock.c | 3 +++
+> >>  arch/m68k/coldfire/clk.c         | 4 ++++
+> >>  arch/mips/bcm63xx/clk.c          | 3 +++
+> >
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
-> new file mode 100644
-> index 0000000..9da5ea2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
-> @@ -0,0 +1,27 @@
-> +* Amlogic USB2 PHY
-> +
-> +Required properties:
-> +- compatible:	Depending on the platform this should be one of:
-> +	"amlogic,meson8b-usb2-phy"
-> +	"amlogic,meson-gxbb-usb2-phy"
-> +- reg:		The base address and length of the registers
-> +- #phys-cells:	should be 0 (see phy-bindings.txt in this directory)
-> +- clocks:	phandle and clock identifier for the phy clocks
-> +- clock-names:	"usb_general" and "usb"
-> +
-> +Optional properties:
-> +- resets:	reference to the reset controller
-> +- phy-supply:	see phy-bindings.txt in this directory
-> +
-> +
-> +Example:
-> +
-> +usb0_phy: usb_phy@0 {
-
-usb-phy@0
-
-With that,
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-> +	compatible = "amlogic,meson-gxbb-usb2-phy";
-> +	#phy-cells = <0>;
-> +	reg = <0x0 0x0 0x0 0x20>;
-> +	resets = <&reset RESET_USB_OTG>;
-> +	clocks = <&clkc CLKID_USB>, <&clkc CLKID_USB0>;
-> +	clock-names = "usb_general", "usb";
-> +	phy-supply = <&usb_vbus>;
-> +};
-> -- 
-> 2.9.3
 > 
+> Gentle ping...
+> 
+> 
+> If you are not keen on this,
+> shall I split it per-arch and send to each arch subsystem?
+> 
+
+If we get acks from more arch maintainers we could take it
+through clk tree, but we really don't maintain these other clk
+implementations so it isn't very appropriate to take it through
+clk tree anyway. Perhaps splitting it up per arch and sending it
+that way and then Ccing akpm (aka the patch collector) would make
+sure things get merged in a timely manner. Or Andrew could just
+pick up this patch as is.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
