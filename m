@@ -1,65 +1,85 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 4/5] ARM: dts: at91: sama5d2: use correct sckc compatible
-Date: Thu,  8 Sep 2016 13:57:22 +0200
-Message-Id: <20160908115723.11878-5-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160908115723.11878-1-alexandre.belloni@free-electrons.com>
-References: <20160908115723.11878-1-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:28019 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755216AbcIPHlt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Sep 2016 03:41:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160907003258.GP12510@codeaurora.org>
+References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
+ <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
+ <20160819002507.GS361@codeaurora.org> <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
+ <20160819191612.GU361@codeaurora.org> <CAK7LNAQownrE0n8rAYGgUs9_byvok8W0V=c6gts_C=8Wvio86g@mail.gmail.com>
+ <20160829182200.GD19826@codeaurora.org> <CAK7LNAQ9byodJTu-itbnhFrUGDQS5bxYUydyJ3zyZ+aLroQ6FA@mail.gmail.com>
+ <20160907003258.GP12510@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 16 Sep 2016 16:41:44 +0900
+Message-ID: <CAK7LNARO+6D=T=O7uWwgGEk_D9t3nOPjPBmdsYWzsrOyvQOorg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
+ clock driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-the sama5d2 sckc is actually sama5d4 compatible
+Hi Stephen,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/boot/dts/sama5d2.dtsi | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+2016-09-07 9:32 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 09/05, Masahiro Yamada wrote:
+>> 2016-08-30 3:22 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> > On 08/29, Masahiro Yamada wrote:
+>> >> I tried this, but it did not work.
+>> >>
+>> >> To make dev_get_regmap() work,
+>> >> the parent device needs to call dev_regmap_init_mmio() beforehand.
+>> >>
+>> >>
+>> >> Since commit bdb0066df96e74a4002125467ebe459feff1ebef
+>> >> (mfd: syscon: Decouple syscon interface from platform devices),
+>> >> syscon_probe() is not called for platform devices,
+>> >> so that never happens.
+>> >>
+>> >
+>> > Ok. Is the syscon also a simple-mfd?
+>> >
+>> > It sounds like there's a device for the parent, but we've failed
+>> > to attach a regmap to it. Maybe the core DT code should assign
+>> > the regmap to the parent device when it creates it so that child
+>> > devices don't need to know this detail? It could look for
+>> > simple-mfd devices with compatible = "syscon" and then create the
+>> > regmap? Here's a totally untested patch for that.
+>> >
+>>
+>>
+>> I was not quire sure about this,
+>> but maybe worth submitting to DT subsystem?
+>>
+>> Anyway, I will go with syscon_node_to_regmap() for v7.
+>> Of course, I am happy to replace it with dev_get_regmap()
+>> when the issue is solved in the mainline.
+>>
+>
+> Ok that's fine. Did my patch fix dev_get_regmap() for you though?
+> That would be useful to know so that this patch can be merged in
+> parallel to yours.
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 353d0e5ec83b..2e49f10f93fa 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -1059,30 +1059,12 @@
- 				status = "disabled";
- 			};
- 
--			sckc@f8048050 {
--				compatible = "atmel,at91sam9x5-sckc";
-+			clk32k: sckc@f8048050 {
-+				compatible = "atmel,sama5d4-sckc";
- 				reg = <0xf8048050 0x4>;
- 
--				slow_rc_osc: slow_rc_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--					#clock-cells = <0>;
--					clock-frequency = <32768>;
--					clock-accuracy = <250000000>;
--					atmel,startup-time-usec = <75>;
--				};
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--					atmel,startup-time-usec = <1200000>;
--				};
--
--				clk32k: slowck {
--					compatible = "atmel,at91sam9x5-clk-slow";
--					#clock-cells = <0>;
--					clocks = <&slow_rc_osc &slow_osc>;
--				};
-+				clocks = <&slow_xtal>;
-+				#clock-cells = <0>;
- 			};
- 
- 			rtc@f80480b0 {
+Sorry for my late reply.
+
+Yup, your patch worked fine!
+
+
+And, I've posted v7 for my SoC clk driver.
+
+
+
 -- 
-2.9.3
+Best Regards
+Masahiro Yamada
