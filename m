@@ -1,51 +1,88 @@
-Return-Path: <linux@roeck-us.net>
-Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
- <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
- <20160919200816.GC29242@roeck-us.net>
- <20160919223616.GN1041@n2100.armlinux.org.uk>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Wim Van Sebroeck <wim@iguana.be>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <0909debb-f7df-648b-95d2-23b535e5b299@roeck-us.net>
-Date: Mon, 19 Sep 2016 21:37:06 -0700
+Return-Path: <fabio.estevam@nxp.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
+To: <sboyd@codeaurora.org>
+CC: <mturquette@baylibre.com>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<p.zabel@pengutronix.de>, <akshay.bhat@timesys.com>,
+	<stillcompiling@gmail.com>, <Charles.Kang@advantech.com.tw>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Fabio
+ Estevam" <fabio.estevam@nxp.com>
+Subject: [PATCH 2/3] clk: imx6: Make the LDB_DI0 and LDB_DI1 clocks read-only
+Date: Fri, 16 Sep 2016 11:36:26 -0300
+Message-ID: <1474036587-13819-2-git-send-email-fabio.estevam@nxp.com>
+In-Reply-To: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
+References: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
+Return-Path: fabio.estevam@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <20160919223616.GN1041@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19/2016 03:36 PM, Russell King - ARM Linux wrote:
-> On Mon, Sep 19, 2016 at 01:08:16PM -0700, Guenter Roeck wrote:
->> On Mon, Sep 19, 2016 at 09:12:14PM +0200, Robert Jarzmik wrote:
->>> The OS timer rate used for the watchdog can now be fetched from the
->>> standard clock API. This will remove the last user of
->>> get_clock_tick_rate() in both pxa and sa11x0 architectures.
->>>
->>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->>
->> Did you test this ? Potential problem, if built into the kernel, could be that
->> the clocks might not be ready by the time the driver is instantiated. Unless
->> this is converted to a platform driver, it won't be able to handle a
->> -EPROBE_DEFER from the clock subsystem.
->
-> Really not a problem at all.  The OSTIMER0 is required for the system
-> tick, and if that's not present, the kernel will be without any kind
-> of time keeping, so a missing watchdog driver is the least of the
-> problems.
->
-> Therefore, both PXA and SA11x0 register their clocks really early to
-> ensure that OSTIMER0 is available by the time_init() stage, which is
-> way before driver probe time.
->
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-You are right. And, at least in qemu, it actually works.
+Due to incorrect placement of the clock gate cell in the ldb_di[x]_clk
+tree, the glitchy parent mux of ldb_di[x]_clk can cause a glitch to
+enter the ldb_di_ipu_div divider. If the divider gets locked up, no
+ldb_di[x]_clk is generated, and the LVDS display will hang when the
+ipu_di_clk is sourced from ldb_di_clk.
 
-Thanks,
-Guenter
+To fix the problem, both the new and current parent of the ldb_di_clk
+should be disabled before the switch. As this can not be guaranteed by
+the clock framework during runtime, make the ldb_di[x]_sel muxes read-only.
+A workaround to set the muxes once during boot could be added to the
+kernel or bootloader.
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx6q.c | 10 ++--------
+ drivers/clk/imx/clk.h       |  8 ++++++++
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index dd33ebc..9bbc994 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -340,8 +340,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	clk[IMX6QDL_CLK_GPU3D_SHADER_SEL] = imx_clk_mux("gpu3d_shader_sel", base + 0x18, 8,  2, gpu3d_shader_sels, ARRAY_SIZE(gpu3d_shader_sels));
+ 	clk[IMX6QDL_CLK_IPU1_SEL]         = imx_clk_mux("ipu1_sel",         base + 0x3c, 9,  2, ipu_sels,          ARRAY_SIZE(ipu_sels));
+ 	clk[IMX6QDL_CLK_IPU2_SEL]         = imx_clk_mux("ipu2_sel",         base + 0x3c, 14, 2, ipu_sels,          ARRAY_SIZE(ipu_sels));
+-	clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_flags("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
+-	clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_flags("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
++	clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_ldb("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
++	clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_ldb("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
+ 	clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL] = imx_clk_mux_flags("ipu1_di0_pre_sel", base + 0x34, 6,  3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+ 	clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL] = imx_clk_mux_flags("ipu1_di1_pre_sel", base + 0x34, 15, 3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+ 	clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL] = imx_clk_mux_flags("ipu2_di0_pre_sel", base + 0x38, 6,  3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+@@ -593,12 +593,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_register_clkdev(clk[IMX6QDL_CLK_ENET_REF], "enet_ref", NULL);
+ 
+-	if ((imx_get_soc_revision() != IMX_CHIP_REVISION_1_0) ||
+-	    clk_on_imx6dl()) {
+-		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI0_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+-		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+-	}
+-
+ 	clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
+ 	if (clk_on_imx6dl())
+ 		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 3799ff8..4afad3b 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -75,6 +75,14 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
++		u8 shift, u8 width, const char **parents, int num_parents)
++{
++	return clk_register_mux(NULL, name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
++			shift, width, CLK_MUX_READ_ONLY, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_fixed_factor(const char *name,
+ 		const char *parent, unsigned int mult, unsigned int div)
+ {
+-- 
+2.7.4
