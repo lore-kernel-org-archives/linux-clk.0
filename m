@@ -1,55 +1,41 @@
-Return-Path: <slemieux.tyco@gmail.com>
-Return-Path: <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH] clk: nxp: clk-lpc32xx: Unmap region obtained by
- of_iomap
-From: "Sylvain Lemieux (gmail)" <slemieux.tyco@gmail.com>
-To: Vladimir Zapolskiy <vz@mleia.com>, Arvind Yadav
- <arvind.yadav.cs@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <162fe71f-e190-3511-6b06-35efdbc8573f@mleia.com>
-References: <1474368846-15916-1-git-send-email-arvind.yadav.cs@gmail.com>
-	 <162fe71f-e190-3511-6b06-35efdbc8573f@mleia.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 21 Sep 2016 13:41:07 -0400
-Message-ID: <1474479667.13453.0.camel@localhost>
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:13:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH 1/4] clk/Renesas-MSTP: Use kmalloc_array() in
+ cpg_mstp_clocks_init()
+Message-ID: <20160916231313.GY7243@codeaurora.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+ <2f96a36e-fae9-5992-7259-67c92692bbc3@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2f96a36e-fae9-5992-7259-67c92692bbc3@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-09-21 at 13:17 +0300, Vladimir Zapolskiy wrote:
-> On 20.09.2016 13:54, Arvind Yadav wrote:
-> > From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> > 
-> > Free memory mapping, if lpc32xx_clk_init is not successful.
-> > 
-> > Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> > ---
-> >  drivers/clk/nxp/clk-lpc32xx.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-> > index 90d740a..34c9735 100644
-> > --- a/drivers/clk/nxp/clk-lpc32xx.c
-> > +++ b/drivers/clk/nxp/clk-lpc32xx.c
-> > @@ -1513,6 +1513,7 @@ static void __init lpc32xx_clk_init(struct device_node *np)
-> >  	if (IS_ERR(clk_regmap)) {
-> >  		pr_err("failed to regmap system control block: %ld\n",
-> >  			PTR_ERR(clk_regmap));
-> > +		iounmap(base);
-> >  		return;
-> >  	}
-> >  
-> > 
+On 09/14, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 14 Sep 2016 21:10:47 +0200
 > 
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> A multiplication for the size determination of a memory allocation
+> indicated that an array data structure should be processed.
+> Thus use the corresponding function "kmalloc_array".
 > 
-> Thank you for the patch.
+> This issue was detected by using the Coccinelle software.
 > 
-Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-> --
-> With best wishes,
-> Vladimir
-> 
-> 
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
