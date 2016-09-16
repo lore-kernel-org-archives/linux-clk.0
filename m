@@ -1,85 +1,49 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-clk@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	johnyoun@synopsys.com,
-	kishon@ti.com,
-	khilman@baylibre.com,
-	carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 6/7] ARM64: meson-gxbb-p20x: Enable USB Nodes
-Date: Sun,  4 Sep 2016 23:31:51 +0200
-Message-Id: <20160904213152.25837-7-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:02:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
+	benjamin.gaignard@st.com, vincent.abriou@st.com,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Subject: Re: [PATCH v3 01/14] drivers: clk: st: Remove stih415-416 clock
+ support
+Message-ID: <20160916230254.GN7243@codeaurora.org>
+References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+ <1472473626-15398-2-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472473626-15398-2-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+On 08/29, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> STiH415 and STiH416 platforms are no longer used.
+> these platforms will be deprecated for the next kernel.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
-Enable both gxbb USB controller and add a 5V regulator for the OTG port
-VBUS
+Applied to clk-next
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi | 29 ++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-index ce105fe..4493bce 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-@@ -93,6 +93,18 @@
- 		compatible = "mmc-pwrseq-emmc";
- 		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
- 	};
-+
-+	usb_vbus: regulator-usb0-vbus {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "USB0_VBUS";
-+
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+
-+		gpio = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
- 
- /* This UART is brought out to the DB9 connector */
-@@ -149,3 +161,20 @@
- 	vmmc-supply = <&vcc_3v3>;
- 	vmmcq-sumpply = <&vddio_boot>;
- };
-+
-+&usb0_phy {
-+	status = "okay";
-+	phy-supply = <&usb_vbus>;
-+};
-+
-+&usb1_phy {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+};
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
