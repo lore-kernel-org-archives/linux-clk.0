@@ -1,63 +1,80 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/4] ARM: dts: imx31: move CCM device node to AIPS2 bus devices
-Date: Mon, 26 Sep 2016 03:03:41 +0300
-Message-Id: <1474848223-19728-3-git-send-email-vz@mleia.com>
-In-Reply-To: <1474848223-19728-1-git-send-email-vz@mleia.com>
-References: <1474848223-19728-1-git-send-email-vz@mleia.com>
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <1463755793-9131-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1463755793-9131-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 16 Sep 2016 16:53:51 +0900
+Message-ID: <CAK7LNATY9wTjHjsLtGHAJ-DueqXcCHdrw_uoSfyTOEmpp-ZPGw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: probe common clock drivers earlier
+To: linux-clk <linux-clk@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jay Sternberg <jay.e.sternberg@intel.com>, Jens Axboe <axboe@fb.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+        Alan Tull <atull@opensource.altera.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX31 Clock Control Module controller is found on AIPS2 bus, move it
-there from SPBA bus to avoid a conflict of device IO space mismatch.
+Hi Stephen, Greg,
 
-Fixes: ef0e4a606fb6 ("ARM: mx31: Replace clk_register_clkdev with clock DT lookup")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
-Changes from v1 to v2:
-* new change in the series
 
- arch/arm/boot/dts/imx31.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+2016-05-20 23:49 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Several SoCs implement platform drivers for clocks rather than
+> CLK_OF_DECLARE().  Clocks should come earlier because they are
+> prerequisites for many of other drivers.  It will help to mitigate
+> EPROBE_DEFER issues.
+>
+> Also, drop the comment since it does not look valuable.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+> Changes in v2:
+>   - Move clk/ above dma/ since DMA drivers generally enable clk
+>
+>  drivers/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 8f5d076..ff39051 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -29,6 +29,8 @@ obj-$(CONFIG_SFI)             += sfi/
+>  # was used and do nothing if so
+>  obj-$(CONFIG_PNP)              += pnp/
+>  obj-y                          += amba/
+> +
+> +obj-y                          += clk/
+>  # Many drivers will want to use DMA so this has to be made available
+>  # really early.
+>  obj-$(CONFIG_DMADEVICES)       += dma/
+> @@ -141,8 +143,6 @@ obj-$(CONFIG_VHOST_RING)    += vhost/
+>  obj-$(CONFIG_VLYNQ)            += vlynq/
+>  obj-$(CONFIG_STAGING)          += staging/
+>  obj-y                          += platform/
+> -#common clk code
+> -obj-y                          += clk/
+>
+>  obj-$(CONFIG_MAILBOX)          += mailbox/
+>  obj-$(CONFIG_HWSPINLOCK)       += hwspinlock/
 
-diff --git a/arch/arm/boot/dts/imx31.dtsi b/arch/arm/boot/dts/imx31.dtsi
-index 3e0893e..8d4c0e3 100644
---- a/arch/arm/boot/dts/imx31.dtsi
-+++ b/arch/arm/boot/dts/imx31.dtsi
-@@ -118,13 +118,6 @@
- 				interrupts = <19>;
- 				clocks = <&clks 25>;
- 			};
--
--			clks: ccm@53f80000{
--				compatible = "fsl,imx31-ccm";
--				reg = <0x53f80000 0x4000>;
--				interrupts = <31>, <53>;
--				#clock-cells = <1>;
--			};
- 		};
- 
- 		aips@53f00000 { /* AIPS2 */
-@@ -134,6 +127,13 @@
- 			reg = <0x53f00000 0x100000>;
- 			ranges;
- 
-+			clks: ccm@53f80000{
-+				compatible = "fsl,imx31-ccm";
-+				reg = <0x53f80000 0x4000>;
-+				interrupts = <31>, <53>;
-+				#clock-cells = <1>;
-+			};
-+
- 			gpt: timer@53f90000 {
- 				compatible = "fsl,imx31-gpt";
- 				reg = <0x53f90000 0x4000>;
+
+What do you think of this patch?
+
+
+Linus game me a positive comment:
+https://lkml.org/lkml/2016/7/15/722
+
+
+
 -- 
-2.8.1
+Best Regards
+Masahiro Yamada
