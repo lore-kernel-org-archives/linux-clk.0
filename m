@@ -1,202 +1,28 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [PATCH 4/6] clk: stm32f4: Add RTC clock
-Date: Fri, 30 Sep 2016 16:25:07 +0200
-Message-ID: <1475245509-6487-5-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
-References: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Sep 2016 16:21:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: vivek.gautam@codeaurora.org
+Cc: andy.gross@linaro.org, david.brown@linaro.org, mturquette@baylibre.com,
+	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Add USB3 PHY reset lines
+Message-ID: <20160916232120.GA7243@codeaurora.org>
+References: <1473914733-4182-1-git-send-email-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473914733-4182-1-git-send-email-vivek.gautam@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 09/15, vivek.gautam@codeaurora.org wrote:
+> From: Vivek Gautam <vivek.gautam@codeaurora.org>
+> 
+> Adding missing reset lines for USB 3.0 PHY.
+> 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
 
-This patch introduces the support of the RTC clock.
-RTC clock can have 3 sources: lsi, lse and hse_rtc.
+Applied to clk-next
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 135 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 134 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index f57e73c..6e26d39 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -134,7 +134,7 @@ static const struct stm32f4_gate_data stm32f4_gates[] __initconst = {
- 	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
- };
- 
--enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, END_PRIMARY_CLK };
-+enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC, END_PRIMARY_CLK };
- /*
-  * MAX_CLKS is the maximum value in the enumeration below plus the combined
-  * hweight of stm32f42xx_gate_map (plus one).
-@@ -318,6 +318,15 @@ static inline void enable_power_domain_write_protection(void)
- 	regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
- }
- 
-+static inline void sofware_reset_backup_domain(void)
-+{
-+	unsigned long val;
-+
-+	val = readl(base + STM32F4_RCC_BDCR);
-+	writel(val |= (1 << 16), base + STM32F4_RCC_BDCR);
-+	writel(val & ~(1 << 16), base + STM32F4_RCC_BDCR);
-+}
-+
- struct stm32_rgate {
- 	struct	clk_hw hw;
- 	struct	clk_gate gate;
-@@ -404,6 +413,113 @@ static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
- 	return hw;
- }
- 
-+static int cclk_gate_enable(struct clk_hw *hw)
-+{
-+	int ret;
-+
-+	disable_power_domain_write_protection();
-+
-+	ret = clk_gate_ops.enable(hw);
-+
-+	enable_power_domain_write_protection();
-+
-+	return ret;
-+}
-+
-+static void cclk_gate_disable(struct clk_hw *hw)
-+{
-+	disable_power_domain_write_protection();
-+
-+	clk_gate_ops.disable(hw);
-+
-+	enable_power_domain_write_protection();
-+}
-+
-+static int cclk_gate_is_enabled(struct clk_hw *hw)
-+{
-+	return clk_gate_ops.is_enabled(hw);
-+}
-+
-+static const struct clk_ops cclk_gate_ops = {
-+	.enable		= cclk_gate_enable,
-+	.disable	= cclk_gate_disable,
-+	.is_enabled	= cclk_gate_is_enabled,
-+};
-+
-+static u8 cclk_mux_get_parent(struct clk_hw *hw)
-+{
-+	return clk_mux_ops.get_parent(hw);
-+}
-+
-+
-+static int cclk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	int ret;
-+
-+	disable_power_domain_write_protection();
-+
-+	sofware_reset_backup_domain();
-+
-+	ret = clk_mux_ops.set_parent(hw, index);
-+
-+	enable_power_domain_write_protection();
-+
-+	return ret;
-+}
-+
-+
-+static const struct clk_ops cclk_mux_ops = {
-+	.get_parent = cclk_mux_get_parent,
-+	.set_parent = cclk_mux_set_parent,
-+};
-+
-+static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
-+		const char * const *parent_names, int num_parents,
-+		void __iomem *reg, u8 bit_idx, u8 shift, unsigned long flags,
-+		spinlock_t *lock)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate *gate;
-+	struct clk_mux *mux;
-+
-+	gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
-+	if (!gate) {
-+		hw = ERR_PTR(-EINVAL);
-+		goto fail;
-+	}
-+
-+	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
-+	if (!mux) {
-+		kfree(gate);
-+		hw = ERR_PTR(-EINVAL);
-+		goto fail;
-+	}
-+
-+	gate->reg = reg;
-+	gate->bit_idx = bit_idx;
-+	gate->flags = 0;
-+	gate->lock = lock;
-+
-+	mux->reg = reg;
-+	mux->shift = shift;
-+	mux->mask = 3;
-+	mux->flags = 0;
-+
-+	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
-+			&mux->hw, &cclk_mux_ops,
-+			NULL, NULL,
-+			&gate->hw, &cclk_gate_ops,
-+			flags);
-+
-+	if (IS_ERR(hw)) {
-+		kfree(gate);
-+		kfree(mux);
-+	}
-+
-+fail:
-+	return hw;
-+}
-+
- static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
- 
- const char *rtc_parents[4] = {
-@@ -509,6 +625,23 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 		goto fail;
- 	}
- 
-+	clks[CLK_HSE_RTC] = clk_hw_register_divider(NULL, "hse-rtc", "clk-hse",
-+			0, base + STM32F4_RCC_CFGR, 16, 5, 0,
-+			&stm32f4_clk_lock);
-+
-+	if (IS_ERR(clks[CLK_HSE_RTC])) {
-+		pr_err("Unable to register hse-rtc clock\n");
-+		goto fail;
-+	}
-+
-+	clks[CLK_RTC] = stm32_register_cclk(NULL, "rtc", rtc_parents, 4,
-+			base + STM32F4_RCC_BDCR, 15, 8, 0, &stm32f4_clk_lock);
-+
-+	if (IS_ERR(clks[CLK_RTC])) {
-+		pr_err("Unable to register rtc clock\n");
-+		goto fail;
-+	}
-+
- 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
- 	return;
- fail:
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
