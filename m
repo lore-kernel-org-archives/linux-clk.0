@@ -1,51 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35196 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761138AbcINKGS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2016 06:06:18 -0400
-Received: by mail-wm0-f41.google.com with SMTP id i130so39598728wmf.0
-        for <linux-clk@vger.kernel.org>; Wed, 14 Sep 2016 03:06:18 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 0/4] ARM: amlogic: add i2c support to Amlogic's gxbb family
-Date: Wed, 14 Sep 2016 12:06:04 +0200
-Message-Id: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zajec5@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160916232332.GB7243@codeaurora.org>
+References: <20160905142935.4550-1-zajec5@gmail.com> <20160913070722.5867-1-zajec5@gmail.com>
+ <20160916232332.GB7243@codeaurora.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 17 Sep 2016 21:20:43 +0200
+Message-ID: <CACna6rwx5Aridk6ff2f3utmkDHEVD1rTBBVAZhr7qp3futuRKA@mail.gmail.com>
+Subject: Re: [PATCH V8] clk: bcm: Add driver for BCM53573 ILP clock
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, Jon Mason <jonmason@broadcom.com>,
+	Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the meson i2c controller found on the gxbb SoC family
-This patchset adds 1 i2c in the AO domain and 3 in the EE domain (A,B,C).
-There is 1 last i2c in the EE domain (D) but it is actually not connected
-to the pad of the SoC, so there is no point in adding it here.
+On 17 September 2016 at 01:23, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/13, Rafa=C5=82 Mi=C5=82ecki wrote:
+>> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+>>
+>> This clock is present on BCM53573 devices (including BCM47189) that use
+>> Cortex-A7. ILP is a part of PMU (Power Management Unit) multi-function
+>> device so we use syscon (and regmap) for it.
+>>
+>> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+>> ---
+>
+> Applied to clk-next
 
-Patches for the i2c [0] driver and pinctrl [1] have been sent in
-dedicated series
+Thank you and everyone who helped me getting this driver into a proper
+shape. I appreciate your help!
 
-[0]: http://lkml.kernel.org/r/1473846557-18123-1-git-send-email-jbrunet@baylibre.com
-[1]: http://lkml.kernel.org/r/1473846328-17339-1-git-send-email-jbrunet@baylibre.com
-
-Jerome Brunet (3):
-  clk: gxbb: expose i2c clocks
-  ARM64: dts: meson-gxbb: add pins for I2C
-  ARM64: dts: gxbb: add i2c bus
-
-Neil Armstrong (1):
-  ARM64: dts: meson-gxbb: add I2C nodes
-
- .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |  6 ++
- arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts    |  6 ++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        | 72 ++++++++++++++++++++++
- drivers/clk/meson/gxbb.h                           |  4 +-
- include/dt-bindings/clock/gxbb-clkc.h              |  2 +
- 5 files changed, 88 insertions(+), 2 deletions(-)
-
--- 
-2.7.4
-
+--=20
+Rafa=C5=82
