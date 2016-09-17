@@ -1,75 +1,48 @@
-Return-Path: <patrice.chotard@st.com>
-Subject: Re: [PATCH v3 11/14] ARM: DT: STiH410: Enable synchronous clock mode
- for video clocks
-To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar
- Gala <galak@codeaurora.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Geert
- Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>,
-        Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
- <1472473626-15398-12-git-send-email-gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-clk@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Peter Griffin
-	<peter.griffin@linaro.org>, <arnaud.pouliquen@st.com>,
-        <benjamin.gaignard@st.com>, <vincent.abriou@st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@linaro.org>
-From: Patrice Chotard <patrice.chotard@st.com>
-Message-ID: <2bd0942f-9525-5819-8edb-b561f5996583@st.com>
-Date: Thu, 15 Sep 2016 09:47:41 +0200
+Return-Path: <weiyj.lk@gmail.com>
+Return-Path: <weiyj.lk@gmail.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chao Xie <chao.xie@marvell.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: mmp: pxa910: fix return value check in pxa910_clk_init()
+Date: Sat, 17 Sep 2016 15:55:56 +0000
+Message-Id: <1474127756-14710-1-git-send-email-weiyj.lk@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1472473626-15398-12-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
+Fix the retrn value check which testing the wrong variable
+in pxa910_clk_init().
 
-On 08/29/2016 02:27 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch enables the synchronous clock mode for video clocks
-> on STiH410 board.
-> 
-> Signed-off-by: Olivier Bideau <olivier.bideau@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  arch/arm/boot/dts/stih410-clock.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
-> index aec2aa7..8598eff 100644
-> --- a/arch/arm/boot/dts/stih410-clock.dtsi
-> +++ b/arch/arm/boot/dts/stih410-clock.dtsi
-> @@ -277,7 +277,7 @@
->  
->  			clk_s_d2_flexgen: clk-s-d2-flexgen {
->  				#clock-cells = <1>;
-> -				compatible = "st,flexgen";
-> +				compatible = "st,flexgen-video", "st,flexgen";
->  
->  				clocks = <&clk_s_d2_quadfs 0>,
->  					 <&clk_s_d2_quadfs 1>,
-> 
-Hi Gabriel
+Fixes: 2bc61da9f7ff ("clk: mmp: add pxa910 DT support for clock driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/mmp/clk-of-pxa910.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied on STi tree for v4.9
-
-Thanks
+diff --git a/drivers/clk/mmp/clk-of-pxa910.c b/drivers/clk/mmp/clk-of-pxa910.c
+index e22a67f..64d1ef4 100644
+--- a/drivers/clk/mmp/clk-of-pxa910.c
++++ b/drivers/clk/mmp/clk-of-pxa910.c
+@@ -282,7 +282,7 @@ static void __init pxa910_clk_init(struct device_node *np)
+ 	}
+ 
+ 	pxa_unit->apmu_base = of_iomap(np, 1);
+-	if (!pxa_unit->mpmu_base) {
++	if (!pxa_unit->apmu_base) {
+ 		pr_err("failed to map apmu registers\n");
+ 		return;
+ 	}
+@@ -294,7 +294,7 @@ static void __init pxa910_clk_init(struct device_node *np)
+ 	}
+ 
+ 	pxa_unit->apbcp_base = of_iomap(np, 3);
+-	if (!pxa_unit->mpmu_base) {
++	if (!pxa_unit->apbcp_base) {
+ 		pr_err("failed to map apbcp registers\n");
+ 		return;
+ 	}
