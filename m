@@ -1,76 +1,39 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 23 Sep 2016 12:47:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yanhaifeng@hisilicon.com,
-	gaofei@hisilicon.com, hermit.wangheming@hisilicon.com,
-	scott.bambrough@linaro.org, mark.gregotski@linaro.org
-Subject: Re: [PATCH v2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
-Message-ID: <20160923174704.GA32729@rob-hp-laptop>
-References: <1474183821-7570-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <weiyj.lk@gmail.com>
+Return-Path: <weiyj.lk@gmail.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chao Xie <chao.xie@marvell.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: mmp: mmp2: fix return value check in mmp2_clk_init()
+Date: Sat, 17 Sep 2016 15:54:13 +0000
+Message-Id: <1474127653-14529-1-git-send-email-weiyj.lk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474183821-7570-1-git-send-email-xuejiancheng@hisilicon.com>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 18, 2016 at 03:30:21PM +0800, Jiancheng Xue wrote:
-> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
-> Generator) module generates clock and reset signals used
-> by other module blocks on SoC.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> ---
-> change log
-> v2:
-> - Fixed compiling error when compiled as a module.
-> - Fixed issues pointed by Stephen Boyd.
-> - Added prefix HISTB for clock index macro definitions.
-> 
->  .../clock/{hi3519-crg.txt => hisi-crg.txt}         |  11 +-
->  drivers/clk/hisilicon/Kconfig                      |   8 +
->  drivers/clk/hisilicon/Makefile                     |   1 +
->  drivers/clk/hisilicon/crg-hi3798cv200.c            | 305 +++++++++++++++++++++
->  drivers/clk/hisilicon/crg.h                        |  34 +++
->  include/dt-bindings/clock/histb-clock.h            |  64 +++++
->  6 files changed, 419 insertions(+), 4 deletions(-)
->  rename Documentation/devicetree/bindings/clock/{hi3519-crg.txt => hisi-crg.txt} (82%)
->  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
->  create mode 100644 drivers/clk/hisilicon/crg.h
->  create mode 100644 include/dt-bindings/clock/histb-clock.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
-> similarity index 82%
-> rename from Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> rename to Documentation/devicetree/bindings/clock/hisi-crg.txt
-> index acd1f23..e3919b6 100644
-> --- a/Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
-> @@ -1,7 +1,7 @@
-> -* Hisilicon Hi3519 Clock and Reset Generator(CRG)
-> +* HiSilicon Clock and Reset Generator(CRG)
->  
-> -The Hi3519 CRG module provides clock and reset signals to various
-> -controllers within the SoC.
-> +The CRG module provides clock and reset signals to various
-> +modules within the SoC.
->  
->  This binding uses the following bindings:
->      Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -10,7 +10,10 @@ This binding uses the following bindings:
->  Required Properties:
->  
->  - compatible: should be one of the following.
-> -  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
-> +  - "hisilicon,hi3516cv300-crg"
-> +  - "hisilicon,hi3519-crg"
-> +  - "hisilicon,hi3798cv200-crg"
-> +  - "hisilicon,hi3798cv200-sysctrl"
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Why crg and sysctrl?
+Fix the retrn value check which testing the wrong variable
+in mmp2_clk_init().
 
->  
->  - reg: physical base address of the controller and length of memory mapped
->    region.
+Fixes: 1ec770d92a62 ("clk: mmp: add mmp2 DT support for clock driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index 3a51fff..9adaf48 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -313,7 +313,7 @@ static void __init mmp2_clk_init(struct device_node *np)
+ 	}
+ 
+ 	pxa_unit->apmu_base = of_iomap(np, 1);
+-	if (!pxa_unit->mpmu_base) {
++	if (!pxa_unit->apmu_base) {
+ 		pr_err("failed to map apmu registers\n");
+ 		return;
+ 	}
