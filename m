@@ -1,168 +1,109 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:65071 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750720AbcIEECe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Sep 2016 00:02:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160829182200.GD19826@codeaurora.org>
-References: <1470112223-24835-1-git-send-email-yamada.masahiro@socionext.com>
- <1470112223-24835-2-git-send-email-yamada.masahiro@socionext.com>
- <20160819002507.GS361@codeaurora.org> <CAK7LNAQg-LcK-vsWVU-b0WsF=Y_NBNR_cWqNDJKyMqp7Svdvqg@mail.gmail.com>
- <20160819191612.GU361@codeaurora.org> <CAK7LNAQownrE0n8rAYGgUs9_byvok8W0V=c6gts_C=8Wvio86g@mail.gmail.com>
- <20160829182200.GD19826@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 5 Sep 2016 13:02:26 +0900
-Message-ID: <CAK7LNAQ9byodJTu-itbnhFrUGDQS5bxYUydyJ3zyZ+aLroQ6FA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] clk: uniphier: add core support code for UniPhier
- clock driver
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sat, 17 Sep 2016 16:23:58 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 1/4] clk: sunxi-ng: Add A64 clocks
+Message-ID: <20160917142358.GD17518@lukather>
+References: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
+ <20160909201029.24530-2-maxime.ripard@free-electrons.com>
+ <20160914214554.GH7243@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Q0rSlbzrZN6k9QnT"
+In-Reply-To: <20160914214554.GH7243@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
+
+
+--Q0rSlbzrZN6k9QnT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Stephen,
 
+On Wed, Sep 14, 2016 at 02:45:54PM -0700, Stephen Boyd wrote:
+> On 09/09, Maxime Ripard wrote:
+> > index 106cba27c331..964f22091a10 100644
+> > --- a/drivers/clk/sunxi-ng/Makefile
+> > +++ b/drivers/clk/sunxi-ng/Makefile
+> > @@ -22,3 +22,4 @@ obj-$(CONFIG_SUN6I_A31_CCU)	+=3D ccu-sun6i-a31.o
+> >  obj-$(CONFIG_SUN8I_A23_CCU)	+=3D ccu-sun8i-a23.o
+> >  obj-$(CONFIG_SUN8I_A33_CCU)	+=3D ccu-sun8i-a33.o
+> >  obj-$(CONFIG_SUN8I_H3_CCU)	+=3D ccu-sun8i-h3.o
+> > +obj-$(CONFIG_SUN50I_A64_CCU)	+=3D ccu-sun50i-a64.o
+>=20
+> Maybe do alphanumeric ordering?
 
-2016-08-30 3:22 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 08/29, Masahiro Yamada wrote:
->> Hi Stephen,
->>
->>
->> 2016-08-20 4:16 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
->> >>
->> >> >> +
->> >> >> +     parent = of_get_parent(dev->of_node); /* parent should be syscon node */
->> >> >> +     regmap = syscon_node_to_regmap(parent);
->> >> >> +     of_node_put(parent);
->> >> >
->> >> > devm_get_regmap(dev->parent) should work then? Why do we need to
->> >> > use OF APIs?
->> >>
->> >> "git grep devm_get_regmap" did not hit anything.
->> >>
->> >> Where is it defined?
->> >>
->> >
->> > Sorry I meant dev_get_regmap().
->> >
->>
->> I tried this, but it did not work.
->>
->> To make dev_get_regmap() work,
->> the parent device needs to call dev_regmap_init_mmio() beforehand.
->>
->>
->> Since commit bdb0066df96e74a4002125467ebe459feff1ebef
->> (mfd: syscon: Decouple syscon interface from platform devices),
->> syscon_probe() is not called for platform devices,
->> so that never happens.
->>
->
-> Ok. Is the syscon also a simple-mfd?
->
-> It sounds like there's a device for the parent, but we've failed
-> to attach a regmap to it. Maybe the core DT code should assign
-> the regmap to the parent device when it creates it so that child
-> devices don't need to know this detail? It could look for
-> simple-mfd devices with compatible = "syscon" and then create the
-> regmap? Here's a totally untested patch for that.
->
-> ----8<----
-> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> index 2f2225e845ef..5f7d3f015b82 100644
-> --- a/drivers/mfd/syscon.c
-> +++ b/drivers/mfd/syscon.c
-> @@ -136,6 +136,17 @@ struct regmap *syscon_node_to_regmap(struct device_node *np)
->  }
->  EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
->
-> +int device_attach_syscon(struct device *dev)
-> +{
-> +       struct regmap *regmap;
-> +
-> +       regmap = syscon_node_to_regmap(dev->of_node);
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
-> +
-> +       return regmap_attach_dev(dev, regmap, &syscon_regmap_config);
-> +}
-> +
->  struct regmap *syscon_regmap_lookup_by_compatible(const char *s)
->  {
->         struct device_node *syscon_np;
-> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> index 8aa197691074..58a018e15006 100644
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-> @@ -25,6 +25,7 @@
->  #include <linux/of_irq.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/mfd/syscon.h>
->
->  const struct of_device_id of_default_bus_match_table[] = {
->         { .compatible = "simple-bus", },
-> @@ -383,7 +384,12 @@ static int of_platform_bus_create(struct device_node *bus,
->                 return 0;
->         }
->
-> +
->         dev = of_platform_device_create_pdata(bus, bus_id, platform_data, parent);
-> +       if (of_device_is_compatible(bus, "simple-mfd") &&
-> +           of_device_is_compatible(bus, "syscon"))
-> +               device_attach_syscon(&dev->dev);
-> +
->         if (!dev || !of_match_node(matches, bus))
->                 return 0;
->
-> diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-> index 40a76b97b7ab..e19e5d15f4e6 100644
-> --- a/include/linux/mfd/syscon.h
-> +++ b/include/linux/mfd/syscon.h
-> @@ -18,9 +18,11 @@
->  #include <linux/err.h>
->  #include <linux/errno.h>
->
-> +struct device;
->  struct device_node;
->
->  #ifdef CONFIG_MFD_SYSCON
-> +extern int device_attach_syscon(struct device *dev);
->  extern struct regmap *syscon_node_to_regmap(struct device_node *np);
->  extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
->  extern struct regmap *syscon_regmap_lookup_by_pdevname(const char *s);
-> @@ -28,6 +30,11 @@ extern struct regmap *syscon_regmap_lookup_by_phandle(
->                                         struct device_node *np,
->                                         const char *property);
->  #else
-> +static inline int device_attach_syscon(struct device *dev)
-> +{
-> +       return 0;
-> +}
-> +
->  static inline struct regmap *syscon_node_to_regmap(struct device_node *np)
->  {
->         return ERR_PTR(-ENOTSUPP);
+Yes, of course.
 
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-=
+ng/ccu-sun50i-a64.c
+> > new file mode 100644
+> > index 000000000000..d51ee416f515
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> > @@ -0,0 +1,870 @@
+> > +
+> > +static void __init sun50i_a64_ccu_setup(struct device_node *node)
+> > +{
+> > +	void __iomem *reg;
+> > +	u32 val;
+> > +
+> > +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
+> > +	if (IS_ERR(reg)) {
+> > +		pr_err("%s: Could not map the clock registers\n",
+> > +		       of_node_full_name(node));
+> > +		return;
+> > +	}
+> > +
+> > +	/* Force the PLL-Audio-1x divider to 4 */
+> > +	val =3D readl(reg + SUN50I_A64_PLL_AUDIO_REG);
+> > +	val &=3D ~GENMASK(19, 16);
+> > +	writel(val | (3 << 16), reg + SUN50I_A64_PLL_AUDIO_REG);
+> > +
+> > +	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+> > +
+> > +	sunxi_ccu_probe(node, reg, &sun50i_a64_ccu_desc);
+> > +}
+> > +CLK_OF_DECLARE(sun50i_a64_ccu, "allwinner,sun50i-a64-ccu",
+> > +	       sun50i_a64_ccu_setup);
+>=20
+> Is there a reason it can't be a platform driver?
 
-I was not quire sure about this,
-but maybe worth submitting to DT subsystem?
+We have timers connected to those clocks. I'm not sure we'll ever use
+them, since we also have the arch timers, and we can always change
+that later, I'll change that.
 
-Anyway, I will go with syscon_node_to_regmap() for v7.
-Of course, I am happy to replace it with dev_get_regmap()
-when the issue is solved in the mainline.
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--Q0rSlbzrZN6k9QnT
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Best Regards
-Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX3VH+AAoJEBx+YmzsjxAgWZsQAKFvmbT5isr/UCwDv/j19lno
+RO6/9VlBkqCaYAyU9gZxok1Ls8TrTqdNsvwGD0v/owqtrmbfaOiDRYeyIWl3Vzpo
+Cyod8gFJhaKhntZc84dq3vs0U2EIfIQ15gRDj0uzF24LtAZkPPOezDgp3RTkgZhb
+0pTkT4G165ti9pAebD+dmV/w6Y7K6aepLI20p4sfeAirucAgzT/qrBllQ9kD3+mI
+a8VxZvmB+W6RZBNv6DphPfEO5yFZslH+9fEEQ/VJq6PYCL1lR/RP1xgRgfP2G4XA
++Ak8Vt45DNs4xJ8ApBWNsU7Y/fDCFOS5TSF6XO/Fk+Upot3Bl/beR9/LlqIcsyGt
+zf/kucCwMhzKMoay/X/Vwqih5QJolIRN7tcD4h8ivMPGeYARTTDXrnAl0/RL1MGS
+2j2yXf9goA6pG2p6NFrUiHercMszf+PyZV1pRFIxu4YtH7z6CJDp+8Nbi8ZevMyx
+3pa9d6b1S+Uv54Ev52faFiGlsxAZMfMP9w4ftLPNnEebV5YLncJNtE9You7j6Bog
+4WJYSwEwbU4jZ2W2hbad/1szz0wK6oAH2Eot5YlYCggqnF2o2xl6sVesm7TY/f2Y
+SzuVrQDvEGIzjhK0p93y0kVJkcUWKdGzJ0t7i+DqYstI24zGq0Pcz3szqP0zQNsM
+Bl25DN8+yD99bvSkwCR4
+=N08J
+-----END PGP SIGNATURE-----
+
+--Q0rSlbzrZN6k9QnT--
