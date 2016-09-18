@@ -1,42 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Sep 2016 16:32:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, ssantosh@kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	nm@ti.com
-Subject: Re: [PATCHv2 3/3] clk: keystone: Add sci-clk driver support
-Message-ID: <20160902233235.GM12510@codeaurora.org>
-References: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
- <1472733635-22661-4-git-send-email-t-kristo@ti.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 18 Sep 2016 08:21:59 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Kalle Kankare <kalle.kankare@vincit.fi>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/1] ARM: imx5: Add clocks configuration
+Message-ID: <20160918002159.GD15478@tiger>
+References: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+ <1473961353.68713919@f429.i.mail.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472733635-22661-4-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1473961353.68713919@f429.i.mail.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Tero Kristo wrote:
-> +
-> +/**
-> + * _sci_clk_get - Gets a handle for an SCI clock
-> + * @provider: Handle to SCI clock provider
-> + * @dev_id: device ID for the clock to register
-> + * @clk_id: clock ID for the clock to register
-> + * @parse_parents: indicator whether parents for this clock should be handled
-> + *
-> + * Gets a handle to an existing TI SCI hw clock, or builds a new clock
-> + * entry and registers it with the common clock framework. Called from
-> + * the common clock framework, when a corresponding of_clk_get call is
-> + * executed, or recursively from itself when parsing parent clocks.
-> + * Returns a pointer to the hw clock struct, or ERR_PTR value in failure.
-> + */
-> +static struct clk_hw *_sci_clk_get(struct sci_clk_provider *provider,
-> +				   u16 dev_id, u8 clk_id, bool parse_parents)
+On Thu, Sep 15, 2016 at 08:42:33PM +0300, Alexander Shiyan wrote:
+> >Четверг, 15 сентября 2016, 13:13 +03:00 от Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>:
+> >
+> >From: Kalle Kankare < kalle.kankare@vincit.fi >
+> >
+> >Add clocks configuration for CSI, FIRI and IEEE1588.
+> >
+> >Signed-off-by: Fabien Lahoudere < fabien.lahoudere@collabora.co.uk >
+> >---
+> > drivers/clk/imx/clk-imx51-imx53.c      | 20 ++++++++++++++++++++
+> > include/dt-bindings/clock/imx5-clock.h | 15 ++++++++++++++-
+> > 2 files changed, 34 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+> >index 29d4c44..1e3c9ea 100644
+> >--- a/drivers/clk/imx/clk-imx51-imx53.c
+> >+++ b/drivers/clk/imx/clk-imx51-imx53.c
+> >@@ -126,6 +126,7 @@ static const char *spdif0_com_sel[] = { "spdif0_podf", "ssi1_root_gate", };
+> > static const char *mx51_spdif1_com_sel[] = { "spdif1_podf", "ssi2_root_gate", };
+> > static const char *step_sels[] = { "lp_apm", };
+> > static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
+> >+static const char *ieee1588_sels[] = { "pll3_sw", "pll4_sw", "dummy" /* usbphy2_clk */, "dummy" /* fec_phy_clk */ };
+> > 
+> > static struct clk *clk[IMX5_CLK_END];
+> > static struct clk_onecell_data clk_data;
+> >@@ -543,6 +544,25 @@ static void __init mx53_clocks_init(struct device_node *np)
+> ...
+> 
+> 2 Shawn Guo: Since the change affects only on i.MX53 architecture,
+> I would ask to change the subject to i.MX53 if it possible.
 
-I still don't get it. We should be registering hw pointers in
-probe and handing them out in the xlate function. Not register
-hws in the xlate function and then handing them out as well. I
-haven't reviewed anything else in this patch.
+Yes.  Actually, since clock driver is not moved to drivers/clk, we
+shouldn't prefix it with "ARM: " any longer.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Shawn
