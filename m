@@ -1,43 +1,237 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Fri, 9 Sep 2016 08:20:34 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
-Message-ID: <20160909062034.tim2tzcihui6inoa@pengutronix.de>
-References: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20160909061631.GI16911@tiger>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:31943 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755050AbcIRBuP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Sep 2016 21:50:15 -0400
+Subject: Re: [PATCH] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1473670888-17997-1-git-send-email-xuejiancheng@hisilicon.com>
+ <20160914210134.GD7243@codeaurora.org>
+CC: <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <gaofei@hisilicon.com>,
+        <hermit.wangheming@hisilicon.com>, <scott.bambrough@linaro.org>,
+        <mark.gregotski@linaro.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <57DDF2B6.2070104@hisilicon.com>
+Date: Sun, 18 Sep 2016 09:49:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20160909061631.GI16911@tiger>
+In-Reply-To: <20160914210134.GD7243@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To += mturquette, sboyd
-
-Hello Shawn, hello Michael, hello Stephen,
-
-On Fri, Sep 09, 2016 at 02:16:31PM +0800, Shawn Guo wrote:
-> On Thu, Sep 08, 2016 at 11:30:21AM +0200, Uwe Kleine-König wrote:
-> > This fixes
-> > 	[    0.000000] i.MX clk 82: register failed with -17
-> > because the name is duplicated.
-> > 
-> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On 2016/9/15 5:01, Stephen Boyd wrote:
+> On 09/12, Jiancheng Xue wrote:
+>> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
+>> Generator) module generates clock and reset signals used
+>> by other module blocks on SoC.
+>>
+>> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 > 
-> I did not queue any clock patches for this cycle.  Can you please send
-> the patches directly to clock maintainers?
+> Overall looks fine. Just a few nitpicks.
+> 
+Hi Stephen,
 
-@shawnguo: Is this an ack?
-@mturquette, sboyd: should I resend? IMHO the first patch should go in
-soon.
+Thanks for all your comments. I'll refine this patch
+according to your suggestions and send a new version.
 
-Best regards
-Uwe
+Best Regards,
+Jiancheng
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+>> ---
+>>  .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ----
+>>  .../devicetree/bindings/clock/hisi-crg.txt         |  49 ++++
+> 
+> I wonder if git format-patch -M would make it more apparent about
+> what's changed across the file rename?
+> 
+>>  drivers/clk/hisilicon/Kconfig                      |   8 +
+>>  drivers/clk/hisilicon/Makefile                     |   1 +
+>>  drivers/clk/hisilicon/crg-hi3798cv200.c            | 304 +++++++++++++++++++++
+>>  drivers/clk/hisilicon/crg.h                        |  39 +++
+>>  include/dt-bindings/clock/histb-clock.h            |  64 +++++
+>>  7 files changed, 465 insertions(+), 46 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
+>>  create mode 100644 drivers/clk/hisilicon/crg.h
+>>  create mode 100644 include/dt-bindings/clock/histb-clock.h
+>>
+>> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+>> index e169ec7..233d809 100644
+>> --- a/drivers/clk/hisilicon/Makefile
+>> +++ b/drivers/clk/hisilicon/Makefile
+>> @@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+>>  obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+>>  obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+>>  obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+>> +obj-$(CONFIG_COMMON_CLK_HI3798CV200) += crg-hi3798cv200.o
+> 
+> Tab this out?
+> 
+>>  obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+>>  obj-$(CONFIG_RESET_HISI)	+= reset.o
+>>  obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+>> diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
+>> new file mode 100644
+>> index 0000000..b763b99
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
+>> @@ -0,0 +1,304 @@
+> [...]
+>> +
+>> +static struct hisi_crg_funcs hi3798cv200_crg_funcs = {
+> 
+> const?
+> 
+>> +	.register_clks = hi3798cv200_clk_register,
+>> +	.unregister_clks = hi3798cv200_clk_unregister,
+>> +};
+>> +
+>> +/* hi3798CV200 sysctrl CRG */
+>> +
+>> +#define HI3798CV200_SYSCTRL_NR_CLKS 16
+>> +
+>> +static const struct hisi_gate_clock hi3798cv200_sysctrl_gate_clks[] = {
+>> +	{ IR_CLK, "clk_ir", "100m",
+>> +		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
+>> +	{ TIMER01_CLK, "clk_timer01", "24m",
+>> +		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
+>> +	{ UART0_CLK, "clk_uart0", "75m",
+>> +		CLK_SET_RATE_PARENT, 0x48, 10, 0, },
+>> +};
+>> +
+>> +static struct hisi_clock_data *hi3798cv200_sysctrl_clk_register(
+>> +					struct platform_device *pdev)
+>> +{
+>> +	struct hisi_clock_data *clk_data;
+>> +	int ret;
+>> +
+>> +	clk_data = hisi_clk_alloc(pdev, HI3798CV200_SYSCTRL_NR_CLKS);
+>> +	if (!clk_data)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	ret = hisi_clk_register_gate(hi3798cv200_sysctrl_gate_clks,
+>> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
+>> +				clk_data);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	ret = of_clk_add_provider(pdev->dev.of_node,
+>> +			of_clk_src_onecell_get, &clk_data->clk_data);
+>> +	if (ret)
+>> +		goto unregister_gate;
+>> +
+>> +	return clk_data;
+>> +
+>> +unregister_gate:
+>> +	hisi_clk_unregister_gate(hi3798cv200_sysctrl_gate_clks,
+>> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
+>> +				clk_data);
+>> +	return ERR_PTR(ret);
+>> +}
+>> +
+>> +static void hi3798cv200_sysctrl_clk_unregister(struct platform_device *pdev)
+>> +{
+>> +	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
+>> +
+>> +	of_clk_del_provider(pdev->dev.of_node);
+>> +
+>> +	hisi_clk_unregister_gate(hi3798cv200_sysctrl_gate_clks,
+>> +				ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
+>> +				crg->clk_data);
+>> +}
+>> +
+>> +static struct hisi_crg_funcs hi3798cv200_sysctrl_funcs = {
+> 
+> const?
+> 
+>> +	.register_clks = hi3798cv200_sysctrl_clk_register,
+>> +	.unregister_clks = hi3798cv200_sysctrl_clk_unregister,
+>> +};
+>> +
+>> +static const struct of_device_id hi3798cv200_crg_match_table[] = {
+>> +	{ .compatible = "hisilicon,hi3798cv200-crg",
+>> +		.data = &hi3798cv200_crg_funcs},
+> 
+> Nitpick: please add a space before }
+> 
+>> +	{ .compatible = "hisilicon,hi3798cv200-sysctrl",
+>> +		.data = &hi3798cv200_sysctrl_funcs},
+> 
+> Nitpick: please add a space before }
+> 
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, hi3798cv200_clk_match_table);
+>> +
+>> +static int hi3798cv200_crg_probe(struct platform_device *pdev)
+>> +{
+>> +	struct hisi_crg_dev *crg;
+>> +	const struct of_device_id *match;
+>> +
+>> +	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
+>> +	if (!crg)
+>> +		return -ENOMEM;
+>> +
+>> +	match = of_match_node(hi3798cv200_crg_match_table, pdev->dev.of_node);
+>> +	crg->funcs = (struct hisi_crg_funcs *)match->data;
+> 
+> We can use of_device_get_match_data() here to simplify things.
+> 
+>> +
+>> +	crg->rstc = hisi_reset_init(pdev);
+>> +	if (!crg->rstc)
+>> +		return -ENOMEM;
+>> +
+>> diff --git a/drivers/clk/hisilicon/crg.h b/drivers/clk/hisilicon/crg.h
+>> new file mode 100644
+>> index 0000000..145b929
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/crg.h
+>> @@ -0,0 +1,39 @@
+>> +/*
+>> + * HiSilicon Clock and Reset Driver Header
+>> + *
+>> + * Copyright (c) 2016 HiSilicon Limited.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License along
+>> + * with this program; if not, write to the Free Software Foundation, Inc.,
+>> + * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+>> + *
+>> + */
+>> +
+>> +#ifndef	__HISI_CRG_H
+>> +#define	__HISI_CRG_H
+> 
+> Weird tab here. Please replace with space.
+> 
+>> +
+>> +struct hisi_clock_data;
+>> +struct hisi_reset_controller;
+>> +
+>> +struct hisi_crg_funcs {
+>> +	struct hisi_clock_data*	(*register_clks)(struct platform_device *pdev);
+>> +	void (*unregister_clks)(struct platform_device *pdev);
+>> +};
+>> +
+>> +struct hisi_crg_dev {
+>> +	struct hisi_clock_data *clk_data;
+>> +	struct hisi_reset_controller *rstc;
+>> +	struct hisi_crg_funcs	*funcs;
+>> +};
+>> +
+> 
+
