@@ -1,72 +1,65 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 15 Sep 2016 10:34:36 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] clk: sunxi-ng: sun6i-a31: Register offset and clk
- flag fixes
-Message-ID: <20160915083436.GC10128@lukather>
-References: <20160915065740.13664-1-wens@csie.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 18 Sep 2016 08:24:51 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Kalle Kankare <kalle.kankare@vincit.fi>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/1] ARM: imx5: Add clocks configuration
+Message-ID: <20160918002451.GE15478@tiger>
+References: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+ <1473961353.68713919@f429.i.mail.ru>
+ <20160918002159.GD15478@tiger>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="o0ZfoUVt4BxPQnbU"
-In-Reply-To: <20160915065740.13664-1-wens@csie.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160918002159.GD15478@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, Sep 18, 2016 at 08:21:59AM +0800, Shawn Guo wrote:
+> On Thu, Sep 15, 2016 at 08:42:33PM +0300, Alexander Shiyan wrote:
+> > >Четверг, 15 сентября 2016, 13:13 +03:00 от Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>:
+> > >
+> > >From: Kalle Kankare < kalle.kankare@vincit.fi >
+> > >
+> > >Add clocks configuration for CSI, FIRI and IEEE1588.
+> > >
+> > >Signed-off-by: Fabien Lahoudere < fabien.lahoudere@collabora.co.uk >
+> > >---
+> > > drivers/clk/imx/clk-imx51-imx53.c      | 20 ++++++++++++++++++++
+> > > include/dt-bindings/clock/imx5-clock.h | 15 ++++++++++++++-
+> > > 2 files changed, 34 insertions(+), 1 deletion(-)
+> > >
+> > >diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+> > >index 29d4c44..1e3c9ea 100644
+> > >--- a/drivers/clk/imx/clk-imx51-imx53.c
+> > >+++ b/drivers/clk/imx/clk-imx51-imx53.c
+> > >@@ -126,6 +126,7 @@ static const char *spdif0_com_sel[] = { "spdif0_podf", "ssi1_root_gate", };
+> > > static const char *mx51_spdif1_com_sel[] = { "spdif1_podf", "ssi2_root_gate", };
+> > > static const char *step_sels[] = { "lp_apm", };
+> > > static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
+> > >+static const char *ieee1588_sels[] = { "pll3_sw", "pll4_sw", "dummy" /* usbphy2_clk */, "dummy" /* fec_phy_clk */ };
+> > > 
+> > > static struct clk *clk[IMX5_CLK_END];
+> > > static struct clk_onecell_data clk_data;
+> > >@@ -543,6 +544,25 @@ static void __init mx53_clocks_init(struct device_node *np)
+> > ...
+> > 
+> > 2 Shawn Guo: Since the change affects only on i.MX53 architecture,
+> > I would ask to change the subject to i.MX53 if it possible.
+> 
+> Yes.  Actually, since clock driver is not moved to drivers/clk, we
 
---o0ZfoUVt4BxPQnbU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+s/not/now
 
-Hi,
+> shouldn't prefix it with "ARM: " any longer.
 
-On Thu, Sep 15, 2016 at 02:57:37PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> Here are 3 fixes for the new sunxi-ng clk driver for sun6i-a31 recently
-> introduced for 4.9. The issues were noticed while working on the display
-> pipeline for the A31/A31s. The second patch follows what Maxime has done
-> for the A33 CCU driver. The third issue was noticed while doing the first
-> patch.
->=20
-> I hope we can get this into 4.9 as well, either right in -rc1, or in a
-> later -rc.
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Stephen, could you apply those patches directly on top of my previous
-PR, or do you want me to send another one?
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---o0ZfoUVt4BxPQnbU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX2l0cAAoJEBx+YmzsjxAgndIQALJ/+FGWOe9YLOUESBj9S+iJ
-tkMo4dVNOs0gshgCGT0Oz93fbo3VVIUOhgTgqQtWedpiX8MFeziKuTozgjQQWEsr
-NrkY7Kq/CX+UMr7ap797FGBivanDSGMcCmOgG/2WAUjpnYJajIE63+NraVBk4Iai
-QZ1oTa7xfgiD8NFqIzAl1/dEQfu/m0pv/rLe3KqZMbR41AQiHqa8KSKimTe/gy3J
-7iy3jBfrwNMUo0+himgLvj3wRjgfLElCaLPBAm82NpUMgjb0+g/bd4sTppcxZH+e
-NDOCEAOHiZRtOgMFJooILQkRSXabo9M6+BoaxEzVJibmkUVrEtuwMue4KDDRbFb5
-A0+KMg3wkoOdB0eqIzgRp1TlxYzecnSuSkx7fAMlqhIFwIfNVbyWuxiOWNr7xAha
-qEpl3+Kn0vtnnptuUB4CLWrb9CLT7QD23eR2BT8yZsAC2prxLBk/jlAxi4WFd7ms
-CkZiIxGZqeh6YkLkHV1zKs9CYWKpeRgunlzDSfoJbnzEXcHI8YHG6L6tA50O/SWU
-w9RF6wP/+0NMp07r+w5OieoYTLnhK3HT8u2iaJnn2z6KHd5OlNkAQgXRpbFzRxAF
-3Ljna5xRjloHuo4U8FzpX1E9q/F4HKXdv4UnA9TMJ8M9L0qaRZgOyJe1l2eg/Cyq
-uORYHD1DZCbCjRFgeWjS
-=N49m
------END PGP SIGNATURE-----
-
---o0ZfoUVt4BxPQnbU--
+Shawn
