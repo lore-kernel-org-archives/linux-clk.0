@@ -1,58 +1,116 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 9 Sep 2016 21:08:34 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2] clk: sunxi-ng: Add hardware dependency
-Message-ID: <20160909190834.GH8881@lukather>
-References: <20160908232829.07adc10b@endymion>
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?utf-8?B?QW5kcsOpIFByenl3YXJh?= <andre.przywara@arm.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20160917145121.GE17518@lukather>
+References: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
+	 <20160909201029.24530-4-maxime.ripard@free-electrons.com>
+	 <fad78d40-b595-633c-6d43-6246ec893635@arm.com> <20160917145121.GE17518@lukather>
+Subject: Re: [PATCH v2 3/4] arm64: dts: add Allwinner A64 SoC .dtsi
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OpLPJvDmhXTZE4Lg"
-In-Reply-To: <20160908232829.07adc10b@endymion>
+Message-Id: <1006111474161712@web13g.yandex.ru>
+Date: Sun, 18 Sep 2016 09:21:52 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
 
---OpLPJvDmhXTZE4Lg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 08, 2016 at 11:28:29PM +0200, Jean Delvare wrote:
-> The sunxi-ng clock driver is useless for other architectures.
->=20
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
+17.09.2016, 22:56, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> On Thu, Sep 15, 2016 at 01:08:45AM +0100, André Przywara wrote:
+>>  > --- a/MAINTAINERS
+>>  > +++ b/MAINTAINERS
+>>  > @@ -982,6 +982,7 @@ M: Chen-Yu Tsai <wens@csie.org>
+>>  > L: linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>>  > S: Maintained
+>>  > N: sun[x456789]i
+>>  > +F: arch/arm64/boot/dts/allwinner/
+>>
+>>  If you promise to not break it needlessly ;-)
+>
+> We started doing so since 4.7, and we're already fighting needlessly
+> with maintainers because of that.
+>
+>>  > + cpus {
+>>  > + #address-cells = <1>;
+>>  > + #size-cells = <0>;
+>>  > +
+>>  > + cpu@0 {
+>>
+>>  This is probably me to blame here since I put you up to it, but you need
+>>  "cpux" names (e.g. "cpu0: cpu@0 {") to match the ones that the PMU node
+>>  references below. dtc will refuse to compile it otherwise.
+>
+> Gaah, yes, of course.
+>
+>>  > + i2c1_pins: i2c1_pins {
+>>  > + allwinner,pins = "PH2", "PH3";
+>>  > + allwinner,function = "i2c1";
+>>  > + allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>>  > + allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>>  > + };
+>>  > +
+>>  > + uart0_pins_a: uart0@0 {
+>>  > + allwinner,pins = "PB8", "PB9";
+>>  > + allwinner,function = "uart0";
+>>  > + allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>>  > + allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>>  > + };
+>>
+>>  So did I get this right that there is a strict "no user - no pins"
+>>  policy here?
+>>  I don't see a reason why we shouldn't have at least the other UART pins
+>>  described here as well - since they are a pure SoC property. That would
+>>  make it easier for people to enable them (with a simple, scripted fdt
+>>  one-liner command in U-Boot, for instance).
+>
+> To avoid having huge DT that are longer to load and parse, especially
+> since every one wires it in the exact same way all the time. And the
+> combination is just too high.
+>
+> On the A64, the UART0 can be exposed through PB9 and PF4 for TX, and
+> PB8 and PF2 for RX. Even though the common usage would be to use PB8
+> and PB9, or PF4 and PF6. But absolutely nothing prevents from using
+> PB8 and PF4.
+>
+> You can then add CTS and RTS into the mix, and multiply that by the
+> number of devices in the SoC.
+>
+>>  I guess there will never be an official DT with more than 2 UARTs
+>>  enabled, although we have actually five UARTs on the headers on the
+>>  Pine64, for instance (and personally I am looking into using one as a
+>>  terminal server).
+>
+> We relaxed the rule lately however. Boards that have access to those
+> UARTs on their headers can put a node in their DT with the right
+> muxing filled already. Which brings you the simple, script fdt
+> one-liner in U-Boot.
+>
+>>  Also UART1 is connected to that WiFi/Bluetooth slot, having it enabled
+>>  should make BT work without further ado (but I haven't tested this).
+>
+> That's probably not true. You'll most likely need to enable a few
+> regulators to have it working.
 
-Applied, thanks!
-Maxime
+It seems that Andre has enabled the necessary regulator in the
+newest version of his ARM Trusted Firmware...
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---OpLPJvDmhXTZE4Lg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0wiyAAoJEBx+YmzsjxAgkVYP/i/lPXNVICgRfcwLHlJBBbQ8
-G3WBm8WPthP7FZBRiZPbV+5BN6sJAK4NK7Ay4geFLKYD6pFWEIMu2AH3gpplA9uB
-pABUJCJuNCSqqG8ZC4FHLXEYAV/Vavc17EFqB4urgFbsyzkvd+yBMzk57KpevfoD
-jmgNgDF0RPS6SzWNVd559D1mwq1f2u29f1cb2kl+y50RGWpO91rAAhllUeyXBMvN
-om8iH5vtB5t0aZAkXYlYyhVVOYfRxjXvnKlNe4yLUw6RntsCiOjJll0eCrwYJTGb
-LzikuZb0hYX+xA4zXvC1KgHs+Vk7l3RM0+9XVn3G3LIkoD9ukFRCFO7C2H2bG1XX
-jadJ8G6gmmxCZedPJhvCoCj65k9YuL1TPbDH4gCzvbDDIi97p57Rp7HZQ3+Etlju
-JdfRyRpu9o3kVpYS+GKc9fW95YpthucEkNqjR/UD6EHAEopgx/Jx12fBw7UkirT8
-pax2Zusue+IA+e1eL64npvWdR7zCnijbTnVF15P/z3kK5rscD0fHjGm6CfKZ4/47
-eIZtkWpAk3p9RFNJ0V/TfWWjWnQEZjPBIXzzmpdgLlSJARq7ave7hvuEgeMvStEj
-PaqXjSBXubfIeDzFNeTbHsBdC+DAwSWkqTlUhKsJgyYeiwhyxn/AL7U4oF6JJDLf
-NWSSbK/0HnS57+mEsP6I
-=NDpR
------END PGP SIGNATURE-----
-
---OpLPJvDmhXTZE4Lg--
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
+> ,
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
