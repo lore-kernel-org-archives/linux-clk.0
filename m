@@ -1,74 +1,67 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 12 Sep 2016 08:10:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, ssantosh@kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	nm@ti.com
-Subject: Re: [PATCHv2 1/3] Documentation: dt: Add TI SCI clock driver
-Message-ID: <20160912131038.GA13103@rob-hp-laptop>
-References: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
- <1472733635-22661-2-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:21426 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752152AbcIRQZd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Sep 2016 12:25:33 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472733635-22661-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <20160917085606.GA17799@kroah.com>
+References: <1463755793-9131-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAK7LNATY9wTjHjsLtGHAJ-DueqXcCHdrw_uoSfyTOEmpp-ZPGw@mail.gmail.com>
+ <20160916231245.GX7243@codeaurora.org> <20160917085606.GA17799@kroah.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 19 Sep 2016 01:25:01 +0900
+Message-ID: <CAK7LNASJjef7-Brn+uuan+cZtpBSjYwL-wgtcrv7vuYAFLEs-w@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: probe common clock drivers earlier
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jay Sternberg <jay.e.sternberg@intel.com>,
+        Jens Axboe <axboe@fb.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+        Alan Tull <atull@opensource.altera.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 01, 2016 at 03:40:33PM +0300, Tero Kristo wrote:
-> Add a clock implementation, TI SCI clock, that will hook to the common
-> clock framework, and allow each clock to be controlled via TI SCI
-> protocol.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Tested-by: Dave Gerlach <d-gerlach@ti.com>
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
->  .../devicetree/bindings/clock/ti,sci-clk.txt       | 51 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> new file mode 100644
-> index 0000000..231cb80
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> @@ -0,0 +1,51 @@
-> +Texas Instruments TI-SCI Clocks
-> +===============================
-> +
-> +All clocks on Texas Instruments' SoCs that contain a System Controller,
-> +are only controlled by this entity. Communication between a host processor
-> +running an OS and the System Controller happens through a protocol known
-> +as TI-SCI[1]. This clock implementation plugs into the common clock
-> +framework and makes use of the TI-SCI protocol on clock API requests.
-> +
-> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-> +
-> +Required properties:
-> +-------------------
-> +- compatible: Must be "ti,sci-clk"
-> +- #clock-cells: Shall be 2.
-> +  In clock consumers, this cell represents the device ID and clock ID
-> +  exposed by the PM firmware. The assignments can be found in the header
-> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
-> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
-> +  is the SoC involved, for example 'k2g'.
-> +- ti,sci: Phandle to the TI SCI device to use for managing the clocks
-> +
-> +Optional properties:
-> +-------------------
-> +- ti,ssc-clocks: Array of phandle clocks that shall enable spread spectrum
-> +		 clocking while enabled
-> +- ti,allow-freq-change-clocks: Array of phandle clocks that shall allow
-> +			       dynamic clock frequency changes by firmware
-> +- ti,input-term-clocks: Array of phandle clocks that shall enable input
-> +			termination
+Hi Greg,
 
-These seem like a random set of features to control. What determines the 
-clocks for these? If it is based on the SoC, then make your compatible 
-string SoC specific and don't put this into DT.
+2016-09-17 17:56 GMT+09:00 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+> On Fri, Sep 16, 2016 at 04:12:45PM -0700, Stephen Boyd wrote:
+>> On 09/16, Masahiro Yamada wrote:
 
-Rob
+>> >
+>> >
+>> > What do you think of this patch?
+>> >
+>>
+>> I assumed Greg would pick it up given that Mike already acked it.
+>
+> I was going to take it?  It's not in my queue, sorry, can someone please
+> resend it with the acks and I will pick it up...
+>
+> thanks,
+>
+> greg k-h
+
+
+
+I did so with Michael's Acked-by:
+
+https://patchwork.kernel.org/patch/9337959/
+
+
+Thanks!
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
