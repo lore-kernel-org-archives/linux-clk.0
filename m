@@ -1,191 +1,41 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v11, 7/8] base: soc: introduce soc_device_match() interface
-Date: Tue, 6 Sep 2016 16:28:22 +0800
-Message-ID: <1473150503-9550-8-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
- Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
- xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
- Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
- linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <keguang.zhang@gmail.com>
+Return-Path: <keguang.zhang@gmail.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH V1 3/3] clk: Loongson1: Make use of GENMASK
+Date: Mon, 19 Sep 2016 12:38:56 +0800
+Message-Id: <1474259936-9657-4-git-send-email-keguang.zhang@gmail.com>
+In-Reply-To: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
+References: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We keep running into cases where device drivers want to know the exact
-version of the a SoC they are currently running on. In the past, this has
-usually been done through a vendor specific API that can be called by a
-driver, or by directly accessing some kind of version register that is
-not part of the device itself but that belongs to a global register area
-of the chip.
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-Common reasons for doing this include:
+Make use of GENMASK instead of open coding the equivalent operation,
+and update the PLL formula.
 
-- A machine is not using devicetree or similar for passing data about
-  on-chip devices, but just announces their presence using boot-time
-  platform devices, and the machine code itself does not care about the
-  revision.
-
-- There is existing firmware or boot loaders with existing DT binaries
-  with generic compatible strings that do not identify the particular
-  revision of each device, but the driver knows which SoC revisions
-  include which part.
-
-- A prerelease version of a chip has some quirks and we are using the same
-  version of the bootloader and the DT blob on both the prerelease and the
-  final version. An update of the DT binding seems inappropriate because
-  that would involve maintaining multiple copies of the dts and/or
-  bootloader.
-
-This patch introduces the soc_device_match() interface that is meant to
-work like of_match_node() but instead of identifying the version of a
-device, it identifies the SoC itself using a vendor-agnostic interface.
-
-Unlike of_match_node(), we do not do an exact string compare but instead
-use glob_match() to allow wildcards in strings.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 ---
-Changes for v11:
-	- Added this patch for soc match
----
- drivers/base/Kconfig    |  1 +
- drivers/base/soc.c      | 61 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/sys_soc.h |  3 +++
- 3 files changed, 65 insertions(+)
+ drivers/clk/loongson1/clk-loongson1b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 98504ec..f1591ad2 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -225,6 +225,7 @@ config GENERIC_CPU_AUTOPROBE
+diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
+index 4b3d9d2..f36a97e 100644
+--- a/drivers/clk/loongson1/clk-loongson1b.c
++++ b/drivers/clk/loongson1/clk-loongson1b.c
+@@ -26,7 +26,7 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+ 	u32 pll, rate;
  
- config SOC_BUS
- 	bool
-+	select GLOB
+ 	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
+-	rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
++	rate = 12 + (pll & GENMASK(5, 0));
+ 	rate *= OSC;
+ 	rate >>= 1;
  
- source "drivers/base/regmap/Kconfig"
- 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 75b98aa..5c4e84a 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -14,6 +14,7 @@
- #include <linux/spinlock.h>
- #include <linux/sys_soc.h>
- #include <linux/err.h>
-+#include <linux/glob.h>
- 
- static DEFINE_IDA(soc_ida);
- 
-@@ -168,3 +169,63 @@ static void __exit soc_bus_unregister(void)
- 	bus_unregister(&soc_bus_type);
- }
- module_exit(soc_bus_unregister);
-+
-+static int soc_device_match_one(struct device *dev, void *arg)
-+{
-+	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
-+	const struct soc_device_attribute *match = arg;
-+
-+	if (match->machine &&
-+	    !glob_match(match->machine, soc_dev->attr->machine))
-+		return 0;
-+
-+	if (match->family &&
-+	    !glob_match(match->family, soc_dev->attr->family))
-+		return 0;
-+
-+	if (match->revision &&
-+	    !glob_match(match->revision, soc_dev->attr->revision))
-+		return 0;
-+
-+	if (match->soc_id &&
-+	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
-+		return 0;
-+
-+	return 1;
-+}
-+
-+/*
-+ * soc_device_match - identify the SoC in the machine
-+ * @matches: zero-terminated array of possible matches
-+ *
-+ * returns the first matching entry of the argument array, or NULL
-+ * if none of them match.
-+ *
-+ * This function is meant as a helper in place of of_match_node()
-+ * in cases where either no device tree is available or the information
-+ * in a device node is insufficient to identify a particular variant
-+ * by its compatible strings or other properties. For new devices,
-+ * the DT binding should always provide unique compatible strings
-+ * that allow the use of of_match_node() instead.
-+ *
-+ * The calling function can use the .data entry of the
-+ * soc_device_attribute to pass a structure or function pointer for
-+ * each entry.
-+ */
-+const struct soc_device_attribute *soc_device_match(
-+	const struct soc_device_attribute *matches)
-+{
-+	struct device *dev;
-+	int ret;
-+
-+	for (ret = 0; ret == 0; matches++) {
-+		if (!(matches->machine || matches->family ||
-+		      matches->revision || matches->soc_id))
-+			return NULL;
-+		dev = NULL;
-+		ret = bus_for_each_dev(&soc_bus_type, dev, (void *)matches,
-+				       soc_device_match_one);
-+	}
-+	return matches;
-+}
-+EXPORT_SYMBOL_GPL(soc_device_match);
-diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
-index 2739ccb..9f5eb06 100644
---- a/include/linux/sys_soc.h
-+++ b/include/linux/sys_soc.h
-@@ -13,6 +13,7 @@ struct soc_device_attribute {
- 	const char *family;
- 	const char *revision;
- 	const char *soc_id;
-+	const void *data;
- };
- 
- /**
-@@ -34,4 +35,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
-  */
- struct device *soc_device_to_device(struct soc_device *soc);
- 
-+const struct soc_device_attribute *soc_device_match(
-+	const struct soc_device_attribute *matches);
- #endif /* __SOC_BUS_H */
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
