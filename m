@@ -1,215 +1,87 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v11, 4/8] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Date: Tue, 6 Sep 2016 16:28:19 +0800
-Message-ID: <1473150503-9550-5-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-References: <1473150503-9550-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Russell King <linux@arm.linux.org.uk>, Yangbo Lu <yangbo.lu@nxp.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, netdev@vger.kernel.org,
- Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>,
- xiaobo.xie@nxp.com, iommu@lists.linux-foundation.org,
- Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, leoyang.li@nxp.com,
- linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <keguang.zhang@gmail.com>
+Return-Path: <keguang.zhang@gmail.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: [PATCH V1 2/3] clk: Loongson1: Update clocks of Loongson1B
+Date: Mon, 19 Sep 2016 12:38:55 +0800
+Message-Id: <1474259936-9657-3-git-send-email-keguang.zhang@gmail.com>
+In-Reply-To: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
+References: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move mpc85xx.h to include/linux/fsl and rename it to svr.h as a common
-header file.  This SVR numberspace is used on some ARM chips as well as
-PPC, and even to check for a PPC SVR multi-arch drivers would otherwise
-need to ifdef the header inclusion and all references to the SVR symbols.
+From: Kelvin Cheung <keguang.zhang@gmail.com>
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Joerg Roedel <jroedel@suse.de>
-[scottwood: update description]
-Signed-off-by: Scott Wood <oss@buserror.net>
----
-Changes for v2:
-	- None
-Changes for v3:
-	- None
-Changes for v4:
-	- None
-Changes for v5:
-	- Changed to Move mpc85xx.h to include/linux/fsl/
-	- Adjusted '#include <linux/fsl/svr.h>' position in file
-Changes for v6:
-	- None
-Changes for v7:
-	- Added 'Acked-by: Wolfram Sang' for I2C part
-	- Also applied to arch/powerpc/kernel/cpu_setup_fsl_booke.S
-Changes for v8:
-	- Added 'Acked-by: Stephen Boyd' for clk part
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Joerg Roedel' for iommu part
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- Updated description by Scott
----
- arch/powerpc/kernel/cpu_setup_fsl_booke.S                     | 2 +-
- arch/powerpc/sysdev/fsl_pci.c                                 | 2 +-
- drivers/clk/clk-qoriq.c                                       | 3 +--
- drivers/i2c/busses/i2c-mpc.c                                  | 2 +-
- drivers/iommu/fsl_pamu.c                                      | 3 +--
- drivers/net/ethernet/freescale/gianfar.c                      | 2 +-
- arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h | 4 ++--
- 7 files changed, 8 insertions(+), 10 deletions(-)
- rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+This patch updates some clock names of Loongson1B,
+and adds AC97, DMA and NAND clock.
 
-diff --git a/arch/powerpc/kernel/cpu_setup_fsl_booke.S b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-index 462aed9..2b0284e 100644
---- a/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-+++ b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-@@ -13,13 +13,13 @@
-  *
-  */
+Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+
+---
+v1:
+   Rebase the patch on clk: ls1x: Migrate to clk_hw based OF
+   and registration APIs.
+---
+ drivers/clk/loongson1/clk-loongson1b.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
+index 5b6817e..4b3d9d2 100644
+--- a/drivers/clk/loongson1/clk-loongson1b.c
++++ b/drivers/clk/loongson1/clk-loongson1b.c
+@@ -37,19 +37,19 @@ static const struct clk_ops ls1x_pll_clk_ops = {
+ 	.recalc_rate = ls1x_pll_recalc_rate,
+ };
  
-+#include <linux/fsl/svr.h>
- #include <asm/page.h>
- #include <asm/processor.h>
- #include <asm/cputable.h>
- #include <asm/ppc_asm.h>
- #include <asm/mmu-book3e.h>
- #include <asm/asm-offsets.h>
--#include <asm/mpc85xx.h>
+-static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
+-static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
+-static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
++static const char *const cpu_parents[] = { "cpu_clk_div", "osc_clk", };
++static const char *const ahb_parents[] = { "ahb_clk_div", "osc_clk", };
++static const char *const dc_parents[] = { "dc_clk_div", "osc_clk", };
  
- _GLOBAL(__e500_icache_setup)
- 	mfspr	r0, SPRN_L1CSR1
-diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-index 0ef9df4..0fd1895 100644
---- a/arch/powerpc/sysdev/fsl_pci.c
-+++ b/arch/powerpc/sysdev/fsl_pci.c
-@@ -22,6 +22,7 @@
- #include <linux/delay.h>
- #include <linux/string.h>
- #include <linux/fsl/edac.h>
-+#include <linux/fsl/svr.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/memblock.h>
-@@ -37,7 +38,6 @@
- #include <asm/pci-bridge.h>
- #include <asm/ppc-pci.h>
- #include <asm/machdep.h>
--#include <asm/mpc85xx.h>
- #include <asm/disassemble.h>
- #include <asm/ppc-opcode.h>
- #include <sysdev/fsl_soc.h>
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 58566a17..4b6c438 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -1149,8 +1150,6 @@ bad_args:
+ void __init ls1x_clk_init(void)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_fixed_rate(NULL, "osc_33m_clk", NULL, 0, OSC);
+-	clk_hw_register_clkdev(hw, "osc_33m_clk", NULL);
++	hw = clk_hw_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
++	clk_hw_register_clkdev(hw, "osc_clk", NULL);
+ 
+ 	/* clock derived from 33 MHz OSC clk */
+-	hw = clk_hw_register_pll(NULL, "pll_clk", "osc_33m_clk",
++	hw = clk_hw_register_pll(NULL, "pll_clk", "osc_clk",
+ 				 &ls1x_pll_clk_ops, 0);
+ 	clk_hw_register_clkdev(hw, "pll_clk", NULL);
+ 
+@@ -104,6 +104,7 @@ void __init ls1x_clk_init(void)
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+ 			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
+ 	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
+ 	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
+ 
+ 	/* clock derived from AHB clk */
+@@ -111,9 +112,11 @@ void __init ls1x_clk_init(void)
+ 	hw = clk_hw_register_fixed_factor(NULL, "apb_clk", "ahb_clk", 0, 1,
+ 					DIV_APB);
+ 	clk_hw_register_clkdev(hw, "apb_clk", NULL);
+-	clk_hw_register_clkdev(hw, "ls1x_i2c", NULL);
+-	clk_hw_register_clkdev(hw, "ls1x_pwmtimer", NULL);
+-	clk_hw_register_clkdev(hw, "ls1x_spi", NULL);
+-	clk_hw_register_clkdev(hw, "ls1x_wdt", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-ac97", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-i2c", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-nand", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-pwmtimer", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-spi", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-wdt", NULL);
+ 	clk_hw_register_clkdev(hw, "serial8250", NULL);
  }
- 
- #ifdef CONFIG_PPC
--#include <asm/mpc85xx.h>
--
- static const u32 a4510_svrs[] __initconst = {
- 	(SVR_P2040 << 8) | 0x10,	/* P2040 1.0 */
- 	(SVR_P2040 << 8) | 0x11,	/* P2040 1.1 */
-diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
-index 48ecffe..600704c 100644
---- a/drivers/i2c/busses/i2c-mpc.c
-+++ b/drivers/i2c/busses/i2c-mpc.c
-@@ -27,9 +27,9 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/fsl/svr.h>
- 
- #include <asm/mpc52xx.h>
--#include <asm/mpc85xx.h>
- #include <sysdev/fsl_soc.h>
- 
- #define DRV_NAME "mpc-i2c"
-diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
-index a34355f..af8fb27 100644
---- a/drivers/iommu/fsl_pamu.c
-+++ b/drivers/iommu/fsl_pamu.c
-@@ -21,11 +21,10 @@
- #include "fsl_pamu.h"
- 
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/interrupt.h>
- #include <linux/genalloc.h>
- 
--#include <asm/mpc85xx.h>
--
- /* define indexes for each operation mapping scenario */
- #define OMI_QMAN        0x00
- #define OMI_FMAN        0x01
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index d20935d..b8dac84 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -86,11 +86,11 @@
- #include <linux/udp.h>
- #include <linux/in.h>
- #include <linux/net_tstamp.h>
-+#include <linux/fsl/svr.h>
- 
- #include <asm/io.h>
- #ifdef CONFIG_PPC
- #include <asm/reg.h>
--#include <asm/mpc85xx.h>
- #endif
- #include <asm/irq.h>
- #include <asm/uaccess.h>
-diff --git a/arch/powerpc/include/asm/mpc85xx.h b/include/linux/fsl/svr.h
-similarity index 97%
-rename from arch/powerpc/include/asm/mpc85xx.h
-rename to include/linux/fsl/svr.h
-index 213f3a8..8d13836 100644
---- a/arch/powerpc/include/asm/mpc85xx.h
-+++ b/include/linux/fsl/svr.h
-@@ -9,8 +9,8 @@
-  * (at your option) any later version.
-  */
- 
--#ifndef __ASM_PPC_MPC85XX_H
--#define __ASM_PPC_MPC85XX_H
-+#ifndef FSL_SVR_H
-+#define FSL_SVR_H
- 
- #define SVR_REV(svr)	((svr) & 0xFF)		/* SOC design resision */
- #define SVR_MAJ(svr)	(((svr) >>  4) & 0xF)	/* Major revision field*/
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
