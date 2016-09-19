@@ -1,72 +1,121 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Sep 2016 13:45:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Jamie Lentin <jm@lentin.co.uk>
-Subject: Re: [PATCH] clk: mvebu: Add clk support for the orion5x SoC mv88f5181
-Message-ID: <20160921204554.GM8319@codeaurora.org>
-References: <20160920162450.4046-1-gregory.clement@free-electrons.com>
- <20160920195919.GD8319@codeaurora.org>
- <8760pp5zhp.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8760pp5zhp.fsf@free-electrons.com>
+	linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] clk: imx31: properly init clocks for machines with DT
+Date: Mon, 19 Sep 2016 05:42:19 +0300
+Message-Id: <1474252939-12579-3-git-send-email-vz@mleia.com>
+In-Reply-To: <1474252939-12579-1-git-send-email-vz@mleia.com>
+References: <1474252939-12579-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21, Gregory CLEMENT wrote:
-> Hi Stephen,
->  
->  On mar., sept. 20 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> 
-> > On 09/20, Gregory CLEMENT wrote:
-> >> From: Jamie Lentin <jm@lentin.co.uk>
-> >> 
-> >> Referring to the u-boot sources for the Netgear WNR854T, add support
-> >> for the mv88f5181.
-> >> 
-> >> [gregory.clement@free-electrons.com: fix commit title]
-> >> Signed-off-by: Jamie Lentin <jm@lentin.co.uk>
-> >> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> >> Acked-by: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> >> ---
-> >> 
-> >> Hi Stephen and Mike,
-> >> 
-> >> do you agree to give your acked-by on this patch. It is part of a
-> >> convertion of old orion5x Socv to the device tree. If you acked-by
-> >> this one, then I will be able to take it in my tree and avoiding
-> >> breaking the git bisect.
-> >
-> > Is the problem that we're changing some dts files somewhere and
-> > those platforms would stop booting if this change wasn't present?
-> > Given that we're adding a new compatible it seems like we're
-> > adding new SoC support, so having the clk patch and the dts patch
-> > come together in -next via a merge instead of basing the dts
-> > patch on top of the clk patch would be how things are normally
-> > done.
-> 
-> The problem appear if the dts for the board using the clock driver is
-> merged in Linus tree before the support in the driver. At this point the
-> board won't be able to boot.
-> 
-> It introduces a hole in the git bisect between the merge of the clock
-> subsystem and the arm-soc subsystem.
+The change converts exported mx31_clocks_init_dt() into a static
+initialization function registered by CLK_OF_DECLARE().
 
-Ok so that sounds like the typical case where a new SoC/board is
-supported and the dts files don't do anything useful until the
-driver support lands. We don't usually care about bisection
-problems here because the board doesn't transition from 'working'
-to 'not working'. It only transitions from 'not working' to
-'working' once the clk driver and the dts files are both present
-in the tree.
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ drivers/clk/imx/clk-imx31.c | 50 +++++++++++++++++++++++----------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index 6a49ba2..cbce308 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <soc/imx/revision.h>
+ #include <soc/imx/timer.h>
+ #include <asm/irq.h>
+@@ -72,14 +73,8 @@ static struct clk ** const uart_clks[] __initconst = {
+ 	NULL
+ };
+ 
+-static void __init _mx31_clocks_init(unsigned long fref)
++static void __init _mx31_clocks_init(void __iomem *base, unsigned long fref)
+ {
+-	void __iomem *base;
+-	struct device_node *np;
+-
+-	base = ioremap(MX31_CCM_BASE_ADDR, SZ_4K);
+-	BUG_ON(!base);
+-
+ 	clk[dummy] = imx_clk_fixed("dummy", 0);
+ 	clk[ckih] = imx_clk_fixed("ckih", fref);
+ 	clk[ckil] = imx_clk_fixed("ckil", 32768);
+@@ -147,19 +142,17 @@ static void __init _mx31_clocks_init(unsigned long fref)
+ 	clk_prepare_enable(clk[iim_gate]);
+ 	mx31_revision();
+ 	clk_disable_unprepare(clk[iim_gate]);
+-
+-	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
+-
+-	if (np) {
+-		clk_data.clks = clk;
+-		clk_data.clk_num = ARRAY_SIZE(clk);
+-		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+-	}
+ }
+ 
+ int __init mx31_clocks_init(unsigned long fref)
+ {
+-	_mx31_clocks_init(fref);
++	void __iomem *base;
++
++	base = ioremap(MX31_CCM_BASE_ADDR, SZ_4K);
++	if (!base)
++		panic("%s: failed to map registers\n", __func__);
++
++	_mx31_clocks_init(base, fref);
+ 
+ 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
+ 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
+@@ -222,22 +215,31 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	return 0;
+ }
+ 
+-int __init mx31_clocks_init_dt(void)
++static void __init mx31_clocks_init_dt(struct device_node *np)
+ {
+-	struct device_node *np;
++	struct device_node *osc_np;
+ 	u32 fref = 26000000; /* default */
++	void __iomem *ccm;
+ 
+-	for_each_compatible_node(np, NULL, "fixed-clock") {
+-		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
++	for_each_compatible_node(osc_np, NULL, "fixed-clock") {
++		if (!of_device_is_compatible(osc_np, "fsl,imx-osc26m"))
+ 			continue;
+ 
+-		if (!of_property_read_u32(np, "clock-frequency", &fref)) {
+-			of_node_put(np);
++		if (!of_property_read_u32(osc_np, "clock-frequency", &fref)) {
++			of_node_put(osc_np);
+ 			break;
+ 		}
+ 	}
+ 
+-	_mx31_clocks_init(fref);
++	ccm = of_iomap(np, 0);
++	if (!ccm)
++		panic("%s: failed to map registers\n", __func__);
+ 
+-	return 0;
++	_mx31_clocks_init(ccm, fref);
++
++	clk_data.clks = clk;
++	clk_data.clk_num = ARRAY_SIZE(clk);
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ }
++
++CLK_OF_DECLARE(imx31_ccm, "fsl,imx31-ccm", mx31_clocks_init_dt);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.1
