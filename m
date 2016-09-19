@@ -1,52 +1,38 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 0/5] AT91: sckc improvements
-Date: Thu,  8 Sep 2016 16:51:41 +0200
-Message-Id: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Wim Van Sebroeck <wim@iguana.be>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+ <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <c29cd7d6-bc45-1207-0133-271a35ad2c4d@linaro.org>
+Date: Mon, 19 Sep 2016 21:55:26 +0200
+MIME-Version: 1.0
+In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 19/09/2016 21:12, Robert Jarzmik wrote:
+> The OS timer rate used for the watchdog can now be fetched from the
+> standard clock API. This will remove the last user of
+> get_clock_tick_rate() in both pxa and sa11x0 architectures.
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
 
-This patch set improves the slow clock controller driver.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-The first patch simply moves some code around to avoid having extern
-functions declared.
-
-The second patch adds support for the SCKC found on sama5d4 and later.
-It is notably missing the OSC32EN bit.
-The third and fourth patches make use of this new driver (DT ABI is not
-broken \o/)
-
-Finally, there is an optimization. Trying to find wether the slow
-oscillator is already stable to avoid waiting 1.2s twice in the boot
-process.
-
-Changes in v2:
- - Fixed a typo pointed by Boris
-
-Alexandre Belloni (5):
-  clk: at91: move slow clock controller clocks to sckc.c
-  clk: at91: Add sama5d4 sckc support
-  ARM: dts: at91: sama5d4: use proper sckc compatible
-  ARM: dts: at91: sama5d2: use correct sckc compatible
-  clk: at91: sckc: optimize boot time
-
- .../devicetree/bindings/clock/at91-clock.txt       |   3 +-
- arch/arm/boot/dts/sama5d2.dtsi                     |  26 +-
- arch/arm/boot/dts/sama5d4.dtsi                     |  27 +-
- drivers/clk/at91/clk-slow.c                        | 353 ----------------
- drivers/clk/at91/sckc.c                            | 447 ++++++++++++++++++++-
- drivers/clk/at91/sckc.h                            |  22 -
- 6 files changed, 456 insertions(+), 422 deletions(-)
- delete mode 100644 drivers/clk/at91/sckc.h
 
 -- 
-2.9.3
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
