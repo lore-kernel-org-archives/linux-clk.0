@@ -1,44 +1,34 @@
-Return-Path: <jdelvare@suse.de>
-Date: Thu, 8 Sep 2016 21:52:16 +0200
-From: Jean Delvare <jdelvare@suse.de>
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH] clk: st: clk-flexgen: Unmap region obtained by of_iomap
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai
- <wens@csie.org>
-Subject: Re: [PATCH] clk: sunxi-ng: Add hardware dependency
-Message-ID: <20160908215216.09eca6c6@endymion>
-In-Reply-To: <178b95fe-e479-0274-0f81-1284a7eb4a81@codeaurora.org>
-References: <20160908173651.769b6829@endymion>
-	<178b95fe-e479-0274-0f81-1284a7eb4a81@codeaurora.org>
+References: <y> <57d92940.6329c80a.3d959.9d78@mx.google.com>
+ <20160914182454.GR7243@codeaurora.org>
+Cc: mturquette@baylibre.com, a.hajda@samsung.com, lee.jones@linaro.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: arvind Yadav <arvind.yadav.cs@gmail.com>
+Message-ID: <4e87aaaf-9169-0c19-e3ad-21b23babb20e@gmail.com>
+Date: Mon, 19 Sep 2016 23:14:46 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20160914182454.GR7243@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 8 Sep 2016 12:32:07 -0700, Stephen Boyd wrote:
-> On 09/08/2016 08:36 AM, Jean Delvare wrote:
-> > The sunxi-ng clock driver is useless for other architectures.
-> >
-> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > ---
-> >  drivers/clk/sunxi-ng/Kconfig |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > --- linux-4.8-rc5.orig/drivers/clk/sunxi-ng/Kconfig	2016-09-04 23:31:46.000000000 +0200
-> > +++ linux-4.8-rc5/drivers/clk/sunxi-ng/Kconfig	2016-09-08 17:29:46.179508283 +0200
-> > @@ -1,6 +1,6 @@
-> >  config SUNXI_CCU
-> >  	bool "Clock support for Allwinner SoCs"
-> > -	default ARCH_SUNXI
-> > +	depends on ARCH_SUNXI || COMPILE_TEST
-> 
-> Please leave the default there and just add the depends and compile test
-> part.
 
-Yes, makes sense sorry. Will send v2 shortly.
 
-Thanks for the review,
--- 
-Jean Delvare
-SUSE L3 Support
+On Wednesday 14 September 2016 11:54 PM, Stephen Boyd wrote:
+> On 09/14, arvind.yadav.cs@gmail.com wrote:
+>> @@ -337,6 +339,8 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+>>   	return;
+>>   
+>>   err:
+>> +	if (reg)
+> This is always true? Why check?
+> I have removed this check. Please review updated patch.
+>> +		iounmap(reg);
+>>   	if (clk_data)
+>>   		kfree(clk_data->clks);
+>>   	kfree(clk_data);
+>> -- 
+>> 1.7.9.5
+>>
