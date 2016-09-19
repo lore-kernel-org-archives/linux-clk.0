@@ -1,31 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Sep 2016 16:34:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Shawn Guo <shawn.guo@linaro.org>, Jason Liu <jason.liu@linaro.org>
-Subject: Re: [PATCH v2 2/2] clk: zx: register ZX296718 clocks
-Message-ID: <20160902233402.GN12510@codeaurora.org>
-References: <1469800698-9374-1-git-send-email-jun.nie@linaro.org>
- <1469800698-9374-2-git-send-email-jun.nie@linaro.org>
- <CABymUCP9dQnyYQLQgAr0AX-f69+co_Mnd=jmQqgN56G9KueN+Q@mail.gmail.com>
- <CABymUCPo2yNsLCjtX1uqZoNESLtUV0P4D8T8e6adONi8z46fiQ@mail.gmail.com>
+Return-Path: <mw@semihalf.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CABymUCPo2yNsLCjtX1uqZoNESLtUV0P4D8T8e6adONi8z46fiQ@mail.gmail.com>
+In-Reply-To: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Mon, 19 Sep 2016 15:17:43 +0200
+Message-ID: <CAPv3WKdoas6nJngFh2bLU0wvz2OZMga6G40UMPkfz9aunRawVw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Armada 7k/8k CP110 system controller fixes
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
+	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
+	Grzegorz Jaszczyk <jaz@semihalf.com>, Marcin Wojtas <mw@semihalf.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Jun Nie wrote:
-> 
-> Mike & Stephen,
-> 
-> Do you have any comments on version 2 patches? Thank you!
-> 
+Hi Stephen,
 
-Can this be moved to be a platform driver instead of using
-CLK_OF_DECLARE? Unless there are some clks required for timers or
-interrupt controllers it should be possible.
+Did you have any chance to take a look at v2? Do you have any remarks?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards.
+Marcin
+
+2016-09-06 19:31 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
+> Hi,
+>
+> Here is the second version of the patchset adding fixes to CP110
+> system controller clock driver. As requested during review,
+> an additional patch is submitted, which covers migration of the
+> driver to clk_hw registration and API.
+>
+> Any feedback would be very welcome.
+>
+> Best regards,
+> Marcin
+>
+> Changelog:
+> v1 -> v2
+> * replace setting CLK_IS_BASIC flag with clearing init structure fields
+>   with memset
+> * minor improvements of allocation and error checking
+> * add migration to clk_hw
+>
+> Marcin Wojtas (3):
+>   clk: mvebu: fix setting unwanted flags in CP110 gate clock
+>   clk: mvebu: dynamically allocate resources in Armada CP110 system
+>     controller
+>   clk: mvebu: migrate CP110 system controller to clk_hw API and
+>     registration
+>
+>  drivers/clk/mvebu/cp110-system-controller.c | 155 +++++++++++++++-------------
+>  1 file changed, 81 insertions(+), 74 deletions(-)
+>
+> --
+> 1.8.3.1
+>
