@@ -1,56 +1,64 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v3 00/11] clk: qcom: PLL updates
-Date: Thu, 29 Sep 2016 14:05:41 +0530
-Message-Id: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] ARM: imx31: remove mx31_clocks_init_dt() function calls
+Date: Mon, 19 Sep 2016 05:42:18 +0300
+Message-Id: <1474252939-12579-2-git-send-email-vz@mleia.com>
+In-Reply-To: <1474252939-12579-1-git-send-email-vz@mleia.com>
+References: <1474252939-12579-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The series is adding a few things in clk-alpha-pll code which
-will be needed to model CPU PLLs and also needed by some MMCC
-PLLs on msm8996
+Clock initialization for i.MX31 powered machines with DT support
+should be done by a call of an init function registered with
+CLK_OF_DECLARE() in common clock framework.
 
-Changes in v3:
-* Removed all the confusing additions to clk-pll code from v2
-* Added patches showing users for the new additions to clk-alpha-pll in mmcc and cpu clocks
-* RFC of skeletal cpu clock driver included
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ arch/arm/mach-imx/common.h   | 1 -
+ arch/arm/mach-imx/imx31-dt.c | 6 ------
+ 2 files changed, 7 deletions(-)
 
-Rajendra Nayak (10):
-  clk: qcom: Add support for alpha pll hwfsm ops
-  clk: qcom: Add support to initialize alpha plls
-  clk: qcom: handle alpha PLLs with 16bit alpha val registers
-  clk: qcom: Enable FSM mode for votable alpha PLLs
-  clk: qcom: Add .is_enabled ops for clk-alpha-pll
-  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
-  clk: qcom: mmcc-8996: Add capability flags for some alpha PLLs
-  clk: qcom: Add support for table based lookups in clk-regmap-mux
-  clk: Add clk_hw_get_clk() helper API to be used by clk providers
-  clk: qcom: Add basic CPU clock driver for msm8996
-
-Taniya Das (1):
-  clk: qcom: support dynamic update using latched interface
-
- drivers/clk/clk.c                 |   6 +
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/clk-alpha-pll.c  | 272 ++++++++++++++++++++++---
- drivers/clk/qcom/clk-alpha-pll.h  |  31 +++
- drivers/clk/qcom/clk-cpu-8996.c   | 408 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-pll.c        |  31 +--
- drivers/clk/qcom/clk-regmap-mux.c |  13 ++
- drivers/clk/qcom/clk-regmap-mux.h |   1 +
- drivers/clk/qcom/common.c         |  21 ++
- drivers/clk/qcom/common.h         |   9 +
- drivers/clk/qcom/mmcc-msm8996.c   |   4 +
- include/linux/clk-provider.h      |   1 +
- 12 files changed, 744 insertions(+), 54 deletions(-)
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
-
+diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
+index a8f4693..e97d8cb 100644
+--- a/arch/arm/mach-imx/common.h
++++ b/arch/arm/mach-imx/common.h
+@@ -48,7 +48,6 @@ int mx21_clocks_init(unsigned long lref, unsigned long fref);
+ int mx27_clocks_init(unsigned long fref);
+ int mx31_clocks_init(unsigned long fref);
+ int mx35_clocks_init(void);
+-int mx31_clocks_init_dt(void);
+ struct platform_device *mxc_register_gpio(char *name, int id,
+ 	resource_size_t iobase, resource_size_t iosize, int irq, int irq_high);
+ void mxc_set_cpu_type(unsigned int type);
+diff --git a/arch/arm/mach-imx/imx31-dt.c b/arch/arm/mach-imx/imx31-dt.c
+index 62e6b4f..668d74b 100644
+--- a/arch/arm/mach-imx/imx31-dt.c
++++ b/arch/arm/mach-imx/imx31-dt.c
+@@ -23,11 +23,6 @@ static const char * const imx31_dt_board_compat[] __initconst = {
+ 	NULL
+ };
+ 
+-static void __init imx31_dt_timer_init(void)
+-{
+-	mx31_clocks_init_dt();
+-}
+-
+ /* FIXME: replace with DT binding */
+ static const struct resource imx31_rnga_res[] __initconst = {
+ 	DEFINE_RES_MEM(MX31_RNGA_BASE_ADDR, SZ_16K),
+@@ -43,7 +38,6 @@ DT_MACHINE_START(IMX31_DT, "Freescale i.MX31 (Device Tree Support)")
+ 	.map_io		= mx31_map_io,
+ 	.init_early	= imx31_init_early,
+ 	.init_irq	= mx31_init_irq,
+-	.init_time	= imx31_dt_timer_init,
+ 	.init_machine	= imx31_dt_mach_init,
+ 	.dt_compat	= imx31_dt_board_compat,
+ MACHINE_END
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.8.1
