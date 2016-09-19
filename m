@@ -1,61 +1,75 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <fabien.lahoudere@collabora.co.uk>
+Subject: Re: [PATCH 1/1] ARM: imx5: Add clocks configuration
+To: Shawn Guo <shawnguo@kernel.org>, Alexander Shiyan <shc_work@mail.ru>
+References: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+ <1473961353.68713919@f429.i.mail.ru> <20160918002159.GD15478@tiger>
+ <20160918002451.GE15478@tiger>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, Kalle Kankare <kalle.kankare@vincit.fi>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, open list
+ <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>
+From: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
+Message-ID: <1b8d9b99-ef47-734e-a232-88fa8860304c@collabora.co.uk>
+Date: Mon, 19 Sep 2016 09:33:16 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160911134111.31141-4-martin.blumenstingl@googlemail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-1-martin.blumenstingl@googlemail.com> <20160911134111.31141-4-martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 14 Sep 2016 23:30:06 +0200
-Message-ID: <CAFBinCAJnhOSt8KHcPn4Wpc1DL6S3EUWViQxbsjw7Cv0TDNBPg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] phy: meson: add USB2 PHY support for Meson8b and GXBB
-To: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-	johnyoun@synopsys.com, kishon@ti.com, khilman@baylibre.com, carlo@caione.org,
-	arnd@arndb.de
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com, will.deacon@arm.com,
-	catalin.marinas@arm.com, gregkh@linuxfoundation.org, mark.rutland@arm.com,
-	robh+dt@kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160918002451.GE15478@tiger>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 11, 2016 at 3:41 PM, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
-> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
+Hi,
+
+On 18/09/16 02:24, Shawn Guo wrote:
+> On Sun, Sep 18, 2016 at 08:21:59AM +0800, Shawn Guo wrote:
+>> On Thu, Sep 15, 2016 at 08:42:33PM +0300, Alexander Shiyan wrote:
+>>>> Четверг, 15 сентября 2016, 13:13 +03:00 от Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>:
+>>>>
+>>>> From: Kalle Kankare < kalle.kankare@vincit.fi >
+>>>>
+>>>> Add clocks configuration for CSI, FIRI and IEEE1588.
+>>>>
+>>>> Signed-off-by: Fabien Lahoudere < fabien.lahoudere@collabora.co.uk >
+>>>> ---
+>>>>  drivers/clk/imx/clk-imx51-imx53.c      | 20 ++++++++++++++++++++
+>>>>  include/dt-bindings/clock/imx5-clock.h | 15 ++++++++++++++-
+>>>>  2 files changed, 34 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+>>>> index 29d4c44..1e3c9ea 100644
+>>>> --- a/drivers/clk/imx/clk-imx51-imx53.c
+>>>> +++ b/drivers/clk/imx/clk-imx51-imx53.c
+>>>> @@ -126,6 +126,7 @@ static const char *spdif0_com_sel[] = { "spdif0_podf", "ssi1_root_gate", };
+>>>>  static const char *mx51_spdif1_com_sel[] = { "spdif1_podf", "ssi2_root_gate", };
+>>>>  static const char *step_sels[] = { "lp_apm", };
+>>>>  static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
+>>>> +static const char *ieee1588_sels[] = { "pll3_sw", "pll4_sw", "dummy" /* usbphy2_clk */, "dummy" /* fec_phy_clk */ };
+>>>>
+>>>>  static struct clk *clk[IMX5_CLK_END];
+>>>>  static struct clk_onecell_data clk_data;
+>>>> @@ -543,6 +544,25 @@ static void __init mx53_clocks_init(struct device_node *np)
+>>> ...
+>>>
+>>> 2 Shawn Guo: Since the change affects only on i.MX53 architecture,
+>>> I would ask to change the subject to i.MX53 if it possible.
+>>
+>> Yes.  Actually, since clock driver is not moved to drivers/clk, we
 >
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> Tested-by: Kevin Hilman <khilman@baylibre.com>
-> ---
->  drivers/phy/Kconfig          |  11 ++
->  drivers/phy/Makefile         |   1 +
->  drivers/phy/phy-meson-usb2.c | 280 +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 292 insertions(+)
->  create mode 100644 drivers/phy/phy-meson-usb2.c
+> s/not/now
 >
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 19bff3a..6ad87ec 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -453,4 +453,15 @@ config PHY_NS2_PCIE
->         help
->           Enable this to support the Broadcom Northstar2 PCIe PHY.
->           If unsure, say N.
-> +
-> +config PHY_MESON_USB2
-> +       tristate "Meson USB2 PHY driver"
-> +       default ARCH_MESON
-> +       depends on OF && (ARCH_MESON || COMPILE_TEST)
-> +       select GENERIC_PHY
-as pointed out by Arnd Bergmann (see [0]) this is missing a "select
-USB_COMMON", just like the PHY_SUN4I_USB and PHY_SUN9I_USB drivers as
-we use of_usb_get_dr_mode_by_phy() to get the mode of the USB
-controller (as the PHY needs special configuration for host-mode).
-
-I will send an update on Sunday.
+>> shouldn't prefix it with "ARM: " any longer.
 
 
-Regards,
-Martin
+Ok is "clk: imx53: Add clocks configuration" ok?
 
+>
+> Shawn
+>
 
-[0] http://marc.info/?l=linux-usb&m=147386117604824&w=2
+Thanks
+
+Fabien
