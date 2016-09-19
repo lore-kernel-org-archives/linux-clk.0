@@ -1,55 +1,57 @@
-Return-Path: <john@metanate.com>
-From: John Keeping <john@metanate.com>
-To: linux-kernel@vger.kernel.org
-Cc: John Keeping <john@metanate.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Sascha Hauer <kernel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/2] clk: rockchip: use identifiers for rk3288 I2S clocks
-Date: Wed,  7 Sep 2016 17:53:30 +0100
-Message-Id: <20160907165330.14607-2-john@metanate.com>
-In-Reply-To: <20160907165330.14607-1-john@metanate.com>
-References: <20160907165330.14607-1-john@metanate.com>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: imx31: fix clock control module interrupts description
+Date: Mon, 19 Sep 2016 04:54:34 +0300
+Message-Id: <1474250074-11430-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export these so that the rates can be set via the device tree.
+The type of AVIC interrupt controller found on i.MX31 is one-cell,
+namely 31 for CCM DVFS and 53 for CCM, however for clock control
+module its interrupts are specified as 3-cells, fix it.
 
-Signed-off-by: John Keeping <john@metanate.com>
+Fixes: ef0e4a606fb6 ("ARM: mx31: Replace clk_register_clkdev with clock DT lookup")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/clock/imx31-clock.txt | 2 +-
+ arch/arm/boot/dts/imx31.dtsi                            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 39af05a589b3..8817a5b3bd0f 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -229,7 +229,7 @@ static struct clk_div_table div_hclk_cpu_t[] = {
- #define IFLAGS ROCKCHIP_INVERTER_HIWORD_MASK
+diff --git a/Documentation/devicetree/bindings/clock/imx31-clock.txt b/Documentation/devicetree/bindings/clock/imx31-clock.txt
+index 19df842..8163d56 100644
+--- a/Documentation/devicetree/bindings/clock/imx31-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx31-clock.txt
+@@ -77,7 +77,7 @@ Examples:
+ clks: ccm@53f80000{
+ 	compatible = "fsl,imx31-ccm";
+ 	reg = <0x53f80000 0x4000>;
+-	interrupts = <0 31 0x04 0 53 0x04>;
++	interrupts = <31>, <53>;
+ 	#clock-cells = <1>;
+ };
  
- static struct rockchip_clk_branch rk3288_i2s_fracmux __initdata =
--	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
-+	MUX(SCLK_I2S_PRE, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(4), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rk3288_spdif_fracmux __initdata =
-@@ -338,10 +338,10 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 
- 	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
- 
--	COMPOSITE(0, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
-+	COMPOSITE(SCLK_I2S_SRC, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(4), 15, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(4), 1, GFLAGS),
--	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(SCLK_I2S_FRAC, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(8), 0,
- 			RK3288_CLKGATE_CON(4), 2, GFLAGS,
- 			&rk3288_i2s_fracmux),
+diff --git a/arch/arm/boot/dts/imx31.dtsi b/arch/arm/boot/dts/imx31.dtsi
+index 1ce7ae9..3e0893e 100644
+--- a/arch/arm/boot/dts/imx31.dtsi
++++ b/arch/arm/boot/dts/imx31.dtsi
+@@ -122,7 +122,7 @@
+ 			clks: ccm@53f80000{
+ 				compatible = "fsl,imx31-ccm";
+ 				reg = <0x53f80000 0x4000>;
+-				interrupts = <0 31 0x04 0 53 0x04>;
++				interrupts = <31>, <53>;
+ 				#clock-cells = <1>;
+ 			};
+ 		};
 -- 
-2.9.3.728.g30b24b4.dirty
+2.8.1
