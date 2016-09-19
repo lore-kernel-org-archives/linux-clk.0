@@ -1,34 +1,50 @@
-Return-Path: <wimvs@spo001.leaseweb.nl>
-Date: Tue, 27 Sep 2016 21:13:49 +0200
-From: Wim Van Sebroeck <wim@iguana.be>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
-Message-ID: <20160927191349.GA6564@spo001.leaseweb.nl>
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr> <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
-Sender: <wimvs@spo001.leaseweb.nl>
+Return-Path: <>
+Return-Path: <>
+From: Arvind yadav <arvind.yadav.cs@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: a.hajda@samsung.com,
+	lee.jones@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [v2] clk: st: clk-flexgen: Unmap region obtained by of_iomap
+Date: Mon, 19 Sep 2016 13:51:24 +0530
+Message-Id: <1474273285-9053-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Robert,
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-> The OS timer rate used for the watchdog can now be fetched from the
-> standard clock API. This will remove the last user of
-> get_clock_tick_rate() in both pxa and sa11x0 architectures.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Free memory mapping, if probe is not successful.
 
-Acked-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/st/clk-flexgen.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Kind regards,
-Wim.
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 546bd79..ba69098 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -278,8 +278,10 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 		return;
+ 
+ 	parents = flexgen_get_parents(np, &num_parents);
+-	if (!parents)
++	if (!parents) {
++		iounmap(reg);
+ 		return;
++	}
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+@@ -337,6 +339,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 	return;
+ 
+ err:
++	iounmap(reg);
+ 	if (clk_data)
+ 		kfree(clk_data->clks);
+ 	kfree(clk_data);
+-- 
+1.7.9.5
