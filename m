@@ -1,62 +1,107 @@
-Return-Path: <>
-Return-Path: <>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: ssantosh@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] clk: keystone: pll: Unmap region obtained by of_iomap
-Date: Tue, 20 Sep 2016 17:16:55 +0530
-Message-Id: <1474372015-16301-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <linux@roeck-us.net>
+Date: Mon, 19 Sep 2016 13:08:16 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+Message-ID: <20160919200816.GC29242@roeck-us.net>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+ <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+On Mon, Sep 19, 2016 at 09:12:14PM +0200, Robert Jarzmik wrote:
+> The OS timer rate used for the watchdog can now be fetched from the
+> standard clock API. This will remove the last user of
+> get_clock_tick_rate() in both pxa and sa11x0 architectures.
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Free memory mapping, if of_pll_div_clk_init is not successful.
+Did you test this ? Potential problem, if built into the kernel, could be that
+the clocks might not be ready by the time the driver is instantiated. Unless
+this is converted to a platform driver, it won't be able to handle a
+-EPROBE_DEFER from the clock subsystem.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/keystone/pll.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Guenter
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index a26ba21..cba9a0e 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -267,25 +267,30 @@ static void __init of_pll_div_clk_init(struct device_node *node)
- 	parent_name = of_clk_get_parent_name(node, 0);
- 	if (!parent_name) {
- 		pr_err("%s: missing parent clock\n", __func__);
-+		iounmap(reg);
- 		return;
- 	}
- 
- 	if (of_property_read_u32(node, "bit-shift", &shift)) {
- 		pr_err("%s: missing 'shift' property\n", __func__);
-+		iounmap(reg);
- 		return;
- 	}
- 
- 	if (of_property_read_u32(node, "bit-mask", &mask)) {
- 		pr_err("%s: missing 'bit-mask' property\n", __func__);
-+		iounmap(reg);
- 		return;
- 	}
- 
- 	clk = clk_register_divider(NULL, clk_name, parent_name, 0, reg, shift,
- 				 mask, 0, NULL);
--	if (clk)
-+	if (clk) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--	else
-+	} else {
- 		pr_err("%s: error registering divider %s\n", __func__, clk_name);
-+		iounmap(reg);
-+	}
- }
- CLK_OF_DECLARE(pll_divider_clock, "ti,keystone,pll-divider-clock", of_pll_div_clk_init);
- 
--- 
-1.7.9.5
+> ---
+>  drivers/watchdog/sa1100_wdt.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
+> index e1d39a1e9628..8965e3f536c3 100644
+> --- a/drivers/watchdog/sa1100_wdt.c
+> +++ b/drivers/watchdog/sa1100_wdt.c
+> @@ -22,6 +22,7 @@
+>  
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+> +#include <linux/clk.h>
+>  #include <linux/types.h>
+>  #include <linux/kernel.h>
+>  #include <linux/fs.h>
+> @@ -155,12 +156,27 @@ static struct miscdevice sa1100dog_miscdev = {
+>  };
+>  
+>  static int margin __initdata = 60;		/* (secs) Default is 1 minute */
+> +static struct clk *clk;
+>  
+>  static int __init sa1100dog_init(void)
+>  {
+>  	int ret;
+>  
+> -	oscr_freq = get_clock_tick_rate();
+> +	clk = clk_get(NULL, "OSTIMER0");
+> +	if (IS_ERR(clk)) {
+> +		pr_err("SA1100/PXA2xx Watchdog Timer: clock not found: %d\n",
+> +		       (int) PTR_ERR(clk));
+> +		return PTR_ERR(clk);
+> +	}
+> +
+> +	ret = clk_prepare_enable(clk);
+> +	if (ret) {
+> +		pr_err("SA1100/PXA2xx Watchdog Timer: clock failed to prepare+enable: %d\n",
+> +		       ret);
+> +		goto err;
+> +	}
+> +
+> +	oscr_freq = clk_get_rate(clk);
+>  
+>  	/*
+>  	 * Read the reset status, and save it for later.  If
+> @@ -176,11 +192,17 @@ static int __init sa1100dog_init(void)
+>  		pr_info("SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
+>  			margin);
+>  	return ret;
+> +err:
+> +	clk_disable_unprepare(clk);
+> +	clk_put(clk);
+> +	return ret;
+>  }
+>  
+>  static void __exit sa1100dog_exit(void)
+>  {
+>  	misc_deregister(&sa1100dog_miscdev);
+> +	clk_disable_unprepare(clk);
+> +	clk_put(clk);
+>  }
+>  
+>  module_init(sa1100dog_init);
+> -- 
+> 2.1.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
