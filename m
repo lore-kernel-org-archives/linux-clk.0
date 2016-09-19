@@ -1,37 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 17:24:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v2] clk: iproc: Make clocks visible options
-Message-ID: <20160915002458.GI7243@codeaurora.org>
-References: <1446151450-23563-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <kishon@ti.com>
+Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, <arnd@arndb.de>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
+ <m260q6jibf.fsf@baylibre.com>
+ <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
+ <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
+ <m2eg4ui0nl.fsf@baylibre.com>
+ <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
+ <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
+ <m2sht9gkau.fsf@baylibre.com>
+ <CAFBinCCDDwydB+RP0CZKoAW5Suxotn224ZFVWvt2OGW3gNJR1g@mail.gmail.com>
+ <57DBAB2F.3040905@ti.com>
+ <CAFBinCC5fhbtkNdc6MJs7veD+xVGC6Qb-jgX_pwvraP1x2JrhQ@mail.gmail.com>
+CC: Kevin Hilman <khilman@baylibre.com>,
+        Ben Dooks
+	<ben.dooks@codethink.co.uk>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <johnyoun@synopsys.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <linux-usb@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <jbrunet@baylibre.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <57DF70AF.4050002@ti.com>
+Date: Mon, 19 Sep 2016 10:29:27 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1446151450-23563-1-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <CAFBinCC5fhbtkNdc6MJs7veD+xVGC6Qb-jgX_pwvraP1x2JrhQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/29, Jon Mason wrote:
-> Make the clocks visible options that can be selected by anyone.  This
-> avoids the problems of:
->  1) Select is a reverse dependency and is hard for people to understand
->     and can sometimes be a pain to track down
->  2) Build coverage goes down because configs are hidden
->  3) Code bloat
-> 
-> Patch suggested by Stephen Boyd
-> 
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> ---
+Hi,
 
-Applied to clk-next with some minor fixup in the Makefile. I know
-this is almost a year old, but it still mostly applied.
+On Monday 19 September 2016 01:26 AM, Martin Blumenstingl wrote:
+> Hi Kishon,
+> 
+> On Fri, Sep 16, 2016 at 10:19 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>> Hi,
+>>
+>> On Friday 09 September 2016 09:44 PM, Martin Blumenstingl wrote:
+>>> On Fri, Sep 9, 2016 at 5:33 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>>>> However, the problem with all of the solutions proposed (runtime PM ones
+>>>> included) is that we're forcing a board-specific design issue (2 devices
+>>>> sharing a reset line) into a driver that should not have any
+>>>> board-specific assumptions in it.
+>>>>
+>>>> For example, if this driver is used on another platform where different
+>>>> PHYs have different reset lines, then one of them (the unlucky one who
+>>>> is not probed first) will never get reset.  So any form of per-device
+>>>> ref-counting is not a portable solution.
+>>> maybe we should also consider Ben's solution: he played with the USB
+>>> PHY on his Meson8b board. His approach was to have only one USB PHY
+>>> driver instance which exposes two PHYs.
+>>> The downside of this: the driver would have to know the offset of the
+>>> PHYs (0x0 for the first PHY, 0x20 for the second), but we could handle
+>>> the reset using runtime PM without any hacks.
+>>
+>> I think the offset information can come from the devicetree too. The phy can be
+>> modeled something like below.
+>>
+>>                 usb-phys@c0000000 {
+>>                         compatible = "amlogic,meson-gxbb-usb2-phy";
+>>                         reg = <0x0 0xc0000000 0x0 0x40>;
+>>                         #address-cells = <2>;
+>>                         #size-cells = <2>;
+>>                         ranges = <0x0 0x0 0x0 0xc0000000 0x0 0x40>;
+>>                         resets = <&reset 34>;
+>>
+>>                         usb0_phy: usb_phy@0 {
+>>                                 #phy-cells = <0>;
+>>                                 reg = <0x0 0x0 0x0 0x20>;
+>>                                 clocks = <&clkc CLKID_USB &clkc CLKID_USB0>;
+>>                                 clock-names = "usb_general", "usb";
+>>                                 status = "disabled";
+>>                         };
+>>
+>>                         usb1_phy: usb_phy@20 {
+>>                                 #phy-cells = <0>;
+>>                                 reg = <0x0 0x20 0x0 0x20>;
+>>                                 clocks = <&clkc CLKID_USB &clkc CLKID_USB1>;
+>>                                 clock-names = "usb_general", "usb";
+>>                                 status = "disabled";
+>>                         };
+>>                 };
+>>
+>> This way the driver will be probed only once (the reset can be done during
+>> probe). The phy driver should scan the dt node and for every sub-node it
+>> invokes phy_create?
+> I'll recap what we have discussed so far (so you don't have to re-read
+> the whole thread):
+> The reference driver treats both USB PHYs as separate devices (the
+> datasheet has no information about the PHYs though). The only
+> "special" thing is the shared reset line -> together with Philipp
+> Zabel (the reset framework maintainer) we decided to make
+> reset_control_reset work for shared reset lines.
+> 
+> That means we can keep the two PHYs as separate devices inside the
+> .dts, while keeping everything else separate (just like the reference
+> driver)
+> Is this fine for you and Arnd?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+yeah.. I'm fine with that.
+
+Thanks
+Kishon
+> 
+> 
+> Regards,
+> Martin
+> 
