@@ -1,254 +1,92 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 1/5] clk: add support for runtime pm
-Date: Thu, 01 Sep 2016 15:45:47 +0200
-Message-id: <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+Date: Mon, 19 Sep 2016 21:12:14 +0200
+Message-Id: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+In-Reply-To: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Registers for some clocks might be located in the SOC area, which are under the
-power domain. To enable access to those registers respective domain has to be
-turned on. Additionally, registers for such clocks will usually loose its
-contents when power domain is turned off, so additional saving and restoring of
-them might be needed in the clock controller driver.
+The OS timer rate used for the watchdog can now be fetched from the
+standard clock API. This will remove the last user of
+get_clock_tick_rate() in both pxa and sa11x0 architectures.
 
-This patch adds basic infrastructure in the clocks core to allow implementing
-driver for such clocks under power domains. Clock provider can supply a
-struct device pointer, which is the used by clock core for tracking and managing
-clock's controller runtime pm state. Each clk_prepare() operation
-will first call pm_runtime_get_sync() on the supplied device, while
-clk_unprepare() will do pm_runtime_put() at the end.
-
-Additional calls to pm_runtime_get/put functions are required to ensure that any
-register access (like calculating/chaning clock rates) will be done with clock
-controller in active runtime state.
-
-Special handling of the case when runtime pm is disabled for clock controller's
-device is needed to let this feature work properly also during system sleep
-suspend/resume operations (runtime pm is first disabled before entering sleep
-state's, but controller is usually still operational until its suspend pm
-callback is called).
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- drivers/clk/clk.c | 84 +++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 76 insertions(+), 8 deletions(-)
+ drivers/watchdog/sa1100_wdt.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939fb6bb..a1934e9b4e95 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/pm_runtime.h>
- #include <linux/sched.h>
- #include <linux/clkdev.h>
+diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
+index e1d39a1e9628..8965e3f536c3 100644
+--- a/drivers/watchdog/sa1100_wdt.c
++++ b/drivers/watchdog/sa1100_wdt.c
+@@ -22,6 +22,7 @@
  
-@@ -46,6 +47,7 @@ struct clk_core {
- 	const struct clk_ops	*ops;
- 	struct clk_hw		*hw;
- 	struct module		*owner;
-+	struct device		*dev;
- 	struct clk_core		*parent;
- 	const char		**parent_names;
- 	struct clk_core		**parents;
-@@ -87,6 +89,42 @@ struct clk {
- 	struct hlist_node clks_node;
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
++#include <linux/clk.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/fs.h>
+@@ -155,12 +156,27 @@ static struct miscdevice sa1100dog_miscdev = {
  };
  
-+/***           runtime pm          ***/
-+static int clk_pm_runtime_get(struct clk_core *core)
-+{
-+	int ret = 0;
-+
-+	if (!core->dev)
-+		return 0;
-+
-+	if (pm_runtime_enabled(core->dev)) {
-+		ret = pm_runtime_get_sync(core->dev);
-+	} else {
-+		if (!pm_runtime_status_suspended(core->dev))
-+			pm_runtime_get_noresume(core->dev);
+ static int margin __initdata = 60;		/* (secs) Default is 1 minute */
++static struct clk *clk;
+ 
+ static int __init sa1100dog_init(void)
+ {
+ 	int ret;
+ 
+-	oscr_freq = get_clock_tick_rate();
++	clk = clk_get(NULL, "OSTIMER0");
++	if (IS_ERR(clk)) {
++		pr_err("SA1100/PXA2xx Watchdog Timer: clock not found: %d\n",
++		       (int) PTR_ERR(clk));
++		return PTR_ERR(clk);
 +	}
-+	return ret < 0 ? ret : 0;
-+}
 +
-+static void clk_pm_runtime_put(struct clk_core *core)
-+{
-+	if (!core->dev)
-+		return;
-+
-+	if (pm_runtime_enabled(core->dev))
-+		pm_runtime_put(core->dev);
-+	else
-+		pm_runtime_put_noidle(core->dev);
-+}
-+
-+static bool clk_pm_runtime_suspended(struct clk_core *core)
-+{
-+	if (!core->dev)
-+		return 0;
-+
-+	return pm_runtime_suspended(core->dev);
-+}
-+
- /***           locking             ***/
- static void clk_prepare_lock(void)
- {
-@@ -150,6 +188,9 @@ static void clk_enable_unlock(unsigned long flags)
- 
- static bool clk_core_is_prepared(struct clk_core *core)
- {
-+	if (clk_pm_runtime_suspended(core))
-+		return false;
-+
- 	/*
- 	 * .is_prepared is optional for clocks that can prepare
- 	 * fall back to software usage counter if it is missing
-@@ -162,6 +203,9 @@ static bool clk_core_is_prepared(struct clk_core *core)
- 
- static bool clk_core_is_enabled(struct clk_core *core)
- {
-+	if (clk_pm_runtime_suspended(core))
-+		return false;
-+
- 	/*
- 	 * .is_enabled is only mandatory for clocks that gate
- 	 * fall back to software usage counter if .is_enabled is missing
-@@ -489,6 +533,8 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (core->ops->unprepare)
- 		core->ops->unprepare(core->hw);
- 
-+	clk_pm_runtime_put(core);
-+
- 	trace_clk_unprepare_complete(core);
- 	clk_core_unprepare(core->parent);
- }
-@@ -530,10 +576,14 @@ static int clk_core_prepare(struct clk_core *core)
- 		return 0;
- 
- 	if (core->prepare_count == 0) {
--		ret = clk_core_prepare(core->parent);
-+		ret = clk_pm_runtime_get(core);
- 		if (ret)
- 			return ret;
- 
-+		ret = clk_core_prepare(core->parent);
-+		if (ret)
-+			goto runtime_put;
-+
- 		trace_clk_prepare(core);
- 
- 		if (core->ops->prepare)
-@@ -541,15 +591,18 @@ static int clk_core_prepare(struct clk_core *core)
- 
- 		trace_clk_prepare_complete(core);
- 
--		if (ret) {
--			clk_core_unprepare(core->parent);
--			return ret;
--		}
-+		if (ret)
-+			goto unprepare;
- 	}
- 
- 	core->prepare_count++;
- 
- 	return 0;
-+unprepare:
-+	clk_core_unprepare(core->parent);
-+runtime_put:
-+	clk_pm_runtime_put(core);
-+	return ret;
- }
- 
- static int clk_core_prepare_lock(struct clk_core *core)
-@@ -1563,6 +1616,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- {
- 	struct clk_core *top, *fail_clk;
- 	unsigned long rate = req_rate;
-+	int ret = 0;
- 
- 	if (!core)
- 		return 0;
-@@ -1579,21 +1633,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (!top)
- 		return -EINVAL;
- 
-+	ret = clk_pm_runtime_get(core);
-+	if (ret)
-+		return ret;
-+
- 	/* notify that we are about to change rates */
- 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
- 	if (fail_clk) {
- 		pr_debug("%s: failed to set %s rate\n", __func__,
- 				fail_clk->name);
- 		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
--		return -EBUSY;
-+		ret = -EBUSY;
++	ret = clk_prepare_enable(clk);
++	if (ret) {
++		pr_err("SA1100/PXA2xx Watchdog Timer: clock failed to prepare+enable: %d\n",
++		       ret);
 +		goto err;
- 	}
++	}
++
++	oscr_freq = clk_get_rate(clk);
  
- 	/* change the rates */
- 	clk_change_rate(top);
- 
- 	core->req_rate = req_rate;
+ 	/*
+ 	 * Read the reset status, and save it for later.  If
+@@ -176,11 +192,17 @@ static int __init sa1100dog_init(void)
+ 		pr_info("SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
+ 			margin);
+ 	return ret;
 +err:
-+	clk_pm_runtime_put(core);
- 
--	return 0;
++	clk_disable_unprepare(clk);
++	clk_put(clk);
 +	return ret;
  }
  
- /**
-@@ -1824,12 +1885,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		p_rate = parent->rate;
- 	}
+ static void __exit sa1100dog_exit(void)
+ {
+ 	misc_deregister(&sa1100dog_miscdev);
++	clk_disable_unprepare(clk);
++	clk_put(clk);
+ }
  
-+	ret = clk_pm_runtime_get(core);
-+	if (ret)
-+		goto out;
-+
- 	/* propagate PRE_RATE_CHANGE notifications */
- 	ret = __clk_speculate_rates(core, p_rate);
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto out;
-+		goto runtime_put;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -1842,6 +1907,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		__clk_recalc_accuracies(core);
- 	}
- 
-+runtime_put:
-+	clk_pm_runtime_put(core);
- out:
- 	clk_prepare_unlock();
- 
-@@ -2546,6 +2613,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		goto fail_name;
- 	}
- 	core->ops = hw->init->ops;
-+	core->dev = dev;
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
+ module_init(sa1100dog_init);
 -- 
-1.9.1
+2.1.4
