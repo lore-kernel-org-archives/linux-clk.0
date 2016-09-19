@@ -1,56 +1,47 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [PATCH 0/6] STM32F4 Add RTC & QSPI clocks
-Date: Fri, 30 Sep 2016 16:25:03 +0200
-Message-ID: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/2] ARM: imx31/of: clk: init clock controller with CLK_OF_DECLARE
+Date: Mon, 19 Sep 2016 05:42:17 +0300
+Message-Id: <1474252939-12579-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+The change is based on v4.8.0-rc1 and plus it depends on this fixup:
 
-This patch-set introduce RTC and QSPI clocks for STM32F4 socs
-RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
+  ARM: dts: imx31: fix clock control module interrupts description
 
-example to use rtc clock:
+The change is tested on qemu kzm target and mx31lite board, while both
+targets don't have DTS in upstream, I had to write simple DTS files for
+them, because the proposed change is for i.MX31 targets with OF support.
 
-		rtc: rtc@40002800 {
-			compatible = "st,stm32-rtc";
-			reg = <0x40002800 0x400>;
-			...
-			clocks = <&rcc 1 CLK_RTC>;
+The second change in the series compilation time dependent on the first
+one, while the first change apparently should break runtime execution
+of i.MX31 boards with OF support, if both changes are applied everything
+should be fine, regression testing on the same legacy targets does not
+show any problems. Moreover i.MX31/OF/clock initialization seems to be
+broken currently, if the change is not applied I can not get a working
+clock source during early boot stage, jiffies are not incremented, but
+because I didn't check the problem thoroughly (can it be caused by
+missing CLK_OF_DECLARE? Or caused by something fixed by the change
+http://www.spinics.net/lists/linux-clk/msg12235.html ?) and because
+the change was tested against code which is not found in upstream,
+I won't call this change as a fix, however its application is apparently
+wanted to get better OF support for i.MX31 targets.
 
-			assigned-clocks =  <&rcc 1 CLK_RTC>;
-			assigned-clock-parents = <&rcc 1 CLK_LSE>;
-			...
-		};
+Vladimir Zapolskiy (2):
+  ARM: imx31: remove mx31_clocks_init_dt() function calls
+  clk: imx31: properly init clocks for machines with DT
 
-Gabriel Fernandez (6):
-  clk: stm32f4: Add LSI & LSE clocks
-  ARM: dts: stm32f429: add LSI and LSE clocks
-  arm: stmf32: Enable SYSCON
-  clk: stm32f4: Add RTC clock
-  clk: stm32f469: Add QSPI clock
-  ARM: dts: stm32f429: Add QSPI clock
-
- .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
- arch/arm/boot/dts/stm32f429.dtsi                   |  18 +
- arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
- arch/arm/configs/stm32_defconfig                   |   1 +
- drivers/clk/clk-stm32f4.c                          | 450 ++++++++++++++++++++-
- 5 files changed, 455 insertions(+), 22 deletions(-)
+ arch/arm/mach-imx/common.h   |  1 -
+ arch/arm/mach-imx/imx31-dt.c |  6 ------
+ drivers/clk/imx/clk-imx31.c  | 49 ++++++++++++++++++++++----------------------
+ 3 files changed, 25 insertions(+), 31 deletions(-)
 
 -- 
-1.9.1
+2.8.1
