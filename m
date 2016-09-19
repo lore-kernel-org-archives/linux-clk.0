@@ -1,88 +1,51 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 0/2] clk: uniphier: add clock drivers for UniPhier SoCs
-Date: Fri, 16 Sep 2016 16:40:02 +0900
-Message-Id: <1474011604-12577-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Mon, 19 Sep 2016 23:36:16 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+Message-ID: <20160919223616.GN1041@n2100.armlinux.org.uk>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+ <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+ <20160919200816.GC29242@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160919200816.GC29242@roeck-us.net>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-I split into two patches to make review easier.
+On Mon, Sep 19, 2016 at 01:08:16PM -0700, Guenter Roeck wrote:
+> On Mon, Sep 19, 2016 at 09:12:14PM +0200, Robert Jarzmik wrote:
+> > The OS timer rate used for the watchdog can now be fetched from the
+> > standard clock API. This will remove the last user of
+> > get_clock_tick_rate() in both pxa and sa11x0 architectures.
+> > 
+> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> 
+> Did you test this ? Potential problem, if built into the kernel, could be that
+> the clocks might not be ready by the time the driver is instantiated. Unless
+> this is converted to a platform driver, it won't be able to handle a
+> -EPROBE_DEFER from the clock subsystem.
 
- 1/2: core support code
- 2/2: data arrays
+Really not a problem at all.  The OSTIMER0 is required for the system
+tick, and if that's not present, the kernel will be without any kind
+of time keeping, so a missing watchdog driver is the least of the
+problems.
 
-
-Changes in v7:
-  - Add static to probe/remove callbacks
-  - Fill unused idx of clk array with ERR_PTR(-EINVAL)
-  - Use of_device_get_match_data() instead of of_match_node()
-  - Remove CLK_IS_BASIC flag
-  - Make drivers built-in only
-  - Remove bogus  #include <linux/bitops.h>
-
-Changes in v6:
-  - Fix provided clock description a bit
-
-Changes in v5:
-  - Assign each gating register bit with a separate clk
-  - Fix examples in binding document to add specific compatible
-  - Document provided clocks for system clock
-
-Changes in v4:
-  - Unify module_platform_driver() boilerplate into a single place
-  - Add binding document
-  - Add USB3 clocks
-
-Changes in v3:
-  - Change to platform drivers instead of OF_CLK_DECLARE
-  - Split into a core part + SoC drivers
-    SoC drivers just consist of tables of SoC-specific data.
-    This allows reviewer to concentrate on the core-part
-  - Hard-code parent clock names for cascading
-
-Changes in v2:
-  - split emmc_hw_reset
-  - make SD clock rate-controllable
-  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
-
-Masahiro Yamada (2):
-  clk: uniphier: add core support code for UniPhier clock driver
-  clk: uniphier: add clock data for UniPhier SoCs
-
- .../devicetree/bindings/clock/uniphier-clock.txt   | 134 +++++++++++++
- MAINTAINERS                                        |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/uniphier/Kconfig                       |   9 +
- drivers/clk/uniphier/Makefile                      |   8 +
- drivers/clk/uniphier/clk-uniphier-core.c           | 214 +++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier-fixed-factor.c   |  48 +++++
- drivers/clk/uniphier/clk-uniphier-fixed-rate.c     |  47 +++++
- drivers/clk/uniphier/clk-uniphier-gate.c           |  97 ++++++++++
- drivers/clk/uniphier/clk-uniphier-mio.c            | 101 ++++++++++
- drivers/clk/uniphier/clk-uniphier-mux.c            |  95 +++++++++
- drivers/clk/uniphier/clk-uniphier-peri.c           |  57 ++++++
- drivers/clk/uniphier/clk-uniphier-sys.c            | 151 +++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h                | 122 ++++++++++++
- 15 files changed, 1086 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/uniphier-clock.txt
- create mode 100644 drivers/clk/uniphier/Kconfig
- create mode 100644 drivers/clk/uniphier/Makefile
- create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-factor.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-fixed-rate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-gate.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mux.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-sys.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier.h
+Therefore, both PXA and SA11x0 register their clocks really early to
+ensure that OSTIMER0 is available by the time_init() stage, which is
+way before driver probe time.
 
 -- 
-1.9.1
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
