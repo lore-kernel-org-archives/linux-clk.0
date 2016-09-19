@@ -1,75 +1,69 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1473842204.2954.13.camel@pengutronix.de>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and
- GXBB
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- hdegoede@redhat.com, Ben Dooks <ben.dooks@codethink.co.uk>,
- mark.rutland@arm.com,  devicetree@vger.kernel.org,
- gregkh@linuxfoundation.org, johnyoun@synopsys.com,  will.deacon@arm.com,
- mturquette@baylibre.com, linux-usb@vger.kernel.org,  sboyd@codeaurora.org,
- kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com,
- carlo@caione.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- jbrunet@baylibre.com
-Date: Wed, 14 Sep 2016 10:36:44 +0200
-In-Reply-To: <7hzinbmh40.fsf@baylibre.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	 <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-	 <m260q6jibf.fsf@baylibre.com>
-	 <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
-	 <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
-	 <m2eg4ui0nl.fsf@baylibre.com>
-	 <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-	 <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-	 <m2sht9gkau.fsf@baylibre.com>
-	 <CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
-	 <1473780508.10237.22.camel@pengutronix.de>
-	 <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
-	 <7hzinbmh40.fsf@baylibre.com>
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1474276031.31321.0.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] clk: imx6: initialize GPU clocks
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Anson Huang
+	 <Anson.Huang@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	patchwork-lst@pengutronix.de, kernel@pengutronix.de, Fabio Estevam
+	 <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 19 Sep 2016 11:07:11 +0200
+In-Reply-To: <20160918001723.GC15478@tiger>
+References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
+	 <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+	 <20160918001723.GC15478@tiger>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, den 13.09.2016, 17:59 -0700 schrieb Kevin Hilman:
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+Am Sonntag, den 18.09.2016, 08:17 +0800 schrieb Shawn Guo:
+> On Fri, Sep 16, 2016 at 11:16:11AM +0200, Lucas Stach wrote:
+> > Initialize the GPU clock muxes to sane inputs. Until now they have
+> > not been changed from their default values, which means that both
+> > GPU3D shader and GPU2D core were fed by clock inputs whose rates
+> > exceed the maximium allowed frequency of the cores by as much as
+> > 200MHz.
+> > 
+> > This fixes a severe GPU stability issue on i.MX6DL.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > ---
+> >  drivers/clk/imx/clk-imx6q.c | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> > index 64c243173395..751c3e7d5843 100644
+> > --- a/drivers/clk/imx/clk-imx6q.c
+> > +++ b/drivers/clk/imx/clk-imx6q.c
+> > @@ -633,6 +633,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+> >  	if (IS_ENABLED(CONFIG_PCI_IMX6))
+> >  		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
+> >  
+> > +	/*
+> > +	 * Initialize the GPU clock muxes, so that the maximum specified clock
+> > +	 * rates for the respective SoC are not exceeded.
+> > +	 */
+> > +	if (clk_on_imx6dl()) {
+> > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
+> > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
+> > +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
+> > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
+> > +	} else if (clk_on_imx6q()) {
+> > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
+> > +		               clk[IMX6QDL_CLK_MMDC_CH0_AXI]);
+> > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_SHADER_SEL],
+> > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
+> > +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
+> > +		               clk[IMX6QDL_CLK_PLL3_USB_OTG]);
+> > +	}
+> > +
 > 
-> > On Tue, Sep 13, 2016 at 5:28 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> Can we handle these with assigned-clock-parents from device tree?
 > 
-> [...]
-> 
-> >>> I added Philipp and Hans to this thread - maybe they can comment on this.
-> >>> To sum it up, our problem is:
-> >>> - there are two separate USB PHYs on Meson GXBB
-> >>> - both are sharing the same reset line (provided by the reset-meson driver)
-> >>> - during initialization of the PHYs we must only call
-> >>> reset_control_reset(rstc) once (if we do it for the first *and* second
-> >>> PHY then the first PHY gets confused once the second PHY uses the
-> >>> reset because the first PHY's state is reset as well)
-> >>
-> >> If you have an initially asserted reset line and you can enable the
-> >> first module by deasserting the reset via reset_control_deassert (and
-> >> reset_control_assert to signal when the module may be disabled again
-> >> after use), shared resets are for you.
-> >>
-> >> If you need a reset pulse or have no direct control over the reset line,
-> >> (device_reset), the reset framework currently has no solution for this.
-> >> The ugly thing about reset_control_once would be that it can't re-reset
-> >> modules when unloading and reloading driver modules.
-> >
-> > The corresponding reset driver in question is reset-meson, which only
-> > implements reset (assert/deassert are not implemented). However, I
-> > don't know if this is due to hardware design.
-> > I think the hardware implements the latter, but maybe Neil can give
-> > more information here (I currently don't have access to my board so I
-> > cannot test how the hardware actually behaves).
-> 
-> It's implemented that way because the hardware only supports a reset
-> pulse.
+No, we want to get rid of the GPU overclocking even with old DTs. DT
+stability rules and all that...
 
-Would it be possible to bring down both PHYs drivers, pull the reset
-line once, and then bring the drivers back up again on this hardware?
-
-regards
-Philipp
+Regards,
+Lucas
