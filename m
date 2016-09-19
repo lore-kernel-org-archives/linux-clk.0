@@ -1,98 +1,263 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/5] clk: add support for runtime pm
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <e3cceb9a-7a30-c662-dba4-bc453f6fddb6@samsung.com>
-Date: Tue, 13 Sep 2016 11:07:45 +0200
-MIME-version: 1.0
-In-reply-to: <20160912223105.GI7243@codeaurora.org>
-Content-type: text/plain; charset=utf-8; format=flowed
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
- <20160908001943.GC13062@codeaurora.org>
- <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
- <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
- <20160912223105.GI7243@codeaurora.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <c7ad213f-e5d1-d5c5-a83c-af1c38d9c1d6@arm.com>
+References: <20160909201029.24530-1-maxime.ripard@free-electrons.com>
+ <20160909201029.24530-5-maxime.ripard@free-electrons.com> <CAGb2v65JZ7gnOZ_LkkvGv5-bqXeK1E1O3eno85zYBSndNpN=Qw@mail.gmail.com>
+ <c7ad213f-e5d1-d5c5-a83c-af1c38d9c1d6@arm.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 19 Sep 2016 23:14:48 +0800
+Message-ID: <CAGb2v64YNdikfPeOmjX3u9exenRAodWat6w6nzpKNZAE4CU-iQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] arm64: dts: add Pine64 support
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-
-On 2016-09-13 00:31, Stephen Boyd wrote:
-> On 09/12, Marek Szyprowski wrote:
->> Hi Stephen,
+On Mon, Sep 12, 2016 at 6:11 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+> Hi,
+>
+> On 10/09/16 03:33, Chen-Yu Tsai wrote:
+>> Hi,
 >>
+>> On Sat, Sep 10, 2016 at 4:10 AM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>>> From: Andre Przywara <andre.przywara@arm.com>
+>>>
+>>> The Pine64 is a cost-efficient development board based on the
+>>> Allwinner A64 SoC.
+>>> There are three models: the basic version with Fast Ethernet and
+>>> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+>>> feature Gigabit Ethernet and additional connectors for touchscreens
+>>> and a camera. Or as my son put it: "Those are smaller and these are
+>>> missing." ;-)
+>>> The two Pine64+ models just differ in the amount of DRAM
+>>> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+>>> patches the DT accordingly we just need to provide one DT for the
+>>> Pine64+.
+>>>
+>>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>>> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
+>>> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>>> ---
+>>>  arch/arm64/boot/dts/Makefile                       |  1 +
+>>>  arch/arm64/boot/dts/allwinner/Makefile             |  5 ++
+>>>  .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  | 50 ++++++++++++++++
+>>>  .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 70 ++++++++++++++++++++++
+>>>  4 files changed, 126 insertions(+)
+>>>  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+>>>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>>>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>>
+>>> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+>>> index 6e199c903676..ddcbf5a2c17e 100644
+>>> --- a/arch/arm64/boot/dts/Makefile
+>>> +++ b/arch/arm64/boot/dts/Makefile
+>>> @@ -1,4 +1,5 @@
+>>>  dts-dirs += al
+>>> +dts-dirs += allwinner
+>>>  dts-dirs += altera
+>>>  dts-dirs += amd
+>>>  dts-dirs += amlogic
+>>> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+>>> new file mode 100644
+>>> index 000000000000..1e29a5ae8282
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+>>> @@ -0,0 +1,5 @@
+>>> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
+>>> +
+>>> +always         := $(dtb-y)
+>>> +subdir-y       := $(dts-dirs)
+>>> +clean-files    := *.dtb
+>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>>> new file mode 100644
+>>> index 000000000000..790d14daaa6a
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>>> @@ -0,0 +1,50 @@
+>>> +/*
+>>> + * Copyright (c) 2016 ARM Ltd.
+>>> + *
+>>> + * This file is dual-licensed: you can use it either under the terms
+>>> + * of the GPL or the X11 license, at your option. Note that this dual
+>>> + * licensing only applies to this file, and not this project as a
+>>> + * whole.
+>>> + *
+>>> + *  a) This library is free software; you can redistribute it and/or
+>>> + *     modify it under the terms of the GNU General Public License as
+>>> + *     published by the Free Software Foundation; either version 2 of the
+>>> + *     License, or (at your option) any later version.
+>>> + *
+>>> + *     This library is distributed in the hope that it will be useful,
+>>> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + *     GNU General Public License for more details.
+>>> + *
+>>> + * Or, alternatively,
+>>> + *
+>>> + *  b) Permission is hereby granted, free of charge, to any person
+>>> + *     obtaining a copy of this software and associated documentation
+>>> + *     files (the "Software"), to deal in the Software without
+>>> + *     restriction, including without limitation the rights to use,
+>>> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>>> + *     sell copies of the Software, and to permit persons to whom the
+>>> + *     Software is furnished to do so, subject to the following
+>>> + *     conditions:
+>>> + *
+>>> + *     The above copyright notice and this permission notice shall be
+>>> + *     included in all copies or substantial portions of the Software.
+>>> + *
+>>> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>>> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>>> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>>> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+>>> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>>> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>>> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>>> + *     OTHER DEALINGS IN THE SOFTWARE.
+>>> + */
+>>> +
+>>> +#include "sun50i-a64-pine64.dts"
+>>> +
+>>> +/ {
+>>> +       model = "Pine64+";
+>>> +       compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
+>>> +
+>>> +       /* TODO: Camera, Ethernet PHY, touchscreen, etc. */
+>>> +};
+>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>> new file mode 100644
+>>> index 000000000000..da9bca51f5a9
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>> @@ -0,0 +1,70 @@
+>>> +/*
+>>> + * Copyright (c) 2016 ARM Ltd.
+>>> + *
+>>> + * This file is dual-licensed: you can use it either under the terms
+>>> + * of the GPL or the X11 license, at your option. Note that this dual
+>>> + * licensing only applies to this file, and not this project as a
+>>> + * whole.
+>>> + *
+>>> + *  a) This library is free software; you can redistribute it and/or
+>>> + *     modify it under the terms of the GNU General Public License as
+>>> + *     published by the Free Software Foundation; either version 2 of the
+>>> + *     License, or (at your option) any later version.
+>>> + *
+>>> + *     This library is distributed in the hope that it will be useful,
+>>> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + *     GNU General Public License for more details.
+>>> + *
+>>> + * Or, alternatively,
+>>> + *
+>>> + *  b) Permission is hereby granted, free of charge, to any person
+>>> + *     obtaining a copy of this software and associated documentation
+>>> + *     files (the "Software"), to deal in the Software without
+>>> + *     restriction, including without limitation the rights to use,
+>>> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>>> + *     sell copies of the Software, and to permit persons to whom the
+>>> + *     Software is furnished to do so, subject to the following
+>>> + *     conditions:
+>>> + *
+>>> + *     The above copyright notice and this permission notice shall be
+>>> + *     included in all copies or substantial portions of the Software.
+>>> + *
+>>> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>>> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>>> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>>> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+>>> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>>> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>>> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>>> + *     OTHER DEALINGS IN THE SOFTWARE.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include "sun50i-a64.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "Pine64";
+>>> +       compatible = "pine64,pine64", "allwinner,sun50i-a64";
+>>> +
+>>> +       aliases {
+>>> +               serial0 = &uart0;
+>>> +       };
+>>> +
+>>> +       chosen {
+>>> +               stdout-path = "serial0:115200n8";
+>>> +       };
+>>> +};
+>>> +
+>>> +&uart0 {
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&uart0_pins_a>;
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&i2c1 {
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&i2c1_pins>;
+>>> +       status = "okay";
 >>
->> On 2016-09-08 02:19, Stephen Boyd wrote:
->>> On 09/01, Marek Szyprowski wrote:
->>>> Registers for some clocks might be located in the SOC area, which are under the
->>>> power domain. To enable access to those registers respective domain has to be
->>>> turned on. Additionally, registers for such clocks will usually loose its
->>>> contents when power domain is turned off, so additional saving and restoring of
->>>> them might be needed in the clock controller driver.
->>>>
->>>> This patch adds basic infrastructure in the clocks core to allow implementing
->>>> driver for such clocks under power domains. Clock provider can supply a
->>>> struct device pointer, which is the used by clock core for tracking and managing
->>>> clock's controller runtime pm state. Each clk_prepare() operation
->>>> will first call pm_runtime_get_sync() on the supplied device, while
->>>> clk_unprepare() will do pm_runtime_put() at the end.
->>>>
->>>> Additional calls to pm_runtime_get/put functions are required to ensure that any
->>>> register access (like calculating/chaning clock rates) will be done with clock
->>>> controller in active runtime state.
->>>>
->>>> Special handling of the case when runtime pm is disabled for clock controller's
->>>> device is needed to let this feature work properly also during system sleep
->>>> suspend/resume operations (runtime pm is first disabled before entering sleep
->>>> state's, but controller is usually still operational until its suspend pm
->>>> callback is called).
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> My "knee jerk" concern is that we're going to take a runtime PM
->>> lock underneath the prepare lock. That seems like a situation
->>> where we could hit a lock inversion if the runtime PM callbacks
->>> themselves acquire the prepare lock by calling clk APIs? But this
->>> concern is false right? We release the runtime PM lock before
->>> calling the PM callback, so we shouldn't hit any deadlock and
->>> lockdep won't complain?
->> Runtime PM uses fine grained locking based on per-device locks, so there
->> should be no problem with global clock prepare lock. The only lock
->> interaction
->> is between clock controller device's rpm lock and clocks global
->> prepare lock, but
->> it always done with the same access pattern. I've tested it
->> extensively (also
->> with lock dep) with various use cases and found no problems.
->>
-> Great! So you have runtime PM callbacks that are calling
-> clk_prepare/unprepare?
+>> Schematics say this is missing an external pull-up. Has anyone tried it?
+>> Without a pull-up any access on the i2c bus should just block.
+>
+> I tried it a while ago (with an older kernel), though I had an external
+> pull-up on the device side, I think. I can give it a try again with
+> Maxime's branch once I find this I2C test device in one of my moving
+> boxes ;-)
+>
+> Do other boards providing a Raspi-compatible header have an on-board
+> pull-up here? So will (some) hardware extensions for the Raspi fail on
+> the Pine64?
 
-Well, not really. clock controller's runtime pm functions must not call
-clk_prepare/unprepare yet.
+IIRC The Bananapi series have pull-ups on the default I2C pins.
 
-I didn't get your question. I thought that you are asking if my change
-won't introduce any deadlock related to prepare and dev->pm locks. My
-runtime pm functions doesn't do any call to clk_prepare/unprepare.
-Although global clock prepare lock is re-entrant from the same process, it
-would cause deadlock if called from runtime pm functions, because runtime
-pm functions might be called from the worker running on the different
-cpu/process.
+>> Also this is on the RPi-2 compatible header. There's also an UART and SPI
+>> that are standard for the RPi-2 header. We should consider enabling them
+>> as well.
+>
+> Interesting topic ;-)
+> As both interfaces can be configured for GPIO as well, I think Maxime
+> voted to not declare them as special function in the upstream DT.
+> UART0 is used for the console, so I guess some people may decide to use
+> those UART2 header pins for GPIO. Similarly for SPI: if you don't need
+> it, you get four (or five) additional GPIO.
+>
+> A kind of related issue arises for those BT/Wifi headers. 99.9% of the
+> users will plug the Pine64 BT/WiFi module in there, at which point we
+> could declare MMC1 as SDIO and UART1 as enabled to cover this.
+> But then again nothing prevents people from building a custom module
+> which uses those pins for something else. Port G at least does not
+> multiplex any other IP to those pins - apart from GPIO, of course.
+>
+> So what is the exact policy here? In the end I think any pin (including
+> UART0's PB8 and PB9) can be configured as GPIO, so do we make some
+> assumptions about "sensible" or predominant usage?
 
-I hope that the work started by Krzysztof Kozlowski on splitting prepare
-lock on per-controller basis will solve limitation and one would be able
-to call clk_prapare/unprepare on clocks from other controllers even from
-the runtime pm functions.
+My personal position is if the vendor explicitly labeled X pin as Y
+peripheral, then we should enable it by default, since that is possibly
+what many users would be expecting. We can list, but explicitly disable,
+other peripherals that the vendor mentioned as optional or changeable.
+Obviously most pins are changeable from the SoC PoV, so my focus here
+is what the vendor intended.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Unfortunately I've not completely worked this out with Maxime yet,
+and I am somewhat busy on other fronts lately. I'll be at ELCE this
+year, so hopefully we'll get this sorted out soon.
+
+> Does "# echo $DEVICE > /sys/devices/platform/$DEVICE/driver/unbind" work
+> to get those pins free later in case one wants to configure them as
+> GPIOs? In this case we may consider being more generous in declaring
+> common use cases in the upstream DT for the sake of the majority of users.
+
+I believe it does, but I've never actually tried it.
+
+Regards
+ChenYu
