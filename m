@@ -1,98 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:48904 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757829AbcIXBpp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Sep 2016 21:45:45 -0400
-Subject: Re: [PATCH v2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
-To: Rob Herring <robh@kernel.org>
-References: <1474183821-7570-1-git-send-email-xuejiancheng@hisilicon.com>
- <20160923174704.GA32729@rob-hp-laptop>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yanhaifeng@hisilicon.com>, <gaofei@hisilicon.com>,
-        <hermit.wangheming@hisilicon.com>, <scott.bambrough@linaro.org>,
-        <mark.gregotski@linaro.org>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <5a6e3727-214a-c791-3d8d-3982ae2f6bac@hisilicon.com>
-Date: Sat, 24 Sep 2016 09:45:11 +0800
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>,  arm@kernel.org,  Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  linux-arm-kernel@lists.infradead.org,  linux-gpio@vger.kernel.org,  Linus Walleij <linus.walleij@linaro.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] ARM: mvebu: drivers for v4.9 (#1)
+References: <87a8fabikx.fsf@free-electrons.com> <4134529.ol6KhRYAQp@wuerfel>
+Date: Tue, 20 Sep 2016 09:09:29 +0200
+In-Reply-To: <4134529.ol6KhRYAQp@wuerfel> (Arnd Bergmann's message of "Tue, 20
+	Sep 2016 00:16:41 +0200")
+Message-ID: <87wpi76o9i.fsf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20160923174704.GA32729@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2016/9/24 1:47, Rob Herring 写道:
-> On Sun, Sep 18, 2016 at 03:30:21PM +0800, Jiancheng Xue wrote:
->> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
->> Generator) module generates clock and reset signals used
->> by other module blocks on SoC.
->>
->> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
->> ---
->> change log
->> v2:
->> - Fixed compiling error when compiled as a module.
->> - Fixed issues pointed by Stephen Boyd.
->> - Added prefix HISTB for clock index macro definitions.
->>
->>  .../clock/{hi3519-crg.txt => hisi-crg.txt}         |  11 +-
->>  drivers/clk/hisilicon/Kconfig                      |   8 +
->>  drivers/clk/hisilicon/Makefile                     |   1 +
->>  drivers/clk/hisilicon/crg-hi3798cv200.c            | 305 +++++++++++++++++++++
->>  drivers/clk/hisilicon/crg.h                        |  34 +++
->>  include/dt-bindings/clock/histb-clock.h            |  64 +++++
->>  6 files changed, 419 insertions(+), 4 deletions(-)
->>  rename Documentation/devicetree/bindings/clock/{hi3519-crg.txt => hisi-crg.txt} (82%)
->>  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
->>  create mode 100644 drivers/clk/hisilicon/crg.h
->>  create mode 100644 include/dt-bindings/clock/histb-clock.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
->> similarity index 82%
->> rename from Documentation/devicetree/bindings/clock/hi3519-crg.txt
->> rename to Documentation/devicetree/bindings/clock/hisi-crg.txt
->> index acd1f23..e3919b6 100644
->> --- a/Documentation/devicetree/bindings/clock/hi3519-crg.txt
->> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
->> @@ -1,7 +1,7 @@
->> -* Hisilicon Hi3519 Clock and Reset Generator(CRG)
->> +* HiSilicon Clock and Reset Generator(CRG)
->>  
->> -The Hi3519 CRG module provides clock and reset signals to various
->> -controllers within the SoC.
->> +The CRG module provides clock and reset signals to various
->> +modules within the SoC.
->>  
->>  This binding uses the following bindings:
->>      Documentation/devicetree/bindings/clock/clock-bindings.txt
->> @@ -10,7 +10,10 @@ This binding uses the following bindings:
->>  Required Properties:
->>  
->>  - compatible: should be one of the following.
->> -  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
->> +  - "hisilicon,hi3516cv300-crg"
->> +  - "hisilicon,hi3519-crg"
->> +  - "hisilicon,hi3798cv200-crg"
->> +  - "hisilicon,hi3798cv200-sysctrl"
-> 
-> Why crg and sysctrl?
-> 
-Hi Rob，
+Hi Arnd,
+ 
+ On mar., sept. 20 2016, Arnd Bergmann <arnd@arndb.de> wrote:
 
-In Hi3798cv200 SoC, the system controller (sysctrl) is another clock
-provider which provides clocks for some modules such as timer0, uart0,
-ir, led etc. These modules won't be power down when the system enters
-into the stand-by mode. Besides providing above clocks, sysctrl also
-contains registers used to control the whole system and some peripherals.
+> On Wednesday, September 14, 2016 5:35:10 PM CEST Gregory CLEMENT wrote:
+>> mvebu drivers for 4.9 (part 1)
+>> 
+>> - Add pinctrl and clk support for the Orion5x SoC mv88f5181 variant
+>> 
+>> ----------------------------------------------------------------
+>> Jamie Lentin (2):
+>>       clk: mvebu: Add clk support for the orion5x SoC mv88f5181
+>>       pinctrl: mvebu: orion5x: Generalise mv88f5181l support for 88f5181
+>> 
+>>  .../devicetree/bindings/clock/mvebu-core-clock.txt |  1 +
+>>  .../bindings/pinctrl/marvell,orion-pinctrl.txt     |  4 +-
+>>  drivers/clk/mvebu/orion.c                          | 70 ++++++++++++++++++++++
+>>  drivers/pinctrl/mvebu/pinctrl-orion.c              | 23 +++----
+>>  4 files changed, 86 insertions(+), 12 deletions(-)
+>
+> I see this touches pinctrl and clk drivers, but none of the maintainers are
+> on Cc for this pull request, nor have they provided an Ack for the patches
+> according to your git log.
+>
+> Why did you not send the driver changes to them?
+
+My bad sorry. The changes only touch data (adding new varaiant of the
+orion5x), are very trivial and won't cause any merge
+conflict. Furthermore there is depency with the other pacthes in the
+mvebu branches and we already did this in the past to avoid dependecy
+between subsystem. _But_ I should have asked the acked-by from the
+drivers maintainers, it was the way we wolved it in the past and I
+forgot it.
+
+>
+> Not pulled for now, until this is resolved, sorry.
+
+If the drivers maintainer for pinctrl and clk give their acked-by do you
+agree to take it for 4.9?
 
 Thanks,
-Jiancheng
 
->>  
->>  - reg: physical base address of the controller and length of memory mapped
->>    region.
-> 
-> .
-> 
-
+Gregory
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
