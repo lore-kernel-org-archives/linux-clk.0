@@ -1,46 +1,34 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Sep 2016 10:36:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: imx31: properly init clocks for machines with DT
+Message-ID: <20160920173646.GC8319@codeaurora.org>
+References: <1474252939-12579-1-git-send-email-vz@mleia.com>
+ <1474252939-12579-3-git-send-email-vz@mleia.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20160902023225.13898-1-chris.brandt@renesas.com>
-References: <20160901131036.17241-1-chris.brandt@renesas.com> <20160902023225.13898-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Sep 2016 10:19:43 +0200
-Message-ID: <CAMuHMdXvJEpECERZPOX_gyj++ZLpe=7ziE2d-X9rcKNJdBaHug@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: rz: Select EXTAL vs USB clock
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474252939-12579-3-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 2, 2016 at 4:32 AM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Check the MD_CLK pin to determine the current clock mode in order to set
-> the pll clock parent correctly.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+On 09/19, Vladimir Zapolskiy wrote:
+> @@ -222,22 +215,31 @@ int __init mx31_clocks_init(unsigned long fref)
+>  	return 0;
+>  }
+>  
+> -int __init mx31_clocks_init_dt(void)
+> +static void __init mx31_clocks_init_dt(struct device_node *np)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Alternatively we can leave mx31_clocks_init_dt() around as an
+exported API, but make it return 0 immediately in the same patch
+to the clk driver here. Then after rc1 we can delete the "unused"
+function in the clk tree assuming the last caller has been
+deleted through arm-soc.
 
-> ---
-> V4:
-> * added static and __init to rz_cpg_read_mode_pins
-> * set cpg_mode during declaration
-> v3:
-> * move reading GPIO port into separate function
-> v2:
-> * Switched to reading MD_CLK pin to determine mode
-
-Thanks for the update, will queue in clk-renesas-for-v4.X...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
