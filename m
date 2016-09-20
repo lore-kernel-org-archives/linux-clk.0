@@ -1,37 +1,47 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 20 Sep 2016 16:52:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
-Cc: Kalle Kankare <kalle.kankare@vincit.fi>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] clk: imx53: Add clocks configuration
-Message-ID: <20160920235212.GE8319@codeaurora.org>
-References: <20160918002451.GE15478@tiger>
- <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+Return-Path: <>
+Return-Path: <>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+Cc: jamesjj.liao@mediatek.com,
+	djkurtz@chromium.org,
+	p.zabel@pengutronix.de,
+	yingjoe.chen@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] clk: mediatek: clk-mt8173: Unmap region obtained by of_iomap
+Date: Tue, 20 Sep 2016 14:00:42 +0530
+Message-Id: <1474360242-15126-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19, Fabien Lahoudere wrote:
-> From: Kalle Kankare <kalle.kankare@vincit.fi>
-> 
-> Add clocks configuration for CSI, FIRI and IEEE1588.
-> 
-> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
-> ---
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-Applied to clk-next
+Free memory mapping, if init is not successful.
 
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt8173.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 10c9860..0ac3aee 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -1074,8 +1074,10 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
+ 	}
+ 
+ 	mt8173_pll_clk_data = clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
+-	if (!clk_data)
++	if (!clk_data) {
++		iounmap(base);
+ 		return;
++	}
+ 
+ 	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
