@@ -1,60 +1,65 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/5] clk: add support for runtime pm
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <648b0ce0-dcc5-d32d-5c4e-b7e0c0f10d4c@samsung.com>
-Date: Thu, 15 Sep 2016 10:32:04 +0200
-MIME-version: 1.0
-In-reply-to: <20160914213903.GG7243@codeaurora.org>
-Content-type: text/plain; charset=utf-8; format=flowed
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
- <20160908001943.GC13062@codeaurora.org>
- <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
- <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
- <20160912223105.GI7243@codeaurora.org>
- <e3cceb9a-7a30-c662-dba4-bc453f6fddb6@samsung.com>
- <20160914213903.GG7243@codeaurora.org>
+Return-Path: <>
+Return-Path: <>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] clk:mmp:clk-of-mmp2: Free memory and Unmap region obtained by kzalloc and of_iomap
+Date: Tue, 20 Sep 2016 15:48:35 +0530
+Message-Id: <1474366715-15608-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
+Free memory and memory mapping , if mmp2_clk_init is not successful.
 
-On 2016-09-14 23:39, Stephen Boyd wrote:
-> On 09/13, Marek Szyprowski wrote:
->> On 2016-09-13 00:31, Stephen Boyd wrote:
->>> Great! So you have runtime PM callbacks that are calling
->>> clk_prepare/unprepare?
->> Well, not really. clock controller's runtime pm functions must not call
->> clk_prepare/unprepare yet.
->>
->> I didn't get your question. I thought that you are asking if my change
->> won't introduce any deadlock related to prepare and dev->pm locks. My
->> runtime pm functions doesn't do any call to clk_prepare/unprepare.
->> Although global clock prepare lock is re-entrant from the same process, it
->> would cause deadlock if called from runtime pm functions, because runtime
->> pm functions might be called from the worker running on the different
->> cpu/process.
-> I mean non-clk controller driver based runtime PM callbacks that
-> call clk_prepare/unprepare in them. For example, some i2c or spi
-> device driver that has clk operations in the runtime PM
-> callbacks. That would allow lockdep to see any potential deadlock
-> because of aliasing lock classes for the device power lock and
-> the global prepare lock.
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/mmp/clk-of-mmp2.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-This works perfectly fine. Runtime pm callbacks are called with power lock
-released, so there is no deadlock possible related to dev->power.lock.
-See __rpm_callback() function in drivers/base/power/runtime.c
-
-Best regards
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index 3a51fff..3757287 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -309,19 +309,19 @@ static void __init mmp2_clk_init(struct device_node *np)
+ 	pxa_unit->mpmu_base = of_iomap(np, 0);
+ 	if (!pxa_unit->mpmu_base) {
+ 		pr_err("failed to map mpmu registers\n");
+-		return;
++		goto free_memory;
+ 	}
+ 
+ 	pxa_unit->apmu_base = of_iomap(np, 1);
+ 	if (!pxa_unit->mpmu_base) {
+ 		pr_err("failed to map apmu registers\n");
+-		return;
++		goto unmap_mpmu_region;
+ 	}
+ 
+ 	pxa_unit->apbc_base = of_iomap(np, 2);
+ 	if (!pxa_unit->apbc_base) {
+ 		pr_err("failed to map apbc registers\n");
+-		return;
++		goto unmap_apmu_region;
+ 	}
+ 
+ 	mmp_clk_init(np, &pxa_unit->unit, MMP2_NR_CLKS);
+@@ -333,6 +333,13 @@ static void __init mmp2_clk_init(struct device_node *np)
+ 	mmp2_axi_periph_clk_init(pxa_unit);
+ 
+ 	mmp2_clk_reset_init(np, pxa_unit);
++
++unmap_apmu_region:
++	iounmap(pxa_unit->apmu_base);
++unmap_mpmu_region:
++	iounmap(pxa_unit->mpmu_base);
++free_memory:
++	kfree(pxa_unit);
+ }
+ 
+ CLK_OF_DECLARE(mmp2_clk, "marvell,mmp2-clock", mmp2_clk_init);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.7.9.5
