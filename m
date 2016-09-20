@@ -1,65 +1,77 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 4/5] ARM: dts: at91: sama5d2: use correct sckc compatible
-Date: Thu,  8 Sep 2016 16:51:45 +0200
-Message-Id: <20160908145146.20422-5-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
-References: <20160908145146.20422-1-alexandre.belloni@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 20 Sep 2016 09:29:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+	johnyoun@synopsys.com, kishon@ti.com, khilman@baylibre.com,
+	carlo@caione.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, will.deacon@arm.com,
+	catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+	mark.rutland@arm.com
+Subject: Re: [PATCH v2 2/6] Documentation: dt-bindings: Add documentation for
+ the Meson USB2 PHYs
+Message-ID: <20160920142944.GA16016@rob-hp-laptop>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-3-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160911134111.31141-3-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-the sama5d2 sckc is actually sama5d4 compatible
+On Sun, Sep 11, 2016 at 03:41:07PM +0200, Martin Blumenstingl wrote:
+> Add the documentation for the bindings for the Meson8b and GXBB USB2
+> PHYs.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../devicetree/bindings/phy/meson-usb2-phy.txt     | 27 ++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+> new file mode 100644
+> index 0000000..9da5ea2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/meson-usb2-phy.txt
+> @@ -0,0 +1,27 @@
+> +* Amlogic USB2 PHY
+> +
+> +Required properties:
+> +- compatible:	Depending on the platform this should be one of:
+> +	"amlogic,meson8b-usb2-phy"
+> +	"amlogic,meson-gxbb-usb2-phy"
+> +- reg:		The base address and length of the registers
+> +- #phys-cells:	should be 0 (see phy-bindings.txt in this directory)
+> +- clocks:	phandle and clock identifier for the phy clocks
+> +- clock-names:	"usb_general" and "usb"
+> +
+> +Optional properties:
+> +- resets:	reference to the reset controller
+> +- phy-supply:	see phy-bindings.txt in this directory
+> +
+> +
+> +Example:
+> +
+> +usb0_phy: usb_phy@0 {
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/boot/dts/sama5d2.dtsi | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+usb-phy@0
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 353d0e5ec83b..2e49f10f93fa 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -1059,30 +1059,12 @@
- 				status = "disabled";
- 			};
- 
--			sckc@f8048050 {
--				compatible = "atmel,at91sam9x5-sckc";
-+			clk32k: sckc@f8048050 {
-+				compatible = "atmel,sama5d4-sckc";
- 				reg = <0xf8048050 0x4>;
- 
--				slow_rc_osc: slow_rc_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--					#clock-cells = <0>;
--					clock-frequency = <32768>;
--					clock-accuracy = <250000000>;
--					atmel,startup-time-usec = <75>;
--				};
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--					atmel,startup-time-usec = <1200000>;
--				};
--
--				clk32k: slowck {
--					compatible = "atmel,at91sam9x5-clk-slow";
--					#clock-cells = <0>;
--					clocks = <&slow_rc_osc &slow_osc>;
--				};
-+				clocks = <&slow_xtal>;
-+				#clock-cells = <0>;
- 			};
- 
- 			rtc@f80480b0 {
--- 
-2.9.3
+With that,
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+> +	compatible = "amlogic,meson-gxbb-usb2-phy";
+> +	#phy-cells = <0>;
+> +	reg = <0x0 0x0 0x0 0x20>;
+> +	resets = <&reset RESET_USB_OTG>;
+> +	clocks = <&clkc CLKID_USB>, <&clkc CLKID_USB0>;
+> +	clock-names = "usb_general", "usb";
+> +	phy-supply = <&usb_vbus>;
+> +};
+> -- 
+> 2.9.3
+> 
