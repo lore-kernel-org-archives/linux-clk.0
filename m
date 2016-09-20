@@ -1,91 +1,44 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Sep 2016 10:32:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] clk: sunxi-ng: sun6i-a31: Set CLK_SET_RATE_PARENT for display output clocks
-Date: Thu, 15 Sep 2016 14:57:38 +0800
-Message-Id: <20160915065740.13664-2-wens@csie.org>
-In-Reply-To: <20160915065740.13664-1-wens@csie.org>
-References: <20160915065740.13664-1-wens@csie.org>
+Subject: Re: [PATCH 0/2] ARM: imx31/of: clk: init clock controller with
+ CLK_OF_DECLARE
+Message-ID: <20160920173250.GB8319@codeaurora.org>
+References: <1474252939-12579-1-git-send-email-vz@mleia.com>
+ <20160919055802.dkf2rxcou44kbya5@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20160919055802.dkf2rxcou44kbya5@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The LCD controller and HDMI controller use the LCDx-CHy and HDMI clocks
-to generate their dot clocks. To be able to generate a full range of
-possible clock rates, the parent PLL clock rates should also be changed.
+On 09/19, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Mon, Sep 19, 2016 at 05:42:17AM +0300, Vladimir Zapolskiy wrote:
+> > The change is based on v4.8.0-rc1 and plus it depends on this fixup:
+> > 
+> >   ARM: dts: imx31: fix clock control module interrupts description
+> > 
+> > The change is tested on qemu kzm target and mx31lite board, while both
+> > targets don't have DTS in upstream, I had to write simple DTS files for
+> > them, because the proposed change is for i.MX31 targets with OF support.
+> > 
+> > The second change in the series compilation time dependent on the first
+> > one, while the first change apparently should break runtime execution
+> > of i.MX31 boards with OF support, if both changes are applied everything
+> > should be fine, regression testing on the same legacy targets does not
+> 
+> that means this should be done in a single patch.
 
-Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+Yes, please combine the patches. I can ack it then so it can be
+routed through arm-soc.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index f1d61faa5bd9..bb488e8baea8 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -543,17 +543,19 @@ static const char * const lcd_ch0_parents[] = { "pll-video0", "pll-video1",
- 						"pll-video0-2x",
- 						"pll-video1-2x", "pll-mipi" };
- static SUNXI_CCU_MUX_WITH_GATE(lcd0_ch0_clk, "lcd0-ch0", lcd_ch0_parents,
--			       0x118, 24, 2, BIT(31), 0);
-+			       0x118, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_MUX_WITH_GATE(lcd1_ch0_clk, "lcd1-ch0", lcd_ch0_parents,
--			       0x11c, 24, 2, BIT(31), 0);
-+			       0x11c, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static const char * const lcd_ch1_parents[] = { "pll-video0", "pll-video1",
- 						"pll-video0-2x",
- 						"pll-video1-2x" };
- static SUNXI_CCU_M_WITH_MUX_GATE(lcd0_ch1_clk, "lcd0-ch1", lcd_ch1_parents,
--				 0x12c, 0, 4, 24, 3, BIT(31), 0);
-+				 0x12c, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(lcd1_ch1_clk, "lcd1-ch1", lcd_ch1_parents,
--				 0x12c, 0, 4, 24, 3, BIT(31), 0);
-+				 0x12c, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const csi_sclk_parents[] = { "pll-video0", "pll-video1",
- 						 "pll9", "pll10", "pll-mipi",
-@@ -601,7 +603,8 @@ static SUNXI_CCU_GATE(digital_mic_clk,	"digital-mic",	"pll-audio",
- 		      0x148, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", lcd_ch1_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(31), 0);
- 
-@@ -624,10 +627,11 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(mbus1_clk, "mbus1", mbus_parents, 0x160,
- 				  CLK_IS_CRITICAL);
- 
- static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_clk, "mipi-dsi", lcd_ch1_parents,
--				 0x168, 16, 3, 24, 2, BIT(31), 0);
-+				 0x168, 16, 3, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_dphy_clk, "mipi-dsi-dphy",
- 				 lcd_ch1_parents, 0x168, 0, 3, 8, 2,
--				 BIT(15), 0);
-+				 BIT(15), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(mipi_csi_dphy_clk, "mipi-csi-dphy",
- 				 lcd_ch1_parents, 0x168, 0, 3, 8, 2,
- 				 BIT(15), 0);
-@@ -956,9 +960,9 @@ static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
- static CLK_FIXED_FACTOR(pll_periph_2x_clk, "pll-periph-2x",
- 			"pll-periph", 1, 2, 0);
- static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
--			"pll-video0", 1, 2, 0);
-+			"pll-video0", 1, 2, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_video1_2x_clk, "pll-video1-2x",
--			"pll-video1", 1, 2, 0);
-+			"pll-video1", 1, 2, CLK_SET_RATE_PARENT);
- 
- static struct clk_hw_onecell_data sun6i_a31_hw_clks = {
- 	.hws	= {
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
