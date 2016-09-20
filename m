@@ -1,53 +1,51 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Fri, 9 Sep 2016 21:15:54 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
-Message-ID: <20160909191554.p5heukzkidwqiwpf@pengutronix.de>
-References: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20160909061631.GI16911@tiger>
- <20160909062034.tim2tzcihui6inoa@pengutronix.de>
- <20160909181138.GD7243@codeaurora.org>
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,  Daniel Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>,  Thomas Gleixner <tglx@linutronix.de>,  Wim Van Sebroeck <wim@iguana.be>,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+	<1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+	<20160919200816.GC29242@roeck-us.net>
+	<20160919223616.GN1041@n2100.armlinux.org.uk>
+	<0909debb-f7df-648b-95d2-23b535e5b299@roeck-us.net>
+Date: Tue, 20 Sep 2016 08:18:02 +0200
+Message-ID: <87h99bdrhh.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20160909181138.GD7243@codeaurora.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 09, 2016 at 11:11:38AM -0700, Stephen Boyd wrote:
-> On 09/09, Uwe Kleine-König wrote:
-> > To += mturquette, sboyd
-> > 
-> > Hello Shawn, hello Michael, hello Stephen,
-> > 
-> > On Fri, Sep 09, 2016 at 02:16:31PM +0800, Shawn Guo wrote:
-> > > On Thu, Sep 08, 2016 at 11:30:21AM +0200, Uwe Kleine-König wrote:
-> > > > This fixes
-> > > > 	[    0.000000] i.MX clk 82: register failed with -17
-> > > > because the name is duplicated.
-> > > > 
-> > > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > > 
-> > > I did not queue any clock patches for this cycle.  Can you please send
-> > > the patches directly to clock maintainers?
-> > 
-> > @shawnguo: Is this an ack?
-> > @mturquette, sboyd: should I resend? IMHO the first patch should go in
-> > soon.
-> 
-> Does the first patch need a fixes tag? We can apply them
-> directly.
+Guenter Roeck <linux@roeck-us.net> writes:
 
-The breakage was introduced by v4.3-rc2~4^2~71^2, i.e.
-3713e3f5e927 (clk: imx35: define two clocks for rtc).
+> On 09/19/2016 03:36 PM, Russell King - ARM Linux wrote:
+>> On Mon, Sep 19, 2016 at 01:08:16PM -0700, Guenter Roeck wrote:
+>>> On Mon, Sep 19, 2016 at 09:12:14PM +0200, Robert Jarzmik wrote:
+>>>> The OS timer rate used for the watchdog can now be fetched from the
+>>>> standard clock API. This will remove the last user of
+>>>> get_clock_tick_rate() in both pxa and sa11x0 architectures.
+>>>>
+>>>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>>>
+>>> Did you test this ? Potential problem, if built into the kernel, could be that
+>>> the clocks might not be ready by the time the driver is instantiated. Unless
+>>> this is converted to a platform driver, it won't be able to handle a
+>>> -EPROBE_DEFER from the clock subsystem.
+>>
+>> Really not a problem at all.  The OSTIMER0 is required for the system
+>> tick, and if that's not present, the kernel will be without any kind
+>> of time keeping, so a missing watchdog driver is the least of the
+>> problems.
+>>
+>> Therefore, both PXA and SA11x0 register their clocks really early to
+>> ensure that OSTIMER0 is available by the time_init() stage, which is
+>> way before driver probe time.
+>>
+>
+> You are right. And, at least in qemu, it actually works.
+Hi Guenter,
 
-Best regards
-Uwe
+Yes, it was tested on pxa25x (lubbock) and pxa27x (mainstone).
+
+Cheers.
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Robert
