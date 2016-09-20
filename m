@@ -1,89 +1,95 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Wim Van Sebroeck <wim@iguana.be>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+ <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <c87359e7-7d0c-6889-af9d-c2136cb46074@roeck-us.net>
+Date: Mon, 19 Sep 2016 21:35:46 -0700
 MIME-Version: 1.0
-In-Reply-To: <20160901141617.9777-2-maxime.ripard@free-electrons.com>
-References: <20160901141617.9777-1-maxime.ripard@free-electrons.com> <20160901141617.9777-2-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 2 Sep 2016 15:25:14 +0800
-Message-ID: <CAGb2v65LC_r_ppfm48xt8gsomGQPaTHg+F6CwFdeq9mvBiAGBg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: sunxi-ng: div: Add mux table macros
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 1, 2016 at 10:16 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add some macros to ease the declaration of clocks that are using them.
+On 09/19/2016 12:12 PM, Robert Jarzmik wrote:
+> The OS timer rate used for the watchdog can now be fetched from the
+> standard clock API. This will remove the last user of
+> get_clock_tick_rate() in both pxa and sa11x0 architectures.
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->  drivers/clk/sunxi-ng/ccu_div.h | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
+>  drivers/watchdog/sa1100_wdt.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-> index 5d98549e23a6..a5c9eaf90e84 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -77,13 +77,16 @@ struct ccu_div {
->                                       _shift, _width, _table, 0,        \
->                                       _flags)
+> diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
+> index e1d39a1e9628..8965e3f536c3 100644
+> --- a/drivers/watchdog/sa1100_wdt.c
+> +++ b/drivers/watchdog/sa1100_wdt.c
+> @@ -22,6 +22,7 @@
 >
-> -#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,      \
-> -                                 _mshift, _mwidth, _muxshift, _muxwidth, \
-> -                                 _gate, _flags)                        \
-> +#define SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,                        \
-> +                                       _parents, _table,               \
-> +                                       _reg,                           \
-> +                                       _mshift, _mwidth,               \
-> +                                       _muxshift, _muxwidth,           \
-> +                                       _gate, _flags)                  \
->         struct ccu_div _struct = {                                      \
->                 .enable = _gate,                                        \
->                 .div    = _SUNXI_CCU_DIV(_mshift, _mwidth),             \
-> -               .mux    = _SUNXI_CCU_MUX(_muxshift, _muxwidth),         \
-> +               .mux    = _SUNXI_CCU_MUX_TABLE(_muxshift, _muxwidth, _table), \
->                 .common = {                                             \
->                         .reg            = _reg,                         \
->                         .hw.init        = CLK_HW_INIT_PARENTS(_name,    \
-> @@ -93,12 +96,23 @@ struct ccu_div {
->                 },                                                      \
->         }
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+> +#include <linux/clk.h>
+>  #include <linux/types.h>
+>  #include <linux/kernel.h>
+>  #include <linux/fs.h>
+> @@ -155,12 +156,27 @@ static struct miscdevice sa1100dog_miscdev = {
+>  };
 >
-> +#define SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,      \
-> +                                 _mshift, _mwidth, _muxshift, _muxwidth, \
-> +                                 _gate, _flags)                        \
-> +       SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,                 \
-> +                                       _parents, NULL,                 \
-> +                                       _reg, _mshift, _mwidth,         \
-> +                                       _muxshift, _muxwidth,           \
-> +                                       _gate, _flags)
+>  static int margin __initdata = 60;		/* (secs) Default is 1 minute */
+> +static struct clk *clk;
+>
+>  static int __init sa1100dog_init(void)
+>  {
+>  	int ret;
+>
+> -	oscr_freq = get_clock_tick_rate();
+> +	clk = clk_get(NULL, "OSTIMER0");
+> +	if (IS_ERR(clk)) {
+> +		pr_err("SA1100/PXA2xx Watchdog Timer: clock not found: %d\n",
+> +		       (int) PTR_ERR(clk));
+> +		return PTR_ERR(clk);
+> +	}
 > +
->  #define SUNXI_CCU_M_WITH_MUX(_struct, _name, _parents, _reg,           \
->                              _mshift, _mwidth, _muxshift, _muxwidth,    \
->                              _flags)                                    \
-> -       SUNXI_CCU_M_WITH_MUX_GATE(_struct, _name, _parents, _reg,       \
-> -                                 _mshift, _mwidth, _muxshift, _muxwidth, \
-> -                                 0, _flags)
-> +       SUNXI_CCU_M_WITH_MUX_TABLE_GATE(_struct, _name,                 \
-> +                                       _parents, NULL,                 \
-> +                                       _reg, _mshift, _mwidth,         \
-> +                                       _muxshift, _muxwidth,           \
-> +                                       0, _flags)
-
-You probably didn't need to change this one though.
-
+> +	ret = clk_prepare_enable(clk);
+> +	if (ret) {
+> +		pr_err("SA1100/PXA2xx Watchdog Timer: clock failed to prepare+enable: %d\n",
+> +		       ret);
+> +		goto err;
+> +	}
+> +
+> +	oscr_freq = clk_get_rate(clk);
 >
+>  	/*
+>  	 * Read the reset status, and save it for later.  If
+> @@ -176,11 +192,17 @@ static int __init sa1100dog_init(void)
+>  		pr_info("SA1100/PXA2xx Watchdog Timer: timer margin %d sec\n",
+>  			margin);
+>  	return ret;
+> +err:
+> +	clk_disable_unprepare(clk);
+> +	clk_put(clk);
+> +	return ret;
+>  }
 >
->  #define SUNXI_CCU_M_WITH_GATE(_struct, _name, _parent, _reg,           \
-> --
-> 2.9.2
+>  static void __exit sa1100dog_exit(void)
+>  {
+>  	misc_deregister(&sa1100dog_miscdev);
+> +	clk_disable_unprepare(clk);
+> +	clk_put(clk);
+>  }
+>
+>  module_init(sa1100dog_init);
 >
