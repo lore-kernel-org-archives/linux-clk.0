@@ -1,56 +1,50 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and
- EPLL clocks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
- <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
- <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
-Cc: linux-clk@vger.kernel.org, tomasz.figa@gmail.com, sboyd@codeaurora.org,
- mturquette@baylibre.com, kgene@kernel.org, b.zolnierkie@samsung.com,
- linux-samsung-soc@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <74653ed5-827b-1ad6-e17a-0c8e173da29f@samsung.com>
-Date: Fri, 02 Sep 2016 16:09:08 +0200
-MIME-version: 1.0
-In-reply-to: <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <julia.lawall@lip6.fr>
+Date: Tue, 20 Sep 2016 19:32:52 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Stephen Boyd <sboyd@codeaurora.org>
+cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: question about clk_hw_register_fixed_factor
+In-Reply-To: <20160920173105.GA8319@codeaurora.org>
+Message-ID: <alpine.DEB.2.10.1609201932362.2914@hadrien>
+References: <alpine.DEB.2.10.1609200811560.3346@hadrien> <20160920173105.GA8319@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/30/2016 11:54 AM, Krzysztof Kozlowski wrote:
-> On 08/22/2016 06:30 PM, Sylwester Nawrocki wrote:
->> > The PDMA{0,1} and EPLL clock IDs are added separately in this
->> > patch so the patch can be merged to the arm-soc tree as dependency.
->> > 
->> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> > ---
->> >  include/dt-bindings/clock/exynos5410.h | 3 +++
->> >  1 file changed, 3 insertions(+)
->> > 
->> > diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
->> > index 85b467b..a74442a 100644
->> > --- a/include/dt-bindings/clock/exynos5410.h
->> > +++ b/include/dt-bindings/clock/exynos5410.h
->> > @@ -19,6 +19,7 @@
->> >  #define CLK_FOUT_MPLL		4
->> >  #define CLK_FOUT_BPLL		5
->> >  #define CLK_FOUT_KPLL		6
->> > +#define CLK_FOUT_EPLL		7
->> >  
->> >  /* gate for special clocks (sclk) */
->> >  #define CLK_SCLK_UART0		128
->> > @@ -48,6 +49,8 @@
->> >  #define CLK_USI3		268
->> >  #define CLK_UART3		260
->> >  #define CLK_PWM			279
->> > +#define CLK_PDMA0		280
->> > +#define CLK_PDMA1		281
+
+
+On Tue, 20 Sep 2016, Stephen Boyd wrote:
+
+> On 09/20, Julia Lawall wrote:
+> > Hello,
+> >
+> > The function clk_hw_register_fixed_factor from
+> > drivers/clk/clk-fixed-factor.c contains:
+> >
+> > struct clk_init_data init;
+> > ...
+> > fix->hw.init = &init;
+> > ...
+> > hw = &fix->hw;
+> > ...
+> > return hw;
+> >
+> > It looks like hw would then contain a dangling pointer, to init.  Should
+> > this be nulled out, or does it not matter because it is certain that no
+> > one will look at it anyway?  Or did I miss a null assignment elsewhere?
+> >
 >
-> How about making the IDs the same as in exynos5420? This way those
-> drivers could be merged someday in the future (if someone would be
-> bored...).
+> Yes this is a common pattern in clk drivers. The init structure
+> is not used after clk_register() (or its variants) is called, so
+> there will typically be a dangling pointer in clk_hw to the
+> clk_init_data structure. Sometimes that structure is allocated on
+> the stack, which leads to other problems like people forgetting
+> to initialize all the members. Usually they forgot to set flags
+> to something and then clk framework does very odd things. We
+> could null out the init pointer if we really cared, but so far
+> this hasn't been a problem.
 
-OK, I will do it, but there is already mismatch in the PLL indices.
+OK, thanks for the clarification.
 
---
-Thanks,
-Sylwester
+julia
