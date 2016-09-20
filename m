@@ -1,44 +1,56 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  <linux-clk@vger.kernel.org>,  <linux-usb@vger.kernel.org>,  <linux-amlogic@lists.infradead.org>,  <jbrunet@baylibre.com>,  <johnyoun@synopsys.com>,  <carlo@caione.org>,  <linux-arm-kernel@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <sboyd@codeaurora.org>,  <mturquette@baylibre.com>,  <will.deacon@arm.com>,  <catalin.marinas@arm.com>,  <gregkh@linuxfoundation.org>,  <mark.rutland@arm.com>,  <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 3/6] phy: meson: add USB2 PHY support for Meson8b and GXBB
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	<20160911134111.31141-1-martin.blumenstingl@googlemail.com>
-	<20160911134111.31141-4-martin.blumenstingl@googlemail.com>
-	<m2a8faxy72.fsf@baylibre.com> <57DCC3CF.9090409@ti.com>
-Date: Mon, 19 Sep 2016 09:42:22 -0700
-In-Reply-To: <57DCC3CF.9090409@ti.com> (Kishon Vijay Abraham, I's message of
-	"Sat, 17 Sep 2016 09:47:19 +0530")
-Message-ID: <m2wpi7hmdt.fsf@baylibre.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 20 Sep 2016 21:00:19 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Anson Huang <Anson.Huang@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+	kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: imx6: initialize GPU clocks
+Message-ID: <20160920130018.GE3744@tiger>
+References: <1474017371-28966-1-git-send-email-l.stach@pengutronix.de>
+ <1474017371-28966-2-git-send-email-l.stach@pengutronix.de>
+ <20160918001723.GC15478@tiger>
+ <1474276031.31321.0.camel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474276031.31321.0.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Kishon Vijay Abraham I <kishon@ti.com> writes:
+On Mon, Sep 19, 2016 at 11:07:11AM +0200, Lucas Stach wrote:
+> > > diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> > > index 64c243173395..751c3e7d5843 100644
+> > > --- a/drivers/clk/imx/clk-imx6q.c
+> > > +++ b/drivers/clk/imx/clk-imx6q.c
+> > > @@ -633,6 +633,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+> > >  	if (IS_ENABLED(CONFIG_PCI_IMX6))
+> > >  		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
+> > >  
+> > > +	/*
+> > > +	 * Initialize the GPU clock muxes, so that the maximum specified clock
+> > > +	 * rates for the respective SoC are not exceeded.
+> > > +	 */
+> > > +	if (clk_on_imx6dl()) {
+> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
+> > > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
+> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
+> > > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
+> > > +	} else if (clk_on_imx6q()) {
+> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_CORE_SEL],
+> > > +		               clk[IMX6QDL_CLK_MMDC_CH0_AXI]);
+> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU3D_SHADER_SEL],
+> > > +		               clk[IMX6QDL_CLK_PLL2_PFD1_594M]);
+> > > +		clk_set_parent(clk[IMX6QDL_CLK_GPU2D_CORE_SEL],
+> > > +		               clk[IMX6QDL_CLK_PLL3_USB_OTG]);
+> > > +	}
+> > > +
+> > 
+> > Can we handle these with assigned-clock-parents from device tree?
+> > 
+> No, we want to get rid of the GPU overclocking even with old DTs. DT
+> stability rules and all that...
 
-> Hi Kevin,
->
-> On Wednesday 14 September 2016 09:36 PM, Kevin Hilman wrote:
->> Kishon,
->> 
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->> 
->>> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
->>>
->>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>> Tested-by: Kevin Hilman <khilman@baylibre.com>
->> 
->> Will you be picking this up for v4.9?
->
-> It's already late for 4.9. Generally send pull request to Greg around -rc6.
-> This can go only in 4.10.
+Fair point.  For both patches,
 
-That's fine.
-
-Does that mean you have it queued someplace?  I don't see it in any of
-your branches.
-
-Kevin
+Acked-by: Shawn Guo <shawnguo@kernel.org>
