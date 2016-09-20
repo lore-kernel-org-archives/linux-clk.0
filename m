@@ -1,58 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750841AbcIIGRF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Sep 2016 02:17:05 -0400
-Date: Fri, 9 Sep 2016 14:16:31 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: clk-imx35: fix name for ckil clk
-Message-ID: <20160909061631.GI16911@tiger>
-References: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Sep 2016 16:52:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
+Cc: Kalle Kankare <kalle.kankare@vincit.fi>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] clk: imx53: Add clocks configuration
+Message-ID: <20160920235212.GE8319@codeaurora.org>
+References: <20160918002451.GE15478@tiger>
+ <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1473327022-8065-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 08, 2016 at 11:30:21AM +0200, Uwe Kleine-König wrote:
-> This fixes
-> 	[    0.000000] i.MX clk 82: register failed with -17
-> because the name is duplicated.
+On 09/19, Fabien Lahoudere wrote:
+> From: Kalle Kankare <kalle.kankare@vincit.fi>
 > 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-I did not queue any clock patches for this cycle.  Can you please send
-the patches directly to clock maintainers?
-
-Shawn
-
+> Add clocks configuration for CSI, FIRI and IEEE1588.
+> 
+> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
 > ---
->  drivers/clk/imx/clk-imx35.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-> index b0978d3b83e2..d302ed3b8225 100644
-> --- a/drivers/clk/imx/clk-imx35.c
-> +++ b/drivers/clk/imx/clk-imx35.c
-> @@ -115,7 +115,7 @@ static void __init _mx35_clocks_init(void)
->  	}
->  
->  	clk[ckih] = imx_clk_fixed("ckih", 24000000);
-> -	clk[ckil] = imx_clk_fixed("ckih", 32768);
-> +	clk[ckil] = imx_clk_fixed("ckil", 32768);
->  	clk[mpll] = imx_clk_pllv1(IMX_PLLV1_IMX35, "mpll", "ckih", base + MX35_CCM_MPCTL);
->  	clk[ppll] = imx_clk_pllv1(IMX_PLLV1_IMX35, "ppll", "ckih", base + MX35_CCM_PPCTL);
->  
-> -- 
-> 2.8.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
