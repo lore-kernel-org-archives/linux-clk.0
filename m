@@ -1,92 +1,51 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v12,
- 3/8] dt: bindings: move guts devicetree doc out of powerpc directory
-Date: Wed, 21 Sep 2016 14:57:15 +0800
-Message-ID: <1474441040-11946-4-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+ <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+ <20160919200816.GC29242@roeck-us.net>
+ <20160919223616.GN1041@n2100.armlinux.org.uk>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Wim Van Sebroeck <wim@iguana.be>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <0909debb-f7df-648b-95d2-23b535e5b299@roeck-us.net>
+Date: Mon, 19 Sep 2016 21:37:06 -0700
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
- Minghuan Lian <minghuan.lian@nxp.com>, linux-i2c@vger.kernel.org,
- linux-clk@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>,
- Russell King <linux@arm.linux.org.uk>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Yangbo Lu <yangbo.lu@nxp.com>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20160919223616.GN1041@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
-since it's used by not only PowerPC but also ARM. And add a specification
-for 'little-endian' property.
+On 09/19/2016 03:36 PM, Russell King - ARM Linux wrote:
+> On Mon, Sep 19, 2016 at 01:08:16PM -0700, Guenter Roeck wrote:
+>> On Mon, Sep 19, 2016 at 09:12:14PM +0200, Robert Jarzmik wrote:
+>>> The OS timer rate used for the watchdog can now be fetched from the
+>>> standard clock API. This will remove the last user of
+>>> get_clock_tick_rate() in both pxa and sa11x0 architectures.
+>>>
+>>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>>
+>> Did you test this ? Potential problem, if built into the kernel, could be that
+>> the clocks might not be ready by the time the driver is instantiated. Unless
+>> this is converted to a platform driver, it won't be able to handle a
+>> -EPROBE_DEFER from the clock subsystem.
+>
+> Really not a problem at all.  The OSTIMER0 is required for the system
+> tick, and if that's not present, the kernel will be without any kind
+> of time keeping, so a missing watchdog driver is the least of the
+> problems.
+>
+> Therefore, both PXA and SA11x0 register their clocks really early to
+> ensure that OSTIMER0 is available by the time_init() stage, which is
+> way before driver probe time.
+>
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Scott Wood <oss@buserror.net>
----
-Changes for v4:
-	- Added this patch
-Changes for v5:
-	- Modified the description for little-endian property
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Rob Herring'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- None
-Changes for v12:
-	- None
----
- Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
- 1 file changed, 3 insertions(+)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+You are right. And, at least in qemu, it actually works.
 
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-similarity index 91%
-rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
-index b71b203..07adca9 100644
---- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-@@ -25,6 +25,9 @@ Recommended properties:
-  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
-    registers, for those SOCs that have a PAMU device.
- 
-+ - little-endian : Indicates that the global utilities block is little
-+   endian. The default is big endian.
-+
- Examples:
- 	global-utilities@e0000 {	/* global utilities block */
- 		compatible = "fsl,mpc8548-guts";
--- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Guenter
