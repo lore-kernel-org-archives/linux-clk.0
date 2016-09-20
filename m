@@ -1,68 +1,58 @@
-Return-Path: <wens@csie.org>
+Return-Path: <kishon@ti.com>
+Subject: Re: [PATCH v2 3/6] phy: meson: add USB2 PHY support for Meson8b and
+ GXBB
+To: Kevin Hilman <khilman@baylibre.com>
+References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
+ <20160911134111.31141-4-martin.blumenstingl@googlemail.com>
+ <m2a8faxy72.fsf@baylibre.com> <57DCC3CF.9090409@ti.com>
+ <m2wpi7hmdt.fsf@baylibre.com>
+CC: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-clk@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>, <jbrunet@baylibre.com>,
+        <johnyoun@synopsys.com>, <carlo@caione.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <will.deacon@arm.com>, <catalin.marinas@arm.com>,
+        <gregkh@linuxfoundation.org>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <57E0C294.50502@ti.com>
+Date: Tue, 20 Sep 2016 10:31:08 +0530
 MIME-Version: 1.0
-In-Reply-To: <20160906121837.7517-5-maxime.ripard@free-electrons.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com> <20160906121837.7517-5-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 7 Sep 2016 14:45:21 +0800
-Message-ID: <CAGb2v67tM_3Q81=Mb1Nf0cja+oxBjJi=6mhkkpnvRM2i0BAmiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] clk: sunxi-ng: Add N-class clocks support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <m2wpi7hmdt.fsf@baylibre.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 6, 2016 at 8:18 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add support for the class with a single factor, N, being a multiplier.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> ---
 
-[...]
 
-> diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-> new file mode 100644
-> index 000000000000..119b190c0eb5
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu_mult.c
+On Monday 19 September 2016 10:12 PM, Kevin Hilman wrote:
+> Kishon Vijay Abraham I <kishon@ti.com> writes:
+> 
+>> Hi Kevin,
+>>
+>> On Wednesday 14 September 2016 09:36 PM, Kevin Hilman wrote:
+>>> Kishon,
+>>>
+>>> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+>>>
+>>>> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
+>>>>
+>>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>>>> Tested-by: Kevin Hilman <khilman@baylibre.com>
+>>>
+>>> Will you be picking this up for v4.9?
+>>
+>> It's already late for 4.9. Generally send pull request to Greg around -rc6.
+>> This can go only in 4.10.
+> 
+> That's fine.
+> 
+> Does that mean you have it queued someplace?  I don't see it in any of
+> your branches.
 
-[...]
+I haven't queued so far. I'll create a testing branch to queue pending patches.
 
-> +static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                          unsigned long parent_rate)
-> +{
-> +       struct ccu_mult *cm = hw_to_ccu_mult(hw);
-> +       unsigned long flags;
-> +       unsigned int n;
-> +       u32 reg;
-> +
-> +       ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
-> +                                               &parent_rate);
-> +
-
-Git complains about extra whitespace here.
-You can keep my ack after fixing it.
-
-ChenYu
-
-> +       ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-> +
-> +       spin_lock_irqsave(cm->common.lock, flags);
-> +
-> +       reg = readl(cm->common.base + cm->common.reg);
-> +       reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
-> +
-> +       writel(reg | ((n - 1) << cm->mult.shift),
-> +              cm->common.base + cm->common.reg);
-> +
-> +       spin_unlock_irqrestore(cm->common.lock, flags);
-> +
-> +       return 0;
-> +}
+Thanks
+Kishon
