@@ -1,43 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40041 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753495AbcIGAey (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Sep 2016 20:34:54 -0400
-Date: Tue, 6 Sep 2016 17:34:52 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Sep 2016 12:59:19 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: carlo@caione.org, khilman@baylibre.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson-gxbb: Export PWM related clocks for DT
-Message-ID: <20160907003452.GR12510@codeaurora.org>
-References: <1471870177-10609-1-git-send-email-narmstrong@baylibre.com>
- <57CACA00.9010306@baylibre.com>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jamie Lentin <jm@lentin.co.uk>
+Subject: Re: [PATCH] clk: mvebu: Add clk support for the orion5x SoC mv88f5181
+Message-ID: <20160920195919.GD8319@codeaurora.org>
+References: <20160920162450.4046-1-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <57CACA00.9010306@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160920162450.4046-1-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/03, Neil Armstrong wrote:
+On 09/20, Gregory CLEMENT wrote:
+> From: Jamie Lentin <jm@lentin.co.uk>
 > 
+> Referring to the u-boot sources for the Netgear WNR854T, add support
+> for the mv88f5181.
 > 
-> Le 22/08/2016 14:49, Neil Armstrong a écrit :
-> > Add the PWM related clocks in order to be referenced as PWM source
-> > clocks.
-> > 
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > ---
-> >  drivers/clk/meson/gxbb.h              | 6 +++---
-> >  include/dt-bindings/clock/gxbb-clkc.h | 3 +++
-> >  2 files changed, 6 insertions(+), 3 deletions(-)
+> [gregory.clement@free-electrons.com: fix commit title]
+> Signed-off-by: Jamie Lentin <jm@lentin.co.uk>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
 > 
-> Dear Clock Maintainers,
+> Hi Stephen and Mike,
 > 
-> Could you review this patch since it is a strong requirement to select the PWM clock parents over DT ?
-> 
+> do you agree to give your acked-by on this patch. It is part of a
+> convertion of old orion5x Socv to the device tree. If you acked-by
+> this one, then I will be able to take it in my tree and avoiding
+> breaking the git bisect.
 
-Looks fine to me. Did you want an ack or an immutable branch?
+Is the problem that we're changing some dts files somewhere and
+those platforms would stop booting if this change wasn't present?
+Given that we're adding a new compatible it seems like we're
+adding new SoC support, so having the clk patch and the dts patch
+come together in -next via a merge instead of basing the dts
+patch on top of the clk patch would be how things are normally
+done.
+
+If we're really changing some dts to be backwards incompatible,
+then I understand the bisect problem and you can have my ack.
+
+Acked-by: Stephen Boyd <sboyd@codeaurora.org.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
