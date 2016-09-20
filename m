@@ -1,57 +1,52 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk
-Cc: mturquette@baylibre.com,
-	galak@codeaurora.org,
-	pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org,
-	varada@codeaurora.org,
-	sricharan@codeaurora.org,
-	architt@codeaurora.org,
-	ntelkar@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <>
+Return-Path: <>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v3 7/7] clk: qcom: ipq4019: changed i2c freq table
-Date: Wed, 21 Sep 2016 17:51:52 +0530
-Message-Id: <1474460512-31994-8-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
-References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] clk: mmp: clk-of-pxa1928: Free memory obtained by kzalloc
+Date: Tue, 20 Sep 2016 15:22:48 +0530
+Message-Id: <1474365168-15489-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current I2C freq table uses MND values which is not
-applicable for I2C since its RCG does not have MND
-counter. This patch updates the freq table for 19.05
-MHz clk frequency with FEPLL_200 parent.
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Free memory, if init is not successful.
+
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/clk/qcom/gcc-ipq4019.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/mmp/clk-of-pxa1928.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index a2809db..314aa35 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -225,8 +225,7 @@ static struct clk_branch gcc_audio_pwm_clk = {
- };
+diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
+index e478ff4..cede7b4 100644
+--- a/drivers/clk/mmp/clk-of-pxa1928.c
++++ b/drivers/clk/mmp/clk-of-pxa1928.c
+@@ -216,6 +216,7 @@ static void __init pxa1928_mpmu_clk_init(struct device_node *np)
+ 	pxa_unit->mpmu_base = of_iomap(np, 0);
+ 	if (!pxa_unit->mpmu_base) {
+ 		pr_err("failed to map mpmu registers\n");
++		kfree(pxa_unit);
+ 		return;
+ 	}
  
- static const struct freq_tbl ftbl_gcc_blsp1_qup1_2_i2c_apps_clk[] = {
--	F(19200000, P_XO, 1, 2, 5),
--	F(24000000, P_XO, 1, 1, 2),
-+	F(19050000, P_FEPLL200, 10.5, 1, 1),
- 	{ }
- };
+@@ -234,6 +235,7 @@ static void __init pxa1928_apmu_clk_init(struct device_node *np)
+ 	pxa_unit->apmu_base = of_iomap(np, 0);
+ 	if (!pxa_unit->apmu_base) {
+ 		pr_err("failed to map apmu registers\n");
++		kfree(pxa_unit);
+ 		return;
+ 	}
+ 
+@@ -254,6 +256,7 @@ static void __init pxa1928_apbc_clk_init(struct device_node *np)
+ 	pxa_unit->apbc_base = of_iomap(np, 0);
+ 	if (!pxa_unit->apbc_base) {
+ 		pr_err("failed to map apbc registers\n");
++		kfree(pxa_unit);
+ 		return;
+ 	}
  
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
