@@ -1,39 +1,39 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 13:55:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Hoan Tran <hotran@apm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, lho@apm.com,
-	Duc Dang <dhdang@apm.com>
-Subject: Re: [PATCH v3 2/3] clk: xgene: Add PMD clock
-Message-ID: <20160914205541.GB7243@codeaurora.org>
-References: <1473704605-28126-1-git-send-email-hotran@apm.com>
- <1473704605-28126-3-git-send-email-hotran@apm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473704605-28126-3-git-send-email-hotran@apm.com>
+Return-Path: <>
+Return-Path: <>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	vz@mleia.com,
+	slemieux.tyco@gmail.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] clk: nxp: clk-lpc32xx: Unmap region obtained by of_iomap
+Date: Tue, 20 Sep 2016 16:24:06 +0530
+Message-Id: <1474368846-15916-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/12, Hoan Tran wrote:
-> Add X-Gene PMD clock support.
-> 
-> PMD clock is implemented for a single register field.
->   Output rate = parent_rate * (denominator - scale) / denominator
-> with
->   - denominator = bitmask of register field + 1
->   - scale = values of register field
-> 
-> For example, for bitmask is 0x7, denominator will be 8 and scale
-> will be computed and programmed accordingly.
-> 
-> Signed-off-by: Hoan Tran <hotran@apm.com>
-> ---
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-Applied to clk-next
+Free memory mapping, if lpc32xx_clk_init is not successful.
 
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 90d740a..34c9735 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -1513,6 +1513,7 @@ static void __init lpc32xx_clk_init(struct device_node *np)
+ 	if (IS_ERR(clk_regmap)) {
+ 		pr_err("failed to regmap system control block: %ld\n",
+ 			PTR_ERR(clk_regmap));
++		iounmap(base);
+ 		return;
+ 	}
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
