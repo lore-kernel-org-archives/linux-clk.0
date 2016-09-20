@@ -1,66 +1,32 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 4/5] ARM: dts: at91: sama5d4: use proper sckc compatible
-Date: Tue, 20 Sep 2016 22:58:32 +0200
-Message-Id: <20160920205833.19638-5-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
-References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 20 Sep 2016 20:58:16 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
+Cc: Kalle Kankare <kalle.kankare@vincit.fi>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] clk: imx53: Add clocks configuration
+Message-ID: <20160920125816.GD3744@tiger>
+References: <20160918002451.GE15478@tiger>
+ <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474281002-18868-1-git-send-email-fabien.lahoudere@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that there is support for the sama5d4 slow clock controller, use its
-driver.
+On Mon, Sep 19, 2016 at 12:30:00PM +0200, Fabien Lahoudere wrote:
+> From: Kalle Kankare <kalle.kankare@vincit.fi>
+> 
+> Add clocks configuration for CSI, FIRI and IEEE1588.
+> 
+> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/boot/dts/sama5d4.dtsi | 27 ++++-----------------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
-
-diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 65e725fb5679..fe094263595c 100644
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -1314,30 +1314,11 @@
- 				status = "disabled";
- 			};
- 
--			sckc@fc068650 {
--				compatible = "atmel,at91sam9x5-sckc";
-+			clk32k: sckc@fc068650 {
-+				compatible = "atmel,sama5d4-sckc";
- 				reg = <0xfc068650 0x4>;
--
--				slow_rc_osc: slow_rc_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--					#clock-cells = <0>;
--					clock-frequency = <32768>;
--					clock-accuracy = <250000000>;
--					atmel,startup-time-usec = <75>;
--				};
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--					atmel,startup-time-usec = <1200000>;
--				};
--
--				clk32k: slowck {
--					compatible = "atmel,at91sam9x5-clk-slow";
--					#clock-cells = <0>;
--					clocks = <&slow_rc_osc &slow_osc>;
--				};
-+				#clock-cells = <0>;
-+				clocks = <&slow_xtal>;
- 			};
- 
- 			rtc@fc0686b0 {
--- 
-2.9.3
+Acked-by: Shawn Guo <shawnguo@kernel.org>
