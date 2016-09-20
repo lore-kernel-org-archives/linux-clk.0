@@ -1,30 +1,146 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 6 Sep 2016 18:09:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add section for Renesas clock drivers
-Message-ID: <20160907010959.GT12510@codeaurora.org>
-References: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jamie Lentin <jm@lentin.co.uk>
+Subject: [PATCH] clk: mvebu: Add clk support for the orion5x SoC mv88f5181
+Date: Tue, 20 Sep 2016 18:24:50 +0200
+Message-Id: <20160920162450.4046-1-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/31, Geert Uytterhoeven wrote:
-> Add a section for Renesas clock drivers, as found on Renesas ARM SoCs,
-> and list myself as the maintainer.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+From: Jamie Lentin <jm@lentin.co.uk>
 
-Applied to clk-next
+Referring to the u-boot sources for the Netgear WNR854T, add support
+for the mv88f5181.
 
+[gregory.clement@free-electrons.com: fix commit title]
+Signed-off-by: Jamie Lentin <jm@lentin.co.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+
+Hi Stephen and Mike,
+
+do you agree to give your acked-by on this patch. It is part of a
+convertion of old orion5x Socv to the device tree. If you acked-by
+this one, then I will be able to take it in my tree and avoiding
+breaking the git bisect.
+
+This patch is really about adding a new variant, teh logic remains the
+same and also it won't produce any conflict.
+
+Sorry to not have asked this before.
+
+Thanks,
+
+Gregory
+
+
+ .../devicetree/bindings/clock/mvebu-core-clock.txt |  1 +
+ drivers/clk/mvebu/orion.c                          | 70 ++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+index 670c2af3e931..eb985a633d59 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+@@ -52,6 +52,7 @@ Required properties:
+ 	"marvell,dove-core-clock" - for Dove SoC core clocks
+ 	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
+ 	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
++	"marvell,mv88f5181-core-clock" - for Orion MV88F5181 SoC
+ 	"marvell,mv88f5182-core-clock" - for Orion MV88F5182 SoC
+ 	"marvell,mv88f5281-core-clock" - for Orion MV88F5281 SoC
+ 	"marvell,mv88f6183-core-clock" - for Orion MV88F6183 SoC
+diff --git a/drivers/clk/mvebu/orion.c b/drivers/clk/mvebu/orion.c
+index fd129566c1ce..a6e5bee23385 100644
+--- a/drivers/clk/mvebu/orion.c
++++ b/drivers/clk/mvebu/orion.c
+@@ -21,6 +21,76 @@ static const struct coreclk_ratio orion_coreclk_ratios[] __initconst = {
+ };
+ 
+ /*
++ * Orion 5181
++ */
++
++#define SAR_MV88F5181_TCLK_FREQ      8
++#define SAR_MV88F5181_TCLK_FREQ_MASK 0x3
++
++static u32 __init mv88f5181_get_tclk_freq(void __iomem *sar)
++{
++	u32 opt = (readl(sar) >> SAR_MV88F5181_TCLK_FREQ) &
++		SAR_MV88F5181_TCLK_FREQ_MASK;
++	if (opt == 0)
++		return 133333333;
++	else if (opt == 1)
++		return 150000000;
++	else if (opt == 2)
++		return 166666667;
++	else
++		return 0;
++}
++
++#define SAR_MV88F5181_CPU_FREQ       4
++#define SAR_MV88F5181_CPU_FREQ_MASK  0xf
++
++static u32 __init mv88f5181_get_cpu_freq(void __iomem *sar)
++{
++	u32 opt = (readl(sar) >> SAR_MV88F5181_CPU_FREQ) &
++		SAR_MV88F5181_CPU_FREQ_MASK;
++	if (opt == 0)
++		return 333333333;
++	else if (opt == 1 || opt == 2)
++		return 400000000;
++	else if (opt == 3)
++		return 500000000;
++	else
++		return 0;
++}
++
++static void __init mv88f5181_get_clk_ratio(void __iomem *sar, int id,
++					   int *mult, int *div)
++{
++	u32 opt = (readl(sar) >> SAR_MV88F5181_CPU_FREQ) &
++		SAR_MV88F5181_CPU_FREQ_MASK;
++	if (opt == 0 || opt == 1) {
++		*mult = 1;
++		*div  = 2;
++	} else if (opt == 2 || opt == 3) {
++		*mult = 1;
++		*div  = 3;
++	} else {
++		*mult = 0;
++		*div  = 1;
++	}
++}
++
++static const struct coreclk_soc_desc mv88f5181_coreclks = {
++	.get_tclk_freq = mv88f5181_get_tclk_freq,
++	.get_cpu_freq = mv88f5181_get_cpu_freq,
++	.get_clk_ratio = mv88f5181_get_clk_ratio,
++	.ratios = orion_coreclk_ratios,
++	.num_ratios = ARRAY_SIZE(orion_coreclk_ratios),
++};
++
++static void __init mv88f5181_clk_init(struct device_node *np)
++{
++	return mvebu_coreclk_setup(np, &mv88f5181_coreclks);
++}
++
++CLK_OF_DECLARE(mv88f5181_clk, "marvell,mv88f5181-core-clock", mv88f5181_clk_init);
++
++/*
+  * Orion 5182
+  */
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
