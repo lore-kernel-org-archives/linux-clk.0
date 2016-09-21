@@ -1,47 +1,80 @@
-Return-Path: <wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Sep 2016 17:02:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] clk: at91: move slow clock controller clocks to
+ sckc.c
+Message-ID: <20160921000211.GH8319@codeaurora.org>
+References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+ <20160920205833.19638-2-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20160908082939.GJ8913@lukather>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
- <20160906121837.7517-7-maxime.ripard@free-electrons.com> <CAGb2v64jDTWB4faaBdCBCcFrt1WNf=PYwc16kpgsUhaMRudHnQ@mail.gmail.com>
- <20160908082939.GJ8913@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 8 Sep 2016 16:32:25 +0800
-Message-ID: <CAGb2v64JhY7KoaxGkpeGinLZ2GoYWyDj+UjE_JwLW_4sVYd_9w@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] clk: sunxi-ng: Add A23 CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160920205833.19638-2-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 8, 2016 at 4:29 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Wed, Sep 07, 2016 at 03:24:11PM +0800, Chen-Yu Tsai wrote:
->> > +               [CLK_BUS_MSGBOX]        = &bus_msgbox_clk.common.hw,
->>
->> A23 manual and Allwinner sources say there is a bus gate for SPINLOCK.
->> Tested it myself, and it indeed exists.
->
-> Yes, sorry. It was supposed to be spinlock instead of msgbox.
->
->> > +       [RST_BUS_SPINLOCK]      =  { 0x2c4, BIT(22) },
->>
->> Allwinner sources say there is a reset control for MSGBOX.
->> Tested it myself, and it indeed exists.
->
-> However, the msgbox is mentionned nowhere in the datasheet.
->
-> I'd prefer to be able to test that it actually works before adding it
-> to the clock driver.
+On 09/20, Alexandre Belloni wrote:
+> Move all clocks related to the slow clock controller to sckc.c. This avoids
+> extern definitions and allows to remove sckc.h
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-I did in fact test it. With reset asserted, writes get ignored,
-and reads produce all 0s. With the reset deasserted and clock
-enabled, reads give the default value and writes stick. Afterwards
-when I toggle the reset, the values revert to the default.
+Applied to clk-next
 
-ChenYu
+drivers/clk/at91/sckc.c:146:13:
+warning: symbol 'of_at91sam9x5_clk_slow_osc_setup' was not
+declared. Should it be static?
+drivers/clk/at91/sckc.c:260:13:
+warning: symbol 'of_at91sam9x5_clk_slow_rc_osc_setup' was not
+declared. Should it be static?
+drivers/clk/at91/sckc.c:359:13:
+warning: symbol 'of_at91sam9x5_clk_slow_setup' was not declared.
+Should it be static?
+
+----8<----
+diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+index f6ed711af738..311956abf4aa 100644
+--- a/drivers/clk/at91/sckc.c
++++ b/drivers/clk/at91/sckc.c
+@@ -143,8 +143,8 @@ at91_clk_register_slow_osc(void __iomem *sckcr,
+ 	return hw;
+ }
+ 
+-void __init of_at91sam9x5_clk_slow_osc_setup(struct device_node *np,
+-					     void __iomem *sckcr)
++static void __init
++of_at91sam9x5_clk_slow_osc_setup(struct device_node *np, void __iomem *sckcr)
+ {
+ 	struct clk_hw *hw;
+ 	const char *parent_name;
+@@ -257,8 +257,8 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
+ 	return hw;
+ }
+ 
+-void __init of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np,
+-						void __iomem *sckcr)
++static void __init
++of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np, void __iomem *sckcr)
+ {
+ 	struct clk_hw *hw;
+ 	u32 frequency = 0;
+@@ -356,8 +356,8 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+ 	return hw;
+ }
+ 
+-void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
+-					 void __iomem *sckcr)
++static void __init
++of_at91sam9x5_clk_slow_setup(struct device_node *np, void __iomem *sckcr)
+ {
+ 	struct clk_hw *hw;
+ 	const char *parent_names[2];
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
