@@ -1,33 +1,74 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Russell King <linux@armlinux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>,  Guenter Roeck <linux@roeck-us.net>
-Cc: Daniel Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Thomas Gleixner <tglx@linutronix.de>,  Wim Van Sebroeck <wim@iguana.be>,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 0/4] kill get_clock_tick_rate()
-References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
-	<87twd2bgtl.fsf@belgarion.home>
-Date: Tue, 27 Sep 2016 20:46:12 +0200
-In-Reply-To: <87twd2bgtl.fsf@belgarion.home> (Robert Jarzmik's message of
-	"Mon, 26 Sep 2016 21:29:26 +0200")
-Message-ID: <87wphx9o5n.fsf@belgarion.home>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Jamie Lentin <jm@lentin.co.uk>
+Subject: Re: [PATCH] clk: mvebu: Add clk support for the orion5x SoC mv88f5181
+References: <20160920162450.4046-1-gregory.clement@free-electrons.com>
+	<20160920195919.GD8319@codeaurora.org>
+Date: Wed, 21 Sep 2016 12:16:50 +0200
+In-Reply-To: <20160920195919.GD8319@codeaurora.org> (Stephen Boyd's message of
+	"Tue, 20 Sep 2016 12:59:19 -0700")
+Message-ID: <8760pp5zhp.fsf@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Robert Jarzmik <robert.jarzmik@free.fr> writes:
->> Hi,
->>
->> This serie aims at killing get_clock_tick_rate() from pxa and sa1100 and replace
->> it by clock API calls.
->>
->> I'd like to have this reviewed and acked afterwards at least by :
->>  - Russell for the mach-sa1100 and sa1100_wdt.c
->>  - Stephen or Michael for the clk-pxa25x.c
->>  - Thomas or Daniel for the clocksource part
->>  - Wim for sa1100_wdt.c
+Hi Stephen,
+ 
+ On mar., sept. 20 2016, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Thanks to all for tests and acks, queued to pxa/for-next.
+> On 09/20, Gregory CLEMENT wrote:
+>> From: Jamie Lentin <jm@lentin.co.uk>
+>> 
+>> Referring to the u-boot sources for the Netgear WNR854T, add support
+>> for the mv88f5181.
+>> 
+>> [gregory.clement@free-electrons.com: fix commit title]
+>> Signed-off-by: Jamie Lentin <jm@lentin.co.uk>
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> ---
+>> 
+>> Hi Stephen and Mike,
+>> 
+>> do you agree to give your acked-by on this patch. It is part of a
+>> convertion of old orion5x Socv to the device tree. If you acked-by
+>> this one, then I will be able to take it in my tree and avoiding
+>> breaking the git bisect.
+>
+> Is the problem that we're changing some dts files somewhere and
+> those platforms would stop booting if this change wasn't present?
+> Given that we're adding a new compatible it seems like we're
+> adding new SoC support, so having the clk patch and the dts patch
+> come together in -next via a merge instead of basing the dts
+> patch on top of the clk patch would be how things are normally
+> done.
 
-Cheers.
+The problem appear if the dts for the board using the clock driver is
+merged in Linus tree before the support in the driver. At this point the
+board won't be able to boot.
 
---
-Robert
+It introduces a hole in the git bisect between the merge of the clock
+subsystem and the arm-soc subsystem.
+
+>
+> If we're really changing some dts to be backwards incompatible,
+> then I understand the bisect problem and you can have my ack.
+>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org.
+
+Thanks,
+
+Gregory
+
+>
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
