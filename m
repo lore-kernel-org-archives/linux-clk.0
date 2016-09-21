@@ -1,63 +1,93 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1473935450.5624.12.camel@pengutronix.de>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and
- GXBB
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, hdegoede@redhat.com, Ben Dooks
- <ben.dooks@codethink.co.uk>, mark.rutland@arm.com,
- devicetree@vger.kernel.org,  gregkh@linuxfoundation.org,
- johnyoun@synopsys.com, will.deacon@arm.com,  mturquette@baylibre.com,
- linux-usb@vger.kernel.org, sboyd@codeaurora.org,  kishon@ti.com,
- robh+dt@kernel.org, catalin.marinas@arm.com, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com
-Date: Thu, 15 Sep 2016 12:30:50 +0200
-In-Reply-To: <CAFBinCDuj_nHtQ9xs0LMmqZT7Yr9SUw24_H2nAwULT7e9kRXag@mail.gmail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	 <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-	 <m260q6jibf.fsf@baylibre.com>
-	 <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
-	 <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
-	 <m2eg4ui0nl.fsf@baylibre.com>
-	 <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-	 <CAFBinCC4gkMrJtertYevg_hXDLJEZ0PqfKKLL5UKXo8B=SXsPw@mail.gmail.com>
-	 <m2sht9gkau.fsf@baylibre.com>
-	 <CAFBinCDohOoFP_3GC+=tt6S7sPS308ao-yf+oGhdfwo-N-JnAA@mail.gmail.com>
-	 <1473780508.10237.22.camel@pengutronix.de>
-	 <CAFBinCC+izGS72TZuiiBu=DjtSmoZXRZ6r76M6rC8W7UTpSD6g@mail.gmail.com>
-	 <1473842236.6816.0.camel@pengutronix.de>
-	 <CAFBinCDuj_nHtQ9xs0LMmqZT7Yr9SUw24_H2nAwULT7e9kRXag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sn1nam02on0063.outbound.protection.outlook.com ([104.47.36.63]:53248
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752852AbcIUHJb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Sep 2016 03:09:31 -0400
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        "Bhupesh Sharma" <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        "Kumar Gala" <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v12, 0/8] Fix eSDHC host version register bug
+Date: Wed, 21 Sep 2016 14:57:12 +0800
+Message-ID: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
+eSDHC controller. To match the SoC version and revision, 10 previous version
+patchsets had tried many methods but all of them were rejected by reviewers.
+Such as
+	- dts compatible method
+	- syscon method
+	- ifdef PPC method
+	- GUTS driver getting SVR method
+Anrd suggested a soc_device_match method in v10, and this is the only available
+method left now. This v11 patchset introduces the soc_device_match interface in
+soc driver.
 
-Am Mittwoch, den 14.09.2016, 23:23 +0200 schrieb Martin Blumenstingl:
-[...]
-> > We could add a triggered flag or a counter to struct reset_control, and
-> > have reset_control_reset_once do nothing if it is already set /
-> > incremented. Since the reset_control goes away with the last consumer,
-> > the shared reset line would get triggered again after unbinding both PHY
-> > devices.
-> I guess that'd do the trick for us:
-> - we could use devm_reset_control_get_optional_shared() during probe
-> - power_on would then call reset_control_reset()
-> - the code in reset_control_reset would be changed: the if
-> (WARN_ON(rstc->shared)) would be removed. then we return 0 if
-> (rstc->shared && atomic_read(&rstc->shared_triggered)). otherwise we
-> proceed with the old logic, except that we use
-> atomic_set(&rstc->shared_triggerred, 1) in case of success (if an
-> error was returned we leave it as "not triggered").
-> 
-> Let me know if you want me to (at least try to) implement that and send an RFC.
+The first six patches of Yangbo are to add the GUTS driver. This is used to
+register a soc device which contain soc version and revision information.
+The other two patches introduce the soc_device_match method in soc driver
+and apply it on esdhc driver to fix this bug.
 
-Yes, please give it a try. reset_control_reset should still WARN if the
-deassert count is set, and reset_(de)assert should do so if triggered is
-set. Mixing the two won't work. And it should be documented that shared
-reset_control_reset may do nothing if the reset was already triggered by
-another consumer.
+Arnd Bergmann (1):
+  base: soc: introduce soc_device_match() interface
 
-regards
-Philipp
+Yangbo Lu (7):
+  dt: bindings: update Freescale DCFG compatible
+  ARM64: dts: ls2080a: add device configuration node
+  dt: bindings: move guts devicetree doc out of powerpc directory
+  powerpc/fsl: move mpc85xx.h to include/linux/fsl
+  soc: fsl: add GUTS driver for QorIQ platforms
+  MAINTAINERS: add entry for Freescale SoC drivers
+  mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+
+ Documentation/devicetree/bindings/arm/fsl.txt      |   6 +-
+ .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
+ MAINTAINERS                                        |  11 +-
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
+ arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
+ arch/powerpc/sysdev/fsl_pci.c                      |   2 +-
+ drivers/base/Kconfig                               |   1 +
+ drivers/base/soc.c                                 |  66 ++++++
+ drivers/clk/clk-qoriq.c                            |   3 +-
+ drivers/i2c/busses/i2c-mpc.c                       |   2 +-
+ drivers/iommu/fsl_pamu.c                           |   3 +-
+ drivers/mmc/host/Kconfig                           |   1 +
+ drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
+ drivers/net/ethernet/freescale/gianfar.c           |   2 +-
+ drivers/soc/Kconfig                                |   2 +-
+ drivers/soc/fsl/Kconfig                            |  19 ++
+ drivers/soc/fsl/Makefile                           |   1 +
+ drivers/soc/fsl/guts.c                             | 257 +++++++++++++++++++++
+ include/linux/fsl/guts.h                           | 125 ++++++----
+ .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
+ include/linux/sys_soc.h                            |   3 +
+ 21 files changed, 478 insertions(+), 61 deletions(-)
+ rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+ create mode 100644 drivers/soc/fsl/Kconfig
+ create mode 100644 drivers/soc/fsl/guts.c
+ rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+
+-- 
+2.1.0.27.g96db324
+
