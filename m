@@ -1,135 +1,571 @@
-Return-Path: <John.Youn@synopsys.com>
-Subject: Re: [PATCH v2 1/6] usb: dwc2: add support for Meson8b and GXBB SoCs
-To: Kevin Hilman <khilman@baylibre.com>, John Youn <John.Youn@synopsys.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-2-martin.blumenstingl@googlemail.com>
- <m24m5ixxyu.fsf@baylibre.com>
-From: John Youn <John.Youn@synopsys.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, "kishon@ti.com"
-	<kishon@ti.com>, "carlo@caione.org" <carlo@caione.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "will.deacon@arm.com"
-	<will.deacon@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>
-Message-ID: <0d587b46-4c6e-c2ec-a62e-5d0c5a5bd902@synopsys.com>
-Date: Wed, 14 Sep 2016 11:12:20 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v12, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Wed, 21 Sep 2016 14:57:17 +0800
+Message-ID: <1474441040-11946-6-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <m24m5ixxyu.fsf@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+ Minghuan Lian <minghuan.lian@nxp.com>, linux-i2c@vger.kernel.org,
+ linux-clk@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>,
+ Russell King <linux@arm.linux.org.uk>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
+ Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
+ Yangbo Lu <yangbo.lu@nxp.com>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9/14/2016 9:11 AM, Kevin Hilman wrote:
-> Hi John,
-> 
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
-> 
->> From: Jerome Brunet <jbrunet@baylibre.com>
->>
->> Add compatible strings for amlogic Meson8b and GXBB SoCs with the
->> corresponding configuration parameters.
->>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> Are you OK with adding this platform for v4.9?  I know you mentioned
-> you're working on new bindings to replace the current way, but since
-> that hasn't been posted AFAICT, it would be nice to get this merged now
-> and we can help test the new bindings when you're ready.
-> 
-> If you're OK with that, and with your Ack, I can take merge the driver
-> changes through the arm-soc tree along with the rest of the DT patches.
-> 
+The global utilities block controls power management, I/O device
+enabling, power-onreset(POR) configuration monitoring, alternate
+function selection for multiplexed signals,and clock control.
 
-Sure. Unfortunately, I wasn't able to complete it for 4.9.
+This patch adds a driver to manage and access global utilities block.
+Initially only reading SVR and registering soc device are supported.
+Other guts accesses, such as reading RCW, should eventually be moved
+into this driver as well.
 
-You can add my acked-by on this:
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v4:
+	- Added this patch
+Changes for v5:
+	- Modified copyright info
+	- Changed MODULE_LICENSE to GPL
+	- Changed EXPORT_SYMBOL_GPL to EXPORT_SYMBOL
+	- Made FSL_GUTS user-invisible
+	- Added a complete compatible list for GUTS
+	- Stored guts info in file-scope variable
+	- Added mfspr() getting SVR
+	- Redefined GUTS APIs
+	- Called fsl_guts_init rather than using platform driver
+	- Removed useless parentheses
+	- Removed useless 'extern' key words
+Changes for v6:
+	- Made guts thread safe in fsl_guts_init
+Changes for v7:
+	- Removed 'ifdef' for function declaration in guts.h
+Changes for v8:
+	- Fixes lines longer than 80 characters checkpatch issue
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- Changed to platform driver
+Changes for v12:
+	- Removed "signed-off-by: Scott"
+	- Defined fsl_soc_die_attr struct array instead of
+	  soc_device_attribute
+	- Re-designed soc_device_attribute for QorIQ SoC
+	- Other minor fixes
+---
+ drivers/soc/Kconfig      |   2 +-
+ drivers/soc/fsl/Kconfig  |  19 ++++
+ drivers/soc/fsl/Makefile |   1 +
+ drivers/soc/fsl/guts.c   | 257 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fsl/guts.h | 125 ++++++++++++++---------
+ 5 files changed, 355 insertions(+), 49 deletions(-)
+ create mode 100644 drivers/soc/fsl/Kconfig
+ create mode 100644 drivers/soc/fsl/guts.c
 
-Acked-by: John Youn <johnyoun@synopsys.com>
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index fe42a2f..f31bceb 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -1,7 +1,7 @@
+ menu "SOC (System On Chip) specific Drivers"
+ 
+ source "drivers/soc/bcm/Kconfig"
+-source "drivers/soc/fsl/qe/Kconfig"
++source "drivers/soc/fsl/Kconfig"
+ source "drivers/soc/mediatek/Kconfig"
+ source "drivers/soc/qcom/Kconfig"
+ source "drivers/soc/rockchip/Kconfig"
+diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
+new file mode 100644
+index 0000000..b99764c
+--- /dev/null
++++ b/drivers/soc/fsl/Kconfig
+@@ -0,0 +1,19 @@
++#
++# Freescale SOC drivers
++#
++
++source "drivers/soc/fsl/qe/Kconfig"
++
++config FSL_GUTS
++	bool "Freescale QorIQ GUTS driver"
++	select SOC_BUS
++	help
++	  The global utilities block controls power management, I/O device
++	  enabling, power-onreset(POR) configuration monitoring, alternate
++	  function selection for multiplexed signals,and clock control.
++	  This driver is to manage and access global utilities block.
++	  Initially only reading SVR and registering soc device are supported.
++	  Other guts accesses, such as reading RCW, should eventually be moved
++	  into this driver as well.
++
++	  If you want GUTS driver support, you should say Y here.
+diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
+index 203307f..02afb7f 100644
+--- a/drivers/soc/fsl/Makefile
++++ b/drivers/soc/fsl/Makefile
+@@ -4,3 +4,4 @@
+ 
+ obj-$(CONFIG_QUICC_ENGINE)		+= qe/
+ obj-$(CONFIG_CPM)			+= qe/
++obj-$(CONFIG_FSL_GUTS)			+= guts.o
+diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+new file mode 100644
+index 0000000..2a0e52c
+--- /dev/null
++++ b/drivers/soc/fsl/guts.c
+@@ -0,0 +1,257 @@
++/*
++ * Freescale QorIQ Platforms GUTS Driver
++ *
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/module.h>
++#include <linux/of_fdt.h>
++#include <linux/sys_soc.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/fsl/guts.h>
++#include <linux/fsl/svr.h>
++
++struct guts {
++	struct ccsr_guts __iomem *regs;
++	bool little_endian;
++};
++
++struct fsl_soc_die_attr {
++	char	*die;
++	u32	svr;
++	u32	mask;
++};
++
++static struct guts *guts;
++static struct soc_device_attribute soc_dev_attr;
++static struct soc_device *soc_dev;
++
++
++/* SoC die attribute definition for QorIQ platform */
++static const struct fsl_soc_die_attr fsl_soc_die[] = {
++#ifdef CONFIG_PPC
++	/*
++	 * Power Architecture-based SoCs T Series
++	 */
++
++	/* Die: T4240, SoC: T4240/T4160/T4080 */
++	{ .die		= "T4240",
++	  .svr		= 0x82400000,
++	  .mask		= 0xfff00000,
++	},
++	/* Die: T1040, SoC: T1040/T1020/T1042/T1022 */
++	{ .die		= "T1040",
++	  .svr		= 0x85200000,
++	  .mask		= 0xfff00000,
++	},
++	/* Die: T2080, SoC: T2080/T2081 */
++	{ .die		= "T2080",
++	  .svr		= 0x85300000,
++	  .mask		= 0xfff00000,
++	},
++	/* Die: T1024, SoC: T1024/T1014/T1023/T1013 */
++	{ .die		= "T1024",
++	  .svr		= 0x85400000,
++	  .mask		= 0xfff00000,
++	},
++#endif /* CONFIG_PPC */
++#if defined(CONFIG_ARCH_MXC) || defined(CONFIG_ARCH_LAYERSCAPE)
++	/*
++	 * ARM-based SoCs LS Series
++	 */
++
++	/* Die: LS1043A, SoC: LS1043A/LS1023A */
++	{ .die		= "LS1043A",
++	  .svr		= 0x87920000,
++	  .mask		= 0xffff0000,
++	},
++	/* Die: LS2080A, SoC: LS2080A/LS2040A/LS2085A */
++	{ .die		= "LS2080A",
++	  .svr		= 0x87010000,
++	  .mask		= 0xff3f0000,
++	},
++	/* Die: LS1088A, SoC: LS1088A/LS1048A/LS1084A/LS1044A */
++	{ .die		= "LS1088A",
++	  .svr		= 0x87030000,
++	  .mask		= 0xff3f0000,
++	},
++	/* Die: LS1012A, SoC: LS1012A */
++	{ .die		= "LS1012A",
++	  .svr		= 0x87040000,
++	  .mask		= 0xffff0000,
++	},
++	/* Die: LS1046A, SoC: LS1046A/LS1026A */
++	{ .die		= "LS1046A",
++	  .svr		= 0x87070000,
++	  .mask		= 0xffff0000,
++	},
++	/* Die: LS2088A, SoC: LS2088A/LS2048A/LS2084A/LS2044A */
++	{ .die		= "LS2088A",
++	  .svr		= 0x87090000,
++	  .mask		= 0xff3f0000,
++	},
++	/* Die: LS1021A, SoC: LS1021A/LS1020A/LS1022A
++	 * Note: Put this die at the end in cause of incorrect identification
++	 */
++	{ .die		= "LS1021A",
++	  .svr		= 0x87000000,
++	  .mask		= 0xfff00000,
++	},
++#endif /* CONFIG_ARCH_MXC || CONFIG_ARCH_LAYERSCAPE */
++	{ },
++};
++
++static const struct fsl_soc_die_attr *fsl_soc_die_match(
++	u32 svr, const struct fsl_soc_die_attr *matches)
++{
++	while (matches->svr) {
++		if (matches->svr == (svr & matches->mask))
++			return matches;
++		matches++;
++	};
++	return NULL;
++}
++
++u32 fsl_guts_get_svr(void)
++{
++	u32 svr = 0;
++
++	if (!guts || !guts->regs)
++		return svr;
++
++	if (guts->little_endian)
++		svr = ioread32(&guts->regs->svr);
++	else
++		svr = ioread32be(&guts->regs->svr);
++
++	return svr;
++}
++EXPORT_SYMBOL(fsl_guts_get_svr);
++
++static int fsl_guts_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	const struct fsl_soc_die_attr *soc_die;
++	const char *machine;
++	u32 svr;
++	int ret = 0;
++
++	/* Initialize guts */
++	guts = kzalloc(sizeof(*guts), GFP_KERNEL);
++	if (!guts)
++		return -ENOMEM;
++
++	guts->little_endian = of_property_read_bool(np, "little-endian");
++
++	guts->regs = of_iomap(np, 0);
++	if (!guts->regs) {
++		ret = -ENOMEM;
++		goto out_free;
++	}
++
++	/* Register soc device */
++	machine = of_flat_dt_get_machine_name();
++	if (machine)
++		soc_dev_attr.machine = kstrdup(machine, GFP_KERNEL);
++
++	svr = fsl_guts_get_svr();
++	soc_die = fsl_soc_die_match(svr, fsl_soc_die);
++	if (soc_die) {
++		soc_dev_attr.family = kasprintf(GFP_KERNEL, "QorIQ %s",
++						soc_die->die);
++	} else {
++		soc_dev_attr.family = kasprintf(GFP_KERNEL, "QorIQ");
++	}
++	soc_dev_attr.soc_id = kasprintf(GFP_KERNEL, "svr:0x%08x", svr);
++	soc_dev_attr.revision = kasprintf(GFP_KERNEL, "%d.%d",
++					   SVR_MAJ(svr), SVR_MIN(svr));
++
++	soc_dev = soc_device_register(&soc_dev_attr);
++	if (IS_ERR(soc_dev)) {
++		ret = PTR_ERR(soc_dev);
++		goto out;
++	}
++	pr_info("Machine: %s\n", soc_dev_attr.machine);
++	pr_info("SoC family: %s\n", soc_dev_attr.family);
++	pr_info("SoC ID: %s, Revision: %s\n",
++		soc_dev_attr.soc_id, soc_dev_attr.revision);
++	return 0;
++out:
++	kfree(soc_dev_attr.machine);
++	kfree(soc_dev_attr.family);
++	kfree(soc_dev_attr.soc_id);
++	kfree(soc_dev_attr.revision);
++	iounmap(guts->regs);
++out_free:
++	kfree(guts);
++	return ret;
++}
++
++static int fsl_guts_remove(struct platform_device *dev)
++{
++	soc_device_unregister(soc_dev);
++	kfree(soc_dev_attr.machine);
++	kfree(soc_dev_attr.family);
++	kfree(soc_dev_attr.soc_id);
++	kfree(soc_dev_attr.revision);
++	iounmap(guts->regs);
++	kfree(guts);
++	return 0;
++}
++
++/*
++ * Table for matching compatible strings, for device tree
++ * guts node, for Freescale QorIQ SOCs.
++ */
++static const struct of_device_id fsl_guts_of_match[] = {
++	{ .compatible = "fsl,qoriq-device-config-1.0", },
++	{ .compatible = "fsl,qoriq-device-config-2.0", },
++	{ .compatible = "fsl,p1010-guts", },
++	{ .compatible = "fsl,p1020-guts", },
++	{ .compatible = "fsl,p1021-guts", },
++	{ .compatible = "fsl,p1022-guts", },
++	{ .compatible = "fsl,p1023-guts", },
++	{ .compatible = "fsl,p2020-guts", },
++	{ .compatible = "fsl,bsc9131-guts", },
++	{ .compatible = "fsl,bsc9132-guts", },
++	{ .compatible = "fsl,mpc8536-guts", },
++	{ .compatible = "fsl,mpc8544-guts", },
++	{ .compatible = "fsl,mpc8548-guts", },
++	{ .compatible = "fsl,mpc8568-guts", },
++	{ .compatible = "fsl,mpc8569-guts", },
++	{ .compatible = "fsl,mpc8572-guts", },
++	{ .compatible = "fsl,ls1021a-dcfg", },
++	{ .compatible = "fsl,ls1043a-dcfg", },
++	{ .compatible = "fsl,ls2080a-dcfg", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
++
++static struct platform_driver fsl_guts_driver = {
++	.driver = {
++		.name = "fsl-guts",
++		.of_match_table = fsl_guts_of_match,
++	},
++	.probe = fsl_guts_probe,
++	.remove = fsl_guts_remove,
++};
++
++static int __init fsl_guts_init(void)
++{
++	return platform_driver_register(&fsl_guts_driver);
++}
++core_initcall(fsl_guts_init);
++
++static void __exit fsl_guts_exit(void)
++{
++	platform_driver_unregister(&fsl_guts_driver);
++}
++module_exit(fsl_guts_exit);
+diff --git a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h
+index 649e917..3efa3b8 100644
+--- a/include/linux/fsl/guts.h
++++ b/include/linux/fsl/guts.h
+@@ -29,83 +29,112 @@
+  * #ifdefs.
+  */
+ struct ccsr_guts {
+-	__be32	porpllsr;	/* 0x.0000 - POR PLL Ratio Status Register */
+-	__be32	porbmsr;	/* 0x.0004 - POR Boot Mode Status Register */
+-	__be32	porimpscr;	/* 0x.0008 - POR I/O Impedance Status and Control Register */
+-	__be32	pordevsr;	/* 0x.000c - POR I/O Device Status Register */
+-	__be32	pordbgmsr;	/* 0x.0010 - POR Debug Mode Status Register */
+-	__be32	pordevsr2;	/* 0x.0014 - POR device status register 2 */
++	u32	porpllsr;	/* 0x.0000 - POR PLL Ratio Status Register */
++	u32	porbmsr;	/* 0x.0004 - POR Boot Mode Status Register */
++	u32	porimpscr;	/* 0x.0008 - POR I/O Impedance Status and
++				 *           Control Register
++				 */
++	u32	pordevsr;	/* 0x.000c - POR I/O Device Status Register */
++	u32	pordbgmsr;	/* 0x.0010 - POR Debug Mode Status Register */
++	u32	pordevsr2;	/* 0x.0014 - POR device status register 2 */
+ 	u8	res018[0x20 - 0x18];
+-	__be32	porcir;		/* 0x.0020 - POR Configuration Information Register */
++	u32	porcir;		/* 0x.0020 - POR Configuration Information
++				 *           Register
++				 */
+ 	u8	res024[0x30 - 0x24];
+-	__be32	gpiocr;		/* 0x.0030 - GPIO Control Register */
++	u32	gpiocr;		/* 0x.0030 - GPIO Control Register */
+ 	u8	res034[0x40 - 0x34];
+-	__be32	gpoutdr;	/* 0x.0040 - General-Purpose Output Data Register */
++	u32	gpoutdr;	/* 0x.0040 - General-Purpose Output Data
++				 *           Register
++				 */
+ 	u8	res044[0x50 - 0x44];
+-	__be32	gpindr;		/* 0x.0050 - General-Purpose Input Data Register */
++	u32	gpindr;		/* 0x.0050 - General-Purpose Input Data
++				 *           Register
++				 */
+ 	u8	res054[0x60 - 0x54];
+-	__be32	pmuxcr;		/* 0x.0060 - Alternate Function Signal Multiplex Control */
+-        __be32  pmuxcr2;	/* 0x.0064 - Alternate function signal multiplex control 2 */
+-        __be32  dmuxcr;		/* 0x.0068 - DMA Mux Control Register */
++	u32	pmuxcr;		/* 0x.0060 - Alternate Function Signal
++				 *           Multiplex Control
++				 */
++	u32	pmuxcr2;	/* 0x.0064 - Alternate function signal
++				 *           multiplex control 2
++				 */
++	u32	dmuxcr;		/* 0x.0068 - DMA Mux Control Register */
+         u8	res06c[0x70 - 0x6c];
+-	__be32	devdisr;	/* 0x.0070 - Device Disable Control */
++	u32	devdisr;	/* 0x.0070 - Device Disable Control */
+ #define CCSR_GUTS_DEVDISR_TB1	0x00001000
+ #define CCSR_GUTS_DEVDISR_TB0	0x00004000
+-	__be32	devdisr2;	/* 0x.0074 - Device Disable Control 2 */
++	u32	devdisr2;	/* 0x.0074 - Device Disable Control 2 */
+ 	u8	res078[0x7c - 0x78];
+-	__be32  pmjcr;		/* 0x.007c - 4 Power Management Jog Control Register */
+-	__be32	powmgtcsr;	/* 0x.0080 - Power Management Status and Control Register */
+-	__be32  pmrccr;		/* 0x.0084 - Power Management Reset Counter Configuration Register */
+-	__be32  pmpdccr;	/* 0x.0088 - Power Management Power Down Counter Configuration Register */
+-	__be32  pmcdr;		/* 0x.008c - 4Power management clock disable register */
+-	__be32	mcpsumr;	/* 0x.0090 - Machine Check Summary Register */
+-	__be32	rstrscr;	/* 0x.0094 - Reset Request Status and Control Register */
+-	__be32  ectrstcr;	/* 0x.0098 - Exception reset control register */
+-	__be32  autorstsr;	/* 0x.009c - Automatic reset status register */
+-	__be32	pvr;		/* 0x.00a0 - Processor Version Register */
+-	__be32	svr;		/* 0x.00a4 - System Version Register */
++	u32	pmjcr;		/* 0x.007c - 4 Power Management Jog Control
++				 *           Register
++				 */
++	u32	powmgtcsr;	/* 0x.0080 - Power Management Status and
++				 *           Control Register
++				 */
++	u32	pmrccr;		/* 0x.0084 - Power Management Reset Counter
++				 *           Configuration Register
++				 */
++	u32	pmpdccr;	/* 0x.0088 - Power Management Power Down Counter
++				 *           Configuration Register
++				 */
++	u32	pmcdr;		/* 0x.008c - 4Power management clock disable
++				 *           register
++				 */
++	u32	mcpsumr;	/* 0x.0090 - Machine Check Summary Register */
++	u32	rstrscr;	/* 0x.0094 - Reset Request Status and
++				 *           Control Register
++				 */
++	u32	ectrstcr;	/* 0x.0098 - Exception reset control register */
++	u32	autorstsr;	/* 0x.009c - Automatic reset status register */
++	u32	pvr;		/* 0x.00a0 - Processor Version Register */
++	u32	svr;		/* 0x.00a4 - System Version Register */
+ 	u8	res0a8[0xb0 - 0xa8];
+-	__be32	rstcr;		/* 0x.00b0 - Reset Control Register */
++	u32	rstcr;		/* 0x.00b0 - Reset Control Register */
+ 	u8	res0b4[0xc0 - 0xb4];
+-	__be32  iovselsr;	/* 0x.00c0 - I/O voltage select status register
++	u32	iovselsr;	/* 0x.00c0 - I/O voltage select status register
+ 					     Called 'elbcvselcr' on 86xx SOCs */
+ 	u8	res0c4[0x100 - 0xc4];
+-	__be32	rcwsr[16];	/* 0x.0100 - Reset Control Word Status registers
++	u32	rcwsr[16];	/* 0x.0100 - Reset Control Word Status registers
+ 					     There are 16 registers */
+ 	u8	res140[0x224 - 0x140];
+-	__be32  iodelay1;	/* 0x.0224 - IO delay control register 1 */
+-	__be32  iodelay2;	/* 0x.0228 - IO delay control register 2 */
++	u32	iodelay1;	/* 0x.0224 - IO delay control register 1 */
++	u32	iodelay2;	/* 0x.0228 - IO delay control register 2 */
+ 	u8	res22c[0x604 - 0x22c];
+-	__be32	pamubypenr; 	/* 0x.604 - PAMU bypass enable register */
++	u32	pamubypenr;	/* 0x.604 - PAMU bypass enable register */
+ 	u8	res608[0x800 - 0x608];
+-	__be32	clkdvdr;	/* 0x.0800 - Clock Divide Register */
++	u32	clkdvdr;	/* 0x.0800 - Clock Divide Register */
+ 	u8	res804[0x900 - 0x804];
+-	__be32	ircr;		/* 0x.0900 - Infrared Control Register */
++	u32	ircr;		/* 0x.0900 - Infrared Control Register */
+ 	u8	res904[0x908 - 0x904];
+-	__be32	dmacr;		/* 0x.0908 - DMA Control Register */
++	u32	dmacr;		/* 0x.0908 - DMA Control Register */
+ 	u8	res90c[0x914 - 0x90c];
+-	__be32	elbccr;		/* 0x.0914 - eLBC Control Register */
++	u32	elbccr;		/* 0x.0914 - eLBC Control Register */
+ 	u8	res918[0xb20 - 0x918];
+-	__be32	ddr1clkdr;	/* 0x.0b20 - DDR1 Clock Disable Register */
+-	__be32	ddr2clkdr;	/* 0x.0b24 - DDR2 Clock Disable Register */
+-	__be32	ddrclkdr;	/* 0x.0b28 - DDR Clock Disable Register */
++	u32	ddr1clkdr;	/* 0x.0b20 - DDR1 Clock Disable Register */
++	u32	ddr2clkdr;	/* 0x.0b24 - DDR2 Clock Disable Register */
++	u32	ddrclkdr;	/* 0x.0b28 - DDR Clock Disable Register */
+ 	u8	resb2c[0xe00 - 0xb2c];
+-	__be32	clkocr;		/* 0x.0e00 - Clock Out Select Register */
++	u32	clkocr;		/* 0x.0e00 - Clock Out Select Register */
+ 	u8	rese04[0xe10 - 0xe04];
+-	__be32	ddrdllcr;	/* 0x.0e10 - DDR DLL Control Register */
++	u32	ddrdllcr;	/* 0x.0e10 - DDR DLL Control Register */
+ 	u8	rese14[0xe20 - 0xe14];
+-	__be32	lbcdllcr;	/* 0x.0e20 - LBC DLL Control Register */
+-	__be32  cpfor;		/* 0x.0e24 - L2 charge pump fuse override register */
++	u32	lbcdllcr;	/* 0x.0e20 - LBC DLL Control Register */
++	u32	cpfor;		/* 0x.0e24 - L2 charge pump fuse override
++				 *           register
++				 */
+ 	u8	rese28[0xf04 - 0xe28];
+-	__be32	srds1cr0;	/* 0x.0f04 - SerDes1 Control Register 0 */
+-	__be32	srds1cr1;	/* 0x.0f08 - SerDes1 Control Register 0 */
++	u32	srds1cr0;	/* 0x.0f04 - SerDes1 Control Register 0 */
++	u32	srds1cr1;	/* 0x.0f08 - SerDes1 Control Register 0 */
+ 	u8	resf0c[0xf2c - 0xf0c];
+-	__be32  itcr;		/* 0x.0f2c - Internal transaction control register */
++	u32	itcr;		/* 0x.0f2c - Internal transaction control
++				 *           register
++				 */
+ 	u8	resf30[0xf40 - 0xf30];
+-	__be32	srds2cr0;	/* 0x.0f40 - SerDes2 Control Register 0 */
+-	__be32	srds2cr1;	/* 0x.0f44 - SerDes2 Control Register 0 */
++	u32	srds2cr0;	/* 0x.0f40 - SerDes2 Control Register 0 */
++	u32	srds2cr1;	/* 0x.0f44 - SerDes2 Control Register 0 */
+ } __attribute__ ((packed));
+ 
++u32 fsl_guts_get_svr(void);
+ 
+ /* Alternate function signal multiplex control */
+ #define MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
+-- 
+2.1.0.27.g96db324
 
-Regards,
-John
 
-
-
-> Kevin
-> 
->> ---
->>  Documentation/devicetree/bindings/usb/dwc2.txt |  2 ++
->>  drivers/usb/dwc2/platform.c                    | 34 ++++++++++++++++++++++++++
->>  2 files changed, 36 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/usb/dwc2.txt b/Documentation/devicetree/bindings/usb/dwc2.txt
->> index 20a68bf..2c30a54 100644
->> --- a/Documentation/devicetree/bindings/usb/dwc2.txt
->> +++ b/Documentation/devicetree/bindings/usb/dwc2.txt
->> @@ -10,6 +10,8 @@ Required properties:
->>    - "rockchip,rk3288-usb", "rockchip,rk3066-usb", "snps,dwc2": for rk3288 Soc;
->>    - "lantiq,arx100-usb": The DWC2 USB controller instance in Lantiq ARX SoCs;
->>    - "lantiq,xrx200-usb": The DWC2 USB controller instance in Lantiq XRX SoCs;
->> +  - "amlogic,meson8b-usb": The DWC2 USB controller instance in Amlogic Meson8b SoCs;
->> +  - "amlogic,meson-gxbb-usb": The DWC2 USB controller instance in Amlogic S905 SoCs;
->>    - snps,dwc2: A generic DWC2 USB controller with default parameters.
->>  - reg : Should contain 1 register range (address and length)
->>  - interrupts : Should contain 1 interrupt
->> diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
->> index fc6f525..8f7b34c 100644
->> --- a/drivers/usb/dwc2/platform.c
->> +++ b/drivers/usb/dwc2/platform.c
->> @@ -181,6 +181,38 @@ static const struct dwc2_core_params params_ltq = {
->>  	.hibernation			= -1,
->>  };
->>  
->> +static const struct dwc2_core_params params_amlogic = {
->> +	.otg_cap			= DWC2_CAP_PARAM_NO_HNP_SRP_CAPABLE,
->> +	.otg_ver			= -1,
->> +	.dma_enable			= 1,
->> +	.dma_desc_enable		= 0,
->> +	.dma_desc_fs_enable		= 0,
->> +	.speed				= DWC2_SPEED_PARAM_HIGH,
->> +	.enable_dynamic_fifo		= 1,
->> +	.en_multiple_tx_fifo		= -1,
->> +	.host_rx_fifo_size		= 512,
->> +	.host_nperio_tx_fifo_size	= 500,
->> +	.host_perio_tx_fifo_size	= 500,
->> +	.max_transfer_size		= -1,
->> +	.max_packet_count		= -1,
->> +	.host_channels			= 16,
->> +	.phy_type			= DWC2_PHY_TYPE_PARAM_UTMI,
->> +	.phy_utmi_width			= -1,
->> +	.phy_ulpi_ddr			= -1,
->> +	.phy_ulpi_ext_vbus		= -1,
->> +	.i2c_enable			= -1,
->> +	.ulpi_fs_ls			= -1,
->> +	.host_support_fs_ls_low_power	= -1,
->> +	.host_ls_low_power_phy_clk	= -1,
->> +	.ts_dline			= -1,
->> +	.reload_ctl			= 1,
->> +	.ahbcfg				= GAHBCFG_HBSTLEN_INCR8 <<
->> +					  GAHBCFG_HBSTLEN_SHIFT,
->> +	.uframe_sched			= 0,
->> +	.external_id_pin_ctl		= -1,
->> +	.hibernation			= -1,
->> +};
->> +
->>  /*
->>   * Check the dr_mode against the module configuration and hardware
->>   * capabilities.
->> @@ -464,6 +496,8 @@ static const struct of_device_id dwc2_of_match_table[] = {
->>  	{ .compatible = "lantiq,xrx200-usb", .data = &params_ltq },
->>  	{ .compatible = "snps,dwc2", .data = NULL },
->>  	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
->> +	{ .compatible = "amlogic,meson8b-usb", .data = &params_amlogic },
->> +	{ .compatible = "amlogic,meson-gxbb-usb", .data = &params_amlogic },
->>  	{},
->>  };
->>  MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
-> 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
