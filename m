@@ -1,69 +1,113 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 14:30:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Irina Tirdea <irina.tirdea@intel.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v3] clk: x86: Add Atom PMC platform clocks
-Message-ID: <20160914213025.GE7243@codeaurora.org>
-References: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v3 3/7] clk: qcom: ipq4019: Added the nodes for pcnoc
+Date: Wed, 21 Sep 2016 17:51:48 +0530
+Message-Id: <1474460512-31994-4-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/09, Irina Tirdea wrote:
-> The BayTrail and CherryTrail platforms provide platform clocks
-> through their Power Management Controller (PMC).
-> 
-> The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
-> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-> an a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-> are available for general system use, where appropriate, and each
-> have Control & Frequency register fields associated with them.
-> 
-> For example, the usage for platform clocks suggested in the datasheet
-> is the following:
->   PLT_CLK[2:0] - Camera
->   PLT_CLK[3] - Audio Codec
->   PLT_CLK[4] -
->   PLT_CLK[5] - COMMs
-> 
-> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
-> 
-> Notes:
->     Submitting this patch through the clock tree as requested by
->     Mark Brown. This patch specifically enables the audio MCLK
->     required by Baytrail CR devices (support already merged in
->     Mark's tree)
-> 
-> Changes from v2:
->  - move clk platform data structures to a separate include file
->  - store clk_hw pointer for the fixed rate clocks
-> 
-> Changes from v1:
->  - register the clk device as child of pmc device
->  - pass iomem pointer from pmc driver to clk driver to avoid using
-> pmc_atom_read()/write() and use readl/writel API instead
->  - use devm_clk_hw_register/clkdev_hw_create instead of
-> clk_register/clkdev_create
-> 
->  arch/x86/Kconfig                          |   1 +
->  arch/x86/include/asm/pmc_atom.h           |   3 +
->  arch/x86/platform/atom/pmc_atom.c         |  78 +++++-
+The current ipq4019 clock driver does not have the node for
+PCNOC so this patch adds and registers the PCNOC clock nodes.
+This PCNOC clock is critical and should not be turned off so
+setting CRITICAL flag also.
 
-Will there be problems if this merges through clk tree? If so we
-could take the clk driver part and the platform data include part
-could be duplicated into both trees. Or clk tree could be pulled
-into x86?
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq4019.c               | 39 ++++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq4019.h |  1 +
+ 2 files changed, 40 insertions(+)
 
-The patch looks fine to me.
-
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 74f7ba8..211c68c 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1550,6 +1550,43 @@ static struct clk_pll_div gcc_fepllwcss5g_clk = {
+ 	.div_table = fepllwcss_clk_div_table
+ };
+ 
++static const struct freq_tbl ftbl_gcc_pcnoc_ahb_clk[] = {
++	F(48000000,  P_XO,	 1, 0, 0),
++	F(100000000, P_FEPLL200, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gcc_pcnoc_ahb_clk_src = {
++	.cmd_rcgr = 0x21024,
++	.hid_width = 5,
++	.parent_map = gcc_xo_200_500_map,
++	.freq_tbl = ftbl_gcc_pcnoc_ahb_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gcc_pcnoc_ahb_clk_src",
++		.parent_names = gcc_xo_200_500,
++		.num_parents = 3,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch pcnoc_clk_src = {
++	.halt_reg = 0x21030,
++	.clkr = {
++		.enable_reg = 0x21030,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "pcnoc_clk_src",
++			.parent_names = (const char *[]){
++				"gcc_pcnoc_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++			.flags = CLK_SET_RATE_PARENT |
++				CLK_IS_CRITICAL,
++		},
++	},
++};
++
+ static struct clk_regmap *gcc_ipq4019_clocks[] = {
+ 	[AUDIO_CLK_SRC] = &audio_clk_src.clkr,
+ 	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
+@@ -1620,6 +1657,8 @@ static struct clk_regmap *gcc_ipq4019_clocks[] = {
+ 	[GCC_FEPLL_WCSS2G_CLK] = &gcc_fepllwcss2g_clk.cdiv.clkr,
+ 	[GCC_FEPLL_WCSS5G_CLK] = &gcc_fepllwcss5g_clk.cdiv.clkr,
+ 	[GCC_APPS_CPU_PLLDIV_CLK] = &gcc_apps_cpu_plldiv_clk.cdiv.clkr,
++	[GCC_PCNOC_AHB_CLK_SRC] = &gcc_pcnoc_ahb_clk_src.clkr,
++	[GCC_PCNOC_AHB_CLK] = &pcnoc_clk_src.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq4019_resets[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq4019.h b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
+index 921565d..3b98498 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq4019.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
+@@ -91,6 +91,7 @@
+ #define GCC_FEPLL_WCSS2G_CLK				72
+ #define GCC_FEPLL_WCSS5G_CLK				73
+ #define GCC_APPS_CPU_PLLDIV_CLK				74
++#define GCC_PCNOC_AHB_CLK_SRC				75
+ 
+ #define WIFI0_CPU_INIT_RESET				0
+ #define WIFI0_RADIO_SRIF_RESET				1
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
