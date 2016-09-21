@@ -1,50 +1,57 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4/5] ARM: dts: exynos: add support for ISP power domain to
- exynos4x12 clocks device
-Date: Thu, 01 Sep 2016 15:45:50 +0200
-Message-id: <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <mw@semihalf.com>
+Return-Path: <mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: sebastian.hesselbarth@gmail.com,
+	andrew@lunn.ch,
+	jason@lakedaemon.net,
+	thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com,
+	nadavh@marvell.com,
+	alior@marvell.com,
+	tn@semihalf.com,
+	jaz@semihalf.com,
+	Marcin Wojtas <mw@semihalf.com>
+Subject: [PATCH v3 0/3] Armada 7k/8k CP110 system controller fixes
+Date: Wed, 21 Sep 2016 11:05:56 +0200
+Message-Id: <1474448759-24482-1-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos4412 clock controller contains some additional clocks for FIMC-ISP
-(Camera ISP) subsystem. Registers for those clocks are partially located
-in the SOC area, which belongs to ISP power domain.
+Hi,
 
-This patch extends clock controller node with ISP clock sub-node and link
-(phandle) to ISP power domain.
+Here is the third version of the patchset adding fixes to CP110
+system controller clock driver. Comparing to v2, the only change
+is return value on alloc failures.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Any feedback would be very welcome.
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 3394bdcf10ae..4daea67546b9 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -74,6 +74,11 @@
- 		compatible = "samsung,exynos4412-clock";
- 		reg = <0x10030000 0x20000>;
- 		#clock-cells = <1>;
-+
-+		isp-clock-controller {
-+			compatible = "samsung,exynos4412-isp-clock";
-+			power-domains = <&pd_isp>;
-+		};
- 	};
- 
- 	mct@10050000 {
+Best regards,
+Marcin
+
+Changelog:
+v3 -> v2
+* return -ENOMEM on alloc failures
+
+v1 -> v2
+* replace setting CLK_IS_BASIC flag with clearing init structure fields
+  with memset
+* minor improvements of allocation and error checking
+* add migration to clk_hw
+
+
+Marcin Wojtas (3):
+  clk: mvebu: fix setting unwanted flags in CP110 gate clock
+  clk: mvebu: dynamically allocate resources in Armada CP110 system
+    controller
+  clk: mvebu: migrate CP110 system controller to clk_hw API and
+    registration
+
+ drivers/clk/mvebu/cp110-system-controller.c | 155 +++++++++++++++-------------
+ 1 file changed, 81 insertions(+), 74 deletions(-)
+
 -- 
-1.9.1
+1.8.3.1
