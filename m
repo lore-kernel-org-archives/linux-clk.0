@@ -1,64 +1,30 @@
 Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] clk: x86: Add Atom PMC platform clocks
-To: "Tirdea, Irina" <irina.tirdea@intel.com>
-References: <1473266524-14786-1-git-send-email-irina.tirdea@intel.com>
- <20160907235227.GB13062@codeaurora.org>
- <1F3AC3675D538145B1661F571FE1805F2F329961@irsmsx105.ger.corp.intel.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
- Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
- "Bossart, Pierre-louis" <pierre-louis.bossart@intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date: Tue, 20 Sep 2016 17:04:24 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <bb55c314-456e-ecff-541c-08cb2a62cd79@codeaurora.org>
-Date: Thu, 8 Sep 2016 12:39:52 -0700
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] clk: at91: sckc: optimize boot time
+Message-ID: <20160921000424.GJ8319@codeaurora.org>
+References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+ <20160920205833.19638-4-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1F3AC3675D538145B1661F571FE1805F2F329961@irsmsx105.ger.corp.intel.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160920205833.19638-4-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/08/2016 11:08 AM, Tirdea, Irina wrote:
->
->> -----Original Message-----
->> From: linux-clk-owner@vger.kernel.org [mailto:linux-clk-owner@vger.kernel.org] On Behalf Of Stephen Boyd
->> Sent: 08 September, 2016 2:52
->> To: Tirdea, Irina
->> Cc: linux-clk@vger.kernel.org; Michael Turquette; alsa-devel@alsa-project.org; Mark Brown; Takashi Iwai; Bossart, Pierre-louis; Pierre-
->> Louis Bossart
->> Subject: Re: [PATCH v2] clk: x86: Add Atom PMC platform clocks
->>
->> On 09/07, Irina Tirdea wrote:
->>> @@ -152,6 +155,17 @@
->>>  #define	SLEEP_TYPE_S5		0x1C00
->>>  #define	SLEEP_ENABLE		0x2000
->>>
->>> +struct pmc_clk {
->>> +	const char *name;
->>> +	unsigned long freq;
->>> +	const char *parent_name;
->>> +};
->>> +
->>> +struct pmc_clk_data {
->>> +	void __iomem *base;
->>> +	const struct pmc_clk *clks;
->>> +};
->> Can you please put these structures in
->> include/linux/platform_data/ with some new file? That way we
->> don't need to have any architecture specific configuration to
->> test build the clk driver and we can drop the asm include fro
->> mthe clk driver too.
->>
-> Thanks for the review!
->
-> Sure, I will make all the changes you pointed out.
->
-> I assume I will also need to allow the driver to be compiled if
-> COMPILE_TEST is set. Is that correct or is there another way
-> to test build the driver for any architecture?
+On 09/20, Alexandre Belloni wrote:
+> Assume that if the oscillator is enabled (OSC32EN bit is present), the
+> delay has already elapsed as the bootloader probably waited for the
+> oscillator to settle. This could waste up to 1.2s.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-Yes that's good too. Individual files can be compiled standalone with
-"make foo.o" even when they're not enabled in the Kconfig.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
