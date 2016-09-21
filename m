@@ -1,40 +1,56 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: rk808: Pass the right pointer as the get_hw context
-Date: Fri,  9 Sep 2016 15:25:06 +0200
-Message-Id: <1473427506-28244-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-Path: <mw@semihalf.com>
+Return-Path: <mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: sebastian.hesselbarth@gmail.com,
+	andrew@lunn.ch,
+	jason@lakedaemon.net,
+	thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com,
+	nadavh@marvell.com,
+	alior@marvell.com,
+	tn@semihalf.com,
+	jaz@semihalf.com,
+	Marcin Wojtas <mw@semihalf.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v3 1/3] clk: mvebu: fix setting unwanted flags in CP110 gate clock
+Date: Wed, 21 Sep 2016 11:05:57 +0200
+Message-Id: <1474448759-24482-2-git-send-email-mw@semihalf.com>
+In-Reply-To: <1474448759-24482-1-git-send-email-mw@semihalf.com>
+References: <1474448759-24482-1-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Right now we are passing a pointer to a pointer to the structure that
-will be used to fetch the clk hw, which gets casted later to a pointer
-to the structure, thus getting garbage in the hw structs.
+Armada CP110 system controller comprises its own routine responsble
+for registering gate clocks. Among others 'flags' field in
+struct clk_init_data was not set, using a random values, which
+may cause an unpredicted behavior.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Fixes: a8b6e85db6a6 ("clk: rk808: Migrate to clk_hw based OF and
-registration APIs")
+This patch fixes the problem by resetting all fields of clk_init_data
+before assigning values for all gated clocks of Armada 7k/8k SoCs family.
+
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
+Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+CC: <stable@vger.kernel.org>
 ---
- drivers/clk/clk-rk808.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/cp110-system-controller.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index faa447e191ef..6461f2820a5b 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -138,7 +138,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 7fa42d6..59fe76e 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -142,6 +142,8 @@ static struct clk *cp110_register_gate(const char *name,
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
  
--	return of_clk_add_hw_provider(node, of_clk_rk808_get, &rk808_clkout);
-+	return of_clk_add_hw_provider(node, of_clk_rk808_get, rk808_clkout);
- }
- 
- static int rk808_clkout_remove(struct platform_device *pdev)
++	memset(&init, 0, sizeof(init));
++
+ 	init.name = name;
+ 	init.ops = &cp110_gate_ops;
+ 	init.parent_names = &parent_name;
 -- 
-2.7.4
+1.8.3.1
