@@ -1,67 +1,193 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 1 Sep 2016 21:54:14 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, arnd@arndb.de, xie.baoyou@zte.com.cn
-Subject: Re: [PATCH] clk: sunxi-ng: mark ccu_nk_find_best() static
-Message-ID: <20160901195414.GH20462@lukather>
-References: <1472727108-18388-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        "Bhupesh Sharma" <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        "Kumar Gala" <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v12, 7/8] base: soc: introduce soc_device_match() interface
+Date: Wed, 21 Sep 2016 14:57:19 +0800
+Message-ID: <1474441040-11946-8-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RwGu8mu1E+uYXPWP"
-In-Reply-To: <1472727108-18388-1-git-send-email-baoyou.xie@linaro.org>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Arnd Bergmann <arnd@arndb.de>
 
---RwGu8mu1E+uYXPWP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We keep running into cases where device drivers want to know the exact
+version of the a SoC they are currently running on. In the past, this has
+usually been done through a vendor specific API that can be called by a
+driver, or by directly accessing some kind of version register that is
+not part of the device itself but that belongs to a global register area
+of the chip.
 
-Hi,
+Common reasons for doing this include:
 
-On Thu, Sep 01, 2016 at 06:51:48PM +0800, Baoyou Xie wrote:
-> We get 1 warning when building kernel with W=3D1:
-> drivers/clk/sunxi-ng/ccu_nk.c:17:6: warning: no previous prototype for 'c=
-cu_nk_find_best' [-Wmissing-prototypes]
->=20
-> In fact, this function is only used in the file in which it is
-> declared and don't need a declaration, but can be made static.
-> So this patch marks it 'static'.
->=20
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+- A machine is not using devicetree or similar for passing data about
+  on-chip devices, but just announces their presence using boot-time
+  platform devices, and the machine code itself does not care about the
+  revision.
 
-A similar patch has been merged already.
+- There is existing firmware or boot loaders with existing DT binaries
+  with generic compatible strings that do not identify the particular
+  revision of each device, but the driver knows which SoC revisions
+  include which part.
 
-Thanks!
-Maxime
+- A prerelease version of a chip has some quirks and we are using the same
+  version of the bootloader and the DT blob on both the prerelease and the
+  final version. An update of the DT binding seems inappropriate because
+  that would involve maintaining multiple copies of the dts and/or
+  bootloader.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+This patch introduces the soc_device_match() interface that is meant to
+work like of_match_node() but instead of identifying the version of a
+device, it identifies the SoC itself using a vendor-agnostic interface.
 
---RwGu8mu1E+uYXPWP
-Content-Type: application/pgp-signature; name="signature.asc"
+Unlike of_match_node(), we do not do an exact string compare but instead
+use glob_match() to allow wildcards in strings.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v11:
+	- Added this patch for soc match
+Changes for v12:
+	- Corrected the author
+	- Rewrited soc_device_match with while loop
+---
+ drivers/base/Kconfig    |  1 +
+ drivers/base/soc.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sys_soc.h |  3 +++
+ 3 files changed, 70 insertions(+)
 
-iQIcBAEBAgAGBQJXyIdmAAoJEBx+YmzsjxAgZXsP/2uwWtrrD4UmQQ6LBh4jY3mz
-QdLWpxHSKxvy+NuETho0g65dFAvqDERGsoUDFi/TH0YdtQL6WG1WRdgbJiTXBxSo
-Z7t760BoNRpQJc5qs/egl+pS2Ky3VsQboWKXGSv8s0g6L9xjWRt4GUR7TaB7H3m5
-BEuakosopnRnllVNBVihoRJ7B+7zS65RALPqYVKINF/2NsgmYnlBoKtMUFfjkFHj
-9CuQMwD9Tm2A/bKzjWqaKypJkdJjeTqLc6nUcs5yF+ReQEytTqTTMVx9WyS2BbOS
-0RRcyrLdG99ayE8fEMFxB1DBeb60+uh6sc7Et4z8m+CTq6k4rldKQQAV0sHqJGK3
-u+6950hKkTs6z+WLL6toLz8FKYezE1Ot92elZq6Ozz1QtFks/5bRopFVp+nrotOW
-ey243w2E+pvVW5hFR0pVkwW6St/mO4hzEcxTz2Aoz/7Xz1iSfOZN2OdQjfqRqHaR
-fxl9dj8eokNMP1DdooWaDO8+ocMZhwEiTEBXGEQ5YwapSmP2J+alcz6siKBWPeH4
-ZNaH8xeKgimjTKyKmfd0KBpKb6sCJrjzhTDJnEMrW+0c01/cbEAx4Zvav+hNinnv
-zcY3vzPBH4MOb3csSr1czqYSGNT0Nal31JboU/cPT2LMTb51puasPum8CP3SDMyX
-7IlPariMvReYeBXm3TDb
-=sS/1
------END PGP SIGNATURE-----
-
---RwGu8mu1E+uYXPWP--
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 98504ec..f1591ad2 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -225,6 +225,7 @@ config GENERIC_CPU_AUTOPROBE
+ 
+ config SOC_BUS
+ 	bool
++	select GLOB
+ 
+ source "drivers/base/regmap/Kconfig"
+ 
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index 75b98aa..d2fd1ad 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -14,6 +14,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/err.h>
++#include <linux/glob.h>
+ 
+ static DEFINE_IDA(soc_ida);
+ 
+@@ -168,3 +169,68 @@ static void __exit soc_bus_unregister(void)
+ 	bus_unregister(&soc_bus_type);
+ }
+ module_exit(soc_bus_unregister);
++
++static int soc_device_match_one(struct device *dev, void *arg)
++{
++	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	const struct soc_device_attribute *match = arg;
++
++	if (match->machine &&
++	    !glob_match(match->machine, soc_dev->attr->machine))
++		return 0;
++
++	if (match->family &&
++	    !glob_match(match->family, soc_dev->attr->family))
++		return 0;
++
++	if (match->revision &&
++	    !glob_match(match->revision, soc_dev->attr->revision))
++		return 0;
++
++	if (match->soc_id &&
++	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
++		return 0;
++
++	return 1;
++}
++
++/*
++ * soc_device_match - identify the SoC in the machine
++ * @matches: zero-terminated array of possible matches
++ *
++ * returns the first matching entry of the argument array, or NULL
++ * if none of them match.
++ *
++ * This function is meant as a helper in place of of_match_node()
++ * in cases where either no device tree is available or the information
++ * in a device node is insufficient to identify a particular variant
++ * by its compatible strings or other properties. For new devices,
++ * the DT binding should always provide unique compatible strings
++ * that allow the use of of_match_node() instead.
++ *
++ * The calling function can use the .data entry of the
++ * soc_device_attribute to pass a structure or function pointer for
++ * each entry.
++ */
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches)
++{
++	int ret = 0;
++
++	if (!matches)
++		return NULL;
++
++	while (!ret) {
++		if (!(matches->machine || matches->family ||
++		      matches->revision || matches->soc_id))
++			break;
++		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
++				       soc_device_match_one);
++		if (!ret)
++			matches++;
++		else
++			return matches;
++	}
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(soc_device_match);
+diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
+index 2739ccb..9f5eb06 100644
+--- a/include/linux/sys_soc.h
++++ b/include/linux/sys_soc.h
+@@ -13,6 +13,7 @@ struct soc_device_attribute {
+ 	const char *family;
+ 	const char *revision;
+ 	const char *soc_id;
++	const void *data;
+ };
+ 
+ /**
+@@ -34,4 +35,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
+  */
+ struct device *soc_device_to_device(struct soc_device *soc);
+ 
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches);
+ #endif /* __SOC_BUS_H */
+-- 
+2.1.0.27.g96db324
