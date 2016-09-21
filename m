@@ -1,218 +1,67 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v12, 4/8] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Date: Wed, 21 Sep 2016 14:57:16 +0800
-Message-ID: <1474441040-11946-5-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
- Minghuan Lian <minghuan.lian@nxp.com>, linux-i2c@vger.kernel.org,
- linux-clk@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>,
- Russell King <linux@arm.linux.org.uk>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Yangbo Lu <yangbo.lu@nxp.com>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v3 4/7] clk: qcom: ipq4019: Added all the frequencies for apps cpu
+Date: Wed, 21 Sep 2016 17:51:49 +0530
+Message-Id: <1474460512-31994-5-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move mpc85xx.h to include/linux/fsl and rename it to svr.h as a common
-header file.  This SVR numberspace is used on some ARM chips as well as
-PPC, and even to check for a PPC SVR multi-arch drivers would otherwise
-need to ifdef the header inclusion and all references to the SVR symbols.
+The APPS CPU clock does not contain all the frequencies in its
+frequency table so this patch adds the same.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Joerg Roedel <jroedel@suse.de>
-[scottwood: update description]
-Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
-Changes for v2:
-	- None
-Changes for v3:
-	- None
-Changes for v4:
-	- None
-Changes for v5:
-	- Changed to Move mpc85xx.h to include/linux/fsl/
-	- Adjusted '#include <linux/fsl/svr.h>' position in file
-Changes for v6:
-	- None
-Changes for v7:
-	- Added 'Acked-by: Wolfram Sang' for I2C part
-	- Also applied to arch/powerpc/kernel/cpu_setup_fsl_booke.S
-Changes for v8:
-	- Added 'Acked-by: Stephen Boyd' for clk part
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Joerg Roedel' for iommu part
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- Updated description by Scott
-Changes for v12:
-	- None
----
- arch/powerpc/kernel/cpu_setup_fsl_booke.S                     | 2 +-
- arch/powerpc/sysdev/fsl_pci.c                                 | 2 +-
- drivers/clk/clk-qoriq.c                                       | 3 +--
- drivers/i2c/busses/i2c-mpc.c                                  | 2 +-
- drivers/iommu/fsl_pamu.c                                      | 3 +--
- drivers/net/ethernet/freescale/gianfar.c                      | 2 +-
- arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h | 4 ++--
- 7 files changed, 8 insertions(+), 10 deletions(-)
- rename arch/powerpc/include/asm/mpc85xx.h => include/linux/fsl/svr.h (97%)
+ drivers/clk/qcom/gcc-ipq4019.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/cpu_setup_fsl_booke.S b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-index 462aed9..2b0284e 100644
---- a/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-+++ b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-@@ -13,13 +13,13 @@
-  *
-  */
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 211c68c..160e0cf 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -565,10 +565,20 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
+ };
  
-+#include <linux/fsl/svr.h>
- #include <asm/page.h>
- #include <asm/processor.h>
- #include <asm/cputable.h>
- #include <asm/ppc_asm.h>
- #include <asm/mmu-book3e.h>
- #include <asm/asm-offsets.h>
--#include <asm/mpc85xx.h>
+ static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+-	F(48000000, P_XO,	   1, 0, 0),
++	F(48000000,  P_XO,         1, 0, 0),
+ 	F(200000000, P_FEPLL200,   1, 0, 0),
++	F(380000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(409000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(444000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(484000000, P_DDRPLLAPSS, 1, 0, 0),
+ 	F(500000000, P_FEPLL500,   1, 0, 0),
++	F(507000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(532000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(560000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(592000000, P_DDRPLLAPSS, 1, 0, 0),
+ 	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(666000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(710000000, P_DDRPLLAPSS, 1, 0, 0),
+ 	{ }
+ };
  
- _GLOBAL(__e500_icache_setup)
- 	mfspr	r0, SPRN_L1CSR1
-diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-index 0ef9df4..0fd1895 100644
---- a/arch/powerpc/sysdev/fsl_pci.c
-+++ b/arch/powerpc/sysdev/fsl_pci.c
-@@ -22,6 +22,7 @@
- #include <linux/delay.h>
- #include <linux/string.h>
- #include <linux/fsl/edac.h>
-+#include <linux/fsl/svr.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/memblock.h>
-@@ -37,7 +38,6 @@
- #include <asm/pci-bridge.h>
- #include <asm/ppc-pci.h>
- #include <asm/machdep.h>
--#include <asm/mpc85xx.h>
- #include <asm/disassemble.h>
- #include <asm/ppc-opcode.h>
- #include <sysdev/fsl_soc.h>
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 58566a17..4b6c438 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -1149,8 +1150,6 @@ bad_args:
- }
- 
- #ifdef CONFIG_PPC
--#include <asm/mpc85xx.h>
--
- static const u32 a4510_svrs[] __initconst = {
- 	(SVR_P2040 << 8) | 0x10,	/* P2040 1.0 */
- 	(SVR_P2040 << 8) | 0x11,	/* P2040 1.1 */
-diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
-index 48ecffe..600704c 100644
---- a/drivers/i2c/busses/i2c-mpc.c
-+++ b/drivers/i2c/busses/i2c-mpc.c
-@@ -27,9 +27,9 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/fsl/svr.h>
- 
- #include <asm/mpc52xx.h>
--#include <asm/mpc85xx.h>
- #include <sysdev/fsl_soc.h>
- 
- #define DRV_NAME "mpc-i2c"
-diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
-index a34355f..af8fb27 100644
---- a/drivers/iommu/fsl_pamu.c
-+++ b/drivers/iommu/fsl_pamu.c
-@@ -21,11 +21,10 @@
- #include "fsl_pamu.h"
- 
- #include <linux/fsl/guts.h>
-+#include <linux/fsl/svr.h>
- #include <linux/interrupt.h>
- #include <linux/genalloc.h>
- 
--#include <asm/mpc85xx.h>
--
- /* define indexes for each operation mapping scenario */
- #define OMI_QMAN        0x00
- #define OMI_FMAN        0x01
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index 4b4f5bc..55be5ce 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -86,11 +86,11 @@
- #include <linux/udp.h>
- #include <linux/in.h>
- #include <linux/net_tstamp.h>
-+#include <linux/fsl/svr.h>
- 
- #include <asm/io.h>
- #ifdef CONFIG_PPC
- #include <asm/reg.h>
--#include <asm/mpc85xx.h>
- #endif
- #include <asm/irq.h>
- #include <asm/uaccess.h>
-diff --git a/arch/powerpc/include/asm/mpc85xx.h b/include/linux/fsl/svr.h
-similarity index 97%
-rename from arch/powerpc/include/asm/mpc85xx.h
-rename to include/linux/fsl/svr.h
-index 213f3a8..8d13836 100644
---- a/arch/powerpc/include/asm/mpc85xx.h
-+++ b/include/linux/fsl/svr.h
-@@ -9,8 +9,8 @@
-  * (at your option) any later version.
-  */
- 
--#ifndef __ASM_PPC_MPC85XX_H
--#define __ASM_PPC_MPC85XX_H
-+#ifndef FSL_SVR_H
-+#define FSL_SVR_H
- 
- #define SVR_REV(svr)	((svr) & 0xFF)		/* SOC design resision */
- #define SVR_MAJ(svr)	(((svr) >>  4) & 0xF)	/* Major revision field*/
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
