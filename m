@@ -1,75 +1,65 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 11:36:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@armlinux.org.uk>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Russell King <linux@armlinux.org.uk>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Pankaj Dev <pankaj.dev@st.com>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>, arnaud.pouliquen@st.com,
-	benjamin.gaignard@st.com, vincent.abriou@st.com,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Subject: Re: [PATCH v3 00/14] Clock improvement for video playback
-Message-ID: <20160914183620.GV7243@codeaurora.org>
-References: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472473626-15398-1-git-send-email-gabriel.fernandez@st.com>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2] clkdev: Detect errors in clk_hw_register_clkdev() for mass registration
+Date: Wed, 21 Sep 2016 15:12:34 +0200
+Message-Id: <1474463554-25295-1-git-send-email-geert@linux-m68k.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/29, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> v3:
->   - Rebase to v4.8-rc1
->   - Tipo fix in st,clkgen-pll.txt
->   - Add Ack of Peter for the series
->   - Add missed patch: "ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms"
-> 
-> v2:
->   - Simpliflication of clock binding
->     remark from Rob https://lkml.org/lkml/2016/5/25/492
->   - Suppression of stih415-416 support for the clocks (in order
-> 	to help simplification of clock binding)
->     (others patchs for the machine and drivers will come)
-> 
-> This serie allows to increase video resolutions and make audio
-> adjustment during a video playback.
-> 
-> Gabriel Fernandez (14):
->   drivers: clk: st: Remove stih415-416 clock support
->   drivers: clk: st: Simplify clock binding of STiH4xx platforms
->   ARM: DT: STiH4xx: Simplify clock binding of STiH4xx platforms
->   drivers: clk: st: Add fs660c32 synthesizer algorithm
->   drivers: clk: st: Add clock propagation for audio clocks
->   drivers: clk: st: Handle clk synchronous mode for video clocks
->   ARM: DT: STiH407: Enable clock propagation for audio clocks
->   ARM: DT: STiH410: Enable clock propagation for audio clocks
->   ARM: DT: STiH418: Enable clock propagation for audio clocks
->   ARM: DT: STiH407: Enable synchronous clock mode for video clocks
->   ARM: DT: STiH410: Enable synchronous clock mode for video clocks
->   ARM: DT: STiH418: Enable synchronous clock mode for video clocks
->   ARM: DT: STi: STiH407: clock configuration to address 720p and 1080p
->   ARM: DT: STi: STiH410: clock configuration to address 720p and 1080p
+Unlike clk_register_clkdev(), clk_hw_register_clkdev() doesn't check for
+passed error objects from a previous registration call. Hence the caller
+of clk_hw_register_*() had to check for errors before calling
+clk_hw_register_clkdev*().
 
-The order of patches intermingles clk changes and dts changes.
-I'd prefer to not take any patches for dts through the clk tree,
-so can those be deferred to an arm-soc PR? Assuming that works,
-I'd just pick 1-2, and 4-6 into the clk tree and the rest can go
-on top through arm-soc.
+Make clk_hw_register_clkdev() more similar to clk_register_clkdev() by
+adding this error check, removing the burden from callers that do mass
+registration.
 
+Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
+Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+v2:
+  - Correct wrong function references
+    s/clkdev_{,hw_}create/clk_{,hw_}register_clkdev/
+
+Note that in the mean time more clk_hw conversions not checking for
+errors have been posted, leading to crashes in error paths, so it would
+be good to have this check in the core.
+---
+ drivers/clk/clkdev.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 97ae60fa15849954..bb8a77a5985f8627 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -448,12 +448,20 @@ EXPORT_SYMBOL(clk_register_clkdev);
+  *
+  * con_id or dev_id may be NULL as a wildcard, just as in the rest of
+  * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clk_hws
++ * from a previous clk_hw_register_*() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_hw_register_*().
+  */
+ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
+ 	const char *dev_id)
+ {
+ 	struct clk_lookup *cl;
+ 
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
+ 	/*
+ 	 * Since dev_id can be NULL, and NULL is handled specially, we must
+ 	 * pass it as either a NULL format string, or with "%s".
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
