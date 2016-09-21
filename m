@@ -1,75 +1,77 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk
+Cc: mturquette@baylibre.com,
+	galak@codeaurora.org,
+	pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org,
+	varada@codeaurora.org,
+	sricharan@codeaurora.org,
+	architt@codeaurora.org,
+	ntelkar@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 3/7] clk: sunxi-ng: mux: Add mux table macro
-Date: Tue,  6 Sep 2016 14:18:33 +0200
-Message-Id: <20160906121837.7517-4-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v3 5/7] clk: qcom: ipq4019: corrected sdcc frequency and parent name
+Date: Wed, 21 Sep 2016 17:51:50 +0530
+Message-Id: <1474460512-31994-6-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a new macro to declare muxes based on a table and a gate.
+1. The parent for sdcc clock is sdccpll so corrected the same
+   in its parent map.
+2. The frequency value was wrong so changed to correct
+   frequency.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/clk/sunxi-ng/ccu_mux.h | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/clk/qcom/gcc-ipq4019.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index f5123a1a6603..47aba3a48245 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -43,9 +43,12 @@ struct ccu_mux {
- 	struct ccu_common	common;
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 160e0cf..b2decd5 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -120,7 +120,7 @@ static struct parent_map gcc_xo_sdcc1_500_map[] = {
+ 
+ static const char * const gcc_xo_sdcc1_500[] = {
+ 	"xo",
+-	"ddrpll",
++	"ddrpllsdcc",
+ 	"fepll500",
  };
  
--#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width, _flags) \
-+#define SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, _table,	\
-+				     _reg, _shift, _width, _gate,	\
-+				     _flags)				\
- 	struct ccu_mux _struct = {					\
--		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
-+		.enable	= _gate,					\
-+		.mux	= _SUNXI_CCU_MUX_TABLE(_shift, _width, _table),	\
- 		.common	= {						\
- 			.reg		= _reg,				\
- 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-@@ -57,17 +60,14 @@ struct ccu_mux {
+@@ -540,13 +540,13 @@ static struct clk_branch gcc_gp3_clk = {
+ };
  
- #define SUNXI_CCU_MUX_WITH_GATE(_struct, _name, _parents, _reg,		\
- 				_shift, _width, _gate, _flags)		\
--	struct ccu_mux _struct = {					\
--		.enable	= _gate,					\
--		.mux	= _SUNXI_CCU_MUX(_shift, _width),		\
--		.common	= {						\
--			.reg		= _reg,				\
--			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
--							      _parents, \
--							      &ccu_mux_ops, \
--							      _flags),	\
--		}							\
--	}
-+	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
-+				      _reg, _shift, _width, _gate,	\
-+				      _flags)
-+
-+#define SUNXI_CCU_MUX(_struct, _name, _parents, _reg, _shift, _width,	\
-+		      _flags)						\
-+	SUNXI_CCU_MUX_TABLE_WITH_GATE(_struct, _name, _parents, NULL,	\
-+				      _reg, _shift, _width, 0, _flags)
+ static const struct freq_tbl ftbl_gcc_sdcc1_apps_clk[] = {
+-	F(144000,    P_XO,			1,  3, 240),
+-	F(400000,    P_XO,			1,  1, 0),
+-	F(20000000,  P_FEPLL500,		1,  1, 25),
+-	F(25000000,  P_FEPLL500,		1,  1, 20),
+-	F(50000000,  P_FEPLL500,		1,  1, 10),
+-	F(100000000, P_FEPLL500,		1,  1, 5),
+-	F(193000000, P_DDRPLL,		1,  0, 0),
++	F(144000,    P_XO,       1,  3, 240),
++	F(400000,    P_XO,       1,  1, 0),
++	F(20000000,  P_FEPLL500, 1,  1, 25),
++	F(25000000,  P_FEPLL500, 1,  1, 20),
++	F(50000000,  P_FEPLL500, 1,  1, 10),
++	F(100000000, P_FEPLL500, 1,  1, 5),
++	F(190000000, P_DDRPLL,   1,  0, 0),
+ 	{ }
+ };
  
- static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
- {
 -- 
-2.9.3
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
