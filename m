@@ -1,271 +1,65 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 2/7] clk: sunxi-ng: div: Allow to set a maximum
-Date: Tue,  6 Sep 2016 14:18:32 +0200
-Message-Id: <20160906121837.7517-3-maxime.ripard@free-electrons.com>
-In-Reply-To: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
-References: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+To: =?UTF-8?B?WWFuZ2JvIEx1?= <yangbo.lu@nxp.com>
+Subject: =?UTF-8?B?UmU6IFt2MTIsIDcvOF0gYmFzZTogc29jOiBpbnRyb2R1Y2Ugc29jX2Rldmlj?=
+ =?UTF-8?B?ZV9tYXRjaCgpIGludGVyZmFjZQ==?=
+MIME-Version: 1.0
+Date: Wed, 21 Sep 2016 10:56:14 +0300
+Message-ID: <1474444574.270880035@f136.i.mail.ru>
+In-Reply-To: <1474441040-11946-8-git-send-email-yangbo.lu@nxp.com>
+References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+ <1474441040-11946-8-git-send-email-yangbo.lu@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Cc: =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>, ulf.hansson@linaro.org,
+ =?UTF-8?B?WGlhb2JvIFhpZQ==?= <xiaobo.xie@nxp.com>,
+ =?UTF-8?B?TWluZ2h1YW4gTGlhbg==?= <minghuan.lian@nxp.com>,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ =?UTF-8?B?UWlhbmcgWmhhbw==?= <qiang.zhao@nxp.com>,
+ =?UTF-8?B?UnVzc2VsbCBLaW5n?= <linux@arm.linux.org.uk>,
+ =?UTF-8?B?Qmh1cGVzaCBTaGFybWE=?= <bhupesh.sharma@freescale.com>,
+ =?UTF-8?B?Sm9lcmcgUm9lZGVs?= <joro@8bytes.org>,
+ =?UTF-8?B?Sm9jaGVuIEZyaWVkcmljaA==?= <jochen@scram.de>,
+ =?UTF-8?B?Q2xhdWRpdSBNYW5vaWw=?= <claudiu.manoil@freescale.com>,
+ devicetree@vger.kernel.org, =?UTF-8?B?QXJuZCBCZXJnbWFubg==?= <arnd@arndb.de>,
+ =?UTF-8?B?U2NvdHQgV29vZA==?= <oss@buserror.net>,
+ =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>,
+ =?UTF-8?B?U2FudG9zaCBTaGlsaW1rYXI=?= <ssantosh@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?B?TGVvIExp?= <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
+ =?UTF-8?B?S3VtYXIgR2FsYQ==?= <galak@codeaurora.org>,
+ linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some dividers might have a maximum value that is lower than the width of
-the register.
-
-Add a field to _ccu_div to handle those case properly. If the field is set
-to 0, the code will assume that the maximum value is the maximum one that
-can be used with the field register width.
-
-Otherwise, we'll use whatever value has been set.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_div.h  | 21 +++++++++++++++++----
- drivers/clk/sunxi-ng/ccu_mp.c   | 23 +++++++++++++----------
- drivers/clk/sunxi-ng/ccu_nkm.c  |  4 ++--
- drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++-----------
- drivers/clk/sunxi-ng/ccu_nm.c   | 16 ++++++++++------
- 5 files changed, 52 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index a5c9eaf90e84..ea693d00be81 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -23,6 +23,8 @@ struct _ccu_div {
- 	u8			shift;
- 	u8			width;
- 
-+	u32			max;
-+
- 	u32			flags;
- 
- 	struct clk_div_table	*table;
-@@ -36,14 +38,25 @@ struct _ccu_div {
- 		.table	= _table,					\
- 	}
- 
--#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
--	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, _flags)
--
- #define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)			\
- 	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
- 
-+#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags) \
-+	{								\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.flags	= _flags,					\
-+		.max	= _max,						\
-+	}
-+
-+#define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
-+	_SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, 0, _flags)
-+
-+#define _SUNXI_CCU_DIV_MAX(_shift, _width, _max)			\
-+	_SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, 0)
-+
- #define _SUNXI_CCU_DIV(_shift, _width)					\
--	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, NULL, 0)
-+	_SUNXI_CCU_DIV_FLAGS(_shift, _width, 0)
- 
- struct ccu_div {
- 	u32			enable;
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-index cbf33ef5faa9..ebb1b31568a5 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.c
-+++ b/drivers/clk/sunxi-ng/ccu_mp.c
-@@ -21,9 +21,9 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
- 	unsigned int best_m = 0, best_p = 0;
- 	unsigned int _m, _p;
- 
--	for (_p = 0; _p <= max_p; _p++) {
-+	for (_p = 1; _p <= max_p; _p <<= 1) {
- 		for (_m = 1; _m <= max_m; _m++) {
--			unsigned long tmp_rate = (parent >> _p) / _m;
-+			unsigned long tmp_rate = parent / _p / _m;
- 
- 			if (tmp_rate > rate)
- 				continue;
-@@ -46,13 +46,15 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
- 				       void *data)
- {
- 	struct ccu_mp *cmp = data;
-+	unsigned int max_m, max_p;
- 	unsigned int m, p;
- 
--	ccu_mp_find_best(parent_rate, rate,
--			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
--			 &m, &p);
-+	max_m = cmp->m.max ?: 1 << cmp->m.width;
-+	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
- 
--	return (parent_rate >> p) / m;
-+	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
-+
-+	return parent_rate / p / m;
- }
- 
- static void ccu_mp_disable(struct clk_hw *hw)
-@@ -108,13 +110,14 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
- 	unsigned long flags;
-+	unsigned int max_m, max_p;
- 	unsigned int m, p;
- 	u32 reg;
- 
--	ccu_mp_find_best(parent_rate, rate,
--			 1 << cmp->m.width, (1 << cmp->p.width) - 1,
--			 &m, &p);
-+	max_m = cmp->m.max ?: 1 << cmp->m.width;
-+	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
- 
-+	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
- 
- 	spin_lock_irqsave(cmp->common.lock, flags);
- 
-@@ -122,7 +125,7 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
- 	reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
- 
--	writel(reg | (p << cmp->p.shift) | ((m - 1) << cmp->m.shift),
-+	writel(reg | (ilog2(p) << cmp->p.shift) | ((m - 1) << cmp->m.shift),
- 	       cmp->common.base + cmp->common.reg);
- 
- 	spin_unlock_irqrestore(cmp->common.lock, flags);
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 182452919ede..059fdc3b4f96 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -103,7 +103,7 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 
- 	_nkm.max_n = 1 << nkm->n.width;
- 	_nkm.max_k = 1 << nkm->k.width;
--	_nkm.max_m = 1 << nkm->m.width;
-+	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
- 
- 	ccu_nkm_find_best(parent_rate, rate, &_nkm);
- 
-@@ -129,7 +129,7 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	_nkm.max_n = 1 << nkm->n.width;
- 	_nkm.max_k = 1 << nkm->k.width;
--	_nkm.max_m = 1 << nkm->m.width;
-+	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
- 
- 	ccu_nkm_find_best(parent_rate, rate, &_nkm);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 9f2b98e19dc9..9769dee99511 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -29,14 +29,14 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
- 	unsigned long _n, _k, _m, _p;
- 
- 	for (_k = 1; _k <= nkmp->max_k; _k++) {
--		for (_p = 0; _p <= nkmp->max_p; _p++) {
-+		for (_p = 1; _p <= nkmp->max_p; _p <<= 1) {
- 			unsigned long tmp_rate;
- 
--			rational_best_approximation(rate / _k, parent >> _p,
-+			rational_best_approximation(rate / _k, parent / _p,
- 						    nkmp->max_n, nkmp->max_m,
- 						    &_n, &_m);
- 
--			tmp_rate = (parent * _n * _k >> _p) / _m;
-+			tmp_rate = parent * _n * _k / (_m * _p);
- 
- 			if (tmp_rate > rate)
- 				continue;
-@@ -110,13 +110,12 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	_nkmp.max_n = 1 << nkmp->n.width;
- 	_nkmp.max_k = 1 << nkmp->k.width;
--	_nkmp.max_m = 1 << nkmp->m.width;
--	_nkmp.max_p = (1 << nkmp->p.width) - 1;
-+	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
-+	_nkmp.max_p = nkmp->p.max ?: 1 << ((1 << nkmp->p.width) - 1);
- 
--	ccu_nkmp_find_best(*parent_rate, rate,
--			   &_nkmp);
-+	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
- 
--	return (*parent_rate * _nkmp.n * _nkmp.k >> _nkmp.p) / _nkmp.m;
-+	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
- }
- 
- static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -129,8 +128,8 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	_nkmp.max_n = 1 << nkmp->n.width;
- 	_nkmp.max_k = 1 << nkmp->k.width;
--	_nkmp.max_m = 1 << nkmp->m.width;
--	_nkmp.max_p = (1 << nkmp->p.width) - 1;
-+	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
-+	_nkmp.max_p = nkmp->p.max ?: 1 << ((1 << nkmp->p.width) - 1);
- 
- 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
- 
-@@ -145,7 +144,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	reg |= (_nkmp.n - 1) << nkmp->n.shift;
- 	reg |= (_nkmp.k - 1) << nkmp->k.shift;
- 	reg |= (_nkmp.m - 1) << nkmp->m.shift;
--	reg |= _nkmp.p << nkmp->p.shift;
-+	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
- 
- 	writel(reg, nkmp->common.base + nkmp->common.reg);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index e35ddd8eec8b..b61bdd8c7a7f 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -61,11 +61,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long *parent_rate)
- {
- 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
-+	unsigned long max_n, max_m;
- 	unsigned long n, m;
- 
--	rational_best_approximation(rate, *parent_rate,
--				    1 << nm->n.width, 1 << nm->m.width,
--				    &n, &m);
-+	max_n = 1 << nm->n.width;
-+	max_m = nm->m.max ?: 1 << nm->m.width;
-+
-+	rational_best_approximation(rate, *parent_rate, max_n, max_m, &n, &m);
- 
- 	return *parent_rate * n / m;
- }
-@@ -75,6 +77,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
- 	unsigned long flags;
-+	unsigned long max_n, max_m;
- 	unsigned long n, m;
- 	u32 reg;
- 
-@@ -83,9 +86,10 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		ccu_frac_helper_disable(&nm->common, &nm->frac);
- 
--	rational_best_approximation(rate, parent_rate,
--				    1 << nm->n.width, 1 << nm->m.width,
--				    &n, &m);
-+	max_n = 1 << nm->n.width;
-+	max_m = nm->m.max ?: 1 << nm->m.width;
-+
-+	rational_best_approximation(rate, parent_rate, max_n, max_m, &n, &m);
- 
- 	spin_lock_irqsave(nm->common.lock, flags);
- 
--- 
-2.9.3
+PtCh0YDQtdC00LAsIDIxINGB0LXQvdGC0Y/QsdGA0Y8gMjAxNiwgOTo1NyArMDM6MDAg0L7RgiBZ
+YW5nYm8gTHUgPHlhbmdiby5sdUBueHAuY29tPjoKPgo+RnJvbTogQXJuZCBCZXJnbWFubiA8IGFy
+bmRAYXJuZGIuZGUgPgo+Cj5XZSBrZWVwIHJ1bm5pbmcgaW50byBjYXNlcyB3aGVyZSBkZXZpY2Ug
+ZHJpdmVycyB3YW50IHRvIGtub3cgdGhlIGV4YWN0Cj52ZXJzaW9uIG9mIHRoZSBhIFNvQyB0aGV5
+IGFyZSBjdXJyZW50bHkgcnVubmluZyBvbi4gSW4gdGhlIHBhc3QsIHRoaXMgaGFzCj51c3VhbGx5
+IGJlZW4gZG9uZSB0aHJvdWdoIGEgdmVuZG9yIHNwZWNpZmljIEFQSSB0aGF0IGNhbiBiZSBjYWxs
+ZWQgYnkgYQo+ZHJpdmVyLCBvciBieSBkaXJlY3RseSBhY2Nlc3Npbmcgc29tZSBraW5kIG9mIHZl
+cnNpb24gcmVnaXN0ZXIgdGhhdCBpcwo+bm90IHBhcnQgb2YgdGhlIGRldmljZSBpdHNlbGYgYnV0
+IHRoYXQgYmVsb25ncyB0byBhIGdsb2JhbCByZWdpc3RlciBhcmVhCj5vZiB0aGUgY2hpcC4KLi4u
+Cj4rY29uc3Qgc3RydWN0IHNvY19kZXZpY2VfYXR0cmlidXRlICpzb2NfZGV2aWNlX21hdGNoKAo+
+K2NvbnN0IHN0cnVjdCBzb2NfZGV2aWNlX2F0dHJpYnV0ZSAqbWF0Y2hlcykKPit7Cj4raW50IHJl
+dCA9IDA7Cj4rCj4raWYgKCFtYXRjaGVzKQo+K3JldHVybiBOVUxMOwo+Kwo+K3doaWxlICghcmV0
+KSB7Cj4raWYgKCEobWF0Y2hlcy0+bWFjaGluZSB8fCBtYXRjaGVzLT5mYW1pbHkgfHwKPisgICAg
+ICBtYXRjaGVzLT5yZXZpc2lvbiB8fCBtYXRjaGVzLT5zb2NfaWQpKQo+K2JyZWFrOwo+K3JldCA9
+IGJ1c19mb3JfZWFjaF9kZXYoJnNvY19idXNfdHlwZSwgTlVMTCwgKHZvaWQgKiltYXRjaGVzLAo+
+KyAgICAgICBzb2NfZGV2aWNlX21hdGNoX29uZSk7Cj4raWYgKCFyZXQpCj4rbWF0Y2hlcysrOwoK
+U28sIHdoYXQgaGFwcGVuIGlmIG5leHQgIm1hdGNoZXMiIChhZnRlciBpbmNyZW1lbnQpIHdpbGwg
+YmUgTlVMTD8KCkkgdGhpbmsgeW91IHNob3VsZCB1c2Ugd2hpbGUobWF0Y2hlcykgYXQgdGhlIHN0
+YXJ0IG9mIHRoaXMgcHJvY2VkdXJlLgoKLS0tCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
+cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
