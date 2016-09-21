@@ -1,65 +1,32 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Russell King <linux@armlinux.org.uk>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Sep 2016 17:04:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2] clkdev: Detect errors in clk_hw_register_clkdev() for mass registration
-Date: Wed, 21 Sep 2016 15:12:34 +0200
-Message-Id: <1474463554-25295-1-git-send-email-geert@linux-m68k.org>
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] clk: at91: Add sama5d4 sckc support
+Message-ID: <20160921000420.GI8319@codeaurora.org>
+References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+ <20160920205833.19638-3-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160920205833.19638-3-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Unlike clk_register_clkdev(), clk_hw_register_clkdev() doesn't check for
-passed error objects from a previous registration call. Hence the caller
-of clk_hw_register_*() had to check for errors before calling
-clk_hw_register_clkdev*().
+On 09/20, Alexandre Belloni wrote:
+> Starting with sama5d4, the crystal oscillator is always enabled at startup
+> and the SCKC doesn't have an OSC32EN bit anymore.
+> 
+> Add support for that new controller.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-Make clk_hw_register_clkdev() more similar to clk_register_clkdev() by
-adding this error check, removing the burden from callers that do mass
-registration.
+Applied to clk-next
 
-Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
-Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-v2:
-  - Correct wrong function references
-    s/clkdev_{,hw_}create/clk_{,hw_}register_clkdev/
-
-Note that in the mean time more clk_hw conversions not checking for
-errors have been posted, leading to crashes in error paths, so it would
-be good to have this check in the core.
----
- drivers/clk/clkdev.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 97ae60fa15849954..bb8a77a5985f8627 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -448,12 +448,20 @@ EXPORT_SYMBOL(clk_register_clkdev);
-  *
-  * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-  * clkdev.
-+ *
-+ * To make things easier for mass registration, we detect error clk_hws
-+ * from a previous clk_hw_register_*() call, and return the error code for
-+ * those.  This is to permit this function to be called immediately
-+ * after clk_hw_register_*().
-  */
- int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
- 	const char *dev_id)
- {
- 	struct clk_lookup *cl;
- 
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
- 	/*
- 	 * Since dev_id can be NULL, and NULL is handled specially, we must
- 	 * pass it as either a NULL format string, or with "%s".
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
