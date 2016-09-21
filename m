@@ -1,54 +1,85 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 19 Sep 2016 07:58:02 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] ARM: imx31/of: clk: init clock controller with
- CLK_OF_DECLARE
-Message-ID: <20160919055802.dkf2rxcou44kbya5@pengutronix.de>
-References: <1474252939-12579-1-git-send-email-vz@mleia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v12, 2/8] ARM64: dts: ls2080a: add device configuration node
+Date: Wed, 21 Sep 2016 14:57:14 +0800
+Message-ID: <1474441040-11946-3-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1474252939-12579-1-git-send-email-vz@mleia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+ Minghuan Lian <minghuan.lian@nxp.com>, linux-i2c@vger.kernel.org,
+ linux-clk@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>,
+ Russell King <linux@arm.linux.org.uk>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
+ Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
+ Yangbo Lu <yangbo.lu@nxp.com>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
-On Mon, Sep 19, 2016 at 05:42:17AM +0300, Vladimir Zapolskiy wrote:
-> The change is based on v4.8.0-rc1 and plus it depends on this fixup:
-> 
->   ARM: dts: imx31: fix clock control module interrupts description
-> 
-> The change is tested on qemu kzm target and mx31lite board, while both
-> targets don't have DTS in upstream, I had to write simple DTS files for
-> them, because the proposed change is for i.MX31 targets with OF support.
-> 
-> The second change in the series compilation time dependent on the first
-> one, while the first change apparently should break runtime execution
-> of i.MX31 boards with OF support, if both changes are applied everything
-> should be fine, regression testing on the same legacy targets does not
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- None
+Changes for v12:
+	- None
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-that means this should be done in a single patch.
-
-> show any problems. Moreover i.MX31/OF/clock initialization seems to be
-> broken currently, if the change is not applied I can not get a working
-> clock source during early boot stage, jiffies are not incremented, but
-> because I didn't check the problem thoroughly (can it be caused by
-> missing CLK_OF_DECLARE? Or caused by something fixed by the change
-> http://www.spinics.net/lists/linux-clk/msg12235.html ?) and because
-> the change was tested against code which is not found in upstream,
-> I won't call this change as a fix, however its application is apparently
-> wanted to get better OF support for i.MX31 targets.
-
-Very appreciated!
-
-Best regards
-Uwe
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index e3b6034..f231a14 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -215,6 +215,12 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
