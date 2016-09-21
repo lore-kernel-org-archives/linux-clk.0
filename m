@@ -1,57 +1,90 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v3 10/11] clk: Add clk_hw_get_clk() helper API to be used by clk providers
-Date: Thu, 29 Sep 2016 14:05:51 +0530
-Message-Id: <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Wed, 21 Sep 2016 10:03:10 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] clk: at91: move slow clock controller clocks to
+ sckc.c
+Message-ID: <20160921080310.szxig3mzebq2oseo@piout.net>
+References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+ <20160920205833.19638-2-alexandre.belloni@free-electrons.com>
+ <20160921000211.GH8319@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160921000211.GH8319@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a helper API that will allow clk providers to turn their clk_hw
-structures into struct clk pointer.
+On 20/09/2016 at 17:02:11 -0700, Stephen Boyd wrote :
+> On 09/20, Alexandre Belloni wrote:
+> > Move all clocks related to the slow clock controller to sckc.c. This avoids
+> > extern definitions and allows to remove sckc.h
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > ---
+> 
+> Applied to clk-next
+> 
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/clk.c            | 6 ++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 7 insertions(+)
+Thanks for the fix!
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939..a084132 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -186,6 +186,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_name);
- 
-+struct clk *clk_hw_get_clk(const struct clk_hw *hw)
-+{
-+	return hw->clk;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_clk);
-+
- struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return !clk ? NULL : clk->core->hw;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a39c0c5..77d05f1 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -729,6 +729,7 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
-+struct clk *clk_hw_get_clk(const struct clk_hw *hw);
- struct clk_hw *__clk_get_hw(struct clk *clk);
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+> drivers/clk/at91/sckc.c:146:13:
+> warning: symbol 'of_at91sam9x5_clk_slow_osc_setup' was not
+> declared. Should it be static?
+> drivers/clk/at91/sckc.c:260:13:
+> warning: symbol 'of_at91sam9x5_clk_slow_rc_osc_setup' was not
+> declared. Should it be static?
+> drivers/clk/at91/sckc.c:359:13:
+> warning: symbol 'of_at91sam9x5_clk_slow_setup' was not declared.
+> Should it be static?
+> 
+> ----8<----
+> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+> index f6ed711af738..311956abf4aa 100644
+> --- a/drivers/clk/at91/sckc.c
+> +++ b/drivers/clk/at91/sckc.c
+> @@ -143,8 +143,8 @@ at91_clk_register_slow_osc(void __iomem *sckcr,
+>  	return hw;
+>  }
+>  
+> -void __init of_at91sam9x5_clk_slow_osc_setup(struct device_node *np,
+> -					     void __iomem *sckcr)
+> +static void __init
+> +of_at91sam9x5_clk_slow_osc_setup(struct device_node *np, void __iomem *sckcr)
+>  {
+>  	struct clk_hw *hw;
+>  	const char *parent_name;
+> @@ -257,8 +257,8 @@ at91_clk_register_slow_rc_osc(void __iomem *sckcr,
+>  	return hw;
+>  }
+>  
+> -void __init of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np,
+> -						void __iomem *sckcr)
+> +static void __init
+> +of_at91sam9x5_clk_slow_rc_osc_setup(struct device_node *np, void __iomem *sckcr)
+>  {
+>  	struct clk_hw *hw;
+>  	u32 frequency = 0;
+> @@ -356,8 +356,8 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+>  	return hw;
+>  }
+>  
+> -void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
+> -					 void __iomem *sckcr)
+> +static void __init
+> +of_at91sam9x5_clk_slow_setup(struct device_node *np, void __iomem *sckcr)
+>  {
+>  	struct clk_hw *hw;
+>  	const char *parent_names[2];
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
