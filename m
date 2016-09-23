@@ -1,87 +1,73 @@
-Return-Path: <mars.cheng@mediatek.com>
-Message-ID: <1473343735.1896.15.camel@mtkswgap22>
-Subject: Re: [PATCH 1/4] Document: DT: Add bindings for mediatek MT6797 SoC
- Platform
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Erin Lo <erin.lo@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>,
-	<linux-clk@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Choui
-	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Scott Shu
-	<scott.shu@mediatek.com>, Jades Shih <jades.shih@mediatek.com>, "Yingjoe
- Chen" <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Date: Thu, 8 Sep 2016 22:08:55 +0800
-In-Reply-To: <57D15B6C.6080305@arm.com>
-References: <1473331794-27542-1-git-send-email-mars.cheng@mediatek.com>
-	 <1473331794-27542-2-git-send-email-mars.cheng@mediatek.com>
-	 <57D15B6C.6080305@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 3/3] clk: keystone: Add sci-clk driver support
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1472733635-22661-1-git-send-email-t-kristo@ti.com>
+ <1472733635-22661-4-git-send-email-t-kristo@ti.com>
+ <20160902233235.GM12510@codeaurora.org>
+ <827e0a46-3771-67a8-1414-0cbaf0e2548e@ti.com>
+ <20160916230101.GM7243@codeaurora.org>
+CC: <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <ssantosh@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <nm@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <9f71ab9b-7aed-ae6f-c057-ed3da0bd5200@ti.com>
+Date: Fri, 23 Sep 2016 11:06:04 +0300
 MIME-Version: 1.0
-Return-Path: mars.cheng@mediatek.com
+In-Reply-To: <20160916230101.GM7243@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marc
+On 17/09/16 02:01, Stephen Boyd wrote:
+> On 09/05, Tero Kristo wrote:
+>> On 03/09/16 02:32, Stephen Boyd wrote:
+>>> I still don't get it. We should be registering hw pointers in
+>>> probe and handing them out in the xlate function. Not register
+>>> hws in the xlate function and then handing them out as well. I
+>>> haven't reviewed anything else in this patch.
+>>
+>> Ok, let me try to explain the functionality.
+>>
+>> Probe time hw pointer registration is only needed for special clocks
+>> that require extra flags, like adding the spread spectrum flag.
+>> There is ever going to be only handful of these.
+>>
+>> Xlate checks out the sci_clk list, and picks up an existing hw clock
+>> if it is there. If not, it will create a new one. The reason this is
+>> done like this, the device IDs / clock IDs don't mean anything to
+>> the driver itself, the driver just passes these forward to the
+>> underlying SCI fwk. And, we don't have inherent knowledge of valid
+>> device / clock IDs either, the SCI fwk returns a failure if a
+>> specific clock ID is bad. The device / clock IDs are going to be
+>> different between different generations of SoC also, and in addition
+>> there can be holes in the ID ranges.
+>
+> Ok. Thanks for the explanation.
+>
+> I understand the desire to make this SoC agnostic and consumer/dt
+> driven. Constructor pattern and all. Unfortunately the OF clk
+> provider is a getter pattern; not a constructor pattern. I'm
+> seriously concerned about the locking here because we're in the
+> framework creating a clk and tying it into a consumer list which
+> could cause all sorts of problems if we want to reenter the
+> framework and register more clks. Recursion abounds and my head
+> explodes! The recursive clk prepare mutex is not something anyone
+> should be thrilled about keeping around.
+>
+> So, just don't do this. Instead, register the clks during probe
+> that exist for the firmware. That list could be discoverable with
+> firmware calls, or known based on different compatible strings
+> from DT that have the soc name in it, or something else. Even
+> scanning the entire DT tree for
+>
+> 	clocks = <&my_clk_node x y>
+> 	
+> would be better, but probably hugely inefficient and outright
+> buggy with DT overlays so don't do it. If the firmware can't tell
+> us what clks are there, just have a table based on compatible
+> string and be done.
 
-Thanks for your review. the response inlined.
+Ok, I will add a static mapping of valid clock IDs within the driver and 
+init all of these during probe. I have a working solution for this 
+already, but will post it out only once 4.9-rc1 is out.
 
-On Thu, 2016-09-08 at 13:37 +0100, Marc Zyngier wrote:
-> On 08/09/16 11:49, Mars Cheng wrote:
-> > This adds DT binding documentation for Mediatek MT6797.
-> > 
-> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> > ---
-[...]
-> 
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> > index 9d1d72c..3d97eb4 100644
-> > --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> > @@ -8,6 +8,7 @@ Required properties:
-> >  	"mediatek,mt8173-sysirq"
-> >  	"mediatek,mt8135-sysirq"
-> >  	"mediatek,mt8127-sysirq"
-> > +	"mediatek,mt6797-sysirq"
-> >  	"mediatek,mt6795-sysirq"
-> >  	"mediatek,mt6755-sysirq"
-> >  	"mediatek,mt6592-sysirq"
-> > @@ -21,7 +22,8 @@ Required properties:
-> >  - interrupt-parent: phandle of irq parent for sysirq. The parent must
-> >    use the same interrupt-cells format as GIC.
-> >  - reg: Physical base address of the intpol registers and length of memory
-> > -  mapped region.
-> > +  mapped region. Could be up to 2 registers here at max. Ex: 6797 needs 2 reg,
-> > +  others need 1.
-> 
-> Two things:
-> 
-> - Please make this a separate patch that can be reviewed independently
-> of the rest of the changes, which are just adding new compatible
-> identifiers.
-
-Will fix this in the next patch set.
-
-> 
-> - Why can't you simply expose it as a separate controller? Looking at
-> the way you're changing the corresponding driver, it looks like you're
-> simply adding an extra base/size. If you simply had a base for the
-> corresponding GIC interrupts, you could handle as many region as you
-> want, and have a more generic driver.
-> 
-
-May I know the meaning of "simply expose it as a separate controller"?
-Or you might like to suggest me any similar driver as a reference? I
-will examine it. Current design is based on the fact: We expect
-irq-mtk-sysirq needs the optional second base but the third one will not
-happen.
-
-If we really need more than 2 bases, we can figure out a more generic
-driver at the time, right?
-
-Thanks.
-> Thanks,
-> 
-> 	M.
+-Tero
