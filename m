@@ -1,159 +1,63 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 2/5] clk: at91: Add sama5d4 sckc support
-Date: Tue, 20 Sep 2016 22:58:30 +0200
-Message-Id: <20160920205833.19638-3-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
-References: <20160920205833.19638-1-alexandre.belloni@free-electrons.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] clk: renesas: cpg-mssr: Always use readl()/writel()
+Date: Fri, 23 Sep 2016 10:32:31 +0200
+Message-Id: <1474619552-29703-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
+References: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Starting with sama5d4, the crystal oscillator is always enabled at startup
-and the SCKC doesn't have an OSC32EN bit anymore.
+The Renesas CPG/MSSR driver core uses a mix of clk_readl()/clk_writel()
+and readl()/writel() to access the clock registers. Settle on the
+generic readl()/writel().
 
-Add support for that new controller.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/clock/at91-clock.txt       |   3 +-
- drivers/clk/at91/sckc.c                            | 100 +++++++++++++++++++++
- 2 files changed, 102 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-index 181bc8ac4e3a..5f3ad65daf69 100644
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-@@ -6,7 +6,8 @@ This binding uses the common clock binding[1].
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index e1365e7491ae02a0..a1d5b7431ec479b5 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -146,12 +146,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		enable ? "ON" : "OFF");
+ 	spin_lock_irqsave(&priv->mstp_lock, flags);
  
- Required properties:
- - compatible : shall be one of the following:
--	"atmel,at91sam9x5-sckc":
-+	"atmel,at91sam9x5-sckc" or
-+	"atmel,sama5d4-sckc":
- 		at91 SCKC (Slow Clock Controller)
- 		This node contains the slow clock definitions.
+-	value = clk_readl(priv->base + SMSTPCR(reg));
++	value = readl(priv->base + SMSTPCR(reg));
+ 	if (enable)
+ 		value &= ~bitmask;
+ 	else
+ 		value |= bitmask;
+-	clk_writel(value, priv->base + SMSTPCR(reg));
++	writel(value, priv->base + SMSTPCR(reg));
  
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index f6ed711af738..60d8225715a2 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -36,6 +36,15 @@ struct clk_slow_osc {
+ 	spin_unlock_irqrestore(&priv->mstp_lock, flags);
  
- #define to_clk_slow_osc(hw) container_of(hw, struct clk_slow_osc, hw)
+@@ -159,8 +159,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		return 0;
  
-+struct clk_sama5d4_slow_osc {
-+	struct clk_hw hw;
-+	void __iomem *sckcr;
-+	unsigned long startup_usec;
-+	bool prepared;
-+};
-+
-+#define to_clk_sama5d4_slow_osc(hw) container_of(hw, struct clk_sama5d4_slow_osc, hw)
-+
- struct clk_slow_rc_osc {
- 	struct clk_hw hw;
- 	void __iomem *sckcr;
-@@ -417,3 +426,94 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
+ 	for (i = 1000; i > 0; --i) {
+-		if (!(clk_readl(priv->base + MSTPSR(reg)) &
+-		      bitmask))
++		if (!(readl(priv->base + MSTPSR(reg)) & bitmask))
+ 			break;
+ 		cpu_relax();
+ 	}
+@@ -190,7 +189,7 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+ 	struct cpg_mssr_priv *priv = clock->priv;
+ 	u32 value;
+ 
+-	value = clk_readl(priv->base + MSTPSR(clock->index / 32));
++	value = readl(priv->base + MSTPSR(clock->index / 32));
+ 
+ 	return !(value & BIT(clock->index % 32));
  }
- CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
- 	       of_at91sam9x5_sckc_setup);
-+
-+static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
-+{
-+	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
-+
-+	if (osc->prepared)
-+		return 0;
-+
-+	/*
-+	 * Assume that if it has already been selected (for example by the
-+	 * bootloader), enough time has aready passed.
-+	 */
-+	if ((readl(osc->sckcr) & AT91_SCKC_OSCSEL)) {
-+		osc->prepared = true;
-+		return 0;
-+	}
-+
-+	usleep_range(osc->startup_usec, osc->startup_usec + 1);
-+	osc->prepared = true;
-+
-+	return 0;
-+}
-+
-+static int clk_sama5d4_slow_osc_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
-+
-+	return osc->prepared;
-+}
-+
-+static const struct clk_ops sama5d4_slow_osc_ops = {
-+	.prepare = clk_sama5d4_slow_osc_prepare,
-+	.is_prepared = clk_sama5d4_slow_osc_is_prepared,
-+};
-+
-+static void __init of_sama5d4_sckc_setup(struct device_node *np)
-+{
-+	void __iomem *regbase = of_iomap(np, 0);
-+	struct clk_hw *hw;
-+	struct clk_sama5d4_slow_osc *osc;
-+	struct clk_init_data init;
-+	const char *xtal_name;
-+	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
-+	bool bypass;
-+	int ret;
-+
-+	if (!regbase)
-+		return;
-+
-+	hw = clk_hw_register_fixed_rate_with_accuracy(NULL, parent_names[0],
-+						      NULL, 0, 32768,
-+						      250000000);
-+	if (IS_ERR(hw))
-+		return;
-+
-+	xtal_name = of_clk_get_parent_name(np, 0);
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+
-+	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
-+	if (!osc)
-+		return;
-+
-+	init.name = parent_names[1];
-+	init.ops = &sama5d4_slow_osc_ops;
-+	init.parent_names = &xtal_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_IGNORE_UNUSED;
-+
-+	osc->hw.init = &init;
-+	osc->sckcr = regbase;
-+	osc->startup_usec = 1200000;
-+
-+	if (bypass)
-+		writel((readl(regbase) | AT91_SCKC_OSC32BYP), regbase);
-+
-+	hw = &osc->hw;
-+	ret = clk_hw_register(NULL, &osc->hw);
-+	if (ret) {
-+		kfree(osc);
-+		return;
-+	}
-+
-+	hw = at91_clk_register_sam9x5_slow(regbase, "slowck", parent_names, 2);
-+	if (IS_ERR(hw))
-+		return;
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
-+}
-+CLK_OF_DECLARE(sama5d4_clk_sckc, "atmel,sama5d4-sckc",
-+	       of_sama5d4_sckc_setup);
 -- 
-2.9.3
+1.9.1
