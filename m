@@ -1,40 +1,40 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 23 Sep 2016 14:43:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jun Nie <jun.nie@linaro.org>, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: mvebu: armada-37xx-periph: Fix the clock gate flag
-Date: Fri, 30 Sep 2016 10:33:59 +0200
-Message-Id: <20160930083359.14943-1-gregory.clement@free-electrons.com>
+Subject: Re: [PATCH] clk: zx296718: register driver earlier with core_initcall
+Message-ID: <20160923214351.GB21232@codeaurora.org>
+References: <1474595108-15790-1-git-send-email-shawn.guo@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474595108-15790-1-git-send-email-shawn.guo@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-For the gate part of the peripheral clock setting the bit disables the
-clock and clearing it enables the clock. This is not the default behavior
-of clk_gate component, so we need to use the CLK_GATE_SET_TO_DISABLE flag.
+On 09/23, Shawn Guo wrote:
+> Clock driver should be registered with an earlier initcall than
+> module_init which is used by most of client device drivers.  Otherwise,
+> probing of these client drivers will likely be deferred due to that
+> calls into clk API will return -EPROBE_DEFER.
+> 
+> Deferred probing is not a problem for most subsystems, but could bring
+> some side effect for particular subsystem, like display.  On ZX296718
+> platform, we get Linux logo and boot log lost from display device, just
+> because the DRM/KMS driver gets -EPROBE_DEFER from devm_clk_get() call.
+> 
+> Let's use core_initcall (qcom and a few other clk drivers use that) for
+> driver registration to avoid those unnecessary -EPROBE_DEFER and get rid
+> of the side effect with ZX296718 display system.
+> 
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/armada-37xx-periph.c | 1 +
- 1 file changed, 1 insertion(+)
+Not the ideal solution but it'll do for now.
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index d5dfbad4ceab..cecb0fdfaef6 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -329,6 +329,7 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
- 		gate->lock = lock;
- 		gate_ops = gate_hw->init->ops;
- 		gate->reg = reg + (u64)gate->reg;
-+		gate->flags = CLK_GATE_SET_TO_DISABLE;
- 	}
- 
- 	if (data->rate_hw) {
+Applied to clk-next
+
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
