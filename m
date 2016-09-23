@@ -1,41 +1,76 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 5/5] clk: at91: sckc: optimize boot time
-Date: Thu,  8 Sep 2016 13:57:23 +0200
-Message-Id: <20160908115723.11878-6-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20160908115723.11878-1-alexandre.belloni@free-electrons.com>
-References: <20160908115723.11878-1-alexandre.belloni@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 23 Sep 2016 12:47:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yanhaifeng@hisilicon.com,
+	gaofei@hisilicon.com, hermit.wangheming@hisilicon.com,
+	scott.bambrough@linaro.org, mark.gregotski@linaro.org
+Subject: Re: [PATCH v2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
+Message-ID: <20160923174704.GA32729@rob-hp-laptop>
+References: <1474183821-7570-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474183821-7570-1-git-send-email-xuejiancheng@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Assume that if the oscillator is enabled (OSC32EN bit is present), the
-delay has already elapsed as the bootloader probably waited for the
-oscillator to settle. This could waste up to 1.2s.
+On Sun, Sep 18, 2016 at 03:30:21PM +0800, Jiancheng Xue wrote:
+> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
+> Generator) module generates clock and reset signals used
+> by other module blocks on SoC.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> ---
+> change log
+> v2:
+> - Fixed compiling error when compiled as a module.
+> - Fixed issues pointed by Stephen Boyd.
+> - Added prefix HISTB for clock index macro definitions.
+> 
+>  .../clock/{hi3519-crg.txt => hisi-crg.txt}         |  11 +-
+>  drivers/clk/hisilicon/Kconfig                      |   8 +
+>  drivers/clk/hisilicon/Makefile                     |   1 +
+>  drivers/clk/hisilicon/crg-hi3798cv200.c            | 305 +++++++++++++++++++++
+>  drivers/clk/hisilicon/crg.h                        |  34 +++
+>  include/dt-bindings/clock/histb-clock.h            |  64 +++++
+>  6 files changed, 419 insertions(+), 4 deletions(-)
+>  rename Documentation/devicetree/bindings/clock/{hi3519-crg.txt => hisi-crg.txt} (82%)
+>  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
+>  create mode 100644 drivers/clk/hisilicon/crg.h
+>  create mode 100644 include/dt-bindings/clock/histb-clock.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+> similarity index 82%
+> rename from Documentation/devicetree/bindings/clock/hi3519-crg.txt
+> rename to Documentation/devicetree/bindings/clock/hisi-crg.txt
+> index acd1f23..e3919b6 100644
+> --- a/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+> @@ -1,7 +1,7 @@
+> -* Hisilicon Hi3519 Clock and Reset Generator(CRG)
+> +* HiSilicon Clock and Reset Generator(CRG)
+>  
+> -The Hi3519 CRG module provides clock and reset signals to various
+> -controllers within the SoC.
+> +The CRG module provides clock and reset signals to various
+> +modules within the SoC.
+>  
+>  This binding uses the following bindings:
+>      Documentation/devicetree/bindings/clock/clock-bindings.txt
+> @@ -10,7 +10,10 @@ This binding uses the following bindings:
+>  Required Properties:
+>  
+>  - compatible: should be one of the following.
+> -  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
+> +  - "hisilicon,hi3516cv300-crg"
+> +  - "hisilicon,hi3519-crg"
+> +  - "hisilicon,hi3798cv200-crg"
+> +  - "hisilicon,hi3798cv200-sysctrl"
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/sckc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why crg and sysctrl?
 
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index 88907c48092b..b0a41170309f 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -69,7 +69,7 @@ static int clk_slow_osc_prepare(struct clk_hw *hw)
- 	void __iomem *sckcr = osc->sckcr;
- 	u32 tmp = readl(sckcr);
- 
--	if (tmp & AT91_SCKC_OSC32BYP)
-+	if (tmp & (AT91_SCKC_OSC32BYP | AT91_SCKC_OSC32EN))
- 		return 0;
- 
- 	writel(tmp | AT91_SCKC_OSC32EN, sckcr);
--- 
-2.9.3
+>  
+>  - reg: physical base address of the controller and length of memory mapped
+>    region.
