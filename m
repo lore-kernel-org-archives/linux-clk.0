@@ -1,90 +1,63 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v13 4/4] arm: dts: mt2701: Use real clock for UARTs
-Date: Mon, 26 Sep 2016 17:26:31 +0800
-Message-ID: <1474881991-17429-5-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1474881991-17429-1-git-send-email-erin.lo@mediatek.com>
-References: <1474881991-17429-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 23 Sep 2016 15:06:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Gregory =?iso-8859-1?Q?Cl=E9ment?= <gregory.clement@free-electrons.com>,
+	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>,
+	Tomasz Nowicki <tn@semihalf.com>,
+	Grzegorz Jaszczyk <jaz@semihalf.com>
+Subject: Re: [PATCH v3 3/3] clk: mvebu: migrate CP110 system controller to
+ clk_hw API and registration
+Message-ID: <20160923220659.GL21232@codeaurora.org>
+References: <1474448759-24482-1-git-send-email-mw@semihalf.com>
+ <1474448759-24482-4-git-send-email-mw@semihalf.com>
+ <20160923214730.GF21232@codeaurora.org>
+ <CAPv3WKfDrtDDMPi4oBmpNN_+b4mvG6cVnZT7pNTo8tcNUyzwyA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAPv3WKfDrtDDMPi4oBmpNN_+b4mvG6cVnZT7pNTo8tcNUyzwyA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
+On 09/24, Marcin Wojtas wrote:
+> Hi Stephen,
+> 
+> 2016-09-23 23:47 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
+> > On 09/21, Marcin Wojtas wrote:
+> >> @@ -203,80 +202,75 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+> >>       if (ret)
+> >>               return ret;
+> >>
+> >> -     cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
+> >> -                               CP110_CLK_NUM, GFP_KERNEL);
+> >> -     if (!cp110_clks)
+> >> -             return -ENOMEM;
+> >> -
+> >> -     cp110_clk_data = devm_kzalloc(&pdev->dev,
+> >> -                                   sizeof(*cp110_clk_data),
+> >> +     cp110_clk_data = devm_kcalloc(&pdev->dev, sizeof(*cp110_clk_data),
+> >> +                                   sizeof(struct clk_hw *) * CP110_CLK_NUM,
+> >>                                     GFP_KERNEL);
+> >
+> > This doesn't look right. Why are calloc()ing clk_hw_onecell_data this
+> > way?
+> 
+> After some time, at a first sight it seems I should've used following:
+> cp110_clk_data = devm_kzalloc(&pdev->dev, sizeof(*cp110_clk_data) +
+>                                                     sizeof(struct
+> clk_hw *) * CP110_CLK_NUM,
+>                                                     GFP_KERNEL);
+> 
+> I'll re-check, but is that what you meant?
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Yes that looks better.
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index c9a8dbf..7eab6f4 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -73,12 +73,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -186,7 +180,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -195,7 +190,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -204,7 +200,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -213,7 +210,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
