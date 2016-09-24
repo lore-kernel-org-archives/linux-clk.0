@@ -1,121 +1,52 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: imx31: properly init clocks for machines with DT
-Date: Mon, 19 Sep 2016 05:42:19 +0300
-Message-Id: <1474252939-12579-3-git-send-email-vz@mleia.com>
-In-Reply-To: <1474252939-12579-1-git-send-email-vz@mleia.com>
-References: <1474252939-12579-1-git-send-email-vz@mleia.com>
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: boris.brezillon@free-electrons.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] clk: at91: Fix a return value in case of error
+Date: Sat, 24 Sep 2016 23:57:26 +0200
+Message-Id: <1474754246-27226-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-The change converts exported mx31_clocks_init_dt() into a static
-initialization function registered by CLK_OF_DECLARE().
+If 'clk_hw_register()' fails, it is likely that we expect to return an
+error instead of a valid pointer (which would mean success).
+'clk_hw_register()' returns a bool, so we don't have the detail of the
+error. Return -ENOMEM instead, as it seems to be the most common error
+returned by clk_register().
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
+and OF APIs")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/clk/imx/clk-imx31.c | 50 +++++++++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 24 deletions(-)
+It is likely that a bigger change is needed. For example using clk_register
+instead of clk_hw_register would return the error instead of a bool.
+We could then propagate this error to the caller without the need to choose
+an arbitrary error value.
 
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index 6a49ba2..cbce308 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -21,6 +21,7 @@
- #include <linux/io.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <soc/imx/revision.h>
- #include <soc/imx/timer.h>
- #include <asm/irq.h>
-@@ -72,14 +73,8 @@ static struct clk ** const uart_clks[] __initconst = {
- 	NULL
- };
- 
--static void __init _mx31_clocks_init(unsigned long fref)
-+static void __init _mx31_clocks_init(void __iomem *base, unsigned long fref)
- {
--	void __iomem *base;
--	struct device_node *np;
--
--	base = ioremap(MX31_CCM_BASE_ADDR, SZ_4K);
--	BUG_ON(!base);
--
- 	clk[dummy] = imx_clk_fixed("dummy", 0);
- 	clk[ckih] = imx_clk_fixed("ckih", fref);
- 	clk[ckil] = imx_clk_fixed("ckil", 32768);
-@@ -147,19 +142,17 @@ static void __init _mx31_clocks_init(unsigned long fref)
- 	clk_prepare_enable(clk[iim_gate]);
- 	mx31_revision();
- 	clk_disable_unprepare(clk[iim_gate]);
--
--	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
--
--	if (np) {
--		clk_data.clks = clk;
--		clk_data.clk_num = ARRAY_SIZE(clk);
--		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
--	}
- }
- 
- int __init mx31_clocks_init(unsigned long fref)
- {
--	_mx31_clocks_init(fref);
-+	void __iomem *base;
-+
-+	base = ioremap(MX31_CCM_BASE_ADDR, SZ_4K);
-+	if (!base)
-+		panic("%s: failed to map registers\n", __func__);
-+
-+	_mx31_clocks_init(base, fref);
- 
- 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
- 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
-@@ -222,22 +215,31 @@ int __init mx31_clocks_init(unsigned long fref)
- 	return 0;
- }
- 
--int __init mx31_clocks_init_dt(void)
-+static void __init mx31_clocks_init_dt(struct device_node *np)
- {
--	struct device_node *np;
-+	struct device_node *osc_np;
- 	u32 fref = 26000000; /* default */
-+	void __iomem *ccm;
- 
--	for_each_compatible_node(np, NULL, "fixed-clock") {
--		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
-+	for_each_compatible_node(osc_np, NULL, "fixed-clock") {
-+		if (!of_device_is_compatible(osc_np, "fsl,imx-osc26m"))
- 			continue;
- 
--		if (!of_property_read_u32(np, "clock-frequency", &fref)) {
--			of_node_put(np);
-+		if (!of_property_read_u32(osc_np, "clock-frequency", &fref)) {
-+			of_node_put(osc_np);
- 			break;
- 		}
+This proposal is un-compiled and un-tested.
+I get an error when I run 'make drivers/clk/at91/' which is likely due to
+my building environment. 
+---
+ drivers/clk/at91/clk-programmable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 190122e64a3a..2cf200e22d48 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -203,7 +203,7 @@ at91_clk_register_programmable(struct regmap *regmap,
+ 	ret = clk_hw_register(NULL, &prog->hw);
+ 	if (ret) {
+ 		kfree(prog);
+-		hw = &prog->hw;
++		hw = ERR_PTR(-ENOMEM);
  	}
  
--	_mx31_clocks_init(fref);
-+	ccm = of_iomap(np, 0);
-+	if (!ccm)
-+		panic("%s: failed to map registers\n", __func__);
- 
--	return 0;
-+	_mx31_clocks_init(ccm, fref);
-+
-+	clk_data.clks = clk;
-+	clk_data.clk_num = ARRAY_SIZE(clk);
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- }
-+
-+CLK_OF_DECLARE(imx31_ccm, "fsl,imx31-ccm", mx31_clocks_init_dt);
+ 	return hw;
 -- 
-2.8.1
+2.7.4
