@@ -1,71 +1,40 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:40357 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752381AbcIKI76 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Sep 2016 04:59:58 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ralf Baechle <ralf@linux-mips.org>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 1/2] watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
-Date: Sun, 11 Sep 2016 10:59:57 +0200
-Message-Id: <1473584398-12942-2-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
-References: <1473584398-12942-1-git-send-email-geert@linux-m68k.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:61602 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754313AbcIXJJj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Sep 2016 05:09:39 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Baoyou Xie <baoyou.xie@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xie.baoyou@zte.com.cn
+Subject: Re: [PATCH] clk: versatile: add missing header dependencies
+Date: Sat, 24 Sep 2016 11:09:17 +0200
+Message-ID: <2048131.z1JiX2E8WD@wuerfel>
+In-Reply-To: <1474691500-19793-1-git-send-email-baoyou.xie@linaro.org>
+References: <1474691500-19793-1-git-send-email-baoyou.xie@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-While the custom minimal TXx9 clock implementation doesn't need or use
-clock (un)prepare calls (they are dummies if !CONFIG_HAVE_CLK_PREPARE),
-they are mandatory when using the Common Clock Framework.
+On Saturday, September 24, 2016 12:31:40 PM CEST Baoyou Xie wrote:
+> We get 1 warning when building kernel with W=1:
+> drivers/clk/versatile/clk-realview.c:54:13: warning: no previous prototype for 'realview_clk_init' [-Wmissing-prototypes]
+> 
+> In fact, this function is declared in
+> include/linux/platform_data/clk-realview.h,
+> so this patch adds missing header dependencies.
+> 
+> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+> 
 
-Hence add them, to prepare for the advent of CCF.
+I think I commented on this one already: the only caller of the
+function is getting removed in v4.9, so we should remove the
+definition of the function subsequently in the next release.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-Tested on RBTX4927.
+We could in theory try to remove this at the same time, but
+the effort to synchronize the git trees is not worth the benefit.
 
-v2:
-  - Add Reviewed-by.
----
- drivers/watchdog/txx9wdt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/watchdog/txx9wdt.c b/drivers/watchdog/txx9wdt.c
-index c2da880292bc2f32..6f7a9deb27d05d25 100644
---- a/drivers/watchdog/txx9wdt.c
-+++ b/drivers/watchdog/txx9wdt.c
-@@ -112,7 +112,7 @@ static int __init txx9wdt_probe(struct platform_device *dev)
- 		txx9_imclk = NULL;
- 		goto exit;
- 	}
--	ret = clk_enable(txx9_imclk);
-+	ret = clk_prepare_enable(txx9_imclk);
- 	if (ret) {
- 		clk_put(txx9_imclk);
- 		txx9_imclk = NULL;
-@@ -144,7 +144,7 @@ static int __init txx9wdt_probe(struct platform_device *dev)
- 	return 0;
- exit:
- 	if (txx9_imclk) {
--		clk_disable(txx9_imclk);
-+		clk_disable_unprepare(txx9_imclk);
- 		clk_put(txx9_imclk);
- 	}
- 	return ret;
-@@ -153,7 +153,7 @@ exit:
- static int __exit txx9wdt_remove(struct platform_device *dev)
- {
- 	watchdog_unregister_device(&txx9wdt);
--	clk_disable(txx9_imclk);
-+	clk_disable_unprepare(txx9_imclk);
- 	clk_put(txx9_imclk);
- 	return 0;
- }
--- 
-1.9.1
+	Arnd
 
