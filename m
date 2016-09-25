@@ -1,34 +1,57 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: dianders@chromium.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, ykk@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [v2 PATCH 1/3] clk: rockchip: Fractional dividers can't set parent rates
-Date: Sun, 04 Sep 2016 23:50:21 +0200
-Message-ID: <3040422.nFj5Be1ODN@phil>
-In-Reply-To: <1472786785-2393-1-git-send-email-zyw@rock-chips.com>
-References: <1472786785-2393-1-git-send-email-zyw@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mw@semihalf.com>
+Return-Path: <mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: sebastian.hesselbarth@gmail.com,
+	andrew@lunn.ch,
+	jason@lakedaemon.net,
+	thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com,
+	nadavh@marvell.com,
+	alior@marvell.com,
+	tn@semihalf.com,
+	jaz@semihalf.com,
+	Marcin Wojtas <mw@semihalf.com>
+Subject: [PATCH v4 0/1] Armada 7k/8k CP110 system controller fixes
+Date: Sun, 25 Sep 2016 09:47:52 +0200
+Message-Id: <1474789673-3837-1-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 1. September 2016, 20:26:23 CEST schrieb Chris Zhong:
-> From: Douglas Anderson <dianders@chromium.org>
-> 
-> Currently the fractional divider clock time can't handle the
-> CLK_SET_RATE_PARENT flag. This is because, unlike normal dividers,
-> there is no clk_divider_bestdiv() function to try speeding up the parent
-> to see if it helps things.
-> 
-> Eventually someone could try to figure out how to make fractional
-> dividers able to use CLK_SET_RATE_PARENT, but until they do let's not
-> confuse the common clock framework (and anyone using it) by setting the
-> flag.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Hi,
 
-applied to my clk-branch for 4.9, after changing the subject to
-    clk: rockchip: drop CLK_SET_RATE_PARENT from rk3399 fractional dividers
+Two patches from the third version of the patchset have already been
+applied, so I re-send the last one with corrected allocation of
+clock data, which was pointed in the review.
+
+Any feedback would be very welcome.
+
+Best regards,
+Marcin
+
+Changelog:
+v4 <- v3
+* fix allocation of clock data
+
+v3 <- v2
+* return -ENOMEM on alloc failures
+
+v1 <- v2
+* replace setting CLK_IS_BASIC flag with clearing init structure fields
+  with memset
+* minor improvements of allocation and error checking
+* add migration to clk_hw
 
 
-Heiko
+Marcin Wojtas (1):
+  clk: mvebu: migrate CP110 system controller to clk_hw API and
+    registration
+
+ drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
+ 1 file changed, 72 insertions(+), 78 deletions(-)
+
+-- 
+1.8.3.1
