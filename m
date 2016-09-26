@@ -1,53 +1,169 @@
-Return-Path: <shc_work@mail.ru>
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-To: =?UTF-8?B?RmFiaWVuIExhaG91ZGVyZQ==?= <fabien.lahoudere@collabora.co.uk>
-Cc: =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>,
-	=?UTF-8?B?b3BlbiBsaXN0Ok9QRU4gRklSTVdBUkUgQU5EIEZMQVRURU5FRCBERVZJQ0Ug?=
- =?UTF-8?B?VFJFRSBCSU5ESU5HUw==?= <devicetree@vger.kernel.org>,
-	=?UTF-8?B?S2FsbGUgS2Fua2FyZQ==?= <kalle.kankare@vincit.fi>,
-	=?UTF-8?B?TWljaGFlbCBUdXJxdWV0dGU=?= <mturquette@baylibre.com>,
-	=?UTF-8?B?U3RlcGhlbiBCb3lk?= <sboyd@codeaurora.org>,
-	=?UTF-8?B?b3BlbiBsaXN0?= <linux-kernel@vger.kernel.org>,
-	=?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>,
-	=?UTF-8?B?U2FzY2hhIEhhdWVy?= <kernel@pengutronix.de>,
-	=?UTF-8?B?RmFiaW8gRXN0ZXZhbQ==?= <fabio.estevam@nxp.com>,
-	=?UTF-8?B?U2hhd24gR3Vv?= <shawnguo@kernel.org>,
-	=?UTF-8?B?b3BlbiBsaXN0OkNPTU1PTiBDTEsgRlJBTUVXT1JL?= <linux-clk@vger.kernel.org>,
-	=?UTF-8?B?bW9kZXJhdGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRSBJTVggLyBNWEMgQVJNIEFS?=
- =?UTF-8?B?Q0hJVEVDVFVSRQ==?= <linux-arm-kernel@lists.infradead.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzFdIEFSTTogaW14NTogQWRkIGNsb2NrcyBjb25maWd1?=
- =?UTF-8?B?cmF0aW9u?=
-MIME-Version: 1.0
-Date: Thu, 15 Sep 2016 20:42:33 +0300
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Message-ID: <1473961353.68713919@f429.i.mail.ru>
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
-References: <1473934403-2726-1-git-send-email-fabien.lahoudere@collabora.co.uk>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 4/4] ARM: clk: imx31: properly init clocks for machines with DT
+Date: Mon, 26 Sep 2016 03:03:43 +0300
+Message-Id: <1474848223-19728-5-git-send-email-vz@mleia.com>
+In-Reply-To: <1474848223-19728-1-git-send-email-vz@mleia.com>
+References: <1474848223-19728-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-PtCn0LXRgtCy0LXRgNCzLCAxNSDRgdC10L3RgtGP0LHRgNGPIDIwMTYsIDEzOjEzICswMzowMCDQ
-vtGCIEZhYmllbiBMYWhvdWRlcmUgPGZhYmllbi5sYWhvdWRlcmVAY29sbGFib3JhLmNvLnVrPjoK
-Pgo+RnJvbTogS2FsbGUgS2Fua2FyZSA8IGthbGxlLmthbmthcmVAdmluY2l0LmZpID4KPgo+QWRk
-IGNsb2NrcyBjb25maWd1cmF0aW9uIGZvciBDU0ksIEZJUkkgYW5kIElFRUUxNTg4Lgo+Cj5TaWdu
-ZWQtb2ZmLWJ5OiBGYWJpZW4gTGFob3VkZXJlIDwgZmFiaWVuLmxhaG91ZGVyZUBjb2xsYWJvcmEu
-Y28udWsgPgo+LS0tCj7CoGRyaXZlcnMvY2xrL2lteC9jbGstaW14NTEtaW14NTMuYyAgICAgIHwg
-MjAgKysrKysrKysrKysrKysrKysrKysKPsKgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9pbXg1
-LWNsb2NrLmggfCAxNSArKysrKysrKysrKysrKy0KPsKgMiBmaWxlcyBjaGFuZ2VkLCAzNCBpbnNl
-cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4KPmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgv
-Y2xrLWlteDUxLWlteDUzLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDUxLWlteDUzLmMKPmlu
-ZGV4IDI5ZDRjNDQuLjFlM2M5ZWEgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlt
-eDUxLWlteDUzLmMKPisrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14NTEtaW14NTMuYwo+QEAg
-LTEyNiw2ICsxMjYsNyBAQCBzdGF0aWMgY29uc3QgY2hhciAqc3BkaWYwX2NvbV9zZWxbXSA9IHsg
-InNwZGlmMF9wb2RmIiwgInNzaTFfcm9vdF9nYXRlIiwgfTsKPsKgc3RhdGljIGNvbnN0IGNoYXIg
-Km14NTFfc3BkaWYxX2NvbV9zZWxbXSA9IHsgInNwZGlmMV9wb2RmIiwgInNzaTJfcm9vdF9nYXRl
-IiwgfTsKPsKgc3RhdGljIGNvbnN0IGNoYXIgKnN0ZXBfc2Vsc1tdID0geyAibHBfYXBtIiwgfTsK
-PsKgc3RhdGljIGNvbnN0IGNoYXIgKmNwdV9wb2RmX3NlbHNbXSA9IHsgInBsbDFfc3ciLCAic3Rl
-cF9zZWwiIH07Cj4rc3RhdGljIGNvbnN0IGNoYXIgKmllZWUxNTg4X3NlbHNbXSA9IHsgInBsbDNf
-c3ciLCAicGxsNF9zdyIsICJkdW1teSIgLyogdXNicGh5Ml9jbGsgKi8sICJkdW1teSIgLyogZmVj
-X3BoeV9jbGsgKi8gfTsKPsKgCj7CoHN0YXRpYyBzdHJ1Y3QgY2xrICpjbGtbSU1YNV9DTEtfRU5E
-XTsKPsKgc3RhdGljIHN0cnVjdCBjbGtfb25lY2VsbF9kYXRhIGNsa19kYXRhOwo+QEAgLTU0Myw2
-ICs1NDQsMjUgQEAgc3RhdGljIHZvaWQgX19pbml0IG14NTNfY2xvY2tzX2luaXQoc3RydWN0IGRl
-dmljZV9ub2RlICpucCkKLi4uCgoyIFNoYXduIEd1bzogU2luY2UgdGhlIGNoYW5nZSBhZmZlY3Rz
-IG9ubHkgb24gaS5NWDUzIGFyY2hpdGVjdHVyZSwKSSB3b3VsZCBhc2sgdG8gY2hhbmdlIHRoZSBz
-dWJqZWN0IHRvIGkuTVg1MyBpZiBpdCBwb3NzaWJsZS4KCi0tLQoK
+Clock initialization for i.MX31 powered machines with DT support
+should be done by a call of an init function registered with
+CLK_OF_DECLARE() in common clock framework.
+
+The change converts exported mx31_clocks_init_dt() into a static
+initialization function registered by CLK_OF_DECLARE().
+
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+Changes from v1 to v2:
+* this change is a squashed change of arch/arm and clk changes,
+  if only one of two changes is applied there is a compilation
+  time or runtime issue.
+
+ arch/arm/mach-imx/common.h   |  1 -
+ arch/arm/mach-imx/imx31-dt.c |  6 ------
+ drivers/clk/imx/clk-imx31.c  | 50 +++++++++++++++++++++++---------------------
+ 3 files changed, 26 insertions(+), 31 deletions(-)
+
+diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
+index a8f4693..e97d8cb 100644
+--- a/arch/arm/mach-imx/common.h
++++ b/arch/arm/mach-imx/common.h
+@@ -48,7 +48,6 @@ int mx21_clocks_init(unsigned long lref, unsigned long fref);
+ int mx27_clocks_init(unsigned long fref);
+ int mx31_clocks_init(unsigned long fref);
+ int mx35_clocks_init(void);
+-int mx31_clocks_init_dt(void);
+ struct platform_device *mxc_register_gpio(char *name, int id,
+ 	resource_size_t iobase, resource_size_t iosize, int irq, int irq_high);
+ void mxc_set_cpu_type(unsigned int type);
+diff --git a/arch/arm/mach-imx/imx31-dt.c b/arch/arm/mach-imx/imx31-dt.c
+index 62e6b4f..668d74b 100644
+--- a/arch/arm/mach-imx/imx31-dt.c
++++ b/arch/arm/mach-imx/imx31-dt.c
+@@ -23,11 +23,6 @@ static const char * const imx31_dt_board_compat[] __initconst = {
+ 	NULL
+ };
+ 
+-static void __init imx31_dt_timer_init(void)
+-{
+-	mx31_clocks_init_dt();
+-}
+-
+ /* FIXME: replace with DT binding */
+ static const struct resource imx31_rnga_res[] __initconst = {
+ 	DEFINE_RES_MEM(MX31_RNGA_BASE_ADDR, SZ_16K),
+@@ -43,7 +38,6 @@ DT_MACHINE_START(IMX31_DT, "Freescale i.MX31 (Device Tree Support)")
+ 	.map_io		= mx31_map_io,
+ 	.init_early	= imx31_init_early,
+ 	.init_irq	= mx31_init_irq,
+-	.init_time	= imx31_dt_timer_init,
+ 	.init_machine	= imx31_dt_mach_init,
+ 	.dt_compat	= imx31_dt_board_compat,
+ MACHINE_END
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index 6a49ba2..cbce308 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <soc/imx/revision.h>
+ #include <soc/imx/timer.h>
+ #include <asm/irq.h>
+@@ -72,14 +73,8 @@ static struct clk ** const uart_clks[] __initconst = {
+ 	NULL
+ };
+ 
+-static void __init _mx31_clocks_init(unsigned long fref)
++static void __init _mx31_clocks_init(void __iomem *base, unsigned long fref)
+ {
+-	void __iomem *base;
+-	struct device_node *np;
+-
+-	base = ioremap(MX31_CCM_BASE_ADDR, SZ_4K);
+-	BUG_ON(!base);
+-
+ 	clk[dummy] = imx_clk_fixed("dummy", 0);
+ 	clk[ckih] = imx_clk_fixed("ckih", fref);
+ 	clk[ckil] = imx_clk_fixed("ckil", 32768);
+@@ -147,19 +142,17 @@ static void __init _mx31_clocks_init(unsigned long fref)
+ 	clk_prepare_enable(clk[iim_gate]);
+ 	mx31_revision();
+ 	clk_disable_unprepare(clk[iim_gate]);
+-
+-	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
+-
+-	if (np) {
+-		clk_data.clks = clk;
+-		clk_data.clk_num = ARRAY_SIZE(clk);
+-		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+-	}
+ }
+ 
+ int __init mx31_clocks_init(unsigned long fref)
+ {
+-	_mx31_clocks_init(fref);
++	void __iomem *base;
++
++	base = ioremap(MX31_CCM_BASE_ADDR, SZ_4K);
++	if (!base)
++		panic("%s: failed to map registers\n", __func__);
++
++	_mx31_clocks_init(base, fref);
+ 
+ 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
+ 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
+@@ -222,22 +215,31 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	return 0;
+ }
+ 
+-int __init mx31_clocks_init_dt(void)
++static void __init mx31_clocks_init_dt(struct device_node *np)
+ {
+-	struct device_node *np;
++	struct device_node *osc_np;
+ 	u32 fref = 26000000; /* default */
++	void __iomem *ccm;
+ 
+-	for_each_compatible_node(np, NULL, "fixed-clock") {
+-		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
++	for_each_compatible_node(osc_np, NULL, "fixed-clock") {
++		if (!of_device_is_compatible(osc_np, "fsl,imx-osc26m"))
+ 			continue;
+ 
+-		if (!of_property_read_u32(np, "clock-frequency", &fref)) {
+-			of_node_put(np);
++		if (!of_property_read_u32(osc_np, "clock-frequency", &fref)) {
++			of_node_put(osc_np);
+ 			break;
+ 		}
+ 	}
+ 
+-	_mx31_clocks_init(fref);
++	ccm = of_iomap(np, 0);
++	if (!ccm)
++		panic("%s: failed to map registers\n", __func__);
+ 
+-	return 0;
++	_mx31_clocks_init(ccm, fref);
++
++	clk_data.clks = clk;
++	clk_data.clk_num = ARRAY_SIZE(clk);
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ }
++
++CLK_OF_DECLARE(imx31_ccm, "fsl,imx31-ccm", mx31_clocks_init_dt);
+-- 
+2.8.1
