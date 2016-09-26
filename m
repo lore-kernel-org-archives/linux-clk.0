@@ -1,46 +1,39 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 20 Sep 2016 10:31:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: question about clk_hw_register_fixed_factor
-Message-ID: <20160920173105.GA8319@codeaurora.org>
-References: <alpine.DEB.2.10.1609200811560.3346@hadrien>
+Return-Path: <ukl@pengutronix.de>
+Date: Mon, 26 Sep 2016 08:36:50 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] ARM: dts: imx31: move CCM device node to AIPS2
+ bus devices
+Message-ID: <20160926063650.syqjgg445dny5kxw@pengutronix.de>
+References: <1474848223-19728-1-git-send-email-vz@mleia.com>
+ <1474848223-19728-3-git-send-email-vz@mleia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.10.1609200811560.3346@hadrien>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1474848223-19728-3-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/20, Julia Lawall wrote:
-> Hello,
-> 
-> The function clk_hw_register_fixed_factor from
-> drivers/clk/clk-fixed-factor.c contains:
-> 
-> struct clk_init_data init;
-> ...
-> fix->hw.init = &init;
-> ...
-> hw = &fix->hw;
-> ...
-> return hw;
-> 
-> It looks like hw would then contain a dangling pointer, to init.  Should
-> this be nulled out, or does it not matter because it is certain that no
-> one will look at it anyway?  Or did I miss a null assignment elsewhere?
-> 
+Hello Vladimir,
 
-Yes this is a common pattern in clk drivers. The init structure
-is not used after clk_register() (or its variants) is called, so
-there will typically be a dangling pointer in clk_hw to the
-clk_init_data structure. Sometimes that structure is allocated on
-the stack, which leads to other problems like people forgetting
-to initialize all the members. Usually they forgot to set flags
-to something and then clk framework does very odd things. We
-could null out the init pointer if we really cared, but so far
-this hasn't been a problem.
+On Mon, Sep 26, 2016 at 03:03:41AM +0300, Vladimir Zapolskiy wrote:
+> i.MX31 Clock Control Module controller is found on AIPS2 bus, move it
+> there from SPBA bus to avoid a conflict of device IO space mismatch.
+> 
+> Fixes: ef0e4a606fb6 ("ARM: mx31: Replace clk_register_clkdev with clock DT lookup")
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+out of interest: Which kind of machine do you work with? I assume this
+isn't just a finger exercise with qemu?
+
+Best regards
+Uwe
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
