@@ -1,25 +1,42 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: dianders@chromium.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, ykk@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [v2 PATCH 3/3] clk: rockchip: use the dclk_vop_frac clock ids
-Date: Sun, 04 Sep 2016 23:51:12 +0200
-Message-ID: <2504148.HshbI1VF8K@phil>
-In-Reply-To: <1472786785-2393-3-git-send-email-zyw@rock-chips.com>
-References: <1472786785-2393-1-git-send-email-zyw@rock-chips.com> <1472786785-2393-3-git-send-email-zyw@rock-chips.com>
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>,  Thomas Gleixner <tglx@linutronix.de>,  Wim Van Sebroeck <wim@iguana.be>,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 0/4] kill get_clock_tick_rate()
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+Date: Mon, 26 Sep 2016 21:29:26 +0200
+In-Reply-To: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+	(Robert Jarzmik's message of "Mon, 19 Sep 2016 21:12:11 +0200")
+Message-ID: <87twd2bgtl.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 1. September 2016, 20:26:25 CEST schrieb Chris Zhong:
-> From: Yakir Yang <ykk@rock-chips.com>
-> 
-> Export the dclk_vop_frac out, so we can set the dclk_vop as the
-> child of dclk_vop_frac, and then we can start to take use of
-> the fractional dividers.
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Robert Jarzmik <robert.jarzmik@free.fr> writes:
 
-applied to my clk-branch for 4.9
+> Hi,
+>
+> This serie aims at killing get_clock_tick_rate() from pxa and sa1100 and replace
+> it by clock API calls.
+>
+> I'd like to have this reviewed and acked afterwards at least by :
+>  - Russell for the mach-sa1100 and sa1100_wdt.c
+>  - Stephen or Michael for the clk-pxa25x.c
+>  - Thomas or Daniel for the clocksource part
+>  - Wim for sa1100_wdt.c
+>
+> If the review converges, I'd also like to take it through the pxa/for-next tree,
+> or alternatively Russell's tree if there is a dependency I'm not seeing, for
+> v4.10 cycle.
+
+Hi Russell,
+
+Would you have time within the next 2 weeks to give this serie a review and
+maybe an Ack from the sa1100 impacted parts (that would be patches 2, 3 and 4) ?
+
+I can also resend the serie if it's easier in your workflow.
+
+Cheers.
+
+--
+Robert
