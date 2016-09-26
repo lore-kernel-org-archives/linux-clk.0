@@ -1,90 +1,54 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, kishon@ti.com,
-Cc: linux-clk@vger.kernel.org,  linux-usb@vger.kernel.org,  linux-amlogic@lists.infradead.org,  jbrunet@baylibre.com,  johnyoun@synopsys.com,  carlo@caione.org,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  sboyd@codeaurora.org,  mturquette@baylibre.com,  will.deacon@arm.com,  catalin.marinas@arm.com,  gregkh@linuxfoundation.org,  mark.rutland@arm.com,  robh+dt@kernel.org
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-	<20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-Date: Thu, 08 Sep 2016 12:35:32 -0700
-In-Reply-To: <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
-	(Martin Blumenstingl's message of "Sun, 4 Sep 2016 23:31:49 +0200")
-Message-ID: <m260q6jibf.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 3/4] clk: imx31: fix rewritten input argument of mx31_clocks_init()
+Date: Mon, 26 Sep 2016 03:03:42 +0300
+Message-Id: <1474848223-19728-4-git-send-email-vz@mleia.com>
+In-Reply-To: <1474848223-19728-1-git-send-email-vz@mleia.com>
+References: <1474848223-19728-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+Function mx31_clocks_init() is called during clock intialization on
+legacy boards with reference clock frequency passed as its input
+argument, this can be verified by examination of the function
+declaration found in arch/arm/mach-imx/common.h and actual function
+users which include that header file.
 
-> This is a new driver for the USB PHY found in Meson8b and GXBB SoCs.
->
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Inside CCF driver the function ignores its input argument, by chance
+the used value in the function body is the same as input arguments on
+side of all callers.
 
-I tested this on meson-gxbb-p200 with USB host and a mass storage
-device.
+Fixes: d9388c843237 ("clk: imx31: Do not call mxc_timer_init twice when booting with DT")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+Changes from v1 to v2:
+* reworded commit message, thanks to Uwe for review
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+ drivers/clk/imx/clk-imx31.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-A minor question/comment below, for you and for Kishon...
-
-[...]
-
-> +static int phy_meson_usb2_probe(struct platform_device *pdev)
-> +{
-> +	struct phy_meson_usb2_priv *priv;
-> +	struct resource *res;
-> +	struct phy *phy;
-> +	struct phy_provider *phy_provider;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	priv->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(priv->regs))
-> +		return PTR_ERR(priv->regs);
-> +
-> +	priv->clk_usb_general = devm_clk_get(&pdev->dev, "usb_general");
-> +	if (IS_ERR(priv->clk_usb_general))
-> +		return PTR_ERR(priv->clk_usb_general);
-> +
-> +	priv->clk_usb = devm_clk_get(&pdev->dev, "usb");
-> +	if (IS_ERR(priv->clk_usb))
-> +		return PTR_ERR(priv->clk_usb);
-> +
-> +	priv->dr_mode = of_usb_get_dr_mode_by_phy(pdev->dev.of_node, -1);
-> +	if (priv->dr_mode == USB_DR_MODE_UNKNOWN) {
-> +		dev_err(&pdev->dev,
-> +			"missing dual role configuration of the controller\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
-> +	if (IS_ERR(phy)) {
-> +		dev_err(&pdev->dev, "failed to create PHY\n");
-> +		return PTR_ERR(phy);
-> +	}
-> +
-> +	if (usb_reset_refcnt++ == 0) {
-> +		ret = device_reset(&pdev->dev);
-> +		if (ret) {
-> +			dev_err(&phy->dev, "Failed to reset USB PHY\n");
-> +			return ret;
-> +		}
-> +	}
-
-The ref count + reset here looks like something that could/should be
-handled in a runtime PM callback.
-
-IOW, there should be a pm_runtime_get_sync() here, and in the
-->runtime_resume() callback, the device_reset() would be called.
-Runtime PM does the refcounting, and only calls ->runtime_resume() on
-the 0 -> 1 transition.
-
-This isn't a big deal for now, so I'll let Kishon decide, but using
-runtime PM from the start will help enabling other PM features later.
-
-Kevin
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index 6a96414..6a49ba2 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -157,10 +157,8 @@ static void __init _mx31_clocks_init(unsigned long fref)
+ 	}
+ }
+ 
+-int __init mx31_clocks_init(void)
++int __init mx31_clocks_init(unsigned long fref)
+ {
+-	u32 fref = 26000000; /* default */
+-
+ 	_mx31_clocks_init(fref);
+ 
+ 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
+-- 
+2.8.1
