@@ -1,107 +1,49 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-clk@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	johnyoun@synopsys.com,
-	kishon@ti.com,
-	khilman@baylibre.com,
-	carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/7] usb: dwc2: add support for Meson8b and GXBB SoCs
-Date: Sun,  4 Sep 2016 23:31:47 +0200
-Message-Id: <20160904213152.25837-3-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/4] ARM: imx31: clock initialization fixes
+Date: Mon, 26 Sep 2016 03:03:39 +0300
+Message-Id: <1474848223-19728-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+The change is tested on qemu kzm target and mx31lite board, while both
+targets don't have DTS in upstream, I had to write simple DTS files for
+them, because the proposed change is for i.MX31 targets with OF support.
 
-Add compatible strings for amlogic Meson8b and GXBB SoCs with the
-corresponding configuration parameters.
+i.MX31/OF/clock initialization seems to be broken currently, if
+the series is not applied I can not get a working clock source during
+early boot stage on a board with DTB supplied.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- Documentation/devicetree/bindings/usb/dwc2.txt |  2 ++
- drivers/usb/dwc2/platform.c                    | 34 ++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+Changes from v1 to v2, thanks to Uwe and Stephen for review:
+* added one more new fix in imx31.dtsi which moves CCM device node
+  to AIPS2 bus,
+* included to the series a fix of CCM interrupts in imx31.dtsi,
+  the change was sent as a separate patch, the change is included
+  to avoid a patch application dependency,
+* as suggested by Uwe reworded one of the commits removing "stack
+  corruption" mentioning, the overwritten value is passed in a register,
+* as suggested by Uwe squashed clk-imx31.c and imx31-dt.c changes
+  to avoid a runtime problem if only one of two patches are applied
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc2.txt b/Documentation/devicetree/bindings/usb/dwc2.txt
-index 20a68bf..2c30a54 100644
---- a/Documentation/devicetree/bindings/usb/dwc2.txt
-+++ b/Documentation/devicetree/bindings/usb/dwc2.txt
-@@ -10,6 +10,8 @@ Required properties:
-   - "rockchip,rk3288-usb", "rockchip,rk3066-usb", "snps,dwc2": for rk3288 Soc;
-   - "lantiq,arx100-usb": The DWC2 USB controller instance in Lantiq ARX SoCs;
-   - "lantiq,xrx200-usb": The DWC2 USB controller instance in Lantiq XRX SoCs;
-+  - "amlogic,meson8b-usb": The DWC2 USB controller instance in Amlogic Meson8b SoCs;
-+  - "amlogic,meson-gxbb-usb": The DWC2 USB controller instance in Amlogic S905 SoCs;
-   - snps,dwc2: A generic DWC2 USB controller with default parameters.
- - reg : Should contain 1 register range (address and length)
- - interrupts : Should contain 1 interrupt
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index fc6f525..8f7b34c 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -181,6 +181,38 @@ static const struct dwc2_core_params params_ltq = {
- 	.hibernation			= -1,
- };
- 
-+static const struct dwc2_core_params params_amlogic = {
-+	.otg_cap			= DWC2_CAP_PARAM_NO_HNP_SRP_CAPABLE,
-+	.otg_ver			= -1,
-+	.dma_enable			= 1,
-+	.dma_desc_enable		= 0,
-+	.dma_desc_fs_enable		= 0,
-+	.speed				= DWC2_SPEED_PARAM_HIGH,
-+	.enable_dynamic_fifo		= 1,
-+	.en_multiple_tx_fifo		= -1,
-+	.host_rx_fifo_size		= 512,
-+	.host_nperio_tx_fifo_size	= 500,
-+	.host_perio_tx_fifo_size	= 500,
-+	.max_transfer_size		= -1,
-+	.max_packet_count		= -1,
-+	.host_channels			= 16,
-+	.phy_type			= DWC2_PHY_TYPE_PARAM_UTMI,
-+	.phy_utmi_width			= -1,
-+	.phy_ulpi_ddr			= -1,
-+	.phy_ulpi_ext_vbus		= -1,
-+	.i2c_enable			= -1,
-+	.ulpi_fs_ls			= -1,
-+	.host_support_fs_ls_low_power	= -1,
-+	.host_ls_low_power_phy_clk	= -1,
-+	.ts_dline			= -1,
-+	.reload_ctl			= 1,
-+	.ahbcfg				= GAHBCFG_HBSTLEN_INCR8 <<
-+					  GAHBCFG_HBSTLEN_SHIFT,
-+	.uframe_sched			= 0,
-+	.external_id_pin_ctl		= -1,
-+	.hibernation			= -1,
-+};
-+
- /*
-  * Check the dr_mode against the module configuration and hardware
-  * capabilities.
-@@ -464,6 +496,8 @@ static const struct of_device_id dwc2_of_match_table[] = {
- 	{ .compatible = "lantiq,xrx200-usb", .data = &params_ltq },
- 	{ .compatible = "snps,dwc2", .data = NULL },
- 	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
-+	{ .compatible = "amlogic,meson8b-usb", .data = &params_amlogic },
-+	{ .compatible = "amlogic,meson-gxbb-usb", .data = &params_amlogic },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
+Vladimir Zapolskiy (4):
+  ARM: dts: imx31: fix clock control module interrupts description
+  ARM: dts: imx31: move CCM device node to AIPS2 bus devices
+  clk: imx31: fix rewritten input argument of mx31_clocks_init()
+  ARM: clk: imx31: properly init clocks for machines with DT
+
+ .../devicetree/bindings/clock/imx31-clock.txt      |  2 +-
+ arch/arm/boot/dts/imx31.dtsi                       | 14 +++---
+ arch/arm/mach-imx/common.h                         |  1 -
+ arch/arm/mach-imx/imx31-dt.c                       |  6 ---
+ drivers/clk/imx/clk-imx31.c                        | 52 +++++++++++-----------
+ 5 files changed, 34 insertions(+), 41 deletions(-)
+
 -- 
-2.9.3
+2.8.1
