@@ -1,27 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 13:53:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	shawn.guo@linaro.org, jason.liu@linaro.org
-Subject: Re: [PATCH v3 2/2] clk: zx: register ZX296718 clocks
-Message-ID: <20160914205342.GZ7243@codeaurora.org>
-References: <1473141762-4775-1-git-send-email-jun.nie@linaro.org>
- <1473141762-4775-3-git-send-email-jun.nie@linaro.org>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Mon, 26 Sep 2016 22:58:11 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+Message-ID: <20160926215811.GI1041@n2100.armlinux.org.uk>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+ <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473141762-4775-3-git-send-email-jun.nie@linaro.org>
+In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/06, Jun Nie wrote:
-> The ZX296718 clocks are statically listed and registered. More
-> clock will be added later.
+On Mon, Sep 19, 2016 at 09:12:14PM +0200, Robert Jarzmik wrote:
+> The OS timer rate used for the watchdog can now be fetched from the
+> standard clock API. This will remove the last user of
+> get_clock_tick_rate() in both pxa and sa11x0 architectures.
 > 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Applied to clk-zte and merged into clk-next.
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+
+Thanks.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
