@@ -1,65 +1,43 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Fri, 2 Sep 2016 19:36:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-clk@vger.kernel.org, tomasz.figa@gmail.com,
-	sboyd@codeaurora.org, mturquette@baylibre.com, kgene@kernel.org,
-	b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and
- EPLL clocks
-Message-ID: <20160902173608.GC9022@kozik-lap>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
- <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
- <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
- <74653ed5-827b-1ad6-e17a-0c8e173da29f@samsung.com>
+Return-Path: <ukl@pengutronix.de>
+Date: Mon, 26 Sep 2016 08:23:18 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] clk: imx31: fix rewritten input argument of
+ mx31_clocks_init()
+Message-ID: <20160926062318.c6tipjjktvmxpwed@pengutronix.de>
+References: <1474848223-19728-1-git-send-email-vz@mleia.com>
+ <1474848223-19728-4-git-send-email-vz@mleia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <74653ed5-827b-1ad6-e17a-0c8e173da29f@samsung.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1474848223-19728-4-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 02, 2016 at 04:09:08PM +0200, Sylwester Nawrocki wrote:
-> On 08/30/2016 11:54 AM, Krzysztof Kozlowski wrote:
-> > On 08/22/2016 06:30 PM, Sylwester Nawrocki wrote:
-> >> > The PDMA{0,1} and EPLL clock IDs are added separately in this
-> >> > patch so the patch can be merged to the arm-soc tree as dependency.
-> >> > 
-> >> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> > ---
-> >> >  include/dt-bindings/clock/exynos5410.h | 3 +++
-> >> >  1 file changed, 3 insertions(+)
-> >> > 
-> >> > diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-> >> > index 85b467b..a74442a 100644
-> >> > --- a/include/dt-bindings/clock/exynos5410.h
-> >> > +++ b/include/dt-bindings/clock/exynos5410.h
-> >> > @@ -19,6 +19,7 @@
-> >> >  #define CLK_FOUT_MPLL		4
-> >> >  #define CLK_FOUT_BPLL		5
-> >> >  #define CLK_FOUT_KPLL		6
-> >> > +#define CLK_FOUT_EPLL		7
-> >> >  
-> >> >  /* gate for special clocks (sclk) */
-> >> >  #define CLK_SCLK_UART0		128
-> >> > @@ -48,6 +49,8 @@
-> >> >  #define CLK_USI3		268
-> >> >  #define CLK_UART3		260
-> >> >  #define CLK_PWM			279
-> >> > +#define CLK_PDMA0		280
-> >> > +#define CLK_PDMA1		281
-> >
-> > How about making the IDs the same as in exynos5420? This way those
-> > drivers could be merged someday in the future (if someone would be
-> > bored...).
+Hello,
+
+On Mon, Sep 26, 2016 at 03:03:42AM +0300, Vladimir Zapolskiy wrote:
+> Function mx31_clocks_init() is called during clock intialization on
+> legacy boards with reference clock frequency passed as its input
+> argument, this can be verified by examination of the function
+> declaration found in arch/arm/mach-imx/common.h and actual function
+> users which include that header file.
 > 
-> OK, I will do it, but there is already mismatch in the PLL indices.
+> Inside CCF driver the function ignores its input argument, by chance
+> the used value in the function body is the same as input arguments on
+> side of all callers.
+> 
+> Fixes: d9388c843237 ("clk: imx31: Do not call mxc_timer_init twice when booting with DT")
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Oh, crap, I missed that difference. This means the drivers won't be
-combined... so I am not sure whether keeping same IDs for rest brings
-benefits. Whatever you chooses:
+Thanks
+Uwe
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
