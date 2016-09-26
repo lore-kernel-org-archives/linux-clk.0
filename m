@@ -1,115 +1,113 @@
-Return-Path: <mw@semihalf.com>
-Return-Path: <mw@semihalf.com>
-From: Marcin Wojtas <mw@semihalf.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	andrew@lunn.ch,
-	jason@lakedaemon.net,
-	thomas.petazzoni@free-electrons.com,
-	gregory.clement@free-electrons.com,
-	nadavh@marvell.com,
-	alior@marvell.com,
-	tn@semihalf.com,
-	jaz@semihalf.com,
-	Marcin Wojtas <mw@semihalf.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2 2/3] clk: mvebu: dynamically allocate resources in Armada CP110 system controller
-Date: Tue,  6 Sep 2016 19:31:56 +0200
-Message-Id: <1473183117-11889-3-git-send-email-mw@semihalf.com>
-In-Reply-To: <1473183117-11889-1-git-send-email-mw@semihalf.com>
-References: <1473183117-11889-1-git-send-email-mw@semihalf.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, James Liao
+	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v13 3/4] arm: dts: mt2701: Add clock controller device nodes
+Date: Mon, 26 Sep 2016 17:26:30 +0800
+Message-ID: <1474881991-17429-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1474881991-17429-1-git-send-email-erin.lo@mediatek.com>
+References: <1474881991-17429-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Original commit, which added support for Armada CP110 system controller
-used global variables for storing all clock information. It worked
-fine for Armada 7k SoC, with single CP110 block. After dual-CP110 Armada 8k
-was introduced, the data got overwritten and corrupted.
+From: James Liao <jamesjj.liao@mediatek.com>
 
-This patch fixes the issue by allocating resources dynamically in the
-driver probe and storing it as platform drvdata.
+Add clock controller nodes for MT2701, include topckgen, infracfg,
+pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
+bdpsys. This patch also add two oscillators that provide clocks for
+MT2701.
 
-Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system ...")
-Signed-off-by: Marcin Wojtas <mw@semihalf.com>
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-CC: <stable@vger.kernel.org>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- drivers/clk/mvebu/cp110-system-controller.c | 29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 59fe76e..5e68d24 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -81,13 +81,6 @@ enum {
- #define CP110_GATE_EIP150		25
- #define CP110_GATE_EIP197		26
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 18596a2..c9a8dbf 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -12,8 +12,10 @@
+  * GNU General Public License for more details.
+  */
  
--static struct clk *cp110_clks[CP110_CLK_NUM];
--
--static struct clk_onecell_data cp110_clk_data = {
--	.clks = cp110_clks,
--	.clk_num = CP110_CLK_NUM,
--};
--
- struct cp110_gate_clk {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -196,7 +189,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	struct device_node *np = pdev->dev.of_node;
- 	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
--	struct clk *clk;
-+	struct clk_onecell_data *cp110_clk_data;
-+	struct clk *clk, **cp110_clks;
- 	u32 nand_clk_ctrl;
- 	int i, ret;
++#include <dt-bindings/clock/mt2701-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/mt2701-resets.h>
+ #include "skeleton64.dtsi"
+ #include "mt2701-pinfunc.h"
  
-@@ -209,6 +203,20 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+@@ -77,6 +79,20 @@
+ 		#clock-cells = <0>;
+ 	};
  
-+	cp110_clks = devm_kcalloc(&pdev->dev, sizeof(struct clk *),
-+				  CP110_CLK_NUM, GFP_KERNEL);
-+	if (!cp110_clks)
-+		return PTR_ERR(cp110_clks);
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
 +
-+	cp110_clk_data = devm_kzalloc(&pdev->dev,
-+				      sizeof(*cp110_clk_data),
-+				      GFP_KERNEL);
-+	if (!cp110_clk_data)
-+		return PTR_ERR(cp110_clk_data);
++	rtc32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000>;
++		clock-output-names = "rtc32k";
++	};
 +
-+	cp110_clk_data->clks = cp110_clks;
-+	cp110_clk_data->clk_num = CP110_CLK_NUM;
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupt-parent = <&gic>;
+@@ -104,6 +120,26 @@
+ 		reg = <0 0x10005000 0 0x1000>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2701-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
 +
- 	/* Register the APLL which is the root of the clk tree */
- 	of_property_read_string_index(np, "core-clock-output-names",
- 				      CP110_CORE_APLL, &apll_name);
-@@ -336,10 +344,12 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 		cp110_clks[CP110_MAX_CORE_CLOCKS + i] = clk;
- 	}
- 
--	ret = of_clk_add_provider(np, cp110_of_clk_get, &cp110_clk_data);
-+	ret = of_clk_add_provider(np, cp110_of_clk_get, cp110_clk_data);
- 	if (ret)
- 		goto fail_clk_add;
- 
-+	platform_set_drvdata(pdev, cp110_clks);
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2701-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
 +
- 	return 0;
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2701-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
+ 	watchdog: watchdog@10007000 {
+ 		compatible = "mediatek,mt2701-wdt",
+ 			     "mediatek,mt6589-wdt";
+@@ -128,6 +164,12 @@
+ 		reg = <0 0x10200100 0 0x1c>;
+ 	};
  
- fail_clk_add:
-@@ -366,6 +376,7 @@ fail0:
- 
- static int cp110_syscon_clk_remove(struct platform_device *pdev)
- {
-+	struct clk **cp110_clks = platform_get_drvdata(pdev);
- 	int i;
- 
- 	of_clk_del_provider(pdev->dev.of_node);
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2701-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	gic: interrupt-controller@10211000 {
+ 		compatible = "arm,cortex-a7-gic";
+ 		interrupt-controller;
 -- 
-1.8.3.1
+1.9.1
