@@ -1,77 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:36281 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761155AbcINKGX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Sep 2016 06:06:23 -0400
-Received: by mail-wm0-f52.google.com with SMTP id b187so38634782wme.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 Sep 2016 03:06:23 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 1/4] clk: gxbb: expose i2c clocks
-Date: Wed, 14 Sep 2016 12:06:05 +0200
-Message-Id: <1473847568-20163-2-git-send-email-jbrunet@baylibre.com>
-In-Reply-To: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
-References: <1473847568-20163-1-git-send-email-jbrunet@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 1/4] ARM: dts: imx31: fix clock control module interrupts description
+Date: Mon, 26 Sep 2016 03:03:40 +0300
+Message-Id: <1474848223-19728-2-git-send-email-vz@mleia.com>
+In-Reply-To: <1474848223-19728-1-git-send-email-vz@mleia.com>
+References: <1474848223-19728-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-I2C and AO_I2C clocks are needed for the i2c driver, expose to DT
-(and comment out in clk driver)
+The type of AVIC interrupt controller found on i.MX31 is one-cell,
+namely 31 for CCM DVFS and 53 for CCM, however for clock control
+module its interrupts are specified as 3-cells, fix it.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: ef0e4a606fb6 ("ARM: mx31: Replace clk_register_clkdev with clock DT lookup")
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- drivers/clk/meson/gxbb.h              | 4 ++--
- include/dt-bindings/clock/gxbb-clkc.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Changes from v1 to v2:
+* added Rob's Acked-by tag.
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 044fc44e9144..0252939ba58f 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -190,7 +190,7 @@
- #define CLKID_PL301		  19
- #define CLKID_PERIPHS		  20
- #define CLKID_SPICC		  21
--#define CLKID_I2C		  22
-+/* CLKID_I2C */
- #define CLKID_SAR_ADC		  23
- #define CLKID_SMART_CARD	  24
- #define CLKID_RNG0		  25
-@@ -261,7 +261,7 @@
- #define CLKID_AO_AHB_SRAM	  90
- #define CLKID_AO_AHB_BUS	  91
- #define CLKID_AO_IFACE		  92
--#define CLKID_AO_I2C		  93
-+/* CLKID_AO_I2C */
- /* CLKID_SD_EMMC_A */
- /* CLKID_SD_EMMC_B */
- /* CLKID_SD_EMMC_C */
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 743c45b40361..baade6f429d0 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -13,12 +13,14 @@
- #define CLKID_CLK81		12
- #define CLKID_MPLL2		15
- #define CLKID_SPI		34
-+#define CLKID_I2C		22
- #define CLKID_ETH		36
- #define CLKID_USB0		50
- #define CLKID_USB1		51
- #define CLKID_USB		55
- #define CLKID_USB1_DDR_BRIDGE	64
- #define CLKID_USB0_DDR_BRIDGE	65
-+#define CLKID_AO_I2C		93
- #define CLKID_SD_EMMC_A		94
- #define CLKID_SD_EMMC_B		95
- #define CLKID_SD_EMMC_C		96
+ Documentation/devicetree/bindings/clock/imx31-clock.txt | 2 +-
+ arch/arm/boot/dts/imx31.dtsi                            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/imx31-clock.txt b/Documentation/devicetree/bindings/clock/imx31-clock.txt
+index 19df842..8163d56 100644
+--- a/Documentation/devicetree/bindings/clock/imx31-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx31-clock.txt
+@@ -77,7 +77,7 @@ Examples:
+ clks: ccm@53f80000{
+ 	compatible = "fsl,imx31-ccm";
+ 	reg = <0x53f80000 0x4000>;
+-	interrupts = <0 31 0x04 0 53 0x04>;
++	interrupts = <31>, <53>;
+ 	#clock-cells = <1>;
+ };
+ 
+diff --git a/arch/arm/boot/dts/imx31.dtsi b/arch/arm/boot/dts/imx31.dtsi
+index 1ce7ae9..3e0893e 100644
+--- a/arch/arm/boot/dts/imx31.dtsi
++++ b/arch/arm/boot/dts/imx31.dtsi
+@@ -122,7 +122,7 @@
+ 			clks: ccm@53f80000{
+ 				compatible = "fsl,imx31-ccm";
+ 				reg = <0x53f80000 0x4000>;
+-				interrupts = <0 31 0x04 0 53 0x04>;
++				interrupts = <31>, <53>;
+ 				#clock-cells = <1>;
+ 			};
+ 		};
 -- 
-2.7.4
-
+2.8.1
