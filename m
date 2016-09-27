@@ -1,66 +1,34 @@
-Return-Path: <fabio.estevam@nxp.com>
-From: Fabio Estevam <fabio.estevam@nxp.com>
-To: <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<p.zabel@pengutronix.de>, <akshay.bhat@timesys.com>,
-	<stillcompiling@gmail.com>, <Charles.Kang@advantech.com.tw>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Fabio
- Estevam" <fabio.estevam@nxp.com>
-Subject: [PATCH 1/3] clk: imx6: Mask mmdc_ch1 handshake for periph2_sel and mmdc_ch1_axi_podf
-Date: Fri, 16 Sep 2016 11:36:25 -0300
-Message-ID: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
-Return-Path: fabio.estevam@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wimvs@spo001.leaseweb.nl>
+Date: Tue, 27 Sep 2016 21:13:49 +0200
+From: Wim Van Sebroeck <wim@iguana.be>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 3/4] watchdog: sa11x0/pxa: get rid of get_clock_tick_rate
+Message-ID: <20160927191349.GA6564@spo001.leaseweb.nl>
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr> <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474312335-20997-4-git-send-email-robert.jarzmik@free.fr>
+Sender: <wimvs@spo001.leaseweb.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+Hi Robert,
 
-MMDC CH1 is not used on i.MX6Q, so the handshake needed to change the
-parent of periph2_sel or the divider of mmdc_ch1_axi_podf will never
-succeed.
-Disable the handshake mechanism to allow changing the frequency of
-mmdc_ch1_axi, allowing to use it as a possible source for the LDB DI
-clock.
+> The OS timer rate used for the watchdog can now be fetched from the
+> standard clock API. This will remove the last user of
+> get_clock_tick_rate() in both pxa and sa11x0 architectures.
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/clk/imx/clk-imx6q.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Acked-by: Wim Van Sebroeck <wim@iguana.be>
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index ba1c1ae..dd33ebc 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -156,6 +156,19 @@ static struct clk ** const uart_clks[] __initconst = {
- 	NULL
- };
- 
-+#define CCM_CCDR		0x04
-+
-+#define CCDR_MMDC_CH1_MASK	BIT(16)
-+
-+static void __init imx6q_mmdc_ch1_mask_handshake(void __iomem *ccm_base)
-+{
-+	unsigned int reg;
-+
-+	reg = readl_relaxed(ccm_base + CCM_CCDR);
-+	reg |= CCDR_MMDC_CH1_MASK;
-+	writel_relaxed(reg, ccm_base + CCM_CCDR);
-+}
-+
- static void __init imx6q_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -297,6 +310,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	base = of_iomap(np, 0);
- 	WARN_ON(!base);
- 
-+	imx6q_mmdc_ch1_mask_handshake(base);
-+
- 	/*                                              name                reg       shift width parent_names     num_parents */
- 	clk[IMX6QDL_CLK_STEP]             = imx_clk_mux("step",	            base + 0xc,  8,  1, step_sels,	   ARRAY_SIZE(step_sels));
- 	clk[IMX6QDL_CLK_PLL1_SW]          = imx_clk_mux("pll1_sw",	    base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
--- 
-2.7.4
+Kind regards,
+Wim.
