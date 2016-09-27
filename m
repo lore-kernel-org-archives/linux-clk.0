@@ -1,42 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 16:18:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jun Nie <jun.nie@linaro.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: zx: fix pointer case warnings
-Message-ID: <20160916231816.GZ7243@codeaurora.org>
-References: <20160915154618.3007024-1-arnd@arndb.de>
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Russell King <linux@armlinux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>,  Guenter Roeck <linux@roeck-us.net>
+Cc: Daniel Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Thomas Gleixner <tglx@linutronix.de>,  Wim Van Sebroeck <wim@iguana.be>,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 0/4] kill get_clock_tick_rate()
+References: <1474312335-20997-1-git-send-email-robert.jarzmik@free.fr>
+	<87twd2bgtl.fsf@belgarion.home>
+Date: Tue, 27 Sep 2016 20:46:12 +0200
+In-Reply-To: <87twd2bgtl.fsf@belgarion.home> (Robert Jarzmik's message of
+	"Mon, 26 Sep 2016 21:29:26 +0200")
+Message-ID: <87wphx9o5n.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160915154618.3007024-1-arnd@arndb.de>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/15, Arnd Bergmann wrote:
-> The zx296718 clock driver has a creative way of assigning the register
-> values for each clock, by initializing an __iomem pointer to an
-> offset and then later adding the base (from ioremap) on top
-> with a cast to u64. This fail on all 32-bit architectures during
-> compile testing:
-> 
-> drivers/clk/zte/clk-zx296718.c: In function 'top_clocks_init':
-> drivers/clk/zte/clk-zx296718.c:554:35: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
->    zx296718_pll_clk[i].reg_base += (u64)reg_base;
-> drivers/clk/zte/clk-zx296718.c:579:29: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-> drivers/clk/zte/clk-zx296718.c:592:31: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-> 
-> It would be nice to avoid all the casts, but I decided to simply
-> shut up the warnings by changing the type from u64 to uintptr_t,
-> which does the right thing in practice.
+Robert Jarzmik <robert.jarzmik@free.fr> writes:
+>> Hi,
+>>
+>> This serie aims at killing get_clock_tick_rate() from pxa and sa1100 and replace
+>> it by clock API calls.
+>>
+>> I'd like to have this reviewed and acked afterwards at least by :
+>>  - Russell for the mach-sa1100 and sa1100_wdt.c
+>>  - Stephen or Michael for the clk-pxa25x.c
+>>  - Thomas or Daniel for the clocksource part
+>>  - Wim for sa1100_wdt.c
 
-Thanks. I usually push people to have descriptor structures that
-they use to create these things at runtime but that isn't working
-out so great all the time and we don't really have a precedent
-for one way or the other. This will work for now.
+Thanks to all for tests and acks, queued to pxa/for-next.
 
-Applied to clk-next.
+Cheers.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--
+Robert
