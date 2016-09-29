@@ -1,75 +1,56 @@
-Return-Path: <khilman@baylibre.com>
-MIME-Version: 1.0
-In-Reply-To: <40e49082-3635-5b99-863b-f51f97258864@synopsys.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-2-martin.blumenstingl@googlemail.com>
- <m24m5ixxyu.fsf@baylibre.com> <0d587b46-4c6e-c2ec-a62e-5d0c5a5bd902@synopsys.com>
- <CAOi56cW+zJ8_Gf6xKMyKNk7YB1+MpWHrtmv=+Xxs0PZy9rAXqQ@mail.gmail.com> <40e49082-3635-5b99-863b-f51f97258864@synopsys.com>
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Wed, 14 Sep 2016 11:36:38 -0700
-Message-ID: <CAOi56cWOwRJWJMhKDmnY0KdaOBMM3Cz2ZS2gTzGd-Hi1wig3jg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] usb: dwc2: add support for Meson8b and GXBB SoCs
-To: John Youn <John.Youn@synopsys.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, "kishon@ti.com" <kishon@ti.com>,
-	"carlo@caione.org" <carlo@caione.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v3 00/11] clk: qcom: PLL updates
+Date: Thu, 29 Sep 2016 14:05:41 +0530
+Message-Id: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 11:26 AM, John Youn <John.Youn@synopsys.com> wrote:
-> On 9/14/2016 11:17 AM, Kevin Hilman wrote:
->> On Wed, Sep 14, 2016 at 11:12 AM, John Youn <John.Youn@synopsys.com> wrote:
->>> On 9/14/2016 9:11 AM, Kevin Hilman wrote:
->>>> Hi John,
->>>>
->>>> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->>>>
->>>>> From: Jerome Brunet <jbrunet@baylibre.com>
->>>>>
->>>>> Add compatible strings for amlogic Meson8b and GXBB SoCs with the
->>>>> corresponding configuration parameters.
->>>>>
->>>>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>>>
->>>> Are you OK with adding this platform for v4.9?  I know you mentioned
->>>> you're working on new bindings to replace the current way, but since
->>>> that hasn't been posted AFAICT, it would be nice to get this merged now
->>>> and we can help test the new bindings when you're ready.
->>>>
->>>> If you're OK with that, and with your Ack, I can take merge the driver
->>>> changes through the arm-soc tree along with the rest of the DT patches.
->>>>
->>>
->>> Sure. Unfortunately, I wasn't able to complete it for 4.9.
->>>
->>> You can add my acked-by on this:
->>>
->>> Acked-by: John Youn <johnyoun@synopsys.com>
->>
->> Great, thanks!  I assume you're OK with PATCH 2/2 for the bindings as
->> well (at least for now until you rework them?)
->>
->> Kevin
->>
->
-> Do you mean PATCH 2/6 from this series?
+The series is adding a few things in clk-alpha-pll code which
+will be needed to model CPU PLLs and also needed by some MMCC
+PLLs on msm8996
 
-Yes.
+Changes in v3:
+* Removed all the confusing additions to clk-pll code from v2
+* Added patches showing users for the new additions to clk-alpha-pll in mmcc and cpu clocks
+* RFC of skeletal cpu clock driver included
 
-> It doesn't seem to add or remove any bindings in dwc2 so I'm fine with
-> it.
+Rajendra Nayak (10):
+  clk: qcom: Add support for alpha pll hwfsm ops
+  clk: qcom: Add support to initialize alpha plls
+  clk: qcom: handle alpha PLLs with 16bit alpha val registers
+  clk: qcom: Enable FSM mode for votable alpha PLLs
+  clk: qcom: Add .is_enabled ops for clk-alpha-pll
+  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
+  clk: qcom: mmcc-8996: Add capability flags for some alpha PLLs
+  clk: qcom: Add support for table based lookups in clk-regmap-mux
+  clk: Add clk_hw_get_clk() helper API to be used by clk providers
+  clk: qcom: Add basic CPU clock driver for msm8996
 
-Thanks.
+Taniya Das (1):
+  clk: qcom: support dynamic update using latched interface
 
-Kevin
+ drivers/clk/clk.c                 |   6 +
+ drivers/clk/qcom/Makefile         |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c  | 272 ++++++++++++++++++++++---
+ drivers/clk/qcom/clk-alpha-pll.h  |  31 +++
+ drivers/clk/qcom/clk-cpu-8996.c   | 408 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-pll.c        |  31 +--
+ drivers/clk/qcom/clk-regmap-mux.c |  13 ++
+ drivers/clk/qcom/clk-regmap-mux.h |   1 +
+ drivers/clk/qcom/common.c         |  21 ++
+ drivers/clk/qcom/common.h         |   9 +
+ drivers/clk/qcom/mmcc-msm8996.c   |   4 +
+ include/linux/clk-provider.h      |   1 +
+ 12 files changed, 744 insertions(+), 54 deletions(-)
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
