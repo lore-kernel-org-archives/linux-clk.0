@@ -1,54 +1,81 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 6 Sep 2016 18:17:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] rockchip clock changes for 4.9 part 1
-Message-ID: <20160907011737.GU12510@codeaurora.org>
-References: <2115968.yvb8ppzjmL@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2115968.yvb8ppzjmL@phil>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v3 05/11] clk: qcom: Add .is_enabled ops for clk-alpha-pll
+Date: Thu, 29 Sep 2016 14:05:46 +0530
+Message-Id: <1475138152-859-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/06, Heiko Stuebner wrote:
-> Hi Mike, Stephen,
-> 
-> please find below the pull request with main Rockchip-releated clock
-> changes for 4.9.
-> 
-> The signed tag should hopefully explain the contents sufficiently,
-> so if nothing stands out please pull.
-> 
-> On the matter of critical clocks, I'm still hoping for the handover type
-> to materialize soonish and am hoping of doing the conversion in one go,
-> instead of making everything critical now and then having to go through
-> the list yet again.
+This would be useful in subsequent patches when the .set_rate operation
+would need to identify if the PLL is actually enabled
 
-Hmm... ok it sounds like we should look into finishing that off
-then. I can't seem to recall why we didn't merge the handoff part
-though so I'll have to go look back on that.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> 
-> Thanks
-> Heiko
-> 
-> 
-> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
-> 
->   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.9-rockchip-clk1
-> 
-> for you to fetch changes up to 7b0f9e357ac838f640b10fb3db1ac35d9a5fa8de:
-> 
->   clk: rockchip: use the dclk_vop_frac clock ids on rk3399 (2016-09-04 23:48:19 +0200)
-
-Pulled, thanks.
-
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index c6ddc04e..89c7fdb 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -199,6 +199,33 @@ static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
+ 	wait_for_pll_disable(pll);
+ }
+ 
++static int pll_is_enabled(struct clk_hw *hw, u32 mask)
++{
++	int ret;
++	u32 val, off;
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++
++	off = pll->offset;
++	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	if (ret)
++		return ret;
++
++	if (val & mask)
++		return 1;
++	else
++		return 0;
++}
++
++static int clk_alpha_pll_hwfsm_is_enabled(struct clk_hw *hw)
++{
++	return pll_is_enabled(hw, PLL_ACTIVE_FLAG);
++}
++
++static int clk_alpha_pll_is_enabled(struct clk_hw *hw)
++{
++	return pll_is_enabled(hw, PLL_LOCK_DET);
++}
++
+ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ {
+ 	int ret;
+@@ -408,6 +435,7 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ const struct clk_ops clk_alpha_pll_ops = {
+ 	.enable = clk_alpha_pll_enable,
+ 	.disable = clk_alpha_pll_disable,
++	.is_enabled = clk_alpha_pll_is_enabled,
+ 	.recalc_rate = clk_alpha_pll_recalc_rate,
+ 	.round_rate = clk_alpha_pll_round_rate,
+ 	.set_rate = clk_alpha_pll_set_rate,
+@@ -417,6 +445,7 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_ops);
+ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
+ 	.enable = clk_alpha_pll_hwfsm_enable,
+ 	.disable = clk_alpha_pll_hwfsm_disable,
++	.is_enabled = clk_alpha_pll_hwfsm_is_enabled,
+ 	.recalc_rate = clk_alpha_pll_recalc_rate,
+ 	.round_rate = clk_alpha_pll_round_rate,
+ 	.set_rate = clk_alpha_pll_set_rate,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
