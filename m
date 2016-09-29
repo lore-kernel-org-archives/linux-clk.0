@@ -1,59 +1,57 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: heiko@sntech.de,
-	dianders@chromium.org
-Cc: linux-rockchip@lists.infradead.org,
-	zhengxing@rock-chips.com,
-	ykk@rock-chips.com,
-	Chris Zhong <zyw@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] clk: rockchip: use the dclk_vop_frac clock ids
-Date: Thu,  1 Sep 2016 15:53:28 -0700
-Message-Id: <1472770408-32278-3-git-send-email-zyw@rock-chips.com>
-In-Reply-To: <1472770408-32278-1-git-send-email-zyw@rock-chips.com>
-References: <1472770408-32278-1-git-send-email-zyw@rock-chips.com>
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v3 10/11] clk: Add clk_hw_get_clk() helper API to be used by clk providers
+Date: Thu, 29 Sep 2016 14:05:51 +0530
+Message-Id: <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yakir Yang <ykk@rock-chips.com>
+Add a helper API that will allow clk providers to turn their clk_hw
+structures into struct clk pointer.
 
-Export the dclk_vop_frac out, so we can set the dclk_vop as the
-child of dclk_vop_frac, and then we can start to take use of
-the fractional dividers.
-
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
+ drivers/clk/clk.c            | 6 ++++++
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 7 insertions(+)
 
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 4c59f2b..2c7cba7 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1168,7 +1168,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(49), 8, 2, MFLAGS, 0, 8, DFLAGS,
- 			RK3399_CLKGATE_CON(10), 12, GFLAGS),
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 820a939..a084132 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -186,6 +186,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_name);
  
--	COMPOSITE_FRACMUX_NOGATE(0, "dclk_vop0_frac", "dclk_vop0_div", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_NOGATE(DCLK_VOP0_FRAC, "dclk_vop0_frac", "dclk_vop0_div", 0,
- 			RK3399_CLKSEL_CON(106), 0,
- 			&rk3399_dclk_vop0_fracmux),
- 
-@@ -1198,7 +1198,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKSEL_CON(50), 8, 2, MFLAGS, 0, 8, DFLAGS,
- 			RK3399_CLKGATE_CON(10), 13, GFLAGS),
- 
--	COMPOSITE_FRACMUX_NOGATE(0, "dclk_vop1_frac", "dclk_vop1_div", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_NOGATE(DCLK_VOP1_FRAC, "dclk_vop1_frac", "dclk_vop1_div", 0,
- 			RK3399_CLKSEL_CON(107), 0,
- 			&rk3399_dclk_vop1_fracmux),
- 
++struct clk *clk_hw_get_clk(const struct clk_hw *hw)
++{
++	return hw->clk;
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_clk);
++
+ struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return !clk ? NULL : clk->core->hw;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a39c0c5..77d05f1 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -729,6 +729,7 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
++struct clk *clk_hw_get_clk(const struct clk_hw *hw);
+ struct clk_hw *__clk_get_hw(struct clk *clk);
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
