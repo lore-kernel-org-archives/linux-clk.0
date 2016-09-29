@@ -1,56 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.8-rc4
-Date: Thu,  1 Sep 2016 18:56:00 -0700
-Message-Id: <20160902015600.21873-1-sboyd@codeaurora.org>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v3 09/11] clk: qcom: Add support for table based lookups in clk-regmap-mux
+Date: Thu, 29 Sep 2016 14:05:50 +0530
+Message-Id: <1475138152-859-10-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+Add support to pass a table of values for parent selection similar
+to whats done in clk-mux
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-regmap-mux.c | 13 +++++++++++++
+ drivers/clk/qcom/clk-regmap-mux.h |  1 +
+ 2 files changed, 14 insertions(+)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to dc7066c54107255f5f9a11bf3f82417c9b1aef51:
-
-  Merge tag 'v4.8-rockchip-clk-fixes1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-fixes (2016-08-29 17:08:35 -0700)
-
-----------------------------------------------------------------
-A collection of small fixes for various SoC vendor clk drivers.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      clk: sunxi-ng: Fix inverted test condition in ccu_helper_wait_for_lock
-
-Chris Zhong (1):
-      clk: rockchip: fix rk3399 aclk_vio gate bit
-
-Stephen Boyd (1):
-      Merge tag 'v4.8-rockchip-clk-fixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
-
-Vince Hsu (1):
-      clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
-
-Xing Zheng (3):
-      clk: rockchip: fix incorrect aclk_emmc source gate bits on rk3399
-      clk: rockchip: fix incorrect GATE bits for {c, g}pll_aclk_perihp_src on rk3399
-      clk: rockchip: mark aclk_emmc_noc as a critical clock on rk3399
-
-Yoshihiro Shimoda (1):
-      clk: renesas: r8a7795: Fix SD clocks
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c |  9 +++++----
- drivers/clk/rockchip/clk-rk3399.c      | 11 ++++++-----
- drivers/clk/sunxi-ng/ccu_common.c      |  2 +-
- drivers/clk/tegra/clk-tegra114.c       |  4 ++--
- 4 files changed, 14 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+index cae3071..14a2af5 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.c
++++ b/drivers/clk/qcom/clk-regmap-mux.c
+@@ -28,6 +28,7 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+ 	struct clk_regmap *clkr = to_clk_regmap(hw);
+ 	unsigned int mask = GENMASK(mux->width - 1, 0);
++	int num_parents = clk_hw_get_num_parents(hw);
+ 	unsigned int val;
+ 
+ 	regmap_read(clkr->regmap, mux->reg, &val);
+@@ -35,6 +36,15 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	val >>= mux->shift;
+ 	val &= mask;
+ 
++	if (mux->table) {
++		int i;
++
++		for (i = 0; i < num_parents; i++)
++			if (mux->table[i] == val)
++				return i;
++		return -EINVAL;
++	}
++
+ 	return val;
+ }
+ 
+@@ -45,6 +55,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+ 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+ 	unsigned int val;
+ 
++	if (mux->table)
++		index = mux->table[index];
++
+ 	val = index;
+ 	val <<= mux->shift;
+ 
+diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+index 5cec761..310804e 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.h
++++ b/drivers/clk/qcom/clk-regmap-mux.h
+@@ -21,6 +21,7 @@ struct clk_regmap_mux {
+ 	u32			reg;
+ 	u32			shift;
+ 	u32			width;
++	u32			*table;
+ 	struct clk_regmap	clkr;
+ };
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
