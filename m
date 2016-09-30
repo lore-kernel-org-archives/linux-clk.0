@@ -1,79 +1,80 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mylene Josserand <mylene.josserand@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 0/7] clk: sunxi-ng: Introduce support for A23 and A33 CCUs
-Date: Tue,  6 Sep 2016 14:18:30 +0200
-Message-Id: <20160906121837.7517-1-maxime.ripard@free-electrons.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH 2/6] ARM: dts: stm32f429: add LSI and LSE clocks
+Date: Fri, 30 Sep 2016 16:25:05 +0200
+Message-ID: <1475245509-6487-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
+References: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Here is the migration for the A23 and A33 clocks to the sunxi-ng
-framework.
+This patch adds lsi / lse oscillators. These clocks can be use by
+RTC clocks.
+The clock drivers needs to disable the power domain write protection using
+syscon / regmap to enable these clocks.
 
-It has been tested on SinA33 board, and I made sure that everything
-was reported at the exact same rate, that the MMC was still working in
-DDR, etc.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ arch/arm/boot/dts/stm32f429.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-This has also been tested to implement the DRM driver, so I'm
-confident things will work just fine.
-
-Let me know what you think,
-Maxime
-
-Changes from v1:
-  - Allowed to set a maximum on the dividers, and used that on the CPU
-    clocks
-  - Renamed the CE (crypto engine) clocks to SS (security system) to
-    stick to what's being used in the datasheet
-  - Added a TODO to mention that we don't really know whose parents
-    are linked to the USB clocks.
-
-Maxime Ripard (7):
-  clk: sunxi-ng: div: Add mux table macros
-  clk: sunxi-ng: div: Allow to set a maximum
-  clk: sunxi-ng: mux: Add mux table macro
-  clk: sunxi-ng: Add N-class clocks support
-  clk: sunxi-ng: Add A33 CCU support
-  clk: sunxi-ng: Add A23 CCU
-  ARM: sun8i: Convert the A23 and A33 to the CCU
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
- arch/arm/boot/dts/sun8i-a23-a33.dtsi               | 257 ++-----
- arch/arm/boot/dts/sun8i-a23.dtsi                   |  51 +-
- arch/arm/boot/dts/sun8i-a33.dtsi                   |  73 +-
- drivers/clk/sunxi-ng/Kconfig                       |  28 +
- drivers/clk/sunxi-ng/Makefile                      |   3 +
- drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h           |  63 ++
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c               | 732 +++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c               | 780 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_div.h                     |  49 +-
- drivers/clk/sunxi-ng/ccu_mp.c                      |  23 +-
- drivers/clk/sunxi-ng/ccu_mult.c                    | 133 ++++
- drivers/clk/sunxi-ng/ccu_mult.h                    |  35 +
- drivers/clk/sunxi-ng/ccu_mux.h                     |  26 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                     |   4 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |  21 +-
- drivers/clk/sunxi-ng/ccu_nm.c                      |  16 +-
- include/dt-bindings/clock/sun8i-a23-a33-ccu.h      | 127 ++++
- include/dt-bindings/reset/sun8i-a23-a33-ccu.h      |  87 +++
- 19 files changed, 2151 insertions(+), 359 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a23.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a33.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_mult.c
- create mode 100644 include/dt-bindings/clock/sun8i-a23-a33-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-a23-a33-ccu.h
-
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index 35df462..0979fb6 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -55,6 +55,18 @@
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <0>;
+ 		};
++
++		clk-lse {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <32768>;
++		};
++
++		clk-lsi {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <32000>;
++		};
+ 	};
+ 
+ 	soc {
+@@ -176,6 +188,11 @@
+ 			reg = <0x40013800 0x400>;
+ 		};
+ 
++		pwrcfg: power-config@40007000 {
++			compatible = "syscon";
++			reg = <0x40007000 0x400>;
++		};
++
+ 		pin-controller {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -330,6 +347,7 @@
+ 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 			reg = <0x40023800 0x400>;
+ 			clocks = <&clk_hse>;
++			st,syscfg = <&pwrcfg>;
+ 		};
+ 
+ 		dma1: dma-controller@40026000 {
 -- 
-2.9.3
+1.9.1
