@@ -1,52 +1,56 @@
-Return-Path: <>
-Return-Path: <>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] clk: mmp: clk-of-pxa1928: Free memory obtained by kzalloc
-Date: Tue, 20 Sep 2016 15:22:48 +0530
-Message-Id: <1474365168-15489-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH 0/6] STM32F4 Add RTC & QSPI clocks
+Date: Fri, 30 Sep 2016 16:25:03 +0200
+Message-ID: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Free memory, if init is not successful.
+This patch-set introduce RTC and QSPI clocks for STM32F4 socs
+RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/mmp/clk-of-pxa1928.c |    3 +++
- 1 file changed, 3 insertions(+)
+example to use rtc clock:
 
-diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
-index e478ff4..cede7b4 100644
---- a/drivers/clk/mmp/clk-of-pxa1928.c
-+++ b/drivers/clk/mmp/clk-of-pxa1928.c
-@@ -216,6 +216,7 @@ static void __init pxa1928_mpmu_clk_init(struct device_node *np)
- 	pxa_unit->mpmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map mpmu registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
- 
-@@ -234,6 +235,7 @@ static void __init pxa1928_apmu_clk_init(struct device_node *np)
- 	pxa_unit->apmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->apmu_base) {
- 		pr_err("failed to map apmu registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
- 
-@@ -254,6 +256,7 @@ static void __init pxa1928_apbc_clk_init(struct device_node *np)
- 	pxa_unit->apbc_base = of_iomap(np, 0);
- 	if (!pxa_unit->apbc_base) {
- 		pr_err("failed to map apbc registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
- 
+		rtc: rtc@40002800 {
+			compatible = "st,stm32-rtc";
+			reg = <0x40002800 0x400>;
+			...
+			clocks = <&rcc 1 CLK_RTC>;
+
+			assigned-clocks =  <&rcc 1 CLK_RTC>;
+			assigned-clock-parents = <&rcc 1 CLK_LSE>;
+			...
+		};
+
+Gabriel Fernandez (6):
+  clk: stm32f4: Add LSI & LSE clocks
+  ARM: dts: stm32f429: add LSI and LSE clocks
+  arm: stmf32: Enable SYSCON
+  clk: stm32f4: Add RTC clock
+  clk: stm32f469: Add QSPI clock
+  ARM: dts: stm32f429: Add QSPI clock
+
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
+ arch/arm/boot/dts/stm32f429.dtsi                   |  18 +
+ arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
+ arch/arm/configs/stm32_defconfig                   |   1 +
+ drivers/clk/clk-stm32f4.c                          | 450 ++++++++++++++++++++-
+ 5 files changed, 455 insertions(+), 22 deletions(-)
+
 -- 
-1.7.9.5
+1.9.1
