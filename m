@@ -1,41 +1,49 @@
-Return-Path: <keguang.zhang@gmail.com>
-Return-Path: <keguang.zhang@gmail.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-To: linux-clk@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: [PATCH V1 3/3] clk: Loongson1: Make use of GENMASK
-Date: Mon, 19 Sep 2016 12:38:56 +0800
-Message-Id: <1474259936-9657-4-git-send-email-keguang.zhang@gmail.com>
-In-Reply-To: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
-References: <1474259936-9657-1-git-send-email-keguang.zhang@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH 6/6] ARM: dts: stm32f429: Add QSPI clock
+Date: Fri, 30 Sep 2016 16:25:09 +0200
+Message-ID: <1475245509-6487-7-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
+References: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kelvin Cheung <keguang.zhang@gmail.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Make use of GENMASK instead of open coding the equivalent operation,
-and update the PLL formula.
+This patch adds the QSPI clock for stm32f469 discovery board.
 
-Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/loongson1/clk-loongson1b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/stm32f469-disco.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
-index 4b3d9d2..f36a97e 100644
---- a/drivers/clk/loongson1/clk-loongson1b.c
-+++ b/drivers/clk/loongson1/clk-loongson1b.c
-@@ -26,7 +26,7 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
- 	u32 pll, rate;
+diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+index cb55ac8..80aecc0 100644
+--- a/arch/arm/boot/dts/stm32f469-disco.dts
++++ b/arch/arm/boot/dts/stm32f469-disco.dts
+@@ -66,6 +66,10 @@
+ 	};
+ };
  
- 	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
--	rate = 12 + (pll & 0x3f) + (((pll >> 8) & 0x3ff) >> 10);
-+	rate = 12 + (pll & GENMASK(5, 0));
- 	rate *= OSC;
- 	rate >>= 1;
- 
++&rcc {
++	compatible = "st,stm32f46xx-rcc", "st,stm32-rcc";
++};
++
+ &clk_hse {
+ 	clock-frequency = <8000000>;
+ };
 -- 
 1.9.1
