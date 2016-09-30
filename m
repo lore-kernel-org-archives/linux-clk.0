@@ -1,81 +1,58 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 4/7] phy: meson: add USB2 PHY support for Meson8b and GXBB
-To: Kevin Hilman <khilman@baylibre.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160904213152.25837-5-martin.blumenstingl@googlemail.com>
- <m260q6jibf.fsf@baylibre.com>
- <CAFBinCA4Yvw5pbOFmJ8SqyOASADavyEPmHywSdOiUazcqe_Zmg@mail.gmail.com>
- <e3b1f611-d6f6-c98b-a53b-98e94ef5bd96@codethink.co.uk>
- <m2eg4ui0nl.fsf@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- mark.rutland@arm.com, devicetree@vger.kernel.org,
- gregkh@linuxfoundation.org, johnyoun@synopsys.com, will.deacon@arm.com,
- mturquette@baylibre.com, linux-usb@vger.kernel.org, sboyd@codeaurora.org,
- kishon@ti.com, robh+dt@kernel.org, catalin.marinas@arm.com,
- carlo@caione.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- jbrunet@baylibre.com
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Message-ID: <ffdd0188-72bc-4575-f997-e8547f4c31d2@codethink.co.uk>
-Date: Thu, 8 Sep 2016 21:53:24 +0100
-MIME-Version: 1.0
-In-Reply-To: <m2eg4ui0nl.fsf@baylibre.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2] clk: bcm2835: Clamp the PLL's requested rate to the hardware limits.
+Date: Fri, 30 Sep 2016 10:07:27 -0700
+Message-Id: <20160930170727.32544-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/16 21:42, Kevin Hilman wrote:
-> Ben Dooks <ben.dooks@codethink.co.uk> writes:
->
->> On 08/09/16 20:52, Martin Blumenstingl wrote:
->>> On Thu, Sep 8, 2016 at 9:35 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->>>>> +     phy = devm_phy_create(&pdev->dev, NULL, &phy_meson_usb2_ops);
->>>>> +     if (IS_ERR(phy)) {
->>>>> +             dev_err(&pdev->dev, "failed to create PHY\n");
->>>>> +             return PTR_ERR(phy);
->>>>> +     }
->>>>> +
->>>>> +     if (usb_reset_refcnt++ == 0) {
->>>>> +             ret = device_reset(&pdev->dev);
->>>>> +             if (ret) {
->>>>> +                     dev_err(&phy->dev, "Failed to reset USB PHY\n");
->>>>> +                     return ret;
->>>>> +             }
->>>>> +     }
->>>>
->>>> The ref count + reset here looks like something that could/should be
->>>> handled in a runtime PM callback.
->>> Unfortunately that doesn't work (as Jerome found out) because both
->>> PHYs are sharing the same reset line.
->>> So if the second PHY would call device_reset then it would also reset
->>> the first PHY!
->>>
->>> There's a comment above the declaration of usb_reset_refcnt which
->>> tries to explain this:
->>> "The PHYs are sharing a common reset line -> we are only allowed to
->>> reset once for all PHYs."
->>> Maybe I should move this comment to the "if (usb_reset_refcnt++ == 0)
->>> {" line to make it easier to see?
->>>
->>
->> pm-runtime has refcounting in it. When one of the nodes turns on,
->> the pm-runtime will call your driver to say there is a user when
->> this first use turns up.
->>
->> If all the sub-phys turn off and drop their refcount then the driver
->> is called to say there are no more users and you can go to sleep.
->
-> After a chat w/Martin on IRC, It turns out runtime PM wont help here.
->
-> The reason is because there are physically two PHY devices[1].  Those 2
-> devices will be treated independely by runtime PM, and have separate
-> use-counting, which means doing what I proposed would cause a reset to
-> happen when either device was probed.
->
-> So, I think it's OK as it is.
+Fixes setting low-resolution video modes on HDMI.  Now the PLLH_PIX
+divider adjusts itself until the PLLH is within bounds.
 
-Surely you can do pm_runtime_get/put on the phy's parent platform
-device and do it that way?
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 7a7970865c2d..69a1849d140c 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -499,8 +499,12 @@ static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
+ static long bcm2835_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long *parent_rate)
+ {
++	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
++	const struct bcm2835_pll_data *data = pll->data;
+ 	u32 ndiv, fdiv;
+ 
++	rate = clamp(rate, data->min_rate, data->max_rate);
++
+ 	bcm2835_pll_choose_ndiv_and_fdiv(rate, *parent_rate, &ndiv, &fdiv);
+ 
+ 	return bcm2835_pll_rate_from_divisors(*parent_rate, ndiv, fdiv, 1);
+@@ -605,13 +609,6 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+ 	u32 ana[4];
+ 	int i;
+ 
+-	if (rate < data->min_rate || rate > data->max_rate) {
+-		dev_err(cprman->dev, "%s: rate out of spec: %lu vs (%lu, %lu)\n",
+-			clk_hw_get_name(hw), rate,
+-			data->min_rate, data->max_rate);
+-		return -EINVAL;
+-	}
+-
+ 	if (rate > data->max_fb_rate) {
+ 		use_fb_prediv = true;
+ 		rate /= 2;
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+2.9.3
