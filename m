@@ -1,76 +1,61 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: kernel-janitors@vger.kernel.org,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH] clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6 as parent
-Date: Tue, 18 Oct 2016 13:42:09 +0800
-Message-Id: <20161018054209.24546-1-wens@csie.org>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 12/15] clk: tegra: dfll: improve function-level documentation
+Date: Sat,  1 Oct 2016 21:46:29 +0200
+Message-Id: <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On the A31, the DMA engine only works if AHB1 is clocked from PLL6.
-In addition, the hstimer is clocked from AHB1, and if AHB1 is clocked
-from the CPU clock, and cpufreq is working, we get an unstable timer.
+Adjust variables to correspond to the names used in the parameter list of
+the function.  Move the struct device * variable up to the place where it
+appears in the parameter list.
 
-Force the AHB1 clock to use PLL6 as its parent. Previously this was done
-in the device tree with the assigned-clocks and assigned-clocks-parent
-bindings. However with this new monolithic driver, the system critical
-clocks aren't exported through the device tree. The alternative is to
-force this setting in the driver before the clocks are registered.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-This is also done in newer versions of mainline U-boot. But people still
-using an older version, or even the vendor version, can still hit this
-issue. Hence the need to do it in the kernel as well.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Reported-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Hi,
+ drivers/clk/tegra/cvb.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-This fix is for 4.9. This should fix issues with hstimer and DMA when
-booting with an old bootloader.
-
-ChenYu
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index 79596463e0d9..4a82a49cff5e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -191,6 +191,8 @@ static struct clk_div_table axi_div_table[] = {
- static SUNXI_CCU_DIV_TABLE(axi_clk, "axi", "cpu",
- 			   0x050, 0, 3, axi_div_table, 0);
+diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
+index 624115e..da9e8e7 100644
+--- a/drivers/clk/tegra/cvb.c
++++ b/drivers/clk/tegra/cvb.c
+@@ -92,19 +92,19 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
  
-+#define SUN6I_A31_AHB1_REG  0x054
-+
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph" };
- 
-@@ -1230,6 +1232,16 @@ static void __init sun6i_a31_ccu_setup(struct device_node *node)
- 	val &= BIT(16);
- 	writel(val, reg + SUN6I_A31_PLL_MIPI_REG);
- 
-+	/* Force AHB1 to PLL6 / 3 */
-+	val = readl(reg + SUN6I_A31_AHB1_REG);
-+	/* set PLL6 pre-div = 3 */
-+	val &= ~GENMASK(7, 6);
-+	val |= 0x2 << 6;
-+	/* select PLL6 / pre-div */
-+	val &= ~GENMASK(13, 12);
-+	val |= 0x3 << 12;
-+	writel(val, reg + SUN6I_A31_AHB1_REG);
-+
- 	sunxi_ccu_probe(node, reg, &sun6i_a31_ccu_desc);
- 
- 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
--- 
-2.9.3
+ /**
+  * tegra_cvb_add_opp_table - build OPP table from Tegra CVB tables
+- * @cvb_tables: array of CVB tables
+- * @sz: size of the previously mentioned array
++ * @dev: the struct device * for which the OPP table is built
++ * @tables: array of CVB tables
++ * @count: size of the previously mentioned array
+  * @process_id: process id of the HW module
+  * @speedo_id: speedo id of the HW module
+  * @speedo_value: speedo value of the HW module
+- * @max_rate: highest safe clock rate
+- * @opp_dev: the struct device * for which the OPP table is built
++ * @max_freq: highest safe clock rate
+  *
+  * On Tegra, a CVB table encodes the relationship between operating voltage
+  * and safe maximal frequency for a given module (e.g. GPU or CPU). This
+  * function calculates the optimal voltage-frequency operating points
+  * for the given arguments and exports them via the OPP library for the
+- * given @opp_dev. Returns a pointer to the struct cvb_table that matched
++ * given @dev. Returns a pointer to the struct cvb_table that matched
+  * or an ERR_PTR on failure.
+  */
+ const struct cvb_table *
