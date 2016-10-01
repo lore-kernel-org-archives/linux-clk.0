@@ -1,63 +1,41 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  "Rafael J. Wysocki" <rjw@rjwysocki.net>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org
-Subject: Re: [PATCH 6/6] cpufreq: pxa: convert to clock API
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
-	<1476130149-31834-7-git-send-email-robert.jarzmik@free.fr>
-	<20161012023601.GC19385@vireshk-i7> <87mvia6q8p.fsf@belgarion.home>
-	<20161012063247.GH19385@vireshk-i7> <87insy6kdq.fsf@belgarion.home>
-	<20161012084044.GK19385@vireshk-i7>
-Date: Wed, 12 Oct 2016 21:12:26 +0200
-In-Reply-To: <20161012084044.GK19385@vireshk-i7> (Viresh Kumar's message of
-	"Wed, 12 Oct 2016 14:10:44 +0530")
-Message-ID: <87eg3l755x.fsf@belgarion.home>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: 
+Cc: kernel-janitors@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 07/15] clk: sunxi: mod0: improve function-level documentation
+Date: Sat,  1 Oct 2016 21:46:24 +0200
+Message-Id: <1475351192-27079-8-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
+Use the actual function name in the function documentation.
 
->> >> PXA architecture have both legacy platform_data based configurations and new
->> >> devicetree based ones.
->> >
->> > I don't see any platform data specific code in this driver. What am I
->> > missing ?
->> 
->> In a legacy platform, ie. without devicetree, we have CONFIG_OF=n.
->> How would cpufreq-dt be usable in this case ?
->> 
->> You can see such a platform in arch/arm/configs/mainstone_defconfig and
->> arch/arm/mach-pxa/mainstone.c as an example.
->
-> Okay, so its not about platform_data as you said earlier. Rather it is
-> about the CONFIG_OF option.
-We're bickering about terminology.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-Mine is that there are globally :
- - platform_data _based_  configurations
-   => drivers probing devices rely on platform_data structures for initial
-   configuration
-   => that implies CONFIG_OF=n
-   => pxa2xx-cpufreq is one of them, even if in this case no platform_data is
-   used
-   
- - devicetree based configurations
-   => drivers probing devices rely on device-tree blob for initial configuration
-   => that implies CONFIG_OF=y
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- - ACPI based configurations
-   => drivers probing devices rely on ACPI data
+---
+ drivers/clk/sunxi/clk-mod0.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- - maybe PCI would deserve a place, but I don't think there is much
-   configuration in it
-
-> In that case, what about making this driver depends_on !CONFIG_OF ? So
-> that the DT users don't use it anymore.
-Good idea, let me try it.
-I'll see if it actually works before make another iteration of this patch.
-
-Cheers.
-
--- 
-Robert
+diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+index e54266c..4417ae1 100644
+--- a/drivers/clk/sunxi/clk-mod0.c
++++ b/drivers/clk/sunxi/clk-mod0.c
+@@ -24,7 +24,7 @@
+ #include "clk-factors.h"
+ 
+ /**
+- * sun4i_get_mod0_factors() - calculates m, n factors for MOD0-style clocks
++ * sun4i_a10_get_mod0_factors() - calculates m, n factors for MOD0-style clocks
+  * MOD0 rate is calculated as follows
+  * rate = (parent_rate >> p) / (m + 1);
+  */
