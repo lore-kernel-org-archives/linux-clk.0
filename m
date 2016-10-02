@@ -1,160 +1,63 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v4 5/9] clk: sunxi-ng: Implement minimum for multipliers
-Date: Tue, 11 Oct 2016 16:28:23 +0200
-Message-Id: <dc2601d4f35d9921ec50ed443cdd413f699fa270.1476196031.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	rtc-linux@googlegroups.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 3/4] rtc: Enable compile testing for Maxim and Samsung drivers
+Date: Sun,  2 Oct 2016 22:58:16 +0200
+Message-Id: <1475441897-15730-4-git-send-email-krzk@kernel.org>
+In-Reply-To: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow the CCU drivers to specify a multiplier for their clocks.
+max8907, max77686 and s5m RTC drivers can be compile tested to increase
+build coverage.  The s5m-rtc uses REGMAP_IRQ so add this as explicit
+dependency.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu_mult.c |  2 +-
- drivers/clk/sunxi-ng/ccu_mult.h | 13 +++++++++----
- drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nkmp.c |  4 ++--
- drivers/clk/sunxi-ng/ccu_nm.c   |  2 +-
- 6 files changed, 21 insertions(+), 16 deletions(-)
+ drivers/rtc/Kconfig | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 6a02ffee5386..678b6cb49f01 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -105,7 +105,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
- 						&parent_rate);
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index e859d148aba9..988053664125 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -303,7 +303,7 @@ config RTC_DRV_MAX6900
  
--	_cm.min = 1;
-+	_cm.min = cm->mult.min;
- 	_cm.max = 1 << cm->mult.width;
- 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ config RTC_DRV_MAX8907
+ 	tristate "Maxim MAX8907"
+-	depends on MFD_MAX8907
++	depends on MFD_MAX8907 || COMPILE_TEST
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  RTC of Maxim MAX8907 PMIC.
+@@ -343,7 +343,7 @@ config RTC_DRV_MAX8997
  
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index 113780b7558e..c1a2134bdc71 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -7,14 +7,19 @@
- struct ccu_mult_internal {
- 	u8	shift;
- 	u8	width;
-+	u8	min;
- };
+ config RTC_DRV_MAX77686
+ 	tristate "Maxim MAX77686"
+-	depends on MFD_MAX77686 || MFD_MAX77620
++	depends on MFD_MAX77686 || MFD_MAX77620 || COMPILE_TEST
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  RTC of Maxim MAX77686/MAX77620/MAX77802 PMIC.
+@@ -602,7 +602,8 @@ config RTC_DRV_RV8803
  
--#define _SUNXI_CCU_MULT(_shift, _width)		\
--	{					\
--		.shift	= _shift,		\
--		.width	= _width,		\
-+#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
-+	{						\
-+		.shift	= _shift,			\
-+		.width	= _width,			\
-+		.min	= _min,				\
- 	}
- 
-+#define _SUNXI_CCU_MULT(_shift, _width)		\
-+	_SUNXI_CCU_MULT_MIN(_shift, _width, 1)
-+
- struct ccu_mult {
- 	u32			enable;
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-index a42d870ba0ef..eaf0fdf78d2b 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.c
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -97,9 +97,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nk->fixed_post_div;
- 
--	_nk.min_n = 1;
-+	_nk.min_n = nk->n.min;
- 	_nk.max_n = 1 << nk->n.width;
--	_nk.min_k = 1;
-+	_nk.min_k = nk->k.min;
- 	_nk.max_k = 1 << nk->k.width;
- 
- 	ccu_nk_find_best(*parent_rate, rate, &_nk);
-@@ -122,9 +122,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate * nk->fixed_post_div;
- 
--	_nk.min_n = 1;
-+	_nk.min_n = nk->n.min;
- 	_nk.max_n = 1 << nk->n.width;
--	_nk.min_k = 1;
-+	_nk.min_k = nk->k.min;
- 	_nk.max_k = 1 << nk->k.width;
- 
- 	ccu_nk_find_best(parent_rate, rate, &_nk);
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index b2a5fccf2f8c..715b49211ddb 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -100,9 +100,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	struct ccu_nkm *nkm = data;
- 	struct _ccu_nkm _nkm;
- 
--	_nkm.min_n = 1;
-+	_nkm.min_n = nkm->n.min;
- 	_nkm.max_n = 1 << nkm->n.width;
--	_nkm.min_k = 1;
-+	_nkm.min_n = nkm->k.min;
- 	_nkm.max_k = 1 << nkm->k.width;
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
-@@ -129,9 +129,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
--	_nkm.min_n = 1;
-+	_nkm.min_n = nkm->n.min;
- 	_nkm.max_n = 1 << nkm->n.width;
--	_nkm.min_k = 1;
-+	_nkm.min_n = nkm->k.min;
- 	_nkm.max_k = 1 << nkm->k.width;
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 2c1398192e48..7968e0bac5db 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -107,9 +107,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
- 	struct _ccu_nkmp _nkmp;
- 
--	_nkmp.min_n = 1;
-+	_nkmp.min_n = nkmp->n.min;
- 	_nkmp.max_n = 1 << nkmp->n.width;
--	_nkmp.min_k = 1;
-+	_nkmp.min_n = nkmp->k.min;
- 	_nkmp.max_k = 1 << nkmp->k.width;
- 	_nkmp.min_m = 1;
- 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index 2a190bc032a9..b1f3f0e8899d 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -93,7 +93,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
- 	struct _ccu_nm _nm;
- 
--	_nm.min_n = 1;
-+	_nm.min_n = nm->n.min;
- 	_nm.max_n = 1 << nm->n.width;
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ config RTC_DRV_S5M
+ 	tristate "Samsung S2M/S5M series"
+-	depends on MFD_SEC_CORE
++	depends on MFD_SEC_CORE || COMPILE_TEST
++	select REGMAP_IRQ
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  RTC of Samsung S2MPS14 and S5M PMIC series.
 -- 
-git-series 0.8.10
+2.7.4
