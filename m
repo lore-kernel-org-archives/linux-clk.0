@@ -1,24 +1,52 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v2 0/2] Renesas R8A7743 CPG/MSSR clock support
-Date: Fri, 07 Oct 2016 23:45:23 +0300
-Message-ID: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rtc-linux@googlegroups.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/4] clk: Enable compile testing for s2mps11 and max77686
+Date: Sun,  2 Oct 2016 22:58:14 +0200
+Message-Id: <1475441897-15730-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+s2mps11 and max77686 clock drivers can be compile tested to increase
+build coverage.
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo. I'm splitting this from the R-Car gen2 common support patch.
-As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
-patch #2 of this series, so it might make sense to merge this patch to the
-'renesas.git' repo as well...
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7743 support
-
-MBR, Sergei
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 6a8ac04bedeb..56c1998ced3e 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -33,7 +33,7 @@ source "drivers/clk/versatile/Kconfig"
+ 
+ config COMMON_CLK_MAX77686
+ 	tristate "Clock driver for Maxim 77620/77686/77802 MFD"
+-	depends on MFD_MAX77686 || MFD_MAX77620
++	depends on MFD_MAX77686 || MFD_MAX77620 || COMPILE_TEST
+ 	---help---
+ 	  This driver supports Maxim 77620/77686/77802 crystal oscillator
+ 	  clock.
+@@ -119,7 +119,7 @@ config COMMON_CLK_CS2000_CP
+ 
+ config COMMON_CLK_S2MPS11
+ 	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+-	depends on MFD_SEC_CORE
++	depends on MFD_SEC_CORE || COMPILE_TEST
+ 	---help---
+ 	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
+ 	  clock. These multi-function devices have two (S2MPS14) or three
+-- 
+2.7.4
