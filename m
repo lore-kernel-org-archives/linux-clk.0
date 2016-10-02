@@ -1,31 +1,96 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Oct 2016 16:30:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Loc Ho <lho@apm.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] clk: xgene: Don't call __pa on ioremaped address
-Message-ID: <20161028233059.GO16026@codeaurora.org>
-References: <1477673978-15424-1-git-send-email-labbott@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477673978-15424-1-git-send-email-labbott@redhat.com>
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rtc-linux@googlegroups.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 2/4] regulator: Enable compile testing for Maxim and Samsung PMIC drivers
+Date: Sun,  2 Oct 2016 22:58:15 +0200
+Message-Id: <1475441897-15730-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/28, Laura Abbott wrote:
-> ioremaped addresses are not linearly mapped so the physical
-> address can not be figured out via __pa. More generally, there
-> is no guarantee that backing value of an ioremapped address
-> is a physical address at all. The value here is only used
-> for debugging so just drop the call to __pa on the ioremapped
-> address.
-> 
-> Fixes: 6ae5fd381251 ("clk: xgene: Silence sparse warnings")
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
+Most of Maxim and Samsung PMIC/MUIC regulator drivers can be compile
+tested to increase build coverage.
 
-Applied to clk-fixes
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/regulator/Kconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 936f7ccc9736..1ce7e3633b63 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -379,7 +379,7 @@ config REGULATOR_MAX1586
+ 
+ config REGULATOR_MAX77620
+ 	tristate "Maxim 77620/MAX20024 voltage regulator"
+-	depends on MFD_MAX77620
++	depends on MFD_MAX77620 || COMPILE_TEST
+ 	help
+ 	  This driver controls Maxim MAX77620 voltage output regulator
+ 	  via I2C bus. The provided regulator is suitable for Tegra
+@@ -453,7 +453,7 @@ config REGULATOR_MAX8998
+ 
+ config REGULATOR_MAX77686
+ 	tristate "Maxim 77686 regulator"
+-	depends on MFD_MAX77686
++	depends on MFD_MAX77686 || COMPILE_TEST
+ 	help
+ 	  This driver controls a Maxim 77686 regulator
+ 	  via I2C bus. The provided regulator is suitable for
+@@ -461,7 +461,7 @@ config REGULATOR_MAX77686
+ 
+ config REGULATOR_MAX77693
+ 	tristate "Maxim 77693/77843 regulator"
+-	depends on (MFD_MAX77693 || MFD_MAX77843)
++	depends on MFD_MAX77693 || MFD_MAX77843 || COMPILE_TEST
+ 	help
+ 	  This driver controls a Maxim 77693/77843 regulators via I2C bus.
+ 	  The regulators include two LDOs, 'SAFEOUT1', 'SAFEOUT2'
+@@ -470,7 +470,7 @@ config REGULATOR_MAX77693
+ 
+ config REGULATOR_MAX77802
+ 	tristate "Maxim 77802 regulator"
+-	depends on MFD_MAX77686
++	depends on MFD_MAX77686 || COMPILE_TEST
+ 	help
+ 	  This driver controls a Maxim 77802 regulator
+ 	  via I2C bus. The provided regulator is suitable for
+@@ -669,14 +669,14 @@ config REGULATOR_RT5033
+ 
+ config REGULATOR_S2MPA01
+ 	tristate "Samsung S2MPA01 voltage regulator"
+-	depends on MFD_SEC_CORE
++	depends on MFD_SEC_CORE || COMPILE_TEST
+ 	help
+ 	 This driver controls Samsung S2MPA01 voltage output regulator
+ 	 via I2C bus. S2MPA01 has 10 Bucks and 26 LDO outputs.
+ 
+ config REGULATOR_S2MPS11
+ 	tristate "Samsung S2MPS11/13/14/15/S2MPU02 voltage regulator"
+-	depends on MFD_SEC_CORE
++	depends on MFD_SEC_CORE || COMPILE_TEST
+ 	help
+ 	 This driver supports a Samsung S2MPS11/13/14/15/S2MPU02 voltage
+ 	 output regulator via I2C bus. The chip is comprised of high efficient
+@@ -685,7 +685,7 @@ config REGULATOR_S2MPS11
+ 
+ config REGULATOR_S5M8767
+ 	tristate "Samsung S5M8767A voltage regulator"
+-	depends on MFD_SEC_CORE
++	depends on MFD_SEC_CORE || COMPILE_TEST
+ 	help
+ 	 This driver supports a Samsung S5M8767A voltage output regulator
+ 	 via I2C bus. S5M8767A have 9 Bucks and 28 LDOs output and
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
