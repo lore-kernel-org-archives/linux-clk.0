@@ -1,70 +1,158 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <57F6EE21.2060903@samsung.com>
-Date: Fri, 07 Oct 2016 09:36:49 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- linux-kernel@vger.kernel.org
-Cc: Markus Reichl <m.reichl@fivetechno.de>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: max77686: fix number of clocks setup for clk_hw based
- registration
-References: 
- <CGME20161006150016epcas1p21acf81d53302f6917c38b3a451fcbe07@epcas1p2.samsung.com>
- <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
-In-reply-to: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 5/9] clk: sunxi-ng: Implement minimum for multipliers
+Date: Mon,  3 Oct 2016 10:09:09 +0200
+Message-Id: <20161003080913.24197-6-maxime.ripard@free-electrons.com>
+In-Reply-To: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
+References: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Javier,
+Allow the CCU drivers to specify a multiplier for their clocks.
 
-On 2016년 10월 06일 23:59, Javier Martinez Canillas wrote:
-> The commit 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and
-> registration APIs") converted the driver to use the new provider API to
-> register clocks using clk_hw.
-> 
-> But unfortunately, in the conversion it missed to set the num_clks value
-> which lead to the following error when trying to register a clk provider:
-> 
-> [    1.963782] of_clk_max77686_get: invalid index 0
-> [    1.967460] ERROR: could not get clock /rtc@10070000:rtc_src(1)
-> [    1.973638] s3c-rtc 10070000.rtc: failed to find rtc source clock
-> 
-> Fix it by correctly set the max77686_clk_driver_data num_clks member.
-> 
-> Fixes: 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and registration APIs")
-> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-> 
-> ---
-> 
->  drivers/clk/clk-max77686.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> index b637f5979023..eb953d3b0b69 100644
-> --- a/drivers/clk/clk-max77686.c
-> +++ b/drivers/clk/clk-max77686.c
-> @@ -216,6 +216,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> +	drv_data->num_clks = num_clks;
->  	drv_data->max_clk_data = devm_kcalloc(dev, num_clks,
->  					      sizeof(*drv_data->max_clk_data),
->  					      GFP_KERNEL);
-> 
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_mult.c |  2 +-
+ drivers/clk/sunxi-ng/ccu_mult.h | 13 +++++++++----
+ drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkmp.c |  4 ++--
+ drivers/clk/sunxi-ng/ccu_nm.c   |  2 +-
+ 6 files changed, 21 insertions(+), 16 deletions(-)
 
-Looks good to me.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 6a02ffee5386..678b6cb49f01 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -105,7 +105,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+ 						&parent_rate);
+ 
+-	_cm.min = 1;
++	_cm.min = cm->mult.min;
+ 	_cm.max = 1 << cm->mult.width;
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index 113780b7558e..c1a2134bdc71 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -7,14 +7,19 @@
+ struct ccu_mult_internal {
+ 	u8	shift;
+ 	u8	width;
++	u8	min;
+ };
+ 
+-#define _SUNXI_CCU_MULT(_shift, _width)		\
+-	{					\
+-		.shift	= _shift,		\
+-		.width	= _width,		\
++#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
++	{						\
++		.shift	= _shift,			\
++		.width	= _width,			\
++		.min	= _min,				\
+ 	}
+ 
++#define _SUNXI_CCU_MULT(_shift, _width)		\
++	_SUNXI_CCU_MULT_MIN(_shift, _width, 1)
++
+ struct ccu_mult {
+ 	u32			enable;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index a42d870ba0ef..eaf0fdf78d2b 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -97,9 +97,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nk->fixed_post_div;
+ 
+-	_nk.min_n = 1;
++	_nk.min_n = nk->n.min;
+ 	_nk.max_n = 1 << nk->n.width;
+-	_nk.min_k = 1;
++	_nk.min_k = nk->k.min;
+ 	_nk.max_k = 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(*parent_rate, rate, &_nk);
+@@ -122,9 +122,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate = rate * nk->fixed_post_div;
+ 
+-	_nk.min_n = 1;
++	_nk.min_n = nk->n.min;
+ 	_nk.max_n = 1 << nk->n.width;
+-	_nk.min_k = 1;
++	_nk.min_k = nk->k.min;
+ 	_nk.max_k = 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(parent_rate, rate, &_nk);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index b2a5fccf2f8c..715b49211ddb 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -100,9 +100,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	struct ccu_nkm *nkm = data;
+ 	struct _ccu_nkm _nkm;
+ 
+-	_nkm.min_n = 1;
++	_nkm.min_n = nkm->n.min;
+ 	_nkm.max_n = 1 << nkm->n.width;
+-	_nkm.min_k = 1;
++	_nkm.min_n = nkm->k.min;
+ 	_nkm.max_k = 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+@@ -129,9 +129,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	u32 reg;
+ 
+-	_nkm.min_n = 1;
++	_nkm.min_n = nkm->n.min;
+ 	_nkm.max_n = 1 << nkm->n.width;
+-	_nkm.min_k = 1;
++	_nkm.min_n = nkm->k.min;
+ 	_nkm.max_k = 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index 2c1398192e48..7968e0bac5db 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -107,9 +107,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+ 	struct _ccu_nkmp _nkmp;
+ 
+-	_nkmp.min_n = 1;
++	_nkmp.min_n = nkmp->n.min;
+ 	_nkmp.max_n = 1 << nkmp->n.width;
+-	_nkmp.min_k = 1;
++	_nkmp.min_n = nkmp->k.min;
+ 	_nkmp.max_k = 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 2a190bc032a9..b1f3f0e8899d 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -93,7 +93,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
+ 	struct _ccu_nm _nm;
+ 
+-	_nm.min_n = 1;
++	_nm.min_n = nm->n.min;
+ 	_nm.max_n = 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
 -- 
-Best Regards,
-Chanwoo Choi
+2.9.3
