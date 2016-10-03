@@ -1,71 +1,200 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 12/15] clk: ti: enforce const types on string arrays
-Date: Tue, 18 Oct 2016 18:46:05 +0300
-Message-ID: <1476805568-19264-13-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 3/9] clk: sunxi-ng: Finish to convert to structures for arguments
+Date: Mon,  3 Oct 2016 10:09:07 +0200
+Message-Id: <20161003080913.24197-4-maxime.ripard@free-electrons.com>
+In-Reply-To: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
+References: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Constant string arrays should use const char * const instead of just
-const char *. Change the implementations using these to proper type.
+Some clocks still use an explicit list of arguments, which make it a bit
+more tedious to add new parameters.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Convert those over to a structure pointer argument to add as many
+arguments as possible without having to many noise in our patches, or a
+very long list of arguments.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/ti/clock.h     | 2 +-
- drivers/clk/ti/composite.c | 2 +-
- drivers/clk/ti/mux.c       | 8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/sunxi-ng/ccu_mult.c | 28 ++++++++++++++++++++--------
+ drivers/clk/sunxi-ng/ccu_nk.c   | 39 ++++++++++++++++++++++-----------------
+ 2 files changed, 42 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index f6383ab..2e5fab8 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -88,7 +88,7 @@ struct ti_clk_mux {
- 	int num_parents;
- 	u16 reg;
- 	u8 module;
--	const char **parents;
-+	const char * const *parents;
- 	u16 flags;
- };
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 010e9424691d..32a1964439a2 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -13,10 +13,20 @@
+ #include "ccu_gate.h"
+ #include "ccu_mult.h"
  
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 3f60f99..beea894 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -124,7 +124,7 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
- 	struct clk_hw *mux;
- 	struct clk_hw *div;
- 	int num_parents = 1;
--	const char **parent_names = NULL;
-+	const char * const *parent_names = NULL;
- 	struct clk *clk;
- 	int ret;
- 
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 774098e..520a18e 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -97,10 +97,10 @@ int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- };
- 
- static struct clk *_register_mux(struct device *dev, const char *name,
--				 const char **parent_names, u8 num_parents,
--				 unsigned long flags, void __iomem *reg,
--				 u8 shift, u32 mask, u8 clk_mux_flags,
--				 u32 *table)
-+				 const char * const *parent_names,
-+				 u8 num_parents, unsigned long flags,
-+				 void __iomem *reg, u8 shift, u32 mask,
-+				 u8 clk_mux_flags, u32 *table)
++struct _ccu_mult {
++	unsigned long	mult, max;
++};
++
+ static void ccu_mult_find_best(unsigned long parent, unsigned long rate,
+-			       unsigned int max_n, unsigned int *n)
++			       struct _ccu_mult *mult)
  {
- 	struct clk_mux *mux;
- 	struct clk *clk;
+-	*n = rate / parent;
++	int _mult;
++
++	_mult = rate / parent;
++	if (_mult > mult->max)
++		_mult = mult->max;
++
++	mult->mult = _mult;
+ }
+ 
+ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+@@ -25,11 +35,12 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+ 					void *data)
+ {
+ 	struct ccu_mult *cm = data;
+-	unsigned int n;
++	struct _ccu_mult _cm;
+ 
+-	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
++	_cm.max = 1 << cm->mult.width;
++	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+-	return parent_rate * n;
++	return parent_rate * _cm.mult;
+ }
+ 
+ static void ccu_mult_disable(struct clk_hw *hw)
+@@ -83,21 +94,22 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long parent_rate)
+ {
+ 	struct ccu_mult *cm = hw_to_ccu_mult(hw);
++	struct _ccu_mult _cm;
+ 	unsigned long flags;
+-	unsigned int n;
+ 	u32 reg;
+ 
+ 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+ 						&parent_rate);
+ 
+-	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
++	_cm.max = 1 << cm->mult.width;
++	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+ 	spin_lock_irqsave(cm->common.lock, flags);
+ 
+ 	reg = readl(cm->common.base + cm->common.reg);
+ 	reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
+ 
+-	writel(reg | ((n - 1) << cm->mult.shift),
++	writel(reg | ((_cm.mult - 1) << cm->mult.shift),
+ 	       cm->common.base + cm->common.reg);
+ 
+ 	spin_unlock_irqrestore(cm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index d6fafb397489..e7e2e75618ef 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -9,21 +9,24 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/rational.h>
+ 
+ #include "ccu_gate.h"
+ #include "ccu_nk.h"
+ 
++struct _ccu_nk {
++	unsigned long	n, max_n;
++	unsigned long	k, max_k;
++};
++
+ static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
+-			     unsigned int max_n, unsigned int max_k,
+-			     unsigned int *n, unsigned int *k)
++			     struct _ccu_nk *nk)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned int best_k = 0, best_n = 0;
+ 	unsigned int _k, _n;
+ 
+-	for (_k = 1; _k <= max_k; _k++) {
+-		for (_n = 1; _n <= max_n; _n++) {
++	for (_k = 1; _k <= nk->max_k; _k++) {
++		for (_n = 1; _n <= nk->max_n; _n++) {
+ 			unsigned long tmp_rate = parent * _n * _k;
+ 
+ 			if (tmp_rate > rate)
+@@ -37,8 +40,8 @@ static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
+ 		}
+ 	}
+ 
+-	*k = best_k;
+-	*n = best_n;
++	nk->k = best_k;
++	nk->n = best_n;
+ }
+ 
+ static void ccu_nk_disable(struct clk_hw *hw)
+@@ -89,16 +92,17 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *parent_rate)
+ {
+ 	struct ccu_nk *nk = hw_to_ccu_nk(hw);
+-	unsigned int n, k;
++	struct _ccu_nk _nk;
+ 
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nk->fixed_post_div;
+ 
+-	ccu_nk_find_best(*parent_rate, rate,
+-			 1 << nk->n.width, 1 << nk->k.width,
+-			 &n, &k);
++	_nk.max_n = 1 << nk->n.width;
++	_nk.max_k = 1 << nk->k.width;
++
++	ccu_nk_find_best(*parent_rate, rate, &_nk);
++	rate = *parent_rate * _nk.n * _nk.k;
+ 
+-	rate = *parent_rate * n * k;
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate = rate / nk->fixed_post_div;
+ 
+@@ -110,15 +114,16 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct ccu_nk *nk = hw_to_ccu_nk(hw);
+ 	unsigned long flags;
+-	unsigned int n, k;
++	struct _ccu_nk _nk;
+ 	u32 reg;
+ 
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate = rate * nk->fixed_post_div;
+ 
+-	ccu_nk_find_best(parent_rate, rate,
+-			 1 << nk->n.width, 1 << nk->k.width,
+-			 &n, &k);
++	_nk.max_n = 1 << nk->n.width;
++	_nk.max_k = 1 << nk->k.width;
++
++	ccu_nk_find_best(parent_rate, rate, &_nk);
+ 
+ 	spin_lock_irqsave(nk->common.lock, flags);
+ 
+@@ -126,7 +131,7 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
+ 	reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
+ 
+-	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
++	writel(reg | ((_nk.k - 1) << nk->k.shift) | ((_nk.n - 1) << nk->n.shift),
+ 	       nk->common.base + nk->common.reg);
+ 
+ 	spin_unlock_irqrestore(nk->common.lock, flags);
 -- 
-1.9.1
+2.9.3
