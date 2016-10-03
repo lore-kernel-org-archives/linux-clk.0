@@ -1,137 +1,311 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: Scott Wood <oss@buserror.net>, "linux-mmc@vger.kernel.org"
- <linux-mmc@vger.kernel.org>, "ulf.hansson@linaro.org"
- <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: RE: [v12, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Date: Thu, 27 Oct 2016 04:34:06 +0000
-Message-ID: <DB6PR0401MB25362658D117DF4D7B92FD48F8AA0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
- <1474441040-11946-6-git-send-email-yangbo.lu@nxp.com>
- <1477501566.6812.9.camel@buserror.net>
-In-Reply-To: <1477501566.6812.9.camel@buserror.net>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jochen Friedrich <jochen@scram.de>, "X.B. Xie" <xiaobo.xie@nxp.com>,
- "M.H. Lian" <minghuan.lian@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Rob Herring <robh+dt@kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 9/9] arm64: dts: add Pine64 support
+Date: Mon,  3 Oct 2016 10:09:13 +0200
+Message-Id: <20161003080913.24197-10-maxime.ripard@free-electrons.com>
+In-Reply-To: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
+References: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU2NvdHQsDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTY290
-dCBXb29kIFttYWlsdG86b3NzQGJ1c2Vycm9yLm5ldF0NCj4gU2VudDogVGh1cnNkYXksIE9jdG9i
-ZXIgMjcsIDIwMTYgMTowNiBBTQ0KPiBUbzogWS5CLiBMdTsgbGludXgtbW1jQHZnZXIua2VybmVs
-Lm9yZzsgdWxmLmhhbnNzb25AbGluYXJvLm9yZzsgQXJuZA0KPiBCZXJnbWFubg0KPiBDYzogbGlu
-dXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC0NCj4gY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtaTJjQHZn
-ZXIua2VybmVsLm9yZzsgaW9tbXVAbGlzdHMubGludXgtDQo+IGZvdW5kYXRpb24ub3JnOyBuZXRk
-ZXZAdmdlci5rZXJuZWwub3JnOyBNYXJrIFJ1dGxhbmQ7IFJvYiBIZXJyaW5nOw0KPiBSdXNzZWxs
-IEtpbmc7IEpvY2hlbiBGcmllZHJpY2g7IEpvZXJnIFJvZWRlbDsgQ2xhdWRpdSBNYW5vaWw7IEJo
-dXBlc2gNCj4gU2hhcm1hOyBRaWFuZyBaaGFvOyBLdW1hciBHYWxhOyBTYW50b3NoIFNoaWxpbWth
-cjsgTGVvIExpOyBYLkIuIFhpZTsgTS5ILg0KPiBMaWFuDQo+IFN1YmplY3Q6IFJlOiBbdjEyLCA1
-LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIgZm9yIFFvcklRIHBsYXRmb3Jtcw0KPiANCj4g
-T24gV2VkLCAyMDE2LTA5LTIxIGF0IDE0OjU3ICswODAwLCBZYW5nYm8gTHUgd3JvdGU6DQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2ZzbC9LY29uZmlnIGIvZHJpdmVycy9zb2MvZnNsL0tj
-b25maWcgbmV3DQo+ID4gZmlsZSBtb2RlIDEwMDY0NCBpbmRleCAwMDAwMDAwLi5iOTk3NjRjDQo+
-ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvc29jL2ZzbC9LY29uZmlnDQo+ID4g
-QEAgLTAsMCArMSwxOSBAQA0KPiA+ICsjDQo+ID4gKyMgRnJlZXNjYWxlIFNPQyBkcml2ZXJzDQo+
-ID4gKyMNCj4gPiArDQo+ID4gK3NvdXJjZSAiZHJpdmVycy9zb2MvZnNsL3FlL0tjb25maWciDQo+
-ID4gKw0KPiA+ICtjb25maWcgRlNMX0dVVFMNCj4gPiArCWJvb2wgIkZyZWVzY2FsZSBRb3JJUSBH
-VVRTIGRyaXZlciINCj4gPiArCXNlbGVjdCBTT0NfQlVTDQo+ID4gKwloZWxwDQo+ID4gKwnCoMKg
-VGhlIGdsb2JhbCB1dGlsaXRpZXMgYmxvY2sgY29udHJvbHMgcG93ZXIgbWFuYWdlbWVudCwgSS9P
-IGRldmljZQ0KPiA+ICsJwqDCoGVuYWJsaW5nLCBwb3dlci1vbnJlc2V0KFBPUikgY29uZmlndXJh
-dGlvbiBtb25pdG9yaW5nLCBhbHRlcm5hdGUNCj4gPiArCcKgwqBmdW5jdGlvbiBzZWxlY3Rpb24g
-Zm9yIG11bHRpcGxleGVkIHNpZ25hbHMsYW5kIGNsb2NrIGNvbnRyb2wuDQo+ID4gKwnCoMKgVGhp
-cyBkcml2ZXIgaXMgdG8gbWFuYWdlIGFuZCBhY2Nlc3MgZ2xvYmFsIHV0aWxpdGllcyBibG9jay4N
-Cj4gPiArCcKgwqBJbml0aWFsbHkgb25seSByZWFkaW5nIFNWUiBhbmQgcmVnaXN0ZXJpbmcgc29j
-IGRldmljZSBhcmUNCj4gPiBzdXBwb3J0ZWQuDQo+ID4gKwnCoMKgT3RoZXIgZ3V0cyBhY2Nlc3Nl
-cywgc3VjaCBhcyByZWFkaW5nIFJDVywgc2hvdWxkIGV2ZW50dWFsbHkgYmUNCj4gPiBtb3ZlZA0K
-PiA+ICsJwqDCoGludG8gdGhpcyBkcml2ZXIgYXMgd2VsbC4NCj4gPiArDQo+ID4gKwnCoMKgSWYg
-eW91IHdhbnQgR1VUUyBkcml2ZXIgc3VwcG9ydCwgeW91IHNob3VsZCBzYXkgWSBoZXJlLg0KPiAN
-Cj4gVGhpcyBpcyB1c2VyLWVuYWJsYWJsZSB3aXRob3V0IGRlcGVuZGVuY2llcywgd2hpY2ggbWVh
-bnMgaXQgd2lsbCBicmVhaw0KPiBzb21lIHJhbmRjb25maWdzLiDCoElmIHRoaXMgaXMgdG8gYmUg
-ZW5hYmxlZCB2aWEgc2VsZWN0IHRoZW4gcmVtb3ZlIHRoZQ0KPiB0ZXh0IGFmdGVyICJib29sIi4N
-Cg0KW0x1IFlhbmdiby1CNDcwOTNdIFdpbGwgZW5hYmxlIGl0IHZpYSBzZWxlY3QgYW5kIHJlbW92
-ZSB0ZXh0IGFmdGVyICdib29sJy4NCiANCj4gDQo+ID4gKy8qIFNvQyBkaWUgYXR0cmlidXRlIGRl
-ZmluaXRpb24gZm9yIFFvcklRIHBsYXRmb3JtICovIHN0YXRpYyBjb25zdA0KPiA+ICtzdHJ1Y3Qg
-ZnNsX3NvY19kaWVfYXR0ciBmc2xfc29jX2RpZVtdID0geyAjaWZkZWYgQ09ORklHX1BQQw0KPiA+
-ICsJLyoNCj4gPiArCcKgKiBQb3dlciBBcmNoaXRlY3R1cmUtYmFzZWQgU29DcyBUIFNlcmllcw0K
-PiA+ICsJwqAqLw0KPiA+ICsNCj4gPiArCS8qIERpZTogVDQyNDAsIFNvQzogVDQyNDAvVDQxNjAv
-VDQwODAgKi8NCj4gPiArCXsgLmRpZQkJPSAiVDQyNDAiLA0KPiA+ICsJwqDCoC5zdnIJCT0gMHg4
-MjQwMDAwMCwNCj4gPiArCcKgwqAubWFzawkJPSAweGZmZjAwMDAwLA0KPiA+ICsJfSwNCj4gPiAr
-CS8qIERpZTogVDEwNDAsIFNvQzogVDEwNDAvVDEwMjAvVDEwNDIvVDEwMjIgKi8NCj4gPiArCXsg
-LmRpZQkJPSAiVDEwNDAiLA0KPiA+ICsJwqDCoC5zdnIJCT0gMHg4NTIwMDAwMCwNCj4gPiArCcKg
-wqAubWFzawkJPSAweGZmZjAwMDAwLA0KPiA+ICsJfSwNCj4gPiArCS8qIERpZTogVDIwODAsIFNv
-QzogVDIwODAvVDIwODEgKi8NCj4gPiArCXsgLmRpZQkJPSAiVDIwODAiLA0KPiA+ICsJwqDCoC5z
-dnIJCT0gMHg4NTMwMDAwMCwNCj4gPiArCcKgwqAubWFzawkJPSAweGZmZjAwMDAwLA0KPiA+ICsJ
-fSwNCj4gPiArCS8qIERpZTogVDEwMjQsIFNvQzogVDEwMjQvVDEwMTQvVDEwMjMvVDEwMTMgKi8N
-Cj4gPiArCXsgLmRpZQkJPSAiVDEwMjQiLA0KPiA+ICsJwqDCoC5zdnIJCT0gMHg4NTQwMDAwMCwN
-Cj4gPiArCcKgwqAubWFzawkJPSAweGZmZjAwMDAwLA0KPiA+ICsJfSwNCj4gPiArI2VuZGlmIC8q
-IENPTkZJR19QUEMgKi8NCj4gPiArI2lmIGRlZmluZWQoQ09ORklHX0FSQ0hfTVhDKSB8fCBkZWZp
-bmVkKENPTkZJR19BUkNIX0xBWUVSU0NBUEUpDQo+IA0KPiBXaWxsIHRoaXMgZHJpdmVyIGV2ZXIg
-YmUgcHJvYmVkIG9uIE1YQz8gwqBXaHkgZG8gd2UgbmVlZCB0aGVzZSBpZmRlZnMgYXQNCj4gYWxs
-Pw0KDQpbTHUgWWFuZ2JvLUI0NzA5M10gV2lsbCByZW1vdmUgdGhlbS4gSW4gdGhlIHByZXZpb3Vz
-IHZlcnNpb24sIHdlIHVzZSB0b28gbWFueSBtZW1iZXJzIGZvciBzb2MgZGVmaW5pdGlvbiwgc28g
-SSBhZGQgI2lmZGVmIGZvciBBUkNILiANCkNPTkZJR19BUkNIX01YQyB3YXMgZm9yIGxzMTAyMWEu
-DQoNCj4gDQo+IA0KPiA+ICsJLyoNCj4gPiArCcKgKiBBUk0tYmFzZWQgU29DcyBMUyBTZXJpZXMN
-Cj4gPiArCcKgKi8NCj4gPiArDQo+ID4gKwkvKiBEaWU6IExTMTA0M0EsIFNvQzogTFMxMDQzQS9M
-UzEwMjNBICovDQo+ID4gKwl7IC5kaWUJCT0gIkxTMTA0M0EiLA0KPiA+ICsJwqDCoC5zdnIJCT0g
-MHg4NzkyMDAwMCwNCj4gPiArCcKgwqAubWFzawkJPSAweGZmZmYwMDAwLA0KPiA+ICsJfSwNCj4g
-PiArCS8qIERpZTogTFMyMDgwQSwgU29DOiBMUzIwODBBL0xTMjA0MEEvTFMyMDg1QSAqLw0KPiA+
-ICsJeyAuZGllCQk9ICJMUzIwODBBIiwNCj4gPiArCcKgwqAuc3ZyCQk9IDB4ODcwMTAwMDAsDQo+
-ID4gKwnCoMKgLm1hc2sJCT0gMHhmZjNmMDAwMCwNCj4gPiArCX0sDQo+ID4gKwkvKiBEaWU6IExT
-MTA4OEEsIFNvQzogTFMxMDg4QS9MUzEwNDhBL0xTMTA4NEEvTFMxMDQ0QSAqLw0KPiA+ICsJeyAu
-ZGllCQk9ICJMUzEwODhBIiwNCj4gPiArCcKgwqAuc3ZyCQk9IDB4ODcwMzAwMDAsDQo+ID4gKwnC
-oMKgLm1hc2sJCT0gMHhmZjNmMDAwMCwNCj4gPiArCX0sDQo+ID4gKwkvKiBEaWU6IExTMTAxMkEs
-IFNvQzogTFMxMDEyQSAqLw0KPiA+ICsJeyAuZGllCQk9ICJMUzEwMTJBIiwNCj4gPiArCcKgwqAu
-c3ZyCQk9IDB4ODcwNDAwMDAsDQo+ID4gKwnCoMKgLm1hc2sJCT0gMHhmZmZmMDAwMCwNCj4gPiAr
-CX0sDQo+ID4gKwkvKiBEaWU6IExTMTA0NkEsIFNvQzogTFMxMDQ2QS9MUzEwMjZBICovDQo+ID4g
-Kwl7IC5kaWUJCT0gIkxTMTA0NkEiLA0KPiA+ICsJwqDCoC5zdnIJCT0gMHg4NzA3MDAwMCwNCj4g
-PiArCcKgwqAubWFzawkJPSAweGZmZmYwMDAwLA0KPiA+ICsJfSwNCj4gPiArCS8qIERpZTogTFMy
-MDg4QSwgU29DOiBMUzIwODhBL0xTMjA0OEEvTFMyMDg0QS9MUzIwNDRBICovDQo+ID4gKwl7IC5k
-aWUJCT0gIkxTMjA4OEEiLA0KPiA+ICsJwqDCoC5zdnIJCT0gMHg4NzA5MDAwMCwNCj4gPiArCcKg
-wqAubWFzawkJPSAweGZmM2YwMDAwLA0KPiA+ICsJfSwNCj4gPiArCS8qIERpZTogTFMxMDIxQSwg
-U29DOiBMUzEwMjFBL0xTMTAyMEEvTFMxMDIyQQ0KPiA+ICsJwqAqIE5vdGU6IFB1dCB0aGlzIGRp
-ZSBhdCB0aGUgZW5kIGluIGNhdXNlIG9mIGluY29ycmVjdA0KPiA+IGlkZW50aWZpY2F0aW9uDQo+
-ID4gKwnCoCovDQo+ID4gKwl7IC5kaWUJCT0gIkxTMTAyMUEiLA0KPiA+ICsJwqDCoC5zdnIJCT0g
-MHg4NzAwMDAwMCwNCj4gPiArCcKgwqAubWFzawkJPSAweGZmZjAwMDAwLA0KPiA+ICsJfSwNCj4g
-PiArI2VuZGlmIC8qIENPTkZJR19BUkNIX01YQyB8fCBDT05GSUdfQVJDSF9MQVlFUlNDQVBFICov
-DQo+IA0KPiBJbnN0ZWFkIG9mIHJlbHlpbmcgb24gb3JkZXJpbmcsIGFkZCBtb3JlIGJpdHMgdG8g
-dGhlIG1hc2sgc28gdGhhdCB0aGVyZSdzDQo+IG5vIG92ZXJsYXAuIMKgSSB0aGluayAweGZmZjcw
-MDAwIHdvdWxkIHdvcmsuDQoNCltMdSBZYW5nYm8tQjQ3MDkzXSBPaywgV2lsbCBkbyB0aGF0LiBU
-aGVuIHdlIGFkZCAzIGJpdHMgb2YgJ1ZhcmlvdXMgUGVyc29uYWxpdGllcycgZmllbGQgZm9yIGxz
-MTAyMWEgZGllIGlkZW50aWZpY2F0aW9uLg0KDQo+IA0KPiA+ICtvdXQ6DQo+ID4gKwlrZnJlZShz
-b2NfZGV2X2F0dHIubWFjaGluZSk7DQo+ID4gKwlrZnJlZShzb2NfZGV2X2F0dHIuZmFtaWx5KTsN
-Cj4gPiArCWtmcmVlKHNvY19kZXZfYXR0ci5zb2NfaWQpOw0KPiA+ICsJa2ZyZWUoc29jX2Rldl9h
-dHRyLnJldmlzaW9uKTsNCj4gPiArCWlvdW5tYXAoZ3V0cy0+cmVncyk7DQo+ID4gK291dF9mcmVl
-Og0KPiA+ICsJa2ZyZWUoZ3V0cyk7DQo+ID4gKwlyZXR1cm4gcmV0Ow0KPiA+ICt9DQo+IA0KPiBQ
-bGVhc2UgdXNlIGRldm0uDQoNCltMdSBZYW5nYm8tQjQ3MDkzXSBTb3JyeSBmb3IgZm9yZ2V0dGlu
-ZyB0aGlzLiBXaWxsIGRvIHRoYXQgYW5kIHNlbmQgb3V0IHRoZSBuZXcgdmVyc2lvbiBzb29uLg0K
-VGhhbmtzIGZvciB5b3VyIGNvbW1lbnRzLg0KDQo+IA0KPiAtU2NvdHQNCg0KX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWls
-aW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0
-cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+From: Andre Przywara <andre.przywara@arm.com>
+
+The Pine64 is a cost-efficient development board based on the
+Allwinner A64 SoC.
+There are three models: the basic version with Fast Ethernet and
+512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+feature Gigabit Ethernet and additional connectors for touchscreens
+and a camera. Or as my son put it: "Those are smaller and these are
+missing." ;-)
+The two Pine64+ models just differ in the amount of DRAM
+(1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+patches the DT accordingly we just need to provide one DT for the
+Pine64+.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Maxime: Removed the common DTSI and include directly the pine64 DTS]
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm64/boot/dts/Makefile                       |  1 +
+ arch/arm64/boot/dts/allwinner/Makefile             |  5 ++
+ .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  | 50 +++++++++++
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 74 +++++++++++++++++
+ include/dt-bindings/reset/sun50i-a64-ccu.h         | 97 +++++++++++-----------
+ 5 files changed, 179 insertions(+), 48 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+
+diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+index 6e199c903676..ddcbf5a2c17e 100644
+--- a/arch/arm64/boot/dts/Makefile
++++ b/arch/arm64/boot/dts/Makefile
+@@ -1,4 +1,5 @@
+ dts-dirs += al
++dts-dirs += allwinner
+ dts-dirs += altera
+ dts-dirs += amd
+ dts-dirs += amlogic
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+new file mode 100644
+index 000000000000..1e29a5ae8282
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -0,0 +1,5 @@
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
++
++always		:= $(dtb-y)
++subdir-y	:= $(dts-dirs)
++clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+new file mode 100644
+index 000000000000..790d14daaa6a
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (c) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "sun50i-a64-pine64.dts"
++
++/ {
++	model = "Pine64+";
++	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
++
++	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+new file mode 100644
+index 000000000000..9f127b3d0e33
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -0,0 +1,74 @@
++/*
++ * Copyright (c) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++#include "sun50i-a64.dtsi"
++
++/ {
++	model = "Pine64";
++	compatible = "pine64,pine64", "allwinner,sun50i-a64";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++	status = "okay";
++};
++
++&i2c1_pins {
++	allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++};
+diff --git a/include/dt-bindings/reset/sun50i-a64-ccu.h b/include/dt-bindings/reset/sun50i-a64-ccu.h
+index e61fac294d73..db60b29ddb11 100644
+--- a/include/dt-bindings/reset/sun50i-a64-ccu.h
++++ b/include/dt-bindings/reset/sun50i-a64-ccu.h
+@@ -46,52 +46,53 @@
+ #define RST_USB_PHY0		0
+ #define RST_USB_PHY1		1
+ #define RST_USB_HSIC		2
+-#define RST_MBUS		3
+-#define RST_BUS_MIPI_DSI	4
+-#define RST_BUS_CE		5
+-#define RST_BUS_DMA		6
+-#define RST_BUS_MMC0		7
+-#define RST_BUS_MMC1		8
+-#define RST_BUS_MMC2		9
+-#define RST_BUS_NAND		10
+-#define RST_BUS_DRAM		11
+-#define RST_BUS_EMAC		12
+-#define RST_BUS_TS		13
+-#define RST_BUS_HSTIMER		14
+-#define RST_BUS_SPI0		15
+-#define RST_BUS_SPI1		16
+-#define RST_BUS_OTG		17
+-#define RST_BUS_EHCI0		18
+-#define RST_BUS_EHCI1		19
+-#define RST_BUS_OHCI0		20
+-#define RST_BUS_OHCI1		21
+-#define RST_BUS_VE		22
+-#define RST_BUS_TCON0		23
+-#define RST_BUS_TCON1		24
+-#define RST_BUS_DEINTERLACE	25
+-#define RST_BUS_CSI		26
+-#define RST_BUS_HDMI0		27
+-#define RST_BUS_HDMI1		28
+-#define RST_BUS_DE		29
+-#define RST_BUS_GPU		30
+-#define RST_BUS_MSGBOX		31
+-#define RST_BUS_SPINLOCK	32
+-#define RST_BUS_DBG		33
+-#define RST_BUS_LVDS		34
+-#define RST_BUS_CODEC		35
+-#define RST_BUS_SPDIF		36
+-#define RST_BUS_THS		37
+-#define RST_BUS_I2S0		38
+-#define RST_BUS_I2S1		39
+-#define RST_BUS_I2S2		40
+-#define RST_BUS_I2C0		41
+-#define RST_BUS_I2C1		42
+-#define RST_BUS_I2C2		43
+-#define RST_BUS_SCR		44
+-#define RST_BUS_UART0		45
+-#define RST_BUS_UART1		46
+-#define RST_BUS_UART2		47
+-#define RST_BUS_UART3		48
+-#define RST_BUS_UART4		49
++#define RST_DRAM		3
++#define RST_MBUS		4
++#define RST_BUS_MIPI_DSI	5
++#define RST_BUS_CE		6
++#define RST_BUS_DMA		7
++#define RST_BUS_MMC0		8
++#define RST_BUS_MMC1		9
++#define RST_BUS_MMC2		10
++#define RST_BUS_NAND		11
++#define RST_BUS_DRAM		12
++#define RST_BUS_EMAC		13
++#define RST_BUS_TS		14
++#define RST_BUS_HSTIMER		15
++#define RST_BUS_SPI0		16
++#define RST_BUS_SPI1		17
++#define RST_BUS_OTG		18
++#define RST_BUS_EHCI0		19
++#define RST_BUS_EHCI1		20
++#define RST_BUS_OHCI0		21
++#define RST_BUS_OHCI1		22
++#define RST_BUS_VE		23
++#define RST_BUS_TCON0		24
++#define RST_BUS_TCON1		25
++#define RST_BUS_DEINTERLACE	26
++#define RST_BUS_CSI		27
++#define RST_BUS_HDMI0		28
++#define RST_BUS_HDMI1		29
++#define RST_BUS_DE		30
++#define RST_BUS_GPU		31
++#define RST_BUS_MSGBOX		32
++#define RST_BUS_SPINLOCK	33
++#define RST_BUS_DBG		34
++#define RST_BUS_LVDS		35
++#define RST_BUS_CODEC		36
++#define RST_BUS_SPDIF		37
++#define RST_BUS_THS		38
++#define RST_BUS_I2S0		39
++#define RST_BUS_I2S1		40
++#define RST_BUS_I2S2		41
++#define RST_BUS_I2C0		42
++#define RST_BUS_I2C1		43
++#define RST_BUS_I2C2		44
++#define RST_BUS_SCR		45
++#define RST_BUS_UART0		46
++#define RST_BUS_UART1		47
++#define RST_BUS_UART2		48
++#define RST_BUS_UART3		49
++#define RST_BUS_UART4		50
+ 
+-#endif /* _DT_BINDINGS_RST_SUN8I_H3_H_ */
++#endif /* _DT_BINDINGS_RST_SUN50I_A64_H_ */
+-- 
+2.9.3
