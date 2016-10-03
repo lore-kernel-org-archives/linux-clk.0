@@ -1,67 +1,99 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: lars@metafoo.de,
-	dan.carpenter@oracle.com,
-	ssantosh@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/3] clk: keystone: Fix an error checking
-Date: Mon, 24 Oct 2016 22:43:24 +0200
-Message-Id: <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 0/9] arm64: Allwinner A64 support based on sunxi-ng
+Date: Mon,  3 Oct 2016 10:09:04 +0200
+Message-Id: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_register_pll() can return ERR_PTR(-ENOMEM) so checking the return value
-against NULL only is not correct.
-In order to fix it, update clk_register_pll() to always return an error
-pointer in case of error and check the return value with IS_ERR.
+Hi,
 
-While at it, also fix a tab vs space in the surrounding code.
+As it was in the first iteration, this is the A64 support based on the
+new sunxi-ng clock framework.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Un-compiled and un-tested.
----
- drivers/clk/keystone/pll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The support for it is quite minimal at the moment, but it should be
+fairly easy to add new devices, as most of the design is shared with
+older SoCs.
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index a26ba2184454..70d6fb2d23bc 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -140,7 +140,7 @@ static struct clk *clk_register_pll(struct device *dev,
- 	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
- 
--	pll->pll_data	= pll_data;
-+	pll->pll_data = pll_data;
- 	pll->hw.init = &init;
- 
- 	clk = clk_register(NULL, &pll->hw);
-@@ -150,7 +150,7 @@ static struct clk *clk_register_pll(struct device *dev,
- 	return clk;
- out:
- 	kfree(pll);
--	return NULL;
-+	return clk;
- }
- 
- /**
-@@ -213,7 +213,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
- 	}
- 
- 	clk = clk_register_pll(NULL, node->name, parent_name, pll_data);
--	if (clk) {
-+	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 		return;
- 	}
+Let me know what you think,
+Maxime
+
+Changes from v2:
+  - Added pull-ups on the Pine64 i2c bus
+  - Removed the PMU since it doesn't work
+  - Refactored the sunxi-ng framework to deal with the specifities of
+    the A64 CCU, especially in terms of minimum factors.
+  - Fixed a few things in the CCU driver: added CLK_SET_RATE PARENT
+    flags, fixed some mux width, etc.
+  - Converted the CCU driver to a platform driver
+  - Added the DRAM reset line
+  - Added IDs for the USB muxes (even though we're not using them yet)
+
+Changes from v1:
+  - Split the A64 CCU support out of the H3 driver
+  - Added the PMU support
+  - Removed the clocks node
+  - Rebased on top of current sunxi/clk-for-4.9 branch
+
+Andre Przywara (3):
+  arm64: dts: add Allwinner A64 SoC .dtsi
+  Documentation: devicetree: add vendor prefix for Pine64
+  arm64: dts: add Pine64 support
+
+Maxime Ripard (6):
+  clk: sunxi-ng: Rename the internal structures
+  clk: sunxi-ng: Remove the use of rational computations
+  clk: sunxi-ng: Finish to convert to structures for arguments
+  clk: sunxi-ng: Add minimums for all the relevant structures and clocks
+  clk: sunxi-ng: Implement minimum for multipliers
+  clk: sunxi-ng: Add A64 clocks
+
+ Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ MAINTAINERS                                        |   1 +
+ arch/arm64/boot/dts/Makefile                       |   1 +
+ arch/arm64/boot/dts/allwinner/Makefile             |   5 +
+ .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  |  50 ++
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  74 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 263 ++++++
+ drivers/clk/sunxi-ng/Kconfig                       |  14 +-
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 918 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h              |  72 ++
+ drivers/clk/sunxi-ng/ccu_div.h                     |   6 +-
+ drivers/clk/sunxi-ng/ccu_frac.c                    |  12 +-
+ drivers/clk/sunxi-ng/ccu_frac.h                    |  14 +-
+ drivers/clk/sunxi-ng/ccu_mp.h                      |   4 +-
+ drivers/clk/sunxi-ng/ccu_mult.c                    |  33 +-
+ drivers/clk/sunxi-ng/ccu_mult.h                    |  17 +-
+ drivers/clk/sunxi-ng/ccu_nk.c                      |  43 +-
+ drivers/clk/sunxi-ng/ccu_nk.h                      |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                     |  45 +-
+ drivers/clk/sunxi-ng/ccu_nkm.h                     |   6 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  55 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.h                    |   8 +-
+ drivers/clk/sunxi-ng/ccu_nm.c                      |  58 +-
+ drivers/clk/sunxi-ng/ccu_nm.h                      |   6 +-
+ include/dt-bindings/clock/sun50i-a64-ccu.h         | 134 +++
+ include/dt-bindings/reset/sun50i-a64-ccu.h         |  98 +++
+ 29 files changed, 1824 insertions(+), 121 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+ create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
+
 -- 
 2.9.3
