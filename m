@@ -1,197 +1,63 @@
-Return-Path: <codekipper@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 4 Oct 2016 23:05:51 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/15] clk: sunxi: mod0: improve function-level
+ documentation
+Message-ID: <20161004210551.GT5228@lukather>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1475351192-27079-8-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-In-Reply-To: <33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <cover.1475569400.git.mylene.josserand@free-electrons.com> <33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
-From: Code Kipper <codekipper@gmail.com>
-Date: Tue, 4 Oct 2016 12:16:24 +0200
-Message-ID: <CAEKpxB=JLwqd_wKv1bUAifiQqVpX_RzXq6TSbjVWwza4LT6fhg@mail.gmail.com>
-Subject: Re: [PATCH 07/14] ASoC: Add sun8i audio card
-To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, mturquette@baylibre.com, sboyd@codeaurora.org,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lee Jones <lee.jones@linaro.org>,
-	mark.rutland@arm.com, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, devicetree <devicetree@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9o1Xi4ZMQ45MudWG"
+In-Reply-To: <1475351192-27079-8-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 4 October 2016 at 11:46, Myl=C3=A8ne Josserand
-<mylene.josserand@free-electrons.com> wrote:
-> Add the audio card for sun8i SoC. This card links the codec driver
-> (digital part) with the DAI driver. The analog codec driver is
-> added as an aux_device.
->
-> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com=
->
-> ---
->  sound/soc/sunxi/Kconfig  |  14 +++++++
->  sound/soc/sunxi/Makefile |   1 +
->  sound/soc/sunxi/sun8i.c  | 101 +++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 116 insertions(+)
->  create mode 100644 sound/soc/sunxi/sun8i.c
->
-> diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
-> index 9e287b0..7b97395 100644
-> --- a/sound/soc/sunxi/Kconfig
-> +++ b/sound/soc/sunxi/Kconfig
-> @@ -27,6 +27,20 @@ config SND_SUN4I_SPDIF
->           Say Y or M to add support for the S/PDIF audio block in the All=
-winner
->           A10 and affiliated SoCs.
->
-> +config SND_SUN8I
-> +       tristate "Allwinner SUN6I/SUN8I audio card support"
-> +       select SND_SUN8I_CODEC
-> +       select SND_SUN4I_I2S
-> +       select SND_SUN8I_CODEC_ANALOG
-> +       select REGMAP_MMIO
-> +       help
-> +         This option enables the audio card for Allwinner A33 (sun8i) So=
-C.
-> +         It enables the DAI driver (SND_SUN4I_I2S), the digital audio
-> +         codec driver (SND_SUN8I_CODEC) and the analog codec driver
-> +         (SND_SUN8I_CODEC_ANALOG).
-> +
-> +         Say Y or M if you want to add sun8i/6i card support
-> +
->  config SND_SUN8I_CODEC
->         tristate "Allwinner SUN8I audio codec"
->         select REGMAP_MMIO
-> diff --git a/sound/soc/sunxi/Makefile b/sound/soc/sunxi/Makefile
-> index 1da63d3..7f1bab9 100644
-> --- a/sound/soc/sunxi/Makefile
-> +++ b/sound/soc/sunxi/Makefile
-> @@ -1,5 +1,6 @@
->  obj-$(CONFIG_SND_SUN4I_CODEC) +=3D sun4i-codec.o
->  obj-$(CONFIG_SND_SUN4I_I2S) +=3D sun4i-i2s.o
->  obj-$(CONFIG_SND_SUN4I_SPDIF) +=3D sun4i-spdif.o
-> +obj-$(CONFIG_SND_SUN8I) +=3D sun8i.o
-Great work with this...I've been battling with the audio codec for the
-h3 for a while and it looks like almost everything that I need is
-delivered here.
->  obj-$(CONFIG_SND_SUN8I_CODEC) +=3D sun8i-codec.o
->  obj-$(CONFIG_SND_SUN8I_CODEC_ANALOG) +=3D sun8i-codec-analog.o
-> diff --git a/sound/soc/sunxi/sun8i.c b/sound/soc/sunxi/sun8i.c
-> new file mode 100644
-> index 0000000..565cd88
-> --- /dev/null
-> +++ b/sound/soc/sunxi/sun8i.c
-> @@ -0,0 +1,101 @@
-> +/*
-> + * ALSA SoC driver for Allwinner sun8i SoC
-> + *
-> + * Copyright (C) 2016 Myl=C3=A8ne Josserand <mylene.josserand@free-elect=
-rons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/firmware.h>
-> +#include <linux/module.h>
-> +
-> +#include <sound/soc.h>
-> +
-> +static struct snd_soc_aux_dev sun8i_audio_prcm_aux_devs[] =3D {
-> +       {
-> +               .name =3D "sun8i-codec-analog",
-> +               .codec_name =3D "sun8i-codec-analog.0",
-> +       },
-> +};
-> +
-> +static struct snd_soc_dai_link sun8i_dai_link =3D {
-> +       .name           =3D "sun4i-i2s",
-> +       .stream_name    =3D "Playback",
-> +       .codec_dai_name =3D "sun8i",
-> +       .dai_fmt        =3D SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S |
-> +                       SND_SOC_DAIFMT_CBM_CFM,
-> +};
-> +
-> +static struct snd_soc_card sun8i_card =3D {
-> +       .name           =3D "sun8i-card",
-> +       .owner          =3D THIS_MODULE,
-> +       .dai_link       =3D &sun8i_dai_link,
-> +       .num_links      =3D 1,
-> +       .aux_dev        =3D sun8i_audio_prcm_aux_devs,
-> +       .num_aux_devs   =3D ARRAY_SIZE(sun8i_audio_prcm_aux_devs),
-> +};
-> +
-> +static int sun8i_probe(struct platform_device *pdev)
-> +{
-> +       struct snd_soc_dai_link *link =3D &sun8i_dai_link;
-> +       struct device_node *np =3D pdev->dev.of_node;
-> +       int ret;
-> +
-> +       /* register the soc card */
-> +       sun8i_card.dev =3D &pdev->dev;
-> +
-> +       /* Retrieve the audio-codec from DT */
-> +       link->codec_of_node =3D of_parse_phandle(np, "allwinner,audio-cod=
-ec", 0);
-> +       if (!link->codec_of_node) {
-> +               dev_err(&pdev->dev, "Missing audio codec\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       /* Retrieve DAI from DT */
-> +       link->cpu_of_node =3D of_parse_phandle(np, "allwinner,i2s-control=
-ler", 0);
-> +       if (!link->cpu_of_node) {
-> +               dev_err(&pdev->dev, "Missing I2S controller\n");
-> +               return -EINVAL;
-> +       }
-> +
-My one question is that we have sun8i-a23 and sun8i-a33, and I think
-we need to distinguish them here. The sun8i-a23 doesn't use the i2s
-block but does use the prcm.
-> +       link->platform_of_node =3D link->cpu_of_node;
-> +
-> +       /* Register the sound card */
-> +       ret =3D devm_snd_soc_register_card(&pdev->dev, &sun8i_card);
-> +       if (ret) {
-> +               dev_err(&pdev->dev,
-> +                       "Soc register card failed %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct of_device_id sun8i_of_match[] =3D {
-> +       { .compatible =3D "allwinner,sun8i-audio", },
-> +       {},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, sun8i_of_match);
-> +
-> +static struct platform_driver sun8i_card_driver =3D {
-> +       .probe =3D sun8i_probe,
-> +       .driver =3D {
-> +               .name   =3D "sun8i-audio",
-> +               .of_match_table =3D sun8i_of_match,
-> +       },
-> +};
-> +
-> +module_platform_driver(sun8i_card_driver);
-> +
-> +MODULE_AUTHOR("Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.co=
-m>");
-> +MODULE_DESCRIPTION("Allwinner sun8i machine ASoC driver");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.9.3
->
+
+--9o1Xi4ZMQ45MudWG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Oct 01, 2016 at 09:46:24PM +0200, Julia Lawall wrote:
+> Use the actual function name in the function documentation.
+>=20
+> Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--9o1Xi4ZMQ45MudWG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX9BmvAAoJEBx+YmzsjxAgjH8P/2a+iKlmzAslVKSK4mAlFqFM
+xc6L42XrbxOEtO8b6o8wfr80GOwkmTcHDPYTOXCTtqZ01lfWwAvvuW/j4sIN37yc
+Zy+wZujuKBshe7Celb8v0BfX8xB+IIlqT8h0G5KrJYu+0es+yuSfdkYpdaDWj5/Q
+wewQjoK2/qq7mMUtJhrrP2agOiFwmgT3w33ue5ZUUKM8FBIF2K0y/MaBbeyjZAfn
+f4SndhvDbHzGoMo7cShnF4aUN3b23ghO2C1VsThSM0pPSojPNG4CBJ+43dRMgOP3
+t0zEtqFRi3j9KtzrobVN0DOWZ/WF4Vi7TwTWzb6jFa6Rowz/f4xCAbJm0xjJpjkZ
+bt5vrmPEgaftiD6ddHXy8VCyihZWeigd17RaWXfSXjiXzkzgcAcUj+RM53Ple6+s
+sE7jzxpCPn4npWSSgP6OLjUzl2fpa3PjDIkU1fp/d02v6udF3L1b7c+XJorCVrx/
+vQBMddWvEdEU96knyL7RCZDDU+GXJ6t9Jr58zMmZZlM5X3Be7Q3ShEcHC5oeGrKb
+z33ybtblaPmXb9gO3LN4W9dg+3EDYSMrL3XpH72rY1c8sIGeE9o5hQtxj6UsJS85
+So/kLrqTsmVdV5u6WzCJG/Jk02zs1WxPK4nr8rFMkwfEzoT6cQBljNZQkTLSmpYA
+FZYMLmo6uUHn2YMAxbD2
+=GBfP
+-----END PGP SIGNATURE-----
+
+--9o1Xi4ZMQ45MudWG--
