@@ -1,87 +1,69 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?utf-8?B?TXlsw6huZSBKb3NzZXJhbmQ=?= <mylene.josserand@free-electrons.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
-	"thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>,
-	"vinod.koul@intel.com" <vinod.koul@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"tiwai@suse.com" <tiwai@suse.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"perex@perex.cz" <perex@perex.cz>,
-	"wens@csie.org" <wens@csie.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"alexandre.belloni@free-electrons.com" <alexandre.belloni@free-electrons.com>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <20161004161549.GO5228@lukather>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-	 <85cbd9926e52d0aa03f6bbfd8794373d8db491e0.1475571575.git.mylene.josserand@free-electrons.com> <20161004161549.GO5228@lukather>
-Subject: Re: [PATCH 06/14] ASoC: Add sun8i digital audio codec
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 4 Oct 2016 14:25:07 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@free-electrons.com>
+Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+ mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH 07/14] ASoC: Add sun8i audio card
+Message-ID: <20161004142507.56a6fab6@free-electrons.com>
+In-Reply-To: <33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+	<33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-Message-Id: <901741475770017@web21g.yandex.ru>
-Date: Fri, 07 Oct 2016 00:06:57 +0800
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
+On Tue,  4 Oct 2016 11:46:20 +0200, Myl=C3=A8ne Josserand wrote:
 
-05.10.2016, 00:20, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
-> Hi,
->
->>  +static const struct of_device_id sun8i_codec_of_match[] = {
->>  + { .compatible = "allwinner,sun8i-a33-codec" },
->>  + { .compatible = "allwinner,sun8i-a23-codec" },
->
-> I thought that the A23 and A33 had different codecs? In that case, it
-> wouldn't be a good assumption to make
+> +config SND_SUN8I
+> +	tristate "Allwinner SUN6I/SUN8I audio card support"
+> +	select SND_SUN8I_CODEC
+> +	select SND_SUN4I_I2S
+> +	select SND_SUN8I_CODEC_ANALOG
+> +	select REGMAP_MMIO
 
-Yes.
+I believe you need a:
 
->
->>  + {}
->>  +};
->>  +MODULE_DEVICE_TABLE(of, sun8i_codec_of_match);
->>  +
->>  +static struct platform_driver sun8i_codec_driver = {
->>  + .driver = {
->>  + .name = "sun8i-codec",
->>  + .owner = THIS_MODULE,
->>  + .of_match_table = sun8i_codec_of_match,
->>  + },
->>  + .probe = sun8i_codec_probe,
->>  + .remove = sun8i_codec_remove,
->>  +};
->>  +module_platform_driver(sun8i_codec_driver);
->>  +
->>  +MODULE_DESCRIPTION("Allwinner A33 (sun8i) codec driver");
->>  +MODULE_AUTHOR("huanxin<huanxin@reuuimllatech.com>");
->
-> Those obfuscated email adresses are not really helpful :)
+	depends on OF
 
-This kind of email addresses  are kept in many places in mainline kernel.
+since you're unconditionally using some DT-related functionality in the
+driver code.
 
-e.g. drivers/mmc/host/sunxi-mmc.c have 'Aaron Maoye <leafy.myeh@reuuimllatech.com>'
+> +#include <linux/firmware.h>
 
->
-> Thanks,
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
-> ,
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Do you really need this header file? I don't see anything
+firmware-loading related in the driver.
+
+> +static int sun8i_probe(struct platform_device *pdev)
+> +{
+> +	struct snd_soc_dai_link *link =3D &sun8i_dai_link;
+> +	struct device_node *np =3D pdev->dev.of_node;
+> +	int ret;
+> +
+> +	/* register the soc card */
+> +	sun8i_card.dev =3D &pdev->dev;
+> +
+> +	/* Retrieve the audio-codec from DT */
+> +	link->codec_of_node =3D of_parse_phandle(np, "allwinner,audio-codec", 0=
+);
+
+Whenever you're using of_parse_phandle(), you must have a corresponding
+of_node_put() to release the reference to the Device Tree node. So I
+guess this should be done 1/ in the error path of ->probe(), and 2/
+during the ->remove() hook.
+
+Best regards,
+
+Thomas
+--=20
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
