@@ -1,28 +1,63 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <mylene.josserand@free-electrons.com>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
+To: vinod.koul@intel.com,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	lee.jones@linaro.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	mylene.josserand@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: [PATCH 14/14] ARM: dts: sun8i: sinlinx: Enable audio nodes
+Date: Tue,  4 Oct 2016 11:46:27 +0200
+Message-Id: <f76f0c8441e78bc47ca2bacbd92dee9464517a0d.1475571575.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
-References: <cover.1476267249.git.emil@limesaudio.com> <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 14 Oct 2016 10:34:23 -0300
-Message-ID: <CAOMZO5DuT4QAOLc9mv4HkpTZN1v_TguDDDcZwy0pR2FTwH4BPA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: imx: improve precision of AV PLL to 1 Hz
-To: Emil Lundmark <emil@limesaudio.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"Ken . Lin" <ken.lin@advantech.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 12, 2016 at 7:31 AM, Emil Lundmark <emil@limesaudio.com> wrote:
-> The audio and video PLLs are designed to have a precision of 1 Hz if some
-> conditions are met. The current implementation only allows a precision that
-> depends on the rate of the parent clock. E.g., if the parent clock is 24
-> MHz, the precision will be 24 Hz; or more generally the precision will be
-...
-> I reckon this is the intention by the design of the clock rate formula.
->
-> Signed-off-by: Emil Lundmark <emil@limesaudio.com>
+Enable the audio codec and the audio dai for the sun8i A33 sinlinx board.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+---
+ arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts b/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
+index fef6abc..b03ca5e 100644
+--- a/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
++++ b/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
+@@ -63,6 +63,14 @@
+ 	};
+ };
+ 
++&codec {
++	status = "okay";
++};
++
++&dai {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+-- 
+2.9.3
