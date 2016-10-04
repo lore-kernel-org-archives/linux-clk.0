@@ -1,51 +1,116 @@
-Return-Path: <otavio.salvador@ossystems.com.br>
-Return-Path: <otavio.salvador@ossystems.com.br>
-From: Otavio Salvador <otavio.salvador@ossystems.com.br>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 4 Oct 2016 17:42:18 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com,
+	vinod.koul@intel.com, linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com, tiwai@suse.com, sboyd@codeaurora.org,
+	lgirdwood@gmail.com, robh+dt@kernel.org, perex@perex.cz,
+	wens@csie.org, broonie@kernel.org,
+	alexandre.belloni@free-electrons.com, dmaengine@vger.kernel.org,
+	lee.jones@linaro.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 03/14] ASoC: sun4i-i2s: Add apb reset
+Message-ID: <20161004154218.GM5228@lukather>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004141516.53c6fa8c@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5CVggufx2U0pZUXd1o=i36Jo-c1B=hgFcSaWeM+=oagaQ@mail.gmail.com>
-References: <03B5A3CA1724CE4EAC32B27E39292A677FC5A390AE@AUSMAIL1.AUS.ADVANTECH.CORP>
- <WM!ea1806249edeb2cf70790bb7482fb813b9b7cef636576d9ca4b01897c8831c3650f71356a13ce9ba5e358a69b86f6a82!@dg.advantech.com>
- <CAOMZO5CXTEpNvAhuc2Et60HxfM=nQngMTdMOtDbazi=1EQ95Jw@mail.gmail.com>
- <03B5A3CA1724CE4EAC32B27E39292A677FC5A39613@AUSMAIL1.AUS.ADVANTECH.CORP>
- <WM!8b5ef465717800ac4466674b98bb32450dc231d955cd4979ca96fd54828a7c3af7de5f376015ebf046c75f20677161c6!@dgg.advantech.com>
- <WM!8ae38b052eee9a42a4712d13aee34e2d793055d4125e98cc2c03451811f33168b3556d3bf52ee5ba8dda879cea808cdc!@dg.advantech.com>
- <CAOMZO5CVggufx2U0pZUXd1o=i36Jo-c1B=hgFcSaWeM+=oagaQ@mail.gmail.com>
-Date: Tue, 11 Oct 2016 15:34:52 -0300
-Message-ID: <CAP9ODKoyhkTA2=MR44LJ24OYTJaWrtg9vT=14vnYNnuuSDRe1A@mail.gmail.com>
-Subject: Re: The possible regression in kernel 4.8 - clk: imx: correct AV PLL
- rate formula
-To: Fabio Estevam <festevam@gmail.com>
-Cc: "Ken.Lin" <ken.lin@advantech.com>, Jason Moss <jason.moss@nxp.com>,
-	"Peter.Chiang" <peter.chiang@advantech.com>, "emil@limesaudio.com" <emil@limesaudio.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Peter.Stretz" <peter.stretz@advantech.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="JfVplkuTfB13Rsg5"
+In-Reply-To: <20161004141516.53c6fa8c@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 11, 2016 at 3:00 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Ken,
->
-> On Tue, Oct 11, 2016 at 2:49 PM, Ken.Lin <ken.lin@advantech.com> wrote:
->
->> With the patches applied, the pixel clock (148500000 required for 1920x1080@60) is correct as we checked in kernel 4.7 and the actual measurement result looked good as we expected.
->> I think the patches should fix the issue.
->
-> That's good news. Thanks for testing.
->
-> Emil is working on a v3 version of the patch series.
->
-> Emil,
->
-> Please add Ken Lin on Cc when you submit v3.
 
-And what will be done regarding 4.8? Is the faulty change to be
-reverted or this patches will be backported?
+--JfVplkuTfB13Rsg5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9981-7854            Mobile: +1 (347) 903-9750
+Hi,
+
+On Tue, Oct 04, 2016 at 02:15:16PM +0200, Thomas Petazzoni wrote:
+> Hello,
+>=20
+> On Tue,  4 Oct 2016 11:46:16 +0200, Myl=E8ne Josserand wrote:
+>=20
+> >  #include <sound/dmaengine_pcm.h>
+> >  #include <sound/pcm_params.h>
+> > @@ -589,6 +590,7 @@ static int sun4i_i2s_probe(struct platform_device *=
+pdev)
+> >  {
+> >  	struct sun4i_i2s *i2s;
+> >  	struct resource *res;
+> > +	struct reset_control *reset_apb;
+> >  	void __iomem *regs;
+> >  	int irq, ret;
+> > =20
+> > @@ -626,7 +628,19 @@ static int sun4i_i2s_probe(struct platform_device =
+*pdev)
+> >  		dev_err(&pdev->dev, "Can't get our mod clock\n");
+> >  		return PTR_ERR(i2s->mod_clk);
+> >  	}
+> > -=09
+> > +
+> > +	reset_apb =3D devm_reset_control_get(&pdev->dev, "apb_reset");
+>=20
+> I believe this is a change in the Device Tree binding, since you're
+> adding support for a new resource. Perhaps the Device Tree binding
+> documentation should be updated accordingly?
+
+Indeed.
+
+You have two solutions to do that:
+  - Either mark it as optional and use reset_control_get_optional
+    (because here, you broke the other SoCs that have that controller
+    but no reset line)
+  - Or introduce a new compatible, and make the reset property
+    mandatory for that new compatible.
+
+I prefer the latter, since you get a stricter error check, and you
+cannot end up in a situation where your driver probes but is
+useless. But you'll find both in our drivers.
+
+> > +	}
+> > +
+> > +	ret =3D reset_control_deassert(reset_apb);
+> > +	if (ret < 0) {
+> > +		dev_err(&pdev->dev, "Can't deassert apb reset (%d)\n", ret);
+> > +		return ret;
+> > +	}
+>=20
+> Do you need to re-assert the reset line in the ->remove() hook?
+
+Even better, you can add it to the runtime_pm hooks! :)
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--JfVplkuTfB13Rsg5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX883aAAoJEBx+YmzsjxAgTc4QAL62RJw5dXv9CTB06fQ8erFG
+KRm7cM35mifXfs6oCfG+eFX3gzlvcvUbDc/+5GBa9VWa+0eY9++0Mc98NWGdl8A+
+8l1W2immpdfDILgk+4Qi2stMyHDMFaV5sqZirNCDVhRnxGAV7KqO9DSd+9EZgb+E
+7sj3iy/4E9Jhd5F0LLGcu0VVbIkb0Nv1RmD/ankvCKICycdVVGAo/iZZ3YtLY6sP
+G+HRnNtK87VP5+x5sVS+VazQB8nfZFUv77DS3ms8VtwMjk+w7J139iv10iGFghgS
+OVJbSxVAiELq0ipxezO/Zi8DAI5u0EwYjp1LxHiwaKUPttaJViYpoc0DGcPHugu5
+/39Z3K6EP9sbf/dqySARo4BX9gj+9EAXkrKADJW2UVI3r0Xj4P482J52+f53x4qY
+ihiuYnZ4bxqz3GNf2HW3fdzVCvr5fQidmr74hXY/I+VoZtUH4+oBSTcKV07mAVuU
+ArAUPzfQpM3n2MZmEDpsJpmZB+Ba/xEeOPCrRF9wfXmGdyxA+uhfrykZNPjsGdv2
+OpesbVGybZoyB5uF/C7P9YC4zgtFh0hhB91it1AMQ6MhQ/L46Br3yD/AWP90HwsP
+722A1MNqajt1WDvmuspZPsvjP93COKCFJ1YPv1c967xSR1hsPESizbv7FGcGZfxa
+gxZSfN+PV+yoI8vcJNVu
+=9ZGk
+-----END PGP SIGNATURE-----
+
+--JfVplkuTfB13Rsg5--
