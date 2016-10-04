@@ -1,50 +1,88 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 4/5] ARM: dts: exynos: add support for ISP power domain to
- exynos4x12 clocks device
-Date: Mon, 24 Oct 2016 14:12:09 +0200
-Message-id: <1477311130-6534-5-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
-References: <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161024121228eucas1p12e92e725af3073597614d1065373d262@eucas1p1.samsung.com>
+Return-Path: <vinod.koul@intel.com>
+Date: Tue, 4 Oct 2016 21:10:09 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	=?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
+	maxime.ripard@free-electrons.com, wens@csie.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	lee.jones@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org,
+	devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	alexandre.belloni@free-electrons.com, dmaengine@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+Message-ID: <20161004154009.GH2467@localhost>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
+ <20161004141221.55327f1b@free-electrons.com>
+ <20161004154651.3d0eb02badb6dc66758dd3aa@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20161004154651.3d0eb02badb6dc66758dd3aa@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos4412 clock controller contains some additional clocks for FIMC-ISP
-(Camera ISP) subsystem. Registers for those clocks are partially located
-in the SOC area, which belongs to ISP power domain.
+On Tue, Oct 04, 2016 at 03:46:51PM +0200, Jean-Francois Moine wrote:
+> On Tue, 4 Oct 2016 14:12:21 +0200
+> Thomas Petazzoni <thomas.petazzoni@free-electrons.com> wrote:
+> 
+> > > > Add the case of a burst of 4 which is handled by the SoC.
+> > > > 
+> > > > Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+> > > > ---
+> > > >  drivers/dma/sun6i-dma.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+> > > > index 8346199..0485204 100644
+> > > > --- a/drivers/dma/sun6i-dma.c
+> > > > +++ b/drivers/dma/sun6i-dma.c
+> > > > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+> > > >  	switch (maxburst) {
+> > > >  	case 1:
+> > > >  		return 0;
+> > > > +	case 4:
+> > > > +		return 1;
+> > > >  	case 8:
+> > > >  		return 2;
+> > > >  	default:
+> > > > -- 
+> > > > 2.9.3  
+> > > 
+> > > This patch has already been rejected by Maxime in the threads
+> > > 	http://www.spinics.net/lists/dmaengine/msg08610.html
+> > > and
+> > > 	http://www.spinics.net/lists/dmaengine/msg08719.html
+> > > 
+> > > I hope you will find the way he wants for this maxburst to be added.
+> > 
+> > I was about to reply to Mylene's e-mail, suggesting that she should add
+> > a comment in the code (and maybe in the commit log) to explain why this
+> > addition is needed, and also that even though the schematics say that
+> > value "1" (max burst size of 4 bytes) is reserved, it is in fact
+> > incorrect. The Allwinner BSP code is really using this value, and it's
+> > the value that makes audio work, so we believe the datasheet is simply
+> > incorrect.
+> > 
+> > We already discussed it with Maxime, so I believe he should agree this
+> > time. But I would suggest to have such details explained in the commit
+> > log and in a comment in the code.
+> 
+> Strange. Looking at the datasheets of the A23, A31, A33, A83T and H3
+> (these are the SoCs using the DMA sun6i), only the H3 can have 4 as the
+> burst size (the doc is unclear for the A31).
+> 
+> Well, I was submitting for the H3, Mylène is submitting for the A33.
+> So, what about the A23, A31 and A83T?
 
-This patch implements integration of ISP clocks with ISP power domain.
+Since these are device properties, I feel we should move this to DT. That
+way any new controller can have any variation based on the mood of hw
+designer that day and we can hopefully cope with it :-)
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+But yes we would need to set the bursts supported in driver and allow above
+for supported bursts only.
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 0074f566cd3b..5667fd33dc98 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -74,6 +74,11 @@
- 		compatible = "samsung,exynos4412-clock";
- 		reg = <0x10030000 0x20000>;
- 		#clock-cells = <1>;
-+
-+		isp-clock-controller {
-+			compatible = "samsung,exynos4412-isp-clock";
-+			power-domains = <&pd_isp>;
-+		};
- 	};
- 
- 	mct@10050000 {
 -- 
-1.9.1
+~Vinod
