@@ -1,49 +1,57 @@
-Return-Path: <ramesh.shanmugasundaram@bp.renesas.com>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: geert+renesas@glider.be,
+Return-Path: <mylene.josserand@free-electrons.com>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
+To: vinod.koul@intel.com,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
 	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org,
+	sboyd@codeaurora.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	lee.jones@linaro.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] clk: renesas: r8a7796: Add DRIF clock
-Date: Thu, 13 Oct 2016 10:31:48 +0100
-Message-Id: <1476351108-54370-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	mylene.josserand@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+Date: Tue,  4 Oct 2016 11:46:14 +0200
+Message-Id: <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds DRIF module clocks for r8a7796 SoC.
+Add the case of a burst of 4 which is handled by the SoC.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
 ---
-Hi Geert, All,
+ drivers/dma/sun6i-dma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-   This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-10-04-v4.8)
-
-Thanks,
-Ramesh.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index f0302fb..f2f56e1 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -128,6 +128,14 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
-+	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif5",		 510,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif4",		 511,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif3",		 512,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif2",		 513,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif1",		 514,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif0",		 515,	R8A7796_CLK_S3D2),
- 	DEF_MOD("hscif4",		 516,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif3",		 517,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif2",		 518,	R8A7796_CLK_S3D1),
+diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+index 8346199..0485204 100644
+--- a/drivers/dma/sun6i-dma.c
++++ b/drivers/dma/sun6i-dma.c
+@@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+ 	switch (maxburst) {
+ 	case 1:
+ 		return 0;
++	case 4:
++		return 1;
+ 	case 8:
+ 		return 2;
+ 	default:
 -- 
-1.9.1
+2.9.3
