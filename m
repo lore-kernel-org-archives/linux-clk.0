@@ -1,77 +1,160 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 4 Oct 2016 18:55:54 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
+	vinod.koul@intel.com, wens@csie.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+	perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+	mark.rutland@arm.com, robh+dt@kernel.org,
+	thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
+	dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+Message-ID: <20161004165553.GS5228@lukather>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20161021154737.3803065-1-arnd@arndb.de>
-References: <20161021154737.3803065-1-arnd@arndb.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Oct 2016 20:01:49 +0200
-Message-ID: <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="REOXmE5zpOGz6VLu"
+In-Reply-To: <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
 
-On Fri, Oct 21, 2016 at 5:47 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> The addition of one more rcar-gen2 based SoC caused a build error (again)
-> in my randconfig builds:
->
-> arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
-> setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
->
-> I think this has happened twice in the past. Instead of adding each SoC
-> one at a time, this changes the existing list to always build the
-> rcar-gen2 related clk files whenever the generic symbol is selected.
+--REOXmE5zpOGz6VLu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The problem is that the R-Car Gen2 platform code calls into the R-Car Gen2
-clock driver[*]. RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the
-R-Car Gen2 clock driver.
-Instead it will use the modern CPG/MSSR driver, like R-Car Gen3 does.
+On Tue, Oct 04, 2016 at 12:40:11PM +0200, Jean-Francois Moine wrote:
+> On Tue,  4 Oct 2016 11:46:14 +0200
+> Myl=E8ne Josserand <mylene.josserand@free-electrons.com> wrote:
+>=20
+> > Add the case of a burst of 4 which is handled by the SoC.
+> >=20
+> > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
+> > ---
+> >  drivers/dma/sun6i-dma.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+> > index 8346199..0485204 100644
+> > --- a/drivers/dma/sun6i-dma.c
+> > +++ b/drivers/dma/sun6i-dma.c
+> > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+> >  	switch (maxburst) {
+> >  	case 1:
+> >  		return 0;
+> > +	case 4:
+> > +		return 1;
+> >  	case 8:
+> >  		return 2;
+> >  	default:
+> > --=20
+> > 2.9.3
+>=20
+> This patch has already been rejected by Maxime in the threads
+> 	http://www.spinics.net/lists/dmaengine/msg08610.html
+> and
+> 	http://www.spinics.net/lists/dmaengine/msg08719.html
+>=20
+> I hope you will find the way he wants for this maxburst to be added.
 
-[*] That will be fixed by "[PATCH v4 00/23] soc: renesas: Add R-Car RST
-    driver for obtaining mode pin state".
+I was talking about something along these lines (not tested):
 
-> Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/clk/renesas/Makefile | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-> index 90dd0db7d9c6..762d122eddec 100644
-> --- a/drivers/clk/renesas/Makefile
-> +++ b/drivers/clk/renesas/Makefile
-> @@ -4,11 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o
->  obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o
-> -obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o clk-div6.o
-> -obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o clk-div6.o
-> -obj-$(CONFIG_ARCH_R8A7792)             += clk-rcar-gen2.o clk-div6.o
-> -obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o clk-div6.o
-> -obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o clk-div6.o
-> +obj-$(CONFIG_ARCH_RCAR_GEN2)           += clk-rcar-gen2.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7795)             += r8a7795-cpg-mssr.o rcar-gen3-cpg.o
->  obj-$(CONFIG_ARCH_R8A7796)             += r8a7796-cpg-mssr.o rcar-gen3-cpg.o
->  obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o clk-div6.o
+-------8<---------
+diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+index 83461994e418..573ac4608293 100644
+--- a/drivers/dma/sun6i-dma.c
++++ b/drivers/dma/sun6i-dma.c
+@@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+ 	switch (maxburst) {
+ 	case 1:
+ 		return 0;
++	case 4:
++		return 1;
+ 	case 8:
+ 		return 2;
+ 	default:
+@@ -1110,11 +1112,19 @@ static int sun6i_dma_probe(struct platform_device *=
+pdev)
+ 	sdc->slave.dst_addr_widths		=3D BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
+ 						  BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
+ 						  BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
++	sdc->slave.dst_bursts			=3D BIT(1) | BIT(8);
++	sdc->slave.src_bursts			=3D BIT(1) | BIT(8);
+ 	sdc->slave.directions			=3D BIT(DMA_DEV_TO_MEM) |
+ 						  BIT(DMA_MEM_TO_DEV);
+ 	sdc->slave.residue_granularity		=3D DMA_RESIDUE_GRANULARITY_BURST;
+ 	sdc->slave.dev =3D &pdev->dev;
+=20
++	if (of_device_is_compatible(pdev->dev.of_node,
++				    "allwinner,sun8i-h3-dma")) {
++		sdc->slave.dst_bursts |=3D BIT(4);
++		sdc->slave.src_bursts |=3D BIT(4);
++	}
++
+ 	sdc->pchans =3D devm_kcalloc(&pdev->dev, sdc->cfg->nr_max_channels,
+ 				   sizeof(struct sun6i_pchan), GFP_KERNEL);
+ 	if (!sdc->pchans)
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index cc535a478bae..f7bbec24bb58 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -673,6 +673,8 @@ struct dma_filter {
+  * 	each type of direction, the dma controller should fill (1 <<
+  * 	<TYPE>) and same should be checked by controller as well
+  * @max_burst: max burst capability per-transfer
++ * @dst_bursts: bitfield of the available burst sizes for the destination
++ * @src_bursts: bitfield of the available burst sizes for the source
+  * @residue_granularity: granularity of the transfer residue reported
+  *	by tx_status
+  * @device_alloc_chan_resources: allocate resources and return the
+@@ -800,6 +802,14 @@ struct dma_device {
+ static inline int dmaengine_slave_config(struct dma_chan *chan,
+ 					  struct dma_slave_config *config)
+ {
++	if (config->src_maxburst && config->device->src_bursts &&
++	    !(BIT(config->src_maxburst) & config->device->src_bursts))
++		return -EINVAL;
++
++	if (config->dst_maxburst && config->device->dst_bursts &&
++	    !(BIT(config->dst_maxburst) & config->device->dst_bursts))
++		return -EINVAL;
++
+ 	if (chan->device->device_config)
+ 		return chan->device->device_config(chan, config);
+-------8<------------=20
 
-Please don't fix it this way, as it will make it _harder_ to convert the R-Car
-Gen2 SoCs to the modern CPG/MSSR driver later.
+Maxime
 
-Gr{oetje,eeting}s,
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-                        Geert
+--REOXmE5zpOGz6VLu
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIcBAEBAgAGBQJX898ZAAoJEBx+YmzsjxAgltQQALVv8yT8BEcrCxqFcFnSbog1
+dhFSw+o5Xz62P+r7DA41uoQR/R8cWoShprC3xlFXFnnMgqtm31tRllRns6sUkeXR
+aEuePrPHiBj17RVrYDv+zEfm29KOqP2sipC2uMLFx7i3w0ii/udFcPqprFXfKibi
+nLSBqKN9PD7mlFLSzxy7VF9ikbjTc+g0k5TS668BJ6QIgr9J+n99nm4y77SzJQS4
+tyyv4AZ3pW6JZDqYjgSqd1OHHHmewjYuumd0/1KMS6P5IsM1h98Su/xlBG+hTR0o
+4X24hSmV+3XCdGnOZHZ3/7UZ0ru/Pp5u05wR0A9VI49rCrFJ37X3pYf/ULxpBIJf
++M2CTILXk6IMCiKcbIQvIcMUHHPCibTuoj87FZ/3Szb/YHens+5DnRmkf1BXX8bh
+ynAYnDj/gSuTapZJjMp/K8wRPas6xSM4KJnc3GVth2MKCN2th+a5ZDRr7VJZAYNl
+libY1vwjPZigiHvuZ9fDiWa3kFY+wQZ6edZQvry9im/9AhMWuo9B0oulQOVZH5SP
++VWBaASlfB/MsMOFKdsLKODk8LscpEZWwHP/Qwt5MNXJNVcaD1RW/Bty/tpac57N
+JWxbi3krOOK9HHbMccAQ+YMM8tyrk/Fi4ocBEOfhSM1o/0WvttdU6odVHoXvPQtj
+ITzrol1xjKT5pGR1VuKt
+=rGp+
+-----END PGP SIGNATURE-----
+
+--REOXmE5zpOGz6VLu--
