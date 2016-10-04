@@ -1,88 +1,103 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v13, 2/8] ARM64: dts: ls2080a: add device configuration node
-Date: Fri, 28 Oct 2016 11:32:28 +0800
-Message-ID: <1477625554-46700-3-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <mylene.josserand@free-electrons.com>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
+To: vinod.koul@intel.com,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	lee.jones@linaro.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	mylene.josserand@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: [PATCH 12/14] ARM: dts: sun8i: Add audio codec, dai and card for A33
+Date: Tue,  4 Oct 2016 11:46:25 +0200
+Message-Id: <0c5caea86dea5e8f8198c61af47983ceb511ff78.1475571575.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Yangbo Lu <yangbo.lu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the dts node for device configuration unit that provides
-general purpose configuration and status for the device.
+Add the audio codec, dai and a sun8i card to be able to use the
+audio stream of the builtin codec on sun8i SoC.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
 ---
-Changes for v5:
-	- Added this patch
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/sun8i-a33.dtsi | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 337da90..c03b099 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -215,6 +215,12 @@
- 			clocks = <&sysclk>;
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index fd1e1cd..4f8b442 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -43,6 +43,7 @@
+  */
+ 
+ #include "sun8i-a23-a33.dtsi"
++#include <dt-bindings/dma/sun4i-a10.h>
+ 
+ / {
+ 	cpus {
+@@ -69,6 +70,12 @@
+ 		reg = <0x40000000 0x80000000>;
+ 	};
+ 
++	sound {
++		compatible = "allwinner,sun8i-audio";
++		allwinner,audio-codec = <&codec>;
++		allwinner,i2s-controller = <&dai>;
++	};
++
+ 	soc@01c00000 {
+ 		tcon0: lcd-controller@01c0c000 {
+ 			compatible = "allwinner,sun8i-a33-tcon";
+@@ -116,6 +123,32 @@
+ 			reset-names = "ahb";
  		};
  
-+		dcfg: dcfg@1e00000 {
-+			compatible = "fsl,ls2080a-dcfg", "syscon";
-+			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
++		dai: dai@01c22c00 {
++			#sound-dai-cells = <0>;
++			compatible = "allwinner,sun4i-a10-i2s";
++			reg = <0x01c22c00 0x200>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
++			clock-names = "apb", "mod";
++			resets = <&ccu RST_BUS_CODEC>;
++			reset-names = "apb_reset";
++			dmas = <&dma 15>, /* AUDIO_CODEC port */
++				<&dma 15>; /* AUDIO_CODEC port */
++			dma-names = "rx", "tx";
++			status = "disabled";
 +		};
 +
- 		serial0: serial@21c0500 {
- 			compatible = "fsl,ns16550", "ns16550a";
- 			reg = <0x0 0x21c0500 0x0 0x100>;
++		codec: codec@01c22e00 {
++			#sound-dai-cells = <0>;
++			compatible = "allwinner,sun8i-a33-codec";
++			reg = <0x01c22e00 0x400>; /* SUNXI_AUDIO_PBASE + 0x200 */
++			reg-names = "audio";
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
++			clock-names = "apb", "codec";
++			status = "disabled";
++		};
++
+ 		fe0: display-frontend@01e00000 {
+ 			compatible = "allwinner,sun8i-a33-display-frontend";
+ 			reg = <0x01e00000 0x20000>;
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.9.3
