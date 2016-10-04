@@ -1,57 +1,35 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
-Date: Tue,  4 Oct 2016 11:46:14 +0200
-Message-Id: <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 4 Oct 2016 14:12:51 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@free-electrons.com>
+Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+ mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH 02/14] clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to
+ ac-dig
+Message-ID: <20161004141251.4e82378e@free-electrons.com>
+In-Reply-To: <8dfe0935d35b8a218ebf39d37113e27289a0de9b.1475571575.git.mylene.josserand@free-electrons.com>
 References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+	<8dfe0935d35b8a218ebf39d37113e27289a0de9b.1475571575.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the case of a burst of 4 which is handled by the SoC.
+Hello,
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- drivers/dma/sun6i-dma.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Tue,  4 Oct 2016 11:46:15 +0200, Myl=C3=A8ne Josserand wrote:
+> Add the flag CLK_SET_RATE_PARENT to 'ac-dig' clock.
 
-diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-index 8346199..0485204 100644
---- a/drivers/dma/sun6i-dma.c
-+++ b/drivers/dma/sun6i-dma.c
-@@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
- 	switch (maxburst) {
- 	case 1:
- 		return 0;
-+	case 4:
-+		return 1;
- 	case 8:
- 		return 2;
- 	default:
--- 
-2.9.3
+There is no need to repeat the commit title inside the commit log
+itself. What would be more useful is to explain *why* this is needed.
+
+Thomas
+--=20
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
