@@ -1,31 +1,88 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <codekipper@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4d2e3a91dfb74209735c940b51d7efc9ba2ed69b.1476267249.git.emil@limesaudio.com>
-References: <cover.1476267249.git.emil@limesaudio.com> <4d2e3a91dfb74209735c940b51d7efc9ba2ed69b.1476267249.git.emil@limesaudio.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 14 Oct 2016 10:33:43 -0300
-Message-ID: <CAOMZO5BdtKb7fOceRz0yiDyBedV_7p+e7f9FoNJY2CsvSv+oBQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: imx: fix integer overflow in AV PLL round rate
-To: Emil Lundmark <emil@limesaudio.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"Ken . Lin" <ken.lin@advantech.com>, Anson Huang <b20788@freescale.com>
+In-Reply-To: <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+ <cover.1475569400.git.mylene.josserand@free-electrons.com> <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
+From: Code Kipper <codekipper@gmail.com>
+Date: Tue, 4 Oct 2016 14:22:26 +0200
+Message-ID: <CAEKpxB=K2c128qNWYT1_bt5xB-9ouFzpf=pAAPge1=_JziLFNA@mail.gmail.com>
+Subject: Re: [PATCH 03/14] ASoC: sun4i-i2s: Add apb reset
+To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@free-electrons.com>
+Cc: vinod.koul@intel.com, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, mturquette@baylibre.com, sboyd@codeaurora.org,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lee Jones <lee.jones@linaro.org>,
+	mark.rutland@arm.com, Rob Herring <robh+dt@kernel.org>,
+	thomas.petazzoni@free-electrons.com, devicetree <devicetree@vger.kernel.org>,
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+	linux-sunxi <linux-sunxi@googlegroups.com>, alexandre.belloni@free-electrons.com,
+	dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 12, 2016 at 7:31 AM, Emil Lundmark <emil@limesaudio.com> wrote:
-> Since 'parent_rate * mfn' may overflow 32 bits, the result should be
-> stored using 64 bits.
+On 4 October 2016 at 11:46, Myl=C3=A8ne Josserand
+<mylene.josserand@free-electrons.com> wrote:
+> Add APB deassert function for sun4i-i2s driver.
 >
-> The problem was discovered when trying to set the rate of the audio PLL
-> (pll4_post_div) on an i.MX6Q. The desired rate was 196.608 MHz, but
-> the actual rate returned was 192.000570 MHz. The round rate function should
-> have been able to return 196.608 MHz, i.e., the desired rate.
+> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com=
 >
-> Fixes: ba7f4f557eb6 ("clk: imx: correct AV PLL rate formula")
-> Cc: Anson Huang <b20788@freescale.com>
-> Signed-off-by: Emil Lundmark <emil@limesaudio.com>
-
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+>  sound/soc/sunxi/sun4i-i2s.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+> index 687a8f8..f3f7026 100644
+> --- a/sound/soc/sunxi/sun4i-i2s.c
+> +++ b/sound/soc/sunxi/sun4i-i2s.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+> +#include <linux/reset.h>
+>
+>  #include <sound/dmaengine_pcm.h>
+>  #include <sound/pcm_params.h>
+> @@ -589,6 +590,7 @@ static int sun4i_i2s_probe(struct platform_device *pd=
+ev)
+>  {
+>         struct sun4i_i2s *i2s;
+>         struct resource *res;
+> +       struct reset_control *reset_apb;
+>         void __iomem *regs;
+>         int irq, ret;
+>
+> @@ -626,7 +628,19 @@ static int sun4i_i2s_probe(struct platform_device *p=
+dev)
+>                 dev_err(&pdev->dev, "Can't get our mod clock\n");
+>                 return PTR_ERR(i2s->mod_clk);
+>         }
+> -
+> +
+> +       reset_apb =3D devm_reset_control_get(&pdev->dev, "apb_reset");
+> +       if (IS_ERR(reset_apb)) {
+> +               dev_err(&pdev->dev, "Can't get apb reset\n");
+> +               return PTR_ERR(i2s->mod_clk);
+> +       }
+> +
+> +       ret =3D reset_control_deassert(reset_apb);
+> +       if (ret < 0) {
+> +               dev_err(&pdev->dev, "Can't deassert apb reset (%d)\n", re=
+t);
+> +               return ret;
+> +       }
+> +
+Is this functionality only required for A31 and onwards?,
+CK
+>         i2s->playback_dma_data.addr =3D res->start + SUN4I_I2S_FIFO_TX_RE=
+G;
+>         i2s->playback_dma_data.maxburst =3D 4;
+>
+> --
+> 2.9.3
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
