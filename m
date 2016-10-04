@@ -1,200 +1,78 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: Paul Burton <paul.burton@imgtec.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH v3 17/18] clk: boston: Add a driver for MIPS Boston board clocks
-Date: Wed, 5 Oct 2016 18:18:23 +0100
-Message-ID: <20161005171824.18014-18-paul.burton@imgtec.com>
-In-Reply-To: <20161005171824.18014-1-paul.burton@imgtec.com>
-References: <20161005171824.18014-1-paul.burton@imgtec.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 4 Oct 2016 14:12:21 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: =?UTF-8?B?TXlsw6huZQ==?= Josserand
+ <mylene.josserand@free-electrons.com>, vinod.koul@intel.com,
+ maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com,
+ sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+ perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org, mark.rutland@arm.com,
+ robh+dt@kernel.org, devicetree@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+Message-ID: <20161004141221.55327f1b@free-electrons.com>
+In-Reply-To: <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+	<3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+	<20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver for the clocks provided by the MIPS Boston board from
-Imagination Technologies. 2 clocks are provided - the system clock & the
-CPU clock - and each is a simple fixed rate clock whose frequency can be
-determined by reading a register provided by the board.
+Hello,
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
+On Tue, 4 Oct 2016 12:40:11 +0200, Jean-Francois Moine wrote:
 
----
+> > Add the case of a burst of 4 which is handled by the SoC.
+> >=20
+> > Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.c=
+om>
+> > ---
+> >  drivers/dma/sun6i-dma.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+> > index 8346199..0485204 100644
+> > --- a/drivers/dma/sun6i-dma.c
+> > +++ b/drivers/dma/sun6i-dma.c
+> > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+> >  	switch (maxburst) {
+> >  	case 1:
+> >  		return 0;
+> > +	case 4:
+> > +		return 1;
+> >  	case 8:
+> >  		return 2;
+> >  	default:
+> > --=20
+> > 2.9.3 =20
+>=20
+> This patch has already been rejected by Maxime in the threads
+> 	http://www.spinics.net/lists/dmaengine/msg08610.html
+> and
+> 	http://www.spinics.net/lists/dmaengine/msg08719.html
+>=20
+> I hope you will find the way he wants for this maxburst to be added.
 
-Changes in v3: None
-Changes in v2:
-- Support BOSTON_CLK_INPUT.
-- Register clocks with clk_register_fixed_rate during boot, removing need for clk_ops.
-- s/uint32_t/u32/.
-- Move driver to a vendor directory.
+I was about to reply to Mylene's e-mail, suggesting that she should add
+a comment in the code (and maybe in the commit log) to explain why this
+addition is needed, and also that even though the schematics say that
+value "1" (max burst size of 4 bytes) is reserved, it is in fact
+incorrect. The Allwinner BSP code is really using this value, and it's
+the value that makes audio work, so we believe the datasheet is simply
+incorrect.
 
- drivers/clk/Kconfig             |   1 +
- drivers/clk/Makefile            |   1 +
- drivers/clk/imgtec/Kconfig      |  10 ++++
- drivers/clk/imgtec/Makefile     |   1 +
- drivers/clk/imgtec/clk-boston.c | 101 ++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 114 insertions(+)
- create mode 100644 drivers/clk/imgtec/Kconfig
- create mode 100644 drivers/clk/imgtec/Makefile
- create mode 100644 drivers/clk/imgtec/clk-boston.c
+We already discussed it with Maxime, so I believe he should agree this
+time. But I would suggest to have such details explained in the commit
+log and in a comment in the code.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e2d9bd7..a6c7e03 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -210,6 +210,7 @@ config COMMON_CLK_OXNAS
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/imgtec/Kconfig"
- source "drivers/clk/meson/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 3b6f9cf..8c4c425 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -60,6 +60,7 @@ obj-y					+= bcm/
- obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
- obj-$(CONFIG_H8300)			+= h8300/
- obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
-+obj-y					+= imgtec/
- obj-$(CONFIG_ARCH_MXC)			+= imx/
- obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
- obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+= keystone/
-diff --git a/drivers/clk/imgtec/Kconfig b/drivers/clk/imgtec/Kconfig
-new file mode 100644
-index 0000000..c2ea745
---- /dev/null
-+++ b/drivers/clk/imgtec/Kconfig
-@@ -0,0 +1,10 @@
-+config COMMON_CLK_BOSTON
-+	bool "Clock driver for MIPS Boston boards"
-+	depends on MIPS || COMPILE_TEST
-+	depends on OF
-+	select MFD_SYSCON
-+	---help---
-+	  Enable this to support the system & CPU clocks on the MIPS Boston
-+	  development board from Imagination Technologies. These are simple
-+	  fixed rate clocks whose rate is determined by reading a platform
-+	  provided register.
-diff --git a/drivers/clk/imgtec/Makefile b/drivers/clk/imgtec/Makefile
-new file mode 100644
-index 0000000..ac779b8
---- /dev/null
-+++ b/drivers/clk/imgtec/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_COMMON_CLK_BOSTON)		+= clk-boston.o
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-new file mode 100644
-index 0000000..14795b8
---- /dev/null
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -0,0 +1,101 @@
-+/*
-+ * Copyright (C) 2016 Imagination Technologies
-+ * Author: Paul Burton <paul.burton@imgtec.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/syscon.h>
-+
-+#include <dt-bindings/clock/boston-clock.h>
-+
-+#define BOSTON_PLAT_MMCMDIV		0x30
-+# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
-+# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
-+# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
-+# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
-+
-+#define BOSTON_CLK_COUNT 3
-+
-+struct clk_boston_state {
-+	struct clk *clks[BOSTON_CLK_COUNT];
-+	struct clk_onecell_data onecell_data;
-+};
-+
-+static u32 ext_field(u32 val, u32 mask)
-+{
-+	return (val & mask) >> (ffs(mask) - 1);
-+}
-+
-+static void __init clk_boston_setup(struct device_node *np)
-+{
-+	unsigned long in_freq, cpu_freq, sys_freq;
-+	uint mmcmdiv, mul, cpu_div, sys_div;
-+	struct clk_boston_state *state;
-+	struct regmap *regmap;
-+	struct clk *clk;
-+	int err;
-+
-+	regmap = syscon_regmap_lookup_by_phandle(np, "regmap");
-+	if (IS_ERR(regmap)) {
-+		pr_err("failed to find regmap\n");
-+		return;
-+	}
-+
-+	err = regmap_read(regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
-+	if (err) {
-+		pr_err("failed to read mmcm_div register: %d\n", err);
-+		return;
-+	}
-+
-+	in_freq = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT) * 1000000;
-+	mul = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
-+
-+	sys_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
-+	sys_freq = mult_frac(in_freq, mul, sys_div);
-+
-+	cpu_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
-+	cpu_freq = mult_frac(in_freq, mul, cpu_div);
-+
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
-+	if (!state)
-+		return;
-+
-+	clk = clk_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to register input clock: %ld\n", PTR_ERR(clk));
-+		return;
-+	}
-+	state->clks[BOSTON_CLK_INPUT] = clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to register sys clock: %ld\n", PTR_ERR(clk));
-+		return;
-+	}
-+	state->clks[BOSTON_CLK_SYS] = clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(clk));
-+		return;
-+	}
-+	state->clks[BOSTON_CLK_CPU] = clk;
-+
-+	state->onecell_data.clks = state->clks;
-+	state->onecell_data.clk_num = BOSTON_CLK_COUNT;
-+
-+	err = of_clk_add_provider(np, of_clk_src_onecell_get,
-+				  &state->onecell_data);
-+	if (err)
-+		pr_err("failed to add DT provider: %d\n", err);
-+}
-+CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
--- 
-2.10.0
+Best regards,
+
+Thomas
+--=20
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
