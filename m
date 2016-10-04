@@ -1,37 +1,68 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 4 Oct 2016 15:16:03 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: =?UTF-8?B?TXlsw6huZQ==?= Josserand
+ <mylene.josserand@free-electrons.com>, vinod.koul@intel.com,
+ maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com,
+ sboyd@codeaurora.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ lee.jones@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org,
+ linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+ linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH 06/14] ASoC: Add sun8i digital audio codec
+Message-ID: <20161004151603.38aac5b2@free-electrons.com>
+In-Reply-To: <20161004130727.srmaielkvd2z5k3s@sirena.org.uk>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+	<85cbd9926e52d0aa03f6bbfd8794373d8db491e0.1475571575.git.mylene.josserand@free-electrons.com>
+	<20161004144008.0d07d18c@free-electrons.com>
+	<20161004130727.srmaielkvd2z5k3s@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20161019000526.GR8871@codeaurora.org>
-References: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
- <1474036587-13819-3-git-send-email-fabio.estevam@nxp.com> <CAOMZO5D7=A=ms_iq1D+Fgg4wKpRx-aScm5V=avxRPu62rFymzQ@mail.gmail.com>
- <20161019000101.GQ8871@codeaurora.org> <CAOMZO5Ae_cB3BiqckAiOyaJPd2HWELkR8hVjEKHbY1nVOAeMxQ@mail.gmail.com>
- <20161019000526.GR8871@codeaurora.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 19 Oct 2016 21:18:50 -0200
-Message-ID: <CAOMZO5Dr+-TJ9b2WGesF3LZUKaccZZb7yj2c4X+BsT4Fe58adw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Joshua Clayton <stillcompiling@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, "Charles.Kang" <Charles.Kang@advantech.com.tw>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-	Akshay Bhat <akshay.bhat@timesys.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hello,
 
-On Tue, Oct 18, 2016 at 10:05 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On Tue, 4 Oct 2016 15:07:27 +0200, Mark Brown wrote:
 
-> Ok that makes it easy. Thanks.
+> > /*
+> >  * ...
+> >  */  
+> 
+> I don't care, IIRC that's something from CodingStyle which checkpatch
+> moans about.
 
-I resent the series yesterday.
+Correct. The
 
-https://patchwork.kernel.org/patch/9380917/
-https://patchwork.kernel.org/patch/9380919/
-https://patchwork.kernel.org/patch/9380921/
+/* ..
+ * ..
+ */
 
-Please consider applying them.
+style is mandatory for net/ and crypto code, but not in the rest of the
+kernel.
 
-Thanks
+> > I'm probably missing something, but in the sun4i-codec.c driver, those
+> > fields are initialized directly in the snd_soc_codec_driver structure,
+> > not in the .component_driver sub-structure.  
+> 
+> We're in the process of pushing everything out to component level, this
+> update should be made in the old code if it's not happened already.
+
+OK.
+
+> > > +	if (clk_prepare_enable(scodec->clk_module))
+> > > +		pr_err("err:open failed;\n");  
+> 
+> > Grr, pr_err, not good. Plus you want to return with an error from the
+> > probe() function.  
+> 
+> Also when printing an error message use dev_err().
+
+That's why I said "Grr, pr_err, not good" :)
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
