@@ -1,70 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36578 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752900AbcJTObA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2016 10:31:00 -0400
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 4 Oct 2016 14:15:16 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@free-electrons.com>
+Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+ mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH 03/14] ASoC: sun4i-i2s: Add apb reset
+Message-ID: <20161004141516.53c6fa8c@free-electrons.com>
+In-Reply-To: <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+	<2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <50a2c9fe665c794dc97f524cacb63dc83d3efaa2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
- <50a2c9fe665c794dc97f524cacb63dc83d3efaa2.1476196031.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 20 Oct 2016 22:30:36 +0800
-Message-ID: <CAGb2v65=xM3HpV05zt+q2vshX49MGkB88s7cfpwVYASodK11Nw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/9] clk: sunxi-ng: Remove the use of rational computations
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Andre Przywara <andre.przywara@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 11, 2016 at 10:28 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> While the rational library works great, it doesn't really allow us to add
-> more constraints, like the minimum.
->
-> Remove that in order to be able to deal with the constraints we'll need.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/Kconfig    |  3 +--
->  drivers/clk/sunxi-ng/ccu_nkm.c  | 31 +++++++++-----------
->  drivers/clk/sunxi-ng/ccu_nkmp.c | 45 +++++++++++++---------------
->  drivers/clk/sunxi-ng/ccu_nm.c   | 54 +++++++++++++++++++++++++---------
->  4 files changed, 78 insertions(+), 55 deletions(-)
->
+Hello,
 
-[...]
+On Tue,  4 Oct 2016 11:46:16 +0200, Myl=C3=A8ne Josserand wrote:
 
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> index 9769dee99511..4b457d8cce11 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> @@ -9,16 +9,15 @@
->   */
->
->  #include <linux/clk-provider.h>
-> -#include <linux/rational.h>
->
->  #include "ccu_gate.h"
->  #include "ccu_nkmp.h"
->
->  struct _ccu_nkmp {
-> -       unsigned long   n, max_n;
-> -       unsigned long   k, max_k;
-> -       unsigned long   m, max_m;
-> -       unsigned long   p, max_p;
-> +       unsigned long   n, min_n, max_n;
-> +       unsigned long   k, min_k, max_k;
-> +       unsigned long   m, min_m, max_m;
-> +       unsigned long   p, min_p, max_p;
+>  #include <sound/dmaengine_pcm.h>
+>  #include <sound/pcm_params.h>
+> @@ -589,6 +590,7 @@ static int sun4i_i2s_probe(struct platform_device *pd=
+ev)
+>  {
+>  	struct sun4i_i2s *i2s;
+>  	struct resource *res;
+> +	struct reset_control *reset_apb;
+>  	void __iomem *regs;
+>  	int irq, ret;
+> =20
+> @@ -626,7 +628,19 @@ static int sun4i_i2s_probe(struct platform_device *p=
+dev)
+>  		dev_err(&pdev->dev, "Can't get our mod clock\n");
+>  		return PTR_ERR(i2s->mod_clk);
+>  	}
+> -=09
+> +
+> +	reset_apb =3D devm_reset_control_get(&pdev->dev, "apb_reset");
 
-Wrong patch? Otherwise,
+I believe this is a change in the Device Tree binding, since you're
+adding support for a new resource. Perhaps the Device Tree binding
+documentation should be updated accordingly?
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+> +	if (IS_ERR(reset_apb)) {
+> +		dev_err(&pdev->dev, "Can't get apb reset\n");
+> +		return PTR_ERR(i2s->mod_clk);
+
+This should be:
+
+		return PTR_ERR(reset_apb);
+
+> +	}
+> +
+> +	ret =3D reset_control_deassert(reset_apb);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Can't deassert apb reset (%d)\n", ret);
+> +		return ret;
+> +	}
+
+Do you need to re-assert the reset line in the ->remove() hook?
+
+Best regards,
+
+Thomas
+--=20
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
