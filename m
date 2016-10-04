@@ -1,43 +1,85 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 1/6] clk: stm32f4: Add LSI & LSE clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <1476436699-21879-2-git-send-email-gabriel.fernandez@st.com>
- <20161019202433.GA8871@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <2e6e123e-4bb8-951c-9d49-4cb5480c37fd@st.com>
-Date: Thu, 20 Oct 2016 18:05:15 +0200
+Return-Path: <mylene.josserand@free-electrons.com>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
+To: vinod.koul@intel.com,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	lee.jones@linaro.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	mylene.josserand@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: [PATCH 03/14] ASoC: sun4i-i2s: Add apb reset
+Date: Tue,  4 Oct 2016 11:46:16 +0200
+Message-Id: <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20161019202433.GA8871@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Add APB deassert function for sun4i-i2s driver.
 
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+---
+ sound/soc/sunxi/sun4i-i2s.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-On 10/19/2016 10:24 PM, Stephen Boyd wrote:
-> On 10/14, gabriel.fernandez@st.com wrote:
->> @@ -292,8 +298,110 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
->>   	return clks[i];
->>   }
->>   
->> +static struct regmap *pdrm;
-> This can't be part of the stm32_rgate structure?
-Finally i prefer not, because i need also to disable power domain write 
-protection in the patch 4 (clk: stm32f4: Add RTC clock).
-its will complicate the code.
-
-BR
-
-Gabriel
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 687a8f8..f3f7026 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -17,6 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
+ 
+ #include <sound/dmaengine_pcm.h>
+ #include <sound/pcm_params.h>
+@@ -589,6 +590,7 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+ {
+ 	struct sun4i_i2s *i2s;
+ 	struct resource *res;
++	struct reset_control *reset_apb;
+ 	void __iomem *regs;
+ 	int irq, ret;
+ 
+@@ -626,7 +628,19 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Can't get our mod clock\n");
+ 		return PTR_ERR(i2s->mod_clk);
+ 	}
+-	
++
++	reset_apb = devm_reset_control_get(&pdev->dev, "apb_reset");
++	if (IS_ERR(reset_apb)) {
++		dev_err(&pdev->dev, "Can't get apb reset\n");
++		return PTR_ERR(i2s->mod_clk);
++	}
++
++	ret = reset_control_deassert(reset_apb);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Can't deassert apb reset (%d)\n", ret);
++		return ret;
++	}
++
+ 	i2s->playback_dma_data.addr = res->start + SUN4I_I2S_FIFO_TX_REG;
+ 	i2s->playback_dma_data.maxburst = 4;
+ 
+-- 
+2.9.3
