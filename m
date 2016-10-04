@@ -1,91 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sat, 1 Oct 2016 22:39:15 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Joe Perches <joe@perches.com>
-cc: Julia Lawall <Julia.Lawall@lip6.fr>, linux-metag@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/15] improve function-level documentation
-In-Reply-To: <1475353194.1996.3.camel@perches.com>
-Message-ID: <alpine.DEB.2.10.1610012232350.3445@hadrien>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr> <1475353194.1996.3.camel@perches.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 4 Oct 2016 04:40:55 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rtc-linux@googlegroups.com
+Message-ID: <20161004024055.4kdjvoiig4fwxi54@sirena.org.uk>
+References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+ <1475441897-15730-3-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="giaj4hhin6z2jwxx"
+In-Reply-To: <1475441897-15730-3-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH 2/4] regulator: Enable compile testing for Maxim and
+ Samsung PMIC drivers
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--giaj4hhin6z2jwxx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 1 Oct 2016, Joe Perches wrote:
+On Sun, Oct 02, 2016 at 10:58:15PM +0200, Krzysztof Kozlowski wrote:
+> Most of Maxim and Samsung PMIC/MUIC regulator drivers can be compile
+> tested to increase build coverage.
 
-> On Sat, 2016-10-01 at 21:46 +0200, Julia Lawall wrote:
-> > These patches fix cases where the documentation above a function definition
-> > is not consistent with the function header.  Issues are detected using the
-> > semantic patch below (http://coccinelle.lip6.fr/).  Basically, the semantic
-> > patch parses a file to find comments, then matches each function header,
-> > and checks that the name and parameter list in the function header are
-> > compatible with the comment that preceeds it most closely.
->
-> Hi Julia.
->
-> Would it be possible for a semantic patch to scan for
-> function definitions where the types do not have
-> identifiers and update the definitions to match the
-> declarations?
->
-> For instance, given:
->
-> <some.h>
-> int foo(int);
->
-> <some.c>
-> int foo(int bar)
-> {
-> 	return baz;
-> }
->
-> Could coccinelle output:
->
-> diff a/some.h b/some.h
-> []
-> -int foo(int);
-> +int foo(int bar);
+All these drivers already just depend on the MFDs which don't have any
+weird architecture dependencies - the main goal with COMPILE_TEST is
+usually to eliminate dependencies which just can't be selected so they
+can be built at all.  Given that there's no easy way to select
+everything in a subsystem otherwise does this buy us a lot?
 
-The following seems to work:
+--giaj4hhin6z2jwxx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-@r@
-identifier f;
-position p;
-type T, t;
-parameter list[n] ps;
-@@
+-----BEGIN PGP SIGNATURE-----
 
-T f@p(ps,t,...);
+iQEcBAABCAAGBQJX8xayAAoJECTWi3JdVIfQnv0H/0zexfPE1tSdzJJaf8Aveugm
+1iNs9WQYjg6ETfvh5UfeNS3uPHbkShrfjOhJkOvpTmwwvjLvc0jTWrgS9JqBM5r4
+t5ONQbZElteES3tuzIKZr6nAjJbT9ZEZ3j2eJeW3J4ygFdF76d6HQP+2SMbsckNP
+6D5xQZWWTD1/NodfRaZnOC34XxrirFgu3lp0BUPdDE5lGPefq+wiqvK1YShaKIuL
+UUriZ9ILjX1BO4BzyCjZVDT7BWxyvq4jLJXf5yW5I5Nx23FbUhCmBPSh8tB1/RWx
++hIPVaXHtaWEDECbsMfZsHcFmvrmtnuHTZjGfjbldKlr6UQ64uXqewwoLl94tD4=
+=qBzW
+-----END PGP SIGNATURE-----
 
-@s@
-identifier r.f,x;
-type r.T, r.t;
-parameter list[r.n] ps;
-@@
-
-T f(ps,t x,...) { ... }
-
-@@
-identifier r.f, s.x;
-position r.p;
-type r.T, r.t;
-parameter list[r.n] ps;
-@@
-
-T f@p(ps,t
-+ x
-  ,...);
-
-After letting it run for a few minutes without making any effort to
-include .h files, I get over 2700 changed lines.
-
-julia
+--giaj4hhin6z2jwxx--
