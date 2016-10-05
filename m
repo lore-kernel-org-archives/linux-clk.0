@@ -1,69 +1,96 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Tue, 4 Oct 2016 14:25:07 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
- mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
- devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH 07/14] ASoC: Add sun8i audio card
-Message-ID: <20161004142507.56a6fab6@free-electrons.com>
-In-Reply-To: <33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-	<33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
+Date: Wed, 5 Oct 2016 18:18:22 +0100
+Message-ID: <20161005171824.18014-17-paul.burton@imgtec.com>
+In-Reply-To: <20161005171824.18014-1-paul.burton@imgtec.com>
+References: <20161005171824.18014-1-paul.burton@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Add device tree binding documentation for the clocks provided by the
+MIPS Boston development board from Imagination Technologies, and a
+header file describing the available clocks for use by device trees &
+driver.
 
-On Tue,  4 Oct 2016 11:46:20 +0200, Myl=C3=A8ne Josserand wrote:
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
 
-> +config SND_SUN8I
-> +	tristate "Allwinner SUN6I/SUN8I audio card support"
-> +	select SND_SUN8I_CODEC
-> +	select SND_SUN4I_I2S
-> +	select SND_SUN8I_CODEC_ANALOG
-> +	select REGMAP_MMIO
+---
 
-I believe you need a:
+Changes in v3: None
+Changes in v2:
+- Add BOSTON_CLK_INPUT to expose the input clock.
 
-	depends on OF
+ .../devicetree/bindings/clock/img,boston-clock.txt | 27 ++++++++++++++++++++++
+ include/dt-bindings/clock/boston-clock.h           | 14 +++++++++++
+ 2 files changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
+ create mode 100644 include/dt-bindings/clock/boston-clock.h
 
-since you're unconditionally using some DT-related functionality in the
-driver code.
-
-> +#include <linux/firmware.h>
-
-Do you really need this header file? I don't see anything
-firmware-loading related in the driver.
-
-> +static int sun8i_probe(struct platform_device *pdev)
-> +{
-> +	struct snd_soc_dai_link *link =3D &sun8i_dai_link;
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	int ret;
-> +
-> +	/* register the soc card */
-> +	sun8i_card.dev =3D &pdev->dev;
-> +
-> +	/* Retrieve the audio-codec from DT */
-> +	link->codec_of_node =3D of_parse_phandle(np, "allwinner,audio-codec", 0=
-);
-
-Whenever you're using of_parse_phandle(), you must have a corresponding
-of_node_put() to release the reference to the Device Tree node. So I
-guess this should be done 1/ in the error path of ->probe(), and 2/
-during the ->remove() hook.
-
-Best regards,
-
-Thomas
---=20
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+new file mode 100644
+index 0000000..c01ea60
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+@@ -0,0 +1,27 @@
++Binding for Imagination Technologies MIPS Boston clock sources.
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : Should be "img,boston-clock".
++- #clock-cells : Should be set to 1.
++  Values available for clock consumers can be found in the header file:
++    <dt-bindings/clock/boston-clock.h>
++- regmap : Phandle to the Boston platform register system controller.
++  This should contain a phandle to the system controller node covering the
++  platform registers provided by the Boston board.
++
++Example:
++
++	clk_boston: clock {
++		compatible = "img,boston-clock";
++		#clock-cells = <1>;
++		regmap = <&plat_regs>;
++	};
++
++	uart0: uart@17ffe000 {
++		/* ... */
++		clocks = <&clk_boston BOSTON_CLK_SYS>;
++	};
+diff --git a/include/dt-bindings/clock/boston-clock.h b/include/dt-bindings/clock/boston-clock.h
+new file mode 100644
+index 0000000..a6f0098
+--- /dev/null
++++ b/include/dt-bindings/clock/boston-clock.h
+@@ -0,0 +1,14 @@
++/*
++ * Copyright (C) 2016 Imagination Technologies
++ *
++ * SPDX-License-Identifier:	GPL-2.0
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
++#define __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
++
++#define BOSTON_CLK_INPUT 0
++#define BOSTON_CLK_SYS 1
++#define BOSTON_CLK_CPU 2
++
++#endif /* __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__ */
+-- 
+2.10.0
