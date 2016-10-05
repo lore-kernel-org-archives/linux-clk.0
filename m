@@ -1,35 +1,72 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 0/3] Renesas R8A7743 CPG/MSSR clock support
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
- robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <7c5715a6-0a29-1055-7b6a-6fe13e4ee96b@cogentembedded.com>
-Date: Fri, 7 Oct 2016 23:35:43 +0300
-MIME-Version: 1.0
-In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-oxnas@lists.tuxfamily.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 2/6] clk: oxnas: Add dt-bindings include file for OX820
+Date: Wed,  5 Oct 2016 17:07:48 +0200
+Message-Id: <20161005150752.22618-3-narmstrong@baylibre.com>
+In-Reply-To: <20161005150752.22618-1-narmstrong@baylibre.com>
+References: <20161005150752.22618-1-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+In order to support the Oxford Semiconductor Gate clocks, add a
+dedicated dt-binding include file for gate indexes.
 
-On 10/05/2016 11:50 PM, Sergei Shtylyov wrote:
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ include/dt-bindings/clock/oxsemi,ox820.h | 40 ++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 include/dt-bindings/clock/oxsemi,ox820.h
 
->    Here's the set of 3 patches against the 'clk-next' branch of CLK group's
-> 'linux.git' repo. The R8A7743 SoC support will be posted separately later --
-> this series depend on the Kconfig variable introduced there, however, the DTs
-> in that series will depend on the patch #2 of this series...
->
-> [1/3] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-
-    This will probably have to be fixed up to handle the absence of the PLL0CR 
-register oin the low end SoC (like RZ/G1E)...
-
-> [2/3] ARM: shmobile: r8a7743: add CPG clock index macros
-> [3/3] clk: renesas: cpg-mssr: add R8A7743 support
-
-    I'm splitting the above 2 patches into a new series and will repost it RSN.
-
-MBR, Sergei
+diff --git a/include/dt-bindings/clock/oxsemi,ox820.h b/include/dt-bindings/clock/oxsemi,ox820.h
+new file mode 100644
+index 0000000..f661ecc
+--- /dev/null
++++ b/include/dt-bindings/clock/oxsemi,ox820.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef DT_CLOCK_OXSEMI_OX820_H
++#define DT_CLOCK_OXSEMI_OX820_H
++
++/* PLLs */
++#define CLK_820_PLLA		0
++#define CLK_820_PLLB		1
++
++/* Gate Clocks */
++#define CLK_820_LEON		2
++#define CLK_820_DMA_SGDMA	3
++#define CLK_820_CIPHER		4
++#define CLK_820_SD		5
++#define CLK_820_SATA		6
++#define CLK_820_AUDIO		7
++#define CLK_820_USBMPH		8
++#define CLK_820_ETHA		9
++#define CLK_820_PCIEA		10
++#define CLK_820_NAND		11
++#define CLK_820_PCIEB		12
++#define CLK_820_ETHB		13
++#define CLK_820_REF600		14
++#define CLK_820_USBDEV		15
++
++#endif /* DT_CLOCK_OXSEMI_OX820_H */
+-- 
+2.7.0
