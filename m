@@ -1,195 +1,200 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v2 0/5] Make pxa core clocks settable
-Date: Sun, 23 Oct 2016 14:19:25 +0200
-Message-Id: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v3 17/18] clk: boston: Add a driver for MIPS Boston board clocks
+Date: Wed, 5 Oct 2016 18:18:23 +0100
+Message-ID: <20161005171824.18014-18-paul.burton@imgtec.com>
+In-Reply-To: <20161005171824.18014-1-paul.burton@imgtec.com>
+References: <20161005171824.18014-1-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
->From v1, this has been kept  :
- - a set of fixes, patches 1 to 4
- - a patch with transfers most of core clock handling from pxa2xx-cpufreq into
-   clk-pxa*, ie. patch 5
-   This is the main change, and is providing control over CPU clocks for both
-   pxa25x and pxa27x through the clock API.
+Add a driver for the clocks provided by the MIPS Boston board from
+Imagination Technologies. 2 clocks are provided - the system clock & the
+CPU clock - and each is a simple fixed rate clock whose frequency can be
+determined by reading a register provided by the board.
 
-The patches have been tested on lubbock (pxa25x) and mainstone (pxa27x) boards,
-with a cpu-burn and different scaling max frequencies.
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
 
-It should be noticed that not _all_ possible cpll frequencies are implemented,
-but only a subset of what was in pxa2xx-cpufreq. The enveloppe can be improved
-later, especially when the "run" clock will become settable as well, but that's
-another work which is not necessary today.
+---
 
-As for quicker review, the diff with the former submission in drivers/clk/pxa is in [1].
+Changes in v3: None
+Changes in v2:
+- Support BOSTON_CLK_INPUT.
+- Register clocks with clk_register_fixed_rate during boot, removing need for clk_ops.
+- s/uint32_t/u32/.
+- Move driver to a vendor directory.
 
-Cheers.
+ drivers/clk/Kconfig             |   1 +
+ drivers/clk/Makefile            |   1 +
+ drivers/clk/imgtec/Kconfig      |  10 ++++
+ drivers/clk/imgtec/Makefile     |   1 +
+ drivers/clk/imgtec/clk-boston.c | 101 ++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 114 insertions(+)
+ create mode 100644 drivers/clk/imgtec/Kconfig
+ create mode 100644 drivers/clk/imgtec/Makefile
+ create mode 100644 drivers/clk/imgtec/clk-boston.c
 
---
-Robert
-
-Robert Jarzmik (5):
-  clk: pxa: remove unused variables
-  clk: pxa: core pll is not affected by t bit
-  clk: pxa: b bit of clkcfg means fast bus
-  clk: pxa: export core clocks
-  clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq
-
- drivers/clk/pxa/clk-pxa.c    | 128 +++++++++++++++++++++++++++++++++
- drivers/clk/pxa/clk-pxa.h    |  56 ++++++++++++++-
- drivers/clk/pxa/clk-pxa25x.c | 114 ++++++++++++++++++++++++++---
- drivers/clk/pxa/clk-pxa27x.c | 168 ++++++++++++++++++++++++++++++++++---------
- 4 files changed, 421 insertions(+), 45 deletions(-)
-
--- 
-2.1.4
-
-[1] Diff with former submission
-diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-index 5c59ca9074c0..7184819b7415 100644
---- a/drivers/clk/pxa/clk-pxa.c
-+++ b/drivers/clk/pxa/clk-pxa.c
-@@ -200,11 +200,11 @@ void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
- int pxa2xx_determine_rate(struct clk_rate_request *req,
- 			  struct pxa2xx_freq *freqs, int nb_freqs)
- {
--	int i, closest_below = -1, closest_above = -1;
-+	int i, closest_below = -1, closest_above = -1, ret = 0;
- 	unsigned long rate;
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e2d9bd7..a6c7e03 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -210,6 +210,7 @@ config COMMON_CLK_OXNAS
  
- 	for (i = 0; i < nb_freqs; i++) {
--		rate = freqs[i].cpll_khz * KHz;
-+		rate = freqs[i].cpll;
- 		if (rate == req->rate)
- 			break;
- 		if (rate < req->min_rate)
-@@ -220,17 +220,17 @@ int pxa2xx_determine_rate(struct clk_rate_request *req,
- 	req->best_parent_hw = NULL;
- 
- 	if (i < nb_freqs)
--		return 0;
--
--	if (closest_below >= 0) {
--		req->rate = freqs[closest_below].cpll_khz * KHz;
--		return 0;
--	}
-+		ret = 0;
-+	else if (closest_below >= 0)
-+		rate = freqs[closest_below].cpll;
-+	else if (closest_above >= 0)
-+		rate = freqs[closest_above].cpll;
-+	else
-+		ret = -EINVAL;
- 
--	if (closest_above >= 0) {
--		req->rate = freqs[closest_above].cpll_khz * KHz;
--		return 0;
--	}
-+	pr_debug("%s(rate=%lu) rate=%lu: %d\n", __func__, req->rate, rate, ret);
-+	if (!rate)
-+		req->rate = rate;
- 
--	return -EINVAL;
-+	return ret;
- }
-diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
-index 068092605955..417cae77f6bc 100644
---- a/drivers/clk/pxa/clk-pxa.h
-+++ b/drivers/clk/pxa/clk-pxa.h
-@@ -136,7 +136,7 @@ struct desc_clk_cken {
- 		 NULL, cken_reg, cken_bit, flag)
- 
- struct pxa2xx_freq {
--	unsigned int cpll_khz;
-+	unsigned long cpll;
- 	unsigned int membus_khz;
- 	unsigned int cccr;
- 	unsigned int div2;
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index 22f89d2f35cc..20fd87b36560 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -179,13 +179,19 @@ static struct desc_clk_cken pxa25x_clocks[] __initdata = {
- 			     clk_pxa25x_memory_parents, 0),
- };
- 
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/imgtec/Kconfig"
+ source "drivers/clk/meson/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3b6f9cf..8c4c425 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -60,6 +60,7 @@ obj-y					+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+ obj-$(CONFIG_H8300)			+= h8300/
+ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
++obj-y					+= imgtec/
+ obj-$(CONFIG_ARCH_MXC)			+= imx/
+ obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
+ obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+= keystone/
+diff --git a/drivers/clk/imgtec/Kconfig b/drivers/clk/imgtec/Kconfig
+new file mode 100644
+index 0000000..c2ea745
+--- /dev/null
++++ b/drivers/clk/imgtec/Kconfig
+@@ -0,0 +1,10 @@
++config COMMON_CLK_BOSTON
++	bool "Clock driver for MIPS Boston boards"
++	depends on MIPS || COMPILE_TEST
++	depends on OF
++	select MFD_SYSCON
++	---help---
++	  Enable this to support the system & CPU clocks on the MIPS Boston
++	  development board from Imagination Technologies. These are simple
++	  fixed rate clocks whose rate is determined by reading a platform
++	  provided register.
+diff --git a/drivers/clk/imgtec/Makefile b/drivers/clk/imgtec/Makefile
+new file mode 100644
+index 0000000..ac779b8
+--- /dev/null
++++ b/drivers/clk/imgtec/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_COMMON_CLK_BOSTON)		+= clk-boston.o
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+new file mode 100644
+index 0000000..14795b8
+--- /dev/null
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -0,0 +1,101 @@
 +/*
-+ * In this table, PXA25x_CCCR(N2, M, L) has the following meaning, where :
-+ *   - freq_cpll = n * m * L * 3.6864 MHz
-+ *   - n = N2 / 2
-+ *   - m = 2^(M - 1), where 1 <= M <= 3
-+ *   - l = L_clk_mult[L], ie. { 0, 27, 32, 36, 40, 45, 0, }[L]
++ * Copyright (C) 2016 Imagination Technologies
++ * Author: Paul Burton <paul.burton@imgtec.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
 + */
- static struct pxa2xx_freq pxa25x_freqs[] = {
- 	/* CPU  MEMBUS  CCCR                  DIV2 CCLKCFG      */
--	{ 99500, 99500, PXA25x_CCCR(2,  1, 1),  1, PXA25x_CLKCFG(1)},
--	{199100, 99500, PXA25x_CCCR(4,  1, 1),  0, PXA25x_CLKCFG(1)},
--	{298500, 99500, PXA25x_CCCR(6,  1, 1),  0, PXA25x_CLKCFG(1)},
--	{298600, 99500, PXA25x_CCCR(2,  1, 16), 0, PXA25x_CLKCFG(1)},
--	{398100, 99500, PXA25x_CCCR(4,  2, 1),  0, PXA25x_CLKCFG(1)},
-+	{ 99532800, 99500, PXA25x_CCCR(2,  1, 1),  1, PXA25x_CLKCFG(1)},
-+	{199065600, 99500, PXA25x_CCCR(4,  1, 1),  0, PXA25x_CLKCFG(1)},
-+	{298598400, 99500, PXA25x_CCCR(3,  2, 1),  0, PXA25x_CLKCFG(1)},
-+	{398131200, 99500, PXA25x_CCCR(4,  2, 1),  0, PXA25x_CLKCFG(1)},
- };
- 
- static u8 clk_pxa25x_core_get_parent(struct clk_hw *hw)
-@@ -257,8 +263,9 @@ static int clk_pxa25x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	int i;
- 
-+	pr_debug("%s(rate=%lu parent_rate=%lu)\n", __func__, rate, parent_rate);
- 	for (i = 0; i < ARRAY_SIZE(pxa25x_freqs); i++)
--		if (pxa25x_freqs[i].cpll_khz * KHz == rate)
-+		if (pxa25x_freqs[i].cpll == rate)
- 			break;
- 
- 	if (i >= ARRAY_SIZE(pxa25x_freqs))
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 2bf450bbdc5a..ec5abe98e177 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -215,13 +215,13 @@ static struct desc_clk_cken pxa27x_clocks[] __initdata = {
-  * change sequences.
-  */
- static struct pxa2xx_freq pxa27x_freqs[] = {
--	{104000, 104000, PXA27x_CCCR(1,  8, 2), 0, PXA27x_CLKCFG(1, 0, 1) },
--	{156000, 104000, PXA27x_CCCR(1,  8, 3), 0, PXA27x_CLKCFG(1, 0, 1) },
--	{208000, 208000, PXA27x_CCCR(0, 16, 2), 1, PXA27x_CLKCFG(0, 0, 1) },
--	{312000, 208000, PXA27x_CCCR(1, 16, 3), 1, PXA27x_CLKCFG(1, 0, 1) },
--	{416000, 208000, PXA27x_CCCR(1, 16, 4), 1, PXA27x_CLKCFG(1, 0, 1) },
--	{520000, 208000, PXA27x_CCCR(1, 16, 5), 1, PXA27x_CLKCFG(1, 0, 1) },
--	{624000, 208000, PXA27x_CCCR(1, 16, 6), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{104000000, 104000, PXA27x_CCCR(1,  8, 2), 0, PXA27x_CLKCFG(1, 0, 1) },
-+	{156000000, 104000, PXA27x_CCCR(1,  8, 3), 0, PXA27x_CLKCFG(1, 0, 1) },
-+	{208000000, 208000, PXA27x_CCCR(0, 16, 2), 1, PXA27x_CLKCFG(0, 0, 1) },
-+	{312000000, 208000, PXA27x_CCCR(1, 16, 3), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{416000000, 208000, PXA27x_CCCR(1, 16, 4), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{520000000, 208000, PXA27x_CCCR(1, 16, 5), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{624000000, 208000, PXA27x_CCCR(1, 16, 6), 1, PXA27x_CLKCFG(1, 0, 1) },
- };
- 
- static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
-@@ -244,7 +244,6 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
- 	return N;
- }
- 
--
- static int clk_pxa27x_cpll_determine_rate(struct clk_hw *hw,
- 					  struct clk_rate_request *req)
- {
-@@ -257,8 +256,9 @@ static int clk_pxa27x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	int i;
- 
-+	pr_debug("%s(rate=%lu parent_rate=%lu)\n", __func__, rate, parent_rate);
- 	for (i = 0; i < ARRAY_SIZE(pxa27x_freqs); i++)
--		if (pxa27x_freqs[i].cpll_khz * KHz == rate)
-+		if (pxa27x_freqs[i].cpll == rate)
- 			break;
- 
- 	if (i >= ARRAY_SIZE(pxa27x_freqs))
++
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/mfd/syscon.h>
++
++#include <dt-bindings/clock/boston-clock.h>
++
++#define BOSTON_PLAT_MMCMDIV		0x30
++# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
++# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
++# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
++# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
++
++#define BOSTON_CLK_COUNT 3
++
++struct clk_boston_state {
++	struct clk *clks[BOSTON_CLK_COUNT];
++	struct clk_onecell_data onecell_data;
++};
++
++static u32 ext_field(u32 val, u32 mask)
++{
++	return (val & mask) >> (ffs(mask) - 1);
++}
++
++static void __init clk_boston_setup(struct device_node *np)
++{
++	unsigned long in_freq, cpu_freq, sys_freq;
++	uint mmcmdiv, mul, cpu_div, sys_div;
++	struct clk_boston_state *state;
++	struct regmap *regmap;
++	struct clk *clk;
++	int err;
++
++	regmap = syscon_regmap_lookup_by_phandle(np, "regmap");
++	if (IS_ERR(regmap)) {
++		pr_err("failed to find regmap\n");
++		return;
++	}
++
++	err = regmap_read(regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
++	if (err) {
++		pr_err("failed to read mmcm_div register: %d\n", err);
++		return;
++	}
++
++	in_freq = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT) * 1000000;
++	mul = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
++
++	sys_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
++	sys_freq = mult_frac(in_freq, mul, sys_div);
++
++	cpu_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
++	cpu_freq = mult_frac(in_freq, mul, cpu_div);
++
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return;
++
++	clk = clk_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
++	if (IS_ERR(clk)) {
++		pr_err("failed to register input clock: %ld\n", PTR_ERR(clk));
++		return;
++	}
++	state->clks[BOSTON_CLK_INPUT] = clk;
++
++	clk = clk_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
++	if (IS_ERR(clk)) {
++		pr_err("failed to register sys clock: %ld\n", PTR_ERR(clk));
++		return;
++	}
++	state->clks[BOSTON_CLK_SYS] = clk;
++
++	clk = clk_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
++	if (IS_ERR(clk)) {
++		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(clk));
++		return;
++	}
++	state->clks[BOSTON_CLK_CPU] = clk;
++
++	state->onecell_data.clks = state->clks;
++	state->onecell_data.clk_num = BOSTON_CLK_COUNT;
++
++	err = of_clk_add_provider(np, of_clk_src_onecell_get,
++				  &state->onecell_data);
++	if (err)
++		pr_err("failed to add DT provider: %d\n", err);
++}
++CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
+-- 
+2.10.0
