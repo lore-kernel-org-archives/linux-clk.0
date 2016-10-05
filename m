@@ -1,75 +1,79 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.9-rc3
-Date: Mon, 24 Oct 2016 16:11:57 -0700
-Message-Id: <20161024231157.2701-1-sboyd@codeaurora.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20161004162430.GQ5228@lukather>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+ <06ea14939405c3eb0fb9be655d26ee564a04a53d.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004162430.GQ5228@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 5 Oct 2016 10:59:47 +0800
+Message-ID: <CAGb2v67gT9j6-NYj04+et2PNHRGFUzhgCnVgX+eoPGybArL60A@mail.gmail.com>
+Subject: Re: [PATCH 08/14] dt-bindings: sound: Add sun8i analog codec documentation
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@free-electrons.com>,
+	Vinod Koul <vinod.koul@intel.com>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lee Jones <lee.jones@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, dmaengine@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+On Wed, Oct 5, 2016 at 12:24 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Tue, Oct 04, 2016 at 11:46:21AM +0200, Myl=C3=A8ne Josserand wrote:
+>> Add the documentation for dt-binding of the analog audiocodec
+>> driver for SUN8I SoC.
+>>
+>> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.co=
+m>
+>> ---
+>>  .../devicetree/bindings/sound/sun8i-codec-analog.txt | 20 +++++++++++++=
++++++++
+>>  1 file changed, 20 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec-=
+analog.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec-analog.=
+txt b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+>> new file mode 100644
+>> index 0000000..a03ec20
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+>> @@ -0,0 +1,20 @@
+>> +* Allwinner A23/A33 Analog Codec
+>> +
+>> +This codec must be handled as a PRCM subnode.
+>
+> Like Mark was saying, you should probably reference the sun6i-prcm.txt
+> binding here
+>
+>> +Required properties:
+>> +- compatible: must be either "allwinner,sun8i-codec-analog"
+>
+> Our compatible prefix is <family>-<soc>, and using the older SoC that
+> introduced that block.
+>
+> In this case, that would be sun6i-a31, I think?
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+sun6i-a31s actually, but a31s has extra line out controls,
+so the right one would be sun8i-a23. Both are listed in my
+original driver.
 
-are available in the git repository at:
+ChenYu
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 91bbc174d45c347aa7aedb2215cc7d2013c06c1f:
-
-  clk: at91: Fix a return value in case of error (2016-10-20 16:37:56 -0700)
-
-----------------------------------------------------------------
-This is the first batch of clk driver fixes for this release. We have a handful
-of fixes for the uniphier clk driver that was introduced recently, as well as
-Kconfig option hiding, module autoloading markings, and a few fixes for clk_hw
-based registration patches that went in this merge window.
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      clk: at91: Fix a return value in case of error
-
-Eric Anholt (1):
-      clk: bcm2835: Clamp the PLL's requested rate to the hardware limits.
-
-Gregory CLEMENT (2):
-      clk: mvebu: armada-37xx-periph: Fix the clock provider registration
-      clk: mvebu: armada-37xx-periph: Fix the clock gate flag
-
-Javier Martinez Canillas (2):
-      clk: samsung: clk-exynos-audss: Fix module autoload
-      clk: max77686: fix number of clocks setup for clk_hw based registration
-
-Jean Delvare (1):
-      clk: mediatek: Add hardware dependency
-
-Masahiro Yamada (4):
-      clk: uniphier: add system clock support for sLD3 SoC
-      clk: uniphier: fix type of variable passed to regmap_read()
-      clk: uniphier: fix memory overrun bug
-      clk: uniphier: rename MIO clock to SD clock for Pro5, PXs2, LD20 SoCs
-
-Shawn Guo (2):
-      clk: core: add __init decoration for CLK_OF_DECLARE_DRIVER function
-      clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and mediactrl clock init
-
- .../devicetree/bindings/clock/uniphier-clock.txt     | 16 ++++++++--------
- drivers/clk/at91/clk-programmable.c                  |  2 +-
- drivers/clk/bcm/clk-bcm2835.c                        | 11 ++++-------
- drivers/clk/clk-max77686.c                           |  1 +
- drivers/clk/hisilicon/clk-hi6220.c                   |  4 ++--
- drivers/clk/mediatek/Kconfig                         |  2 ++
- drivers/clk/mvebu/armada-37xx-periph.c               | 11 ++++++-----
- drivers/clk/samsung/clk-exynos-audss.c               |  1 +
- drivers/clk/uniphier/clk-uniphier-core.c             | 20 ++++++++++++--------
- drivers/clk/uniphier/clk-uniphier-mio.c              |  2 +-
- drivers/clk/uniphier/clk-uniphier-mux.c              |  2 +-
- drivers/clk/uniphier/clk-uniphier.h                  |  2 +-
- include/linux/clk-provider.h                         |  2 +-
- 13 files changed, 41 insertions(+), 35 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+> Thanks,
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
