@@ -1,163 +1,89 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [RESEND/PATCH v6 2/3] clk: qcom: Add regmap mux-div clocks
- support
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20161019132816.31073-1-georgi.djakov@linaro.org>
- <20161019132816.31073-3-georgi.djakov@linaro.org>
- <20161028015955.GH16026@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <117afa56-b7ef-c141-c464-1868346380ed@linaro.org>
-Date: Fri, 28 Oct 2016 19:53:56 +0300
+Return-Path: <mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH 08/14] dt-bindings: sound: Add sun8i analog codec
+ documentation
+To: Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+ <06ea14939405c3eb0fb9be655d26ee564a04a53d.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004162430.GQ5228@lukather>
+ <CAGb2v67gT9j6-NYj04+et2PNHRGFUzhgCnVgX+eoPGybArL60A@mail.gmail.com>
+Cc: Vinod Koul <vinod.koul@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Lee Jones <lee.jones@linaro.org>,
+ Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, dmaengine@vger.kernel.org,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux-ALSA <alsa-devel@alsa-project.org>,
+ devicetree <devicetree@vger.kernel.org>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>
+From: Mylene Josserand <mylene.josserand@free-electrons.com>
+Message-ID: <b94e3b11-8edb-a632-f7f1-217a594f310c@free-electrons.com>
+Date: Wed, 5 Oct 2016 14:08:54 +0200
 MIME-Version: 1.0
-In-Reply-To: <20161028015955.GH16026@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <CAGb2v67gT9j6-NYj04+et2PNHRGFUzhgCnVgX+eoPGybArL60A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/28/2016 04:59 AM, Stephen Boyd wrote:
-> On 10/19, Georgi Djakov wrote:
->> diff --git a/drivers/clk/qcom/clk-regmap-mux-div.c b/drivers/clk/qcom/clk-regmap-mux-div.c
->> new file mode 100644
->> index 000000000000..ec87f496606a
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-regmap-mux-div.c
->> @@ -0,0 +1,254 @@
->> +/*
->> + * Copyright (c) 2015, Linaro Limited
->> + * Copyright (c) 2014, The Linux Foundation. All rights reserved.
->> + *
->> + * This software is licensed under the terms of the GNU General Public
->> + * License version 2, as published by the Free Software Foundation, and
->> + * may be copied, distributed, and modified under those terms.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/delay.h>
->> +#include <linux/export.h>
->
-> Are symbols exported. They probably should be for modules.
+Hello,
 
-In the next patch i am using __clk_lookup(), which is not exported, so i 
-made this builtin too. Will remove <export.h> from here.
 
->
->> +#include <linux/kernel.h>
->> +#include <linux/regmap.h>
->> +
->> +#include "clk-regmap-mux-div.h"
->> +
->> +#define CMD_RCGR			0x0
->> +#define CMD_RCGR_UPDATE			BIT(0)
->> +#define CMD_RCGR_DIRTY_CFG		BIT(4)
->> +#define CMD_RCGR_ROOT_OFF		BIT(31)
->> +#define CFG_RCGR			0x4
->> +
->> +#define to_clk_regmap_mux_div(_hw) \
->> +	container_of(to_clk_regmap(_hw), struct clk_regmap_mux_div, clkr)
->> +
->> +int __mux_div_set_src_div(struct clk_regmap_mux_div *md, u32 src, u32 div)
->> +{
->> +	int ret, count;
->> +	u32 val, mask;
->> +	const char *name = clk_hw_get_name(&md->clkr.hw);
->> +
->> +	val = (div << md->hid_shift) | (src << md->src_shift);
->> +	mask = ((BIT(md->hid_width) - 1) << md->hid_shift) |
->> +	       ((BIT(md->src_width) - 1) << md->src_shift);
->> +
->> +	ret = regmap_update_bits(md->clkr.regmap, CFG_RCGR + md->reg_offset,
->> +				 mask, val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = regmap_update_bits(md->clkr.regmap, CMD_RCGR + md->reg_offset,
->> +				 CMD_RCGR_UPDATE, CMD_RCGR_UPDATE);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Wait for update to take effect */
->> +	for (count = 500; count > 0; count--) {
->> +		ret = regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset,
->> +				  &val);
->> +		if (ret)
->> +			return ret;
->> +		if (!(val & CMD_RCGR_UPDATE))
->> +			return 0;
->> +		udelay(1);
->> +	}
->> +
->> +	pr_err("%s: RCG did not update its configuration", name);
->> +	return -EBUSY;
->> +}
->> +
->> +static void __mux_div_get_src_div(struct clk_regmap_mux_div *md, u32 *src,
->> +				  u32 *div)
->> +{
->> +	u32 val, __div, __src;
->
-> Perhaps just use d and s.
->
+On 05/10/2016 04:59, Chen-Yu Tsai wrote:
+> On Wed, Oct 5, 2016 at 12:24 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> Hi,
+>>
+>> On Tue, Oct 04, 2016 at 11:46:21AM +0200, Mylène Josserand wrote:
+>>> Add the documentation for dt-binding of the analog audiocodec
+>>> driver for SUN8I SoC.
+>>>
+>>> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+>>> ---
+>>>  .../devicetree/bindings/sound/sun8i-codec-analog.txt | 20 ++++++++++++++++++++
+>>>  1 file changed, 20 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+>>> new file mode 100644
+>>> index 0000000..a03ec20
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+>>> @@ -0,0 +1,20 @@
+>>> +* Allwinner A23/A33 Analog Codec
+>>> +
+>>> +This codec must be handled as a PRCM subnode.
+>>
+>> Like Mark was saying, you should probably reference the sun6i-prcm.txt
+>> binding here
 
-Ok.
 
->> +	const char *name = clk_hw_get_name(&md->clkr.hw);
->> +
->> +	regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset, &val);
->> +
->> +	if (val & CMD_RCGR_DIRTY_CFG) {
->> +		pr_err("%s: RCG configuration is pending\n", name);
->> +		return;
->> +	}
->> +
->> +	regmap_read(md->clkr.regmap, CFG_RCGR + md->reg_offset, &val);
->> +	__src = (val >> md->src_shift);
->> +	__src &= BIT(md->src_width) - 1;
->> +	*src = __src;
->> +
->> +	__div = (val >> md->hid_shift);
->> +	__div &= BIT(md->hid_width) - 1;
->> +	*div = __div;
->> +}
->> +
->> +static unsigned long mux_div_recalc_rate(struct clk_hw *hw, unsigned long prate)
->> +{
->> +	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
->> +	u32 div, src;
->> +	int i, num_parents = clk_hw_get_num_parents(hw);
->> +	const char *name = clk_hw_get_name(hw);
->> +
->> +	__mux_div_get_src_div(md, &src, &div);
->> +	for (i = 0; i < num_parents; i++)
->> +		if (src == md->parent_map[i].cfg) {
->> +			struct clk_hw *p = clk_hw_get_parent_by_index(hw, i);
->> +			unsigned long parent_rate = clk_hw_get_rate(p);
->> +
->> +			return mult_frac(parent_rate, 2, div + 1);
->> +		}
->> +
->> +	pr_err("%s: Can't find parent %d\n", name, src);
->> +	return 0;
->> +}
->> +
->> +static void mux_div_disable(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
->> +
->> +	__mux_div_set_src_div(md, md->safe_src, md->safe_div);
->
-> Ah this is to do magic tricks with cpuidle. In the android tree
-> they call clk_disable() on the CPU clks from the idle path and
-> that switches us over to the safe source and turns off the A53
-> PLL while the CPU is not powered. That's all sort of sneaky and
-> we're not doing that yet here so let's leave that until later.
-> Please remove the enable/disable stuff.
->
+Okay, I will explain more how it works.
 
-Ok, agree! Its not used currently. Removed.
+
+>>
+>>> +Required properties:
+>>> +- compatible: must be either "allwinner,sun8i-codec-analog"
+>>
+>> Our compatible prefix is <family>-<soc>, and using the older SoC that
+>> introduced that block.
+>>
+>> In this case, that would be sun6i-a31, I think?
+>
+> sun6i-a31s actually, but a31s has extra line out controls,
+> so the right one would be sun8i-a23. Both are listed in my
+> original driver.
+
+
+It is noted.
+
+Thanks!
+
+
+-- 
+Mylène Josserand, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
