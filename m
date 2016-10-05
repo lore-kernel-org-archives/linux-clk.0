@@ -1,91 +1,94 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH 03/14] ASoC: sun4i-i2s: Add apb reset
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <2c5abe6578c8e4e841cb59357d88ce397551a593.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004141516.53c6fa8c@free-electrons.com> <20161004154218.GM5228@lukather>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ alsa-devel@alsa-project.org, vinod.koul@intel.com,
+ linux-kernel@vger.kernel.org, mturquette@baylibre.com, tiwai@suse.com,
+ sboyd@codeaurora.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+ perex@perex.cz, wens@csie.org, broonie@kernel.org,
+ alexandre.belloni@free-electrons.com, dmaengine@vger.kernel.org,
+ lee.jones@linaro.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Mylene Josserand <mylene.josserand@free-electrons.com>
+Message-ID: <efd96516-c5f4-91d0-450d-7521b1b76ed7@free-electrons.com>
+Date: Wed, 5 Oct 2016 11:43:10 +0200
 MIME-Version: 1.0
-In-Reply-To: <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
-References: <20161017120705.3726-1-wenpan@hisilicon.com> <20161017120705.3726-3-wenpan@hisilicon.com>
- <20161018155835.qyoffwznacdac46y@rob-hp-laptop> <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 18 Oct 2016 21:45:29 -0500
-Message-ID: <CAL_JsqK18RHFhDSWA_j+v_pJL6vk+a=GD7oo6O3JJaV4hHHEBg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: Pan Wen <wenpan@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, howell.yang@hisilicon.com,
-	jalen.hsu@hisilicon.com, lvkuanliang 00222834 <lvkuanliang@hisilicon.com>,
-	suwenping@hisilicon.com, raojun@hisilicon.com, kevin.lixu@hisilicon.com
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20161004154218.GM5228@lukather>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 18, 2016 at 9:38 PM, Jiancheng Xue
-<xuejiancheng@hisilicon.com> wrote:
->
->
-> =E5=9C=A8 2016/10/18 23:58, Rob Herring =E5=86=99=E9=81=93:
->> On Mon, Oct 17, 2016 at 08:07:04PM +0800, Pan Wen wrote:
->>> Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
->>> Generator) module generates clock and reset signals used
->>> by other module blocks on SoC.
->>>
->>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
->>> ---
->>>  .../devicetree/bindings/clock/hisi-crg.txt         |  50 ++++
->>>  drivers/clk/hisilicon/Kconfig                      |   8 +
->>>  drivers/clk/hisilicon/Makefile                     |   1 +
->>>  drivers/clk/hisilicon/crg-hi3516cv300.c            | 330 +++++++++++++=
-++++++++
->>>  drivers/clk/hisilicon/crg.h                        |  34 +++
->>>  include/dt-bindings/clock/hi3516cv300-clock.h      |  48 +++
->>>  6 files changed, 471 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.tx=
-t
->>>  create mode 100644 drivers/clk/hisilicon/crg-hi3516cv300.c
->>>  create mode 100644 drivers/clk/hisilicon/crg.h
->>>  create mode 100644 include/dt-bindings/clock/hi3516cv300-clock.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Doc=
-umentation/devicetree/bindings/clock/hisi-crg.txt
->>> new file mode 100644
->>> index 0000000..cc60b3d
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
->>> @@ -0,0 +1,50 @@
->>> +* HiSilicon Clock and Reset Generator(CRG)
->>
->> Seems kind of generic given there's already various HiSi clock bindings
->> documented.
->>
->>> +
->>> +The CRG module provides clock and reset signals to various
->>> +modules within the SoC.
->>> +
->>> +This binding uses the following bindings:
->>> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
->>> +    Documentation/devicetree/bindings/reset/reset.txt
->>> +
->>> +Required Properties:
->>> +
->>> +- compatible: should be one of the following.
->>> +  - "hisilicon,hi3516cv300-crg"
->>> +  - "hisilicon,hi3516cv300-sysctrl"
->>> +  - "hisilicon,hi3519-crg"
->>
->> There is already a binding for this. Please merge them.
->>
-> Hi Rob,
->
-> Pan Wen and I work together. There's really a same file included in the p=
-atch
-> https://lkml.org/lkml/2016/9/18/42 ([PATCH v2] clk: hisilicon: add CRG dr=
-iver for Hi3798CV200 SoC).
-> But that patch has not been acked. This binding file will be merged if th=
-at
-> patch is accepted first. Could you give me more comments on that patch or
-> help me to ack it?  Thank you very much.
+Hello,
 
-If I haven't commented, then likely it was not sent to the DT list.
 
-Rob
+On 04/10/2016 17:42, Maxime Ripard wrote:
+> Hi,
+>
+> On Tue, Oct 04, 2016 at 02:15:16PM +0200, Thomas Petazzoni wrote:
+>> Hello,
+>>
+>> On Tue,  4 Oct 2016 11:46:16 +0200, Mylène Josserand wrote:
+>>
+>>>  #include <sound/dmaengine_pcm.h>
+>>>  #include <sound/pcm_params.h>
+>>> @@ -589,6 +590,7 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+>>>  {
+>>>  	struct sun4i_i2s *i2s;
+>>>  	struct resource *res;
+>>> +	struct reset_control *reset_apb;
+>>>  	void __iomem *regs;
+>>>  	int irq, ret;
+>>>
+>>> @@ -626,7 +628,19 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+>>>  		dev_err(&pdev->dev, "Can't get our mod clock\n");
+>>>  		return PTR_ERR(i2s->mod_clk);
+>>>  	}
+>>> -	
+>>> +
+>>> +	reset_apb = devm_reset_control_get(&pdev->dev, "apb_reset");
+>>
+>> I believe this is a change in the Device Tree binding, since you're
+>> adding support for a new resource. Perhaps the Device Tree binding
+>> documentation should be updated accordingly?
+>
+> Indeed.
+>
+> You have two solutions to do that:
+>   - Either mark it as optional and use reset_control_get_optional
+>     (because here, you broke the other SoCs that have that controller
+>     but no reset line)
+>   - Or introduce a new compatible, and make the reset property
+>     mandatory for that new compatible.
+>
+> I prefer the latter, since you get a stricter error check, and you
+> cannot end up in a situation where your driver probes but is
+> useless. But you'll find both in our drivers.
+>
+
+
+Okay, thank you for the hints!
+
+
+>>> +	}
+>>> +
+>>> +	ret = reset_control_deassert(reset_apb);
+>>> +	if (ret < 0) {
+>>> +		dev_err(&pdev->dev, "Can't deassert apb reset (%d)\n", ret);
+>>> +		return ret;
+>>> +	}
+>>
+>> Do you need to re-assert the reset line in the ->remove() hook?
+>
+> Even better, you can add it to the runtime_pm hooks! :)
+
+
+I will have a look to runtime_pm and update it for a V2.
+
+
+-- 
+Mylène Josserand, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
