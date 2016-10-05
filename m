@@ -1,114 +1,69 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 2/5] clock: samsung: add support for runtime pm
-Date: Mon, 24 Oct 2016 14:12:07 +0200
-Message-id: <1477311130-6534-3-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
-References: <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161024121227eucas1p2a32eef7b4beb68704cd9c0758921d4d4@eucas1p2.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:36776 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754453AbcJEPH7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2016 11:07:59 -0400
+Received: by mail-wm0-f42.google.com with SMTP id k125so272809874wma.1
+        for <linux-clk@vger.kernel.org>; Wed, 05 Oct 2016 08:07:58 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-oxnas@lists.tuxfamily.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/6] clk: oxnas: Add dt-bindings include file for OX810SE
+Date: Wed,  5 Oct 2016 17:07:47 +0200
+Message-Id: <20161005150752.22618-2-narmstrong@baylibre.com>
+In-Reply-To: <20161005150752.22618-1-narmstrong@baylibre.com>
+References: <20161005150752.22618-1-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds struct device pointer to samsung_clk_provider and forwarding it
-to clk_register_* functions, so drivers can register clocks, which use runtime
-pm feature.
+In order to prepare support for the Oxford Semiconductor OX820, add
+a dt-bindings include file used by the ox810se dtsi.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/samsung/clk-pll.c |  2 +-
- drivers/clk/samsung/clk.c     | 12 ++++++------
- drivers/clk/samsung/clk.h     |  1 +
- 3 files changed, 8 insertions(+), 7 deletions(-)
+ include/dt-bindings/clock/oxsemi,ox810se.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 include/dt-bindings/clock/oxsemi,ox810se.h
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 9617825daabb..f5249a7e545d 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -1345,7 +1345,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	pll->lock_reg = base + pll_clk->lock_offset;
- 	pll->con_reg = base + pll_clk->con_offset;
- 
--	clk = clk_register(NULL, &pll->hw);
-+	clk = clk_register(ctx->dev, &pll->hw);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: failed to register pll clock %s : %ld\n",
- 			__func__, pll_clk->name, PTR_ERR(clk));
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index b7d87d6db9dc..e6923714f024 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -143,7 +143,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_rate(NULL, list->name,
-+		clk = clk_register_fixed_rate(ctx->dev, list->name,
- 			list->parent_name, list->flags, list->fixed_rate);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-@@ -172,7 +172,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
- 	unsigned int idx;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_factor(NULL, list->name,
-+		clk = clk_register_fixed_factor(ctx->dev, list->name,
- 			list->parent_name, list->flags, list->mult, list->div);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-@@ -193,7 +193,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_mux(NULL, list->name, list->parent_names,
-+		clk = clk_register_mux(ctx->dev, list->name, list->parent_names,
- 			list->num_parents, list->flags,
- 			ctx->reg_base + list->offset,
- 			list->shift, list->width, list->mux_flags, &ctx->lock);
-@@ -226,13 +226,13 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
- 		if (list->table)
--			clk = clk_register_divider_table(NULL, list->name,
-+			clk = clk_register_divider_table(ctx->dev, list->name,
- 				list->parent_name, list->flags,
- 				ctx->reg_base + list->offset,
- 				list->shift, list->width, list->div_flags,
- 				list->table, &ctx->lock);
- 		else
--			clk = clk_register_divider(NULL, list->name,
-+			clk = clk_register_divider(ctx->dev, list->name,
- 				list->parent_name, list->flags,
- 				ctx->reg_base + list->offset, list->shift,
- 				list->width, list->div_flags, &ctx->lock);
-@@ -264,7 +264,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_gate(NULL, list->name, list->parent_name,
-+		clk = clk_register_gate(ctx->dev, list->name, list->parent_name,
- 				list->flags, ctx->reg_base + list->offset,
- 				list->bit_idx, list->gate_flags, &ctx->lock);
- 		if (IS_ERR(clk)) {
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index da3bdebabf1e..9263d8a27c6b 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -26,6 +26,7 @@
-  */
- struct samsung_clk_provider {
- 	void __iomem *reg_base;
-+	struct device *dev;
- 	struct clk_onecell_data clk_data;
- 	spinlock_t lock;
- };
+diff --git a/include/dt-bindings/clock/oxsemi,ox810se.h b/include/dt-bindings/clock/oxsemi,ox810se.h
+new file mode 100644
+index 0000000..d5facb5
+--- /dev/null
++++ b/include/dt-bindings/clock/oxsemi,ox810se.h
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef DT_CLOCK_OXSEMI_OX810SE_H
++#define DT_CLOCK_OXSEMI_OX810SE_H
++
++#define CLK_810_LEON		0
++#define CLK_810_DMA_SGDMA	1
++#define CLK_810_CIPHER		2
++#define CLK_810_SATA		3
++#define CLK_810_AUDIO		4
++#define CLK_810_USBMPH		5
++#define CLK_810_ETHA		6
++#define CLK_810_PCIEA		7
++#define CLK_810_NAND		8
++
++#endif /* DT_CLOCK_OXSEMI_OX810SE_H */
 -- 
-1.9.1
+2.7.0
+
