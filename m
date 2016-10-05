@@ -1,45 +1,44 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 10 Oct 2016 16:37:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	horms+renesas@verge.net.au
-Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A7743 support
-Message-ID: <20161010213743.GA12919@rob-hp-laptop>
-References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
- <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
+Return-Path: <mylene.josserand@free-electrons.com>
+From: Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH 02/14] clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to
+ ac-dig
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <8dfe0935d35b8a218ebf39d37113e27289a0de9b.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004141251.4e82378e@free-electrons.com>
+Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+ mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ alexandre.belloni@free-electrons.com
+Message-ID: <20e6fc5f-54ba-951c-efaf-b3629c8f75a0@free-electrons.com>
+Date: Wed, 5 Oct 2016 11:37:53 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
+In-Reply-To: <20161004141251.4e82378e@free-electrons.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 07, 2016 at 11:47:49PM +0300, Sergei Shtylyov wrote:
-> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
-> 
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> Changes in version 2:
-> - documented the R8A7743 device tree binding;
-> - fixed whitespace errors/warnings reported by checkpatch.pl;
-> - used  tabs instead of spaces for indentation;
-> - fixed the PLL3 column name in the PLL table.
-> 
->  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    4 
+Hello Thomas,
 
-Acked-by: Rob Herring <robh@kernel.org>
 
->  drivers/clk/renesas/Kconfig                                  |    1 
->  drivers/clk/renesas/Makefile                                 |    1 
->  drivers/clk/renesas/r8a7743-cpg-mssr.c                       |  268 +++++++++++
->  drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
->  drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
->  6 files changed, 280 insertions(+), 1 deletion(-)
+On 04/10/2016 14:12, Thomas Petazzoni wrote:
+> Hello,
+>
+> On Tue,  4 Oct 2016 11:46:15 +0200, Mylène Josserand wrote:
+>> Add the flag CLK_SET_RATE_PARENT to 'ac-dig' clock.
+>
+> There is no need to repeat the commit title inside the commit log
+> itself. What would be more useful is to explain *why* this is needed.
+
+
+Agreed, I will update it for a V2.
+
+Thanks !
+
+-- 
+Mylène Josserand, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
