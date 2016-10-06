@@ -1,66 +1,63 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH 5/6] clk: stm32f469: Add QSPI clock
-To: Rob Herring <robh@kernel.org>
-References: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
- <1475245509-6487-6-git-send-email-gabriel.fernandez@st.com>
- <20161008205003.GB17455@rob-hp-laptop>
-CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <61b117b7-1a30-f433-872a-c9087ba41fc1@st.com>
-Date: Tue, 11 Oct 2016 11:17:16 +0200
+Return-Path: <mw@semihalf.com>
 MIME-Version: 1.0
-In-Reply-To: <20161008205003.GB17455@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1474789673-3837-1-git-send-email-mw@semihalf.com>
+References: <1474789673-3837-1-git-send-email-mw@semihalf.com>
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Thu, 6 Oct 2016 21:24:03 +0200
+Message-ID: <CAPv3WKf13FJxGkpt+OcNO--hRQoZr-TtuzCcAJrQwFXjqRgM2Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/1] Armada 7k/8k CP110 system controller fixes
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
+	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
+	Grzegorz Jaszczyk <jaz@semihalf.com>, Marcin Wojtas <mw@semihalf.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Hi Stephen,
 
-Thanks for reviewing
+Do you have any further comments on the remaining patch?
 
-On 10/08/2016 10:50 PM, Rob Herring wrote:
-> On Fri, Sep 30, 2016 at 04:25:08PM +0200, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> This patch adds the QSPI clock for stm32f469 discovery board.
->> The gate mapping is a little bit different from stm32f429 soc.
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>   .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
->>   drivers/clk/clk-stm32f4.c                          | 173 ++++++++++++++++++---
->>   2 files changed, 158 insertions(+), 19 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
->> index fee3205..eace3de 100644
->> --- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
->> @@ -8,7 +8,9 @@ Please also refer to clock-bindings.txt in this directory for common clock
->>   controller binding usage.
->>   
->>   Required properties:
->> -- compatible: Should be "st,stm32f42xx-rcc"
->> +- compatible: Should be:
->> +  "st,stm32f42xx-rcc"
->> +  "st,stm32f46xx-rcc"
-> Generally, we don't use wildcards in compatible strings. I know there's
-> lots of part numbers of stm32 parts which I guess are often same die
-> with different fusing or package. Your compatible strings should be at
-> least specific enough to identify parts that are really different die.
-okay i will propose "st,stm32f469-rcc" if no one is against.
+Best regards,
+Marcin
 
-BR
-
-Gabriel
-
+2016-09-25 9:47 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
+> Hi,
 >
->>   - reg: should be register base and length as documented in the
->>     datasheet
->>   - #clock-cells: 2, device nodes should specify the clock in their "clocks"
+> Two patches from the third version of the patchset have already been
+> applied, so I re-send the last one with corrected allocation of
+> clock data, which was pointed in the review.
+>
+> Any feedback would be very welcome.
+>
+> Best regards,
+> Marcin
+>
+> Changelog:
+> v4 <- v3
+> * fix allocation of clock data
+>
+> v3 <- v2
+> * return -ENOMEM on alloc failures
+>
+> v1 <- v2
+> * replace setting CLK_IS_BASIC flag with clearing init structure fields
+>   with memset
+> * minor improvements of allocation and error checking
+> * add migration to clk_hw
+>
+>
+> Marcin Wojtas (1):
+>   clk: mvebu: migrate CP110 system controller to clk_hw API and
+>     registration
+>
+>  drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
+>  1 file changed, 72 insertions(+), 78 deletions(-)
+>
+> --
+> 1.8.3.1
+>
