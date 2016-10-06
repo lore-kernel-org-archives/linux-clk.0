@@ -1,71 +1,50 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Thu, 6 Oct 2016 20:22:43 +0300
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] clk: samsung: clk-exynos-audss: Fix module autoload
-Date: Sun, 16 Oct 2016 10:45:07 -0300
-Message-Id: <1476625507-21377-1-git-send-email-javier@osg.samsung.com>
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: max77686: fix number of clocks setup for clk_hw
+ based registration
+Message-ID: <20161006172243.GA5229@kozik-lap>
+References: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If the driver is built as a module, autoload won't work because the module
-alias information is not filled. So user-space can't match the registered
-device with the corresponding module.
+On Thu, Oct 06, 2016 at 11:59:59AM -0300, Javier Martinez Canillas wrote:
+> The commit 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and
+> registration APIs") converted the driver to use the new provider API to
+> register clocks using clk_hw.
+> 
+> But unfortunately, in the conversion it missed to set the num_clks value
+> which lead to the following error when trying to register a clk provider:
+> 
+> [    1.963782] of_clk_max77686_get: invalid index 0
+> [    1.967460] ERROR: could not get clock /rtc@10070000:rtc_src(1)
+> [    1.973638] s3c-rtc 10070000.rtc: failed to find rtc source clock
+> 
+> Fix it by correctly set the max77686_clk_driver_data num_clks member.
+> 
+> Fixes: 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and registration APIs")
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> 
+> ---
+> 
+>  drivers/clk/clk-max77686.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Export the module alias information using the MODULE_DEVICE_TABLE() macro.
-
-Before this patch:
-
-$ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
-alias:          platform:exynos-audss-clk
-
-After this patch:
-
-$ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
-alias:          platform:exynos-audss-clk
-alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
-alias:          of:N*T*Csamsung,exynos5420-audss-clock
-alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
-alias:          of:N*T*Csamsung,exynos5410-audss-clock
-alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
-alias:          of:N*T*Csamsung,exynos5250-audss-clock
-alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
-alias:          of:N*T*Csamsung,exynos4210-audss-clock
-
-Fixes: 4d252fd5719b ("clk: samsung: Allow modular build of the Audio Subsystem CLKCON driver")
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
 
----
-
-Changes in v2:
-- Add fixes tag. Suggested by Krzysztof Kozlowski.
-- Add Krzysztof Kozlowski's Reviewed-by and Tested-by tags.
-
- drivers/clk/samsung/clk-exynos-audss.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 51d152f735cc..17e68a724945 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -106,6 +106,7 @@ static const struct of_device_id exynos_audss_clk_of_match[] = {
- 	},
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, exynos_audss_clk_of_match);
- 
- static void exynos_audss_clk_teardown(void)
- {
--- 
-2.7.4
+Best regards,
+Krzysztof
