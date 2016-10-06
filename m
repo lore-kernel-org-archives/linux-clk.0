@@ -1,124 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:36809 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbcJEPIB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2016 11:08:01 -0400
-Received: by mail-wm0-f45.google.com with SMTP id k125so272811430wma.1
-        for <linux-clk@vger.kernel.org>; Wed, 05 Oct 2016 08:08:00 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-oxnas@lists.tuxfamily.org
-Subject: [PATCH 3/6] clk: oxnas: Rename to clk_oxnas_gate
-Date: Wed,  5 Oct 2016 17:07:49 +0200
-Message-Id: <20161005150752.22618-4-narmstrong@baylibre.com>
-In-Reply-To: <20161005150752.22618-1-narmstrong@baylibre.com>
-References: <20161005150752.22618-1-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <>
+Return-Path: <>
+From: radek <radoslaw.pietrzyk@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@st.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+Subject: [PATCH] Reorganize STM32 clocks in order to prepare them for PLLI2S and PLLSAI
+Date: Thu,  6 Oct 2016 22:01:34 +0000
+Message-Id: <1475791294-5804-1-git-send-email-user@localhost>
 List-ID: <linux-clk.vger.kernel.org>
 
-Rename clock ops to clk_oxnas_gate in ops and structures.
+From: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
 ---
- drivers/clk/clk-oxnas.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/clk/clk-stm32f4.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
-index 47649ac..a76c7fb 100644
---- a/drivers/clk/clk-oxnas.c
-+++ b/drivers/clk/clk-oxnas.c
-@@ -26,7 +26,7 @@
- #include <linux/mfd/syscon.h>
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 02d6810..1fd3eac 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -245,9 +245,10 @@ static void stm32f4_rcc_register_pll(const char *hse_clk, const char *hsi_clk)
+ 	const char   *pllsrc = pllcfgr & BIT(22) ? hse_clk : hsi_clk;
+ 	unsigned long pllq   = (pllcfgr >> 24) & 0xf;
  
- /* Standard regmap gate clocks */
--struct clk_oxnas {
-+struct clk_oxnas_gate {
- 	struct clk_hw hw;
- 	signed char bit;
- 	struct regmap *regmap;
-@@ -37,14 +37,14 @@ struct clk_oxnas {
- #define CLK_SET_REGOFFSET	0x2c
- #define CLK_CLR_REGOFFSET	0x30
- 
--static inline struct clk_oxnas *to_clk_oxnas(struct clk_hw *hw)
-+static inline struct clk_oxnas_gate *to_clk_oxnas_gate(struct clk_hw *hw)
- {
--	return container_of(hw, struct clk_oxnas, hw);
-+	return container_of(hw, struct clk_oxnas_gate, hw);
+-	clk_register_fixed_factor(NULL, "vco", pllsrc, 0, plln, pllm);
+-	clk_register_fixed_factor(NULL, "pll", "vco", 0, 1, pllp);
+-	clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1, pllq);
++	clk_register_fixed_factor(NULL, "vco-div", pllsrc, 0, 1, pllm);
++	clk_register_fixed_factor(NULL, "vco-mul", "vco-div", 0, plln, 1);
++	clk_register_fixed_factor(NULL, "pll", "vco-mul", 0, 1, pllp);
++	clk_register_fixed_factor(NULL, "pll48", "vco-mul", 0, 1, pllq);
  }
  
--static int oxnas_clk_is_enabled(struct clk_hw *hw)
-+static int oxnas_clk_gate_is_enabled(struct clk_hw *hw)
- {
--	struct clk_oxnas *std = to_clk_oxnas(hw);
-+	struct clk_oxnas_gate *std = to_clk_oxnas_gate(hw);
- 	int ret;
- 	unsigned int val;
- 
-@@ -55,26 +55,26 @@ static int oxnas_clk_is_enabled(struct clk_hw *hw)
- 	return val & BIT(std->bit);
- }
- 
--static int oxnas_clk_enable(struct clk_hw *hw)
-+static int oxnas_clk_gate_enable(struct clk_hw *hw)
- {
--	struct clk_oxnas *std = to_clk_oxnas(hw);
-+	struct clk_oxnas_gate *std = to_clk_oxnas_gate(hw);
- 
- 	regmap_write(std->regmap, CLK_SET_REGOFFSET, BIT(std->bit));
- 
- 	return 0;
- }
- 
--static void oxnas_clk_disable(struct clk_hw *hw)
-+static void oxnas_clk_gate_disable(struct clk_hw *hw)
- {
--	struct clk_oxnas *std = to_clk_oxnas(hw);
-+	struct clk_oxnas_gate *std = to_clk_oxnas_gate(hw);
- 
- 	regmap_write(std->regmap, CLK_CLR_REGOFFSET, BIT(std->bit));
- }
- 
--static const struct clk_ops oxnas_clk_ops = {
--	.enable = oxnas_clk_enable,
--	.disable = oxnas_clk_disable,
--	.is_enabled = oxnas_clk_is_enabled,
-+static const struct clk_ops oxnas_clk_gate_ops = {
-+	.enable = oxnas_clk_gate_enable,
-+	.disable = oxnas_clk_gate_disable,
-+	.is_enabled = oxnas_clk_gate_is_enabled,
- };
- 
- static const char *const oxnas_clk_parents[] = {
-@@ -88,7 +88,7 @@ static const char *const eth_parents[] = {
- #define DECLARE_STD_CLKP(__clk, __parent)			\
- static const struct clk_init_data clk_##__clk##_init = {	\
- 	.name = __stringify(__clk),				\
--	.ops = &oxnas_clk_ops,					\
-+	.ops = &oxnas_clk_gate_ops,					\
- 	.parent_names = __parent,				\
- 	.num_parents = ARRAY_SIZE(__parent),			\
- }
-@@ -127,7 +127,7 @@ static const struct clk_oxnas_init_data clk_oxnas_init[] = {
- };
- 
- struct clk_oxnas_data {
--	struct clk_oxnas clk_oxnas[ARRAY_SIZE(clk_oxnas_init)];
-+	struct clk_oxnas_gate clk_oxnas[ARRAY_SIZE(clk_oxnas_init)];
- 	struct clk_onecell_data onecell_data[ARRAY_SIZE(clk_oxnas_init)];
- 	struct clk *clks[ARRAY_SIZE(clk_oxnas_init)];
- };
-@@ -150,7 +150,7 @@ static int oxnas_stdclk_probe(struct platform_device *pdev)
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(clk_oxnas_init); i++) {
--		struct clk_oxnas *_clk;
-+		struct clk_oxnas_gate *_clk;
- 
- 		_clk = &clk_oxnas->clk_oxnas[i];
- 		_clk->bit = clk_oxnas_init[i].bit;
+ /*
 -- 
-2.7.0
-
+1.9.1
