@@ -1,99 +1,91 @@
-Return-Path: <lho@apm.com>
+Return-Path: <irina.tirdea@intel.com>
+From: "Tirdea, Irina" <irina.tirdea@intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, "x86@kernel.org" <x86@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai
+	<tiwai@suse.com>, "Bossart, Pierre-louis" <pierre-louis.bossart@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: RE: [PATCH v3] clk: x86: Add Atom PMC platform clocks
+Date: Thu, 6 Oct 2016 18:09:04 +0000
+Message-ID: <1F3AC3675D538145B1661F571FE1805F2F36B1A9@irsmsx105.ger.corp.intel.com>
+References: <1473427417-9166-1-git-send-email-irina.tirdea@intel.com>
+ <20160914213025.GE7243@codeaurora.org>
+In-Reply-To: <20160914213025.GE7243@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <83c41979-96a0-27bb-4e5a-329396ab296a@redhat.com>
-References: <1477673978-15424-1-git-send-email-labbott@redhat.com>
- <CAPw-ZT=XYA3Q=nYC649iC41eebC8fqMsiOaG+O8mhP24D4JN5Q@mail.gmail.com> <83c41979-96a0-27bb-4e5a-329396ab296a@redhat.com>
-From: Loc Ho <lho@apm.com>
-Date: Fri, 28 Oct 2016 10:11:27 -0700
-Message-ID: <CAPw-ZT=Zmvy3GVCYfDx4RO-BN8Ot209MfCuoF9rnih8vXzKdKw@mail.gmail.com>
-Subject: Re: [PATCHv2] clk: xgene: Don't call __pa on ioremaped address
-To: Laura Abbott <labbott@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: irina.tirdea@intel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
->>
->>> ioremaped addresses are not linearly mapped so the physical
->>> address can not be figured out via __pa. More generally, there
->>> is no guarantee that backing value of an ioremapped address
->>> is a physical address at all. The value here is only used
->>> for debugging so just drop the call to __pa on the ioremapped
->>> address.
->>>
->>> Fixes: 6ae5fd381251 ("clk: xgene: Silence sparse warnings")
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>> ---
->>> v2: Fix up one more format string
->>>
->>> I put the fixes tag to match with the cleanup that was done.
->>> If there is interest in this fix for pre-4.2 kernels for
->>> stable, I can submit a patch for that as well.
->>> ---
->>>  drivers/clk/clk-xgene.c | 10 ++++------
->>>  1 file changed, 4 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
->>> index 3433132..1e67655 100644
->>> --- a/drivers/clk/clk-xgene.c
->>> +++ b/drivers/clk/clk-xgene.c
->>> @@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
->>>         struct xgene_clk *pclk = to_xgene_clk(hw);
->>>         unsigned long flags = 0;
->>>         u32 data;
->>> -       phys_addr_t reg;
->>>
->>>         if (pclk->lock)
->>>                 spin_lock_irqsave(pclk->lock, flags);
->>>
->>>         if (pclk->param.csr_reg != NULL) {
->>>                 pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
->>> -               reg = __pa(pclk->param.csr_reg);
->>>                 /* First enable the clock */
->>>                 data = xgene_clk_read(pclk->param.csr_reg +
->>>                                         pclk->param.reg_clk_offset);
->>>                 data |= pclk->param.reg_clk_mask;
->>>                 xgene_clk_write(data, pclk->param.csr_reg +
->>>                                         pclk->param.reg_clk_offset);
->>> -               pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask
->>> 0x%08X value 0x%08X\n",
->>> -                       clk_hw_get_name(hw), &reg,
->>> +               pr_debug("%s clk offset 0x%08X mask 0x%08X value
->>> 0x%08X\n",
->>> +                       clk_hw_get_name(hw),
->>>                         pclk->param.reg_clk_offset,
->>> pclk->param.reg_clk_mask,
->>>                         data);
->>>
->>> @@ -268,8 +266,8 @@ static int xgene_clk_enable(struct clk_hw *hw)
->>>                 data &= ~pclk->param.reg_csr_mask;
->>>                 xgene_clk_write(data, pclk->param.csr_reg +
->>>                                         pclk->param.reg_csr_offset);
->>> -               pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X
->>> mask 0x%08X value 0x%08X\n",
->>> -                       clk_hw_get_name(hw), &reg,
->>> +               pr_debug("%s csr offset 0x%08X mask 0x%08X value
->>> 0x%08X\n",
->>> +                       clk_hw_get_name(hw),
->>>                         pclk->param.reg_csr_offset,
->>> pclk->param.reg_csr_mask,
->>>                         data);
->>>         }
->>
->>
->>
->> The code looks fine to me. May be overly cautious here. Do you have a
->> board to test this out?
->>
->> -Loc
->>
->
-> Yes, that was how I caught the problem. There are no errors that I
-> can see with this patch applied.
 
-Acked-by: Loc Ho <lho@apm.com>
+> -----Original Message-----
+> From: linux-clk-owner@vger.kernel.org [mailto:linux-clk-owner@vger.kernel=
+.org] On Behalf Of Stephen Boyd
+> Sent: 15 September, 2016 0:30
+> To: Tirdea, Irina
+> Cc: linux-clk@vger.kernel.org; Michael Turquette; alsa-devel@alsa-project=
+.org; Mark Brown; Takashi Iwai; Bossart, Pierre-louis; Pierre-
+> Louis Bossart
+> Subject: Re: [PATCH v3] clk: x86: Add Atom PMC platform clocks
+>=20
+> On 09/09, Irina Tirdea wrote:
+> > The BayTrail and CherryTrail platforms provide platform clocks
+> > through their Power Management Controller (PMC).
+> >
+> > The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
+> > frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
+> > an a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
+> > are available for general system use, where appropriate, and each
+> > have Control & Frequency register fields associated with them.
+> >
+> > For example, the usage for platform clocks suggested in the datasheet
+> > is the following:
+> >   PLT_CLK[2:0] - Camera
+> >   PLT_CLK[3] - Audio Codec
+> >   PLT_CLK[4] -
+> >   PLT_CLK[5] - COMMs
+> >
+> > Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+> > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.c=
+om>
+> > ---
+> >
+> > Notes:
+> >     Submitting this patch through the clock tree as requested by
+> >     Mark Brown. This patch specifically enables the audio MCLK
+> >     required by Baytrail CR devices (support already merged in
+> >     Mark's tree)
+> >
+> > Changes from v2:
+> >  - move clk platform data structures to a separate include file
+> >  - store clk_hw pointer for the fixed rate clocks
+> >
+> > Changes from v1:
+> >  - register the clk device as child of pmc device
+> >  - pass iomem pointer from pmc driver to clk driver to avoid using
+> > pmc_atom_read()/write() and use readl/writel API instead
+> >  - use devm_clk_hw_register/clkdev_hw_create instead of
+> > clk_register/clkdev_create
+> >
+> >  arch/x86/Kconfig                          |   1 +
+> >  arch/x86/include/asm/pmc_atom.h           |   3 +
+> >  arch/x86/platform/atom/pmc_atom.c         |  78 +++++-
+>=20
+> Will there be problems if this merges through clk tree? If so we
+> could take the clk driver part and the platform data include part
+> could be duplicated into both trees. Or clk tree could be pulled
+> into x86?
+>=20
+> The patch looks fine to me.
 
--Loc
+Adding the x86 list and maintainers to this thread, as they should be able
+to answer this question. I already sent a new version of this patch, this
+time also including the x86 platform list and maintainers [1].
+
+Thanks,
+Irina
+
+[1] http://www.spinics.net/lists/linux-clk/msg12169.html
