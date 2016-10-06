@@ -1,73 +1,82 @@
-Return-Path: <labbott@redhat.com>
-Return-Path: <labbott@redhat.com>
-Subject: Re: [PATCH] clk: xgene: Don't call __pa on ioremaped address
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Loc Ho <lho@apm.com>
-References: <1477610508-7449-1-git-send-email-labbott@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <ccea4ce8-5607-c164-f90a-291075bcc13e@redhat.com>
-Date: Thu, 27 Oct 2016 16:24:53 -0700
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Thu, 6 Oct 2016 20:23:03 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+	"thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>,
+	"vinod.koul@intel.com" <vinod.koul@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"tiwai@suse.com" <tiwai@suse.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"perex@perex.cz" <perex@perex.cz>, "wens@csie.org" <wens@csie.org>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 06/14] ASoC: Add sun8i digital audio codec
+Message-ID: <20161006182303.sftz3c7hjhv7xell@piout.net>
+References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+ <85cbd9926e52d0aa03f6bbfd8794373d8db491e0.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004161549.GO5228@lukather>
+ <901741475770017@web21g.yandex.ru>
 MIME-Version: 1.0
-In-Reply-To: <1477610508-7449-1-git-send-email-labbott@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <901741475770017@web21g.yandex.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/27/2016 04:21 PM, Laura Abbott wrote:
-> ioremaped addresses are not linearly mapped so the physical
-> address can not be figured out via __pa. More generally, there
-> is no guarantee that backing value of an ioremapped address
-> is a physical address at all. The value here is only used
-> for debugging so just drop the call to __pa on the ioremapped
-> address.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> Found while working on virt_to_phys debugging for arm64
-> ---
->  drivers/clk/clk-xgene.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-> index 3433132..4697bf9 100644
-> --- a/drivers/clk/clk-xgene.c
-> +++ b/drivers/clk/clk-xgene.c
-> @@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
->  	struct xgene_clk *pclk = to_xgene_clk(hw);
->  	unsigned long flags = 0;
->  	u32 data;
-> -	phys_addr_t reg;
->
->  	if (pclk->lock)
->  		spin_lock_irqsave(pclk->lock, flags);
->
->  	if (pclk->param.csr_reg != NULL) {
->  		pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
-> -		reg = __pa(pclk->param.csr_reg);
->  		/* First enable the clock */
->  		data = xgene_clk_read(pclk->param.csr_reg +
->  					pclk->param.reg_clk_offset);
->  		data |= pclk->param.reg_clk_mask;
->  		xgene_clk_write(data, pclk->param.csr_reg +
->  					pclk->param.reg_clk_offset);
-> -		pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
-> -			clk_hw_get_name(hw), &reg,
-> +		pr_debug("%s clk offset 0x%08X mask 0x%08X value 0x%08X\n",
-> +			clk_hw_get_name(hw),
->  			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
->  			data);
->
-> @@ -269,7 +267,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
->  		xgene_clk_write(data, pclk->param.csr_reg +
->  					pclk->param.reg_csr_offset);
->  		pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
+On 07/10/2016 at 00:06:57 +0800, Icenowy Zheng wrote :
+> 05.10.2016, 00:20, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> > Hi,
+> >
+> >>  +static const struct of_device_id sun8i_codec_of_match[] = {
+> >>  + { .compatible = "allwinner,sun8i-a33-codec" },
+> >>  + { .compatible = "allwinner,sun8i-a23-codec" },
+> >
+> > I thought that the A23 and A33 had different codecs? In that case, it
+> > wouldn't be a good assumption to make
+> 
+> Yes.
+> 
+> >
+> >>  + {}
+> >>  +};
+> >>  +MODULE_DEVICE_TABLE(of, sun8i_codec_of_match);
+> >>  +
+> >>  +static struct platform_driver sun8i_codec_driver = {
+> >>  + .driver = {
+> >>  + .name = "sun8i-codec",
+> >>  + .owner = THIS_MODULE,
+> >>  + .of_match_table = sun8i_codec_of_match,
+> >>  + },
+> >>  + .probe = sun8i_codec_probe,
+> >>  + .remove = sun8i_codec_remove,
+> >>  +};
+> >>  +module_platform_driver(sun8i_codec_driver);
+> >>  +
+> >>  +MODULE_DESCRIPTION("Allwinner A33 (sun8i) codec driver");
+> >>  +MODULE_AUTHOR("huanxin<huanxin@reuuimllatech.com>");
+> >
+> > Those obfuscated email adresses are not really helpful :)
+> 
+> This kind of email addresses  are kept in many places in mainline kernel.
+> 
+> e.g. drivers/mmc/host/sunxi-mmc.c have 'Aaron Maoye <leafy.myeh@reuuimllatech.com>'
+> 
 
-Bah, this got fixed locally but didn't get amended. I'll remove
-the format here in a v2 assuming there are no other objections.
+Well, that is only one place and it is a comment, not in the
+MODULE_AUTHOR macro. I would agree that it is not useful to have a stale
+email address in MODULE_AUTHOR.
 
-> -			clk_hw_get_name(hw), &reg,
-> +			clk_hw_get_name(hw),
->  			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
->  			data);
->  	}
->
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
