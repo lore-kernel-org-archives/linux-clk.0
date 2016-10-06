@@ -1,37 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from spo001.leaseweb.nl ([85.17.2.162]:40228 "EHLO
-        spo001.leaseweb.nl" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751086AbcJHO3Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2016 10:29:16 -0400
-Date: Sat, 8 Oct 2016 16:13:24 +0200
-From: Wim Van Sebroeck <wim@iguana.be>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
-Message-ID: <20161008141324.GH23290@spo001.leaseweb.nl>
-References: <1473584398-12942-1-git-send-email-geert@linux-m68k.org> <1473584398-12942-2-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1473584398-12942-2-git-send-email-geert@linux-m68k.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Markus Reichl <m.reichl@fivetechno.de>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: max77686: fix number of clocks setup for clk_hw based registration
+Date: Thu,  6 Oct 2016 11:59:59 -0300
+Message-Id: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+The commit 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and
+registration APIs") converted the driver to use the new provider API to
+register clocks using clk_hw.
 
-> While the custom minimal TXx9 clock implementation doesn't need or use
-> clock (un)prepare calls (they are dummies if !CONFIG_HAVE_CLK_PREPARE),
-> they are mandatory when using the Common Clock Framework.
-> 
-> Hence add them, to prepare for the advent of CCF.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+But unfortunately, in the conversion it missed to set the num_clks value
+which lead to the following error when trying to register a clk provider:
 
-This patch was added to linux-watchdog-next almost 2 weeks ago.
+[    1.963782] of_clk_max77686_get: invalid index 0
+[    1.967460] ERROR: could not get clock /rtc@10070000:rtc_src(1)
+[    1.973638] s3c-rtc 10070000.rtc: failed to find rtc source clock
 
-Kind regards,
-Wim.
+Fix it by correctly set the max77686_clk_driver_data num_clks member.
 
+Fixes: 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and registration APIs")
+Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+
+---
+
+ drivers/clk/clk-max77686.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index b637f5979023..eb953d3b0b69 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -216,6 +216,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	drv_data->num_clks = num_clks;
+ 	drv_data->max_clk_data = devm_kcalloc(dev, num_clks,
+ 					      sizeof(*drv_data->max_clk_data),
+ 					      GFP_KERNEL);
+-- 
+2.7.4
