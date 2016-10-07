@@ -1,339 +1,131 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v5 2/4] arm64: dts: add Allwinner A64 SoC .dtsi
-Date: Thu, 20 Oct 2016 20:00:30 +0200
-Message-Id: <eb11a71c58cd85551d9d793437db1792abd5077c.1476986335.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
-References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <icenowy@aosc.xyz>
+Date: Fri, 7 Oct 2016 16:35:30 +0800
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@free-electrons.com>
+Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+ mark.rutland@arm.com, robh+dt@kernel.org,
+ thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/14] ASoc: sunxi: Add Allwinner A33 codec driver
+Message-ID: <20161007163530.7b027091@aosc.xyz>
+In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
-References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andre Przywara <andre.przywara@arm.com>
+On Tue,  4 Oct 2016 11:46:13 +0200
+Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com> wrote:
 
-The Allwinner A64 SoC is a low-cost chip with 4 ARM Cortex-A53 cores
-and the typical tablet / TV box peripherals.
-The SoC is based on the (32-bit) Allwinner H3 chip, sharing most of
-the peripherals and the memory map.
-Although the cores are proper 64-bit ones, the whole SoC is actually
-limited to 4GB (including all the supported DRAM), so we use 32-bit
-address and size cells. This has the nice feature of us being able to
-reuse the DT for 32-bit kernels as well.
-This .dtsi lists the hardware that we support so far.
+> Hi everyone,
+>=20
+>=20
+> This patchset add the audio codec for Allwinner A33 (sun8i) SoC.
+>=20
+> It adds different drivers:
+>    - sun8i-codec-analog (patch 4): This driver implements the analog
+> part of the audio codec. The analog part is handled in PRCM registers
+> so this driver must be added as prcm's subnode (patch 5).
+>    - sun8i-codec (patch 6): This driver implements the digital part
+> of the A33 codec.
+>    - sun8i (patch 7): This driver implements a sound card for A33.
+>    It links the DAI and the audio codec. The analog codec driver is
+> handled as an "aux_device".
+>=20
+> The DAI for this codec is the same than for A20: "sun4i-i2s".
+> The digital codec code is coming from Allwinner's BSP (after some
+> cleanup and DAPM conversion) [1]
+> The analog codec driver is coming from Chen-Yu Tsai's driver [2]
+> with some modifications (such as read/write regmap functions).
+>=20
+> Currently, all the drivers handle only the playback feature.
+> The other ones (such as capture) and all other interfaces except
+> headphone are not supported.
+>=20
+> These drivers are functional except for one issue. When playing a
+> sound for the first time, a short delay can be noticed. On a second
+> play (right after), the sound is played correctly. If we wait a short
+> time (~5 sec), the delay is back.
+> There is the same behavior for left/right channel. On the first
+> time, a left sound is played on the left channel but in the second
+> time, the sound will be played on wrong channel.
+>=20
+> These issues will be fixed in a second time. Is someone have
+> suggestions about it?
+>=20
+> Examples of amixer commands:
+> 	amixer set 'Headphone' 75%
+> 	amixer set 'Headphone' on
+> 	amixer set 'DAC' on
+> 	amixer set 'Right DAC Mixer RSlot 0' on
+> 	amixer set 'Left DAC Mixer LSlot 0' on
+> 	amixer set 'DAC Reversed Right' on
+> 	amixer set 'DAC Reversed Left' on
+>=20
+> It was tested on Parrot and Sinlinx board where device tree's
+> modifications are added (patch 11 to 14).
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-[Maxime: Convert to CCU binding, drop the MMC support for now]
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/arm/sunxi.txt |   1 +-
- MAINTAINERS                                     |   1 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi   | 263 +++++++++++++++++-
- 3 files changed, 265 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+I tested it on my iNet D978 Rev2 board (dts available in linux-next now)
+Directly output audio from mpg123 to the audio codec failed, with
+noises appear in the earphone. (And the mpg123 process terminated very
+fast, seems that the bitrate become wrong)
 
-diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-index 3975d0a0e4c2..4d6467cc2aa2 100644
---- a/Documentation/devicetree/bindings/arm/sunxi.txt
-+++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-@@ -14,4 +14,5 @@ using one of the following compatible strings:
-   allwinner,sun8i-a83t
-   allwinner,sun8i-h3
-   allwinner,sun9i-a80
-+  allwinner,sun50i-a64
-   nextthing,gr8
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1cd38a7e0064..86488e92655f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1019,6 +1019,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- N:	sun[x456789]i
- F:	arch/arm/boot/dts/ntc-gr8*
-+F:	arch/arm64/boot/dts/allwinner/
- 
- ARM/Allwinner SoC Clock Support
- M:	Emilio López <emilio@elopez.com.ar>
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-new file mode 100644
-index 000000000000..be51024743b4
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -0,0 +1,263 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ * based on the Allwinner H3 dtsi:
-+ *    Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <dt-bindings/clock/sun50i-a64-ccu.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/pinctrl/sun4i-a10.h>
-+#include <dt-bindings/reset/sun50i-a64-ccu.h>
-+
-+/ {
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	osc24M: osc24M_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24M";
-+	};
-+
-+	osc32k: osc32k_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		clock-output-names = "osc32k";
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun50i-a64-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		pio: pinctrl@1c20800 {
-+			compatible = "allwinner,sun50i-a64-pinctrl";
-+			reg = <0x01c20800 0x400>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_PIO>;
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+
-+			i2c1_pins: i2c1_pins {
-+				allwinner,pins = "PH2", "PH3";
-+				allwinner,function = "i2c1";
-+			};
-+
-+			uart0_pins_a: uart0@0 {
-+				allwinner,pins = "PB8", "PB9";
-+				allwinner,function = "uart0";
-+			};
-+		};
-+
-+		uart0: serial@1c28000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28000 0x400>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@1c28400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28400 0x400>;
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@1c28800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28800 0x400>;
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@1c28c00 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28c00 0x400>;
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART3>;
-+			resets = <&ccu RST_BUS_UART3>;
-+			status = "disabled";
-+		};
-+
-+		uart4: serial@1c29000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c29000 0x400>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART4>;
-+			resets = <&ccu RST_BUS_UART4>;
-+			status = "disabled";
-+		};
-+
-+		i2c0: i2c@1c2ac00 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x01c2ac00 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_I2C0>;
-+			resets = <&ccu RST_BUS_I2C0>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c1: i2c@1c2b000 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x01c2b000 0x400>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_I2C1>;
-+			resets = <&ccu RST_BUS_I2C1>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c2: i2c@1c2b400 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x01c2b400 0x400>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_I2C2>;
-+			resets = <&ccu RST_BUS_I2C2>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		gic: interrupt-controller@1c81000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x01c81000 0x1000>,
-+			      <0x01c82000 0x2000>,
-+			      <0x01c84000 0x2000>,
-+			      <0x01c86000 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+
-+		rtc: rtc@1f00000 {
-+			compatible = "allwinner,sun6i-a31-rtc";
-+			reg = <0x01f00000 0x54>;
-+			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+};
--- 
-git-series 0.8.10
+However, paplay works well with the decoded wav file, and ```mpg123 -o
+pulse``` works properly.
+
+>=20
+> Thank you in advance,
+> Best regards,
+>=20
+> [1]:
+> https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/sound/soc/sun=
+xi/audiocodec/sun8iw5_sndcodec.c
+> [2]: https://github.com/wens/linux/tree/a31-audio
+>=20
+> Myl=C3=A8ne Josserand (14):
+>   dma: sun6i-dma: Add burst case of 4
+>   clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to ac-dig
+>   ASoC: sun4i-i2s: Add apb reset
+>   ASoC: Add sun8i analog codec driver
+>   mfd: sun6i-prcm: Add sun8i analog codec as subnode
+>   ASoC: Add sun8i digital audio codec
+>   ASoC: Add sun8i audio card
+>   dt-bindings: sound: Add sun8i analog codec documentation
+>   dt-bindings: sound: Add sun8i codec documentation
+>   dt-bindings: sound: Add sun8i audio card documentation
+>   ARM: dts: sun8i: Add analog codec on prcm node
+>   ARM: dts: sun8i: Add audio codec, dai and card for A33
+>   ARM: dts: sun8i: parrot: Enable audio nodes
+>   ARM: dts: sun8i: sinlinx: Enable audio nodes
+>=20
+>  .../devicetree/bindings/sound/sun8i-audio.txt      |  17 +
+>  .../bindings/sound/sun8i-codec-analog.txt          |  20 +
+>  .../devicetree/bindings/sound/sun8i-codec.txt      |  24 +
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi               |   7 +
+>  arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts     |   8 +
+>  arch/arm/boot/dts/sun8i-a33.dtsi                   |  33 ++
+>  arch/arm/boot/dts/sun8i-r16-parrot.dts             |   8 +
+>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c               |   2 +-
+>  drivers/dma/sun6i-dma.c                            |   2 +
+>  drivers/mfd/sun6i-prcm.c                           |  16 +
+>  sound/soc/sunxi/Kconfig                            |  30 ++
+>  sound/soc/sunxi/Makefile                           |   3 +
+>  sound/soc/sunxi/sun4i-i2s.c                        |  16 +-
+>  sound/soc/sunxi/sun8i-codec-analog.c               | 305
+> +++++++++++++ sound/soc/sunxi/sun8i-codec.c                      |
+> 492 +++++++++++++++++++++
+> sound/soc/sunxi/sun8i.c                            | 101 +++++ 16
+> files changed, 1082 insertions(+), 2 deletions(-) create mode 100644
+> Documentation/devicetree/bindings/sound/sun8i-audio.txt create mode
+> 100644 Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+> create mode 100644
+> Documentation/devicetree/bindings/sound/sun8i-codec.txt create mode
+> 100644 sound/soc/sunxi/sun8i-codec-analog.c create mode 100644
+> sound/soc/sunxi/sun8i-codec.c create mode 100644
+> sound/soc/sunxi/sun8i.c
+>=20
