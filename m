@@ -1,69 +1,55 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robdclark@gmail.com,
-	jcrouse@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/2] clk: qcom: mmcc-8996: Add gpu gdscs
-Date: Thu, 20 Oct 2016 15:08:07 +0530
-Message-Id: <1476956287-13749-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
-References: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 0/5] Add runtime PM support for clocks (on Exynos SoC
+ example)
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <c1cf1a1f-2d1f-7f35-3e3b-f2de90959a24@samsung.com>
+Date: Fri, 07 Oct 2016 11:12:20 +0200
+MIME-version: 1.0
+In-reply-to: <57F6926F.1070707@math.uni-bielefeld.de>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: 
+ <CGME20160919105545eucas1p1026e435bbaeb1f5c866a9abcdd051464@eucas1p1.samsung.com>
+ <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com>
+ <57F6926F.1070707@math.uni-bielefeld.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add gpu gdsc data for msm8996
+Hi Tobias,
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8996.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index ca97e11..f77206f 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -3034,6 +3034,28 @@ enum {
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-+static struct gdsc gpu_gdsc = {
-+	.gdscr = 0x4034,
-+	.gds_hw_ctrl = 0x4038,
-+	.pd = {
-+		.name = "gpu",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc gpu_gx_gdsc = {
-+	.gdscr = 0x4024,
-+	.clamp_io_ctrl = 0x4300,
-+	.cxcs = (unsigned int []){ 0x4028 },
-+	.cxc_count = 1,
-+	.pd = {
-+		.name = "gpu_gx",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = CLAMP_IO,
-+};
-+
- static struct clk_regmap *mmcc_msm8996_clocks[] = {
- 	[MMPLL0_EARLY] = &mmpll0_early.clkr,
- 	[MMPLL0_PLL] = &mmpll0.clkr,
-@@ -3223,6 +3245,8 @@ enum {
- 	[CPP_GDSC] = &cpp_gdsc,
- 	[FD_GDSC] = &fd_gdsc,
- 	[MDSS_GDSC] = &mdss_gdsc,
-+	[GPU_GDSC] = &gpu_gdsc,
-+	[GPU_GX_GDSC] = &gpu_gx_gdsc,
- };
- 
- static const struct qcom_reset_map mmcc_msm8996_resets[] = {
+On 2016-10-06 20:05, Tobias Jakobi wrote:
+> Hello Marek,
+>
+> I'm using the patches from the v4.8-clocks-pm-v2 branch plus the ones
+> from the v4.8-clocks-pm-v2 branch on top of 4.8.0.
+>
+> I see some warnings on boot coming from driver core. It appears that the
+> warnings are actually meaningful, since IOMMUs stop working completly.
+> E.g. if I modprobe s5p-mfc later, firmware loading fails because
+> apparantly the IOMMU domain isn't online.
+>
+>> WARNING: CPU: 0 PID: 1 at drivers/base/core.c:356 device_links_driver_bound+0x124/0x12c
+> I added some debug printk() to device_links_driver_bound(), to show the
+> link status. Apparantly it is always DEVICE_LINK_AVAILABLE.
+
+Please note that some additional patches are needed to get IOMMU working 
+properly with both runtime-pm patches and deferred probe, which feature 
+in turn is needed to get it working after adding clocks-pm changes. I 
+will send such patch soon (as a new version of IOMMU deferred probe 
+support patches were posted a few days ago).
+
+ > (...)
+
+Best regards
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
