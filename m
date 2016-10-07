@@ -1,146 +1,382 @@
-Return-Path: <moinejf@free.fr>
-Date: Sun, 23 Oct 2016 18:31:07 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: =?ISO-8859-1?Q?Myl=E8ne?= Josserand
- <mylene.josserand@free-electrons.com>, vinod.koul@intel.com, wens@csie.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
- mark.rutland@arm.com, robh+dt@kernel.org,
- thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
-Message-Id: <20161023183107.5b75b6aad62853378713299f@free.fr>
-In-Reply-To: <20161004165553.GS5228@lukather>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-	<3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
-	<20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
-	<20161004165553.GS5228@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1474282525-30441-2-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20160919105548eucas1p24b28143fab25eb47f5629d31f817b0bc@eucas1p2.samsung.com>
+ <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com> <1474282525-30441-2-git-send-email-m.szyprowski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 7 Oct 2016 12:07:57 +0200
+Message-ID: <CAPDyKFqtGTJ38K5xm+-xVZcjAmLuo21613GHwUkQKKJXvYtsLQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] clk: add support for runtime pm
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 4 Oct 2016 18:55:54 +0200
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
-
-> On Tue, Oct 04, 2016 at 12:40:11PM +0200, Jean-Francois Moine wrote:
-> > On Tue,  4 Oct 2016 11:46:14 +0200
-> > Myl=E8ne Josserand <mylene.josserand@free-electrons.com> wrote:
-> >=20
-> > > Add the case of a burst of 4 which is handled by the SoC.
-> > >=20
-> > > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.co=
-m>
-> > > ---
-> > >  drivers/dma/sun6i-dma.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >=20
-> > > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-> > > index 8346199..0485204 100644
-> > > --- a/drivers/dma/sun6i-dma.c
-> > > +++ b/drivers/dma/sun6i-dma.c
-> > > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
-> > >  	switch (maxburst) {
-> > >  	case 1:
-> > >  		return 0;
-> > > +	case 4:
-> > > +		return 1;
-> > >  	case 8:
-> > >  		return 2;
-> > >  	default:
-> > > --=20
-> > > 2.9.3
-> >=20
-> > This patch has already been rejected by Maxime in the threads
-> > 	http://www.spinics.net/lists/dmaengine/msg08610.html
-> > and
-> > 	http://www.spinics.net/lists/dmaengine/msg08719.html
-> >=20
-> > I hope you will find the way he wants for this maxburst to be added.
->=20
-> I was talking about something along these lines (not tested):
-
-I wonder why you don't submit this yourself.
-
-> -------8<---------
-> diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-> index 83461994e418..573ac4608293 100644
-> --- a/drivers/dma/sun6i-dma.c
-> +++ b/drivers/dma/sun6i-dma.c
-> @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
->  	switch (maxburst) {
->  	case 1:
->  		return 0;
-> +	case 4:
-> +		return 1;
->  	case 8:
->  		return 2;
->  	default:
-> @@ -1110,11 +1112,19 @@ static int sun6i_dma_probe(struct platform_device=
- *pdev)
->  	sdc->slave.dst_addr_widths		=3D BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
->  						  BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
->  						  BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-> +	sdc->slave.dst_bursts			=3D BIT(1) | BIT(8);
-> +	sdc->slave.src_bursts			=3D BIT(1) | BIT(8);
->  	sdc->slave.directions			=3D BIT(DMA_DEV_TO_MEM) |
->  						  BIT(DMA_MEM_TO_DEV);
->  	sdc->slave.residue_granularity		=3D DMA_RESIDUE_GRANULARITY_BURST;
->  	sdc->slave.dev =3D &pdev->dev;
-> =20
-> +	if (of_device_is_compatible(pdev->dev.of_node,
-> +				    "allwinner,sun8i-h3-dma")) {
-> +		sdc->slave.dst_bursts |=3D BIT(4);
-> +		sdc->slave.src_bursts |=3D BIT(4);
-> +	}
+On 19 September 2016 at 12:55, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Registers for some clocks might be located in the SOC area, which are under the
+> power domain. To enable access to those registers respective domain has to be
+> turned on. Additionally, registers for such clocks will usually loose its
+> contents when power domain is turned off, so additional saving and restoring of
+> them might be needed in the clock controller driver.
+>
+> This patch adds basic infrastructure in the clocks core to allow implementing
+> driver for such clocks under power domains. Clock provider can supply a
+> struct device pointer, which is the used by clock core for tracking and managing
+> clock's controller runtime pm state. Each clk_prepare() operation
+> will first call pm_runtime_get_sync() on the supplied device, while
+> clk_unprepare() will do pm_runtime_put() at the end.
+>
+> Additional calls to pm_runtime_get/put functions are required to ensure that any
+> register access (like calculating/changing clock rates and unpreparing/disabling
+> unused clocks on boot) will be done with clock controller in runtime resumend
+> state.
+>
+> When one wants to register clock controller, which make use of this feature, he
+> has to:
+> 1. Provide a struct device to the core when registering the provider and set
+>    CLK_RUNTIME_PM flags for its clocks.
+> 2. It needs to enable runtime PM for that device.
+> 3. It needs to make sure the runtime PM status of the controller device reflects
+>    the HW state.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/clk.c            | 107 +++++++++++++++++++++++++++++++++++++++----
+>  include/linux/clk-provider.h |   1 +
+>  2 files changed, 98 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 820a939fb6bb..096a199b8e46 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/of.h>
+>  #include <linux/device.h>
+>  #include <linux/init.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/sched.h>
+>  #include <linux/clkdev.h>
+>
+> @@ -46,6 +47,7 @@ struct clk_core {
+>         const struct clk_ops    *ops;
+>         struct clk_hw           *hw;
+>         struct module           *owner;
+> +       struct device           *dev;
+>         struct clk_core         *parent;
+>         const char              **parent_names;
+>         struct clk_core         **parents;
+> @@ -87,6 +89,26 @@ struct clk {
+>         struct hlist_node clks_node;
+>  };
+>
+> +/***           runtime pm          ***/
+> +static int clk_pm_runtime_get(struct clk_core *core)
+> +{
+> +       int ret = 0;
 > +
->  	sdc->pchans =3D devm_kcalloc(&pdev->dev, sdc->cfg->nr_max_channels,
->  				   sizeof(struct sun6i_pchan), GFP_KERNEL);
->  	if (!sdc->pchans)
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index cc535a478bae..f7bbec24bb58 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -673,6 +673,8 @@ struct dma_filter {
->   * 	each type of direction, the dma controller should fill (1 <<
->   * 	<TYPE>) and same should be checked by controller as well
->   * @max_burst: max burst capability per-transfer
-> + * @dst_bursts: bitfield of the available burst sizes for the destination
-> + * @src_bursts: bitfield of the available burst sizes for the source
-
-You did not define dst_bursts nor src_bursts.
-
->   * @residue_granularity: granularity of the transfer residue reported
->   *	by tx_status
->   * @device_alloc_chan_resources: allocate resources and return the
-> @@ -800,6 +802,14 @@ struct dma_device {
->  static inline int dmaengine_slave_config(struct dma_chan *chan,
->  					  struct dma_slave_config *config)
+> +       if (!core->dev)
+> +               return 0;
+> +
+> +       ret = pm_runtime_get_sync(core->dev);
+> +       return ret < 0 ? ret : 0;
+> +}
+> +
+> +static void clk_pm_runtime_put(struct clk_core *core)
+> +{
+> +       if (!core->dev)
+> +               return;
+> +
+> +       pm_runtime_put(core->dev);
+> +}
+> +
+>  /***           locking             ***/
+>  static void clk_prepare_lock(void)
 >  {
-> +	if (config->src_maxburst && config->device->src_bursts &&
-> +	    !(BIT(config->src_maxburst) & config->device->src_bursts))
-
-The maxburst may be as big as 4Kibytes, then, I am not sure that this
-code will work!
-
-> +		return -EINVAL;
+> @@ -150,6 +172,8 @@ static void clk_enable_unlock(unsigned long flags)
+>
+>  static bool clk_core_is_prepared(struct clk_core *core)
+>  {
+> +       bool status;
 > +
-> +	if (config->dst_maxburst && config->device->dst_bursts &&
-> +	    !(BIT(config->dst_maxburst) & config->device->dst_bursts))
-> +		return -EINVAL;
+>         /*
+>          * .is_prepared is optional for clocks that can prepare
+>          * fall back to software usage counter if it is missing
+> @@ -157,11 +181,17 @@ static bool clk_core_is_prepared(struct clk_core *core)
+>         if (!core->ops->is_prepared)
+>                 return core->prepare_count;
+>
+> -       return core->ops->is_prepared(core->hw);
+> +       clk_pm_runtime_get(core);
+
+I guess you should assign status to the return code, and check it.
+
+> +       status = core->ops->is_prepared(core->hw);
+> +       clk_pm_runtime_put(core);
 > +
->  	if (chan->device->device_config)
->  		return chan->device->device_config(chan, config);
-> -------8<------------=20
+> +       return status;
+>  }
+>
+>  static bool clk_core_is_enabled(struct clk_core *core)
+>  {
+> +       bool status;
+> +
+>         /*
+>          * .is_enabled is only mandatory for clocks that gate
+>          * fall back to software usage counter if .is_enabled is missing
+> @@ -169,7 +199,29 @@ static bool clk_core_is_enabled(struct clk_core *core)
+>         if (!core->ops->is_enabled)
+>                 return core->enable_count;
+>
+> -       return core->ops->is_enabled(core->hw);
+> +       /*
+> +        * Check if runtime pm is enabled before calling .is_enabled callback,
+> +        * if not assume that clock is disabled, because we might be called
+> +        * from atomic context, from which pm_runtime_get() is not allowed.
+> +        * This function is called mainly from clk_disable_unused_subtree,
+> +        * which ensures proper runtime pm activation of controller before
+> +        * taking enable spinlock, but the below check is needed if one tries
+> +        * to call it from other place.
+> +        */
+> +       if (core->dev) {
+> +               pm_runtime_get_noresume(core->dev);
+> +               if (pm_runtime_suspended(core->dev)) {
 
-Yes, I know that the burst size is always a power of 2.
-The best way to check it would be to change the {src,dts}_maxburst to a
-bitmap of the possible bursts as 0x0d for 1,4 and 8 bytes. But this
-asks for a lot of changes...
+I think it's wrong to use pm_runtime_suspended().
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+What you should be checking, is whether the device is RPM_ACTIVE or if
+runtime PM isn't enabled for device.
+
+In other words, you should use pm_runtime_active() to find out whether
+it's okay to invoke the ->is_enabled() ops or not.
+
+Accordingly, I think the upper comment you added then needs to be a
+rephrased a bit to reflect this.
+
+> +                       status = false;
+> +                       goto done;
+> +               }
+> +       }
+> +
+> +       status = core->ops->is_enabled(core->hw);
+> +done:
+> +       if (core->dev)
+> +               pm_runtime_put(core->dev);
+> +
+> +       return status;
+>  }
+>
+>  /***    helper functions   ***/
+> @@ -489,6 +541,8 @@ static void clk_core_unprepare(struct clk_core *core)
+>         if (core->ops->unprepare)
+>                 core->ops->unprepare(core->hw);
+>
+> +       clk_pm_runtime_put(core);
+> +
+>         trace_clk_unprepare_complete(core);
+>         clk_core_unprepare(core->parent);
+>  }
+> @@ -530,10 +584,14 @@ static int clk_core_prepare(struct clk_core *core)
+>                 return 0;
+>
+>         if (core->prepare_count == 0) {
+> -               ret = clk_core_prepare(core->parent);
+> +               ret = clk_pm_runtime_get(core);
+>                 if (ret)
+>                         return ret;
+>
+> +               ret = clk_core_prepare(core->parent);
+> +               if (ret)
+> +                       goto runtime_put;
+> +
+>                 trace_clk_prepare(core);
+>
+>                 if (core->ops->prepare)
+> @@ -541,15 +599,18 @@ static int clk_core_prepare(struct clk_core *core)
+>
+>                 trace_clk_prepare_complete(core);
+>
+> -               if (ret) {
+> -                       clk_core_unprepare(core->parent);
+> -                       return ret;
+> -               }
+> +               if (ret)
+> +                       goto unprepare;
+>         }
+>
+>         core->prepare_count++;
+>
+>         return 0;
+> +unprepare:
+> +       clk_core_unprepare(core->parent);
+> +runtime_put:
+> +       clk_pm_runtime_put(core);
+> +       return ret;
+>  }
+>
+>  static int clk_core_prepare_lock(struct clk_core *core)
+> @@ -745,6 +806,9 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
+>         if (core->flags & CLK_IGNORE_UNUSED)
+>                 return;
+>
+> +       if (clk_pm_runtime_get(core) != 0)
+
+You may simplify this:
+if (clk_pm_runtime_get(core))
+
+> +               return;
+> +
+>         if (clk_core_is_prepared(core)) {
+>                 trace_clk_unprepare(core);
+>                 if (core->ops->unprepare_unused)
+> @@ -753,6 +817,8 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
+>                         core->ops->unprepare(core->hw);
+>                 trace_clk_unprepare_complete(core);
+>         }
+> +
+> +       clk_pm_runtime_put(core);
+>  }
+>
+>  static void clk_disable_unused_subtree(struct clk_core *core)
+> @@ -768,6 +834,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_prepare_enable(core->parent);
+>
+> +       if (clk_pm_runtime_get(core) != 0)
+
+Is there any reason to why you haven't moved this further down in this
+function, like just before calling clk_core_is_enabled()?
+
+You may also simplify this:
+if (clk_pm_runtime_get(core))
+
+> +               return;
+> +
+
+You need to restore the call made to clk_core_prepare_enable()
+earlier, so please update the error handling to cope with this.
+
+>         flags = clk_enable_lock();
+>
+>         if (core->enable_count)
+> @@ -794,6 +863,8 @@ unlock_out:
+>         clk_enable_unlock(flags);
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_disable_unprepare(core->parent);
+> +
+> +       clk_pm_runtime_put(core);
+>  }
+>
+>  static bool clk_ignore_unused;
+> @@ -1563,6 +1634,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>  {
+>         struct clk_core *top, *fail_clk;
+>         unsigned long rate = req_rate;
+> +       int ret = 0;
+>
+>         if (!core)
+>                 return 0;
+> @@ -1579,21 +1651,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>         if (!top)
+>                 return -EINVAL;
+>
+> +       ret = clk_pm_runtime_get(core);
+> +       if (ret)
+> +               return ret;
+> +
+>         /* notify that we are about to change rates */
+>         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+>         if (fail_clk) {
+>                 pr_debug("%s: failed to set %s rate\n", __func__,
+>                                 fail_clk->name);
+>                 clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
+> -               return -EBUSY;
+> +               ret = -EBUSY;
+> +               goto err;
+>         }
+>
+>         /* change the rates */
+>         clk_change_rate(top);
+>
+>         core->req_rate = req_rate;
+> +err:
+> +       clk_pm_runtime_put(core);
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  /**
+> @@ -1824,12 +1903,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+>                 p_rate = parent->rate;
+>         }
+>
+> +       ret = clk_pm_runtime_get(core);
+> +       if (ret)
+> +               goto out;
+> +
+>         /* propagate PRE_RATE_CHANGE notifications */
+>         ret = __clk_speculate_rates(core, p_rate);
+>
+>         /* abort if a driver objects */
+>         if (ret & NOTIFY_STOP_MASK)
+> -               goto out;
+> +               goto runtime_put;
+>
+>         /* do the re-parent */
+>         ret = __clk_set_parent(core, parent, p_index);
+> @@ -1842,6 +1925,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+>                 __clk_recalc_accuracies(core);
+>         }
+>
+> +runtime_put:
+> +       clk_pm_runtime_put(core);
+>  out:
+>         clk_prepare_unlock();
+>
+> @@ -2546,6 +2631,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>                 goto fail_name;
+>         }
+>         core->ops = hw->init->ops;
+> +       if (dev && (hw->init->flags & CLK_RUNTIME_PM))
+> +               core->dev = dev;
+
+I guess you need this to play safe, although I am really wondering if
+we should try without.
+
+Not that many clocks are currently being registered with a valid
+struct device pointer. For the other cases why not try to use runtime
+PM as per default?
+
+Moreover we anyway rely on the clock provider to enable runtime PM for
+the clock device, and when that isn't the case the runtime PM
+deployment in the core should still be safe, right!?
+
+>         if (dev && dev->driver)
+>                 core->owner = dev->driver->owner;
+>         core->hw = hw;
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index a39c0c530778..8a131eb71fdf 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -35,6 +35,7 @@
+>  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
+>  /* parents need enable during gate/ungate, set rate and re-parent */
+>  #define CLK_OPS_PARENT_ENABLE  BIT(12)
+> +#define CLK_RUNTIME_PM         BIT(13)
+>
+>  struct clk;
+>  struct clk_hw;
+> --
+> 1.9.1
+>
+
+Kind regards
+Uffe
