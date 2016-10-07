@@ -1,63 +1,74 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rtc-linux@googlegroups.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/4] rtc: Enable compile testing for Maxim and Samsung drivers
-Date: Sun,  2 Oct 2016 22:58:16 +0200
-Message-Id: <1475441897-15730-4-git-send-email-krzk@kernel.org>
-In-Reply-To: <1475441897-15730-1-git-send-email-krzk@kernel.org>
-References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v2 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+Date: Fri, 07 Oct 2016 23:46:47 +0300
+Message-ID: <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
+In-Reply-To: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
+References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-max8907, max77686 and s5m RTC drivers can be compile tested to increase
-build coverage.  The s5m-rtc uses REGMAP_IRQ so add this as explicit
-dependency.
+Add macros usable by the device tree sources to reference the R8A7743 CPG
+clocks  by index.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/rtc/Kconfig | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Changes in version 2:
+- reduced the macro value indentation.
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index e859d148aba9..988053664125 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -303,7 +303,7 @@ config RTC_DRV_MAX6900
- 
- config RTC_DRV_MAX8907
- 	tristate "Maxim MAX8907"
--	depends on MFD_MAX8907
-+	depends on MFD_MAX8907 || COMPILE_TEST
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of Maxim MAX8907 PMIC.
-@@ -343,7 +343,7 @@ config RTC_DRV_MAX8997
- 
- config RTC_DRV_MAX77686
- 	tristate "Maxim MAX77686"
--	depends on MFD_MAX77686 || MFD_MAX77620
-+	depends on MFD_MAX77686 || MFD_MAX77620 || COMPILE_TEST
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of Maxim MAX77686/MAX77620/MAX77802 PMIC.
-@@ -602,7 +602,8 @@ config RTC_DRV_RV8803
- 
- config RTC_DRV_S5M
- 	tristate "Samsung S2M/S5M series"
--	depends on MFD_SEC_CORE
-+	depends on MFD_SEC_CORE || COMPILE_TEST
-+	select REGMAP_IRQ
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of Samsung S2MPS14 and S5M PMIC series.
--- 
-2.7.4
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+Index: renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7743 CPG Core Clocks */
++#define R8A7743_CLK_Z		0
++#define R8A7743_CLK_ZG		1
++#define R8A7743_CLK_ZTR		2
++#define R8A7743_CLK_ZTRD2	3
++#define R8A7743_CLK_ZT		4
++#define R8A7743_CLK_ZX		5
++#define R8A7743_CLK_ZS		6
++#define R8A7743_CLK_HP		7
++#define R8A7743_CLK_B		8
++#define R8A7743_CLK_LB		9
++#define R8A7743_CLK_P		10
++#define R8A7743_CLK_CL		11
++#define R8A7743_CLK_M2		12
++#define R8A7743_CLK_ZB3		13
++#define R8A7743_CLK_ZB3D2	14
++#define R8A7743_CLK_DDR		15
++#define R8A7743_CLK_SDH		16
++#define R8A7743_CLK_SD0		17
++#define R8A7743_CLK_SD2		18
++#define R8A7743_CLK_SD3		19
++#define R8A7743_CLK_MMC0	20
++#define R8A7743_CLK_MP		21
++#define R8A7743_CLK_QSPI	22
++#define R8A7743_CLK_CP		23
++#define R8A7743_CLK_RCAN	24
++#define R8A7743_CLK_R		25
++#define R8A7743_CLK_OSC		26
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
