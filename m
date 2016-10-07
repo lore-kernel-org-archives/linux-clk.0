@@ -1,83 +1,70 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <ssantosh@kernel.org>
-CC: <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-Date: Fri, 21 Oct 2016 15:45:59 +0300
-Message-ID: <1477053961-27128-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <57F6EE21.2060903@samsung.com>
+Date: Fri, 07 Oct 2016 09:36:49 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ linux-kernel@vger.kernel.org
+Cc: Markus Reichl <m.reichl@fivetechno.de>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: max77686: fix number of clocks setup for clk_hw based
+ registration
+References: 
+ <CGME20161006150016epcas1p21acf81d53302f6917c38b3a451fcbe07@epcas1p2.samsung.com>
+ <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
+In-reply-to: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a clock implementation, TI SCI clock, that will hook to the common
-clock framework, and allow each clock to be controlled via TI SCI
-protocol.
+Hi Javier,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- .../devicetree/bindings/clock/ti,sci-clk.txt       | 37 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+On 2016년 10월 06일 23:59, Javier Martinez Canillas wrote:
+> The commit 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and
+> registration APIs") converted the driver to use the new provider API to
+> register clocks using clk_hw.
+> 
+> But unfortunately, in the conversion it missed to set the num_clks value
+> which lead to the following error when trying to register a clk provider:
+> 
+> [    1.963782] of_clk_max77686_get: invalid index 0
+> [    1.967460] ERROR: could not get clock /rtc@10070000:rtc_src(1)
+> [    1.973638] s3c-rtc 10070000.rtc: failed to find rtc source clock
+> 
+> Fix it by correctly set the max77686_clk_driver_data num_clks member.
+> 
+> Fixes: 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and registration APIs")
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> 
+> ---
+> 
+>  drivers/clk/clk-max77686.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> index b637f5979023..eb953d3b0b69 100644
+> --- a/drivers/clk/clk-max77686.c
+> +++ b/drivers/clk/clk-max77686.c
+> @@ -216,6 +216,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> +	drv_data->num_clks = num_clks;
+>  	drv_data->max_clk_data = devm_kcalloc(dev, num_clks,
+>  					      sizeof(*drv_data->max_clk_data),
+>  					      GFP_KERNEL);
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-new file mode 100644
-index 0000000..bfc3ca4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-@@ -0,0 +1,37 @@
-+Texas Instruments TI-SCI Clocks
-+===============================
-+
-+All clocks on Texas Instruments' SoCs that contain a System Controller,
-+are only controlled by this entity. Communication between a host processor
-+running an OS and the System Controller happens through a protocol known
-+as TI-SCI[1]. This clock implementation plugs into the common clock
-+framework and makes use of the TI-SCI protocol on clock API requests.
-+
-+[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-+
-+Required properties:
-+-------------------
-+- compatible: Must be "ti,k2g-sci-clk"
-+- #clock-cells: Shall be 2.
-+  In clock consumers, this cell represents the device ID and clock ID
-+  exposed by the PM firmware. The assignments can be found in the header
-+  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
-+  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
-+  is the SoC involved, for example 'k2g'.
-+
-+Examples:
-+--------
-+
-+pmmc: pmmc {
-+	compatible = "ti,k2g-sci";
-+
-+	k2g_clks: k2g_clks {
-+		compatible = "ti,k2g-sci-clk";
-+		#clock-cells = <2>;
-+	};
-+};
-+
-+uart0: serial@2530c00 {
-+	compatible = "ns16550a";
-+	clocks = <&k2g_clks K2G_DEV_UART0 0>;
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3eaac5ed..3ee7c7a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11895,6 +11895,7 @@ F:	include/linux/soc/ti/ti_sci_protocol.h
- F:	Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
- F:	include/dt-bindings/genpd/k2g.h
- F:	drivers/soc/ti/ti_sci_pm_domains.c
-+F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
- 
- THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
+Looks good to me.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-1.9.1
+Best Regards,
+Chanwoo Choi
