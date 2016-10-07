@@ -1,78 +1,103 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Tue, 4 Oct 2016 14:12:21 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: =?UTF-8?B?TXlsw6huZQ==?= Josserand
- <mylene.josserand@free-electrons.com>, vinod.koul@intel.com,
- maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com,
- sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
- perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org, mark.rutland@arm.com,
- robh+dt@kernel.org, devicetree@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
-Message-ID: <20161004141221.55327f1b@free-electrons.com>
-In-Reply-To: <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-	<3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
-	<20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: Sylvain Lemieux <slemieux@tycoint.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: lpc32xx: add a quirk for PWM and MS clock dividers
+Date: Fri,  7 Oct 2016 04:16:55 +0300
+Message-Id: <1475803015-4067-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+In common clock framework CLK_DIVIDER_ONE_BASED or'ed with
+CLK_DIVIDER_ALLOW_ZERO flags indicates that
+1) a divider clock may be set to zero value,
+2) divider's zero value is interpreted as a non-divided clock.
 
-On Tue, 4 Oct 2016 12:40:11 +0200, Jean-Francois Moine wrote:
+On the LPC32xx platform clock dividers of PWM and memory card clocks
+comply with the first condition, but zero value means a gated clock,
+thus it may happen that the divider value is not updated when
+the clock is enabled and the clock remains gated.
 
-> > Add the case of a burst of 4 which is handled by the SoC.
-> >=20
-> > Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.c=
-om>
-> > ---
-> >  drivers/dma/sun6i-dma.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-> > index 8346199..0485204 100644
-> > --- a/drivers/dma/sun6i-dma.c
-> > +++ b/drivers/dma/sun6i-dma.c
-> > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
-> >  	switch (maxburst) {
-> >  	case 1:
-> >  		return 0;
-> > +	case 4:
-> > +		return 1;
-> >  	case 8:
-> >  		return 2;
-> >  	default:
-> > --=20
-> > 2.9.3 =20
->=20
-> This patch has already been rejected by Maxime in the threads
-> 	http://www.spinics.net/lists/dmaengine/msg08610.html
-> and
-> 	http://www.spinics.net/lists/dmaengine/msg08719.html
->=20
-> I hope you will find the way he wants for this maxburst to be added.
+The change adds one-shot quirks, which check for zero value of divider
+on initialization and set it to a non-zero value, therefore in runtime
+a gate clock will work as expected.
 
-I was about to reply to Mylene's e-mail, suggesting that she should add
-a comment in the code (and maybe in the commit log) to explain why this
-addition is needed, and also that even though the schematics say that
-value "1" (max burst size of 4 bytes) is reserved, it is in fact
-incorrect. The Allwinner BSP code is really using this value, and it's
-the value that makes audio work, so we believe the datasheet is simply
-incorrect.
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 32 ++++++++++++++++++++++++++++----
+ 1 file changed, 28 insertions(+), 4 deletions(-)
 
-We already discussed it with Maxime, so I believe he should agree this
-time. But I would suggest to have such details explained in the commit
-log and in a comment in the code.
-
-Best regards,
-
-Thomas
---=20
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 34c9735..5b98ff9 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -1282,13 +1282,13 @@ static struct clk_hw_proto clk_hw_proto[LPC32XX_CLK_HW_MAX] = {
+ 
+ 	LPC32XX_DEFINE_MUX(PWM1_MUX, PWMCLK_CTRL, 1, 0x1, NULL, 0),
+ 	LPC32XX_DEFINE_DIV(PWM1_DIV, PWMCLK_CTRL, 4, 4, NULL,
+-			   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO),
++			   CLK_DIVIDER_ONE_BASED),
+ 	LPC32XX_DEFINE_GATE(PWM1_GATE, PWMCLK_CTRL, 0, 0),
+ 	LPC32XX_DEFINE_COMPOSITE(PWM1, PWM1_MUX, PWM1_DIV, PWM1_GATE),
+ 
+ 	LPC32XX_DEFINE_MUX(PWM2_MUX, PWMCLK_CTRL, 3, 0x1, NULL, 0),
+ 	LPC32XX_DEFINE_DIV(PWM2_DIV, PWMCLK_CTRL, 8, 4, NULL,
+-			   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO),
++			   CLK_DIVIDER_ONE_BASED),
+ 	LPC32XX_DEFINE_GATE(PWM2_GATE, PWMCLK_CTRL, 2, 0),
+ 	LPC32XX_DEFINE_COMPOSITE(PWM2, PWM2_MUX, PWM2_DIV, PWM2_GATE),
+ 
+@@ -1335,8 +1335,7 @@ static struct clk_hw_proto clk_hw_proto[LPC32XX_CLK_HW_MAX] = {
+ 	LPC32XX_DEFINE_GATE(USB_DIV_GATE, USB_CTRL, 17, 0),
+ 	LPC32XX_DEFINE_COMPOSITE(USB_DIV, _NULL, USB_DIV_DIV, USB_DIV_GATE),
+ 
+-	LPC32XX_DEFINE_DIV(SD_DIV, MS_CTRL, 0, 4, NULL,
+-			   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO),
++	LPC32XX_DEFINE_DIV(SD_DIV, MS_CTRL, 0, 4, NULL, CLK_DIVIDER_ONE_BASED),
+ 	LPC32XX_DEFINE_CLK(SD_GATE, MS_CTRL, BIT(5) | BIT(9), BIT(5) | BIT(9),
+ 			   0x0, BIT(5) | BIT(9), 0x0, 0x0, clk_mask_ops),
+ 	LPC32XX_DEFINE_COMPOSITE(SD, _NULL, SD_DIV, SD_GATE),
+@@ -1478,6 +1477,20 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
+ 	return clk;
+ }
+ 
++static void __init lpc32xx_clk_div_quirk(u32 reg, u32 div_mask, u32 gate)
++{
++	u32 val;
++
++	regmap_read(clk_regmap, reg, &val);
++
++	if (!(val & div_mask)) {
++		val &= ~gate;
++		val |= BIT(__ffs(div_mask));
++	}
++
++	regmap_update_bits(clk_regmap, reg, gate | div_mask, val);
++}
++
+ static void __init lpc32xx_clk_init(struct device_node *np)
+ {
+ 	unsigned int i;
+@@ -1517,6 +1530,17 @@ static void __init lpc32xx_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	/*
++	 * Divider part of PWM and MS clocks requires a quirk to avoid
++	 * a misinterpretation of formally valid zero value in register
++	 * bitfield, which indicates another clock gate. Instead of
++	 * adding complexity to a gate clock ensure that zero value in
++	 * divider clock is never met in runtime.
++	 */
++	lpc32xx_clk_div_quirk(LPC32XX_CLKPWR_PWMCLK_CTRL, 0xf0, BIT(0));
++	lpc32xx_clk_div_quirk(LPC32XX_CLKPWR_PWMCLK_CTRL, 0xf00, BIT(2));
++	lpc32xx_clk_div_quirk(LPC32XX_CLKPWR_MS_CTRL, 0xf, BIT(5) | BIT(9));
++
+ 	for (i = 1; i < LPC32XX_CLK_MAX; i++) {
+ 		clk[i] = lpc32xx_clk_register(i);
+ 		if (IS_ERR(clk[i])) {
+-- 
+2.8.1
