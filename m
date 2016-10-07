@@ -1,98 +1,30 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2] clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization
- method for CLKOUT
-Date: Wed, 26 Oct 2016 08:12:20 +0200
-Message-id: <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
-References: 
- <CGME20161026061227eucas1p20fb865eafd802044ed79ce336fa90eab@eucas1p2.samsung.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 2/3] ARM: shmobile: r8a7743: add CPG clock index macros
+To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, devicetree@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+ <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
+Cc: linux-clk@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8b978817-017a-bd68-b4af-1dcbdd6a49b6@cogentembedded.com>
+Date: Fri, 7 Oct 2016 22:06:10 +0300
+MIME-Version: 1.0
+In-Reply-To: <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
-controller, and these functionalities are supported by different drivers
-that matches the same compatible strings.
+Hello.
 
-Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
-clocks") the OF core flags clock controllers registered with the
-CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
-compatible string will not be registered.
+On 10/05/2016 11:54 PM, Sergei Shtylyov wrote:
 
-This prevents the PMU platform device to be created, so the Exynos PMU
-driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> Add macros usable by the device tree sources to reference the R8A7743 CPG
+> clocks  by index.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Fix this by changing CLKOUT driver initialization method to
-CLK_OF_DECLARE_DRIVER(), which doesn't clear the OF_POPULATED flag, so
-later a platform device is created and the Exynos PMU platform driver
-can be be probed properly.
+    Probably makes ense to merge this patch to both the clk and renesas trees 
+in order to satisfy the dependencies both ways... what do you think, Simon?
 
-Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-Changelog:
-v2:
-- switched to CLK_OF_DECLARE_DRIVER instead of calling
-  of_node_clear_flag(node, OF_POPULATED) as suggested by Stephen Boyd
-
-v1: https://www.spinics.net/lists/linux-clk/msg12833.html
-- initial version
----
- drivers/clk/samsung/clk-exynos-clkout.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 96fab6cfb202..6c6afb87b4ce 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -132,28 +132,34 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	pr_err("%s: failed to register clkout clock\n", __func__);
- }
- 
-+/*
-+ * We use CLK_OF_DECLARE_DRIVER initialization method to avoid setting
-+ * the OF_POPULATED flag on the pmu device tree node, so later the
-+ * Exynos PMU platform device can be properly probed with PMU driver.
-+ */
-+
- static void __init exynos4_clkout_init(struct device_node *node)
- {
- 	exynos_clkout_init(node, EXYNOS4_CLKOUT_MUX_MASK);
- }
--CLK_OF_DECLARE(exynos4210_clkout, "samsung,exynos4210-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos4210_clkout, "samsung,exynos4210-pmu",
- 		exynos4_clkout_init);
--CLK_OF_DECLARE(exynos4212_clkout, "samsung,exynos4212-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos4212_clkout, "samsung,exynos4212-pmu",
- 		exynos4_clkout_init);
--CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4412-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos4412_clkout, "samsung,exynos4412-pmu",
- 		exynos4_clkout_init);
--CLK_OF_DECLARE(exynos3250_clkout, "samsung,exynos3250-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos3250_clkout, "samsung,exynos3250-pmu",
- 		exynos4_clkout_init);
- 
- static void __init exynos5_clkout_init(struct device_node *node)
- {
- 	exynos_clkout_init(node, EXYNOS5_CLKOUT_MUX_MASK);
- }
--CLK_OF_DECLARE(exynos5250_clkout, "samsung,exynos5250-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos5250_clkout, "samsung,exynos5250-pmu",
- 		exynos5_clkout_init);
--CLK_OF_DECLARE(exynos5410_clkout, "samsung,exynos5410-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos5410_clkout, "samsung,exynos5410-pmu",
- 		exynos5_clkout_init);
--CLK_OF_DECLARE(exynos5420_clkout, "samsung,exynos5420-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos5420_clkout, "samsung,exynos5420-pmu",
- 		exynos5_clkout_init);
--CLK_OF_DECLARE(exynos5433_clkout, "samsung,exynos5433-pmu",
-+CLK_OF_DECLARE_DRIVER(exynos5433_clkout, "samsung,exynos5433-pmu",
- 		exynos5_clkout_init);
--- 
-1.9.1
+MBR, Sergei
