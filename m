@@ -1,52 +1,35 @@
-Return-Path: <nm@ti.com>
-Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-To: Tero Kristo <t-kristo@ti.com>, Rob Herring <robh@kernel.org>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-2-git-send-email-t-kristo@ti.com>
- <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
- <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
-CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-From: Nishanth Menon <nm@ti.com>
-Message-ID: <bce2ef84-491b-070a-dda4-77729567341c@ti.com>
-Date: Mon, 31 Oct 2016 15:34:04 -0500
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 0/3] Renesas R8A7743 CPG/MSSR clock support
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7c5715a6-0a29-1055-7b6a-6fe13e4ee96b@cogentembedded.com>
+Date: Fri, 7 Oct 2016 23:35:43 +0300
 MIME-Version: 1.0
-In-Reply-To: <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/31/2016 07:50 AM, Tero Kristo wrote:
-[...]
+Hello.
 
->>> +pmmc: pmmc {
->>> +	compatible = "ti,k2g-sci";
->>> +
->>> +	k2g_clks: k2g_clks {
->>
->> Use "clocks" for node name instead.
->>
->>> +		compatible = "ti,k2g-sci-clk";
->>
->> I'm starting to think all these child nodes for SCI are pointless. Is
->> there any reason why the parent node can't be the clock provider (along
->> with all the other providers it acks as)?
+On 10/05/2016 11:50 PM, Sergei Shtylyov wrote:
+
+>    Here's the set of 3 patches against the 'clk-next' branch of CLK group's
+> 'linux.git' repo. The R8A7743 SoC support will be posted separately later --
+> this series depend on the Kconfig variable introduced there, however, the DTs
+> in that series will depend on the patch #2 of this series...
 >
-> I believe the only reason to keep them separate is to have kernel side
-> of things modular. If we have separate nodes, the drivers can be probed
-> separately.
->
-> If not, we need to build one huge blob with all the features in it, so
-> the main driver can probe everything in one go, with annoying
-> back-and-forth callbacks in place (assuming we still want to keep stuff
-> somehow modular.)
+> [1/3] clk: renesas: cpg-mssr: add common R-Car Gen2 support
 
-Documentation/devicetree/bindings/arm/arm,scpi.txt follows the same 
-solution as well, right? There is indeed additional nodes coming in - 
-such as reset, pd etc.. I cant see why it is different for sci clk.. 
-not to mention the driver mess it results in.
+    This will probably have to be fixed up to handle the absence of the PLL0CR 
+register oin the low end SoC (like RZ/G1E)...
 
+> [2/3] ARM: shmobile: r8a7743: add CPG clock index macros
+> [3/3] clk: renesas: cpg-mssr: add R8A7743 support
 
--- 
-Regards,
-Nishanth Menon
+    I'm splitting the above 2 patches into a new series and will repost it RSN.
+
+MBR, Sergei
