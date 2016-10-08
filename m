@@ -1,79 +1,37 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
- carlo@caione.org, khilman@baylibre.com, devicetree@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1471870177-10609-1-git-send-email-narmstrong@baylibre.com>
-Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1471870177-10609-1-git-send-email-narmstrong@baylibre.com>
-Message-ID: <147285925618.69079.14195001640916253279@resonance>
-Subject: Re: [PATCH] clk: meson-gxbb: Export PWM related clocks for DT
-Date: Fri, 02 Sep 2016 16:34:16 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from spo001.leaseweb.nl ([85.17.2.162]:40228 "EHLO
+        spo001.leaseweb.nl" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751086AbcJHO3Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Oct 2016 10:29:16 -0400
+Date: Sat, 8 Oct 2016 16:13:24 +0200
+From: Wim Van Sebroeck <wim@iguana.be>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] watchdog: txx9wdt: Add missing clock (un)prepare calls for CCF
+Message-ID: <20161008141324.GH23290@spo001.leaseweb.nl>
+References: <1473584398-12942-1-git-send-email-geert@linux-m68k.org> <1473584398-12942-2-git-send-email-geert@linux-m68k.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473584398-12942-2-git-send-email-geert@linux-m68k.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Neil Armstrong (2016-08-22 05:49:37)
-> Add the PWM related clocks in order to be referenced as PWM source
-> clocks.
-> =
+Hi Geert,
 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> While the custom minimal TXx9 clock implementation doesn't need or use
+> clock (un)prepare calls (they are dummies if !CONFIG_HAVE_CLK_PREPARE),
+> they are mandatory when using the Common Clock Framework.
+> 
+> Hence add them, to prepare for the advent of CCF.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Applied.
+This patch was added to linux-watchdog-next almost 2 weeks ago.
 
-Regards,
-Mike
+Kind regards,
+Wim.
 
-> ---
->  drivers/clk/meson/gxbb.h              | 6 +++---
->  include/dt-bindings/clock/gxbb-clkc.h | 3 +++
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> =
-
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index a2adf34..523b494 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -170,11 +170,11 @@
->   */
->  #define CLKID_SYS_PLL            0
->  /* CLKID_CPUCLK */
-> -#define CLKID_HDMI_PLL           2
-> +/* CLKID_HDMI_PLL */
->  #define CLKID_FIXED_PLL                  3
->  #define CLKID_FCLK_DIV2                  4
-> -#define CLKID_FCLK_DIV3                  5
-> -#define CLKID_FCLK_DIV4                  6
-> +/* CLKID_FCLK_DIV3 */
-> +/* CLKID_FCLK_DIV4 */
->  #define CLKID_FCLK_DIV5                  7
->  #define CLKID_FCLK_DIV7                  8
->  #define CLKID_GP0_PLL            9
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/=
-clock/gxbb-clkc.h
-> index f889d80..a5897f3 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -6,6 +6,9 @@
->  #define __GXBB_CLKC_H
->  =
-
->  #define CLKID_CPUCLK           1
-> +#define CLKID_HDMI_PLL         2
-> +#define CLKID_FCLK_DIV3                5
-> +#define CLKID_FCLK_DIV4                6
->  #define CLKID_CLK81            12
->  #define CLKID_ETH              36
->  =
-
-> -- =
-
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
