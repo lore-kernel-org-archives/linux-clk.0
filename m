@@ -1,161 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0053.outbound.protection.outlook.com ([104.47.38.53]:11218
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756157AbcJ1F7N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Oct 2016 01:59:13 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v14, 8/8] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-Date: Fri, 28 Oct 2016 13:45:21 +0800
-Message-ID: <1477633521-7391-9-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <shawn.guo@linaro.org>
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and mediactrl clock init
+Date: Sat,  8 Oct 2016 21:38:12 +0800
+Message-Id: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
-Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
-This patch adds the GUTS driver support for eSDHC driver to match SoC.
-And fix host version to avoid that incorrect version numbers break down
-the ADMA data transfer.
+The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
+also reset controller.  It worked fine that single sysctrl/mediactrl
+device node in DT can be used to initialize clock driver and populate
+platform device for reset controller.  But it stops working after
+commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+gets merged.  The commit sets flag OF_POPULATED during clock
+initialization to skip the platform device populating for the same
+device node.  On hi6220, it effectively makes hi6220-sysctrl reset
+driver not probe any more.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Scott Wood <oss@buserror.net>
----
-Changes for v2:
-	- Got SVR through iomap instead of dts
-Changes for v3:
-	- Managed GUTS through syscon instead of iomap in eSDHC driver
-Changes for v4:
-	- Got SVR by GUTS driver instead of SYSCON
-Changes for v5:
-	- Changed to get SVR through API fsl_guts_get_svr()
-	- Combined patch 4, patch 5 and patch 6 into one
-Changes for v6:
-	- Added 'Acked-by: Ulf Hansson'
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- Changed to use soc_device_match
-Changes for v12:
-	- Matched soc through .family field instead of .soc_id
-Changes for v13:
-	- None
-Changes for v14:
-	- None
----
- drivers/mmc/host/Kconfig          |  1 +
- drivers/mmc/host/sdhci-of-esdhc.c | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+The patch changes hi6220 sysctrl and mediactrl clock init macro from
+CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
+the same hardware block can continue working.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 5274f50..a1135a9 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -144,6 +144,7 @@ config MMC_SDHCI_OF_ESDHC
- 	depends on MMC_SDHCI_PLTFM
- 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select FSL_GUTS
- 	help
- 	  This selects the Freescale eSDHC controller support.
- 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index fb71c86..57bdb9e 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -18,6 +18,7 @@
- #include <linux/of.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-+#include <linux/sys_soc.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
-@@ -28,6 +29,7 @@
- struct sdhci_esdhc {
- 	u8 vendor_ver;
- 	u8 spec_ver;
-+	bool quirk_incorrect_hostver;
- };
- 
- /**
-@@ -73,6 +75,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
- static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 				     int spec_reg, u32 value)
- {
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
- 	u16 ret;
- 	int shift = (spec_reg & 0x2) * 8;
- 
-@@ -80,6 +84,12 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
- 		ret = value & 0xffff;
- 	else
- 		ret = (value >> shift) & 0xffff;
-+	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
-+	 * vendor version and spec version information.
-+	 */
-+	if ((spec_reg == SDHCI_HOST_VERSION) &&
-+	    (esdhc->quirk_incorrect_hostver))
-+		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
- 	return ret;
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+It fixes an issue that is seen on linux-next, i.e. the new added
+hi6220-sysctrl reset driver doesn't probe at all, and consequently the
+mmc driver fails to register.
+
+Shawn
+
+ drivers/clk/hisilicon/clk-hi6220.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+index fe364e63f8de..c0e8e1f196aa 100644
+--- a/drivers/clk/hisilicon/clk-hi6220.c
++++ b/drivers/clk/hisilicon/clk-hi6220.c
+@@ -195,7 +195,7 @@ static void __init hi6220_clk_sys_init(struct device_node *np)
+ 	hi6220_clk_register_divider(hi6220_div_clks_sys,
+ 			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
  }
+-CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
++CLK_OF_DECLARE_DRIVER(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
  
-@@ -558,6 +568,12 @@ static const struct sdhci_pltfm_data sdhci_esdhc_le_pdata = {
- 	.ops = &sdhci_esdhc_le_ops,
- };
  
-+static struct soc_device_attribute soc_incorrect_hostver[] = {
-+	{ .family = "QorIQ T4240", .revision = "1.0", },
-+	{ .family = "QorIQ T4240", .revision = "2.0", },
-+	{ },
-+};
-+
- static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host;
-@@ -571,6 +587,10 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
- 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
- 			     SDHCI_VENDOR_VER_SHIFT;
- 	esdhc->spec_ver = host_ver & SDHCI_SPEC_VER_MASK;
-+	if (soc_device_match(soc_incorrect_hostver))
-+		esdhc->quirk_incorrect_hostver = true;
-+	else
-+		esdhc->quirk_incorrect_hostver = false;
+ /* clocks in media controller */
+@@ -252,7 +252,7 @@ static void __init hi6220_clk_media_init(struct device_node *np)
+ 	hi6220_clk_register_divider(hi6220_div_clks_media,
+ 				ARRAY_SIZE(hi6220_div_clks_media), clk_data);
  }
+-CLK_OF_DECLARE(hi6220_clk_media, "hisilicon,hi6220-mediactrl", hi6220_clk_media_init);
++CLK_OF_DECLARE_DRIVER(hi6220_clk_media, "hisilicon,hi6220-mediactrl", hi6220_clk_media_init);
  
- static int sdhci_esdhc_probe(struct platform_device *pdev)
+ 
+ /* clocks in pmctrl */
 -- 
-2.1.0.27.g96db324
-
+1.9.1
