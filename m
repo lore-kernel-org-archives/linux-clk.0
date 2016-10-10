@@ -1,103 +1,59 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 12/14] ARM: dts: sun8i: Add audio codec, dai and card for A33
-Date: Tue,  4 Oct 2016 11:46:25 +0200
-Message-Id: <0c5caea86dea5e8f8198c61af47983ceb511ff78.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH 2/6] clk: pxa: core pll is not affected by t bit
+Date: Mon, 10 Oct 2016 22:09:05 +0200
+Message-Id: <1476130149-31834-3-git-send-email-robert.jarzmik@free.fr>
+In-Reply-To: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the audio codec, dai and a sun8i card to be able to use the
-audio stream of the builtin codec on sun8i SoC.
+The t bit of clkfcfg doesn't affect the core pll clock, but it makes core
+clock select between core pll clock and core run clock.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+As such remove it from the core pll rate reporting function, while it
+remains in clk_pxa27x_core_get_parent().
+
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- arch/arm/boot/dts/sun8i-a33.dtsi | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/pxa/clk-pxa25x.c | 4 +---
+ drivers/clk/pxa/clk-pxa27x.c | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index fd1e1cd..4f8b442 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -43,6 +43,7 @@
-  */
+diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
+index a98b98e2a9e4..3bb603a27f2b 100644
+--- a/drivers/clk/pxa/clk-pxa25x.c
++++ b/drivers/clk/pxa/clk-pxa25x.c
+@@ -182,9 +182,7 @@ static unsigned long clk_pxa25x_cpll_get_rate(struct clk_hw *hw,
+ 	m = M_clk_mult[(cccr >> 5) & 0x03];
+ 	n2 = N2_clk_mult[(cccr >> 7) & 0x07];
  
- #include "sun8i-a23-a33.dtsi"
-+#include <dt-bindings/dma/sun4i-a10.h>
+-	if (t)
+-		return m * l * n2 * parent_rate / 2;
+-	return m * l * parent_rate;
++	return m * l * n2 * parent_rate / 2;
+ }
+ PARENTS(clk_pxa25x_cpll) = { "osc_3_6864mhz" };
+ RATE_RO_OPS(clk_pxa25x_cpll, "cpll");
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index afc395b4148e..3930053543a3 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -162,7 +162,7 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
+ 	L  = l * parent_rate;
+ 	N  = (L * n2) / 2;
  
- / {
- 	cpus {
-@@ -69,6 +70,12 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	sound {
-+		compatible = "allwinner,sun8i-audio";
-+		allwinner,audio-codec = <&codec>;
-+		allwinner,i2s-controller = <&dai>;
-+	};
-+
- 	soc@01c00000 {
- 		tcon0: lcd-controller@01c0c000 {
- 			compatible = "allwinner,sun8i-a33-tcon";
-@@ -116,6 +123,32 @@
- 			reset-names = "ahb";
- 		};
- 
-+		dai: dai@01c22c00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-i2s";
-+			reg = <0x01c22c00 0x200>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+			clock-names = "apb", "mod";
-+			resets = <&ccu RST_BUS_CODEC>;
-+			reset-names = "apb_reset";
-+			dmas = <&dma 15>, /* AUDIO_CODEC port */
-+				<&dma 15>; /* AUDIO_CODEC port */
-+			dma-names = "rx", "tx";
-+			status = "disabled";
-+		};
-+
-+		codec: codec@01c22e00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun8i-a33-codec";
-+			reg = <0x01c22e00 0x400>; /* SUNXI_AUDIO_PBASE + 0x200 */
-+			reg-names = "audio";
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+			clock-names = "apb", "codec";
-+			status = "disabled";
-+		};
-+
- 		fe0: display-frontend@01e00000 {
- 			compatible = "allwinner,sun8i-a33-display-frontend";
- 			reg = <0x01e00000 0x20000>;
+-	return t ? N : L;
++	return N;
+ }
+ PARENTS(clk_pxa27x_cpll) = { "osc_13mhz" };
+ RATE_RO_OPS(clk_pxa27x_cpll, "cpll");
 -- 
-2.9.3
+2.1.4
