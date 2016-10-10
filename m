@@ -1,200 +1,45 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 3/9] clk: sunxi-ng: Finish to convert to structures for arguments
-Date: Mon,  3 Oct 2016 10:09:07 +0200
-Message-Id: <20161003080913.24197-4-maxime.ripard@free-electrons.com>
-In-Reply-To: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
-References: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 10 Oct 2016 16:37:43 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	horms+renesas@verge.net.au
+Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A7743 support
+Message-ID: <20161010213743.GA12919@rob-hp-laptop>
+References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
+ <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks still use an explicit list of arguments, which make it a bit
-more tedious to add new parameters.
+On Fri, Oct 07, 2016 at 11:47:49PM +0300, Sergei Shtylyov wrote:
+> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
+> 
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> Changes in version 2:
+> - documented the R8A7743 device tree binding;
+> - fixed whitespace errors/warnings reported by checkpatch.pl;
+> - used  tabs instead of spaces for indentation;
+> - fixed the PLL3 column name in the PLL table.
+> 
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    4 
 
-Convert those over to a structure pointer argument to add as many
-arguments as possible without having to many noise in our patches, or a
-very long list of arguments.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mult.c | 28 ++++++++++++++++++++--------
- drivers/clk/sunxi-ng/ccu_nk.c   | 39 ++++++++++++++++++++++-----------------
- 2 files changed, 42 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 010e9424691d..32a1964439a2 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -13,10 +13,20 @@
- #include "ccu_gate.h"
- #include "ccu_mult.h"
- 
-+struct _ccu_mult {
-+	unsigned long	mult, max;
-+};
-+
- static void ccu_mult_find_best(unsigned long parent, unsigned long rate,
--			       unsigned int max_n, unsigned int *n)
-+			       struct _ccu_mult *mult)
- {
--	*n = rate / parent;
-+	int _mult;
-+
-+	_mult = rate / parent;
-+	if (_mult > mult->max)
-+		_mult = mult->max;
-+
-+	mult->mult = _mult;
- }
- 
- static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
-@@ -25,11 +35,12 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
- 					void *data)
- {
- 	struct ccu_mult *cm = data;
--	unsigned int n;
-+	struct _ccu_mult _cm;
- 
--	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-+	_cm.max = 1 << cm->mult.width;
-+	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
--	return parent_rate * n;
-+	return parent_rate * _cm.mult;
- }
- 
- static void ccu_mult_disable(struct clk_hw *hw)
-@@ -83,21 +94,22 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long parent_rate)
- {
- 	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+	struct _ccu_mult _cm;
- 	unsigned long flags;
--	unsigned int n;
- 	u32 reg;
- 
- 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
- 						&parent_rate);
- 
--	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-+	_cm.max = 1 << cm->mult.width;
-+	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
- 	spin_lock_irqsave(cm->common.lock, flags);
- 
- 	reg = readl(cm->common.base + cm->common.reg);
- 	reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
- 
--	writel(reg | ((n - 1) << cm->mult.shift),
-+	writel(reg | ((_cm.mult - 1) << cm->mult.shift),
- 	       cm->common.base + cm->common.reg);
- 
- 	spin_unlock_irqrestore(cm->common.lock, flags);
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-index d6fafb397489..e7e2e75618ef 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.c
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -9,21 +9,24 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/rational.h>
- 
- #include "ccu_gate.h"
- #include "ccu_nk.h"
- 
-+struct _ccu_nk {
-+	unsigned long	n, max_n;
-+	unsigned long	k, max_k;
-+};
-+
- static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
--			     unsigned int max_n, unsigned int max_k,
--			     unsigned int *n, unsigned int *k)
-+			     struct _ccu_nk *nk)
- {
- 	unsigned long best_rate = 0;
- 	unsigned int best_k = 0, best_n = 0;
- 	unsigned int _k, _n;
- 
--	for (_k = 1; _k <= max_k; _k++) {
--		for (_n = 1; _n <= max_n; _n++) {
-+	for (_k = 1; _k <= nk->max_k; _k++) {
-+		for (_n = 1; _n <= nk->max_n; _n++) {
- 			unsigned long tmp_rate = parent * _n * _k;
- 
- 			if (tmp_rate > rate)
-@@ -37,8 +40,8 @@ static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
- 		}
- 	}
- 
--	*k = best_k;
--	*n = best_n;
-+	nk->k = best_k;
-+	nk->n = best_n;
- }
- 
- static void ccu_nk_disable(struct clk_hw *hw)
-@@ -89,16 +92,17 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long *parent_rate)
- {
- 	struct ccu_nk *nk = hw_to_ccu_nk(hw);
--	unsigned int n, k;
-+	struct _ccu_nk _nk;
- 
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nk->fixed_post_div;
- 
--	ccu_nk_find_best(*parent_rate, rate,
--			 1 << nk->n.width, 1 << nk->k.width,
--			 &n, &k);
-+	_nk.max_n = 1 << nk->n.width;
-+	_nk.max_k = 1 << nk->k.width;
-+
-+	ccu_nk_find_best(*parent_rate, rate, &_nk);
-+	rate = *parent_rate * _nk.n * _nk.k;
- 
--	rate = *parent_rate * n * k;
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate / nk->fixed_post_div;
- 
-@@ -110,15 +114,16 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct ccu_nk *nk = hw_to_ccu_nk(hw);
- 	unsigned long flags;
--	unsigned int n, k;
-+	struct _ccu_nk _nk;
- 	u32 reg;
- 
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate * nk->fixed_post_div;
- 
--	ccu_nk_find_best(parent_rate, rate,
--			 1 << nk->n.width, 1 << nk->k.width,
--			 &n, &k);
-+	_nk.max_n = 1 << nk->n.width;
-+	_nk.max_k = 1 << nk->k.width;
-+
-+	ccu_nk_find_best(parent_rate, rate, &_nk);
- 
- 	spin_lock_irqsave(nk->common.lock, flags);
- 
-@@ -126,7 +131,7 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
- 	reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
- 
--	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
-+	writel(reg | ((_nk.k - 1) << nk->k.shift) | ((_nk.n - 1) << nk->n.shift),
- 	       nk->common.base + nk->common.reg);
- 
- 	spin_unlock_irqrestore(nk->common.lock, flags);
--- 
-2.9.3
+>  drivers/clk/renesas/Kconfig                                  |    1 
+>  drivers/clk/renesas/Makefile                                 |    1 
+>  drivers/clk/renesas/r8a7743-cpg-mssr.c                       |  268 +++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
+>  drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
+>  6 files changed, 280 insertions(+), 1 deletion(-)
