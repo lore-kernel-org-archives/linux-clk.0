@@ -1,137 +1,47 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 09/15] clk: ti: move omap2_init_clk_clkdm under TI clock driver
-Date: Tue, 18 Oct 2016 18:46:02 +0300
-Message-ID: <1476805568-19264-10-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+Return-Path: <john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
+References: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
+From: John Stultz <john.stultz@linaro.org>
+Date: Mon, 10 Oct 2016 10:39:12 -0700
+Message-ID: <CALAqxLV5oOsP8ZcKrwzwK6OsZZwTjsvyk18+aWEFpZh17VttnA@mail.gmail.com>
+Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and
+ mediactrl clock init
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This is not needed outside the driver, so move it inside it and remove
-the prototype from the public header also.
+On Sat, Oct 8, 2016 at 6:38 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
+> The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
+> also reset controller.  It worked fine that single sysctrl/mediactrl
+> device node in DT can be used to initialize clock driver and populate
+> platform device for reset controller.  But it stops working after
+> commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> gets merged.  The commit sets flag OF_POPULATED during clock
+> initialization to skip the platform device populating for the same
+> device node.  On hi6220, it effectively makes hi6220-sysctrl reset
+> driver not probe any more.
+>
+> The patch changes hi6220 sysctrl and mediactrl clock init macro from
+> CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
+> the same hardware block can continue working.
+>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c  | 34 ----------------------------------
- drivers/clk/ti/clock.h       |  1 +
- drivers/clk/ti/clockdomain.c | 30 ++++++++++++++++++++++++++++++
- include/linux/clk/ti.h       |  1 -
- 4 files changed, 31 insertions(+), 35 deletions(-)
+Tested-by: John Stultz <john.stultz@linaro.org>
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 5391b66..ce8e804 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -79,40 +79,6 @@ int __init omap2_clk_setup_ll_ops(void)
-  * OMAP2+ specific clock functions
-  */
- 
--/* Private functions */
--
--/* Public functions */
--
--/**
-- * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
-- * @clk: OMAP clock struct ptr to use
-- *
-- * Convert a clockdomain name stored in a struct clk 'clk' into a
-- * clockdomain pointer, and save it into the struct clk.  Intended to be
-- * called during clk_register().  No return value.
-- */
--void omap2_init_clk_clkdm(struct clk_hw *hw)
--{
--	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
--	struct clockdomain *clkdm;
--	const char *clk_name;
--
--	if (!clk->clkdm_name)
--		return;
--
--	clk_name = __clk_get_name(hw->clk);
--
--	clkdm = clkdm_lookup(clk->clkdm_name);
--	if (clkdm) {
--		pr_debug("clock: associated clk %s to clkdm %s\n",
--			 clk_name, clk->clkdm_name);
--		clk->clkdm = clkdm;
--	} else {
--		pr_debug("clock: could not associate clk %s to clkdm %s\n",
--			 clk_name, clk->clkdm_name);
--	}
--}
--
- static int __initdata mpurate;
- 
- /*
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 5675e37..9c85a51 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -232,6 +232,7 @@ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
- u8 ti_clk_mux_get_parent(struct clk_hw *hw);
- int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index);
- 
-+void omap2_init_clk_clkdm(struct clk_hw *hw);
- int omap2_clkops_enable_clkdm(struct clk_hw *hw);
- void omap2_clkops_disable_clkdm(struct clk_hw *hw);
- 
-diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index 6cf9dd1..704157d 100644
---- a/drivers/clk/ti/clockdomain.c
-+++ b/drivers/clk/ti/clockdomain.c
-@@ -103,6 +103,36 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
- 	ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
- }
- 
-+/**
-+ * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
-+ * @clk: OMAP clock struct ptr to use
-+ *
-+ * Convert a clockdomain name stored in a struct clk 'clk' into a
-+ * clockdomain pointer, and save it into the struct clk.  Intended to be
-+ * called during clk_register().  No return value.
-+ */
-+void omap2_init_clk_clkdm(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct clockdomain *clkdm;
-+	const char *clk_name;
-+
-+	if (!clk->clkdm_name)
-+		return;
-+
-+	clk_name = __clk_get_name(hw->clk);
-+
-+	clkdm = ti_clk_ll_ops->clkdm_lookup(clk->clkdm_name);
-+	if (clkdm) {
-+		pr_debug("clock: associated clk %s to clkdm %s\n",
-+			 clk_name, clk->clkdm_name);
-+		clk->clkdm = clkdm;
-+	} else {
-+		pr_debug("clock: could not associate clk %s to clkdm %s\n",
-+			 clk_name, clk->clkdm_name);
-+	}
-+}
-+
- static void __init of_ti_clockdomain_setup(struct device_node *node)
- {
- 	struct clk *clk;
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index bc7fd8f..626ae94 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -238,7 +238,6 @@ struct ti_clk_ll_ops {
- 
- #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
- 
--void omap2_init_clk_clkdm(struct clk_hw *clk);
- int omap2_clk_disable_autoidle_all(void);
- int omap2_clk_enable_autoidle_all(void);
- int omap2_clk_allow_idle(struct clk *clk);
--- 
-1.9.1
+I hit this as well last week when 989eafd0b609 ("clk: core: Avoid
+double initialization of clocks") landed, which killed graphics on my
+HiKey.
+
+My workaround was a bit hackish, as I don't really know when one
+should use OF_DECLARE vs OF_DECLARE_DRIVER, but I also converted the
+hi6220_clk_ao and hi6220_clk_power to the _DRIVER side. Your patch
+seems to work just as well for me, but I wanted to double check with
+you that the ao/power clks didn't need the conversion as well.
+
+thanks
+-john
