@@ -1,49 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 18 Oct 2016 16:48:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/6] clk: pxa: transfer CPU clock setting from
- pxa2xx-cpufreq
-Message-ID: <20161018234855.GO8871@codeaurora.org>
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH 3/6] clk: pxa: b bit of clkcfg means fast bus
+Date: Mon, 10 Oct 2016 22:09:06 +0200
+Message-Id: <1476130149-31834-4-git-send-email-robert.jarzmik@free.fr>
+In-Reply-To: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
 References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
- <1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
- <87zim23zw3.fsf@belgarion.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87zim23zw3.fsf@belgarion.home>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/18, Robert Jarzmik wrote:
-> Robert Jarzmik <robert.jarzmik@free.fr> writes:
-> 
-> > This is the initial stage to transfer the pxa25x and pxa27x CPU clocks
-> > handling from cpufreq to the clock API. More precisely, the clocks
-> > transferred are :
-> >  - cpll : core pll, known also as the CPU core turbo frequency
-> >  - core : core, known also as the CPU actual frequency, being either the
-> >           CPU core turbo frequency or the CPU core run frequency
-> >
-> > This transfer is a prequel to shrink the code in pxa2xx-cpufreq.c, so
-> > that it can become, at least in devicetree builds, the casual cpufreq-dt
-> > driver.
-> 
-> Hi Michael and Stephen,
-> 
-> I'm planing on sending a v2 next week with minor corrections, mostly in the data
-> tables (pxa25x_freqs and pxa27x_freqs), as testing prooved some values were wrong.
-> 
-> If you want me modify this serie, will you have time to review for next week or
-> should I delay the v2 posting ?
-> 
+The meaning of this bit was inverted :
+ - when set to 0, system bus clock is half of the CPU run clock
+ - when set to 1, system bus clock is the CPU run clock
 
-No need to delay. clk patches look fine with a quick glance. It
-would be really neat if we could make cpufreq-dt work without DT.
-What's blocking that? OPP tables?
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/clk/pxa/clk-pxa27x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index 3930053543a3..3b36e8d0f81e 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -291,9 +291,9 @@ static unsigned long clk_pxa27x_system_bus_get_rate(struct clk_hw *hw,
+ 	if (osc_forced)
+ 		return parent_rate;
+ 	if (b)
+-		return parent_rate / 2;
+-	else
+ 		return parent_rate;
++	else
++		return parent_rate / 2;
+ }
+ 
+ static u8 clk_pxa27x_system_bus_get_parent(struct clk_hw *hw)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
