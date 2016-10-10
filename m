@@ -1,58 +1,55 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [RESEND/PATCH v6 0/3] Add support for Qualcomm A53 CPU clock
-Date: Wed, 19 Oct 2016 16:28:13 +0300
-Message-Id: <20161019132816.31073-1-georgi.djakov@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+Subject: Re: [PATCH] Reorganize STM32 clocks in order to prepare them for
+ PLLI2S and PLLSAI
+To: radek <radoslaw.pietrzyk@gmail.com>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com
+References: <1475791294-5804-1-git-send-email-user@localhost>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Message-ID: <2d6d5c10-346e-0541-1bc0-b75ef5b40d3f@linaro.org>
+Date: Mon, 10 Oct 2016 10:37:45 +0100
+MIME-Version: 1.0
+In-Reply-To: <1475791294-5804-1-git-send-email-user@localhost>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
- * Rebase to clk-next and update according to the recent API changes.
+On 06/10/16 23:01, radek wrote:
+> From: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+>
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+> ---
+>  drivers/clk/clk-stm32f4.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index 02d6810..1fd3eac 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -245,9 +245,10 @@ static void stm32f4_rcc_register_pll(const char *hse_clk, const char *hsi_clk)
+>  	const char   *pllsrc = pllcfgr & BIT(22) ? hse_clk : hsi_clk;
+>  	unsigned long pllq   = (pllcfgr >> 24) & 0xf;
+>
+> -	clk_register_fixed_factor(NULL, "vco", pllsrc, 0, plln, pllm);
+> -	clk_register_fixed_factor(NULL, "pll", "vco", 0, 1, pllp);
+> -	clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1, pllq);
+> +	clk_register_fixed_factor(NULL, "vco-div", pllsrc, 0, 1, pllm);
+> +	clk_register_fixed_factor(NULL, "vco-mul", "vco-div", 0, plln, 1);
+> +	clk_register_fixed_factor(NULL, "pll", "vco-mul", 0, 1, pllp);
+> +	clk_register_fixed_factor(NULL, "pll48", "vco-mul", 0, 1, pllq);
 
-Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
- * Convert to builtin drivers as now __clk_lookup() is used
+I'm struggling to marry this up to the clock tree diagram for the 
+F4-series (and there's no patch description to help me).
 
-Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
- * Split driver into two parts - and separate A53 PLL and
-   A53 clock controller drivers.
- * Drop the safe switch hook patch. Add a clock notifier in
-   the clock provider to handle switching via safe mux and
-   divider configuration.
+I can see the value of naming the "/M" pre-division separately (and 
+agree that its hard to find it a good name for this clock in the 
+datasheet). However I am struggling to work out why we'd want to rename 
+the vco output.
 
-Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
- * Drop gpll0_vote patch.
- * Switch to the new clk_hw_* APIs.
- * Rebase to the current clk-next.
-
-Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
- * Drop SR2 PLL patch, as it is already applied.
- * Add gpll0_vote rate propagation patch.
- * Update/rebase patches to the current clk-next.
+For me the names for the multiplies clock within each pll emerges fairly 
+cleanly from the datasheet (PLL -> vco, PLLI2S -> vcoi2s, PLLSAI -> 
+vcosai). What does the '-mul' add?
 
 
-Georgi Djakov (3):
-  clk: qcom: Add A53 PLL support
-  clk: qcom: Add regmap mux-div clocks support
-  clk: qcom: Add A53 clock driver
-
- .../devicetree/bindings/clock/qcom,a53-pll.txt     |  17 ++
- .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 ++
- drivers/clk/qcom/Kconfig                           |  17 ++
- drivers/clk/qcom/Makefile                          |   3 +
- drivers/clk/qcom/a53-pll.c                         |  94 ++++++++
- drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.c              | 254 +++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.h              |  58 +++++
- 8 files changed, 620 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
- create mode 100644 drivers/clk/qcom/a53cc.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+Daniel.
