@@ -1,70 +1,134 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 20 Oct 2016 11:46:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH v4 6/9] clk: sunxi-ng: Add A64 clocks
-Message-ID: <20161020184601.GB26139@codeaurora.org>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
- <cd4dd81821b8910d40626baab2dbfdabd94b1b98.1476196031.git-series.maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cd4dd81821b8910d40626baab2dbfdabd94b1b98.1476196031.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Subject: Re: [PATCH] clk: lpc32xx: fix pwm clock divider computation
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <28a243a6-9c66-228b-f9b0-2f0e659b5cdd@mleia.com>
+References: <1474915467-11101-1-git-send-email-slemieux.tyco@gmail.com>
+	 <78c1e683-ac17-437b-289f-113ea842f62b@mleia.com>
+	 <1475678416.23405.32.camel@localhost>
+	 <28a243a6-9c66-228b-f9b0-2f0e659b5cdd@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 11 Oct 2016 11:42:33 -0400
+Message-ID: <1476200553.7075.11.camel@localhost>
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/11, Maxime Ripard wrote:
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> new file mode 100644
-> index 000000000000..c0e96bf6d104
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> +
-> +static int sun50i_a64_ccu_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res;
-> +	void __iomem *reg;
-> +	u32 val;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	reg = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(reg)) {
-> +		dev_err(&pdev->dev, "Could not map the clock registers\n");
+Hi Vladimir,
 
-devm_ioremap_resource() should already spit out an error.
+On Fri, 2016-10-07 at 03:56 +0300, Vladimir Zapolskiy wrote:
+> Hi Sylvain,
+> 
+> On 05.10.2016 17:40, Sylvain Lemieux wrote:
+> > On Wed, 2016-10-05 at 05:38 +0300, Vladimir Zapolskiy wrote:
+> >> Hi Sylvain,
+> >>
+> >> On 26.09.2016 21:44, Sylvain Lemieux wrote:
+> >>> From: Sylvain Lemieux <slemieux@tycoint.com>
+> >>>
+> >>> A zero value in the PWM clock divider register
+> >>> (PWM1_FREQ/PWM2_FREQ) turn off the PWM clock.
+> >>>
+> >>> The "CLK_DIVIDER_ALLOW_ZERO" option is used for hardware that handle
+> >>> the zero divider by not modifying their clock input (i.e. bypass).
+> >>> See "/include/linux/clk-provider.h" for details.
+> >>
+> >> the problem is that the divider value is not set to some non-zero
+> >> value when the clock is enabled, right?
+> >>
+> > The "clk_divider_set_rate" function is working properly and 
+> > setup the divider properly. There is no need to perform any
+> > special process when enabling or initializing the PWM clock.
+> > 
+> > The problem occur when the PWM is enable in the project specific
+> > device tree and the PWM output clock is not explicitly setup.
+> > 
+> > With the actual implementation, the function that compute the 
+> > output rate, based on the actual divider, return the parent clock
+> > rate, which is inaccurate, since the clock is off. The core driver
+> > will than call the enable function, which should not take place.
+> 
+> this is a reword of my statement above, I'll repeat it for clarity
+> removing double negation, when PWMx_FREQ bits in PWMCLK_CTRL register
+> are all zeros gate on/off works incorrectly.
+> 
+> > This patch ensure that the compute output rate for the PWM clock
+> > handle properly the special case for a 0 divider. By returning 0,
+> > the core driver do not try to enable the clock, which is the
+> > expected behavior.
+> 
+> While I admit the problem, the patch is incorrect, it fakes a gated
+> off clock by assigning zero frequency rate to it. In terms of CCF
+> the problem is not related to the divider and it shall not be fixed
+> by introducing a new divider operation, because it is an issue with
+> the clock on/off setting correctness.
+> 
+> > I still think the current patch is the proper way to fix the
+> > issue created by the "CLK_DIVIDER_ALLOW_ZERO" flag of the PWM clock.
+> 
+> Dealing with a complex clock it makes sense to decompose it into
+> a divider clock and a gate clock in terms of CCF. The PWM clock
+> under discussion does not fit into the common model, it has two
+> independent gate controls, and half of the controls is placed
+> into the clock divider bitfield.
+> 
+> CLK_DIVIDER_ALLOW_ZERO is used incorrectly here, like you stated
+> in the commit message divider's zero value means the same as
+> non-divided clock, and here it should mean a gated clock.
+> By the way you may notice that a divider from MS_CTRL is similar.
+> 
+> Theoretically it might be possible to introduce a CCF-wide flag
+> to describe zero value as a gated off clock, but I hesitate to
+> do it until I find a ground that the flag is going to be utilized
+> by other clock drivers.
+> 
+> Below I proposed two options how to resolve the problem, one is
+> to update clock gate ops, another one is to make zero value never
+> happen.
+> 
+> I tend to the second option, because it is simpler and direct,
+> I'll implement it and send a change for your testing.
 
-> +		return PTR_ERR(reg);
-> +	}
-> +
-> +	/* Force the PLL-Audio-1x divider to 4 */
-> +	val = readl(reg + SUN50I_A64_PLL_AUDIO_REG);
-> +	val &= ~GENMASK(19, 16);
-> +	writel(val | (3 << 16), reg + SUN50I_A64_PLL_AUDIO_REG);
-> +
-> +	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
-> +
-> +	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-> +}
-> +
-> +static const struct of_device_id sun50i_a64_ccu_ids[] = {
-> +	{ .compatible = "allwinner,sun50i-a64-ccu" },
-> +	{ },
+Thanks for the clarification;
 
-Nitpick: drop the comma
+The proper approach is to remove the second independent gate
+control from the divider.
 
-> +};
-> +
-> +static struct platform_driver sun50i_a64_ccu_driver = {
-> +	.probe	= sun50i_a64_ccu_probe,
-> +	.driver	= {
-> +		.name	= "sun50i-a64-ccu",
-> +		.of_match_table	= sun50i_a64_ccu_ids,
-> +	},
-> +};
-> +builtin_platform_driver(sun50i_a64_ccu_driver);
+This patch is not needed; the following patch resolve this issue:
+http://www.spinics.net/lists/arm-kernel/msg535313.html
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> >> I think it does not matter if the clock rate value is set to parent
+> >> clock rate or any other value when divider is 0 *and* clock is gated.
+> >> Enabling or disabling a clock is a gate control, so I suggest two
+> >> alternative options at your choice (my preference is option 2):
+> >>
+> >> 1) add a custom clk_pwm_gate_enable(), clk_pwm_gate_disable() and
+> >> clk_pwm_gate_is_enabled() functions combined under lpc32xx_clk_pwm_gate_ops.
+> >>
+> >> Next instead of adding one more define for a single exception
+> >> please reassign .ops for two PWM clocks in runtime in
+> >> lpc32xx_clk_init() function before calling lpc32xx_clk_register()
+> >> in a loop.
+> >>
+> >> But this option is too invasive, a simpler solution is below.
+> >>
+> >> 2) in lpc32xx_clk_init() before clock registrations check for zero
+> >> dividers of PWM clocks, then if a divider is 0 and clock is gated
+> >> set divider to 1, if the divider is 0 and clock is not gated then
+> >> gate the clock and set divider to 1, in other cases do nothing.
+> >>
+> >>> Remove the CLK_DIVIDER_ALLOW_ZERO option and add support to handle
+> >>> the clock rate computation of the PWM clock divider 0 value.
+> >>>
+> >>> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> >>> ---
+[...]
+> 
+> --
+> With best wishes,
+> Vladimir
+
+Sylvain
