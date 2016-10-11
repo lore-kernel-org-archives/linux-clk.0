@@ -1,629 +1,206 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v2 5/5] clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq
-Date: Sun, 23 Oct 2016 14:19:30 +0200
-Message-Id: <1477225170-19019-6-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
-References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v4 9/9] arm64: dts: add Pine64 support
+Date: Tue, 11 Oct 2016 16:28:27 +0200
+Message-Id: <0ceb2e4d03b16b3c7edf1550ba4a79fbbfac925b.1476196031.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the initial stage to transfer the pxa25x and pxa27x CPU clocks
-handling from cpufreq to the clock API. More precisely, the clocks
-transferred are :
- - cpll : core pll, known also as the CPU core turbo frequency
- - core : core, known also as the CPU actual frequency, being either the
-          CPU core turbo frequency or the CPU core run frequency
+From: Andre Przywara <andre.przywara@arm.com>
 
-This transfer is a prequel to shrink the code in pxa2xx-cpufreq.c, so
-that it can become, at least in devicetree builds, the casual cpufreq-dt
-driver.
+The Pine64 is a cost-efficient development board based on the
+Allwinner A64 SoC.
+There are three models: the basic version with Fast Ethernet and
+512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+feature Gigabit Ethernet and additional connectors for touchscreens
+and a camera. Or as my son put it: "Those are smaller and these are
+missing." ;-)
+The two Pine64+ models just differ in the amount of DRAM
+(1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+patches the DT accordingly we just need to provide one DT for the
+Pine64+.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Maxime: Removed the common DTSI and include directly the pine64 DTS]
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
-Since v1: fixed pxa25x CCCR settings
-      	  added pr_debug() for debug
-	  changed cpll unit from kHz to Hz
----
- drivers/clk/pxa/clk-pxa.c    | 128 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/pxa/clk-pxa.h    |  56 ++++++++++++++++-
- drivers/clk/pxa/clk-pxa25x.c | 101 ++++++++++++++++++++++++++++--
- drivers/clk/pxa/clk-pxa27x.c | 144 ++++++++++++++++++++++++++++++++++++-------
- 4 files changed, 402 insertions(+), 27 deletions(-)
+ arch/arm64/boot/dts/Makefile                             |  1 +-
+ arch/arm64/boot/dts/allwinner/Makefile                   |  5 +-
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts | 50 ++++++-
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts      | 74 +++++++++-
+ 4 files changed, 130 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
 
-diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-index 29cee9e8d4d9..7184819b7415 100644
---- a/drivers/clk/pxa/clk-pxa.c
-+++ b/drivers/clk/pxa/clk-pxa.c
-@@ -15,9 +15,18 @@
- #include <linux/clkdev.h>
- #include <linux/of.h>
- 
-+#include <mach/pxa2xx-regs.h>
-+#include <mach/smemc.h>
+diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+index 6e199c903676..ddcbf5a2c17e 100644
+--- a/arch/arm64/boot/dts/Makefile
++++ b/arch/arm64/boot/dts/Makefile
+@@ -1,4 +1,5 @@
+ dts-dirs += al
++dts-dirs += allwinner
+ dts-dirs += altera
+ dts-dirs += amd
+ dts-dirs += amlogic
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+new file mode 100644
+index 000000000000..1e29a5ae8282
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -0,0 +1,5 @@
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
 +
- #include <dt-bindings/clock/pxa-clock.h>
- #include "clk-pxa.h"
- 
-+#define KHz 1000
-+#define MHz (1000 * 1000)
-+
-+#define MDREFR_DB2_MASK		(MDREFR_K2DB2 | MDREFR_K1DB2)
-+#define MDREFR_DRI_MASK		0xFFF
-+
- DEFINE_SPINLOCK(lock);
- 
- static struct clk *pxa_clocks[CLK_MAX];
-@@ -106,3 +115,122 @@ void __init clk_pxa_dt_common_init(struct device_node *np)
- {
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &onecell_data);
- }
-+
-+void pxa2xx_core_turbo_switch(bool on)
-+{
-+	unsigned long flags;
-+	unsigned int unused, clkcfg;
-+
-+	local_irq_save(flags);
-+
-+	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-+	clkcfg &= ~CLKCFG_TURBO & ~CLKCFG_HALFTURBO;
-+	if (on)
-+		clkcfg |= CLKCFG_TURBO;
-+	clkcfg |= CLKCFG_FCS;
-+
-+	asm volatile(
-+	"	b	2f\n"
-+	"	.align	5\n"
-+	"1:	mcr	p14, 0, %1, c6, c0, 0\n"
-+	"	b	3f\n"
-+	"2:	b	1b\n"
-+	"3:	nop\n"
-+		: "=&r" (unused)
-+		: "r" (clkcfg)
-+		: );
-+
-+	local_irq_restore(flags);
-+}
-+
-+void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
-+			u32 (*mdrefr_dri)(unsigned int))
-+{
-+	unsigned int clkcfg = freq->clkcfg;
-+	unsigned int unused, preset_mdrefr, postset_mdrefr;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+
-+	/* Calculate the next MDREFR.  If we're slowing down the SDRAM clock
-+	 * we need to preset the smaller DRI before the change.	 If we're
-+	 * speeding up we need to set the larger DRI value after the change.
-+	 */
-+	preset_mdrefr = postset_mdrefr = __raw_readl(MDREFR);
-+	if ((preset_mdrefr & MDREFR_DRI_MASK) > mdrefr_dri(freq->membus_khz)) {
-+		preset_mdrefr = (preset_mdrefr & ~MDREFR_DRI_MASK);
-+		preset_mdrefr |= mdrefr_dri(freq->membus_khz);
-+	}
-+	postset_mdrefr =
-+		(postset_mdrefr & ~MDREFR_DRI_MASK) |
-+		mdrefr_dri(freq->membus_khz);
-+
-+	/* If we're dividing the memory clock by two for the SDRAM clock, this
-+	 * must be set prior to the change.  Clearing the divide must be done
-+	 * after the change.
-+	 */
-+	if (freq->div2) {
-+		preset_mdrefr  |= MDREFR_DB2_MASK;
-+		postset_mdrefr |= MDREFR_DB2_MASK;
-+	} else {
-+		postset_mdrefr &= ~MDREFR_DB2_MASK;
-+	}
-+
-+	/* Set new the CCCR and prepare CLKCFG */
-+	writel(freq->cccr, CCCR);
-+
-+	asm volatile(
-+	"	ldr	r4, [%1]\n"
-+	"	b	2f\n"
-+	"	.align	5\n"
-+	"1:	str	%3, [%1]		/* preset the MDREFR */\n"
-+	"	mcr	p14, 0, %2, c6, c0, 0	/* set CLKCFG[FCS] */\n"
-+	"	str	%4, [%1]		/* postset the MDREFR */\n"
-+	"	b	3f\n"
-+	"2:	b	1b\n"
-+	"3:	nop\n"
-+	     : "=&r" (unused)
-+	     : "r" (MDREFR), "r" (clkcfg), "r" (preset_mdrefr),
-+	       "r" (postset_mdrefr)
-+	     : "r4", "r5");
-+
-+	local_irq_restore(flags);
-+}
-+
-+int pxa2xx_determine_rate(struct clk_rate_request *req,
-+			  struct pxa2xx_freq *freqs, int nb_freqs)
-+{
-+	int i, closest_below = -1, closest_above = -1, ret = 0;
-+	unsigned long rate;
-+
-+	for (i = 0; i < nb_freqs; i++) {
-+		rate = freqs[i].cpll;
-+		if (rate == req->rate)
-+			break;
-+		if (rate < req->min_rate)
-+			continue;
-+		if (rate > req->max_rate)
-+			continue;
-+		if (rate <= req->rate)
-+			closest_below = i;
-+		if ((rate >= req->rate) && (closest_above == -1))
-+			closest_above = i;
-+	}
-+
-+	req->best_parent_hw = NULL;
-+
-+	if (i < nb_freqs)
-+		ret = 0;
-+	else if (closest_below >= 0)
-+		rate = freqs[closest_below].cpll;
-+	else if (closest_above >= 0)
-+		rate = freqs[closest_above].cpll;
-+	else
-+		ret = -EINVAL;
-+
-+	pr_debug("%s(rate=%lu) rate=%lu: %d\n", __func__, req->rate, rate, ret);
-+	if (!rate)
-+		req->rate = rate;
-+
-+	return ret;
-+}
-diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
-index d1de805df867..417cae77f6bc 100644
---- a/drivers/clk/pxa/clk-pxa.h
-+++ b/drivers/clk/pxa/clk-pxa.h
-@@ -13,6 +13,11 @@
- #ifndef _CLK_PXA_
- #define _CLK_PXA_
- 
-+#define CLKCFG_TURBO		0x1
-+#define CLKCFG_FCS		0x2
-+#define CLKCFG_HALFTURBO	0x4
-+#define CLKCFG_FASTBUS		0x8
-+
- #define PARENTS(name) \
- 	static const char *const name ## _parents[] __initconst
- #define MUX_RO_RATE_RO_OPS(name, clk_name)			\
-@@ -35,10 +40,27 @@
- 			NULL, NULL, CLK_GET_RATE_NOCACHE);	\
- 	}
- 
--#define RATE_RO_OPS(name, clk_name)			\
-+#define RATE_RO_OPS(name, clk_name)				\
-+	static struct clk_hw name ## _rate_hw;			\
-+	static struct clk_ops name ## _rate_ops = {		\
-+		.recalc_rate = name ## _get_rate,		\
-+	};							\
-+	static struct clk * __init clk_register_ ## name(void)	\
-+	{							\
-+		return clk_register_composite(NULL, clk_name,	\
-+			name ## _parents,			\
-+			ARRAY_SIZE(name ## _parents),		\
-+			NULL, NULL,				\
-+			&name ## _rate_hw, &name ## _rate_ops,	\
-+			NULL, NULL, CLK_GET_RATE_NOCACHE);	\
-+	}
-+
-+#define RATE_OPS(name, clk_name)				\
- 	static struct clk_hw name ## _rate_hw;			\
- 	static struct clk_ops name ## _rate_ops = {		\
- 		.recalc_rate = name ## _get_rate,		\
-+		.set_rate = name ## _set_rate,			\
-+		.determine_rate = name ## _determine_rate,	\
- 	};							\
- 	static struct clk * __init clk_register_ ## name(void)	\
- 	{							\
-@@ -50,6 +72,24 @@
- 			NULL, NULL, CLK_GET_RATE_NOCACHE);	\
- 	}
- 
-+#define MUX_OPS(name, clk_name, flags)				\
-+	static struct clk_hw name ## _mux_hw;			\
-+	static struct clk_ops name ## _mux_ops = {		\
-+		.get_parent = name ## _get_parent,		\
-+		.set_parent = name ## _set_parent,		\
-+		.determine_rate = name ## _determine_rate,	\
-+	};							\
-+	static struct clk * __init clk_register_ ## name(void)	\
-+	{							\
-+		return clk_register_composite(NULL, clk_name,	\
-+			name ## _parents,			\
-+			ARRAY_SIZE(name ## _parents),		\
-+			&name ## _mux_hw, &name ## _mux_ops,	\
-+			NULL, NULL,				\
-+			NULL, NULL,				\
-+			CLK_GET_RATE_NOCACHE | flags); \
-+	}
-+
- /*
-  * CKEN clock type
-  * This clock takes it source from 2 possible parents :
-@@ -95,6 +135,14 @@ struct desc_clk_cken {
- 	PXA_CKEN(dev_id, con_id, name, parents, 1, 1, 1, 1,		\
- 		 NULL, cken_reg, cken_bit, flag)
- 
-+struct pxa2xx_freq {
-+	unsigned long cpll;
-+	unsigned int membus_khz;
-+	unsigned int cccr;
-+	unsigned int div2;
-+	unsigned int clkcfg;
-+};
-+
- static int dummy_clk_set_parent(struct clk_hw *hw, u8 index)
- {
- 	return 0;
-@@ -105,4 +153,10 @@ extern void clkdev_pxa_register(int ckid, const char *con_id,
- extern int clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks);
- void clk_pxa_dt_common_init(struct device_node *np);
- 
-+void pxa2xx_core_turbo_switch(bool on);
-+void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
-+			u32 (*mdrefr_dri)(unsigned int));
-+int pxa2xx_determine_rate(struct clk_rate_request *req,
-+			  struct pxa2xx_freq *freqs,  int nb_freqs);
-+
- #endif
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index 6a3009eec830..20fd87b36560 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -18,6 +18,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <mach/pxa2xx-regs.h>
-+#include <mach/smemc.h>
- 
- #include <dt-bindings/clock/pxa-clock.h>
- #include "clk-pxa.h"
-@@ -30,6 +31,17 @@ enum {
- 	PXA_CORE_TURBO,
- };
- 
-+#define PXA25x_CLKCFG(T)			\
-+	(CLKCFG_FCS |				\
-+	 ((T) ? CLKCFG_TURBO : 0))
-+#define PXA25x_CCCR(N2, M, L) (N2 << 7 | M << 5 | L)
-+
-+#define MDCNFG_DRAC2(mdcnfg)	(((mdcnfg) >> 21) & 0x3)
-+#define MDCNFG_DRAC0(mdcnfg)	(((mdcnfg) >> 5) & 0x3)
-+
-+/* Define the refresh period in mSec for the SDRAM and the number of rows */
-+#define SDRAM_TREF	64	/* standard 64ms SDRAM */
-+
- /*
-  * Various clock factors driven by the CCCR register.
-  */
-@@ -48,6 +60,34 @@ static const char * const get_freq_khz[] = {
- 	"core", "run", "cpll", "memory"
- };
- 
-+static int get_sdram_rows(void)
-+{
-+	static int sdram_rows;
-+	unsigned int drac2 = 0, drac0 = 0;
-+	u32 mdcnfg;
-+
-+	if (sdram_rows)
-+		return sdram_rows;
-+
-+	mdcnfg = __raw_readl(MDCNFG);
-+
-+	if (mdcnfg & (MDCNFG_DE2 | MDCNFG_DE3))
-+		drac2 = MDCNFG_DRAC2(mdcnfg);
-+
-+	if (mdcnfg & (MDCNFG_DE0 | MDCNFG_DE1))
-+		drac0 = MDCNFG_DRAC0(mdcnfg);
-+
-+	sdram_rows = 1 << (11 + max(drac0, drac2));
-+	return sdram_rows;
-+}
-+
-+static u32 mdrefr_dri(unsigned int freq_khz)
-+{
-+	u32 interval = freq_khz * SDRAM_TREF / get_sdram_rows();
-+
-+	return interval / 32;
-+}
-+
- /*
-  * Get the clock frequency as reflected by CCCR and the turbo flag.
-  * We assume these values have been applied via a fcs.
-@@ -139,6 +179,21 @@ static struct desc_clk_cken pxa25x_clocks[] __initdata = {
- 			     clk_pxa25x_memory_parents, 0),
- };
- 
++always		:= $(dtb-y)
++subdir-y	:= $(dts-dirs)
++clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+new file mode 100644
+index 000000000000..790d14daaa6a
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+@@ -0,0 +1,50 @@
 +/*
-+ * In this table, PXA25x_CCCR(N2, M, L) has the following meaning, where :
-+ *   - freq_cpll = n * m * L * 3.6864 MHz
-+ *   - n = N2 / 2
-+ *   - m = 2^(M - 1), where 1 <= M <= 3
-+ *   - l = L_clk_mult[L], ie. { 0, 27, 32, 36, 40, 45, 0, }[L]
++ * Copyright (c) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
 + */
-+static struct pxa2xx_freq pxa25x_freqs[] = {
-+	/* CPU  MEMBUS  CCCR                  DIV2 CCLKCFG      */
-+	{ 99532800, 99500, PXA25x_CCCR(2,  1, 1),  1, PXA25x_CLKCFG(1)},
-+	{199065600, 99500, PXA25x_CCCR(4,  1, 1),  0, PXA25x_CLKCFG(1)},
-+	{298598400, 99500, PXA25x_CCCR(3,  2, 1),  0, PXA25x_CLKCFG(1)},
-+	{398131200, 99500, PXA25x_CCCR(4,  2, 1),  0, PXA25x_CLKCFG(1)},
++
++#include "sun50i-a64-pine64.dts"
++
++/ {
++	model = "Pine64+";
++	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
++
++	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
 +};
-+
- static u8 clk_pxa25x_core_get_parent(struct clk_hw *hw)
- {
- 	unsigned long clkcfg;
-@@ -151,13 +206,24 @@ static u8 clk_pxa25x_core_get_parent(struct clk_hw *hw)
- 	return PXA_CORE_RUN;
- }
- 
--static unsigned long clk_pxa25x_core_get_rate(struct clk_hw *hw,
--					      unsigned long parent_rate)
-+static int clk_pxa25x_core_set_parent(struct clk_hw *hw, u8 index)
- {
--	return parent_rate;
-+	if (index > PXA_CORE_TURBO)
-+		return -EINVAL;
-+
-+	pxa2xx_core_turbo_switch(index == PXA_CORE_TURBO);
-+
-+	return 0;
- }
-+
-+static int clk_pxa25x_core_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	return __clk_mux_determine_rate(hw, req);
-+}
-+
- PARENTS(clk_pxa25x_core) = { "run", "cpll" };
--MUX_RO_RATE_RO_OPS(clk_pxa25x_core, "core");
-+MUX_OPS(clk_pxa25x_core, "core", CLK_SET_RATE_PARENT);
- 
- static unsigned long clk_pxa25x_run_get_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
-@@ -184,8 +250,33 @@ static unsigned long clk_pxa25x_cpll_get_rate(struct clk_hw *hw,
- 
- 	return m * l * n2 * parent_rate / 2;
- }
-+
-+static int clk_pxa25x_cpll_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	return pxa2xx_determine_rate(req, pxa25x_freqs,
-+				     ARRAY_SIZE(pxa25x_freqs));
-+}
-+
-+static int clk_pxa25x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	int i;
-+
-+	pr_debug("%s(rate=%lu parent_rate=%lu)\n", __func__, rate, parent_rate);
-+	for (i = 0; i < ARRAY_SIZE(pxa25x_freqs); i++)
-+		if (pxa25x_freqs[i].cpll == rate)
-+			break;
-+
-+	if (i >= ARRAY_SIZE(pxa25x_freqs))
-+		return -EINVAL;
-+
-+	pxa2xx_cpll_change(&pxa25x_freqs[i], mdrefr_dri);
-+
-+	return 0;
-+}
- PARENTS(clk_pxa25x_cpll) = { "osc_3_6864mhz" };
--RATE_RO_OPS(clk_pxa25x_cpll, "cpll");
-+RATE_OPS(clk_pxa25x_cpll, "cpll");
- 
- static void __init pxa25x_register_core(void)
- {
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 9fb40e884999..ec5abe98e177 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -17,6 +17,8 @@
- #include <linux/clkdev.h>
- #include <linux/of.h>
- 
-+#include <mach/smemc.h>
-+
- #include <dt-bindings/clock/pxa-clock.h>
- #include "clk-pxa.h"
- 
-@@ -45,11 +47,52 @@ enum {
- 	PXA_MEM_RUN,
- };
- 
-+#define PXA27x_CLKCFG(B, HT, T)			\
-+	(CLKCFG_FCS |				\
-+	 ((B)  ? CLKCFG_FASTBUS : 0) |		\
-+	 ((HT) ? CLKCFG_HALFTURBO : 0) |	\
-+	 ((T)  ? CLKCFG_TURBO : 0))
-+#define PXA27x_CCCR(A, L, N2) (A << 25 | N2 << 7 | L)
-+
-+#define MDCNFG_DRAC2(mdcnfg)	(((mdcnfg) >> 21) & 0x3)
-+#define MDCNFG_DRAC0(mdcnfg)	(((mdcnfg) >> 5) & 0x3)
-+
-+/* Define the refresh period in mSec for the SDRAM and the number of rows */
-+#define SDRAM_TREF	64	/* standard 64ms SDRAM */
-+
- static const char * const get_freq_khz[] = {
- 	"core", "run", "cpll", "memory",
- 	"system_bus"
- };
- 
-+static int get_sdram_rows(void)
-+{
-+	static int sdram_rows;
-+	unsigned int drac2 = 0, drac0 = 0;
-+	u32 mdcnfg;
-+
-+	if (sdram_rows)
-+		return sdram_rows;
-+
-+	mdcnfg = __raw_readl(MDCNFG);
-+
-+	if (mdcnfg & (MDCNFG_DE2 | MDCNFG_DE3))
-+		drac2 = MDCNFG_DRAC2(mdcnfg);
-+
-+	if (mdcnfg & (MDCNFG_DE0 | MDCNFG_DE1))
-+		drac0 = MDCNFG_DRAC0(mdcnfg);
-+
-+	sdram_rows = 1 << (11 + max(drac0, drac2));
-+	return sdram_rows;
-+}
-+
-+static u32 mdrefr_dri(unsigned int freq_khz)
-+{
-+	u32 interval = freq_khz * SDRAM_TREF / get_sdram_rows();
-+
-+	return (interval - 31) / 32;
-+}
-+
- /*
-  * Get the clock frequency as reflected by CCSR and the turbo flag.
-  * We assume these values have been applied via a fcs.
-@@ -145,6 +188,42 @@ static struct desc_clk_cken pxa27x_clocks[] __initdata = {
- 
- };
- 
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+new file mode 100644
+index 000000000000..9f127b3d0e33
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -0,0 +1,74 @@
 +/*
-+ * PXA270 definitions
++ * Copyright (c) 2016 ARM Ltd.
 + *
-+ * For the PXA27x:
-+ * Control variables are A, L, 2N for CCCR; B, HT, T for CLKCFG.
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
 + *
-+ * A = 0 => memory controller clock from table 3-7,
-+ * A = 1 => memory controller clock = system bus clock
-+ * Run mode frequency	= 13 MHz * L
-+ * Turbo mode frequency = 13 MHz * L * N
-+ * System bus frequency = 13 MHz * L / (B + 1)
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
 + *
-+ * In CCCR:
-+ * A = 1
-+ * L = 16	  oscillator to run mode ratio
-+ * 2N = 6	  2 * (turbo mode to run mode ratio)
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
 + *
-+ * In CCLKCFG:
-+ * B = 1	  Fast bus mode
-+ * HT = 0	  Half-Turbo mode
-+ * T = 1	  Turbo mode
++ * Or, alternatively,
 + *
-+ * For now, just support some of the combinations in table 3-7 of
-+ * PXA27x Processor Family Developer's Manual to simplify frequency
-+ * change sequences.
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
 + */
-+static struct pxa2xx_freq pxa27x_freqs[] = {
-+	{104000000, 104000, PXA27x_CCCR(1,  8, 2), 0, PXA27x_CLKCFG(1, 0, 1) },
-+	{156000000, 104000, PXA27x_CCCR(1,  8, 3), 0, PXA27x_CLKCFG(1, 0, 1) },
-+	{208000000, 208000, PXA27x_CCCR(0, 16, 2), 1, PXA27x_CLKCFG(0, 0, 1) },
-+	{312000000, 208000, PXA27x_CCCR(1, 16, 3), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{416000000, 208000, PXA27x_CCCR(1, 16, 4), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{520000000, 208000, PXA27x_CCCR(1, 16, 5), 1, PXA27x_CLKCFG(1, 0, 1) },
-+	{624000000, 208000, PXA27x_CCCR(1, 16, 6), 1, PXA27x_CLKCFG(1, 0, 1) },
++
++/dts-v1/;
++
++#include "sun50i-a64.dtsi"
++
++/ {
++	model = "Pine64";
++	compatible = "pine64,pine64", "allwinner,sun50i-a64";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +};
 +
- static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
- 	unsigned long parent_rate)
- {
-@@ -164,8 +243,33 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
- 
- 	return N;
- }
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
 +
-+static int clk_pxa27x_cpll_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	return pxa2xx_determine_rate(req, pxa27x_freqs,
-+				     ARRAY_SIZE(pxa27x_freqs));
-+}
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++	status = "okay";
++};
 +
-+static int clk_pxa27x_cpll_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	int i;
-+
-+	pr_debug("%s(rate=%lu parent_rate=%lu)\n", __func__, rate, parent_rate);
-+	for (i = 0; i < ARRAY_SIZE(pxa27x_freqs); i++)
-+		if (pxa27x_freqs[i].cpll == rate)
-+			break;
-+
-+	if (i >= ARRAY_SIZE(pxa27x_freqs))
-+		return -EINVAL;
-+
-+	pxa2xx_cpll_change(&pxa27x_freqs[i], mdrefr_dri);
-+	return 0;
-+}
-+
- PARENTS(clk_pxa27x_cpll) = { "osc_13mhz" };
--RATE_RO_OPS(clk_pxa27x_cpll, "cpll");
-+RATE_OPS(clk_pxa27x_cpll, "cpll");
- 
- static unsigned long clk_pxa27x_lcd_base_get_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
-@@ -217,25 +321,6 @@ static void __init pxa27x_register_plls(void)
- 	clk_register_fixed_factor(NULL, "ppll_312mhz", "osc_13mhz", 0, 24, 1);
- }
- 
--static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
--					      unsigned long parent_rate)
--{
--	unsigned long clkcfg;
--	unsigned int ht, osc_forced;
--	unsigned long ccsr = readl(CCSR);
--
--	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
--	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
--	ht = clkcfg & (1 << 2);
--
--	if (osc_forced)
--		return parent_rate;
--	if (ht)
--		return parent_rate / 2;
--	else
--		return parent_rate;
--}
--
- static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- {
- 	unsigned long clkcfg;
-@@ -254,8 +339,25 @@ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- 		return PXA_CORE_TURBO;
- 	return PXA_CORE_RUN;
- }
-+
-+static int clk_pxa27x_core_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	if (index > PXA_CORE_TURBO)
-+		return -EINVAL;
-+
-+	pxa2xx_core_turbo_switch(index == PXA_CORE_TURBO);
-+
-+	return 0;
-+}
-+
-+static int clk_pxa27x_core_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	return __clk_mux_determine_rate(hw, req);
-+}
-+
- PARENTS(clk_pxa27x_core) = { "osc_13mhz", "run", "cpll" };
--MUX_RO_RATE_RO_OPS(clk_pxa27x_core, "core");
-+MUX_OPS(clk_pxa27x_core, "core", CLK_SET_RATE_PARENT);
- 
- static unsigned long clk_pxa27x_run_get_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
++&i2c1_pins {
++	allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++};
 -- 
-2.1.4
+git-series 0.8.10
