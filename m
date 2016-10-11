@@ -1,85 +1,160 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v13, 1/8] dt: bindings: update Freescale DCFG compatible
-Date: Fri, 28 Oct 2016 11:32:27 +0800
-Message-ID: <1477625554-46700-2-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Yangbo Lu <yangbo.lu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v4 5/9] clk: sunxi-ng: Implement minimum for multipliers
+Date: Tue, 11 Oct 2016 16:28:23 +0200
+Message-Id: <dc2601d4f35d9921ec50ed443cdd413f699fa270.1476196031.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
-of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
-ls1043a, and ls2080a.
+Allow the CCU drivers to specify a multiplier for their clocks.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added a list for the possible compatibles
-Changes for v10:
-	- None
-Changes for v11:
-	- Added 'Acked-by: Rob Herring'
-	- Updated commit message by Scott
-Changes for v12:
-	- None
-Changes for v13:
-	- None
----
- Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu_mult.c |  2 +-
+ drivers/clk/sunxi-ng/ccu_mult.h | 13 +++++++++----
+ drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkmp.c |  4 ++--
+ drivers/clk/sunxi-ng/ccu_nm.c   |  2 +-
+ 6 files changed, 21 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index dbbc095..713c1ae 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -119,7 +119,11 @@ Freescale DCFG
- configuration and status for the device. Such as setting the secondary
- core start address and release the secondary core from holdoff and startup.
-   Required properties:
--  - compatible: should be "fsl,ls1021a-dcfg"
-+  - compatible: should be "fsl,<chip>-dcfg"
-+    Possible compatibles:
-+	"fsl,ls1021a-dcfg"
-+	"fsl,ls1043a-dcfg"
-+	"fsl,ls2080a-dcfg"
-   - reg : should contain base address and length of DCFG memory-mapped registers
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 6a02ffee5386..678b6cb49f01 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -105,7 +105,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+ 						&parent_rate);
  
- Example:
+-	_cm.min = 1;
++	_cm.min = cm->mult.min;
+ 	_cm.max = 1 << cm->mult.width;
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index 113780b7558e..c1a2134bdc71 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -7,14 +7,19 @@
+ struct ccu_mult_internal {
+ 	u8	shift;
+ 	u8	width;
++	u8	min;
+ };
+ 
+-#define _SUNXI_CCU_MULT(_shift, _width)		\
+-	{					\
+-		.shift	= _shift,		\
+-		.width	= _width,		\
++#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
++	{						\
++		.shift	= _shift,			\
++		.width	= _width,			\
++		.min	= _min,				\
+ 	}
+ 
++#define _SUNXI_CCU_MULT(_shift, _width)		\
++	_SUNXI_CCU_MULT_MIN(_shift, _width, 1)
++
+ struct ccu_mult {
+ 	u32			enable;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index a42d870ba0ef..eaf0fdf78d2b 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -97,9 +97,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nk->fixed_post_div;
+ 
+-	_nk.min_n = 1;
++	_nk.min_n = nk->n.min;
+ 	_nk.max_n = 1 << nk->n.width;
+-	_nk.min_k = 1;
++	_nk.min_k = nk->k.min;
+ 	_nk.max_k = 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(*parent_rate, rate, &_nk);
+@@ -122,9 +122,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate = rate * nk->fixed_post_div;
+ 
+-	_nk.min_n = 1;
++	_nk.min_n = nk->n.min;
+ 	_nk.max_n = 1 << nk->n.width;
+-	_nk.min_k = 1;
++	_nk.min_k = nk->k.min;
+ 	_nk.max_k = 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(parent_rate, rate, &_nk);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index b2a5fccf2f8c..715b49211ddb 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -100,9 +100,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	struct ccu_nkm *nkm = data;
+ 	struct _ccu_nkm _nkm;
+ 
+-	_nkm.min_n = 1;
++	_nkm.min_n = nkm->n.min;
+ 	_nkm.max_n = 1 << nkm->n.width;
+-	_nkm.min_k = 1;
++	_nkm.min_n = nkm->k.min;
+ 	_nkm.max_k = 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+@@ -129,9 +129,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	u32 reg;
+ 
+-	_nkm.min_n = 1;
++	_nkm.min_n = nkm->n.min;
+ 	_nkm.max_n = 1 << nkm->n.width;
+-	_nkm.min_k = 1;
++	_nkm.min_n = nkm->k.min;
+ 	_nkm.max_k = 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index 2c1398192e48..7968e0bac5db 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -107,9 +107,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+ 	struct _ccu_nkmp _nkmp;
+ 
+-	_nkmp.min_n = 1;
++	_nkmp.min_n = nkmp->n.min;
+ 	_nkmp.max_n = 1 << nkmp->n.width;
+-	_nkmp.min_k = 1;
++	_nkmp.min_n = nkmp->k.min;
+ 	_nkmp.max_k = 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 2a190bc032a9..b1f3f0e8899d 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -93,7 +93,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
+ 	struct _ccu_nm _nm;
+ 
+-	_nm.min_n = 1;
++	_nm.min_n = nm->n.min;
+ 	_nm.max_n = 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+git-series 0.8.10
