@@ -1,89 +1,63 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-Subject: Re: [PATCH 08/14] dt-bindings: sound: Add sun8i analog codec
- documentation
-To: Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <06ea14939405c3eb0fb9be655d26ee564a04a53d.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004162430.GQ5228@lukather>
- <CAGb2v67gT9j6-NYj04+et2PNHRGFUzhgCnVgX+eoPGybArL60A@mail.gmail.com>
-Cc: Vinod Koul <vinod.koul@intel.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Lee Jones <lee.jones@linaro.org>,
- Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, dmaengine@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux-ALSA <alsa-devel@alsa-project.org>,
- devicetree <devicetree@vger.kernel.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>
-From: Mylene Josserand <mylene.josserand@free-electrons.com>
-Message-ID: <b94e3b11-8edb-a632-f7f1-217a594f310c@free-electrons.com>
-Date: Wed, 5 Oct 2016 14:08:54 +0200
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v67gT9j6-NYj04+et2PNHRGFUzhgCnVgX+eoPGybArL60A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Neil Armstrong <narmstrong@baylibre.com>,  sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20161005150752.22618-1-narmstrong@baylibre.com>
+Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-oxnas@lists.tuxfamily.org
+References: <20161005150752.22618-1-narmstrong@baylibre.com>
+Message-ID: <147617274057.17481.2362814012745242458@resonance>
+Subject: Re: [PATCH 0/6] clk: oxnas: Rework driver to add support for OX820
+Date: Tue, 11 Oct 2016 09:59:00 +0200
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Quoting Neil Armstrong (2016-10-05 17:07:46)
+> In order to to support the Oxford Semiconductor OX820 Soc clock gates,
+> rework the original driver with a structure inspired from the Qcom or Mes=
+on
+> drivers and using the new devm_clk_hw_register() call.
+> =
 
+> The first patches add dt-bindings include file to clarify the clock indic=
+es.
+> =
 
-On 05/10/2016 04:59, Chen-Yu Tsai wrote:
-> On Wed, Oct 5, 2016 at 12:24 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> Hi,
->>
->> On Tue, Oct 04, 2016 at 11:46:21AM +0200, Mylène Josserand wrote:
->>> Add the documentation for dt-binding of the analog audiocodec
->>> driver for SUN8I SoC.
->>>
->>> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
->>> ---
->>>  .../devicetree/bindings/sound/sun8i-codec-analog.txt | 20 ++++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
->>> new file mode 100644
->>> index 0000000..a03ec20
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
->>> @@ -0,0 +1,20 @@
->>> +* Allwinner A23/A33 Analog Codec
->>> +
->>> +This codec must be handled as a PRCM subnode.
->>
->> Like Mark was saying, you should probably reference the sun6i-prcm.txt
->> binding here
+> In future work, OX820 PLLs should also be handled by this driver.
 
+Series looks good to me. Will apply after -rc1 drops.
 
-Okay, I will explain more how it works.
+Regards,
+Mike
 
+> =
 
->>
->>> +Required properties:
->>> +- compatible: must be either "allwinner,sun8i-codec-analog"
->>
->> Our compatible prefix is <family>-<soc>, and using the older SoC that
->> introduced that block.
->>
->> In this case, that would be sun6i-a31, I think?
->
-> sun6i-a31s actually, but a31s has extra line out controls,
-> so the right one would be sun8i-a23. Both are listed in my
-> original driver.
+> Neil Armstrong (6):
+>   clk: oxnas: Add dt-bindings include file for OX810SE
+>   clk: oxnas: Add dt-bindings include file for OX820
+>   clk: oxnas: Rename to clk_oxnas_gate
+>   clk: oxnas: Refactor to make use of devm_clk_hw_register()
+>   clk: oxnas: Add OX820 Gate clocks
+>   dt-bindings: clk: oxnas,stdclk: Add OX820 bindings
+> =
 
+>  .../devicetree/bindings/clock/oxnas,stdclk.txt     |  19 +-
+>  drivers/clk/clk-oxnas.c                            | 232 ++++++++++++++-=
+------
+>  include/dt-bindings/clock/oxsemi,ox810se.h         |  30 +++
+>  include/dt-bindings/clock/oxsemi,ox820.h           |  40 ++++
+>  4 files changed, 231 insertions(+), 90 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/oxsemi,ox810se.h
+>  create mode 100644 include/dt-bindings/clock/oxsemi,ox820.h
+> =
 
-It is noted.
+> -- =
 
-Thanks!
+> 2.7.0
+> =
 
-
--- 
-Mylène Josserand, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
