@@ -1,93 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-by2nam03on0059.outbound.protection.outlook.com ([104.47.42.59]:12270
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965111AbcJ1F65 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Oct 2016 01:58:57 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v14, 6/8] MAINTAINERS: add entry for Freescale SoC drivers
-Date: Fri, 28 Oct 2016 13:45:19 +0800
-Message-ID: <1477633521-7391-7-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: Rob Herring <robh@kernel.org>
+CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
+Date: Tue, 11 Oct 2016 17:00:44 +0100
+Message-ID: <2468748.fALFhzhDcI@np-p-burton>
+In-Reply-To: <20161010130121.GA31827@rob-hp-laptop>
+References: <20161005171824.18014-1-paul.burton@imgtec.com> <20161005171824.18014-17-paul.burton@imgtec.com> <20161010130121.GA31827@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="nextPart1510261.TKAFVGyAAe";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add maintainer entry for Freescale SoC drivers including
-the QE library and the GUTS driver now. Also add maintainer
-for QE library.
+--nextPart1510261.TKAFVGyAAe
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Qiang Zhao <qiang.zhao@nxp.com>
----
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added linux-arm mail list
-	- Removed GUTS driver entry
-Changes for v10:
-	- Changed 'DRIVER' to 'DRIVERS'
-	- Added 'Acked-by' of Scott and Qiang
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
-Changes for v14:
-	- None
----
- MAINTAINERS | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+On Monday, 10 October 2016 08:01:21 BST Rob Herring wrote:
+> On Wed, Oct 05, 2016 at 06:18:22PM +0100, Paul Burton wrote:
+> > Add device tree binding documentation for the clocks provided by the
+> > MIPS Boston development board from Imagination Technologies, and a
+> > header file describing the available clocks for use by device trees &
+> > driver.
+> > 
+> > Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: devicetree@vger.kernel.org
+> > 
+> > ---
+> > 
+> > Changes in v3: None
+> > Changes in v2:
+> > - Add BOSTON_CLK_INPUT to expose the input clock.
+> > 
+> >  .../devicetree/bindings/clock/img,boston-clock.txt | 27
+> >  ++++++++++++++++++++++ include/dt-bindings/clock/boston-clock.h         
+> >   | 14 +++++++++++ 2 files changed, 41 insertions(+)
+> >  create mode 100644
+> >  Documentation/devicetree/bindings/clock/img,boston-clock.txt create mode
+> >  100644 include/dt-bindings/clock/boston-clock.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+> > b/Documentation/devicetree/bindings/clock/img,boston-clock.txt new file
+> > mode 100644
+> > index 0000000..c01ea60
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+> > @@ -0,0 +1,27 @@
+> > +Binding for Imagination Technologies MIPS Boston clock sources.
+> > +
+> > +This binding uses the common clock binding[1].
+> > +
+> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +
+> > +Required properties:
+> > +- compatible : Should be "img,boston-clock".
+> > +- #clock-cells : Should be set to 1.
+> > +  Values available for clock consumers can be found in the header file:
+> > +    <dt-bindings/clock/boston-clock.h>
+> > +- regmap : Phandle to the Boston platform register system controller.
+> > +  This should contain a phandle to the system controller node covering
+> > the
+> > +  platform registers provided by the Boston board.
+> 
+> Can you just make the clock node a child of the system controller and
+> drop this?
+> 
+> Rob
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c72fa18..cf3aaee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5037,9 +5037,18 @@ S:	Maintained
- F:	drivers/net/ethernet/freescale/fman
- F:	Documentation/devicetree/bindings/powerpc/fsl/fman.txt
+Hi Rob,
  
-+FREESCALE SOC DRIVERS
-+M:	Scott Wood <oss@buserror.net>
-+L:	linuxppc-dev@lists.ozlabs.org
-+L:	linux-arm-kernel@lists.infradead.org
-+S:	Maintained
-+F:	drivers/soc/fsl/
-+F:	include/linux/fsl/
-+
- FREESCALE QUICC ENGINE LIBRARY
-+M:	Qiang Zhao <qiang.zhao@nxp.com>
- L:	linuxppc-dev@lists.ozlabs.org
--S:	Orphan
-+S:	Maintained
- F:	drivers/soc/fsl/qe/
- F:	include/soc/fsl/*qe*.h
- F:	include/soc/fsl/*ucc*.h
--- 
-2.1.0.27.g96db324
+(Apologies to anyone who received my last; my mail client seems to be 
+misconfigured & previously sent HTML mail.)
 
+As I mentioned before technically that could be done, but it would really not 
+be at all reflective of the hardware & so seems somewhat contrary to the 
+purpose of a device tree.
+ 
+Thanks,
+    Paul
+--nextPart1510261.TKAFVGyAAe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJX/QysAAoJEIIg2fppPBxl8D8P/jZEbGy4OwrZEmOTXP+Der/O
+n0oNrjzD6VkgKOAc4lIZNjRPgHxUXb/qFdL6ObfOnVYxmlfs+KrvzZoO6YbleaG2
+Oq3qMqvJsV+VKxPqB2HKVRM/S9pN+GpXdp553oRkPUJwCFJrrTuuW9YHE6c6gegm
+O57H2nG/M6KF4mXfQj9sN/H1fU14kwwfEgTRovPZg6m2imLS8yd1behdAY9nRlZj
+tanMDIEZlWnrdP61ZAfVAsa/V+ussaJWc40miqHyDEGprLHZ4n9PrwJeMdrJ1SOa
+aaFv8Qpk+UiY9Ia+7wL2K9Gdn1aCmbfqcoXZWTQ1hZi1SPTuLYGrXw8FmGnxh5FW
+X1SKtW458oP5uW6aQX+r5ixqzoCF6/eUgjH/8BAa60q9nDdA1MlYDk1SfmxnQ+/0
+0H5gj+7bR9RoLkGthxCYQuRBncxO3zTL4f6EcNNdjpPiGIVju3BWe2MNTqycf+HO
+Acpr5gOAyiK7xDxkRBU4kzL3HxUJuC0VyC61FljgSh1ZAUcKRp8BeULY6W4+haxF
+P2UCRXv0bX0l5OEr0YGaOB+yMyEc4JxyxkrCeRNK6iMFR7vDY16Ng+UhHNa1bpog
+C1QxPNrkaqSlYAZzF/Q9FnNhCZS1a17z9SszCVO2yAm2w2CZ1MHUK3ib90wWrTkX
+10x2FoSR4zN6GDY6AlC/
+=Oluv
+-----END PGP SIGNATURE-----
+
+--nextPart1510261.TKAFVGyAAe--
