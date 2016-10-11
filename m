@@ -1,24 +1,111 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v3 0/2] Renesas R8A7743 CPG/MSSR clock support
-Date: Fri, 21 Oct 2016 23:12:42 +0300
-Message-ID: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:32493 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752674AbcJKBXG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Oct 2016 21:23:06 -0400
+Subject: Re: [PATCH v2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
+To: Rob Herring <robh@kernel.org>
+References: <1474183821-7570-1-git-send-email-xuejiancheng@hisilicon.com>
+ <20160923174704.GA32729@rob-hp-laptop>
+ <5a6e3727-214a-c791-3d8d-3982ae2f6bac@hisilicon.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <gaofei@hisilicon.com>,
+        <hermit.wangheming@hisilicon.com>, <scott.bambrough@linaro.org>,
+        <mark.gregotski@linaro.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <8d4d296c-5814-1ad6-4102-600762cbac8b@hisilicon.com>
+Date: Tue, 11 Oct 2016 09:22:16 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5a6e3727-214a-c791-3d8d-3982ae2f6bac@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo. I've splitted them from the R-Car gen2 common support patch.
-As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
-patch #1 of this series, it might make sense to merge this patch to the
-'renesas.git' repo as well...
 
-[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7743 support
+在 2016/9/24 9:45, Jiancheng Xue 写道:
+> 在 2016/9/24 1:47, Rob Herring 写道:
+>> On Sun, Sep 18, 2016 at 03:30:21PM +0800, Jiancheng Xue wrote:
+>>> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
+>>> Generator) module generates clock and reset signals used
+>>> by other module blocks on SoC.
+>>>
+>>> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+>>> ---
+>>> change log
+>>> v2:
+>>> - Fixed compiling error when compiled as a module.
+>>> - Fixed issues pointed by Stephen Boyd.
+>>> - Added prefix HISTB for clock index macro definitions.
+>>>
+>>>  .../clock/{hi3519-crg.txt => hisi-crg.txt}         |  11 +-
+>>>  drivers/clk/hisilicon/Kconfig                      |   8 +
+>>>  drivers/clk/hisilicon/Makefile                     |   1 +
+>>>  drivers/clk/hisilicon/crg-hi3798cv200.c            | 305 +++++++++++++++++++++
+>>>  drivers/clk/hisilicon/crg.h                        |  34 +++
+>>>  include/dt-bindings/clock/histb-clock.h            |  64 +++++
+>>>  6 files changed, 419 insertions(+), 4 deletions(-)
+>>>  rename Documentation/devicetree/bindings/clock/{hi3519-crg.txt => hisi-crg.txt} (82%)
+>>>  create mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
+>>>  create mode 100644 drivers/clk/hisilicon/crg.h
+>>>  create mode 100644 include/dt-bindings/clock/histb-clock.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> similarity index 82%
+>>> rename from Documentation/devicetree/bindings/clock/hi3519-crg.txt
+>>> rename to Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> index acd1f23..e3919b6 100644
+>>> --- a/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> @@ -1,7 +1,7 @@
+>>> -* Hisilicon Hi3519 Clock and Reset Generator(CRG)
+>>> +* HiSilicon Clock and Reset Generator(CRG)
+>>>  
+>>> -The Hi3519 CRG module provides clock and reset signals to various
+>>> -controllers within the SoC.
+>>> +The CRG module provides clock and reset signals to various
+>>> +modules within the SoC.
+>>>  
+>>>  This binding uses the following bindings:
+>>>      Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>> @@ -10,7 +10,10 @@ This binding uses the following bindings:
+>>>  Required Properties:
+>>>  
+>>>  - compatible: should be one of the following.
+>>> -  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
+>>> +  - "hisilicon,hi3516cv300-crg"
+>>> +  - "hisilicon,hi3519-crg"
+>>> +  - "hisilicon,hi3798cv200-crg"
+>>> +  - "hisilicon,hi3798cv200-sysctrl"
+>>
+>> Why crg and sysctrl?
+>>
+> Hi Rob，
+> 
+> In Hi3798cv200 SoC, the system controller (sysctrl) is another clock
+> provider which provides clocks for some modules such as timer0, uart0,
+> ir, led etc. These modules won't be power down when the system enters
+> into the stand-by mode. Besides providing above clocks, sysctrl also
+> contains registers used to control the whole system and some peripherals.
+> 
+Hi Rob，
 
-MBR, Sergei
+Do you still have any questions about this? Could you help me to ack this binding?
+Thank you!
+
+Regards,
+Jiancheng
+> 
+>>>  
+>>>  - reg: physical base address of the controller and length of memory mapped
+>>>    region.
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
+
