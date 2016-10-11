@@ -1,131 +1,51 @@
-Return-Path: <icenowy@aosc.xyz>
-Date: Fri, 7 Oct 2016 16:35:30 +0800
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
- mark.rutland@arm.com, robh+dt@kernel.org,
- thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/14] ASoc: sunxi: Add Allwinner A33 codec driver
-Message-ID: <20161007163530.7b027091@aosc.xyz>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+Return-Path: <otavio.salvador@ossystems.com.br>
+Return-Path: <otavio.salvador@ossystems.com.br>
+From: Otavio Salvador <otavio.salvador@ossystems.com.br>
 MIME-Version: 1.0
+In-Reply-To: <CAOMZO5CVggufx2U0pZUXd1o=i36Jo-c1B=hgFcSaWeM+=oagaQ@mail.gmail.com>
+References: <03B5A3CA1724CE4EAC32B27E39292A677FC5A390AE@AUSMAIL1.AUS.ADVANTECH.CORP>
+ <WM!ea1806249edeb2cf70790bb7482fb813b9b7cef636576d9ca4b01897c8831c3650f71356a13ce9ba5e358a69b86f6a82!@dg.advantech.com>
+ <CAOMZO5CXTEpNvAhuc2Et60HxfM=nQngMTdMOtDbazi=1EQ95Jw@mail.gmail.com>
+ <03B5A3CA1724CE4EAC32B27E39292A677FC5A39613@AUSMAIL1.AUS.ADVANTECH.CORP>
+ <WM!8b5ef465717800ac4466674b98bb32450dc231d955cd4979ca96fd54828a7c3af7de5f376015ebf046c75f20677161c6!@dgg.advantech.com>
+ <WM!8ae38b052eee9a42a4712d13aee34e2d793055d4125e98cc2c03451811f33168b3556d3bf52ee5ba8dda879cea808cdc!@dg.advantech.com>
+ <CAOMZO5CVggufx2U0pZUXd1o=i36Jo-c1B=hgFcSaWeM+=oagaQ@mail.gmail.com>
+Date: Tue, 11 Oct 2016 15:34:52 -0300
+Message-ID: <CAP9ODKoyhkTA2=MR44LJ24OYTJaWrtg9vT=14vnYNnuuSDRe1A@mail.gmail.com>
+Subject: Re: The possible regression in kernel 4.8 - clk: imx: correct AV PLL
+ rate formula
+To: Fabio Estevam <festevam@gmail.com>
+Cc: "Ken.Lin" <ken.lin@advantech.com>, Jason Moss <jason.moss@nxp.com>,
+	"Peter.Chiang" <peter.chiang@advantech.com>, "emil@limesaudio.com" <emil@limesaudio.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Peter.Stretz" <peter.stretz@advantech.com>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue,  4 Oct 2016 11:46:13 +0200
-Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com> wrote:
+On Tue, Oct 11, 2016 at 3:00 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Ken,
+>
+> On Tue, Oct 11, 2016 at 2:49 PM, Ken.Lin <ken.lin@advantech.com> wrote:
+>
+>> With the patches applied, the pixel clock (148500000 required for 1920x1080@60) is correct as we checked in kernel 4.7 and the actual measurement result looked good as we expected.
+>> I think the patches should fix the issue.
+>
+> That's good news. Thanks for testing.
+>
+> Emil is working on a v3 version of the patch series.
+>
+> Emil,
+>
+> Please add Ken Lin on Cc when you submit v3.
 
-> Hi everyone,
->=20
->=20
-> This patchset add the audio codec for Allwinner A33 (sun8i) SoC.
->=20
-> It adds different drivers:
->    - sun8i-codec-analog (patch 4): This driver implements the analog
-> part of the audio codec. The analog part is handled in PRCM registers
-> so this driver must be added as prcm's subnode (patch 5).
->    - sun8i-codec (patch 6): This driver implements the digital part
-> of the A33 codec.
->    - sun8i (patch 7): This driver implements a sound card for A33.
->    It links the DAI and the audio codec. The analog codec driver is
-> handled as an "aux_device".
->=20
-> The DAI for this codec is the same than for A20: "sun4i-i2s".
-> The digital codec code is coming from Allwinner's BSP (after some
-> cleanup and DAPM conversion) [1]
-> The analog codec driver is coming from Chen-Yu Tsai's driver [2]
-> with some modifications (such as read/write regmap functions).
->=20
-> Currently, all the drivers handle only the playback feature.
-> The other ones (such as capture) and all other interfaces except
-> headphone are not supported.
->=20
-> These drivers are functional except for one issue. When playing a
-> sound for the first time, a short delay can be noticed. On a second
-> play (right after), the sound is played correctly. If we wait a short
-> time (~5 sec), the delay is back.
-> There is the same behavior for left/right channel. On the first
-> time, a left sound is played on the left channel but in the second
-> time, the sound will be played on wrong channel.
->=20
-> These issues will be fixed in a second time. Is someone have
-> suggestions about it?
->=20
-> Examples of amixer commands:
-> 	amixer set 'Headphone' 75%
-> 	amixer set 'Headphone' on
-> 	amixer set 'DAC' on
-> 	amixer set 'Right DAC Mixer RSlot 0' on
-> 	amixer set 'Left DAC Mixer LSlot 0' on
-> 	amixer set 'DAC Reversed Right' on
-> 	amixer set 'DAC Reversed Left' on
->=20
-> It was tested on Parrot and Sinlinx board where device tree's
-> modifications are added (patch 11 to 14).
+And what will be done regarding 4.8? Is the faulty change to be
+reverted or this patches will be backported?
 
-I tested it on my iNet D978 Rev2 board (dts available in linux-next now)
-Directly output audio from mpg123 to the audio codec failed, with
-noises appear in the earphone. (And the mpg123 process terminated very
-fast, seems that the bitrate become wrong)
-
-However, paplay works well with the decoded wav file, and ```mpg123 -o
-pulse``` works properly.
-
->=20
-> Thank you in advance,
-> Best regards,
->=20
-> [1]:
-> https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/sound/soc/sun=
-xi/audiocodec/sun8iw5_sndcodec.c
-> [2]: https://github.com/wens/linux/tree/a31-audio
->=20
-> Myl=C3=A8ne Josserand (14):
->   dma: sun6i-dma: Add burst case of 4
->   clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to ac-dig
->   ASoC: sun4i-i2s: Add apb reset
->   ASoC: Add sun8i analog codec driver
->   mfd: sun6i-prcm: Add sun8i analog codec as subnode
->   ASoC: Add sun8i digital audio codec
->   ASoC: Add sun8i audio card
->   dt-bindings: sound: Add sun8i analog codec documentation
->   dt-bindings: sound: Add sun8i codec documentation
->   dt-bindings: sound: Add sun8i audio card documentation
->   ARM: dts: sun8i: Add analog codec on prcm node
->   ARM: dts: sun8i: Add audio codec, dai and card for A33
->   ARM: dts: sun8i: parrot: Enable audio nodes
->   ARM: dts: sun8i: sinlinx: Enable audio nodes
->=20
->  .../devicetree/bindings/sound/sun8i-audio.txt      |  17 +
->  .../bindings/sound/sun8i-codec-analog.txt          |  20 +
->  .../devicetree/bindings/sound/sun8i-codec.txt      |  24 +
->  arch/arm/boot/dts/sun8i-a23-a33.dtsi               |   7 +
->  arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts     |   8 +
->  arch/arm/boot/dts/sun8i-a33.dtsi                   |  33 ++
->  arch/arm/boot/dts/sun8i-r16-parrot.dts             |   8 +
->  drivers/clk/sunxi-ng/ccu-sun8i-a33.c               |   2 +-
->  drivers/dma/sun6i-dma.c                            |   2 +
->  drivers/mfd/sun6i-prcm.c                           |  16 +
->  sound/soc/sunxi/Kconfig                            |  30 ++
->  sound/soc/sunxi/Makefile                           |   3 +
->  sound/soc/sunxi/sun4i-i2s.c                        |  16 +-
->  sound/soc/sunxi/sun8i-codec-analog.c               | 305
-> +++++++++++++ sound/soc/sunxi/sun8i-codec.c                      |
-> 492 +++++++++++++++++++++
-> sound/soc/sunxi/sun8i.c                            | 101 +++++ 16
-> files changed, 1082 insertions(+), 2 deletions(-) create mode 100644
-> Documentation/devicetree/bindings/sound/sun8i-audio.txt create mode
-> 100644 Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
-> create mode 100644
-> Documentation/devicetree/bindings/sound/sun8i-codec.txt create mode
-> 100644 sound/soc/sunxi/sun8i-codec-analog.c create mode 100644
-> sound/soc/sunxi/sun8i-codec.c create mode 100644
-> sound/soc/sunxi/sun8i.c
->=20
+-- 
+Otavio Salvador                             O.S. Systems
+http://www.ossystems.com.br        http://code.ossystems.com.br
+Mobile: +55 (53) 9981-7854            Mobile: +1 (347) 903-9750
