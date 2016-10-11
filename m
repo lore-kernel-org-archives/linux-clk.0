@@ -1,70 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Oct 2016 13:51:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/6] clk: pxa: transfer CPU clock setting from
- pxa2xx-cpufreq
-Message-ID: <20161019205128.GE8871@codeaurora.org>
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
- <1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
- <87zim23zw3.fsf@belgarion.home>
- <20161018234855.GO8871@codeaurora.org>
- <877f943xjk.fsf@belgarion.home>
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 11 Oct 2016 10:01:47 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: John Stultz <john.stultz@linaro.org>
+Cc: Shawn Guo <shawn.guo@linaro.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>
+Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and
+ mediactrl clock init
+Message-ID: <20161011020147.GB15400@tiger>
+References: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
+ <CALAqxLV5oOsP8ZcKrwzwK6OsZZwTjsvyk18+aWEFpZh17VttnA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <877f943xjk.fsf@belgarion.home>
+In-Reply-To: <CALAqxLV5oOsP8ZcKrwzwK6OsZZwTjsvyk18+aWEFpZh17VttnA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/19, Robert Jarzmik wrote:
-> Stephen Boyd <sboyd@codeaurora.org> writes:
-> 
-> > On 10/18, Robert Jarzmik wrote:
-> >> Robert Jarzmik <robert.jarzmik@free.fr> writes:
-> >> Hi Michael and Stephen,
-> >> 
-> >> I'm planing on sending a v2 next week with minor corrections, mostly in the data
-> >> tables (pxa25x_freqs and pxa27x_freqs), as testing prooved some values were wrong.
-> >> 
-> >> If you want me modify this serie, will you have time to review for next week or
-> >> should I delay the v2 posting ?
-> >> 
+Hi John,
+
+On Mon, Oct 10, 2016 at 10:39:12AM -0700, John Stultz wrote:
+> On Sat, Oct 8, 2016 at 6:38 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
+> > The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
+> > also reset controller.  It worked fine that single sysctrl/mediactrl
+> > device node in DT can be used to initialize clock driver and populate
+> > platform device for reset controller.  But it stops working after
+> > commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> > gets merged.  The commit sets flag OF_POPULATED during clock
+> > initialization to skip the platform device populating for the same
+> > device node.  On hi6220, it effectively makes hi6220-sysctrl reset
+> > driver not probe any more.
 > >
-> > No need to delay. clk patches look fine with a quick glance. It
-> > would be really neat if we could make cpufreq-dt work without DT.
-> > What's blocking that? OPP tables?
+> > The patch changes hi6220 sysctrl and mediactrl clock init macro from
+> > CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
+> > the same hardware block can continue working.
+> >
+> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 > 
-> Heu I'm not the author of cpufreq-dt, so I'm not the best to answer.
-> To answer the question "without DT", it depends if you mean "with ACPI" or "with
-> platform_data" or something else.
-
-I mean platform_data mostly. Do you use ACPI with the clk driver?
-
+> Tested-by: John Stultz <john.stultz@linaro.org>
 > 
-> From what I've seen so far, the missing/blocking points are :
->  - the OPP points definition as you said
-
-Hm.. I thought cpufreq-dt worked with OPP tables populated by
-other code (i.e. platform code).
-
->  - probably same thing for the input power supply / regulator
-
-Regulators should be optional I hope. Do you use regulators in
-your design that has platform_data?
-
->  - the cooling parts probably
->  - and more generaly all the cpufreq-dt is built around device-tree
->  - last point, the name from KConfig, "Generic DT based cpufreq driver"
->    => that strongly suggest it's device-tree only
+> I hit this as well last week when 989eafd0b609 ("clk: core: Avoid
+> double initialization of clocks") landed, which killed graphics on my
+> HiKey.
 > 
-> I'm deeply convinced that Viresh being one of the authors will shed more light
-> on this.
+> My workaround was a bit hackish, as I don't really know when one
+> should use OF_DECLARE vs OF_DECLARE_DRIVER, but I also converted the
+> hi6220_clk_ao and hi6220_clk_power to the _DRIVER side. Your patch
+> seems to work just as well for me, but I wanted to double check with
+> you that the ao/power clks didn't need the conversion as well.
 
-Sure, thanks for the notes.
+For now, clock driver is the only one matching compatible
+"hisilicon,hi6220-aoctrl" and "hisilicon,hi6220-pmctrl".  Whoever
+adding a platform driver probing the same compatible later will have
+to change it CLK_OF_DECLARE_DRIVER.  Otherwise, the platform driver
+simply doesn't probe.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Shawn
