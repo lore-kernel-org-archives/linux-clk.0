@@ -1,63 +1,93 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Sat, 15 Oct 2016 20:27:11 +0300
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: samsung: clk-exynos-audss: Fix module autoload
-Message-ID: <20161015172711.GA6465@kozik-lap>
-References: <1476470645-22159-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1476470645-22159-1-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <2468748.fALFhzhDcI@np-p-burton>
+References: <20161005171824.18014-1-paul.burton@imgtec.com>
+ <20161005171824.18014-17-paul.burton@imgtec.com> <20161010130121.GA31827@rob-hp-laptop>
+ <2468748.fALFhzhDcI@np-p-burton>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 11 Oct 2016 15:06:46 -0500
+Message-ID: <CAL_Jsq+PkQmkkLMjiurmHegewpc6n_ntUMsik8oMZdM2nXHQ6g@mail.gmail.com>
+Subject: Re: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: Linux-MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 14, 2016 at 03:44:05PM -0300, Javier Martinez Canillas wrote:
-> If the driver is built as a module, autoload won't work because the module
-> alias information is not filled. So user-space can't match the registered
-> device with the corresponding module.
-> 
-> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
-> 
-> Before this patch:
-> 
-> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
-> alias:          platform:exynos-audss-clk
-> 
-> After this patch:
-> 
-> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
-> alias:          platform:exynos-audss-clk
-> alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
-> alias:          of:N*T*Csamsung,exynos5420-audss-clock
-> alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
-> alias:          of:N*T*Csamsung,exynos5410-audss-clock
-> alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
-> alias:          of:N*T*Csamsung,exynos5250-audss-clock
-> alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
-> alias:          of:N*T*Csamsung,exynos4210-audss-clock
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
-> 
->  drivers/clk/samsung/clk-exynos-audss.c | 1 +
->  1 file changed, 1 insertion(+)
+On Tue, Oct 11, 2016 at 11:00 AM, Paul Burton <paul.burton@imgtec.com> wrote:
+> On Monday, 10 October 2016 08:01:21 BST Rob Herring wrote:
+>> On Wed, Oct 05, 2016 at 06:18:22PM +0100, Paul Burton wrote:
+>> > Add device tree binding documentation for the clocks provided by the
+>> > MIPS Boston development board from Imagination Technologies, and a
+>> > header file describing the available clocks for use by device trees &
+>> > driver.
+>> >
+>> > Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+>> > Cc: Michael Turquette <mturquette@baylibre.com>
+>> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> > Cc: linux-clk@vger.kernel.org
+>> > Cc: Rob Herring <robh+dt@kernel.org>
+>> > Cc: Mark Rutland <mark.rutland@arm.com>
+>> > Cc: devicetree@vger.kernel.org
+>> >
+>> > ---
+>> >
+>> > Changes in v3: None
+>> > Changes in v2:
+>> > - Add BOSTON_CLK_INPUT to expose the input clock.
+>> >
+>> >  .../devicetree/bindings/clock/img,boston-clock.txt | 27
+>> >  ++++++++++++++++++++++ include/dt-bindings/clock/boston-clock.h
+>> >   | 14 +++++++++++ 2 files changed, 41 insertions(+)
+>> >  create mode 100644
+>> >  Documentation/devicetree/bindings/clock/img,boston-clock.txt create mode
+>> >  100644 include/dt-bindings/clock/boston-clock.h
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>> > b/Documentation/devicetree/bindings/clock/img,boston-clock.txt new file
+>> > mode 100644
+>> > index 0000000..c01ea60
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>> > @@ -0,0 +1,27 @@
+>> > +Binding for Imagination Technologies MIPS Boston clock sources.
+>> > +
+>> > +This binding uses the common clock binding[1].
+>> > +
+>> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> > +
+>> > +Required properties:
+>> > +- compatible : Should be "img,boston-clock".
+>> > +- #clock-cells : Should be set to 1.
+>> > +  Values available for clock consumers can be found in the header file:
+>> > +    <dt-bindings/clock/boston-clock.h>
+>> > +- regmap : Phandle to the Boston platform register system controller.
+>> > +  This should contain a phandle to the system controller node covering
+>> > the
+>> > +  platform registers provided by the Boston board.
+>>
+>> Can you just make the clock node a child of the system controller and
+>> drop this?
+>>
+>> Rob
+>
+> Hi Rob,
+>
+> (Apologies to anyone who received my last; my mail client seems to be
+> misconfigured & previously sent HTML mail.)
+>
+> As I mentioned before technically that could be done, but it would really not
+> be at all reflective of the hardware & so seems somewhat contrary to the
+> purpose of a device tree.
 
-Indeed, this was missed by 4d252fd5719b thus I think it could be
-mentioned as fix tag (just for reference...):
-Fixes: 4d252fd5719b ("clk: samsung: Allow modular build of the Audio Subsystem CLKCON driver")
+Given that you need a reference back to the system controller, it does
+match the h/w. The system controller h/w contains various functions,
+therefore the system controller node should contain nodes for those
+functions (or the sys ctrlr itself could be the clock provider node
+with no child nodes). Otherwise, what is the parent of the clock node?
+Root? Root should generally be the top level devices of the SoC,
+though it gets used for things which have no good parent.
 
-Anyway, this fixes the issue, so:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Rob
