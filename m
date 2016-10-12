@@ -1,43 +1,44 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
-	<peter.chen@nxp.com>
-Subject: [PATCH 2/3] ARM: imx: mach-imx6ul: add imx6ull support
-Date: Tue, 1 Nov 2016 11:02:22 +0800
-Message-ID: <1477969343-19887-3-git-send-email-peter.chen@nxp.com>
-In-Reply-To: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
-References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
-Return-Path: peter.chen@nxp.com
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 12 Oct 2016 12:02:47 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 6/6] cpufreq: pxa: convert to clock API
+Message-ID: <20161012063247.GH19385@vireshk-i7>
+References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+ <1476130149-31834-7-git-send-email-robert.jarzmik@free.fr>
+ <20161012023601.GC19385@vireshk-i7>
+ <87mvia6q8p.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87mvia6q8p.fsf@belgarion.home>
 List-ID: <linux-clk.vger.kernel.org>
 
-imx6ull is derived SoC from imx6ul.
+On 12-10-16, 08:22, Robert Jarzmik wrote:
+> Viresh Kumar <viresh.kumar@linaro.org> writes:
+> 
+> > On 10-10-16, 22:09, Robert Jarzmik wrote:
+> >> As the clock settings have been introduced into the clock pxa drivers,
+> >> which are now available to change the CPU clock by themselves, remove
+> >> the clock handling from this driver, and rely on pxa clock drivers.
+> >> 
+> >> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> >> ---
+> >>  drivers/cpufreq/pxa2xx-cpufreq.c | 191 ++++++++-------------------------------
+> >>  1 file changed, 39 insertions(+), 152 deletions(-)
+> >
+> > As you mentioned in the previous patch, why can't you use cpufreq-dt
+> > driver now and delete this one ?
+> 
+> PXA architecture have both legacy platform_data based configurations and new
+> devicetree based ones.
 
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
----
- arch/arm/mach-imx/mach-imx6ul.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I don't see any platform data specific code in this driver. What am I
+missing ?
 
-diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
-index 58a2b88..0b24630 100644
---- a/arch/arm/mach-imx/mach-imx6ul.c
-+++ b/arch/arm/mach-imx/mach-imx6ul.c
-@@ -89,10 +89,11 @@ static void __init imx6ul_init_late(void)
- 
- static const char * const imx6ul_dt_compat[] __initconst = {
- 	"fsl,imx6ul",
-+	"fsl,imx6ull",
- 	NULL,
- };
- 
--DT_MACHINE_START(IMX6UL, "Freescale i.MX6 Ultralite (Device Tree)")
-+DT_MACHINE_START(IMX6UL, "Freescale i.MX6 UltraLite (Device Tree)")
- 	.init_irq	= imx6ul_init_irq,
- 	.init_machine	= imx6ul_init_machine,
- 	.init_late	= imx6ul_init_late,
 -- 
-2.7.4
+viresh
