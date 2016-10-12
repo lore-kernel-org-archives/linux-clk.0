@@ -1,79 +1,40 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v3 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-Date: Fri, 21 Oct 2016 23:15:07 +0300
-Message-ID: <21115355.YTPdgcs0id@wasted.cogentembedded.com>
-In-Reply-To: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
-References: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  "Rafael J. Wysocki" <rjw@rjwysocki.net>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org
+Subject: Re: [PATCH 6/6] cpufreq: pxa: convert to clock API
+References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+	<1476130149-31834-7-git-send-email-robert.jarzmik@free.fr>
+	<20161012023601.GC19385@vireshk-i7>
+Date: Wed, 12 Oct 2016 08:22:30 +0200
+In-Reply-To: <20161012023601.GC19385@vireshk-i7> (Viresh Kumar's message of
+	"Wed, 12 Oct 2016 08:06:01 +0530")
+Message-ID: <87mvia6q8p.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add macros usable by  the device tree sources to reference the R8A7743 CPG
-clocks  by index. The data comes from the  table 7.2b in the revision 0.50
-of the RZ/G Series User's Manual.
+Viresh Kumar <viresh.kumar@linaro.org> writes:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> On 10-10-16, 22:09, Robert Jarzmik wrote:
+>> As the clock settings have been introduced into the clock pxa drivers,
+>> which are now available to change the CPU clock by themselves, remove
+>> the clock handling from this driver, and rely on pxa clock drivers.
+>> 
+>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>> ---
+>>  drivers/cpufreq/pxa2xx-cpufreq.c | 191 ++++++++-------------------------------
+>>  1 file changed, 39 insertions(+), 152 deletions(-)
+>
+> As you mentioned in the previous patch, why can't you use cpufreq-dt
+> driver now and delete this one ?
 
----
-Changes in version 3:
-- renumbered the #define's in order to match the R8A7791 CPG clocks;
-- added the reference to  the manaual to the patch description.
+PXA architecture have both legacy platform_data based configurations and new
+devicetree based ones.
 
-Changes in version 2:
-- reduced the macro value indentation.
+I don't think cpufreq-dt can handle the legacy platform_data ones, can it ?
 
- include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Cheers.
 
-Index: linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7743 CPG Core Clocks */
-+#define R8A7743_CLK_Z		0
-+#define R8A7743_CLK_ZG		1
-+#define R8A7743_CLK_ZTR		2
-+#define R8A7743_CLK_ZTRD2	3
-+#define R8A7743_CLK_ZT		4
-+#define R8A7743_CLK_ZX		5
-+#define R8A7743_CLK_ZS		6
-+#define R8A7743_CLK_HP		7
-+#define R8A7743_CLK_B		9
-+#define R8A7743_CLK_LB		10
-+#define R8A7743_CLK_P		11
-+#define R8A7743_CLK_CL		12
-+#define R8A7743_CLK_M2		13
-+#define R8A7743_CLK_ZB3		15
-+#define R8A7743_CLK_ZB3D2	16
-+#define R8A7743_CLK_DDR		17
-+#define R8A7743_CLK_SDH		18
-+#define R8A7743_CLK_SD0		19
-+#define R8A7743_CLK_SD2		20
-+#define R8A7743_CLK_SD3		21
-+#define R8A7743_CLK_MMC0	22
-+#define R8A7743_CLK_MP		23
-+#define R8A7743_CLK_QSPI	26
-+#define R8A7743_CLK_CP		27
-+#define R8A7743_CLK_RCAN	28
-+#define R8A7743_CLK_R		29
-+#define R8A7743_CLK_OSC		30
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
+-- 
+Robert
