@@ -1,24 +1,46 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH 0/2] Renesas R8A7745 CPG/MSSR clock support
-Date: Thu, 27 Oct 2016 23:41:55 +0300
-Message-ID: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Lin Huang <hl@rock-chips.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: rockchip: don't return NULL when failing to register ddrclk branch
+Date: Wed, 12 Oct 2016 20:31:41 +0800
+Message-Id: <1476275501-2653-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+rockchip_clk_register_ddrclk should not return NULL when faling
+to call clk_register, otherwise rockchip_clk_register_branches
+prints "unknown clock type". The acutal case is that it's a known
+clock type but we fail to regiser it, which may makes user confuse
+the reason of failure. And the pr_err here is pointless as
+rockchip_clk_register_branches will also print the similar message.
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
-depend on the common R-Car Gen2 support patch. As the DT patches in the
-R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
-it might make sense to merge this patch to the 'renesas.git' repo as well...
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-[1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7745 support
+ drivers/clk/rockchip/clk-ddr.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-MBR, Sergei
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+index 8feba93..e807535 100644
+--- a/drivers/clk/rockchip/clk-ddr.c
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -144,11 +144,8 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
+ 	ddrclk->ddr_flag = ddr_flag;
+ 
+ 	clk = clk_register(NULL, &ddrclk->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: could not register ddrclk %s\n", __func__,	name);
++	if (IS_ERR(clk))
+ 		kfree(ddrclk);
+-		return NULL;
+-	}
+ 
+ 	return clk;
+ }
+-- 
+2.3.7
