@@ -1,59 +1,150 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization
- method for CLKOUT
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <CGME20161026061227eucas1p20fb865eafd802044ed79ce336fa90eab@eucas1p2.samsung.com>
- <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <c5016b20-cf1f-2d9a-a4af-b79a53b3d617@osg.samsung.com>
-Date: Wed, 26 Oct 2016 07:12:43 -0300
-MIME-Version: 1.0
-In-Reply-To: <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <emil@limesaudio.com>
+Return-Path: <emil@limesaudio.com>
+From: Emil Lundmark <emil@limesaudio.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	"Ken . Lin" <ken.lin@advantech.com>,
+	Emil Lundmark <emil@limesaudio.com>
+Subject: [PATCH v3 2/2] clk: imx: improve precision of AV PLL to 1 Hz
+Date: Wed, 12 Oct 2016 12:31:41 +0200
+Message-Id: <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
+In-Reply-To: <cover.1476267249.git.emil@limesaudio.com>
+References: <cover.1476267249.git.emil@limesaudio.com>
+In-Reply-To: <cover.1476267249.git.emil@limesaudio.com>
+References: <cover.1476267249.git.emil@limesaudio.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Marek,
+The audio and video PLLs are designed to have a precision of 1 Hz if some
+conditions are met. The current implementation only allows a precision that
+depends on the rate of the parent clock. E.g., if the parent clock is 24
+MHz, the precision will be 24 Hz; or more generally the precision will be
 
-On 10/26/2016 03:12 AM, Marek Szyprowski wrote:
-> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
-> controller, and these functionalities are supported by different drivers
-> that matches the same compatible strings.
-> 
-> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
-> clocks") the OF core flags clock controllers registered with the
-> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
-> compatible string will not be registered.
-> 
-> This prevents the PMU platform device to be created, so the Exynos PMU
-> driver is never probed. This breaks (among other things) Suspend-to-RAM.
-> 
-> Fix this by changing CLKOUT driver initialization method to
-> CLK_OF_DECLARE_DRIVER(), which doesn't clear the OF_POPULATED flag, so
-> later a platform device is created and the Exynos PMU platform driver
-> can be be probed properly.
-> 
-> Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Changelog:
-> v2:
-> - switched to CLK_OF_DECLARE_DRIVER instead of calling
->   of_node_clear_flag(node, OF_POPULATED) as suggested by Stephen Boyd
->
+    p / 10^6 Hz
 
-I was not aware about this new macro and certainly looks like a better
-option. The patch looks good to me.
+where p is the parent clock rate. This comes down to how the register
+values for the PLL's fractional loop divider are chosen.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+The clock rate calculation for the PLL is
 
-Best regards,
+    PLL output frequency = Fref * (DIV_SELECT + NUM / DENOM)
+
+or with a shorter notation
+
+    r = p * (d + a / b)
+
+In addition to all variables being integers, we also have the following
+conditions:
+
+    27 <= d <= 54
+
+    -2^29 <= a <= 2^29-1
+     0    <  b <= 2^30-1
+    |a| < b
+
+Here, d, a and b are register values for the fractional loop divider. We
+want to chose d, a and b such that f(p, r) = p, i.e. f is our round_rate
+function. Currently, d and b are chosen as
+
+    d = r / p
+    b = 10^6
+
+hence we get the poor precision. And a is defined in terms of r, d, p and
+b:
+
+    a = (r - d * p) * b / p
+
+I propose that if p <= 2^30-1 (i.e., the max value for b), we chose b as
+
+    b = p
+
+We can do this since
+
+    |a| < b
+
+    |(r - d * p) * b / p| < b
+
+    |r - d * p| < p
+
+Which have two solutions, one of them is when p < 0, so we can skip that
+one. The other is when p > 0 and
+
+    p * (d - 1) < r < p * (d + 1)
+
+Substitute d = r / p:
+
+    (r - p) < r < (r + p)  <=>  p > 0
+
+So, as long as p > 0, we can chose b = p. This is a good choise for b since
+
+    a = (r - d * p) * b / p
+      = (r - d * p) * p / p
+      = r - d * p
+
+    r = p * (d + a / b)
+      = p * d + p * a / b
+      = p * d + p * a / p
+      = p * d + a
+
+and if d = r / p:
+
+    a = r - d * p
+      = r - r / p * p
+      = 0
+
+    r = p * d + a
+      = p * d + 0
+      = p * r / p
+      = r
+
+I reckon this is the intention by the design of the clock rate formula.
+
+Signed-off-by: Emil Lundmark <emil@limesaudio.com>
+---
+ drivers/clk/imx/clk-pllv3.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 7a6acc3e4a92..ed3a2df536ea 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -234,6 +234,7 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long max_rate = parent_rate * 54;
+ 	u32 div;
+ 	u32 mfn, mfd = 1000000;
++	u32 max_mfd = 0x3FFFFFFF;
+ 	u64 temp64;
+ 
+ 	if (rate > max_rate)
+@@ -241,6 +242,9 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	else if (rate < min_rate)
+ 		rate = min_rate;
+ 
++	if (parent_rate <= max_mfd)
++		mfd = parent_rate;
++
+ 	div = rate / parent_rate;
+ 	temp64 = (u64) (rate - div * parent_rate);
+ 	temp64 *= mfd;
+@@ -262,11 +266,15 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long max_rate = parent_rate * 54;
+ 	u32 val, div;
+ 	u32 mfn, mfd = 1000000;
++	u32 max_mfd = 0x3FFFFFFF;
+ 	u64 temp64;
+ 
+ 	if (rate < min_rate || rate > max_rate)
+ 		return -EINVAL;
+ 
++	if (parent_rate <= max_mfd)
++		mfd = parent_rate;
++
+ 	div = rate / parent_rate;
+ 	temp64 = (u64) (rate - div * parent_rate);
+ 	temp64 *= mfd;
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.4
