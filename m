@@ -1,158 +1,103 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 5/9] clk: sunxi-ng: Implement minimum for multipliers
-Date: Mon,  3 Oct 2016 10:09:09 +0200
-Message-Id: <20161003080913.24197-6-maxime.ripard@free-electrons.com>
-In-Reply-To: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
-References: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
+References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com> <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Oct 2016 13:39:23 +0200
+Message-ID: <CAMuHMdWrowTK8KxthrEO0DNHsBn-_PyY0GcRCc38wY6iynshiA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow the CCU drivers to specify a multiplier for their clocks.
+Hi Sergei,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mult.c |  2 +-
- drivers/clk/sunxi-ng/ccu_mult.h | 13 +++++++++----
- drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nkmp.c |  4 ++--
- drivers/clk/sunxi-ng/ccu_nm.c   |  2 +-
- 6 files changed, 21 insertions(+), 16 deletions(-)
+On Fri, Oct 7, 2016 at 10:46 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference the R8A7743 CPG
+> clocks  by index.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 6a02ffee5386..678b6cb49f01 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -105,7 +105,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
- 						&parent_rate);
- 
--	_cm.min = 1;
-+	_cm.min = cm->mult.min;
- 	_cm.max = 1 << cm->mult.width;
- 	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index 113780b7558e..c1a2134bdc71 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -7,14 +7,19 @@
- struct ccu_mult_internal {
- 	u8	shift;
- 	u8	width;
-+	u8	min;
- };
- 
--#define _SUNXI_CCU_MULT(_shift, _width)		\
--	{					\
--		.shift	= _shift,		\
--		.width	= _width,		\
-+#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
-+	{						\
-+		.shift	= _shift,			\
-+		.width	= _width,			\
-+		.min	= _min,				\
- 	}
- 
-+#define _SUNXI_CCU_MULT(_shift, _width)		\
-+	_SUNXI_CCU_MULT_MIN(_shift, _width, 1)
-+
- struct ccu_mult {
- 	u32			enable;
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-index a42d870ba0ef..eaf0fdf78d2b 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.c
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -97,9 +97,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nk->fixed_post_div;
- 
--	_nk.min_n = 1;
-+	_nk.min_n = nk->n.min;
- 	_nk.max_n = 1 << nk->n.width;
--	_nk.min_k = 1;
-+	_nk.min_k = nk->k.min;
- 	_nk.max_k = 1 << nk->k.width;
- 
- 	ccu_nk_find_best(*parent_rate, rate, &_nk);
-@@ -122,9 +122,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate * nk->fixed_post_div;
- 
--	_nk.min_n = 1;
-+	_nk.min_n = nk->n.min;
- 	_nk.max_n = 1 << nk->n.width;
--	_nk.min_k = 1;
-+	_nk.min_k = nk->k.min;
- 	_nk.max_k = 1 << nk->k.width;
- 
- 	ccu_nk_find_best(parent_rate, rate, &_nk);
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index b2a5fccf2f8c..715b49211ddb 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -100,9 +100,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	struct ccu_nkm *nkm = data;
- 	struct _ccu_nkm _nkm;
- 
--	_nkm.min_n = 1;
-+	_nkm.min_n = nkm->n.min;
- 	_nkm.max_n = 1 << nkm->n.width;
--	_nkm.min_k = 1;
-+	_nkm.min_n = nkm->k.min;
- 	_nkm.max_k = 1 << nkm->k.width;
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
-@@ -129,9 +129,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
--	_nkm.min_n = 1;
-+	_nkm.min_n = nkm->n.min;
- 	_nkm.max_n = 1 << nkm->n.width;
--	_nkm.min_k = 1;
-+	_nkm.min_n = nkm->k.min;
- 	_nkm.max_k = 1 << nkm->k.width;
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 2c1398192e48..7968e0bac5db 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -107,9 +107,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
- 	struct _ccu_nkmp _nkmp;
- 
--	_nkmp.min_n = 1;
-+	_nkmp.min_n = nkmp->n.min;
- 	_nkmp.max_n = 1 << nkmp->n.width;
--	_nkmp.min_k = 1;
-+	_nkmp.min_n = nkmp->k.min;
- 	_nkmp.max_k = 1 << nkmp->k.width;
- 	_nkmp.min_m = 1;
- 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index 2a190bc032a9..b1f3f0e8899d 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -93,7 +93,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
- 	struct _ccu_nm _nm;
- 
--	_nm.min_n = 1;
-+	_nm.min_n = nm->n.min;
- 	_nm.max_n = 1 << nm->n.width;
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
--- 
-2.9.3
+Thanks for your patch!
+
+It would be good to refer to the table and version of the datasheet
+(i.e. Table 7.2b, I have Rev. 0.50 of the RZ/G series User's Manual).
+
+> --- /dev/null
+> +++ renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+> @@ -0,0 +1,43 @@
+> +/*
+> + * Copyright (C) 2016 Cogent Embedded Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7743 CPG Core Clocks */
+> +#define R8A7743_CLK_Z          0
+> +#define R8A7743_CLK_ZG         1
+> +#define R8A7743_CLK_ZTR                2
+> +#define R8A7743_CLK_ZTRD2      3
+> +#define R8A7743_CLK_ZT         4
+> +#define R8A7743_CLK_ZX         5
+> +#define R8A7743_CLK_ZS         6
+> +#define R8A7743_CLK_HP         7
+
+In this particular case, I think we should leave holes in the numbering for
+clocks that exist on r8a7791. That way we can easily reuse the driver on
+r8a7791 later, and NULLify the entries for clocks that do not exist on r8a7743.
+
+I.e. a one entry hole here, ...
+
+> +#define R8A7743_CLK_B          8
+> +#define R8A7743_CLK_LB         9
+> +#define R8A7743_CLK_P          10
+> +#define R8A7743_CLK_CL         11
+> +#define R8A7743_CLK_M2         12
+
+... a one entry hole here, ...
+
+> +#define R8A7743_CLK_ZB3                13
+> +#define R8A7743_CLK_ZB3D2      14
+> +#define R8A7743_CLK_DDR                15
+> +#define R8A7743_CLK_SDH                16
+> +#define R8A7743_CLK_SD0                17
+> +#define R8A7743_CLK_SD2                18
+> +#define R8A7743_CLK_SD3                19
+> +#define R8A7743_CLK_MMC0       20
+> +#define R8A7743_CLK_MP         21
+
+... and a two entry hole here.
+
+> +#define R8A7743_CLK_QSPI       22
+> +#define R8A7743_CLK_CP         23
+> +#define R8A7743_CLK_RCAN       24
+> +#define R8A7743_CLK_R          25
+> +#define R8A7743_CLK_OSC                26
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
