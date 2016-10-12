@@ -1,53 +1,82 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 12 Oct 2016 10:56:59 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	John Stultz <john.stultz@linaro.org>, Andreas Mohr <andi@lisas.de>,
+	Brian Norris <briannorris@chromium.org>,
+	Tao Huang <huangtao@rock-chips.com>,
+	Tony Xie <tony.xie@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 0/6] Make pxa core clocks settable
-Date: Mon, 10 Oct 2016 22:09:03 +0200
-Message-Id: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+	linux-clk <linux-clk@vger.kernel.org>
+Message-ID: <20161012085659.y74qnipuwdblkjjh@sirena.org.uk>
+References: <1476133442-17757-1-git-send-email-dianders@chromium.org>
+ <alpine.DEB.2.20.1610110908240.7794@nanos>
+ <CAD=FV=VTc-RFNiUqkKDr=NFWhphV7r2J+EudSbqt4X3TX62mQw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hawcpf24p6g7vfdm"
+In-Reply-To: <CAD=FV=VTc-RFNiUqkKDr=NFWhphV7r2J+EudSbqt4X3TX62mQw@mail.gmail.com>
+Subject: Re: [PATCH v2] timers: Fix usleep_range() in the context of
+ wake_up_process()
 List-ID: <linux-clk.vger.kernel.org>
 
-This serie is two fold:
- - a set of fixes, patches 1 to 4
- - a patch with transfers most of core clock handling from pxa2xx-cpufreq into
-   clk-pxa*, ie. patch 5
-   This is the main change, and is providing control over CPU clocks for both
-   pxa25x and pxa27x through the clock API.
 
- - a last patch (patch 6), which is not to be taken right away, just reviewed,
-   and which simplifies pxa2xx-cpufreq by removing everything clock related.
-   This one relies on the former one, but is not necessarily to be taken in the
-   same cycle, as the cpufreq will continue to work with the former cpufreq
-   driver even if the clock changes are in.
+--hawcpf24p6g7vfdm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The patches have been tested on lubbock (pxa25x) and mainstone (pxa27x) boards,
-with a cpu-burn and different scaling max frequencies.
+On Tue, Oct 11, 2016 at 09:33:15AM -0700, Doug Anderson wrote:
+> On Tue, Oct 11, 2016 at 12:14 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Mon, 10 Oct 2016, Douglas Anderson wrote:
 
-Happy review.
+> >> Users of usleep_range() expect that it will _never_ return in less time
+> >> than the minimum passed parameter.  However, nothing in any of the code
+> >> ensures this.  Specifically:
 
---
-Robert
+> > There is no such guarantee for that interface and never has been, so how
+> > did you make sure that none of the existing users is relying on this?
 
-Robert Jarzmik (6):
-  clk: pxa: remove unused variables
-  clk: pxa: core pll is not affected by t bit
-  clk: pxa: b bit of clkcfg means fast bus
-  clk: pxa: export core clocks
-  clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq
-  cpufreq: pxa: convert to clock API
+> > You can't just can't just declare that all all of the users expect that and
+> > be done with it.
 
- drivers/clk/pxa/clk-pxa.c        | 128 ++++++++++++++++++++++++++
- drivers/clk/pxa/clk-pxa.h        |  56 +++++++++++-
- drivers/clk/pxa/clk-pxa25x.c     | 107 +++++++++++++++++++---
- drivers/clk/pxa/clk-pxa27x.c     | 168 +++++++++++++++++++++++++++-------
- drivers/cpufreq/pxa2xx-cpufreq.c | 191 ++++++++-------------------------------
- 5 files changed, 453 insertions(+), 197 deletions(-)
+> You're right that I can't guarantee that no callers are relying on the
+> existing behavior of a wake_up_process() causing usleep_range() to
+> return early.  I would say, however, that all callers I've seen are
+> absolutely relying on the min delay being enforced and I've never
+> personally seen a caller relying on being woken up from
+> usleep_range().  All the users relying on the min delay being enforced
 
--- 
-2.1.4
+Indeed.  It's *highly* surprising for any sleep interface to undershoot
+on delays, the usual thing is that they might delay for longer.  If the
+function doesn't actually reliably delay for the minimum time then I'd
+expect that a large proportion of those conversions and other recent
+code that's been added is buggy.
+
+> one of two functions: usleep_atlest() and usleep_wakeable().  As
+> argued below I think that usleep_range() name implies that it will at
+> least sleep the minimum so I would really like to avoid keeping the
+> name usleep_range() and also keeping the existing behavior.
+
+I tend to agree with everything Doug is saying in terms of API
+expectations.
+
+--hawcpf24p6g7vfdm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAABCAAGBQJX/frXAAoJECTWi3JdVIfQX7UH/it23a1hvDi2h8XCii6fHgkU
+X+i8VtEzCd2jNihGL6FoUYvLu71BvWYd/Pbe+mR5tIO57dhitRnfXkSwvD5VCO0o
+K+0o/4zFULAyjRuE5pTUCO0cv6dVrIZscVv7tiym8CSE35eOzmvHFdz5BqCfXDJn
+GI55tk1IN4GI/GB4+kUQZwx6bmeTCkY90qKt2mfbh6FJ5tpba04xnbsNGnPmxkWf
+M3ntKRM84lfvhBs17z0QkWEtP9YQLZ0A0uuniMGawGTumiiGUJlnwMx2thAe1/1G
+R3LpO5Hp1KLIUg23yBMxIe81vXyEg2zo9inyu/Q90dvr9JTuMqLA+UcdT0vYNSg=
+=ECTj
+-----END PGP SIGNATURE-----
+
+--hawcpf24p6g7vfdm--
