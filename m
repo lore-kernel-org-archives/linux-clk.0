@@ -1,60 +1,49 @@
-Return-Path: <khilman@baylibre.com>
-MIME-Version: 1.0
-In-Reply-To: <0d587b46-4c6e-c2ec-a62e-5d0c5a5bd902@synopsys.com>
-References: <20160904213152.25837-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-1-martin.blumenstingl@googlemail.com>
- <20160911134111.31141-2-martin.blumenstingl@googlemail.com>
- <m24m5ixxyu.fsf@baylibre.com> <0d587b46-4c6e-c2ec-a62e-5d0c5a5bd902@synopsys.com>
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Wed, 14 Sep 2016 11:17:35 -0700
-Message-ID: <CAOi56cW+zJ8_Gf6xKMyKNk7YB1+MpWHrtmv=+Xxs0PZy9rAXqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] usb: dwc2: add support for Meson8b and GXBB SoCs
-To: John Youn <John.Youn@synopsys.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, "kishon@ti.com" <kishon@ti.com>,
-	"carlo@caione.org" <carlo@caione.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <ramesh.shanmugasundaram@bp.renesas.com>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r8a7796: Add DRIF clock
+Date: Thu, 13 Oct 2016 10:31:48 +0100
+Message-Id: <1476351108-54370-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 11:12 AM, John Youn <John.Youn@synopsys.com> wrote:
-> On 9/14/2016 9:11 AM, Kevin Hilman wrote:
->> Hi John,
->>
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->>
->>> From: Jerome Brunet <jbrunet@baylibre.com>
->>>
->>> Add compatible strings for amlogic Meson8b and GXBB SoCs with the
->>> corresponding configuration parameters.
->>>
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>
->> Are you OK with adding this platform for v4.9?  I know you mentioned
->> you're working on new bindings to replace the current way, but since
->> that hasn't been posted AFAICT, it would be nice to get this merged now
->> and we can help test the new bindings when you're ready.
->>
->> If you're OK with that, and with your Ack, I can take merge the driver
->> changes through the arm-soc tree along with the rest of the DT patches.
->>
->
-> Sure. Unfortunately, I wasn't able to complete it for 4.9.
->
-> You can add my acked-by on this:
->
-> Acked-by: John Youn <johnyoun@synopsys.com>
+This patch adds DRIF module clocks for r8a7796 SoC.
 
-Great, thanks!  I assume you're OK with PATCH 2/2 for the bindings as
-well (at least for now until you rework them?)
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+Hi Geert, All,
 
-Kevin
+   This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-10-04-v4.8)
+
+Thanks,
+Ramesh.
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index f0302fb..f2f56e1 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -128,6 +128,14 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+ 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
++	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif5",		 510,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif4",		 511,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif3",		 512,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif2",		 513,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif1",		 514,	R8A7796_CLK_S3D2),
++	DEF_MOD("drif0",		 515,	R8A7796_CLK_S3D2),
+ 	DEF_MOD("hscif4",		 516,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("hscif3",		 517,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("hscif2",		 518,	R8A7796_CLK_S3D1),
+-- 
+1.9.1
