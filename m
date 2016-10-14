@@ -1,101 +1,62 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: "Y.B. Lu" <yangbo.lu@nxp.com>, Scott Wood <oss@buserror.net>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Arnd Bergmann
- <arnd@arndb.de>
-Subject: RE: [v13, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Date: Fri, 28 Oct 2016 06:06:10 +0000
-Message-ID: <DB6PR0401MB253607E63983FFF02C24B75DF8AD0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
- <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
- <1477629956.6812.15.camel@buserror.net>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+Date: Fri, 14 Oct 2016 11:18:13 +0200
+Message-ID: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Kumar Gala <galak@codeaurora.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBZLkIuIEx1DQo+IFNlbnQ6IEZy
-aWRheSwgT2N0b2JlciAyOCwgMjAxNiAyOjAwIFBNDQo+IFRvOiAnU2NvdHQgV29vZCc7IGxpbnV4
-LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IHVsZi5oYW5zc29uQGxpbmFyby5vcmc7IEFybmQNCj4gQmVy
-Z21hbm4NCj4gQ2M6IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBkZXZpY2V0cmVlQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsg
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGlvbW11QGxpc3RzLmxpbnV4LQ0KPiBmb3Vu
-ZGF0aW9uLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgR3JlZyBLcm9haC1IYXJ0bWFuOyBN
-YXJrIFJ1dGxhbmQ7DQo+IFJvYiBIZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbiBGcmllZHJp
-Y2g7IEpvZXJnIFJvZWRlbDsgQ2xhdWRpdSBNYW5vaWw7DQo+IEJodXBlc2ggU2hhcm1hOyBRaWFu
-ZyBaaGFvOyBLdW1hciBHYWxhOyBTYW50b3NoIFNoaWxpbWthcjsgTGVvIExpOyBYLkIuDQo+IFhp
-ZTsgTS5ILiBMaWFuDQo+IFN1YmplY3Q6IFJFOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VU
-UyBkcml2ZXIgZm9yIFFvcklRIHBsYXRmb3Jtcw0KPiANCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogbGludXgtbW1jLW93bmVyQHZnZXIua2VybmVsLm9y
-ZyBbbWFpbHRvOmxpbnV4LW1tYy0NCj4gPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFs
-ZiBPZiBTY290dCBXb29kDQo+ID4gU2VudDogRnJpZGF5LCBPY3RvYmVyIDI4LCAyMDE2IDEyOjQ2
-IFBNDQo+ID4gVG86IFkuQi4gTHU7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IHVsZi5oYW5z
-c29uQGxpbmFyby5vcmc7IEFybmQNCj4gPiBCZXJnbWFubg0KPiA+IENjOiBsaW51eHBwYy1kZXZA
-bGlzdHMub3psYWJzLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gbGludXgt
-YXJtLSBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsNCj4gPiBsaW51eC0gY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtaTJjQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gPiBpb21tdUBsaXN0cy5saW51eC0gZm91bmRhdGlvbi5vcmc7IG5ldGRldkB2
-Z2VyLmtlcm5lbC5vcmc7IEdyZWcNCj4gPiBLcm9haC1IYXJ0bWFuOyBNYXJrIFJ1dGxhbmQ7IFJv
-YiBIZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbg0KPiA+IEZyaWVkcmljaDsgSm9lcmcgUm9l
-ZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVzaCBTaGFybWE7IFFpYW5nIFpoYW87DQo+IEt1bWFy
-IEdhbGE7IFNhbnRvc2ggU2hpbGlta2FyOyBMZW8gTGk7IFguQi4NCj4gPiBYaWU7IE0uSC4gTGlh
-bg0KPiA+IFN1YmplY3Q6IFJlOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIg
-Zm9yIFFvcklRIHBsYXRmb3Jtcw0KPiA+DQo+ID4gT24gRnJpLCAyMDE2LTEwLTI4IGF0IDExOjMy
-ICswODAwLCBZYW5nYm8gTHUgd3JvdGU6DQo+ID4gPiArCWd1dHMtPnJlZ3MgPSBvZl9pb21hcChu
-cCwgMCk7DQo+ID4gPiArCWlmICghZ3V0cy0+cmVncykNCj4gPiA+ICsJCXJldHVybiAtRU5PTUVN
-Ow0KPiA+ID4gKw0KPiA+ID4gKwkvKiBSZWdpc3RlciBzb2MgZGV2aWNlICovDQo+ID4gPiArCW1h
-Y2hpbmUgPSBvZl9mbGF0X2R0X2dldF9tYWNoaW5lX25hbWUoKTsNCj4gPiA+ICsJaWYgKG1hY2hp
-bmUpDQo+ID4gPiArCQlzb2NfZGV2X2F0dHIubWFjaGluZSA9IGRldm1fa3N0cmR1cChkZXYsIG1h
-Y2hpbmUsDQo+ID4gPiBHRlBfS0VSTkVMKTsNCj4gPiA+ICsNCj4gPiA+ICsJc3ZyID0gZnNsX2d1
-dHNfZ2V0X3N2cigpOw0KPiA+ID4gKwlzb2NfZGllID0gZnNsX3NvY19kaWVfbWF0Y2goc3ZyLCBm
-c2xfc29jX2RpZSk7DQo+ID4gPiArCWlmIChzb2NfZGllKSB7DQo+ID4gPiArCQlzb2NfZGV2X2F0
-dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLA0KPiA+ID4gKwkJCQkJ
-CcKgwqDCoMKgwqAiUW9ySVEgJXMiLCBzb2NfZGllLQ0KPiA+ID4gPmRpZSk7DQo+ID4gPiArCX0g
-ZWxzZSB7DQo+ID4gPiArCQlzb2NfZGV2X2F0dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmludGYoZGV2
-LCBHRlBfS0VSTkVMLA0KPiA+ID4gIlFvcklRIik7DQo+ID4gPiArCX0NCj4gPiA+ICsJc29jX2Rl
-dl9hdHRyLnNvY19pZCA9IGRldm1fa2FzcHJpbnRmKGRldiwgR0ZQX0tFUk5FTCwNCj4gPiA+ICsJ
-CQkJCcKgwqDCoMKgwqAic3ZyOjB4JTA4eCIsIHN2cik7DQo+ID4gPiArCXNvY19kZXZfYXR0ci5y
-ZXZpc2lvbiA9IGRldm1fa2FzcHJpbnRmKGRldiwgR0ZQX0tFUk5FTCwgIiVkLiVkIiwNCj4gPiA+
-ICsJCQkJCcKgwqDCoMKgwqDCoMKgU1ZSX01BSihzdnIpLCBTVlJfTUlOKHN2cikpOw0KPiA+ID4g
-Kw0KPiA+ID4gKwlzb2NfZGV2ID0gc29jX2RldmljZV9yZWdpc3Rlcigmc29jX2Rldl9hdHRyKTsN
-Cj4gPiA+ICsJaWYgKElTX0VSUihzb2NfZGV2KSkNCj4gPiA+ICsJCXJldHVybiBQVFJfRVJSKHNv
-Y19kZXYpOw0KPiA+DQo+ID4gaW9yZW1hcCBsZWFrcyBvbiB0aGlzIGVycm9yIHBhdGguIMKgVXNl
-IGRldm1faW9yZW1hcF9yZXNvdXJjZSgpLg0KPiA+DQo+IA0KPiBbTHUgWWFuZ2JvLUI0NzA5M10g
-T2suIEkgaGF2ZSBmaXhlZCBpdCBpbiB2MTQuIFRoYW5rcyA6KQ0KDQpbTHUgWWFuZ2JvLUI0NzA5
-M10gU29ycnksIHVzZWQgdGhlIHdyb25nIGVycm9yIGNvZGUuLi4gV2lsbCByZXNlbnQgaXQNCg0K
-PiANCj4gPiAtU2NvdHQNCj4gPg0KPiA+IC0tDQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
-IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LW1tYyINCj4gPiBpbiB0aGUg
-Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZyBNb3JlIG1ham9y
-ZG9tbw0KPiA+IGluZm8gYXQgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
-dG1sDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
-eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
-ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
-cm0ta2VybmVsCg==
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+
+v2:
+ - rename compatible property "st,stm32f46xx-rcc" into "st,stm32f469-rcc"
+ - cosmetic: remove bad copy/paste
+
+This patch-set introduce RTC and QSPI clocks for STM32F4 socs
+RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
+
+example to use rtc clock:
+
+		rtc: rtc@40002800 {
+			compatible = "st,stm32-rtc";
+			reg = <0x40002800 0x400>;
+			...
+			clocks = <&rcc 1 CLK_RTC>;
+
+			assigned-clocks =  <&rcc 1 CLK_RTC>;
+			assigned-clock-parents = <&rcc 1 CLK_LSE>;
+			...
+		};
+
+Gabriel Fernandez (6):
+  clk: stm32f4: Add LSI & LSE clocks
+  ARM: dts: stm32f429: add LSI and LSE clocks
+  arm: stmf32: Enable SYSCON
+  clk: stm32f4: Add RTC clock
+  clk: stm32f469: Add QSPI clock
+  ARM: dts: stm32f429: Add QSPI clock
+
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
+ arch/arm/boot/dts/stm32f429.dtsi                   |  18 +
+ arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
+ arch/arm/configs/stm32_defconfig                   |   1 +
+ drivers/clk/clk-stm32f4.c                          | 442 ++++++++++++++++++++-
+ 5 files changed, 447 insertions(+), 22 deletions(-)
+
+-- 
+1.9.1
