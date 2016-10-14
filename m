@@ -1,40 +1,49 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-Date: Fri, 21 Oct 2016 23:07:47 +0200
-Message-ID: <3808786.t4RxxDciQu@wuerfel>
-In-Reply-To: <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
-References: <20161021154737.3803065-1-arnd@arndb.de> <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH v2 3/6] arm: stmf32: Enable SYSCON
+Date: Fri, 14 Oct 2016 11:18:16 +0200
+Message-ID: <1476436699-21879-4-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, October 21, 2016 8:01:49 PM CEST Geert Uytterhoeven wrote:
-> > diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-> > index 90dd0db7d9c6..762d122eddec 100644
-> > --- a/drivers/clk/renesas/Makefile
-> > +++ b/drivers/clk/renesas/Makefile
-> > @@ -4,11 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o clk-div6.o
-> >  obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o clk-div6.o
-> >  obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o
-> >  obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o
-> > -obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o clk-div6.o
-> > -obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o clk-div6.o
-> > -obj-$(CONFIG_ARCH_R8A7792)             += clk-rcar-gen2.o clk-div6.o
-> > -obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o clk-div6.o
-> > -obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o clk-div6.o
-> > +obj-$(CONFIG_ARCH_RCAR_GEN2)           += clk-rcar-gen2.o clk-div6.o
-> >  obj-$(CONFIG_ARCH_R8A7795)             += r8a7795-cpg-mssr.o rcar-gen3-cpg.o
-> >  obj-$(CONFIG_ARCH_R8A7796)             += r8a7796-cpg-mssr.o rcar-gen3-cpg.o
-> >  obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o clk-div6.o
-> 
-> Please don't fix it this way, as it will make it _harder_ to convert the R-Car
-> Gen2 SoCs to the modern CPG/MSSR driver later.
-> 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Ok, I see. How about just adding another line for r8a7743 and
-dropping that again after the timer_init has been converted?
+The clock drivers needs to disable the power domain write protection
+using syscon/regmap to enable RTC clock.
 
-	Arnd
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ arch/arm/configs/stm32_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
+index 1e5ec2a..ed1c0881 100644
+--- a/arch/arm/configs/stm32_defconfig
++++ b/arch/arm/configs/stm32_defconfig
+@@ -49,6 +49,7 @@ CONFIG_SERIAL_STM32=y
+ CONFIG_SERIAL_STM32_CONSOLE=y
+ # CONFIG_HW_RANDOM is not set
+ # CONFIG_HWMON is not set
++CONFIG_MFD_SYSCON=y
+ # CONFIG_USB_SUPPORT is not set
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+-- 
+1.9.1
