@@ -1,41 +1,55 @@
-Return-Path: <Xiaolong.Zhang@spreadtrum.com>
-Date: Sat, 22 Oct 2016 16:14:49 +0800
-From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <orson.zhai@spreadtrum.com>,
-        <baolin.wang@spreadtrum.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ben.li@spreadturm.com>
-Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
- fixed-factor clocks
-Message-ID: <20161022081448.GB32560@spreadtrum.com>
-References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
- <20161020230103.GD26139@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:40028 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751441AbcJOCzv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Oct 2016 22:55:51 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <20161020230103.GD26139@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 15 Oct 2016 11:55:38 +0900
+Message-ID: <CAK7LNAQL=G7hkVDgcGCM60Lq4Omx25-qb=TkXUKOO2CzeargTg@mail.gmail.com>
+Subject: [problem on 32-bit systems] changing the type of clk_rate to "long long"?
+To: linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 四, 10月 20, 2016 at 04:01:03下午 -0700, Stephen Boyd wrote:
-> On 10/11, Orson Zhai wrote:
-> > From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> > 
-> > When common kernel setups fixed clock, of_clk_provider will be registerred.
-> > But there is no clkdev being registerred at the same time. This will make
-> > it difficult to get the clock by using clk_get(NULL, con_id).
-> > 
-> > Add clkdev register for fixed-rate and fixed-factor clock and ignore
-> > the error if any.
-> > 
-> > Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> > Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
-> > ---
-> 
-> Why are we using clkdev lookups for clks populated from DT?
-> Shouldn't we be able to point to them from the consumers that
-> would also be in DT? I'm a little lost.
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-The clk_get interface allows the first argument as NULL. We just assure
-consumers can get the clock from DT or by clock name.
+Hi.
+
+
+When I was testing my clk driver + generic cpufreq driver,
+I was hit by a problem.
+
+
+Everything worked fine on my 64-bit SoCs,
+but not on 32-bit SoCs.
+
+
+I found the cause of the problem was
+that the type of clk_rate is "long".
+
+It is long enough on 64-bit systems,
+but only 32-bit wide on 32-bit systems.
+
+
+The CPU clocks on my SoCs
+are derived from a 2.4GHz PLL.
+
+
+The .round_rate() callback tries to return 2400000000,
+but it does not fit in a signed 32-bit-wide variable
+and it is treated as -1894967296, which is an error.
+
+
+In order to handle clock frequency safely,
+shall we use "long long" instead?
+(It is guaranteed to have 64-bit width)
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
