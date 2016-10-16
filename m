@@ -1,40 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 18 Oct 2016 16:51:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
-Message-ID: <20161018235108.GP8871@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] clk: samsung: clk-exynos-audss: Fix module autoload
+Date: Sun, 16 Oct 2016 10:45:07 -0300
+Message-Id: <1476625507-21377-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, gabriel.fernandez@st.com wrote:
-> 
-> Gabriel Fernandez (6):
->   clk: stm32f4: Add LSI & LSE clocks
->   ARM: dts: stm32f429: add LSI and LSE clocks
->   arm: stmf32: Enable SYSCON
->   clk: stm32f4: Add RTC clock
->   clk: stm32f469: Add QSPI clock
->   ARM: dts: stm32f429: Add QSPI clock
+If the driver is built as a module, autoload won't work because the module
+alias information is not filled. So user-space can't match the registered
+device with the corresponding module.
 
-Can the clk patches be picked without causing problems for
-existing dt changes? Do you want an ack from clk maintainers
-instead of us picking the clk patches up? The series has
-intermingled clk and dts changes so I'm confused.
+Export the module alias information using the MODULE_DEVICE_TABLE() macro.
 
+Before this patch:
+
+$ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+alias:          platform:exynos-audss-clk
+
+After this patch:
+
+$ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+alias:          platform:exynos-audss-clk
+alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
+alias:          of:N*T*Csamsung,exynos5420-audss-clock
+alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
+alias:          of:N*T*Csamsung,exynos5410-audss-clock
+alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
+alias:          of:N*T*Csamsung,exynos5250-audss-clock
+alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
+alias:          of:N*T*Csamsung,exynos4210-audss-clock
+
+Fixes: 4d252fd5719b ("clk: samsung: Allow modular build of the Audio Subsystem CLKCON driver")
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Changes in v2:
+- Add fixes tag. Suggested by Krzysztof Kozlowski.
+- Add Krzysztof Kozlowski's Reviewed-by and Tested-by tags.
+
+ drivers/clk/samsung/clk-exynos-audss.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 51d152f735cc..17e68a724945 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -106,6 +106,7 @@ static const struct of_device_id exynos_audss_clk_of_match[] = {
+ 	},
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, exynos_audss_clk_of_match);
+ 
+ static void exynos_audss_clk_teardown(void)
+ {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
