@@ -1,32 +1,76 @@
-Return-Path: <tony@atomide.com>
-Date: Thu, 20 Oct 2016 06:11:43 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 03/15] dt-bindings: clock: add omap4 hwmod clock IDs
-Message-ID: <20161020131143.5cfhl3eug2lr64oa@atomide.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <1476805568-19264-4-git-send-email-t-kristo@ti.com>
- <20161020124742.7b65l5lz6kcfsysl@atomide.com>
- <051e2a14-8fb9-fd0f-99e0-decc5c02ae75@ti.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk: samsung: clk-exynos-audss: Fix module autoload
+To: Krzysztof Kozlowski <krzk@kernel.org>
+References: <1476470645-22159-1-git-send-email-javier@osg.samsung.com>
+ <20161015172711.GA6465@kozik-lap>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <521c63ea-2564-1739-696f-bc9178eab838@osg.samsung.com>
+Date: Sun, 16 Oct 2016 10:44:41 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <051e2a14-8fb9-fd0f-99e0-decc5c02ae75@ti.com>
+In-Reply-To: <20161015172711.GA6465@kozik-lap>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [161020 06:00]:
-> On 20/10/16 15:47, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [161018 08:47]:
-> > > Add IDs for omap4 hwmod clocks. These are basically register offsets
-> > > from the beginning of the clockdomain address space.
-> > 
-> > Looks like you have a wrong subject for this patch?
+Hello Krzysztof,
+
+On 10/15/2016 02:27 PM, Krzysztof Kozlowski wrote:
+> On Fri, Oct 14, 2016 at 03:44:05PM -0300, Javier Martinez Canillas wrote:
+>> If the driver is built as a module, autoload won't work because the module
+>> alias information is not filled. So user-space can't match the registered
+>> device with the corresponding module.
+>>
+>> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+>>
+>> Before this patch:
+>>
+>> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+>> alias:          platform:exynos-audss-clk
+>>
+>> After this patch:
+>>
+>> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+>> alias:          platform:exynos-audss-clk
+>> alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
+>> alias:          of:N*T*Csamsung,exynos5420-audss-clock
+>> alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
+>> alias:          of:N*T*Csamsung,exynos5410-audss-clock
+>> alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
+>> alias:          of:N*T*Csamsung,exynos5250-audss-clock
+>> alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
+>> alias:          of:N*T*Csamsung,exynos4210-audss-clock
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> ---
+>>
+>>  drivers/clk/samsung/clk-exynos-audss.c | 1 +
+>>  1 file changed, 1 insertion(+)
 > 
-> What is the correct one? There seems to be multiple approaches in place.
+> Indeed, this was missed by 4d252fd5719b thus I think it could be
+> mentioned as fix tag (just for reference...):
+> Fixes: 4d252fd5719b ("clk: samsung: Allow modular build of the Audio Subsystem CLKCON driver")
+>
 
-Oh sorry yeah never mind, I somehow thought these defines
-we for drivers/clk, not for dt-bindings.. Sorry for the noise.
+Indeed. I missed that, sorry. I'll post a v2 including this information.
+ 
+> Anyway, this fixes the issue, so:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
 
-Tony
+Thanks!
+ 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
