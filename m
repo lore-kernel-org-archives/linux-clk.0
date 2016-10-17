@@ -1,62 +1,40 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 26 Oct 2016 13:19:01 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 17 Oct 2016 15:43:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawn.guo@linaro.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rtc-linux@googlegroups.com
-Subject: Re: [PATCH 4/4] mfd: Enable compile testing for max77620 and max77686
-Message-ID: <20161026121901.GU8574@dell>
-References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
- <1475441897-15730-5-git-send-email-krzk@kernel.org>
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and
+ mediactrl clock init
+Message-ID: <20161017224310.GM8871@codeaurora.org>
+References: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1475441897-15730-5-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 02 Oct 2016, Krzysztof Kozlowski wrote:
-
-> The OF is not a strict build-time dependency so max77620 and max77686
-> can be compile tested to increase build coverage.
+On 10/08, Shawn Guo wrote:
+> The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
+> also reset controller.  It worked fine that single sysctrl/mediactrl
+> device node in DT can be used to initialize clock driver and populate
+> platform device for reset controller.  But it stops working after
+> commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> gets merged.  The commit sets flag OF_POPULATED during clock
+> initialization to skip the platform device populating for the same
+> device node.  On hi6220, it effectively makes hi6220-sysctrl reset
+> driver not probe any more.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> The patch changes hi6220 sysctrl and mediactrl clock init macro from
+> CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
+> the same hardware block can continue working.
+> 
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 > ---
->  drivers/mfd/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks.
-
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index c6df6442ba2b..ccea26943746 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -563,7 +563,7 @@ config MFD_MAX14577
->  config MFD_MAX77620
->  	bool "Maxim Semiconductor MAX77620 and MAX20024 PMIC Support"
->  	depends on I2C=y
-> -	depends on OF
-> +	depends on OF || COMPILE_TEST
->  	select MFD_CORE
->  	select REGMAP_I2C
->  	select REGMAP_IRQ
-> @@ -578,7 +578,7 @@ config MFD_MAX77620
->  config MFD_MAX77686
->  	tristate "Maxim Semiconductor MAX77686/802 PMIC Support"
->  	depends on I2C
-> -	depends on OF
-> +	depends on OF || COMPILE_TEST
->  	select MFD_CORE
->  	select REGMAP_I2C
->  	select REGMAP_IRQ
+Applied to clk-fixes
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
