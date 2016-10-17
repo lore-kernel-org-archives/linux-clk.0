@@ -1,83 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:59640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754866AbcJaSPL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2016 14:15:11 -0400
-Date: Mon, 31 Oct 2016 11:15:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Michael Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: cdce925: add support for CDCE913, CDCE937, and
- CDCE949
-Message-ID: <20161031181509.GS16026@codeaurora.org>
-References: <1477848637-5151-1-git-send-email-akinobu.mita@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Pan Wen <wenpan@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <xuwei5@hisilicon.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <howell.yang@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>, <wenpan@hisilicon.com>
+Subject: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
+Date: Mon, 17 Oct 2016 20:07:03 +0800
+Message-ID: <20161017120705.3726-2-wenpan@hisilicon.com>
+In-Reply-To: <20161017120705.3726-1-wenpan@hisilicon.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477848637-5151-1-git-send-email-akinobu.mita@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/31, Akinobu Mita wrote:
-> @@ -582,13 +615,19 @@ static int cdce925_probe(struct i2c_client *client,
->  	struct clk_cdce925_chip *data;
->  	struct device_node *node = client->dev.of_node;
->  	const char *parent_name;
-> -	const char *pll_clk_name[NUMBER_OF_PLLS] = {NULL,};
-> +	const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
->  	struct clk_init_data init;
->  	u32 value;
->  	int i;
->  	int err;
->  	struct device_node *np_output;
->  	char child_name[6];
-> +	struct regmap_config cdce925_regmap_config = {
+Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
 
-Maybe just call this config because it's a local variable now.
+Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+---
+ arch/arm/mach-hisi/Kconfig | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-> +		.name = "configuration0",
-> +		.reg_bits = 8,
-> +		.val_bits = 8,
-> +		.cache_type = REGCACHE_RBTREE,
-> +	};
->  
->  	dev_dbg(&client->dev, "%s\n", __func__);
->  	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-> @@ -596,6 +635,9 @@ static int cdce925_probe(struct i2c_client *client,
->  		return -ENOMEM;
->  
->  	data->i2c_client = client;
-> +	data->chip_info = &clk_cdce925_chip_info_tbl[id->driver_data];
-> +	cdce925_regmap_config.max_register = CDCE925_OFFSET_PLL	+
-> +		data->chip_info->num_plls * 0x10 - 1;
->  	data->regmap = devm_regmap_init(&client->dev, &regmap_cdce925_bus,
->  			&client->dev, &cdce925_regmap_config);
->  	if (IS_ERR(data->regmap)) {
-> @@ -728,13 +780,19 @@ static int cdce925_probe(struct i2c_client *client,
->  }
->  
->  static const struct i2c_device_id cdce925_id[] = {
-> -	{ "cdce925", 0 },
-> +	{ "cdce913", CDCE913 },
-> +	{ "cdce925", CDCE925 },
-> +	{ "cdce937", CDCE937 },
-> +	{ "cdce949", CDCE949 },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, cdce925_id);
->  
->  static const struct of_device_id clk_cdce925_of_match[] = {
-> +	{ .compatible = "ti,cdce913" },
->  	{ .compatible = "ti,cdce925" },
-> +	{ .compatible = "ti,cdce937" },
-> +	{ .compatible = "ti,cdce949" },
-
-Doesn't this need to be updated to point to the correct enum
-values?
-
->  	{ },
-
+diff --git a/arch/arm/mach-hisi/Kconfig b/arch/arm/mach-hisi/Kconfig
+index a3b091a..03d8379 100644
+--- a/arch/arm/mach-hisi/Kconfig
++++ b/arch/arm/mach-hisi/Kconfig
+@@ -1,12 +1,14 @@
+ config ARCH_HISI
+ 	bool "Hisilicon SoC Support"
+-	depends on ARCH_MULTI_V7
+ 	select ARM_AMBA
+-	select ARM_GIC
++	select ARM_GIC if ARCH_MULTI_V7
++	select ARM_VIC if ARCH_MULTI_V5
+ 	select ARM_TIMER_SP804
+ 	select POWER_RESET
+ 	select POWER_RESET_HISI
+ 	select POWER_SUPPLY
++	select PINCTRL
++	select PINCTRL_SINGLE
+ 
+ if ARCH_HISI
+ 
+@@ -18,8 +20,6 @@ config ARCH_HI3xxx
+ 	select CACHE_L2X0
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+-	select PINCTRL
+-	select PINCTRL_SINGLE
+ 	help
+ 	  Support for Hisilicon Hi36xx SoC family
+ 
+@@ -48,8 +48,6 @@ config ARCH_HIX5HD2
+ 	select CACHE_L2X0
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+-	select PINCTRL
+-	select PINCTRL_SINGLE
+ 	help
+ 	  Support for Hisilicon HIX5HD2 SoC family
+ endmenu
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
