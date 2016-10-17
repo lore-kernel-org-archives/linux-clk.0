@@ -1,39 +1,57 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 17 Oct 2016 15:21:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: samsung: clk-exynos-audss: Fix module autoload
+Message-ID: <20161017222150.GE8871@codeaurora.org>
+References: <1476625507-21377-1-git-send-email-javier@osg.samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20161019000101.GQ8871@codeaurora.org>
-References: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
- <1474036587-13819-3-git-send-email-fabio.estevam@nxp.com> <CAOMZO5D7=A=ms_iq1D+Fgg4wKpRx-aScm5V=avxRPu62rFymzQ@mail.gmail.com>
- <20161019000101.GQ8871@codeaurora.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 18 Oct 2016 22:03:26 -0200
-Message-ID: <CAOMZO5Ae_cB3BiqckAiOyaJPd2HWELkR8hVjEKHbY1nVOAeMxQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Joshua Clayton <stillcompiling@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, "Charles.Kang" <Charles.Kang@advantech.com.tw>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-	Akshay Bhat <akshay.bhat@timesys.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476625507-21377-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 10/16, Javier Martinez Canillas wrote:
+> If the driver is built as a module, autoload won't work because the module
+> alias information is not filled. So user-space can't match the registered
+> device with the corresponding module.
+> 
+> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+> 
+> Before this patch:
+> 
+> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+> alias:          platform:exynos-audss-clk
+> 
+> After this patch:
+> 
+> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+> alias:          platform:exynos-audss-clk
+> alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
+> alias:          of:N*T*Csamsung,exynos5420-audss-clock
+> alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
+> alias:          of:N*T*Csamsung,exynos5410-audss-clock
+> alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
+> alias:          of:N*T*Csamsung,exynos5250-audss-clock
+> alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
+> alias:          of:N*T*Csamsung,exynos4210-audss-clock
+> 
+> Fixes: 4d252fd5719b ("clk: samsung: Allow modular build of the Audio Subsystem CLKCON driver")
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
 
-On Tue, Oct 18, 2016 at 10:01 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+Applied to clk-fixes
 
-> Urgh, sorry I missed this one and then we got too close to the
-> merge window to keep applying things and I was traveling for a
-> bit. Is this a bug that's urgent and needs to be fixed to keep
-> these boards working in the v4.9-rc series? Does it need to go
-> back to stable? The change is fairly large, so we might be able
-> to put it into clk-fixes for -rc2, but it would need some
-> justification and preferably a stable/fixes tag.
->
-> Also, what about the other two patches in this series?
-
-Yesterday I resent this series based on linux-next, so if you could
-apply them to clk-next that would be great.
-
-Thanks
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
