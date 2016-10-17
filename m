@@ -1,36 +1,46 @@
-Return-Path: <moinejf@free.fr>
-Date: Tue, 18 Oct 2016 09:50:44 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6
- as parent
-Message-Id: <20161018095044.d1664c4935ad13007453fb35@free.fr>
-In-Reply-To: <20161018054209.24546-1-wens@csie.org>
-References: <20161018054209.24546-1-wens@csie.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 17 Oct 2016 15:30:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: max77686: fix number of clocks setup for clk_hw
+ based registration
+Message-ID: <20161017223030.GI8871@codeaurora.org>
+References: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475765999-14366-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 18 Oct 2016 13:42:09 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+On 10/06, Javier Martinez Canillas wrote:
+> The commit 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and
+> registration APIs") converted the driver to use the new provider API to
+> register clocks using clk_hw.
+> 
+> But unfortunately, in the conversion it missed to set the num_clks value
+> which lead to the following error when trying to register a clk provider:
+> 
+> [    1.963782] of_clk_max77686_get: invalid index 0
+> [    1.967460] ERROR: could not get clock /rtc@10070000:rtc_src(1)
+> [    1.973638] s3c-rtc 10070000.rtc: failed to find rtc source clock
+> 
+> Fix it by correctly set the max77686_clk_driver_data num_clks member.
+> 
+> Fixes: 9b4cac33adc7 ("clk: max77686: Migrate to clk_hw based OF and registration APIs")
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> 
+> ---
 
-> On the A31, the DMA engine only works if AHB1 is clocked from PLL6.
-> In addition, the hstimer is clocked from AHB1, and if AHB1 is clocked
-> from the CPU clock, and cpufreq is working, we get an unstable timer.
->=20
-> Force the AHB1 clock to use PLL6 as its parent. Previously this was done
-> in the device tree with the assigned-clocks and assigned-clocks-parent
-> bindings. However with this new monolithic driver, the system critical
-> clocks aren't exported through the device tree. The alternative is to
-> force this setting in the driver before the clocks are registered.
+Applied to clk-fixes
 
-It should be simpler to export the constant (CLK_AHB1) instead of
-adding code...
-
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
