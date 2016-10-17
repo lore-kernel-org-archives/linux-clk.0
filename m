@@ -1,80 +1,30 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 30 Oct 2016 15:41:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, ssantosh@kernel.org, nm@ti.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-Message-ID: <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-2-git-send-email-t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 17 Oct 2016 15:34:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: bcm2835: Clamp the PLL's requested rate to the
+ hardware limits.
+Message-ID: <20161017223438.GK8871@codeaurora.org>
+References: <20160930170727.32544-1-eric@anholt.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477053961-27128-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <20160930170727.32544-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
-> Add a clock implementation, TI SCI clock, that will hook to the common
-> clock framework, and allow each clock to be controlled via TI SCI
-> protocol.
+On 09/30, Eric Anholt wrote:
+> Fixes setting low-resolution video modes on HDMI.  Now the PLLH_PIX
+> divider adjusts itself until the PLLH is within bounds.
 > 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 > ---
->  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> new file mode 100644
-> index 0000000..bfc3ca4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> @@ -0,0 +1,37 @@
-> +Texas Instruments TI-SCI Clocks
-> +===============================
-> +
-> +All clocks on Texas Instruments' SoCs that contain a System Controller,
-> +are only controlled by this entity. Communication between a host processor
-> +running an OS and the System Controller happens through a protocol known
-> +as TI-SCI[1]. This clock implementation plugs into the common clock
-> +framework and makes use of the TI-SCI protocol on clock API requests.
-> +
-> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-> +
-> +Required properties:
-> +-------------------
-> +- compatible: Must be "ti,k2g-sci-clk"
-> +- #clock-cells: Shall be 2.
-> +  In clock consumers, this cell represents the device ID and clock ID
-> +  exposed by the PM firmware. The assignments can be found in the header
-> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
-> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
-> +  is the SoC involved, for example 'k2g'.
-> +
-> +Examples:
-> +--------
-> +
-> +pmmc: pmmc {
-> +	compatible = "ti,k2g-sci";
-> +
-> +	k2g_clks: k2g_clks {
 
-Use "clocks" for node name instead.
- 
-> +		compatible = "ti,k2g-sci-clk";
+Applied to clk-fixes
 
-I'm starting to think all these child nodes for SCI are pointless. Is 
-there any reason why the parent node can't be the clock provider (along 
-with all the other providers it acks as)?
-
-> +		#clock-cells = <2>;
-> +	};
-> +};
-> +
-> +uart0: serial@2530c00 {
-> +	compatible = "ns16550a";
-> +	clocks = <&k2g_clks K2G_DEV_UART0 0>;
-> +};
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
