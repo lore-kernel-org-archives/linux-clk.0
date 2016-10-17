@@ -1,64 +1,71 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 1/6] clk: pxa: remove unused variables
-Date: Mon, 10 Oct 2016 22:09:04 +0200
-Message-Id: <1476130149-31834-2-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <mw@semihalf.com>
+MIME-Version: 1.0
+In-Reply-To: <CAPv3WKf13FJxGkpt+OcNO--hRQoZr-TtuzCcAJrQwFXjqRgM2Q@mail.gmail.com>
+References: <1474789673-3837-1-git-send-email-mw@semihalf.com> <CAPv3WKf13FJxGkpt+OcNO--hRQoZr-TtuzCcAJrQwFXjqRgM2Q@mail.gmail.com>
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Mon, 17 Oct 2016 15:03:00 +0200
+Message-ID: <CAPv3WKdhe+3_2wjSwKD3i0OY5W3aPiaZAnAaidanyAzvvH6d6g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/1] Armada 7k/8k CP110 system controller fixes
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
+	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
+	Grzegorz Jaszczyk <jaz@semihalf.com>, Marcin Wojtas <mw@semihalf.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a cleanup patch to remove unused values not used in their
-respective functions.
+Hi Stephen,
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/clk/pxa/clk-pxa27x.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Since merge window is closed, I kindly remind about remaining patch.
 
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index c40b1804f58c..afc395b4148e 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -221,14 +221,12 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
- 					      unsigned long parent_rate)
- {
- 	unsigned long clkcfg;
--	unsigned int t, ht, b, osc_forced;
-+	unsigned int ht, osc_forced;
- 	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
--	t  = clkcfg & (1 << 0);
- 	ht = clkcfg & (1 << 2);
--	b  = clkcfg & (1 << 3);
- 
- 	if (osc_forced)
- 		return parent_rate;
-@@ -241,7 +239,7 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
- static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- {
- 	unsigned long clkcfg;
--	unsigned int t, ht, b, osc_forced;
-+	unsigned int t, ht, osc_forced;
- 	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
-@@ -251,7 +249,6 @@ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
- 	t  = clkcfg & (1 << 0);
- 	ht = clkcfg & (1 << 2);
--	b  = clkcfg & (1 << 3);
- 
- 	if (ht || t)
- 		return PXA_CORE_TURBO;
--- 
-2.1.4
+Best regards,
+Marcin
+
+2016-10-06 21:24 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
+> Hi Stephen,
+>
+> Do you have any further comments on the remaining patch?
+>
+> Best regards,
+> Marcin
+>
+> 2016-09-25 9:47 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
+>> Hi,
+>>
+>> Two patches from the third version of the patchset have already been
+>> applied, so I re-send the last one with corrected allocation of
+>> clock data, which was pointed in the review.
+>>
+>> Any feedback would be very welcome.
+>>
+>> Best regards,
+>> Marcin
+>>
+>> Changelog:
+>> v4 <- v3
+>> * fix allocation of clock data
+>>
+>> v3 <- v2
+>> * return -ENOMEM on alloc failures
+>>
+>> v1 <- v2
+>> * replace setting CLK_IS_BASIC flag with clearing init structure fields
+>>   with memset
+>> * minor improvements of allocation and error checking
+>> * add migration to clk_hw
+>>
+>>
+>> Marcin Wojtas (1):
+>>   clk: mvebu: migrate CP110 system controller to clk_hw API and
+>>     registration
+>>
+>>  drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
+>>  1 file changed, 72 insertions(+), 78 deletions(-)
+>>
+>> --
+>> 1.8.3.1
+>>
