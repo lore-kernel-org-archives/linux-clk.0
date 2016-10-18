@@ -1,49 +1,41 @@
-Return-Path: <emil@limesaudio.com>
-Return-Path: <emil@limesaudio.com>
-From: Emil Lundmark <emil@limesaudio.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	"Ken . Lin" <ken.lin@advantech.com>,
-	Emil Lundmark <emil@limesaudio.com>
-Subject: [PATCH v3 0/2] clk: imx: fix AV PLL rate setting
-Date: Wed, 12 Oct 2016 12:31:39 +0200
-Message-Id: <cover.1476267249.git.emil@limesaudio.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
+Date: Tue, 18 Oct 2016 18:45:53 +0300
+Message-ID: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi,
 
-I discovered a problem when trying to set the rate of the audio PLL
-(pll4_post_div) on an i.MX6Q. The rate I wanted to set was 196.608 MHz, but
-the actual rate I got was 192.000570 MHz. This patch series fixes this
-issue and also improves the precision of the audio/video PLLs.
+As a recap, this series is part of the ongoing work to get rid of the
+hwmod database under mach-omap2 folder. This series converts the
+existing clock related functionality to a new clock type, which will
+allow removing all the .clkctrl related items from hwmod database.
+This series adds sample solution for OMAP4 only, rest of the SoCs can
+be converted automatically once the approach is acceptable.
 
-Changes since v2:
-- Cast result of 'parent_rate * mfn / mfd' to unsigned long instead of u32.
-- Clarify how this issue was discovered in the commit message.
-- Rebased on Linux 4.8.
+v4 has the following high level changes compared to v3:
+- Clock data is now statically built-in to the driver
+- Adds clockdomain provider support, which can be used to fetch
+  clocks based on clockdomain relation. Only clockdomains need to be
+  registered within DT.
+- Added some automatic clock alias generation support to the TI clock
+  drivers, if this is not acceptable, I can change this to add all the
+  aliases under the individual drivers/clk/ti/clk-xyz.c files
+- As a sample, only omap4 clock data is available with this set
 
-Changes since v1:
-- Use correct subsystem name in commit summary.
-- Use 'Fixes:' tag to indicate bug fix.
-- Revise argument for choosing the denominator register value after
-  comments from Lothar Waßmann.
+After this series, the clock data can be dropped from the hwmod database
+for OMAP4, I have working patches for this for anybody interested. Also,
+the DT files require some modifications to add proper support for
+clockdomain providers, and drop some unnecessary clock nodes.
 
-v2: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-October/460809.html
-v1: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-October/460350.html
+Boot + simple PM test seems to be working on OMAP4 with this set, and
+boot test with other boards I have access to don't seem to cause any
+issues. Applies on top of 4.9-rc1.
 
-Emil Lundmark (2):
-  clk: imx: fix integer overflow in AV PLL round rate
-  clk: imx: improve precision of AV PLL to 1 Hz
-
- drivers/clk/imx/clk-pllv3.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
--- 
-2.7.4
+-Tero
