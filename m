@@ -1,63 +1,137 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V3 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Date: Thu, 27 Oct 2016 16:01:07 +0200
-Message-Id: <1477576872-2665-2-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 09/15] clk: ti: move omap2_init_clk_clkdm under TI clock driver
+Date: Tue, 18 Oct 2016 18:46:02 +0300
+Message-ID: <1476805568-19264-10-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+This is not needed outside the driver, so move it inside it and remove
+the prototype from the public header also.
 
-Add TEGRA20_CLK_NOR to init table and set default rate to 92 MHz which
-is max rate.
-
-The maximum rate value of 92 MHz is pulled from the downstream L4T
-kernel.
-
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
+ arch/arm/mach-omap2/clock.c  | 34 ----------------------------------
+ drivers/clk/ti/clock.h       |  1 +
+ drivers/clk/ti/clockdomain.c | 30 ++++++++++++++++++++++++++++++
+ include/linux/clk/ti.h       |  1 -
+ 4 files changed, 31 insertions(+), 35 deletions(-)
 
-Changes in v2:
-- no changes
-
-Changes in v3:
-- Added comment in commit message where I got the maximum rates from.
-
- drivers/clk/tegra/clk-tegra20.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cb..13d3b5a 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-+	{ TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 92000000, 0 },
- 	{ TEGRA20_CLK_SBC1, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC2, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
---
-2.1.4
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 5391b66..ce8e804 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -79,40 +79,6 @@ int __init omap2_clk_setup_ll_ops(void)
+  * OMAP2+ specific clock functions
+  */
+ 
+-/* Private functions */
+-
+-/* Public functions */
+-
+-/**
+- * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
+- * @clk: OMAP clock struct ptr to use
+- *
+- * Convert a clockdomain name stored in a struct clk 'clk' into a
+- * clockdomain pointer, and save it into the struct clk.  Intended to be
+- * called during clk_register().  No return value.
+- */
+-void omap2_init_clk_clkdm(struct clk_hw *hw)
+-{
+-	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+-	struct clockdomain *clkdm;
+-	const char *clk_name;
+-
+-	if (!clk->clkdm_name)
+-		return;
+-
+-	clk_name = __clk_get_name(hw->clk);
+-
+-	clkdm = clkdm_lookup(clk->clkdm_name);
+-	if (clkdm) {
+-		pr_debug("clock: associated clk %s to clkdm %s\n",
+-			 clk_name, clk->clkdm_name);
+-		clk->clkdm = clkdm;
+-	} else {
+-		pr_debug("clock: could not associate clk %s to clkdm %s\n",
+-			 clk_name, clk->clkdm_name);
+-	}
+-}
+-
+ static int __initdata mpurate;
+ 
+ /*
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 5675e37..9c85a51 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -232,6 +232,7 @@ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
+ u8 ti_clk_mux_get_parent(struct clk_hw *hw);
+ int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index);
+ 
++void omap2_init_clk_clkdm(struct clk_hw *hw);
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+ 
+diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
+index 6cf9dd1..704157d 100644
+--- a/drivers/clk/ti/clockdomain.c
++++ b/drivers/clk/ti/clockdomain.c
+@@ -103,6 +103,36 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
+ 	ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
+ }
+ 
++/**
++ * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
++ * @clk: OMAP clock struct ptr to use
++ *
++ * Convert a clockdomain name stored in a struct clk 'clk' into a
++ * clockdomain pointer, and save it into the struct clk.  Intended to be
++ * called during clk_register().  No return value.
++ */
++void omap2_init_clk_clkdm(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct clockdomain *clkdm;
++	const char *clk_name;
++
++	if (!clk->clkdm_name)
++		return;
++
++	clk_name = __clk_get_name(hw->clk);
++
++	clkdm = ti_clk_ll_ops->clkdm_lookup(clk->clkdm_name);
++	if (clkdm) {
++		pr_debug("clock: associated clk %s to clkdm %s\n",
++			 clk_name, clk->clkdm_name);
++		clk->clkdm = clkdm;
++	} else {
++		pr_debug("clock: could not associate clk %s to clkdm %s\n",
++			 clk_name, clk->clkdm_name);
++	}
++}
++
+ static void __init of_ti_clockdomain_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index bc7fd8f..626ae94 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -238,7 +238,6 @@ struct ti_clk_ll_ops {
+ 
+ #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
+ 
+-void omap2_init_clk_clkdm(struct clk_hw *clk);
+ int omap2_clk_disable_autoidle_all(void);
+ int omap2_clk_enable_autoidle_all(void);
+ int omap2_clk_allow_idle(struct clk *clk);
+-- 
+1.9.1
