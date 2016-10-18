@@ -1,63 +1,86 @@
-Return-Path: <mw@semihalf.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 10/15] clk: ti: add support API for fetching memmap index
+Date: Tue, 18 Oct 2016 18:46:03 +0300
+Message-ID: <1476805568-19264-11-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1474789673-3837-1-git-send-email-mw@semihalf.com>
-References: <1474789673-3837-1-git-send-email-mw@semihalf.com>
-From: Marcin Wojtas <mw@semihalf.com>
-Date: Thu, 6 Oct 2016 21:24:03 +0200
-Message-ID: <CAPv3WKf13FJxGkpt+OcNO--hRQoZr-TtuzCcAJrQwFXjqRgM2Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/1] Armada 7k/8k CP110 system controller fixes
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
-	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
-	Grzegorz Jaszczyk <jaz@semihalf.com>, Marcin Wojtas <mw@semihalf.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Searches for a memmap index for a given node. Checks against all the
+registered iomaps and sees if the node is registered for this.
 
-Do you have any further comments on the remaining patch?
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk.c   | 24 ++++++++++++++++++++++++
+ drivers/clk/ti/clock.h |  1 +
+ 2 files changed, 25 insertions(+)
 
-Best regards,
-Marcin
-
-2016-09-25 9:47 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
-> Hi,
->
-> Two patches from the third version of the patchset have already been
-> applied, so I re-send the last one with corrected allocation of
-> clock data, which was pointed in the review.
->
-> Any feedback would be very welcome.
->
-> Best regards,
-> Marcin
->
-> Changelog:
-> v4 <- v3
-> * fix allocation of clock data
->
-> v3 <- v2
-> * return -ENOMEM on alloc failures
->
-> v1 <- v2
-> * replace setting CLK_IS_BASIC flag with clearing init structure fields
->   with memset
-> * minor improvements of allocation and error checking
-> * add migration to clk_hw
->
->
-> Marcin Wojtas (1):
->   clk: mvebu: migrate CP110 system controller to clk_hw API and
->     registration
->
->  drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
->  1 file changed, 72 insertions(+), 78 deletions(-)
->
-> --
-> 1.8.3.1
->
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 7a445f4..8bebda4 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -39,6 +39,7 @@
+ struct clk_iomap {
+ 	struct regmap *regmap;
+ 	void __iomem *mem;
++	struct device_node *node;
+ };
+ 
+ static struct clk_iomap *clk_memmaps[CLK_MAX_MEMMAPS];
+@@ -199,6 +200,28 @@ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index)
+ }
+ 
+ /**
++ * ti_clk_get_memmap_index - get memory mapping index for a node
++ * @node: device node pointer to find memmap index for
++ *
++ * Finds a matching memory mapping index for a node. Returns the index
++ * to the mapping, or negative error value in failure.
++ */
++int ti_clk_get_memmap_index(struct device_node *node)
++{
++	int i;
++
++	for (i = 0; i < CLK_MAX_MEMMAPS; i++) {
++		if (!clk_memmaps[i])
++			continue;
++
++		if (clk_memmaps[i]->node == node)
++			return i;
++	}
++
++	return -ENOENT;
++}
++
++/**
+  * omap2_clk_provider_init - init master clock provider
+  * @parent: master node
+  * @index: internal index for clk_reg_ops
+@@ -234,6 +257,7 @@ int __init omap2_clk_provider_init(struct device_node *parent, int index,
+ 
+ 	io->regmap = syscon;
+ 	io->mem = mem;
++	io->node = parent;
+ 
+ 	clk_memmaps[index] = io;
+ 
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 9c85a51..9b8a5f2 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -203,6 +203,7 @@ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
+ struct clk *ti_clk_register_clk(struct ti_clk *setup);
+ int ti_clk_register_clks(struct ti_clk_alias *clks);
+ 
++int ti_clk_get_memmap_index(struct device_node *node);
+ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index);
+ void ti_dt_clocks_register(struct ti_dt_clk *oclks);
+ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
+-- 
+1.9.1
