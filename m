@@ -1,71 +1,40 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V3 4/6] ARM: tegra: Add Tegra30 GMI support
-Date: Thu, 27 Oct 2016 16:01:10 +0200
-Message-Id: <1477576872-2665-5-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 18 Oct 2016 16:51:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+Message-ID: <20161018235108.GP8871@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+On 10/14, gabriel.fernandez@st.com wrote:
+> 
+> Gabriel Fernandez (6):
+>   clk: stm32f4: Add LSI & LSE clocks
+>   ARM: dts: stm32f429: add LSI and LSE clocks
+>   arm: stmf32: Enable SYSCON
+>   clk: stm32f4: Add RTC clock
+>   clk: stm32f469: Add QSPI clock
+>   ARM: dts: stm32f429: Add QSPI clock
 
-Add a device node for the GMI controller found on Tegra30.
+Can the clk patches be picked without causing problems for
+existing dt changes? Do you want an ack from clk maintainers
+instead of us picking the clk patches up? The series has
+intermingled clk and dts changes so I'm confused.
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
----
-
-Changes in v2:
-- added address-cells, size-cells and ranges properties
-
-Changes in v3:
-- no changes
-
- arch/arm/boot/dts/tegra30.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 5030065..bbb1c00 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -439,6 +439,19 @@
- 		status = "disabled";
- 	};
-
-+	gmi@70009000 {
-+		compatible = "nvidia,tegra30-gmi";
-+		reg = <0x70009000 0x1000>;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0x48000000 0x7ffffff>;
-+		clocks = <&tegra_car TEGRA30_CLK_NOR>;
-+		clock-names = "gmi";
-+		resets = <&tegra_car 42>;
-+		reset-names = "gmi";
-+		status = "disabled";
-+	};
-+
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
---
-2.1.4
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
