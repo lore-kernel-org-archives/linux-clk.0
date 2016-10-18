@@ -1,48 +1,40 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-To: Arnd Bergmann <arnd@arndb.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20161021154737.3803065-1-arnd@arndb.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Magnus Damm <damm+renesas@opensource.se>,
- Simon Horman <horms+renesas@verge.net.au>,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <9f16dc0d-fe5e-dff8-e461-9e0dfdd23da7@cogentembedded.com>
-Date: Fri, 21 Oct 2016 19:42:42 +0300
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,  Viresh Kumar <viresh.kumar@linaro.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org
+Subject: Re: [PATCH 5/6] clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq
+References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+	<1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
+Date: Tue, 18 Oct 2016 09:00:28 +0200
+In-Reply-To: <1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
+	(Robert Jarzmik's message of "Mon, 10 Oct 2016 22:09:08 +0200")
+Message-ID: <87zim23zw3.fsf@belgarion.home>
 MIME-Version: 1.0
-In-Reply-To: <20161021154737.3803065-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+Robert Jarzmik <robert.jarzmik@free.fr> writes:
 
-On 10/21/2016 06:47 PM, Arnd Bergmann wrote:
-
-> The addition of one more rcar-gen2 based SoC caused a build error (again)
-> in my randconfig builds:
+> This is the initial stage to transfer the pxa25x and pxa27x CPU clocks
+> handling from cpufreq to the clock API. More precisely, the clocks
+> transferred are :
+>  - cpll : core pll, known also as the CPU core turbo frequency
+>  - core : core, known also as the CPU actual frequency, being either the
+>           CPU core turbo frequency or the CPU core run frequency
 >
-> arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
-> setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
+> This transfer is a prequel to shrink the code in pxa2xx-cpufreq.c, so
+> that it can become, at least in devicetree builds, the casual cpufreq-dt
+> driver.
 
-    OK, seeing how you got this -- I should have tested the kernel build with 
-only R8A7743 enabled... sorry about that. :-<
-    I probably shouldn't have used rcar_gen2_timer_init() in the 1st place...
+Hi Michael and Stephen,
 
-> I think this has happened twice in the past. Instead of adding each SoC
-> one at a time, this changes the existing list to always build the
-> rcar-gen2 related clk files whenever the generic symbol is selected.
+I'm planing on sending a v2 next week with minor corrections, mostly in the data
+tables (pxa25x_freqs and pxa27x_freqs), as testing prooved some values were wrong.
 
-    The problem is we're not going to use this driver on RZ/G SoCs... The 
-newer rcar2-cpg-mssr.c will be used instead -- I submitted the patches for 
-that before ELC-E...
+If you want me modify this serie, will you have time to review for next week or
+should I delay the v2 posting ?
 
-> Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[...]
+Cheers.
 
-MBR, Sergei
+--
+Robert
