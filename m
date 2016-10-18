@@ -1,229 +1,92 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Oct 2016 18:54:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
-Message-ID: <20161028015438.GG16026@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161019132816.31073-4-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:36788 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932779AbcJRA32 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2016 20:29:28 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b186so8856128vkb.3
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2016 17:29:28 -0700 (PDT)
+From: Fabio Estevam <festevam@gmail.com>
+To: sboyd@codeaurora.org
+Cc: shawnguo@kernel.org, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH RESEND 2/3] clk: imx6: Make the LDB_DI0 and LDB_DI1 clocks read-only
+Date: Mon, 17 Oct 2016 22:29:13 -0200
+Message-Id: <1476750554-21961-2-git-send-email-festevam@gmail.com>
+In-Reply-To: <1476750554-21961-1-git-send-email-festevam@gmail.com>
+References: <1476750554-21961-1-git-send-email-festevam@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/19, Georgi Djakov wrote:
-> Add a driver for the A53 Clock Controller. It is a hardware block that
-> implements a combined mux and half integer divider functionality. It can
-> choose between a fixed-rate clock or the dedicated A53 PLL. The source
-> and the divider can be set both at the same time.
-> 
-> This is required for enabling CPU frequency scaling on platforms like
-> MSM8916.
-> 
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-Please Cc DT reviewers.
+Due to incorrect placement of the clock gate cell in the ldb_di[x]_clk
+tree, the glitchy parent mux of ldb_di[x]_clk can cause a glitch to
+enter the ldb_di_ipu_div divider. If the divider gets locked up, no
+ldb_di[x]_clk is generated, and the LVDS display will hang when the
+ipu_di_clk is sourced from ldb_di_clk.
 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
->  drivers/clk/qcom/Kconfig                           |   8 ++
->  drivers/clk/qcom/Makefile                          |   1 +
->  drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
->  4 files changed, 186 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
->  create mode 100644 drivers/clk/qcom/a53cc.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> new file mode 100644
-> index 000000000000..a025f062f177
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> @@ -0,0 +1,22 @@
-> +Qualcomm A53 CPU Clock Controller Binding
-> +------------------------------------------------
-> +The A53 CPU Clock Controller is hardware, which provides a combined
-> +mux and divider functionality for the CPU clocks. It can choose between
-> +a fixed rate clock and the dedicated A53 PLL.
-> +
-> +Required properties :
-> +- compatible : shall contain:
-> +
-> +			"qcom,a53cc"
-> +
-> +- reg : shall contain base register location and length
-> +	of the APCS region
-> +- #clock-cells : shall contain 1
-> +
-> +Example:
-> +
-> +	apcs: syscon@b011000 {
-> +		compatible = "qcom,a53cc", "syscon";
+To fix the problem, both the new and current parent of the ldb_di_clk
+should be disabled before the switch. As this can not be guaranteed by
+the clock framework during runtime, make the ldb_di[x]_sel muxes read-only.
+A workaround to set the muxes once during boot could be added to the
+kernel or bootloader.
 
-Why is it a syscon? Is that part used?
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx6q.c | 10 ++--------
+ drivers/clk/imx/clk.h       |  8 ++++++++
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-> +		reg = <0x0b011000 0x1000>;
-> +		#clock-cells = <1>;
-> +	};
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index a889f0b14b54..59dfcdc340e4 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -159,3 +159,11 @@ config QCOM_A53PLL
->  	  support for CPU frequencies above 1GHz.
->  	  Say Y if you want to support CPU frequency scaling on devices
->  	  such as MSM8916.
-> +
-> +config QCOM_A53CC
-> +	bool "A53 Clock Controller"
-
-Can't these configs be tristate? Same applies to A53PLL.
-
-> +	depends on COMMON_CLK_QCOM && QCOM_A53PLL
-> +	help
-> +	  Support for the A53 clock controller on some Qualcomm devices.
-> +	  Say Y if you want to support CPU frequency scaling on devices
-> +	  such as MSM8916.
-> diff --git a/drivers/clk/qcom/a53cc.c b/drivers/clk/qcom/a53cc.c
-> new file mode 100644
-> index 000000000000..4d20db9da407
-> --- /dev/null
-> +++ b/drivers/clk/qcom/a53cc.c
-> @@ -0,0 +1,155 @@
-> +/*
-> + * Copyright (c) 2016, Linaro Limited
-> + * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/cpu.h>
-
-Is this include used?
-
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-mux-div.h"
-> +
-> +enum {
-> +	P_GPLL0,
-> +	P_A53PLL,
-> +};
-> +
-> +static const struct parent_map gpll0_a53cc_map[] = {
-> +	{ P_GPLL0, 4 },
-> +	{ P_A53PLL, 5 },
-> +};
-> +
-> +static const char * const gpll0_a53cc[] = {
-> +	"gpll0_vote",
-> +	"a53pll",
-> +};
-> +
-> +static const struct regmap_config a53cc_regmap_config = {
-> +	.reg_bits		= 32,
-> +	.reg_stride		= 4,
-> +	.val_bits		= 32,
-> +	.max_register		= 0x1000,
-> +	.fast_io		= true,
-> +	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-> +};
-> +
-> +static const struct of_device_id qcom_a53cc_match_table[] = {
-> +	{ .compatible = "qcom,a53cc" },
-> +	{ }
-> +};
-
-Can you move this down next to the driver please?
-
-> +
-> +/*
-> + * We use the notifier function for switching to a temporary safe configuration
-> + * (mux and divider), while the a53 pll is reconfigured.
-> + */
-> +static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-> +			     void *data)
-> +{
-> +	int ret = 0;
-> +	struct clk_regmap_mux_div *md = container_of(nb,
-> +						     struct clk_regmap_mux_div,
-> +						     clk_nb);
-> +
-> +	if (event == PRE_RATE_CHANGE)
-> +		ret = __mux_div_set_src_div(md, md->safe_src, md->safe_div);
-> +
-> +	return notifier_from_errno(ret);
-> +}
-> +
-> +static int qcom_a53cc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk_regmap_mux_div *a53cc;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	struct clk *pclk;
-> +	struct regmap *regmap;
-> +	struct clk_init_data init;
-
- = { } for safety?
-
-> +	int ret;
-> +
-> +	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
-> +	if (!a53cc)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	a53cc->reg_offset = 0x50,
-> +	a53cc->hid_width = 5,
-> +	a53cc->hid_shift = 0,
-> +	a53cc->src_width = 3,
-> +	a53cc->src_shift = 8,
-> +	a53cc->safe_src = 4,
-> +	a53cc->safe_div = 3,
-
-Replace commas with semicolons please.
-
-Also do we need the safe things to be part of the struct? The
-notifier is here so we could just as easily hard code these
-things in the notifier.
-
-> +	a53cc->parent_map = gpll0_a53cc_map,
-> +
-> +	init.name = "a53mux",
-> +	init.parent_names = gpll0_a53cc,
-> +	init.num_parents = 2,
-> +	init.ops = &clk_regmap_mux_div_ops,
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +	a53cc->clkr.hw.init = &init;
-> +
-> +	pclk = __clk_lookup(gpll0_a53cc[1]);
-> +	if (!pclk)
-> +		return -EPROBE_DEFER;
-> +
-> +	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
-> +	ret = clk_notifier_register(pclk, &a53cc->clk_nb);
-> +	if (ret) {
-> +		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-> +		return ret;
-> +	}
-
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 66825a8..a4f4de5 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -345,8 +345,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 		clk[IMX6QDL_CLK_GPU3D_SHADER_SEL] = imx_clk_mux("gpu3d_shader_sel", base + 0x18, 8,  2, gpu3d_shader_sels, ARRAY_SIZE(gpu3d_shader_sels));
+ 	clk[IMX6QDL_CLK_IPU1_SEL]         = imx_clk_mux("ipu1_sel",         base + 0x3c, 9,  2, ipu_sels,          ARRAY_SIZE(ipu_sels));
+ 	clk[IMX6QDL_CLK_IPU2_SEL]         = imx_clk_mux("ipu2_sel",         base + 0x3c, 14, 2, ipu_sels,          ARRAY_SIZE(ipu_sels));
+-	clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_flags("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
+-	clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_flags("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
++	clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_ldb("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
++	clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_ldb("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
+ 	clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL] = imx_clk_mux_flags("ipu1_di0_pre_sel", base + 0x34, 6,  3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+ 	clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL] = imx_clk_mux_flags("ipu1_di1_pre_sel", base + 0x34, 15, 3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+ 	clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL] = imx_clk_mux_flags("ipu2_di0_pre_sel", base + 0x38, 6,  3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+@@ -597,12 +597,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_register_clkdev(clk[IMX6QDL_CLK_ENET_REF], "enet_ref", NULL);
+ 
+-	if ((imx_get_soc_revision() != IMX_CHIP_REVISION_1_0) ||
+-	    clk_on_imx6dl()) {
+-		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI0_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+-		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+-	}
+-
+ 	clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
+ 	if (clk_on_imx6dl())
+ 		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 3799ff8..4afad3b 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -75,6 +75,14 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
++		u8 shift, u8 width, const char **parents, int num_parents)
++{
++	return clk_register_mux(NULL, name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
++			shift, width, CLK_MUX_READ_ONLY, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_fixed_factor(const char *name,
+ 		const char *parent, unsigned int mult, unsigned int div)
+ {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
