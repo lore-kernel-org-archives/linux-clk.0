@@ -1,72 +1,76 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 08/14] dt-bindings: sound: Add sun8i analog codec documentation
-Date: Tue,  4 Oct 2016 11:46:21 +0200
-Message-Id: <06ea14939405c3eb0fb9be655d26ee564a04a53d.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH] clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6 as parent
+Date: Tue, 18 Oct 2016 13:42:09 +0800
+Message-Id: <20161018054209.24546-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the documentation for dt-binding of the analog audiocodec
-driver for SUN8I SoC.
+On the A31, the DMA engine only works if AHB1 is clocked from PLL6.
+In addition, the hstimer is clocked from AHB1, and if AHB1 is clocked
+from the CPU clock, and cpufreq is working, we get an unstable timer.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+Force the AHB1 clock to use PLL6 as its parent. Previously this was done
+in the device tree with the assigned-clocks and assigned-clocks-parent
+bindings. However with this new monolithic driver, the system critical
+clocks aren't exported through the device tree. The alternative is to
+force this setting in the driver before the clocks are registered.
+
+This is also done in newer versions of mainline U-boot. But people still
+using an older version, or even the vendor version, can still hit this
+issue. Hence the need to do it in the kernel as well.
+
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Reported-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../devicetree/bindings/sound/sun8i-codec-analog.txt | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
-new file mode 100644
-index 0000000..a03ec20
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
-@@ -0,0 +1,20 @@
-+* Allwinner A23/A33 Analog Codec
+This fix is for 4.9. This should fix issues with hstimer and DMA when
+booting with an old bootloader.
+
+ChenYu
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 79596463e0d9..4a82a49cff5e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -191,6 +191,8 @@ static struct clk_div_table axi_div_table[] = {
+ static SUNXI_CCU_DIV_TABLE(axi_clk, "axi", "cpu",
+ 			   0x050, 0, 3, axi_div_table, 0);
+ 
++#define SUN6I_A31_AHB1_REG  0x054
 +
-+This codec must be handled as a PRCM subnode.
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi", "pll-periph" };
+ 
+@@ -1230,6 +1232,16 @@ static void __init sun6i_a31_ccu_setup(struct device_node *node)
+ 	val &= BIT(16);
+ 	writel(val, reg + SUN6I_A31_PLL_MIPI_REG);
+ 
++	/* Force AHB1 to PLL6 / 3 */
++	val = readl(reg + SUN6I_A31_AHB1_REG);
++	/* set PLL6 pre-div = 3 */
++	val &= ~GENMASK(7, 6);
++	val |= 0x2 << 6;
++	/* select PLL6 / pre-div */
++	val &= ~GENMASK(13, 12);
++	val |= 0x3 << 12;
++	writel(val, reg + SUN6I_A31_AHB1_REG);
 +
-+Required properties:
-+- compatible: must be either "allwinner,sun8i-codec-analog"
-+- interrupts: must contain the codec interrupt
-+- clocks: a list of phandle + clock-specifer pairs, one for each entry
-+  in clock-names.
-+- clock-names: should contain followings:
-+   - "apb": the parent APB clock for this controller
-+   - "codec": the parent module clock
-+
-+Example, in your prcm subnode:
-+codec_analog: codec_analog {
-+	compatible = "allwinner,sun8i-codec-analog";
-+	interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+	clock-names = "apb", "codec";
-+};
+ 	sunxi_ccu_probe(node, reg, &sun6i_a31_ccu_desc);
+ 
+ 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
 -- 
 2.9.3
