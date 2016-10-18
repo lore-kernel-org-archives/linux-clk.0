@@ -1,51 +1,57 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  "Rafael J. Wysocki" <rjw@rjwysocki.net>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org
-Subject: Re: [PATCH 6/6] cpufreq: pxa: convert to clock API
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
-	<1476130149-31834-7-git-send-email-robert.jarzmik@free.fr>
-	<20161012023601.GC19385@vireshk-i7> <87mvia6q8p.fsf@belgarion.home>
-	<20161012063247.GH19385@vireshk-i7>
-Date: Wed, 12 Oct 2016 10:29:05 +0200
-In-Reply-To: <20161012063247.GH19385@vireshk-i7> (Viresh Kumar's message of
-	"Wed, 12 Oct 2016 12:02:47 +0530")
-Message-ID: <87insy6kdq.fsf@belgarion.home>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 08/15] clk: ti: add clkdm_lookup to the exported functions
+Date: Tue, 18 Oct 2016 18:46:01 +0300
+Message-ID: <1476805568-19264-9-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
+This will be needed to move some additional clockdomain functionality
+under clock driver.
 
-> On 12-10-16, 08:22, Robert Jarzmik wrote:
->> Viresh Kumar <viresh.kumar@linaro.org> writes:
->> 
->> > On 10-10-16, 22:09, Robert Jarzmik wrote:
->> >> As the clock settings have been introduced into the clock pxa drivers,
->> >> which are now available to change the CPU clock by themselves, remove
->> >> the clock handling from this driver, and rely on pxa clock drivers.
->> >> 
->> >> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->> >> ---
->> >>  drivers/cpufreq/pxa2xx-cpufreq.c | 191 ++++++++-------------------------------
->> >>  1 file changed, 39 insertions(+), 152 deletions(-)
->> >
->> > As you mentioned in the previous patch, why can't you use cpufreq-dt
->> > driver now and delete this one ?
->> 
->> PXA architecture have both legacy platform_data based configurations and new
->> devicetree based ones.
->
-> I don't see any platform data specific code in this driver. What am I
-> missing ?
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock.c | 1 +
+ include/linux/clk/ti.h      | 2 ++
+ 2 files changed, 3 insertions(+)
 
-In a legacy platform, ie. without devicetree, we have CONFIG_OF=n.
-How would cpufreq-dt be usable in this case ?
-
-You can see such a platform in arch/arm/configs/mainstone_defconfig and
-arch/arm/mach-pxa/mainstone.c as an example.
-
-Cheers.
-
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index d058125..5391b66 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -57,6 +57,7 @@
+ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ 	.clkdm_clk_enable = clkdm_clk_enable,
+ 	.clkdm_clk_disable = clkdm_clk_disable,
++	.clkdm_lookup = clkdm_lookup,
+ 	.cm_wait_module_ready = omap_cm_wait_module_ready,
+ 	.cm_split_idlest_reg = cm_split_idlest_reg,
+ };
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 07308db..bc7fd8f 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -213,6 +213,7 @@ struct clk_omap_reg {
+  * @clk_writel: pointer to register write function
+  * @clkdm_clk_enable: pointer to clockdomain enable function
+  * @clkdm_clk_disable: pointer to clockdomain disable function
++ * @clkdm_lookup: pointer to clockdomain lookup function
+  * @cm_wait_module_ready: pointer to CM module wait ready function
+  * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
+  *
+@@ -228,6 +229,7 @@ struct ti_clk_ll_ops {
+ 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
+ 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
+ 				     struct clk *clk);
++	struct clockdomain * (*clkdm_lookup)(const char *name);
+ 	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
+ 					u8 idlest_shift);
+ 	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
 -- 
-Robert
+1.9.1
