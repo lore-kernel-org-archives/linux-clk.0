@@ -1,92 +1,38 @@
-Return-Path: <labbott@redhat.com>
-Return-Path: <labbott@redhat.com>
-Subject: Re: [PATCHv2] clk: xgene: Don't call __pa on ioremaped address
-To: Loc Ho <lho@apm.com>
-References: <1477673978-15424-1-git-send-email-labbott@redhat.com>
- <CAPw-ZT=XYA3Q=nYC649iC41eebC8fqMsiOaG+O8mhP24D4JN5Q@mail.gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <83c41979-96a0-27bb-4e5a-329396ab296a@redhat.com>
-Date: Fri, 28 Oct 2016 10:09:47 -0700
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 18 Oct 2016 09:17:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: gabriel.fernandez@st.com
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v2 5/6] clk: stm32f469: Add QSPI clock
+Message-ID: <20161018141716.cdxywazk6kfg7z64@rob-hp-laptop>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPw-ZT=XYA3Q=nYC649iC41eebC8fqMsiOaG+O8mhP24D4JN5Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/28/2016 10:07 AM, Loc Ho wrote:
-> Hi Laura,
->
->> ioremaped addresses are not linearly mapped so the physical
->> address can not be figured out via __pa. More generally, there
->> is no guarantee that backing value of an ioremapped address
->> is a physical address at all. The value here is only used
->> for debugging so just drop the call to __pa on the ioremapped
->> address.
->>
->> Fixes: 6ae5fd381251 ("clk: xgene: Silence sparse warnings")
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->> v2: Fix up one more format string
->>
->> I put the fixes tag to match with the cleanup that was done.
->> If there is interest in this fix for pre-4.2 kernels for
->> stable, I can submit a patch for that as well.
->> ---
->>  drivers/clk/clk-xgene.c | 10 ++++------
->>  1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
->> index 3433132..1e67655 100644
->> --- a/drivers/clk/clk-xgene.c
->> +++ b/drivers/clk/clk-xgene.c
->> @@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
->>         struct xgene_clk *pclk = to_xgene_clk(hw);
->>         unsigned long flags = 0;
->>         u32 data;
->> -       phys_addr_t reg;
->>
->>         if (pclk->lock)
->>                 spin_lock_irqsave(pclk->lock, flags);
->>
->>         if (pclk->param.csr_reg != NULL) {
->>                 pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
->> -               reg = __pa(pclk->param.csr_reg);
->>                 /* First enable the clock */
->>                 data = xgene_clk_read(pclk->param.csr_reg +
->>                                         pclk->param.reg_clk_offset);
->>                 data |= pclk->param.reg_clk_mask;
->>                 xgene_clk_write(data, pclk->param.csr_reg +
->>                                         pclk->param.reg_clk_offset);
->> -               pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
->> -                       clk_hw_get_name(hw), &reg,
->> +               pr_debug("%s clk offset 0x%08X mask 0x%08X value 0x%08X\n",
->> +                       clk_hw_get_name(hw),
->>                         pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
->>                         data);
->>
->> @@ -268,8 +266,8 @@ static int xgene_clk_enable(struct clk_hw *hw)
->>                 data &= ~pclk->param.reg_csr_mask;
->>                 xgene_clk_write(data, pclk->param.csr_reg +
->>                                         pclk->param.reg_csr_offset);
->> -               pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
->> -                       clk_hw_get_name(hw), &reg,
->> +               pr_debug("%s csr offset 0x%08X mask 0x%08X value 0x%08X\n",
->> +                       clk_hw_get_name(hw),
->>                         pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
->>                         data);
->>         }
->
->
-> The code looks fine to me. May be overly cautious here. Do you have a
-> board to test this out?
->
-> -Loc
->
+On Fri, Oct 14, 2016 at 11:18:18AM +0200, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch adds the QSPI clock for stm32f469 discovery board.
+> The gate mapping is a little bit different from stm32f429 soc.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+>  .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
+>  drivers/clk/clk-stm32f4.c                          | 173 ++++++++++++++++++---
+>  2 files changed, 158 insertions(+), 19 deletions(-)
 
-Yes, that was how I caught the problem. There are no errors that I
-can see with this patch applied.
-
-Thanks,
-Laura
+Acked-by: Rob Herring <robh@kernel.org>
