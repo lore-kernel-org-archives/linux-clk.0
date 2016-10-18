@@ -1,26 +1,36 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Mon, 24 Oct 2016 15:34:28 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Emil Lundmark <emil@limesaudio.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Ken . Lin" <ken.lin@advantech.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/2] clk: imx: fix AV PLL rate setting
-Message-ID: <20161024073428.GA30578@tiger>
-References: <cover.1476267249.git.emil@limesaudio.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1476267249.git.emil@limesaudio.com>
+Return-Path: <moinejf@free.fr>
+Date: Tue, 18 Oct 2016 09:50:44 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6
+ as parent
+Message-Id: <20161018095044.d1664c4935ad13007453fb35@free.fr>
+In-Reply-To: <20161018054209.24546-1-wens@csie.org>
+References: <20161018054209.24546-1-wens@csie.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 12, 2016 at 12:31:39PM +0200, Emil Lundmark wrote:
-> Emil Lundmark (2):
->   clk: imx: fix integer overflow in AV PLL round rate
->   clk: imx: improve precision of AV PLL to 1 Hz
+On Tue, 18 Oct 2016 13:42:09 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-For both,
+> On the A31, the DMA engine only works if AHB1 is clocked from PLL6.
+> In addition, the hstimer is clocked from AHB1, and if AHB1 is clocked
+> from the CPU clock, and cpufreq is working, we get an unstable timer.
+>=20
+> Force the AHB1 clock to use PLL6 as its parent. Previously this was done
+> in the device tree with the assigned-clocks and assigned-clocks-parent
+> bindings. However with this new monolithic driver, the system critical
+> clocks aren't exported through the device tree. The alternative is to
+> force this setting in the driver before the clocks are registered.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+It should be simpler to export the constant (CLK_AHB1) instead of
+adding code...
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
