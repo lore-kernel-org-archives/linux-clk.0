@@ -1,158 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1477501566.6812.9.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
-        ulf.hansson@linaro.org, Arnd Bergmann <arnd@arndb.de>
-Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>
-In-Reply-To: <1474441040-11946-6-git-send-email-yangbo.lu@nxp.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
-         <1474441040-11946-6-git-send-email-yangbo.lu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 26 Oct 2016 12:06:06 -0500
-Mime-Version: 1.0
-Subject: Re: [v12, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:36785 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932779AbcJRA30 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Oct 2016 20:29:26 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b186so8856102vkb.3
+        for <linux-clk@vger.kernel.org>; Mon, 17 Oct 2016 17:29:26 -0700 (PDT)
+From: Fabio Estevam <festevam@gmail.com>
+To: sboyd@codeaurora.org
+Cc: shawnguo@kernel.org, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH RESEND 1/3] clk: imx6: Mask mmdc_ch1 handshake for periph2_sel and mmdc_ch1_axi_podf
+Date: Mon, 17 Oct 2016 22:29:12 -0200
+Message-Id: <1476750554-21961-1-git-send-email-festevam@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-09-21 at 14:57 +0800, Yangbo Lu wrote:
-> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
-> new file mode 100644
-> index 0000000..b99764c
-> --- /dev/null
-> +++ b/drivers/soc/fsl/Kconfig
-> @@ -0,0 +1,19 @@
-> +#
-> +# Freescale SOC drivers
-> +#
-> +
-> +source "drivers/soc/fsl/qe/Kconfig"
-> +
-> +config FSL_GUTS
-> +	bool "Freescale QorIQ GUTS driver"
-> +	select SOC_BUS
-> +	help
-> +	  The global utilities block controls power management, I/O device
-> +	  enabling, power-onreset(POR) configuration monitoring, alternate
-> +	  function selection for multiplexed signals,and clock control.
-> +	  This driver is to manage and access global utilities block.
-> +	  Initially only reading SVR and registering soc device are
-> supported.
-> +	  Other guts accesses, such as reading RCW, should eventually be
-> moved
-> +	  into this driver as well.
-> +
-> +	  If you want GUTS driver support, you should say Y here.
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-This is user-enablable without dependencies, which means it will break some
-randconfigs.  If this is to be enabled via select then remove the text after
-"bool".
+MMDC CH1 is not used on i.MX6Q, so the handshake needed to change the
+parent of periph2_sel or the divider of mmdc_ch1_axi_podf will never
+succeed.
+Disable the handshake mechanism to allow changing the frequency of
+mmdc_ch1_axi, allowing to use it as a possible source for the LDB DI
+clock.
 
-> +/* SoC die attribute definition for QorIQ platform */
-> +static const struct fsl_soc_die_attr fsl_soc_die[] = {
-> +#ifdef CONFIG_PPC
-> +	/*
-> +	 * Power Architecture-based SoCs T Series
-> +	 */
-> +
-> +	/* Die: T4240, SoC: T4240/T4160/T4080 */
-> +	{ .die		= "T4240",
-> +	  .svr		= 0x82400000,
-> +	  .mask		= 0xfff00000,
-> +	},
-> +	/* Die: T1040, SoC: T1040/T1020/T1042/T1022 */
-> +	{ .die		= "T1040",
-> +	  .svr		= 0x85200000,
-> +	  .mask		= 0xfff00000,
-> +	},
-> +	/* Die: T2080, SoC: T2080/T2081 */
-> +	{ .die		= "T2080",
-> +	  .svr		= 0x85300000,
-> +	  .mask		= 0xfff00000,
-> +	},
-> +	/* Die: T1024, SoC: T1024/T1014/T1023/T1013 */
-> +	{ .die		= "T1024",
-> +	  .svr		= 0x85400000,
-> +	  .mask		= 0xfff00000,
-> +	},
-> +#endif /* CONFIG_PPC */
-> +#if defined(CONFIG_ARCH_MXC) || defined(CONFIG_ARCH_LAYERSCAPE)
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx6q.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Will this driver ever be probed on MXC?  Why do we need these ifdefs at all?
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index ce8ea10..66825a8 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -156,6 +156,19 @@ static struct clk ** const uart_clks[] __initconst = {
+ 	NULL
+ };
+ 
++#define CCM_CCDR		0x04
++
++#define CCDR_MMDC_CH1_MASK	BIT(16)
++
++static void __init imx6q_mmdc_ch1_mask_handshake(void __iomem *ccm_base)
++{
++	unsigned int reg;
++
++	reg = readl_relaxed(ccm_base + CCM_CCDR);
++	reg |= CCDR_MMDC_CH1_MASK;
++	writel_relaxed(reg, ccm_base + CCM_CCDR);
++}
++
+ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -297,6 +310,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
+ 
++	imx6q_mmdc_ch1_mask_handshake(base);
++
+ 	/*                                              name                reg       shift width parent_names     num_parents */
+ 	clk[IMX6QDL_CLK_STEP]             = imx_clk_mux("step",	            base + 0xc,  8,  1, step_sels,	   ARRAY_SIZE(step_sels));
+ 	clk[IMX6QDL_CLK_PLL1_SW]          = imx_clk_mux("pll1_sw",	    base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
+-- 
+2.7.4
 
-
-> +	/*
-> +	 * ARM-based SoCs LS Series
-> +	 */
-> +
-> +	/* Die: LS1043A, SoC: LS1043A/LS1023A */
-> +	{ .die		= "LS1043A",
-> +	  .svr		= 0x87920000,
-> +	  .mask		= 0xffff0000,
-> +	},
-> +	/* Die: LS2080A, SoC: LS2080A/LS2040A/LS2085A */
-> +	{ .die		= "LS2080A",
-> +	  .svr		= 0x87010000,
-> +	  .mask		= 0xff3f0000,
-> +	},
-> +	/* Die: LS1088A, SoC: LS1088A/LS1048A/LS1084A/LS1044A */
-> +	{ .die		= "LS1088A",
-> +	  .svr		= 0x87030000,
-> +	  .mask		= 0xff3f0000,
-> +	},
-> +	/* Die: LS1012A, SoC: LS1012A */
-> +	{ .die		= "LS1012A",
-> +	  .svr		= 0x87040000,
-> +	  .mask		= 0xffff0000,
-> +	},
-> +	/* Die: LS1046A, SoC: LS1046A/LS1026A */
-> +	{ .die		= "LS1046A",
-> +	  .svr		= 0x87070000,
-> +	  .mask		= 0xffff0000,
-> +	},
-> +	/* Die: LS2088A, SoC: LS2088A/LS2048A/LS2084A/LS2044A */
-> +	{ .die		= "LS2088A",
-> +	  .svr		= 0x87090000,
-> +	  .mask		= 0xff3f0000,
-> +	},
-> +	/* Die: LS1021A, SoC: LS1021A/LS1020A/LS1022A
-> +	 * Note: Put this die at the end in cause of incorrect
-> identification
-> +	 */
-> +	{ .die		= "LS1021A",
-> +	  .svr		= 0x87000000,
-> +	  .mask		= 0xfff00000,
-> +	},
-> +#endif /* CONFIG_ARCH_MXC || CONFIG_ARCH_LAYERSCAPE */
-
-Instead of relying on ordering, add more bits to the mask so that there's no
-overlap.  I think 0xfff70000 would work.
-
-> +out:
-> +	kfree(soc_dev_attr.machine);
-> +	kfree(soc_dev_attr.family);
-> +	kfree(soc_dev_attr.soc_id);
-> +	kfree(soc_dev_attr.revision);
-> +	iounmap(guts->regs);
-> +out_free:
-> +	kfree(guts);
-> +	return ret;
-> +}
-
-Please use devm.
-
--Scott
