@@ -1,148 +1,71 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 4/6] clk: stm32f4: Add RTC clock
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <1476436699-21879-5-git-send-email-gabriel.fernandez@st.com>
- <20161019204537.GD8871@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <d805fde7-c8a8-15e0-b13d-b54b5c7cca6a@st.com>
-Date: Thu, 20 Oct 2016 09:50:34 +0200
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 12/15] clk: ti: enforce const types on string arrays
+Date: Tue, 18 Oct 2016 18:46:05 +0300
+Message-ID: <1476805568-19264-13-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20161019204537.GD8871@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Constant string arrays should use const char * const instead of just
+const char *. Change the implementations using these to proper type.
 
-Thanks for reviewing.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clock.h     | 2 +-
+ drivers/clk/ti/composite.c | 2 +-
+ drivers/clk/ti/mux.c       | 8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Ok for all yours remarks
-
-
-On 10/19/2016 10:45 PM, Stephen Boyd wrote:
-> On 10/14, gabriel.fernandez@st.com wrote:
->> @@ -310,6 +310,15 @@ static inline void enable_power_domain_write_protection(void)
->>   	regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
->>   }
->>   
->> +static inline void sofware_reset_backup_domain(void)
->> +{
->> +	unsigned long val;
->> +
->> +	val = readl(base + STM32F4_RCC_BDCR);
->> +	writel(val |= (1 << 16), base + STM32F4_RCC_BDCR);
-> Interesting C style here! Why set the bit in val that will then
-> be cleared in the next function call? Please just don't do it. It
-> would be better to do writel(val | BIT(16), ...)
->
->> +	writel(val & ~(1 << 16), base + STM32F4_RCC_BDCR);
->> +}
->> +
->>   struct stm32_rgate {
->>   	struct	clk_hw hw;
->>   	struct	clk_gate gate;
->> @@ -396,6 +405,113 @@ static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
->>   	return hw;
->>   }
->>   
->> +static int cclk_gate_enable(struct clk_hw *hw)
->> +{
->> +	int ret;
->> +
->> +	disable_power_domain_write_protection();
->> +
->> +	ret = clk_gate_ops.enable(hw);
->> +
->> +	enable_power_domain_write_protection();
->> +
->> +	return ret;
->> +}
->> +
->> +static void cclk_gate_disable(struct clk_hw *hw)
->> +{
->> +	disable_power_domain_write_protection();
->> +
->> +	clk_gate_ops.disable(hw);
->> +
->> +	enable_power_domain_write_protection();
->> +}
->> +
->> +static int cclk_gate_is_enabled(struct clk_hw *hw)
->> +{
->> +	return clk_gate_ops.is_enabled(hw);
->> +}
->> +
->> +static const struct clk_ops cclk_gate_ops = {
->> +	.enable		= cclk_gate_enable,
->> +	.disable	= cclk_gate_disable,
->> +	.is_enabled	= cclk_gate_is_enabled,
->> +};
->> +
->> +static u8 cclk_mux_get_parent(struct clk_hw *hw)
->> +{
->> +	return clk_mux_ops.get_parent(hw);
->> +}
->> +
->> +
-> Weird double newline here. Please remove one.
->
->> +static int cclk_mux_set_parent(struct clk_hw *hw, u8 index)
->> +{
->> +	int ret;
->> +
->> +	disable_power_domain_write_protection();
->> +
->> +	sofware_reset_backup_domain();
->> +
->> +	ret = clk_mux_ops.set_parent(hw, index);
->> +
->> +	enable_power_domain_write_protection();
->> +
->> +	return ret;
->> +}
->> +
->> +
-> Same.
->
->> +static const struct clk_ops cclk_mux_ops = {
->> +	.get_parent = cclk_mux_get_parent,
->> +	.set_parent = cclk_mux_set_parent,
->> +};
->> +
->> +static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
->> +		const char * const *parent_names, int num_parents,
->> +		void __iomem *reg, u8 bit_idx, u8 shift, unsigned long flags,
->> +		spinlock_t *lock)
->> +{
->> +	struct clk_hw *hw;
->> +	struct clk_gate *gate;
->> +	struct clk_mux *mux;
->> +
->> +	gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
-> sizeof(*gate) please.
->
->> +	if (!gate) {
->> +		hw = ERR_PTR(-EINVAL);
->> +		goto fail;
->> +	}
->> +
->> +	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
-> sizeof(*mux) please.
->
->> +	if (!mux) {
->> +		kfree(gate);
->> +		hw = ERR_PTR(-EINVAL);
->> +		goto fail;
->> +	}
->> +
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index f6383ab..2e5fab8 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -88,7 +88,7 @@ struct ti_clk_mux {
+ 	int num_parents;
+ 	u16 reg;
+ 	u8 module;
+-	const char **parents;
++	const char * const *parents;
+ 	u16 flags;
+ };
+ 
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 3f60f99..beea894 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -124,7 +124,7 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
+ 	struct clk_hw *mux;
+ 	struct clk_hw *div;
+ 	int num_parents = 1;
+-	const char **parent_names = NULL;
++	const char * const *parent_names = NULL;
+ 	struct clk *clk;
+ 	int ret;
+ 
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 774098e..520a18e 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -97,10 +97,10 @@ int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ };
+ 
+ static struct clk *_register_mux(struct device *dev, const char *name,
+-				 const char **parent_names, u8 num_parents,
+-				 unsigned long flags, void __iomem *reg,
+-				 u8 shift, u32 mask, u8 clk_mux_flags,
+-				 u32 *table)
++				 const char * const *parent_names,
++				 u8 num_parents, unsigned long flags,
++				 void __iomem *reg, u8 shift, u32 mask,
++				 u8 clk_mux_flags, u32 *table)
+ {
+ 	struct clk_mux *mux;
+ 	struct clk *clk;
+-- 
+1.9.1
