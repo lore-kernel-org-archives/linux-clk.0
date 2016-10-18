@@ -1,40 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 17 Oct 2016 15:43:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and
- mediactrl clock init
-Message-ID: <20161017224310.GM8871@codeaurora.org>
-References: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 01/15] clk: ti: remove un-used definitions from public clk_hw_omap struct
+Date: Tue, 18 Oct 2016 18:45:54 +0300
+Message-ID: <1476805568-19264-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/08, Shawn Guo wrote:
-> The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
-> also reset controller.  It worked fine that single sysctrl/mediactrl
-> device node in DT can be used to initialize clock driver and populate
-> platform device for reset controller.  But it stops working after
-> commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-> gets merged.  The commit sets flag OF_POPULATED during clock
-> initialization to skip the platform device populating for the same
-> device node.  On hi6220, it effectively makes hi6220-sysctrl reset
-> driver not probe any more.
-> 
-> The patch changes hi6220 sysctrl and mediactrl clock init macro from
-> CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
-> the same hardware block can continue working.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
+Clksel support has been deprecated a while back, so remove these from
+the struct also.
 
-Applied to clk-fixes
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/linux/clk/ti.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 6110fe0..07308db 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
+  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
+  * @flags: see "struct clk.flags possibilities" above
+  * @clksel_reg: for clksel clks, register va containing src/divisor select
+- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
+- * @clksel: for clksel clks, pointer to struct clksel for this clock
+  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
+  * @clkdm_name: clockdomain name that this clock is contained in
+  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
+@@ -145,8 +143,6 @@ struct clk_hw_omap {
+ 	u8			enable_bit;
+ 	u8			flags;
+ 	void __iomem		*clksel_reg;
+-	u32			clksel_mask;
+-	const struct clksel	*clksel;
+ 	struct dpll_data	*dpll_data;
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
