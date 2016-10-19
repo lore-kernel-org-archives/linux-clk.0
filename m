@@ -1,46 +1,58 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Lin Huang <hl@rock-chips.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] clk: rockchip: don't return NULL when failing to register ddrclk branch
-Date: Wed, 12 Oct 2016 20:31:41 +0800
-Message-Id: <1476275501-2653-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [RESEND/PATCH v6 0/3] Add support for Qualcomm A53 CPU clock
+Date: Wed, 19 Oct 2016 16:28:13 +0300
+Message-Id: <20161019132816.31073-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-rockchip_clk_register_ddrclk should not return NULL when faling
-to call clk_register, otherwise rockchip_clk_register_branches
-prints "unknown clock type". The acutal case is that it's a known
-clock type but we fail to regiser it, which may makes user confuse
-the reason of failure. And the pr_err here is pointless as
-rockchip_clk_register_branches will also print the similar message.
+Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
+ * Rebase to clk-next and update according to the recent API changes.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
+ * Convert to builtin drivers as now __clk_lookup() is used
 
- drivers/clk/rockchip/clk-ddr.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
+ * Split driver into two parts - and separate A53 PLL and
+   A53 clock controller drivers.
+ * Drop the safe switch hook patch. Add a clock notifier in
+   the clock provider to handle switching via safe mux and
+   divider configuration.
 
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 8feba93..e807535 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -144,11 +144,8 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	ddrclk->ddr_flag = ddr_flag;
- 
- 	clk = clk_register(NULL, &ddrclk->hw);
--	if (IS_ERR(clk)) {
--		pr_err("%s: could not register ddrclk %s\n", __func__,	name);
-+	if (IS_ERR(clk))
- 		kfree(ddrclk);
--		return NULL;
--	}
- 
- 	return clk;
- }
--- 
-2.3.7
+Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
+ * Drop gpll0_vote patch.
+ * Switch to the new clk_hw_* APIs.
+ * Rebase to the current clk-next.
+
+Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
+ * Drop SR2 PLL patch, as it is already applied.
+ * Add gpll0_vote rate propagation patch.
+ * Update/rebase patches to the current clk-next.
+
+
+Georgi Djakov (3):
+  clk: qcom: Add A53 PLL support
+  clk: qcom: Add regmap mux-div clocks support
+  clk: qcom: Add A53 clock driver
+
+ .../devicetree/bindings/clock/qcom,a53-pll.txt     |  17 ++
+ .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 ++
+ drivers/clk/qcom/Kconfig                           |  17 ++
+ drivers/clk/qcom/Makefile                          |   3 +
+ drivers/clk/qcom/a53-pll.c                         |  94 ++++++++
+ drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.c              | 254 +++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |  58 +++++
+ 8 files changed, 620 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
+ create mode 100644 drivers/clk/qcom/a53cc.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
