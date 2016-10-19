@@ -1,90 +1,53 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v14 4/4] arm: dts: mt2701: Use real clock for UARTs
-Date: Fri, 21 Oct 2016 11:32:22 +0800
-Message-ID: <1477020742-13889-5-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
-References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <20161018235108.GP8871@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <d878b846-556d-180b-8ebf-2d06646efb58@st.com>
+Date: Wed, 19 Oct 2016 10:34:38 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+In-Reply-To: <20161018235108.GP8871@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
+Hi Stephen,
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index c9a8dbf..7eab6f4 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -73,12 +73,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -186,7 +180,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -195,7 +190,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -204,7 +200,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -213,7 +210,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
--- 
-1.9.1
+On 10/19/2016 01:51 AM, Stephen Boyd wrote:
+> On 10/14, gabriel.fernandez@st.com wrote:
+>> Gabriel Fernandez (6):
+>>    clk: stm32f4: Add LSI & LSE clocks
+>>    ARM: dts: stm32f429: add LSI and LSE clocks
+>>    arm: stmf32: Enable SYSCON
+>>    clk: stm32f4: Add RTC clock
+>>    clk: stm32f469: Add QSPI clock
+>>    ARM: dts: stm32f429: Add QSPI clock
+> Can the clk patches be picked without causing problems for
+> existing dt changes? Do you want an ack from clk maintainers
+> instead of us picking the clk patches up? The series has
+> intermingled clk and dts changes so I'm confused.
+>
+
+Thanks for reviewing.
+
+Normally DT patches will be taken by STM32 maintainer, but yes there is 
+a dependency between patch 1 & 2, so if you push the patch 1 into 
+clk-next tree you have to take also patch 2.
+
+You have to be synchronized with Alexandre Torgue.
+
+Best Regards
+
+Gabriel
