@@ -1,82 +1,121 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Thu, 6 Oct 2016 20:23:03 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
-	"thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>,
-	"vinod.koul@intel.com" <vinod.koul@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"tiwai@suse.com" <tiwai@suse.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"perex@perex.cz" <perex@perex.cz>, "wens@csie.org" <wens@csie.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 06/14] ASoC: Add sun8i digital audio codec
-Message-ID: <20161006182303.sftz3c7hjhv7xell@piout.net>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <85cbd9926e52d0aa03f6bbfd8794373d8db491e0.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004161549.GO5228@lukather>
- <901741475770017@web21g.yandex.ru>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH 2/3] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
+To: Rob Herring <robh@kernel.org>, Pan Wen <wenpan@hisilicon.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-3-wenpan@hisilicon.com>
+ <20161018155835.qyoffwznacdac46y@rob-hp-laptop>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <xuwei5@hisilicon.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <howell.yang@hisilicon.com>, <jalen.hsu@hisilicon.com>,
+        <lvkuanliang@hisilicon.com>, <suwenping@hisilicon.com>,
+        <raojun@hisilicon.com>, <kevin.lixu@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
+Date: Wed, 19 Oct 2016 10:38:20 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <901741475770017@web21g.yandex.ru>
+In-Reply-To: <20161018155835.qyoffwznacdac46y@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/10/2016 at 00:06:57 +0800, Icenowy Zheng wrote :
-> 05.10.2016, 00:20, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
-> > Hi,
-> >
-> >>  +static const struct of_device_id sun8i_codec_of_match[] = {
-> >>  + { .compatible = "allwinner,sun8i-a33-codec" },
-> >>  + { .compatible = "allwinner,sun8i-a23-codec" },
-> >
-> > I thought that the A23 and A33 had different codecs? In that case, it
-> > wouldn't be a good assumption to make
-> 
-> Yes.
-> 
-> >
-> >>  + {}
-> >>  +};
-> >>  +MODULE_DEVICE_TABLE(of, sun8i_codec_of_match);
-> >>  +
-> >>  +static struct platform_driver sun8i_codec_driver = {
-> >>  + .driver = {
-> >>  + .name = "sun8i-codec",
-> >>  + .owner = THIS_MODULE,
-> >>  + .of_match_table = sun8i_codec_of_match,
-> >>  + },
-> >>  + .probe = sun8i_codec_probe,
-> >>  + .remove = sun8i_codec_remove,
-> >>  +};
-> >>  +module_platform_driver(sun8i_codec_driver);
-> >>  +
-> >>  +MODULE_DESCRIPTION("Allwinner A33 (sun8i) codec driver");
-> >>  +MODULE_AUTHOR("huanxin<huanxin@reuuimllatech.com>");
-> >
-> > Those obfuscated email adresses are not really helpful :)
-> 
-> This kind of email addresses  are kept in many places in mainline kernel.
-> 
-> e.g. drivers/mmc/host/sunxi-mmc.c have 'Aaron Maoye <leafy.myeh@reuuimllatech.com>'
-> 
 
-Well, that is only one place and it is a comment, not in the
-MODULE_AUTHOR macro. I would agree that it is not useful to have a stale
-email address in MODULE_AUTHOR.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+åœ¨ 2016/10/18 23:58, Rob Herring å†™é“:
+> On Mon, Oct 17, 2016 at 08:07:04PM +0800, Pan Wen wrote:
+>> Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
+>> Generator) module generates clock and reset signals used
+>> by other module blocks on SoC.
+>>
+>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+>> ---
+>>  .../devicetree/bindings/clock/hisi-crg.txt         |  50 ++++
+>>  drivers/clk/hisilicon/Kconfig                      |   8 +
+>>  drivers/clk/hisilicon/Makefile                     |   1 +
+>>  drivers/clk/hisilicon/crg-hi3516cv300.c            | 330 +++++++++++++++++++++
+>>  drivers/clk/hisilicon/crg.h                        |  34 +++
+>>  include/dt-bindings/clock/hi3516cv300-clock.h      |  48 +++
+>>  6 files changed, 471 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>  create mode 100644 drivers/clk/hisilicon/crg-hi3516cv300.c
+>>  create mode 100644 drivers/clk/hisilicon/crg.h
+>>  create mode 100644 include/dt-bindings/clock/hi3516cv300-clock.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>> new file mode 100644
+>> index 0000000..cc60b3d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>> @@ -0,0 +1,50 @@
+>> +* HiSilicon Clock and Reset Generator(CRG)
+> 
+> Seems kind of generic given there's already various HiSi clock bindings 
+> documented.
+> 
+>> +
+>> +The CRG module provides clock and reset signals to various
+>> +modules within the SoC.
+>> +
+>> +This binding uses the following bindings:
+>> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +    Documentation/devicetree/bindings/reset/reset.txt
+>> +
+>> +Required Properties:
+>> +
+>> +- compatible: should be one of the following.
+>> +  - "hisilicon,hi3516cv300-crg"
+>> +  - "hisilicon,hi3516cv300-sysctrl"
+>> +  - "hisilicon,hi3519-crg"
+> 
+> There is already a binding for this. Please merge them.
+> 
+Hi Rob,
+
+Pan Wen and I work together. There's really a same file included in the patch
+https://lkml.org/lkml/2016/9/18/42 ([PATCH v2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC).
+But that patch has not been acked. This binding file will be merged if that
+patch is accepted first. Could you give me more comments on that patch or
+help me to ack it?  Thank you very much.
+
+Regards,
+Jiancheng
+
+
+>> +  - "hisilicon,hi3798cv200-crg"
+>> +  - "hisilicon,hi3798cv200-sysctrl"
+>> +
+>> +- reg: physical base address of the controller and length of memory mapped
+>> +  region.
+>> +
+>> +- #clock-cells: should be 1.
+>> +
+>> +Each clock is assigned an identifier and client nodes use this identifier
+>> +to specify the clock which they consume.
+>> +
+>> +All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
+>> +
+>> +- #reset-cells: should be 2.
+>> +
+>> +A reset signal can be controlled by writing a bit register in the CRG module.
+>> +The reset specifier consists of two cells. The first cell represents the
+>> +register offset relative to the base address. The second cell represents the
+>> +bit index in the register.
+>> +
+>> +Example: CRG nodes
+>> +CRG: clock-reset-controller@12010000 {
+>> +	compatible = "hisilicon,hi3519-crg";
+>> +	reg = <0x12010000 0x10000>;
+>> +	#clock-cells = <1>;
+>> +	#reset-cells = <2>;
+>> +};
+>> +
+>> +Example: consumer nodes
+>> +i2c0: i2c@12110000 {
+>> +	compatible = "hisilicon,hi3519-i2c";
+>> +	reg = <0x12110000 0x1000>;
+>> +	clocks = <&CRG HI3519_I2C0_RST>;
+>> +	resets = <&CRG 0xe4 0>;
+>> +};
+> 
+> .
+> 
