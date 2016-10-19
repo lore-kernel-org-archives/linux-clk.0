@@ -1,84 +1,70 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 26 Oct 2016 15:05:01 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH 05/14] mfd: sun6i-prcm: Add sun8i analog codec as subnode
-Message-ID: <20161026140501.GH13127@dell>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <c74aea452bd1831f439dd67884cb2879e0849f03.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Oct 2016 13:51:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 5/6] clk: pxa: transfer CPU clock setting from
+ pxa2xx-cpufreq
+Message-ID: <20161019205128.GE8871@codeaurora.org>
+References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+ <1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
+ <87zim23zw3.fsf@belgarion.home>
+ <20161018234855.GO8871@codeaurora.org>
+ <877f943xjk.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <c74aea452bd1831f439dd67884cb2879e0849f03.1475571575.git.mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <877f943xjk.fsf@belgarion.home>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 04 Oct 2016, Mylène Josserand wrote:
-
-> The sun8i audio codec is using PRCM registers to configure all the
-> analog part of the audio codec. It is added as a subnode of the PRCM
-> with his resource (offset of 0x1c0).
+On 10/19, Robert Jarzmik wrote:
+> Stephen Boyd <sboyd@codeaurora.org> writes:
 > 
-> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
-> ---
->  drivers/mfd/sun6i-prcm.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> > On 10/18, Robert Jarzmik wrote:
+> >> Robert Jarzmik <robert.jarzmik@free.fr> writes:
+> >> Hi Michael and Stephen,
+> >> 
+> >> I'm planing on sending a v2 next week with minor corrections, mostly in the data
+> >> tables (pxa25x_freqs and pxa27x_freqs), as testing prooved some values were wrong.
+> >> 
+> >> If you want me modify this serie, will you have time to review for next week or
+> >> should I delay the v2 posting ?
+> >> 
+> >
+> > No need to delay. clk patches look fine with a quick glance. It
+> > would be really neat if we could make cpufreq-dt work without DT.
+> > What's blocking that? OPP tables?
 > 
-> diff --git a/drivers/mfd/sun6i-prcm.c b/drivers/mfd/sun6i-prcm.c
-> index 011fcc5..e0c6bf5 100644
-> --- a/drivers/mfd/sun6i-prcm.c
-> +++ b/drivers/mfd/sun6i-prcm.c
-> @@ -12,6 +12,8 @@
->  #include <linux/init.h>
->  #include <linux/of.h>
->  
-> +#define SUN6I_AUDIO_CODEC_ANALOG	0x1c0
-> +
->  struct prcm_data {
->  	int nsubdevs;
->  	const struct mfd_cell *subdevs;
-> @@ -57,6 +59,14 @@ static const struct resource sun6i_a31_apb0_rstc_res[] = {
->  	},
->  };
->  
-> +static const struct resource sun8i_adda_res[] = {
-> +	{
-> +		.start = SUN6I_AUDIO_CODEC_ANALOG,
-> +		.end = 0x1c3,
+> Heu I'm not the author of cpufreq-dt, so I'm not the best to answer.
+> To answer the question "without DT", it depends if you mean "with ACPI" or "with
+> platform_data" or something else.
 
-This also needs defining.  No magic numbers please.
+I mean platform_data mostly. Do you use ACPI with the clk driver?
 
-> +		.flags = IORESOURCE_MEM,
-> +	},
-> +};
-> +
->  static const struct mfd_cell sun6i_a31_prcm_subdevs[] = {
->  	{
->  		.name = "sun6i-a31-ar100-clk",
-> @@ -109,6 +119,12 @@ static const struct mfd_cell sun8i_a23_prcm_subdevs[] = {
->  		.num_resources = ARRAY_SIZE(sun6i_a31_apb0_rstc_res),
->  		.resources = sun6i_a31_apb0_rstc_res,
->  	},
-> +	{
-> +		.name = "sun8i-codec-analog",
-> +		.of_compatible = "allwinner,sun8i-codec-analog",
-> +		.num_resources = ARRAY_SIZE(sun8i_adda_res),
-> +		.resources = sun8i_adda_res,
-> +	},
->  };
->  
->  static const struct prcm_data sun6i_a31_prcm_data = {
+> 
+> From what I've seen so far, the missing/blocking points are :
+>  - the OPP points definition as you said
+
+Hm.. I thought cpufreq-dt worked with OPP tables populated by
+other code (i.e. platform code).
+
+>  - probably same thing for the input power supply / regulator
+
+Regulators should be optional I hope. Do you use regulators in
+your design that has platform_data?
+
+>  - the cooling parts probably
+>  - and more generaly all the cpufreq-dt is built around device-tree
+>  - last point, the name from KConfig, "Generic DT based cpufreq driver"
+>    => that strongly suggest it's device-tree only
+> 
+> I'm deeply convinced that Viresh being one of the authors will shed more light
+> on this.
+
+Sure, thanks for the notes.
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
