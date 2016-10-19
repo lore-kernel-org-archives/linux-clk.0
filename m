@@ -1,127 +1,79 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 00/14] ASoc: sunxi: Add Allwinner A33 codec driver
-Date: Tue,  4 Oct 2016 11:46:13 +0200
-Message-Id: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 18 Oct 2016 17:01:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	Joshua Clayton <stillcompiling@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"Charles.Kang" <Charles.Kang@advantech.com.tw>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Akshay Bhat <akshay.bhat@timesys.com>
+Subject: Re: [PATCH 3/3] clk: imx6: Fix procedure to switch the parent of
+ LDB_DI_CLK
+Message-ID: <20161019000101.GQ8871@codeaurora.org>
+References: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
+ <1474036587-13819-3-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5D7=A=ms_iq1D+Fgg4wKpRx-aScm5V=avxRPu62rFymzQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5D7=A=ms_iq1D+Fgg4wKpRx-aScm5V=avxRPu62rFymzQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+On 09/23, Fabio Estevam wrote:
+> Hi Stephen,
+> 
+> On Fri, Sep 16, 2016 at 11:36 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+> > Due to incorrect placement of the clock gate cell in the ldb_di[x]_clk
+> > tree, the glitchy parent mux of ldb_di[x]_clk can cause a glitch to
+> > enter the ldb_di_ipu_div divider. If the divider gets locked up, no
+> > ldb_di[x]_clk is generated, and the LVDS display will hang when the
+> > ipu_di_clk is sourced from ldb_di_clk.
+> >
+> > To fix the problem, both the new and current parent of the ldb_di_clk
+> > should be disabled before the switch. This patch ensures that correct
+> > steps are followed when ldb_di_clk parent is switched in the beginning
+> > of boot. The glitchy muxes are then registered as read-only. The clock
+> > parent can be selected using the assigned-clocks and
+> > assigned-clock-parents properties of the ccm device tree node:
+> >
+> >         &clks {
+> >                 assigned-clocks = <&clks IMX6QDL_CLK_LDB_DI0_SEL>,
+> >                                   <&clks IMX6QDL_CLK_LDB_DI1_SEL>;
+> >                 assigned-clock-parents = <&clks IMX6QDL_CLK_MMDC_CH1_AXI>,
+> >                                          <&clks IMX6QDL_CLK_PLL5_VIDEO_DIV>;
+> >         };
+> >
+> > The issue is explained in detail in EB821 ("LDB Clock Switch Procedure &
+> > i.MX6 Asynchronous Clock Switching Guidelines") [1].
+> >
+> > [1] http://www.nxp.com/files/32bit/doc/eng_bulletin/EB821.pdf
+> >
+> > Signed-off-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>
+> > Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > Reviewed-by: Akshay Bhat <akshay.bhat@timesys.com>
+> > Tested-by Joshua Clayton <stillcompiling@gmail.com>
+> > Tested-by: Charles Kang <Charles.Kang@advantech.com.tw>
+> > Acked-by: Shawn Guo <shawnguo@kernel.org>
+> 
+> Do you think this one could be applied to clk-next? It fixes an
+> important LVDS bug.
+> 
 
+Urgh, sorry I missed this one and then we got too close to the
+merge window to keep applying things and I was traveling for a
+bit. Is this a bug that's urgent and needs to be fixed to keep
+these boards working in the v4.9-rc series? Does it need to go
+back to stable? The change is fairly large, so we might be able
+to put it into clk-fixes for -rc2, but it would need some
+justification and preferably a stable/fixes tag.
 
-This patchset add the audio codec for Allwinner A33 (sun8i) SoC.
-
-It adds different drivers:
-   - sun8i-codec-analog (patch 4): This driver implements the analog part
-   of the audio codec. The analog part is handled in PRCM registers so this
-   driver must be added as prcm's subnode (patch 5).
-   - sun8i-codec (patch 6): This driver implements the digital part of the
-   A33 codec.
-   - sun8i (patch 7): This driver implements a sound card for A33.
-   It links the DAI and the audio codec. The analog codec driver is handled
-   as an "aux_device".
-
-The DAI for this codec is the same than for A20: "sun4i-i2s".
-The digital codec code is coming from Allwinner's BSP (after some
-cleanup and DAPM conversion) [1]
-The analog codec driver is coming from Chen-Yu Tsai's driver [2]
-with some modifications (such as read/write regmap functions).
-
-Currently, all the drivers handle only the playback feature.
-The other ones (such as capture) and all other interfaces except
-headphone are not supported.
-
-These drivers are functional except for one issue. When playing a sound
-for the first time, a short delay can be noticed. On a second play
-(right after), the sound is played correctly. If we wait a short time
-(~5 sec), the delay is back.
-There is the same behavior for left/right channel. On the first
-time, a left sound is played on the left channel but in the second
-time, the sound will be played on wrong channel.
-
-These issues will be fixed in a second time. Is someone have suggestions
-about it?
-
-Examples of amixer commands:
-	amixer set 'Headphone' 75%
-	amixer set 'Headphone' on
-	amixer set 'DAC' on
-	amixer set 'Right DAC Mixer RSlot 0' on
-	amixer set 'Left DAC Mixer LSlot 0' on
-	amixer set 'DAC Reversed Right' on
-	amixer set 'DAC Reversed Left' on
-
-It was tested on Parrot and Sinlinx board where device tree's modifications
-are added (patch 11 to 14).
-
-Thank you in advance,
-Best regards,
-
-[1]: https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/sound/soc/sunxi/audiocodec/sun8iw5_sndcodec.c
-[2]: https://github.com/wens/linux/tree/a31-audio
-
-Mylène Josserand (14):
-  dma: sun6i-dma: Add burst case of 4
-  clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to ac-dig
-  ASoC: sun4i-i2s: Add apb reset
-  ASoC: Add sun8i analog codec driver
-  mfd: sun6i-prcm: Add sun8i analog codec as subnode
-  ASoC: Add sun8i digital audio codec
-  ASoC: Add sun8i audio card
-  dt-bindings: sound: Add sun8i analog codec documentation
-  dt-bindings: sound: Add sun8i codec documentation
-  dt-bindings: sound: Add sun8i audio card documentation
-  ARM: dts: sun8i: Add analog codec on prcm node
-  ARM: dts: sun8i: Add audio codec, dai and card for A33
-  ARM: dts: sun8i: parrot: Enable audio nodes
-  ARM: dts: sun8i: sinlinx: Enable audio nodes
-
- .../devicetree/bindings/sound/sun8i-audio.txt      |  17 +
- .../bindings/sound/sun8i-codec-analog.txt          |  20 +
- .../devicetree/bindings/sound/sun8i-codec.txt      |  24 +
- arch/arm/boot/dts/sun8i-a23-a33.dtsi               |   7 +
- arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts     |   8 +
- arch/arm/boot/dts/sun8i-a33.dtsi                   |  33 ++
- arch/arm/boot/dts/sun8i-r16-parrot.dts             |   8 +
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c               |   2 +-
- drivers/dma/sun6i-dma.c                            |   2 +
- drivers/mfd/sun6i-prcm.c                           |  16 +
- sound/soc/sunxi/Kconfig                            |  30 ++
- sound/soc/sunxi/Makefile                           |   3 +
- sound/soc/sunxi/sun4i-i2s.c                        |  16 +-
- sound/soc/sunxi/sun8i-codec-analog.c               | 305 +++++++++++++
- sound/soc/sunxi/sun8i-codec.c                      | 492 +++++++++++++++++++++
- sound/soc/sunxi/sun8i.c                            | 101 +++++
- 16 files changed, 1082 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/sun8i-audio.txt
- create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
- create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec.txt
- create mode 100644 sound/soc/sunxi/sun8i-codec-analog.c
- create mode 100644 sound/soc/sunxi/sun8i-codec.c
- create mode 100644 sound/soc/sunxi/sun8i.c
+Also, what about the other two patches in this series?
 
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
