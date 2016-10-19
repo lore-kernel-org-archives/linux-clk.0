@@ -1,26 +1,88 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Pan Wen <wenpan@hisilicon.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, xuwei5@hisilicon.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, howell.yang@hisilicon.com, xuejiancheng@hisilicon.com, jalen.hsu@hisilicon.com, lvkuanliang@hisilicon.com, suwenping@hisilicon.com, raojun@hisilicon.com, kevin.lixu@hisilicon.com, Marty Plummer <netz.kernel@gmail.com>
-Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
-Date: Mon, 17 Oct 2016 15:48:49 +0200
-Message-ID: <5893354.6MrIxqzRoI@wuerfel>
-In-Reply-To: <20161017120705.3726-2-wenpan@hisilicon.com>
-References: <20161017120705.3726-1-wenpan@hisilicon.com> <20161017120705.3726-2-wenpan@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 4/7] clk: qcom: Add freq tables for a few rcgs
+Date: Wed, 19 Oct 2016 16:58:40 +0530
+Message-Id: <1476876523-27378-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
+References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
-> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
-> 
-> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
-> 
+Add frequency tables for a few RCG clocks in msm8996
 
-Looks ok. I've added Marty Plummer to Cc, he was recently proposing
-patches for Hi3520, which I think is closely related to this one.
-Please try to work together so the patches don't conflict. It should
-be fairly straightforward since you are basically doing the same
-change here.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-	Arnd
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 3c85e05..f6124cf 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -464,10 +464,18 @@ enum {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_sdcc1_ice_core_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(150000000, P_GPLL0, 4, 0, 0),
++	F(300000000, P_GPLL0, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 sdcc1_ice_core_clk_src = {
+ 	.cmd_rcgr = 0x13024,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_gpll4_gpll0_early_div_map,
++	.freq_tbl = ftbl_sdcc1_ice_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "sdcc1_ice_core_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4_gpll0_early_div,
+@@ -1230,10 +1238,18 @@ enum {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_ufs_ice_core_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(150000000, P_GPLL0, 4, 0, 0),
++	F(300000000, P_GPLL0, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 ufs_ice_core_clk_src = {
+ 	.cmd_rcgr = 0x76014,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_map,
++	.freq_tbl = ftbl_ufs_ice_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "ufs_ice_core_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+@@ -1242,10 +1258,19 @@ enum {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_qspi_ser_clk_src[] = {
++	F(75000000, P_GPLL0, 8, 0, 0),
++	F(150000000, P_GPLL0, 4, 0, 0),
++	F(256000000, P_GPLL4, 1.5, 0, 0),
++	F(300000000, P_GPLL0, 2, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 qspi_ser_clk_src = {
+ 	.cmd_rcgr = 0x8b00c,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div_map,
++	.freq_tbl = ftbl_qspi_ser_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "qspi_ser_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
