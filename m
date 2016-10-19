@@ -1,87 +1,84 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 05/14] mfd: sun6i-prcm: Add sun8i analog codec as subnode
-Date: Tue,  4 Oct 2016 11:46:18 +0200
-Message-Id: <c74aea452bd1831f439dd67884cb2879e0849f03.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Oct 2016 13:32:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v2 5/6] clk: stm32f469: Add QSPI clock
+Message-ID: <20161019203228.GC8871@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The sun8i audio codec is using PRCM registers to configure all the
-analog part of the audio codec. It is added as a subnode of the PRCM
-with his resource (offset of 0x1c0).
+On 10/14, gabriel.fernandez@st.com wrote:
+> @@ -532,10 +618,42 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+>  	{ 0 },
+>  };
+>  
+> +struct stm32f4_clk_data {
+> +	const struct stm32f4_gate_data *gates_data;
+> +	const u64 *gates_map;
+> +	int gates_num;
+> +};
+> @@ -549,6 +667,19 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+>  		goto fail;
+>  	}
+>  
+> +	match = of_match_node(stm32f4_of_match, np);
+> +	if (WARN_ON(!match))
+> +		return;
+> +
+> +	data = match->data;
+> +
+> +	clks = kmalloc_array(data->gates_num + END_PRIMARY_CLK,
+> +			sizeof(struct clk_hw *), GFP_KERNEL);
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- drivers/mfd/sun6i-prcm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+sizeof(*clks)?
 
-diff --git a/drivers/mfd/sun6i-prcm.c b/drivers/mfd/sun6i-prcm.c
-index 011fcc5..e0c6bf5 100644
---- a/drivers/mfd/sun6i-prcm.c
-+++ b/drivers/mfd/sun6i-prcm.c
-@@ -12,6 +12,8 @@
- #include <linux/init.h>
- #include <linux/of.h>
- 
-+#define SUN6I_AUDIO_CODEC_ANALOG	0x1c0
-+
- struct prcm_data {
- 	int nsubdevs;
- 	const struct mfd_cell *subdevs;
-@@ -57,6 +59,14 @@ static const struct resource sun6i_a31_apb0_rstc_res[] = {
- 	},
- };
- 
-+static const struct resource sun8i_adda_res[] = {
-+	{
-+		.start = SUN6I_AUDIO_CODEC_ANALOG,
-+		.end = 0x1c3,
-+		.flags = IORESOURCE_MEM,
-+	},
-+};
-+
- static const struct mfd_cell sun6i_a31_prcm_subdevs[] = {
- 	{
- 		.name = "sun6i-a31-ar100-clk",
-@@ -109,6 +119,12 @@ static const struct mfd_cell sun8i_a23_prcm_subdevs[] = {
- 		.num_resources = ARRAY_SIZE(sun6i_a31_apb0_rstc_res),
- 		.resources = sun6i_a31_apb0_rstc_res,
- 	},
-+	{
-+		.name = "sun8i-codec-analog",
-+		.of_compatible = "allwinner,sun8i-codec-analog",
-+		.num_resources = ARRAY_SIZE(sun8i_adda_res),
-+		.resources = sun8i_adda_res,
-+	},
- };
- 
- static const struct prcm_data sun6i_a31_prcm_data = {
+> +	if (!clks)
+> +		goto fail;
+> +
+> +	stm32f4_gate_map = data->gates_map;
+> +
+>  	hse_clk = of_clk_get_parent_name(np, 0);
+>  
+>  	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+> @@ -581,11 +712,15 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+>  	clks[FCLK] = clk_hw_register_fixed_factor(NULL, "fclk", "ahb_div",
+>  					       0, 1, 1);
+>  
+> -	for (n = 0; n < ARRAY_SIZE(stm32f4_gates); n++) {
+> -		const struct stm32f4_gate_data *gd = &stm32f4_gates[n];
+> -		unsigned int secondary =
+> -		    8 * (gd->offset - STM32F4_RCC_AHB1ENR) + gd->bit_idx;
+> -		int idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
+> +	for (n = 0; n < data->gates_num; n++) {
+> +		const struct stm32f4_gate_data *gd;
+> +		unsigned int secondary;
+> +		int idx;
+> +
+> +		gd = (struct stm32f4_gate_data *) &data->gates_data[n];
+
+Why do we cast here? Get rid of const? Perhaps the struct
+shouldn't have const on the member instead?
+
+> +		secondary = 8 * (gd->offset - STM32F4_RCC_AHB1ENR) +
+> +			gd->bit_idx;
+> +		idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
+>  
+>  		if (idx < 0)
+
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
