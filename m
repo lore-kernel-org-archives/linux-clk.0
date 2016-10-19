@@ -1,41 +1,93 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Date: Tue, 18 Oct 2016 18:45:53 +0300
-Message-ID: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 6/7] clk: qcom: Add force enable/disable needed for gfx3d rcg on msm8996
+Date: Wed, 19 Oct 2016 16:58:42 +0530
+Message-Id: <1476876523-27378-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
+References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The gfx3d RCG on msm8996 needs to be force enabled/disabled by
+toggling the CMD_ROOT_EN bit. Add enable/disable ops to clk_gfx3d_ops
 
-As a recap, this series is part of the ongoing work to get rid of the
-hwmod database under mach-omap2 folder. This series converts the
-existing clock related functionality to a new clock type, which will
-allow removing all the .clkctrl related items from hwmod database.
-This series adds sample solution for OMAP4 only, rest of the SoCs can
-be converted automatically once the approach is acceptable.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-v4 has the following high level changes compared to v3:
-- Clock data is now statically built-in to the driver
-- Adds clockdomain provider support, which can be used to fetch
-  clocks based on clockdomain relation. Only clockdomains need to be
-  registered within DT.
-- Added some automatic clock alias generation support to the TI clock
-  drivers, if this is not acceptable, I can change this to add all the
-  aliases under the individual drivers/clk/ti/clk-xyz.c files
-- As a sample, only omap4 clock data is available with this set
-
-After this series, the clock data can be dropped from the hwmod database
-for OMAP4, I have working patches for this for anybody interested. Also,
-the DT files require some modifications to add proper support for
-clockdomain providers, and drop some unnecessary clock nodes.
-
-Boot + simple PM test seems to be working on OMAP4 with this set, and
-boot test with other boards I have access to don't seem to cause any
-issues. Applies on top of 4.9-rc1.
-
--Tero
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index a071bba..6c79cca 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -300,7 +300,7 @@ static int clk_rcg2_set_rate_and_parent(struct clk_hw *hw,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
+-static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
++static int clk_rcg2_force_enable(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const char *name = clk_hw_get_name(hw);
+@@ -316,20 +316,39 @@ static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
+ 	for (count = 500; count > 0; count--) {
+ 		ret = clk_rcg2_is_enabled(hw);
+ 		if (ret)
+-			break;
++			return 0;
+ 		udelay(1);
+ 	}
+ 	if (!count)
+ 		pr_err("%s: RCG did not turn on\n", name);
+ 
++	return -ETIMEDOUT;
++}
++
++static void clk_rcg2_force_disable(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* clear force enable RCG */
++	regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
++			   CMD_ROOT_EN, 0);
++}
++
++static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
++{
++	int ret;
++
++	ret = clk_rcg2_force_enable(hw);
++	if (ret)
++		return ret;
++
+ 	/* set clock rate */
+ 	ret = __clk_rcg2_set_rate(hw, rate);
+ 	if (ret)
+ 		return ret;
+ 
+-	/* clear force enable RCG */
+-	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+-				 CMD_ROOT_EN, 0);
++	clk_rcg2_force_disable(hw);
++	return 0;
+ }
+ 
+ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -801,6 +820,8 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
+ }
+ 
+ const struct clk_ops clk_gfx3d_ops = {
++	.enable = clk_rcg2_force_enable,
++	.disable = clk_rcg2_force_disable,
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+ 	.set_parent = clk_rcg2_set_parent,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
