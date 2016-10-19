@@ -1,26 +1,31 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 17 Oct 2016 15:27:38 -0700
+Date: Wed, 19 Oct 2016 13:14:21 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: core: add __init decoration for
- CLK_OF_DECLARE_DRIVER function
-Message-ID: <20161017222738.GG8871@codeaurora.org>
-References: <1475917178-15488-1-git-send-email-shawn.guo@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: uniphier: fix memory overrun bug
+Message-ID: <20161019201421.GY8871@codeaurora.org>
+References: <1476877779-27854-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475917178-15488-1-git-send-email-shawn.guo@linaro.org>
+In-Reply-To: <1476877779-27854-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/08, Shawn Guo wrote:
-> The new introduced macro CLK_OF_DECLARE_DRIVER is usually used to
-> declare clock driver init functions, which are mostly decorated with
-> __init.  Add __init decoration for CLK_OF_DECLARE_DRIVER function to
-> avoid causing section mismatch warnings on client clock drivers.
+On 10/19, Masahiro Yamada wrote:
+> The first loop of this "for" statement writes memory beyond the
+> allocated clk_hw_onecell_data.
 > 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> It should be:
+>     for (clk_num--; clk_num >= 0; clk_num--)
+>             ...
+> 
+> Or more simply:
+>     while (--clk_num >= 0)
+>             ...
+> 
+> Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
 
 Applied to clk-fixes
