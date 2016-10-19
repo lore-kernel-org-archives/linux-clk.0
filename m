@@ -1,47 +1,51 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Tue, 4 Oct 2016 11:30:56 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 18 Oct 2016 17:05:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	Joshua Clayton <stillcompiling@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rtc-linux@googlegroups.com
-Subject: Re: [PATCH 2/4] regulator: Enable compile testing for Maxim and
- Samsung PMIC drivers
-Message-ID: <20161004093056.GA8832@kozik-book>
-References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
- <1475441897-15730-3-git-send-email-krzk@kernel.org>
- <20161004024055.4kdjvoiig4fwxi54@sirena.org.uk>
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"Charles.Kang" <Charles.Kang@advantech.com.tw>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Akshay Bhat <akshay.bhat@timesys.com>
+Subject: Re: [PATCH 3/3] clk: imx6: Fix procedure to switch the parent of
+ LDB_DI_CLK
+Message-ID: <20161019000526.GR8871@codeaurora.org>
+References: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
+ <1474036587-13819-3-git-send-email-fabio.estevam@nxp.com>
+ <CAOMZO5D7=A=ms_iq1D+Fgg4wKpRx-aScm5V=avxRPu62rFymzQ@mail.gmail.com>
+ <20161019000101.GQ8871@codeaurora.org>
+ <CAOMZO5Ae_cB3BiqckAiOyaJPd2HWELkR8hVjEKHbY1nVOAeMxQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20161004024055.4kdjvoiig4fwxi54@sirena.org.uk>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5Ae_cB3BiqckAiOyaJPd2HWELkR8hVjEKHbY1nVOAeMxQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 04, 2016 at 04:40:55AM +0200, Mark Brown wrote:
-> On Sun, Oct 02, 2016 at 10:58:15PM +0200, Krzysztof Kozlowski wrote:
-> > Most of Maxim and Samsung PMIC/MUIC regulator drivers can be compile
-> > tested to increase build coverage.
+On 10/18, Fabio Estevam wrote:
+> Hi Stephen,
 > 
-> All these drivers already just depend on the MFDs which don't have any
-> weird architecture dependencies - the main goal with COMPILE_TEST is
-> usually to eliminate dependencies which just can't be selected so they
-> can be built at all.  Given that there's no easy way to select
-> everything in a subsystem otherwise does this buy us a lot?
+> On Tue, Oct 18, 2016 at 10:01 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> 
+> > Urgh, sorry I missed this one and then we got too close to the
+> > merge window to keep applying things and I was traveling for a
+> > bit. Is this a bug that's urgent and needs to be fixed to keep
+> > these boards working in the v4.9-rc series? Does it need to go
+> > back to stable? The change is fairly large, so we might be able
+> > to put it into clk-fixes for -rc2, but it would need some
+> > justification and preferably a stable/fixes tag.
+> >
+> > Also, what about the other two patches in this series?
+> 
+> Yesterday I resent this series based on linux-next, so if you could
+> apply them to clk-next that would be great.
+> 
 
-Initially I thought similar - if parent MFD driver can be
-compile-tested, then these children do not need that flag...
+Ok that makes it easy. Thanks.
 
-However the MFD drivers depend on I2C which (currently) cannot be
-removed for compile testing. On the other hand, regulator drivers do not
-need that dependency so you can compile-test them with I2C=n. That is
-the main benefit. If you wish, I can add this information to the commit
-msg.
-
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
