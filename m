@@ -1,40 +1,56 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,  Viresh Kumar <viresh.kumar@linaro.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/6] clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
-	<1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
-Date: Tue, 18 Oct 2016 09:00:28 +0200
-In-Reply-To: <1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
-	(Robert Jarzmik's message of "Mon, 10 Oct 2016 22:09:08 +0200")
-Message-ID: <87zim23zw3.fsf@belgarion.home>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 5/7] clk: qcom: Mark a few clocks as BRANCH_VOTED
+Date: Wed, 19 Oct 2016 16:58:41 +0530
+Message-Id: <1476876523-27378-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
+References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Robert Jarzmik <robert.jarzmik@free.fr> writes:
+Mark some of the bimc and smmu clocks with BRANCH_VOTED so
+we just add a delay on disable without waiting on the halt
+status.
 
-> This is the initial stage to transfer the pxa25x and pxa27x CPU clocks
-> handling from cpufreq to the clock API. More precisely, the clocks
-> transferred are :
->  - cpll : core pll, known also as the CPU core turbo frequency
->  - core : core, known also as the CPU actual frequency, being either the
->           CPU core turbo frequency or the CPU core run frequency
->
-> This transfer is a prequel to shrink the code in pxa2xx-cpufreq.c, so
-> that it can become, at least in devicetree builds, the casual cpufreq-dt
-> driver.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Hi Michael and Stephen,
-
-I'm planing on sending a v2 next week with minor corrections, mostly in the data
-tables (pxa25x_freqs and pxa27x_freqs), as testing prooved some values were wrong.
-
-If you want me modify this serie, will you have time to review for next week or
-should I delay the v2 posting ?
-
-Cheers.
-
---
-Robert
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index f6124cf..2c01b62 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -1341,6 +1341,7 @@ enum {
+ 
+ static struct clk_branch gcc_mmss_bimc_gfx_clk = {
+ 	.halt_reg = 0x9010,
++	.halt_check = BRANCH_VOTED,
+ 	.clkr = {
+ 		.enable_reg = 0x9010,
+ 		.enable_mask = BIT(0),
+@@ -2897,6 +2898,7 @@ enum {
+ 
+ static struct clk_branch gcc_smmu_aggre0_axi_clk = {
+ 	.halt_reg = 0x81014,
++	.halt_check = BRANCH_VOTED,
+ 	.clkr = {
+ 		.enable_reg = 0x81014,
+ 		.enable_mask = BIT(0),
+@@ -2912,6 +2914,7 @@ enum {
+ 
+ static struct clk_branch gcc_smmu_aggre0_ahb_clk = {
+ 	.halt_reg = 0x81018,
++	.halt_check = BRANCH_VOTED,
+ 	.clkr = {
+ 		.enable_reg = 0x81018,
+ 		.enable_mask = BIT(0),
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
