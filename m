@@ -1,218 +1,39 @@
-Return-Path: <radoslaw.pietrzyk@gmail.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1880a125-b5ec-b64a-5c9b-90d4e9c0af86@st.com>
-References: <1475791294-5804-1-git-send-email-user@localhost>
- <2d6d5c10-346e-0541-1bc0-b75ef5b40d3f@linaro.org> <CAFvLkMQjDZysgoT3FfkVP8UQVkqghW9=CZU-OEmGUAdMR7CO2A@mail.gmail.com>
- <b6fd21b7-75a6-c38d-a9f1-fbf07132a1d3@linaro.org> <1880a125-b5ec-b64a-5c9b-90d4e9c0af86@st.com>
-From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Date: Mon, 10 Oct 2016 14:11:12 +0200
-Message-ID: <CAFvLkMSmPznfXsw2mAmd5Zn3V9fPj4kwdFF8dxfXikZZ5kVUSw@mail.gmail.com>
-Subject: Re: [PATCH] Reorganize STM32 clocks in order to prepare them for
- PLLI2S and PLLSAI
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/alternative; boundary=001a11402784f7fd0e053e81a7bf
+In-Reply-To: <20161019000101.GQ8871@codeaurora.org>
+References: <1474036587-13819-1-git-send-email-fabio.estevam@nxp.com>
+ <1474036587-13819-3-git-send-email-fabio.estevam@nxp.com> <CAOMZO5D7=A=ms_iq1D+Fgg4wKpRx-aScm5V=avxRPu62rFymzQ@mail.gmail.com>
+ <20161019000101.GQ8871@codeaurora.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 18 Oct 2016 22:03:26 -0200
+Message-ID: <CAOMZO5Ae_cB3BiqckAiOyaJPd2HWELkR8hVjEKHbY1nVOAeMxQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, Joshua Clayton <stillcompiling@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, "Charles.Kang" <Charles.Kang@advantech.com.tw>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Akshay Bhat <akshay.bhat@timesys.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---001a11402784f7fd0e053e81a7bf
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-I agree that the name is not suitable at all but I just wanted to leave it
-as it is to make things clear but generally this divider should be combined
-with the HSI/HSE muxer to create one general clock for all PLLs. If Gabriel
-is doing this than this patch should be discarded.
+On Tue, Oct 18, 2016 at 10:01 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-2016-10-10 13:32 GMT+02:00 Alexandre Torgue <alexandre.torgue@st.com>:
+> Urgh, sorry I missed this one and then we got too close to the
+> merge window to keep applying things and I was traveling for a
+> bit. Is this a bug that's urgent and needs to be fixed to keep
+> these boards working in the v4.9-rc series? Does it need to go
+> back to stable? The change is fairly large, so we might be able
+> to put it into clk-fixes for -rc2, but it would need some
+> justification and preferably a stable/fixes tag.
+>
+> Also, what about the other two patches in this series?
 
-> Hi Radoslaw,
->
-> I add Gabriel in the discussion. Gabriel is updating PLL management for
-> STM32F429.
->
-> Regards
-> Alex
->
->
-> On 10/10/2016 12:31 PM, Daniel Thompson wrote:
->
->> On 10/10/16 10:56, Rados=C5=82aw Pietrzyk wrote:
->>
->>> Hi,
->>> all plls have the same clock parent which is after a main divider.
->>> Currently the divider and multiplier are connected together within vco
->>> clock and therefore there is no chance to reuse the divider and clearly
->>> state where the conncetion "really" is. We can arrange all of them
->>> separately but than the divider will be hidden for all of them
->>> separately.
->>>
->>
->> Quoting my last mail "I can see the value of naming the "/M"
->> pre-division separately". In other words I agree with the idea of the
->> patch.
->>
->> To more explicitly state my review comments...
->>
->> From: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
->>>
->>
->> Please add a explanation of the problem and solution in the patch
->> description.
->>
->>
->> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
->>> ---
->>>  drivers/clk/clk-stm32f4.c | 7 ++++---
->>>  1 file changed, 4 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
->>> index 02d6810..1fd3eac 100644
->>> --- a/drivers/clk/clk-stm32f4.c
->>> +++ b/drivers/clk/clk-stm32f4.c
->>> @@ -245,9 +245,10 @@ static void stm32f4_rcc_register_pll(const char
->>>
->> *hse_clk, const char *hsi_clk)
->>
->>>      const char   *pllsrc =3D pllcfgr & BIT(22) ? hse_clk : hsi_clk;
->>>      unsigned long pllq   =3D (pllcfgr >> 24) & 0xf;
->>>
->>> -    clk_register_fixed_factor(NULL, "vco", pllsrc, 0, plln, pllm);
->>> -    clk_register_fixed_factor(NULL, "pll", "vco", 0, 1, pllp);
->>> -    clk_register_fixed_factor(NULL, "pll48", "vco", 0, 1, pllq);
->>> +    clk_register_fixed_factor(NULL, "vco-div", pllsrc, 0, 1, pllm);
->>>
->>
->> This strikes me as a bad name for a clock that is shared by all three
->> PLLs (the vco being an internal component of the PLL) however since the
->> clock is not named in the datasheet we are forced to invent a name [I
->> suspect that's why I gave up trying to name it when I wrote the driver
->> originally ;-) ].
->>
->> Perhaps "pllin-prediv"?
->>
->>
->> +    clk_register_fixed_factor(NULL, "vco-mul", "vco-div", 0, plln, 1);
->>>
->>
->> Why rename this clock? Multiplying is a what the vco (and its control
->> circuits) is *for*. Tagging it "-mul" is meaningless.
->>
->>
->> Daniel.
->>
->
+Yesterday I resent this series based on linux-next, so if you could
+apply them to clk-next that would be great.
 
---001a11402784f7fd0e053e81a7bf
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">I agree that the name is not suitable at all but I just wa=
-nted to leave it as it is to make things clear but generally this divider s=
-hould be combined with the HSI/HSE muxer to create one general clock for al=
-l PLLs. If Gabriel is doing this than this patch should be discarded.</div>=
-<div class=3D"gmail_extra"><br><div class=3D"gmail_quote">2016-10-10 13:32 =
-GMT+02:00 Alexandre Torgue <span dir=3D"ltr">&lt;<a href=3D"mailto:alexandr=
-e.torgue@st.com" target=3D"_blank">alexandre.torgue@st.com</a>&gt;</span>:<=
-br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left=
-:1px #ccc solid;padding-left:1ex">Hi Radoslaw,<br>
-<br>
-I add Gabriel in the discussion. Gabriel is updating PLL management for STM=
-32F429.<br>
-<br>
-Regards<br>
-Alex<div class=3D"HOEnZb"><div class=3D"h5"><br>
-<br>
-On 10/10/2016 12:31 PM, Daniel Thompson wrote:<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-On 10/10/16 10:56, Rados=C5=82aw Pietrzyk wrote:<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-Hi,<br>
-all plls have the same clock parent which is after a main divider.<br>
-Currently the divider and multiplier are connected together within vco<br>
-clock and therefore there is no chance to reuse the divider and clearly<br>
-state where the conncetion &quot;really&quot; is. We can arrange all of the=
-m<br>
-separately but than the divider will be hidden for all of them<br>
-separately.<br>
-</blockquote>
-<br>
-Quoting my last mail &quot;I can see the value of naming the &quot;/M&quot;=
-<br>
-pre-division separately&quot;. In other words I agree with the idea of the<=
-br>
-patch.<br>
-<br>
-To more explicitly state my review comments...<br>
-<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-From: Radoslaw Pietrzyk &lt;<a href=3D"mailto:radoslaw.pietrzyk@gmail.com" =
-target=3D"_blank">radoslaw.pietrzyk@gmail.com</a>&gt;<br>
-</blockquote>
-<br>
-Please add a explanation of the problem and solution in the patch<br>
-description.<br>
-<br>
-<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-Signed-off-by: Radoslaw Pietrzyk &lt;<a href=3D"mailto:radoslaw.pietrzyk@gm=
-ail.com" target=3D"_blank">radoslaw.pietrzyk@gmail.com</a>&gt;<br>
----<br>
-=C2=A0drivers/clk/clk-stm32f4.c | 7 ++++---<br>
-=C2=A01 file changed, 4 insertions(+), 3 deletions(-)<br>
-<br>
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c<br>
-index 02d6810..1fd3eac 100644<br>
---- a/drivers/clk/clk-stm32f4.c<br>
-+++ b/drivers/clk/clk-stm32f4.c<br>
-@@ -245,9 +245,10 @@ static void stm32f4_rcc_register_pll(const char<br>
-</blockquote>
-*hse_clk, const char *hsi_clk)<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-=C2=A0 =C2=A0 =C2=A0const char=C2=A0 =C2=A0*pllsrc =3D pllcfgr &amp; BIT(22=
-) ? hse_clk : hsi_clk;<br>
-=C2=A0 =C2=A0 =C2=A0unsigned long pllq=C2=A0 =C2=A0=3D (pllcfgr &gt;&gt; 24=
-) &amp; 0xf;<br>
-<br>
--=C2=A0 =C2=A0 clk_register_fixed_factor(NULL<wbr>, &quot;vco&quot;, pllsrc=
-, 0, plln, pllm);<br>
--=C2=A0 =C2=A0 clk_register_fixed_factor(NULL<wbr>, &quot;pll&quot;, &quot;=
-vco&quot;, 0, 1, pllp);<br>
--=C2=A0 =C2=A0 clk_register_fixed_factor(NULL<wbr>, &quot;pll48&quot;, &quo=
-t;vco&quot;, 0, 1, pllq);<br>
-+=C2=A0 =C2=A0 clk_register_fixed_factor(NULL<wbr>, &quot;vco-div&quot;, pl=
-lsrc, 0, 1, pllm);<br>
-</blockquote>
-<br>
-This strikes me as a bad name for a clock that is shared by all three<br>
-PLLs (the vco being an internal component of the PLL) however since the<br>
-clock is not named in the datasheet we are forced to invent a name [I<br>
-suspect that&#39;s why I gave up trying to name it when I wrote the driver<=
-br>
-originally ;-) ].<br>
-<br>
-Perhaps &quot;pllin-prediv&quot;?<br>
-<br>
-<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-+=C2=A0 =C2=A0 clk_register_fixed_factor(NULL<wbr>, &quot;vco-mul&quot;, &q=
-uot;vco-div&quot;, 0, plln, 1);<br>
-</blockquote>
-<br>
-Why rename this clock? Multiplying is a what the vco (and its control<br>
-circuits) is *for*. Tagging it &quot;-mul&quot; is meaningless.<br>
-<br>
-<br>
-Daniel.<br>
-</blockquote>
-</div></div></blockquote></div><br></div>
-
---001a11402784f7fd0e053e81a7bf--
+Thanks
