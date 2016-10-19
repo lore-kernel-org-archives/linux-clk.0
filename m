@@ -1,83 +1,73 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com.com>
-Subject: [PATCH V3 0/6] Add support for Tegra GMI bus controller
-Date: Thu, 27 Oct 2016 16:01:06 +0200
-Message-Id: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 19 Oct 2016 11:56:44 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6
+ as parent
+Message-ID: <20161019095644.336urfguu6azmmy3@lukather>
+References: <20161018054209.24546-1-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qwsz4vzhgwk3xruw"
+In-Reply-To: <20161018054209.24546-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com.com>
 
-Hi.
+--qwsz4vzhgwk3xruw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch series adds support for the Tegra GMI bus controller.
+On Tue, Oct 18, 2016 at 01:42:09PM +0800, Chen-Yu Tsai wrote:
+> On the A31, the DMA engine only works if AHB1 is clocked from PLL6.
+> In addition, the hstimer is clocked from AHB1, and if AHB1 is clocked
+> from the CPU clock, and cpufreq is working, we get an unstable timer.
+>=20
+> Force the AHB1 clock to use PLL6 as its parent. Previously this was done
+> in the device tree with the assigned-clocks and assigned-clocks-parent
+> bindings. However with this new monolithic driver, the system critical
+> clocks aren't exported through the device tree. The alternative is to
+> force this setting in the driver before the clocks are registered.
+>=20
+> This is also done in newer versions of mainline U-boot. But people still
+> using an older version, or even the vendor version, can still hit this
+> issue. Hence the need to do it in the kernel as well.
+>=20
+> Reported-by: Hans de Goede <hdegoede@redhat.com>
+> Reported-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
-carrier board which has multiple CAN controllers (SJA1000) connected to the
-GMI bus.
+Applied, thanks!
+Maxime
 
-I have re-based on top of latest tegra/for-next in V3. Also see individual
-patches for changes in V3.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-I have picked up all the comments and suggestions from V2, but I still do not
-have an ACK from Rob on the bindings and discussions have halted for some time
-now and I hope that this re-send could be the basis for new discussions.
+--qwsz4vzhgwk3xruw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See below links for previous discussions.
+-----BEGIN PGP SIGNATURE-----
 
-Comments on RFC:
-https://marc.info/?l=linux-clk&m=146893557629903&w=2
-https://marc.info/?l=linux-tegra&m=146893541829801&w=2
-https://marc.info/?l=linux-tegra&m=146893542429814&w=2
+iQIcBAEBCAAGBQJYB0NcAAoJEBx+YmzsjxAgWYYP/3JlNWjbgbFgi8O3c+9J0r24
+j/I0Qv7zKpVix0MHMx8D4CO1MqFMnyC0jSEqIW4ZVZTfRgFIRJBEjcLg5lIY66u/
+6L7fpNqjjO7oPJC3Z7fGMVngG4DWiJQejtVeSpU+TB0poCWC7M87K7ugrJFxtJAx
+BhZPYfAyJDvrzCbbcyZOzqkjnpD3T+IFHegUmWZOpvT0Pd+lwYM5ytwXf0/dOXSP
+46MO5+fq7IyHvzaV8EjQqJadVF4zMCq8ZrMBUPbrhxJD5WW/fQuK/wid736Kji1O
+SfVGy5+2X2+KgrdAa985Dr+j3Ww/g16PJ2FV/2JFz9haoemEzMTtYtdt27DCxZF9
+ntuhF5JpW5Q4jAzFIO3moQyKwQiSsD8clomHWAfdlQ0BsvOu1o3M18/KQWHxkXiU
+TKt/BmPTNXQ7PLCBqhpvU3zDGtZ0rCqwufhb2zvII13maJ0/8CmEepatpkIut1Df
+Aaz2+9CngIqoxzmWTZOPNVqyK1+r2guC/0EsoZVSjb5tGk5O2Ab181f1/UfqyL4T
+Gp0Fgij1neC1lAHYOOfCEqWsOMrliHRL+mFncBHuBwZjZ8/SC3VqH3EZ8mlkMPAz
+aQVx8FRuy7IO/1h4WceiNeogS1fekQbwtXGBY0sAK9ESFTzbRq/3Ntd+JmvQUlDE
+YPE4X1j/ktdrGHUEkE4s
+=1ZqU
+-----END PGP SIGNATURE-----
 
-Comments on V1:
-https://marc.info/?l=linux-arm-kernel&m=147051551821122&w=2
-https://marc.info/?l=linux-arm-kernel&m=147051553121150&w=2
-https://marc.info/?l=linux-arm-kernel&m=147194856600627&w=2
-https://marc.info/?l=linux-arm-kernel&m=147072742432211&w=2
-
-Comments on V2:
-https://marc.info/?l=devicetree&m=147522253920226&w=2
-https://marc.info/?l=linux-tegra&m=147204588027687&w=2
-https://marc.info/?l=linux-tegra&m=147204588027687&w=2
-https://marc.info/?l=devicetree&m=147256931318922&w=2
-
-Mirza Krak (6):
-  clk: tegra: add TEGRA20_CLK_NOR to init table
-  clk: tegra: add TEGRA30_CLK_NOR to init table
-  dt/bindings: Add bindings for Tegra GMI controller
-  ARM: tegra: Add Tegra30 GMI support
-  ARM: tegra: Add Tegra20 GMI support
-  bus: Add support for Tegra Generic Memory Interface
-
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 ++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |  16 +-
- arch/arm/boot/dts/tegra30.dtsi                     |  13 +
- drivers/bus/Kconfig                                |   8 +
- drivers/bus/Makefile                               |   1 +
- drivers/bus/tegra-gmi.c                            | 267 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra20.c                    |   1 +
- drivers/clk/tegra/clk-tegra30.c                    |   1 +
- 8 files changed, 438 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
- create mode 100644 drivers/bus/tegra-gmi.c
-
---
-2.1.4
+--qwsz4vzhgwk3xruw--
