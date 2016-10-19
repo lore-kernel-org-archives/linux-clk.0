@@ -1,93 +1,169 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-To: Rob Herring <robh@kernel.org>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-2-git-send-email-t-kristo@ti.com>
- <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
-CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <ssantosh@kernel.org>, <nm@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
-Date: Mon, 31 Oct 2016 14:50:12 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 18 Oct 2016 17:46:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: Rob Herring <robh@kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
+Message-ID: <20161019004604.GS8871@codeaurora.org>
+References: <20161005171824.18014-1-paul.burton@imgtec.com>
+ <2468748.fALFhzhDcI@np-p-burton>
+ <CAL_Jsq+PkQmkkLMjiurmHegewpc6n_ntUMsik8oMZdM2nXHQ6g@mail.gmail.com>
+ <2330857.F1IQS18Qic@np-p-burton>
 MIME-Version: 1.0
-In-Reply-To: <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2330857.F1IQS18Qic@np-p-burton>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/10/16 22:41, Rob Herring wrote:
-> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
->> Add a clock implementation, TI SCI clock, that will hook to the common
->> clock framework, and allow each clock to be controlled via TI SCI
->> protocol.
->>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> ---
->>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37 ++++++++++++++++++++++
->>  MAINTAINERS                                        |  1 +
->>  2 files changed, 38 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->> new file mode 100644
->> index 0000000..bfc3ca4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->> @@ -0,0 +1,37 @@
->> +Texas Instruments TI-SCI Clocks
->> +===============================
->> +
->> +All clocks on Texas Instruments' SoCs that contain a System Controller,
->> +are only controlled by this entity. Communication between a host processor
->> +running an OS and the System Controller happens through a protocol known
->> +as TI-SCI[1]. This clock implementation plugs into the common clock
->> +framework and makes use of the TI-SCI protocol on clock API requests.
->> +
->> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
->> +
->> +Required properties:
->> +-------------------
->> +- compatible: Must be "ti,k2g-sci-clk"
->> +- #clock-cells: Shall be 2.
->> +  In clock consumers, this cell represents the device ID and clock ID
->> +  exposed by the PM firmware. The assignments can be found in the header
->> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
->> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
->> +  is the SoC involved, for example 'k2g'.
->> +
->> +Examples:
->> +--------
->> +
->> +pmmc: pmmc {
->> +	compatible = "ti,k2g-sci";
->> +
->> +	k2g_clks: k2g_clks {
->
-> Use "clocks" for node name instead.
->
->> +		compatible = "ti,k2g-sci-clk";
->
-> I'm starting to think all these child nodes for SCI are pointless. Is
-> there any reason why the parent node can't be the clock provider (along
-> with all the other providers it acks as)?
+On 10/11, Paul Burton wrote:
+> On Tuesday, 11 October 2016 15:06:46 BST Rob Herring wrote:
+> > On Tue, Oct 11, 2016 at 11:00 AM, Paul Burton <paul.burton@imgtec.com> 
+> wrote:
+> > > On Monday, 10 October 2016 08:01:21 BST Rob Herring wrote:
+> > >> On Wed, Oct 05, 2016 at 06:18:22PM +0100, Paul Burton wrote:
+> > >> > Add device tree binding documentation for the clocks provided by the
+> > >> > MIPS Boston development board from Imagination Technologies, and a
+> > >> > header file describing the available clocks for use by device trees &
+> > >> > driver.
+> > >> > 
+> > >> > Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+> > >> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > >> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > >> > Cc: linux-clk@vger.kernel.org
+> > >> > Cc: Rob Herring <robh+dt@kernel.org>
+> > >> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > >> > Cc: devicetree@vger.kernel.org
+> > >> > 
+> > >> > ---
+> > >> > 
+> > >> > Changes in v3: None
+> > >> > Changes in v2:
+> > >> > - Add BOSTON_CLK_INPUT to expose the input clock.
+> > >> > 
+> > >> >  .../devicetree/bindings/clock/img,boston-clock.txt | 27
+> > >> >  ++++++++++++++++++++++ include/dt-bindings/clock/boston-clock.h
+> > >> >  
+> > >> >   | 14 +++++++++++ 2 files changed, 41 insertions(+)
+> > >> >  
+> > >> >  create mode 100644
+> > >> >  Documentation/devicetree/bindings/clock/img,boston-clock.txt create
+> > >> >  mode
+> > >> >  100644 include/dt-bindings/clock/boston-clock.h
+> > >> > 
+> > >> > diff --git
+> > >> > a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+> > >> > b/Documentation/devicetree/bindings/clock/img,boston-clock.txt new file
+> > >> > mode 100644
+> > >> > index 0000000..c01ea60
+> > >> > --- /dev/null
+> > >> > +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+> > >> > @@ -0,0 +1,27 @@
+> > >> > +Binding for Imagination Technologies MIPS Boston clock sources.
+> > >> > +
+> > >> > +This binding uses the common clock binding[1].
+> > >> > +
+> > >> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > >> > +
+> > >> > +Required properties:
+> > >> > +- compatible : Should be "img,boston-clock".
+> > >> > +- #clock-cells : Should be set to 1.
+> > >> > +  Values available for clock consumers can be found in the header
+> > >> > file:
+> > >> > +    <dt-bindings/clock/boston-clock.h>
+> > >> > +- regmap : Phandle to the Boston platform register system controller.
+> > >> > +  This should contain a phandle to the system controller node covering
+> > >> > the
+> > >> > +  platform registers provided by the Boston board.
+> > >> 
+> > >> Can you just make the clock node a child of the system controller and
+> > >> drop this?
+> > >> 
+> > >> Rob
+> > > 
+> > > Hi Rob,
+> > > 
+> > > (Apologies to anyone who received my last; my mail client seems to be
+> > > misconfigured & previously sent HTML mail.)
+> > > 
+> > > As I mentioned before technically that could be done, but it would really
+> > > not be at all reflective of the hardware & so seems somewhat contrary to
+> > > the purpose of a device tree.
+> > 
+> > Given that you need a reference back to the system controller, it does
+> > match the h/w. The system controller h/w contains various functions,
+> > therefore the system controller node should contain nodes for those
+> > functions (or the sys ctrlr itself could be the clock provider node
+> > with no child nodes). Otherwise, what is the parent of the clock node?
+> > Root? Root should generally be the top level devices of the SoC,
+> > though it gets used for things which have no good parent.
+> > 
+> > Rob
+> 
+> Hi Rob,
+> 
+> The "system controller" here is a bunch of registers which contain information 
+> about the system - nothing more & nothing less. There are a few random bits of 
+> functionality such as system level reset exposed through them, but things like 
+> clocks are not part of some coherent block of hardware known as the system 
+> controller. The register exposing information about the clocks has no actual 
+> connection to the clocks at all - it's just a dumb register whose value is 
+> filled in by whomever generates the FPGA bitfile. 
 
-I believe the only reason to keep them separate is to have kernel side 
-of things modular. If we have separate nodes, the drivers can be probed 
-separately.
+This sounds pretty much how every clk controller or syscon/mfd is
+made. A dumb register set that controls a bunch of hard macros
+placed by hardware designers. It just so happens that there are
+other things in this register set that aren't clk controls.
 
-If not, we need to build one huge blob with all the features in it, so 
-the main driver can probe everything in one go, with annoying 
-back-and-forth callbacks in place (assuming we still want to keep stuff 
-somehow modular.)
+> I don't see how that can be 
+> reasonably seen as the clocks being a child of this ecclectic bunch of 
+> registers.
 
--Tero
+Can you further describe what being a child device means to you?
+There must be some reason why a child device is wrong from your
+perspective that isn't coming across here.
 
->
->> +		#clock-cells = <2>;
->> +	};
->> +};
->> +
->> +uart0: serial@2530c00 {
->> +	compatible = "ns16550a";
->> +	clocks = <&k2g_clks K2G_DEV_UART0 0>;
->> +};
+> 
+> Perhaps the use of syscon has been misleading here? I'm using the syscon code 
+> purely as a nice way to obtain a regmap to that bunch of registers. Please 
+> believe me when I say I know this hardware well enough to know that there 
+> isn't a coherent block of system controller hardware that provides the clocks 
+> here.
+> 
+
+The problem I have, from a DT perspective, is that the clks are
+not on the board. Clks that live on the board go to the root of
+the DT tree under / or some container clks node. In this case the
+clks are in the SoC, so they should go into the SoC node, not the
+root. But the SoC node should have a reg property for each child
+node, and this node wouldn't have a reg property because it uses
+a regmap, so from a DT perspective that's also the wrong place to
+put this node.
+
+Therefore, the best solution is to make the clk controller node a
+child of the syscon, and then the reg property doesn't exist in
+the clk controller node. This also nicely removes any linuxism of
+needing to have a regmap property (regmap is not really a
+hardware concept and is fairly linux specific) because we can
+grab the regmap handle from the parent device/node.
+
+Technically having the child node for the clk controller part is
+abusing DT. We should really only have one node for the syscon,
+which probes a driver that then creates platform devices in
+software to match up with other drivers for the specific
+functions that are accessible through the dumb register set. But
+since we have MFD/syscons quite often, and things get sort of
+messy when all these different things are going on within one
+node and thus one big driver, we allow MFDs to be described in DT
+with sub-nodes that are for the sub-functions so that we can have
+drivers match up appropriately. Otherwise we're left with a big
+driver for the MFD that becomes sort of like a board file to
+register sub devices, or a mash up of all these different
+functions that use one struct device.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
