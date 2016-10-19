@@ -1,61 +1,143 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Oct 2016 17:53:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Message-ID: <20161028005341.GR26139@codeaurora.org>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Scott Wood <oss@buserror.net>, "Arnd
+ Bergmann" <arnd@arndb.de>
+Subject: RE: [v12, 0/8] Fix eSDHC host version register bug
+Date: Wed, 19 Oct 2016 02:40:53 +0000
+Message-ID: <AM5PR0401MB2529907DE940AC310FC8C0B2F8D20@AM5PR0401MB2529.eurprd04.prod.outlook.com>
+References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+ <CAPDyKFoit0sTPpfi2=AHcdZsDwOJxbBX68O-1jBFL=5JN0m6_w@mail.gmail.com>
+In-Reply-To: <CAPDyKFoit0sTPpfi2=AHcdZsDwOJxbBX68O-1jBFL=5JN0m6_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, "X.B. Xie" <xiaobo.xie@nxp.com>,
+ "M.H. Lian" <minghuan.lian@nxp.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Russell King <linux@arm.linux.org.uk>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ linux-mmc <linux-mmc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/18, Tero Kristo wrote:
-> Hi,
+> -----Original Message-----
+> From: Ulf Hansson [mailto:ulf.hansson@linaro.org]
+> Sent: Tuesday, October 18, 2016 6:48 PM
+> To: Y.B. Lu
+> Cc: linux-mmc; Scott Wood; Arnd Bergmann; linuxppc-dev@lists.ozlabs.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; linux-clk; linux-i2c@vger.kernel.org;
+> iommu@lists.linux-foundation.org; netdev@vger.kernel.org; Mark Rutland;
+> Rob Herring; Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil;
+> Bhupesh Sharma; Qiang Zhao; Kumar Gala; Santosh Shilimkar; Leo Li; X.B.
+> Xie; M.H. Lian
+> Subject: Re: [v12, 0/8] Fix eSDHC host version register bug
 > 
-> As a recap, this series is part of the ongoing work to get rid of the
-> hwmod database under mach-omap2 folder. This series converts the
-> existing clock related functionality to a new clock type, which will
-> allow removing all the .clkctrl related items from hwmod database.
-> This series adds sample solution for OMAP4 only, rest of the SoCs can
-> be converted automatically once the approach is acceptable.
+> On 21 September 2016 at 08:57, Yangbo Lu <yangbo.lu@nxp.com> wrote:
+> > This patchset is used to fix a host version register bug in the
+> > T4240-R1.0-R2.0 eSDHC controller. To match the SoC version and
+> > revision, 10 previous version patchsets had tried many methods but all
+> of them were rejected by reviewers.
+> > Such as
+> >         - dts compatible method
+> >         - syscon method
+> >         - ifdef PPC method
+> >         - GUTS driver getting SVR method Anrd suggested a
+> > soc_device_match method in v10, and this is the only available method
+> > left now. This v11 patchset introduces the soc_device_match interface
+> > in soc driver.
+> >
+> > The first six patches of Yangbo are to add the GUTS driver. This is
+> > used to register a soc device which contain soc version and revision
+> information.
+> > The other two patches introduce the soc_device_match method in soc
+> > driver and apply it on esdhc driver to fix this bug.
+> >
+> > Arnd Bergmann (1):
+> >   base: soc: introduce soc_device_match() interface
+> >
+> > Yangbo Lu (7):
+> >   dt: bindings: update Freescale DCFG compatible
+> >   ARM64: dts: ls2080a: add device configuration node
+> >   dt: bindings: move guts devicetree doc out of powerpc directory
+> >   powerpc/fsl: move mpc85xx.h to include/linux/fsl
+> >   soc: fsl: add GUTS driver for QorIQ platforms
+> >   MAINTAINERS: add entry for Freescale SoC drivers
+> >   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+> >
+> >  Documentation/devicetree/bindings/arm/fsl.txt      |   6 +-
+> >  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
+> >  MAINTAINERS                                        |  11 +-
+> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
+> >  arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
+> >  arch/powerpc/sysdev/fsl_pci.c                      |   2 +-
+> >  drivers/base/Kconfig                               |   1 +
+> >  drivers/base/soc.c                                 |  66 ++++++
+> >  drivers/clk/clk-qoriq.c                            |   3 +-
+> >  drivers/i2c/busses/i2c-mpc.c                       |   2 +-
+> >  drivers/iommu/fsl_pamu.c                           |   3 +-
+> >  drivers/mmc/host/Kconfig                           |   1 +
+> >  drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
+> >  drivers/net/ethernet/freescale/gianfar.c           |   2 +-
+> >  drivers/soc/Kconfig                                |   2 +-
+> >  drivers/soc/fsl/Kconfig                            |  19 ++
+> >  drivers/soc/fsl/Makefile                           |   1 +
+> >  drivers/soc/fsl/guts.c                             | 257
+> +++++++++++++++++++++
+> >  include/linux/fsl/guts.h                           | 125 ++++++----
+> >  .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
+> >  include/linux/sys_soc.h                            |   3 +
+> >  21 files changed, 478 insertions(+), 61 deletions(-)  rename
+> > Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+> > create mode 100644 drivers/soc/fsl/Kconfig  create mode 100644
+> > drivers/soc/fsl/guts.c  rename arch/powerpc/include/asm/mpc85xx.h =>
+> > include/linux/fsl/svr.h (97%)
+> >
+> > --
+> > 2.1.0.27.g96db324
+> >
 > 
-> v4 has the following high level changes compared to v3:
-> - Clock data is now statically built-in to the driver
-> - Adds clockdomain provider support, which can be used to fetch
->   clocks based on clockdomain relation. Only clockdomains need to be
->   registered within DT.
-> - Added some automatic clock alias generation support to the TI clock
->   drivers, if this is not acceptable, I can change this to add all the
->   aliases under the individual drivers/clk/ti/clk-xyz.c files
-
-Is there a plan to get rid of the aliases entirely? Or we can't
-do that because DT is not fully supported on these platforms? I'm
-mostly wondering how long that sort of code is going to stick
-around and if it's better to fully compartmentalize it to the
-SoCs that are affected or if it should be a core feature of TI
-driver.
-
-> - As a sample, only omap4 clock data is available with this set
+> This looks good to me! I am not sure which tree you want this to be
+> picked up through, but unless no other volunteers I can take it through
+> my mmc tree.
 > 
-> After this series, the clock data can be dropped from the hwmod database
-> for OMAP4, I have working patches for this for anybody interested. Also,
-> the DT files require some modifications to add proper support for
-> clockdomain providers, and drop some unnecessary clock nodes.
-
-Can this be shared as a git tree on the web? Hopefully I can see
-the resulting DTS and understand what's going on better.
-
-> 
-> Boot + simple PM test seems to be working on OMAP4 with this set, and
-> boot test with other boards I have access to don't seem to cause any
-> issues. Applies on top of 4.9-rc1.
+> Although, before considering to apply, I need an ack from Scott/Arnd for
+> the guts driver in patch 5/8 and I need an ack from Greg for patch 7/8,
+> where the soc_device_match() interface is added (seems like you didn't
+> add him on cc/to).
 > 
 
-Awesome!
+[Lu Yangbo-B47093] Thanks a lot for your clarifying, Uffe.
+This patchset was based on mmc tree, and needed your picking up.
+But I think it needs to be rebased now since I saw qbman driver was in drivers/soc/fsl/ now.
+I will do that after collecting others' ACKs or comments.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hi Scott and Arnd,
+Could I get your ACTs if there're no other changes needed?
+Thanks a lot.
+
+> Kind regards
+> Uffe
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
