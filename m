@@ -1,147 +1,37 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 03/15] dt-bindings: clock: add omap4 hwmod clock IDs
-Date: Tue, 18 Oct 2016 18:45:56 +0300
-Message-ID: <1476805568-19264-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <13815645.d8PJGpIqtG@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <13815645.d8PJGpIqtG@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Oct 2016 10:57:34 +0200
+Message-ID: <CAMuHMdU0aLmvC7X4F1v4kiNJ2pDDK=G-xvF9e+5bVKezCy3CvA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add IDs for omap4 hwmod clocks. These are basically register offsets
-from the beginning of the clockdomain address space.
+On Wed, Oct 5, 2016 at 10:52 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+> and Software Reset support code, using the CPG/MSSR driver core.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- include/dt-bindings/clock/ti,omap44xx.h | 116 ++++++++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 include/dt-bindings/clock/ti,omap44xx.h
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/include/dt-bindings/clock/ti,omap44xx.h b/include/dt-bindings/clock/ti,omap44xx.h
-new file mode 100644
-index 0000000..38af57d
---- /dev/null
-+++ b/include/dt-bindings/clock/ti,omap44xx.h
-@@ -0,0 +1,116 @@
-+/*
-+ * TI OMAP4 SoC clock definitions
-+ *
-+ * Copyright (C) 2016 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_TI_OMAP4_H__
-+#define __DT_BINDINGS_CLOCK_TI_OMAP4_H__
-+
-+#define OMAP44XX_MPUSS_MPU 0x20
-+#define OMAP44XX_TESLA_DSP 0x20
-+#define OMAP44XX_TESLA_MMU_DSP 0x20
-+#define OMAP44XX_ABE_L4_ABE 0x20
-+#define OMAP44XX_ABE_AESS 0x28
-+#define OMAP44XX_ABE_MCPDM 0x30
-+#define OMAP44XX_ABE_DMIC 0x38
-+#define OMAP44XX_ABE_MCASP 0x40
-+#define OMAP44XX_ABE_MCBSP1 0x48
-+#define OMAP44XX_ABE_MCBSP2 0x50
-+#define OMAP44XX_ABE_MCBSP3 0x58
-+#define OMAP44XX_ABE_SLIMBUS1 0x60
-+#define OMAP44XX_ABE_TIMER5 0x68
-+#define OMAP44XX_ABE_TIMER6 0x70
-+#define OMAP44XX_ABE_TIMER7 0x78
-+#define OMAP44XX_ABE_TIMER8 0x80
-+#define OMAP44XX_ABE_WD_TIMER3 0x88
-+#define OMAP44XX_L4_WKUP_L4_WKUP 0x20
-+#define OMAP44XX_L4_WKUP_WD_TIMER2 0x30
-+#define OMAP44XX_L4_WKUP_GPIO1 0x38
-+#define OMAP44XX_L4_WKUP_TIMER1 0x40
-+#define OMAP44XX_L4_WKUP_COUNTER_32K 0x50
-+#define OMAP44XX_L4_WKUP_KBD 0x78
-+#define OMAP44XX_EMU_SYS_DEBUGSS 0x20
-+#define OMAP44XX_L3_DSS_DSS_CORE 0x20
-+#define OMAP44XX_L3_DSS_DSS_RFBI 0x20
-+#define OMAP44XX_L3_DSS_DSS_HDMI 0x20
-+#define OMAP44XX_L3_DSS_DSS_DSI2 0x20
-+#define OMAP44XX_L3_DSS_DSS_VENC 0x20
-+#define OMAP44XX_L3_DSS_DSS_DISPC 0x20
-+#define OMAP44XX_L3_DSS_DSS_DSI1 0x20
-+#define OMAP44XX_ISS_FDIF 0x28
-+#define OMAP44XX_L4_PER_GPIO2 0x60
-+#define OMAP44XX_L4_PER_GPIO3 0x68
-+#define OMAP44XX_L4_PER_GPIO4 0x70
-+#define OMAP44XX_L4_PER_GPIO5 0x78
-+#define OMAP44XX_L4_PER_GPIO6 0x80
-+#define OMAP44XX_L4_PER_HDQ1W 0x88
-+#define OMAP44XX_L4_PER_I2C1 0xa0
-+#define OMAP44XX_L4_PER_I2C2 0xa8
-+#define OMAP44XX_L4_PER_I2C3 0xb0
-+#define OMAP44XX_L4_PER_I2C4 0xb8
-+#define OMAP44XX_L4_PER_L4_PER 0xc0
-+#define OMAP44XX_L3_GFX_GPU 0x20
-+#define OMAP44XX_L3_INIT_HSI 0x38
-+#define OMAP44XX_ISS_ISS 0x20
-+#define OMAP44XX_L4_PER_MCBSP4 0xe0
-+#define OMAP44XX_L4_PER_MCSPI1 0xf0
-+#define OMAP44XX_L4_PER_MCSPI2 0xf8
-+#define OMAP44XX_L4_PER_MCSPI3 0x100
-+#define OMAP44XX_L4_PER_MCSPI4 0x108
-+#define OMAP44XX_L4_PER_MMC3 0x120
-+#define OMAP44XX_L4_PER_MMC4 0x128
-+#define OMAP44XX_L3_INIT_MMC1 0x28
-+#define OMAP44XX_L3_INIT_MMC2 0x30
-+#define OMAP44XX_L3_INIT_OCP2SCP_USB_PHY 0xe0
-+#define OMAP44XX_L4_PER_TIMER10 0x28
-+#define OMAP44XX_L4_PER_TIMER11 0x30
-+#define OMAP44XX_L4_PER_TIMER2 0x38
-+#define OMAP44XX_L4_PER_TIMER3 0x40
-+#define OMAP44XX_L4_PER_TIMER4 0x48
-+#define OMAP44XX_L4_PER_TIMER9 0x50
-+#define OMAP44XX_L4_PER_ELM 0x58
-+#define OMAP44XX_L4_PER_SLIMBUS2 0x138
-+#define OMAP44XX_L4_PER_UART1 0x140
-+#define OMAP44XX_L4_PER_UART2 0x148
-+#define OMAP44XX_L4_PER_UART3 0x150
-+#define OMAP44XX_L4_PER_UART4 0x158
-+#define OMAP44XX_L4_PER_MMC5 0x160
-+#define OMAP44XX_L4_AO_SMARTREFLEX_CORE 0x38
-+#define OMAP44XX_L4_AO_SMARTREFLEX_IVA 0x30
-+#define OMAP44XX_L4_AO_SMARTREFLEX_MPU 0x28
-+#define OMAP44XX_L3_INIT_USB_HOST_FS 0xd0
-+#define OMAP44XX_L3_INIT_USB_HOST_HS 0x58
-+#define OMAP44XX_L3_INIT_USB_OTG_HS 0x60
-+#define OMAP44XX_L3_1_L3_MAIN_1 0x20
-+#define OMAP44XX_L3_2_L3_MAIN_2 0x20
-+#define OMAP44XX_L3_2_GPMC 0x28
-+#define OMAP44XX_L3_2_OCMC_RAM 0x30
-+#define OMAP44XX_DUCATI_IPU 0x20
-+#define OMAP44XX_DUCATI_MMU_IPU 0x20
-+#define OMAP44XX_L3_DMA_DMA_SYSTEM 0x20
-+#define OMAP44XX_L3_EMIF_DMM 0x20
-+#define OMAP44XX_L3_EMIF_EMIF1 0x30
-+#define OMAP44XX_L3_EMIF_EMIF2 0x38
-+#define OMAP44XX_D2D_C2C 0x20
-+#define OMAP44XX_L4_CFG_L4_CFG 0x20
-+#define OMAP44XX_L4_CFG_SPINLOCK 0x28
-+#define OMAP44XX_L4_CFG_MAILBOX 0x30
-+#define OMAP44XX_L3_INSTR_L3_MAIN_3 0x20
-+#define OMAP44XX_L3_INSTR_L3_INSTR 0x28
-+#define OMAP44XX_L3_INSTR_OCP_WP_NOC 0x40
-+#define OMAP44XX_IVAHD_IVA 0x20
-+#define OMAP44XX_IVAHD_SL2IF 0x28
-+#define OMAP44XX_L3_INIT_USB_TLL_HS 0x68
-+
-+#endif
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
