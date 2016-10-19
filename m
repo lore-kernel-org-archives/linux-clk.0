@@ -1,71 +1,66 @@
-Return-Path: <mw@semihalf.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Oct 2016 13:29:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+Message-ID: <20161019202904.GB8871@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <20161018235108.GP8871@codeaurora.org>
+ <d878b846-556d-180b-8ebf-2d06646efb58@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPv3WKf13FJxGkpt+OcNO--hRQoZr-TtuzCcAJrQwFXjqRgM2Q@mail.gmail.com>
-References: <1474789673-3837-1-git-send-email-mw@semihalf.com> <CAPv3WKf13FJxGkpt+OcNO--hRQoZr-TtuzCcAJrQwFXjqRgM2Q@mail.gmail.com>
-From: Marcin Wojtas <mw@semihalf.com>
-Date: Mon, 17 Oct 2016 15:03:00 +0200
-Message-ID: <CAPv3WKdhe+3_2wjSwKD3i0OY5W3aPiaZAnAaidanyAzvvH6d6g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/1] Armada 7k/8k CP110 system controller fixes
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	=?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>,
-	nadavh@marvell.com, Lior Amsalem <alior@marvell.com>, Tomasz Nowicki <tn@semihalf.com>,
-	Grzegorz Jaszczyk <jaz@semihalf.com>, Marcin Wojtas <mw@semihalf.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <d878b846-556d-180b-8ebf-2d06646efb58@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-Since merge window is closed, I kindly remind about remaining patch.
-
-Best regards,
-Marcin
-
-2016-10-06 21:24 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
+On 10/19, Gabriel Fernandez wrote:
 > Hi Stephen,
->
-> Do you have any further comments on the remaining patch?
->
-> Best regards,
-> Marcin
->
-> 2016-09-25 9:47 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
->> Hi,
->>
->> Two patches from the third version of the patchset have already been
->> applied, so I re-send the last one with corrected allocation of
->> clock data, which was pointed in the review.
->>
->> Any feedback would be very welcome.
->>
->> Best regards,
->> Marcin
->>
->> Changelog:
->> v4 <- v3
->> * fix allocation of clock data
->>
->> v3 <- v2
->> * return -ENOMEM on alloc failures
->>
->> v1 <- v2
->> * replace setting CLK_IS_BASIC flag with clearing init structure fields
->>   with memset
->> * minor improvements of allocation and error checking
->> * add migration to clk_hw
->>
->>
->> Marcin Wojtas (1):
->>   clk: mvebu: migrate CP110 system controller to clk_hw API and
->>     registration
->>
->>  drivers/clk/mvebu/cp110-system-controller.c | 150 +++++++++++++---------------
->>  1 file changed, 72 insertions(+), 78 deletions(-)
->>
->> --
->> 1.8.3.1
->>
+> 
+> 
+> On 10/19/2016 01:51 AM, Stephen Boyd wrote:
+> >On 10/14, gabriel.fernandez@st.com wrote:
+> >>Gabriel Fernandez (6):
+> >>   clk: stm32f4: Add LSI & LSE clocks
+> >>   ARM: dts: stm32f429: add LSI and LSE clocks
+> >>   arm: stmf32: Enable SYSCON
+> >>   clk: stm32f4: Add RTC clock
+> >>   clk: stm32f469: Add QSPI clock
+> >>   ARM: dts: stm32f429: Add QSPI clock
+> >Can the clk patches be picked without causing problems for
+> >existing dt changes? Do you want an ack from clk maintainers
+> >instead of us picking the clk patches up? The series has
+> >intermingled clk and dts changes so I'm confused.
+> >
+> 
+> Thanks for reviewing.
+> 
+> Normally DT patches will be taken by STM32 maintainer, but yes there
+> is a dependency between patch 1 & 2, so if you push the patch 1 into
+> clk-next tree you have to take also patch 2.
+
+Let's break the dependency by making the required property
+optional or key off a different compatible string. As it stands
+right now applying patch 1 will cause things to break until the
+second patch lands which is not great.
+
+> 
+> You have to be synchronized with Alexandre Torgue.
+> 
+> 
+
+I'd prefer zero synchronization. Please just send the clk patches
+the next time and leave the stuff for arm-soc out of the patch
+series. Thanks.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
