@@ -1,38 +1,91 @@
-Return-Path: <wens@csie.org>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20161018095044.d1664c4935ad13007453fb35@free.fr>
-References: <20161018054209.24546-1-wens@csie.org> <20161018095044.d1664c4935ad13007453fb35@free.fr>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 18 Oct 2016 15:57:29 +0800
-Message-ID: <CAGb2v641uy84D3j0q0s+ft+xiTnzDOS8m_GsKd-L3-F1aoUAHA@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6 as parent
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com> <20161017120705.3726-3-wenpan@hisilicon.com>
+ <20161018155835.qyoffwznacdac46y@rob-hp-laptop> <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 18 Oct 2016 21:45:29 -0500
+Message-ID: <CAL_JsqK18RHFhDSWA_j+v_pJL6vk+a=GD7oo6O3JJaV4hHHEBg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: Pan Wen <wenpan@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, howell.yang@hisilicon.com,
+	jalen.hsu@hisilicon.com, lvkuanliang 00222834 <lvkuanliang@hisilicon.com>,
+	suwenping@hisilicon.com, raojun@hisilicon.com, kevin.lixu@hisilicon.com
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 18, 2016 at 3:50 PM, Jean-Francois Moine <moinejf@free.fr> wrote:
-> On Tue, 18 Oct 2016 13:42:09 +0800
-> Chen-Yu Tsai <wens@csie.org> wrote:
+On Tue, Oct 18, 2016 at 9:38 PM, Jiancheng Xue
+<xuejiancheng@hisilicon.com> wrote:
 >
->> On the A31, the DMA engine only works if AHB1 is clocked from PLL6.
->> In addition, the hstimer is clocked from AHB1, and if AHB1 is clocked
->> from the CPU clock, and cpufreq is working, we get an unstable timer.
+>
+> =E5=9C=A8 2016/10/18 23:58, Rob Herring =E5=86=99=E9=81=93:
+>> On Mon, Oct 17, 2016 at 08:07:04PM +0800, Pan Wen wrote:
+>>> Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
+>>> Generator) module generates clock and reset signals used
+>>> by other module blocks on SoC.
+>>>
+>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+>>> ---
+>>>  .../devicetree/bindings/clock/hisi-crg.txt         |  50 ++++
+>>>  drivers/clk/hisilicon/Kconfig                      |   8 +
+>>>  drivers/clk/hisilicon/Makefile                     |   1 +
+>>>  drivers/clk/hisilicon/crg-hi3516cv300.c            | 330 +++++++++++++=
+++++++++
+>>>  drivers/clk/hisilicon/crg.h                        |  34 +++
+>>>  include/dt-bindings/clock/hi3516cv300-clock.h      |  48 +++
+>>>  6 files changed, 471 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/hisi-crg.tx=
+t
+>>>  create mode 100644 drivers/clk/hisilicon/crg-hi3516cv300.c
+>>>  create mode 100644 drivers/clk/hisilicon/crg.h
+>>>  create mode 100644 include/dt-bindings/clock/hi3516cv300-clock.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Doc=
+umentation/devicetree/bindings/clock/hisi-crg.txt
+>>> new file mode 100644
+>>> index 0000000..cc60b3d
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> @@ -0,0 +1,50 @@
+>>> +* HiSilicon Clock and Reset Generator(CRG)
 >>
->> Force the AHB1 clock to use PLL6 as its parent. Previously this was done
->> in the device tree with the assigned-clocks and assigned-clocks-parent
->> bindings. However with this new monolithic driver, the system critical
->> clocks aren't exported through the device tree. The alternative is to
->> force this setting in the driver before the clocks are registered.
+>> Seems kind of generic given there's already various HiSi clock bindings
+>> documented.
+>>
+>>> +
+>>> +The CRG module provides clock and reset signals to various
+>>> +modules within the SoC.
+>>> +
+>>> +This binding uses the following bindings:
+>>> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>> +    Documentation/devicetree/bindings/reset/reset.txt
+>>> +
+>>> +Required Properties:
+>>> +
+>>> +- compatible: should be one of the following.
+>>> +  - "hisilicon,hi3516cv300-crg"
+>>> +  - "hisilicon,hi3516cv300-sysctrl"
+>>> +  - "hisilicon,hi3519-crg"
+>>
+>> There is already a binding for this. Please merge them.
+>>
+> Hi Rob,
 >
-> It should be simpler to export the constant (CLK_AHB1) instead of
-> adding code...
+> Pan Wen and I work together. There's really a same file included in the p=
+atch
+> https://lkml.org/lkml/2016/9/18/42 ([PATCH v2] clk: hisilicon: add CRG dr=
+iver for Hi3798CV200 SoC).
+> But that patch has not been acked. This binding file will be merged if th=
+at
+> patch is accepted first. Could you give me more comments on that patch or
+> help me to ack it?  Thank you very much.
 
-I get you. But the plan is to not export system core clocks that
-don't have a direct user.
+If I haven't commented, then likely it was not sent to the DT list.
 
-ChenYu
+Rob
