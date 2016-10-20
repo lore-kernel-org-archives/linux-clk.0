@@ -1,99 +1,70 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v15,
- 2/7] dt: bindings: move guts devicetree doc out of powerpc directory
-Date: Fri, 28 Oct 2016 14:50:13 +0800
-Message-ID: <1477637418-38938-3-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36578 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752900AbcJTObA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2016 10:31:00 -0400
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Yangbo Lu <yangbo.lu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <50a2c9fe665c794dc97f524cacb63dc83d3efaa2.1476196031.git-series.maxime.ripard@free-electrons.com>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+ <50a2c9fe665c794dc97f524cacb63dc83d3efaa2.1476196031.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 20 Oct 2016 22:30:36 +0800
+Message-ID: <CAGb2v65=xM3HpV05zt+q2vshX49MGkB88s7cfpwVYASodK11Nw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/9] clk: sunxi-ng: Remove the use of rational computations
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move guts devicetree doc to Documentation/devicetree/bindings/soc/fsl/
-since it's used by not only PowerPC but also ARM. And add a specification
-for 'little-endian' property.
+On Tue, Oct 11, 2016 at 10:28 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> While the rational library works great, it doesn't really allow us to add
+> more constraints, like the minimum.
+>
+> Remove that in order to be able to deal with the constraints we'll need.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig    |  3 +--
+>  drivers/clk/sunxi-ng/ccu_nkm.c  | 31 +++++++++-----------
+>  drivers/clk/sunxi-ng/ccu_nkmp.c | 45 +++++++++++++---------------
+>  drivers/clk/sunxi-ng/ccu_nm.c   | 54 +++++++++++++++++++++++++---------
+>  4 files changed, 78 insertions(+), 55 deletions(-)
+>
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Scott Wood <oss@buserror.net>
----
-Changes for v4:
-	- Added this patch
-Changes for v5:
-	- Modified the description for little-endian property
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-	- Added 'Acked-by: Rob Herring'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
-Changes for v14:
-	- None
-Changes for v15:
-	- None
----
- Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt | 3 +++
- 1 file changed, 3 insertions(+)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+[...]
 
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-similarity index 91%
-rename from Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-rename to Documentation/devicetree/bindings/soc/fsl/guts.txt
-index b71b203..07adca9 100644
---- a/Documentation/devicetree/bindings/powerpc/fsl/guts.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/guts.txt
-@@ -25,6 +25,9 @@ Recommended properties:
-  - fsl,liodn-bits : Indicates the number of defined bits in the LIODN
-    registers, for those SOCs that have a PAMU device.
- 
-+ - little-endian : Indicates that the global utilities block is little
-+   endian. The default is big endian.
-+
- Examples:
- 	global-utilities@e0000 {	/* global utilities block */
- 		compatible = "fsl,mpc8548-guts";
--- 
-2.1.0.27.g96db324
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> index 9769dee99511..4b457d8cce11 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> @@ -9,16 +9,15 @@
+>   */
+>
+>  #include <linux/clk-provider.h>
+> -#include <linux/rational.h>
+>
+>  #include "ccu_gate.h"
+>  #include "ccu_nkmp.h"
+>
+>  struct _ccu_nkmp {
+> -       unsigned long   n, max_n;
+> -       unsigned long   k, max_k;
+> -       unsigned long   m, max_m;
+> -       unsigned long   p, max_p;
+> +       unsigned long   n, min_n, max_n;
+> +       unsigned long   k, min_k, max_k;
+> +       unsigned long   m, min_m, max_m;
+> +       unsigned long   p, min_p, max_p;
 
+Wrong patch? Otherwise,
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Acked-by: Chen-Yu Tsai <wens@csie.org>
