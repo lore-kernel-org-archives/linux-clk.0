@@ -1,95 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0073.outbound.protection.outlook.com ([104.47.36.73]:48434
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030230AbcJ1HDs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Oct 2016 03:03:48 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v15, 5/7] MAINTAINERS: add entry for Freescale SoC drivers
-Date: Fri, 28 Oct 2016 14:50:16 +0800
-Message-ID: <1477637418-38938-6-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 20 Oct 2016 11:46:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v4 6/9] clk: sunxi-ng: Add A64 clocks
+Message-ID: <20161020184601.GB26139@codeaurora.org>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+ <cd4dd81821b8910d40626baab2dbfdabd94b1b98.1476196031.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cd4dd81821b8910d40626baab2dbfdabd94b1b98.1476196031.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add maintainer entry for Freescale SoC drivers including
-the QE library and the GUTS driver now. Also add maintainer
-for QE library.
+On 10/11, Maxime Ripard wrote:
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> new file mode 100644
+> index 000000000000..c0e96bf6d104
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> +
+> +static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	void __iomem *reg;
+> +	u32 val;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	reg = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(reg)) {
+> +		dev_err(&pdev->dev, "Could not map the clock registers\n");
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Qiang Zhao <qiang.zhao@nxp.com>
----
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added linux-arm mail list
-	- Removed GUTS driver entry
-Changes for v10:
-	- Changed 'DRIVER' to 'DRIVERS'
-	- Added 'Acked-by' of Scott and Qiang
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
-Changes for v14:
-	- None
-Changes for v15:
-	- None
----
- MAINTAINERS | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+devm_ioremap_resource() should already spit out an error.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c72fa18..cf3aaee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5037,9 +5037,18 @@ S:	Maintained
- F:	drivers/net/ethernet/freescale/fman
- F:	Documentation/devicetree/bindings/powerpc/fsl/fman.txt
- 
-+FREESCALE SOC DRIVERS
-+M:	Scott Wood <oss@buserror.net>
-+L:	linuxppc-dev@lists.ozlabs.org
-+L:	linux-arm-kernel@lists.infradead.org
-+S:	Maintained
-+F:	drivers/soc/fsl/
-+F:	include/linux/fsl/
-+
- FREESCALE QUICC ENGINE LIBRARY
-+M:	Qiang Zhao <qiang.zhao@nxp.com>
- L:	linuxppc-dev@lists.ozlabs.org
--S:	Orphan
-+S:	Maintained
- F:	drivers/soc/fsl/qe/
- F:	include/soc/fsl/*qe*.h
- F:	include/soc/fsl/*ucc*.h
+> +		return PTR_ERR(reg);
+> +	}
+> +
+> +	/* Force the PLL-Audio-1x divider to 4 */
+> +	val = readl(reg + SUN50I_A64_PLL_AUDIO_REG);
+> +	val &= ~GENMASK(19, 16);
+> +	writel(val | (3 << 16), reg + SUN50I_A64_PLL_AUDIO_REG);
+> +
+> +	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+> +
+> +	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
+> +}
+> +
+> +static const struct of_device_id sun50i_a64_ccu_ids[] = {
+> +	{ .compatible = "allwinner,sun50i-a64-ccu" },
+> +	{ },
+
+Nitpick: drop the comma
+
+> +};
+> +
+> +static struct platform_driver sun50i_a64_ccu_driver = {
+> +	.probe	= sun50i_a64_ccu_probe,
+> +	.driver	= {
+> +		.name	= "sun50i-a64-ccu",
+> +		.of_match_table	= sun50i_a64_ccu_ids,
+> +	},
+> +};
+> +builtin_platform_driver(sun50i_a64_ccu_driver);
+
 -- 
-2.1.0.27.g96db324
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
