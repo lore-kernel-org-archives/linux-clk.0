@@ -1,72 +1,176 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 31 Oct 2016 11:06:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Erin Lo <erin.lo@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, ms.chen@mediatek.com,
-	robert.chou@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>
-Subject: Re: [PATCH v14 1/4] clk: mediatek: Add MT2701 clock support
-Message-ID: <20161031180647.GR16026@codeaurora.org>
-References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
- <1477020742-13889-2-git-send-email-erin.lo@mediatek.com>
- <20161028011753.GS26139@codeaurora.org>
- <1477896558.5376.13.camel@mtksdaap41>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v2 1/6] clk: stm32f4: Add LSI & LSE clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <1476436699-21879-2-git-send-email-gabriel.fernandez@st.com>
+ <20161019202433.GA8871@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <e1a7dd16-089e-3a60-9e53-cdd57e42aeed@st.com>
+Date: Thu, 20 Oct 2016 09:47:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477896558.5376.13.camel@mtksdaap41>
+In-Reply-To: <20161019202433.GA8871@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/31, James Liao wrote:
-> On Thu, 2016-10-27 at 18:17 -0700, Stephen Boyd wrote:
-> > On 10/21, Erin Lo wrote:
-> > > @@ -244,3 +256,31 @@ void mtk_clk_register_composites(const struct mtk_composite *mcs,
-> > >  			clk_data->clks[mc->id] = clk;
-> > >  	}
-> > >  }
-> > > +
-> > > +void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
-> > > +			int num, void __iomem *base, spinlock_t *lock,
-> > > +				struct clk_onecell_data *clk_data)
-> > > +{
-> > > +	struct clk *clk;
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i <  num; i++) {
-> > > +		const struct mtk_clk_divider *mcd = &mcds[i];
-> > > +
-> > > +		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
-> > 
-> > NULL is a valid clk. IS_ERR_OR_NULL is usually wrong.
-> 
-> Why NULL is a valid clk?
 
-Perhaps at some point we'll want to return a NULL pointer to
-clk_get() callers so that they can handle things like optional
-clocks easily without having any storage requirements. I don't
-know if we'll ever do that, but that's just a possibility.
+Hi Stephen,
+Many thanks for reviewing.
 
-> 
-> clk_data is designed for multiple initialization from different clock
-> types, such as infra_clk_data in clk-mt2701.c. So it will ignore valid
-> clocks to avoid duplicated clock registration. Here I assume a clock
-> pointer with error code or NULL to be an invalid (not initialized)
-> clock.
-> 
+On 10/19/2016 10:24 PM, Stephen Boyd wrote:
+> On 10/14, gabriel.fernandez@st.com wrote:
+>> @@ -292,8 +298,110 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+>>   	return clks[i];
+>>   }
+>>   
+>> +static struct regmap *pdrm;
+> This can't be part of the stm32_rgate structure?
+yes i can include it.
 
-Ok. Would it be possible to initialize the array with all error
-pointers? That would make things less error prone, but it
-probably doesn't matter at all anyway because this is done during
-registration time. IS_ERR_OR_NULL makes me take a second look
-each time, because it's usually wrong.
+>
+>> +
+>> +static inline void disable_power_domain_write_protection(void)
+>> +{
+>> +	regmap_update_bits(pdrm, 0x00, (1 << 8), (1 << 8));
+>> +}
+>> +
+>> +static inline void enable_power_domain_write_protection(void)
+>> +{
+>> +	regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
+>> +}
+>> +
+>> +struct stm32_rgate {
+>> +	struct	clk_hw hw;
+>> +	struct	clk_gate gate;
+> Why not use the clk_hw inside clk_gate?yes you right, if it's optional i won't have dependency with DT
+ok
+>
+>> +	u8	bit_rdy_idx;
+>> +};
+>> +
+>> +#define RTC_TIMEOUT 1000000
+>> +
+>> +#define to_rgclk(_hw) container_of(_hw, struct stm32_rgate, hw)
+>> +
+>> +static int rgclk_enable(struct clk_hw *hw)
+>> +{
+>> +	struct stm32_rgate *rgate = to_rgclk(hw);
+>> +	struct clk_hw *gate_hw = &rgate->gate.hw;
+>> +	struct clk_gate *gate = to_clk_gate(gate_hw);
+>> +	u32 reg;
+>> +	int ret;
+>> +
+>> +	__clk_hw_set_clk(gate_hw, hw);
+> Then we don't need this part.
+>
+>> +
+>> +	disable_power_domain_write_protection();
+>> +
+>> +	clk_gate_ops.enable(gate_hw);
+>> +
+>> +	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
+>> +			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
+>> +
+>> +	enable_power_domain_write_protection();
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void rgclk_disable(struct clk_hw *hw)
+>> +{
+>> +	clk_gate_ops.disable(hw);
+>> +}
+>> +
+>> +static int rgclk_is_enabled(struct clk_hw *hw)
+>> +{
+>> +	return clk_gate_ops.is_enabled(hw);
+>> +}
+>> +
+>> +
+> Drop the double newline here please.
+ok
+>
+>> +static const struct clk_ops rgclk_ops = {
+>> +	.enable = rgclk_enable,
+>> +	.disable = rgclk_disable,
+>> +	.is_enabled = rgclk_is_enabled,
+>> +};
+>> +
+>> +static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
+>> +		const char *parent_name, unsigned long flags,
+>> +		void __iomem *reg, u8 bit_idx, u8 bit_rdy_idx,
+>> +		u8 clk_gate_flags, spinlock_t *lock)
+>> +{
+>> +	struct stm32_rgate *rgate;
+>> +	struct clk_init_data init = { NULL };
+>> +	struct clk_hw *hw;
+>> +	int ret;
+>> +
+>> +	rgate = kzalloc(sizeof(*rgate), GFP_KERNEL);
+>> +	if (!rgate)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	init.name = name;
+>> +	init.ops = &rgclk_ops;
+>> +	init.flags = flags | CLK_IS_BASIC;
+> Please no CLK_IS_BASIC flags.
+ok
+>
+>> +	init.parent_names = &parent_name;
+>> +	init.num_parents = 1;
+>> +
+>> +	rgate->hw.init = &init;
+>> +	rgate->bit_rdy_idx = bit_rdy_idx;
+>> +
+>> +	rgate->gate.lock = lock;
+>> +	rgate->gate.reg = reg;
+>> +	rgate->gate.bit_idx = bit_idx;
+>> +
+>> +	hw = &rgate->hw;
+>> +	ret = clk_hw_register(dev, hw);
+>> +	if (ret) {
+>> +		kfree(rgate);
+>> +		hw = ERR_PTR(ret);
+>> +	}
+>> +
+>> +	return hw;
+>> +}
+>> +
+>>   static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
+>>   
+>> +const char *rtc_parents[4] = {
+> static const char * const?
+ok
+>
+>> +	"no-clock", "lse", "lsi", "hse-rtc"
+>> +};
+>> +
+>>   static const struct clk_div_table ahb_div_table[] = {
+>>   	{ 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
+>>   	{ 0x4,   1 }, { 0x5,   1 }, { 0x6,   1 }, { 0x7,   1 },
+>> @@ -319,6 +427,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+>>   		return;
+>>   	}
+>>   
+>> +	pdrm = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
+> Is there a dt binding update for this? It should probably be
+> optional?
+yes you right, if it's optional i don't need dependency with DT
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>> +	if (IS_ERR(pdrm)) {
+>> +		pr_err("%s: Unable to get syscfg\n", __func__);
+>> +		goto fail;
+>> +	}
+>> +
+>>   	hse_clk = of_clk_get_parent_name(np, 0);
+>>   
