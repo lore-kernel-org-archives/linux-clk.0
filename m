@@ -1,36 +1,42 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 20 Oct 2016 16:01:03 -0700
+Date: Thu, 20 Oct 2016 10:48:05 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Orson Zhai <orson.zhai@spreadtrum.com>
-Cc: mturquette@baylibre.com, baolin.wang@spreadtrum.com,
-	xiaolong.zhang@spreadtrum.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ben.li@spreadturm.com
-Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
- fixed-factor clocks
-Message-ID: <20161020230103.GD26139@codeaurora.org>
-References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: Rob Herring <robh@kernel.org>, Pan Wen <wenpan@hisilicon.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	howell.yang@hisilicon.com, jalen.hsu@hisilicon.com,
+	lvkuanliang 00222834 <lvkuanliang@hisilicon.com>,
+	suwenping@hisilicon.com, raojun@hisilicon.com,
+	kevin.lixu@hisilicon.com
+Subject: Re: [PATCH 2/3] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
+Message-ID: <20161020174805.GA26139@codeaurora.org>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-3-wenpan@hisilicon.com>
+ <20161018155835.qyoffwznacdac46y@rob-hp-laptop>
+ <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
+ <CAL_JsqK18RHFhDSWA_j+v_pJL6vk+a=GD7oo6O3JJaV4hHHEBg@mail.gmail.com>
+ <5dc55eef-808e-fa78-a5a0-4fccb31e5ceb@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+In-Reply-To: <5dc55eef-808e-fa78-a5a0-4fccb31e5ceb@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/11, Orson Zhai wrote:
-> From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+On 10/19, Jiancheng Xue wrote:
 > 
-> When common kernel setups fixed clock, of_clk_provider will be registerred.
-> But there is no clkdev being registerred at the same time. This will make
-> it difficult to get the clock by using clk_get(NULL, con_id).
+> I'm pretty sure that the patch was sent to the DT list devicetree@vger.kernel.org.
+> You had asked a question about "hi3798cv200-sysctrl" and I replied (https://lkml.org/lkml/2016/10/10/517).
+> I'm waiting for your new comments. If there's some misunderstatnding, please let me know.
 > 
-> Add clkdev register for fixed-rate and fixed-factor clock and ignore
-> the error if any.
-> 
-> Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
-> ---
 
-Why are we using clkdev lookups for clks populated from DT?
-Shouldn't we be able to point to them from the consumers that
-would also be in DT? I'm a little lost.
+Are there two patch series that touch the same clk binding
+document?  Can you please combine them and resend them if that's
+the case?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
