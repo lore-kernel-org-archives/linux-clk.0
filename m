@@ -1,41 +1,33 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: lars@metafoo.de,
-	dan.carpenter@oracle.com,
-	ssantosh@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/3] clk: keystone: Fix some error handling paths
-Date: Mon, 24 Oct 2016 22:43:23 +0200
-Message-Id: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 20 Oct 2016 16:50:07 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, kernel@pengutronix.de,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: mxs: don't register a clkdev for enet_out
+Message-ID: <20161020235007.GF26139@codeaurora.org>
+References: <20161020075840.16406-1-u.kleine-koenig@pengutronix.de>
+ <20161020075840.16406-2-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20161020075840.16406-2-u.kleine-koenig@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The first of these 3 patches is a v2 of a patch posted earlier.
-The main change in this v2 is the propagation of the error returned by
-'clk_register_pll()'.
+On 10/20, Uwe Kleine-König wrote:
+> The last user is gone in the previous commit. So this can be removed, too.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
 
-The 2nd one is completely un-related and fixes some typo in error messages
-spoted while looking at the file.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Finaly, the 3rd one refactors the '_of_pll_clk_init' function in order to
-factorize some cleanups in case of error and to add some missing 'iounmap()'
-calls if 'clk_register_pll()' fails.
-
-These patches are un-compiled. I get some errors for some reasons in my build
-environment. I've not checked further the root cause of these build errors
-but I guess that my plateform is not what is expected to build this code.
-
-Christophe JAILLET (3):
-  clk: keystone: Fix an error checking
-  clk: keystone: Fix some error messages
-  clk: keystone: Fix missing iounmap calls in an error handling path
-
- drivers/clk/keystone/pll.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+I'm fine if this goes through arm-soc if you want to bunch them
+together. Otherwise just resend the patch once the ARM side
+merges into some -rc1 and we can remove it in the next next
+release.
 
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
