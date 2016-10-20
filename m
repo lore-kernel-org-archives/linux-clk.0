@@ -1,44 +1,39 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 3/6] clk: pxa: b bit of clkcfg means fast bus
-Date: Mon, 10 Oct 2016 22:09:06 +0200
-Message-Id: <1476130149-31834-4-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <tglx@linutronix.de>
+Date: Thu, 20 Oct 2016 23:52:38 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Irina Tirdea <irina.tirdea@intel.com>
+cc: linux-clk@vger.kernel.org, x86@kernel.org,
+    Stephen Boyd <sboyd@codeaurora.org>, Ingo Molnar <mingo@redhat.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    "H. Peter Anvin" <hpa@zytor.com>, alsa-devel@alsa-project.org,
+    Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+    Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+    LKML <linux-kernel@vger.kernel.org>,
+    Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+    Darren Hart <dvhart@infradead.org>
+Subject: Re: [RESEND PATCH v4] clk: x86: Add Atom PMC platform clocks
+In-Reply-To: <1476735320-4315-1-git-send-email-irina.tirdea@intel.com>
+Message-ID: <alpine.DEB.2.20.1610202349200.4938@nanos>
+References: <1476735320-4315-1-git-send-email-irina.tirdea@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The meaning of this bit was inverted :
- - when set to 0, system bus clock is half of the CPU run clock
- - when set to 1, system bus clock is the CPU run clock
+On Mon, 17 Oct 2016, Irina Tirdea wrote:
+> The patch has already been reviewed by Stephen Boyd [1].
+> The only remaining question is the one pointed out by Stephen:
+> "Will there be problems if this merges through clk tree? If so we
+> could take the clk driver part and the platform data include part
+> could be duplicated into both trees. Or clk tree could be pulled
+> into x86?" [1]
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/clk/pxa/clk-pxa27x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The proper thing to do is:
 
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 3930053543a3..3b36e8d0f81e 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -291,9 +291,9 @@ static unsigned long clk_pxa27x_system_bus_get_rate(struct clk_hw *hw,
- 	if (osc_forced)
- 		return parent_rate;
- 	if (b)
--		return parent_rate / 2;
--	else
- 		return parent_rate;
-+	else
-+		return parent_rate / 2;
- }
- 
- static u8 clk_pxa27x_system_bus_get_parent(struct clk_hw *hw)
--- 
-2.1.4
+Move all that cruft including arch/x86/platform/atom/pmc_atom.c into
+drivers/platform/x86. There is nothing architecture specific in these
+files. It's pure peripheral driver enablement. So drivers/platform/x86 is
+the proper location for this. Please discuss this with Darren Hart (cc'ed).
+
+Thanks,
+
+	tglx
