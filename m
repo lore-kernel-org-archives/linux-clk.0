@@ -1,34 +1,30 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rnayak@codeaurora.org,
-	stanimir.varbanov@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 0/3] clk: qcom: Add support for hw controlled gdscs/clocks
-Date: Mon, 24 Oct 2016 15:48:14 +0530
-Message-Id: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 20 Oct 2016 16:42:03 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: boris.brezillon@free-electrons.com, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] clk: at91: Fix a return value in case of error
+Message-ID: <20161020234203.GE26139@codeaurora.org>
+References: <1474804438-27804-1-git-send-email-christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474804438-27804-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for gdscs(powerdomains) that can be configured
-in hw controlled mode. So they are turned 'ON' based on needs dynamically,
-helping to save power. Also updated the venus video ip's gdsc/clock
-data to put them in hw control.
+On 09/25, Christophe JAILLET wrote:
+> If 'clk_hw_register()' fails, it is likely that we expect to return an
+> error instead of a valid pointer (which would mean success).
+> 
+> Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
+> and OF APIs")
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Rajendra Nayak (1):
-  clk: qcom: gdsc: Add support for gdscs with HW control
-
-Sricharan R (2):
-  clk: qcom: Put venus core0/1 gdscs to hw control mode
-  clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
-
- drivers/clk/qcom/gdsc.c         | 15 +++++++++++++++
- drivers/clk/qcom/gdsc.h         |  1 +
- drivers/clk/qcom/mmcc-msm8996.c |  4 ++++
- 3 files changed, 20 insertions(+)
+Applied to clk-fixes
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
