@@ -1,128 +1,69 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 04/15] clk: ti: add support for automatic clock alias generation
-Date: Tue, 18 Oct 2016 18:45:57 +0300
-Message-ID: <1476805568-19264-5-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robdclark@gmail.com,
+	jcrouse@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 2/2] clk: qcom: mmcc-8996: Add gpu gdscs
+Date: Thu, 20 Oct 2016 15:08:07 +0530
+Message-Id: <1476956287-13749-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
+References: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Large portions of the OMAP framework still depend on the support of
-having clock aliases in place, so add support functions for generating
-these automatically.
+Add gpu gdsc data for msm8996
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/clk/ti/clk.c   | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/ti/clock.h |  5 ++++
- 2 files changed, 69 insertions(+)
+ drivers/clk/qcom/mmcc-msm8996.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 5fcf247..91bad55 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -24,6 +24,7 @@
- #include <linux/list.h>
- #include <linux/regmap.h>
- #include <linux/bootmem.h>
-+#include <linux/device.h>
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index ca97e11..f77206f 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3034,6 +3034,28 @@ enum {
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
  
- #include "clock.h"
++static struct gdsc gpu_gdsc = {
++	.gdscr = 0x4034,
++	.gds_hw_ctrl = 0x4038,
++	.pd = {
++		.name = "gpu",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc gpu_gx_gdsc = {
++	.gdscr = 0x4024,
++	.clamp_io_ctrl = 0x4300,
++	.cxcs = (unsigned int []){ 0x4028 },
++	.cxc_count = 1,
++	.pd = {
++		.name = "gpu_gx",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = CLAMP_IO,
++};
++
+ static struct clk_regmap *mmcc_msm8996_clocks[] = {
+ 	[MMPLL0_EARLY] = &mmpll0_early.clkr,
+ 	[MMPLL0_PLL] = &mmpll0.clkr,
+@@ -3223,6 +3245,8 @@ enum {
+ 	[CPP_GDSC] = &cpp_gdsc,
+ 	[FD_GDSC] = &fd_gdsc,
+ 	[MDSS_GDSC] = &mdss_gdsc,
++	[GPU_GDSC] = &gpu_gdsc,
++	[GPU_GX_GDSC] = &gpu_gx_gdsc,
+ };
  
-@@ -453,3 +454,66 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
- 		clk_prepare_enable(init_clk);
- 	}
- }
-+
-+/**
-+ * ti_clk_add_alias - add a clock alias for a TI clock
-+ * @dev: device alias for this clock
-+ * @clk: clock handle to create alias for
-+ * @con: connection ID for this clock
-+ *
-+ * Creates a clock alias for a TI clock. Allocates the clock lookup entry
-+ * and assigns the data to it. Returns 0 if successful, negative error
-+ * value otherwise.
-+ */
-+int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con)
-+{
-+	struct clk_lookup *cl;
-+
-+	if (!clk)
-+		return 0;
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	cl = kzalloc(sizeof(*cl), GFP_KERNEL);
-+	if (!cl)
-+		return -ENOMEM;
-+
-+	if (dev)
-+		cl->dev_id = dev_name(dev);
-+	cl->con_id = con;
-+	cl->clk = clk;
-+
-+	clkdev_add(cl);
-+
-+	return 0;
-+}
-+
-+/**
-+ * ti_clk_register - register a TI clock to the common clock framework
-+ * @dev: device for this clock
-+ * @hw: hardware clock handle
-+ * @con: connection ID for this clock
-+ *
-+ * Registers a TI clock to the common clock framework, and adds a clock
-+ * alias for it. Returns a handle to the registered clock if successful,
-+ * ERR_PTR value in failure.
-+ */
-+struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
-+			    const char *con)
-+{
-+	struct clk *clk;
-+	int ret;
-+
-+	clk = clk_register(dev, hw);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = ti_clk_add_alias(dev, clk, con);
-+	if (ret) {
-+		clk_unregister(clk);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 7eca8a1..6bf962d 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -16,6 +16,8 @@
- #ifndef __DRIVERS_CLK_TI_CLOCK__
- #define __DRIVERS_CLK_TI_CLOCK__
- 
-+#include <linux/clkdev.h>
-+
- enum {
- 	TI_CLK_FIXED,
- 	TI_CLK_MUX,
-@@ -189,6 +191,9 @@ struct ti_dt_clk {
- struct clk *ti_clk_register_divider(struct ti_clk *setup);
- struct clk *ti_clk_register_composite(struct ti_clk *setup);
- struct clk *ti_clk_register_dpll(struct ti_clk *setup);
-+struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
-+			    const char *con);
-+int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
- 
- struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
- struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
+ static const struct qcom_reset_map mmcc_msm8996_resets[] = {
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
