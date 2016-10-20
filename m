@@ -1,49 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 17 Oct 2016 15:28:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix the clock provider
- registration
-Message-ID: <20161017222851.GH8871@codeaurora.org>
-References: <20160929142855.30408-1-gregory.clement@free-electrons.com>
- <87h98ovb4i.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87h98ovb4i.fsf@free-electrons.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v5 3/4] Documentation: devicetree: add vendor prefix for Pine64
+Date: Thu, 20 Oct 2016 20:00:31 +0200
+Message-Id: <73852fb92ac0aeec294dc9883cf235d9fa74a07b.1476986335.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/07, Gregory CLEMENT wrote:
-> Hi Stephen and Mike
->  
->  On jeu., sept. 29 2016, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-> 
-> > While trying using a peripheral clock on a driver, I saw that the clock
-> > pointer returned by the provider was NULL.
-> >
-> > The problem was a missing indirection. It was the pointer stored in the
-> > hws array which needed to be updated not the value it contains.
-> >
-> > Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> 
-> I saw that you already did the pull request for the clk subsystem.
-> 
-> Do you consider to do a another pull request for the fixes?
-> 
-> It would be nice to have this driver working since the rc1 :)
-> 
-> For this driver an other fix is needed:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2016-September/459640.html
-> 
+From: Andre Przywara <andre.przywara@arm.com>
 
-Yep I was on vacation/conferencing during the merge window. I'll
-be sending off a set of fixes in a couple days.
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+[Maxime: Change title prefix to match the usual style]
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index f0a48ea78659..4eefd1c3ff16 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -208,7 +208,7 @@ parade	Parade Technologies Inc.
+ pericom	Pericom Technology Inc.
+ phytec	PHYTEC Messtechnik GmbH
+ picochip	Picochip Ltd
+-pixcir  PIXCIR MICROELECTRONICS Co., Ltd
++pine64	Pine64
+ plathome	Plat'Home Co., Ltd.
+ plda	PLDA
+ powervr	PowerVR (deprecated, use img)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.8.10
