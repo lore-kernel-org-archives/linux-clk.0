@@ -1,374 +1,1331 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A7745 support
-Date: Thu, 27 Oct 2016 23:43:31 +0300
-Message-ID: <5012234.NZmvoVqhq0@wasted.cogentembedded.com>
-In-Reply-To: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v5 1/4] clk: sunxi-ng: Add A64 clocks
+Date: Thu, 20 Oct 2016 20:00:29 +0200
+Message-Id: <644b94c7a8fb2feb9da71e8ece2d1ae4523f2917.1476986335.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
-Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-(and RZ/G) code.
+Add the A64 CCU clocks set.
 
-Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-<geert+renesas@glider.be>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
- drivers/clk/renesas/Kconfig                                  |    1 
- drivers/clk/renesas/Makefile                                 |    1 
- drivers/clk/renesas/r8a7745-cpg-mssr.c                       |  261 +++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
- drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
- 6 files changed, 273 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt |   1 +-
+ drivers/clk/sunxi-ng/Kconfig                          |  11 +-
+ drivers/clk/sunxi-ng/Makefile                         |   1 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c                 | 917 +++++++++++-
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  72 +-
+ include/dt-bindings/clock/sun50i-a64-ccu.h            | 134 ++-
+ include/dt-bindings/reset/sun50i-a64-ccu.h            |  98 +-
+ 7 files changed, 1234 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+ create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
 
-Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -14,6 +14,7 @@ They provide the following functionaliti
- Required Properties:
-   - compatible: Must be one of:
-       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
-+      - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 3868458a5feb..74d44a4273f2 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -7,6 +7,7 @@ Required properties :
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
++		- "allwinner,sun50i-a64-ccu"
  
-@@ -23,8 +24,8 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7743, r8a7795, r8a7796)
--      - "usb_extal" (r8a7743)
-+      - "extal" (r8a7743, r8a7745, r8a7795, r8a7796)
-+      - "usb_extal" (r8a7743, r8a7745)
-       - "extalr" (r8a7795, r8a7796)
+ - reg: Must contain the registers base address and length
+ - clocks: phandle to the oscillators feeding the CCU. Two are needed:
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 1b4c55a53d7a..8454c6e3dd65 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -53,6 +53,17 @@ config SUNXI_CCU_MP
  
-   - #clock-cells: Must be 2
-Index: linux/drivers/clk/renesas/Kconfig
-===================================================================
---- linux.orig/drivers/clk/renesas/Kconfig
-+++ linux/drivers/clk/renesas/Kconfig
-@@ -1,6 +1,7 @@
- config CLK_RENESAS_CPG_MSSR
- 	bool
- 	default y if ARCH_R8A7743
-+	default y if ARCH_R8A7745
- 	default y if ARCH_R8A7795
- 	default y if ARCH_R8A7796
+ # SoC Drivers
  
-Index: linux/drivers/clk/renesas/Makefile
-===================================================================
---- linux.orig/drivers/clk/renesas/Makefile
-+++ linux/drivers/clk/renesas/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
- obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7743)		+= r8a7743-cpg-mssr.o rcar-gen2-cpg.o
-+obj-$(CONFIG_ARCH_R8A7745)		+= r8a7745-cpg-mssr.o rcar-gen2-cpg.o
- obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
-Index: linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
-===================================================================
++config SUN50I_A64_CCU
++	bool "Support for the Allwinner A64 CCU"
++	select SUNXI_CCU_DIV
++	select SUNXI_CCU_NK
++	select SUNXI_CCU_NKM
++	select SUNXI_CCU_NKMP
++	select SUNXI_CCU_NM
++	select SUNXI_CCU_MP
++	select SUNXI_CCU_PHASE
++	default ARM64 && ARCH_SUNXI
++
+ config SUN6I_A31_CCU
+ 	bool "Support for the Allwinner A31/A31s CCU"
+ 	select SUNXI_CCU_DIV
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 106cba27c331..24fbc6e5deb8 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_SUNXI_CCU_NM)	+= ccu_nm.o
+ obj-$(CONFIG_SUNXI_CCU_MP)	+= ccu_mp.o
+ 
+ # SoC support
++obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
+ obj-$(CONFIG_SUN6I_A31_CCU)	+= ccu-sun6i-a31.o
+ obj-$(CONFIG_SUN8I_A23_CCU)	+= ccu-sun8i-a23.o
+ obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+new file mode 100644
+index 000000000000..41aa8cc151df
 --- /dev/null
-+++ linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -0,0 +1,261 @@
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -0,0 +1,917 @@
 +/*
-+ * r8a7745 Clock Pulse Generator / Module Standby and Software Reset
++ * Copyright (c) 2016 Maxime Ripard. All rights reserved.
 + *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
 + *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published
-+ * by the Free Software Foundation; of the License.
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/soc/renesas/rcar-rst.h>
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
 +
-+#include <dt-bindings/clock/r8a7745-cpg-mssr.h>
++#include "ccu_common.h"
++#include "ccu_reset.h"
 +
-+#include "renesas-cpg-mssr.h"
-+#include "rcar-gen2-cpg.h"
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_mp.h"
++#include "ccu_mult.h"
++#include "ccu_nk.h"
++#include "ccu_nkm.h"
++#include "ccu_nkmp.h"
++#include "ccu_nm.h"
++#include "ccu_phase.h"
 +
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R8A7745_CLK_OSC,
++#include "ccu-sun50i-a64.h"
 +
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+	CLK_USB_EXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_MAIN,
-+	CLK_PLL0,
-+	CLK_PLL1,
-+	CLK_PLL3,
-+	CLK_PLL1_DIV2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE
-+};
-+
-+static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal",	CLK_EXTAL),
-+	DEF_INPUT("usb_extal",	CLK_USB_EXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_BASE(".main",	CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
-+	DEF_BASE(".pll0",	CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
-+	DEF_BASE(".pll1",	CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
-+	DEF_BASE(".pll3",	CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
-+
-+	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
-+
-+	/* Core Clock Outputs */
-+	DEF_BASE("lb",	 R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
-+	DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
-+	DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-+	DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
-+	DEF_BASE("rcan", R8A7745_CLK_RCAN, CLK_TYPE_GEN2_RCAN, CLK_USB_EXTAL),
-+
-+	DEF_FIXED("z2",     R8A7745_CLK_Z2,    CLK_PLL0,	  1, 1),
-+	DEF_FIXED("zg",     R8A7745_CLK_ZG,    CLK_PLL1,          6, 1),
-+	DEF_FIXED("zx",     R8A7745_CLK_ZX,    CLK_PLL1,          3, 1),
-+	DEF_FIXED("zs",     R8A7745_CLK_ZS,    CLK_PLL1,          6, 1),
-+	DEF_FIXED("hp",     R8A7745_CLK_HP,    CLK_PLL1,         12, 1),
-+	DEF_FIXED("b",      R8A7745_CLK_B,     CLK_PLL1,         12, 1),
-+	DEF_FIXED("p",      R8A7745_CLK_P,     CLK_PLL1,         24, 1),
-+	DEF_FIXED("cl",     R8A7745_CLK_CL,    CLK_PLL1,         48, 1),
-+	DEF_FIXED("cp",     R8A7745_CLK_CP,    CLK_PLL1,         48, 1),
-+	DEF_FIXED("m2",     R8A7745_CLK_M2,    CLK_PLL1,          8, 1),
-+	DEF_FIXED("zb3",    R8A7745_CLK_ZB3,   CLK_PLL3,          4, 1),
-+	DEF_FIXED("zb3d2",  R8A7745_CLK_ZB3D2, CLK_PLL3,          8, 1),
-+	DEF_FIXED("ddr",    R8A7745_CLK_DDR,   CLK_PLL3,          8, 1),
-+	DEF_FIXED("mp",     R8A7745_CLK_MP,    CLK_PLL1_DIV2,    15, 1),
-+	DEF_FIXED("acp",    R8A7745_CLK_ACP,   CLK_EXTAL,         2, 1),
-+	DEF_FIXED("r",      R8A7745_CLK_R,     CLK_PLL1,      49152, 1),
-+	DEF_FIXED("osc",    R8A7745_CLK_OSC,   CLK_PLL1,      12288, 1),
-+
-+	DEF_DIV6P1("sd2",   R8A7745_CLK_SD2,   CLK_PLL1_DIV2, 0x078),
-+	DEF_DIV6P1("sd3",   R8A7745_CLK_SD3,   CLK_PLL1_DIV2, 0x26c),
-+	DEF_DIV6P1("mmc0",  R8A7745_CLK_MMC0,  CLK_PLL1_DIV2, 0x240),
-+};
-+
-+static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
-+	DEF_MOD("msiof0",	    0,	R8A7745_CLK_MP),
-+	DEF_MOD("vcp0",		  101,	R8A7745_CLK_ZS),
-+	DEF_MOD("vpc0",		  103,	R8A7745_CLK_ZS),
-+	DEF_MOD("tmu1",		  111,	R8A7745_CLK_P),
-+	DEF_MOD("3dg",		  112,	R8A7745_CLK_ZG),
-+	DEF_MOD("2d-dmac",	  115,	R8A7745_CLK_ZS),
-+	DEF_MOD("fdp1-1",	  118,	R8A7745_CLK_ZS),
-+	DEF_MOD("fdp1-0",	  119,	R8A7745_CLK_ZS),
-+	DEF_MOD("tmu3",		  121,	R8A7745_CLK_P),
-+	DEF_MOD("tmu2",		  122,	R8A7745_CLK_P),
-+	DEF_MOD("cmt0",		  124,	R8A7745_CLK_R),
-+	DEF_MOD("tmu0",		  125,	R8A7745_CLK_CP),
-+	DEF_MOD("vsp1du0",	  128,	R8A7745_CLK_ZS),
-+	DEF_MOD("vsp1-sy",	  131,	R8A7745_CLK_ZS),
-+	DEF_MOD("scifa2",	  202,	R8A7745_CLK_MP),
-+	DEF_MOD("scifa1",	  203,	R8A7745_CLK_MP),
-+	DEF_MOD("scifa0",	  204,	R8A7745_CLK_MP),
-+	DEF_MOD("msiof2",	  205,	R8A7745_CLK_MP),
-+	DEF_MOD("scifb0",	  206,	R8A7745_CLK_MP),
-+	DEF_MOD("scifb1",	  207,	R8A7745_CLK_MP),
-+	DEF_MOD("msiof1",	  208,	R8A7745_CLK_MP),
-+	DEF_MOD("scifb2",	  216,	R8A7745_CLK_MP),
-+	DEF_MOD("sys-dmac1",	  218,	R8A7745_CLK_ZS),
-+	DEF_MOD("sys-dmac0",	  219,	R8A7745_CLK_ZS),
-+	DEF_MOD("tpu0",		  304,	R8A7745_CLK_CP),
-+	DEF_MOD("sdhi3",	  311,	R8A7745_CLK_SD3),
-+	DEF_MOD("sdhi2",	  312,	R8A7745_CLK_SD2),
-+	DEF_MOD("sdhi0",	  314,	R8A7745_CLK_SD0),
-+	DEF_MOD("mmcif0",	  315,	R8A7745_CLK_MMC0),
-+	DEF_MOD("iic0",		  318,	R8A7745_CLK_HP),
-+	DEF_MOD("iic1",		  323,	R8A7745_CLK_HP),
-+	DEF_MOD("cmt1",		  329,	R8A7745_CLK_R),
-+	DEF_MOD("usbhs-dmac0",	  330,	R8A7745_CLK_HP),
-+	DEF_MOD("usbhs-dmac1",	  331,	R8A7745_CLK_HP),
-+	DEF_MOD("irqc",		  407,	R8A7745_CLK_CP),
-+	DEF_MOD("intc-sys",	  408,	R8A7745_CLK_ZS),
-+	DEF_MOD("audio-dmac0",	  502,	R8A7745_CLK_HP),
-+	DEF_MOD("thermal",	  522,	CLK_EXTAL),
-+	DEF_MOD("pwm",		  523,	R8A7745_CLK_P),
-+	DEF_MOD("usb-ehci",	  703,	R8A7745_CLK_MP),
-+	DEF_MOD("usbhs",	  704,	R8A7745_CLK_HP),
-+	DEF_MOD("hscif2",	  713,	R8A7745_CLK_ZS),
-+	DEF_MOD("scif5",	  714,	R8A7745_CLK_P),
-+	DEF_MOD("scif4",	  715,	R8A7745_CLK_P),
-+	DEF_MOD("hscif1",	  716,	R8A7745_CLK_ZS),
-+	DEF_MOD("hscif0",	  717,	R8A7745_CLK_ZS),
-+	DEF_MOD("scif3",	  718,	R8A7745_CLK_P),
-+	DEF_MOD("scif2",	  719,	R8A7745_CLK_P),
-+	DEF_MOD("scif1",	  720,	R8A7745_CLK_P),
-+	DEF_MOD("scif0",	  721,	R8A7745_CLK_P),
-+	DEF_MOD("du0",		  724,	R8A7745_CLK_ZX),
-+	DEF_MOD("ipmmu-sgx",	  800,	R8A7745_CLK_ZX),
-+	DEF_MOD("vin1",		  810,	R8A7745_CLK_ZG),
-+	DEF_MOD("vin0",		  811,	R8A7745_CLK_ZG),
-+	DEF_MOD("etheravb",	  812,	R8A7745_CLK_HP),
-+	DEF_MOD("ether",	  813,	R8A7745_CLK_P),
-+	DEF_MOD("gpio6",	  905,	R8A7745_CLK_CP),
-+	DEF_MOD("gpio5",	  907,	R8A7745_CLK_CP),
-+	DEF_MOD("gpio4",	  908,	R8A7745_CLK_CP),
-+	DEF_MOD("gpio3",	  909,	R8A7745_CLK_CP),
-+	DEF_MOD("gpio2",	  910,	R8A7745_CLK_CP),
-+	DEF_MOD("gpio1",	  911,	R8A7745_CLK_CP),
-+	DEF_MOD("gpio0",	  912,	R8A7745_CLK_CP),
-+	DEF_MOD("can1",		  915,	R8A7745_CLK_P),
-+	DEF_MOD("can0",		  916,	R8A7745_CLK_P),
-+	DEF_MOD("qspi_mod",	  917,	R8A7745_CLK_QSPI),
-+	DEF_MOD("i2c5",		  925,	R8A7745_CLK_HP),
-+	DEF_MOD("i2c4",		  927,	R8A7745_CLK_HP),
-+	DEF_MOD("i2c3",		  928,	R8A7745_CLK_HP),
-+	DEF_MOD("i2c2",		  929,	R8A7745_CLK_HP),
-+	DEF_MOD("i2c1",		  930,	R8A7745_CLK_HP),
-+	DEF_MOD("i2c0",		  931,	R8A7745_CLK_HP),
-+	DEF_MOD("ssi-all",	 1005,	R8A7745_CLK_P),
-+	DEF_MOD("ssi9",		 1006,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi8",		 1007,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi7",		 1008,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi6",		 1009,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi5",		 1010,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi4",		 1011,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi3",		 1012,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi2",		 1013,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi1",		 1014,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi0",		 1015,	MOD_CLK_ID(1005)),
-+	DEF_MOD("scu-all",	 1017,	R8A7745_CLK_P),
-+	DEF_MOD("scu-dvc1",	 1018,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-dvc0",	 1019,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu1-mix1", 1020,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu0-mix0", 1021,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src9",	 1022,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src8",	 1023,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src7",	 1024,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src6",	 1025,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src5",	 1026,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src4",	 1027,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src3",	 1028,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src2",	 1029,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src1",	 1030,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src0",	 1031,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scifa3",	 1106,	R8A7745_CLK_MP),
-+	DEF_MOD("scifa4",	 1107,	R8A7745_CLK_MP),
-+	DEF_MOD("scifa5",	 1108,	R8A7745_CLK_MP),
-+};
-+
-+static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
++static struct ccu_nkmp pll_cpux_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT(8, 5),
++	.k		= _SUNXI_CCU_MULT(4, 2),
++	.m		= _SUNXI_CCU_DIV(0, 2),
++	.p		= _SUNXI_CCU_DIV_MAX(16, 2, 4),
++	.common		= {
++		.reg		= 0x000,
++		.hw.init	= CLK_HW_INIT("pll-cpux",
++					      "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
 +};
 +
 +/*
-+ * CPG Clock Data
-+ */
-+
-+/*
-+ *    MD	EXTAL		PLL0	PLL1	PLL3
-+ * 14 13 19	(MHz)		*1	*2
-+ *---------------------------------------------------
-+ * 0  0  0	15		x200/3	x208/2	x106
-+ * 0  0  1	15		x200/3	x208/2	x88
-+ * 0  1  0	20		x150/3	x156/2	x80
-+ * 0  1  1	20		x150/3	x156/2	x66
-+ * 1  0  0	26 / 2		x230/3	x240/2	x122
-+ * 1  0  1	26 / 2		x230/3	x240/2	x102
-+ * 1  1  0	30 / 2		x200/3	x208/2	x106
-+ * 1  1  1	30 / 2		x200/3	x208/2	x88
++ * The Audio PLL is supposed to have 4 outputs: 3 fixed factors from
++ * the base (2x, 4x and 8x), and one variable divider (the one true
++ * pll audio).
 + *
-+ * *1 :	Table 7.5b indicates VCO output (PLL0 = VCO/3)
-+ * *2 :	Table 7.5b indicates VCO output (PLL1 = VCO/2)
++ * We don't have any need for the variable divider for now, so we just
++ * hardcode it to match with the clock names
 + */
-+#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
-+					 (((md) & BIT(13)) >> 12) | \
-+					 (((md) & BIT(19)) >> 19))
++#define SUN50I_A64_PLL_AUDIO_REG	0x008
 +
-+static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
-+	/* EXTAL div	PLL1 mult	PLL3 mult	PLL0 mult */
-+	{ 1,		208,		106,		200	},
-+	{ 1,		208,		88,		200	},
-+	{ 1,		156,		80,		150	},
-+	{ 1,		156,		66,		150	},
-+	{ 2,		240,		122,		230	},
-+	{ 2,		240,		102,		230	},
-+	{ 2,		208,		106,		200	},
-+	{ 2,		208,		88,		200	},
++static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
++				   "osc24M", 0x008,
++				   8, 7,	/* N */
++				   0, 5,	/* M */
++				   BIT(31),	/* gate */
++				   BIT(28),	/* lock */
++				   CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
++					"osc24M", 0x010,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
++					"osc24M", 0x018,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr0_clk, "pll-ddr0",
++				    "osc24M", 0x020,
++				    8, 5,	/* N */
++				    4, 2,	/* K */
++				    0, 2,	/* M */
++				    BIT(31),	/* gate */
++				    BIT(28),	/* lock */
++				    CLK_SET_RATE_UNGATE);
++
++static struct ccu_nk pll_periph0_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT(8, 5),
++	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
++	.fixed_post_div	= 2,
++	.common		= {
++		.reg		= 0x028,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-periph0", "osc24M",
++					      &ccu_nk_ops, CLK_SET_RATE_UNGATE),
++	},
 +};
 +
-+static int __init r8a7745_cpg_mssr_init(struct device *dev)
++static struct ccu_nk pll_periph1_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT(8, 5),
++	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
++	.fixed_post_div	= 2,
++	.common		= {
++		.reg		= 0x02c,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-periph1", "osc24M",
++					      &ccu_nk_ops, CLK_SET_RATE_UNGATE),
++	},
++};
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
++					"osc24M", 0x030,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
++					"osc24M", 0x038,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++/*
++ * The output function can be changed to something more complex that
++ * we do not handle yet.
++ *
++ * Hardcode the mode so that we don't fall in that case.
++ */
++#define SUN50I_A64_PLL_MIPI_REG		0x040
++
++struct ccu_nkm pll_mipi_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT(8, 4),
++	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
++	.m		= _SUNXI_CCU_DIV(0, 4),
++	.common		= {
++		.reg		= 0x040,
++		.hw.init	= CLK_HW_INIT("pll-mipi", "pll-video0",
++					      &ccu_nkm_ops, CLK_SET_RATE_UNGATE),
++	},
++};
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_hsic_clk, "pll-hsic",
++					"osc24M", 0x044,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
++					"osc24M", 0x048,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
++				   "osc24M", 0x04c,
++				   8, 7,	/* N */
++				   0, 2,	/* M */
++				   BIT(31),	/* gate */
++				   BIT(28),	/* lock */
++				   CLK_SET_RATE_UNGATE);
++
++static const char * const cpux_parents[] = { "osc32k", "osc24M",
++					     "pll-cpux" , "pll-cpux" };
++static SUNXI_CCU_MUX(cpux_clk, "cpux", cpux_parents,
++		     0x050, 16, 2, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
++
++static const char * const ahb1_parents[] = { "osc32k", "osc24M",
++					     "axi" , "pll-periph0" };
++static struct ccu_div ahb1_clk = {
++	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
++
++	.mux		= {
++		.shift	= 12,
++		.width	= 2,
++
++		.variable_prediv	= {
++			.index	= 3,
++			.shift	= 6,
++			.width	= 2,
++		},
++	},
++
++	.common		= {
++		.reg		= 0x054,
++		.features	= CCU_FEATURE_VARIABLE_PREDIV,
++		.hw.init	= CLK_HW_INIT_PARENTS("ahb1",
++						      ahb1_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
++
++static struct clk_div_table apb1_div_table[] = {
++	{ .val = 0, .div = 2 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 8 },
++	{ /* Sentinel */ },
++};
++static SUNXI_CCU_DIV_TABLE(apb1_clk, "apb1", "ahb1",
++			   0x054, 8, 2, apb1_div_table, 0);
++
++static const char * const apb2_parents[] = { "osc32k", "osc24M",
++					     "pll-periph0-2x" ,
++					     "pll-periph0-2x" };
++static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
++			     0, 5,	/* M */
++			     16, 2,	/* P */
++			     24, 2,	/* mux */
++			     0);
++
++static const char * const ahb2_parents[] = { "ahb1" , "pll-periph0" };
++static const struct ccu_mux_fixed_prediv ahb2_fixed_predivs[] = {
++	{ .index = 1, .div = 2 },
++};
++static struct ccu_mux ahb2_clk = {
++	.mux		= {
++		.shift	= 0,
++		.width	= 1,
++		.fixed_predivs	= ahb2_fixed_predivs,
++		.n_predivs	= ARRAY_SIZE(ahb2_fixed_predivs),
++	},
++
++	.common		= {
++		.reg		= 0x05c,
++		.features	= CCU_FEATURE_FIXED_PREDIV,
++		.hw.init	= CLK_HW_INIT_PARENTS("ahb2",
++						      ahb2_parents,
++						      &ccu_mux_ops,
++						      0),
++	},
++};
++
++static SUNXI_CCU_GATE(bus_mipi_dsi_clk,	"bus-mipi-dsi",	"ahb1",
++		      0x060, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_ce_clk,	"bus-ce",	"ahb1",
++		      0x060, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_dma_clk,	"bus-dma",	"ahb1",
++		      0x060, BIT(6), 0);
++static SUNXI_CCU_GATE(bus_mmc0_clk,	"bus-mmc0",	"ahb1",
++		      0x060, BIT(8), 0);
++static SUNXI_CCU_GATE(bus_mmc1_clk,	"bus-mmc1",	"ahb1",
++		      0x060, BIT(9), 0);
++static SUNXI_CCU_GATE(bus_mmc2_clk,	"bus-mmc2",	"ahb1",
++		      0x060, BIT(10), 0);
++static SUNXI_CCU_GATE(bus_nand_clk,	"bus-nand",	"ahb1",
++		      0x060, BIT(13), 0);
++static SUNXI_CCU_GATE(bus_dram_clk,	"bus-dram",	"ahb1",
++		      0x060, BIT(14), 0);
++static SUNXI_CCU_GATE(bus_emac_clk,	"bus-emac",	"ahb2",
++		      0x060, BIT(17), 0);
++static SUNXI_CCU_GATE(bus_ts_clk,	"bus-ts",	"ahb1",
++		      0x060, BIT(18), 0);
++static SUNXI_CCU_GATE(bus_hstimer_clk,	"bus-hstimer",	"ahb1",
++		      0x060, BIT(19), 0);
++static SUNXI_CCU_GATE(bus_spi0_clk,	"bus-spi0",	"ahb1",
++		      0x060, BIT(20), 0);
++static SUNXI_CCU_GATE(bus_spi1_clk,	"bus-spi1",	"ahb1",
++		      0x060, BIT(21), 0);
++static SUNXI_CCU_GATE(bus_otg_clk,	"bus-otg",	"ahb1",
++		      0x060, BIT(23), 0);
++static SUNXI_CCU_GATE(bus_ehci0_clk,	"bus-ehci0",	"ahb1",
++		      0x060, BIT(24), 0);
++static SUNXI_CCU_GATE(bus_ehci1_clk,	"bus-ehci1",	"ahb2",
++		      0x060, BIT(25), 0);
++static SUNXI_CCU_GATE(bus_ohci0_clk,	"bus-ohci0",	"ahb1",
++		      0x060, BIT(28), 0);
++static SUNXI_CCU_GATE(bus_ohci1_clk,	"bus-ohci1",	"ahb2",
++		      0x060, BIT(29), 0);
++
++static SUNXI_CCU_GATE(bus_ve_clk,	"bus-ve",	"ahb1",
++		      0x064, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_tcon0_clk,	"bus-tcon0",	"ahb1",
++		      0x064, BIT(3), 0);
++static SUNXI_CCU_GATE(bus_tcon1_clk,	"bus-tcon1",	"ahb1",
++		      0x064, BIT(4), 0);
++static SUNXI_CCU_GATE(bus_deinterlace_clk,	"bus-deinterlace",	"ahb1",
++		      0x064, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_csi_clk,	"bus-csi",	"ahb1",
++		      0x064, BIT(8), 0);
++static SUNXI_CCU_GATE(bus_hdmi_clk,	"bus-hdmi",	"ahb1",
++		      0x064, BIT(11), 0);
++static SUNXI_CCU_GATE(bus_de_clk,	"bus-de",	"ahb1",
++		      0x064, BIT(12), 0);
++static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
++		      0x064, BIT(20), 0);
++static SUNXI_CCU_GATE(bus_msgbox_clk,	"bus-msgbox",	"ahb1",
++		      0x064, BIT(21), 0);
++static SUNXI_CCU_GATE(bus_spinlock_clk,	"bus-spinlock",	"ahb1",
++		      0x064, BIT(22), 0);
++
++static SUNXI_CCU_GATE(bus_codec_clk,	"bus-codec",	"apb1",
++		      0x068, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_spdif_clk,	"bus-spdif",	"apb1",
++		      0x068, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_pio_clk,	"bus-pio",	"apb1",
++		      0x068, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_ths_clk,	"bus-ths",	"apb1",
++		      0x068, BIT(8), 0);
++static SUNXI_CCU_GATE(bus_i2s0_clk,	"bus-i2s0",	"apb1",
++		      0x068, BIT(12), 0);
++static SUNXI_CCU_GATE(bus_i2s1_clk,	"bus-i2s1",	"apb1",
++		      0x068, BIT(13), 0);
++static SUNXI_CCU_GATE(bus_i2s2_clk,	"bus-i2s2",	"apb1",
++		      0x068, BIT(14), 0);
++
++static SUNXI_CCU_GATE(bus_i2c0_clk,	"bus-i2c0",	"apb2",
++		      0x06c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_i2c1_clk,	"bus-i2c1",	"apb2",
++		      0x06c, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_i2c2_clk,	"bus-i2c2",	"apb2",
++		      0x06c, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_scr_clk,	"bus-scr",	"apb2",
++		      0x06c, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_uart0_clk,	"bus-uart0",	"apb2",
++		      0x06c, BIT(16), 0);
++static SUNXI_CCU_GATE(bus_uart1_clk,	"bus-uart1",	"apb2",
++		      0x06c, BIT(17), 0);
++static SUNXI_CCU_GATE(bus_uart2_clk,	"bus-uart2",	"apb2",
++		      0x06c, BIT(18), 0);
++static SUNXI_CCU_GATE(bus_uart3_clk,	"bus-uart3",	"apb2",
++		      0x06c, BIT(19), 0);
++static SUNXI_CCU_GATE(bus_uart4_clk,	"bus-uart4",	"apb2",
++		      0x06c, BIT(20), 0);
++
++static SUNXI_CCU_GATE(bus_dbg_clk,	"bus-dbg",	"ahb1",
++		      0x070, BIT(7), 0);
++
++static struct clk_div_table ths_div_table[] = {
++	{ .val = 0, .div = 1 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 6 },
++};
++static const char * const ths_parents[] = { "osc24M" };
++static struct ccu_div ths_clk = {
++	.enable	= BIT(31),
++	.div	= _SUNXI_CCU_DIV_TABLE(0, 2, ths_div_table),
++	.mux	= _SUNXI_CCU_MUX(24, 2),
++	.common	= {
++		.reg		= 0x074,
++		.hw.init	= CLK_HW_INIT_PARENTS("ths",
++						      ths_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
++
++static const char * const mod0_default_parents[] = { "osc24M", "pll-periph0",
++						     "pll-periph1" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", mod0_default_parents, 0x080,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const mmc_default_parents[] = { "osc24M", "pll-periph0-2x",
++						    "pll-periph1-2x" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_default_parents, 0x088,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_default_parents, 0x08c,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_default_parents, 0x090,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const ts_parents[] = { "osc24M", "pll-periph0", };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ts_clk, "ts", ts_parents, 0x098,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 4,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(ce_clk, "ce", mmc_default_parents, 0x09c,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi0_clk, "spi0", mod0_default_parents, 0x0a0,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
++					    "pll-audio-2x", "pll-audio" };
++static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
++			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
++			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s_parents,
++			       0x0b8, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_M_WITH_GATE(spdif_clk, "spdif", "pll-audio",
++			     0x0c0, 0, 4, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
++		      0x0cc, BIT(8), 0);
++static SUNXI_CCU_GATE(usb_phy1_clk,	"usb-phy1",	"osc24M",
++		      0x0cc, BIT(9), 0);
++static SUNXI_CCU_GATE(usb_hsic_clk,	"usb-hsic",	"pll-hsic",
++		      0x0cc, BIT(10), 0);
++static SUNXI_CCU_GATE(usb_hsic_12m_clk,	"usb-hsic-12M",	"osc12M",
++		      0x0cc, BIT(11), 0);
++static SUNXI_CCU_GATE(usb_ohci0_clk,	"usb-ohci0",	"osc12M",
++		      0x0cc, BIT(16), 0);
++static SUNXI_CCU_GATE(usb_ohci1_clk,	"usb-ohci1",	"usb-ohci0",
++		      0x0cc, BIT(17), 0);
++
++static const char * const dram_parents[] = { "pll-ddr0", "pll-ddr1" };
++static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
++			    0x0f4, 0, 4, 20, 2, CLK_IS_CRITICAL);
++
++static SUNXI_CCU_GATE(dram_ve_clk,	"dram-ve",	"dram",
++		      0x100, BIT(0), 0);
++static SUNXI_CCU_GATE(dram_csi_clk,	"dram-csi",	"dram",
++		      0x100, BIT(1), 0);
++static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
++		      0x100, BIT(2), 0);
++static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
++		      0x100, BIT(3), 0);
++
++static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
++static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
++				 0x104, 0, 4, 24, 3, BIT(31), 0);
++
++static const char * const tcon0_parents[] = { "pll-mipi", "pll-video0-2x" };
++static const u8 tcon0_table[] = { 0, 2, };
++static SUNXI_CCU_MUX_TABLE_WITH_GATE(tcon0_clk, "tcon0", tcon0_parents,
++				     tcon0_table, 0x118, 24, 3, BIT(31),
++				     CLK_SET_RATE_PARENT);
++
++static const char * const tcon1_parents[] = { "pll-video0", "pll-video1" };
++static const u8 tcon1_table[] = { 0, 2, };
++struct ccu_div tcon1_clk = {
++	.enable		= BIT(31),
++	.div		= _SUNXI_CCU_DIV(0, 4),
++	.mux		= _SUNXI_CCU_MUX_TABLE(24, 2, tcon1_table),
++	.common		= {
++		.reg		= 0x11c,
++		.hw.init	= CLK_HW_INIT_PARENTS("tcon1",
++						      tcon1_parents,
++						      &ccu_div_ops,
++						      CLK_SET_RATE_PARENT),
++	},
++};
++
++static const char * const deinterlace_parents[] = { "pll-periph0", "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace", deinterlace_parents,
++				 0x124, 0, 4, 24, 3, BIT(31), 0);
++
++static SUNXI_CCU_GATE(csi_misc_clk,	"csi-misc",	"osc24M",
++		      0x130, BIT(31), 0);
++
++static const char * const csi_sclk_parents[] = { "pll-periph0", "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
++				 0x134, 16, 4, 24, 3, BIT(31), 0);
++
++static const char * const csi_mclk_parents[] = { "osc24M", "pll-video1", "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(csi_mclk_clk, "csi-mclk", csi_mclk_parents,
++				 0x134, 0, 5, 8, 3, BIT(15), 0);
++
++static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
++			     0x13c, 16, 3, BIT(31), 0);
++
++static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
++		      0x140, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
++		      0x140, BIT(30), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
++		      0x144, BIT(31), 0);
++
++static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
++				 0x150, 0, 4, 24, 2, BIT(31), 0);
++
++static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
++		      0x154, BIT(31), 0);
++
++static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x",
++						 "pll-ddr0", "pll-ddr1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents,
++				 0x15c, 0, 3, 24, 2, BIT(31), CLK_IS_CRITICAL);
++
++static const char * const dsi_dphy_parents[] = { "pll-video0", "pll-periph0" };
++static const u8 dsi_dphy_table[] = { 0, 2, };
++static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(dsi_dphy_clk, "dsi-dphy",
++				       dsi_dphy_parents, dsi_dphy_table,
++				       0x168, 0, 4, 8, 2, BIT(31), 0);
++
++static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
++			     0x1a0, 0, 3, BIT(31), CLK_SET_RATE_PARENT);
++
++/* Fixed Factor clocks */
++static CLK_FIXED_FACTOR(osc12M_clk, "osc12M", "osc24M", 1, 2, 0);
++
++/* We hardcode the divider to 4 for now */
++static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
++			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
++			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
++			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
++			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
++			"pll-periph0", 1, 2, 0);
++static CLK_FIXED_FACTOR(pll_periph1_2x_clk, "pll-periph1-2x",
++			"pll-periph1", 1, 2, 0);
++static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
++			"pll-video0", 1, 2, CLK_SET_RATE_PARENT);
++
++static struct ccu_common *sun50i_a64_ccu_clks[] = {
++	&pll_cpux_clk.common,
++	&pll_audio_base_clk.common,
++	&pll_video0_clk.common,
++	&pll_ve_clk.common,
++	&pll_ddr0_clk.common,
++	&pll_periph0_clk.common,
++	&pll_periph1_clk.common,
++	&pll_video1_clk.common,
++	&pll_gpu_clk.common,
++	&pll_mipi_clk.common,
++	&pll_hsic_clk.common,
++	&pll_de_clk.common,
++	&pll_ddr1_clk.common,
++	&cpux_clk.common,
++	&axi_clk.common,
++	&ahb1_clk.common,
++	&apb1_clk.common,
++	&apb2_clk.common,
++	&ahb2_clk.common,
++	&bus_mipi_dsi_clk.common,
++	&bus_ce_clk.common,
++	&bus_dma_clk.common,
++	&bus_mmc0_clk.common,
++	&bus_mmc1_clk.common,
++	&bus_mmc2_clk.common,
++	&bus_nand_clk.common,
++	&bus_dram_clk.common,
++	&bus_emac_clk.common,
++	&bus_ts_clk.common,
++	&bus_hstimer_clk.common,
++	&bus_spi0_clk.common,
++	&bus_spi1_clk.common,
++	&bus_otg_clk.common,
++	&bus_ehci0_clk.common,
++	&bus_ehci1_clk.common,
++	&bus_ohci0_clk.common,
++	&bus_ohci1_clk.common,
++	&bus_ve_clk.common,
++	&bus_tcon0_clk.common,
++	&bus_tcon1_clk.common,
++	&bus_deinterlace_clk.common,
++	&bus_csi_clk.common,
++	&bus_hdmi_clk.common,
++	&bus_de_clk.common,
++	&bus_gpu_clk.common,
++	&bus_msgbox_clk.common,
++	&bus_spinlock_clk.common,
++	&bus_codec_clk.common,
++	&bus_spdif_clk.common,
++	&bus_pio_clk.common,
++	&bus_ths_clk.common,
++	&bus_i2s0_clk.common,
++	&bus_i2s1_clk.common,
++	&bus_i2s2_clk.common,
++	&bus_i2c0_clk.common,
++	&bus_i2c1_clk.common,
++	&bus_i2c2_clk.common,
++	&bus_scr_clk.common,
++	&bus_uart0_clk.common,
++	&bus_uart1_clk.common,
++	&bus_uart2_clk.common,
++	&bus_uart3_clk.common,
++	&bus_uart4_clk.common,
++	&bus_dbg_clk.common,
++	&ths_clk.common,
++	&nand_clk.common,
++	&mmc0_clk.common,
++	&mmc1_clk.common,
++	&mmc2_clk.common,
++	&ts_clk.common,
++	&ce_clk.common,
++	&spi0_clk.common,
++	&spi1_clk.common,
++	&i2s0_clk.common,
++	&i2s1_clk.common,
++	&i2s2_clk.common,
++	&spdif_clk.common,
++	&usb_phy0_clk.common,
++	&usb_phy1_clk.common,
++	&usb_hsic_clk.common,
++	&usb_hsic_12m_clk.common,
++	&usb_ohci0_clk.common,
++	&usb_ohci1_clk.common,
++	&dram_clk.common,
++	&dram_ve_clk.common,
++	&dram_csi_clk.common,
++	&dram_deinterlace_clk.common,
++	&dram_ts_clk.common,
++	&de_clk.common,
++	&tcon0_clk.common,
++	&tcon1_clk.common,
++	&deinterlace_clk.common,
++	&csi_misc_clk.common,
++	&csi_sclk_clk.common,
++	&csi_mclk_clk.common,
++	&ve_clk.common,
++	&ac_dig_clk.common,
++	&ac_dig_4x_clk.common,
++	&avs_clk.common,
++	&hdmi_clk.common,
++	&hdmi_ddc_clk.common,
++	&mbus_clk.common,
++	&dsi_dphy_clk.common,
++	&gpu_clk.common,
++};
++
++static struct clk_hw_onecell_data sun50i_a64_hw_clks = {
++	.hws	= {
++		[CLK_OSC_12M]		= &osc12M_clk.hw,
++		[CLK_PLL_CPUX]		= &pll_cpux_clk.common.hw,
++		[CLK_PLL_AUDIO_BASE]	= &pll_audio_base_clk.common.hw,
++		[CLK_PLL_AUDIO]		= &pll_audio_clk.hw,
++		[CLK_PLL_AUDIO_2X]	= &pll_audio_2x_clk.hw,
++		[CLK_PLL_AUDIO_4X]	= &pll_audio_4x_clk.hw,
++		[CLK_PLL_AUDIO_8X]	= &pll_audio_8x_clk.hw,
++		[CLK_PLL_VIDEO0]	= &pll_video0_clk.common.hw,
++		[CLK_PLL_VIDEO0_2X]	= &pll_video0_2x_clk.hw,
++		[CLK_PLL_VE]		= &pll_ve_clk.common.hw,
++		[CLK_PLL_DDR0]		= &pll_ddr0_clk.common.hw,
++		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
++		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
++		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
++		[CLK_PLL_PERIPH1_2X]	= &pll_periph1_2x_clk.hw,
++		[CLK_PLL_VIDEO1]	= &pll_video1_clk.common.hw,
++		[CLK_PLL_GPU]		= &pll_gpu_clk.common.hw,
++		[CLK_PLL_MIPI]  	= &pll_mipi_clk.common.hw,
++		[CLK_PLL_HSIC]		= &pll_hsic_clk.common.hw,
++		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
++		[CLK_PLL_DDR1]		= &pll_ddr1_clk.common.hw,
++		[CLK_CPUX]		= &cpux_clk.common.hw,
++		[CLK_AXI]		= &axi_clk.common.hw,
++		[CLK_AHB1]		= &ahb1_clk.common.hw,
++		[CLK_APB1]		= &apb1_clk.common.hw,
++		[CLK_APB2]		= &apb2_clk.common.hw,
++		[CLK_AHB2]		= &ahb2_clk.common.hw,
++		[CLK_BUS_MIPI_DSI]	= &bus_mipi_dsi_clk.common.hw,
++		[CLK_BUS_CE]		= &bus_ce_clk.common.hw,
++		[CLK_BUS_DMA]		= &bus_dma_clk.common.hw,
++		[CLK_BUS_MMC0]		= &bus_mmc0_clk.common.hw,
++		[CLK_BUS_MMC1]		= &bus_mmc1_clk.common.hw,
++		[CLK_BUS_MMC2]		= &bus_mmc2_clk.common.hw,
++		[CLK_BUS_NAND]		= &bus_nand_clk.common.hw,
++		[CLK_BUS_DRAM]		= &bus_dram_clk.common.hw,
++		[CLK_BUS_EMAC]		= &bus_emac_clk.common.hw,
++		[CLK_BUS_TS]		= &bus_ts_clk.common.hw,
++		[CLK_BUS_HSTIMER]	= &bus_hstimer_clk.common.hw,
++		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
++		[CLK_BUS_SPI1]		= &bus_spi1_clk.common.hw,
++		[CLK_BUS_OTG]		= &bus_otg_clk.common.hw,
++		[CLK_BUS_EHCI0]		= &bus_ehci0_clk.common.hw,
++		[CLK_BUS_EHCI1]		= &bus_ehci1_clk.common.hw,
++		[CLK_BUS_OHCI0]		= &bus_ohci0_clk.common.hw,
++		[CLK_BUS_OHCI1]		= &bus_ohci1_clk.common.hw,
++		[CLK_BUS_VE]		= &bus_ve_clk.common.hw,
++		[CLK_BUS_TCON0]		= &bus_tcon0_clk.common.hw,
++		[CLK_BUS_TCON1]		= &bus_tcon1_clk.common.hw,
++		[CLK_BUS_DEINTERLACE]	= &bus_deinterlace_clk.common.hw,
++		[CLK_BUS_CSI]		= &bus_csi_clk.common.hw,
++		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
++		[CLK_BUS_DE]		= &bus_de_clk.common.hw,
++		[CLK_BUS_GPU]		= &bus_gpu_clk.common.hw,
++		[CLK_BUS_MSGBOX]	= &bus_msgbox_clk.common.hw,
++		[CLK_BUS_SPINLOCK]	= &bus_spinlock_clk.common.hw,
++		[CLK_BUS_CODEC]		= &bus_codec_clk.common.hw,
++		[CLK_BUS_SPDIF]		= &bus_spdif_clk.common.hw,
++		[CLK_BUS_PIO]		= &bus_pio_clk.common.hw,
++		[CLK_BUS_THS]		= &bus_ths_clk.common.hw,
++		[CLK_BUS_I2S0]		= &bus_i2s0_clk.common.hw,
++		[CLK_BUS_I2S1]		= &bus_i2s1_clk.common.hw,
++		[CLK_BUS_I2S2]		= &bus_i2s2_clk.common.hw,
++		[CLK_BUS_I2C0]		= &bus_i2c0_clk.common.hw,
++		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
++		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
++		[CLK_BUS_UART0]		= &bus_uart0_clk.common.hw,
++		[CLK_BUS_UART1]		= &bus_uart1_clk.common.hw,
++		[CLK_BUS_UART2]		= &bus_uart2_clk.common.hw,
++		[CLK_BUS_UART3]		= &bus_uart3_clk.common.hw,
++		[CLK_BUS_UART4]		= &bus_uart4_clk.common.hw,
++		[CLK_BUS_SCR]		= &bus_scr_clk.common.hw,
++		[CLK_BUS_DBG]		= &bus_dbg_clk.common.hw,
++		[CLK_THS]		= &ths_clk.common.hw,
++		[CLK_NAND]		= &nand_clk.common.hw,
++		[CLK_MMC0]		= &mmc0_clk.common.hw,
++		[CLK_MMC1]		= &mmc1_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_TS]		= &ts_clk.common.hw,
++		[CLK_CE]		= &ce_clk.common.hw,
++		[CLK_SPI0]		= &spi0_clk.common.hw,
++		[CLK_SPI1]		= &spi1_clk.common.hw,
++		[CLK_I2S0]		= &i2s0_clk.common.hw,
++		[CLK_I2S1]		= &i2s1_clk.common.hw,
++		[CLK_I2S2]		= &i2s2_clk.common.hw,
++		[CLK_SPDIF]		= &spdif_clk.common.hw,
++		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
++		[CLK_USB_PHY1]		= &usb_phy1_clk.common.hw,
++		[CLK_USB_HSIC]		= &usb_hsic_clk.common.hw,
++		[CLK_USB_HSIC_12M]	= &usb_hsic_12m_clk.common.hw,
++		[CLK_USB_OHCI0]		= &usb_ohci0_clk.common.hw,
++		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
++		[CLK_DRAM]		= &dram_clk.common.hw,
++		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
++		[CLK_DRAM_CSI]		= &dram_csi_clk.common.hw,
++		[CLK_DRAM_DEINTERLACE]	= &dram_deinterlace_clk.common.hw,
++		[CLK_DRAM_TS]		= &dram_ts_clk.common.hw,
++		[CLK_DE]		= &de_clk.common.hw,
++		[CLK_TCON0]		= &tcon0_clk.common.hw,
++		[CLK_TCON1]		= &tcon1_clk.common.hw,
++		[CLK_DEINTERLACE]	= &deinterlace_clk.common.hw,
++		[CLK_CSI_MISC]		= &csi_misc_clk.common.hw,
++		[CLK_CSI_SCLK]		= &csi_sclk_clk.common.hw,
++		[CLK_CSI_MCLK]		= &csi_mclk_clk.common.hw,
++		[CLK_VE]		= &ve_clk.common.hw,
++		[CLK_AC_DIG]		= &ac_dig_clk.common.hw,
++		[CLK_AC_DIG_4X]		= &ac_dig_4x_clk.common.hw,
++		[CLK_AVS]		= &avs_clk.common.hw,
++		[CLK_HDMI]		= &hdmi_clk.common.hw,
++		[CLK_HDMI_DDC]		= &hdmi_ddc_clk.common.hw,
++		[CLK_MBUS]		= &mbus_clk.common.hw,
++		[CLK_DSI_DPHY]		= &dsi_dphy_clk.common.hw,
++		[CLK_GPU]		= &gpu_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
++static struct ccu_reset_map sun50i_a64_ccu_resets[] = {
++	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
++	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
++	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
++
++	[RST_DRAM]		=  { 0x0f4, BIT(31) },
++	[RST_MBUS]		=  { 0x0fc, BIT(31) },
++
++	[RST_BUS_MIPI_DSI]	=  { 0x2c0, BIT(1) },
++	[RST_BUS_CE]		=  { 0x2c0, BIT(5) },
++	[RST_BUS_DMA]		=  { 0x2c0, BIT(6) },
++	[RST_BUS_MMC0]		=  { 0x2c0, BIT(8) },
++	[RST_BUS_MMC1]		=  { 0x2c0, BIT(9) },
++	[RST_BUS_MMC2]		=  { 0x2c0, BIT(10) },
++	[RST_BUS_NAND]		=  { 0x2c0, BIT(13) },
++	[RST_BUS_DRAM]		=  { 0x2c0, BIT(14) },
++	[RST_BUS_EMAC]		=  { 0x2c0, BIT(17) },
++	[RST_BUS_TS]		=  { 0x2c0, BIT(18) },
++	[RST_BUS_HSTIMER]	=  { 0x2c0, BIT(19) },
++	[RST_BUS_SPI0]		=  { 0x2c0, BIT(20) },
++	[RST_BUS_SPI1]		=  { 0x2c0, BIT(21) },
++	[RST_BUS_OTG]		=  { 0x2c0, BIT(23) },
++	[RST_BUS_EHCI0]		=  { 0x2c0, BIT(24) },
++	[RST_BUS_EHCI1]		=  { 0x2c0, BIT(25) },
++	[RST_BUS_OHCI0]		=  { 0x2c0, BIT(28) },
++	[RST_BUS_OHCI1]		=  { 0x2c0, BIT(29) },
++
++	[RST_BUS_VE]		=  { 0x2c4, BIT(0) },
++	[RST_BUS_TCON0]		=  { 0x2c4, BIT(3) },
++	[RST_BUS_TCON1]		=  { 0x2c4, BIT(4) },
++	[RST_BUS_DEINTERLACE]	=  { 0x2c4, BIT(5) },
++	[RST_BUS_CSI]		=  { 0x2c4, BIT(8) },
++	[RST_BUS_HDMI0]		=  { 0x2c4, BIT(10) },
++	[RST_BUS_HDMI1]		=  { 0x2c4, BIT(11) },
++	[RST_BUS_DE]		=  { 0x2c4, BIT(12) },
++	[RST_BUS_GPU]		=  { 0x2c4, BIT(20) },
++	[RST_BUS_MSGBOX]	=  { 0x2c4, BIT(21) },
++	[RST_BUS_SPINLOCK]	=  { 0x2c4, BIT(22) },
++	[RST_BUS_DBG]		=  { 0x2c4, BIT(31) },
++
++	[RST_BUS_LVDS]		=  { 0x2c8, BIT(0) },
++
++	[RST_BUS_CODEC]		=  { 0x2d0, BIT(0) },
++	[RST_BUS_SPDIF]		=  { 0x2d0, BIT(1) },
++	[RST_BUS_THS]		=  { 0x2d0, BIT(8) },
++	[RST_BUS_I2S0]		=  { 0x2d0, BIT(12) },
++	[RST_BUS_I2S1]		=  { 0x2d0, BIT(13) },
++	[RST_BUS_I2S2]		=  { 0x2d0, BIT(14) },
++
++	[RST_BUS_I2C0]		=  { 0x2d8, BIT(0) },
++	[RST_BUS_I2C1]		=  { 0x2d8, BIT(1) },
++	[RST_BUS_I2C2]		=  { 0x2d8, BIT(2) },
++	[RST_BUS_SCR]		=  { 0x2d8, BIT(5) },
++	[RST_BUS_UART0]		=  { 0x2d8, BIT(16) },
++	[RST_BUS_UART1]		=  { 0x2d8, BIT(17) },
++	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
++	[RST_BUS_UART3]		=  { 0x2d8, BIT(19) },
++	[RST_BUS_UART4]		=  { 0x2d8, BIT(20) },
++};
++
++static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
++	.ccu_clks	= sun50i_a64_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun50i_a64_ccu_clks),
++
++	.hw_clks	= &sun50i_a64_hw_clks,
++
++	.resets		= sun50i_a64_ccu_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
++};
++
++static int sun50i_a64_ccu_probe(struct platform_device *pdev)
 +{
-+	const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
-+	u32 cpg_mode;
-+	int error;
++	struct resource *res;
++	void __iomem *reg;
++	u32 val;
 +
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(reg)) {
++		dev_err(&pdev->dev, "Could not map the clock registers\n");
++		return PTR_ERR(reg);
++	}
 +
-+	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
++	/* Force the PLL-Audio-1x divider to 4 */
++	val = readl(reg + SUN50I_A64_PLL_AUDIO_REG);
++	val &= ~GENMASK(19, 16);
++	writel(val | (3 << 16), reg + SUN50I_A64_PLL_AUDIO_REG);
 +
-+	return rcar_gen2_cpg_init(cpg_pll_config);
++	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
++
++	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
 +}
 +
-+const struct cpg_mssr_info r8a7745_cpg_mssr_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r8a7745_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r8a7745_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r8a7745_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r8a7745_mod_clks),
-+	.num_hw_mod_clks = 12 * 32,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r8a7745_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r8a7745_crit_mod_clks),
-+
-+	/* Callbacks */
-+	.init = r8a7745_cpg_mssr_init,
-+	.cpg_clk_register = rcar_gen2_cpg_clk_register,
++static const struct of_device_id sun50i_a64_ccu_ids[] = {
++	{ .compatible = "allwinner,sun50i-a64-ccu" },
++	{ },
 +};
-Index: linux/drivers/clk/renesas/renesas-cpg-mssr.c
-===================================================================
---- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ linux/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -509,6 +509,12 @@ static const struct of_device_id cpg_mss
- 		.data = &r8a7743_cpg_mssr_info,
- 	},
- #endif
-+#ifdef CONFIG_ARCH_R8A7745
-+	{
-+		.compatible = "renesas,r8a7745-cpg-mssr",
-+		.data = &r8a7745_cpg_mssr_info,
++
++static struct platform_driver sun50i_a64_ccu_driver = {
++	.probe	= sun50i_a64_ccu_probe,
++	.driver	= {
++		.name	= "sun50i-a64-ccu",
++		.of_match_table	= sun50i_a64_ccu_ids,
 +	},
-+#endif
- #ifdef CONFIG_ARCH_R8A7795
- 	{
- 		.compatible = "renesas,r8a7795-cpg-mssr",
-Index: linux/drivers/clk/renesas/renesas-cpg-mssr.h
-===================================================================
---- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ linux/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -131,6 +131,7 @@ struct cpg_mssr_info {
- };
- 
- extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
-+extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
- #endif
++};
++builtin_platform_driver(sun50i_a64_ccu_driver);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+new file mode 100644
+index 000000000000..9b3cd24b78d2
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+@@ -0,0 +1,72 @@
++/*
++ * Copyright 2016 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_SUN50I_A64_H_
++#define _CCU_SUN50I_A64_H_
++
++#include <dt-bindings/clock/sun50i-a64-ccu.h>
++#include <dt-bindings/reset/sun50i-a64-ccu.h>
++
++#define CLK_OSC_12M			0
++#define CLK_PLL_CPUX			1
++#define CLK_PLL_AUDIO_BASE		2
++#define CLK_PLL_AUDIO			3
++#define CLK_PLL_AUDIO_2X		4
++#define CLK_PLL_AUDIO_4X		5
++#define CLK_PLL_AUDIO_8X		6
++#define CLK_PLL_VIDEO0			7
++#define CLK_PLL_VIDEO0_2X		8
++#define CLK_PLL_VE			9
++#define CLK_PLL_DDR0			10
++#define CLK_PLL_PERIPH0			11
++#define CLK_PLL_PERIPH0_2X		12
++#define CLK_PLL_PERIPH1			13
++#define CLK_PLL_PERIPH1_2X		14
++#define CLK_PLL_VIDEO1			15
++#define CLK_PLL_GPU			16
++#define CLK_PLL_MIPI			17
++#define CLK_PLL_HSIC			18
++#define CLK_PLL_DE			19
++#define CLK_PLL_DDR1			20
++#define CLK_CPUX			21
++#define CLK_AXI				22
++#define CLK_APB				23
++#define CLK_AHB1			24
++#define CLK_APB1			25
++#define CLK_APB2			26
++#define CLK_AHB2			27
++
++/* All the bus gates are exported */
++
++/* The first bunch of module clocks are exported */
++
++#define CLK_USB_OHCI0_12M		90
++
++#define CLK_USB_OHCI1_12M		92
++
++#define CLK_DRAM			94
++
++/* All the DRAM gates are exported */
++
++/* Some more module clocks are exported */
++
++#define CLK_MBUS			112
++
++/* And the DSI and GPU module clock is exported */
++
++#define CLK_NUMBER			(CLK_GPU + 1)
++
++#endif /* _CCU_SUN50I_A64_H_ */
+diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+new file mode 100644
+index 000000000000..370c0a0473fc
+--- /dev/null
++++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+@@ -0,0 +1,134 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SUN50I_A64_H_
++#define _DT_BINDINGS_CLK_SUN50I_A64_H_
++
++#define CLK_BUS_MIPI_DSI	28
++#define CLK_BUS_CE		29
++#define CLK_BUS_DMA		30
++#define CLK_BUS_MMC0		31
++#define CLK_BUS_MMC1		32
++#define CLK_BUS_MMC2		33
++#define CLK_BUS_NAND		34
++#define CLK_BUS_DRAM		35
++#define CLK_BUS_EMAC		36
++#define CLK_BUS_TS		37
++#define CLK_BUS_HSTIMER		38
++#define CLK_BUS_SPI0		39
++#define CLK_BUS_SPI1		40
++#define CLK_BUS_OTG		41
++#define CLK_BUS_EHCI0		42
++#define CLK_BUS_EHCI1		43
++#define CLK_BUS_OHCI0		44
++#define CLK_BUS_OHCI1		45
++#define CLK_BUS_VE		46
++#define CLK_BUS_TCON0		47
++#define CLK_BUS_TCON1		48
++#define CLK_BUS_DEINTERLACE	49
++#define CLK_BUS_CSI		50
++#define CLK_BUS_HDMI		51
++#define CLK_BUS_DE		52
++#define CLK_BUS_GPU		53
++#define CLK_BUS_MSGBOX		54
++#define CLK_BUS_SPINLOCK	55
++#define CLK_BUS_CODEC		56
++#define CLK_BUS_SPDIF		57
++#define CLK_BUS_PIO		58
++#define CLK_BUS_THS		59
++#define CLK_BUS_I2S0		60
++#define CLK_BUS_I2S1		61
++#define CLK_BUS_I2S2		62
++#define CLK_BUS_I2C0		63
++#define CLK_BUS_I2C1		64
++#define CLK_BUS_I2C2		65
++#define CLK_BUS_SCR		66
++#define CLK_BUS_UART0		67
++#define CLK_BUS_UART1		68
++#define CLK_BUS_UART2		69
++#define CLK_BUS_UART3		70
++#define CLK_BUS_UART4		71
++#define CLK_BUS_DBG		72
++#define CLK_THS			73
++#define CLK_NAND		74
++#define CLK_MMC0		75
++#define CLK_MMC1		76
++#define CLK_MMC2		77
++#define CLK_TS			78
++#define CLK_CE			79
++#define CLK_SPI0		80
++#define CLK_SPI1		81
++#define CLK_I2S0		82
++#define CLK_I2S1		83
++#define CLK_I2S2		84
++#define CLK_SPDIF		85
++#define CLK_USB_PHY0		86
++#define CLK_USB_PHY1		87
++#define CLK_USB_HSIC		88
++#define CLK_USB_HSIC_12M	89
++
++#define CLK_USB_OHCI0		91
++
++#define CLK_USB_OHCI1		93
++
++#define CLK_DRAM_VE		95
++#define CLK_DRAM_CSI		96
++#define CLK_DRAM_DEINTERLACE	97
++#define CLK_DRAM_TS		98
++#define CLK_DE			99
++#define CLK_TCON0		100
++#define CLK_TCON1		101
++#define CLK_DEINTERLACE		102
++#define CLK_CSI_MISC		103
++#define CLK_CSI_SCLK		104
++#define CLK_CSI_MCLK		105
++#define CLK_VE			106
++#define CLK_AC_DIG		107
++#define CLK_AC_DIG_4X		108
++#define CLK_AVS			109
++#define CLK_HDMI		110
++#define CLK_HDMI_DDC		111
++
++#define CLK_DSI_DPHY		113
++#define CLK_GPU			114
++
++#endif /* _DT_BINDINGS_CLK_SUN50I_H_ */
+diff --git a/include/dt-bindings/reset/sun50i-a64-ccu.h b/include/dt-bindings/reset/sun50i-a64-ccu.h
+new file mode 100644
+index 000000000000..db60b29ddb11
+--- /dev/null
++++ b/include/dt-bindings/reset/sun50i-a64-ccu.h
+@@ -0,0 +1,98 @@
++/*
++ * Copyright (C) 2016 Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef _DT_BINDINGS_RST_SUN50I_A64_H_
++#define _DT_BINDINGS_RST_SUN50I_A64_H_
++
++#define RST_USB_PHY0		0
++#define RST_USB_PHY1		1
++#define RST_USB_HSIC		2
++#define RST_DRAM		3
++#define RST_MBUS		4
++#define RST_BUS_MIPI_DSI	5
++#define RST_BUS_CE		6
++#define RST_BUS_DMA		7
++#define RST_BUS_MMC0		8
++#define RST_BUS_MMC1		9
++#define RST_BUS_MMC2		10
++#define RST_BUS_NAND		11
++#define RST_BUS_DRAM		12
++#define RST_BUS_EMAC		13
++#define RST_BUS_TS		14
++#define RST_BUS_HSTIMER		15
++#define RST_BUS_SPI0		16
++#define RST_BUS_SPI1		17
++#define RST_BUS_OTG		18
++#define RST_BUS_EHCI0		19
++#define RST_BUS_EHCI1		20
++#define RST_BUS_OHCI0		21
++#define RST_BUS_OHCI1		22
++#define RST_BUS_VE		23
++#define RST_BUS_TCON0		24
++#define RST_BUS_TCON1		25
++#define RST_BUS_DEINTERLACE	26
++#define RST_BUS_CSI		27
++#define RST_BUS_HDMI0		28
++#define RST_BUS_HDMI1		29
++#define RST_BUS_DE		30
++#define RST_BUS_GPU		31
++#define RST_BUS_MSGBOX		32
++#define RST_BUS_SPINLOCK	33
++#define RST_BUS_DBG		34
++#define RST_BUS_LVDS		35
++#define RST_BUS_CODEC		36
++#define RST_BUS_SPDIF		37
++#define RST_BUS_THS		38
++#define RST_BUS_I2S0		39
++#define RST_BUS_I2S1		40
++#define RST_BUS_I2S2		41
++#define RST_BUS_I2C0		42
++#define RST_BUS_I2C1		43
++#define RST_BUS_I2C2		44
++#define RST_BUS_SCR		45
++#define RST_BUS_UART0		46
++#define RST_BUS_UART1		47
++#define RST_BUS_UART2		48
++#define RST_BUS_UART3		49
++#define RST_BUS_UART4		50
++
++#endif /* _DT_BINDINGS_RST_SUN50I_A64_H_ */
+-- 
+git-series 0.8.10
