@@ -1,111 +1,77 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: Rob Herring <robh@kernel.org>
-CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
-Date: Tue, 11 Oct 2016 17:00:44 +0100
-Message-ID: <2468748.fALFhzhDcI@np-p-burton>
-In-Reply-To: <20161010130121.GA31827@rob-hp-laptop>
-References: <20161005171824.18014-1-paul.burton@imgtec.com> <20161005171824.18014-17-paul.burton@imgtec.com> <20161010130121.GA31827@rob-hp-laptop>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from up.free-electrons.com ([163.172.77.33]:34782 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933709AbcJTR1u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2016 13:27:50 -0400
+Date: Thu, 20 Oct 2016 19:27:47 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v4 4/9] clk: sunxi-ng: Add minimums for all the relevant
+ structures and clocks
+Message-ID: <20161020172747.dagnsdwhhxmxvm4c@lukather>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+ <a96b56fb7bda849e087b63a04ff76d1396c44d72.1476196031.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v64itwTvMoxvtYDqOALL-XJYvhv-5daPPjPzb9DfY3o62A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1510261.TKAFVGyAAe";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="railmedgbrcx4slw"
+In-Reply-To: <CAGb2v64itwTvMoxvtYDqOALL-XJYvhv-5daPPjPzb9DfY3o62A@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---nextPart1510261.TKAFVGyAAe
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 
-On Monday, 10 October 2016 08:01:21 BST Rob Herring wrote:
-> On Wed, Oct 05, 2016 at 06:18:22PM +0100, Paul Burton wrote:
-> > Add device tree binding documentation for the clocks provided by the
-> > MIPS Boston development board from Imagination Technologies, and a
-> > header file describing the available clocks for use by device trees &
-> > driver.
-> > 
-> > Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: devicetree@vger.kernel.org
-> > 
-> > ---
-> > 
-> > Changes in v3: None
-> > Changes in v2:
-> > - Add BOSTON_CLK_INPUT to expose the input clock.
-> > 
-> >  .../devicetree/bindings/clock/img,boston-clock.txt | 27
-> >  ++++++++++++++++++++++ include/dt-bindings/clock/boston-clock.h         
-> >   | 14 +++++++++++ 2 files changed, 41 insertions(+)
-> >  create mode 100644
-> >  Documentation/devicetree/bindings/clock/img,boston-clock.txt create mode
-> >  100644 include/dt-bindings/clock/boston-clock.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> > b/Documentation/devicetree/bindings/clock/img,boston-clock.txt new file
-> > mode 100644
-> > index 0000000..c01ea60
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> > @@ -0,0 +1,27 @@
-> > +Binding for Imagination Technologies MIPS Boston clock sources.
-> > +
-> > +This binding uses the common clock binding[1].
-> > +
-> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +
-> > +Required properties:
-> > +- compatible : Should be "img,boston-clock".
-> > +- #clock-cells : Should be set to 1.
-> > +  Values available for clock consumers can be found in the header file:
-> > +    <dt-bindings/clock/boston-clock.h>
-> > +- regmap : Phandle to the Boston platform register system controller.
-> > +  This should contain a phandle to the system controller node covering
-> > the
-> > +  platform registers provided by the Boston board.
-> 
-> Can you just make the clock node a child of the system controller and
-> drop this?
-> 
-> Rob
+--railmedgbrcx4slw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
- 
-(Apologies to anyone who received my last; my mail client seems to be 
-misconfigured & previously sent HTML mail.)
+On Thu, Oct 20, 2016 at 11:04:18PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Oct 11, 2016 at 10:28 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Modify the current clocks we have to be able to specify the minimum for
+> > each clocks we support, just like we support the max.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+>=20
+> Including the bits from patch 2.
 
-As I mentioned before technically that could be done, but it would really not 
-be at all reflective of the hardware & so seems somewhat contrary to the 
-purpose of a device tree.
- 
-Thanks,
-    Paul
---nextPart1510261.TKAFVGyAAe
+Applied with those bits merged in this patch.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--railmedgbrcx4slw
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJX/QysAAoJEIIg2fppPBxl8D8P/jZEbGy4OwrZEmOTXP+Der/O
-n0oNrjzD6VkgKOAc4lIZNjRPgHxUXb/qFdL6ObfOnVYxmlfs+KrvzZoO6YbleaG2
-Oq3qMqvJsV+VKxPqB2HKVRM/S9pN+GpXdp553oRkPUJwCFJrrTuuW9YHE6c6gegm
-O57H2nG/M6KF4mXfQj9sN/H1fU14kwwfEgTRovPZg6m2imLS8yd1behdAY9nRlZj
-tanMDIEZlWnrdP61ZAfVAsa/V+ussaJWc40miqHyDEGprLHZ4n9PrwJeMdrJ1SOa
-aaFv8Qpk+UiY9Ia+7wL2K9Gdn1aCmbfqcoXZWTQ1hZi1SPTuLYGrXw8FmGnxh5FW
-X1SKtW458oP5uW6aQX+r5ixqzoCF6/eUgjH/8BAa60q9nDdA1MlYDk1SfmxnQ+/0
-0H5gj+7bR9RoLkGthxCYQuRBncxO3zTL4f6EcNNdjpPiGIVju3BWe2MNTqycf+HO
-Acpr5gOAyiK7xDxkRBU4kzL3HxUJuC0VyC61FljgSh1ZAUcKRp8BeULY6W4+haxF
-P2UCRXv0bX0l5OEr0YGaOB+yMyEc4JxyxkrCeRNK6iMFR7vDY16Ng+UhHNa1bpog
-C1QxPNrkaqSlYAZzF/Q9FnNhCZS1a17z9SszCVO2yAm2w2CZ1MHUK3ib90wWrTkX
-10x2FoSR4zN6GDY6AlC/
-=Oluv
+iQIcBAEBCAAGBQJYCP6TAAoJEBx+YmzsjxAgSGMQAKoPVBnj+W2JcbxOx2OAjd8u
+5rgQ0JjY0blR+sCpSarKOwb8duSnsDdQU4bYPYYXf9wUalFc0ghFq8efwtpn3/mh
+LDwN+TFGAHLLSOyHFyrINtz7wvrznbN2KATuaH+ISBzatpOh5zbUxMg+O6E3xZcn
+/1osPwPUWcng04o241vQazkxYA1VjGx59myhN6JzeCRJlHHnpfQVuNyoX5/5o9VJ
+abmuReLHpYX8vvxooAhUeD4EVSJ5ypDSlqtnMuYwMsqHkDi99giM5dIAVGkFwqXR
+nN+tE80VKRUXZ/HuqEuPpL+Qe3/mPs3X81tGy+cEe4T3UJ0TQaFKZvUWgli6QSKV
+9QgZS3DBGPy8MmoXFTbPwGF2lNkb/Q0Yv1fL73oPuAgPcclnUYYS4cZyGoqx+Ynk
+G5K4dWhTL4WO/Q1fFD7B+FBWD6YA7h50t+G8TClC4pAJJTMzZORFfspXvkpGE3nj
+O0fIcpMaZrIoIldOvOh74kUIgXTs/qEi1/wdPjU+FAHv+Rcvfe5tb2njl+fILRhU
+Ph6P8Sg9ZkeYw3jpBC0m5m7kChj0V1Ycb9LdctatkDJfP+61+x7itWzNhm5Pcyo9
+BK57JluCwzIKXULdgw8aAZUc3GPUYStUOLESNdn9HIJwsh9SWmt5qmAu4dTDo7cR
+y8lt7TooVSM7NqUr00Eg
+=71Ar
 -----END PGP SIGNATURE-----
 
---nextPart1510261.TKAFVGyAAe--
+--railmedgbrcx4slw--
