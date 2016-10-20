@@ -1,91 +1,26 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0064.outbound.protection.outlook.com ([104.47.37.64]:62240
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750823AbcJ1DqK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Oct 2016 23:46:10 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v13, 6/8] MAINTAINERS: add entry for Freescale SoC drivers
-Date: Fri, 28 Oct 2016 11:32:32 +0800
-Message-ID: <1477625554-46700-7-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <tony@atomide.com>
+Date: Thu, 20 Oct 2016 06:06:48 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support
+ to clockdomains
+Message-ID: <20161020130648.azdsai47atynsdzn@atomide.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <1476805568-19264-12-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476805568-19264-12-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add maintainer entry for Freescale SoC drivers including
-the QE library and the GUTS driver now. Also add maintainer
-for QE library.
+* Tero Kristo <t-kristo@ti.com> [161018 08:47]:
+> Clockdomains can now be used as clock providers in the system. This
+> patch initializes the provider data during init, and parses the clocks
+> while they are being registered. An xlate function for the provider
+> is also given.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Acked-by: Qiang Zhao <qiang.zhao@nxp.com>
----
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added linux-arm mail list
-	- Removed GUTS driver entry
-Changes for v10:
-	- Changed 'DRIVER' to 'DRIVERS'
-	- Added 'Acked-by' of Scott and Qiang
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
----
- MAINTAINERS | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Good to see this happen:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c72fa18..cf3aaee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5037,9 +5037,18 @@ S:	Maintained
- F:	drivers/net/ethernet/freescale/fman
- F:	Documentation/devicetree/bindings/powerpc/fsl/fman.txt
- 
-+FREESCALE SOC DRIVERS
-+M:	Scott Wood <oss@buserror.net>
-+L:	linuxppc-dev@lists.ozlabs.org
-+L:	linux-arm-kernel@lists.infradead.org
-+S:	Maintained
-+F:	drivers/soc/fsl/
-+F:	include/linux/fsl/
-+
- FREESCALE QUICC ENGINE LIBRARY
-+M:	Qiang Zhao <qiang.zhao@nxp.com>
- L:	linuxppc-dev@lists.ozlabs.org
--S:	Orphan
-+S:	Maintained
- F:	drivers/soc/fsl/qe/
- F:	include/soc/fsl/*qe*.h
- F:	include/soc/fsl/*ucc*.h
--- 
-2.1.0.27.g96db324
-
+Acked-by: Tony Lindgren <tony@atomide.com>
