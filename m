@@ -1,99 +1,149 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 0/9] arm64: Allwinner A64 support based on sunxi-ng
-Date: Mon,  3 Oct 2016 10:09:04 +0200
-Message-Id: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v2 4/6] clk: stm32f4: Add RTC clock
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <1476436699-21879-5-git-send-email-gabriel.fernandez@st.com>
+ <20161019204537.GD8871@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <b5c25849-e62b-2266-7c01-41a38dedf5eb@st.com>
+Date: Thu, 20 Oct 2016 09:55:26 +0200
+MIME-Version: 1.0
+In-Reply-To: <20161019204537.GD8871@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Stephen,
 
-As it was in the first iteration, this is the A64 support based on the
-new sunxi-ng clock framework.
 
-The support for it is quite minimal at the moment, but it should be
-fairly easy to add new devices, as most of the design is shared with
-older SoCs.
+On 10/19/2016 10:45 PM, Stephen Boyd wrote:
+> On 10/14, gabriel.fernandez@st.com wrote:
+>> @@ -310,6 +310,15 @@ static inline void enable_power_domain_write_protection(void)
+>>   	regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
+>>   }
+>>   
+>> +static inline void sofware_reset_backup_domain(void)
+>> +{
+>> +	unsigned long val;
+>> +
+>> +	val = readl(base + STM32F4_RCC_BDCR);
+>> +	writel(val |= (1 << 16), base + STM32F4_RCC_BDCR);
+> Interesting C style here! Why set the bit in val that will then
+> be cleared in the next function call? Please just don't do it. It
+> would be better to do writel(val | BIT(16), ...)
+To reset the backup domain, i have to generate a pulse on this bit.
 
-Let me know what you think,
-Maxime
+BR
+Gabriel.
 
-Changes from v2:
-  - Added pull-ups on the Pine64 i2c bus
-  - Removed the PMU since it doesn't work
-  - Refactored the sunxi-ng framework to deal with the specifities of
-    the A64 CCU, especially in terms of minimum factors.
-  - Fixed a few things in the CCU driver: added CLK_SET_RATE PARENT
-    flags, fixed some mux width, etc.
-  - Converted the CCU driver to a platform driver
-  - Added the DRAM reset line
-  - Added IDs for the USB muxes (even though we're not using them yet)
-
-Changes from v1:
-  - Split the A64 CCU support out of the H3 driver
-  - Added the PMU support
-  - Removed the clocks node
-  - Rebased on top of current sunxi/clk-for-4.9 branch
-
-Andre Przywara (3):
-  arm64: dts: add Allwinner A64 SoC .dtsi
-  Documentation: devicetree: add vendor prefix for Pine64
-  arm64: dts: add Pine64 support
-
-Maxime Ripard (6):
-  clk: sunxi-ng: Rename the internal structures
-  clk: sunxi-ng: Remove the use of rational computations
-  clk: sunxi-ng: Finish to convert to structures for arguments
-  clk: sunxi-ng: Add minimums for all the relevant structures and clocks
-  clk: sunxi-ng: Implement minimum for multipliers
-  clk: sunxi-ng: Add A64 clocks
-
- Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- MAINTAINERS                                        |   1 +
- arch/arm64/boot/dts/Makefile                       |   1 +
- arch/arm64/boot/dts/allwinner/Makefile             |   5 +
- .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  |  50 ++
- .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  74 ++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 263 ++++++
- drivers/clk/sunxi-ng/Kconfig                       |  14 +-
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 918 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h              |  72 ++
- drivers/clk/sunxi-ng/ccu_div.h                     |   6 +-
- drivers/clk/sunxi-ng/ccu_frac.c                    |  12 +-
- drivers/clk/sunxi-ng/ccu_frac.h                    |  14 +-
- drivers/clk/sunxi-ng/ccu_mp.h                      |   4 +-
- drivers/clk/sunxi-ng/ccu_mult.c                    |  33 +-
- drivers/clk/sunxi-ng/ccu_mult.h                    |  17 +-
- drivers/clk/sunxi-ng/ccu_nk.c                      |  43 +-
- drivers/clk/sunxi-ng/ccu_nk.h                      |   4 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                     |  45 +-
- drivers/clk/sunxi-ng/ccu_nkm.h                     |   6 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |  55 +-
- drivers/clk/sunxi-ng/ccu_nkmp.h                    |   8 +-
- drivers/clk/sunxi-ng/ccu_nm.c                      |  58 +-
- drivers/clk/sunxi-ng/ccu_nm.h                      |   6 +-
- include/dt-bindings/clock/sun50i-a64-ccu.h         | 134 +++
- include/dt-bindings/reset/sun50i-a64-ccu.h         |  98 +++
- 29 files changed, 1824 insertions(+), 121 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
- create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
-
--- 
-2.9.3
+>
+>> +	writel(val & ~(1 << 16), base + STM32F4_RCC_BDCR);
+>> +}
+>> +
+>>   struct stm32_rgate {
+>>   	struct	clk_hw hw;
+>>   	struct	clk_gate gate;
+>> @@ -396,6 +405,113 @@ static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
+>>   	return hw;
+>>   }
+>>   
+>> +static int cclk_gate_enable(struct clk_hw *hw)
+>> +{
+>> +	int ret;
+>> +
+>> +	disable_power_domain_write_protection();
+>> +
+>> +	ret = clk_gate_ops.enable(hw);
+>> +
+>> +	enable_power_domain_write_protection();
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void cclk_gate_disable(struct clk_hw *hw)
+>> +{
+>> +	disable_power_domain_write_protection();
+>> +
+>> +	clk_gate_ops.disable(hw);
+>> +
+>> +	enable_power_domain_write_protection();
+>> +}
+>> +
+>> +static int cclk_gate_is_enabled(struct clk_hw *hw)
+>> +{
+>> +	return clk_gate_ops.is_enabled(hw);
+>> +}
+>> +
+>> +static const struct clk_ops cclk_gate_ops = {
+>> +	.enable		= cclk_gate_enable,
+>> +	.disable	= cclk_gate_disable,
+>> +	.is_enabled	= cclk_gate_is_enabled,
+>> +};
+>> +
+>> +static u8 cclk_mux_get_parent(struct clk_hw *hw)
+>> +{
+>> +	return clk_mux_ops.get_parent(hw);
+>> +}
+>> +
+>> +
+> Weird double newline here. Please remove one.
+>
+>> +static int cclk_mux_set_parent(struct clk_hw *hw, u8 index)
+>> +{
+>> +	int ret;
+>> +
+>> +	disable_power_domain_write_protection();
+>> +
+>> +	sofware_reset_backup_domain();
+>> +
+>> +	ret = clk_mux_ops.set_parent(hw, index);
+>> +
+>> +	enable_power_domain_write_protection();
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +
+> Same.
+>
+>> +static const struct clk_ops cclk_mux_ops = {
+>> +	.get_parent = cclk_mux_get_parent,
+>> +	.set_parent = cclk_mux_set_parent,
+>> +};
+>> +
+>> +static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+>> +		const char * const *parent_names, int num_parents,
+>> +		void __iomem *reg, u8 bit_idx, u8 shift, unsigned long flags,
+>> +		spinlock_t *lock)
+>> +{
+>> +	struct clk_hw *hw;
+>> +	struct clk_gate *gate;
+>> +	struct clk_mux *mux;
+>> +
+>> +	gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
+> sizeof(*gate) please.
+>
+>> +	if (!gate) {
+>> +		hw = ERR_PTR(-EINVAL);
+>> +		goto fail;
+>> +	}
+>> +
+>> +	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
+> sizeof(*mux) please.
+>
+>> +	if (!mux) {
+>> +		kfree(gate);
+>> +		hw = ERR_PTR(-EINVAL);
+>> +		goto fail;
+>> +	}
+>> +
