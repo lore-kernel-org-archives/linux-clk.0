@@ -1,51 +1,114 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 25 Oct 2016 13:40:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-Cc: mturquette@baylibre.com, orson.zhai@spreadtrum.com,
-	baolin.wang@spreadtrum.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ben.li@spreadturm.com
-Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
- fixed-factor clocks
-Message-ID: <20161025204008.GE26139@codeaurora.org>
-References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
- <20161020230103.GD26139@codeaurora.org>
- <20161022081448.GB32560@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20161022081448.GB32560@spreadtrum.com>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robdclark@gmail.com,
+	jcrouse@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 1/2] clk: qcom: Handle the clamp_io assert/deassert sequence
+Date: Thu, 20 Oct 2016 15:08:06 +0530
+Message-Id: <1476956287-13749-2-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
+References: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/22, Xiaolong Zhang wrote:
-> On 四, 10月 20, 2016 at 04:01:03下午 -0700, Stephen Boyd wrote:
-> > On 10/11, Orson Zhai wrote:
-> > > From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> > > 
-> > > When common kernel setups fixed clock, of_clk_provider will be registerred.
-> > > But there is no clkdev being registerred at the same time. This will make
-> > > it difficult to get the clock by using clk_get(NULL, con_id).
-> > > 
-> > > Add clkdev register for fixed-rate and fixed-factor clock and ignore
-> > > the error if any.
-> > > 
-> > > Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> > > Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
-> > > ---
-> > 
-> > Why are we using clkdev lookups for clks populated from DT?
-> > Shouldn't we be able to point to them from the consumers that
-> > would also be in DT? I'm a little lost.
-> > 
-> The clk_get interface allows the first argument as NULL. We just assure
-> consumers can get the clock from DT or by clock name.
+Add a flag to mark gdscs which need to support the clamp deassert/assert
+before and after the gdsc enable/disable
 
-Ok. The first argument to clk_get() really shouldn't be NULL. It
-should be the device pointer for the device that is associated
-with the clk you want to get. The clock name (second argument to
-clk_get()) should be device specific and not some globally unique
-identifier. It seems that you're using the clk_get() API
-incorrectly.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gdsc.c | 26 +++++++++++++++++++++++++-
+ drivers/clk/qcom/gdsc.h |  2 ++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index f12d7b2..925d178 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -30,6 +30,7 @@
+ #define SW_OVERRIDE_MASK	BIT(2)
+ #define HW_CONTROL_MASK		BIT(1)
+ #define SW_COLLAPSE_MASK	BIT(0)
++#define GMEM_CLAMP_IO_MASK	BIT(0)
+ 
+ /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
+ #define EN_REST_WAIT_VAL	(0x2 << 20)
+@@ -140,6 +141,18 @@ static inline void gdsc_clear_mem_on(struct gdsc *sc)
+ 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, 0);
+ }
+ 
++static inline void gdsc_deassert_clamp_io(struct gdsc *sc)
++{
++	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
++			   GMEM_CLAMP_IO_MASK, 0);
++}
++
++static inline void gdsc_assert_clamp_io(struct gdsc *sc)
++{
++	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
++			   GMEM_CLAMP_IO_MASK, 1);
++}
++
+ static int gdsc_enable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+@@ -148,6 +161,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_deassert_reset(sc);
+ 
++	if (sc->flags & CLAMP_IO)
++		gdsc_deassert_clamp_io(sc);
++
+ 	ret = gdsc_toggle_logic(sc, true);
+ 	if (ret)
+ 		return ret;
+@@ -170,6 +186,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ static int gdsc_disable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
++	int ret;
+ 
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+@@ -177,7 +194,14 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	if (sc->pwrsts & PWRSTS_OFF)
+ 		gdsc_clear_mem_on(sc);
+ 
+-	return gdsc_toggle_logic(sc, false);
++	ret = gdsc_toggle_logic(sc, false);
++	if (ret)
++		return ret;
++
++	if (sc->flags & CLAMP_IO)
++		gdsc_assert_clamp_io(sc);
++
++	return 0;
+ }
+ 
+ static int gdsc_init(struct gdsc *sc)
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 3bf497c..f011c49 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -39,6 +39,7 @@ struct gdsc {
+ 	struct regmap			*regmap;
+ 	unsigned int			gdscr;
+ 	unsigned int			gds_hw_ctrl;
++	unsigned int			clamp_io_ctrl;
+ 	unsigned int			*cxcs;
+ 	unsigned int			cxc_count;
+ 	const u8			pwrsts;
+@@ -50,6 +51,7 @@ struct gdsc {
+ #define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+ 	const u8			flags;
+ #define VOTABLE		BIT(0)
++#define CLAMP_IO	BIT(1)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
