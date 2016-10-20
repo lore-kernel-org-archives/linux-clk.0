@@ -1,111 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Oct 2016 18:41:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Emil Lundmark <emil@limesaudio.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	"Ken . Lin" <ken.lin@advantech.com>
-Subject: Re: [PATCH v3 2/2] clk: imx: improve precision of AV PLL to 1 Hz
-Message-ID: <20161028014130.GE16026@codeaurora.org>
-References: <cover.1476267249.git.emil@limesaudio.com>
- <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <20161018235108.GP8871@codeaurora.org>
+ <d878b846-556d-180b-8ebf-2d06646efb58@st.com>
+ <20161019202904.GB8871@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <36f11be6-0706-6fdb-681c-5d11d5989e28@st.com>
+Date: Thu, 20 Oct 2016 09:52:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
+In-Reply-To: <20161019202904.GB8871@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/12, Emil Lundmark wrote:
-> The audio and video PLLs are designed to have a precision of 1 Hz if some
-> conditions are met. The current implementation only allows a precision that
-> depends on the rate of the parent clock. E.g., if the parent clock is 24
-> MHz, the precision will be 24 Hz; or more generally the precision will be
-> 
->     p / 10^6 Hz
-> 
-> where p is the parent clock rate. This comes down to how the register
-> values for the PLL's fractional loop divider are chosen.
-> 
-> The clock rate calculation for the PLL is
-> 
->     PLL output frequency = Fref * (DIV_SELECT + NUM / DENOM)
-> 
-> or with a shorter notation
-> 
->     r = p * (d + a / b)
-> 
-> In addition to all variables being integers, we also have the following
-> conditions:
-> 
->     27 <= d <= 54
-> 
->     -2^29 <= a <= 2^29-1
->      0    <  b <= 2^30-1
->     |a| < b
-> 
-> Here, d, a and b are register values for the fractional loop divider. We
-> want to chose d, a and b such that f(p, r) = p, i.e. f is our round_rate
-> function. Currently, d and b are chosen as
-> 
->     d = r / p
->     b = 10^6
-> 
-> hence we get the poor precision. And a is defined in terms of r, d, p and
-> b:
-> 
->     a = (r - d * p) * b / p
-> 
-> I propose that if p <= 2^30-1 (i.e., the max value for b), we chose b as
-> 
->     b = p
-> 
-> We can do this since
-> 
->     |a| < b
-> 
->     |(r - d * p) * b / p| < b
-> 
->     |r - d * p| < p
-> 
-> Which have two solutions, one of them is when p < 0, so we can skip that
-> one. The other is when p > 0 and
-> 
->     p * (d - 1) < r < p * (d + 1)
-> 
-> Substitute d = r / p:
-> 
->     (r - p) < r < (r + p)  <=>  p > 0
-> 
-> So, as long as p > 0, we can chose b = p. This is a good choise for b since
-> 
->     a = (r - d * p) * b / p
->       = (r - d * p) * p / p
->       = r - d * p
-> 
->     r = p * (d + a / b)
->       = p * d + p * a / b
->       = p * d + p * a / p
->       = p * d + a
-> 
-> and if d = r / p:
-> 
->     a = r - d * p
->       = r - r / p * p
->       = 0
-> 
->     r = p * d + a
->       = p * d + 0
->       = p * r / p
->       = r
-> 
-> I reckon this is the intention by the design of the clock rate formula.
-> 
-> Signed-off-by: Emil Lundmark <emil@limesaudio.com>
-> ---
+Hi Stephen,
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 10/19/2016 10:29 PM, Stephen Boyd wrote:
+> On 10/19, Gabriel Fernandez wrote:
+>> Hi Stephen,
+>>
+>>
+>> On 10/19/2016 01:51 AM, Stephen Boyd wrote:
+>>> On 10/14, gabriel.fernandez@st.com wrote:
+>>>> Gabriel Fernandez (6):
+>>>>    clk: stm32f4: Add LSI & LSE clocks
+>>>>    ARM: dts: stm32f429: add LSI and LSE clocks
+>>>>    arm: stmf32: Enable SYSCON
+>>>>    clk: stm32f4: Add RTC clock
+>>>>    clk: stm32f469: Add QSPI clock
+>>>>    ARM: dts: stm32f429: Add QSPI clock
+>>> Can the clk patches be picked without causing problems for
+>>> existing dt changes? Do you want an ack from clk maintainers
+>>> instead of us picking the clk patches up? The series has
+>>> intermingled clk and dts changes so I'm confused.
+>>>
+>> Thanks for reviewing.
+>>
+>> Normally DT patches will be taken by STM32 maintainer, but yes there
+>> is a dependency between patch 1 & 2, so if you push the patch 1 into
+>> clk-next tree you have to take also patch 2.
+> Let's break the dependency by making the required property
+> optional or key off a different compatible string. As it stands
+> right now applying patch 1 will cause things to break until the
+> second patch lands which is not great.
+>
+>> You have to be synchronized with Alexandre Torgue.
+>>
+>>
+> I'd prefer zero synchronization. Please just send the clk patches
+> the next time and leave the stuff for arm-soc out of the patch
+> series. Thanks.
+Ok
+
+Many Thanks.
