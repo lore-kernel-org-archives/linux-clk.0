@@ -1,63 +1,53 @@
-Return-Path: <shawn.guo@linaro.org>
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and mediactrl clock init
-Date: Sat,  8 Oct 2016 21:38:12 +0800
-Message-Id: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <ssantosh@kernel.org>
+CC: <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH 0/3] clk: keystone: add sci clock support
+Date: Fri, 21 Oct 2016 15:45:58 +0300
+Message-ID: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
-also reset controller.  It worked fine that single sysctrl/mediactrl
-device node in DT can be used to initialize clock driver and populate
-platform device for reset controller.  But it stops working after
-commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-gets merged.  The commit sets flag OF_POPULATED during clock
-initialization to skip the platform device populating for the same
-device node.  On hi6220, it effectively makes hi6220-sysctrl reset
-driver not probe any more.
+Hi,
 
-The patch changes hi6220 sysctrl and mediactrl clock init macro from
-CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
-the same hardware block can continue working.
+Version 3 has following changes compared to v2 [1]:
+- rebased on top of 4.9-rc1
+- dropped some of the controversial DT properties like ti,ssc-clocks etc.
+- driver now registers all the SCI clocks during probe time, for this,
+  there is an array built-in to the driver with knowledge of valid clocks
+  for the device
+- xlate only picks up the clocks registered during probe
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
-It fixes an issue that is seen on linux-next, i.e. the new added
-hi6220-sysctrl reset driver doesn't probe at all, and consequently the
-mmc driver fails to register.
+This series depends on the base SCI protocol support series [2]
+and the TI-SCI generic PM domain support series for the device
+ID include file [3].
 
-Shawn
+Quick boot test seems to be fine.
 
- drivers/clk/hisilicon/clk-hi6220.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-Tero
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index fe364e63f8de..c0e8e1f196aa 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -195,7 +195,7 @@ static void __init hi6220_clk_sys_init(struct device_node *np)
- 	hi6220_clk_register_divider(hi6220_div_clks_sys,
- 			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
- }
--CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
-+CLK_OF_DECLARE_DRIVER(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
- 
- 
- /* clocks in media controller */
-@@ -252,7 +252,7 @@ static void __init hi6220_clk_media_init(struct device_node *np)
- 	hi6220_clk_register_divider(hi6220_div_clks_media,
- 				ARRAY_SIZE(hi6220_div_clks_media), clk_data);
- }
--CLK_OF_DECLARE(hi6220_clk_media, "hisilicon,hi6220-mediactrl", hi6220_clk_media_init);
-+CLK_OF_DECLARE_DRIVER(hi6220_clk_media, "hisilicon,hi6220-mediactrl", hi6220_clk_media_init);
- 
- 
- /* clocks in pmctrl */
+[1] http://www.spinics.net/lists/devicetree/msg141319.html
+[2] http://www.spinics.net/lists/devicetree/msg146621.html
+[3] http://www.spinics.net/lists/arm-kernel/msg536851.html
+
+Tero Kristo (3):
+  Documentation: dt: Add TI SCI clock driver
+  dt-binding: clock: Add k2g clock definitions
+  clk: keystone: Add sci-clk driver support
+
+ .../devicetree/bindings/clock/ti,sci-clk.txt       |  37 ++
+ MAINTAINERS                                        |   3 +
+ drivers/clk/Kconfig                                |   9 +
+ drivers/clk/keystone/Makefile                      |   1 +
+ drivers/clk/keystone/sci-clk.c                     | 589 +++++++++++++++++++++
+ include/dt-bindings/clock/k2g.h                    | 234 ++++++++
+ 6 files changed, 873 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+ create mode 100644 drivers/clk/keystone/sci-clk.c
+ create mode 100644 include/dt-bindings/clock/k2g.h
+
 -- 
 1.9.1
