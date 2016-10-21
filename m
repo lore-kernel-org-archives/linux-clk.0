@@ -1,85 +1,55 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 05/15] clk: ti: create clock aliases automatically for simple clock types
-Date: Tue, 18 Oct 2016 18:45:58 +0300
-Message-ID: <1476805568-19264-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:38766 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbcJUE7N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2016 00:59:13 -0400
+Date: Thu, 20 Oct 2016 21:59:32 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
+        x86@kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, alsa-devel@alsa-project.org,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [RESEND PATCH v4] clk: x86: Add Atom PMC platform clocks
+Message-ID: <20161021045932.GA90338@f23x64.localdomain>
+References: <1476735320-4315-1-git-send-email-irina.tirdea@intel.com>
+ <alpine.DEB.2.20.1610202349200.4938@nanos>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.20.1610202349200.4938@nanos>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch generates clock aliases automatically for simple clock types
-(fixed-clock, fixed-factor-clock), so that we don't need to add the data
-for these statically into tables.
+On Thu, Oct 20, 2016 at 11:52:38PM +0200, Thomas Gleixner wrote:
+> On Mon, 17 Oct 2016, Irina Tirdea wrote:
+> > The patch has already been reviewed by Stephen Boyd [1].
+> > The only remaining question is the one pointed out by Stephen:
+> > "Will there be problems if this merges through clk tree? If so we
+> > could take the clk driver part and the platform data include part
+> > could be duplicated into both trees. Or clk tree could be pulled
+> > into x86?" [1]
+> 
+> The proper thing to do is:
+> 
+> Move all that cruft including arch/x86/platform/atom/pmc_atom.c into
+> drivers/platform/x86. There is nothing architecture specific in these
+> files. It's pure peripheral driver enablement. So drivers/platform/x86 is
+> the proper location for this. Please discuss this with Darren Hart (cc'ed).
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+We've been adding more of the pmc and punit drivers to drivers/platform/x86.
+This makes more sense than being under "arch". Thomas and I have discussed
+moving more of the non architectural stuff in arch/x86/platform to my tree under
+platform/drivers/x86.
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 91bad55..7fd9d8e 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -355,12 +355,20 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
- 	return clk;
- }
- 
-+static const struct of_device_id simple_clk_match_table[] __initconst = {
-+	{ .compatible = "fixed-clock" },
-+	{ .compatible = "fixed-factor-clock" },
-+	{ }
-+};
-+
- int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
- {
- 	struct clk *clk;
- 	bool retry;
- 	struct ti_clk_alias *retry_clk;
- 	struct ti_clk_alias *tmp;
-+	struct device_node *np;
-+	int ret = 0;
- 
- 	while (clks->clk) {
- 		clk = ti_clk_register_clk(clks->clk);
-@@ -370,7 +378,14 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
- 			} else {
- 				pr_err("register for %s failed: %ld\n",
- 				       clks->clk->name, PTR_ERR(clk));
--				return PTR_ERR(clk);
-+				ret = PTR_ERR(clk);
-+				/*
-+				 * Aliases still need to be added here,
-+				 * as we might be running on a
-+				 * transitional system that has old DT
-+				 * clock data in place.
-+				 */
-+				goto add_aliases;
- 			}
- 		} else {
- 			clks->lk.clk = clk;
-@@ -404,6 +419,18 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
- 		}
- 	}
- 
-+add_aliases:
-+	/* add clock aliases for any fixed-clocks / fixed-factor-clocks */
-+	if (of_have_populated_dt())
-+		for_each_matching_node(np, simple_clk_match_table) {
-+			struct of_phandle_args clkspec;
-+
-+			clkspec.np = np;
-+			clk = of_clk_get_from_provider(&clkspec);
-+
-+			ti_clk_add_alias(NULL, clk, np->name);
-+		}
-+
- 	return 0;
- }
- #endif
+Irina, please point me at the relevant context if it's more than just this
+particular patch.
+
+
 -- 
-1.9.1
+Darren Hart
+Intel Open Source Technology Center
