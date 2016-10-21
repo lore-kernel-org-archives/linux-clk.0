@@ -1,82 +1,79 @@
-Return-Path: <lho@apm.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+Date: Fri, 21 Oct 2016 23:15:07 +0300
+Message-ID: <21115355.YTPdgcs0id@wasted.cogentembedded.com>
+In-Reply-To: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
+References: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1477673978-15424-1-git-send-email-labbott@redhat.com>
-References: <1477673978-15424-1-git-send-email-labbott@redhat.com>
-From: Loc Ho <lho@apm.com>
-Date: Fri, 28 Oct 2016 10:07:26 -0700
-Message-ID: <CAPw-ZT=XYA3Q=nYC649iC41eebC8fqMsiOaG+O8mhP24D4JN5Q@mail.gmail.com>
-Subject: Re: [PATCHv2] clk: xgene: Don't call __pa on ioremaped address
-To: Laura Abbott <labbott@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Laura,
+Add macros usable by  the device tree sources to reference the R8A7743 CPG
+clocks  by index. The data comes from the  table 7.2b in the revision 0.50
+of the RZ/G Series User's Manual.
 
-> ioremaped addresses are not linearly mapped so the physical
-> address can not be figured out via __pa. More generally, there
-> is no guarantee that backing value of an ioremapped address
-> is a physical address at all. The value here is only used
-> for debugging so just drop the call to __pa on the ioremapped
-> address.
->
-> Fixes: 6ae5fd381251 ("clk: xgene: Silence sparse warnings")
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v2: Fix up one more format string
->
-> I put the fixes tag to match with the cleanup that was done.
-> If there is interest in this fix for pre-4.2 kernels for
-> stable, I can submit a patch for that as well.
-> ---
->  drivers/clk/clk-xgene.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-> index 3433132..1e67655 100644
-> --- a/drivers/clk/clk-xgene.c
-> +++ b/drivers/clk/clk-xgene.c
-> @@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
->         struct xgene_clk *pclk = to_xgene_clk(hw);
->         unsigned long flags = 0;
->         u32 data;
-> -       phys_addr_t reg;
->
->         if (pclk->lock)
->                 spin_lock_irqsave(pclk->lock, flags);
->
->         if (pclk->param.csr_reg != NULL) {
->                 pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
-> -               reg = __pa(pclk->param.csr_reg);
->                 /* First enable the clock */
->                 data = xgene_clk_read(pclk->param.csr_reg +
->                                         pclk->param.reg_clk_offset);
->                 data |= pclk->param.reg_clk_mask;
->                 xgene_clk_write(data, pclk->param.csr_reg +
->                                         pclk->param.reg_clk_offset);
-> -               pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
-> -                       clk_hw_get_name(hw), &reg,
-> +               pr_debug("%s clk offset 0x%08X mask 0x%08X value 0x%08X\n",
-> +                       clk_hw_get_name(hw),
->                         pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
->                         data);
->
-> @@ -268,8 +266,8 @@ static int xgene_clk_enable(struct clk_hw *hw)
->                 data &= ~pclk->param.reg_csr_mask;
->                 xgene_clk_write(data, pclk->param.csr_reg +
->                                         pclk->param.reg_csr_offset);
-> -               pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
-> -                       clk_hw_get_name(hw), &reg,
-> +               pr_debug("%s csr offset 0x%08X mask 0x%08X value 0x%08X\n",
-> +                       clk_hw_get_name(hw),
->                         pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
->                         data);
->         }
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+---
+Changes in version 3:
+- renumbered the #define's in order to match the R8A7791 CPG clocks;
+- added the reference to  the manaual to the patch description.
 
-The code looks fine to me. May be overly cautious here. Do you have a
-board to test this out?
+Changes in version 2:
+- reduced the macro value indentation.
 
--Loc
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+Index: linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7743 CPG Core Clocks */
++#define R8A7743_CLK_Z		0
++#define R8A7743_CLK_ZG		1
++#define R8A7743_CLK_ZTR		2
++#define R8A7743_CLK_ZTRD2	3
++#define R8A7743_CLK_ZT		4
++#define R8A7743_CLK_ZX		5
++#define R8A7743_CLK_ZS		6
++#define R8A7743_CLK_HP		7
++#define R8A7743_CLK_B		9
++#define R8A7743_CLK_LB		10
++#define R8A7743_CLK_P		11
++#define R8A7743_CLK_CL		12
++#define R8A7743_CLK_M2		13
++#define R8A7743_CLK_ZB3		15
++#define R8A7743_CLK_ZB3D2	16
++#define R8A7743_CLK_DDR		17
++#define R8A7743_CLK_SDH		18
++#define R8A7743_CLK_SD0		19
++#define R8A7743_CLK_SD2		20
++#define R8A7743_CLK_SD3		21
++#define R8A7743_CLK_MMC0	22
++#define R8A7743_CLK_MP		23
++#define R8A7743_CLK_QSPI	26
++#define R8A7743_CLK_CP		27
++#define R8A7743_CLK_RCAN	28
++#define R8A7743_CLK_R		29
++#define R8A7743_CLK_OSC		30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
