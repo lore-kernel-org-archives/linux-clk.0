@@ -1,67 +1,296 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3] clkdev: Detect errors in clk_hw_register_clkdev() for mass registration
-Date: Fri, 21 Oct 2016 09:02:38 +0200
-Message-Id: <1477033358-7934-1-git-send-email-geert@linux-m68k.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH v3 3/3] clk: stm32f469: Add QSPI clock
+Date: Fri, 21 Oct 2016 11:23:30 +0200
+Message-ID: <1477041810-12313-4-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Unlike clk_register_clkdev(), clk_hw_register_clkdev() doesn't check for
-passed error objects from a previous registration call. Hence the caller
-of clk_hw_register_*() has to check for errors before calling
-clk_hw_register_clkdev*().
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Make clk_hw_register_clkdev() more similar to clk_register_clkdev() by
-adding this error check, removing the burden from callers that do mass
-registration.
+This patch adds the QSPI clock for stm32f469 discovery board.
+The gate mapping is a little bit different from stm32f429 soc.
 
-Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
-Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
-Fixes: 44ce9a9ae977736f ("MIPS: TXx9: Convert to Common Clock Framework")
-Fixes: f48d947a162dfa9d ("clk: clps711x: Migrate to clk_hw based OF and registration APIs")
-Fixes: b4626a7f489238a5 ("CLK: Add Loongson1C clock support")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
-v3:
-  - Add more Fixes tags for drivers not checking errors in v4.9-rc1,
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
+ drivers/clk/clk-stm32f4.c                          | 173 ++++++++++++++++++---
+ 2 files changed, 158 insertions(+), 19 deletions(-)
 
-v2:
-  - Correct wrong function references
-    s/clkdev_{,hw_}create/clk_{,hw_}register_clkdev/
----
- drivers/clk/clkdev.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 97ae60fa15849954..bb8a77a5985f8627 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -448,12 +448,20 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
-  *
-  * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-  * clkdev.
-+ *
-+ * To make things easier for mass registration, we detect error clk_hws
-+ * from a previous clk_hw_register_*() call, and return the error code for
-+ * those.  This is to permit this function to be called immediately
-+ * after clk_hw_register_*().
-  */
- int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
- 	const char *dev_id)
- {
- 	struct clk_lookup *cl;
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+index c209de6..0532d81 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -7,7 +7,9 @@ Please refer to clock-bindings.txt for common clock controller binding usage.
+ Please also refer to reset.txt for common reset controller binding usage.
  
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
+ Required properties:
+-- compatible: Should be "st,stm32f42xx-rcc"
++- compatible: Should be:
++  "st,stm32f42xx-rcc"
++  "st,stm32f469-rcc"
+ - reg: should be register base and length as documented in the
+   datasheet
+ - #reset-cells: 1, see below
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index cbc8148..c2661e2 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -46,7 +46,7 @@ struct stm32f4_gate_data {
+ 	unsigned long flags;
+ };
+ 
+-static const struct stm32f4_gate_data stm32f4_gates[] __initconst = {
++static const struct stm32f4_gate_data stm32f429_gates[] __initconst = {
+ 	{ STM32F4_RCC_AHB1ENR,  0,	"gpioa",	"ahb_div" },
+ 	{ STM32F4_RCC_AHB1ENR,  1,	"gpiob",	"ahb_div" },
+ 	{ STM32F4_RCC_AHB1ENR,  2,	"gpioc",	"ahb_div" },
+@@ -126,22 +126,108 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
+ };
+ 
++static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
++	{ STM32F4_RCC_AHB1ENR,  0,	"gpioa",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  1,	"gpiob",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  2,	"gpioc",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  3,	"gpiod",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  4,	"gpioe",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  5,	"gpiof",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  6,	"gpiog",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  7,	"gpioh",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  8,	"gpioi",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR,  9,	"gpioj",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 10,	"gpiok",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 12,	"crc",		"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 18,	"bkpsra",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 20,	"ccmdatam",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 21,	"dma1",		"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 22,	"dma2",		"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 23,	"dma2d",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 25,	"ethmac",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 26,	"ethmactx",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 27,	"ethmacrx",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 28,	"ethmacptp",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 29,	"otghs",	"ahb_div" },
++	{ STM32F4_RCC_AHB1ENR, 30,	"otghsulpi",	"ahb_div" },
 +
- 	/*
- 	 * Since dev_id can be NULL, and NULL is handled specially, we must
- 	 * pass it as either a NULL format string, or with "%s".
++	{ STM32F4_RCC_AHB2ENR,  0,	"dcmi",		"ahb_div" },
++	{ STM32F4_RCC_AHB2ENR,  4,	"cryp",		"ahb_div" },
++	{ STM32F4_RCC_AHB2ENR,  5,	"hash",		"ahb_div" },
++	{ STM32F4_RCC_AHB2ENR,  6,	"rng",		"pll48" },
++	{ STM32F4_RCC_AHB2ENR,  7,	"otgfs",	"pll48" },
++
++	{ STM32F4_RCC_AHB3ENR,  0,	"fmc",		"ahb_div",
++		CLK_IGNORE_UNUSED },
++	{ STM32F4_RCC_AHB3ENR,  1,	"qspi",		"ahb_div",
++		CLK_IGNORE_UNUSED },
++
++	{ STM32F4_RCC_APB1ENR,  0,	"tim2",		"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  1,	"tim3",		"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  2,	"tim4",		"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  3,	"tim5",		"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  4,	"tim6",		"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  5,	"tim7",		"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  6,	"tim12",	"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  7,	"tim13",	"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR,  8,	"tim14",	"apb1_mul" },
++	{ STM32F4_RCC_APB1ENR, 11,	"wwdg",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 14,	"spi2",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 15,	"spi3",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 17,	"uart2",	"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 18,	"uart3",	"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 19,	"uart4",	"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 20,	"uart5",	"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 21,	"i2c1",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 22,	"i2c2",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 23,	"i2c3",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 25,	"can1",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 26,	"can2",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 28,	"pwr",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 29,	"dac",		"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 30,	"uart7",	"apb1_div" },
++	{ STM32F4_RCC_APB1ENR, 31,	"uart8",	"apb1_div" },
++
++	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR,  4,	"usart1",	"apb2_div" },
++	{ STM32F4_RCC_APB2ENR,  5,	"usart6",	"apb2_div" },
++	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
++	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 16,	"tim9",		"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR, 17,	"tim10",	"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR, 18,	"tim11",	"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR, 20,	"spi5",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 21,	"spi6",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 22,	"sai1",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
++};
++
+ enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC, END_PRIMARY_CLK };
+-/*
+- * MAX_CLKS is the maximum value in the enumeration below plus the combined
+- * hweight of stm32f42xx_gate_map (plus one).
+- */
+-#define MAX_CLKS (71 + END_PRIMARY_CLK + 1)
+ 
+ /*
+  * This bitmask tells us which bit offsets (0..192) on STM32F4[23]xxx
+  * have gate bits associated with them. Its combined hweight is 71.
+  */
+-static const u64 stm32f42xx_gate_map[] = { 0x000000f17ef417ffull,
+-					   0x0000000000000001ull,
+-					   0x04777f33f6fec9ffull };
++#define MAX_GATE_MAP 3
++
++static const u64 stm32f42xx_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
++						       0x0000000000000001ull,
++						       0x04777f33f6fec9ffull };
++
++static const u64 stm32f46xx_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
++						       0x0000000000000003ull,
++						       0x0c777f33f6fec9ffull };
++
++const u64 *stm32f4_gate_map;
++
++static struct clk_hw **clks;
+ 
+-static struct clk_hw *clks[MAX_CLKS];
+ static DEFINE_SPINLOCK(stm32f4_clk_lock);
+ static void __iomem *base;
+ 
+@@ -263,7 +349,7 @@ static void stm32f4_rcc_register_pll(const char *hse_clk, const char *hsi_clk)
+  */
+ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+ {
+-	u64 table[ARRAY_SIZE(stm32f42xx_gate_map)];
++	u64 table[MAX_GATE_MAP];
+ 
+ 	if (primary == 1) {
+ 		if (WARN_ON(secondary >= END_PRIMARY_CLK))
+@@ -271,7 +357,7 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+ 		return secondary;
+ 	}
+ 
+-	memcpy(table, stm32f42xx_gate_map, sizeof(table));
++	memcpy(table, stm32f4_gate_map, sizeof(table));
+ 
+ 	/* only bits set in table can be used as indices */
+ 	if (WARN_ON(secondary >= BITS_PER_BYTE * sizeof(table) ||
+@@ -525,10 +611,42 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 	"no-clock", "lse", "lsi", "hse-rtc"
+ };
+ 
++struct stm32f4_clk_data {
++	const struct stm32f4_gate_data *gates_data;
++	const u64 *gates_map;
++	int gates_num;
++};
++
++static const struct stm32f4_clk_data stm32f429_clk_data = {
++	.gates_data	= stm32f429_gates,
++	.gates_map	= stm32f42xx_gate_map,
++	.gates_num	= ARRAY_SIZE(stm32f429_gates),
++};
++
++static const struct stm32f4_clk_data stm32f469_clk_data = {
++	.gates_data	= stm32f469_gates,
++	.gates_map	= stm32f46xx_gate_map,
++	.gates_num	= ARRAY_SIZE(stm32f469_gates),
++};
++
++static const struct of_device_id stm32f4_of_match[] = {
++	{
++		.compatible = "st,stm32f42xx-rcc",
++		.data = &stm32f429_clk_data
++	},
++	{
++		.compatible = "st,stm32f469-rcc",
++		.data = &stm32f469_clk_data
++	},
++	{}
++};
++
+ static void __init stm32f4_rcc_init(struct device_node *np)
+ {
+ 	const char *hse_clk;
+ 	int n;
++	const struct of_device_id *match;
++	const struct stm32f4_clk_data *data;
+ 
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
+@@ -542,6 +660,19 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		pr_warn("%s: Unable to get syscfg\n", __func__);
+ 	}
+ 
++	match = of_match_node(stm32f4_of_match, np);
++	if (WARN_ON(!match))
++		return;
++
++	data = match->data;
++
++	clks = kmalloc_array(data->gates_num + END_PRIMARY_CLK,
++			sizeof(*clks), GFP_KERNEL);
++	if (!clks)
++		goto fail;
++
++	stm32f4_gate_map = data->gates_map;
++
+ 	hse_clk = of_clk_get_parent_name(np, 0);
+ 
+ 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+@@ -574,11 +705,15 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	clks[FCLK] = clk_hw_register_fixed_factor(NULL, "fclk", "ahb_div",
+ 					       0, 1, 1);
+ 
+-	for (n = 0; n < ARRAY_SIZE(stm32f4_gates); n++) {
+-		const struct stm32f4_gate_data *gd = &stm32f4_gates[n];
+-		unsigned int secondary =
+-		    8 * (gd->offset - STM32F4_RCC_AHB1ENR) + gd->bit_idx;
+-		int idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
++	for (n = 0; n < data->gates_num; n++) {
++		const struct stm32f4_gate_data *gd;
++		unsigned int secondary;
++		int idx;
++
++		gd = &data->gates_data[n];
++		secondary = 8 * (gd->offset - STM32F4_RCC_AHB1ENR) +
++			gd->bit_idx;
++		idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
+ 
+ 		if (idx < 0)
+ 			goto fail;
+@@ -630,6 +765,8 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+ 	return;
+ fail:
++	kfree(clks);
+ 	iounmap(base);
+ }
+-CLK_OF_DECLARE(stm32f4_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_init);
++CLK_OF_DECLARE(stm32f42xx_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_init);
++CLK_OF_DECLARE(stm32f46xx_rcc, "st,stm32f469-rcc", stm32f4_rcc_init);
 -- 
 1.9.1
