@@ -1,59 +1,24 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 28 Oct 2016 05:51:12 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support
- to clockdomains
-Message-ID: <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <1476805568-19264-12-git-send-email-t-kristo@ti.com>
- <20161028005047.GQ26139@codeaurora.org>
- <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 0/2] Renesas R8A7743 CPG/MSSR clock support
+Date: Fri, 21 Oct 2016 23:12:42 +0300
+Message-ID: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [161028 00:43]:
-> On 28/10/16 03:50, Stephen Boyd wrote:
-> > I suppose a PRCM is
-> > like an MFD that has clocks and resets under it? On other
-> > platforms we've combined that all into one node and just had
-> > #clock-cells and #reset-cells in that node. Is there any reason
-> > we can't do that here?
-> 
-> For OMAPs, there are typically multiple instances of the PRCM around; OMAP4
-> for example has:
-> 
-> cm1 @ 0x4a004000 (clocks + clockdomains)
-> cm2 @ 0x4a008000 (clocks + clockdomains)
-> prm @ 0x4a306000 (few clocks + resets + power state handling)
-> scrm @ 0x4a30a000 (few external clocks + plenty of misc stuff)
-> 
-> These instances are also under different power/voltage domains which means
-> their PM behavior is different.
-> 
-> The idea behind having a clockdomain as a provider was mostly to have the
-> topology visible : prcm-instance -> clockdomain -> clocks
+Hello.
 
-Yeah that's needed to get the interconnect hierarchy right for
-genpd :)
+   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+'linux.git' repo. I've splitted them from the R-Car gen2 common support patch.
+As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
+patch #1 of this series, it might make sense to merge this patch to the
+'renesas.git' repo as well...
 
-> ... but basically I think it would be possible to drop the clockdomain
-> representation and just mark the prcm-instance as a clock provider. Tony,
-> any thoughts on that?
+[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+[2/2] clk: renesas: cpg-mssr: add R8A7743 support
 
-No let's not drop the clockdomains as those will be needed when we
-move things into proper hierarchy within the interconnect instances.
-This will then help with getting things right with genpd.
-
-In the long run we just want to specify clockdomain and the offset of
-the clock instance within the clockdomain in the dts files.
-
-Regards,
-
-Tony
+MBR, Sergei
