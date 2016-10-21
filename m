@@ -1,382 +1,129 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>
+Subject: [PATCH v14 0/4] Add clock support for Mediatek MT2701
+Date: Fri, 21 Oct 2016 11:32:18 +0800
+Message-ID: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1474282525-30441-2-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20160919105548eucas1p24b28143fab25eb47f5629d31f817b0bc@eucas1p2.samsung.com>
- <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com> <1474282525-30441-2-git-send-email-m.szyprowski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 7 Oct 2016 12:07:57 +0200
-Message-ID: <CAPDyKFqtGTJ38K5xm+-xVZcjAmLuo21613GHwUkQKKJXvYtsLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: add support for runtime pm
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19 September 2016 at 12:55, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Registers for some clocks might be located in the SOC area, which are under the
-> power domain. To enable access to those registers respective domain has to be
-> turned on. Additionally, registers for such clocks will usually loose its
-> contents when power domain is turned off, so additional saving and restoring of
-> them might be needed in the clock controller driver.
->
-> This patch adds basic infrastructure in the clocks core to allow implementing
-> driver for such clocks under power domains. Clock provider can supply a
-> struct device pointer, which is the used by clock core for tracking and managing
-> clock's controller runtime pm state. Each clk_prepare() operation
-> will first call pm_runtime_get_sync() on the supplied device, while
-> clk_unprepare() will do pm_runtime_put() at the end.
->
-> Additional calls to pm_runtime_get/put functions are required to ensure that any
-> register access (like calculating/changing clock rates and unpreparing/disabling
-> unused clocks on boot) will be done with clock controller in runtime resumend
-> state.
->
-> When one wants to register clock controller, which make use of this feature, he
-> has to:
-> 1. Provide a struct device to the core when registering the provider and set
->    CLK_RUNTIME_PM flags for its clocks.
-> 2. It needs to enable runtime PM for that device.
-> 3. It needs to make sure the runtime PM status of the controller device reflects
->    the HW state.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/clk.c            | 107 +++++++++++++++++++++++++++++++++++++++----
->  include/linux/clk-provider.h |   1 +
->  2 files changed, 98 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939fb6bb..096a199b8e46 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -21,6 +21,7 @@
->  #include <linux/of.h>
->  #include <linux/device.h>
->  #include <linux/init.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/sched.h>
->  #include <linux/clkdev.h>
->
-> @@ -46,6 +47,7 @@ struct clk_core {
->         const struct clk_ops    *ops;
->         struct clk_hw           *hw;
->         struct module           *owner;
-> +       struct device           *dev;
->         struct clk_core         *parent;
->         const char              **parent_names;
->         struct clk_core         **parents;
-> @@ -87,6 +89,26 @@ struct clk {
->         struct hlist_node clks_node;
->  };
->
-> +/***           runtime pm          ***/
-> +static int clk_pm_runtime_get(struct clk_core *core)
-> +{
-> +       int ret = 0;
-> +
-> +       if (!core->dev)
-> +               return 0;
-> +
-> +       ret = pm_runtime_get_sync(core->dev);
-> +       return ret < 0 ? ret : 0;
-> +}
-> +
-> +static void clk_pm_runtime_put(struct clk_core *core)
-> +{
-> +       if (!core->dev)
-> +               return;
-> +
-> +       pm_runtime_put(core->dev);
-> +}
-> +
->  /***           locking             ***/
->  static void clk_prepare_lock(void)
->  {
-> @@ -150,6 +172,8 @@ static void clk_enable_unlock(unsigned long flags)
->
->  static bool clk_core_is_prepared(struct clk_core *core)
->  {
-> +       bool status;
-> +
->         /*
->          * .is_prepared is optional for clocks that can prepare
->          * fall back to software usage counter if it is missing
-> @@ -157,11 +181,17 @@ static bool clk_core_is_prepared(struct clk_core *core)
->         if (!core->ops->is_prepared)
->                 return core->prepare_count;
->
-> -       return core->ops->is_prepared(core->hw);
-> +       clk_pm_runtime_get(core);
+This series is based on v4.9-rc1, add clock and reset controller support
+for Mediatek MT2701.
 
-I guess you should assign status to the return code, and check it.
+changes since v13:
+- Rebase to v4.9-rc1.
 
-> +       status = core->ops->is_prepared(core->hw);
-> +       clk_pm_runtime_put(core);
-> +
-> +       return status;
->  }
->
->  static bool clk_core_is_enabled(struct clk_core *core)
->  {
-> +       bool status;
-> +
->         /*
->          * .is_enabled is only mandatory for clocks that gate
->          * fall back to software usage counter if .is_enabled is missing
-> @@ -169,7 +199,29 @@ static bool clk_core_is_enabled(struct clk_core *core)
->         if (!core->ops->is_enabled)
->                 return core->enable_count;
->
-> -       return core->ops->is_enabled(core->hw);
-> +       /*
-> +        * Check if runtime pm is enabled before calling .is_enabled callback,
-> +        * if not assume that clock is disabled, because we might be called
-> +        * from atomic context, from which pm_runtime_get() is not allowed.
-> +        * This function is called mainly from clk_disable_unused_subtree,
-> +        * which ensures proper runtime pm activation of controller before
-> +        * taking enable spinlock, but the below check is needed if one tries
-> +        * to call it from other place.
-> +        */
-> +       if (core->dev) {
-> +               pm_runtime_get_noresume(core->dev);
-> +               if (pm_runtime_suspended(core->dev)) {
+changes since v12:
+- Rebase to clk-next.
+- Use CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE().
+- Use dev_* and devm_* APIs instead of pr_* and ioremap().
+- Refine init functions. Share error messages in common probe().
+- Fix null pointer checking for clk_data.
 
-I think it's wrong to use pm_runtime_suspended().
+changes since v11:
+- Rebase to clk-next.
+- Return error code from probe() if clock registration fail.
 
-What you should be checking, is whether the device is RPM_ACTIVE or if
-runtime PM isn't enabled for device.
+changes since v10:
+- Remove COMMON_CLK dependency from clk/mediatek/Kconfig.
 
-In other words, you should use pm_runtime_active() to find out whether
-it's okay to invoke the ->is_enabled() ops or not.
+changes since v9:
+- Rebase to v4.8-rc1.
+- Drop a fix patch of parent clock initial state. It will be replaced by a new
+  patch from Mike/Stephen.
+- Replace clk.h with clk-provider.h.
+- Correct register settings of clocks.
 
-Accordingly, I think the upper comment you added then needs to be a
-rephrased a bit to reflect this.
+changes since v8:
+- Rebase to v4.7-rc1.
+- Include mt2701-resets.h in mt2701.dtsi.
+- Remove an unused property from apmixedsys DT node.
 
-> +                       status = false;
-> +                       goto done;
-> +               }
-> +       }
-> +
-> +       status = core->ops->is_enabled(core->hw);
-> +done:
-> +       if (core->dev)
-> +               pm_runtime_put(core->dev);
-> +
-> +       return status;
->  }
->
->  /***    helper functions   ***/
-> @@ -489,6 +541,8 @@ static void clk_core_unprepare(struct clk_core *core)
->         if (core->ops->unprepare)
->                 core->ops->unprepare(core->hw);
->
-> +       clk_pm_runtime_put(core);
-> +
->         trace_clk_unprepare_complete(core);
->         clk_core_unprepare(core->parent);
->  }
-> @@ -530,10 +584,14 @@ static int clk_core_prepare(struct clk_core *core)
->                 return 0;
->
->         if (core->prepare_count == 0) {
-> -               ret = clk_core_prepare(core->parent);
-> +               ret = clk_pm_runtime_get(core);
->                 if (ret)
->                         return ret;
->
-> +               ret = clk_core_prepare(core->parent);
-> +               if (ret)
-> +                       goto runtime_put;
-> +
->                 trace_clk_prepare(core);
->
->                 if (core->ops->prepare)
-> @@ -541,15 +599,18 @@ static int clk_core_prepare(struct clk_core *core)
->
->                 trace_clk_prepare_complete(core);
->
-> -               if (ret) {
-> -                       clk_core_unprepare(core->parent);
-> -                       return ret;
-> -               }
-> +               if (ret)
-> +                       goto unprepare;
->         }
->
->         core->prepare_count++;
->
->         return 0;
-> +unprepare:
-> +       clk_core_unprepare(core->parent);
-> +runtime_put:
-> +       clk_pm_runtime_put(core);
-> +       return ret;
->  }
->
->  static int clk_core_prepare_lock(struct clk_core *core)
-> @@ -745,6 +806,9 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
->         if (core->flags & CLK_IGNORE_UNUSED)
->                 return;
->
-> +       if (clk_pm_runtime_get(core) != 0)
+changes since v7:
+- Rebase to clk-next.
+- Implement subsystem clocks in seperated files.
+- Replace critical clock enabling with CLK_IS_CRITICAL flag.
+- Reduce most clock registrations in CLK_OF_DECLARE().
+- Remove __init and __initconst from most init fucntions and data,
+  and replace driver registration with platform_driver_register().
+- Replace some common function or variable names with unique names.
+- Use real clock for UARTs.
 
-You may simplify this:
-if (clk_pm_runtime_get(core))
+changes since v6:
+- Rebase to v4.6-rc1.
+- Register subsystem clocks in probe() instead of CLK_OF_DECLARE().
+- Add clocks that referred by subsystem clocks.
+- Fix clk_data size of apmixedsys.
+- Add config options for each subsystem clock provider.
 
-> +               return;
-> +
->         if (clk_core_is_prepared(core)) {
->                 trace_clk_unprepare(core);
->                 if (core->ops->unprepare_unused)
-> @@ -753,6 +817,8 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
->                         core->ops->unprepare(core->hw);
->                 trace_clk_unprepare_complete(core);
->         }
-> +
-> +       clk_pm_runtime_put(core);
->  }
->
->  static void clk_disable_unused_subtree(struct clk_core *core)
-> @@ -768,6 +834,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
->         if (core->flags & CLK_OPS_PARENT_ENABLE)
->                 clk_core_prepare_enable(core->parent);
->
-> +       if (clk_pm_runtime_get(core) != 0)
+changes since v5:
+- Rebase to v4.5-rc1 and [1].
+- Enable critical clocks for MT2701
+- Refine dt-binding documents, add reset controller support for hifsys.
 
-Is there any reason to why you haven't moved this further down in this
-function, like just before calling clk_core_is_enabled()?
+changes since v4:
+- Rebase to v4.5-rc1.
+- Remove CLK_SET_RATE_PARENT from divider flags.
+- Add img_jpgdec_smi clock.
+- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
 
-You may also simplify this:
-if (clk_pm_runtime_get(core))
+changes since v3:
+- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
 
-> +               return;
-> +
+changes since v2:
+- Fix ethsys definition.
+- Replace read-modify-write with regmap_update_bits() in clock operations.
+- Move mt2701-resets.h to include/dt-bindings/reset/.
+- Add hifsys reset patch from John Crispin.
 
-You need to restore the call made to clk_core_prepare_enable()
-earlier, so please update the error handling to cope with this.
+changes since v1:
+- Document MT2701 compatible strings.
 
->         flags = clk_enable_lock();
->
->         if (core->enable_count)
-> @@ -794,6 +863,8 @@ unlock_out:
->         clk_enable_unlock(flags);
->         if (core->flags & CLK_OPS_PARENT_ENABLE)
->                 clk_core_disable_unprepare(core->parent);
-> +
-> +       clk_pm_runtime_put(core);
->  }
->
->  static bool clk_ignore_unused;
-> @@ -1563,6 +1634,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->  {
->         struct clk_core *top, *fail_clk;
->         unsigned long rate = req_rate;
-> +       int ret = 0;
->
->         if (!core)
->                 return 0;
-> @@ -1579,21 +1651,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         if (!top)
->                 return -EINVAL;
->
-> +       ret = clk_pm_runtime_get(core);
-> +       if (ret)
-> +               return ret;
-> +
->         /* notify that we are about to change rates */
->         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->         if (fail_clk) {
->                 pr_debug("%s: failed to set %s rate\n", __func__,
->                                 fail_clk->name);
->                 clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
-> -               return -EBUSY;
-> +               ret = -EBUSY;
-> +               goto err;
->         }
->
->         /* change the rates */
->         clk_change_rate(top);
->
->         core->req_rate = req_rate;
-> +err:
-> +       clk_pm_runtime_put(core);
->
-> -       return 0;
-> +       return ret;
->  }
->
->  /**
-> @@ -1824,12 +1903,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
->                 p_rate = parent->rate;
->         }
->
-> +       ret = clk_pm_runtime_get(core);
-> +       if (ret)
-> +               goto out;
-> +
->         /* propagate PRE_RATE_CHANGE notifications */
->         ret = __clk_speculate_rates(core, p_rate);
->
->         /* abort if a driver objects */
->         if (ret & NOTIFY_STOP_MASK)
-> -               goto out;
-> +               goto runtime_put;
->
->         /* do the re-parent */
->         ret = __clk_set_parent(core, parent, p_index);
-> @@ -1842,6 +1925,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
->                 __clk_recalc_accuracies(core);
->         }
->
-> +runtime_put:
-> +       clk_pm_runtime_put(core);
->  out:
->         clk_prepare_unlock();
->
-> @@ -2546,6 +2631,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->                 goto fail_name;
->         }
->         core->ops = hw->init->ops;
-> +       if (dev && (hw->init->flags & CLK_RUNTIME_PM))
-> +               core->dev = dev;
+[1] https://patchwork.kernel.org/patch/8147901/
 
-I guess you need this to play safe, although I am really wondering if
-we should try without.
+Erin Lo (1):
+  arm: dts: mt2701: Use real clock for UARTs
 
-Not that many clocks are currently being registered with a valid
-struct device pointer. For the other cases why not try to use runtime
-PM as per default?
+James Liao (1):
+  arm: dts: mt2701: Add clock controller device nodes
 
-Moreover we anyway rely on the clock provider to enable runtime PM for
-the clock device, and when that isn't the case the runtime PM
-deployment in the core should still be safe, right!?
+Shunli Wang (2):
+  clk: mediatek: Add MT2701 clock support
+  reset: mediatek: Add MT2701 reset driver
 
->         if (dev && dev->driver)
->                 core->owner = dev->driver->owner;
->         core->hw = hw;
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index a39c0c530778..8a131eb71fdf 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -35,6 +35,7 @@
->  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
->  /* parents need enable during gate/ungate, set rate and re-parent */
->  #define CLK_OPS_PARENT_ENABLE  BIT(12)
-> +#define CLK_RUNTIME_PM         BIT(13)
->
->  struct clk;
->  struct clk_hw;
-> --
-> 1.9.1
->
+ arch/arm/boot/dts/mt2701.dtsi          |   50 +-
+ drivers/clk/mediatek/Kconfig           |   43 ++
+ drivers/clk/mediatek/Makefile          |    7 +
+ drivers/clk/mediatek/clk-gate.c        |   52 ++
+ drivers/clk/mediatek/clk-gate.h        |    2 +
+ drivers/clk/mediatek/clk-mt2701-bdp.c  |  148 +++++
+ drivers/clk/mediatek/clk-mt2701-eth.c  |   90 +++
+ drivers/clk/mediatek/clk-mt2701-hif.c  |   91 +++
+ drivers/clk/mediatek/clk-mt2701-img.c  |   90 +++
+ drivers/clk/mediatek/clk-mt2701-mm.c   |  133 ++++
+ drivers/clk/mediatek/clk-mt2701-vdec.c |  101 +++
+ drivers/clk/mediatek/clk-mt2701.c      | 1054 ++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c         |   40 ++
+ drivers/clk/mediatek/clk-mtk.h         |   41 +-
+ drivers/clk/mediatek/clk-pll.c         |    1 +
+ 15 files changed, 1933 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-bdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-hif.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2701.c
 
-Kind regards
-Uffe
+--
+1.9.1
