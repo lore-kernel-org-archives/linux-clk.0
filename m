@@ -1,80 +1,113 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <3b50ab04-74d2-da25-d0a8-63a90ce69d93@samsung.com>
-Date: Tue, 25 Oct 2016 10:51:03 +0200
-MIME-version: 1.0
-In-reply-to: <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
-Content-type: text/plain; charset=utf-8; format=flowed
-References: 
- <CGME20161024121224eucas1p1070b72308dc9c8d8d2b10fa5bfeaf5ed@eucas1p1.samsung.com>
- <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, James Liao
+	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v14 3/4] arm: dts: mt2701: Add clock controller device nodes
+Date: Fri, 21 Oct 2016 11:32:21 +0800
+Message-ID: <1477020742-13889-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
+References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+From: James Liao <jamesjj.liao@mediatek.com>
 
+Add clock controller nodes for MT2701, include topckgen, infracfg,
+pericfg, apmixedsys, mmsys, imgsys, vdecsys, hifsys, ethsys and
+bdpsys. This patch also add two oscillators that provide clocks for
+MT2701.
 
-On 2016-10-24 14:12, Marek Szyprowski wrote:
-> This patchset adds runtime PM support to common clock framework. This is an
-> attempt to implement support for clock controllers, which belongs to a power
-> domain. This approach works surprisingly well on Exynos 4412 and 5433 SoCs,
-> what allowed us to solve various freeze/crash issues related to power
-> management.
->
-> The main idea behind this patchset is to keep clock's controller power domain
-> enabled every time when at least one of its clock is enabled or access to its
-> registers is being made. Clock controller driver (clock provider) can
-> supply a struct device pointer, which is the used by clock core for tracking and
-> managing clock's controller runtime pm state. Each clk_prepare() operation will
-> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-> will do pm_runtime_put() at the end.
->
-> This runtime PM feature has been tested with Exynos4412 and Exynos5433 clocks
-> drivers. Both have some clocks, which belongs to respective power domains and
-> need special handling during power on/off procedures. Till now it wasn't handled
-> at all, what caused various problems.
->
-> Patches for exynos 4412 and 5433 clocks drivers change the way the clock
-> provider is initialized. Instead of CLK_OF_DECLARE based initialization, a
-> complete platform device driver infrastructure is being used. This is needed to
-> let driver to use runtime pm feature and integrate with generic power domains.
-> The side-effect of this change is a delay in clock provider registeration
-> during system boot, so early initialized drivers might get EPROBEDEFER error
-> when requesting their clocks. This is an issue for IOMMU drivers, so
-> this patchset will be fully functional once the deferred probe for IOMMU
-> will be merged.
->
-> The side-effect of this patchset is the one can finally read
-> /sys/kernel/debug/clk/clk_summary on all Exynos4412 boards without any freeze.
->
-> If one wants to test this patchset (on Exynos4412 Trats2 device with FIMC-IS
-> driver), I've provided a branch with all needed patches (fixes for Exynos,
-> FIMC-IS driver and IOMMU deferred probe):
-> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.9-clocks-pm-v3
->
-> Patches are based on vanilla v4.9-rc1 kernel.
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-If one want to test this patchset together with my recently posted 
-Exynos IOMMU
-runtime PM patches (V5: 
-http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1253432.html),
-I prepared a single branch with both patchsets and all their prerequisites:
-
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.9-iommu-pm-v5-clocks-pm-v3
-
-
-Best regards
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 18596a2..c9a8dbf 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -12,8 +12,10 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <dt-bindings/clock/mt2701-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/mt2701-resets.h>
+ #include "skeleton64.dtsi"
+ #include "mt2701-pinfunc.h"
+ 
+@@ -77,6 +79,20 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
++	rtc32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000>;
++		clock-output-names = "rtc32k";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupt-parent = <&gic>;
+@@ -104,6 +120,26 @@
+ 		reg = <0 0x10005000 0 0x1000>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2701-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2701-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2701-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
+ 	watchdog: watchdog@10007000 {
+ 		compatible = "mediatek,mt2701-wdt",
+ 			     "mediatek,mt6589-wdt";
+@@ -128,6 +164,12 @@
+ 		reg = <0 0x10200100 0 0x1c>;
+ 	};
+ 
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2701-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	gic: interrupt-controller@10211000 {
+ 		compatible = "arm,cortex-a7-gic";
+ 		interrupt-controller;
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
