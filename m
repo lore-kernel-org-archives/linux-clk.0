@@ -1,85 +1,58 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0067.outbound.protection.outlook.com ([104.47.38.67]:18522
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934688AbcJ1F6T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Oct 2016 01:58:19 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Received: from szxga02-in.huawei.com ([119.145.14.65]:48822 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752158AbcJUBrf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Oct 2016 21:47:35 -0400
+Subject: Re: [PATCH 2/3] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-3-wenpan@hisilicon.com>
+ <20161018155835.qyoffwznacdac46y@rob-hp-laptop>
+ <7ce2e35b-19e1-9493-90a7-15b321fee2cc@hisilicon.com>
+ <CAL_JsqK18RHFhDSWA_j+v_pJL6vk+a=GD7oo6O3JJaV4hHHEBg@mail.gmail.com>
+ <5dc55eef-808e-fa78-a5a0-4fccb31e5ceb@hisilicon.com>
+ <20161020174805.GA26139@codeaurora.org>
+CC: Rob Herring <robh@kernel.org>, Pan Wen <wenpan@hisilicon.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v14, 1/8] dt: bindings: update Freescale DCFG compatible
-Date: Fri, 28 Oct 2016 13:45:14 +0800
-Message-ID: <1477633521-7391-2-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
+        Russell King <linux@armlinux.org.uk>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        <howell.yang@hisilicon.com>, <jalen.hsu@hisilicon.com>,
+        lvkuanliang 00222834 <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <7a99bc79-179d-a5ac-bd2a-2e1ce3724d79@hisilicon.com>
+Date: Fri, 21 Oct 2016 09:46:19 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20161020174805.GA26139@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Update Freescale DCFG compatible with 'fsl,<chip>-dcfg' instead
-of 'fsl,ls1021a-dcfg' to include more chips such as ls1021a,
-ls1043a, and ls2080a.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Scott Wood <oss@buserror.net>
----
-Changes for v8:
-	- Added this patch
-Changes for v9:
-	- Added a list for the possible compatibles
-Changes for v10:
-	- None
-Changes for v11:
-	- Added 'Acked-by: Rob Herring'
-	- Updated commit message by Scott
-Changes for v12:
-	- None
-Changes for v13:
-	- None
-Changes for v14:
-	- None
----
- Documentation/devicetree/bindings/arm/fsl.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index dbbc095..713c1ae 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -119,7 +119,11 @@ Freescale DCFG
- configuration and status for the device. Such as setting the secondary
- core start address and release the secondary core from holdoff and startup.
-   Required properties:
--  - compatible: should be "fsl,ls1021a-dcfg"
-+  - compatible: should be "fsl,<chip>-dcfg"
-+    Possible compatibles:
-+	"fsl,ls1021a-dcfg"
-+	"fsl,ls1043a-dcfg"
-+	"fsl,ls2080a-dcfg"
-   - reg : should contain base address and length of DCFG memory-mapped registers
- 
- Example:
--- 
-2.1.0.27.g96db324
+在 2016/10/21 1:48, Stephen Boyd 写道:
+> On 10/19, Jiancheng Xue wrote:
+>>
+>> I'm pretty sure that the patch was sent to the DT list devicetree@vger.kernel.org.
+>> You had asked a question about "hi3798cv200-sysctrl" and I replied (https://lkml.org/lkml/2016/10/10/517).
+>> I'm waiting for your new comments. If there's some misunderstatnding, please let me know.
+>>
+> 
+> Are there two patch series that touch the same clk binding
+> document?  Can you please combine them and resend them if that's
+> the case?
+> 
+
+OK. I will resend this patch.
+
+Thanks,
+Jiancheng
+
 
