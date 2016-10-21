@@ -1,280 +1,244 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <ssantosh@kernel.org>
-CC: <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 2/3] dt-binding: clock: Add k2g clock definitions
-Date: Fri, 21 Oct 2016 15:46:00 +0300
-Message-ID: <1477053961-27128-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH v3 1/3] clk: stm32f4: Add LSI & LSE clocks
+Date: Fri, 21 Oct 2016 11:23:28 +0200
+Message-ID: <1477041810-12313-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add identifiers for the K2G clocks managed by the PMMC.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Tested-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Nishanth Menon <nm@ti.com>
+This patch introduces the support of the LSI & LSE clocks.
+The clock drivers needs to disable the power domain write protection
+using syscon/regmap to enable these clocks.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- MAINTAINERS                     |   1 +
- include/dt-bindings/clock/k2g.h | 234 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 235 insertions(+)
- create mode 100644 include/dt-bindings/clock/k2g.h
+ drivers/clk/clk-stm32f4.c | 131 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 126 insertions(+), 5 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3ee7c7a..960deb6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11896,6 +11896,7 @@ F:	Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
- F:	include/dt-bindings/genpd/k2g.h
- F:	drivers/soc/ti/ti_sci_pm_domains.c
- F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-+F:	include/dt-bindings/clock/k2g.h
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 02d6810..6427e0f 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -19,10 +19,14 @@
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/ioport.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
  
- THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
-diff --git a/include/dt-bindings/clock/k2g.h b/include/dt-bindings/clock/k2g.h
-new file mode 100644
-index 0000000..cddffc3
---- /dev/null
-+++ b/include/dt-bindings/clock/k2g.h
-@@ -0,0 +1,234 @@
-+/*
-+ * TI K2G SoC clock definitions
-+ *
-+ * Copyright (C) 2015-2016 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_K2G_H__
-+#define __DT_BINDINGS_CLOCK_K2G_H__
+ #define STM32F4_RCC_PLLCFGR		0x04
+ #define STM32F4_RCC_CFGR		0x08
+@@ -31,6 +35,8 @@
+ #define STM32F4_RCC_AHB3ENR		0x38
+ #define STM32F4_RCC_APB1ENR		0x40
+ #define STM32F4_RCC_APB2ENR		0x44
++#define STM32F4_RCC_BDCR		0x70
++#define STM32F4_RCC_CSR			0x74
+ 
+ struct stm32f4_gate_data {
+ 	u8	offset;
+@@ -120,13 +126,12 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
+ };
+ 
++enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, END_PRIMARY_CLK };
+ /*
+  * MAX_CLKS is the maximum value in the enumeration below plus the combined
+  * hweight of stm32f42xx_gate_map (plus one).
+  */
+-#define MAX_CLKS 74
+-
+-enum { SYSTICK, FCLK };
++#define MAX_CLKS (71 + END_PRIMARY_CLK + 1)
+ 
+ /*
+  * This bitmask tells us which bit offsets (0..192) on STM32F4[23]xxx
+@@ -140,6 +145,8 @@ struct stm32f4_gate_data {
+ static DEFINE_SPINLOCK(stm32f4_clk_lock);
+ static void __iomem *base;
+ 
++static struct regmap *pdrm;
 +
-+/*
-+ * The clock IDs listed in this file are describing the clocks at IP's
-+ * boundaries. The firmware is not exposing any of the generic clocks
-+ * from the system, those are handled internally by the firmware.
-+ */
-+#define K2G_DEV_PMMC_MPM_VBUS_CLK		0
-+#define K2G_DEV_PMMC_MPM_FUNC_32K_CLK		1
-+#define K2G_DEV_PMMC_MPM_FUNC_OSC_CLK		2
-+#define K2G_DEV_PMMC_MPM_DAP_CLK		3
+ /*
+  * "Multiplier" device for APBx clocks.
+  *
+@@ -259,7 +266,7 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+ 	u64 table[ARRAY_SIZE(stm32f42xx_gate_map)];
+ 
+ 	if (primary == 1) {
+-		if (WARN_ON(secondary > FCLK))
++		if (WARN_ON(secondary >= END_PRIMARY_CLK))
+ 			return -EINVAL;
+ 		return secondary;
+ 	}
+@@ -276,7 +283,7 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+ 	table[BIT_ULL_WORD(secondary)] &=
+ 	    GENMASK_ULL(secondary % BITS_PER_LONG_LONG, 0);
+ 
+-	return FCLK + hweight64(table[0]) +
++	return END_PRIMARY_CLK - 1 + hweight64(table[0]) +
+ 	       (BIT_ULL_WORD(secondary) >= 1 ? hweight64(table[1]) : 0) +
+ 	       (BIT_ULL_WORD(secondary) >= 2 ? hweight64(table[2]) : 0);
+ }
+@@ -292,6 +299,98 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+ 	return clks[i];
+ }
+ 
++#define to_rgclk(_rgate) container_of(_rgate, struct stm32_rgate, gate)
 +
-+#define K2G_DEV_MLB_MLB_SYS_CLK			0
-+#define K2G_DEV_MLB_MLB_SHB_OCP_CLK		1
-+#define K2G_DEV_MLB_MLB_SPB_OCP_CLK		2
-+#define K2G_DEV_MLB_MLB_IO_CLK			3
-+#define K2G_DEV_MLB_MLBP_IO_CLK			4
++static inline void disable_power_domain_write_protection(void)
++{
++	if (pdrm)
++		regmap_update_bits(pdrm, 0x00, (1 << 8), (1 << 8));
++}
 +
-+#define K2G_DEV_DSS_PI_DSS_OCP_CLK		0
-+#define K2G_DEV_DSS_PI_DSS_VP_CLK		1
++static inline void enable_power_domain_write_protection(void)
++{
++	if (pdrm)
++		regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
++}
 +
-+#define K2G_DEV_MCBSP_VBUS_CLK			0
-+#define K2G_DEV_MCBSP_CLKS			1
-+#define K2G_DEV_MCBSP_CLKS_PARENT_AUDIO_OSC	2
-+#define K2G_DEV_MCBSP_CLKS_PARENT_MLB_IO_CLK	3
-+#define K2G_DEV_MCBSP_CLKS_PARENT_MLBP_IO_CLK	4
-+#define K2G_DEV_MCBSP_CLKS_PARENT_SYS_OSCCLK	5
-+#define K2G_DEV_MCBSP_CLKS_PARENT_XREFCLK	6
-+#define K2G_DEV_MCBSP_CLKS_PARENT_UART_PLL	7
++struct stm32_rgate {
++	struct	clk_gate gate;
++	u8	bit_rdy_idx;
++};
 +
-+#define K2G_DEV_MCASP_VBUS_CLK			0
-+#define K2G_DEV_MCASP_AUX_CLK			1
-+#define K2G_DEV_MCASP_AUX_CLK_PARENT_AUDIO_OSC		2
-+#define K2G_DEV_MCASP_AUX_CLK_PARENT_MLB_IO_CLK		3
-+#define K2G_DEV_MCASP_AUX_CLK_PARENT_MLBP_IO_CLK	4
-+#define K2G_DEV_MCASP_AUX_CLK_PARENT_SYS_OSCCLK		5
-+#define K2G_DEV_MCASP_AUX_CLK_PARENT_XREFCLK		6
-+#define K2G_DEV_MCASP_AUX_CLK_PARENT_UART_PLL		7
++#define RTC_TIMEOUT 1000000
 +
-+#define K2G_DEV_DCAN_VBUS_CLK			0
-+#define K2G_DEV_DCAN_CAN_CLK			1
++static int rgclk_enable(struct clk_hw *hw)
++{
++	struct clk_gate *gate = to_clk_gate(hw);
++	struct stm32_rgate *rgate = to_rgclk(gate);
++	u32 reg;
++	int ret;
 +
-+#define K2G_DEV_EMIF_V_CLK			0
-+#define K2G_DEV_EMIF_M_CLK			1
-+#define K2G_DEV_EMIF_DFT_LOCAL_CLK		2
-+#define K2G_DEV_EMIF_PUB_CTL_CLK		3
-+#define K2G_DEV_EMIF_PHY_CTL_CLK		4
-+#define K2G_DEV_EMIF_VBUSP_CLK			5
++	disable_power_domain_write_protection();
 +
-+#define K2G_DEV_MMCHS_VBUS_CLK			0
-+#define K2G_DEV_MMCHS_CLK_ADPI			1
-+#define K2G_DEV_MMCHS_CLK32K			2
++	clk_gate_ops.enable(hw);
 +
-+#define K2G_DEV_GPMC_GPMC_FCLK			0
++	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
++			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
 +
-+#define K2G_DEV_ELM_CLK				0
++	enable_power_domain_write_protection();
++	return ret;
++}
 +
-+#define K2G_DEV_SPI_VBUSP_CLK			0
++static void rgclk_disable(struct clk_hw *hw)
++{
++	clk_gate_ops.disable(hw);
++}
 +
-+#define K2G_DEV_ICSS_VCLK_CLK			0
-+#define K2G_DEV_ICSS_CORE_CLK			1
-+#define K2G_DEV_ICSS_CORE_CLK_PARENT_ICSS_PLL	2
-+#define K2G_DEV_ICSS_CORE_CLK_PARENT_NSS_PLL	3
-+#define K2G_DEV_ICSS_UCLK_CLK			4
-+#define K2G_DEV_ICSS_IEPCLK_CLK			5
++static int rgclk_is_enabled(struct clk_hw *hw)
++{
++	return clk_gate_ops.is_enabled(hw);
++}
 +
-+#define K2G_DEV_USB_BUS_CLK			0
-+#define K2G_DEV_USB_PHYMMR_CLK			1
-+#define K2G_DEV_USB_SUSP_CLK			2
-+#define K2G_DEV_USB_REF_CLK			3
-+#define K2G_DEV_USB_DFT_ULPI_CLK		4
-+#define K2G_DEV_USB_DFT_UTMI_CLK		5
-+#define K2G_DEV_USB_CLKCORE			6
++static const struct clk_ops rgclk_ops = {
++	.enable = rgclk_enable,
++	.disable = rgclk_disable,
++	.is_enabled = rgclk_is_enabled,
++};
 +
-+#define K2G_DEV_NSS_VCLK			0
-+#define K2G_DEV_NSS_SA_UL_CLK			1
-+#define K2G_DEV_NSS_SA_UL_X1_CLK		2
-+#define K2G_DEV_NSS_ESW_CLK			3
-+/*
-+ * Mux register is internal to the CPTS, so we must allow NSS to control it.
-+ * CPTS_REFCLK_P/N is a direct input to this mux, so ignore it is ignored
-+ * in the SoC clock tree.
-+ */
-+#define K2G_DEV_NSS_CPTS_CHIP_CLK1_2		4
-+#define K2G_DEV_NSS_CPTS_CHIP_CLK1_3		5
-+#define K2G_DEV_NSS_CPTS_TIMI0			6
-+#define K2G_DEV_NSS_CPTS_TIMI1			7
-+#define K2G_DEV_NSS_CPTS_NSS_PLL		8
-+#define K2G_DEV_NSS_GMII_RFTCLK			9
-+#define K2G_DEV_NSS_RGMII_MHZ_5_CLK		10
-+#define K2G_DEV_NSS_RGMII_MHZ_50_CLK		11
-+#define K2G_DEV_NSS_RGMII_MHZ_250_CLK		12
-+#define K2G_DEV_NSS_RMII_MHZ_50_CLK		13
++static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 bit_idx, u8 bit_rdy_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	struct stm32_rgate *rgate;
++	struct clk_init_data init = { NULL };
++	struct clk_hw *hw;
++	int ret;
 +
-+#define K2G_DEV_PCIE_VBUS_CLK			0
++	rgate = kzalloc(sizeof(*rgate), GFP_KERNEL);
++	if (!rgate)
++		return ERR_PTR(-ENOMEM);
 +
-+#define K2G_DEV_OTP_VBUS_CLK			0
++	init.name = name;
++	init.ops = &rgclk_ops;
++	init.flags = flags;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
 +
-+#define K2G_DEV_GPIO_VBUS_CLK			0
++	rgate->bit_rdy_idx = bit_rdy_idx;
 +
-+#define K2G_DEV_TIMER64_VBUS_CLK		0
-+#define K2G_DEV_TIMER64_TINL			1
-+#define K2G_DEV_TIMER64_TINL_PARENT_TIMI0	2
-+#define K2G_DEV_TIMER64_TINL_PARENT_TIMI1	3
-+#define K2G_DEV_TIMER64_TINH			4
-+#define K2G_DEV_TIMER64_TINH_PARENT_TIMI0	5
-+#define K2G_DEV_TIMER64_TINH_PARENT_TIMI1	6
-+#define K2G_DEV_TIMER64_TOUTL			7
-+#define K2G_DEV_TIMER64_TOUTH			8
++	rgate->gate.lock = lock;
++	rgate->gate.reg = reg;
++	rgate->gate.bit_idx = bit_idx;
++	rgate->gate.hw.init = &init;
 +
-+#define K2G_DEV_SEC_MGR_SEC_CLK_PI		0
++	hw = &rgate->gate.hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(rgate);
++		hw = ERR_PTR(ret);
++	}
 +
-+#define K2G_DEV_MSGMGR_VBUS_CLK			0
++	return hw;
++}
 +
-+#define K2G_DEV_BOOTCFG_VBUS_CLK		0
+ static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
+ 
+ static const struct clk_div_table ahb_div_table[] = {
+@@ -319,6 +418,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	pdrm = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
++	if (IS_ERR(pdrm)) {
++		pdrm = NULL;
++		pr_warn("%s: Unable to get syscfg\n", __func__);
++	}
 +
-+#define K2G_DEV_ARM_BOOTROM_VBUS_CLK		0
+ 	hse_clk = of_clk_get_parent_name(np, 0);
+ 
+ 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+@@ -371,6 +476,22 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		}
+ 	}
+ 
++	clks[CLK_LSI] = clk_register_rgate(NULL, "lsi", "clk-lsi", 0,
++			base + STM32F4_RCC_CSR, 0, 2, 0, &stm32f4_clk_lock);
 +
-+#define K2G_DEV_DSP_BOOTROM_VBUS_CLK		0
++	if (IS_ERR(clks[CLK_LSI])) {
++		pr_err("Unable to register lsi clock\n");
++		goto fail;
++	}
 +
-+#define K2G_DEV_DEBUGSS_VBUSP_CTTBRCLK_CLK	0
-+#define K2G_DEV_DEBUGSS_VBUSP_STMD0_CLK		1
-+#define K2G_DEV_DEBUGSS_VBUSP_SLAVE_CLK		2
-+#define K2G_DEV_DEBUGSS_VBUSP_MASTER_CLK	3
-+#define K2G_DEV_DEBUGSS_TCK			4
-+#define K2G_DEV_DEBUGSS_CS_TRCEXPT_CLK		5
-+#define K2G_DEV_DEBUGSS_DSP_TRACECLK		6
-+#define K2G_DEV_DEBUGSS_STMXPT_CLK		7
++	clks[CLK_LSE] = clk_register_rgate(NULL, "lse", "clk-lse", 0,
++			base + STM32F4_RCC_BDCR, 0, 2, 0, &stm32f4_clk_lock);
 +
-+#define K2G_DEV_UART_CBA_CLK_PI			0
++	if (IS_ERR(clks[CLK_LSE])) {
++		pr_err("Unable to register lse clock\n");
++		goto fail;
++	}
 +
-+#define K2G_DEV_EHRPWM_VBUS_CLK			0
-+
-+#define K2G_DEV_EQEP_VBUS_CLK			0
-+
-+#define K2G_DEV_ECAP_VBUS_CLK			0
-+
-+#define K2G_DEV_I2C_VBUS_CLK			0
-+
-+#define K2G_DEV_CP_TRACER_CP_TRACER_CLK		0
-+
-+#define K2G_DEV_EDMA_TPTC_CLK			0
-+#define K2G_DEV_EDMA_TPCC_CLK			1
-+
-+#define K2G_DEV_SEMAPHORE_VBUS_CLK		0
-+
-+#define K2G_DEV_INTC_VBUS_CLK			0
-+
-+#define K2G_DEV_GIC_VBUS_CLK			0
-+
-+#define K2G_DEV_QSPI_QSPI_CLK			0
-+#define K2G_DEV_QSPI_DATA_BUS_CLK		1
-+#define K2G_DEV_QSPI_CFG_BUS_CLK		2
-+#define K2G_DEV_QSPI_QSPI_CLK_O			3
-+#define K2G_DEV_QSPI_QSPI_CLK_I			4
-+
-+#define K2G_DEV_ARM_64B_COUNTER_CLK_INPUT	0
-+#define K2G_DEV_ARM_64B_COUNTER_VBUSP_CLK	1
-+
-+#define K2G_DEV_TETRIS_CORE_CLK			0
-+#define K2G_DEV_TETRIS_SUBSYS_CLK		1
-+
-+#define K2G_DEV_CGEM_CORE_CLK			0
-+#define K2G_DEV_CGEM_TRACE_CLK			1
-+
-+#define K2G_DEV_MSMC_VBUS_CLK			0
-+
-+#define K2G_DEV_DFT_SS_VBUS_CLK			0
-+#define K2G_DEV_DFT_SS_TCK			1
-+
-+#define K2G_DEV_CBASS_VBUS_CLK			0
-+
-+#define K2G_DEV_SMARTREFLEX_SCLK_CLK		0
-+#define K2G_DEV_SMARTREFLEX_REFCLK1_CLK		1
-+#define K2G_DEV_SMARTREFLEX_TEMPMCLK_CLK	2
-+
-+#define K2G_DEV_EFUSE_VBUS_CLK			0
-+
-+/* Outputs from board (inputs to SoC) */
-+#define K2G_DEV_BOARD_SYS_OSCIN			0
-+#define K2G_DEV_BOARD_SYS_CLK			1
-+#define K2G_DEV_BOARD_AUDIO_OSCIN		2
-+#define K2G_DEV_BOARD_DDR			3
-+#define K2G_DEV_BOARD_MLBCLK			4
-+#define K2G_DEV_BOARD_MLBPCLK			5
-+#define K2G_DEV_BOARD_XREFCLK			6
-+#define K2G_DEV_BOARD_TIMI0			7
-+#define K2G_DEV_BOARD_TIMI1			8
-+
-+/* Inputs to board (outputs from SoC) */
-+#define K2G_DEV_BOARD_SYSCLKOUT			10
-+#define K2G_DEV_BOARD_OBSCLK			11
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_MAIN_PLL	12
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_DSS_PLL	13
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_ARM_PLL	14
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_UART_PLL	15
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_ICSS_PLL	16
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_DDR_PLL	17
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_PLL_CTRL	18
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_NSS_PLL	19
-+#define K2G_DEV_BOARD_OBSCLK_PARENT_SYSOSC	20
-+#define K2G_DEV_BOARD_MII_CLKOUT		21
-+#define K2G_DEV_BOARD_TIMO0			22
-+#define K2G_DEV_BOARD_TIMO1			23
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_0L	24
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_0H	25
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_1L	26
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_1H	27
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_2L	28
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_2H	29
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_3L	30
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_3H	31
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_4L	32
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_4H	33
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_5L	34
-+#define K2G_DEV_BOARD_TIMO_PARENT_TIMER64_5H	35
-+
-+#endif
+ 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+ 	return;
+ fail:
 -- 
 1.9.1
