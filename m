@@ -1,63 +1,213 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 14/14] ARM: dts: sun8i: sinlinx: Enable audio nodes
-Date: Tue,  4 Oct 2016 11:46:27 +0200
-Message-Id: <f76f0c8441e78bc47ca2bacbd92dee9464517a0d.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH v3 2/3] clk: stm32f4: Add RTC clock
+Date: Fri, 21 Oct 2016 11:23:29 +0200
+Message-ID: <1477041810-12313-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the audio codec and the audio dai for the sun8i A33 sinlinx board.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+This patch introduces the support of the RTC clock.
+RTC clock can have 3 sources: lsi, lse and hse_rtc.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/clk-stm32f4.c | 137 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 136 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts b/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
-index fef6abc..b03ca5e 100644
---- a/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
-+++ b/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
-@@ -63,6 +63,14 @@
- 	};
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 6427e0f..cbc8148 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -126,7 +126,7 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
  };
  
-+&codec {
-+	status = "okay";
+-enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, END_PRIMARY_CLK };
++enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC, END_PRIMARY_CLK };
+ /*
+  * MAX_CLKS is the maximum value in the enumeration below plus the combined
+  * hweight of stm32f42xx_gate_map (plus one).
+@@ -313,6 +313,15 @@ static inline void enable_power_domain_write_protection(void)
+ 		regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
+ }
+ 
++static inline void sofware_reset_backup_domain(void)
++{
++	unsigned long val;
++
++	val = readl(base + STM32F4_RCC_BDCR);
++	writel(val | BIT(16), base + STM32F4_RCC_BDCR);
++	writel(val & ~BIT(16), base + STM32F4_RCC_BDCR);
++}
++
+ struct stm32_rgate {
+ 	struct	clk_gate gate;
+ 	u8	bit_rdy_idx;
+@@ -391,6 +400,111 @@ static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
+ 	return hw;
+ }
+ 
++static int cclk_gate_enable(struct clk_hw *hw)
++{
++	int ret;
++
++	disable_power_domain_write_protection();
++
++	ret = clk_gate_ops.enable(hw);
++
++	enable_power_domain_write_protection();
++
++	return ret;
++}
++
++static void cclk_gate_disable(struct clk_hw *hw)
++{
++	disable_power_domain_write_protection();
++
++	clk_gate_ops.disable(hw);
++
++	enable_power_domain_write_protection();
++}
++
++static int cclk_gate_is_enabled(struct clk_hw *hw)
++{
++	return clk_gate_ops.is_enabled(hw);
++}
++
++static const struct clk_ops cclk_gate_ops = {
++	.enable		= cclk_gate_enable,
++	.disable	= cclk_gate_disable,
++	.is_enabled	= cclk_gate_is_enabled,
 +};
 +
-+&dai {
-+	status = "okay";
++static u8 cclk_mux_get_parent(struct clk_hw *hw)
++{
++	return clk_mux_ops.get_parent(hw);
++}
++
++static int cclk_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	int ret;
++
++	disable_power_domain_write_protection();
++
++	sofware_reset_backup_domain();
++
++	ret = clk_mux_ops.set_parent(hw, index);
++
++	enable_power_domain_write_protection();
++
++	return ret;
++}
++
++static const struct clk_ops cclk_mux_ops = {
++	.get_parent = cclk_mux_get_parent,
++	.set_parent = cclk_mux_set_parent,
 +};
 +
- &ehci0 {
- 	status = "okay";
++static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
++		const char * const *parent_names, int num_parents,
++		void __iomem *reg, u8 bit_idx, u8 shift, unsigned long flags,
++		spinlock_t *lock)
++{
++	struct clk_hw *hw;
++	struct clk_gate *gate;
++	struct clk_mux *mux;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate) {
++		hw = ERR_PTR(-EINVAL);
++		goto fail;
++	}
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux) {
++		kfree(gate);
++		hw = ERR_PTR(-EINVAL);
++		goto fail;
++	}
++
++	gate->reg = reg;
++	gate->bit_idx = bit_idx;
++	gate->flags = 0;
++	gate->lock = lock;
++
++	mux->reg = reg;
++	mux->shift = shift;
++	mux->mask = 3;
++	mux->flags = 0;
++
++	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
++			&mux->hw, &cclk_mux_ops,
++			NULL, NULL,
++			&gate->hw, &cclk_gate_ops,
++			flags);
++
++	if (IS_ERR(hw)) {
++		kfree(gate);
++		kfree(mux);
++	}
++
++fail:
++	return hw;
++}
++
+ static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
+ 
+ static const struct clk_div_table ahb_div_table[] = {
+@@ -407,6 +521,10 @@ static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
+ 	{ 0 },
  };
+ 
++static const char *rtc_parents[4] = {
++	"no-clock", "lse", "lsi", "hse-rtc"
++};
++
+ static void __init stm32f4_rcc_init(struct device_node *np)
+ {
+ 	const char *hse_clk;
+@@ -492,6 +610,23 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		goto fail;
+ 	}
+ 
++	clks[CLK_HSE_RTC] = clk_hw_register_divider(NULL, "hse-rtc", "clk-hse",
++			0, base + STM32F4_RCC_CFGR, 16, 5, 0,
++			&stm32f4_clk_lock);
++
++	if (IS_ERR(clks[CLK_HSE_RTC])) {
++		pr_err("Unable to register hse-rtc clock\n");
++		goto fail;
++	}
++
++	clks[CLK_RTC] = stm32_register_cclk(NULL, "rtc", rtc_parents, 4,
++			base + STM32F4_RCC_BDCR, 15, 8, 0, &stm32f4_clk_lock);
++
++	if (IS_ERR(clks[CLK_RTC])) {
++		pr_err("Unable to register rtc clock\n");
++		goto fail;
++	}
++
+ 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+ 	return;
+ fail:
 -- 
-2.9.3
+1.9.1
