@@ -1,55 +1,39 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <c1cf1a1f-2d1f-7f35-3e3b-f2de90959a24@samsung.com>
-Date: Fri, 07 Oct 2016 11:12:20 +0200
-MIME-version: 1.0
-In-reply-to: <57F6926F.1070707@math.uni-bielefeld.de>
-Content-type: text/plain; charset=utf-8; format=flowed
-References: 
- <CGME20160919105545eucas1p1026e435bbaeb1f5c866a9abcdd051464@eucas1p1.samsung.com>
- <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com>
- <57F6926F.1070707@math.uni-bielefeld.de>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	dianders@google.com,
+	zyw@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: add 533.25MHz to rk3399 clock rates table
+Date: Fri, 21 Oct 2016 12:03:40 +0800
+Message-Id: <1477022620-8143-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tobias,
+We need to get the accurate 533.25MHz for the DP display.
 
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-On 2016-10-06 20:05, Tobias Jakobi wrote:
-> Hello Marek,
->
-> I'm using the patches from the v4.8-clocks-pm-v2 branch plus the ones
-> from the v4.8-clocks-pm-v2 branch on top of 4.8.0.
->
-> I see some warnings on boot coming from driver core. It appears that the
-> warnings are actually meaningful, since IOMMUs stop working completly.
-> E.g. if I modprobe s5p-mfc later, firmware loading fails because
-> apparantly the IOMMU domain isn't online.
->
->> WARNING: CPU: 0 PID: 1 at drivers/base/core.c:356 device_links_driver_bound+0x124/0x12c
-> I added some debug printk() to device_links_driver_bound(), to show the
-> link status. Apparantly it is always DEVICE_LINK_AVAILABLE.
+ drivers/clk/rockchip/clk-rk3399.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please note that some additional patches are needed to get IOMMU working 
-properly with both runtime-pm patches and deferred probe, which feature 
-in turn is needed to get it working after adding clocks-pm changes. I 
-will send such patch soon (as a new version of IOMMU deferred probe 
-support patches were posted a few days ago).
-
- > (...)
-
-Best regards
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 2c7cba7..a87cb49 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -93,6 +93,7 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE( 676000000, 3, 169, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 600000000, 1, 75, 3, 1, 1, 0),
+ 	RK3036_PLL_RATE( 594000000, 1, 99, 4, 1, 1, 0),
++	RK3036_PLL_RATE( 533250000, 8, 711, 4, 1, 1, 0),
+ 	RK3036_PLL_RATE( 504000000, 1, 63, 3, 1, 1, 0),
+ 	RK3036_PLL_RATE( 500000000, 6, 250, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 408000000, 1, 68, 2, 2, 1, 0),
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.7.4
