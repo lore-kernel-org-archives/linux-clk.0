@@ -1,39 +1,58 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <WM!8ae38b052eee9a42a4712d13aee34e2d793055d4125e98cc2c03451811f33168b3556d3bf52ee5ba8dda879cea808cdc!@dg.advantech.com>
-References: <03B5A3CA1724CE4EAC32B27E39292A677FC5A390AE@AUSMAIL1.AUS.ADVANTECH.CORP>
- <WM!ea1806249edeb2cf70790bb7482fb813b9b7cef636576d9ca4b01897c8831c3650f71356a13ce9ba5e358a69b86f6a82!@dg.advantech.com>
- <CAOMZO5CXTEpNvAhuc2Et60HxfM=nQngMTdMOtDbazi=1EQ95Jw@mail.gmail.com>
- <03B5A3CA1724CE4EAC32B27E39292A677FC5A39613@AUSMAIL1.AUS.ADVANTECH.CORP>
- <WM!8b5ef465717800ac4466674b98bb32450dc231d955cd4979ca96fd54828a7c3af7de5f376015ebf046c75f20677161c6!@dgg.advantech.com>
- <WM!8ae38b052eee9a42a4712d13aee34e2d793055d4125e98cc2c03451811f33168b3556d3bf52ee5ba8dda879cea808cdc!@dg.advantech.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 11 Oct 2016 15:00:53 -0300
-Message-ID: <CAOMZO5CVggufx2U0pZUXd1o=i36Jo-c1B=hgFcSaWeM+=oagaQ@mail.gmail.com>
-Subject: Re: The possible regression in kernel 4.8 - clk: imx: correct AV PLL
- rate formula
-To: "Ken.Lin" <ken.lin@advantech.com>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Peter.Stretz" <peter.stretz@advantech.com>,
-	"Peter.Chiang" <peter.chiang@advantech.com>, Akshay Bhat <akshay.bhat@timesys.com>,
-	Jason Moss <jason.moss@nxp.com>, "emil@limesaudio.com" <emil@limesaudio.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.131]:56670 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934263AbcJUPr4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Oct 2016 11:47:56 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix link error for rcar-gen2
+Date: Fri, 21 Oct 2016 17:47:06 +0200
+Message-Id: <20161021154737.3803065-1-arnd@arndb.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ken,
+The addition of one more rcar-gen2 based SoC caused a build error (again)
+in my randconfig builds:
 
-On Tue, Oct 11, 2016 at 2:49 PM, Ken.Lin <ken.lin@advantech.com> wrote:
+arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
+setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
 
-> With the patches applied, the pixel clock (148500000 required for 1920x1080@60) is correct as we checked in kernel 4.7 and the actual measurement result looked good as we expected.
-> I think the patches should fix the issue.
+I think this has happened twice in the past. Instead of adding each SoC
+one at a time, this changes the existing list to always build the
+rcar-gen2 related clk files whenever the generic symbol is selected.
 
-That's good news. Thanks for testing.
+Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/renesas/Makefile | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Emil is working on a v3 version of the patch series.
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 90dd0db7d9c6..762d122eddec 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -4,11 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
++obj-$(CONFIG_ARCH_RCAR_GEN2)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+ obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+ obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
+-- 
+2.9.0
 
-Emil,
-
-Please add Ken Lin on Cc when you submit v3.
