@@ -1,51 +1,52 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <1475353194.1996.3.camel@perches.com>
-Subject: Re: [PATCH 00/15] improve function-level documentation
-From: Joe Perches <joe@perches.com>
-To: Julia Lawall <Julia.Lawall@lip6.fr>, linux-metag@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date: Sat, 01 Oct 2016 13:19:54 -0700
-In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
-Content-Type: text/plain; charset="ISO-8859-1"
-Mime-Version: 1.0
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <net147@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <73852fb92ac0aeec294dc9883cf235d9fa74a07b.1476986335.git-series.maxime.ripard@free-electrons.com>
+References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+ <73852fb92ac0aeec294dc9883cf235d9fa74a07b.1476986335.git-series.maxime.ripard@free-electrons.com>
+From: Jonathan Liu <net147@gmail.com>
+Date: Fri, 21 Oct 2016 11:30:01 +1100
+Message-ID: <CANwerB36N8q7ppKqocRs9m62h65+vrJFn37ncc-oh+Yozz_vFQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v5 3/4] Documentation: devicetree: add
+ vendor prefix for Pine64
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com, Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2016-10-01 at 21:46 +0200, Julia Lawall wrote:
-> These patches fix cases where the documentation above a function definition
-> is not consistent with the function header.  Issues are detected using the
-> semantic patch below (http://coccinelle.lip6.fr/).  Basically, the semantic
-> patch parses a file to find comments, then matches each function header,
-> and checks that the name and parameter list in the function header are
-> compatible with the comment that preceeds it most closely.
+On 21 October 2016 at 05:00, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> From: Andre Przywara <andre.przywara@arm.com>
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> [Maxime: Change title prefix to match the usual style]
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index f0a48ea78659..4eefd1c3ff16 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -208,7 +208,7 @@ parade      Parade Technologies Inc.
+>  pericom        Pericom Technology Inc.
+>  phytec PHYTEC Messtechnik GmbH
+>  picochip       Picochip Ltd
+> -pixcir  PIXCIR MICROELECTRONICS Co., Ltd
 
-Hi Julia.
+Why is "pixcir  PIXCIR MICROELECTRONICS Co., Ltd" removed?
 
-Would it be possible for a semantic patch to scan for
-function definitions where the types do not have
-identifiers and update the definitions to match the
-declarations?
+> +pine64 Pine64
+>  plathome       Plat'Home Co., Ltd.
+>  plda   PLDA
+>  powervr        PowerVR (deprecated, use img)
+> --
+> git-series 0.8.10
 
-For instance, given:
-
-<some.h>
-int foo(int);
-
-<some.c>
-int foo(int bar)
-{
-	return baz;
-}
-
-Could coccinelle output:
-
-diff a/some.h b/some.h
-[]
--int foo(int);
-+int foo(int bar);
+Regards,
+Jonathan
