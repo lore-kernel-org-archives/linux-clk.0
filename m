@@ -1,56 +1,90 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Thu, 20 Oct 2016 09:14:58 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/6] clk: pxa: transfer CPU clock setting from
- pxa2xx-cpufreq
-Message-ID: <20161020034458.GE11766@vireshk-i7>
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
- <1476130149-31834-6-git-send-email-robert.jarzmik@free.fr>
- <87zim23zw3.fsf@belgarion.home>
- <20161018234855.GO8871@codeaurora.org>
- <877f943xjk.fsf@belgarion.home>
- <20161019205128.GE8871@codeaurora.org>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v14 4/4] arm: dts: mt2701: Use real clock for UARTs
+Date: Fri, 21 Oct 2016 11:32:22 +0800
+Message-ID: <1477020742-13889-5-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
+References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161019205128.GE8871@codeaurora.org>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19-10-16, 13:51, Stephen Boyd wrote:
-> On 10/19, Robert Jarzmik wrote:
-> > Stephen Boyd <sboyd@codeaurora.org> writes:
-> > 
-> > > On 10/18, Robert Jarzmik wrote:
-> > >> Robert Jarzmik <robert.jarzmik@free.fr> writes:
-> > >> Hi Michael and Stephen,
-> > >> 
-> > >> I'm planing on sending a v2 next week with minor corrections, mostly in the data
-> > >> tables (pxa25x_freqs and pxa27x_freqs), as testing prooved some values were wrong.
-> > >> 
-> > >> If you want me modify this serie, will you have time to review for next week or
-> > >> should I delay the v2 posting ?
-> > >> 
-> > >
-> > > No need to delay. clk patches look fine with a quick glance. It
-> > > would be really neat if we could make cpufreq-dt work without DT.
-> > > What's blocking that? OPP tables?
-> > 
-> > Heu I'm not the author of cpufreq-dt, so I'm not the best to answer.
-> > To answer the question "without DT", it depends if you mean "with ACPI" or "with
-> > platform_data" or something else.
-> 
-> I mean platform_data mostly. Do you use ACPI with the clk driver?
+We used to use a fixed rate clock for the UARTs. Now that we have clock
+support we can associate the correct clocks to the UARTs and drop the
+26MHz fixed rate UART clock.
 
-I would like to see sample code for that, as I am not sure what all changes
-would be required in cpufreq-dt in that case. Yes it is more dependent on the
-OPP framework than DT right now.
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-My first impression is that it should be doable..
-
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index c9a8dbf..7eab6f4 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -73,12 +73,6 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	uart_clk: dummy26m {
+-		compatible = "fixed-clock";
+-		clock-frequency = <26000000>;
+-		#clock-cells = <0>;
+-	};
+-
+ 	clk26m: oscillator@0 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -186,7 +180,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -195,7 +190,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -204,7 +200,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -213,7 +210,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ };
 -- 
-viresh
+1.9.1
