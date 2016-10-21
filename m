@@ -1,90 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0042.outbound.protection.outlook.com ([104.47.37.42]:46336
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965129AbcJ1HDS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Oct 2016 03:03:18 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v15, 1/7] ARM64: dts: ls2080a: add device configuration node
-Date: Fri, 28 Oct 2016 14:50:12 +0800
-Message-ID: <1477637418-38938-2-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] clk: fix link error for rcar-gen2
+To: Arnd Bergmann <arnd@arndb.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20161021154737.3803065-1-arnd@arndb.de>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Magnus Damm <damm+renesas@opensource.se>,
+ Simon Horman <horms+renesas@verge.net.au>,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9f16dc0d-fe5e-dff8-e461-9e0dfdd23da7@cogentembedded.com>
+Date: Fri, 21 Oct 2016 19:42:42 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20161021154737.3803065-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the dts node for device configuration unit that provides
-general purpose configuration and status for the device.
+Hello.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
----
-Changes for v5:
-	- Added this patch
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
-Changes for v14:
-	- None
-Changes for v15:
-	- None
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 10/21/2016 06:47 PM, Arnd Bergmann wrote:
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 337da90..c03b099 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -215,6 +215,12 @@
- 			clocks = <&sysclk>;
- 		};
- 
-+		dcfg: dcfg@1e00000 {
-+			compatible = "fsl,ls2080a-dcfg", "syscon";
-+			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
-+		};
-+
- 		serial0: serial@21c0500 {
- 			compatible = "fsl,ns16550", "ns16550a";
- 			reg = <0x0 0x21c0500 0x0 0x100>;
--- 
-2.1.0.27.g96db324
+> The addition of one more rcar-gen2 based SoC caused a build error (again)
+> in my randconfig builds:
+>
+> arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
+> setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
 
+    OK, seeing how you got this -- I should have tested the kernel build with 
+only R8A7743 enabled... sorry about that. :-<
+    I probably shouldn't have used rcar_gen2_timer_init() in the 1st place...
+
+> I think this has happened twice in the past. Instead of adding each SoC
+> one at a time, this changes the existing list to always build the
+> rcar-gen2 related clk files whenever the generic symbol is selected.
+
+    The problem is we're not going to use this driver on RZ/G SoCs... The 
+newer rcar2-cpg-mssr.c will be used instead -- I submitted the patches for 
+that before ELC-E...
+
+> Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[...]
+
+MBR, Sergei
