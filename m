@@ -1,70 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from host.buserror.net ([209.198.135.123]:58375 "EHLO
-        host.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbcJ1EqY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2016 00:46:24 -0400
-Message-ID: <1477629956.6812.15.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
-        ulf.hansson@linaro.org, Arnd Bergmann <arnd@arndb.de>
-Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>
-Date: Thu, 27 Oct 2016 23:45:56 -0500
-In-Reply-To: <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
-         <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [v13, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH v2 1/5] clk: pxa: remove unused variables
+Date: Sun, 23 Oct 2016 14:19:26 +0200
+Message-Id: <1477225170-19019-2-git-send-email-robert.jarzmik@free.fr>
+In-Reply-To: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-10-28 at 11:32 +0800, Yangbo Lu wrote:
-> +	guts->regs = of_iomap(np, 0);
-> +	if (!guts->regs)
-> +		return -ENOMEM;
-> +
-> +	/* Register soc device */
-> +	machine = of_flat_dt_get_machine_name();
-> +	if (machine)
-> +		soc_dev_attr.machine = devm_kstrdup(dev, machine,
-> GFP_KERNEL);
-> +
-> +	svr = fsl_guts_get_svr();
-> +	soc_die = fsl_soc_die_match(svr, fsl_soc_die);
-> +	if (soc_die) {
-> +		soc_dev_attr.family = devm_kasprintf(dev, GFP_KERNEL,
-> +						     "QorIQ %s", soc_die-
-> >die);
-> +	} else {
-> +		soc_dev_attr.family = devm_kasprintf(dev, GFP_KERNEL,
-> "QorIQ");
-> +	}
-> +	soc_dev_attr.soc_id = devm_kasprintf(dev, GFP_KERNEL,
-> +					     "svr:0x%08x", svr);
-> +	soc_dev_attr.revision = devm_kasprintf(dev, GFP_KERNEL, "%d.%d",
-> +					       SVR_MAJ(svr), SVR_MIN(svr));
-> +
-> +	soc_dev = soc_device_register(&soc_dev_attr);
-> +	if (IS_ERR(soc_dev))
-> +		return PTR_ERR(soc_dev);
+This is a cleanup patch to remove unused values not used in their
+respective functions.
 
-ioremap leaks on this error path.  Use devm_ioremap_resource().
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/clk/pxa/clk-pxa27x.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
--Scott
-
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index c40b1804f58c..afc395b4148e 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -221,14 +221,12 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
+ 					      unsigned long parent_rate)
+ {
+ 	unsigned long clkcfg;
+-	unsigned int t, ht, b, osc_forced;
++	unsigned int ht, osc_forced;
+ 	unsigned long ccsr = readl(CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+ 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+-	t  = clkcfg & (1 << 0);
+ 	ht = clkcfg & (1 << 2);
+-	b  = clkcfg & (1 << 3);
+ 
+ 	if (osc_forced)
+ 		return parent_rate;
+@@ -241,7 +239,7 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
+ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
+ {
+ 	unsigned long clkcfg;
+-	unsigned int t, ht, b, osc_forced;
++	unsigned int t, ht, osc_forced;
+ 	unsigned long ccsr = readl(CCSR);
+ 
+ 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
+@@ -251,7 +249,6 @@ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
+ 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+ 	t  = clkcfg & (1 << 0);
+ 	ht = clkcfg & (1 << 2);
+-	b  = clkcfg & (1 << 3);
+ 
+ 	if (ht || t)
+ 		return PXA_CORE_TURBO;
+-- 
+2.1.4
