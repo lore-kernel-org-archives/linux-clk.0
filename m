@@ -1,37 +1,354 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Oct 2016 18:39:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v3 3/3] clk: stm32f469: Add QSPI clock
-Message-ID: <20161028013940.GC16026@codeaurora.org>
-References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
- <1477041810-12313-4-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:40556 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755384AbcJWX7G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Oct 2016 19:59:06 -0400
+Subject: Re: [PATCH v5 2/4] arm64: dts: add Allwinner A64 SoC .dtsi
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>
+References: <cover.f18c0f482ef4459b5c8f6eb5828fcb6762440974.1476986335.git-series.maxime.ripard@free-electrons.com>
+ <eb11a71c58cd85551d9d793437db1792abd5077c.1476986335.git-series.maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <a0b71433-8302-8ac2-a695-60ac813b380f@arm.com>
+Date: Mon, 24 Oct 2016 00:57:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477041810-12313-4-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <eb11a71c58cd85551d9d793437db1792abd5077c.1476986335.git-series.maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 20/10/16 19:00, Maxime Ripard wrote:
+
+Hi Maxime,
+
+> From: Andre Przywara <andre.przywara@arm.com>
 > 
-> This patch adds the QSPI clock for stm32f469 discovery board.
-> The gate mapping is a little bit different from stm32f429 soc.
+> The Allwinner A64 SoC is a low-cost chip with 4 ARM Cortex-A53 cores
+> and the typical tablet / TV box peripherals.
+> The SoC is based on the (32-bit) Allwinner H3 chip, sharing most of
+> the peripherals and the memory map.
+> Although the cores are proper 64-bit ones, the whole SoC is actually
+> limited to 4GB (including all the supported DRAM), so we use 32-bit
+> address and size cells. This has the nice feature of us being able to
+> reuse the DT for 32-bit kernels as well.
+> This .dtsi lists the hardware that we support so far.
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> [Maxime: Convert to CCU binding, drop the MMC support for now]
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
+>  Documentation/devicetree/bindings/arm/sunxi.txt |   1 +-
+>  MAINTAINERS                                     |   1 +-
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi   | 263 +++++++++++++++++-
+>  3 files changed, 265 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+> index 3975d0a0e4c2..4d6467cc2aa2 100644
+> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+> @@ -14,4 +14,5 @@ using one of the following compatible strings:
+>    allwinner,sun8i-a83t
+>    allwinner,sun8i-h3
+>    allwinner,sun9i-a80
+> +  allwinner,sun50i-a64
+>    nextthing,gr8
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1cd38a7e0064..86488e92655f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1019,6 +1019,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+>  N:	sun[x456789]i
+>  F:	arch/arm/boot/dts/ntc-gr8*
+> +F:	arch/arm64/boot/dts/allwinner/
+>  
+>  ARM/Allwinner SoC Clock Support
+>  M:	Emilio López <emilio@elopez.com.ar>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> new file mode 100644
+> index 000000000000..be51024743b4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -0,0 +1,263 @@
+> +/*
+> + * Copyright (C) 2016 ARM Ltd.
+> + * based on the Allwinner H3 dtsi:
+> + *    Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This file is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This file is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include <dt-bindings/clock/sun50i-a64-ccu.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/pinctrl/sun4i-a10.h>
+> +#include <dt-bindings/reset/sun50i-a64-ccu.h>
+> +
+> +/ {
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <0>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <1>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <2>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			device_type = "cpu";
+> +			reg = <3>;
+> +			enable-method = "psci";
+> +		};
+> +	};
+> +
+> +	osc24M: osc24M_clk {
+> +		#clock-cells = <0>;
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "osc24M";
+> +	};
+> +
+> +	osc32k: osc32k_clk {
+> +		#clock-cells = <0>;
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		clock-output-names = "osc32k";
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+> +			     <GIC_PPI 14
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+> +			     <GIC_PPI 11
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+> +			     <GIC_PPI 10
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +	};
+> +
+> +	soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		ccu: clock@01c20000 {
+> +			compatible = "allwinner,sun50i-a64-ccu";
+> +			reg = <0x01c20000 0x400>;
+> +			clocks = <&osc24M>, <&osc32k>;
+> +			clock-names = "hosc", "losc";
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+> +		pio: pinctrl@1c20800 {
+> +			compatible = "allwinner,sun50i-a64-pinctrl";
+> +			reg = <0x01c20800 0x400>;
+> +			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_PIO>;
+> +			gpio-controller;
+> +			#gpio-cells = <3>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +
+> +			i2c1_pins: i2c1_pins {
+> +				allwinner,pins = "PH2", "PH3";
+> +				allwinner,function = "i2c1";
 
-Applied to clk-next + added Rob's ack from v2.
+So as Icenowy pointed out, we are missing the drive and pull properties
+here, at least as long as we don't have your patch (series) in place to
+cope with that.
+But if we rely on this series (which seems OK to me), shouldn't we then
+use the generic properties for pins and function here as well?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Cheers,
+Andre.
+
+> +			};
+> +
+> +			uart0_pins_a: uart0@0 {
+> +				allwinner,pins = "PB8", "PB9";
+> +				allwinner,function = "uart0";
+> +			};
+> +		};
+> +
+> +		uart0: serial@1c28000 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28000 0x400>;
+> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART0>;
+> +			resets = <&ccu RST_BUS_UART0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@1c28400 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28400 0x400>;
+> +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART1>;
+> +			resets = <&ccu RST_BUS_UART1>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@1c28800 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28800 0x400>;
+> +			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART2>;
+> +			resets = <&ccu RST_BUS_UART2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart3: serial@1c28c00 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28c00 0x400>;
+> +			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART3>;
+> +			resets = <&ccu RST_BUS_UART3>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart4: serial@1c29000 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c29000 0x400>;
+> +			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART4>;
+> +			resets = <&ccu RST_BUS_UART4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c0: i2c@1c2ac00 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2ac00 0x400>;
+> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C0>;
+> +			resets = <&ccu RST_BUS_I2C0>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c1: i2c@1c2b000 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2b000 0x400>;
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C1>;
+> +			resets = <&ccu RST_BUS_I2C1>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c2: i2c@1c2b400 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2b400 0x400>;
+> +			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C2>;
+> +			resets = <&ccu RST_BUS_I2C2>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		gic: interrupt-controller@1c81000 {
+> +			compatible = "arm,gic-400";
+> +			reg = <0x01c81000 0x1000>,
+> +			      <0x01c82000 0x2000>,
+> +			      <0x01c84000 0x2000>,
+> +			      <0x01c86000 0x2000>;
+> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +		};
+> +
+> +		rtc: rtc@1f00000 {
+> +			compatible = "allwinner,sun6i-a31-rtc";
+> +			reg = <0x01f00000 0x54>;
+> +			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +	};
+> +};
+> 
+
