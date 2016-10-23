@@ -1,202 +1,146 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v4 3/9] clk: sunxi-ng: Finish to convert to structures for arguments
-Date: Tue, 11 Oct 2016 16:28:21 +0200
-Message-Id: <67333887b86b7fd838dd9d6523dc7e3d9a9ddeb4.1476196031.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <moinejf@free.fr>
+Date: Sun, 23 Oct 2016 18:31:07 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: =?ISO-8859-1?Q?Myl=E8ne?= Josserand
+ <mylene.josserand@free-electrons.com>, vinod.koul@intel.com, wens@csie.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
+ mark.rutland@arm.com, robh+dt@kernel.org,
+ thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+Message-Id: <20161023183107.5b75b6aad62853378713299f@free.fr>
+In-Reply-To: <20161004165553.GS5228@lukather>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+	<3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+	<20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
+	<20161004165553.GS5228@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks still use an explicit list of arguments, which make it a bit
-more tedious to add new parameters.
+On Tue, 4 Oct 2016 18:55:54 +0200
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Convert those over to a structure pointer argument to add as many
-arguments as possible without having to many noise in our patches, or a
-very long list of arguments.
+> On Tue, Oct 04, 2016 at 12:40:11PM +0200, Jean-Francois Moine wrote:
+> > On Tue,  4 Oct 2016 11:46:14 +0200
+> > Myl=E8ne Josserand <mylene.josserand@free-electrons.com> wrote:
+> >=20
+> > > Add the case of a burst of 4 which is handled by the SoC.
+> > >=20
+> > > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.co=
+m>
+> > > ---
+> > >  drivers/dma/sun6i-dma.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >=20
+> > > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+> > > index 8346199..0485204 100644
+> > > --- a/drivers/dma/sun6i-dma.c
+> > > +++ b/drivers/dma/sun6i-dma.c
+> > > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+> > >  	switch (maxburst) {
+> > >  	case 1:
+> > >  		return 0;
+> > > +	case 4:
+> > > +		return 1;
+> > >  	case 8:
+> > >  		return 2;
+> > >  	default:
+> > > --=20
+> > > 2.9.3
+> >=20
+> > This patch has already been rejected by Maxime in the threads
+> > 	http://www.spinics.net/lists/dmaengine/msg08610.html
+> > and
+> > 	http://www.spinics.net/lists/dmaengine/msg08719.html
+> >=20
+> > I hope you will find the way he wants for this maxburst to be added.
+>=20
+> I was talking about something along these lines (not tested):
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mult.c | 28 +++++++++++++++++-------
- drivers/clk/sunxi-ng/ccu_nk.c   | 39 +++++++++++++++++++---------------
- 2 files changed, 42 insertions(+), 25 deletions(-)
+I wonder why you don't submit this yourself.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 010e9424691d..32a1964439a2 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -13,10 +13,20 @@
- #include "ccu_gate.h"
- #include "ccu_mult.h"
- 
-+struct _ccu_mult {
-+	unsigned long	mult, max;
-+};
-+
- static void ccu_mult_find_best(unsigned long parent, unsigned long rate,
--			       unsigned int max_n, unsigned int *n)
-+			       struct _ccu_mult *mult)
- {
--	*n = rate / parent;
-+	int _mult;
-+
-+	_mult = rate / parent;
-+	if (_mult > mult->max)
-+		_mult = mult->max;
-+
-+	mult->mult = _mult;
- }
- 
- static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
-@@ -25,11 +35,12 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
- 					void *data)
- {
- 	struct ccu_mult *cm = data;
--	unsigned int n;
-+	struct _ccu_mult _cm;
- 
--	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-+	_cm.max = 1 << cm->mult.width;
-+	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
--	return parent_rate * n;
-+	return parent_rate * _cm.mult;
- }
- 
- static void ccu_mult_disable(struct clk_hw *hw)
-@@ -83,21 +94,22 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long parent_rate)
- {
- 	struct ccu_mult *cm = hw_to_ccu_mult(hw);
-+	struct _ccu_mult _cm;
- 	unsigned long flags;
--	unsigned int n;
- 	u32 reg;
- 
- 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
- 						&parent_rate);
- 
--	ccu_mult_find_best(parent_rate, rate, 1 << cm->mult.width, &n);
-+	_cm.max = 1 << cm->mult.width;
-+	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
- 	spin_lock_irqsave(cm->common.lock, flags);
- 
- 	reg = readl(cm->common.base + cm->common.reg);
- 	reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
- 
--	writel(reg | ((n - 1) << cm->mult.shift),
-+	writel(reg | ((_cm.mult - 1) << cm->mult.shift),
- 	       cm->common.base + cm->common.reg);
- 
- 	spin_unlock_irqrestore(cm->common.lock, flags);
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-index d6fafb397489..e7e2e75618ef 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.c
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -9,21 +9,24 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/rational.h>
- 
- #include "ccu_gate.h"
- #include "ccu_nk.h"
- 
-+struct _ccu_nk {
-+	unsigned long	n, max_n;
-+	unsigned long	k, max_k;
-+};
-+
- static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
--			     unsigned int max_n, unsigned int max_k,
--			     unsigned int *n, unsigned int *k)
-+			     struct _ccu_nk *nk)
- {
- 	unsigned long best_rate = 0;
- 	unsigned int best_k = 0, best_n = 0;
- 	unsigned int _k, _n;
- 
--	for (_k = 1; _k <= max_k; _k++) {
--		for (_n = 1; _n <= max_n; _n++) {
-+	for (_k = 1; _k <= nk->max_k; _k++) {
-+		for (_n = 1; _n <= nk->max_n; _n++) {
- 			unsigned long tmp_rate = parent * _n * _k;
- 
- 			if (tmp_rate > rate)
-@@ -37,8 +40,8 @@ static void ccu_nk_find_best(unsigned long parent, unsigned long rate,
- 		}
- 	}
- 
--	*k = best_k;
--	*n = best_n;
-+	nk->k = best_k;
-+	nk->n = best_n;
- }
- 
- static void ccu_nk_disable(struct clk_hw *hw)
-@@ -89,16 +92,17 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long *parent_rate)
- {
- 	struct ccu_nk *nk = hw_to_ccu_nk(hw);
--	unsigned int n, k;
-+	struct _ccu_nk _nk;
- 
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nk->fixed_post_div;
- 
--	ccu_nk_find_best(*parent_rate, rate,
--			 1 << nk->n.width, 1 << nk->k.width,
--			 &n, &k);
-+	_nk.max_n = 1 << nk->n.width;
-+	_nk.max_k = 1 << nk->k.width;
-+
-+	ccu_nk_find_best(*parent_rate, rate, &_nk);
-+	rate = *parent_rate * _nk.n * _nk.k;
- 
--	rate = *parent_rate * n * k;
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate / nk->fixed_post_div;
- 
-@@ -110,15 +114,16 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct ccu_nk *nk = hw_to_ccu_nk(hw);
- 	unsigned long flags;
--	unsigned int n, k;
-+	struct _ccu_nk _nk;
- 	u32 reg;
- 
- 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate * nk->fixed_post_div;
- 
--	ccu_nk_find_best(parent_rate, rate,
--			 1 << nk->n.width, 1 << nk->k.width,
--			 &n, &k);
-+	_nk.max_n = 1 << nk->n.width;
-+	_nk.max_k = 1 << nk->k.width;
-+
-+	ccu_nk_find_best(parent_rate, rate, &_nk);
- 
- 	spin_lock_irqsave(nk->common.lock, flags);
- 
-@@ -126,7 +131,7 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
- 	reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
- 
--	writel(reg | ((k - 1) << nk->k.shift) | ((n - 1) << nk->n.shift),
-+	writel(reg | ((_nk.k - 1) << nk->k.shift) | ((_nk.n - 1) << nk->n.shift),
- 	       nk->common.base + nk->common.reg);
- 
- 	spin_unlock_irqrestore(nk->common.lock, flags);
--- 
-git-series 0.8.10
+> -------8<---------
+> diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+> index 83461994e418..573ac4608293 100644
+> --- a/drivers/dma/sun6i-dma.c
+> +++ b/drivers/dma/sun6i-dma.c
+> @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
+>  	switch (maxburst) {
+>  	case 1:
+>  		return 0;
+> +	case 4:
+> +		return 1;
+>  	case 8:
+>  		return 2;
+>  	default:
+> @@ -1110,11 +1112,19 @@ static int sun6i_dma_probe(struct platform_device=
+ *pdev)
+>  	sdc->slave.dst_addr_widths		=3D BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
+>  						  BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
+>  						  BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+> +	sdc->slave.dst_bursts			=3D BIT(1) | BIT(8);
+> +	sdc->slave.src_bursts			=3D BIT(1) | BIT(8);
+>  	sdc->slave.directions			=3D BIT(DMA_DEV_TO_MEM) |
+>  						  BIT(DMA_MEM_TO_DEV);
+>  	sdc->slave.residue_granularity		=3D DMA_RESIDUE_GRANULARITY_BURST;
+>  	sdc->slave.dev =3D &pdev->dev;
+> =20
+> +	if (of_device_is_compatible(pdev->dev.of_node,
+> +				    "allwinner,sun8i-h3-dma")) {
+> +		sdc->slave.dst_bursts |=3D BIT(4);
+> +		sdc->slave.src_bursts |=3D BIT(4);
+> +	}
+> +
+>  	sdc->pchans =3D devm_kcalloc(&pdev->dev, sdc->cfg->nr_max_channels,
+>  				   sizeof(struct sun6i_pchan), GFP_KERNEL);
+>  	if (!sdc->pchans)
+> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> index cc535a478bae..f7bbec24bb58 100644
+> --- a/include/linux/dmaengine.h
+> +++ b/include/linux/dmaengine.h
+> @@ -673,6 +673,8 @@ struct dma_filter {
+>   * 	each type of direction, the dma controller should fill (1 <<
+>   * 	<TYPE>) and same should be checked by controller as well
+>   * @max_burst: max burst capability per-transfer
+> + * @dst_bursts: bitfield of the available burst sizes for the destination
+> + * @src_bursts: bitfield of the available burst sizes for the source
+
+You did not define dst_bursts nor src_bursts.
+
+>   * @residue_granularity: granularity of the transfer residue reported
+>   *	by tx_status
+>   * @device_alloc_chan_resources: allocate resources and return the
+> @@ -800,6 +802,14 @@ struct dma_device {
+>  static inline int dmaengine_slave_config(struct dma_chan *chan,
+>  					  struct dma_slave_config *config)
+>  {
+> +	if (config->src_maxburst && config->device->src_bursts &&
+> +	    !(BIT(config->src_maxburst) & config->device->src_bursts))
+
+The maxburst may be as big as 4Kibytes, then, I am not sure that this
+code will work!
+
+> +		return -EINVAL;
+> +
+> +	if (config->dst_maxburst && config->device->dst_bursts &&
+> +	    !(BIT(config->dst_maxburst) & config->device->dst_bursts))
+> +		return -EINVAL;
+> +
+>  	if (chan->device->device_config)
+>  		return chan->device->device_config(chan, config);
+> -------8<------------=20
+
+Yes, I know that the burst size is always a power of 2.
+The best way to check it would be to change the {src,dts}_maxburst to a
+bitmap of the possible bursts as 0x0d for 1,4 and 8 bytes. But this
+asks for a lot of changes...
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
