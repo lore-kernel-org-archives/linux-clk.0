@@ -1,69 +1,56 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 10 Oct 2016 08:01:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
-Message-ID: <20161010130121.GA31827@rob-hp-laptop>
-References: <20161005171824.18014-1-paul.burton@imgtec.com>
- <20161005171824.18014-17-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161005171824.18014-17-paul.burton@imgtec.com>
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH v2 2/5] clk: pxa: core pll is not affected by t bit
+Date: Sun, 23 Oct 2016 14:19:27 +0200
+Message-Id: <1477225170-19019-3-git-send-email-robert.jarzmik@free.fr>
+In-Reply-To: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 05, 2016 at 06:18:22PM +0100, Paul Burton wrote:
-> Add device tree binding documentation for the clocks provided by the
-> MIPS Boston development board from Imagination Technologies, and a
-> header file describing the available clocks for use by device trees &
-> driver.
-> 
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> 
-> ---
-> 
-> Changes in v3: None
-> Changes in v2:
-> - Add BOSTON_CLK_INPUT to expose the input clock.
-> 
->  .../devicetree/bindings/clock/img,boston-clock.txt | 27 ++++++++++++++++++++++
->  include/dt-bindings/clock/boston-clock.h           | 14 +++++++++++
->  2 files changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
->  create mode 100644 include/dt-bindings/clock/boston-clock.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> new file mode 100644
-> index 0000000..c01ea60
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> @@ -0,0 +1,27 @@
-> +Binding for Imagination Technologies MIPS Boston clock sources.
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible : Should be "img,boston-clock".
-> +- #clock-cells : Should be set to 1.
-> +  Values available for clock consumers can be found in the header file:
-> +    <dt-bindings/clock/boston-clock.h>
-> +- regmap : Phandle to the Boston platform register system controller.
-> +  This should contain a phandle to the system controller node covering the
-> +  platform registers provided by the Boston board.
+The t bit of clkfcfg doesn't affect the core pll clock, but it makes core
+clock select between core pll clock and core run clock.
 
-Can you just make the clock node a child of the system controller and 
-drop this?
+As such remove it from the core pll rate reporting function, while it
+remains in clk_pxa27x_core_get_parent().
 
-Rob
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/clk/pxa/clk-pxa25x.c | 4 +---
+ drivers/clk/pxa/clk-pxa27x.c | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
+index a98b98e2a9e4..3bb603a27f2b 100644
+--- a/drivers/clk/pxa/clk-pxa25x.c
++++ b/drivers/clk/pxa/clk-pxa25x.c
+@@ -182,9 +182,7 @@ static unsigned long clk_pxa25x_cpll_get_rate(struct clk_hw *hw,
+ 	m = M_clk_mult[(cccr >> 5) & 0x03];
+ 	n2 = N2_clk_mult[(cccr >> 7) & 0x07];
+ 
+-	if (t)
+-		return m * l * n2 * parent_rate / 2;
+-	return m * l * parent_rate;
++	return m * l * n2 * parent_rate / 2;
+ }
+ PARENTS(clk_pxa25x_cpll) = { "osc_3_6864mhz" };
+ RATE_RO_OPS(clk_pxa25x_cpll, "cpll");
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index afc395b4148e..3930053543a3 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -162,7 +162,7 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
+ 	L  = l * parent_rate;
+ 	N  = (L * n2) / 2;
+ 
+-	return t ? N : L;
++	return N;
+ }
+ PARENTS(clk_pxa27x_cpll) = { "osc_13mhz" };
+ RATE_RO_OPS(clk_pxa27x_cpll, "cpll");
+-- 
+2.1.4
