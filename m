@@ -1,151 +1,98 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [v12, 0/8] Fix eSDHC host version register bug
-Date: Wed, 19 Oct 2016 02:47:07 +0000
-Message-ID: <AM5PR0401MB2529BA70C6E7AF7C71631A47F8D20@AM5PR0401MB2529.eurprd04.prod.outlook.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
- <CAPDyKFoit0sTPpfi2=AHcdZsDwOJxbBX68O-1jBFL=5JN0m6_w@mail.gmail.com>
-In-Reply-To: <CAPDyKFoit0sTPpfi2=AHcdZsDwOJxbBX68O-1jBFL=5JN0m6_w@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 24 Oct 2016 17:05:42 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v4 6/9] clk: sunxi-ng: Add A64 clocks
+Message-ID: <20161024150542.cle7iw2l7c5ybbrr@lukather>
+References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+ <cd4dd81821b8910d40626baab2dbfdabd94b1b98.1476196031.git-series.maxime.ripard@free-electrons.com>
+ <20161020184601.GB26139@codeaurora.org>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
- Russell King <linux@arm.linux.org.uk>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Scott Wood <oss@buserror.net>,
- Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- linux-mmc <linux-mmc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Kumar Gala <galak@codeaurora.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6t3qhlpls5xcw2dg"
+In-Reply-To: <20161020184601.GB26139@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-+ Greg
 
-Hi Greg,
+--6t3qhlpls5xcw2dg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I submitted this patchset for a MMC bug fix, and introduce the below patch which needs your ACK.
-> > Arnd Bergmann (1):
-> >   base: soc: introduce soc_device_match() interface
-https://patchwork.kernel.org/patch/9342913/
+Hi Stephen,
 
-Could you help to review it and give some comments or ACK.
-Thank you very much.
+On Thu, Oct 20, 2016 at 11:46:01AM -0700, Stephen Boyd wrote:
+> On 10/11, Maxime Ripard wrote:
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-=
+ng/ccu-sun50i-a64.c
+> > new file mode 100644
+> > index 000000000000..c0e96bf6d104
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> > +
+> > +static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+> > +{
+> > +	struct resource *res;
+> > +	void __iomem *reg;
+> > +	u32 val;
+> > +
+> > +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	reg =3D devm_ioremap_resource(&pdev->dev, res);
+> > +	if (IS_ERR(reg)) {
+> > +		dev_err(&pdev->dev, "Could not map the clock registers\n");
+>=20
+> devm_ioremap_resource() should already spit out an error.
+>=20
+> > +		return PTR_ERR(reg);
+> > +	}
+> > +
+> > +	/* Force the PLL-Audio-1x divider to 4 */
+> > +	val =3D readl(reg + SUN50I_A64_PLL_AUDIO_REG);
+> > +	val &=3D ~GENMASK(19, 16);
+> > +	writel(val | (3 << 16), reg + SUN50I_A64_PLL_AUDIO_REG);
+> > +
+> > +	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+> > +
+> > +	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
+> > +}
+> > +
+> > +static const struct of_device_id sun50i_a64_ccu_ids[] =3D {
+> > +	{ .compatible =3D "allwinner,sun50i-a64-ccu" },
+> > +	{ },
+>=20
+> Nitpick: drop the comma
 
+Thanks for your comments, it's fixed.
 
+Maxime
 
-Best regards,
-Yangbo Lu
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--6t3qhlpls5xcw2dg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> -----Original Message-----
-> From: Ulf Hansson [mailto:ulf.hansson@linaro.org]
-> Sent: Tuesday, October 18, 2016 6:48 PM
-> To: Y.B. Lu
-> Cc: linux-mmc; Scott Wood; Arnd Bergmann; linuxppc-dev@lists.ozlabs.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; linux-clk; linux-i2c@vger.kernel.org;
-> iommu@lists.linux-foundation.org; netdev@vger.kernel.org; Mark Rutland;
-> Rob Herring; Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil;
-> Bhupesh Sharma; Qiang Zhao; Kumar Gala; Santosh Shilimkar; Leo Li; X.B.
-> Xie; M.H. Lian
-> Subject: Re: [v12, 0/8] Fix eSDHC host version register bug
-> 
-> On 21 September 2016 at 08:57, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> > This patchset is used to fix a host version register bug in the
-> > T4240-R1.0-R2.0 eSDHC controller. To match the SoC version and
-> > revision, 10 previous version patchsets had tried many methods but all
-> of them were rejected by reviewers.
-> > Such as
-> >         - dts compatible method
-> >         - syscon method
-> >         - ifdef PPC method
-> >         - GUTS driver getting SVR method Anrd suggested a
-> > soc_device_match method in v10, and this is the only available method
-> > left now. This v11 patchset introduces the soc_device_match interface
-> > in soc driver.
-> >
-> > The first six patches of Yangbo are to add the GUTS driver. This is
-> > used to register a soc device which contain soc version and revision
-> information.
-> > The other two patches introduce the soc_device_match method in soc
-> > driver and apply it on esdhc driver to fix this bug.
-> >
-> > Arnd Bergmann (1):
-> >   base: soc: introduce soc_device_match() interface
-> >
-> > Yangbo Lu (7):
-> >   dt: bindings: update Freescale DCFG compatible
-> >   ARM64: dts: ls2080a: add device configuration node
-> >   dt: bindings: move guts devicetree doc out of powerpc directory
-> >   powerpc/fsl: move mpc85xx.h to include/linux/fsl
-> >   soc: fsl: add GUTS driver for QorIQ platforms
-> >   MAINTAINERS: add entry for Freescale SoC drivers
-> >   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-> >
-> >  Documentation/devicetree/bindings/arm/fsl.txt      |   6 +-
-> >  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
-> >  MAINTAINERS                                        |  11 +-
-> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
-> >  arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
-> >  arch/powerpc/sysdev/fsl_pci.c                      |   2 +-
-> >  drivers/base/Kconfig                               |   1 +
-> >  drivers/base/soc.c                                 |  66 ++++++
-> >  drivers/clk/clk-qoriq.c                            |   3 +-
-> >  drivers/i2c/busses/i2c-mpc.c                       |   2 +-
-> >  drivers/iommu/fsl_pamu.c                           |   3 +-
-> >  drivers/mmc/host/Kconfig                           |   1 +
-> >  drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
-> >  drivers/net/ethernet/freescale/gianfar.c           |   2 +-
-> >  drivers/soc/Kconfig                                |   2 +-
-> >  drivers/soc/fsl/Kconfig                            |  19 ++
-> >  drivers/soc/fsl/Makefile                           |   1 +
-> >  drivers/soc/fsl/guts.c                             | 257
-> +++++++++++++++++++++
-> >  include/linux/fsl/guts.h                           | 125 ++++++----
-> >  .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
-> >  include/linux/sys_soc.h                            |   3 +
-> >  21 files changed, 478 insertions(+), 61 deletions(-)  rename
-> > Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
-> > create mode 100644 drivers/soc/fsl/Kconfig  create mode 100644
-> > drivers/soc/fsl/guts.c  rename arch/powerpc/include/asm/mpc85xx.h =>
-> > include/linux/fsl/svr.h (97%)
-> >
-> > --
-> > 2.1.0.27.g96db324
-> >
-> 
-> This looks good to me! I am not sure which tree you want this to be
-> picked up through, but unless no other volunteers I can take it through
-> my mmc tree.
-> 
-> Although, before considering to apply, I need an ack from Scott/Arnd for
-> the guts driver in patch 5/8 and I need an ack from Greg for patch 7/8,
-> where the soc_device_match() interface is added (seems like you didn't
-> add him on cc/to).
-> 
-> Kind regards
-> Uffe
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYDiNCAAoJEBx+YmzsjxAgpOAP/A0zd+zs2hz8peugygH2t9rk
+q1PVPfshHKD+HZEfnLSYS+HBCnEBAhNWc/dsq47QfHb//szYzar5IcuwvYZMU1Vq
+mi2hvKd+26ZvyUzLgsICJcXosgmoDxgCaRX3sLqQBGTlbcvVuPFZ7+kCnxvFXi7Y
+RM/E0xIqozqizCNJ7s/BzkOTIsztRtP36dtz8OBUJi7ZVxsmf4uiEnjvKizbLfPh
++kn2NPlXuOk80U2qwY2G/hUIIoG3E/lCJYLlT6dArrF7T3Du1brQ/PHTBYBPbsLX
+e+8bJfsWiFC3GOwZDhjzEEjO4oYLaQCaStEIfbQyZbVVq495Qb7M9wzgXtFfROw2
+H7jIorP7wDrHDwtgbXGiR+0xkzMB/q/PXPpvvkz1ye0qAV78T/4yAVhXvFCzDLbr
+h146bImRrV1HoF0sSLOf/y5Hk+GLBRCUAcH3Ny1xK6gXCReVU1YT24IyGGg4r0u/
+iTLCllFYFkZ5F2QLUqYVBz5z1nbo4hjECLaQmoj4ZUJ9GQ15nPDlO+85FVDPLWYw
+zw7KpIAwEvXu8wpBSQLs5sDFri3LHf+zS72K+CnkeobzW6NRXi/gV1D/XM+zojvz
+5qR977u2VfhvYNVJmrwegmEvpunxNLQ6GtCAooZexmlt0lKPaVNiFZuBe7ExFFF3
+qWXn8rgLm2LD9mQUOecZ
+=iYuW
+-----END PGP SIGNATURE-----
+
+--6t3qhlpls5xcw2dg--
