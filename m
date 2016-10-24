@@ -1,45 +1,69 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20161028014127.GD16026@codeaurora.org>
-References: <cover.1476267249.git.emil@limesaudio.com> <4d2e3a91dfb74209735c940b51d7efc9ba2ed69b.1476267249.git.emil@limesaudio.com>
- <20161028014127.GD16026@codeaurora.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 28 Oct 2016 09:47:15 -0200
-Message-ID: <CAOMZO5Co32XUpNFz4Hd2DEmNnMBvD5fKmsyjcmsgawea4dJR9g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: imx: fix integer overflow in AV PLL round rate
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Emil Lundmark <emil@limesaudio.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"Ken . Lin" <ken.lin@advantech.com>, Anson Huang <b20788@freescale.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: lars@metafoo.de,
+	dan.carpenter@oracle.com,
+	ssantosh@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 3/3] clk: keystone: Fix missing iounmap calls in an error handling path
+Date: Mon, 24 Oct 2016 22:43:26 +0200
+Message-Id: <7ed7c1abf1666f1e6eda240bb705940bc14bd186.1477339880.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Factorize 'iounmap()' calls in the error handling path.
+The main goal is to add these calls if 'clk_register_pll()' fails.
 
-On Thu, Oct 27, 2016 at 11:41 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/12, Emil Lundmark wrote:
->> Since 'parent_rate * mfn' may overflow 32 bits, the result should be
->> stored using 64 bits.
->>
->> The problem was discovered when trying to set the rate of the audio PLL
->> (pll4_post_div) on an i.MX6Q. The desired rate was 196.608 MHz, but
->> the actual rate returned was 192.000570 MHz. The round rate function should
->> have been able to return 196.608 MHz, i.e., the desired rate.
->>
->> Fixes: ba7f4f557eb6 ("clk: imx: correct AV PLL rate formula")
->> Cc: Anson Huang <b20788@freescale.com>
->> Signed-off-by: Emil Lundmark <emil@limesaudio.com>
->> ---
->
-> Applied to clk-next
+Add an error message if an 'of_iomap' call fails to be consistent.
 
-This one fixes a regression caused by ba7f4f557eb6 ("clk: imx: correct
-AV PLL rate formula").
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-compiled & un-tested
+---
+ drivers/clk/keystone/pll.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-So it should go to clk-fixes instead with the stable tag:
-
-Cc: <stable@vger.kernel.org> # 4.8.x
-
-Thanks
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index 35c0e2b011d1..73a2558b29c0 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -191,7 +191,6 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 	pll_data->pll_ctl0 = of_iomap(node, i);
+ 	if (!pll_data->pll_ctl0) {
+ 		pr_err("%s: ioremap failed\n", __func__);
+-		iounmap(pll_data->pllod);
+ 		goto out;
+ 	}
+ 
+@@ -206,8 +205,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 		i = of_property_match_string(node, "reg-names", "multiplier");
+ 		pll_data->pllm = of_iomap(node, i);
+ 		if (!pll_data->pllm) {
+-			iounmap(pll_data->pll_ctl0);
+-			iounmap(pll_data->pllod);
++			pr_err("%s: ioremap failed\n", __func__);
+ 			goto out;
+ 		}
+ 	}
+@@ -220,6 +218,12 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 
+ out:
+ 	pr_err("%s: error initializing pll %s\n", __func__, node->name);
++	if (pll_data->pllm)
++		iounmap(pll_data->pllm);
++	if (pll_data->pll_ctl0)
++		iounmap(pll_data->pll_ctl0);
++	if (pll_data->pllod)
++		iounmap(pll_data->pllod);
+ 	kfree(pll_data);
+ }
+ 
+-- 
+2.9.3
