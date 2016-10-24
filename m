@@ -1,176 +1,51 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 1/6] clk: stm32f4: Add LSI & LSE clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <1476436699-21879-2-git-send-email-gabriel.fernandez@st.com>
- <20161019202433.GA8871@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <e1a7dd16-089e-3a60-9e53-cdd57e42aeed@st.com>
-Date: Thu, 20 Oct 2016 09:47:04 +0200
-MIME-Version: 1.0
-In-Reply-To: <20161019202433.GA8871@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rnayak@codeaurora.org,
+	stanimir.varbanov@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
+Date: Mon, 24 Oct 2016 15:48:17 +0530
+Message-Id: <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+With the venus subcore0/1 gdscs(powerdomains) in
+hw controlled mode, the clock controller does not handle
+the status bit for the clocks in that domain. So avoid
+checking for the status bit of those clocks by setting the
+BRANCH_HALT_DELAY flag. This avoids the WARN_ONs which
+otherwise occurs when enabling/disabling those clocks.
 
-Hi Stephen,
-Many thanks for reviewing.
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ drivers/clk/qcom/mmcc-msm8996.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On 10/19/2016 10:24 PM, Stephen Boyd wrote:
-> On 10/14, gabriel.fernandez@st.com wrote:
->> @@ -292,8 +298,110 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
->>   	return clks[i];
->>   }
->>   
->> +static struct regmap *pdrm;
-> This can't be part of the stm32_rgate structure?
-yes i can include it.
-
->
->> +
->> +static inline void disable_power_domain_write_protection(void)
->> +{
->> +	regmap_update_bits(pdrm, 0x00, (1 << 8), (1 << 8));
->> +}
->> +
->> +static inline void enable_power_domain_write_protection(void)
->> +{
->> +	regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
->> +}
->> +
->> +struct stm32_rgate {
->> +	struct	clk_hw hw;
->> +	struct	clk_gate gate;
-> Why not use the clk_hw inside clk_gate?yes you right, if it's optional i won't have dependency with DT
-ok
->
->> +	u8	bit_rdy_idx;
->> +};
->> +
->> +#define RTC_TIMEOUT 1000000
->> +
->> +#define to_rgclk(_hw) container_of(_hw, struct stm32_rgate, hw)
->> +
->> +static int rgclk_enable(struct clk_hw *hw)
->> +{
->> +	struct stm32_rgate *rgate = to_rgclk(hw);
->> +	struct clk_hw *gate_hw = &rgate->gate.hw;
->> +	struct clk_gate *gate = to_clk_gate(gate_hw);
->> +	u32 reg;
->> +	int ret;
->> +
->> +	__clk_hw_set_clk(gate_hw, hw);
-> Then we don't need this part.
->
->> +
->> +	disable_power_domain_write_protection();
->> +
->> +	clk_gate_ops.enable(gate_hw);
->> +
->> +	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
->> +			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
->> +
->> +	enable_power_domain_write_protection();
->> +
->> +	return ret;
->> +}
->> +
->> +static void rgclk_disable(struct clk_hw *hw)
->> +{
->> +	clk_gate_ops.disable(hw);
->> +}
->> +
->> +static int rgclk_is_enabled(struct clk_hw *hw)
->> +{
->> +	return clk_gate_ops.is_enabled(hw);
->> +}
->> +
->> +
-> Drop the double newline here please.
-ok
->
->> +static const struct clk_ops rgclk_ops = {
->> +	.enable = rgclk_enable,
->> +	.disable = rgclk_disable,
->> +	.is_enabled = rgclk_is_enabled,
->> +};
->> +
->> +static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
->> +		const char *parent_name, unsigned long flags,
->> +		void __iomem *reg, u8 bit_idx, u8 bit_rdy_idx,
->> +		u8 clk_gate_flags, spinlock_t *lock)
->> +{
->> +	struct stm32_rgate *rgate;
->> +	struct clk_init_data init = { NULL };
->> +	struct clk_hw *hw;
->> +	int ret;
->> +
->> +	rgate = kzalloc(sizeof(*rgate), GFP_KERNEL);
->> +	if (!rgate)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	init.name = name;
->> +	init.ops = &rgclk_ops;
->> +	init.flags = flags | CLK_IS_BASIC;
-> Please no CLK_IS_BASIC flags.
-ok
->
->> +	init.parent_names = &parent_name;
->> +	init.num_parents = 1;
->> +
->> +	rgate->hw.init = &init;
->> +	rgate->bit_rdy_idx = bit_rdy_idx;
->> +
->> +	rgate->gate.lock = lock;
->> +	rgate->gate.reg = reg;
->> +	rgate->gate.bit_idx = bit_idx;
->> +
->> +	hw = &rgate->hw;
->> +	ret = clk_hw_register(dev, hw);
->> +	if (ret) {
->> +		kfree(rgate);
->> +		hw = ERR_PTR(ret);
->> +	}
->> +
->> +	return hw;
->> +}
->> +
->>   static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
->>   
->> +const char *rtc_parents[4] = {
-> static const char * const?
-ok
->
->> +	"no-clock", "lse", "lsi", "hse-rtc"
->> +};
->> +
->>   static const struct clk_div_table ahb_div_table[] = {
->>   	{ 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
->>   	{ 0x4,   1 }, { 0x5,   1 }, { 0x6,   1 }, { 0x7,   1 },
->> @@ -319,6 +427,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->>   		return;
->>   	}
->>   
->> +	pdrm = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
-> Is there a dt binding update for this? It should probably be
-> optional?
-yes you right, if it's optional i don't need dependency with DT
-
->> +	if (IS_ERR(pdrm)) {
->> +		pr_err("%s: Unable to get syscfg\n", __func__);
->> +		goto fail;
->> +	}
->> +
->>   	hse_clk = of_clk_get_parent_name(np, 0);
->>   
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 41aabe3..8f3f480 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -1760,6 +1760,7 @@ enum {
+ };
+ 
+ static struct clk_branch video_subcore0_clk = {
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.halt_reg = 0x1048,
+ 	.clkr = {
+ 		.enable_reg = 0x1048,
+@@ -1775,6 +1776,7 @@ enum {
+ };
+ 
+ static struct clk_branch video_subcore1_clk = {
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.halt_reg = 0x104c,
+ 	.clkr = {
+ 		.enable_reg = 0x104c,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
