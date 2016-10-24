@@ -1,45 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:38059 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752672AbcJEPH5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2016 11:07:57 -0400
-Received: by mail-wm0-f41.google.com with SMTP id p138so279295647wmb.1
-        for <linux-clk@vger.kernel.org>; Wed, 05 Oct 2016 08:07:57 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-oxnas@lists.tuxfamily.org
-Subject: [PATCH 0/6] clk: oxnas: Rework driver to add support for OX820
-Date: Wed,  5 Oct 2016 17:07:46 +0200
-Message-Id: <20161005150752.22618-1-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: lars@metafoo.de,
+	dan.carpenter@oracle.com,
+	ssantosh@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/3] clk: keystone: Fix an error checking
+Date: Mon, 24 Oct 2016 22:43:24 +0200
+Message-Id: <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to to support the Oxford Semiconductor OX820 Soc clock gates,
-rework the original driver with a structure inspired from the Qcom or Meson
-drivers and using the new devm_clk_hw_register() call.
+clk_register_pll() can return ERR_PTR(-ENOMEM) so checking the return value
+against NULL only is not correct.
+In order to fix it, update clk_register_pll() to always return an error
+pointer in case of error and check the return value with IS_ERR.
 
-The first patches add dt-bindings include file to clarify the clock indices.
+While at it, also fix a tab vs space in the surrounding code.
 
-In future work, OX820 PLLs should also be handled by this driver.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-compiled and un-tested.
+---
+ drivers/clk/keystone/pll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Neil Armstrong (6):
-  clk: oxnas: Add dt-bindings include file for OX810SE
-  clk: oxnas: Add dt-bindings include file for OX820
-  clk: oxnas: Rename to clk_oxnas_gate
-  clk: oxnas: Refactor to make use of devm_clk_hw_register()
-  clk: oxnas: Add OX820 Gate clocks
-  dt-bindings: clk: oxnas,stdclk: Add OX820 bindings
-
- .../devicetree/bindings/clock/oxnas,stdclk.txt     |  19 +-
- drivers/clk/clk-oxnas.c                            | 232 ++++++++++++++-------
- include/dt-bindings/clock/oxsemi,ox810se.h         |  30 +++
- include/dt-bindings/clock/oxsemi,ox820.h           |  40 ++++
- 4 files changed, 231 insertions(+), 90 deletions(-)
- create mode 100644 include/dt-bindings/clock/oxsemi,ox810se.h
- create mode 100644 include/dt-bindings/clock/oxsemi,ox820.h
-
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index a26ba2184454..70d6fb2d23bc 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -140,7 +140,7 @@ static struct clk *clk_register_pll(struct device *dev,
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 
+-	pll->pll_data	= pll_data;
++	pll->pll_data = pll_data;
+ 	pll->hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &pll->hw);
+@@ -150,7 +150,7 @@ static struct clk *clk_register_pll(struct device *dev,
+ 	return clk;
+ out:
+ 	kfree(pll);
+-	return NULL;
++	return clk;
+ }
+ 
+ /**
+@@ -213,7 +213,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 	}
+ 
+ 	clk = clk_register_pll(NULL, node->name, parent_name, pll_data);
+-	if (clk) {
++	if (!IS_ERR(clk)) {
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		return;
+ 	}
 -- 
-2.7.0
-
+2.9.3
