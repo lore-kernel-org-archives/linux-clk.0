@@ -1,103 +1,51 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 25 Oct 2016 13:40:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Cc: mturquette@baylibre.com, orson.zhai@spreadtrum.com,
+	baolin.wang@spreadtrum.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ben.li@spreadturm.com
+Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
+ fixed-factor clocks
+Message-ID: <20161025204008.GE26139@codeaurora.org>
+References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+ <20161020230103.GD26139@codeaurora.org>
+ <20161022081448.GB32560@spreadtrum.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
-References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com> <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Oct 2016 13:39:23 +0200
-Message-ID: <CAMuHMdWrowTK8KxthrEO0DNHsBn-_PyY0GcRCc38wY6iynshiA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20161022081448.GB32560@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+On 10/22, Xiaolong Zhang wrote:
+> On 四, 10月 20, 2016 at 04:01:03下午 -0700, Stephen Boyd wrote:
+> > On 10/11, Orson Zhai wrote:
+> > > From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+> > > 
+> > > When common kernel setups fixed clock, of_clk_provider will be registerred.
+> > > But there is no clkdev being registerred at the same time. This will make
+> > > it difficult to get the clock by using clk_get(NULL, con_id).
+> > > 
+> > > Add clkdev register for fixed-rate and fixed-factor clock and ignore
+> > > the error if any.
+> > > 
+> > > Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+> > > Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
+> > > ---
+> > 
+> > Why are we using clkdev lookups for clks populated from DT?
+> > Shouldn't we be able to point to them from the consumers that
+> > would also be in DT? I'm a little lost.
+> > 
+> The clk_get interface allows the first argument as NULL. We just assure
+> consumers can get the clock from DT or by clock name.
 
-On Fri, Oct 7, 2016 at 10:46 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by the device tree sources to reference the R8A7743 CPG
-> clocks  by index.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Ok. The first argument to clk_get() really shouldn't be NULL. It
+should be the device pointer for the device that is associated
+with the clk you want to get. The clock name (second argument to
+clk_get()) should be device specific and not some globally unique
+identifier. It seems that you're using the clk_get() API
+incorrectly.
 
-Thanks for your patch!
-
-It would be good to refer to the table and version of the datasheet
-(i.e. Table 7.2b, I have Rev. 0.50 of the RZ/G series User's Manual).
-
-> --- /dev/null
-> +++ renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
-> @@ -0,0 +1,43 @@
-> +/*
-> + * Copyright (C) 2016 Cogent Embedded Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-> +#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* r8a7743 CPG Core Clocks */
-> +#define R8A7743_CLK_Z          0
-> +#define R8A7743_CLK_ZG         1
-> +#define R8A7743_CLK_ZTR                2
-> +#define R8A7743_CLK_ZTRD2      3
-> +#define R8A7743_CLK_ZT         4
-> +#define R8A7743_CLK_ZX         5
-> +#define R8A7743_CLK_ZS         6
-> +#define R8A7743_CLK_HP         7
-
-In this particular case, I think we should leave holes in the numbering for
-clocks that exist on r8a7791. That way we can easily reuse the driver on
-r8a7791 later, and NULLify the entries for clocks that do not exist on r8a7743.
-
-I.e. a one entry hole here, ...
-
-> +#define R8A7743_CLK_B          8
-> +#define R8A7743_CLK_LB         9
-> +#define R8A7743_CLK_P          10
-> +#define R8A7743_CLK_CL         11
-> +#define R8A7743_CLK_M2         12
-
-... a one entry hole here, ...
-
-> +#define R8A7743_CLK_ZB3                13
-> +#define R8A7743_CLK_ZB3D2      14
-> +#define R8A7743_CLK_DDR                15
-> +#define R8A7743_CLK_SDH                16
-> +#define R8A7743_CLK_SD0                17
-> +#define R8A7743_CLK_SD2                18
-> +#define R8A7743_CLK_SD3                19
-> +#define R8A7743_CLK_MMC0       20
-> +#define R8A7743_CLK_MP         21
-
-... and a two entry hole here.
-
-> +#define R8A7743_CLK_QSPI       22
-> +#define R8A7743_CLK_CP         23
-> +#define R8A7743_CLK_RCAN       24
-> +#define R8A7743_CLK_R          25
-> +#define R8A7743_CLK_OSC                26
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
