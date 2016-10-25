@@ -1,37 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Oct 2016 18:38:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Tue, 25 Oct 2016 19:07:24 +0300
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v3 2/3] clk: stm32f4: Add RTC clock
-Message-ID: <20161028013851.GB16026@codeaurora.org>
-References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
- <1477041810-12313-3-git-send-email-gabriel.fernandez@st.com>
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk/samsung: Clear OF_POPULATED flag from clkout node in
+ init callback
+Message-ID: <20161025160724.GA3535@kozik-lap>
+References: <CGME20161025123519eucas1p1f8d2efba82ebd101e8fa0697a5708a28@eucas1p1.samsung.com>
+ <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477041810-12313-3-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Tue, Oct 25, 2016 at 02:34:21PM +0200, Marek Szyprowski wrote:
+> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+> controller, and these functionalities are supported by different drivers
+> that matches the same compatible strings.
 > 
-> This patch introduces the support of the RTC clock.
-> RTC clock can have 3 sources: lsi, lse and hse_rtc.
+> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+> clocks") the OF core flags clock controllers registered with the
+> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+> compatible string as the interrupt controller will not be registered.
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> This prevents the PMU platform device to be registered so the Exynos PMU
+> driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> 
+> Fix this by clearing the OF_POPULATED flag in the clkout driver init
+> callback, to allow the Exynos PMU platform driver to be probed. The patch
+> is based on similar patch from Javier Martinez Canillas: b030485220ca
+> "ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in IRQ init callback".
+> 
+> Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+>  drivers/clk/samsung/clk-exynos-clkout.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Applied to clk-next
+Yes, one could expect this sooner or later...
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
