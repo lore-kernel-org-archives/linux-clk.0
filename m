@@ -1,63 +1,60 @@
-Return-Path: <ken.lin@advantech.com>
-From: "Ken.Lin" <ken.lin@advantech.com>
-To: "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de"
-	<kernel@pengutronix.de>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Peter.Stretz" <peter.stretz@advantech.com>,
-        "Peter.Chiang" <peter.chiang@advantech.com>,
-        Akshay Bhat
-	<akshay.bhat@timesys.com>
-Date: Thu, 6 Oct 2016 16:26:32 -0700
-Subject: RE: The possible regression in kernel 4.8 - clk: imx: correct AV
- PLL rate formula
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-References: <03B5A3CA1724CE4EAC32B27E39292A677FC5A390AF@AUSMAIL1.AUS.ADVANTECH.CORP>
-Message-Id: <WM!ed3fbaeb0522ef511432f86a8f960e4450d5dc585c3e6a7282707c963f20491527420d38f737d38adb9ab7cba9794282!@dg.advantech.com>
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] clk/samsung: Clear OF_POPULATED flag from clkout node in init
+ callback
+Date: Tue, 25 Oct 2016 14:34:21 +0200
+Message-id: <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
+References: 
+ <CGME20161025123519eucas1p1f8d2efba82ebd101e8fa0697a5708a28@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+controller, and these functionalities are supported by different drivers
+that matches the same compatible strings.
 
+Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+clocks") the OF core flags clock controllers registered with the
+CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+compatible string as the interrupt controller will not be registered.
 
------Original Message-----
-From: Ken.Lin=20
-Sent: Thursday, October 6, 2016 4:21 PM
-To: 'shawnguo@kernel.org'; 'kernel@pengutronix.de'; 'sboyd@codeaurora.org';=
- 'mturquette@baylibre.com'
-Cc: 'linux-arm-kernel@lists.infradead.org'; 'linux-clk@vger.kernel.org'; 'l=
-inux-kernel@vger.kernel.org'; Peter.Stretz; Peter.Chiang; Akshay Bhat
-Subject: The possible regression in kernel 4.8 - clk: imx: correct AV PLL r=
-ate formula
+This prevents the PMU platform device to be registered so the Exynos PMU
+driver is never probed. This breaks (among other things) Suspend-to-RAM.
 
-Hi,
+Fix this by clearing the OF_POPULATED flag in the clkout driver init
+callback, to allow the Exynos PMU platform driver to be probed. The patch
+is based on similar patch from Javier Martinez Canillas: b030485220ca
+"ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in IRQ init callback".
 
-We found a possible regression issue (not seen in kernel 4.7-stable), which=
- has to do with the new NXP commit ba7f4f557eb67ee21c979c8539dc1886f5d5341c=
- when we did a DP test (1920x1080@60) with clock source PLL5.
-The DP desired pixel clock (148.5MHz that is calculated from the input of P=
-LL output frequency) would be correct again when we reverted this commit.
-Could you please help check if the commit has the side effect since it woul=
-d have impacts on our on-going project when it requires moving from kernel =
-4.7 to kernel 4.8 or newer version?
+Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Please check the following URL for the details
-https://www.dropbox.com/s/7wc5jdp8unlsiob/possible_regression_for_clk_imx_c=
-orrect_VL_PLL_rate_formula.pdf?dl=3D0
-
-
-Thank you
-
-Cheers,
-Ken Lin
-
---=20
-This message has been scanned for viruses and
-dangerous content by MailScanner, and is
-believed to be clean.
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 96fab6cfb202..57303cfec7d4 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -116,6 +116,12 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
+ 
+ 	register_syscore_ops(&exynos_clkout_syscore_ops);
+ 
++	/*
++	 * Clear the OF_POPULATED flag set in of_irq_init so that
++	 * later the Exynos PMU platform device won't be skipped.
++	 */
++	of_node_clear_flag(node, OF_POPULATED);
++
+ 	return;
+ 
+ err_clk_unreg:
+-- 
+1.9.1
