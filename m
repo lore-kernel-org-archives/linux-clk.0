@@ -1,94 +1,58 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 4 Oct 2016 15:07:27 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
-	vinod.koul@intel.com, maxime.ripard@free-electrons.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-	lee.jones@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com
-Message-ID: <20161004130727.srmaielkvd2z5k3s@sirena.org.uk>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
- <85cbd9926e52d0aa03f6bbfd8794373d8db491e0.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004144008.0d07d18c@free-electrons.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk/samsung: Clear OF_POPULATED flag from clkout node in
+ init callback
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <CGME20161025123519eucas1p1f8d2efba82ebd101e8fa0697a5708a28@eucas1p1.samsung.com>
+ <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <6a1165ff-e169-09f7-6ee6-c5d368d042ae@osg.samsung.com>
+Date: Tue, 25 Oct 2016 11:16:20 -0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gpztr7jxwopd7ip3"
-In-Reply-To: <20161004144008.0d07d18c@free-electrons.com>
-Subject: Re: [PATCH 06/14] ASoC: Add sun8i digital audio codec
+In-Reply-To: <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Marek,
 
---gpztr7jxwopd7ip3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10/25/2016 09:34 AM, Marek Szyprowski wrote:
+> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+> controller, and these functionalities are supported by different drivers
+> that matches the same compatible strings.
+> 
+> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+> clocks") the OF core flags clock controllers registered with the
+> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+> compatible string as the interrupt controller will not be registered.
+> 
+> This prevents the PMU platform device to be registered so the Exynos PMU
+> driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> 
+> Fix this by clearing the OF_POPULATED flag in the clkout driver init
+> callback, to allow the Exynos PMU platform driver to be probed. The patch
+> is based on similar patch from Javier Martinez Canillas: b030485220ca
+> "ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in IRQ init callback".
+> 
+> Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
-On Tue, Oct 04, 2016 at 02:40:08PM +0200, Thomas Petazzoni wrote:
+The patch looks good to me:
 
-> > +/* CODEC_OFFSET represents the offset of the codec registers
-> > + * and not all the DAI registers
-> > + */
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> This is not the proper comment style I believe for audio code, it
-> should be:
+I've also tested it on an Exynos5800 Peach Pi, the PMU driver is probed
+and S2R works correctly:
 
-> /*
->  * ...
->  */
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-I don't care, IIRC that's something from CodingStyle which checkpatch
-moans about.
-
-> > +	/* pcm operations */
-> > +	.ops = &sun8i_codec_dai_ops,
-> > +};
-> > +EXPORT_SYMBOL(sun8i_codec_dai);
-
-> This EXPORT_SYMBOL looks wrong. First because it doesn't seem to be
-> used outside of this module. And second because using EXPORT_SYMBOL on
-> a function defined as static doesn't make much sense, as the "static"
-> qualifier limits the visibility of the symbol to the current
-> compilation unit.
-
-Also all the ASoC code is _GPL so a non-GPL export is an issue.
-
-> > +	.component_driver = {
-> > +		.dapm_widgets		= sun8i_codec_dapm_widgets,
-> > +		.num_dapm_widgets	= ARRAY_SIZE(sun8i_codec_dapm_widgets),
-> > +		.dapm_routes		= sun8i_codec_dapm_routes,
-> > +		.num_dapm_routes	= ARRAY_SIZE(sun8i_codec_dapm_routes),
-
-> I'm probably missing something, but in the sun4i-codec.c driver, those
-> fields are initialized directly in the snd_soc_codec_driver structure,
-> not in the .component_driver sub-structure.
-
-We're in the process of pushing everything out to component level, this
-update should be made in the old code if it's not happened already.
-
-> > +	if (clk_prepare_enable(scodec->clk_module))
-> > +		pr_err("err:open failed;\n");
-
-> Grr, pr_err, not good. Plus you want to return with an error from the
-> probe() function.
-
-Also when printing an error message use dev_err().
-
---gpztr7jxwopd7ip3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAABCAAGBQJX86mOAAoJECTWi3JdVIfQBN0H/0hEvPxnDY3IJcUtpnC9qVeb
-ykmKv1gtF/m9M9peXqqorRFZ4in1OwHeyU6vUY0+5bDtq9B9g9V2TYad1Ur1R4nF
-7KzqnCxa2XPoqDTGz3pkPsVeLNQjFA39IW/fBqu7MOpK6FZ+neXgfrwBzG81XRzQ
-J6/mqeiDi8yygUZqIW0jsthmq0Q0LbpIPJDk6gbT2D5SE+aRJftB4vxdQal6DQPw
-wn8kYDdcbnlAwiivzJFmKJuRvSLgcUr9+ab6K4cmWXqfeVaZXvQLaCmBxP13Q5mD
-eW5OGleZ28Sprjsp/0DlGF6uAseZAOzCEBIOvJQKj9q8RmHa2ZEcatADMP1pNak=
-=PoB3
------END PGP SIGNATURE-----
-
---gpztr7jxwopd7ip3--
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
