@@ -1,143 +1,80 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Scott Wood <oss@buserror.net>, "Arnd
- Bergmann" <arnd@arndb.de>
-Subject: RE: [v12, 0/8] Fix eSDHC host version register bug
-Date: Wed, 19 Oct 2016 02:40:53 +0000
-Message-ID: <AM5PR0401MB2529907DE940AC310FC8C0B2F8D20@AM5PR0401MB2529.eurprd04.prod.outlook.com>
-References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
- <CAPDyKFoit0sTPpfi2=AHcdZsDwOJxbBX68O-1jBFL=5JN0m6_w@mail.gmail.com>
-In-Reply-To: <CAPDyKFoit0sTPpfi2=AHcdZsDwOJxbBX68O-1jBFL=5JN0m6_w@mail.gmail.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, "X.B. Xie" <xiaobo.xie@nxp.com>,
- "M.H. Lian" <minghuan.lian@nxp.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
- Russell King <linux@arm.linux.org.uk>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- linux-mmc <linux-mmc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Kumar Gala <galak@codeaurora.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 0/5] Add runtime PM support for clocks (on Exynos SoC
+ example)
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <3b50ab04-74d2-da25-d0a8-63a90ce69d93@samsung.com>
+Date: Tue, 25 Oct 2016 10:51:03 +0200
+MIME-version: 1.0
+In-reply-to: <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: 
+ <CGME20161024121224eucas1p1070b72308dc9c8d8d2b10fa5bfeaf5ed@eucas1p1.samsung.com>
+ <1477311130-6534-1-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Ulf Hansson [mailto:ulf.hansson@linaro.org]
-> Sent: Tuesday, October 18, 2016 6:48 PM
-> To: Y.B. Lu
-> Cc: linux-mmc; Scott Wood; Arnd Bergmann; linuxppc-dev@lists.ozlabs.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; linux-clk; linux-i2c@vger.kernel.org;
-> iommu@lists.linux-foundation.org; netdev@vger.kernel.org; Mark Rutland;
-> Rob Herring; Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil;
-> Bhupesh Sharma; Qiang Zhao; Kumar Gala; Santosh Shilimkar; Leo Li; X.B.
-> Xie; M.H. Lian
-> Subject: Re: [v12, 0/8] Fix eSDHC host version register bug
-> 
-> On 21 September 2016 at 08:57, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> > This patchset is used to fix a host version register bug in the
-> > T4240-R1.0-R2.0 eSDHC controller. To match the SoC version and
-> > revision, 10 previous version patchsets had tried many methods but all
-> of them were rejected by reviewers.
-> > Such as
-> >         - dts compatible method
-> >         - syscon method
-> >         - ifdef PPC method
-> >         - GUTS driver getting SVR method Anrd suggested a
-> > soc_device_match method in v10, and this is the only available method
-> > left now. This v11 patchset introduces the soc_device_match interface
-> > in soc driver.
-> >
-> > The first six patches of Yangbo are to add the GUTS driver. This is
-> > used to register a soc device which contain soc version and revision
-> information.
-> > The other two patches introduce the soc_device_match method in soc
-> > driver and apply it on esdhc driver to fix this bug.
-> >
-> > Arnd Bergmann (1):
-> >   base: soc: introduce soc_device_match() interface
-> >
-> > Yangbo Lu (7):
-> >   dt: bindings: update Freescale DCFG compatible
-> >   ARM64: dts: ls2080a: add device configuration node
-> >   dt: bindings: move guts devicetree doc out of powerpc directory
-> >   powerpc/fsl: move mpc85xx.h to include/linux/fsl
-> >   soc: fsl: add GUTS driver for QorIQ platforms
-> >   MAINTAINERS: add entry for Freescale SoC drivers
-> >   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
-> >
-> >  Documentation/devicetree/bindings/arm/fsl.txt      |   6 +-
-> >  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
-> >  MAINTAINERS                                        |  11 +-
-> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
-> >  arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
-> >  arch/powerpc/sysdev/fsl_pci.c                      |   2 +-
-> >  drivers/base/Kconfig                               |   1 +
-> >  drivers/base/soc.c                                 |  66 ++++++
-> >  drivers/clk/clk-qoriq.c                            |   3 +-
-> >  drivers/i2c/busses/i2c-mpc.c                       |   2 +-
-> >  drivers/iommu/fsl_pamu.c                           |   3 +-
-> >  drivers/mmc/host/Kconfig                           |   1 +
-> >  drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
-> >  drivers/net/ethernet/freescale/gianfar.c           |   2 +-
-> >  drivers/soc/Kconfig                                |   2 +-
-> >  drivers/soc/fsl/Kconfig                            |  19 ++
-> >  drivers/soc/fsl/Makefile                           |   1 +
-> >  drivers/soc/fsl/guts.c                             | 257
-> +++++++++++++++++++++
-> >  include/linux/fsl/guts.h                           | 125 ++++++----
-> >  .../asm/mpc85xx.h => include/linux/fsl/svr.h       |   4 +-
-> >  include/linux/sys_soc.h                            |   3 +
-> >  21 files changed, 478 insertions(+), 61 deletions(-)  rename
-> > Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
-> > create mode 100644 drivers/soc/fsl/Kconfig  create mode 100644
-> > drivers/soc/fsl/guts.c  rename arch/powerpc/include/asm/mpc85xx.h =>
-> > include/linux/fsl/svr.h (97%)
-> >
-> > --
-> > 2.1.0.27.g96db324
-> >
-> 
-> This looks good to me! I am not sure which tree you want this to be
-> picked up through, but unless no other volunteers I can take it through
-> my mmc tree.
-> 
-> Although, before considering to apply, I need an ack from Scott/Arnd for
-> the guts driver in patch 5/8 and I need an ack from Greg for patch 7/8,
-> where the soc_device_match() interface is added (seems like you didn't
-> add him on cc/to).
-> 
+Dear All,
 
-[Lu Yangbo-B47093] Thanks a lot for your clarifying, Uffe.
-This patchset was based on mmc tree, and needed your picking up.
-But I think it needs to be rebased now since I saw qbman driver was in drivers/soc/fsl/ now.
-I will do that after collecting others' ACKs or comments.
 
-Hi Scott and Arnd,
-Could I get your ACTs if there're no other changes needed?
-Thanks a lot.
+On 2016-10-24 14:12, Marek Szyprowski wrote:
+> This patchset adds runtime PM support to common clock framework. This is an
+> attempt to implement support for clock controllers, which belongs to a power
+> domain. This approach works surprisingly well on Exynos 4412 and 5433 SoCs,
+> what allowed us to solve various freeze/crash issues related to power
+> management.
+>
+> The main idea behind this patchset is to keep clock's controller power domain
+> enabled every time when at least one of its clock is enabled or access to its
+> registers is being made. Clock controller driver (clock provider) can
+> supply a struct device pointer, which is the used by clock core for tracking and
+> managing clock's controller runtime pm state. Each clk_prepare() operation will
+> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+> will do pm_runtime_put() at the end.
+>
+> This runtime PM feature has been tested with Exynos4412 and Exynos5433 clocks
+> drivers. Both have some clocks, which belongs to respective power domains and
+> need special handling during power on/off procedures. Till now it wasn't handled
+> at all, what caused various problems.
+>
+> Patches for exynos 4412 and 5433 clocks drivers change the way the clock
+> provider is initialized. Instead of CLK_OF_DECLARE based initialization, a
+> complete platform device driver infrastructure is being used. This is needed to
+> let driver to use runtime pm feature and integrate with generic power domains.
+> The side-effect of this change is a delay in clock provider registeration
+> during system boot, so early initialized drivers might get EPROBEDEFER error
+> when requesting their clocks. This is an issue for IOMMU drivers, so
+> this patchset will be fully functional once the deferred probe for IOMMU
+> will be merged.
+>
+> The side-effect of this patchset is the one can finally read
+> /sys/kernel/debug/clk/clk_summary on all Exynos4412 boards without any freeze.
+>
+> If one wants to test this patchset (on Exynos4412 Trats2 device with FIMC-IS
+> driver), I've provided a branch with all needed patches (fixes for Exynos,
+> FIMC-IS driver and IOMMU deferred probe):
+> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.9-clocks-pm-v3
+>
+> Patches are based on vanilla v4.9-rc1 kernel.
 
-> Kind regards
-> Uffe
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+If one want to test this patchset together with my recently posted 
+Exynos IOMMU
+runtime PM patches (V5: 
+http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1253432.html),
+I prepared a single branch with both patchsets and all their prerequisites:
+
+https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.9-iommu-pm-v5-clocks-pm-v3
+
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
