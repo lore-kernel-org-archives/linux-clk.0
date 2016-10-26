@@ -1,71 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from userp1050.oracle.com ([156.151.31.82]:42192 "EHLO
-        userp1050.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752706AbcJLLlR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Oct 2016 07:41:17 -0400
-Received: from userp1040.oracle.com (userp1040.oracle.com [156.151.31.81])
-        by userp1050.oracle.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id u9C9ZOt6012960
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-clk@vger.kernel.org>; Wed, 12 Oct 2016 09:35:24 GMT
-Date: Wed, 12 Oct 2016 12:34:04 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: yamada.masahiro@socionext.com
-Cc: linux-clk@vger.kernel.org
-Subject: [bug report] clk: uniphier: add core support code for UniPhier clock
- driver
-Message-ID: <20161012093404.GA29062@mwanda>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <13815645.d8PJGpIqtG@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <13815645.d8PJGpIqtG@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Oct 2016 14:17:45 +0200
+Message-ID: <CAMuHMdUZc9ZPGAm=93586wDARhvE-wAz1jk1HRnda35GQjzG+g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Masahiro Yamada,
+On Wed, Oct 5, 2016 at 10:52 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+> and Software Reset support code, using the CPG/MSSR driver core.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The patch 734d82f4a678: "clk: uniphier: add core support code for
-UniPhier clock driver" from Sep 16, 2016, leads to the following
-static checker warning:
+> --- /dev/null
+> +++ renesas/drivers/clk/renesas/rcar-gen2-cpg.c
 
-	drivers/clk/uniphier/clk-uniphier-mux.c:56 uniphier_clk_mux_get_parent()
-	warn: signedness bug returning '(-22)'
+> +
+> +/*
+> + * Reset register definitions.
+> + */
+> +#define MODEMR 0xe6160060
+> +
+> +u32 __init rcar_gen2_read_modemr(void)
+> +{
+> +       void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+> +       u32 mode;
+> +
+> +       BUG_ON(!modemr);
+> +       mode = ioread32(modemr);
+> +       iounmap(modemr);
+> +
+> +       return mode;
+> +}
 
-drivers/clk/uniphier/clk-uniphier-mux.c
-    40  static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
-               ^^
-    41  {
-    42          struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
-    43          int num_parents = clk_hw_get_num_parents(hw);
-    44          int ret;
-    45          u32 val;
-    46          u8 i;
-    47  
-    48          ret = regmap_read(mux->regmap, mux->reg, &val);
-    49          if (ret)
-    50                  return ret;
-    51  
-    52          for (i = 0; i < num_parents; i++)
-    53                  if ((mux->masks[i] & val) == mux->vals[i])
-    54                          return i;
-    55  
-    56          return -EINVAL;
-                       ^^^^^^^
+Once we have "[PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining
+mode pin state" in place, we can make the RST node in DT mandatory
+for SoCs using CPG/MSSR, and drop this helper function.
 
-We can't return -EINVAL as a u8.
+> --- /dev/null
+> +++ renesas/drivers/clk/renesas/rcar-gen2-cpg.h
+> @@ -0,0 +1,42 @@
 
-    57  }
+> +u32 rcar_gen2_read_modemr(void);
 
-There are a bunch of similar bugs:
+Likewise.
 
-drivers/clk/samsung/clk-s3c2410-dclk.c:72 s3c24xx_clkout_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/uniphier/clk-uniphier-mux.c:56 uniphier_clk_mux_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/microchip/clk-core.c:296 roclk_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/microchip/clk-core.c:837 sclk_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/ti/mux.c:51 ti_clk_mux_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/ti/mux.c:61 ti_clk_mux_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/nxp/clk-lpc32xx.c:1018 clk_mux_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/nxp/clk-lpc32xx.c:1022 clk_mux_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/rockchip/clk-ddr.c:91 rockchip_ddrclk_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/clk-mux.c:51 clk_mux_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/clk-mux.c:61 clk_mux_get_parent() warn: signedness bug returning '(-22)'
+Gr{oetje,eeting}s,
 
-regards,
-dan carpenter
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
