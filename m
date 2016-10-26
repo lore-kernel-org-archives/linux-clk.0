@@ -1,235 +1,158 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH v3 9/9] arm64: dts: add Pine64 support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-   Mike Turquette <mturquette@baylibre.com>,
-   Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
-References: <20161003080913.24197-1-maxime.ripard@free-electrons.com>
- <20161003080913.24197-10-maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-   linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <7483f6ea-3b59-46ca-fb31-f26af6ec8423@arm.com>
-Date: Mon, 3 Oct 2016 11:24:24 +0100
-MIME-Version: 1.0
-In-Reply-To: <20161003080913.24197-10-maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1477501566.6812.9.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
+        ulf.hansson@linaro.org, Arnd Bergmann <arnd@arndb.de>
+Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>
+In-Reply-To: <1474441040-11946-6-git-send-email-yangbo.lu@nxp.com>
+References: <1474441040-11946-1-git-send-email-yangbo.lu@nxp.com>
+         <1474441040-11946-6-git-send-email-yangbo.lu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 26 Oct 2016 12:06:06 -0500
+Mime-Version: 1.0
+Subject: Re: [v12, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
-
-thanks for the respin!
-
-On 03/10/16 09:09, Maxime Ripard wrote:
-> From: Andre Przywara <andre.przywara@arm.com>
-> 
-> The Pine64 is a cost-efficient development board based on the
-> Allwinner A64 SoC.
-> There are three models: the basic version with Fast Ethernet and
-> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
-> feature Gigabit Ethernet and additional connectors for touchscreens
-> and a camera. Or as my son put it: "Those are smaller and these are
-> missing." ;-)
-> The two Pine64+ models just differ in the amount of DRAM
-> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
-> patches the DT accordingly we just need to provide one DT for the
-> Pine64+.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm64/boot/dts/Makefile                       |  1 +
->  arch/arm64/boot/dts/allwinner/Makefile             |  5 ++
->  .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  | 50 +++++++++++
->  .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 74 +++++++++++++++++
->  include/dt-bindings/reset/sun50i-a64-ccu.h         | 97 +++++++++++-----------
-
-Shouldn't the changes in this file be merged into patch 6/9?
-
-...
-
->  5 files changed, 179 insertions(+), 48 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> 
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index 6e199c903676..ddcbf5a2c17e 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -1,4 +1,5 @@
->  dts-dirs += al
-> +dts-dirs += allwinner
->  dts-dirs += altera
->  dts-dirs += amd
->  dts-dirs += amlogic
-> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+On Wed, 2016-09-21 at 14:57 +0800, Yangbo Lu wrote:
+> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
 > new file mode 100644
-> index 000000000000..1e29a5ae8282
+> index 0000000..b99764c
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> @@ -0,0 +1,5 @@
-> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
+> +++ b/drivers/soc/fsl/Kconfig
+> @@ -0,0 +1,19 @@
+> +#
+> +# Freescale SOC drivers
+> +#
 > +
-> +always		:= $(dtb-y)
-> +subdir-y	:= $(dts-dirs)
-> +clean-files	:= *.dtb
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-> new file mode 100644
-> index 000000000000..790d14daaa6a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-> @@ -0,0 +1,50 @@
-> +/*
-> + * Copyright (c) 2016 ARM Ltd.
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This library is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This library is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
+> +source "drivers/soc/fsl/qe/Kconfig"
 > +
-> +#include "sun50i-a64-pine64.dts"
+> +config FSL_GUTS
+> +	bool "Freescale QorIQ GUTS driver"
+> +	select SOC_BUS
+> +	help
+> +	  The global utilities block controls power management, I/O device
+> +	  enabling, power-onreset(POR) configuration monitoring, alternate
+> +	  function selection for multiplexed signals,and clock control.
+> +	  This driver is to manage and access global utilities block.
+> +	  Initially only reading SVR and registering soc device are
+> supported.
+> +	  Other guts accesses, such as reading RCW, should eventually be
+> moved
+> +	  into this driver as well.
 > +
-> +/ {
-> +	model = "Pine64+";
-> +	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
-> +
-> +	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
-> +};
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> new file mode 100644
-> index 000000000000..9f127b3d0e33
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> @@ -0,0 +1,74 @@
-> +/*
-> + * Copyright (c) 2016 ARM Ltd.
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This library is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This library is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sun50i-a64.dtsi"
-> +
-> +/ {
-> +	model = "Pine64";
-> +	compatible = "pine64,pine64", "allwinner,sun50i-a64";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart0_pins_a>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c1_pins>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1_pins {
-> +	allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-> +};
-> diff --git a/include/dt-bindings/reset/sun50i-a64-ccu.h b/include/dt-bindings/reset/sun50i-a64-ccu.h
-> index e61fac294d73..db60b29ddb11 100644
-> --- a/include/dt-bindings/reset/sun50i-a64-ccu.h
-> +++ b/include/dt-bindings/reset/sun50i-a64-ccu.h
-> @@ -46,52 +46,53 @@
->  #define RST_USB_PHY0		0
->  #define RST_USB_PHY1		1
->  #define RST_USB_HSIC		2
-> -#define RST_MBUS		3
-....
-> +#define RST_DRAM		3
-> +#define RST_MBUS		4
+> +	  If you want GUTS driver support, you should say Y here.
 
-So I take it that this kind of changes will not happen anymore once the
-DT has been merged?
-And this numbering is arbitrary and not connected to some hardware
-bits/register addresses at all?
-And in case we find some missing bits later we will just queue them at
-the end?
+This is user-enablable without dependencies, which means it will break some
+randconfigs.  If this is to be enabled via select then remove the text after
+"bool".
 
-Cheers,
-Andre.
+> +/* SoC die attribute definition for QorIQ platform */
+> +static const struct fsl_soc_die_attr fsl_soc_die[] = {
+> +#ifdef CONFIG_PPC
+> +	/*
+> +	 * Power Architecture-based SoCs T Series
+> +	 */
+> +
+> +	/* Die: T4240, SoC: T4240/T4160/T4080 */
+> +	{ .die		= "T4240",
+> +	  .svr		= 0x82400000,
+> +	  .mask		= 0xfff00000,
+> +	},
+> +	/* Die: T1040, SoC: T1040/T1020/T1042/T1022 */
+> +	{ .die		= "T1040",
+> +	  .svr		= 0x85200000,
+> +	  .mask		= 0xfff00000,
+> +	},
+> +	/* Die: T2080, SoC: T2080/T2081 */
+> +	{ .die		= "T2080",
+> +	  .svr		= 0x85300000,
+> +	  .mask		= 0xfff00000,
+> +	},
+> +	/* Die: T1024, SoC: T1024/T1014/T1023/T1013 */
+> +	{ .die		= "T1024",
+> +	  .svr		= 0x85400000,
+> +	  .mask		= 0xfff00000,
+> +	},
+> +#endif /* CONFIG_PPC */
+> +#if defined(CONFIG_ARCH_MXC) || defined(CONFIG_ARCH_LAYERSCAPE)
+
+Will this driver ever be probed on MXC?  Why do we need these ifdefs at all?
+
+
+> +	/*
+> +	 * ARM-based SoCs LS Series
+> +	 */
+> +
+> +	/* Die: LS1043A, SoC: LS1043A/LS1023A */
+> +	{ .die		= "LS1043A",
+> +	  .svr		= 0x87920000,
+> +	  .mask		= 0xffff0000,
+> +	},
+> +	/* Die: LS2080A, SoC: LS2080A/LS2040A/LS2085A */
+> +	{ .die		= "LS2080A",
+> +	  .svr		= 0x87010000,
+> +	  .mask		= 0xff3f0000,
+> +	},
+> +	/* Die: LS1088A, SoC: LS1088A/LS1048A/LS1084A/LS1044A */
+> +	{ .die		= "LS1088A",
+> +	  .svr		= 0x87030000,
+> +	  .mask		= 0xff3f0000,
+> +	},
+> +	/* Die: LS1012A, SoC: LS1012A */
+> +	{ .die		= "LS1012A",
+> +	  .svr		= 0x87040000,
+> +	  .mask		= 0xffff0000,
+> +	},
+> +	/* Die: LS1046A, SoC: LS1046A/LS1026A */
+> +	{ .die		= "LS1046A",
+> +	  .svr		= 0x87070000,
+> +	  .mask		= 0xffff0000,
+> +	},
+> +	/* Die: LS2088A, SoC: LS2088A/LS2048A/LS2084A/LS2044A */
+> +	{ .die		= "LS2088A",
+> +	  .svr		= 0x87090000,
+> +	  .mask		= 0xff3f0000,
+> +	},
+> +	/* Die: LS1021A, SoC: LS1021A/LS1020A/LS1022A
+> +	 * Note: Put this die at the end in cause of incorrect
+> identification
+> +	 */
+> +	{ .die		= "LS1021A",
+> +	  .svr		= 0x87000000,
+> +	  .mask		= 0xfff00000,
+> +	},
+> +#endif /* CONFIG_ARCH_MXC || CONFIG_ARCH_LAYERSCAPE */
+
+Instead of relying on ordering, add more bits to the mask so that there's no
+overlap.  I think 0xfff70000 would work.
+
+> +out:
+> +	kfree(soc_dev_attr.machine);
+> +	kfree(soc_dev_attr.family);
+> +	kfree(soc_dev_attr.soc_id);
+> +	kfree(soc_dev_attr.revision);
+> +	iounmap(guts->regs);
+> +out_free:
+> +	kfree(guts);
+> +	return ret;
+> +}
+
+Please use devm.
+
+-Scott
