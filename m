@@ -1,72 +1,111 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-oxnas@lists.tuxfamily.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 2/6] clk: oxnas: Add dt-bindings include file for OX820
-Date: Wed,  5 Oct 2016 17:07:48 +0200
-Message-Id: <20161005150752.22618-3-narmstrong@baylibre.com>
-In-Reply-To: <20161005150752.22618-1-narmstrong@baylibre.com>
-References: <20161005150752.22618-1-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <5810731C.6050100@samsung.com>
+Date: Wed, 26 Oct 2016 18:10:52 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2] clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization
+ method for CLKOUT
+References: 
+ <CGME20161026061227eucas1p20fb865eafd802044ed79ce336fa90eab@eucas1p2.samsung.com>
+ <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to support the Oxford Semiconductor Gate clocks, add a
-dedicated dt-binding include file for gate indexes.
+Hi Marek,
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- include/dt-bindings/clock/oxsemi,ox820.h | 40 ++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 include/dt-bindings/clock/oxsemi,ox820.h
+On 2016년 10월 26일 15:12, Marek Szyprowski wrote:
+> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+> controller, and these functionalities are supported by different drivers
+> that matches the same compatible strings.
+> 
+> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+> clocks") the OF core flags clock controllers registered with the
+> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+> compatible string will not be registered.
+> 
+> This prevents the PMU platform device to be created, so the Exynos PMU
+> driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> 
+> Fix this by changing CLKOUT driver initialization method to
+> CLK_OF_DECLARE_DRIVER(), which doesn't clear the OF_POPULATED flag, so
+> later a platform device is created and the Exynos PMU platform driver
+> can be be probed properly.
+> 
+> Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Changelog:
+> v2:
+> - switched to CLK_OF_DECLARE_DRIVER instead of calling
+>   of_node_clear_flag(node, OF_POPULATED) as suggested by Stephen Boyd
+> 
+> v1: https://www.spinics.net/lists/linux-clk/msg12833.html
+> - initial version
+> ---
+>  drivers/clk/samsung/clk-exynos-clkout.c | 22 ++++++++++++++--------
+>  1 file changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> index 96fab6cfb202..6c6afb87b4ce 100644
+> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> @@ -132,28 +132,34 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
+>  	pr_err("%s: failed to register clkout clock\n", __func__);
+>  }
+>  
+> +/*
+> + * We use CLK_OF_DECLARE_DRIVER initialization method to avoid setting
+> + * the OF_POPULATED flag on the pmu device tree node, so later the
+> + * Exynos PMU platform device can be properly probed with PMU driver.
+> + */
+> +
+>  static void __init exynos4_clkout_init(struct device_node *node)
+>  {
+>  	exynos_clkout_init(node, EXYNOS4_CLKOUT_MUX_MASK);
+>  }
+> -CLK_OF_DECLARE(exynos4210_clkout, "samsung,exynos4210-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos4210_clkout, "samsung,exynos4210-pmu",
+>  		exynos4_clkout_init);
+> -CLK_OF_DECLARE(exynos4212_clkout, "samsung,exynos4212-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos4212_clkout, "samsung,exynos4212-pmu",
+>  		exynos4_clkout_init);
+> -CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4412-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos4412_clkout, "samsung,exynos4412-pmu",
+>  		exynos4_clkout_init);
+> -CLK_OF_DECLARE(exynos3250_clkout, "samsung,exynos3250-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos3250_clkout, "samsung,exynos3250-pmu",
+>  		exynos4_clkout_init);
+>  
+>  static void __init exynos5_clkout_init(struct device_node *node)
+>  {
+>  	exynos_clkout_init(node, EXYNOS5_CLKOUT_MUX_MASK);
+>  }
+> -CLK_OF_DECLARE(exynos5250_clkout, "samsung,exynos5250-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos5250_clkout, "samsung,exynos5250-pmu",
+>  		exynos5_clkout_init);
+> -CLK_OF_DECLARE(exynos5410_clkout, "samsung,exynos5410-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos5410_clkout, "samsung,exynos5410-pmu",
+>  		exynos5_clkout_init);
+> -CLK_OF_DECLARE(exynos5420_clkout, "samsung,exynos5420-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos5420_clkout, "samsung,exynos5420-pmu",
+>  		exynos5_clkout_init);
+> -CLK_OF_DECLARE(exynos5433_clkout, "samsung,exynos5433-pmu",
+> +CLK_OF_DECLARE_DRIVER(exynos5433_clkout, "samsung,exynos5433-pmu",
+>  		exynos5_clkout_init);
+> 
 
-diff --git a/include/dt-bindings/clock/oxsemi,ox820.h b/include/dt-bindings/clock/oxsemi,ox820.h
-new file mode 100644
-index 0000000..f661ecc
---- /dev/null
-+++ b/include/dt-bindings/clock/oxsemi,ox820.h
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef DT_CLOCK_OXSEMI_OX820_H
-+#define DT_CLOCK_OXSEMI_OX820_H
-+
-+/* PLLs */
-+#define CLK_820_PLLA		0
-+#define CLK_820_PLLB		1
-+
-+/* Gate Clocks */
-+#define CLK_820_LEON		2
-+#define CLK_820_DMA_SGDMA	3
-+#define CLK_820_CIPHER		4
-+#define CLK_820_SD		5
-+#define CLK_820_SATA		6
-+#define CLK_820_AUDIO		7
-+#define CLK_820_USBMPH		8
-+#define CLK_820_ETHA		9
-+#define CLK_820_PCIEA		10
-+#define CLK_820_NAND		11
-+#define CLK_820_PCIEB		12
-+#define CLK_820_ETHB		13
-+#define CLK_820_REF600		14
-+#define CLK_820_USBDEV		15
-+
-+#endif /* DT_CLOCK_OXSEMI_OX820_H */
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.7.0
+Best Regards,
+Chanwoo Choi
