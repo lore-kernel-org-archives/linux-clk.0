@@ -1,82 +1,98 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v14, 2/8] ARM64: dts: ls2080a: add device configuration node
-Date: Fri, 28 Oct 2016 13:45:15 +0800
-Message-ID: <1477633521-7391-3-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v2] clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization
+ method for CLKOUT
+Date: Wed, 26 Oct 2016 08:12:20 +0200
+Message-id: <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
+References: 
+ <CGME20161026061227eucas1p20fb865eafd802044ed79ce336fa90eab@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the dts node for device configuration unit that provides
-general purpose configuration and status for the device.
+The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+controller, and these functionalities are supported by different drivers
+that matches the same compatible strings.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Scott Wood <oss@buserror.net>
----
-Changes for v5:
-	- Added this patch
-Changes for v6:
-	- None
-Changes for v7:
-	- None
-Changes for v8:
-	- Added 'Acked-by: Scott Wood'
-Changes for v9:
-	- None
-Changes for v10:
-	- None
-Changes for v11:
-	- None
-Changes for v12:
-	- None
-Changes for v13:
-	- None
-Changes for v14:
-	- None
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+clocks") the OF core flags clock controllers registered with the
+CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+compatible string will not be registered.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 337da90..c03b099 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -215,6 +215,12 @@
- 			clocks = <&sysclk>;
- 		};
+This prevents the PMU platform device to be created, so the Exynos PMU
+driver is never probed. This breaks (among other things) Suspend-to-RAM.
+
+Fix this by changing CLKOUT driver initialization method to
+CLK_OF_DECLARE_DRIVER(), which doesn't clear the OF_POPULATED flag, so
+later a platform device is created and the Exynos PMU platform driver
+can be be probed properly.
+
+Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Changelog:
+v2:
+- switched to CLK_OF_DECLARE_DRIVER instead of calling
+  of_node_clear_flag(node, OF_POPULATED) as suggested by Stephen Boyd
+
+v1: https://www.spinics.net/lists/linux-clk/msg12833.html
+- initial version
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 96fab6cfb202..6c6afb87b4ce 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -132,28 +132,34 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
+ 	pr_err("%s: failed to register clkout clock\n", __func__);
+ }
  
-+		dcfg: dcfg@1e00000 {
-+			compatible = "fsl,ls2080a-dcfg", "syscon";
-+			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
-+		};
++/*
++ * We use CLK_OF_DECLARE_DRIVER initialization method to avoid setting
++ * the OF_POPULATED flag on the pmu device tree node, so later the
++ * Exynos PMU platform device can be properly probed with PMU driver.
++ */
 +
- 		serial0: serial@21c0500 {
- 			compatible = "fsl,ns16550", "ns16550a";
- 			reg = <0x0 0x21c0500 0x0 0x100>;
+ static void __init exynos4_clkout_init(struct device_node *node)
+ {
+ 	exynos_clkout_init(node, EXYNOS4_CLKOUT_MUX_MASK);
+ }
+-CLK_OF_DECLARE(exynos4210_clkout, "samsung,exynos4210-pmu",
++CLK_OF_DECLARE_DRIVER(exynos4210_clkout, "samsung,exynos4210-pmu",
+ 		exynos4_clkout_init);
+-CLK_OF_DECLARE(exynos4212_clkout, "samsung,exynos4212-pmu",
++CLK_OF_DECLARE_DRIVER(exynos4212_clkout, "samsung,exynos4212-pmu",
+ 		exynos4_clkout_init);
+-CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4412-pmu",
++CLK_OF_DECLARE_DRIVER(exynos4412_clkout, "samsung,exynos4412-pmu",
+ 		exynos4_clkout_init);
+-CLK_OF_DECLARE(exynos3250_clkout, "samsung,exynos3250-pmu",
++CLK_OF_DECLARE_DRIVER(exynos3250_clkout, "samsung,exynos3250-pmu",
+ 		exynos4_clkout_init);
+ 
+ static void __init exynos5_clkout_init(struct device_node *node)
+ {
+ 	exynos_clkout_init(node, EXYNOS5_CLKOUT_MUX_MASK);
+ }
+-CLK_OF_DECLARE(exynos5250_clkout, "samsung,exynos5250-pmu",
++CLK_OF_DECLARE_DRIVER(exynos5250_clkout, "samsung,exynos5250-pmu",
+ 		exynos5_clkout_init);
+-CLK_OF_DECLARE(exynos5410_clkout, "samsung,exynos5410-pmu",
++CLK_OF_DECLARE_DRIVER(exynos5410_clkout, "samsung,exynos5410-pmu",
+ 		exynos5_clkout_init);
+-CLK_OF_DECLARE(exynos5420_clkout, "samsung,exynos5420-pmu",
++CLK_OF_DECLARE_DRIVER(exynos5420_clkout, "samsung,exynos5420-pmu",
+ 		exynos5_clkout_init);
+-CLK_OF_DECLARE(exynos5433_clkout, "samsung,exynos5433-pmu",
++CLK_OF_DECLARE_DRIVER(exynos5433_clkout, "samsung,exynos5433-pmu",
+ 		exynos5_clkout_init);
 -- 
-2.1.0.27.g96db324
+1.9.1
