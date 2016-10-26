@@ -1,35 +1,49 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 0/7] clk: qcom: Misc gcc/mmcc msm8996 fixes
-Date: Wed, 19 Oct 2016 16:58:36 +0530
-Message-Id: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <5038285.9DcXKlHSpF@wasted.cogentembedded.com>
+References: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com> <5038285.9DcXKlHSpF@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Oct 2016 14:14:25 +0200
+Message-ID: <CAMuHMdV9O97qWskZ=EWz-kSy_rV_U5rfrsRDWRHUB2WiFXAq7w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: renesas: cpg-mssr: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-These are some misc fixes in the gcc and mmcc clock drivers for msm8996
+On Fri, Oct 21, 2016 at 10:17 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> --- /dev/null
+> +++ linux/drivers/clk/renesas/r8a7743-cpg-mssr.c
+> @@ -0,0 +1,264 @@
 
-Rajendra Nayak (7):
-  clk: qcom: Mark a few branch clocks with BRANCH_HALT_DELAY
-  clk: qcom: Add a custom udelay needed for some branch clocks
-  clk: qcom: Add custom udelays for clks in msm8996
-  clk: qcom: Add freq tables for a few rcgs
-  clk: qcom: Mark a few clocks as BRANCH_VOTED
-  clk: qcom: Add force enable/disable needed for gfx3d rcg on msm8996
-  clk: qcom: Add some missing gcc clks for msm8996
+> +static int __init r8a7743_cpg_mssr_init(struct device *dev)
+> +{
+> +       const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
+> +       u32 cpg_mode = rcar_gen2_read_modemr();
 
- drivers/clk/qcom/clk-branch.c                |   5 +-
- drivers/clk/qcom/clk-branch.h                |   2 +
- drivers/clk/qcom/clk-rcg2.c                  |  31 +++-
- drivers/clk/qcom/gcc-msm8996.c               | 254 ++++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-msm8996.h |  12 ++
- 5 files changed, 291 insertions(+), 13 deletions(-)
+It would be good if we could appply "[PATCH v4 00/23] soc: renesas: Add R-Car
+RST driver for obtaining mode pin state" first, and change this driveer to
+use rcar_rst_read_mode_pins() instead.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> +       cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+> +
+> +       return rcar_gen2_cpg_init(cpg_pll_config);
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
