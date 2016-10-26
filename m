@@ -1,178 +1,86 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [RESEND/PATCH v6 1/3] clk: qcom: Add A53 PLL support
-Date: Wed, 19 Oct 2016 16:28:14 +0300
-Message-Id: <20161019132816.31073-2-georgi.djakov@linaro.org>
-In-Reply-To: <20161019132816.31073-1-georgi.djakov@linaro.org>
-References: <20161019132816.31073-1-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:32999 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932174AbcJZPs5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Oct 2016 11:48:57 -0400
+Received: by mail-vk0-f68.google.com with SMTP id h7so275942vkf.0
+        for <linux-clk@vger.kernel.org>; Wed, 26 Oct 2016 08:48:57 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1476750554-21961-1-git-send-email-festevam@gmail.com>
+References: <1476750554-21961-1-git-send-email-festevam@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 26 Oct 2016 13:48:56 -0200
+Message-ID: <CAOMZO5BQHKv7dxJTq2C1qdvhhRRRW8bafaXoQW77AKLNTWggAg@mail.gmail.com>
+Subject: Re: [PATCH RESEND 1/3] clk: imx6: Mask mmdc_ch1 handshake for
+ periph2_sel and mmdc_ch1_axi_podf
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the PLL, which generates the higher range of CPU
-frequencies on MSM8916 platforms.
+Shawn,
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,a53-pll.txt     | 17 ++++
- drivers/clk/qcom/Kconfig                           |  9 +++
- drivers/clk/qcom/Makefile                          |  1 +
- drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
- 4 files changed, 121 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
+Are you collecting the imx clk patches in this cycle?
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
-new file mode 100644
-index 000000000000..50e71e4e13a6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
-@@ -0,0 +1,17 @@
-+A53 PLL Binding
-+---------------
-+The A53 PLL is the main CPU PLL used for frequencies above 1GHz.
-+
-+Required properties :
-+- compatible : Shall contain only one of the following:
-+
-+		"qcom,a53-pll"
-+
-+- reg : shall contain base register location and length
-+
-+Example:
-+
-+	a53pll: a53pll@0b016000 {
-+		compatible = "qcom,a53-pll";
-+		reg = <0x0b016000 0x40>;
-+	};
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 0146d3c2547f..a889f0b14b54 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -150,3 +150,12 @@ config MSM_MMCC_8996
- 	  Support for the multimedia clock controller on msm8996 devices.
- 	  Say Y if you want to support multimedia devices such as display,
- 	  graphics, video encode/decode, camera, etc.
-+
-+config QCOM_A53PLL
-+	bool "A53 PLL"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the A53 PLL on some Qualcomm devices. It provides
-+	  support for CPU frequencies above 1GHz.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8916.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 1fb1f5476cb0..7d27f47f0c92 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -29,3 +29,4 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-new file mode 100644
-index 000000000000..43902080f34b
---- /dev/null
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -0,0 +1,94 @@
-+/*
-+ * Copyright (c) 2016, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+
-+static struct pll_freq_tbl a53pll_freq[] = {
-+	{  998400000, 52, 0x0, 0x1, 0 },
-+	{ 1094400000, 57, 0x0, 0x1, 0 },
-+	{ 1152000000, 62, 0x0, 0x1, 0 },
-+	{ 1209600000, 65, 0x0, 0x1, 0 },
-+	{ 1401600000, 73, 0x0, 0x1, 0 },
-+};
-+
-+static const struct regmap_config a53pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x40,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static const struct of_device_id qcom_a53pll_match_table[] = {
-+	{ .compatible = "qcom,a53-pll" },
-+	{ }
-+};
-+
-+static int qcom_a53pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct clk_pll *pll;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_init_data init;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pll->l_reg = 0x04,
-+	pll->m_reg = 0x08,
-+	pll->n_reg = 0x0c,
-+	pll->config_reg = 0x14,
-+	pll->mode_reg = 0x00,
-+	pll->status_reg = 0x1c,
-+	pll->status_bit = 16,
-+	pll->freq_tbl = a53pll_freq,
-+
-+	init.name = node->name;
-+	init.parent_names = (const char *[]){ "xo" },
-+	init.num_parents = 1,
-+	init.ops = &clk_pll_sr2_ops,
-+	init.flags = CLK_IS_CRITICAL;
-+	pll->clkr.hw.init = &init;
-+
-+	return devm_clk_register_regmap(dev, &pll->clkr);
-+}
-+
-+static struct platform_driver qcom_a53pll_driver = {
-+	.probe = qcom_a53pll_probe,
-+	.driver = {
-+		.name = "qcom-a53pll",
-+		.of_match_table = qcom_a53pll_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_a53pll_driver);
+I see no response from Stephen on this series from a long time.
+
+We missed 4.9, so hopefully this can land in 4.10.
+
+On Mon, Oct 17, 2016 at 10:29 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> From: Philipp Zabel <p.zabel@pengutronix.de>
+>
+> MMDC CH1 is not used on i.MX6Q, so the handshake needed to change the
+> parent of periph2_sel or the divider of mmdc_ch1_axi_podf will never
+> succeed.
+> Disable the handshake mechanism to allow changing the frequency of
+> mmdc_ch1_axi, allowing to use it as a possible source for the LDB DI
+> clock.
+>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6q.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index ce8ea10..66825a8 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> @@ -156,6 +156,19 @@ static struct clk ** const uart_clks[] __initconst = {
+>         NULL
+>  };
+>
+> +#define CCM_CCDR               0x04
+> +
+> +#define CCDR_MMDC_CH1_MASK     BIT(16)
+> +
+> +static void __init imx6q_mmdc_ch1_mask_handshake(void __iomem *ccm_base)
+> +{
+> +       unsigned int reg;
+> +
+> +       reg = readl_relaxed(ccm_base + CCM_CCDR);
+> +       reg |= CCDR_MMDC_CH1_MASK;
+> +       writel_relaxed(reg, ccm_base + CCM_CCDR);
+> +}
+> +
+>  static void __init imx6q_clocks_init(struct device_node *ccm_node)
+>  {
+>         struct device_node *np;
+> @@ -297,6 +310,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+>         base = of_iomap(np, 0);
+>         WARN_ON(!base);
+>
+> +       imx6q_mmdc_ch1_mask_handshake(base);
+> +
+>         /*                                              name                reg       shift width parent_names     num_parents */
+>         clk[IMX6QDL_CLK_STEP]             = imx_clk_mux("step",             base + 0xc,  8,  1, step_sels,         ARRAY_SIZE(step_sels));
+>         clk[IMX6QDL_CLK_PLL1_SW]          = imx_clk_mux("pll1_sw",          base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
+> --
+> 2.7.4
+>
