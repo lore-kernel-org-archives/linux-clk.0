@@ -1,273 +1,232 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v4 1/9] clk: sunxi-ng: Rename the internal structures
-Date: Tue, 11 Oct 2016 16:28:19 +0200
-Message-Id: <28e6628786497633eea8cd8522d89284414a7c4c.1476196031.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
-References: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] clk: uniphier: add CPU-gear change (cpufreq) support
+Date: Thu, 27 Oct 2016 02:31:27 +0900
+Message-Id: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Rename the structures meant to be embedded in other structures to make it
-consistent with the mux structure name
+Core support code for CPU frequency changes, which will be used by
+the generic cpufreq driver.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+The register view is different from the generic clk-mux; it has
+a separate status register, and an update bit to load the register
+setting.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/clk/sunxi-ng/ccu_div.h  |  6 +++---
- drivers/clk/sunxi-ng/ccu_frac.c | 12 ++++++------
- drivers/clk/sunxi-ng/ccu_frac.h | 14 +++++++-------
- drivers/clk/sunxi-ng/ccu_mp.h   |  4 ++--
- drivers/clk/sunxi-ng/ccu_mult.h |  4 ++--
- drivers/clk/sunxi-ng/ccu_nk.h   |  4 ++--
- drivers/clk/sunxi-ng/ccu_nkm.h  |  6 +++---
- drivers/clk/sunxi-ng/ccu_nkmp.h |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nm.h   |  6 +++---
- 9 files changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 34c338832c0d..06540f7cf41c 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -20,7 +20,7 @@
- #include "ccu_mux.h"
+ drivers/clk/uniphier/Makefile               |   3 +
+ drivers/clk/uniphier/clk-uniphier-core.c    |   3 +
+ drivers/clk/uniphier/clk-uniphier-cpugear.c | 115 ++++++++++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h         |  17 +++-
+ 4 files changed, 136 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/uniphier/clk-uniphier-cpugear.c
+
+diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+index f27b3603..665d1d6 100644
+--- a/drivers/clk/uniphier/Makefile
++++ b/drivers/clk/uniphier/Makefile
+@@ -1,8 +1,11 @@
+ obj-y	+= clk-uniphier-core.o
++
++obj-y	+= clk-uniphier-cpugear.o
+ obj-y	+= clk-uniphier-fixed-factor.o
+ obj-y	+= clk-uniphier-fixed-rate.o
+ obj-y	+= clk-uniphier-gate.o
+ obj-y	+= clk-uniphier-mux.o
++
+ obj-y	+= clk-uniphier-sys.o
+ obj-y	+= clk-uniphier-mio.o
+ obj-y	+= clk-uniphier-peri.o
+diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
+index 26c53f7..0007218 100644
+--- a/drivers/clk/uniphier/clk-uniphier-core.c
++++ b/drivers/clk/uniphier/clk-uniphier-core.c
+@@ -27,6 +27,9 @@ static struct clk_hw *uniphier_clk_register(struct device *dev,
+ 					const struct uniphier_clk_data *data)
+ {
+ 	switch (data->type) {
++	case UNIPHIER_CLK_TYPE_CPUGEAR:
++		return uniphier_clk_register_cpugear(dev, regmap, data->name,
++						     &data->data.cpugear);
+ 	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
+ 		return uniphier_clk_register_fixed_factor(dev, data->name,
+ 							  &data->data.factor);
+diff --git a/drivers/clk/uniphier/clk-uniphier-cpugear.c b/drivers/clk/uniphier/clk-uniphier-cpugear.c
+new file mode 100644
+index 0000000..9bff26e
+--- /dev/null
++++ b/drivers/clk/uniphier/clk-uniphier-cpugear.c
+@@ -0,0 +1,115 @@
++/*
++ * Copyright (C) 2016 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/regmap.h>
++
++#include "clk-uniphier.h"
++
++#define UNIPHIER_CLK_CPUGEAR_STAT	0	/* status */
++#define UNIPHIER_CLK_CPUGEAR_SET	4	/* set */
++#define UNIPHIER_CLK_CPUGEAR_UPD	8	/* update */
++#define   UNIPHIER_CLK_CPUGEAR_UPD_BIT	BIT(0)
++
++struct uniphier_clk_cpugear {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	unsigned int regbase;
++	unsigned int mask;
++};
++
++#define to_uniphier_clk_cpugear(_hw) \
++			container_of(_hw, struct uniphier_clk_cpugear, hw)
++
++static int uniphier_clk_cpugear_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct uniphier_clk_cpugear *gear = to_uniphier_clk_cpugear(hw);
++	int ret;
++	unsigned int val;
++
++	ret = regmap_write_bits(gear->regmap,
++				gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
++				gear->mask, index);
++	if (ret)
++		return ret;
++
++	ret = regmap_write_bits(gear->regmap,
++				gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
++				UNIPHIER_CLK_CPUGEAR_UPD_BIT,
++				UNIPHIER_CLK_CPUGEAR_UPD_BIT);
++	if (ret)
++		return ret;
++
++	return regmap_read_poll_timeout(gear->regmap,
++				gear->regbase + UNIPHIER_CLK_CPUGEAR_UPD,
++				val, !(val & UNIPHIER_CLK_CPUGEAR_UPD_BIT),
++				0, 1);
++}
++
++static u8 uniphier_clk_cpugear_get_parent(struct clk_hw *hw)
++{
++	struct uniphier_clk_cpugear *gear = to_uniphier_clk_cpugear(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
++	int ret;
++	unsigned int val;
++
++	ret = regmap_read(gear->regmap,
++			  gear->regbase + UNIPHIER_CLK_CPUGEAR_STAT, &val);
++	if (ret)
++		return ret;
++
++	val &= gear->mask;
++
++	return val < num_parents ? val : -EINVAL;
++}
++
++static const struct clk_ops uniphier_clk_cpugear_ops = {
++	.determine_rate = __clk_mux_determine_rate,
++	.set_parent = uniphier_clk_cpugear_set_parent,
++	.get_parent = uniphier_clk_cpugear_get_parent,
++};
++
++struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
++					 struct regmap *regmap,
++					 const char *name,
++				const struct uniphier_clk_cpugear_data *data)
++{
++	struct uniphier_clk_cpugear *gear;
++	struct clk_init_data init;
++	int ret;
++
++	gear = devm_kzalloc(dev, sizeof(*gear), GFP_KERNEL);
++	if (!gear)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &uniphier_clk_cpugear_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = data->parent_names;
++	init.num_parents = data->num_parents,
++
++	gear->regmap = regmap;
++	gear->regbase = data->regbase;
++	gear->mask = data->mask;
++	gear->hw.init = &init;
++
++	ret = devm_clk_hw_register(dev, &gear->hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return &gear->hw;
++}
+diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
+index 0244dba..9707b0f 100644
+--- a/drivers/clk/uniphier/clk-uniphier.h
++++ b/drivers/clk/uniphier/clk-uniphier.h
+@@ -20,15 +20,24 @@
+ struct device;
+ struct regmap;
  
- /**
-- * struct _ccu_div - Internal divider description
-+ * struct ccu_div_internal - Internal divider description
-  * @shift: Bit offset of the divider in its register
-  * @width: Width of the divider field in its register
-  * @max: Maximum value allowed for that divider. This is the
-@@ -36,7 +36,7 @@
-  * It is basically a wrapper around the clk_divider functions
-  * arguments.
-  */
--struct _ccu_div {
-+struct ccu_div_internal {
- 	u8			shift;
- 	u8			width;
+-#define UNIPHIER_CLK_MUX_MAX_PARENTS	8
++#define UNIPHIER_CLK_CPUGEAR_MAX_PARENTS	16
++#define UNIPHIER_CLK_MUX_MAX_PARENTS		8
  
-@@ -78,7 +78,7 @@ struct _ccu_div {
- struct ccu_div {
- 	u32			enable;
- 
--	struct _ccu_div		div;
-+	struct ccu_div_internal		div;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
+ enum uniphier_clk_type {
++	UNIPHIER_CLK_TYPE_CPUGEAR,
+ 	UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+ 	UNIPHIER_CLK_TYPE_FIXED_RATE,
+ 	UNIPHIER_CLK_TYPE_GATE,
+ 	UNIPHIER_CLK_TYPE_MUX,
  };
-diff --git a/drivers/clk/sunxi-ng/ccu_frac.c b/drivers/clk/sunxi-ng/ccu_frac.c
-index 5c4b10cd15b5..8b5eb7756bf7 100644
---- a/drivers/clk/sunxi-ng/ccu_frac.c
-+++ b/drivers/clk/sunxi-ng/ccu_frac.c
-@@ -14,7 +14,7 @@
- #include "ccu_frac.h"
  
- bool ccu_frac_helper_is_enabled(struct ccu_common *common,
--				struct _ccu_frac *cf)
-+				struct ccu_frac_internal *cf)
- {
- 	if (!(common->features & CCU_FEATURE_FRACTIONAL))
- 		return false;
-@@ -23,7 +23,7 @@ bool ccu_frac_helper_is_enabled(struct ccu_common *common,
- }
- 
- void ccu_frac_helper_enable(struct ccu_common *common,
--			    struct _ccu_frac *cf)
-+			    struct ccu_frac_internal *cf)
- {
- 	unsigned long flags;
- 	u32 reg;
-@@ -38,7 +38,7 @@ void ccu_frac_helper_enable(struct ccu_common *common,
- }
- 
- void ccu_frac_helper_disable(struct ccu_common *common,
--			     struct _ccu_frac *cf)
-+			     struct ccu_frac_internal *cf)
- {
- 	unsigned long flags;
- 	u32 reg;
-@@ -53,7 +53,7 @@ void ccu_frac_helper_disable(struct ccu_common *common,
- }
- 
- bool ccu_frac_helper_has_rate(struct ccu_common *common,
--			      struct _ccu_frac *cf,
-+			      struct ccu_frac_internal *cf,
- 			      unsigned long rate)
- {
- 	if (!(common->features & CCU_FEATURE_FRACTIONAL))
-@@ -63,7 +63,7 @@ bool ccu_frac_helper_has_rate(struct ccu_common *common,
- }
- 
- unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
--					struct _ccu_frac *cf)
-+					struct ccu_frac_internal *cf)
- {
- 	u32 reg;
- 
-@@ -84,7 +84,7 @@ unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
- }
- 
- int ccu_frac_helper_set_rate(struct ccu_common *common,
--			     struct _ccu_frac *cf,
-+			     struct ccu_frac_internal *cf,
- 			     unsigned long rate)
- {
- 	unsigned long flags;
-diff --git a/drivers/clk/sunxi-ng/ccu_frac.h b/drivers/clk/sunxi-ng/ccu_frac.h
-index e4c670b1cdfe..7b1ee380156f 100644
---- a/drivers/clk/sunxi-ng/ccu_frac.h
-+++ b/drivers/clk/sunxi-ng/ccu_frac.h
-@@ -18,7 +18,7 @@
- 
- #include "ccu_common.h"
- 
--struct _ccu_frac {
-+struct ccu_frac_internal {
- 	u32		enable;
- 	u32		select;
- 
-@@ -33,21 +33,21 @@ struct _ccu_frac {
++struct uniphier_clk_cpugear_data {
++	const char *parent_names[UNIPHIER_CLK_CPUGEAR_MAX_PARENTS];
++	unsigned int num_parents;
++	unsigned int regbase;
++	unsigned int mask;
++};
++
+ struct uniphier_clk_fixed_factor_data {
+ 	const char *parent_name;
+ 	unsigned int mult;
+@@ -58,6 +67,7 @@ struct uniphier_clk_data {
+ 	enum uniphier_clk_type type;
+ 	int idx;
+ 	union {
++		struct uniphier_clk_cpugear_data cpugear;
+ 		struct uniphier_clk_fixed_factor_data factor;
+ 		struct uniphier_clk_fixed_rate_data rate;
+ 		struct uniphier_clk_gate_data gate;
+@@ -90,7 +100,10 @@ struct uniphier_clk_data {
+ 		},						\
  	}
  
- bool ccu_frac_helper_is_enabled(struct ccu_common *common,
--				struct _ccu_frac *cf);
-+				struct ccu_frac_internal *cf);
- void ccu_frac_helper_enable(struct ccu_common *common,
--			    struct _ccu_frac *cf);
-+			    struct ccu_frac_internal *cf);
- void ccu_frac_helper_disable(struct ccu_common *common,
--			     struct _ccu_frac *cf);
-+			     struct ccu_frac_internal *cf);
- 
- bool ccu_frac_helper_has_rate(struct ccu_common *common,
--			      struct _ccu_frac *cf,
-+			      struct ccu_frac_internal *cf,
- 			      unsigned long rate);
- 
- unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
--					struct _ccu_frac *cf);
-+					struct ccu_frac_internal *cf);
- 
- int ccu_frac_helper_set_rate(struct ccu_common *common,
--			     struct _ccu_frac *cf,
-+			     struct ccu_frac_internal *cf,
- 			     unsigned long rate);
- 
- #endif /* _CCU_FRAC_H_ */
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
-index edf9215ea8cc..915625e97d98 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.h
-+++ b/drivers/clk/sunxi-ng/ccu_mp.h
-@@ -29,8 +29,8 @@
- struct ccu_mp {
- 	u32			enable;
- 
--	struct _ccu_div		m;
--	struct _ccu_div		p;
-+	struct ccu_div_internal		m;
-+	struct ccu_div_internal		p;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
- };
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index 5d2c8dc14073..113780b7558e 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -4,7 +4,7 @@
- #include "ccu_common.h"
- #include "ccu_mux.h"
- 
--struct _ccu_mult {
-+struct ccu_mult_internal {
- 	u8	shift;
- 	u8	width;
- };
-@@ -18,7 +18,7 @@ struct _ccu_mult {
- struct ccu_mult {
- 	u32			enable;
- 
--	struct _ccu_mult	mult;
-+	struct ccu_mult_internal	mult;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
- };
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.h b/drivers/clk/sunxi-ng/ccu_nk.h
-index 4b52da0c29fe..437836b80696 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.h
-+++ b/drivers/clk/sunxi-ng/ccu_nk.h
-@@ -30,8 +30,8 @@ struct ccu_nk {
- 	u32			enable;
- 	u32			lock;
- 
--	struct _ccu_mult	n;
--	struct _ccu_mult	k;
-+	struct ccu_mult_internal	n;
-+	struct ccu_mult_internal	k;
- 
- 	unsigned int		fixed_post_div;
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-index 35493fddd8ab..34580894f4d1 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-@@ -29,9 +29,9 @@ struct ccu_nkm {
- 	u32			enable;
- 	u32			lock;
- 
--	struct _ccu_mult	n;
--	struct _ccu_mult	k;
--	struct _ccu_div		m;
-+	struct ccu_mult_internal	n;
-+	struct ccu_mult_internal	k;
-+	struct ccu_div_internal		m;
- 	struct ccu_mux_internal	mux;
- 
- 	struct ccu_common	common;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
-index 5adb0c92a614..a82facbc6144 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
-@@ -29,10 +29,10 @@ struct ccu_nkmp {
- 	u32			enable;
- 	u32			lock;
- 
--	struct _ccu_mult	n;
--	struct _ccu_mult	k;
--	struct _ccu_div		m;
--	struct _ccu_div		p;
-+	struct ccu_mult_internal	n;
-+	struct ccu_mult_internal	k;
-+	struct ccu_div_internal		m;
-+	struct ccu_div_internal		p;
- 
- 	struct ccu_common	common;
- };
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
-index 0b7bcd33a2df..e87fd186da78 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nm.h
-@@ -30,9 +30,9 @@ struct ccu_nm {
- 	u32			enable;
- 	u32			lock;
- 
--	struct _ccu_mult	n;
--	struct _ccu_div		m;
--	struct _ccu_frac	frac;
-+	struct ccu_mult_internal	n;
-+	struct ccu_div_internal		m;
-+	struct ccu_frac_internal	frac;
- 
- 	struct ccu_common	common;
- };
+-
++struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
++					     struct regmap *regmap,
++					     const char *name,
++				const struct uniphier_clk_cpugear_data *data);
+ struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
+ 						  const char *name,
+ 			const struct uniphier_clk_fixed_factor_data *data);
 -- 
-git-series 0.8.10
+1.9.1
