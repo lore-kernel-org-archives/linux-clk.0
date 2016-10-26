@@ -1,63 +1,59 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 11/14] ARM: dts: sun8i: Add analog codec on prcm node
-Date: Tue,  4 Oct 2016 11:46:24 +0200
-Message-Id: <b845d118ae8443227f8537f539ada0a485ff0ec3.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2] clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization
+ method for CLKOUT
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <CGME20161026061227eucas1p20fb865eafd802044ed79ce336fa90eab@eucas1p2.samsung.com>
+ <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <c5016b20-cf1f-2d9a-a4af-b79a53b3d617@osg.samsung.com>
+Date: Wed, 26 Oct 2016 07:12:43 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1477462340-7867-1-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The analog codec for sun8i used PRCM registers so it should be added
-in the device tree as a subnode of the prcm entry.
+Hello Marek,
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a23-a33.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 10/26/2016 03:12 AM, Marek Szyprowski wrote:
+> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+> controller, and these functionalities are supported by different drivers
+> that matches the same compatible strings.
+> 
+> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+> clocks") the OF core flags clock controllers registered with the
+> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+> compatible string will not be registered.
+> 
+> This prevents the PMU platform device to be created, so the Exynos PMU
+> driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> 
+> Fix this by changing CLKOUT driver initialization method to
+> CLK_OF_DECLARE_DRIVER(), which doesn't clear the OF_POPULATED flag, so
+> later a platform device is created and the Exynos PMU platform driver
+> can be be probed properly.
+> 
+> Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Changelog:
+> v2:
+> - switched to CLK_OF_DECLARE_DRIVER instead of calling
+>   of_node_clear_flag(node, OF_POPULATED) as suggested by Stephen Boyd
+>
 
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 48fc24f..5197812 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -549,6 +549,13 @@
- 				compatible = "allwinner,sun6i-a31-clock-reset";
- 				#reset-cells = <1>;
- 			};
-+
-+			codec_analog: codec_analog {
-+				compatible = "allwinner,sun8i-codec-analog";
-+				interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+				clock-names = "apb", "codec";
-+			};
- 		};
- 
- 		cpucfg@01f01c00 {
+I was not aware about this new macro and certainly looks like a better
+option. The patch looks good to me.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.9.3
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
