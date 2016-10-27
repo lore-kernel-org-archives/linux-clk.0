@@ -1,65 +1,78 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/7] clk: qcom: Add a custom udelay needed for some branch clocks
-Date: Wed, 19 Oct 2016 16:58:38 +0530
-Message-Id: <1476876523-27378-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
-References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V3 5/6] ARM: tegra: Add Tegra20 GMI support
+Date: Thu, 27 Oct 2016 16:01:11 +0200
+Message-Id: <1477576872-2665-6-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some branch clocks marked with a BRANCH_HALT_DELAY might need more
-than the default 10us delay. Have a way to specify a custom delay
-in such cases
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Add a device node for the GMI controller found on Tegra20.
+
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
 ---
- drivers/clk/qcom/clk-branch.c | 5 ++++-
- drivers/clk/qcom/clk-branch.h | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index 26f7af31..1c11f12 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -82,7 +82,10 @@ static int clk_branch_wait(const struct clk_branch *br, bool enabling,
- 		return 0;
- 
- 	if (br->halt_check == BRANCH_HALT_DELAY || (!enabling && voted)) {
--		udelay(10);
-+		if (br->udelay)
-+			udelay(br->udelay);
-+		else
-+			udelay(10);
- 	} else if (br->halt_check == BRANCH_HALT_ENABLE ||
- 		   br->halt_check == BRANCH_HALT ||
- 		   (enabling && voted)) {
-diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-index 284df3f..4c56a35 100644
---- a/drivers/clk/qcom/clk-branch.h
-+++ b/drivers/clk/qcom/clk-branch.h
-@@ -26,6 +26,7 @@
-  * @halt_reg: halt register
-  * @halt_bit: ANDed with @halt_reg to test for clock halted
-  * @halt_check: type of halt checking to perform
-+ * @udelay: custom udelay incase of BRANCH_HALT_DELAY, default is 10us
-  * @clkr: handle between common and hardware-specific interfaces
-  *
-  * Clock which can gate its output.
-@@ -43,6 +44,7 @@ struct clk_branch {
- #define BRANCH_HALT_ENABLE_VOTED	(BRANCH_HALT_ENABLE | BRANCH_VOTED)
- #define BRANCH_HALT_DELAY		2 /* No bit to check; just delay */
- 
-+	u32	udelay;
- 	struct clk_regmap clkr;
- };
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Changes in v2:
+- added address-cells, size-cells and ranges properties
+
+Changes in v3:
+- fixed range address which is not the same as Tegra30.
+
+ arch/arm/boot/dts/tegra20.dtsi | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 2207c08..b22cddb 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -1,4 +1,4 @@
+-#include <dt-bindings/clock/tegra20-car.h>
++include <dt-bindings/clock/tegra20-car.h>
+ #include <dt-bindings/gpio/tegra-gpio.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -376,6 +376,20 @@
+ 		status = "disabled";
+ 	};
+
++
++	gmi@70009000 {
++		compatible = "nvidia,tegra20-gmi";
++		reg = <0x70009000 0x1000>;
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges = <0 0 0xd0000000 0xfffffff>;
++		clocks = <&tegra_car TEGRA20_CLK_NOR>;
++		clock-names = "gmi";
++		resets = < &tegra_car 42>;
++		reset-names = "gmi";
++		status = "disabled";
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
+--
+2.1.4
