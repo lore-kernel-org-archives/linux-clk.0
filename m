@@ -1,206 +1,83 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v13, 7/8] base: soc: introduce soc_device_match() interface
-Date: Fri, 28 Oct 2016 11:32:33 +0800
-Message-ID: <1477625554-46700-8-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v4 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+Date: Thu, 27 Oct 2016 23:23:35 +0300
+Message-ID: <3099806.ZmRHFh5yFn@wasted.cogentembedded.com>
+In-Reply-To: <1590929.i2qFnIhqnT@wasted.cogentembedded.com>
+References: <1590929.i2qFnIhqnT@wasted.cogentembedded.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Yangbo Lu <yangbo.lu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+Add macros usable by  the device tree sources to reference the R8A7743 CPG
+clocks  by index. The data comes from the  table 7.2b in the revision 0.50
+of the RZ/G Series User's Manual.
 
-We keep running into cases where device drivers want to know the exact
-version of the a SoC they are currently running on. In the past, this has
-usually been done through a vendor specific API that can be called by a
-driver, or by directly accessing some kind of version register that is
-not part of the device itself but that belongs to a global register area
-of the chip.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Common reasons for doing this include:
-
-- A machine is not using devicetree or similar for passing data about
-  on-chip devices, but just announces their presence using boot-time
-  platform devices, and the machine code itself does not care about the
-  revision.
-
-- There is existing firmware or boot loaders with existing DT binaries
-  with generic compatible strings that do not identify the particular
-  revision of each device, but the driver knows which SoC revisions
-  include which part.
-
-- A prerelease version of a chip has some quirks and we are using the same
-  version of the bootloader and the DT blob on both the prerelease and the
-  final version. An update of the DT binding seems inappropriate because
-  that would involve maintaining multiple copies of the dts and/or
-  bootloader.
-
-This patch introduces the soc_device_match() interface that is meant to
-work like of_match_node() but instead of identifying the version of a
-device, it identifies the SoC itself using a vendor-agnostic interface.
-
-Unlike of_match_node(), we do not do an exact string compare but instead
-use glob_match() to allow wildcards in strings.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Changes for v11:
-	- Added this patch for soc match
-Changes for v12:
-	- Corrected the author
-	- Rewrited soc_device_match with while loop
-Changes for v13:
-	- Added ack from Greg
----
- drivers/base/Kconfig    |  1 +
- drivers/base/soc.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/sys_soc.h |  3 +++
- 3 files changed, 70 insertions(+)
+Changes in version 4:
+- added Geert's tag.
 
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index fdf44ca..991b21e 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -235,6 +235,7 @@ config GENERIC_CPU_AUTOPROBE
- 
- config SOC_BUS
- 	bool
-+	select GLOB
- 
- source "drivers/base/regmap/Kconfig"
- 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index b63f23e..0c5cf87 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -13,6 +13,7 @@
- #include <linux/spinlock.h>
- #include <linux/sys_soc.h>
- #include <linux/err.h>
-+#include <linux/glob.h>
- 
- static DEFINE_IDA(soc_ida);
- 
-@@ -159,3 +160,68 @@ static int __init soc_bus_register(void)
- 	return bus_register(&soc_bus_type);
- }
- core_initcall(soc_bus_register);
-+
-+static int soc_device_match_one(struct device *dev, void *arg)
-+{
-+	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
-+	const struct soc_device_attribute *match = arg;
-+
-+	if (match->machine &&
-+	    !glob_match(match->machine, soc_dev->attr->machine))
-+		return 0;
-+
-+	if (match->family &&
-+	    !glob_match(match->family, soc_dev->attr->family))
-+		return 0;
-+
-+	if (match->revision &&
-+	    !glob_match(match->revision, soc_dev->attr->revision))
-+		return 0;
-+
-+	if (match->soc_id &&
-+	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
-+		return 0;
-+
-+	return 1;
-+}
-+
+Changes in version 3:
+- renumbered the #define's in order to match the R8A7791 CPG clocks;
+- added the reference to the manual in the patch description.
+
+Changes in version 2:
+- reduced the macro value indentation.
+
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+Index: linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+@@ -0,0 +1,43 @@
 +/*
-+ * soc_device_match - identify the SoC in the machine
-+ * @matches: zero-terminated array of possible matches
++ * Copyright (C) 2016 Cogent Embedded Inc.
 + *
-+ * returns the first matching entry of the argument array, or NULL
-+ * if none of them match.
-+ *
-+ * This function is meant as a helper in place of of_match_node()
-+ * in cases where either no device tree is available or the information
-+ * in a device node is insufficient to identify a particular variant
-+ * by its compatible strings or other properties. For new devices,
-+ * the DT binding should always provide unique compatible strings
-+ * that allow the use of of_match_node() instead.
-+ *
-+ * The calling function can use the .data entry of the
-+ * soc_device_attribute to pass a structure or function pointer for
-+ * each entry.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + */
-+const struct soc_device_attribute *soc_device_match(
-+	const struct soc_device_attribute *matches)
-+{
-+	int ret = 0;
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
 +
-+	if (!matches)
-+		return NULL;
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+	while (!ret) {
-+		if (!(matches->machine || matches->family ||
-+		      matches->revision || matches->soc_id))
-+			break;
-+		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
-+				       soc_device_match_one);
-+		if (!ret)
-+			matches++;
-+		else
-+			return matches;
-+	}
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(soc_device_match);
-diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
-index 2739ccb..9f5eb06 100644
---- a/include/linux/sys_soc.h
-+++ b/include/linux/sys_soc.h
-@@ -13,6 +13,7 @@ struct soc_device_attribute {
- 	const char *family;
- 	const char *revision;
- 	const char *soc_id;
-+	const void *data;
- };
- 
- /**
-@@ -34,4 +35,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
-  */
- struct device *soc_device_to_device(struct soc_device *soc);
- 
-+const struct soc_device_attribute *soc_device_match(
-+	const struct soc_device_attribute *matches);
- #endif /* __SOC_BUS_H */
--- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
++/* r8a7743 CPG Core Clocks */
++#define R8A7743_CLK_Z		0
++#define R8A7743_CLK_ZG		1
++#define R8A7743_CLK_ZTR		2
++#define R8A7743_CLK_ZTRD2	3
++#define R8A7743_CLK_ZT		4
++#define R8A7743_CLK_ZX		5
++#define R8A7743_CLK_ZS		6
++#define R8A7743_CLK_HP		7
++#define R8A7743_CLK_B		9
++#define R8A7743_CLK_LB		10
++#define R8A7743_CLK_P		11
++#define R8A7743_CLK_CL		12
++#define R8A7743_CLK_M2		13
++#define R8A7743_CLK_ZB3		15
++#define R8A7743_CLK_ZB3D2	16
++#define R8A7743_CLK_DDR		17
++#define R8A7743_CLK_SDH		18
++#define R8A7743_CLK_SD0		19
++#define R8A7743_CLK_SD2		20
++#define R8A7743_CLK_SD3		21
++#define R8A7743_CLK_MMC0	22
++#define R8A7743_CLK_MP		23
++#define R8A7743_CLK_QSPI	26
++#define R8A7743_CLK_CP		27
++#define R8A7743_CLK_RCAN	28
++#define R8A7743_CLK_R		29
++#define R8A7743_CLK_OSC		30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
