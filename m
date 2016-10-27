@@ -1,123 +1,187 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: Scott Wood <oss@buserror.net>, "linux-mmc@vger.kernel.org"
- <linux-mmc@vger.kernel.org>, "ulf.hansson@linaro.org"
- <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: RE: [v13, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
-Date: Fri, 28 Oct 2016 07:08:44 +0000
-Message-ID: <DB6PR0401MB2536E6A29246096648EEC890F8AD0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
- <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
- <1477629956.6812.15.camel@buserror.net>  
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- Kumar Gala <galak@codeaurora.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V3 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Thu, 27 Oct 2016 16:01:09 +0200
+Message-Id: <1477576872-2665-4-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBZLkIuIEx1DQo+IFNlbnQ6IEZy
-aWRheSwgT2N0b2JlciAyOCwgMjAxNiAyOjA2IFBNDQo+IFRvOiBZLkIuIEx1OyAnU2NvdHQgV29v
-ZCc7ICdsaW51eC1tbWNAdmdlci5rZXJuZWwub3JnJzsNCj4gJ3VsZi5oYW5zc29uQGxpbmFyby5v
-cmcnOyAnQXJuZCBCZXJnbWFubicNCj4gQ2M6ICdsaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9y
-Zyc7ICdkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZyc7DQo+ICdsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmcnOyAnbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyc7DQo+ICds
-aW51eC1jbGtAdmdlci5rZXJuZWwub3JnJzsgJ2xpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmcnOw0K
-PiAnaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcnOyAnbmV0ZGV2QHZnZXIua2VybmVs
-Lm9yZyc7ICdHcmVnDQo+IEtyb2FoLUhhcnRtYW4nOyAnTWFyayBSdXRsYW5kJzsgJ1JvYiBIZXJy
-aW5nJzsgJ1J1c3NlbGwgS2luZyc7ICdKb2NoZW4NCj4gRnJpZWRyaWNoJzsgJ0pvZXJnIFJvZWRl
-bCc7ICdDbGF1ZGl1IE1hbm9pbCc7ICdCaHVwZXNoIFNoYXJtYSc7IFFpYW5nDQo+IFpoYW87ICdL
-dW1hciBHYWxhJzsgJ1NhbnRvc2ggU2hpbGlta2FyJzsgTGVvIExpOyBYLkIuIFhpZTsgTS5ILiBM
-aWFuDQo+IFN1YmplY3Q6IFJFOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIg
-Zm9yIFFvcklRIHBsYXRmb3Jtcw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
-PiA+IEZyb206IFkuQi4gTHUNCj4gPiBTZW50OiBGcmlkYXksIE9jdG9iZXIgMjgsIDIwMTYgMjow
-MCBQTQ0KPiA+IFRvOiAnU2NvdHQgV29vZCc7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IHVs
-Zi5oYW5zc29uQGxpbmFyby5vcmc7DQo+ID4gQXJuZCBCZXJnbWFubg0KPiA+IENjOiBsaW51eHBw
-Yy1kZXZAbGlzdHMub3psYWJzLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4g
-bGludXgtYXJtLSBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIu
-a2VybmVsLm9yZzsNCj4gPiBsaW51eC0gY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtaTJjQHZn
-ZXIua2VybmVsLm9yZzsNCj4gPiBpb21tdUBsaXN0cy5saW51eC0gZm91bmRhdGlvbi5vcmc7IG5l
-dGRldkB2Z2VyLmtlcm5lbC5vcmc7IEdyZWcNCj4gPiBLcm9haC1IYXJ0bWFuOyBNYXJrIFJ1dGxh
-bmQ7IFJvYiBIZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbg0KPiA+IEZyaWVkcmljaDsgSm9l
-cmcgUm9lZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVzaCBTaGFybWE7IFFpYW5nIFpoYW87DQo+
-IEt1bWFyIEdhbGE7IFNhbnRvc2ggU2hpbGlta2FyOyBMZW8gTGk7IFguQi4NCj4gPiBYaWU7IE0u
-SC4gTGlhbg0KPiA+IFN1YmplY3Q6IFJFOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBk
-cml2ZXIgZm9yIFFvcklRIHBsYXRmb3Jtcw0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IGxpbnV4LW1tYy1vd25lckB2Z2VyLmtlcm5l
-bC5vcmcgW21haWx0bzpsaW51eC1tbWMtDQo+ID4gPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9u
-IEJlaGFsZiBPZiBTY290dCBXb29kDQo+ID4gPiBTZW50OiBGcmlkYXksIE9jdG9iZXIgMjgsIDIw
-MTYgMTI6NDYgUE0NCj4gPiA+IFRvOiBZLkIuIEx1OyBsaW51eC1tbWNAdmdlci5rZXJuZWwub3Jn
-OyB1bGYuaGFuc3NvbkBsaW5hcm8ub3JnOyBBcm5kDQo+ID4gPiBCZXJnbWFubg0KPiA+ID4gQ2M6
-IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
-ZzsNCj4gPiA+IGxpbnV4LWFybS0ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBsaW51eC0gY2xrQHZnZXIua2VybmVsLm9yZzsg
-bGludXgtaTJjQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGlvbW11QGxpc3RzLmxpbnV4LSBmb3Vu
-ZGF0aW9uLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgR3JlZw0KPiA+ID4gS3JvYWgtSGFy
-dG1hbjsgTWFyayBSdXRsYW5kOyBSb2IgSGVycmluZzsgUnVzc2VsbCBLaW5nOyBKb2NoZW4NCj4g
-PiA+IEZyaWVkcmljaDsgSm9lcmcgUm9lZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVzaCBTaGFy
-bWE7IFFpYW5nIFpoYW87DQo+ID4gS3VtYXIgR2FsYTsgU2FudG9zaCBTaGlsaW1rYXI7IExlbyBM
-aTsgWC5CLg0KPiA+ID4gWGllOyBNLkguIExpYW4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbdjEzLCA1
-LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIgZm9yIFFvcklRDQo+ID4gPiBwbGF0Zm9ybXMN
-Cj4gPiA+DQo+ID4gPiBPbiBGcmksIDIwMTYtMTAtMjggYXQgMTE6MzIgKzA4MDAsIFlhbmdibyBM
-dSB3cm90ZToNCj4gPiA+ID4gKwlndXRzLT5yZWdzID0gb2ZfaW9tYXAobnAsIDApOw0KPiA+ID4g
-PiArCWlmICghZ3V0cy0+cmVncykNCj4gPiA+ID4gKwkJcmV0dXJuIC1FTk9NRU07DQo+ID4gPiA+
-ICsNCj4gPiA+ID4gKwkvKiBSZWdpc3RlciBzb2MgZGV2aWNlICovDQo+ID4gPiA+ICsJbWFjaGlu
-ZSA9IG9mX2ZsYXRfZHRfZ2V0X21hY2hpbmVfbmFtZSgpOw0KPiA+ID4gPiArCWlmIChtYWNoaW5l
-KQ0KPiA+ID4gPiArCQlzb2NfZGV2X2F0dHIubWFjaGluZSA9IGRldm1fa3N0cmR1cChkZXYsIG1h
-Y2hpbmUsDQo+ID4gPiA+IEdGUF9LRVJORUwpOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJc3ZyID0g
-ZnNsX2d1dHNfZ2V0X3N2cigpOw0KPiA+ID4gPiArCXNvY19kaWUgPSBmc2xfc29jX2RpZV9tYXRj
-aChzdnIsIGZzbF9zb2NfZGllKTsNCj4gPiA+ID4gKwlpZiAoc29jX2RpZSkgew0KPiA+ID4gPiAr
-CQlzb2NfZGV2X2F0dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLA0K
-PiA+ID4gPiArCQkJCQkJwqDCoMKgwqDCoCJRb3JJUSAlcyIsIHNvY19kaWUtDQo+ID4gPiA+ID5k
-aWUpOw0KPiA+ID4gPiArCX0gZWxzZSB7DQo+ID4gPiA+ICsJCXNvY19kZXZfYXR0ci5mYW1pbHkg
-PSBkZXZtX2thc3ByaW50ZihkZXYsIEdGUF9LRVJORUwsDQo+ID4gPiA+ICJRb3JJUSIpOw0KPiA+
-ID4gPiArCX0NCj4gPiA+ID4gKwlzb2NfZGV2X2F0dHIuc29jX2lkID0gZGV2bV9rYXNwcmludGYo
-ZGV2LCBHRlBfS0VSTkVMLA0KPiA+ID4gPiArCQkJCQnCoMKgwqDCoMKgInN2cjoweCUwOHgiLCBz
-dnIpOw0KPiA+ID4gPiArCXNvY19kZXZfYXR0ci5yZXZpc2lvbiA9IGRldm1fa2FzcHJpbnRmKGRl
-diwgR0ZQX0tFUk5FTCwNCj4gIiVkLiVkIiwNCj4gPiA+ID4gKwkJCQkJwqDCoMKgwqDCoMKgwqBT
-VlJfTUFKKHN2ciksIFNWUl9NSU4oc3ZyKSk7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlzb2NfZGV2
-ID0gc29jX2RldmljZV9yZWdpc3Rlcigmc29jX2Rldl9hdHRyKTsNCj4gPiA+ID4gKwlpZiAoSVNf
-RVJSKHNvY19kZXYpKQ0KPiA+ID4gPiArCQlyZXR1cm4gUFRSX0VSUihzb2NfZGV2KTsNCj4gPiA+
-DQo+ID4gPiBpb3JlbWFwIGxlYWtzIG9uIHRoaXMgZXJyb3IgcGF0aC4gwqBVc2UgZGV2bV9pb3Jl
-bWFwX3Jlc291cmNlKCkuDQo+ID4gPg0KPiA+DQo+ID4gW0x1IFlhbmdiby1CNDcwOTNdIE9rLiBJ
-IGhhdmUgZml4ZWQgaXQgaW4gdjE0LiBUaGFua3MgOikNCj4gDQo+IFtMdSBZYW5nYm8tQjQ3MDkz
-XSBTb3JyeSwgdXNlZCB0aGUgd3JvbmcgZXJyb3IgY29kZS4uLiBXaWxsIHJlc2VudCBpdA0KDQpb
-THUgWWFuZ2JvLUI0NzA5M10gVGhlIHYxNSBoYWQgYmVlbiBzZW50LiBBbmQgZHJvcHBlZCBwYXRj
-aCAnZHQ6IGJpbmRpbmdzOiB1cGRhdGUgRnJlZXNjYWxlIERDRkcgY29tcGF0aWJsZScsDQpzaW5j
-ZSB0aGF0IHdvcmsgaGFzIGJlZW4gZG9uZSBieSBiZWxvdyBwYXRjaCBvbiBTaGF3bkd1bydzIGxp
-bnV4IHRyZWUuDQonZHQtYmluZGluZ3M6IGZzbDogYWRkIExTMTA0M0EvTFMxMDQ2QS9MUzIwODBB
-IGNvbXBhdGlibGUgZm9yIFNDRkcgYW5kIERDRkcnDQpodHRwczovL2dpdC5rZXJuZWwub3JnL2Nn
-aXQvbGludXgva2VybmVsL2dpdC9zaGF3bmd1by9saW51eC5naXQvY29tbWl0Lz9oPWlteC9kdDY0
-JmlkPTk4MTAzNGEyYmZjYWZmNWM5NWRhZmRlMjRkN2FiZmU3ZjkwMjVjMTkNCg0KVGhhbmtzLg0K
-DQo+IA0KPiA+DQo+ID4gPiAtU2NvdHQNCj4gPiA+DQo+ID4gPiAtLQ0KPiA+ID4gVG8gdW5zdWJz
-Y3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LW1t
-YyINCj4gPiA+IGluIHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnIE1vcmUgbWFqb3Jkb21vDQo+ID4gPiBpbmZvIGF0IGh0dHA6Ly92Z2VyLmtlcm5lbC5v
-cmcvbWFqb3Jkb21vLWluZm8uaHRtbA0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
-YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+From: Mirza Krak <mirza.krak@gmail.com>
+
+Document the devicetree bindings for the Generic Memory Interface (GMI)
+bus driver found on Tegra SOCs.
+
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+---
+
+Changes in v2:
+- Updated examples and some information based on comments from Jon Hunter.
+
+Changes in v3:
+- Updates ranges description based on comments from Rob Herring
+
+ .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+new file mode 100644
+index 0000000..49bda2f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+@@ -0,0 +1,132 @@
++Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
++
++The Generic Memory Interface bus enables memory transfers between internal and
++external memory. Can be used to attach various high speed devices such as
++synchronous/asynchronous NOR, FPGA, UARTS and more.
++
++The actual devices are instantiated from the child nodes of a GMI node.
++
++Required properties:
++ - compatible : Should contain one of the following:
++        For Tegra20 must contain "nvidia,tegra20-gmi".
++        For Tegra30 must contain "nvidia,tegra30-gmi".
++ - reg: Should contain GMI controller registers location and length.
++ - clocks: Must contain an entry for each entry in clock-names.
++ - clock-names: Must include the following entries: "gmi"
++ - resets : Must contain an entry for each entry in reset-names.
++ - reset-names : Must include the following entries: "gmi"
++ - #address-cells: The number of cells used to represent physical base
++   addresses in the GMI address space. Should be 2.
++ - #size-cells: The number of cells used to represent the size of an address
++   range in the GMI address space. Should be 1.
++ - ranges: Must be set up to reflect the memory layout with three integer values
++   for each chip-select line in use (only one entry is supported, see below
++   comments):
++   <cs-number> <offset> <physical address of mapping> <size>
++
++Note that the GMI controller does not have any internal chip-select address
++decoding, because of that chip-selects either need to be managed via software
++or by employing external chip-select decoding logic.
++
++If external chip-select logic is used to support multiple devices it is assumed
++that the devices use the same timing and so are probably the same type. It also
++assumes that they can fit in the 256MB address range. In this case only one
++child device is supported which represents the active chip-select line, see
++examples for more insight.
++
++The chip-select number is decoded from the child nodes second address cell of
++'ranges' property, if 'ranges' property is not present or empty chip-select will
++then be decoded from the first cell of the 'reg' property.
++
++Optional child cs node properties:
++
++ - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
++ - nvidia,snor-mux-mode: Enable address/data MUX mode.
++ - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
++   If omitted it will be asserted with data.
++ - nvidia,snor-rdy-inv: RDY signal is active high
++ - nvidia,snor-adv-inv: ADV signal is active high
++ - nvidia,snor-oe-inv: WE/OE signal is active high
++ - nvidia,snor-cs-inv: CS signal is active high
++
++  Note that there is some special handling for the timing values.
++  From Tegra TRM:
++  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
++
++ - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
++   bus. Valid values are 0-15, default is 1
++ - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
++   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
++   (in case of MASTER Request). Valid values are 0-15, default is 1
++ - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
++   Valid values are 0-15, default is 1.
++ - nvidia,snor-ce-width: Number of cycles before CE is asserted.
++   Valid values are 0-15, default is 4
++ - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
++   Valid values are 0-15, default is 1
++ - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
++   Valid values are 0-255, default is 1
++ - nvidia,snor-wait-width: Number of cycles before READY is asserted.
++   Valid values are 0-255, default is 3
++
++Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
++controllers with a simple-bus node since they are all connected to the same
++chip-select (CS4), in this example external address decoding is provided:
++
++gmi@70090000 {
++	compatible = "nvidia,tegra20-gmi";
++	reg = <0x70009000 0x1000>;
++	#address-cells = <2>;
++	#size-cells = <1>;
++	clocks = <&tegra_car TEGRA20_CLK_NOR>;
++	clock-names = "gmi";
++	resets = <&tegra_car 42>;
++	reset-names = "gmi";
++	ranges = <4 0 0xd0000000 0xfffffff>;
++
++	status = "okay";
++
++	bus@4,0 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 4 0 0x40100>;
++
++		nvidia,snor-mux-mode;
++		nvidia,snor-adv-inv;
++
++		can@0 {
++			reg = <0 0x100>;
++			...
++		};
++
++		can@40000 {
++			reg = <0x40000 0x100>;
++			...
++		};
++	};
++};
++
++Example with one SJA1000 CAN controller connected to the GMI bus
++on CS4:
++
++gmi@70090000 {
++	compatible = "nvidia,tegra20-gmi";
++	reg = <0x70009000 0x1000>;
++	#address-cells = <2>;
++	#size-cells = <1>;
++	clocks = <&tegra_car TEGRA20_CLK_NOR>;
++	clock-names = "gmi";
++	resets = <&tegra_car 42>;
++	reset-names = "gmi";
++	ranges = <4 0 0xd0000000 0xfffffff>;
++
++	status = "okay";
++
++	can@4,0 {
++		reg = <4 0 0x100>;
++		nvidia,snor-mux-mode;
++		nvidia,snor-adv-inv;
++		...
++	};
++};
+--
+2.1.4
