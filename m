@@ -1,88 +1,73 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Tue, 4 Oct 2016 21:10:09 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	=?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>,
-	maxime.ripard@free-electrons.com, wens@csie.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	lee.jones@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org,
-	devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	alexandre.belloni@free-electrons.com, dmaengine@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
-Message-ID: <20161004154009.GH2467@localhost>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
- <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
- <20161004141221.55327f1b@free-electrons.com>
- <20161004154651.3d0eb02badb6dc66758dd3aa@free.fr>
+Return-Path: <labbott@redhat.com>
+Return-Path: <labbott@redhat.com>
+Subject: Re: [PATCH] clk: xgene: Don't call __pa on ioremaped address
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Loc Ho <lho@apm.com>
+References: <1477610508-7449-1-git-send-email-labbott@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <ccea4ce8-5607-c164-f90a-291075bcc13e@redhat.com>
+Date: Thu, 27 Oct 2016 16:24:53 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20161004154651.3d0eb02badb6dc66758dd3aa@free.fr>
+In-Reply-To: <1477610508-7449-1-git-send-email-labbott@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 04, 2016 at 03:46:51PM +0200, Jean-Francois Moine wrote:
-> On Tue, 4 Oct 2016 14:12:21 +0200
-> Thomas Petazzoni <thomas.petazzoni@free-electrons.com> wrote:
-> 
-> > > > Add the case of a burst of 4 which is handled by the SoC.
-> > > > 
-> > > > Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
-> > > > ---
-> > > >  drivers/dma/sun6i-dma.c | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-> > > > index 8346199..0485204 100644
-> > > > --- a/drivers/dma/sun6i-dma.c
-> > > > +++ b/drivers/dma/sun6i-dma.c
-> > > > @@ -240,6 +240,8 @@ static inline s8 convert_burst(u32 maxburst)
-> > > >  	switch (maxburst) {
-> > > >  	case 1:
-> > > >  		return 0;
-> > > > +	case 4:
-> > > > +		return 1;
-> > > >  	case 8:
-> > > >  		return 2;
-> > > >  	default:
-> > > > -- 
-> > > > 2.9.3  
-> > > 
-> > > This patch has already been rejected by Maxime in the threads
-> > > 	http://www.spinics.net/lists/dmaengine/msg08610.html
-> > > and
-> > > 	http://www.spinics.net/lists/dmaengine/msg08719.html
-> > > 
-> > > I hope you will find the way he wants for this maxburst to be added.
-> > 
-> > I was about to reply to Mylene's e-mail, suggesting that she should add
-> > a comment in the code (and maybe in the commit log) to explain why this
-> > addition is needed, and also that even though the schematics say that
-> > value "1" (max burst size of 4 bytes) is reserved, it is in fact
-> > incorrect. The Allwinner BSP code is really using this value, and it's
-> > the value that makes audio work, so we believe the datasheet is simply
-> > incorrect.
-> > 
-> > We already discussed it with Maxime, so I believe he should agree this
-> > time. But I would suggest to have such details explained in the commit
-> > log and in a comment in the code.
-> 
-> Strange. Looking at the datasheets of the A23, A31, A33, A83T and H3
-> (these are the SoCs using the DMA sun6i), only the H3 can have 4 as the
-> burst size (the doc is unclear for the A31).
-> 
-> Well, I was submitting for the H3, Mylène is submitting for the A33.
-> So, what about the A23, A31 and A83T?
+On 10/27/2016 04:21 PM, Laura Abbott wrote:
+> ioremaped addresses are not linearly mapped so the physical
+> address can not be figured out via __pa. More generally, there
+> is no guarantee that backing value of an ioremapped address
+> is a physical address at all. The value here is only used
+> for debugging so just drop the call to __pa on the ioremapped
+> address.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> Found while working on virt_to_phys debugging for arm64
+> ---
+>  drivers/clk/clk-xgene.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+> index 3433132..4697bf9 100644
+> --- a/drivers/clk/clk-xgene.c
+> +++ b/drivers/clk/clk-xgene.c
+> @@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
+>  	struct xgene_clk *pclk = to_xgene_clk(hw);
+>  	unsigned long flags = 0;
+>  	u32 data;
+> -	phys_addr_t reg;
+>
+>  	if (pclk->lock)
+>  		spin_lock_irqsave(pclk->lock, flags);
+>
+>  	if (pclk->param.csr_reg != NULL) {
+>  		pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
+> -		reg = __pa(pclk->param.csr_reg);
+>  		/* First enable the clock */
+>  		data = xgene_clk_read(pclk->param.csr_reg +
+>  					pclk->param.reg_clk_offset);
+>  		data |= pclk->param.reg_clk_mask;
+>  		xgene_clk_write(data, pclk->param.csr_reg +
+>  					pclk->param.reg_clk_offset);
+> -		pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+> -			clk_hw_get_name(hw), &reg,
+> +		pr_debug("%s clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+> +			clk_hw_get_name(hw),
+>  			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
+>  			data);
+>
+> @@ -269,7 +267,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
+>  		xgene_clk_write(data, pclk->param.csr_reg +
+>  					pclk->param.reg_csr_offset);
+>  		pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
 
-Since these are device properties, I feel we should move this to DT. That
-way any new controller can have any variation based on the mood of hw
-designer that day and we can hopefully cope with it :-)
+Bah, this got fixed locally but didn't get amended. I'll remove
+the format here in a v2 assuming there are no other objections.
 
-But yes we would need to set the bursts supported in driver and allow above
-for supported bursts only.
-
--- 
-~Vinod
+> -			clk_hw_get_name(hw), &reg,
+> +			clk_hw_get_name(hw),
+>  			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
+>  			data);
+>  	}
+>
