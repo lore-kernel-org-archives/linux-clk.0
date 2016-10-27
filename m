@@ -1,198 +1,73 @@
-Return-Path: <codekipper@gmail.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+Date: Thu, 27 Oct 2016 23:42:51 +0300
+Message-ID: <2946846.zhWOBzBeGa@wasted.cogentembedded.com>
+In-Reply-To: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
+References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <cover.1475569400.git.mylene.josserand@free-electrons.com> <33d641ff43f0c0349cdfa2cdbbfdcdde66205596.1475571575.git.mylene.josserand@free-electrons.com>
-From: Code Kipper <codekipper@gmail.com>
-Date: Wed, 5 Oct 2016 08:04:26 +0200
-Message-ID: <CAEKpxBkUbCGJdToReQx7P+5i92doUdNeMvA5fiDACGcniY=nJg@mail.gmail.com>
-Subject: Re: [PATCH 07/14] ASoC: Add sun8i audio card
-To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lee Jones <lee.jones@linaro.org>,
-	mark.rutland@arm.com, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, devicetree <devicetree@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 4 October 2016 at 11:46, Myl=C3=A8ne Josserand
-<mylene.josserand@free-electrons.com> wrote:
-> Add the audio card for sun8i SoC. This card links the codec driver
-> (digital part) with the DAI driver. The analog codec driver is
-> added as an aux_device.
->
-> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com=
->
-> ---
->  sound/soc/sunxi/Kconfig  |  14 +++++++
->  sound/soc/sunxi/Makefile |   1 +
->  sound/soc/sunxi/sun8i.c  | 101 +++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 116 insertions(+)
->  create mode 100644 sound/soc/sunxi/sun8i.c
->
-> diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
-> index 9e287b0..7b97395 100644
-> --- a/sound/soc/sunxi/Kconfig
-> +++ b/sound/soc/sunxi/Kconfig
-> @@ -27,6 +27,20 @@ config SND_SUN4I_SPDIF
->           Say Y or M to add support for the S/PDIF audio block in the All=
-winner
->           A10 and affiliated SoCs.
->
-> +config SND_SUN8I
-> +       tristate "Allwinner SUN6I/SUN8I audio card support"
-> +       select SND_SUN8I_CODEC
-> +       select SND_SUN4I_I2S
-> +       select SND_SUN8I_CODEC_ANALOG
-> +       select REGMAP_MMIO
-> +       help
-> +         This option enables the audio card for Allwinner A33 (sun8i) So=
-C.
-> +         It enables the DAI driver (SND_SUN4I_I2S), the digital audio
-> +         codec driver (SND_SUN8I_CODEC) and the analog codec driver
-> +         (SND_SUN8I_CODEC_ANALOG).
-> +
-> +         Say Y or M if you want to add sun8i/6i card support
-> +
->  config SND_SUN8I_CODEC
->         tristate "Allwinner SUN8I audio codec"
->         select REGMAP_MMIO
-> diff --git a/sound/soc/sunxi/Makefile b/sound/soc/sunxi/Makefile
-> index 1da63d3..7f1bab9 100644
-> --- a/sound/soc/sunxi/Makefile
-> +++ b/sound/soc/sunxi/Makefile
-> @@ -1,5 +1,6 @@
->  obj-$(CONFIG_SND_SUN4I_CODEC) +=3D sun4i-codec.o
->  obj-$(CONFIG_SND_SUN4I_I2S) +=3D sun4i-i2s.o
->  obj-$(CONFIG_SND_SUN4I_SPDIF) +=3D sun4i-spdif.o
-> +obj-$(CONFIG_SND_SUN8I) +=3D sun8i.o
->  obj-$(CONFIG_SND_SUN8I_CODEC) +=3D sun8i-codec.o
->  obj-$(CONFIG_SND_SUN8I_CODEC_ANALOG) +=3D sun8i-codec-analog.o
-> diff --git a/sound/soc/sunxi/sun8i.c b/sound/soc/sunxi/sun8i.c
-> new file mode 100644
-> index 0000000..565cd88
-> --- /dev/null
-> +++ b/sound/soc/sunxi/sun8i.c
-> @@ -0,0 +1,101 @@
-> +/*
-> + * ALSA SoC driver for Allwinner sun8i SoC
-> + *
-> + * Copyright (C) 2016 Myl=C3=A8ne Josserand <mylene.josserand@free-elect=
-rons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/firmware.h>
-> +#include <linux/module.h>
-> +
-> +#include <sound/soc.h>
-> +
-> +static struct snd_soc_aux_dev sun8i_audio_prcm_aux_devs[] =3D {
-> +       {
-> +               .name =3D "sun8i-codec-analog",
-> +               .codec_name =3D "sun8i-codec-analog.0",
-> +       },
-> +};
-> +
-> +static struct snd_soc_dai_link sun8i_dai_link =3D {
-> +       .name           =3D "sun4i-i2s",
-> +       .stream_name    =3D "Playback",
-> +       .codec_dai_name =3D "sun8i",
-> +       .dai_fmt        =3D SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S |
-> +                       SND_SOC_DAIFMT_CBM_CFM,
-> +};
-> +
-> +static struct snd_soc_card sun8i_card =3D {
-> +       .name           =3D "sun8i-card",
-> +       .owner          =3D THIS_MODULE,
-> +       .dai_link       =3D &sun8i_dai_link,
-> +       .num_links      =3D 1,
-> +       .aux_dev        =3D sun8i_audio_prcm_aux_devs,
-> +       .num_aux_devs   =3D ARRAY_SIZE(sun8i_audio_prcm_aux_devs),
-> +};
-> +
-> +static int sun8i_probe(struct platform_device *pdev)
-> +{
-> +       struct snd_soc_dai_link *link =3D &sun8i_dai_link;
-> +       struct device_node *np =3D pdev->dev.of_node;
-> +       int ret;
-> +
-> +       /* register the soc card */
-> +       sun8i_card.dev =3D &pdev->dev;
-> +
-> +       /* Retrieve the audio-codec from DT */
-> +       link->codec_of_node =3D of_parse_phandle(np, "allwinner,audio-cod=
-ec", 0);
-> +       if (!link->codec_of_node) {
-> +               dev_err(&pdev->dev, "Missing audio codec\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       /* Retrieve DAI from DT */
-> +       link->cpu_of_node =3D of_parse_phandle(np, "allwinner,i2s-control=
-ler", 0);
-Now that I've spent some time trying to add my changes for the H3
-ontop of your code,  I think this file should be more generic and rely
-on the dtsi more. It's pretty A33 specific but with little effort it
-can be worked to cover all of the sun8i type drivers. I would change
-"allwinner,i2s-controller" to "allwinner,audio-dai" for starters and
-then maybe pull in some info for the dai-link from the dtsi.
-CK
-> +       if (!link->cpu_of_node) {
-> +               dev_err(&pdev->dev, "Missing I2S controller\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       link->platform_of_node =3D link->cpu_of_node;
-> +
-> +       /* Register the sound card */
-> +       ret =3D devm_snd_soc_register_card(&pdev->dev, &sun8i_card);
-> +       if (ret) {
-> +               dev_err(&pdev->dev,
-> +                       "Soc register card failed %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct of_device_id sun8i_of_match[] =3D {
-> +       { .compatible =3D "allwinner,sun8i-audio", },
-> +       {},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, sun8i_of_match);
-> +
-> +static struct platform_driver sun8i_card_driver =3D {
-> +       .probe =3D sun8i_probe,
-> +       .driver =3D {
-> +               .name   =3D "sun8i-audio",
-> +               .of_match_table =3D sun8i_of_match,
-> +       },
-> +};
-> +
-> +module_platform_driver(sun8i_card_driver);
-> +
-> +MODULE_AUTHOR("Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.co=
-m>");
-> +MODULE_DESCRIPTION("Allwinner sun8i machine ASoC driver");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.9.3
->
+Add macros usable by  the device tree sources to reference the R8A7745 CPG
+clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+of the RZ/G Series User's Manual.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+
+Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7745 CPG Core Clocks */
++#define R8A7745_CLK_Z2		0
++#define R8A7745_CLK_ZG		1
++#define R8A7745_CLK_ZTR		2
++#define R8A7745_CLK_ZTRD2	3
++#define R8A7745_CLK_ZT		4
++#define R8A7745_CLK_ZX		5
++#define R8A7745_CLK_ZS		6
++#define R8A7745_CLK_HP		7
++#define R8A7745_CLK_B		9
++#define R8A7745_CLK_LB		10
++#define R8A7745_CLK_P		11
++#define R8A7745_CLK_CL		12
++#define R8A7745_CLK_CP		13
++#define R8A7745_CLK_M2		14
++#define R8A7745_CLK_ZB3		16
++#define R8A7745_CLK_ZB3D2	17
++#define R8A7745_CLK_DDR		18
++#define R8A7745_CLK_SDH		19
++#define R8A7745_CLK_SD0		20
++#define R8A7745_CLK_SD2		21
++#define R8A7745_CLK_SD3		22
++#define R8A7745_CLK_MMC0	23
++#define R8A7745_CLK_MP		24
++#define R8A7745_CLK_QSPI	25
++#define R8A7745_CLK_ACP		26
++#define R8A7745_CLK_RCAN	27
++#define R8A7745_CLK_R		28
++#define R8A7745_CLK_OSC		29
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
