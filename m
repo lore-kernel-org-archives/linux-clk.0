@@ -1,57 +1,30 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 08/15] clk: ti: add clkdm_lookup to the exported functions
-Date: Tue, 18 Oct 2016 18:46:01 +0300
-Message-ID: <1476805568-19264-9-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 0/2] Renesas R8A7745 CPG/MSSR clock support
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <92ed8fd0-33c5-f5af-15ce-311cf61e5f83@cogentembedded.com>
+Date: Fri, 28 Oct 2016 00:01:12 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This will be needed to move some additional clockdomain functionality
-under clock driver.
+On 10/27/2016 11:41 PM, Sergei Shtylyov wrote:
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c | 1 +
- include/linux/clk/ti.h      | 2 ++
- 2 files changed, 3 insertions(+)
+>    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+> 'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
+> depend on the common R-Car Gen2 support patch. As the DT patches in the
+> R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
+> it might make sense to merge this patch to the 'renesas.git' repo as well...
+>
+> [1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+> [2/2] clk: renesas: cpg-mssr: add R8A7745 support
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index d058125..5391b66 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -57,6 +57,7 @@
- static struct ti_clk_ll_ops omap_clk_ll_ops = {
- 	.clkdm_clk_enable = clkdm_clk_enable,
- 	.clkdm_clk_disable = clkdm_clk_disable,
-+	.clkdm_lookup = clkdm_lookup,
- 	.cm_wait_module_ready = omap_cm_wait_module_ready,
- 	.cm_split_idlest_reg = cm_split_idlest_reg,
- };
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 07308db..bc7fd8f 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -213,6 +213,7 @@ struct clk_omap_reg {
-  * @clk_writel: pointer to register write function
-  * @clkdm_clk_enable: pointer to clockdomain enable function
-  * @clkdm_clk_disable: pointer to clockdomain disable function
-+ * @clkdm_lookup: pointer to clockdomain lookup function
-  * @cm_wait_module_ready: pointer to CM module wait ready function
-  * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
-  *
-@@ -228,6 +229,7 @@ struct ti_clk_ll_ops {
- 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
- 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
- 				     struct clk *clk);
-+	struct clockdomain * (*clkdm_lookup)(const char *name);
- 	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
- 					u8 idlest_shift);
- 	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
--- 
-1.9.1
+    Forgot to mention that the patch #2 depends on Geert's RST driver in order 
+to build.
+
+MBR, Sergei
