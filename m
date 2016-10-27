@@ -1,226 +1,374 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:34452 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752784AbcJEUZw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Oct 2016 16:25:52 -0400
-Date: Wed, 5 Oct 2016 22:25:35 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-cc: Daniel Vetter <daniel@ffwll.ch>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-clk@vger.kernel.org,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        linux-mtd@lists.infradead.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        drbd-dev@lists.linbit.com, linux-metag@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Subject: Re: kernel-doc-rst-lint (was: Re: [PATCH 00/15] improve function-level
- documentation)
-In-Reply-To: <87h98quc1w.fsf@intel.com>
-Message-ID: <alpine.DEB.2.10.1610052224240.3130@hadrien>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr> <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com> <87h98quc1w.fsf@intel.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A7745 support
+Date: Thu, 27 Oct 2016 23:43:31 +0300
+Message-ID: <5012234.NZmvoVqhq0@wasted.cogentembedded.com>
+In-Reply-To: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
+References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-1882111399-1475699148=:3130"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
+Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+(and RZ/G) code.
 
---8323329-1882111399-1475699148=:3130
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+<geert+renesas@glider.be>.
 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
+ drivers/clk/renesas/Kconfig                                  |    1 
+ drivers/clk/renesas/Makefile                                 |    1 
+ drivers/clk/renesas/r8a7745-cpg-mssr.c                       |  261 +++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
+ drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
+ 6 files changed, 273 insertions(+), 2 deletions(-)
 
-On Wed, 5 Oct 2016, Jani Nikula wrote:
-
-> On Wed, 05 Oct 2016, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > Jani Nikula has a patch with a scrip to make the one kernel-doc parser
-> > into a lint/checker pass over the entire kernel. I think that'd would
-> > be more robust instead of trying to approximate the real kerneldoc
-> > parser. Otoh that parser is a horror show of a perl/regex driven state
-> > machine ;-)
-> >
-> > Jani, can you pls digg out these patches? Can't find them right now ...
->
-> Expanding the massive Cc: with linux-doc list...
->
-> Here goes. It's a quick hack from months ago, but still seems to
-> somewhat work. At least for the kernel-doc parts. The reStructuredText
-> lint part isn't all that great, and doesn't have mapping to line numbers
-> like the Sphinx kernel-doc extension does. Anyway I'm happy how this
-> integrates with kernel build CHECK and C=1/C=2.
->
-> I guess Julia's goal is to automate the *fixing* of some of the error
-> classes from kernel-doc. Not sure how well this could be made to
-> integrate with any of that.
-
-No, my work doesn't fix anything.  Coccinelle can't actually process
-comments.  I just correlated the parsed comment with the function header.
-
-julia
-
->
-> BR,
-> Jani.
->
->
-> From 1244efa0f63a7b13795e8c37f81733a3c8bfc56a Mon Sep 17 00:00:00 2001
-> From: Jani Nikula <jani.nikula@intel.com>
-> Date: Tue, 31 May 2016 18:11:33 +0300
-> Subject: [PATCH] kernel-doc-rst-lint: add tool to check kernel-doc and rst
->  correctness
-> Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-> Cc: Jani Nikula <jani.nikula@intel.com>
->
-> Simple kernel-doc and reStructuredText lint tool that can be used
-> independently and as a kernel build CHECK tool to validate kernel-doc
-> comments.
->
-> Independent usage:
-> $ kernel-doc-rst-lint FILE
->
-> Kernel CHECK usage:
-> $ make CHECK=scripts/kernel-doc-rst-lint C=1		# (or C=2)
->
-> Depends on docutils and the rst-lint package
-> https://pypi.python.org/pypi/restructuredtext_lint
->
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-> ---
->  scripts/kernel-doc-rst-lint | 106 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 106 insertions(+)
->  create mode 100755 scripts/kernel-doc-rst-lint
->
-> diff --git a/scripts/kernel-doc-rst-lint b/scripts/kernel-doc-rst-lint
-> new file mode 100755
-> index 000000000000..7e0157679f83
-> --- /dev/null
-> +++ b/scripts/kernel-doc-rst-lint
-> @@ -0,0 +1,106 @@
-> +#!/usr/bin/env python
-> +# coding=utf-8
-> +#
-> +# Copyright © 2016 Intel Corporation
-> +#
-> +# Permission is hereby granted, free of charge, to any person obtaining a
-> +# copy of this software and associated documentation files (the "Software"),
-> +# to deal in the Software without restriction, including without limitation
-> +# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> +# and/or sell copies of the Software, and to permit persons to whom the
-> +# Software is furnished to do so, subject to the following conditions:
-> +#
-> +# The above copyright notice and this permission notice (including the next
-> +# paragraph) shall be included in all copies or substantial portions of the
-> +# Software.
-> +#
-> +# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> +# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> +# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> +# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> +# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> +# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-> +# IN THE SOFTWARE.
-> +#
-> +# Authors:
-> +#    Jani Nikula <jani.nikula@intel.com>
-> +#
-> +# Simple kernel-doc and reStructuredText lint tool that can be used
-> +# independently and as a kernel build CHECK tool to validate kernel-doc
-> +# comments.
-> +#
-> +# Independent usage:
-> +# $ kernel-doc-rst-lint FILE
-> +#
-> +# Kernel CHECK usage:
-> +# $ make CHECK=scripts/kernel-doc-rst-lint C=1		# (or C=2)
-> +#
-> +# Depends on docutils and the rst-lint package
-> +# https://pypi.python.org/pypi/restructuredtext_lint
-> +#
-> +
-> +import os
-> +import subprocess
-> +import sys
-> +
-> +from docutils.parsers.rst import directives
-> +from docutils.parsers.rst import Directive
-> +from docutils.parsers.rst import roles
-> +from docutils import nodes, statemachine
-> +import restructuredtext_lint
-> +
-> +class DummyDirective(Directive):
-> +    required_argument = 1
-> +    optional_arguments = 0
-> +    option_spec = { }
-> +    has_content = True
-> +
-> +    def run(self):
-> +        return []
-> +
-> +# Fake the Sphinx C Domain directives and roles
-> +directives.register_directive('c:function', DummyDirective)
-> +directives.register_directive('c:type', DummyDirective)
-> +roles.register_generic_role('c:func', nodes.emphasis)
-> +roles.register_generic_role('c:type', nodes.emphasis)
-> +
-> +# We accept but ignore parameters to be compatible with how the kernel build
-> +# invokes CHECK.
-> +if len(sys.argv) < 2:
-> +    sys.stderr.write('usage: kernel-doc-rst-lint [IGNORED OPTIONS] FILE\n');
-> +    sys.exit(1)
-> +
-> +infile = sys.argv[len(sys.argv) - 1]
-> +cmd = ['scripts/kernel-doc', '-rst', infile]
-> +
-> +try:
-> +    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-> +    out, err = p.communicate()
-> +
-> +    # python2 needs conversion to unicode.
-> +    # python3 with universal_newlines=True returns strings.
-> +    if sys.version_info.major < 3:
-> +        out, err = unicode(out, 'utf-8'), unicode(err, 'utf-8')
-> +
-> +    # kernel-doc errors
-> +    sys.stderr.write(err)
-> +    if p.returncode != 0:
-> +        sys.exit(p.returncode)
-> +
-> +    # restructured text errors
-> +    lines = statemachine.string2lines(out, 8, convert_whitespace=True)
-> +    lint_errors = restructuredtext_lint.lint(out, infile)
-> +    for error in lint_errors:
-> +        # Ignore INFO
-> +        if error.level <= 1:
-> +            continue
-> +
-> +        print(error.source + ': ' + error.type + ': ' + error.full_message)
-> +        if error.line is not None:
-> +            print('Context:')
-> +            print('\t' + lines[error.line - 1])
-> +            print('\t' + lines[error.line])
-> +
-> +except Exception as e:
-> +    sys.stderr.write(str(e) + '\n')
-> +    sys.exit(1)
-> --
-> 2.1.4
->
->
-> --
-> Jani Nikula, Intel Open Source Technology Center
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-1882111399-1475699148=:3130--
+Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+===================================================================
+--- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -14,6 +14,7 @@ They provide the following functionaliti
+ Required Properties:
+   - compatible: Must be one of:
+       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
++      - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+ 
+@@ -23,8 +24,8 @@ Required Properties:
+   - clocks: References to external parent clocks, one entry for each entry in
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+-      - "extal" (r8a7743, r8a7795, r8a7796)
+-      - "usb_extal" (r8a7743)
++      - "extal" (r8a7743, r8a7745, r8a7795, r8a7796)
++      - "usb_extal" (r8a7743, r8a7745)
+       - "extalr" (r8a7795, r8a7796)
+ 
+   - #clock-cells: Must be 2
+Index: linux/drivers/clk/renesas/Kconfig
+===================================================================
+--- linux.orig/drivers/clk/renesas/Kconfig
++++ linux/drivers/clk/renesas/Kconfig
+@@ -1,6 +1,7 @@
+ config CLK_RENESAS_CPG_MSSR
+ 	bool
+ 	default y if ARCH_R8A7743
++	default y if ARCH_R8A7745
+ 	default y if ARCH_R8A7795
+ 	default y if ARCH_R8A7796
+ 
+Index: linux/drivers/clk/renesas/Makefile
+===================================================================
+--- linux.orig/drivers/clk/renesas/Makefile
++++ linux/drivers/clk/renesas/Makefile
+@@ -3,6 +3,7 @@ obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7743)		+= r8a7743-cpg-mssr.o rcar-gen2-cpg.o
++obj-$(CONFIG_ARCH_R8A7745)		+= r8a7745-cpg-mssr.o rcar-gen2-cpg.o
+ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+Index: linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
+===================================================================
+--- /dev/null
++++ linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -0,0 +1,261 @@
++/*
++ * r8a7745 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published
++ * by the Free Software Foundation; of the License.
++ */
++
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/soc/renesas/rcar-rst.h>
++
++#include <dt-bindings/clock/r8a7745-cpg-mssr.h>
++
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen2-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R8A7745_CLK_OSC,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++	CLK_USB_EXTAL,
++
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL0,
++	CLK_PLL1,
++	CLK_PLL3,
++	CLK_PLL1_DIV2,
++
++	/* Module Clocks */
++	MOD_CLK_BASE
++};
++
++static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",	CLK_EXTAL),
++	DEF_INPUT("usb_extal",	CLK_USB_EXTAL),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",	CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
++	DEF_BASE(".pll0",	CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
++	DEF_BASE(".pll1",	CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
++	DEF_BASE(".pll3",	CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
++
++	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
++
++	/* Core Clock Outputs */
++	DEF_BASE("lb",	 R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
++	DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
++	DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
++	DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
++	DEF_BASE("rcan", R8A7745_CLK_RCAN, CLK_TYPE_GEN2_RCAN, CLK_USB_EXTAL),
++
++	DEF_FIXED("z2",     R8A7745_CLK_Z2,    CLK_PLL0,	  1, 1),
++	DEF_FIXED("zg",     R8A7745_CLK_ZG,    CLK_PLL1,          6, 1),
++	DEF_FIXED("zx",     R8A7745_CLK_ZX,    CLK_PLL1,          3, 1),
++	DEF_FIXED("zs",     R8A7745_CLK_ZS,    CLK_PLL1,          6, 1),
++	DEF_FIXED("hp",     R8A7745_CLK_HP,    CLK_PLL1,         12, 1),
++	DEF_FIXED("b",      R8A7745_CLK_B,     CLK_PLL1,         12, 1),
++	DEF_FIXED("p",      R8A7745_CLK_P,     CLK_PLL1,         24, 1),
++	DEF_FIXED("cl",     R8A7745_CLK_CL,    CLK_PLL1,         48, 1),
++	DEF_FIXED("cp",     R8A7745_CLK_CP,    CLK_PLL1,         48, 1),
++	DEF_FIXED("m2",     R8A7745_CLK_M2,    CLK_PLL1,          8, 1),
++	DEF_FIXED("zb3",    R8A7745_CLK_ZB3,   CLK_PLL3,          4, 1),
++	DEF_FIXED("zb3d2",  R8A7745_CLK_ZB3D2, CLK_PLL3,          8, 1),
++	DEF_FIXED("ddr",    R8A7745_CLK_DDR,   CLK_PLL3,          8, 1),
++	DEF_FIXED("mp",     R8A7745_CLK_MP,    CLK_PLL1_DIV2,    15, 1),
++	DEF_FIXED("acp",    R8A7745_CLK_ACP,   CLK_EXTAL,         2, 1),
++	DEF_FIXED("r",      R8A7745_CLK_R,     CLK_PLL1,      49152, 1),
++	DEF_FIXED("osc",    R8A7745_CLK_OSC,   CLK_PLL1,      12288, 1),
++
++	DEF_DIV6P1("sd2",   R8A7745_CLK_SD2,   CLK_PLL1_DIV2, 0x078),
++	DEF_DIV6P1("sd3",   R8A7745_CLK_SD3,   CLK_PLL1_DIV2, 0x26c),
++	DEF_DIV6P1("mmc0",  R8A7745_CLK_MMC0,  CLK_PLL1_DIV2, 0x240),
++};
++
++static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
++	DEF_MOD("msiof0",	    0,	R8A7745_CLK_MP),
++	DEF_MOD("vcp0",		  101,	R8A7745_CLK_ZS),
++	DEF_MOD("vpc0",		  103,	R8A7745_CLK_ZS),
++	DEF_MOD("tmu1",		  111,	R8A7745_CLK_P),
++	DEF_MOD("3dg",		  112,	R8A7745_CLK_ZG),
++	DEF_MOD("2d-dmac",	  115,	R8A7745_CLK_ZS),
++	DEF_MOD("fdp1-1",	  118,	R8A7745_CLK_ZS),
++	DEF_MOD("fdp1-0",	  119,	R8A7745_CLK_ZS),
++	DEF_MOD("tmu3",		  121,	R8A7745_CLK_P),
++	DEF_MOD("tmu2",		  122,	R8A7745_CLK_P),
++	DEF_MOD("cmt0",		  124,	R8A7745_CLK_R),
++	DEF_MOD("tmu0",		  125,	R8A7745_CLK_CP),
++	DEF_MOD("vsp1du0",	  128,	R8A7745_CLK_ZS),
++	DEF_MOD("vsp1-sy",	  131,	R8A7745_CLK_ZS),
++	DEF_MOD("scifa2",	  202,	R8A7745_CLK_MP),
++	DEF_MOD("scifa1",	  203,	R8A7745_CLK_MP),
++	DEF_MOD("scifa0",	  204,	R8A7745_CLK_MP),
++	DEF_MOD("msiof2",	  205,	R8A7745_CLK_MP),
++	DEF_MOD("scifb0",	  206,	R8A7745_CLK_MP),
++	DEF_MOD("scifb1",	  207,	R8A7745_CLK_MP),
++	DEF_MOD("msiof1",	  208,	R8A7745_CLK_MP),
++	DEF_MOD("scifb2",	  216,	R8A7745_CLK_MP),
++	DEF_MOD("sys-dmac1",	  218,	R8A7745_CLK_ZS),
++	DEF_MOD("sys-dmac0",	  219,	R8A7745_CLK_ZS),
++	DEF_MOD("tpu0",		  304,	R8A7745_CLK_CP),
++	DEF_MOD("sdhi3",	  311,	R8A7745_CLK_SD3),
++	DEF_MOD("sdhi2",	  312,	R8A7745_CLK_SD2),
++	DEF_MOD("sdhi0",	  314,	R8A7745_CLK_SD0),
++	DEF_MOD("mmcif0",	  315,	R8A7745_CLK_MMC0),
++	DEF_MOD("iic0",		  318,	R8A7745_CLK_HP),
++	DEF_MOD("iic1",		  323,	R8A7745_CLK_HP),
++	DEF_MOD("cmt1",		  329,	R8A7745_CLK_R),
++	DEF_MOD("usbhs-dmac0",	  330,	R8A7745_CLK_HP),
++	DEF_MOD("usbhs-dmac1",	  331,	R8A7745_CLK_HP),
++	DEF_MOD("irqc",		  407,	R8A7745_CLK_CP),
++	DEF_MOD("intc-sys",	  408,	R8A7745_CLK_ZS),
++	DEF_MOD("audio-dmac0",	  502,	R8A7745_CLK_HP),
++	DEF_MOD("thermal",	  522,	CLK_EXTAL),
++	DEF_MOD("pwm",		  523,	R8A7745_CLK_P),
++	DEF_MOD("usb-ehci",	  703,	R8A7745_CLK_MP),
++	DEF_MOD("usbhs",	  704,	R8A7745_CLK_HP),
++	DEF_MOD("hscif2",	  713,	R8A7745_CLK_ZS),
++	DEF_MOD("scif5",	  714,	R8A7745_CLK_P),
++	DEF_MOD("scif4",	  715,	R8A7745_CLK_P),
++	DEF_MOD("hscif1",	  716,	R8A7745_CLK_ZS),
++	DEF_MOD("hscif0",	  717,	R8A7745_CLK_ZS),
++	DEF_MOD("scif3",	  718,	R8A7745_CLK_P),
++	DEF_MOD("scif2",	  719,	R8A7745_CLK_P),
++	DEF_MOD("scif1",	  720,	R8A7745_CLK_P),
++	DEF_MOD("scif0",	  721,	R8A7745_CLK_P),
++	DEF_MOD("du0",		  724,	R8A7745_CLK_ZX),
++	DEF_MOD("ipmmu-sgx",	  800,	R8A7745_CLK_ZX),
++	DEF_MOD("vin1",		  810,	R8A7745_CLK_ZG),
++	DEF_MOD("vin0",		  811,	R8A7745_CLK_ZG),
++	DEF_MOD("etheravb",	  812,	R8A7745_CLK_HP),
++	DEF_MOD("ether",	  813,	R8A7745_CLK_P),
++	DEF_MOD("gpio6",	  905,	R8A7745_CLK_CP),
++	DEF_MOD("gpio5",	  907,	R8A7745_CLK_CP),
++	DEF_MOD("gpio4",	  908,	R8A7745_CLK_CP),
++	DEF_MOD("gpio3",	  909,	R8A7745_CLK_CP),
++	DEF_MOD("gpio2",	  910,	R8A7745_CLK_CP),
++	DEF_MOD("gpio1",	  911,	R8A7745_CLK_CP),
++	DEF_MOD("gpio0",	  912,	R8A7745_CLK_CP),
++	DEF_MOD("can1",		  915,	R8A7745_CLK_P),
++	DEF_MOD("can0",		  916,	R8A7745_CLK_P),
++	DEF_MOD("qspi_mod",	  917,	R8A7745_CLK_QSPI),
++	DEF_MOD("i2c5",		  925,	R8A7745_CLK_HP),
++	DEF_MOD("i2c4",		  927,	R8A7745_CLK_HP),
++	DEF_MOD("i2c3",		  928,	R8A7745_CLK_HP),
++	DEF_MOD("i2c2",		  929,	R8A7745_CLK_HP),
++	DEF_MOD("i2c1",		  930,	R8A7745_CLK_HP),
++	DEF_MOD("i2c0",		  931,	R8A7745_CLK_HP),
++	DEF_MOD("ssi-all",	 1005,	R8A7745_CLK_P),
++	DEF_MOD("ssi9",		 1006,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi8",		 1007,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi7",		 1008,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi6",		 1009,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi5",		 1010,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi4",		 1011,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi3",		 1012,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi2",		 1013,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi1",		 1014,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi0",		 1015,	MOD_CLK_ID(1005)),
++	DEF_MOD("scu-all",	 1017,	R8A7745_CLK_P),
++	DEF_MOD("scu-dvc1",	 1018,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-dvc0",	 1019,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu1-mix1", 1020,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu0-mix0", 1021,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src9",	 1022,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src8",	 1023,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src7",	 1024,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src6",	 1025,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src5",	 1026,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src4",	 1027,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src3",	 1028,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src2",	 1029,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src1",	 1030,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src0",	 1031,	MOD_CLK_ID(1017)),
++	DEF_MOD("scifa3",	 1106,	R8A7745_CLK_MP),
++	DEF_MOD("scifa4",	 1107,	R8A7745_CLK_MP),
++	DEF_MOD("scifa5",	 1108,	R8A7745_CLK_MP),
++};
++
++static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
++};
++
++/*
++ * CPG Clock Data
++ */
++
++/*
++ *    MD	EXTAL		PLL0	PLL1	PLL3
++ * 14 13 19	(MHz)		*1	*2
++ *---------------------------------------------------
++ * 0  0  0	15		x200/3	x208/2	x106
++ * 0  0  1	15		x200/3	x208/2	x88
++ * 0  1  0	20		x150/3	x156/2	x80
++ * 0  1  1	20		x150/3	x156/2	x66
++ * 1  0  0	26 / 2		x230/3	x240/2	x122
++ * 1  0  1	26 / 2		x230/3	x240/2	x102
++ * 1  1  0	30 / 2		x200/3	x208/2	x106
++ * 1  1  1	30 / 2		x200/3	x208/2	x88
++ *
++ * *1 :	Table 7.5b indicates VCO output (PLL0 = VCO/3)
++ * *2 :	Table 7.5b indicates VCO output (PLL1 = VCO/2)
++ */
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
++					 (((md) & BIT(13)) >> 12) | \
++					 (((md) & BIT(19)) >> 19))
++
++static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
++	/* EXTAL div	PLL1 mult	PLL3 mult	PLL0 mult */
++	{ 1,		208,		106,		200	},
++	{ 1,		208,		88,		200	},
++	{ 1,		156,		80,		150	},
++	{ 1,		156,		66,		150	},
++	{ 2,		240,		122,		230	},
++	{ 2,		240,		102,		230	},
++	{ 2,		208,		106,		200	},
++	{ 2,		208,		88,		200	},
++};
++
++static int __init r8a7745_cpg_mssr_init(struct device *dev)
++{
++	const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
++	u32 cpg_mode;
++	int error;
++
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
++
++	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
++
++	return rcar_gen2_cpg_init(cpg_pll_config);
++}
++
++const struct cpg_mssr_info r8a7745_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r8a7745_core_clks,
++	.num_core_clks = ARRAY_SIZE(r8a7745_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r8a7745_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r8a7745_mod_clks),
++	.num_hw_mod_clks = 12 * 32,
++
++	/* Critical Module Clocks */
++	.crit_mod_clks = r8a7745_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r8a7745_crit_mod_clks),
++
++	/* Callbacks */
++	.init = r8a7745_cpg_mssr_init,
++	.cpg_clk_register = rcar_gen2_cpg_clk_register,
++};
+Index: linux/drivers/clk/renesas/renesas-cpg-mssr.c
+===================================================================
+--- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.c
++++ linux/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -509,6 +509,12 @@ static const struct of_device_id cpg_mss
+ 		.data = &r8a7743_cpg_mssr_info,
+ 	},
+ #endif
++#ifdef CONFIG_ARCH_R8A7745
++	{
++		.compatible = "renesas,r8a7745-cpg-mssr",
++		.data = &r8a7745_cpg_mssr_info,
++	},
++#endif
+ #ifdef CONFIG_ARCH_R8A7795
+ 	{
+ 		.compatible = "renesas,r8a7795-cpg-mssr",
+Index: linux/drivers/clk/renesas/renesas-cpg-mssr.h
+===================================================================
+--- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.h
++++ linux/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -131,6 +131,7 @@ struct cpg_mssr_info {
+ };
+ 
+ extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
++extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+ #endif
