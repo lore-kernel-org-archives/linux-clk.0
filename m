@@ -1,63 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Neil Armstrong <narmstrong@baylibre.com>,  sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20161005150752.22618-1-narmstrong@baylibre.com>
-Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-oxnas@lists.tuxfamily.org
-References: <20161005150752.22618-1-narmstrong@baylibre.com>
-Message-ID: <147617274057.17481.2362814012745242458@resonance>
-Subject: Re: [PATCH 0/6] clk: oxnas: Rework driver to add support for OX820
-Date: Tue, 11 Oct 2016 09:59:00 +0200
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V3 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
+Date: Thu, 27 Oct 2016 16:01:08 +0200
+Message-Id: <1477576872-2665-3-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Neil Armstrong (2016-10-05 17:07:46)
-> In order to to support the Oxford Semiconductor OX820 Soc clock gates,
-> rework the original driver with a structure inspired from the Qcom or Mes=
-on
-> drivers and using the new devm_clk_hw_register() call.
-> =
+From: Mirza Krak <mirza.krak@gmail.com>
 
-> The first patches add dt-bindings include file to clarify the clock indic=
-es.
-> =
+Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
+is max rate.
 
-> In future work, OX820 PLLs should also be handled by this driver.
+The maximum rate value of 127 MHz is pulled from the downstream L4T
+kernel.
 
-Series looks good to me. Will apply after -rc1 drops.
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+---
 
-Regards,
-Mike
+Changes in v2:
+- no changes
 
-> =
+Changes in v3:
+- Added comment in commit message where I got the maximum rates from.
 
-> Neil Armstrong (6):
->   clk: oxnas: Add dt-bindings include file for OX810SE
->   clk: oxnas: Add dt-bindings include file for OX820
->   clk: oxnas: Rename to clk_oxnas_gate
->   clk: oxnas: Refactor to make use of devm_clk_hw_register()
->   clk: oxnas: Add OX820 Gate clocks
->   dt-bindings: clk: oxnas,stdclk: Add OX820 bindings
-> =
+ drivers/clk/tegra/clk-tegra30.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->  .../devicetree/bindings/clock/oxnas,stdclk.txt     |  19 +-
->  drivers/clk/clk-oxnas.c                            | 232 ++++++++++++++-=
-------
->  include/dt-bindings/clock/oxsemi,ox810se.h         |  30 +++
->  include/dt-bindings/clock/oxsemi,ox820.h           |  40 ++++
->  4 files changed, 231 insertions(+), 90 deletions(-)
->  create mode 100644 include/dt-bindings/clock/oxsemi,ox810se.h
->  create mode 100644 include/dt-bindings/clock/oxsemi,ox820.h
-> =
-
-> -- =
-
-> 2.7.0
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 8e2db5e..67f1677 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1252,6 +1252,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
++	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 127000000, 0 },
+ 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
+--
+2.1.4
