@@ -1,82 +1,79 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [PATCH v2 2/6] ARM: dts: stm32f429: add LSI and LSE clocks
-Date: Fri, 14 Oct 2016 11:18:15 +0200
-Message-ID: <1476436699-21879-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 28 Oct 2016 16:54:48 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support
+ to clockdomains
+Message-ID: <20161028235448.57squdf6cu2wxxvm@atomide.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <1476805568-19264-12-git-send-email-t-kristo@ti.com>
+ <20161028005047.GQ26139@codeaurora.org>
+ <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
+ <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
+ <20161028233617.GP16026@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161028233617.GP16026@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+* Stephen Boyd <sboyd@codeaurora.org> [161028 16:37]:
+> On 10/28, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [161028 00:43]:
+> > > On 28/10/16 03:50, Stephen Boyd wrote:
+> > > > I suppose a PRCM is
+> > > > like an MFD that has clocks and resets under it? On other
+> > > > platforms we've combined that all into one node and just had
+> > > > #clock-cells and #reset-cells in that node. Is there any reason
+> > > > we can't do that here?
+> > > 
+> > > For OMAPs, there are typically multiple instances of the PRCM around; OMAP4
+> > > for example has:
+> > > 
+> > > cm1 @ 0x4a004000 (clocks + clockdomains)
+> > > cm2 @ 0x4a008000 (clocks + clockdomains)
+> > > prm @ 0x4a306000 (few clocks + resets + power state handling)
+> > > scrm @ 0x4a30a000 (few external clocks + plenty of misc stuff)
+> > > 
+> > > These instances are also under different power/voltage domains which means
+> > > their PM behavior is different.
+> > > 
+> > > The idea behind having a clockdomain as a provider was mostly to have the
+> > > topology visible : prcm-instance -> clockdomain -> clocks
+> > 
+> > Yeah that's needed to get the interconnect hierarchy right for
+> > genpd :)
+> > 
+> > > ... but basically I think it would be possible to drop the clockdomain
+> > > representation and just mark the prcm-instance as a clock provider. Tony,
+> > > any thoughts on that?
+> > 
+> > No let's not drop the clockdomains as those will be needed when we
+> > move things into proper hierarchy within the interconnect instances.
+> > This will then help with getting things right with genpd.
+> > 
+> > In the long run we just want to specify clockdomain and the offset of
+> > the clock instance within the clockdomain in the dts files.
+> > 
+> 
+> Sorry, I have very little idea how OMAP hardware works. Do you
+> mean that you will have different nodes for each clockdomain so
+> that genpd can map 1:1 to the node in dts? But in hardware
+> there's a prcm that allows us to control many clock domains
+> through register read/writes? How is the interconnect involved?
 
-This patch adds lsi / lse oscillators. These clocks can be use by
-RTC clocks.
-The clock drivers needs to disable the power domain write protection using
-syscon / regmap to enable these clocks.
+There are multiple clockdomains, at least one for each interconnect
+instance. Once a clockdomain is idle, the related interconnect can
+idle too. So yeah genpd pretty much maps 1:1 with the clockdomains.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- arch/arm/boot/dts/stm32f429.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+There's more info in for example omap4 TRM section "3.4.1 Device
+Power-Management Layout" that shows the voltage/power/clock domains.
+The interconnect instances are mostly named there too looking at
+the L4/L3 naming.
 
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index 336ee4f..2700449 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -56,6 +56,18 @@
- 			compatible = "fixed-clock";
- 			clock-frequency = <0>;
- 		};
-+
-+		clk-lse {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32768>;
-+		};
-+
-+		clk-lsi {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+		};
- 	};
- 
- 	soc {
-@@ -185,6 +197,11 @@
- 			interrupts = <1>, <2>, <3>, <6>, <7>, <8>, <9>, <10>, <23>, <40>, <41>, <42>, <62>, <76>;
- 		};
- 
-+		pwrcfg: power-config@40007000 {
-+			compatible = "syscon";
-+			reg = <0x40007000 0x400>;
-+		};
-+
- 		pin-controller {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-@@ -340,6 +357,7 @@
- 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 			reg = <0x40023800 0x400>;
- 			clocks = <&clk_hse>;
-+			st,syscfg = <&pwrcfg>;
- 		};
- 
- 		dma1: dma-controller@40026000 {
--- 
-1.9.1
+Regards,
+
+Tony
