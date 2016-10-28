@@ -1,148 +1,123 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: Rob Herring <robh@kernel.org>
-CC: Linux-MIPS <linux-mips@linux-mips.org>, Ralf Baechle
-	<ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "Mark
- Rutland" <mark.rutland@arm.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 16/18] dt-bindings: Document img,boston-clock binding
-Date: Tue, 11 Oct 2016 22:15:45 +0100
-Message-ID: <2330857.F1IQS18Qic@np-p-burton>
-In-Reply-To: <CAL_Jsq+PkQmkkLMjiurmHegewpc6n_ntUMsik8oMZdM2nXHQ6g@mail.gmail.com>
-References: <20161005171824.18014-1-paul.burton@imgtec.com> <2468748.fALFhzhDcI@np-p-burton> <CAL_Jsq+PkQmkkLMjiurmHegewpc6n_ntUMsik8oMZdM2nXHQ6g@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: Scott Wood <oss@buserror.net>, "linux-mmc@vger.kernel.org"
+ <linux-mmc@vger.kernel.org>, "ulf.hansson@linaro.org"
+ <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: RE: [v13, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Fri, 28 Oct 2016 07:08:44 +0000
+Message-ID: <DB6PR0401MB2536E6A29246096648EEC890F8AD0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+ <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
+ <1477629956.6812.15.camel@buserror.net>  
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1681193.t5WapgXVv7";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
---nextPart1681193.t5WapgXVv7
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-On Tuesday, 11 October 2016 15:06:46 BST Rob Herring wrote:
-> On Tue, Oct 11, 2016 at 11:00 AM, Paul Burton <paul.burton@imgtec.com> 
-wrote:
-> > On Monday, 10 October 2016 08:01:21 BST Rob Herring wrote:
-> >> On Wed, Oct 05, 2016 at 06:18:22PM +0100, Paul Burton wrote:
-> >> > Add device tree binding documentation for the clocks provided by the
-> >> > MIPS Boston development board from Imagination Technologies, and a
-> >> > header file describing the available clocks for use by device trees &
-> >> > driver.
-> >> > 
-> >> > Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> >> > Cc: Michael Turquette <mturquette@baylibre.com>
-> >> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> >> > Cc: linux-clk@vger.kernel.org
-> >> > Cc: Rob Herring <robh+dt@kernel.org>
-> >> > Cc: Mark Rutland <mark.rutland@arm.com>
-> >> > Cc: devicetree@vger.kernel.org
-> >> > 
-> >> > ---
-> >> > 
-> >> > Changes in v3: None
-> >> > Changes in v2:
-> >> > - Add BOSTON_CLK_INPUT to expose the input clock.
-> >> > 
-> >> >  .../devicetree/bindings/clock/img,boston-clock.txt | 27
-> >> >  ++++++++++++++++++++++ include/dt-bindings/clock/boston-clock.h
-> >> >  
-> >> >   | 14 +++++++++++ 2 files changed, 41 insertions(+)
-> >> >  
-> >> >  create mode 100644
-> >> >  Documentation/devicetree/bindings/clock/img,boston-clock.txt create
-> >> >  mode
-> >> >  100644 include/dt-bindings/clock/boston-clock.h
-> >> > 
-> >> > diff --git
-> >> > a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> >> > b/Documentation/devicetree/bindings/clock/img,boston-clock.txt new file
-> >> > mode 100644
-> >> > index 0000000..c01ea60
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> >> > @@ -0,0 +1,27 @@
-> >> > +Binding for Imagination Technologies MIPS Boston clock sources.
-> >> > +
-> >> > +This binding uses the common clock binding[1].
-> >> > +
-> >> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >> > +
-> >> > +Required properties:
-> >> > +- compatible : Should be "img,boston-clock".
-> >> > +- #clock-cells : Should be set to 1.
-> >> > +  Values available for clock consumers can be found in the header
-> >> > file:
-> >> > +    <dt-bindings/clock/boston-clock.h>
-> >> > +- regmap : Phandle to the Boston platform register system controller.
-> >> > +  This should contain a phandle to the system controller node covering
-> >> > the
-> >> > +  platform registers provided by the Boston board.
-> >> 
-> >> Can you just make the clock node a child of the system controller and
-> >> drop this?
-> >> 
-> >> Rob
-> > 
-> > Hi Rob,
-> > 
-> > (Apologies to anyone who received my last; my mail client seems to be
-> > misconfigured & previously sent HTML mail.)
-> > 
-> > As I mentioned before technically that could be done, but it would really
-> > not be at all reflective of the hardware & so seems somewhat contrary to
-> > the purpose of a device tree.
-> 
-> Given that you need a reference back to the system controller, it does
-> match the h/w. The system controller h/w contains various functions,
-> therefore the system controller node should contain nodes for those
-> functions (or the sys ctrlr itself could be the clock provider node
-> with no child nodes). Otherwise, what is the parent of the clock node?
-> Root? Root should generally be the top level devices of the SoC,
-> though it gets used for things which have no good parent.
-> 
-> Rob
-
-Hi Rob,
-
-The "system controller" here is a bunch of registers which contain information 
-about the system - nothing more & nothing less. There are a few random bits of 
-functionality such as system level reset exposed through them, but things like 
-clocks are not part of some coherent block of hardware known as the system 
-controller. The register exposing information about the clocks has no actual 
-connection to the clocks at all - it's just a dumb register whose value is 
-filled in by whomever generates the FPGA bitfile. I don't see how that can be 
-reasonably seen as the clocks being a child of this ecclectic bunch of 
-registers.
-
-Perhaps the use of syscon has been misleading here? I'm using the syscon code 
-purely as a nice way to obtain a regmap to that bunch of registers. Please 
-believe me when I say I know this hardware well enough to know that there 
-isn't a coherent block of system controller hardware that provides the clocks 
-here.
-
-Thanks,
-    Paul
---nextPart1681193.t5WapgXVv7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJX/VaBAAoJEIIg2fppPBxlbjUP/jt9jAVkOgzQuXBd6B3l4jHM
-sseuupUm8bc+oR28dQpaHTinZKfLMV+KtnY638Aj/0D9We96R0j5ZiVcisIjTchP
-JuvIojL9mW5X9FNNWSr0UlmMB/XJFYr7z26nuxmB7JUw4iEdh5ji/hLDhXmAsfi8
-7mkt4NBlxCBuiJe9WJtAPFZxR7RSCvvotUGAcXAm3Ep2ZiL6WWw3CqRSWc+LXwPH
-mVyGtfNsVP0EXB1rlc3Q5pxibb5CFCD5r35ghp6z6UrEa0Ze8w/j4PvHhcsMvX7l
-11CyFkckfC7DcjfKXJRzhAdZY6PfgffJcXrcAEQ64vacHvF0cwuxG8lIZtSGJUl6
-MW2G6A3gnwr9rhb5nQ7okPpWXm1lcZPuIrCGBWz156P9v1hJc5TF1xR0SJreHK2Q
-ZXHFqTi0LZ6cV+1fz6byill2Xor6+CUHO+vOnmAtRe7n5/0SjlH/aRSWMZGi1iav
-1HfNXDmgUa9jdeIBQ5HfvrcXgU8foawg4v4RwjULnijkG2oRYCqAVGdeindchMYc
-wz64lAFYNx1vTT3woe+74f9KXXmfdA3hliNjHQiox+N+0S+z9LFEs/mUdDfcHvE8
-lHOXpzwUKHQbzOF+VoUaKdwZAbdtlvz6hz3VaudmndJ7AEgG/XVqoFoJ3rsWioYY
-7WJZ7OnLZ4banxhEsX11
-=7AlU
------END PGP SIGNATURE-----
-
---nextPart1681193.t5WapgXVv7--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBZLkIuIEx1DQo+IFNlbnQ6IEZy
+aWRheSwgT2N0b2JlciAyOCwgMjAxNiAyOjA2IFBNDQo+IFRvOiBZLkIuIEx1OyAnU2NvdHQgV29v
+ZCc7ICdsaW51eC1tbWNAdmdlci5rZXJuZWwub3JnJzsNCj4gJ3VsZi5oYW5zc29uQGxpbmFyby5v
+cmcnOyAnQXJuZCBCZXJnbWFubicNCj4gQ2M6ICdsaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9y
+Zyc7ICdkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZyc7DQo+ICdsaW51eC1hcm0ta2VybmVsQGxp
+c3RzLmluZnJhZGVhZC5vcmcnOyAnbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyc7DQo+ICds
+aW51eC1jbGtAdmdlci5rZXJuZWwub3JnJzsgJ2xpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmcnOw0K
+PiAnaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcnOyAnbmV0ZGV2QHZnZXIua2VybmVs
+Lm9yZyc7ICdHcmVnDQo+IEtyb2FoLUhhcnRtYW4nOyAnTWFyayBSdXRsYW5kJzsgJ1JvYiBIZXJy
+aW5nJzsgJ1J1c3NlbGwgS2luZyc7ICdKb2NoZW4NCj4gRnJpZWRyaWNoJzsgJ0pvZXJnIFJvZWRl
+bCc7ICdDbGF1ZGl1IE1hbm9pbCc7ICdCaHVwZXNoIFNoYXJtYSc7IFFpYW5nDQo+IFpoYW87ICdL
+dW1hciBHYWxhJzsgJ1NhbnRvc2ggU2hpbGlta2FyJzsgTGVvIExpOyBYLkIuIFhpZTsgTS5ILiBM
+aWFuDQo+IFN1YmplY3Q6IFJFOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIg
+Zm9yIFFvcklRIHBsYXRmb3Jtcw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
+PiA+IEZyb206IFkuQi4gTHUNCj4gPiBTZW50OiBGcmlkYXksIE9jdG9iZXIgMjgsIDIwMTYgMjow
+MCBQTQ0KPiA+IFRvOiAnU2NvdHQgV29vZCc7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IHVs
+Zi5oYW5zc29uQGxpbmFyby5vcmc7DQo+ID4gQXJuZCBCZXJnbWFubg0KPiA+IENjOiBsaW51eHBw
+Yy1kZXZAbGlzdHMub3psYWJzLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4g
+bGludXgtYXJtLSBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsNCj4gPiBsaW51eC0gY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtaTJjQHZn
+ZXIua2VybmVsLm9yZzsNCj4gPiBpb21tdUBsaXN0cy5saW51eC0gZm91bmRhdGlvbi5vcmc7IG5l
+dGRldkB2Z2VyLmtlcm5lbC5vcmc7IEdyZWcNCj4gPiBLcm9haC1IYXJ0bWFuOyBNYXJrIFJ1dGxh
+bmQ7IFJvYiBIZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbg0KPiA+IEZyaWVkcmljaDsgSm9l
+cmcgUm9lZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVzaCBTaGFybWE7IFFpYW5nIFpoYW87DQo+
+IEt1bWFyIEdhbGE7IFNhbnRvc2ggU2hpbGlta2FyOyBMZW8gTGk7IFguQi4NCj4gPiBYaWU7IE0u
+SC4gTGlhbg0KPiA+IFN1YmplY3Q6IFJFOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBk
+cml2ZXIgZm9yIFFvcklRIHBsYXRmb3Jtcw0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IGxpbnV4LW1tYy1vd25lckB2Z2VyLmtlcm5l
+bC5vcmcgW21haWx0bzpsaW51eC1tbWMtDQo+ID4gPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9u
+IEJlaGFsZiBPZiBTY290dCBXb29kDQo+ID4gPiBTZW50OiBGcmlkYXksIE9jdG9iZXIgMjgsIDIw
+MTYgMTI6NDYgUE0NCj4gPiA+IFRvOiBZLkIuIEx1OyBsaW51eC1tbWNAdmdlci5rZXJuZWwub3Jn
+OyB1bGYuaGFuc3NvbkBsaW5hcm8ub3JnOyBBcm5kDQo+ID4gPiBCZXJnbWFubg0KPiA+ID4gQ2M6
+IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
+ZzsNCj4gPiA+IGxpbnV4LWFybS0ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBsaW51eC0gY2xrQHZnZXIua2VybmVsLm9yZzsg
+bGludXgtaTJjQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGlvbW11QGxpc3RzLmxpbnV4LSBmb3Vu
+ZGF0aW9uLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgR3JlZw0KPiA+ID4gS3JvYWgtSGFy
+dG1hbjsgTWFyayBSdXRsYW5kOyBSb2IgSGVycmluZzsgUnVzc2VsbCBLaW5nOyBKb2NoZW4NCj4g
+PiA+IEZyaWVkcmljaDsgSm9lcmcgUm9lZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVzaCBTaGFy
+bWE7IFFpYW5nIFpoYW87DQo+ID4gS3VtYXIgR2FsYTsgU2FudG9zaCBTaGlsaW1rYXI7IExlbyBM
+aTsgWC5CLg0KPiA+ID4gWGllOyBNLkguIExpYW4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbdjEzLCA1
+LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIgZm9yIFFvcklRDQo+ID4gPiBwbGF0Zm9ybXMN
+Cj4gPiA+DQo+ID4gPiBPbiBGcmksIDIwMTYtMTAtMjggYXQgMTE6MzIgKzA4MDAsIFlhbmdibyBM
+dSB3cm90ZToNCj4gPiA+ID4gKwlndXRzLT5yZWdzID0gb2ZfaW9tYXAobnAsIDApOw0KPiA+ID4g
+PiArCWlmICghZ3V0cy0+cmVncykNCj4gPiA+ID4gKwkJcmV0dXJuIC1FTk9NRU07DQo+ID4gPiA+
+ICsNCj4gPiA+ID4gKwkvKiBSZWdpc3RlciBzb2MgZGV2aWNlICovDQo+ID4gPiA+ICsJbWFjaGlu
+ZSA9IG9mX2ZsYXRfZHRfZ2V0X21hY2hpbmVfbmFtZSgpOw0KPiA+ID4gPiArCWlmIChtYWNoaW5l
+KQ0KPiA+ID4gPiArCQlzb2NfZGV2X2F0dHIubWFjaGluZSA9IGRldm1fa3N0cmR1cChkZXYsIG1h
+Y2hpbmUsDQo+ID4gPiA+IEdGUF9LRVJORUwpOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsJc3ZyID0g
+ZnNsX2d1dHNfZ2V0X3N2cigpOw0KPiA+ID4gPiArCXNvY19kaWUgPSBmc2xfc29jX2RpZV9tYXRj
+aChzdnIsIGZzbF9zb2NfZGllKTsNCj4gPiA+ID4gKwlpZiAoc29jX2RpZSkgew0KPiA+ID4gPiAr
+CQlzb2NfZGV2X2F0dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLA0K
+PiA+ID4gPiArCQkJCQkJwqDCoMKgwqDCoCJRb3JJUSAlcyIsIHNvY19kaWUtDQo+ID4gPiA+ID5k
+aWUpOw0KPiA+ID4gPiArCX0gZWxzZSB7DQo+ID4gPiA+ICsJCXNvY19kZXZfYXR0ci5mYW1pbHkg
+PSBkZXZtX2thc3ByaW50ZihkZXYsIEdGUF9LRVJORUwsDQo+ID4gPiA+ICJRb3JJUSIpOw0KPiA+
+ID4gPiArCX0NCj4gPiA+ID4gKwlzb2NfZGV2X2F0dHIuc29jX2lkID0gZGV2bV9rYXNwcmludGYo
+ZGV2LCBHRlBfS0VSTkVMLA0KPiA+ID4gPiArCQkJCQnCoMKgwqDCoMKgInN2cjoweCUwOHgiLCBz
+dnIpOw0KPiA+ID4gPiArCXNvY19kZXZfYXR0ci5yZXZpc2lvbiA9IGRldm1fa2FzcHJpbnRmKGRl
+diwgR0ZQX0tFUk5FTCwNCj4gIiVkLiVkIiwNCj4gPiA+ID4gKwkJCQkJwqDCoMKgwqDCoMKgwqBT
+VlJfTUFKKHN2ciksIFNWUl9NSU4oc3ZyKSk7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlzb2NfZGV2
+ID0gc29jX2RldmljZV9yZWdpc3Rlcigmc29jX2Rldl9hdHRyKTsNCj4gPiA+ID4gKwlpZiAoSVNf
+RVJSKHNvY19kZXYpKQ0KPiA+ID4gPiArCQlyZXR1cm4gUFRSX0VSUihzb2NfZGV2KTsNCj4gPiA+
+DQo+ID4gPiBpb3JlbWFwIGxlYWtzIG9uIHRoaXMgZXJyb3IgcGF0aC4gwqBVc2UgZGV2bV9pb3Jl
+bWFwX3Jlc291cmNlKCkuDQo+ID4gPg0KPiA+DQo+ID4gW0x1IFlhbmdiby1CNDcwOTNdIE9rLiBJ
+IGhhdmUgZml4ZWQgaXQgaW4gdjE0LiBUaGFua3MgOikNCj4gDQo+IFtMdSBZYW5nYm8tQjQ3MDkz
+XSBTb3JyeSwgdXNlZCB0aGUgd3JvbmcgZXJyb3IgY29kZS4uLiBXaWxsIHJlc2VudCBpdA0KDQpb
+THUgWWFuZ2JvLUI0NzA5M10gVGhlIHYxNSBoYWQgYmVlbiBzZW50LiBBbmQgZHJvcHBlZCBwYXRj
+aCAnZHQ6IGJpbmRpbmdzOiB1cGRhdGUgRnJlZXNjYWxlIERDRkcgY29tcGF0aWJsZScsDQpzaW5j
+ZSB0aGF0IHdvcmsgaGFzIGJlZW4gZG9uZSBieSBiZWxvdyBwYXRjaCBvbiBTaGF3bkd1bydzIGxp
+bnV4IHRyZWUuDQonZHQtYmluZGluZ3M6IGZzbDogYWRkIExTMTA0M0EvTFMxMDQ2QS9MUzIwODBB
+IGNvbXBhdGlibGUgZm9yIFNDRkcgYW5kIERDRkcnDQpodHRwczovL2dpdC5rZXJuZWwub3JnL2Nn
+aXQvbGludXgva2VybmVsL2dpdC9zaGF3bmd1by9saW51eC5naXQvY29tbWl0Lz9oPWlteC9kdDY0
+JmlkPTk4MTAzNGEyYmZjYWZmNWM5NWRhZmRlMjRkN2FiZmU3ZjkwMjVjMTkNCg0KVGhhbmtzLg0K
+DQo+IA0KPiA+DQo+ID4gPiAtU2NvdHQNCj4gPiA+DQo+ID4gPiAtLQ0KPiA+ID4gVG8gdW5zdWJz
+Y3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LW1t
+YyINCj4gPiA+IGluIHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
+ZWwub3JnIE1vcmUgbWFqb3Jkb21vDQo+ID4gPiBpbmZvIGF0IGh0dHA6Ly92Z2VyLmtlcm5lbC5v
+cmcvbWFqb3Jkb21vLWluZm8uaHRtbA0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
+YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
