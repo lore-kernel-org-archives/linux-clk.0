@@ -1,96 +1,197 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 4 Oct 2016 18:24:30 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, wens@csie.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH 08/14] dt-bindings: sound: Add sun8i analog codec
- documentation
-Message-ID: <20161004162430.GQ5228@lukather>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <06ea14939405c3eb0fb9be655d26ee564a04a53d.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Oct 2016 18:49:14 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RESEND/PATCH v6 1/3] clk: qcom: Add A53 PLL support
+Message-ID: <20161028014914.GF16026@codeaurora.org>
+References: <20161019132816.31073-1-georgi.djakov@linaro.org>
+ <20161019132816.31073-2-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="p2u4WfPhYOuYlOsk"
-In-Reply-To: <06ea14939405c3eb0fb9be655d26ee564a04a53d.1475571575.git.mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161019132816.31073-2-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/19, Georgi Djakov wrote:
+> Add support for the PLL, which generates the higher range of CPU
+> frequencies on MSM8916 platforms.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 
---p2u4WfPhYOuYlOsk
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please Cc dt reviewers.
 
-Hi,
-
-On Tue, Oct 04, 2016 at 11:46:21AM +0200, Myl=E8ne Josserand wrote:
-> Add the documentation for dt-binding of the analog audiocodec
-> driver for SUN8I SoC.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
 > ---
->  .../devicetree/bindings/sound/sun8i-codec-analog.txt | 20 ++++++++++++++=
-++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec-a=
-nalog.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec-analog.t=
-xt b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+>  .../devicetree/bindings/clock/qcom,a53-pll.txt     | 17 ++++
+>  drivers/clk/qcom/Kconfig                           |  9 +++
+>  drivers/clk/qcom/Makefile                          |  1 +
+>  drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
+>  4 files changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+>  create mode 100644 drivers/clk/qcom/a53-pll.c
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
 > new file mode 100644
-> index 0000000..a03ec20
+> index 000000000000..50e71e4e13a6
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
-> @@ -0,0 +1,20 @@
-> +* Allwinner A23/A33 Analog Codec
+> +++ b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+> @@ -0,0 +1,17 @@
+> +A53 PLL Binding
+> +---------------
+> +The A53 PLL is the main CPU PLL used for frequencies above 1GHz.
+
+Perhaps add which SoC(s) its in?
+
 > +
-> +This codec must be handled as a PRCM subnode.
+> +Required properties :
+> +- compatible : Shall contain only one of the following:
+> +
+> +		"qcom,a53-pll"
 
-Like Mark was saying, you should probably reference the sun6i-prcm.txt
-binding here
+And this could be something more SoC specific too?
 
-> +Required properties:
-> +- compatible: must be either "allwinner,sun8i-codec-analog"
+> +
+> +- reg : shall contain base register location and length
+> +
+> +Example:
+> +
+> +	a53pll: a53pll@0b016000 {
 
-Our compatible prefix is <family>-<soc>, and using the older SoC that
-introduced that block.
+Drop the leading 0
 
-In this case, that would be sun6i-a31, I think?
+> +		compatible = "qcom,a53-pll";
+> +		reg = <0x0b016000 0x40>;
 
-Thanks,
-Maxime
+Should probably have #clock-cells = <0> just in case.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> +	};
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 1fb1f5476cb0..7d27f47f0c92 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -29,3 +29,4 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
+>  obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+>  obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+>  obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+> +obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+> diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+> new file mode 100644
+> index 000000000000..43902080f34b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/a53-pll.c
+> @@ -0,0 +1,94 @@
+> +/*
+> + * Copyright (c) 2016, Linaro Limited
+> + * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
 
---p2u4WfPhYOuYlOsk
-Content-Type: application/pgp-signature; name="signature.asc"
+#include <linux/clk-provider.h>?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +
+> +#include "clk-pll.h"
+> +#include "clk-regmap.h"
+> +
+> +static struct pll_freq_tbl a53pll_freq[] = {
 
-iQIcBAEBAgAGBQJX89e+AAoJEBx+YmzsjxAg4vIP/A+feM0Z7SRv5eTtt5g+yqeA
-RG/N/G1nJt32ENjJvDAMh67S5dUWLcb+4RsmdxfDkdQHjFBVxfCVINI/2/mxo1B2
-0MdSlvMKvWgZsUFUzVpRf9Lmx7/u7zzljcK+z+vvF8mnLGfwB0a6T5j2JIzAWrrw
-218qh4xkDJpwdxseKgqFAS/J0aH2j9cRU/woxk8mwGyFCMQiVrzKS0j0+I/sc8jC
-BtTJPqOIEUCspqGQzg0mDIMsgMbdio23J1F5guOqs43BE9tDKCofaob2PACrVcvj
-ze9IlAd7YnPUma3ijOCEO7iAkhpujq3SMDNMCWbwNIXzMfY7y0WD5nHEatxEERhQ
-iYwi1z2TDtw9MLWVMGtCLQ6Go0V16OQhnOFPR0Ps2Wyv3gNWV11XrpDqLh1rDmdU
-TpUQl4ows57z9jalbd7X7qhwd8G1ESpwA5iLHTnJ7Ec8cby5rkIPWdiXxy9k1pqX
-TjAM4f6ALHeX/VV2z0u787PQt5skpsM7EHiLoklrsxDWTyF0VwtKtltC+VffTn7t
-9cCLn6nOOcmMIcnrmZwAeccSCvPCnkrtSu1fRx3TutudpgkpUgXw2KUuOMhiTEs2
-F4Yqwx6glIzmTQY0BNe+fmL8GqNpKPQ7st9htsUUVNtKOqX/BhsRlhZtdLMSmzGn
-PPLgo4ehUi+6//MOCg6D
-=3pp+
------END PGP SIGNATURE-----
+Can this be const?
 
---p2u4WfPhYOuYlOsk--
+> +	{  998400000, 52, 0x0, 0x1, 0 },
+> +	{ 1094400000, 57, 0x0, 0x1, 0 },
+> +	{ 1152000000, 62, 0x0, 0x1, 0 },
+> +	{ 1209600000, 65, 0x0, 0x1, 0 },
+> +	{ 1401600000, 73, 0x0, 0x1, 0 },
+> +};
+> +
+> +static const struct regmap_config a53pll_regmap_config = {
+> +	.reg_bits		= 32,
+> +	.reg_stride		= 4,
+> +	.val_bits		= 32,
+> +	.max_register		= 0x40,
+> +	.fast_io		= true,
+> +	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
+> +};
+> +
+> +static const struct of_device_id qcom_a53pll_match_table[] = {
+> +	{ .compatible = "qcom,a53-pll" },
+> +	{ }
+> +};
+> +
+> +static int qcom_a53pll_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+> +	struct clk_pll *pll;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	struct regmap *regmap;
+> +	struct clk_init_data init;
+
+Initialize to { } for safety?
+
+> +
+> +	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
+> +	if (!pll)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	pll->l_reg = 0x04,
+> +	pll->m_reg = 0x08,
+> +	pll->n_reg = 0x0c,
+> +	pll->config_reg = 0x14,
+> +	pll->mode_reg = 0x00,
+> +	pll->status_reg = 0x1c,
+> +	pll->status_bit = 16,
+> +	pll->freq_tbl = a53pll_freq,
+
+Replace commas with semicolon please.
+
+> +
+> +	init.name = node->name;
+
+Please just hardcode the string name for now. Best to not get
+tied down to DT node names if we don't need to.
+
+> +	init.parent_names = (const char *[]){ "xo" },
+> +	init.num_parents = 1,
+> +	init.ops = &clk_pll_sr2_ops,
+> +	init.flags = CLK_IS_CRITICAL;
+> +	pll->clkr.hw.init = &init;
+> +
+> +	return devm_clk_register_regmap(dev, &pll->clkr);
+> +}
+> +
+> +static struct platform_driver qcom_a53pll_driver = {
+> +	.probe = qcom_a53pll_probe,
+> +	.driver = {
+> +		.name = "qcom-a53pll",
+> +		.of_match_table = qcom_a53pll_match_table,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(qcom_a53pll_driver);
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
