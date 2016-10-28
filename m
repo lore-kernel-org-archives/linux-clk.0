@@ -1,92 +1,200 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [v15, 0/7] Fix eSDHC host version register bug
-Date: Mon, 31 Oct 2016 09:36:33 +0000
-Message-ID: <DB6PR0401MB25365B15D753E4D60A25C8F8F8AE0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
- <3386858.dvuMhvkN3m@wuerfel>
-In-Reply-To: <3386858.dvuMhvkN3m@wuerfel>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v14, 7/8] base: soc: introduce soc_device_match() interface
+Date: Fri, 28 Oct 2016 13:45:20 +0800
+Message-ID: <1477633521-7391-8-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
+References: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "M.H. Lian" <minghuan.lian@nxp.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>, Claudiu
- Manoil <claudiu.manoil@freescale.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar
- Gala <galak@codeaurora.org>, Scott Wood <oss@buserror.net>,
- Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- "X.B. Xie" <xiaobo.xie@nxp.com>, Leo Li <leoyang.li@nxp.com>,
- "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: Friday, October 28, 2016 6:54 PM
-> To: linux-arm-kernel@lists.infradead.org
-> Cc: Y.B. Lu; linux-mmc@vger.kernel.org; ulf.hansson@linaro.org; Scott
-> Wood; Mark Rutland; Greg Kroah-Hartman; X.B. Xie; M.H. Lian; linux-
-> i2c@vger.kernel.org; linux-clk@vger.kernel.org; Qiang Zhao; Russell King;
-> Bhupesh Sharma; Joerg Roedel; Jochen Friedrich; Claudiu Manoil;
-> devicetree@vger.kernel.org; Rob Herring; Santosh Shilimkar;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Leo Li;
-> iommu@lists.linux-foundation.org; Kumar Gala; linuxppc-
-> dev@lists.ozlabs.org
-> Subject: Re: [v15, 0/7] Fix eSDHC host version register bug
-> 
-> On Friday, October 28, 2016 2:50:11 PM CEST Yangbo Lu wrote:
-> > This patchset is used to fix a host version register bug in the
-> > T4240-R1.0-R2.0 eSDHC controller. To match the SoC version and
-> > revision, 10 previous version patchsets had tried many methods but all
-> of them were rejected by reviewers.
-> > Such as
-> >         - dts compatible method
-> >         - syscon method
-> >         - ifdef PPC method
-> >         - GUTS driver getting SVR method Anrd suggested a
-> > soc_device_match method in v10, and this is the only available method
-> > left now. This v11 patchset introduces the soc_device_match interface
-> > in soc driver.
-> >
-> > The first five patches of Yangbo are to add the GUTS driver. This is
-> > used to register a soc device which contain soc version and revision
-> information.
-> > The other two patches introduce the soc_device_match method in soc
-> > driver and apply it on esdhc driver to fix this bug.
-> >
-> 
-> Looks good overall. With patch 3 dropped (or an explanation why it's
-> still needed), everything
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
->
+From: Arnd Bergmann <arnd@arndb.de>
+
+We keep running into cases where device drivers want to know the exact
+version of the a SoC they are currently running on. In the past, this has
+usually been done through a vendor specific API that can be called by a
+driver, or by directly accessing some kind of version register that is
+not part of the device itself but that belongs to a global register area
+of the chip.
+
+Common reasons for doing this include:
+
+- A machine is not using devicetree or similar for passing data about
+  on-chip devices, but just announces their presence using boot-time
+  platform devices, and the machine code itself does not care about the
+  revision.
+
+- There is existing firmware or boot loaders with existing DT binaries
+  with generic compatible strings that do not identify the particular
+  revision of each device, but the driver knows which SoC revisions
+  include which part.
+
+- A prerelease version of a chip has some quirks and we are using the same
+  version of the bootloader and the DT blob on both the prerelease and the
+  final version. An update of the DT binding seems inappropriate because
+  that would involve maintaining multiple copies of the dts and/or
+  bootloader.
+
+This patch introduces the soc_device_match() interface that is meant to
+work like of_match_node() but instead of identifying the version of a
+device, it identifies the SoC itself using a vendor-agnostic interface.
+
+Unlike of_match_node(), we do not do an exact string compare but instead
+use glob_match() to allow wildcards in strings.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+Changes for v11:
+	- Added this patch for soc match
+Changes for v12:
+	- Corrected the author
+	- Rewrited soc_device_match with while loop
+Changes for v13:
+	- Added ack from Greg
+Changes for v14:
+	- None
+---
+ drivers/base/Kconfig    |  1 +
+ drivers/base/soc.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sys_soc.h |  3 +++
+ 3 files changed, 70 insertions(+)
+
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index fdf44ca..991b21e 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -235,6 +235,7 @@ config GENERIC_CPU_AUTOPROBE
  
-[Lu Yangbo-B47093] Thank you very much:) See my explaination in patch 3 email.
-
-> 	Arnd
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ config SOC_BUS
+ 	bool
++	select GLOB
+ 
+ source "drivers/base/regmap/Kconfig"
+ 
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index b63f23e..0c5cf87 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -13,6 +13,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/err.h>
++#include <linux/glob.h>
+ 
+ static DEFINE_IDA(soc_ida);
+ 
+@@ -159,3 +160,68 @@ static int __init soc_bus_register(void)
+ 	return bus_register(&soc_bus_type);
+ }
+ core_initcall(soc_bus_register);
++
++static int soc_device_match_one(struct device *dev, void *arg)
++{
++	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	const struct soc_device_attribute *match = arg;
++
++	if (match->machine &&
++	    !glob_match(match->machine, soc_dev->attr->machine))
++		return 0;
++
++	if (match->family &&
++	    !glob_match(match->family, soc_dev->attr->family))
++		return 0;
++
++	if (match->revision &&
++	    !glob_match(match->revision, soc_dev->attr->revision))
++		return 0;
++
++	if (match->soc_id &&
++	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
++		return 0;
++
++	return 1;
++}
++
++/*
++ * soc_device_match - identify the SoC in the machine
++ * @matches: zero-terminated array of possible matches
++ *
++ * returns the first matching entry of the argument array, or NULL
++ * if none of them match.
++ *
++ * This function is meant as a helper in place of of_match_node()
++ * in cases where either no device tree is available or the information
++ * in a device node is insufficient to identify a particular variant
++ * by its compatible strings or other properties. For new devices,
++ * the DT binding should always provide unique compatible strings
++ * that allow the use of of_match_node() instead.
++ *
++ * The calling function can use the .data entry of the
++ * soc_device_attribute to pass a structure or function pointer for
++ * each entry.
++ */
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches)
++{
++	int ret = 0;
++
++	if (!matches)
++		return NULL;
++
++	while (!ret) {
++		if (!(matches->machine || matches->family ||
++		      matches->revision || matches->soc_id))
++			break;
++		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
++				       soc_device_match_one);
++		if (!ret)
++			matches++;
++		else
++			return matches;
++	}
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(soc_device_match);
+diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
+index 2739ccb..9f5eb06 100644
+--- a/include/linux/sys_soc.h
++++ b/include/linux/sys_soc.h
+@@ -13,6 +13,7 @@ struct soc_device_attribute {
+ 	const char *family;
+ 	const char *revision;
+ 	const char *soc_id;
++	const void *data;
+ };
+ 
+ /**
+@@ -34,4 +35,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
+  */
+ struct device *soc_device_to_device(struct soc_device *soc);
+ 
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches);
+ #endif /* __SOC_BUS_H */
+-- 
+2.1.0.27.g96db324
