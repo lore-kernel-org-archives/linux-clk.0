@@ -1,92 +1,37 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 5/6] clk: stm32f469: Add QSPI clock
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
- <20161019203228.GC8871@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <ce7829db-a858-2de9-f9e5-89c6642262b1@st.com>
-Date: Thu, 20 Oct 2016 17:44:44 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Oct 2016 18:39:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v3 3/3] clk: stm32f469: Add QSPI clock
+Message-ID: <20161028013940.GC16026@codeaurora.org>
+References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+ <1477041810-12313-4-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20161019203228.GC8871@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1477041810-12313-4-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen
+On 10/21, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch adds the QSPI clock for stm32f469 discovery board.
+> The gate mapping is a little bit different from stm32f429 soc.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
 
+Applied to clk-next + added Rob's ack from v2.
 
-On 10/19/2016 10:32 PM, Stephen Boyd wrote:
-> On 10/14, gabriel.fernandez@st.com wrote:
->> @@ -532,10 +618,42 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
->>   	{ 0 },
->>   };
->>   
->> +struct stm32f4_clk_data {
->> +	const struct stm32f4_gate_data *gates_data;
->> +	const u64 *gates_map;
->> +	int gates_num;
->> +};
->> @@ -549,6 +667,19 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->>   		goto fail;
->>   	}
->>   
->> +	match = of_match_node(stm32f4_of_match, np);
->> +	if (WARN_ON(!match))
->> +		return;
->> +
->> +	data = match->data;
->> +
->> +	clks = kmalloc_array(data->gates_num + END_PRIMARY_CLK,
->> +			sizeof(struct clk_hw *), GFP_KERNEL);
-> sizeof(*clks)?
-ok
-
->
->> +	if (!clks)
->> +		goto fail;
->> +
->> +	stm32f4_gate_map = data->gates_map;
->> +
->>   	hse_clk = of_clk_get_parent_name(np, 0);
->>   
->>   	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
->> @@ -581,11 +712,15 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->>   	clks[FCLK] = clk_hw_register_fixed_factor(NULL, "fclk", "ahb_div",
->>   					       0, 1, 1);
->>   
->> -	for (n = 0; n < ARRAY_SIZE(stm32f4_gates); n++) {
->> -		const struct stm32f4_gate_data *gd = &stm32f4_gates[n];
->> -		unsigned int secondary =
->> -		    8 * (gd->offset - STM32F4_RCC_AHB1ENR) + gd->bit_idx;
->> -		int idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
->> +	for (n = 0; n < data->gates_num; n++) {
->> +		const struct stm32f4_gate_data *gd;
->> +		unsigned int secondary;
->> +		int idx;
->> +
->> +		gd = (struct stm32f4_gate_data *) &data->gates_data[n];
-> Why do we cast here? Get rid of const? Perhaps the struct
-> shouldn't have const on the member instead?
-we don't need cast here.
-
-Thank's Stephen
-
-BR
-Gabriel
->
->> +		secondary = 8 * (gd->offset - STM32F4_RCC_AHB1ENR) +
->> +			gd->bit_idx;
->> +		idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
->>   
->>   		if (idx < 0)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
