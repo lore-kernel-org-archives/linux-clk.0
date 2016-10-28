@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
-        ulf.hansson@linaro.org, Scott Wood <oss@buserror.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Leo Li <leoyang.li@nxp.com>,
-        iommu@lists.linux-foundation.org,
-        Kumar Gala <galak@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [v15, 6/7] base: soc: introduce soc_device_match() interface
-Date: Fri, 28 Oct 2016 12:47:54 +0200
-Message-ID: <2572890.e6aV4hmMEL@wuerfel>
-In-Reply-To: <1477637418-38938-7-git-send-email-yangbo.lu@nxp.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com> <1477637418-38938-7-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Oct 2016 18:38:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v3 1/3] clk: stm32f4: Add LSI & LSE clocks
+Message-ID: <20161028013846.GA16026@codeaurora.org>
+References: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+ <1477041810-12313-2-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1477041810-12313-2-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, October 28, 2016 2:50:17 PM CEST Yangbo Lu wrote:
-> +
-> +static int soc_device_match_one(struct device *dev, void *arg)
-> +{
-> +       struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
-> +       const struct soc_device_attribute *match = arg;
-> +
-> +       if (match->machine &&
-> +           !glob_match(match->machine, soc_dev->attr->machine))
-> +               return 0;
-> +
-> +       if (match->family &&
-> +           !glob_match(match->family, soc_dev->attr->family))
-> +               return 0;
-> +
+On 10/21, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
+> This patch introduces the support of the LSI & LSE clocks.
+> The clock drivers needs to disable the power domain write protection
+> using syscon/regmap to enable these clocks.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
 
-Geert found a bug in my code, and submitted a fix at
-https://patchwork.kernel.org/patch/9361395/
+Applied to clk-next + 
 
-I think you should include that one in your series.
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index c2661e28eeda..5eb05dbf59b8 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -224,7 +224,7 @@ static const u64 stm32f46xx_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
+ 						       0x0000000000000003ull,
+ 						       0x0c777f33f6fec9ffull };
+ 
+-const u64 *stm32f4_gate_map;
++static const u64 *stm32f4_gate_map;
+ 
+ static struct clk_hw **clks;
+ 
 
-	Arnd
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
