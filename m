@@ -1,47 +1,95 @@
-Return-Path: <john.stultz@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sn1nam02on0073.outbound.protection.outlook.com ([104.47.36.73]:48434
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030230AbcJ1HDs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Oct 2016 03:03:48 -0400
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v15, 5/7] MAINTAINERS: add entry for Freescale SoC drivers
+Date: Fri, 28 Oct 2016 14:50:16 +0800
+Message-ID: <1477637418-38938-6-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
+References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
-References: <1475933892-16021-1-git-send-email-shawn.guo@linaro.org>
-From: John Stultz <john.stultz@linaro.org>
-Date: Mon, 10 Oct 2016 10:39:12 -0700
-Message-ID: <CALAqxLV5oOsP8ZcKrwzwK6OsZZwTjsvyk18+aWEFpZh17VttnA@mail.gmail.com>
-Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER for sysctrl and
- mediactrl clock init
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 8, 2016 at 6:38 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
-> The hi6220-sysctrl and hi6220-mediactrl are not only clock provider but
-> also reset controller.  It worked fine that single sysctrl/mediactrl
-> device node in DT can be used to initialize clock driver and populate
-> platform device for reset controller.  But it stops working after
-> commit 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-> gets merged.  The commit sets flag OF_POPULATED during clock
-> initialization to skip the platform device populating for the same
-> device node.  On hi6220, it effectively makes hi6220-sysctrl reset
-> driver not probe any more.
->
-> The patch changes hi6220 sysctrl and mediactrl clock init macro from
-> CLK_OF_DECLARE to CLK_OF_DECLARE_DRIVER, so that the reset driver using
-> the same hardware block can continue working.
->
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Add maintainer entry for Freescale SoC drivers including
+the QE library and the GUTS driver now. Also add maintainer
+for QE library.
 
-Tested-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+Acked-by: Qiang Zhao <qiang.zhao@nxp.com>
+---
+Changes for v8:
+	- Added this patch
+Changes for v9:
+	- Added linux-arm mail list
+	- Removed GUTS driver entry
+Changes for v10:
+	- Changed 'DRIVER' to 'DRIVERS'
+	- Added 'Acked-by' of Scott and Qiang
+Changes for v11:
+	- None
+Changes for v12:
+	- None
+Changes for v13:
+	- None
+Changes for v14:
+	- None
+Changes for v15:
+	- None
+---
+ MAINTAINERS | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-I hit this as well last week when 989eafd0b609 ("clk: core: Avoid
-double initialization of clocks") landed, which killed graphics on my
-HiKey.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c72fa18..cf3aaee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5037,9 +5037,18 @@ S:	Maintained
+ F:	drivers/net/ethernet/freescale/fman
+ F:	Documentation/devicetree/bindings/powerpc/fsl/fman.txt
+ 
++FREESCALE SOC DRIVERS
++M:	Scott Wood <oss@buserror.net>
++L:	linuxppc-dev@lists.ozlabs.org
++L:	linux-arm-kernel@lists.infradead.org
++S:	Maintained
++F:	drivers/soc/fsl/
++F:	include/linux/fsl/
++
+ FREESCALE QUICC ENGINE LIBRARY
++M:	Qiang Zhao <qiang.zhao@nxp.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+-S:	Orphan
++S:	Maintained
+ F:	drivers/soc/fsl/qe/
+ F:	include/soc/fsl/*qe*.h
+ F:	include/soc/fsl/*ucc*.h
+-- 
+2.1.0.27.g96db324
 
-My workaround was a bit hackish, as I don't really know when one
-should use OF_DECLARE vs OF_DECLARE_DRIVER, but I also converted the
-hi6220_clk_ao and hi6220_clk_power to the _DRIVER side. Your patch
-seems to work just as well for me, but I wanted to double check with
-you that the ao/power clks didn't need the conversion as well.
-
-thanks
--john
