@@ -1,46 +1,85 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 01/15] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Tue, 18 Oct 2016 18:45:54 +0300
-Message-ID: <1476805568-19264-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: Scott Wood <oss@buserror.net>, "linux-mmc@vger.kernel.org"
+ <linux-mmc@vger.kernel.org>, "ulf.hansson@linaro.org"
+ <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: RE: [v13, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Fri, 28 Oct 2016 06:00:03 +0000
+Message-ID: <DB6PR0401MB2536E2CE7B604554F52AF3AFF8AD0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+ <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
+ <1477629956.6812.15.camel@buserror.net>
+In-Reply-To: <1477629956.6812.15.camel@buserror.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- include/linux/clk/ti.h | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 6110fe0..07308db 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -145,8 +143,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
--- 
-1.9.1
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtbW1jLW93bmVy
+QHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOmxpbnV4LW1tYy0NCj4gb3duZXJAdmdlci5rZXJuZWwu
+b3JnXSBPbiBCZWhhbGYgT2YgU2NvdHQgV29vZA0KPiBTZW50OiBGcmlkYXksIE9jdG9iZXIgMjgs
+IDIwMTYgMTI6NDYgUE0NCj4gVG86IFkuQi4gTHU7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7
+IHVsZi5oYW5zc29uQGxpbmFyby5vcmc7IEFybmQNCj4gQmVyZ21hbm4NCj4gQ2M6IGxpbnV4cHBj
+LWRldkBsaXN0cy5vemxhYnMub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgt
+YXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWkyY0B2Z2VyLmtl
+cm5lbC5vcmc7IGlvbW11QGxpc3RzLmxpbnV4LQ0KPiBmb3VuZGF0aW9uLm9yZzsgbmV0ZGV2QHZn
+ZXIua2VybmVsLm9yZzsgR3JlZyBLcm9haC1IYXJ0bWFuOyBNYXJrIFJ1dGxhbmQ7DQo+IFJvYiBI
+ZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbiBGcmllZHJpY2g7IEpvZXJnIFJvZWRlbDsgQ2xh
+dWRpdSBNYW5vaWw7DQo+IEJodXBlc2ggU2hhcm1hOyBRaWFuZyBaaGFvOyBLdW1hciBHYWxhOyBT
+YW50b3NoIFNoaWxpbWthcjsgTGVvIExpOyBYLkIuDQo+IFhpZTsgTS5ILiBMaWFuDQo+IFN1Ympl
+Y3Q6IFJlOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIgZm9yIFFvcklRIHBs
+YXRmb3Jtcw0KPiANCj4gT24gRnJpLCAyMDE2LTEwLTI4IGF0IDExOjMyICswODAwLCBZYW5nYm8g
+THUgd3JvdGU6DQo+ID4gKwlndXRzLT5yZWdzID0gb2ZfaW9tYXAobnAsIDApOw0KPiA+ICsJaWYg
+KCFndXRzLT5yZWdzKQ0KPiA+ICsJCXJldHVybiAtRU5PTUVNOw0KPiA+ICsNCj4gPiArCS8qIFJl
+Z2lzdGVyIHNvYyBkZXZpY2UgKi8NCj4gPiArCW1hY2hpbmUgPSBvZl9mbGF0X2R0X2dldF9tYWNo
+aW5lX25hbWUoKTsNCj4gPiArCWlmIChtYWNoaW5lKQ0KPiA+ICsJCXNvY19kZXZfYXR0ci5tYWNo
+aW5lID0gZGV2bV9rc3RyZHVwKGRldiwgbWFjaGluZSwNCj4gPiBHRlBfS0VSTkVMKTsNCj4gPiAr
+DQo+ID4gKwlzdnIgPSBmc2xfZ3V0c19nZXRfc3ZyKCk7DQo+ID4gKwlzb2NfZGllID0gZnNsX3Nv
+Y19kaWVfbWF0Y2goc3ZyLCBmc2xfc29jX2RpZSk7DQo+ID4gKwlpZiAoc29jX2RpZSkgew0KPiA+
+ICsJCXNvY19kZXZfYXR0ci5mYW1pbHkgPSBkZXZtX2thc3ByaW50ZihkZXYsIEdGUF9LRVJORUws
+DQo+ID4gKwkJCQkJCcKgwqDCoMKgwqAiUW9ySVEgJXMiLCBzb2NfZGllLQ0KPiA+ID5kaWUpOw0K
+PiA+ICsJfSBlbHNlIHsNCj4gPiArCQlzb2NfZGV2X2F0dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmlu
+dGYoZGV2LCBHRlBfS0VSTkVMLA0KPiA+ICJRb3JJUSIpOw0KPiA+ICsJfQ0KPiA+ICsJc29jX2Rl
+dl9hdHRyLnNvY19pZCA9IGRldm1fa2FzcHJpbnRmKGRldiwgR0ZQX0tFUk5FTCwNCj4gPiArCQkJ
+CQnCoMKgwqDCoMKgInN2cjoweCUwOHgiLCBzdnIpOw0KPiA+ICsJc29jX2Rldl9hdHRyLnJldmlz
+aW9uID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLCAiJWQuJWQiLA0KPiA+ICsJCQkJ
+CcKgwqDCoMKgwqDCoMKgU1ZSX01BSihzdnIpLCBTVlJfTUlOKHN2cikpOw0KPiA+ICsNCj4gPiAr
+CXNvY19kZXYgPSBzb2NfZGV2aWNlX3JlZ2lzdGVyKCZzb2NfZGV2X2F0dHIpOw0KPiA+ICsJaWYg
+KElTX0VSUihzb2NfZGV2KSkNCj4gPiArCQlyZXR1cm4gUFRSX0VSUihzb2NfZGV2KTsNCj4gDQo+
+IGlvcmVtYXAgbGVha3Mgb24gdGhpcyBlcnJvciBwYXRoLiDCoFVzZSBkZXZtX2lvcmVtYXBfcmVz
+b3VyY2UoKS4NCj4gDQoNCltMdSBZYW5nYm8tQjQ3MDkzXSBPay4gSSBoYXZlIGZpeGVkIGl0IGlu
+IHYxNC4gVGhhbmtzIDopDQoNCj4gLVNjb3R0DQo+IA0KPiAtLQ0KPiBUbyB1bnN1YnNjcmliZSBm
+cm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtbW1jIiBpbg0K
+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZyBNb3Jl
+IG1ham9yZG9tbyBpbmZvIGF0DQo+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
+Zm8uaHRtbA0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+bGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
+YWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
+dXgtYXJtLWtlcm5lbAo=
