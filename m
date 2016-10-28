@@ -1,173 +1,206 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Oct 2016 13:24:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v2 1/6] clk: stm32f4: Add LSI & LSE clocks
-Message-ID: <20161019202433.GA8871@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <1476436699-21879-2-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v13, 7/8] base: soc: introduce soc_device_match() interface
+Date: Fri, 28 Oct 2016 11:32:33 +0800
+Message-ID: <1477625554-46700-8-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476436699-21879-2-git-send-email-gabriel.fernandez@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
+ Yangbo Lu <yangbo.lu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
+ Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, gabriel.fernandez@st.com wrote:
-> @@ -292,8 +298,110 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
->  	return clks[i];
->  }
->  
-> +static struct regmap *pdrm;
+From: Arnd Bergmann <arnd@arndb.de>
 
-This can't be part of the stm32_rgate structure?
+We keep running into cases where device drivers want to know the exact
+version of the a SoC they are currently running on. In the past, this has
+usually been done through a vendor specific API that can be called by a
+driver, or by directly accessing some kind of version register that is
+not part of the device itself but that belongs to a global register area
+of the chip.
 
-> +
-> +static inline void disable_power_domain_write_protection(void)
-> +{
-> +	regmap_update_bits(pdrm, 0x00, (1 << 8), (1 << 8));
-> +}
-> +
-> +static inline void enable_power_domain_write_protection(void)
-> +{
-> +	regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
-> +}
-> +
-> +struct stm32_rgate {
-> +	struct	clk_hw hw;
-> +	struct	clk_gate gate;
+Common reasons for doing this include:
 
-Why not use the clk_hw inside clk_gate?
+- A machine is not using devicetree or similar for passing data about
+  on-chip devices, but just announces their presence using boot-time
+  platform devices, and the machine code itself does not care about the
+  revision.
 
-> +	u8	bit_rdy_idx;
-> +};
-> +
-> +#define RTC_TIMEOUT 1000000
-> +
-> +#define to_rgclk(_hw) container_of(_hw, struct stm32_rgate, hw)
-> +
-> +static int rgclk_enable(struct clk_hw *hw)
-> +{
-> +	struct stm32_rgate *rgate = to_rgclk(hw);
-> +	struct clk_hw *gate_hw = &rgate->gate.hw;
-> +	struct clk_gate *gate = to_clk_gate(gate_hw);
-> +	u32 reg;
-> +	int ret;
-> +
-> +	__clk_hw_set_clk(gate_hw, hw);
+- There is existing firmware or boot loaders with existing DT binaries
+  with generic compatible strings that do not identify the particular
+  revision of each device, but the driver knows which SoC revisions
+  include which part.
 
-Then we don't need this part.
+- A prerelease version of a chip has some quirks and we are using the same
+  version of the bootloader and the DT blob on both the prerelease and the
+  final version. An update of the DT binding seems inappropriate because
+  that would involve maintaining multiple copies of the dts and/or
+  bootloader.
 
-> +
-> +	disable_power_domain_write_protection();
-> +
-> +	clk_gate_ops.enable(gate_hw);
-> +
-> +	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
-> +			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
-> +
-> +	enable_power_domain_write_protection();
-> +
-> +	return ret;
-> +}
-> +
-> +static void rgclk_disable(struct clk_hw *hw)
-> +{
-> +	clk_gate_ops.disable(hw);
-> +}
-> +
-> +static int rgclk_is_enabled(struct clk_hw *hw)
-> +{
-> +	return clk_gate_ops.is_enabled(hw);
-> +}
-> +
-> +
+This patch introduces the soc_device_match() interface that is meant to
+work like of_match_node() but instead of identifying the version of a
+device, it identifies the SoC itself using a vendor-agnostic interface.
 
-Drop the double newline here please.
+Unlike of_match_node(), we do not do an exact string compare but instead
+use glob_match() to allow wildcards in strings.
 
-> +static const struct clk_ops rgclk_ops = {
-> +	.enable = rgclk_enable,
-> +	.disable = rgclk_disable,
-> +	.is_enabled = rgclk_is_enabled,
-> +};
-> +
-> +static struct clk_hw *clk_register_rgate(struct device *dev, const char *name,
-> +		const char *parent_name, unsigned long flags,
-> +		void __iomem *reg, u8 bit_idx, u8 bit_rdy_idx,
-> +		u8 clk_gate_flags, spinlock_t *lock)
-> +{
-> +	struct stm32_rgate *rgate;
-> +	struct clk_init_data init = { NULL };
-> +	struct clk_hw *hw;
-> +	int ret;
-> +
-> +	rgate = kzalloc(sizeof(*rgate), GFP_KERNEL);
-> +	if (!rgate)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name = name;
-> +	init.ops = &rgclk_ops;
-> +	init.flags = flags | CLK_IS_BASIC;
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+Changes for v11:
+	- Added this patch for soc match
+Changes for v12:
+	- Corrected the author
+	- Rewrited soc_device_match with while loop
+Changes for v13:
+	- Added ack from Greg
+---
+ drivers/base/Kconfig    |  1 +
+ drivers/base/soc.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sys_soc.h |  3 +++
+ 3 files changed, 70 insertions(+)
 
-Please no CLK_IS_BASIC flags.
-
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +
-> +	rgate->hw.init = &init;
-> +	rgate->bit_rdy_idx = bit_rdy_idx;
-> +
-> +	rgate->gate.lock = lock;
-> +	rgate->gate.reg = reg;
-> +	rgate->gate.bit_idx = bit_idx;
-> +
-> +	hw = &rgate->hw;
-> +	ret = clk_hw_register(dev, hw);
-> +	if (ret) {
-> +		kfree(rgate);
-> +		hw = ERR_PTR(ret);
-> +	}
-> +
-> +	return hw;
-> +}
-> +
->  static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
->  
-> +const char *rtc_parents[4] = {
-
-static const char * const?
-
-> +	"no-clock", "lse", "lsi", "hse-rtc"
-> +};
-> +
->  static const struct clk_div_table ahb_div_table[] = {
->  	{ 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
->  	{ 0x4,   1 }, { 0x5,   1 }, { 0x6,   1 }, { 0x7,   1 },
-> @@ -319,6 +427,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->  		return;
->  	}
->  
-> +	pdrm = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
-
-Is there a dt binding update for this? It should probably be
-optional?
-
-> +	if (IS_ERR(pdrm)) {
-> +		pr_err("%s: Unable to get syscfg\n", __func__);
-> +		goto fail;
-> +	}
-> +
->  	hse_clk = of_clk_get_parent_name(np, 0);
->  
-
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index fdf44ca..991b21e 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -235,6 +235,7 @@ config GENERIC_CPU_AUTOPROBE
+ 
+ config SOC_BUS
+ 	bool
++	select GLOB
+ 
+ source "drivers/base/regmap/Kconfig"
+ 
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index b63f23e..0c5cf87 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -13,6 +13,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/err.h>
++#include <linux/glob.h>
+ 
+ static DEFINE_IDA(soc_ida);
+ 
+@@ -159,3 +160,68 @@ static int __init soc_bus_register(void)
+ 	return bus_register(&soc_bus_type);
+ }
+ core_initcall(soc_bus_register);
++
++static int soc_device_match_one(struct device *dev, void *arg)
++{
++	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	const struct soc_device_attribute *match = arg;
++
++	if (match->machine &&
++	    !glob_match(match->machine, soc_dev->attr->machine))
++		return 0;
++
++	if (match->family &&
++	    !glob_match(match->family, soc_dev->attr->family))
++		return 0;
++
++	if (match->revision &&
++	    !glob_match(match->revision, soc_dev->attr->revision))
++		return 0;
++
++	if (match->soc_id &&
++	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
++		return 0;
++
++	return 1;
++}
++
++/*
++ * soc_device_match - identify the SoC in the machine
++ * @matches: zero-terminated array of possible matches
++ *
++ * returns the first matching entry of the argument array, or NULL
++ * if none of them match.
++ *
++ * This function is meant as a helper in place of of_match_node()
++ * in cases where either no device tree is available or the information
++ * in a device node is insufficient to identify a particular variant
++ * by its compatible strings or other properties. For new devices,
++ * the DT binding should always provide unique compatible strings
++ * that allow the use of of_match_node() instead.
++ *
++ * The calling function can use the .data entry of the
++ * soc_device_attribute to pass a structure or function pointer for
++ * each entry.
++ */
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches)
++{
++	int ret = 0;
++
++	if (!matches)
++		return NULL;
++
++	while (!ret) {
++		if (!(matches->machine || matches->family ||
++		      matches->revision || matches->soc_id))
++			break;
++		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
++				       soc_device_match_one);
++		if (!ret)
++			matches++;
++		else
++			return matches;
++	}
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(soc_device_match);
+diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
+index 2739ccb..9f5eb06 100644
+--- a/include/linux/sys_soc.h
++++ b/include/linux/sys_soc.h
+@@ -13,6 +13,7 @@ struct soc_device_attribute {
+ 	const char *family;
+ 	const char *revision;
+ 	const char *soc_id;
++	const void *data;
+ };
+ 
+ /**
+@@ -34,4 +35,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
+  */
+ struct device *soc_device_to_device(struct soc_device *soc);
+ 
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches);
+ #endif /* __SOC_BUS_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
