@@ -1,67 +1,47 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <20161018235108.GP8871@codeaurora.org>
- <d878b846-556d-180b-8ebf-2d06646efb58@st.com>
- <20161019202904.GB8871@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <36f11be6-0706-6fdb-681c-5d11d5989e28@st.com>
-Date: Thu, 20 Oct 2016 09:52:54 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.187]:60202 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752419AbcJ1Kxn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Oct 2016 06:53:43 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Yangbo Lu <yangbo.lu@nxp.com>, linux-mmc@vger.kernel.org,
+        ulf.hansson@linaro.org, Scott Wood <oss@buserror.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Leo Li <leoyang.li@nxp.com>,
+        iommu@lists.linux-foundation.org, Kumar Gala <galak@codeaurora.org>
+Subject: Re: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
+Date: Fri, 28 Oct 2016 12:52:44 +0200
+Message-ID: <2723366.1bJeJ7SKI6@wuerfel>
+In-Reply-To: <1477637418-38938-4-git-send-email-yangbo.lu@nxp.com>
+References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com> <1477637418-38938-4-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20161019202904.GB8871@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Friday, October 28, 2016 2:50:14 PM CEST Yangbo Lu wrote:
+> Move mpc85xx.h to include/linux/fsl and rename it to svr.h as a common
+> header file.  This SVR numberspace is used on some ARM chips as well as
+> PPC, and even to check for a PPC SVR multi-arch drivers would otherwise
+> need to ifdef the header inclusion and all references to the SVR symbols.
+> 
+> 
 
+I don't see any of the contents of this header referenced by the soc driver
+any more. I think you can just drop this patch.
 
-On 10/19/2016 10:29 PM, Stephen Boyd wrote:
-> On 10/19, Gabriel Fernandez wrote:
->> Hi Stephen,
->>
->>
->> On 10/19/2016 01:51 AM, Stephen Boyd wrote:
->>> On 10/14, gabriel.fernandez@st.com wrote:
->>>> Gabriel Fernandez (6):
->>>>    clk: stm32f4: Add LSI & LSE clocks
->>>>    ARM: dts: stm32f429: add LSI and LSE clocks
->>>>    arm: stmf32: Enable SYSCON
->>>>    clk: stm32f4: Add RTC clock
->>>>    clk: stm32f469: Add QSPI clock
->>>>    ARM: dts: stm32f429: Add QSPI clock
->>> Can the clk patches be picked without causing problems for
->>> existing dt changes? Do you want an ack from clk maintainers
->>> instead of us picking the clk patches up? The series has
->>> intermingled clk and dts changes so I'm confused.
->>>
->> Thanks for reviewing.
->>
->> Normally DT patches will be taken by STM32 maintainer, but yes there
->> is a dependency between patch 1 & 2, so if you push the patch 1 into
->> clk-next tree you have to take also patch 2.
-> Let's break the dependency by making the required property
-> optional or key off a different compatible string. As it stands
-> right now applying patch 1 will cause things to break until the
-> second patch lands which is not great.
->
->> You have to be synchronized with Alexandre Torgue.
->>
->>
-> I'd prefer zero synchronization. Please just send the clk patches
-> the next time and leave the stuff for arm-soc out of the patch
-> series. Thanks.
-Ok
+	Arnd
 
-Many Thanks.
