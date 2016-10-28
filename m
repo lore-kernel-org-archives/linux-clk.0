@@ -1,63 +1,82 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [PATCH v3 0/3] STM32F4 Add RTC & QSPI clocks
-Date: Fri, 21 Oct 2016 11:23:27 +0200
-Message-ID: <1477041810-12313-1-git-send-email-gabriel.fernandez@st.com>
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v14, 2/8] ARM64: dts: ls2080a: add device configuration node
+Date: Fri, 28 Oct 2016 13:45:15 +0800
+Message-ID: <1477633521-7391-3-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
+References: <1477633521-7391-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
-v3:
- - remove arm & DT patches from this patch-set
- - solve issue of dependency with DT
- - remove clk_hw from struct stm32_rgate (use hw of clk_gate)
- - suppress CLK_IS_BASIC flags of clk_register_rgate()
- - cosmetic changes
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- None
+Changes for v12:
+	- None
+Changes for v13:
+	- None
+Changes for v14:
+	- None
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-v2:
- - rename compatible property "st,stm32f46xx-rcc" into "st,stm32f469-rcc"
- - cosmetic: remove bad copy/paste
-
-This patch-set introduce RTC and QSPI clocks for STM32F4 socs
-RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
-
-example to use rtc clock:
-
-		rtc: rtc@40002800 {
-			compatible = "st,stm32-rtc";
-			reg = <0x40002800 0x400>;
-			...
-			clocks = <&rcc 1 CLK_RTC>;
-
-			assigned-clocks =  <&rcc 1 CLK_RTC>;
-			assigned-clock-parents = <&rcc 1 CLK_LSE>;
-			...
-		};
-
-Gabriel Fernandez (3):
-  clk: stm32f4: Add LSI & LSE clocks
-  clk: stm32f4: Add RTC clock
-  clk: stm32f469: Add QSPI clock
-
- .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
- drivers/clk/clk-stm32f4.c                          | 435 ++++++++++++++++++++-
- 2 files changed, 417 insertions(+), 22 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index 337da90..c03b099 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -215,6 +215,12 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
 -- 
-1.9.1
+2.1.0.27.g96db324
