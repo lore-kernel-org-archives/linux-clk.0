@@ -1,44 +1,90 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 12 Oct 2016 12:02:47 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 6/6] cpufreq: pxa: convert to clock API
-Message-ID: <20161012063247.GH19385@vireshk-i7>
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
- <1476130149-31834-7-git-send-email-robert.jarzmik@free.fr>
- <20161012023601.GC19385@vireshk-i7>
- <87mvia6q8p.fsf@belgarion.home>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-cys01nam02on0042.outbound.protection.outlook.com ([104.47.37.42]:46336
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965129AbcJ1HDS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Oct 2016 03:03:18 -0400
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v15, 1/7] ARM64: dts: ls2080a: add device configuration node
+Date: Fri, 28 Oct 2016 14:50:12 +0800
+Message-ID: <1477637418-38938-2-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
+References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87mvia6q8p.fsf@belgarion.home>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12-10-16, 08:22, Robert Jarzmik wrote:
-> Viresh Kumar <viresh.kumar@linaro.org> writes:
-> 
-> > On 10-10-16, 22:09, Robert Jarzmik wrote:
-> >> As the clock settings have been introduced into the clock pxa drivers,
-> >> which are now available to change the CPU clock by themselves, remove
-> >> the clock handling from this driver, and rely on pxa clock drivers.
-> >> 
-> >> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> >> ---
-> >>  drivers/cpufreq/pxa2xx-cpufreq.c | 191 ++++++++-------------------------------
-> >>  1 file changed, 39 insertions(+), 152 deletions(-)
-> >
-> > As you mentioned in the previous patch, why can't you use cpufreq-dt
-> > driver now and delete this one ?
-> 
-> PXA architecture have both legacy platform_data based configurations and new
-> devicetree based ones.
+Add the dts node for device configuration unit that provides
+general purpose configuration and status for the device.
 
-I don't see any platform data specific code in this driver. What am I
-missing ?
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v5:
+	- Added this patch
+Changes for v6:
+	- None
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- None
+Changes for v12:
+	- None
+Changes for v13:
+	- None
+Changes for v14:
+	- None
+Changes for v15:
+	- None
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index 337da90..c03b099 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -215,6 +215,12 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,ls2080a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
+ 		serial0: serial@21c0500 {
+ 			compatible = "fsl,ns16550", "ns16550a";
+ 			reg = <0x0 0x21c0500 0x0 0x100>;
 -- 
-viresh
+2.1.0.27.g96db324
+
