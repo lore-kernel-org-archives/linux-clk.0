@@ -1,111 +1,86 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 4 Oct 2016 18:19:50 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: vinod.koul@intel.com, wens@csie.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH 09/14] dt-bindings: sound: Add sun8i codec documentation
-Message-ID: <20161004161950.GP5228@lukather>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
- <a5b0bdc6b50dfcc2dc0145d00edd08fee3ce7764.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <lho@apm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Bi+HF1AHjw0mn3zx"
-In-Reply-To: <a5b0bdc6b50dfcc2dc0145d00edd08fee3ce7764.1475571575.git.mylene.josserand@free-electrons.com>
+In-Reply-To: <20161027233344.GF26139@codeaurora.org>
+References: <1477610508-7449-1-git-send-email-labbott@redhat.com>
+ <ccea4ce8-5607-c164-f90a-291075bcc13e@redhat.com> <20161027233344.GF26139@codeaurora.org>
+From: Loc Ho <lho@apm.com>
+Date: Thu, 27 Oct 2016 21:57:38 -0700
+Message-ID: <CAPw-ZTk60L5MpC3qgYP0dXB_ZGKSj7NtMPSMCx9sinaK6EDwaA@mail.gmail.com>
+Subject: Re: [PATCH] clk: xgene: Don't call __pa on ioremaped address
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laura Abbott <labbott@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/alternative; boundary=001a113fbd488674a5053fe5b26c
 List-ID: <linux-clk.vger.kernel.org>
 
-
---Bi+HF1AHjw0mn3zx
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+--001a113fbd488674a5053fe5b26c
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 04, 2016 at 11:46:22AM +0200, Myl=E8ne Josserand wrote:
-> Add the documentation for dt-binding of the digital audio codec driver
-> for sun8i SoC.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-> ---
->  .../devicetree/bindings/sound/sun8i-codec.txt      | 24 ++++++++++++++++=
-++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec.t=
-xt
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec.txt b/Do=
-cumentation/devicetree/bindings/sound/sun8i-codec.txt
-> new file mode 100644
-> index 0000000..1808869
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
-> @@ -0,0 +1,24 @@
-> +* Allwinner A23/A33 Codec
-> +
-> +Required properties:
-> +- compatible: must be either "allwinner,sun4i-a23-codec" or
-> +  "allwinner,sun7i-a33-codec"
+Hi Stephen,
 
-Copy and paste issue ? :)
+On Thu, Oct 27, 2016 at 4:33 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-One compatible by line is usually favored, since when you'll add new
-compatibles, you don't have to modify the context.xs
+> On 10/27, Laura Abbott wrote:
+> > On 10/27/2016 04:21 PM, Laura Abbott wrote:
+> > >
+> > >@@ -269,7 +267,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
+> > >             xgene_clk_write(data, pclk->param.csr_reg +
+> > >                                     pclk->param.reg_csr_offset);
+> > >             pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X
+> mask 0x%08X value 0x%08X\n",
+> >
+> > Bah, this got fixed locally but didn't get amended. I'll remove
+> > the format here in a v2 assuming there are no other objections.
+> >
+>
+> Include a Fixes: tag too? It would be nice if sparse complained
+> about __pa used on an __iomem pointer too.
+>
 
-> +- reg: must contain the registers location and length
-> +- interrupts: must contain the codec interrupt
-> +- clocks: a list of phandle + clock-specifer pairs, one for each entry
-> +  in clock-names.
-> +- clock-names: should contain followings:
-> +   - "apb": the parent APB clock for this controller
-> +   - "codec": the parent module clock
+=E2=80=8BThe change looks fine after you fix the pr_debug mentioned above. =
+Will you
+be generate another version?
 
-We're usually calling them "bus" and "mod".
+-Loc=E2=80=8B
 
-> +
-> +Example:
-> +codec: codec@01c22e00 {
-> +	#sound-dai-cells =3D <0>;
-> +	compatible =3D "allwinner,sun8i-a33-codec";
-> +	reg =3D <0x01c22e00 0x400>; /* SUNXI_AUDIO_PBASE + 0x200 */
-> +	reg-names =3D "audio";
+--001a113fbd488674a5053fe5b26c
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-You don't define reg-names in your bindings, while your code relies on
-it. It isn't really needed, since you have only one couple of base +
-size, so it should just go away.
+<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-family:arial,he=
+lvetica,sans-serif">Hi Stephen,</div><div class=3D"gmail_extra"><br><div cl=
+ass=3D"gmail_quote">On Thu, Oct 27, 2016 at 4:33 PM, Stephen Boyd <span dir=
+=3D"ltr">&lt;<a href=3D"mailto:sboyd@codeaurora.org" target=3D"_blank">sboy=
+d@codeaurora.org</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On=
+ 10/27, Laura Abbott wrote:<br>
+&gt; On 10/27/2016 04:21 PM, Laura Abbott wrote:<br>
+&gt; &gt;<br>
+&gt; &gt;@@ -269,7 +267,7 @@ static int xgene_clk_enable(struct clk_hw *hw)=
+<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0xgene_clk_write(da=
+ta, pclk-&gt;param.csr_reg +<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0pclk-&gt;=
+param.reg_csr_offset);<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0pr_debug(&quot;%s =
+CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n&quot;=
+,<br>
+&gt;<br>
+&gt; Bah, this got fixed locally but didn&#39;t get amended. I&#39;ll remov=
+e<br>
+&gt; the format here in a v2 assuming there are no other objections.<br>
+&gt;<br>
+<br>
+Include a Fixes: tag too? It would be nice if sparse complained<br>
+about __pa used on an __iomem pointer too.<br></blockquote><div><br></div><=
+div><div class=3D"gmail_default" style=3D"font-family:arial,helvetica,sans-=
+serif">=E2=80=8BThe change looks fine after you fix the pr_debug mentioned =
+above. Will you be generate another version?</div><div class=3D"gmail_defau=
+lt" style=3D"font-family:arial,helvetica,sans-serif"><br></div><div class=
+=3D"gmail_default" style=3D"font-family:arial,helvetica,sans-serif">-Loc=E2=
+=80=8B</div><br></div></div></div></div>
 
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---Bi+HF1AHjw0mn3zx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX89amAAoJEBx+YmzsjxAgAvsP/0g2m6b5C2k2QAmN/LjCdE9v
-p2o912Ypsefw2Cx4Bi1hvgMFq5+6mRNZIH7qoypMSCO3FL5mAtRWcFz9d0Ej4KMp
-SnRxfCtfa68t54V677eDTGp0gEhS0iCiehxgz5hkNJnw5r6FXpUM0HzTq8fbPiI6
-vUhwOF+wGKqVYfpwEL9lA7tDixtspnDAJlbTQEH7EXkeR03HKPD2DB9eG1LfHYMl
-M+cNv17eBlG3xuMl58jvrhJr2ndk/rpEgieoBPagJr6lU3WFLRCQovL8hiJjHbyl
-alISLNzhKWdq34xfSw8Jw8UB5ViFtbYUDPTkM5PAwU2Qud29KbRir1vXFCL1KpeW
-kOcDrRK0UjWYn7tKHJz4/Tx9mYFYlCNvl+okOL6OgkfdhFXCJXM5srGHjaUi2BR6
-5pwbHB3OTc5VD7LGk1av0+OCN0TUxYuC+lS+ppXmqqjtIRh5pKo+fSrTgFoBe47Q
-Zd+pHYdoHrvPflcx6A2LI3eqQKH8Xajcq3RClkZV06x0+hO3IjDEG+TBd/yA1MS+
-sn6hBjfXN4H8Wrnz2qTNng5vzH7TO0D5fUpz1GP1Y93lnQ2Xg10486vMcC4AsLUh
-AwJe1qzqe+bTSDYfFW0FkQWpqSAEMMUKcJ6yMUb2JxW+nhundREUTRvgp++SDTte
-1SvrCsYrmBwzi/cCNo6L
-=PCFx
------END PGP SIGNATURE-----
-
---Bi+HF1AHjw0mn3zx--
+--001a113fbd488674a5053fe5b26c--
