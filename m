@@ -1,459 +1,101 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-Date: Thu, 27 Oct 2016 22:53:57 +0300
-Message-ID: <3797605.lKJkRScdp8@wasted.cogentembedded.com>
-In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: "Y.B. Lu" <yangbo.lu@nxp.com>, Scott Wood <oss@buserror.net>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Arnd Bergmann
+ <arnd@arndb.de>
+Subject: RE: [v13, 5/8] soc: fsl: add GUTS driver for QorIQ platforms
+Date: Fri, 28 Oct 2016 06:06:10 +0000
+Message-ID: <DB6PR0401MB253607E63983FFF02C24B75DF8AD0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+ <1477625554-46700-6-git-send-email-yangbo.lu@nxp.com>
+ <1477629956.6812.15.camel@buserror.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
-and Software Reset support code, using the CPG/MSSR driver core. 
-
-Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-<geert+renesas@glider.be>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
-
-Changes in version 2:
-- added support  for non-existing PLL0CR;
-- removed the function reading the mode pins;
-- added/used the #define's for PLL0CR.STC;
-- used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
-- removed rcar_gen2_read_modemr();
-- added Geert's tag.
-
- drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
- 2 files changed, 411 insertions(+)
-
-Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
-===================================================================
---- /dev/null
-+++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -0,0 +1,369 @@
-+/*
-+ * R-Car Gen2 Clock Pulse Generator
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published
-+ * by the Free Software Foundation.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+
-+#include "renesas-cpg-mssr.h"
-+#include "rcar-gen2-cpg.h"
-+
-+#define CPG_FRQCRB		0x0004
-+#define CPG_FRQCRB_KICK		BIT(31)
-+#define CPG_SDCKCR		0x0074
-+#define CPG_PLL0CR		0x00d8
-+#define CPG_PLL0CR_STC_SHIFT	24
-+#define CPG_PLL0CR_STC_MASK	(0x7f << CPG_PLL0CR_STC_SHIFT)
-+#define CPG_FRQCRC		0x00e0
-+#define CPG_FRQCRC_ZFC_SHIFT	8
-+#define CPG_FRQCRC_ZFC_MASK	(0x1f << CPG_FRQCRC_ZFC_SHIFT)
-+#define CPG_ADSPCKCR		0x025c
-+#define CPG_RCANCKCR		0x0270
-+
-+static spinlock_t cpg_lock;
-+
-+/*
-+ * Z Clock
-+ *
-+ * Traits of this clock:
-+ * prepare - clk_prepare only ensures that parents are prepared
-+ * enable - clk_enable only ensures that parents are enabled
-+ * rate - rate is adjustable.  clk->rate = parent->rate * mult / 32
-+ * parent - fixed parent.  No clk_set_parent support
-+ */
-+
-+struct cpg_z_clk {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+	void __iomem *kick_reg;
-+};
-+
-+#define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
-+
-+static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+	unsigned int val;
-+
-+	val = (readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK) >> CPG_FRQCRC_ZFC_SHIFT;
-+	mult = 32 - val;
-+
-+	return div_u64((u64)parent_rate * mult, 32);
-+}
-+
-+static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	unsigned long prate  = *parent_rate;
-+	unsigned int mult;
-+
-+	if (!prate)
-+		prate = 1;
-+
-+	mult = div_u64((u64)rate * 32, prate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	return *parent_rate / 32 * mult;
-+}
-+
-+static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+	u32 val, kick;
-+	unsigned int i;
-+
-+	mult = div_u64((u64)rate * 32, parent_rate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
-+		return -EBUSY;
-+
-+	val = readl(zclk->reg);
-+	val &= ~CPG_FRQCRC_ZFC_MASK;
-+	val |= (32 - mult) << CPG_FRQCRC_ZFC_SHIFT;
-+	writel(val, zclk->reg);
-+
-+	/*
-+	 * Set KICK bit in FRQCRB to update hardware setting and wait for
-+	 * clock change completion.
-+	 */
-+	kick = readl(zclk->kick_reg);
-+	kick |= CPG_FRQCRB_KICK;
-+	writel(kick, zclk->kick_reg);
-+
-+	/*
-+	 * Note: There is no HW information about the worst case latency.
-+	 *
-+	 * Using experimental measurements, it seems that no more than
-+	 * ~10 iterations are needed, independently of the CPU rate.
-+	 * Since this value might be dependent on external xtal rate, pll1
-+	 * rate or even the other emulation clocks rate, use 1000 as a
-+	 * "super" safe value.
-+	 */
-+	for (i = 1000; i; i--) {
-+		if (!(readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
-+			return 0;
-+
-+		cpu_relax();
-+	}
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static const struct clk_ops cpg_z_clk_ops = {
-+	.recalc_rate = cpg_z_clk_recalc_rate,
-+	.round_rate = cpg_z_clk_round_rate,
-+	.set_rate = cpg_z_clk_set_rate,
-+};
-+
-+static struct clk * __init cpg_z_clk_register(const char *name,
-+					      const char *parent_name,
-+					      void __iomem *base)
-+{
-+	struct clk_init_data init;
-+	struct cpg_z_clk *zclk;
-+	struct clk *clk;
-+
-+	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
-+	if (!zclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &cpg_z_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	zclk->reg = base + CPG_FRQCRC;
-+	zclk->kick_reg = base + CPG_FRQCRB;
-+	zclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(zclk);
-+
-+	return clk;
-+}
-+
-+static struct clk * __init cpg_rcan_clk_register(const char *name,
-+						 const char *parent_name,
-+						 void __iomem *base)
-+{
-+	struct clk_fixed_factor *fixed;
-+	struct clk_gate *gate;
-+	struct clk *clk;
-+
-+	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
-+	if (!fixed)
-+		return ERR_PTR(-ENOMEM);
-+
-+	fixed->mult = 1;
-+	fixed->div = 6;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate) {
-+		kfree(fixed);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	gate->reg = base + CPG_RCANCKCR;
-+	gate->bit_idx = 8;
-+	gate->flags = CLK_GATE_SET_TO_DISABLE;
-+	gate->lock = &cpg_lock;
-+
-+	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
-+				     &fixed->hw, &clk_fixed_factor_ops,
-+				     &gate->hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk)) {
-+		kfree(gate);
-+		kfree(fixed);
-+	}
-+
-+	return clk;
-+}
-+
-+/* ADSP divisors */
-+static const struct clk_div_table cpg_adsp_div_table[] = {
-+	{  1,  3 }, {  2,  4 }, {  3,  6 }, {  4,  8 },
-+	{  5, 12 }, {  6, 16 }, {  7, 18 }, {  8, 24 },
-+	{ 10, 36 }, { 11, 48 }, {  0,  0 },
-+};
-+
-+static struct clk * __init cpg_adsp_clk_register(const char *name,
-+						 const char *parent_name,
-+						 void __iomem *base)
-+{
-+	struct clk_divider *div;
-+	struct clk_gate *gate;
-+	struct clk *clk;
-+
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	div->reg = base + CPG_ADSPCKCR;
-+	div->width = 4;
-+	div->table = cpg_adsp_div_table;
-+	div->lock = &cpg_lock;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate) {
-+		kfree(div);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	gate->reg = base + CPG_ADSPCKCR;
-+	gate->bit_idx = 8;
-+	gate->flags = CLK_GATE_SET_TO_DISABLE;
-+	gate->lock = &cpg_lock;
-+
-+	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
-+				     &div->hw, &clk_divider_ops,
-+				     &gate->hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk)) {
-+		kfree(gate);
-+		kfree(div);
-+	}
-+
-+	return clk;
-+}
-+
-+/* SDHI divisors */
-+static const struct clk_div_table cpg_sdh_div_table[] = {
-+	{  0,  2 }, {  1,  3 }, {  2,  4 }, {  3,  6 },
-+	{  4,  8 }, {  5, 12 }, {  6, 16 }, {  7, 18 },
-+	{  8, 24 }, { 10, 36 }, { 11, 48 }, {  0,  0 },
-+};
-+
-+static const struct clk_div_table cpg_sd01_div_table[] = {
-+	{  4,  8 }, {  5, 12 }, {  6, 16 }, {  7, 18 },
-+	{  8, 24 }, { 10, 36 }, { 11, 48 }, { 12, 10 },
-+	{  0,  0 },
-+};
-+
-+static const struct rcar_gen2_cpg_pll_config *cpg_pll_config __initdata;
-+static u32 cpg_mode __initdata;
-+
-+struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
-+					       const struct cpg_core_clk *core,
-+					       const struct cpg_mssr_info *info,
-+					       struct clk **clks,
-+					       void __iomem *base)
-+{
-+	const struct clk_div_table *table = NULL;
-+	const struct clk *parent;
-+	const char *parent_name;
-+	unsigned int mult = 1;
-+	unsigned int div = 1;
-+	unsigned int shift;
-+
-+	parent = clks[core->parent];
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	parent_name = __clk_get_name(parent);
-+
-+	switch (core->type) {
-+	/* R-Car Gen2 */
-+	case CLK_TYPE_GEN2_MAIN:
-+		div = cpg_pll_config->extal_div;
-+		break;
-+
-+	case CLK_TYPE_GEN2_PLL0:
-+		/*
-+		 * PLL0  is a configurable multiplier clock except on  R-Car E2.
-+		 * Register the PLL0 clock as a fixed factor clock for now as
-+		 * there's  no generic multiplier clock implementation and we
-+		 * currently have no need to change the multiplier value.
-+		 */
-+		mult = cpg_pll_config->pll0_mult;
-+		if (mult) {
-+			/* PLL0 is VCO/3 on R-Car E2 */
-+			div  = 3;
-+		} else	{
-+			u32 pll0cr = readl(base + CPG_PLL0CR);
-+
-+			mult = ((pll0cr & CPG_PLL0CR_STC_MASK) >>
-+				CPG_PLL0CR_STC_SHIFT) + 1;
-+		}
-+		break;
-+
-+	case CLK_TYPE_GEN2_PLL1:
-+		mult = cpg_pll_config->pll1_mult / 2;
-+		break;
-+
-+	case CLK_TYPE_GEN2_PLL3:
-+		mult = cpg_pll_config->pll3_mult;
-+		break;
-+
-+	case CLK_TYPE_GEN2_Z:
-+		return cpg_z_clk_register(core->name, parent_name, base);
-+
-+	case CLK_TYPE_GEN2_LB:
-+		div = cpg_mode & BIT(18) ? 36 : 24;
-+		break;
-+
-+	case CLK_TYPE_GEN2_ADSP:
-+		return cpg_adsp_clk_register(core->name, parent_name, base);
-+
-+	case CLK_TYPE_GEN2_SDH:
-+		table = cpg_sdh_div_table;
-+		shift = 8;
-+		break;
-+
-+	case CLK_TYPE_GEN2_SD0:
-+		table = cpg_sd01_div_table;
-+		shift = 4;
-+		break;
-+
-+	case CLK_TYPE_GEN2_SD1:
-+		table = cpg_sd01_div_table;
-+		shift = 0;
-+		break;
-+
-+	case CLK_TYPE_GEN2_QSPI:
-+		div = (cpg_mode & (BIT(3) | BIT(2) | BIT(1))) == BIT(2) ?
-+		      8 : 10;
-+		break;
-+
-+	case CLK_TYPE_GEN2_RCAN:
-+		return cpg_rcan_clk_register(core->name, parent_name, base);
-+
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (!table)
-+		return clk_register_fixed_factor(NULL, core->name, parent_name,
-+						 0, mult, div);
-+	else
-+		return clk_register_divider_table(NULL, core->name,
-+						  parent_name, 0,
-+						  base + CPG_SDCKCR, shift, 4,
-+						  0, table, &cpg_lock);
-+}
-+
-+int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config)
-+{
-+	cpg_pll_config = config;
-+
-+	spin_lock_init(&cpg_lock);
-+
-+	return 0;
-+}
-Index: linux/drivers/clk/renesas/rcar-gen2-cpg.h
-===================================================================
---- /dev/null
-+++ linux/drivers/clk/renesas/rcar-gen2-cpg.h
-@@ -0,0 +1,42 @@
-+/*
-+ * R-Car Gen2 Clock Pulse Generator
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published
-+ * by the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#ifndef __CLK_RENESAS_RCAR_GEN2_CPG_H__
-+#define __CLK_RENESAS_RCAR_GEN2_CPG_H__
-+
-+enum rcar_gen2_clk_types {
-+	CLK_TYPE_GEN2_MAIN = CLK_TYPE_CUSTOM,
-+	CLK_TYPE_GEN2_PLL0,
-+	CLK_TYPE_GEN2_PLL1,
-+	CLK_TYPE_GEN2_PLL3,
-+	CLK_TYPE_GEN2_Z,
-+	CLK_TYPE_GEN2_LB,
-+	CLK_TYPE_GEN2_ADSP,
-+	CLK_TYPE_GEN2_SDH,
-+	CLK_TYPE_GEN2_SD0,
-+	CLK_TYPE_GEN2_SD1,
-+	CLK_TYPE_GEN2_QSPI,
-+	CLK_TYPE_GEN2_RCAN,
-+};
-+
-+struct rcar_gen2_cpg_pll_config {
-+	unsigned int extal_div;
-+	unsigned int pll1_mult;
-+	unsigned int pll3_mult;
-+	unsigned int pll0_mult;		/* leave as zero if PLL0CR exists */
-+};
-+
-+struct clk *rcar_gen2_cpg_clk_register(struct device *dev,
-+				       const struct cpg_core_clk *core,
-+				       const struct cpg_mssr_info *info,
-+				       struct clk **clks, void __iomem *base);
-+int rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config);
-+
-+#endif
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBZLkIuIEx1DQo+IFNlbnQ6IEZy
+aWRheSwgT2N0b2JlciAyOCwgMjAxNiAyOjAwIFBNDQo+IFRvOiAnU2NvdHQgV29vZCc7IGxpbnV4
+LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IHVsZi5oYW5zc29uQGxpbmFyby5vcmc7IEFybmQNCj4gQmVy
+Z21hbm4NCj4gQ2M6IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBkZXZpY2V0cmVlQHZn
+ZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5v
+cmc7IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGlvbW11QGxpc3RzLmxpbnV4LQ0KPiBmb3Vu
+ZGF0aW9uLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgR3JlZyBLcm9haC1IYXJ0bWFuOyBN
+YXJrIFJ1dGxhbmQ7DQo+IFJvYiBIZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbiBGcmllZHJp
+Y2g7IEpvZXJnIFJvZWRlbDsgQ2xhdWRpdSBNYW5vaWw7DQo+IEJodXBlc2ggU2hhcm1hOyBRaWFu
+ZyBaaGFvOyBLdW1hciBHYWxhOyBTYW50b3NoIFNoaWxpbWthcjsgTGVvIExpOyBYLkIuDQo+IFhp
+ZTsgTS5ILiBMaWFuDQo+IFN1YmplY3Q6IFJFOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VU
+UyBkcml2ZXIgZm9yIFFvcklRIHBsYXRmb3Jtcw0KPiANCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogbGludXgtbW1jLW93bmVyQHZnZXIua2VybmVsLm9y
+ZyBbbWFpbHRvOmxpbnV4LW1tYy0NCj4gPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFs
+ZiBPZiBTY290dCBXb29kDQo+ID4gU2VudDogRnJpZGF5LCBPY3RvYmVyIDI4LCAyMDE2IDEyOjQ2
+IFBNDQo+ID4gVG86IFkuQi4gTHU7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IHVsZi5oYW5z
+c29uQGxpbmFyby5vcmc7IEFybmQNCj4gPiBCZXJnbWFubg0KPiA+IENjOiBsaW51eHBwYy1kZXZA
+bGlzdHMub3psYWJzLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gbGludXgt
+YXJtLSBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsNCj4gPiBsaW51eC0gY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtaTJjQHZnZXIua2Vy
+bmVsLm9yZzsNCj4gPiBpb21tdUBsaXN0cy5saW51eC0gZm91bmRhdGlvbi5vcmc7IG5ldGRldkB2
+Z2VyLmtlcm5lbC5vcmc7IEdyZWcNCj4gPiBLcm9haC1IYXJ0bWFuOyBNYXJrIFJ1dGxhbmQ7IFJv
+YiBIZXJyaW5nOyBSdXNzZWxsIEtpbmc7IEpvY2hlbg0KPiA+IEZyaWVkcmljaDsgSm9lcmcgUm9l
+ZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVzaCBTaGFybWE7IFFpYW5nIFpoYW87DQo+IEt1bWFy
+IEdhbGE7IFNhbnRvc2ggU2hpbGlta2FyOyBMZW8gTGk7IFguQi4NCj4gPiBYaWU7IE0uSC4gTGlh
+bg0KPiA+IFN1YmplY3Q6IFJlOiBbdjEzLCA1LzhdIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIg
+Zm9yIFFvcklRIHBsYXRmb3Jtcw0KPiA+DQo+ID4gT24gRnJpLCAyMDE2LTEwLTI4IGF0IDExOjMy
+ICswODAwLCBZYW5nYm8gTHUgd3JvdGU6DQo+ID4gPiArCWd1dHMtPnJlZ3MgPSBvZl9pb21hcChu
+cCwgMCk7DQo+ID4gPiArCWlmICghZ3V0cy0+cmVncykNCj4gPiA+ICsJCXJldHVybiAtRU5PTUVN
+Ow0KPiA+ID4gKw0KPiA+ID4gKwkvKiBSZWdpc3RlciBzb2MgZGV2aWNlICovDQo+ID4gPiArCW1h
+Y2hpbmUgPSBvZl9mbGF0X2R0X2dldF9tYWNoaW5lX25hbWUoKTsNCj4gPiA+ICsJaWYgKG1hY2hp
+bmUpDQo+ID4gPiArCQlzb2NfZGV2X2F0dHIubWFjaGluZSA9IGRldm1fa3N0cmR1cChkZXYsIG1h
+Y2hpbmUsDQo+ID4gPiBHRlBfS0VSTkVMKTsNCj4gPiA+ICsNCj4gPiA+ICsJc3ZyID0gZnNsX2d1
+dHNfZ2V0X3N2cigpOw0KPiA+ID4gKwlzb2NfZGllID0gZnNsX3NvY19kaWVfbWF0Y2goc3ZyLCBm
+c2xfc29jX2RpZSk7DQo+ID4gPiArCWlmIChzb2NfZGllKSB7DQo+ID4gPiArCQlzb2NfZGV2X2F0
+dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLA0KPiA+ID4gKwkJCQkJ
+CcKgwqDCoMKgwqAiUW9ySVEgJXMiLCBzb2NfZGllLQ0KPiA+ID4gPmRpZSk7DQo+ID4gPiArCX0g
+ZWxzZSB7DQo+ID4gPiArCQlzb2NfZGV2X2F0dHIuZmFtaWx5ID0gZGV2bV9rYXNwcmludGYoZGV2
+LCBHRlBfS0VSTkVMLA0KPiA+ID4gIlFvcklRIik7DQo+ID4gPiArCX0NCj4gPiA+ICsJc29jX2Rl
+dl9hdHRyLnNvY19pZCA9IGRldm1fa2FzcHJpbnRmKGRldiwgR0ZQX0tFUk5FTCwNCj4gPiA+ICsJ
+CQkJCcKgwqDCoMKgwqAic3ZyOjB4JTA4eCIsIHN2cik7DQo+ID4gPiArCXNvY19kZXZfYXR0ci5y
+ZXZpc2lvbiA9IGRldm1fa2FzcHJpbnRmKGRldiwgR0ZQX0tFUk5FTCwgIiVkLiVkIiwNCj4gPiA+
+ICsJCQkJCcKgwqDCoMKgwqDCoMKgU1ZSX01BSihzdnIpLCBTVlJfTUlOKHN2cikpOw0KPiA+ID4g
+Kw0KPiA+ID4gKwlzb2NfZGV2ID0gc29jX2RldmljZV9yZWdpc3Rlcigmc29jX2Rldl9hdHRyKTsN
+Cj4gPiA+ICsJaWYgKElTX0VSUihzb2NfZGV2KSkNCj4gPiA+ICsJCXJldHVybiBQVFJfRVJSKHNv
+Y19kZXYpOw0KPiA+DQo+ID4gaW9yZW1hcCBsZWFrcyBvbiB0aGlzIGVycm9yIHBhdGguIMKgVXNl
+IGRldm1faW9yZW1hcF9yZXNvdXJjZSgpLg0KPiA+DQo+IA0KPiBbTHUgWWFuZ2JvLUI0NzA5M10g
+T2suIEkgaGF2ZSBmaXhlZCBpdCBpbiB2MTQuIFRoYW5rcyA6KQ0KDQpbTHUgWWFuZ2JvLUI0NzA5
+M10gU29ycnksIHVzZWQgdGhlIHdyb25nIGVycm9yIGNvZGUuLi4gV2lsbCByZXNlbnQgaXQNCg0K
+PiANCj4gPiAtU2NvdHQNCj4gPg0KPiA+IC0tDQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
+IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LW1tYyINCj4gPiBpbiB0aGUg
+Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZyBNb3JlIG1ham9y
+ZG9tbw0KPiA+IGluZm8gYXQgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
+dG1sDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
+eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
+cm0ta2VybmVsCg==
