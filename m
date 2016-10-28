@@ -1,34 +1,92 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robdclark@gmail.com,
-	jcrouse@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 0/2] clk: qcom: Add support for msm8996 gpu gdscs
-Date: Thu, 20 Oct 2016 15:08:05 +0530
-Message-Id: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <labbott@redhat.com>
+Return-Path: <labbott@redhat.com>
+Subject: Re: [PATCHv2] clk: xgene: Don't call __pa on ioremaped address
+To: Loc Ho <lho@apm.com>
+References: <1477673978-15424-1-git-send-email-labbott@redhat.com>
+ <CAPw-ZT=XYA3Q=nYC649iC41eebC8fqMsiOaG+O8mhP24D4JN5Q@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <83c41979-96a0-27bb-4e5a-329396ab296a@redhat.com>
+Date: Fri, 28 Oct 2016 10:09:47 -0700
+MIME-Version: 1.0
+In-Reply-To: <CAPw-ZT=XYA3Q=nYC649iC41eebC8fqMsiOaG+O8mhP24D4JN5Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The GPU gdsc for 8996 has an additonal clamp that needs to be
-released/deasserted before the gdsc can be enabled, and asserted
-back on a disable.
-This series adds support to do that based off a flag in the gdsc
-driver and also populates the data for the 2 gdscs which are part
-of mmcc
+On 10/28/2016 10:07 AM, Loc Ho wrote:
+> Hi Laura,
+>
+>> ioremaped addresses are not linearly mapped so the physical
+>> address can not be figured out via __pa. More generally, there
+>> is no guarantee that backing value of an ioremapped address
+>> is a physical address at all. The value here is only used
+>> for debugging so just drop the call to __pa on the ioremapped
+>> address.
+>>
+>> Fixes: 6ae5fd381251 ("clk: xgene: Silence sparse warnings")
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>> v2: Fix up one more format string
+>>
+>> I put the fixes tag to match with the cleanup that was done.
+>> If there is interest in this fix for pre-4.2 kernels for
+>> stable, I can submit a patch for that as well.
+>> ---
+>>  drivers/clk/clk-xgene.c | 10 ++++------
+>>  1 file changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+>> index 3433132..1e67655 100644
+>> --- a/drivers/clk/clk-xgene.c
+>> +++ b/drivers/clk/clk-xgene.c
+>> @@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
+>>         struct xgene_clk *pclk = to_xgene_clk(hw);
+>>         unsigned long flags = 0;
+>>         u32 data;
+>> -       phys_addr_t reg;
+>>
+>>         if (pclk->lock)
+>>                 spin_lock_irqsave(pclk->lock, flags);
+>>
+>>         if (pclk->param.csr_reg != NULL) {
+>>                 pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
+>> -               reg = __pa(pclk->param.csr_reg);
+>>                 /* First enable the clock */
+>>                 data = xgene_clk_read(pclk->param.csr_reg +
+>>                                         pclk->param.reg_clk_offset);
+>>                 data |= pclk->param.reg_clk_mask;
+>>                 xgene_clk_write(data, pclk->param.csr_reg +
+>>                                         pclk->param.reg_clk_offset);
+>> -               pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+>> -                       clk_hw_get_name(hw), &reg,
+>> +               pr_debug("%s clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+>> +                       clk_hw_get_name(hw),
+>>                         pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
+>>                         data);
+>>
+>> @@ -268,8 +266,8 @@ static int xgene_clk_enable(struct clk_hw *hw)
+>>                 data &= ~pclk->param.reg_csr_mask;
+>>                 xgene_clk_write(data, pclk->param.csr_reg +
+>>                                         pclk->param.reg_csr_offset);
+>> -               pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
+>> -                       clk_hw_get_name(hw), &reg,
+>> +               pr_debug("%s csr offset 0x%08X mask 0x%08X value 0x%08X\n",
+>> +                       clk_hw_get_name(hw),
+>>                         pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
+>>                         data);
+>>         }
+>
+>
+> The code looks fine to me. May be overly cautious here. Do you have a
+> board to test this out?
+>
+> -Loc
+>
 
-Rajendra Nayak (2):
-  clk: qcom: Handle the clamp_io assert/deassert sequence
-  clk: qcom: mmcc-8996: Add gpu gdscs
+Yes, that was how I caught the problem. There are no errors that I
+can see with this patch applied.
 
- drivers/clk/qcom/gdsc.c         | 26 +++++++++++++++++++++++++-
- drivers/clk/qcom/gdsc.h         |  2 ++
- drivers/clk/qcom/mmcc-msm8996.c | 24 ++++++++++++++++++++++++
- 3 files changed, 51 insertions(+), 1 deletion(-)
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Thanks,
+Laura
