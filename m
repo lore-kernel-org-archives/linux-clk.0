@@ -1,30 +1,161 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 0/2] Renesas R8A7745 CPG/MSSR clock support
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
- robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <92ed8fd0-33c5-f5af-15ce-311cf61e5f83@cogentembedded.com>
-Date: Fri, 28 Oct 2016 00:01:12 +0300
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
+ <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [v13, 8/8] mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+Date: Fri, 28 Oct 2016 11:32:34 +0800
+Message-ID: <1477625554-46700-9-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
+References: <1477625554-46700-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen Friedrich <jochen@scram.de>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
+ Yangbo Lu <yangbo.lu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
+ Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/27/2016 11:41 PM, Sergei Shtylyov wrote:
+The eSDHC of T4240-R1.0-R2.0 has incorrect vender version and spec version.
+Acturally the right version numbers should be VVN=0x13 and SVN = 0x1.
+This patch adds the GUTS driver support for eSDHC driver to match SoC.
+And fix host version to avoid that incorrect version numbers break down
+the ADMA data transfer.
 
->    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-> 'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
-> depend on the common R-Car Gen2 support patch. As the DT patches in the
-> R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
-> it might make sense to merge this patch to the 'renesas.git' repo as well...
->
-> [1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-> [2/2] clk: renesas: cpg-mssr: add R8A7745 support
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Scott Wood <oss@buserror.net>
+---
+Changes for v2:
+	- Got SVR through iomap instead of dts
+Changes for v3:
+	- Managed GUTS through syscon instead of iomap in eSDHC driver
+Changes for v4:
+	- Got SVR by GUTS driver instead of SYSCON
+Changes for v5:
+	- Changed to get SVR through API fsl_guts_get_svr()
+	- Combined patch 4, patch 5 and patch 6 into one
+Changes for v6:
+	- Added 'Acked-by: Ulf Hansson'
+Changes for v7:
+	- None
+Changes for v8:
+	- Added 'Acked-by: Scott Wood'
+Changes for v9:
+	- None
+Changes for v10:
+	- None
+Changes for v11:
+	- Changed to use soc_device_match
+Changes for v12:
+	- Matched soc through .family field instead of .soc_id
+Changes for v13:
+	- None
+---
+ drivers/mmc/host/Kconfig          |  1 +
+ drivers/mmc/host/sdhci-of-esdhc.c | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-    Forgot to mention that the patch #2 depends on Geert's RST driver in order 
-to build.
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 5274f50..a1135a9 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -144,6 +144,7 @@ config MMC_SDHCI_OF_ESDHC
+ 	depends on MMC_SDHCI_PLTFM
+ 	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
+ 	select MMC_SDHCI_IO_ACCESSORS
++	select FSL_GUTS
+ 	help
+ 	  This selects the Freescale eSDHC controller support.
+ 
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index fb71c86..57bdb9e 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -18,6 +18,7 @@
+ #include <linux/of.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
++#include <linux/sys_soc.h>
+ #include <linux/mmc/host.h>
+ #include "sdhci-pltfm.h"
+ #include "sdhci-esdhc.h"
+@@ -28,6 +29,7 @@
+ struct sdhci_esdhc {
+ 	u8 vendor_ver;
+ 	u8 spec_ver;
++	bool quirk_incorrect_hostver;
+ };
+ 
+ /**
+@@ -73,6 +75,8 @@ static u32 esdhc_readl_fixup(struct sdhci_host *host,
+ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 				     int spec_reg, u32 value)
+ {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_esdhc *esdhc = sdhci_pltfm_priv(pltfm_host);
+ 	u16 ret;
+ 	int shift = (spec_reg & 0x2) * 8;
+ 
+@@ -80,6 +84,12 @@ static u16 esdhc_readw_fixup(struct sdhci_host *host,
+ 		ret = value & 0xffff;
+ 	else
+ 		ret = (value >> shift) & 0xffff;
++	/* Workaround for T4240-R1.0-R2.0 eSDHC which has incorrect
++	 * vendor version and spec version information.
++	 */
++	if ((spec_reg == SDHCI_HOST_VERSION) &&
++	    (esdhc->quirk_incorrect_hostver))
++		ret = (VENDOR_V_23 << SDHCI_VENDOR_VER_SHIFT) | SDHCI_SPEC_200;
+ 	return ret;
+ }
+ 
+@@ -558,6 +568,12 @@ static const struct sdhci_pltfm_data sdhci_esdhc_le_pdata = {
+ 	.ops = &sdhci_esdhc_le_ops,
+ };
+ 
++static struct soc_device_attribute soc_incorrect_hostver[] = {
++	{ .family = "QorIQ T4240", .revision = "1.0", },
++	{ .family = "QorIQ T4240", .revision = "2.0", },
++	{ },
++};
++
+ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host;
+@@ -571,6 +587,10 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
+ 	esdhc->vendor_ver = (host_ver & SDHCI_VENDOR_VER_MASK) >>
+ 			     SDHCI_VENDOR_VER_SHIFT;
+ 	esdhc->spec_ver = host_ver & SDHCI_SPEC_VER_MASK;
++	if (soc_device_match(soc_incorrect_hostver))
++		esdhc->quirk_incorrect_hostver = true;
++	else
++		esdhc->quirk_incorrect_hostver = false;
+ }
+ 
+ static int sdhci_esdhc_probe(struct platform_device *pdev)
+-- 
+2.1.0.27.g96db324
 
-MBR, Sergei
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
