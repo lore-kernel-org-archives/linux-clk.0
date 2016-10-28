@@ -1,40 +1,85 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Oct 2016 16:37:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+Return-Path: <t-kristo@ti.com>
 Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Message-ID: <20161028233750.GQ16026@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
 References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
  <20161028005341.GR26139@codeaurora.org>
- <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+Date: Fri, 28 Oct 2016 10:19:15 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+In-Reply-To: <20161028005341.GR26139@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/28, Tero Kristo wrote:
-> Eventually that should happen. However, we have plenty of legacy
-> code still in place which depend on clk_get functionality within
-> kernel. The major contributing factor is the hwmod codebase, for
-> which we have plans to:
-> 
-> - get this clock driver merged
-> - implement a new interconnect driver for OMAP family SoCs
-> - interconnect driver will use DT handles for fetching clocks,
-> rather than clock aliases
-> - reset handling will be implemented as part of the interconnect
-> driver somehow (no prototype / clear plans for that as of yet)
-> - all the hwmod stuff can be dropped
-> 
-> The clock alias handling is still needed as a transition phase until
-> all the above is done, then we can start dropping them. Basically
-> anything that is using omap_hwmod depends on the clock aliases right
-> now.
+On 28/10/16 03:53, Stephen Boyd wrote:
+> On 10/18, Tero Kristo wrote:
+>> Hi,
+>>
+>> As a recap, this series is part of the ongoing work to get rid of the
+>> hwmod database under mach-omap2 folder. This series converts the
+>> existing clock related functionality to a new clock type, which will
+>> allow removing all the .clkctrl related items from hwmod database.
+>> This series adds sample solution for OMAP4 only, rest of the SoCs can
+>> be converted automatically once the approach is acceptable.
+>>
+>> v4 has the following high level changes compared to v3:
+>> - Clock data is now statically built-in to the driver
+>> - Adds clockdomain provider support, which can be used to fetch
+>>   clocks based on clockdomain relation. Only clockdomains need to be
+>>   registered within DT.
+>> - Added some automatic clock alias generation support to the TI clock
+>>   drivers, if this is not acceptable, I can change this to add all the
+>>   aliases under the individual drivers/clk/ti/clk-xyz.c files
+>
+> Is there a plan to get rid of the aliases entirely? Or we can't
+> do that because DT is not fully supported on these platforms? I'm
+> mostly wondering how long that sort of code is going to stick
+> around and if it's better to fully compartmentalize it to the
+> SoCs that are affected or if it should be a core feature of TI
+> driver.
 
-Ok, sounds good. Thanks.
+Eventually that should happen. However, we have plenty of legacy code 
+still in place which depend on clk_get functionality within kernel. The 
+major contributing factor is the hwmod codebase, for which we have plans to:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+- get this clock driver merged
+- implement a new interconnect driver for OMAP family SoCs
+- interconnect driver will use DT handles for fetching clocks, rather 
+than clock aliases
+- reset handling will be implemented as part of the interconnect driver 
+somehow (no prototype / clear plans for that as of yet)
+- all the hwmod stuff can be dropped
+
+The clock alias handling is still needed as a transition phase until all 
+the above is done, then we can start dropping them. Basically anything 
+that is using omap_hwmod depends on the clock aliases right now.
+
+>
+>> - As a sample, only omap4 clock data is available with this set
+>>
+>> After this series, the clock data can be dropped from the hwmod database
+>> for OMAP4, I have working patches for this for anybody interested. Also,
+>> the DT files require some modifications to add proper support for
+>> clockdomain providers, and drop some unnecessary clock nodes.
+>
+> Can this be shared as a git tree on the web? Hopefully I can see
+> the resulting DTS and understand what's going on better.
+
+Sure, here is a test branch I've been using, it has some extra hacks on 
+top for debugging purposes, but the DTS changes are visible also.
+
+https://github.com/t-kristo/linux-pm/tree/4.9-rc1-hwmod-clks-w-data
+
+
+>
+>>
+>> Boot + simple PM test seems to be working on OMAP4 with this set, and
+>> boot test with other boards I have access to don't seem to cause any
+>> issues. Applies on top of 4.9-rc1.
+>>
+>
+> Awesome!
+>
