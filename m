@@ -1,55 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:50766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933235AbcJaOLX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 31 Oct 2016 10:11:23 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Oct 2016 18:41:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Emil Lundmark <emil@limesaudio.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	"Ken . Lin" <ken.lin@advantech.com>
+Subject: Re: [PATCH v3 2/2] clk: imx: improve precision of AV PLL to 1 Hz
+Message-ID: <20161028014130.GE16026@codeaurora.org>
+References: <cover.1476267249.git.emil@limesaudio.com>
+ <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVZFTeRDpRkF4s-=XM+BAT0=W4Lm=o8C4eYBTR4uUSBQw@mail.gmail.com>
-References: <120f00f2-94b6-aead-7bb4-9917bc338660@redhat.com>
- <1475856570-10743-1-git-send-email-labbott@redhat.com> <CAMuHMdW1xaYvcv4RtevyCsLrLQmcujNSQJ1839++cX1US-UKBw@mail.gmail.com>
- <20161031122140.GB6774@kroah.com> <CAMuHMdVZFTeRDpRkF4s-=XM+BAT0=W4Lm=o8C4eYBTR4uUSBQw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 31 Oct 2016 09:10:57 -0500
-Message-ID: <CAL_JsqJsPhy_ATTaTH8H2kaAQP04V1Huiv5J-SQM=CMBq5hmSQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Make Kconfig text for DEBUG_TEST_DRIVER_REMOVE
- stronger
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <66f5967187f915fe7039f4dbfb77db88a2423094.1476267249.git.emil@limesaudio.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 7:28 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Greg,
->
-> On Mon, Oct 31, 2016 at 1:21 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->> On Mon, Oct 31, 2016 at 11:12:45AM +0100, Geert Uytterhoeven wrote:
->>> On Fri, Oct 7, 2016 at 6:09 PM, Laura Abbott <labbott@redhat.com> wrote:
->>> > The current state of driver removal is not great.
->>> > CONFIG_DEBUG_TEST_DRIVER_REMOVE finds lots of errors. The help text
->>> > currently undersells exactly how many errors this option will find. Add
->>> > a bit more description to indicate this option shouldn't be turned on
->>> > unless you actually want to debug driver removal. The text can be
->>> > changed later when more drivers are fixed up.
->>>
->>> Indeed, this is failing miserably for e.g. SoC clock drivers using
->>> platform_driver_probe(), which are never retried, rendering the complete
->>> system useless.
->>
->> Why are they never retried?
->
-> Because platform_driver_probe() is meant for non-hotpluggable devices,
-> and unregisters the platform driver immediately if probe fails.
-> See also the comments for __platform_driver_probe():
+On 10/12, Emil Lundmark wrote:
+> The audio and video PLLs are designed to have a precision of 1 Hz if some
+> conditions are met. The current implementation only allows a precision that
+> depends on the rate of the parent clock. E.g., if the parent clock is 24
+> MHz, the precision will be 24 Hz; or more generally the precision will be
+> 
+>     p / 10^6 Hz
+> 
+> where p is the parent clock rate. This comes down to how the register
+> values for the PLL's fractional loop divider are chosen.
+> 
+> The clock rate calculation for the PLL is
+> 
+>     PLL output frequency = Fref * (DIV_SELECT + NUM / DENOM)
+> 
+> or with a shorter notation
+> 
+>     r = p * (d + a / b)
+> 
+> In addition to all variables being integers, we also have the following
+> conditions:
+> 
+>     27 <= d <= 54
+> 
+>     -2^29 <= a <= 2^29-1
+>      0    <  b <= 2^30-1
+>     |a| < b
+> 
+> Here, d, a and b are register values for the fractional loop divider. We
+> want to chose d, a and b such that f(p, r) = p, i.e. f is our round_rate
+> function. Currently, d and b are chosen as
+> 
+>     d = r / p
+>     b = 10^6
+> 
+> hence we get the poor precision. And a is defined in terms of r, d, p and
+> b:
+> 
+>     a = (r - d * p) * b / p
+> 
+> I propose that if p <= 2^30-1 (i.e., the max value for b), we chose b as
+> 
+>     b = p
+> 
+> We can do this since
+> 
+>     |a| < b
+> 
+>     |(r - d * p) * b / p| < b
+> 
+>     |r - d * p| < p
+> 
+> Which have two solutions, one of them is when p < 0, so we can skip that
+> one. The other is when p > 0 and
+> 
+>     p * (d - 1) < r < p * (d + 1)
+> 
+> Substitute d = r / p:
+> 
+>     (r - p) < r < (r + p)  <=>  p > 0
+> 
+> So, as long as p > 0, we can chose b = p. This is a good choise for b since
+> 
+>     a = (r - d * p) * b / p
+>       = (r - d * p) * p / p
+>       = r - d * p
+> 
+>     r = p * (d + a / b)
+>       = p * d + p * a / b
+>       = p * d + p * a / p
+>       = p * d + a
+> 
+> and if d = r / p:
+> 
+>     a = r - d * p
+>       = r - r / p * p
+>       = 0
+> 
+>     r = p * d + a
+>       = p * d + 0
+>       = p * r / p
+>       = r
+> 
+> I reckon this is the intention by the design of the clock rate formula.
+> 
+> Signed-off-by: Emil Lundmark <emil@limesaudio.com>
+> ---
 
-My patch "driver core: skip removal test for non-removable drivers"
-fixes this case. It seems to have dropped from Greg's queue, so I'll
-resend.
+Applied to clk-next
 
-Rob
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
