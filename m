@@ -1,83 +1,60 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Oct 2016 13:32:28 -0700
+Date: Thu, 27 Oct 2016 17:53:41 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v2 5/6] clk: stm32f469: Add QSPI clock
-Message-ID: <20161019203228.GC8871@codeaurora.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
+Message-ID: <20161028005341.GR26139@codeaurora.org>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476436699-21879-6-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, gabriel.fernandez@st.com wrote:
-> @@ -532,10 +618,42 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
->  	{ 0 },
->  };
->  
-> +struct stm32f4_clk_data {
-> +	const struct stm32f4_gate_data *gates_data;
-> +	const u64 *gates_map;
-> +	int gates_num;
-> +};
-> @@ -549,6 +667,19 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->  		goto fail;
->  	}
->  
-> +	match = of_match_node(stm32f4_of_match, np);
-> +	if (WARN_ON(!match))
-> +		return;
-> +
-> +	data = match->data;
-> +
-> +	clks = kmalloc_array(data->gates_num + END_PRIMARY_CLK,
-> +			sizeof(struct clk_hw *), GFP_KERNEL);
+On 10/18, Tero Kristo wrote:
+> Hi,
+> 
+> As a recap, this series is part of the ongoing work to get rid of the
+> hwmod database under mach-omap2 folder. This series converts the
+> existing clock related functionality to a new clock type, which will
+> allow removing all the .clkctrl related items from hwmod database.
+> This series adds sample solution for OMAP4 only, rest of the SoCs can
+> be converted automatically once the approach is acceptable.
+> 
+> v4 has the following high level changes compared to v3:
+> - Clock data is now statically built-in to the driver
+> - Adds clockdomain provider support, which can be used to fetch
+>   clocks based on clockdomain relation. Only clockdomains need to be
+>   registered within DT.
+> - Added some automatic clock alias generation support to the TI clock
+>   drivers, if this is not acceptable, I can change this to add all the
+>   aliases under the individual drivers/clk/ti/clk-xyz.c files
 
-sizeof(*clks)?
+Is there a plan to get rid of the aliases entirely? Or we can't
+do that because DT is not fully supported on these platforms? I'm
+mostly wondering how long that sort of code is going to stick
+around and if it's better to fully compartmentalize it to the
+SoCs that are affected or if it should be a core feature of TI
+driver.
 
-> +	if (!clks)
-> +		goto fail;
-> +
-> +	stm32f4_gate_map = data->gates_map;
-> +
->  	hse_clk = of_clk_get_parent_name(np, 0);
->  
->  	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
-> @@ -581,11 +712,15 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->  	clks[FCLK] = clk_hw_register_fixed_factor(NULL, "fclk", "ahb_div",
->  					       0, 1, 1);
->  
-> -	for (n = 0; n < ARRAY_SIZE(stm32f4_gates); n++) {
-> -		const struct stm32f4_gate_data *gd = &stm32f4_gates[n];
-> -		unsigned int secondary =
-> -		    8 * (gd->offset - STM32F4_RCC_AHB1ENR) + gd->bit_idx;
-> -		int idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
-> +	for (n = 0; n < data->gates_num; n++) {
-> +		const struct stm32f4_gate_data *gd;
-> +		unsigned int secondary;
-> +		int idx;
-> +
-> +		gd = (struct stm32f4_gate_data *) &data->gates_data[n];
+> - As a sample, only omap4 clock data is available with this set
+> 
+> After this series, the clock data can be dropped from the hwmod database
+> for OMAP4, I have working patches for this for anybody interested. Also,
+> the DT files require some modifications to add proper support for
+> clockdomain providers, and drop some unnecessary clock nodes.
 
-Why do we cast here? Get rid of const? Perhaps the struct
-shouldn't have const on the member instead?
+Can this be shared as a git tree on the web? Hopefully I can see
+the resulting DTS and understand what's going on better.
 
-> +		secondary = 8 * (gd->offset - STM32F4_RCC_AHB1ENR) +
-> +			gd->bit_idx;
-> +		idx = stm32f4_rcc_lookup_clk_idx(0, secondary);
->  
->  		if (idx < 0)
+> 
+> Boot + simple PM test seems to be working on OMAP4 with this set, and
+> boot test with other boards I have access to don't seem to cause any
+> issues. Applies on top of 4.9-rc1.
+> 
+
+Awesome!
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
