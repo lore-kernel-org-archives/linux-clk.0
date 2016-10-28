@@ -1,96 +1,46 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rtc-linux@googlegroups.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/4] regulator: Enable compile testing for Maxim and Samsung PMIC drivers
-Date: Sun,  2 Oct 2016 22:58:15 +0200
-Message-Id: <1475441897-15730-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1475441897-15730-1-git-send-email-krzk@kernel.org>
-References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20161028181316.GI16026@codeaurora.org>
+References: <cover.1476267249.git.emil@limesaudio.com> <4d2e3a91dfb74209735c940b51d7efc9ba2ed69b.1476267249.git.emil@limesaudio.com>
+ <20161028014127.GD16026@codeaurora.org> <CAOMZO5Co32XUpNFz4Hd2DEmNnMBvD5fKmsyjcmsgawea4dJR9g@mail.gmail.com>
+ <20161028181316.GI16026@codeaurora.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 28 Oct 2016 17:32:07 -0200
+Message-ID: <CAOMZO5CLMtyZStgDzdiSHo9s8BhXyiapWqDx1L_TmMpH13043g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: imx: fix integer overflow in AV PLL round rate
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Emil Lundmark <emil@limesaudio.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"Ken . Lin" <ken.lin@advantech.com>, Anson Huang <b20788@freescale.com>,
+	Otavio Salvador <otavio.salvador@ossystems.com.br>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Most of Maxim and Samsung PMIC/MUIC regulator drivers can be compile
-tested to increase build coverage.
+On Fri, Oct 28, 2016 at 4:13 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/regulator/Kconfig | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> The clk-fixes branch is for patches that fix problems in code
+> merged during the merge window as well as small one-liners and
+> things that are causing great pain for people on the latest
+> release. Given that this fixes a regression in v4.8 and we're
+> trying to stabilize v4.9 it looked like it could wait until
+> v4.10.
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 936f7ccc9736..1ce7e3633b63 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -379,7 +379,7 @@ config REGULATOR_MAX1586
- 
- config REGULATOR_MAX77620
- 	tristate "Maxim 77620/MAX20024 voltage regulator"
--	depends on MFD_MAX77620
-+	depends on MFD_MAX77620 || COMPILE_TEST
- 	help
- 	  This driver controls Maxim MAX77620 voltage output regulator
- 	  via I2C bus. The provided regulator is suitable for Tegra
-@@ -453,7 +453,7 @@ config REGULATOR_MAX8998
- 
- config REGULATOR_MAX77686
- 	tristate "Maxim 77686 regulator"
--	depends on MFD_MAX77686
-+	depends on MFD_MAX77686 || COMPILE_TEST
- 	help
- 	  This driver controls a Maxim 77686 regulator
- 	  via I2C bus. The provided regulator is suitable for
-@@ -461,7 +461,7 @@ config REGULATOR_MAX77686
- 
- config REGULATOR_MAX77693
- 	tristate "Maxim 77693/77843 regulator"
--	depends on (MFD_MAX77693 || MFD_MAX77843)
-+	depends on MFD_MAX77693 || MFD_MAX77843 || COMPILE_TEST
- 	help
- 	  This driver controls a Maxim 77693/77843 regulators via I2C bus.
- 	  The regulators include two LDOs, 'SAFEOUT1', 'SAFEOUT2'
-@@ -470,7 +470,7 @@ config REGULATOR_MAX77693
- 
- config REGULATOR_MAX77802
- 	tristate "Maxim 77802 regulator"
--	depends on MFD_MAX77686
-+	depends on MFD_MAX77686 || COMPILE_TEST
- 	help
- 	  This driver controls a Maxim 77802 regulator
- 	  via I2C bus. The provided regulator is suitable for
-@@ -669,14 +669,14 @@ config REGULATOR_RT5033
- 
- config REGULATOR_S2MPA01
- 	tristate "Samsung S2MPA01 voltage regulator"
--	depends on MFD_SEC_CORE
-+	depends on MFD_SEC_CORE || COMPILE_TEST
- 	help
- 	 This driver controls Samsung S2MPA01 voltage output regulator
- 	 via I2C bus. S2MPA01 has 10 Bucks and 26 LDO outputs.
- 
- config REGULATOR_S2MPS11
- 	tristate "Samsung S2MPS11/13/14/15/S2MPU02 voltage regulator"
--	depends on MFD_SEC_CORE
-+	depends on MFD_SEC_CORE || COMPILE_TEST
- 	help
- 	 This driver supports a Samsung S2MPS11/13/14/15/S2MPU02 voltage
- 	 output regulator via I2C bus. The chip is comprised of high efficient
-@@ -685,7 +685,7 @@ config REGULATOR_S2MPS11
- 
- config REGULATOR_S5M8767
- 	tristate "Samsung S5M8767A voltage regulator"
--	depends on MFD_SEC_CORE
-+	depends on MFD_SEC_CORE || COMPILE_TEST
- 	help
- 	 This driver supports a Samsung S5M8767A voltage output regulator
- 	 via I2C bus. S5M8767A have 9 Bucks and 28 LDOs output and
--- 
-2.7.4
+The regression affects 4.8 and 4.9.
+
+> So is there something going on here where the pain is too much to
+> wait for the next merge window? If so the commit text should
+
+Yes, people reported HDMI issues because of this bug:
+https://www.spinics.net/lists/arm-kernel/msg535304.html
+
+> mention something about what's causing that pain. Perhaps by
+> referencing the commit that merged outside of clk tree that
+> caused problems.
+
+This patch clearly states that the problem is caused by ba7f4f557eb6
+("clk: imx: correct AV PLL rate formula").
+
+Since this is a regression, I don't understand why we need to wait
+until 4.10 to get it applied.
