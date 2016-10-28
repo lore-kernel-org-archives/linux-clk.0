@@ -1,59 +1,75 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+Return-Path: <labbott@redhat.com>
+Return-Path: <labbott@redhat.com>
+From: Laura Abbott <labbott@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 2/6] clk: pxa: core pll is not affected by t bit
-Date: Mon, 10 Oct 2016 22:09:05 +0200
-Message-Id: <1476130149-31834-3-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
-References: <1476130149-31834-1-git-send-email-robert.jarzmik@free.fr>
+	Loc Ho <lho@apm.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2] clk: xgene: Don't call __pa on ioremaped address
+Date: Fri, 28 Oct 2016 09:59:38 -0700
+Message-Id: <1477673978-15424-1-git-send-email-labbott@redhat.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The t bit of clkfcfg doesn't affect the core pll clock, but it makes core
-clock select between core pll clock and core run clock.
+ioremaped addresses are not linearly mapped so the physical
+address can not be figured out via __pa. More generally, there
+is no guarantee that backing value of an ioremapped address
+is a physical address at all. The value here is only used
+for debugging so just drop the call to __pa on the ioremapped
+address.
 
-As such remove it from the core pll rate reporting function, while it
-remains in clk_pxa27x_core_get_parent().
-
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Fixes: 6ae5fd381251 ("clk: xgene: Silence sparse warnings")
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
- drivers/clk/pxa/clk-pxa25x.c | 4 +---
- drivers/clk/pxa/clk-pxa27x.c | 2 +-
- 2 files changed, 2 insertions(+), 4 deletions(-)
+v2: Fix up one more format string
 
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index a98b98e2a9e4..3bb603a27f2b 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -182,9 +182,7 @@ static unsigned long clk_pxa25x_cpll_get_rate(struct clk_hw *hw,
- 	m = M_clk_mult[(cccr >> 5) & 0x03];
- 	n2 = N2_clk_mult[(cccr >> 7) & 0x07];
+I put the fixes tag to match with the cleanup that was done.
+If there is interest in this fix for pre-4.2 kernels for
+stable, I can submit a patch for that as well.
+---
+ drivers/clk/clk-xgene.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+index 3433132..1e67655 100644
+--- a/drivers/clk/clk-xgene.c
++++ b/drivers/clk/clk-xgene.c
+@@ -243,22 +243,20 @@ static int xgene_clk_enable(struct clk_hw *hw)
+ 	struct xgene_clk *pclk = to_xgene_clk(hw);
+ 	unsigned long flags = 0;
+ 	u32 data;
+-	phys_addr_t reg;
  
--	if (t)
--		return m * l * n2 * parent_rate / 2;
--	return m * l * parent_rate;
-+	return m * l * n2 * parent_rate / 2;
- }
- PARENTS(clk_pxa25x_cpll) = { "osc_3_6864mhz" };
- RATE_RO_OPS(clk_pxa25x_cpll, "cpll");
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index afc395b4148e..3930053543a3 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -162,7 +162,7 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
- 	L  = l * parent_rate;
- 	N  = (L * n2) / 2;
+ 	if (pclk->lock)
+ 		spin_lock_irqsave(pclk->lock, flags);
  
--	return t ? N : L;
-+	return N;
- }
- PARENTS(clk_pxa27x_cpll) = { "osc_13mhz" };
- RATE_RO_OPS(clk_pxa27x_cpll, "cpll");
+ 	if (pclk->param.csr_reg != NULL) {
+ 		pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
+-		reg = __pa(pclk->param.csr_reg);
+ 		/* First enable the clock */
+ 		data = xgene_clk_read(pclk->param.csr_reg +
+ 					pclk->param.reg_clk_offset);
+ 		data |= pclk->param.reg_clk_mask;
+ 		xgene_clk_write(data, pclk->param.csr_reg +
+ 					pclk->param.reg_clk_offset);
+-		pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+-			clk_hw_get_name(hw), &reg,
++		pr_debug("%s clk offset 0x%08X mask 0x%08X value 0x%08X\n",
++			clk_hw_get_name(hw),
+ 			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
+ 			data);
+ 
+@@ -268,8 +266,8 @@ static int xgene_clk_enable(struct clk_hw *hw)
+ 		data &= ~pclk->param.reg_csr_mask;
+ 		xgene_clk_write(data, pclk->param.csr_reg +
+ 					pclk->param.reg_csr_offset);
+-		pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
+-			clk_hw_get_name(hw), &reg,
++		pr_debug("%s csr offset 0x%08X mask 0x%08X value 0x%08X\n",
++			clk_hw_get_name(hw),
+ 			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
+ 			data);
+ 	}
 -- 
-2.1.4
+2.7.4
