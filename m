@@ -1,157 +1,154 @@
-Return-Path: <vz@mleia.com>
-Subject: Re: [PATCH] clk: lpc32xx: fix pwm clock divider computation
-To: Sylvain Lemieux <slemieux.tyco@gmail.com>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1474915467-11101-1-git-send-email-slemieux.tyco@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <78c1e683-ac17-437b-289f-113ea842f62b@mleia.com>
-Date: Wed, 5 Oct 2016 05:38:37 +0300
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Oct 2016 18:59:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [RESEND/PATCH v6 2/3] clk: qcom: Add regmap mux-div clocks
+ support
+Message-ID: <20161028015955.GH16026@codeaurora.org>
+References: <20161019132816.31073-1-georgi.djakov@linaro.org>
+ <20161019132816.31073-3-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1474915467-11101-1-git-send-email-slemieux.tyco@gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161019132816.31073-3-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylvain,
+On 10/19, Georgi Djakov wrote:
+> diff --git a/drivers/clk/qcom/clk-regmap-mux-div.c b/drivers/clk/qcom/clk-regmap-mux-div.c
+> new file mode 100644
+> index 000000000000..ec87f496606a
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-regmap-mux-div.c
+> @@ -0,0 +1,254 @@
+> +/*
+> + * Copyright (c) 2015, Linaro Limited
+> + * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/delay.h>
+> +#include <linux/export.h>
 
-On 26.09.2016 21:44, Sylvain Lemieux wrote:
-> From: Sylvain Lemieux <slemieux@tycoint.com>
-> 
-> A zero value in the PWM clock divider register
-> (PWM1_FREQ/PWM2_FREQ) turn off the PWM clock.
-> 
-> The "CLK_DIVIDER_ALLOW_ZERO" option is used for hardware that handle
-> the zero divider by not modifying their clock input (i.e. bypass).
-> See "/include/linux/clk-provider.h" for details.
+Are symbols exported. They probably should be for modules.
 
-the problem is that the divider value is not set to some non-zero
-value when the clock is enabled, right?
-
-I think it does not matter if the clock rate value is set to parent
-clock rate or any other value when divider is 0 *and* clock is gated.
-Enabling or disabling a clock is a gate control, so I suggest two
-alternative options at your choice (my preference is option 2):
-
-1) add a custom clk_pwm_gate_enable(), clk_pwm_gate_disable() and
-clk_pwm_gate_is_enabled() functions combined under lpc32xx_clk_pwm_gate_ops.
-
-Next instead of adding one more define for a single exception
-please reassign .ops for two PWM clocks in runtime in
-lpc32xx_clk_init() function before calling lpc32xx_clk_register()
-in a loop.
-
-But this option is too invasive, a simpler solution is below.
-
-2) in lpc32xx_clk_init() before clock registrations check for zero
-dividers of PWM clocks, then if a divider is 0 and clock is gated
-set divider to 1, if the divider is 0 and clock is not gated then
-gate the clock and set divider to 1, in other cases do nothing.
-
-> Remove the CLK_DIVIDER_ALLOW_ZERO option and add support to handle
-> the clock rate computation of the PWM clock divider 0 value.
-> 
-> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> ---
-> Note:
-> * Should we include a new CLK_DIVIDER option for this case
->   (i.e. clock off when zero ) in "clk-provider.h"?
-> 
->  drivers/clk/nxp/clk-lpc32xx.c | 52 +++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 48 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-> index 34c9735..3ca3a14 100644
-> --- a/drivers/clk/nxp/clk-lpc32xx.c
-> +++ b/drivers/clk/nxp/clk-lpc32xx.c
-> @@ -959,6 +959,25 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
->  				   divider->flags);
->  }
->  
-> +static unsigned long clk_divider_pwm_recalc_rate(struct clk_hw *hw,
-> +		unsigned long parent_rate)
+> +#include <linux/kernel.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "clk-regmap-mux-div.h"
+> +
+> +#define CMD_RCGR			0x0
+> +#define CMD_RCGR_UPDATE			BIT(0)
+> +#define CMD_RCGR_DIRTY_CFG		BIT(4)
+> +#define CMD_RCGR_ROOT_OFF		BIT(31)
+> +#define CFG_RCGR			0x4
+> +
+> +#define to_clk_regmap_mux_div(_hw) \
+> +	container_of(to_clk_regmap(_hw), struct clk_regmap_mux_div, clkr)
+> +
+> +int __mux_div_set_src_div(struct clk_regmap_mux_div *md, u32 src, u32 div)
 > +{
-> +	struct lpc32xx_clk_div *divider = to_lpc32xx_div(hw);
-> +	unsigned int val;
+> +	int ret, count;
+> +	u32 val, mask;
+> +	const char *name = clk_hw_get_name(&md->clkr.hw);
 > +
-> +	regmap_read(clk_regmap, divider->reg, &val);
+> +	val = (div << md->hid_shift) | (src << md->src_shift);
+> +	mask = ((BIT(md->hid_width) - 1) << md->hid_shift) |
+> +	       ((BIT(md->src_width) - 1) << md->src_shift);
 > +
-> +	val >>= divider->shift;
-> +	val &= div_mask(divider->width);
+> +	ret = regmap_update_bits(md->clkr.regmap, CFG_RCGR + md->reg_offset,
+> +				 mask, val);
+> +	if (ret)
+> +		return ret;
 > +
-> +	/* Handle 0 divider -> PWM clock is off. */
-> +	if(val == 0)
-
-No space in front of the open parenthesis.
-
-> +		return 0;
+> +	ret = regmap_update_bits(md->clkr.regmap, CMD_RCGR + md->reg_offset,
+> +				 CMD_RCGR_UPDATE, CMD_RCGR_UPDATE);
+> +	if (ret)
+> +		return ret;
 > +
-> +	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-> +				   divider->flags);
+> +	/* Wait for update to take effect */
+> +	for (count = 500; count > 0; count--) {
+> +		ret = regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset,
+> +				  &val);
+> +		if (ret)
+> +			return ret;
+> +		if (!(val & CMD_RCGR_UPDATE))
+> +			return 0;
+> +		udelay(1);
+> +	}
+> +
+> +	pr_err("%s: RCG did not update its configuration", name);
+> +	return -EBUSY;
 > +}
 > +
->  static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
->  				unsigned long *prate)
->  {
-> @@ -999,6 +1018,12 @@ static const struct clk_ops lpc32xx_clk_divider_ops = {
->  	.set_rate = clk_divider_set_rate,
->  };
->  
-> +static const struct clk_ops lpc32xx_clk_pwm_divider_ops = {
-> +	.recalc_rate = clk_divider_pwm_recalc_rate,
-> +	.round_rate = clk_divider_round_rate,
-> +	.set_rate = clk_divider_set_rate,
-> +};
+> +static void __mux_div_get_src_div(struct clk_regmap_mux_div *md, u32 *src,
+> +				  u32 *div)
+> +{
+> +	u32 val, __div, __src;
+
+Perhaps just use d and s.
+
+> +	const char *name = clk_hw_get_name(&md->clkr.hw);
 > +
->  static u8 clk_mux_get_parent(struct clk_hw *hw)
->  {
->  	struct lpc32xx_clk_mux *mux = to_lpc32xx_mux(hw);
-> @@ -1151,6 +1176,25 @@ struct clk_hw_proto {
->  	},								\
->  }
->  
-> +#define LPC32XX_DEFINE_PWM_DIV(_idx, _reg, _shift, _width, _tab, _fl)	\
-> +[CLK_PREFIX(_idx)] = {							\
-> +	.type = CLK_DIV,						\
-> +	{								\
-> +		.hw0 = {						\
-> +			.ops = &lpc32xx_clk_pwm_divider_ops,		\
-> +			{						\
-> +				.div = {				\
-> +					.reg = LPC32XX_CLKPWR_ ## _reg,	\
-> +					.shift = (_shift),		\
-> +					.width = (_width),		\
-> +					.table = (_tab),		\
-> +					.flags = (_fl),			\
-> +				 },					\
-> +			},						\
-> +		 },							\
-> +	},								\
+> +	regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset, &val);
+> +
+> +	if (val & CMD_RCGR_DIRTY_CFG) {
+> +		pr_err("%s: RCG configuration is pending\n", name);
+> +		return;
+> +	}
+> +
+> +	regmap_read(md->clkr.regmap, CFG_RCGR + md->reg_offset, &val);
+> +	__src = (val >> md->src_shift);
+> +	__src &= BIT(md->src_width) - 1;
+> +	*src = __src;
+> +
+> +	__div = (val >> md->hid_shift);
+> +	__div &= BIT(md->hid_width) - 1;
+> +	*div = __div;
 > +}
 > +
->  #define LPC32XX_DEFINE_GATE(_idx, _reg, _bit, _flags)			\
->  [CLK_PREFIX(_idx)] = {							\
->  	.type = CLK_GATE,						\
-> @@ -1281,14 +1325,14 @@ static struct clk_hw_proto clk_hw_proto[LPC32XX_CLK_HW_MAX] = {
->  	LPC32XX_DEFINE_GATE(MCPWM, TIMCLK_CTRL1, 6, 0),
->  
->  	LPC32XX_DEFINE_MUX(PWM1_MUX, PWMCLK_CTRL, 1, 0x1, NULL, 0),
-> -	LPC32XX_DEFINE_DIV(PWM1_DIV, PWMCLK_CTRL, 4, 4, NULL,
-> -			   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO),
-> +	LPC32XX_DEFINE_PWM_DIV(PWM1_DIV, PWMCLK_CTRL, 4, 4, NULL,
-> +			       CLK_DIVIDER_ONE_BASED),
->  	LPC32XX_DEFINE_GATE(PWM1_GATE, PWMCLK_CTRL, 0, 0),
->  	LPC32XX_DEFINE_COMPOSITE(PWM1, PWM1_MUX, PWM1_DIV, PWM1_GATE),
->  
->  	LPC32XX_DEFINE_MUX(PWM2_MUX, PWMCLK_CTRL, 3, 0x1, NULL, 0),
-> -	LPC32XX_DEFINE_DIV(PWM2_DIV, PWMCLK_CTRL, 8, 4, NULL,
-> -			   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO),
-> +	LPC32XX_DEFINE_PWM_DIV(PWM2_DIV, PWMCLK_CTRL, 8, 4, NULL,
-> +			       CLK_DIVIDER_ONE_BASED),
->  	LPC32XX_DEFINE_GATE(PWM2_GATE, PWMCLK_CTRL, 2, 0),
->  	LPC32XX_DEFINE_COMPOSITE(PWM2, PWM2_MUX, PWM2_DIV, PWM2_GATE),
->  
-> 
+> +static unsigned long mux_div_recalc_rate(struct clk_hw *hw, unsigned long prate)
+> +{
+> +	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
+> +	u32 div, src;
+> +	int i, num_parents = clk_hw_get_num_parents(hw);
+> +	const char *name = clk_hw_get_name(hw);
+> +
+> +	__mux_div_get_src_div(md, &src, &div);
+> +	for (i = 0; i < num_parents; i++)
+> +		if (src == md->parent_map[i].cfg) {
+> +			struct clk_hw *p = clk_hw_get_parent_by_index(hw, i);
+> +			unsigned long parent_rate = clk_hw_get_rate(p);
+> +
+> +			return mult_frac(parent_rate, 2, div + 1);
+> +		}
+> +
+> +	pr_err("%s: Can't find parent %d\n", name, src);
+> +	return 0;
+> +}
+> +
+> +static void mux_div_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
+> +
+> +	__mux_div_set_src_div(md, md->safe_src, md->safe_div);
 
---
-With best wishes,
-Vladimir
+Ah this is to do magic tricks with cpuidle. In the android tree
+they call clk_disable() on the CPU clks from the idle path and
+that switches us over to the safe source and turns off the A53
+PLL while the CPU is not powered. That's all sort of sneaky and
+we're not doing that yet here so let's leave that until later.
+Please remove the enable/disable stuff.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
