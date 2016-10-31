@@ -1,93 +1,44 @@
-Return-Path: <oss@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Scott Wood <oss@buserror.net>,
-	stable@vger.kernel.org
-Date: Mon, 17 Oct 2016 13:42:23 -0500
-Message-Id: <1476729743-15563-1-git-send-email-oss@buserror.net>
-Subject: [PATCH] clk: qoriq: Don't allow CPU clocks higher than starting value
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34809 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750720AbcJaKMr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2016 06:12:47 -0400
+MIME-Version: 1.0
+In-Reply-To: <1475856570-10743-1-git-send-email-labbott@redhat.com>
+References: <120f00f2-94b6-aead-7bb4-9917bc338660@redhat.com> <1475856570-10743-1-git-send-email-labbott@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 31 Oct 2016 11:12:45 +0100
+Message-ID: <CAMuHMdW1xaYvcv4RtevyCsLrLQmcujNSQJ1839++cX1US-UKBw@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Make Kconfig text for DEBUG_TEST_DRIVER_REMOVE
+ stronger
+To: Laura Abbott <labbott@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The boot-time frequency of a CPU is considered its rated maximum, as we
-have no other source of such information.  However, this was previously
-only used for chips with 80% restrictions on secondary PLLs.  This
-usually wasn't a problem because most chips/configs boot with a divider
-of /1, with other dividers being used only for dynamic frequency
-reduction.  However, at least one config (LS1021A at less than 1 GHz)
-uses a different divider for top speed.  This was causing cpufreq to set
-a frequency beyond the chip's rated speed.
+On Fri, Oct 7, 2016 at 6:09 PM, Laura Abbott <labbott@redhat.com> wrote:
+> The current state of driver removal is not great.
+> CONFIG_DEBUG_TEST_DRIVER_REMOVE finds lots of errors. The help text
+> currently undersells exactly how many errors this option will find. Add
+> a bit more description to indicate this option shouldn't be turned on
+> unless you actually want to debug driver removal. The text can be
+> changed later when more drivers are fixed up.
 
-This is fixed by applying a 100%-of-initial-speed limit to all CPU PLLs,
-similar to the existing 80% limit that only applied to some.
+Indeed, this is failing miserably for e.g. SoC clock drivers using
+platform_driver_probe(), which are never retried, rendering the complete
+system useless.
 
-Signed-off-by: Scott Wood <oss@buserror.net>
-Cc: stable@vger.kernel.org
----
- drivers/clk/clk-qoriq.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 20b1055..80ae2a5 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -700,6 +700,7 @@ static struct clk * __init create_mux_common(struct clockgen *cg,
- 					     struct mux_hwclock *hwc,
- 					     const struct clk_ops *ops,
- 					     unsigned long min_rate,
-+					     unsigned long max_rate,
- 					     unsigned long pct80_rate,
- 					     const char *fmt, int idx)
- {
-@@ -728,6 +729,8 @@ static struct clk * __init create_mux_common(struct clockgen *cg,
- 			continue;
- 		if (rate < min_rate)
- 			continue;
-+		if (rate > max_rate)
-+			continue;
- 
- 		parent_names[j] = div->name;
- 		hwc->parent_to_clksel[j] = i;
-@@ -759,7 +762,7 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
- 	struct mux_hwclock *hwc;
- 	const struct clockgen_pll_div *div;
- 	unsigned long plat_rate, min_rate;
--	u64 pct80_rate;
-+	u64 max_rate, pct80_rate;
- 	u32 clksel;
- 
- 	hwc = kzalloc(sizeof(*hwc), GFP_KERNEL);
-@@ -787,8 +790,8 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
- 		return NULL;
- 	}
- 
--	pct80_rate = clk_get_rate(div->clk);
--	pct80_rate *= 8;
-+	max_rate = clk_get_rate(div->clk);
-+	pct80_rate = max_rate * 8;
- 	do_div(pct80_rate, 10);
- 
- 	plat_rate = clk_get_rate(cg->pll[PLATFORM_PLL].div[PLL_DIV1].clk);
-@@ -798,7 +801,7 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
- 	else
- 		min_rate = plat_rate / 2;
- 
--	return create_mux_common(cg, hwc, &cmux_ops, min_rate,
-+	return create_mux_common(cg, hwc, &cmux_ops, min_rate, max_rate,
- 				 pct80_rate, "cg-cmux%d", idx);
- }
- 
-@@ -813,7 +816,7 @@ static struct clk * __init create_one_hwaccel(struct clockgen *cg, int idx)
- 	hwc->reg = cg->regs + 0x20 * idx + 0x10;
- 	hwc->info = cg->info.hwaccel[idx];
- 
--	return create_mux_common(cg, hwc, &hwaccel_ops, 0, 0,
-+	return create_mux_common(cg, hwc, &hwaccel_ops, 0, ULONG_MAX, 0,
- 				 "cg-hwaccel%d", idx);
- }
- 
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
