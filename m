@@ -1,52 +1,38 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Tue, 25 Oct 2016 19:07:24 +0300
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk/samsung: Clear OF_POPULATED flag from clkout node in
- init callback
-Message-ID: <20161025160724.GA3535@kozik-lap>
-References: <CGME20161025123519eucas1p1f8d2efba82ebd101e8fa0697a5708a28@eucas1p1.samsung.com>
- <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35528 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941491AbcJaMVc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Oct 2016 08:21:32 -0400
+Date: Mon, 31 Oct 2016 06:21:40 -0600
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laura Abbott <labbott@redhat.com>, Rob Herring <robh@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] driver core: Make Kconfig text for
+ DEBUG_TEST_DRIVER_REMOVE stronger
+Message-ID: <20161031122140.GB6774@kroah.com>
+References: <120f00f2-94b6-aead-7bb4-9917bc338660@redhat.com>
+ <1475856570-10743-1-git-send-email-labbott@redhat.com>
+ <CAMuHMdW1xaYvcv4RtevyCsLrLQmcujNSQJ1839++cX1US-UKBw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdW1xaYvcv4RtevyCsLrLQmcujNSQJ1839++cX1US-UKBw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 25, 2016 at 02:34:21PM +0200, Marek Szyprowski wrote:
-> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
-> controller, and these functionalities are supported by different drivers
-> that matches the same compatible strings.
+On Mon, Oct 31, 2016 at 11:12:45AM +0100, Geert Uytterhoeven wrote:
+> On Fri, Oct 7, 2016 at 6:09 PM, Laura Abbott <labbott@redhat.com> wrote:
+> > The current state of driver removal is not great.
+> > CONFIG_DEBUG_TEST_DRIVER_REMOVE finds lots of errors. The help text
+> > currently undersells exactly how many errors this option will find. Add
+> > a bit more description to indicate this option shouldn't be turned on
+> > unless you actually want to debug driver removal. The text can be
+> > changed later when more drivers are fixed up.
 > 
-> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
-> clocks") the OF core flags clock controllers registered with the
-> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
-> compatible string as the interrupt controller will not be registered.
-> 
-> This prevents the PMU platform device to be registered so the Exynos PMU
-> driver is never probed. This breaks (among other things) Suspend-to-RAM.
-> 
-> Fix this by clearing the OF_POPULATED flag in the clkout driver init
-> callback, to allow the Exynos PMU platform driver to be probed. The patch
-> is based on similar patch from Javier Martinez Canillas: b030485220ca
-> "ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in IRQ init callback".
-> 
-> Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos-clkout.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Indeed, this is failing miserably for e.g. SoC clock drivers using
+> platform_driver_probe(), which are never retried, rendering the complete
+> system useless.
 
-Yes, one could expect this sooner or later...
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Why are they never retried?
