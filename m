@@ -1,141 +1,64 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Daniel Vetter <daniel@ffwll.ch>, Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: kernel-doc-rst-lint (was: Re: [PATCH 00/15] improve function-level
- documentation)
-In-Reply-To: <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
-Date: Wed, 05 Oct 2016 17:04:43 +0300
-Message-ID: <87h98quc1w.fsf@intel.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, linux-doc@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- dri-devel <dri-devel@lists.freedesktop.org>, linux-metag@vger.kernel.org,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- linux-mtd@lists.infradead.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- drbd-dev@lists.linbit.com
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v7 0/3] Add support for Qualcomm A53 CPU clock
+Date: Mon, 31 Oct 2016 16:55:23 +0200
+Message-Id: <20161031145526.5023-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gV2VkLCAwNSBPY3QgMjAxNiwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPiB3cm90
-ZToKPiBKYW5pIE5pa3VsYSBoYXMgYSBwYXRjaCB3aXRoIGEgc2NyaXAgdG8gbWFrZSB0aGUgb25l
-IGtlcm5lbC1kb2MgcGFyc2VyCj4gaW50byBhIGxpbnQvY2hlY2tlciBwYXNzIG92ZXIgdGhlIGVu
-dGlyZSBrZXJuZWwuIEkgdGhpbmsgdGhhdCdkIHdvdWxkCj4gYmUgbW9yZSByb2J1c3QgaW5zdGVh
-ZCBvZiB0cnlpbmcgdG8gYXBwcm94aW1hdGUgdGhlIHJlYWwga2VybmVsZG9jCj4gcGFyc2VyLiBP
-dG9oIHRoYXQgcGFyc2VyIGlzIGEgaG9ycm9yIHNob3cgb2YgYSBwZXJsL3JlZ2V4IGRyaXZlbiBz
-dGF0ZQo+IG1hY2hpbmUgOy0pCj4KPiBKYW5pLCBjYW4geW91IHBscyBkaWdnIG91dCB0aGVzZSBw
-YXRjaGVzPyBDYW4ndCBmaW5kIHRoZW0gcmlnaHQgbm93IC4uLgoKRXhwYW5kaW5nIHRoZSBtYXNz
-aXZlIENjOiB3aXRoIGxpbnV4LWRvYyBsaXN0Li4uCgpIZXJlIGdvZXMuIEl0J3MgYSBxdWljayBo
-YWNrIGZyb20gbW9udGhzIGFnbywgYnV0IHN0aWxsIHNlZW1zIHRvCnNvbWV3aGF0IHdvcmsuIEF0
-IGxlYXN0IGZvciB0aGUga2VybmVsLWRvYyBwYXJ0cy4gVGhlIHJlU3RydWN0dXJlZFRleHQKbGlu
-dCBwYXJ0IGlzbid0IGFsbCB0aGF0IGdyZWF0LCBhbmQgZG9lc24ndCBoYXZlIG1hcHBpbmcgdG8g
-bGluZSBudW1iZXJzCmxpa2UgdGhlIFNwaGlueCBrZXJuZWwtZG9jIGV4dGVuc2lvbiBkb2VzLiBB
-bnl3YXkgSSdtIGhhcHB5IGhvdyB0aGlzCmludGVncmF0ZXMgd2l0aCBrZXJuZWwgYnVpbGQgQ0hF
-Q0sgYW5kIEM9MS9DPTIuCgpJIGd1ZXNzIEp1bGlhJ3MgZ29hbCBpcyB0byBhdXRvbWF0ZSB0aGUg
-KmZpeGluZyogb2Ygc29tZSBvZiB0aGUgZXJyb3IKY2xhc3NlcyBmcm9tIGtlcm5lbC1kb2MuIE5v
-dCBzdXJlIGhvdyB3ZWxsIHRoaXMgY291bGQgYmUgbWFkZSB0bwppbnRlZ3JhdGUgd2l0aCBhbnkg
-b2YgdGhhdC4KCkJSLApKYW5pLgoKCkZyb20gMTI0NGVmYTBmNjNhN2IxMzc5NWU4YzM3ZjgxNzMz
-YTNjOGJmYzU2YSBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKRnJvbTogSmFuaSBOaWt1bGEgPGph
-bmkubmlrdWxhQGludGVsLmNvbT4KRGF0ZTogVHVlLCAzMSBNYXkgMjAxNiAxODoxMTozMyArMDMw
-MApTdWJqZWN0OiBbUEFUQ0hdIGtlcm5lbC1kb2MtcnN0LWxpbnQ6IGFkZCB0b29sIHRvIGNoZWNr
-IGtlcm5lbC1kb2MgYW5kIHJzdAogY29ycmVjdG5lc3MKT3JnYW5pemF0aW9uOiBJbnRlbCBGaW5s
-YW5kIE95IC0gQklDIDAzNTc2MDYtNCAtIFdlc3RlbmRpbmthdHUgNywgMDIxNjAgRXNwb28KQ2M6
-IEphbmkgTmlrdWxhIDxqYW5pLm5pa3VsYUBpbnRlbC5jb20+CgpTaW1wbGUga2VybmVsLWRvYyBh
-bmQgcmVTdHJ1Y3R1cmVkVGV4dCBsaW50IHRvb2wgdGhhdCBjYW4gYmUgdXNlZAppbmRlcGVuZGVu
-dGx5IGFuZCBhcyBhIGtlcm5lbCBidWlsZCBDSEVDSyB0b29sIHRvIHZhbGlkYXRlIGtlcm5lbC1k
-b2MKY29tbWVudHMuCgpJbmRlcGVuZGVudCB1c2FnZToKJCBrZXJuZWwtZG9jLXJzdC1saW50IEZJ
-TEUKCktlcm5lbCBDSEVDSyB1c2FnZToKJCBtYWtlIENIRUNLPXNjcmlwdHMva2VybmVsLWRvYy1y
-c3QtbGludCBDPTEJCSMgKG9yIEM9MikKCkRlcGVuZHMgb24gZG9jdXRpbHMgYW5kIHRoZSByc3Qt
-bGludCBwYWNrYWdlCmh0dHBzOi8vcHlwaS5weXRob24ub3JnL3B5cGkvcmVzdHJ1Y3R1cmVkdGV4
-dF9saW50CgpTaWduZWQtb2ZmLWJ5OiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFAaW50ZWwuY29t
-PgotLS0KIHNjcmlwdHMva2VybmVsLWRvYy1yc3QtbGludCB8IDEwNiArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDEwNiBpbnNlcnRp
-b25zKCspCiBjcmVhdGUgbW9kZSAxMDA3NTUgc2NyaXB0cy9rZXJuZWwtZG9jLXJzdC1saW50Cgpk
-aWZmIC0tZ2l0IGEvc2NyaXB0cy9rZXJuZWwtZG9jLXJzdC1saW50IGIvc2NyaXB0cy9rZXJuZWwt
-ZG9jLXJzdC1saW50Cm5ldyBmaWxlIG1vZGUgMTAwNzU1CmluZGV4IDAwMDAwMDAwMDAwMC4uN2Uw
-MTU3Njc5ZjgzCi0tLSAvZGV2L251bGwKKysrIGIvc2NyaXB0cy9rZXJuZWwtZG9jLXJzdC1saW50
-CkBAIC0wLDAgKzEsMTA2IEBACisjIS91c3IvYmluL2VudiBweXRob24KKyMgY29kaW5nPXV0Zi04
-CisjCisjIENvcHlyaWdodCDCqSAyMDE2IEludGVsIENvcnBvcmF0aW9uCisjCisjIFBlcm1pc3Np
-b24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFp
-bmluZyBhCisjIGNvcHkgb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0
-aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJlIiksCisjIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdp
-dGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24KKyMgdGhlIHJp
-Z2h0cyB0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1
-YmxpY2Vuc2UsCisjIGFuZC9vciBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBw
-ZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZQorIyBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8g
-c28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgorIworIyBUaGUgYWJvdmUg
-Y29weXJpZ2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSAoaW5jbHVkaW5nIHRo
-ZSBuZXh0CisjIHBhcmFncmFwaCkgc2hhbGwgYmUgaW5jbHVkZWQgaW4gYWxsIGNvcGllcyBvciBz
-dWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUKKyMgU29mdHdhcmUuCisjCisjIFRIRSBTT0ZUV0FS
-RSBJUyBQUk9WSURFRCAiQVMgSVMiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFOWSBLSU5ELCBFWFBS
-RVNTIE9SCisjIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJTUlURUQgVE8gVEhFIFdBUlJB
-TlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZLAorIyBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVS
-UE9TRSBBTkQgTk9OSU5GUklOR0VNRU5ULiAgSU4gTk8gRVZFTlQgU0hBTEwKKyMgVEhFIEFVVEhP
-UlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMg
-T1IgT1RIRVIKKyMgTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwg
-VE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcKKyMgRlJPTSwgT1VUIE9GIE9SIElOIENPTk5FQ1RJ
-T04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUworIyBJTiBU
-SEUgU09GVFdBUkUuCisjCisjIEF1dGhvcnM6CisjICAgIEphbmkgTmlrdWxhIDxqYW5pLm5pa3Vs
-YUBpbnRlbC5jb20+CisjCisjIFNpbXBsZSBrZXJuZWwtZG9jIGFuZCByZVN0cnVjdHVyZWRUZXh0
-IGxpbnQgdG9vbCB0aGF0IGNhbiBiZSB1c2VkCisjIGluZGVwZW5kZW50bHkgYW5kIGFzIGEga2Vy
-bmVsIGJ1aWxkIENIRUNLIHRvb2wgdG8gdmFsaWRhdGUga2VybmVsLWRvYworIyBjb21tZW50cy4K
-KyMKKyMgSW5kZXBlbmRlbnQgdXNhZ2U6CisjICQga2VybmVsLWRvYy1yc3QtbGludCBGSUxFCisj
-CisjIEtlcm5lbCBDSEVDSyB1c2FnZToKKyMgJCBtYWtlIENIRUNLPXNjcmlwdHMva2VybmVsLWRv
-Yy1yc3QtbGludCBDPTEJCSMgKG9yIEM9MikKKyMKKyMgRGVwZW5kcyBvbiBkb2N1dGlscyBhbmQg
-dGhlIHJzdC1saW50IHBhY2thZ2UKKyMgaHR0cHM6Ly9weXBpLnB5dGhvbi5vcmcvcHlwaS9yZXN0
-cnVjdHVyZWR0ZXh0X2xpbnQKKyMKKworaW1wb3J0IG9zCitpbXBvcnQgc3VicHJvY2VzcworaW1w
-b3J0IHN5cworCitmcm9tIGRvY3V0aWxzLnBhcnNlcnMucnN0IGltcG9ydCBkaXJlY3RpdmVzCitm
-cm9tIGRvY3V0aWxzLnBhcnNlcnMucnN0IGltcG9ydCBEaXJlY3RpdmUKK2Zyb20gZG9jdXRpbHMu
-cGFyc2Vycy5yc3QgaW1wb3J0IHJvbGVzCitmcm9tIGRvY3V0aWxzIGltcG9ydCBub2Rlcywgc3Rh
-dGVtYWNoaW5lCitpbXBvcnQgcmVzdHJ1Y3R1cmVkdGV4dF9saW50CisKK2NsYXNzIER1bW15RGly
-ZWN0aXZlKERpcmVjdGl2ZSk6CisgICAgcmVxdWlyZWRfYXJndW1lbnQgPSAxCisgICAgb3B0aW9u
-YWxfYXJndW1lbnRzID0gMAorICAgIG9wdGlvbl9zcGVjID0geyB9CisgICAgaGFzX2NvbnRlbnQg
-PSBUcnVlCisKKyAgICBkZWYgcnVuKHNlbGYpOgorICAgICAgICByZXR1cm4gW10KKworIyBGYWtl
-IHRoZSBTcGhpbnggQyBEb21haW4gZGlyZWN0aXZlcyBhbmQgcm9sZXMKK2RpcmVjdGl2ZXMucmVn
-aXN0ZXJfZGlyZWN0aXZlKCdjOmZ1bmN0aW9uJywgRHVtbXlEaXJlY3RpdmUpCitkaXJlY3RpdmVz
-LnJlZ2lzdGVyX2RpcmVjdGl2ZSgnYzp0eXBlJywgRHVtbXlEaXJlY3RpdmUpCityb2xlcy5yZWdp
-c3Rlcl9nZW5lcmljX3JvbGUoJ2M6ZnVuYycsIG5vZGVzLmVtcGhhc2lzKQorcm9sZXMucmVnaXN0
-ZXJfZ2VuZXJpY19yb2xlKCdjOnR5cGUnLCBub2Rlcy5lbXBoYXNpcykKKworIyBXZSBhY2NlcHQg
-YnV0IGlnbm9yZSBwYXJhbWV0ZXJzIHRvIGJlIGNvbXBhdGlibGUgd2l0aCBob3cgdGhlIGtlcm5l
-bCBidWlsZAorIyBpbnZva2VzIENIRUNLLgoraWYgbGVuKHN5cy5hcmd2KSA8IDI6CisgICAgc3lz
-LnN0ZGVyci53cml0ZSgndXNhZ2U6IGtlcm5lbC1kb2MtcnN0LWxpbnQgW0lHTk9SRUQgT1BUSU9O
-U10gRklMRVxuJyk7CisgICAgc3lzLmV4aXQoMSkKKworaW5maWxlID0gc3lzLmFyZ3ZbbGVuKHN5
-cy5hcmd2KSAtIDFdCitjbWQgPSBbJ3NjcmlwdHMva2VybmVsLWRvYycsICctcnN0JywgaW5maWxl
-XQorCit0cnk6CisgICAgcCA9IHN1YnByb2Nlc3MuUG9wZW4oY21kLCBzdGRvdXQ9c3VicHJvY2Vz
-cy5QSVBFLCBzdGRlcnI9c3VicHJvY2Vzcy5QSVBFLCB1bml2ZXJzYWxfbmV3bGluZXM9VHJ1ZSkK
-KyAgICBvdXQsIGVyciA9IHAuY29tbXVuaWNhdGUoKQorCisgICAgIyBweXRob24yIG5lZWRzIGNv
-bnZlcnNpb24gdG8gdW5pY29kZS4KKyAgICAjIHB5dGhvbjMgd2l0aCB1bml2ZXJzYWxfbmV3bGlu
-ZXM9VHJ1ZSByZXR1cm5zIHN0cmluZ3MuCisgICAgaWYgc3lzLnZlcnNpb25faW5mby5tYWpvciA8
-IDM6CisgICAgICAgIG91dCwgZXJyID0gdW5pY29kZShvdXQsICd1dGYtOCcpLCB1bmljb2RlKGVy
-ciwgJ3V0Zi04JykKKworICAgICMga2VybmVsLWRvYyBlcnJvcnMKKyAgICBzeXMuc3RkZXJyLndy
-aXRlKGVycikKKyAgICBpZiBwLnJldHVybmNvZGUgIT0gMDoKKyAgICAgICAgc3lzLmV4aXQocC5y
-ZXR1cm5jb2RlKQorCisgICAgIyByZXN0cnVjdHVyZWQgdGV4dCBlcnJvcnMKKyAgICBsaW5lcyA9
-IHN0YXRlbWFjaGluZS5zdHJpbmcybGluZXMob3V0LCA4LCBjb252ZXJ0X3doaXRlc3BhY2U9VHJ1
-ZSkKKyAgICBsaW50X2Vycm9ycyA9IHJlc3RydWN0dXJlZHRleHRfbGludC5saW50KG91dCwgaW5m
-aWxlKQorICAgIGZvciBlcnJvciBpbiBsaW50X2Vycm9yczoKKyAgICAgICAgIyBJZ25vcmUgSU5G
-TworICAgICAgICBpZiBlcnJvci5sZXZlbCA8PSAxOgorICAgICAgICAgICAgY29udGludWUKKwor
-ICAgICAgICBwcmludChlcnJvci5zb3VyY2UgKyAnOiAnICsgZXJyb3IudHlwZSArICc6ICcgKyBl
-cnJvci5mdWxsX21lc3NhZ2UpCisgICAgICAgIGlmIGVycm9yLmxpbmUgaXMgbm90IE5vbmU6Cisg
-ICAgICAgICAgICBwcmludCgnQ29udGV4dDonKQorICAgICAgICAgICAgcHJpbnQoJ1x0JyArIGxp
-bmVzW2Vycm9yLmxpbmUgLSAxXSkKKyAgICAgICAgICAgIHByaW50KCdcdCcgKyBsaW5lc1tlcnJv
-ci5saW5lXSkKKworZXhjZXB0IEV4Y2VwdGlvbiBhcyBlOgorICAgIHN5cy5zdGRlcnIud3JpdGUo
-c3RyKGUpICsgJ1xuJykKKyAgICBzeXMuZXhpdCgxKQotLSAKMi4xLjQKCgotLSAKSmFuaSBOaWt1
-bGEsIEludGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
-ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Changes since v6 (https://lkml.org/lkml/2016/9/7/347)
+ * Addressed various comments from Stephen
+
+Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
+ * Rebase to clk-next and update according to the recent API changes.
+
+Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
+ * Convert to builtin drivers as now __clk_lookup() is used
+
+Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
+ * Split driver into two parts - and separate A53 PLL and
+   A53 clock controller drivers.
+ * Drop the safe switch hook patch. Add a clock notifier in
+   the clock provider to handle switching via safe mux and
+   divider configuration.
+
+Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
+ * Drop gpll0_vote patch.
+ * Switch to the new clk_hw_* APIs.
+ * Rebase to the current clk-next.
+
+Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
+ * Drop SR2 PLL patch, as it is already applied.
+ * Add gpll0_vote rate propagation patch.
+ * Update/rebase patches to the current clk-next.
+
+
+Georgi Djakov (3):
+  clk: qcom: Add A53 PLL support
+  clk: qcom: Add regmap mux-div clocks support
+  clk: qcom: Add A53 clock driver
+
+ .../devicetree/bindings/clock/qcom,a53cc.txt       |  23 ++
+ .../devicetree/bindings/clock/qcom,a53pll.txt      |  20 ++
+ drivers/clk/qcom/Kconfig                           |  17 ++
+ drivers/clk/qcom/Makefile                          |   3 +
+ drivers/clk/qcom/a53-pll.c                         |  94 ++++++++
+ drivers/clk/qcom/a53cc.c                           | 152 +++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.c              | 237 +++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |  52 +++++
+ 8 files changed, 598 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
+ create mode 100644 drivers/clk/qcom/a53cc.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
