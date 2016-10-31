@@ -1,56 +1,69 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sat, 8 Oct 2016 15:50:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH 5/6] clk: stm32f469: Add QSPI clock
-Message-ID: <20161008205003.GB17455@rob-hp-laptop>
-References: <1475245509-6487-1-git-send-email-gabriel.fernandez@st.com>
- <1475245509-6487-6-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475245509-6487-6-git-send-email-gabriel.fernandez@st.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
+References: <20161021154737.3803065-1-arnd@arndb.de> <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
+ <3808786.t4RxxDciQu@wuerfel> <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 31 Oct 2016 10:23:00 +0100
+Message-ID: <CAMuHMdXRjgETtjBHHu2mHt9iEfe_rL5fpD-pgPH9MWniOFubQQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: fix link error for rcar-gen2
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 30, 2016 at 04:25:08PM +0200, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch adds the QSPI clock for stm32f469 discovery board.
-> The gate mapping is a little bit different from stm32f429 soc.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
->  drivers/clk/clk-stm32f4.c                          | 173 ++++++++++++++++++---
->  2 files changed, 158 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-> index fee3205..eace3de 100644
-> --- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-> @@ -8,7 +8,9 @@ Please also refer to clock-bindings.txt in this directory for common clock
->  controller binding usage.
->  
->  Required properties:
-> -- compatible: Should be "st,stm32f42xx-rcc"
-> +- compatible: Should be:
-> +  "st,stm32f42xx-rcc"
-> +  "st,stm32f46xx-rcc"
+On Tue, Oct 25, 2016 at 10:37 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Oct 21, 2016 at 11:07 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Friday, October 21, 2016 8:01:49 PM CEST Geert Uytterhoeven wrote:
+>>> > diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+>>> > index 90dd0db7d9c6..762d122eddec 100644
+>>> > --- a/drivers/clk/renesas/Makefile
+>>> > +++ b/drivers/clk/renesas/Makefile
+>>> > @@ -4,11 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o clk-div6.o
+>>> >  obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o clk-div6.o
+>>> >  obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o
+>>> >  obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o
+>>> > -obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o clk-div6.o
+>>> > -obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o clk-div6.o
+>>> > -obj-$(CONFIG_ARCH_R8A7792)             += clk-rcar-gen2.o clk-div6.o
+>>> > -obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o clk-div6.o
+>>> > -obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o clk-div6.o
+>>> > +obj-$(CONFIG_ARCH_RCAR_GEN2)           += clk-rcar-gen2.o clk-div6.o
+>>> >  obj-$(CONFIG_ARCH_R8A7795)             += r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+>>> >  obj-$(CONFIG_ARCH_R8A7796)             += r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+>>> >  obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o clk-div6.o
+>>>
+>>> Please don't fix it this way, as it will make it _harder_ to convert the R-Car
+>>> Gen2 SoCs to the modern CPG/MSSR driver later.
+>>
+>> Ok, I see. How about just adding another line for r8a7743 and
+>> dropping that again after the timer_init has been converted?
+>
+> That's an option, but it touches a different subsystem ;-)
 
-Generally, we don't use wildcards in compatible strings. I know there's 
-lots of part numbers of stm32 parts which I guess are often same die 
-with different fusing or package. Your compatible strings should be at 
-least specific enough to identify parts that are really different die. 
+Alternatively, the call to rcar_gen2_clocks_init() in
+arch/arm/mach-shmobile/setup-rcar-gen2.c:rcar_gen2_timer_init()
+can be protected temporarily by
 
->  - reg: should be register base and length as documented in the
->    datasheet
->  - #clock-cells: 2, device nodes should specify the clock in their "clocks"
+    #if defined(CONFIG_R8A7790) || ... || defined(CONFIG_R8A7794)
+
+until "[PATCH v4 00/23] soc: renesas: Add R-Car RST driver for
+obtaining mode pin state" went it, which will remove that call.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
