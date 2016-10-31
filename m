@@ -1,76 +1,52 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: vinod.koul@intel.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	lee.jones@linaro.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH 09/14] dt-bindings: sound: Add sun8i codec documentation
-Date: Tue,  4 Oct 2016 11:46:22 +0200
-Message-Id: <a5b0bdc6b50dfcc2dc0145d00edd08fee3ce7764.1475571575.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
-In-Reply-To: <cover.1475571575.git.mylene.josserand@free-electrons.com>
-References: <cover.1475571575.git.mylene.josserand@free-electrons.com>
+Return-Path: <nm@ti.com>
+Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
+To: Tero Kristo <t-kristo@ti.com>, Rob Herring <robh@kernel.org>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-2-git-send-email-t-kristo@ti.com>
+ <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
+ <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
+CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+From: Nishanth Menon <nm@ti.com>
+Message-ID: <bce2ef84-491b-070a-dda4-77729567341c@ti.com>
+Date: Mon, 31 Oct 2016 15:34:04 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the documentation for dt-binding of the digital audio codec driver
-for sun8i SoC.
+On 10/31/2016 07:50 AM, Tero Kristo wrote:
+[...]
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- .../devicetree/bindings/sound/sun8i-codec.txt      | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec.txt
+>>> +pmmc: pmmc {
+>>> +	compatible = "ti,k2g-sci";
+>>> +
+>>> +	k2g_clks: k2g_clks {
+>>
+>> Use "clocks" for node name instead.
+>>
+>>> +		compatible = "ti,k2g-sci-clk";
+>>
+>> I'm starting to think all these child nodes for SCI are pointless. Is
+>> there any reason why the parent node can't be the clock provider (along
+>> with all the other providers it acks as)?
+>
+> I believe the only reason to keep them separate is to have kernel side
+> of things modular. If we have separate nodes, the drivers can be probed
+> separately.
+>
+> If not, we need to build one huge blob with all the features in it, so
+> the main driver can probe everything in one go, with annoying
+> back-and-forth callbacks in place (assuming we still want to keep stuff
+> somehow modular.)
 
-diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec.txt b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
-new file mode 100644
-index 0000000..1808869
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
-@@ -0,0 +1,24 @@
-+* Allwinner A23/A33 Codec
-+
-+Required properties:
-+- compatible: must be either "allwinner,sun4i-a23-codec" or
-+  "allwinner,sun7i-a33-codec"
-+- reg: must contain the registers location and length
-+- interrupts: must contain the codec interrupt
-+- clocks: a list of phandle + clock-specifer pairs, one for each entry
-+  in clock-names.
-+- clock-names: should contain followings:
-+   - "apb": the parent APB clock for this controller
-+   - "codec": the parent module clock
-+
-+Example:
-+codec: codec@01c22e00 {
-+	#sound-dai-cells = <0>;
-+	compatible = "allwinner,sun8i-a33-codec";
-+	reg = <0x01c22e00 0x400>; /* SUNXI_AUDIO_PBASE + 0x200 */
-+	reg-names = "audio";
-+	interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+	clock-names = "apb", "codec";
-+	status = "disabled";
-+};
+Documentation/devicetree/bindings/arm/arm,scpi.txt follows the same 
+solution as well, right? There is indeed additional nodes coming in - 
+such as reset, pd etc.. I cant see why it is different for sci clk.. 
+not to mention the driver mess it results in.
+
+
 -- 
-2.9.3
+Regards,
+Nishanth Menon
