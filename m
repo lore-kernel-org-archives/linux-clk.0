@@ -1,61 +1,81 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v2 1/5] clk: pxa: remove unused variables
-Date: Sun, 23 Oct 2016 14:19:26 +0200
-Message-Id: <1477225170-19019-2-git-send-email-robert.jarzmik@free.fr>
-In-Reply-To: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
-References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: Arnd Bergmann <arnd@arndb.de>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>
+Subject: RE: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
+Date: Mon, 31 Oct 2016 09:35:33 +0000
+Message-ID: <DB6PR0401MB2536B1B2E6AC36BDC8FC540DF8AE0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
+ <1477637418-38938-4-git-send-email-yangbo.lu@nxp.com>
+ <2723366.1bJeJ7SKI6@wuerfel>
+In-Reply-To: <2723366.1bJeJ7SKI6@wuerfel>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "M.H. Lian" <minghuan.lian@nxp.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar
+ Gala <galak@codeaurora.org>, Scott Wood <oss@buserror.net>,
+ Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ "X.B. Xie" <xiaobo.xie@nxp.com>, Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a cleanup patch to remove unused values not used in their
-respective functions.
+> -----Original Message-----
+> From: Arnd Bergmann [mailto:arnd@arndb.de]
+> Sent: Friday, October 28, 2016 6:53 PM
+> To: linuxppc-dev@lists.ozlabs.org
+> Cc: Y.B. Lu; linux-mmc@vger.kernel.org; ulf.hansson@linaro.org; Scott
+> Wood; Mark Rutland; Greg Kroah-Hartman; X.B. Xie; M.H. Lian; linux-
+> i2c@vger.kernel.org; linux-clk@vger.kernel.org; Qiang Zhao; Russell King;
+> Bhupesh Sharma; Joerg Roedel; Claudiu Manoil; devicetree@vger.kernel.org;
+> Rob Herring; Santosh Shilimkar; linux-arm-kernel@lists.infradead.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Leo Li;
+> iommu@lists.linux-foundation.org; Kumar Gala
+> Subject: Re: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
+> 
+> On Friday, October 28, 2016 2:50:14 PM CEST Yangbo Lu wrote:
+> > Move mpc85xx.h to include/linux/fsl and rename it to svr.h as a common
+> > header file.  This SVR numberspace is used on some ARM chips as well
+> > as PPC, and even to check for a PPC SVR multi-arch drivers would
+> > otherwise need to ifdef the header inclusion and all references to the
+> SVR symbols.
+> >
+> >
+> 
+> I don't see any of the contents of this header referenced by the soc
+> driver any more. I think you can just drop this patch.
+> 
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/clk/pxa/clk-pxa27x.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+[Lu Yangbo-B47093] This header file was included by guts.c.
+The guts driver used macro SVR_MAJ/SVR_MIN for calculation.
 
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index c40b1804f58c..afc395b4148e 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -221,14 +221,12 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
- 					      unsigned long parent_rate)
- {
- 	unsigned long clkcfg;
--	unsigned int t, ht, b, osc_forced;
-+	unsigned int ht, osc_forced;
- 	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
--	t  = clkcfg & (1 << 0);
- 	ht = clkcfg & (1 << 2);
--	b  = clkcfg & (1 << 3);
- 
- 	if (osc_forced)
- 		return parent_rate;
-@@ -241,7 +239,7 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
- static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- {
- 	unsigned long clkcfg;
--	unsigned int t, ht, b, osc_forced;
-+	unsigned int t, ht, osc_forced;
- 	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
-@@ -251,7 +249,6 @@ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
- 	t  = clkcfg & (1 << 0);
- 	ht = clkcfg & (1 << 2);
--	b  = clkcfg & (1 << 3);
- 
- 	if (ht || t)
- 		return PXA_CORE_TURBO;
--- 
-2.1.4
+This header file was for powerpc arch before. And this patch is to made it as common header file for both ARM and PPC.
+Sooner or later this is needed.
+
+> 	Arnd
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
