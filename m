@@ -1,52 +1,72 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rtc-linux@googlegroups.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4/4] mfd: Enable compile testing for max77620 and max77686
-Date: Sun,  2 Oct 2016 22:58:17 +0200
-Message-Id: <1475441897-15730-5-git-send-email-krzk@kernel.org>
-In-Reply-To: <1475441897-15730-1-git-send-email-krzk@kernel.org>
-References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 31 Oct 2016 11:06:47 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Erin Lo <erin.lo@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, ms.chen@mediatek.com,
+	robert.chou@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>
+Subject: Re: [PATCH v14 1/4] clk: mediatek: Add MT2701 clock support
+Message-ID: <20161031180647.GR16026@codeaurora.org>
+References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
+ <1477020742-13889-2-git-send-email-erin.lo@mediatek.com>
+ <20161028011753.GS26139@codeaurora.org>
+ <1477896558.5376.13.camel@mtksdaap41>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1477896558.5376.13.camel@mtksdaap41>
 List-ID: <linux-clk.vger.kernel.org>
 
-The OF is not a strict build-time dependency so max77620 and max77686
-can be compile tested to increase build coverage.
+On 10/31, James Liao wrote:
+> On Thu, 2016-10-27 at 18:17 -0700, Stephen Boyd wrote:
+> > On 10/21, Erin Lo wrote:
+> > > @@ -244,3 +256,31 @@ void mtk_clk_register_composites(const struct mtk_composite *mcs,
+> > >  			clk_data->clks[mc->id] = clk;
+> > >  	}
+> > >  }
+> > > +
+> > > +void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+> > > +			int num, void __iomem *base, spinlock_t *lock,
+> > > +				struct clk_onecell_data *clk_data)
+> > > +{
+> > > +	struct clk *clk;
+> > > +	int i;
+> > > +
+> > > +	for (i = 0; i <  num; i++) {
+> > > +		const struct mtk_clk_divider *mcd = &mcds[i];
+> > > +
+> > > +		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
+> > 
+> > NULL is a valid clk. IS_ERR_OR_NULL is usually wrong.
+> 
+> Why NULL is a valid clk?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/mfd/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Perhaps at some point we'll want to return a NULL pointer to
+clk_get() callers so that they can handle things like optional
+clocks easily without having any storage requirements. I don't
+know if we'll ever do that, but that's just a possibility.
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index c6df6442ba2b..ccea26943746 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -563,7 +563,7 @@ config MFD_MAX14577
- config MFD_MAX77620
- 	bool "Maxim Semiconductor MAX77620 and MAX20024 PMIC Support"
- 	depends on I2C=y
--	depends on OF
-+	depends on OF || COMPILE_TEST
- 	select MFD_CORE
- 	select REGMAP_I2C
- 	select REGMAP_IRQ
-@@ -578,7 +578,7 @@ config MFD_MAX77620
- config MFD_MAX77686
- 	tristate "Maxim Semiconductor MAX77686/802 PMIC Support"
- 	depends on I2C
--	depends on OF
-+	depends on OF || COMPILE_TEST
- 	select MFD_CORE
- 	select REGMAP_I2C
- 	select REGMAP_IRQ
+> 
+> clk_data is designed for multiple initialization from different clock
+> types, such as infra_clk_data in clk-mt2701.c. So it will ignore valid
+> clocks to avoid duplicated clock registration. Here I assume a clock
+> pointer with error code or NULL to be an invalid (not initialized)
+> clock.
+> 
+
+Ok. Would it be possible to initialize the array with all error
+pointers? That would make things less error prone, but it
+probably doesn't matter at all anyway because this is done during
+registration time. IS_ERR_OR_NULL makes me take a second look
+each time, because it's usually wrong.
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
