@@ -1,102 +1,74 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v4 0/9] arm64: Allwinner A64 support based on sunxi-ng
-Date: Tue, 11 Oct 2016 16:28:18 +0200
-Message-Id: <cover.024e1b023e41efe548dc6a004f7a946408d5c9a2.1476196031.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:46078 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165908AbcKAGuv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2016 02:50:51 -0400
+Received: from mail-yb0-f170.google.com (mail-yb0-f170.google.com [209.85.213.170]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id uA16oh98005918
+        for <linux-clk@vger.kernel.org>; Tue, 1 Nov 2016 15:50:43 +0900
+Received: by mail-yb0-f170.google.com with SMTP id d128so70215389ybh.2
+        for <linux-clk@vger.kernel.org>; Mon, 31 Oct 2016 23:50:43 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20161028012844.GT26139@codeaurora.org>
+References: <20161012093404.GA29062@mwanda> <CAK7LNAQ9=SZMCwoEFasULX4arqkxqOMpREUn6GLtqTdXik5=3w@mail.gmail.com>
+ <20161028012844.GT26139@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 1 Nov 2016 15:50:42 +0900
+Message-ID: <CAK7LNAQiPOCo7MUb9c81uOsJeJ36Q0OoSgUc9DmjmAgk5v_pmg@mail.gmail.com>
+Subject: Re: [bug report] clk: uniphier: add core support code for UniPhier
+ clock driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Stephen,
 
-As it was in the first iteration, this is the A64 support based on the
-new sunxi-ng clock framework.
 
-The support for it is quite minimal at the moment, but it should be
-fairly easy to add new devices, as most of the design is shared with
-older SoCs.
 
-Let me know what you think,
-Maxime
+2016-10-28 10:28 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 10/13, Masahiro Yamada wrote:
+>> 2016-10-12 18:34 GMT+09:00 Dan Carpenter <dan.carpenter@oracle.com>:
+>> >
+>> > We can't return -EINVAL as a u8.
+>> >
+>> >     57  }
+>>
+>>
+>>
+>> I think we should change the return type of .get_parent() callback to "int"
+>> so we can handle error code.
+>> (perhaps, the argument of .set_parent() as well for consistency?)
+>
+> Yeah we've been thinking of changing get_parent() to return a
+> struct clk_hw pointer (or an error pointer). That would simplify
+> things by avoiding lots of remapping.
 
-Changes from v3:
-  - Fix patch split
 
-Changes from v2:
-  - Added pull-ups on the Pine64 i2c bus
-  - Removed the PMU since it doesn't work
-  - Refactored the sunxi-ng framework to deal with the specifities of
-    the A64 CCU, especially in terms of minimum factors.
-  - Fixed a few things in the CCU driver: added CLK_SET_RATE PARENT
-    flags, fixed some mux width, etc.
-  - Converted the CCU driver to a platform driver
-  - Added the DRAM reset line
-  - Added IDs for the USB muxes (even though we're not using them yet)
+I am not quite sure about this.
 
-Changes from v1:
-  - Split the A64 CCU support out of the H3 driver
-  - Added the PMU support
-  - Removed the clocks node
-  - Rebased on top of current sunxi/clk-for-4.9 branch
 
-Andre Przywara (3):
-  arm64: dts: add Allwinner A64 SoC .dtsi
-  Documentation: devicetree: add vendor prefix for Pine64
-  arm64: dts: add Pine64 support
+Currently, parent's clk_hw can be retrieved
+in the following process:
 
-Maxime Ripard (6):
-  clk: sunxi-ng: Rename the internal structures
-  clk: sunxi-ng: Remove the use of rational computations
-  clk: sunxi-ng: Finish to convert to structures for arguments
-  clk: sunxi-ng: Add minimums for all the relevant structures and clocks
-  clk: sunxi-ng: Implement minimum for multipliers
-  clk: sunxi-ng: Add A64 clocks
+ [1] read a register and get the parent index
+ [2] Get core->parents[index]
 
- Documentation/devicetree/bindings/arm/sunxi.txt          |   1 +-
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt    |   1 +-
- Documentation/devicetree/bindings/vendor-prefixes.txt    |   1 +-
- MAINTAINERS                                              |   1 +-
- arch/arm64/boot/dts/Makefile                             |   1 +-
- arch/arm64/boot/dts/allwinner/Makefile                   |   5 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts |  50 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts      |  74 +-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi            | 263 ++-
- drivers/clk/sunxi-ng/Kconfig                             |  14 +-
- drivers/clk/sunxi-ng/Makefile                            |   1 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c                    | 918 ++++++++-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h                    |  72 +-
- drivers/clk/sunxi-ng/ccu_div.h                           |   6 +-
- drivers/clk/sunxi-ng/ccu_frac.c                          |  12 +-
- drivers/clk/sunxi-ng/ccu_frac.h                          |  14 +-
- drivers/clk/sunxi-ng/ccu_mp.h                            |   4 +-
- drivers/clk/sunxi-ng/ccu_mult.c                          |  33 +-
- drivers/clk/sunxi-ng/ccu_mult.h                          |  17 +-
- drivers/clk/sunxi-ng/ccu_nk.c                            |  43 +-
- drivers/clk/sunxi-ng/ccu_nk.h                            |   4 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                           |  45 +-
- drivers/clk/sunxi-ng/ccu_nkm.h                           |   6 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c                          |  55 +-
- drivers/clk/sunxi-ng/ccu_nkmp.h                          |   8 +-
- drivers/clk/sunxi-ng/ccu_nm.c                            |  58 +-
- drivers/clk/sunxi-ng/ccu_nm.h                            |   6 +-
- include/dt-bindings/clock/sun50i-a64-ccu.h               | 134 +-
- include/dt-bindings/reset/sun50i-a64-ccu.h               |  98 +-
- 29 files changed, 1824 insertions(+), 121 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
- create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
+
+[1] is a job of low-level driver and [2] is managed in the core framework.
+
+
+I am not sure if I understood correctly,
+but your suggestion means that
+[2] will be moved to lowlevel drivers as well?
+
+If so, I felt like similar code will be duplicated
+and I wonder if it makes sense.
+
+
 
 -- 
-git-series 0.8.10
+Best Regards
+Masahiro Yamada
