@@ -1,84 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:36582 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424382AbcKANxV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2016 09:53:21 -0400
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, Fabio Estevam
+	<fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 2/3] ARM: imx: mach-imx6ul: add imx6ull support
+Date: Tue, 1 Nov 2016 10:44:36 +0000
+Message-ID: <HE1PR04MB1450456D09E01C3F308D25AB8BA10@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
+ <1477969343-19887-3-git-send-email-peter.chen@nxp.com>
+ <CAOMZO5AsF8s9Ff2NHQ+j2_xSBNEzGY6bGLK-kgvx-aST+K2PNQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5AsF8s9Ff2NHQ+j2_xSBNEzGY6bGLK-kgvx-aST+K2PNQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20161031181509.GS16026@codeaurora.org>
-References: <1477848637-5151-1-git-send-email-akinobu.mita@gmail.com> <20161031181509.GS16026@codeaurora.org>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Tue, 1 Nov 2016 22:52:54 +0900
-Message-ID: <CAC5umyiVcV_KEL+g=mRL-mGQfJrCU5XrEVNzX=CFFXWNuTMBGQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: cdce925: add support for CDCE913, CDCE937, and CDCE949
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Michael Turquette <mturquette@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-11-01 3:15 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 10/31, Akinobu Mita wrote:
->> @@ -582,13 +615,19 @@ static int cdce925_probe(struct i2c_client *client,
->>       struct clk_cdce925_chip *data;
->>       struct device_node *node = client->dev.of_node;
->>       const char *parent_name;
->> -     const char *pll_clk_name[NUMBER_OF_PLLS] = {NULL,};
->> +     const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
->>       struct clk_init_data init;
->>       u32 value;
->>       int i;
->>       int err;
->>       struct device_node *np_output;
->>       char child_name[6];
->> +     struct regmap_config cdce925_regmap_config = {
->
-> Maybe just call this config because it's a local variable now.
-
-Sounds good.
-
->> +             .name = "configuration0",
->> +             .reg_bits = 8,
->> +             .val_bits = 8,
->> +             .cache_type = REGCACHE_RBTREE,
->> +     };
->>
->>       dev_dbg(&client->dev, "%s\n", __func__);
->>       data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
->> @@ -596,6 +635,9 @@ static int cdce925_probe(struct i2c_client *client,
->>               return -ENOMEM;
->>
->>       data->i2c_client = client;
->> +     data->chip_info = &clk_cdce925_chip_info_tbl[id->driver_data];
->> +     cdce925_regmap_config.max_register = CDCE925_OFFSET_PLL +
->> +             data->chip_info->num_plls * 0x10 - 1;
->>       data->regmap = devm_regmap_init(&client->dev, &regmap_cdce925_bus,
->>                       &client->dev, &cdce925_regmap_config);
->>       if (IS_ERR(data->regmap)) {
->> @@ -728,13 +780,19 @@ static int cdce925_probe(struct i2c_client *client,
->>  }
->>
->>  static const struct i2c_device_id cdce925_id[] = {
->> -     { "cdce925", 0 },
->> +     { "cdce913", CDCE913 },
->> +     { "cdce925", CDCE925 },
->> +     { "cdce937", CDCE937 },
->> +     { "cdce949", CDCE949 },
->>       { }
->>  };
->>  MODULE_DEVICE_TABLE(i2c, cdce925_id);
->>
->>  static const struct of_device_id clk_cdce925_of_match[] = {
->> +     { .compatible = "ti,cdce913" },
->>       { .compatible = "ti,cdce925" },
->> +     { .compatible = "ti,cdce937" },
->> +     { .compatible = "ti,cdce949" },
->
-> Doesn't this need to be updated to point to the correct enum
-> values?
-
-I think it isn't needed. Because the data field in struct of_device_id
-for this driver is not used even if the device is registered from
-device tree.  But the driver_data in i2c_device_id is used instead.
+IA0KPg0KPk9uIFR1ZSwgTm92IDEsIDIwMTYgYXQgMTowMiBBTSwgUGV0ZXIgQ2hlbiA8cGV0ZXIu
+Y2hlbkBueHAuY29tPiB3cm90ZToNCj4+IGlteDZ1bGwgaXMgZGVyaXZlZCBTb0MgZnJvbSBpbXg2
+dWwuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgQ2hlbiA8cGV0ZXIuY2hlbkBueHAuY29t
+Pg0KPj4gLS0tDQo+PiAgYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2dWwuYyB8IDMgKystDQo+
+PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPj4NCj4+
+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLWlteC9tYWNoLWlteDZ1bC5jDQo+PiBiL2FyY2gv
+YXJtL21hY2gtaW14L21hY2gtaW14NnVsLmMgaW5kZXggNThhMmI4OC4uMGIyNDYzMCAxMDA2NDQN
+Cj4+IC0tLSBhL2FyY2gvYXJtL21hY2gtaW14L21hY2gtaW14NnVsLmMNCj4+ICsrKyBiL2FyY2gv
+YXJtL21hY2gtaW14L21hY2gtaW14NnVsLmMNCj4+IEBAIC04OSwxMCArODksMTEgQEAgc3RhdGlj
+IHZvaWQgX19pbml0IGlteDZ1bF9pbml0X2xhdGUodm9pZCkNCj4+DQo+PiAgc3RhdGljIGNvbnN0
+IGNoYXIgKiBjb25zdCBpbXg2dWxfZHRfY29tcGF0W10gX19pbml0Y29uc3QgPSB7DQo+PiAgICAg
+ICAgICJmc2wsaW14NnVsIiwNCj4+ICsgICAgICAgImZzbCxpbXg2dWxsIiwNCj4+ICAgICAgICAg
+TlVMTCwNCj4+ICB9Ow0KPj4NCj4+IC1EVF9NQUNISU5FX1NUQVJUKElNWDZVTCwgIkZyZWVzY2Fs
+ZSBpLk1YNiBVbHRyYWxpdGUgKERldmljZSBUcmVlKSIpDQo+PiArRFRfTUFDSElORV9TVEFSVChJ
+TVg2VUwsICJGcmVlc2NhbGUgaS5NWDYgVWx0cmFMaXRlIChEZXZpY2UgVHJlZSkiKQ0KPg0KPklz
+IHRoaXMgY2hhbmdlIHJlYWxseSBuZWVkZWQ/DQoNClRoaXMgY2hhbmdlIGRvZXMgbm90IGJlIHJl
+bGF0ZWQgd2l0aCBpbXg2dWxsIHN1cHBvcnQsIGJ1dCBhbHNvIGEgbmVlZGVkIGNoYW5nZSBzaW5j
+ZQ0KdGhlIGZvcm1hbCBuYW1lIGlzIGNhcGl0YWwgbGV0dGVyICJMIiwgaWYgeW91IGFyZSBjb25j
+ZXJuZWQgd2l0aCB0aGF0LCBJIGNhbiBkZWxldGUgdGhpcw0KY2hhbmdlLg0KDQpQZXRlcg0K
