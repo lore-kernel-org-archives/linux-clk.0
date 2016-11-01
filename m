@@ -1,45 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 3 Nov 2016 13:34:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rnayak@codeaurora.org, stanimir.varbanov@linaro.org
-Subject: Re: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus
- core0/1 clks
-Message-ID: <20161103203418.GA16026@codeaurora.org>
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
- <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:37755 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754367AbcKAUPO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2016 16:15:14 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] clk: renesas: r8a7796: Add VIN clocks
+Date: Tue,  1 Nov 2016 21:12:25 +0100
+Message-Id: <20161101201225.14810-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/24, Sricharan R wrote:
-> With the venus subcore0/1 gdscs(powerdomains) in
-> hw controlled mode, the clock controller does not handle
-> the status bit for the clocks in that domain. So avoid
-> checking for the status bit of those clocks by setting the
-> BRANCH_HALT_DELAY flag. This avoids the WARN_ONs which
-> otherwise occurs when enabling/disabling those clocks.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-A better design would be to check if the associated GDSC is in hw
-control mode and then skip the checks because the clocks are no
-longer under the control of the registers. I presume we only
-enable the clocks here to turn on parent clocks which don't turn
-on/off automatically, i.e. the PLL.
-
-Given that hw control is a static decision I guess that is an
-over-engineered solution though? The problem is that this seems
-brittle because we have to keep two things in sync, the branches
-and the gdsc. So I guess this is ok, but it deserves a comment
-like "GDSC is in HW control" so we know what's going on. Also the
-commit text could be more explicit that clocks within the gdsc
-power domain don't work when the gdsc is off, and with hw control
-of a gdsc we can't tell when the gdsc may be off or on.
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index ade75e7..bfef976 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -125,6 +125,14 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("thermal",		 522,	R8A7796_CLK_CP),
+ 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
+ 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
++	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin4",			 807,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin3",			 808,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin2",			 809,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin1",			 810,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin0",			 811,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.10.2
+
