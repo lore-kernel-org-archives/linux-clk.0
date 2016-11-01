@@ -1,66 +1,32 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-Subject: Re: [PATCH 1/6] clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469
- boards
-To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, andrea.merello@gmail.com
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
- <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, kernel@stlinux.com,
- ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <d60df94d-8f42-12eb-af55-2fc839c126bc@linaro.org>
-Date: Mon, 7 Nov 2016 13:53:19 +0000
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: dianders@google.com, zhangqing@rock-chips.com, huangtao@rock-chips.com, briannorris@google.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: optimize the configuration for 800MHz and 1GHz on RK3399
+Date: Wed, 02 Nov 2016 00:25:37 +0100
+Message-ID: <37901081.P92AxpVH96@phil>
+In-Reply-To: <1477970526-26388-1-git-send-email-zhengxing@rock-chips.com>
+References: <1477970526-26388-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> This patch introduces PLL_I2S and PLL_SAI.
-> Vco clock of these PLLs can be modify by DT (only n multiplicator,
-> m divider is still fixed by the boot-loader).
-> Each PLL has 3 dividers. PLL should be off when we modify the rate.
->
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  drivers/clk/clk-stm32f4.c | 371 ++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 359 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index c2661e2..7641acd 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -28,6 +28,7 @@
- > ...
-> +static const struct clk_div_table pll_divp_table[] = {
-> +	{ 0, 2 }, { 1, 4 }, { 2, 6 }, { 3, 8 },
-> +};
-> +
->  /*
->   * Decode current PLL state and (statically) model the state we inherit from
->   * the bootloader.
->   */
+Am Dienstag, 1. November 2016, 11:22:06 CET schrieb Xing Zheng:
+> Usually, the 800MHz and 1GHz are supplied for CPLL and NPLL in the RK3399.
+> But dues to the carelessly copying from RK3036 when the RK3399 bringing up,
+> the refdiv == 6, it will increase the lock time, and it is not an optimal
+> configuration.
+> 
+> Please let's fix them for the lock time and jitter are lower:
+> 800 MHz:
+> - FVCO == 2.4 GHz, revdiv == 1.
+> 1 GHz:
+> - FVCO == 3 GHz, revdiv == 1.
+> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-This comment isn't right. For a start the model is no longer static.
+applied to my clk-branch for 4.10
 
 
-> @@ -615,18 +944,24 @@ struct stm32f4_clk_data {
->  	const struct stm32f4_gate_data *gates_data;
->  	const u64 *gates_map;
->  	int gates_num;
-> +	const struct stm32f4_pll_data *pll_data;
-> +	int pll_num;
-
-pll_num is unused.
-
-
-Daniel.
+Thanks
+Heiko
