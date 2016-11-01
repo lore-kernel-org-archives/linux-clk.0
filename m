@@ -1,100 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46378 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753208AbcKUGjD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:39:03 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v9 09/16] mmc: sdhci: Factor out sdhci_enable_clk
-Date: Mon, 21 Nov 2016 12:07:19 +0530
-Message-Id: <1479710246-26676-10-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1477922460.2837.5.camel@intel.com>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004124011.d7f5754a082d5f17d5185fc4@free.fr> <20161004165553.GS5228@lukather>
+ <20161023183107.5b75b6aad62853378713299f@free.fr> <20161027175154.v4kuhyvm3r5n6tdo@lukather>
+ <CAGb2v67SSZF6XL-HXv83nuwTKpJc53h8gsrb2r2V98LNZBzqEA@mail.gmail.com> <1477922460.2837.5.camel@intel.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 1 Nov 2016 22:55:13 +0800
+Message-ID: <CAGb2v65yR9NOff+VDA0cBj3UenGpdYUfnYfesnmzP8AN4uw4Tw@mail.gmail.com>
+Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+To: "Koul, Vinod" <vinod.koul@intel.com>
+Cc: "wens@csie.org" <wens@csie.org>,
+	"maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "moinejf@free.fr" <moinejf@free.fr>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>, "broonie@kernel.org" <broonie@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"alexandre.belloni@free-electrons.com" <alexandre.belloni@free-electrons.com>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, "tiwai@suse.com" <tiwai@suse.com>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"mylene.josserand@free-electrons.com" <mylene.josserand@free-electrons.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "perex@perex.cz" <perex@perex.cz>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Factor out sdhci_enable_clk from sdhci_set_clock
-and make it EXPORT_SYMBOL so that it can be called.
+On Tue, Nov 1, 2016 at 9:46 PM, Koul, Vinod <vinod.koul@intel.com> wrote:
+> On Sun, 2016-10-30 at 10:06 +0800, Chen-Yu Tsai wrote:
+>> Looking at the dmaengine API, I believe we got it wrong.
+>>
+>> max_burst in dma_slave_config denotes the largest amount of data
+>> a single transfer should be, as described in dmaengine.h:
+>
+> Not a single transfer but smallest transaction within a transfer of a
+> block. So dmaengines transfer data in bursts from source to destination,
+> this parameter decides the size of that bursts
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
----
- drivers/mmc/host/sdhci.c | 28 +++++++++++++++++-----------
- drivers/mmc/host/sdhci.h |  1 +
- 2 files changed, 18 insertions(+), 11 deletions(-)
+Right.
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index d08d507..62aedf1 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1344,20 +1344,10 @@ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
- }
- EXPORT_SYMBOL_GPL(sdhci_calc_clk);
- 
--void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-+void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
- {
--	u16 clk;
- 	unsigned long timeout;
- 
--	host->mmc->actual_clock = 0;
--
--	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
--
--	if (clock == 0)
--		return;
--
--	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
--
- 	clk |= SDHCI_CLOCK_INT_EN;
- 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
- 
-@@ -1378,6 +1368,22 @@ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 	clk |= SDHCI_CLOCK_CARD_EN;
- 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
- }
-+EXPORT_SYMBOL_GPL(sdhci_enable_clk);
-+
-+void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	u16 clk;
-+
-+	host->mmc->actual_clock = 0;
-+
-+	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-+
-+	if (clock == 0)
-+		return;
-+
-+	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
-+	sdhci_enable_clk(host, clk);
-+}
- EXPORT_SYMBOL_GPL(sdhci_set_clock);
- 
- static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char mode,
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 9c35776..2fe9e80 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -682,6 +682,7 @@ static inline bool sdhci_sdio_irq_enabled(struct sdhci_host *host)
- u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
- 		   unsigned int *actual_clock);
- void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
-+void sdhci_enable_clk(struct sdhci_host *host, u16 clk);
- void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
- 		     unsigned short vdd);
- void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+>
+>>
+>>  * @src_maxburst: the maximum number of words (note: words, as in
+>>  * units of the src_addr_width member, not bytes) that can be sent
+>>  * in one burst to the device. Typically something like half the
+>>  * FIFO depth on I/O peripherals so you don't overflow it. This
+>>  * may or may not be applicable on memory sources.
+>>  * @dst_maxburst: same as src_maxburst but for destination target
+>>  * mutatis mutandis.
+>>
+>> The DMA engine driver should be free to select whatever burst size
+>> that doesn't exceed this. So for max_burst = 4, the driver can select
+>> burst = 4 for controllers that do support it, or burst = 1 for those
+>> that don't, and do more bursts.
+>
+> Nope, the client configures these parameters and dmaengine driver
+> validates and programs
 
+Shouldn't we just name it "burst_size" then if it's meant to be what
+the client specifically asks for?
+
+My understanding is that the client configures its own parameters,
+such as the trigger level for the DRQ, like raise DRQ when level < 1/4
+FIFO depth, request maxburst = 1/4 or 1/2 FIFO depth, so as not to
+overrun the FIFO. When the DRQ is raised, the DMA engine will do a
+burst, and after the burst the DRQ would be low again, so the DMA
+engine will wait. So the DMA engine driver should be free to
+program the actual burst size to something less than maxburst, shouldn't
+it?
+
+>>
+>> This also means we can increase max_burst for the audio codec, as
+>> the FIFO is 64 samples deep for stereo, or 128 samples for mono.
+>
+> Beware that higher bursts means chance of underrun of FIFO. This value
+> is selected with consideration of power and performance required. Lazy
+> allocation would be half of FIFO size..
+
+You mean underrun if its the source right? So the client setting maxburst
+should take the DRQ trigger level into account for this.
+
+
+Regards
+ChenYu
