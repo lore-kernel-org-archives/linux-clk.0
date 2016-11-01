@@ -1,50 +1,60 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: dianders@google.com,
+	zhangqing@rock-chips.com,
+	huangtao@rock-chips.com,
+	briannorris@google.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rnayak@codeaurora.org,
-	stanimir.varbanov@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 2/3] clk: qcom: Put venus core0/1 gdscs to hw control mode
-Date: Mon, 24 Oct 2016 15:48:16 +0530
-Message-Id: <1477304297-5248-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: optimize the configuration for 800MHz and 1GHz on RK3399
+Date: Tue,  1 Nov 2016 11:22:06 +0800
+Message-Id: <1477970526-26388-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The venus video ip's internal core blocks are under the
-control of the firmware and their powerdomains needs to be
-'ON' only when used by the firmware. So putting it into
-hw controlled mode lets this to happen, otherwise the firmware
-hangs checking for this.
+Usually, the 800MHz and 1GHz are supplied for CPLL and NPLL in the RK3399.
+But dues to the carelessly copying from RK3036 when the RK3399 bringing up,
+the refdiv == 6, it will increase the lock time, and it is not an optimal
+configuration.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Please let's fix them for the lock time and jitter are lower:
+800 MHz:
+- FVCO == 2.4 GHz, revdiv == 1.
+1 GHz:
+- FVCO == 3 GHz, revdiv == 1.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/qcom/mmcc-msm8996.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index ca97e11..41aabe3 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -2945,6 +2945,7 @@ enum {
- 		.name = "venus_core0",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = HW_CTRL,
- };
- 
- static struct gdsc venus_core1_gdsc = {
-@@ -2955,6 +2956,7 @@ enum {
- 		.name = "venus_core1",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = HW_CTRL,
- };
- 
- static struct gdsc camss_gdsc = {
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index a5a3f41..28aff45 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -77,7 +77,7 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE(1104000000, 1, 46, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1100000000, 12, 550, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1008000000, 1, 84, 2, 1, 1, 0),
+-	RK3036_PLL_RATE(1000000000, 6, 500, 2, 1, 1, 0),
++	RK3036_PLL_RATE(1000000000, 1, 125, 3, 1, 1, 0),
+ 	RK3036_PLL_RATE( 984000000, 1, 82, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 960000000, 1, 80, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 936000000, 1, 78, 2, 1, 1, 0),
+@@ -87,7 +87,7 @@ static struct rockchip_pll_rate_table rk3399_pll_rates[] = {
+ 	RK3036_PLL_RATE( 864000000, 1, 72, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 840000000, 1, 70, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 816000000, 1, 68, 2, 1, 1, 0),
+-	RK3036_PLL_RATE( 800000000, 6, 400, 2, 1, 1, 0),
++	RK3036_PLL_RATE( 800000000, 1, 100, 3, 1, 1, 0),
+ 	RK3036_PLL_RATE( 700000000, 6, 350, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 696000000, 1, 58, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 676000000, 3, 169, 2, 1, 1, 0),
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
