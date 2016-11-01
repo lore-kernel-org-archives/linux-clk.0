@@ -1,44 +1,43 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: Re: [PATCH 02/14] clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to
- ac-dig
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
- <8dfe0935d35b8a218ebf39d37113e27289a0de9b.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004141251.4e82378e@free-electrons.com>
-Cc: vinod.koul@intel.com, maxime.ripard@free-electrons.com, wens@csie.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lee.jones@linaro.org,
- mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
- devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- alexandre.belloni@free-electrons.com
-Message-ID: <20e6fc5f-54ba-951c-efaf-b3629c8f75a0@free-electrons.com>
-Date: Wed, 5 Oct 2016 11:37:53 +0200
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
+	<peter.chen@nxp.com>
+Subject: [PATCH 2/3] ARM: imx: mach-imx6ul: add imx6ull support
+Date: Tue, 1 Nov 2016 11:02:22 +0800
+Message-ID: <1477969343-19887-3-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
+References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
+Return-Path: peter.chen@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <20161004141251.4e82378e@free-electrons.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Thomas,
+imx6ull is derived SoC from imx6ul.
 
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ arch/arm/mach-imx/mach-imx6ul.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 04/10/2016 14:12, Thomas Petazzoni wrote:
-> Hello,
->
-> On Tue,  4 Oct 2016 11:46:15 +0200, Mylène Josserand wrote:
->> Add the flag CLK_SET_RATE_PARENT to 'ac-dig' clock.
->
-> There is no need to repeat the commit title inside the commit log
-> itself. What would be more useful is to explain *why* this is needed.
-
-
-Agreed, I will update it for a V2.
-
-Thanks !
-
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 58a2b88..0b24630 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -89,10 +89,11 @@ static void __init imx6ul_init_late(void)
+ 
+ static const char * const imx6ul_dt_compat[] __initconst = {
+ 	"fsl,imx6ul",
++	"fsl,imx6ull",
+ 	NULL,
+ };
+ 
+-DT_MACHINE_START(IMX6UL, "Freescale i.MX6 Ultralite (Device Tree)")
++DT_MACHINE_START(IMX6UL, "Freescale i.MX6 UltraLite (Device Tree)")
+ 	.init_irq	= imx6ul_init_irq,
+ 	.init_machine	= imx6ul_init_machine,
+ 	.init_late	= imx6ul_init_late,
 -- 
-Mylène Josserand, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.7.4
