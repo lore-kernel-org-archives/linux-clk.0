@@ -1,34 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Nov 2016 11:57:45 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH] clk: bcm2835: Fix ->fixed_divider of pllh_aux
-Message-ID: <20161123195745.GH25626@codeaurora.org>
-References: <20161122204528.18435-1-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:36582 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424382AbcKANxV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Nov 2016 09:53:21 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161122204528.18435-1-eric@anholt.net>
+In-Reply-To: <20161031181509.GS16026@codeaurora.org>
+References: <1477848637-5151-1-git-send-email-akinobu.mita@gmail.com> <20161031181509.GS16026@codeaurora.org>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Date: Tue, 1 Nov 2016 22:52:54 +0900
+Message-ID: <CAC5umyiVcV_KEL+g=mRL-mGQfJrCU5XrEVNzX=CFFXWNuTMBGQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: cdce925: add support for CDCE913, CDCE937, and CDCE949
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Michael Turquette <mturquette@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/22, Eric Anholt wrote:
-> From: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
-> There is no fixed divider on pllh_aux.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Reviewed-by: Eric Anholt <eric@anholt.net>
-> ---
+2016-11-01 3:15 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 10/31, Akinobu Mita wrote:
+>> @@ -582,13 +615,19 @@ static int cdce925_probe(struct i2c_client *client,
+>>       struct clk_cdce925_chip *data;
+>>       struct device_node *node = client->dev.of_node;
+>>       const char *parent_name;
+>> -     const char *pll_clk_name[NUMBER_OF_PLLS] = {NULL,};
+>> +     const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
+>>       struct clk_init_data init;
+>>       u32 value;
+>>       int i;
+>>       int err;
+>>       struct device_node *np_output;
+>>       char child_name[6];
+>> +     struct regmap_config cdce925_regmap_config = {
+>
+> Maybe just call this config because it's a local variable now.
 
-Applied to clk-next
+Sounds good.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>> +             .name = "configuration0",
+>> +             .reg_bits = 8,
+>> +             .val_bits = 8,
+>> +             .cache_type = REGCACHE_RBTREE,
+>> +     };
+>>
+>>       dev_dbg(&client->dev, "%s\n", __func__);
+>>       data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+>> @@ -596,6 +635,9 @@ static int cdce925_probe(struct i2c_client *client,
+>>               return -ENOMEM;
+>>
+>>       data->i2c_client = client;
+>> +     data->chip_info = &clk_cdce925_chip_info_tbl[id->driver_data];
+>> +     cdce925_regmap_config.max_register = CDCE925_OFFSET_PLL +
+>> +             data->chip_info->num_plls * 0x10 - 1;
+>>       data->regmap = devm_regmap_init(&client->dev, &regmap_cdce925_bus,
+>>                       &client->dev, &cdce925_regmap_config);
+>>       if (IS_ERR(data->regmap)) {
+>> @@ -728,13 +780,19 @@ static int cdce925_probe(struct i2c_client *client,
+>>  }
+>>
+>>  static const struct i2c_device_id cdce925_id[] = {
+>> -     { "cdce925", 0 },
+>> +     { "cdce913", CDCE913 },
+>> +     { "cdce925", CDCE925 },
+>> +     { "cdce937", CDCE937 },
+>> +     { "cdce949", CDCE949 },
+>>       { }
+>>  };
+>>  MODULE_DEVICE_TABLE(i2c, cdce925_id);
+>>
+>>  static const struct of_device_id clk_cdce925_of_match[] = {
+>> +     { .compatible = "ti,cdce913" },
+>>       { .compatible = "ti,cdce925" },
+>> +     { .compatible = "ti,cdce937" },
+>> +     { .compatible = "ti,cdce949" },
+>
+> Doesn't this need to be updated to point to the correct enum
+> values?
+
+I think it isn't needed. Because the data field in struct of_device_id
+for this driver is not used even if the device is registered from
+device tree.  But the driver_data in i2c_device_id is used instead.
