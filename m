@@ -1,85 +1,86 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-Subject: Re: [PATCH 2/6] clk: stm32f4: SDIO & 48Mhz clock management for
- STM32F469 board
-To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, andrea.merello@gmail.com
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
- <1478523943-23142-3-git-send-email-gabriel.fernandez@st.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, kernel@stlinux.com,
- ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <45a332b6-5170-9ae3-8d5e-c5f827c3edea@linaro.org>
-Date: Mon, 7 Nov 2016 13:55:29 +0000
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1477992234.8785.9.camel@mtksdaap41>
+Subject: Re: [PATCH v14 1/4] clk: mediatek: Add MT2701 clock support
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>, Daniel
+ Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Shunli Wang
+	<shunli.wang@mediatek.com>
+Date: Tue, 1 Nov 2016 17:23:54 +0800
+In-Reply-To: <20161031180647.GR16026@codeaurora.org>
+References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
+	 <1477020742-13889-2-git-send-email-erin.lo@mediatek.com>
+	 <20161028011753.GS26139@codeaurora.org>
+	 <1477896558.5376.13.camel@mtksdaap41>
+	 <20161031180647.GR16026@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1478523943-23142-3-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
-> from pll-sai-p.
->
-> The SDIO clock could be also derived from 48Mhz or from sys clock.
->
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  drivers/clk/clk-stm32f4.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index 7641acd..dda15bc 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -199,7 +199,7 @@ struct stm32f4_gate_data {
->  	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
-> -	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
-> +	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"sdmux" },
+Hi Stephen,
 
-I'm confused. How do the "sdmux" clock come to exist on STM32F429?
+On Mon, 2016-10-31 at 11:06 -0700, Stephen Boyd wrote:
+> On 10/31, James Liao wrote:
+> > On Thu, 2016-10-27 at 18:17 -0700, Stephen Boyd wrote:
+> > > On 10/21, Erin Lo wrote:
+> > > > @@ -244,3 +256,31 @@ void mtk_clk_register_composites(const struct mtk_composite *mcs,
+> > > >  			clk_data->clks[mc->id] = clk;
+> > > >  	}
+> > > >  }
+> > > > +
+> > > > +void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+> > > > +			int num, void __iomem *base, spinlock_t *lock,
+> > > > +				struct clk_onecell_data *clk_data)
+> > > > +{
+> > > > +	struct clk *clk;
+> > > > +	int i;
+> > > > +
+> > > > +	for (i = 0; i <  num; i++) {
+> > > > +		const struct mtk_clk_divider *mcd = &mcds[i];
+> > > > +
+> > > > +		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
+> > > 
+> > > NULL is a valid clk. IS_ERR_OR_NULL is usually wrong.
+> > 
+> > Why NULL is a valid clk?
+> 
+> Perhaps at some point we'll want to return a NULL pointer to
+> clk_get() callers so that they can handle things like optional
+> clocks easily without having any storage requirements. I don't
+> know if we'll ever do that, but that's just a possibility.
+> 
+> > 
+> > clk_data is designed for multiple initialization from different clock
+> > types, such as infra_clk_data in clk-mt2701.c. So it will ignore valid
+> > clocks to avoid duplicated clock registration. Here I assume a clock
+> > pointer with error code or NULL to be an invalid (not initialized)
+> > clock.
+> > 
+> 
+> Ok. Would it be possible to initialize the array with all error
+> pointers? That would make things less error prone, but it
+
+Yes. Current mtk_alloc_clk_data() implementation init all elements with
+ERR_PTR(-ENOENT). 
+
+> probably doesn't matter at all anyway because this is done during
+> registration time. IS_ERR_OR_NULL makes me take a second look
+> each time, because it's usually wrong.
+
+I see. Although currently all Mediatek clk drivers use
+mtk_alloc_clk_data() to allocate clk_data, I would like to keep the
+flexibility to support zero-initialized clk_data such as a static
+structure. So I prefer to treat a NULL pointer as an uninitialized
+clock.
 
 
->  	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
->  	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
-> @@ -940,6 +940,10 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
->  	"no-clock", "lse", "lsi", "hse-rtc"
->  };
->
-> +static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
-> +
-> +static const char *sdmux_parents[2] = { "pll48", "sys" };
-> +
->  struct stm32f4_clk_data {
->  	const struct stm32f4_gate_data *gates_data;
->  	const u64 *gates_map;
-> @@ -1109,6 +1113,18 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->  		goto fail;
->  	}
->
-> +	if (of_device_is_compatible(np, "st,stm32f469-rcc")) {
-> +		clk_hw_register_mux_table(NULL, "pll48",
-> +				pll48_parents, ARRAY_SIZE(pll48_parents), 0,
-> +				base + STM32F4_RCC_DCKCFGR, 27, 1, 0, NULL,
-> +				&stm32f4_clk_lock);
-> +
-> +		clk_hw_register_mux_table(NULL, "sdmux",
-> +				sdmux_parents, ARRAY_SIZE(sdmux_parents), 0,
-> +				base + STM32F4_RCC_DCKCFGR, 28, 1, 0, NULL,
-> +				&stm32f4_clk_lock);
-> +	}
-> +
->  	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
->  	return;
->  fail:
->
+Best regards,
+
+James
