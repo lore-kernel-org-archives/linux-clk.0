@@ -1,56 +1,39 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: pxa: fix pxa2xx_determine_rate return
-References: <20161108144950.3472058-1-arnd@arndb.de>
-	<20161108144950.3472058-2-arnd@arndb.de>
-Date: Tue, 08 Nov 2016 19:01:57 +0100
-In-Reply-To: <20161108144950.3472058-2-arnd@arndb.de> (Arnd Bergmann's message
-	of "Tue, 8 Nov 2016 15:49:31 +0100")
-Message-ID: <87k2cdyhnu.fsf@belgarion.home>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:46236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1169102AbcKAM75 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 1 Nov 2016 08:59:57 -0400
+Date: Tue, 1 Nov 2016 20:59:35 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>
+Subject: Re: [PATCH RESEND 1/3] clk: imx6: Mask mmdc_ch1 handshake for
+ periph2_sel and mmdc_ch1_axi_podf
+Message-ID: <20161101125935.GA23831@tiger>
+References: <1476750554-21961-1-git-send-email-festevam@gmail.com>
+ <CAOMZO5BQHKv7dxJTq2C1qdvhhRRRW8bafaXoQW77AKLNTWggAg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5BQHKv7dxJTq2C1qdvhhRRRW8bafaXoQW77AKLNTWggAg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Arnd Bergmann <arnd@arndb.de> writes:
+On Wed, Oct 26, 2016 at 01:48:56PM -0200, Fabio Estevam wrote:
+> Shawn,
+> 
+> Are you collecting the imx clk patches in this cycle?
+> 
+> I see no response from Stephen on this series from a long time.
+> 
+> We missed 4.9, so hopefully this can land in 4.10.
 
-> The new pxa2xx_determine_rate() function seems lacking in a few
-> regards:
->
-> - For an exact match or no match at all, the rate is uninitialized
->   as reported by gcc -Wmaybe-unintialized:
->    drivers/clk/pxa/clk-pxa.c: In function 'pxa2xx_determine_rate':
->    drivers/clk/pxa/clk-pxa.c:243:5: error: 'rate' may be used uninitialized in
->   this function
-Euh I don't think that is true.
+Okay, I just applied the series to imx/clk branch, and will get it into
+linux-next for wider testing.  If no issue is reported, I will send it
+to Stephen and Mike then.
 
-For an exact match, rate is assigned the exact value in the first line after the
-for(xxx).
-
-For no match at all, there are 2 cases :
- - either a closest match is found, and rate is actually assigned (see below)
- - or no match is found, and it's true rate remains uninitialized, but we have
-   ret = -EINVAL
-
-> - If we get a non-exact match, the req->rate output is never set
->   to the actual rate but remains at the requested rate.
-Euh no, that doesn't seem correct to me.
-
-If a non-exact match is found, either by closest_below or closest_above, rate is
-set (rate = freqs[closest_xxx].cpll). And a couple of lines later after the
-if/else, req->rate = rate is set as well, so I don't think this part of the
-commit message is accurate.
-
-> - We should not attempt to print a rate if none could be found
-True.
-
-> This rewrites the logic accordingly.
-Unless I'm wrong in the analysis above, I'd rather have just "unsigned long rate
-= 0" in the variable declaration, and keep the pr_debug() even if -EINVAL is
-returned (it's better for bug tracking, with a rate == 0 in this case for example).
-
-Cheers.
-
---
-Robert
+Shawn
