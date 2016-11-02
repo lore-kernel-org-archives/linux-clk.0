@@ -1,84 +1,33 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Wed, 16 Nov 2016 13:32:32 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 2/3] thermal: hisilicon: fix for dependency
-Message-ID: <20161116053232.GA7240@leoy-linaro>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
- <1472633417-9330-3-git-send-email-leo.yan@linaro.org>
- <20161112120534.GC23848@leoy-linaro>
- <1479212695.2224.12.camel@intel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 17:33:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rtc-linux@googlegroups.com
+Subject: Re: [PATCH 1/4] clk: Enable compile testing for s2mps11 and max77686
+Message-ID: <20161102003319.GK16026@codeaurora.org>
+References: <1475441897-15730-1-git-send-email-krzk@kernel.org>
+ <1475441897-15730-2-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1479212695.2224.12.camel@intel.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475441897-15730-2-git-send-email-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 15, 2016 at 08:24:55PM +0800, Zhang Rui wrote:
-> On Sat, 2016-11-12 at 20:05 +0800, Leo Yan wrote:
-> > Hi Rui, Eduardo,
-> > 
-> > On Wed, Aug 31, 2016 at 04:50:16PM +0800, Leo Yan wrote:
-> > > 
-> > > The thermal driver is standalone driver which is used to enable
-> > > thermal sensors, so it can be used with any cooling device and
-> > > should not bind with CPU cooling device driver.
-> > > 
-> > > This original patch is suggested by Amit Kucheria; so it's to
-> > > polish the dependency in Kconfig, and remove the dependency with
-> > > CPU_THERMAL.
-> > Could you help review this patch? Or need me resend this patch? Sorry
-> > I have not tracked this patches well before, this is one missed
-> > patch for 96board Hikey.
-> > 
-> as it still applies cleanly, the patch is queued for 4.10.
+On 10/02, Krzysztof Kozlowski wrote:
+> s2mps11 and max77686 clock drivers can be compile tested to increase
+> build coverage.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Thanks a lot.
+Applied to clk-next
 
-> thanks,
-> rui
-> > Thanks,
-> > Leo Yan
-> > 
-> > > 
-> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > > ---
-> > >  drivers/thermal/Kconfig | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > > index 2d702ca..91ebab3 100644
-> > > --- a/drivers/thermal/Kconfig
-> > > +++ b/drivers/thermal/Kconfig
-> > > @@ -177,8 +177,10 @@ config THERMAL_EMULATION
-> > >  
-> > >  config HISI_THERMAL
-> > >  	tristate "Hisilicon thermal driver"
-> > > -	depends on (ARCH_HISI && CPU_THERMAL && OF) ||
-> > > COMPILE_TEST
-> > > +	depends on ARCH_HISI || COMPILE_TEST
-> > >  	depends on HAS_IOMEM
-> > > +	depends on OF
-> > > +	default y
-> > >  	help
-> > >  	  Enable this to plug hisilicon's thermal sensor driver
-> > > into the Linux
-> > >  	  thermal framework. cpufreq is used as the cooling device
-> > > to throttle
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
