@@ -1,40 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:23769 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752196AbcKHMVM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Nov 2016 07:21:12 -0500
-Subject: Re: [PATCH v6 08/14] mmc: sdhci-msm: Implement set_clock callback for
- sdhci-msm
-To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-9-git-send-email-riteshh@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <432247af-a9f1-e9f3-cbc9-09ed262ad3da@intel.com>
-Date: Tue, 8 Nov 2016 14:16:11 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 13:39:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/7] clk: qcom: Mark a few branch clocks with
+ BRANCH_HALT_DELAY
+Message-ID: <20161102203950.GK16026@codeaurora.org>
+References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
+ <1476876523-27378-2-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1478517877-23733-9-git-send-email-riteshh@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476876523-27378-2-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:24, Ritesh Harjani wrote:
-> sdhci-msm controller may have different clk-rates for each
-> bus speed mode. Thus implement set_clock callback for
-> sdhci-msm driver.
+On 10/19, Rajendra Nayak wrote:
+> We seem to have a few branch clocks within gcc for msm8996 which do
+> have a valid halt bit but can't be used to check branch enable/disable
+> status as they rely on external clocks in some cases and in some 
+> others only toggle during an ongoing bus transaction.
+> Mark these with BRANCH_HALT_DELAY, so we just add a delay instead.
 > 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Srini tells me that if the pcie pipe clocks are enabled after the
+phy is powered up things work fine and the halt bit checks work.
+So I don't think we need this patch. Probably the drivers are
+enabling all their clocks at probe instead of understanding that
+the phy is outputting a clock that goes into gcc to be gated and
+then back out into their controller and/or phy.
 
+Also, note that these clocks have parents that should be
+populated by the phys, but so far we haven't done that. That
+should be fixed as well.
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
