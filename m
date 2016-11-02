@@ -1,94 +1,27 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v15 4/4] arm: dts: mt2701: Use real clock for UARTs
-To: Erin Lo <erin.lo@mediatek.com>, Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
-References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
- <1478245388-1412-5-git-send-email-erin.lo@mediatek.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
- Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, srv_heupstream@mediatek.com,
- ms.chen@mediatek.com, robert.chou@mediatek.com
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <eece3eba-fd24-ad96-ca20-c08403894b00@gmail.com>
-Date: Wed, 9 Nov 2016 18:20:21 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 17:45:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: shh.xie@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	Mingkai Hu <mingkai.hu@nxp.com>, Shaohui Xie <Shaohui.Xie@nxp.com>
+Subject: Re: [PATCH] clk: qoriq: add ls1046a support
+Message-ID: <20161102004516.GT16026@codeaurora.org>
+References: <1473220110-22159-1-git-send-email-shh.xie@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1478245388-1412-5-git-send-email-erin.lo@mediatek.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1473220110-22159-1-git-send-email-shh.xie@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 11/04/2016 08:43 AM, Erin Lo wrote:
-> We used to use a fixed rate clock for the UARTs. Now that we have clock
-> support we can associate the correct clocks to the UARTs and drop the
-> 26MHz fixed rate UART clock.
->
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-
-Applied, thanks.
-
+On 09/07, shh.xie@gmail.com wrote:
+> From: Mingkai Hu <mingkai.hu@nxp.com>
+> 
+> Signed-off-by: Mingkai Hu <mingkai.hu@nxp.com>
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@nxp.com>
 > ---
->  arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-> index c9a8dbf..7eab6f4 100644
-> --- a/arch/arm/boot/dts/mt2701.dtsi
-> +++ b/arch/arm/boot/dts/mt2701.dtsi
-> @@ -73,12 +73,6 @@
->  		#clock-cells = <0>;
->  	};
->
-> -	uart_clk: dummy26m {
-> -		compatible = "fixed-clock";
-> -		clock-frequency = <26000000>;
-> -		#clock-cells = <0>;
-> -	};
-> -
->  	clk26m: oscillator@0 {
->  		compatible = "fixed-clock";
->  		#clock-cells = <0>;
-> @@ -186,7 +180,8 @@
->  			     "mediatek,mt6577-uart";
->  		reg = <0 0x11002000 0 0x400>;
->  		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
-> -		clocks = <&uart_clk>;
-> +		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-> +		clock-names = "baud", "bus";
->  		status = "disabled";
->  	};
->
-> @@ -195,7 +190,8 @@
->  			     "mediatek,mt6577-uart";
->  		reg = <0 0x11003000 0 0x400>;
->  		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
-> -		clocks = <&uart_clk>;
-> +		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-> +		clock-names = "baud", "bus";
->  		status = "disabled";
->  	};
->
-> @@ -204,7 +200,8 @@
->  			     "mediatek,mt6577-uart";
->  		reg = <0 0x11004000 0 0x400>;
->  		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
-> -		clocks = <&uart_clk>;
-> +		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-> +		clock-names = "baud", "bus";
->  		status = "disabled";
->  	};
->
-> @@ -213,7 +210,8 @@
->  			     "mediatek,mt6577-uart";
->  		reg = <0 0x11005000 0 0x400>;
->  		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
-> -		clocks = <&uart_clk>;
-> +		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-> +		clock-names = "baud", "bus";
->  		status = "disabled";
->  	};
->  };
->
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
