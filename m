@@ -1,24 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:27432
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966285AbcKJUzT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2016 15:55:19 -0500
-Date: Thu, 10 Nov 2016 21:55:16 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: question about clk_get_parent
-Message-ID: <alpine.DEB.2.20.1611102149500.1970@hadrien>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 15:22:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v3 10/11] clk: Add clk_hw_get_clk() helper API to be used
+ by clk providers
+Message-ID: <20161102222208.GT16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-As far as I can see in the various definitions of clk_get_parent, they all
-return either NULL or a value stored in a structure field.  But the
-documentation with the prototype in includ/linux/clk.h says that it
-returns a valid IS_ERR() condition containing errno.  Are ERR_PTR values
-stored in the structure fields?
+On 09/29, Rajendra Nayak wrote:
+> Add a helper API that will allow clk providers to turn their clk_hw
+> structures into struct clk pointer.
+> 
 
-thanks,
-julia
+Did I suggest this?
+
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  drivers/clk/clk.c            | 6 ++++++
+>  include/linux/clk-provider.h | 1 +
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 820a939..a084132 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -186,6 +186,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_get_name);
+>  
+> +struct clk *clk_hw_get_clk(const struct clk_hw *hw)
+> +{
+> +	return hw->clk;
+
+I'd prefer we actually went through all the work and actually
+allocated another clk structure here. We can add another string
+or two for the dev_id and con_id too for debug/accouting
+purposes.
+
+The hw->clk is sort of a remnant of the clk_core introduction. I
+can't recall the exact plan (i.e. I should write it down
+somewhere once I do) but I think we want to get rid of hw->clk
+and have everyone use clk_hw_get_clk() instead. Then for
+traversals from the clk_hw pointer to a clk pointer are very
+clear.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
