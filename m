@@ -1,208 +1,524 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH v6 4/4] arm64: dts: add Pine64 support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
-References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
- <45ddd059d22233c3e07852f4f71ee7ad7ed48542.1478123413.git-series.maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Message-ID: <83b8ff39-91f0-4e5c-61a5-e21f31c909ff@arm.com>
-Date: Wed, 2 Nov 2016 22:05:09 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 15:17:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [RFC v3 11/11] clk: qcom: Add basic CPU clock driver for msm8996
+Message-ID: <20161102221741.GS16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-12-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <45ddd059d22233c3e07852f4f71ee7ad7ed48542.1478123413.git-series.maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475138152-859-12-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/11/16 21:50, Maxime Ripard wrote:
-> From: Andre Przywara <andre.przywara@arm.com>
+On 09/29, Rajendra Nayak wrote:
+> This is a skeletal CPU clock driver, which adds support for the
+> CPU SS primary as well as secondary/alternate PLLs, and the
+> primary/secondary muxes.
 > 
-> The Pine64 is a cost-efficient development board based on the
-> Allwinner A64 SoC.
-> There are three models: the basic version with Fast Ethernet and
-> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
-> feature Gigabit Ethernet and additional connectors for touchscreens
-> and a camera. Or as my son put it: "Those are smaller and these are
-> missing." ;-)
-> The two Pine64+ models just differ in the amount of DRAM
-> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
-> patches the DT accordingly we just need to provide one DT for the
-> Pine64+.
+> This still has support missing for
+> 1. CBF PLL and mux
+> 2. ACD
+> 3. APM
+
+Maybe you can put a clk tree diagram here so we understand the
+hierarchy.
+
 > 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
->  arch/arm64/boot/dts/Makefile                             |  1 +-
->  arch/arm64/boot/dts/allwinner/Makefile                   |  5 +-
->  arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts | 50 ++++++-
->  arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts      | 74 +++++++++-
->  4 files changed, 130 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> 
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index 6684f97c2722..080232b0270e 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -1,4 +1,5 @@
->  dts-dirs += al
-> +dts-dirs += allwinner
->  dts-dirs += altera
->  dts-dirs += amd
->  dts-dirs += amlogic
-> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+
+DT binding document?
+
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 2a25f4e..407668d 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -10,6 +10,7 @@ clk-qcom-y += clk-branch.o
+>  clk-qcom-y += clk-regmap-divider.o
+>  clk-qcom-y += clk-regmap-mux.o
+>  clk-qcom-y += reset.o
+> +clk-qcom-y += clk-cpu-8996.o
+
+Please add a config option.
+
+>  clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+>  
+>  obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
+> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
 > new file mode 100644
-> index 000000000000..1e29a5ae8282
+> index 0000000..e690544
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> @@ -0,0 +1,5 @@
-> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
-> +
-> +always		:= $(dtb-y)
-> +subdir-y	:= $(dts-dirs)
-> +clean-files	:= *.dtb
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-> new file mode 100644
-> index 000000000000..790d14daaa6a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-> @@ -0,0 +1,50 @@
+> +++ b/drivers/clk/qcom/clk-cpu-8996.c
+> @@ -0,0 +1,408 @@
 > +/*
-> + * Copyright (c) 2016 ARM Ltd.
+> + * Copyright (c) 2016, The Linux Foundation. All rights reserved.
 > + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
 > + *
-> + *  a) This library is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This library is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 > + */
 > +
-> +#include "sun50i-a64-pine64.dts"
-> +
-> +/ {
-> +	model = "Pine64+";
-> +	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
-> +
-> +	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
-> +};
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> new file mode 100644
-> index 000000000000..9f127b3d0e33
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> @@ -0,0 +1,74 @@
-> +/*
-> + * Copyright (c) 2016 ARM Ltd.
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This library is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This library is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sun50i-a64.dtsi"
-> +
-> +/ {
-> +	model = "Pine64";
-> +	compatible = "pine64,pine64", "allwinner,sun50i-a64";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart0_pins_a>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c1_pins>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1_pins {
-> +	allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/cpu.h>
 
-which should translate to:
-	bias-pull-up;
-in the generic binding, right?
+Is this used?
 
-Cheers,
-Andre.
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-pll.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-mux.h"
+> +
+> +#define VCO(a, b, c) { \
+> +	.val = a,\
+> +	.min_freq = b,\
+> +	.max_freq = c,\
+> +}
+> +
+> +static const struct alpha_pll_config hfpll_config = {
+> +	.l = 60,
+> +	.config_ctl_val = 0x200D4828,
+> +	.config_ctl_hi_val = 0x006,
+> +	.pre_div_mask = BIT(12),
+> +	.post_div_mask = 0x3 << 8,
+> +	.main_output_mask = BIT(0),
+> +	.early_output_mask = BIT(3),
+> +};
+> +
+> +static struct clk_alpha_pll perfcl_pll = {
+> +	.offset = 0x80000,
+> +	.min_rate = 600000000,
+> +	.max_rate = 3000000000,
+> +	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_16BIT_ALPHA
+> +			| SUPPORTS_FSM_MODE,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "perfcl_pll",
+> +		.parent_names = (const char *[]){ "xo_board" },
+> +		.num_parents = 1,
+> +		.ops = &clk_alpha_pll_hwfsm_ops,
+> +	},
+> +};
+> +
+> +static struct clk_alpha_pll pwrcl_pll = {
+> +	.offset = 0x0,
+> +	.min_rate = 600000000,
+> +	.max_rate = 3000000000,
+> +	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_16BIT_ALPHA
+> +			| SUPPORTS_FSM_MODE,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "pwrcl_pll",
+> +		.parent_names = (const char *[]){ "xo_board" },
+> +		.num_parents = 1,
+> +		.ops = &clk_alpha_pll_hwfsm_ops,
+> +	},
+> +};
+> +
+> +static const struct pll_vco alt_pll_vco_modes[] = {
+> +	VCO(3,  250000000,  500000000),
+> +	VCO(2,  500000000,  750000000),
+> +	VCO(1,  750000000, 1000000000),
+> +	VCO(0, 1000000000, 2150400000),
+> +};
+> +
+> +static const struct alpha_pll_config altpll_config = {
+> +	.l = 16,
+> +	.vco_val = 0x3 << 20,
+> +	.vco_mask = 0x3 << 20,
+> +	.config_ctl_val = 0x4001051B,
+
+Lower case hex please.
+
+> +	.post_div_mask = 0x3 << 8,
+> +	.post_div_val = 0x1,
+> +	.main_output_mask = BIT(0),
+> +	.early_output_mask = BIT(3),
+> +};
+> +
+> +static struct clk_alpha_pll perfcl_alt_pll = {
+> +	.offset = 0x80100,
+> +	.vco_table = alt_pll_vco_modes,
+> +	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+> +	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "perfcl_alt_pll",
+> +		.parent_names = (const char *[]){ "xo_board" },
+> +		.num_parents = 1,
+> +		.ops = &clk_alpha_pll_hwfsm_ops,
+> +	},
+> +};
+> +
+> +static struct clk_alpha_pll pwrcl_alt_pll = {
+> +	.offset = 0x100,
+> +	.vco_table = alt_pll_vco_modes,
+> +	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+> +	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "pwrcl_alt_pll",
+> +		.parent_names = (const char *[]){ "xo_board" },
+> +		.num_parents = 1,
+> +		.ops = &clk_alpha_pll_hwfsm_ops,
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux pwrcl_pmux = {
+> +	.reg = 0x40,
+> +	.shift = 0,
+> +	.width = 2,
+> +	.table = (u32 []){0, 1, 3},
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "pwrcl_pmux",
+> +		.parent_names = (const char *[]){
+> +			"pwrcl_smux",
+> +			"pwrcl_pll",
+> +			"pwrcl_alt_pll",
+> +		},
+> +		.num_parents = 3,
+> +		.ops = &clk_regmap_mux_closest_ops,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux pwrcl_smux = {
+> +	.reg = 0x40,
+> +	.shift = 2,
+> +	.width = 2,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "pwrcl_smux",
+> +		.parent_names = (const char *[]){
+> +			"xo_board",
+> +			"pwrcl_pll_main",
+> +			"sys_apcscbf_clk",
+> +			"sys_apcsaux_clk",
+> +		},
+> +		.num_parents = 4,
+> +		.ops = &clk_regmap_mux_closest_ops,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux perfcl_pmux = {
+> +	.reg = 0x80040,
+> +	.shift = 0,
+> +	.width = 2,
+> +	.table = (u32 []){0, 1, 3},
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "perfcl_pmux",
+> +		.parent_names = (const char *[]){
+> +			"perfcl_smux",
+> +			"perfcl_pll",
+> +			"perfcl_alt_pll",
+> +		},
+> +		.num_parents = 3,
+> +		.ops = &clk_regmap_mux_closest_ops,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux perfcl_smux = {
+> +	.reg = 0x80040,
+> +	.shift = 2,
+> +	.width = 2,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "perfcl_smux",
+> +		.parent_names = (const char *[]){
+> +			"xo_board",
+
+Just use xo please.
+
+> +			"perfcl_pll_main",
+> +			"sys_apcscbf_clk",
+> +			"sys_apcsaux_clk",
+> +		},
+> +		.num_parents = 4,
+> +		.ops = &clk_regmap_mux_closest_ops,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +struct clk_cpu_8996 {
+> +	struct clk_hw *alt_clk;
+> +	struct clk_hw *pll;
+> +	struct clk_regmap clkr;
+> +};
+> +
+> +static inline struct clk_cpu_8996 *to_clk_cpu_8996(struct clk_hw *hw)
+> +{
+> +	return container_of(to_clk_regmap(hw), struct clk_cpu_8996, clkr);
+> +}
+> +
+> +static int clk_cpu_8996_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long prate)
+> +{
+> +	int ret;
+> +	struct clk_cpu_8996 *cpuclk = to_clk_cpu_8996(hw);
+> +	struct clk *alt_clk, *pll, *parent;
+> +
+> +	alt_clk = clk_hw_get_clk(cpuclk->alt_clk);
+> +	pll = clk_hw_get_clk(cpuclk->pll);
+> +	parent = clk_hw_get_clk(clk_hw_get_parent(hw));
+> +
+> +	/* Switch parent to alt clk */
+> +	if (cpuclk->alt_clk) {
+
+This would be false sometimes?
+
+> +		ret = clk_set_parent(parent, alt_clk);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Set the PLL to new rate */
+> +	ret = clk_set_rate(pll, rate);
+> +	if (ret)
+> +		goto error;
+> +
+> +	/* Switch back to primary pll */
+> +	if (cpuclk->alt_clk) {
+> +		ret = clk_set_parent(parent, pll);
+> +		if (ret)
+> +			goto error;
+> +	}
+> +	return 0;
+> +
+> +error:
+> +	if (cpuclk->alt_clk)
+> +		clk_set_parent(parent, pll);
+> +
+> +	return ret;
+> +}
+> +
+> +static unsigned long clk_cpu_8996_recalc_rate(struct clk_hw *hw,
+> +					      unsigned long prate)
+> +{
+> +	return clk_hw_get_rate(clk_hw_get_parent(hw));
+> +}
+
+If we just pass through parent rate I'm confused what the point
+of recalc is here.
+
+> +
+> +static long clk_cpu_8996_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				    unsigned long *prate)
+> +{
+> +	return clk_hw_round_rate(clk_hw_get_parent(hw), rate);
+
+Same here. The core does this already?
+
+> +}
+> +
+> +static struct clk_ops clk_cpu_8996_ops = {
+
+const?
+
+> +	.set_rate = clk_cpu_8996_set_rate,
+> +	.recalc_rate = clk_cpu_8996_recalc_rate,
+> +	.round_rate = clk_cpu_8996_round_rate,
+
+This all feels fake... Please fold it onto the mux clk, because
+the mux is the true output to the CPU and not this software clk
+thing here.
+
+> +};
+> +
+> +static struct clk_cpu_8996 pwrcl_clk = {
+> +	.alt_clk = &pwrcl_alt_pll.clkr.hw,
+> +	.pll = &pwrcl_pll.clkr.hw,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "pwrcl_clk",
+> +		.parent_names = (const char *[]){ "pwrcl_pmux" },
+> +		.num_parents = 1,
+> +		.ops = &clk_cpu_8996_ops,
+> +	},
+> +};
+> +
+> +static struct clk_cpu_8996 perfcl_clk = {
+> +	.alt_clk = &perfcl_alt_pll.clkr.hw,
+> +	.pll = &perfcl_pll.clkr.hw,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "perfcl_clk",
+> +		.parent_names = (const char *[]){ "perfcl_pmux" },
+> +		.num_parents = 1,
+> +		.ops = &clk_cpu_8996_ops,
+> +	},
+> +};
+> +
+> +static const struct regmap_config cpu_msm8996_regmap_config = {
+> +	.reg_bits		= 32,
+> +	.reg_stride		= 4,
+> +	.val_bits		= 32,
+> +	.max_register		= 0x80210,
+> +	.fast_io		= true,
+> +	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
+> +};
+> +
+> +static const struct of_device_id match_table[] = {
+> +	{ .compatible = "qcom,cpu-clk-msm8996" },
+> +	{}
+> +};
+> +
+> +#define cluster_clk_register(dev, clk, clkr) { \
+> +	clk = devm_clk_register_regmap(dev, clkr); \
+> +	if (IS_ERR(clk)) \
+> +		return PTR_ERR(clk); }
+
+Yuck. Why not have an array that we register in a loop instead?
+
+> +
+> +#define cpu_clk_register_fixed(dev, clk, name, pname, flags, m, n) { \
+> +	clk = clk_register_fixed_factor(dev, name, pname, flags, m, n); \
+> +	if (IS_ERR(clk)) \
+> +		return PTR_ERR(clk); }
+
+These could also be specified statically and registered in a
+loop. Also, please use clk_hw based registration APIs.
+
+> +
+> +#define cpu_set_rate(dev, clk, rate) { \
+> +	if (clk_set_rate(clk, rate)) \
+> +		dev_err(dev, "Failed to set " #clk " to " #rate "\n"); }
+
+Not used?
+
+> +
+> +#define cpu_prepare_enable(dev, clk) { \
+> +	if (clk_prepare_enable(clk)) \
+> +		dev_err(dev, "Failed to enable " #clk "\n"); }
+> +
+> +#define cpu_set_parent(dev, clk, parent) { \
+> +	if (clk_set_parent(clk, parent)) \
+> +		dev_err(dev, "Failed to set parent for " #clk "\n"); }
+> +
+> +struct clk *pwr_clk, *perf_clk;
+
+static? Why do these need to be global though?
+
+> +
+> +static int register_cpu_clocks(struct device *dev, struct regmap *regmap)
+> +{
+> +	struct clk *perf_alt_pll, *pwr_alt_pll, *perf_pll, *pwr_pll;
+> +	struct clk *perf_pmux, *perf_smux, *pwr_pmux, *pwr_smux;
+> +	struct clk *perf_pll_main, *pwr_pll_main;
+> +
+> +	/* register PLLs */
+> +	cluster_clk_register(dev, perf_pll, &perfcl_pll.clkr);
+> +	cluster_clk_register(dev, pwr_pll, &pwrcl_pll.clkr);
+> +	cluster_clk_register(dev, perf_alt_pll, &perfcl_alt_pll.clkr);
+> +	cluster_clk_register(dev, pwr_alt_pll, &pwrcl_alt_pll.clkr);
+> +
+> +	/* register MUXs */
+> +	cluster_clk_register(dev, perf_pmux, &perfcl_pmux.clkr);
+> +	cluster_clk_register(dev, perf_smux, &perfcl_smux.clkr);
+> +	cluster_clk_register(dev, pwr_pmux, &pwrcl_pmux.clkr);
+> +	cluster_clk_register(dev, pwr_smux, &pwrcl_smux.clkr);
+> +
+> +	/* register Fixed clks */
+> +	cpu_clk_register_fixed(dev, perf_pll_main, "perfcl_pll_main",
+> +			       "perfcl_pll", CLK_SET_RATE_PARENT, 1, 2);
+> +	cpu_clk_register_fixed(dev, pwr_pll_main, "pwrcl_pll_main",
+> +			       "pwrcl_pll", CLK_SET_RATE_PARENT, 1, 2);
+> +
+> +	/* Register CPU clks */
+
+Capitalized register this time?
+
+> +	cluster_clk_register(dev, perf_clk, &perfcl_clk.clkr);
+> +	cluster_clk_register(dev, pwr_clk, &pwrcl_clk.clkr);
+> +
+> +	/* Initialise the PLLs */
+> +	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
+> +	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
+> +	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+> +	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+> +
+> +	/* Enable all PLLs and alt PLLs */
+> +	cpu_prepare_enable(dev, perf_pll);
+> +	cpu_prepare_enable(dev, pwr_pll);
+> +	cpu_prepare_enable(dev, perf_alt_pll);
+> +	cpu_prepare_enable(dev, pwr_alt_pll);
+
+Is this so the clks don't turn off at late init? Or because clk
+framework doesn't know these things are already enabled? The
+comment doesn't help in understanding here.
+
+> +
+> +	/* Init MUXes with default parents */
+> +	cpu_set_parent(dev, perf_pmux, perf_pll);
+> +	cpu_set_parent(dev, pwr_pmux, pwr_pll);
+> +	cpu_set_parent(dev, perf_smux, perf_pll_main);
+> +	cpu_set_parent(dev, pwr_smux, pwr_pll_main);
+
+Can we use assigned-parents in DT instead?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +	void __iomem *base;
+> +	struct resource *res;
+> +	struct clk_onecell_data *data;
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap_cpu;
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->clks = devm_kcalloc(dev, 3, sizeof(struct clk *), GFP_KERNEL);
+
+sizeof(*data->clks) or I guess hw pointers now. Also 3 != 2?
+
+> +	if (!data->clks)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	regmap_cpu = devm_regmap_init_mmio(dev, base,
+> +					   &cpu_msm8996_regmap_config);
+> +	if (IS_ERR(regmap_cpu))
+> +		return PTR_ERR(regmap_cpu);
+> +
+> +	ret = register_cpu_clocks(dev, regmap_cpu);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->clks[0] = pwr_clk;
+> +	data->clks[1] = perf_clk;
+> +	data->clk_num = 2;
+> +
+> +	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get, data);
+> +}
+> +
+> +static struct platform_driver qcom_cpu_clk_msm8996_driver = {
+> +	.probe = qcom_cpu_clk_msm8996_driver_probe,
+> +	.driver = {
+> +		.name = "qcom-cpu-clk-msm8996",
+> +		.of_match_table = match_table,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(qcom_cpu_clk_msm8996_driver);
+
+It can't be a module?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
