@@ -1,46 +1,40 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH] clk: Free struct clk allocated during clk_hw_register()
-Date: Tue,  8 Nov 2016 13:53:50 +0530
-Message-Id: <1478593430-23102-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 17:18:34 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rnayak@codeaurora.org, stanimir.varbanov@linaro.org
+Subject: Re: [PATCH 1/3] clk: qcom: gdsc: Add support for gdscs with HW
+ control
+Message-ID: <20161102001834.GB16026@codeaurora.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+ <1477304297-5248-2-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1477304297-5248-2-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-With clk_hw_register() API we hide the struct clk from the caller
-and return an int error code instead, so the caller (clk provider)
-is not expected to use hw->clk on return.
-Free the memory, and mark hw->clk as NULL before returning.
+On 10/24, Sricharan R wrote:
+> @@ -164,6 +171,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>  	 */
+>  	udelay(1);
+>  
+> +	/* Turn on HW trigger mode if supported */
+> +	if (sc->flags & HW_CTRL)
+> +		gdsc_hwctrl(sc, true);
+> +
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/clk.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+It sounds like this will cause glitches if the hardware isn't
+asserting their hw control bit by default? This has me concerned
+that we can't just throw the hw control enable part into here,
+because that bit doesn't live in the clock controller, instead it
+lives in the hw block that is powered by the power domain?
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0fb39fe..f81e4aa 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2628,7 +2628,15 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
-  */
- int clk_hw_register(struct device *dev, struct clk_hw *hw)
- {
--	return PTR_ERR_OR_ZERO(clk_register(dev, hw));
-+	struct clk *c;
-+
-+	c = clk_register(dev, hw);
-+	if (IS_ERR(c))
-+		return PTR_ERR(c);
-+
-+	__clk_free_clk(c);
-+	hw->clk = NULL;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(clk_hw_register);
- 
+Or does the power on reset value of that hw control signal
+asserted? If that's true then we should be ok to force it into hw
+control mode by default.
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
