@@ -1,61 +1,48 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Bastian =?ISO-8859-1?Q?K=F6cher?= <mail@kchr.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [clk:clk-qcom-8994 2/2] include/linux/module.h:213:1: error:
- expected ',' or '; ' before 'extern'
-Date: Fri, 11 Nov 2016 08:35:13 +0100
-Message-ID: <19999499.Yz2FylxFTS@bastiultrabook>
-In-Reply-To: <20161110234515.GO16026@codeaurora.org>
-References: <201611110732.1ceuZvsr%fengguang.wu@intel.com>
- <20161110234515.GO16026@codeaurora.org>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: kbuild test robot <fengguang.wu@intel.com>,
- Jeremy McNicoll <jeremymc@redhat.com>, kbuild-all@01.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.135]:32803 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753558AbcKBHFT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 03:05:19 -0400
+From: Jianqun Xu <jay.xu@rock-chips.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de,
+        huangtao@rock-chips.com, zhangqing@rock-chips.com,
+        zhengxing@rock-chips.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        lintao@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>
+Subject: [PATCH] clk: rockchip: fix some clocks' name to be more standard style
+Date: Wed,  2 Nov 2016 15:04:56 +0800
+Message-Id: <1478070296-23080-1-git-send-email-jay.xu@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks for doing that :)
+Fix aclk_emmcgrf to aclk_emmc_grf, and fix aclk_emmccore to be
+aclk_emmc_core.
 
-On Donnerstag, 10. November 2016 15:45:15 CET Stephen Boyd wrote:
-> On 11/11, kbuild test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-qcom-8994
-> > head:   cc800227108710c8f02255e61659b956b041eec3
-> > commit: cc800227108710c8f02255e61659b956b041eec3 [2/2] clk: qcom: Add support for msm8994 global clock controller
-> > config: i386-allmodconfig (attached as .config)
-> > compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-> > reproduce:
-> >         git checkout cc800227108710c8f02255e61659b956b041eec3
-> >         # save the attached .config to linux build tree
-> >         make ARCH=i386 
-> > 
-> > All error/warnings (new ones prefixed by >>):
-> > 
-> >    In file included from drivers/clk/qcom/gcc-msm8994.c:20:0:
-> > >> include/linux/module.h:213:1: error: expected ',' or ';' before 'extern'
-> >     extern const typeof(name) __mod_##type##__##name##_device_table  \
-> >     ^
-> > >> drivers/clk/qcom/gcc-msm8994.c:2265:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
-> >     MODULE_DEVICE_TABLE(of, gcc_msm8994_match_table);
-> 
-> Urgh that's sad. Too bad MODULE_DEVICE_TABLE doesn't have
-> something in it in the !MODULE case to cause compilation problems
-> like this to come out. I'll go fix this up.
-> 
-> 
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 2c7cba7..b3df2c6 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -935,11 +935,11 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(6), 13, GFLAGS),
+ 	COMPOSITE_NOGATE(ACLK_EMMC, "aclk_emmc", mux_aclk_emmc_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(21), 7, 1, MFLAGS, 0, 5, DFLAGS),
+-	GATE(ACLK_EMMC_CORE, "aclk_emmccore", "aclk_emmc", CLK_IGNORE_UNUSED,
++	GATE(ACLK_EMMC_CORE, "aclk_emmc_core", "aclk_emmc", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(32), 8, GFLAGS),
+ 	GATE(ACLK_EMMC_NOC, "aclk_emmc_noc", "aclk_emmc", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(32), 9, GFLAGS),
+-	GATE(ACLK_EMMC_GRF, "aclk_emmcgrf", "aclk_emmc", CLK_IGNORE_UNUSED,
++	GATE(ACLK_EMMC_GRF, "aclk_emmc_grf", "aclk_emmc", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(32), 10, GFLAGS),
+ 
+ 	/* perilp0 */
+-- 
+1.9.1
 
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
