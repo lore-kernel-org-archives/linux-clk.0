@@ -1,55 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:32966 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbcKGL0P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:26:15 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v6 07/14] mmc: sdhci-msm: Enable few quirks
-Date: Mon,  7 Nov 2016 16:54:30 +0530
-Message-Id: <1478517877-23733-8-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Stephen Boyd'" <sboyd@codeaurora.org>
+Cc: <mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<rnayak@codeaurora.org>,
+	<stanimir.varbanov@linaro.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-2-git-send-email-sricharan@codeaurora.org> <20161102001834.GB16026@codeaurora.org>
+In-Reply-To: <20161102001834.GB16026@codeaurora.org>
+Subject: RE: [PATCH 1/3] clk: qcom: gdsc: Add support for gdscs with HW control
+Date: Wed, 2 Nov 2016 12:20:44 +0530
+Message-ID: <003c01d234d5$731b19c0$59514d40$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-sdhc-msm controller needs this SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN
-& SDHCI_QUIRK2_PRESET_VALUE_BROKEN to be set. Hence setting it.
+Hi Stephen,
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>On 10/24, Sricharan R wrote:
+>> @@ -164,6 +171,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>>  	 */
+>>  	udelay(1);
+>>
+>> +	/* Turn on HW trigger mode if supported */
+>> +	if (sc->flags & HW_CTRL)
+>> +		gdsc_hwctrl(sc, true);
+>> +
+>
+>It sounds like this will cause glitches if the hardware isn't
+>asserting their hw control bit by default? This has me concerned
+>that we can't just throw the hw control enable part into here,
+>because that bit doesn't live in the clock controller, instead it
+>lives in the hw block that is powered by the power domain?
+>
+>Or does the power on reset value of that hw control signal
+>asserted? If that's true then we should be ok to force it into hw
+>control mode by default.
+>
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 66ca444..fde2777 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -594,7 +594,9 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
- static const struct sdhci_pltfm_data sdhci_msm_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
- 		  SDHCI_QUIRK_NO_CARD_NO_RESET |
--		  SDHCI_QUIRK_SINGLE_POWER_WRITE,
-+		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
-+		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops = &sdhci_msm_ops,
- };
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+The hw control bit is set by default. Instead its turned 'off'
+with the reset value. So it has to not 
+be turned 'on' at some point
+to put the gdsc in hw control if required. This bit is part of the
+gdscr register. So i did not quite understand the reason for the
+glitch here ?
 
+Regards,
+ Sricharan
