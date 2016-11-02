@@ -1,153 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60536 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbcKGLZx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:25:53 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v6 04/14] mmc: sdhci-msm: Change poor style writel/readl of registers
-Date: Mon,  7 Nov 2016 16:54:27 +0530
-Message-Id: <1478517877-23733-5-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Stephen Boyd'" <sboyd@codeaurora.org>
+Cc: <mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<rnayak@codeaurora.org>,
+	<stanimir.varbanov@linaro.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-2-git-send-email-sricharan@codeaurora.org> <20161102001834.GB16026@codeaurora.org> <003c01d234d5$731b19c0$59514d40$@codeaurora.org>
+In-Reply-To: <003c01d234d5$731b19c0$59514d40$@codeaurora.org>
+Subject: RE: [PATCH 1/3] clk: qcom: gdsc: Add support for gdscs with HW control
+Date: Wed, 2 Nov 2016 12:23:43 +0530
+Message-ID: <003e01d234d5$dd3aeab0$97b0c010$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch changes the poor style of writel/readl registers
-into more readable format. Also to avoid mixed style format
-of readl/writel in sdhci-msm driver.
+Hi,
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 54 ++++++++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 22 deletions(-)
+>-----Original Message-----
+>From: linux-arm-msm-owner@vger.kernel.org [mailto:linux-arm-msm-owner@vger.kernel.org] On Behalf Of Sricharan
+>Sent: Wednesday, November 02, 2016 12:21 PM
+>To: 'Stephen Boyd' <sboyd@codeaurora.org>
+>Cc: mturquette@baylibre.com; linux-clk@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-kernel@vger.kernel.org;
+>rnayak@codeaurora.org; stanimir.varbanov@linaro.org
+>Subject: RE: [PATCH 1/3] clk: qcom: gdsc: Add support for gdscs with HW control
+>
+>Hi Stephen,
+>
+>>On 10/24, Sricharan R wrote:
+>>> @@ -164,6 +171,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>>>  	 */
+>>>  	udelay(1);
+>>>
+>>> +	/* Turn on HW trigger mode if supported */
+>>> +	if (sc->flags & HW_CTRL)
+>>> +		gdsc_hwctrl(sc, true);
+>>> +
+>>
+>>It sounds like this will cause glitches if the hardware isn't
+>>asserting their hw control bit by default? This has me concerned
+>>that we can't just throw the hw control enable part into here,
+>>because that bit doesn't live in the clock controller, instead it
+>>lives in the hw block that is powered by the power domain?
+>>
+>>Or does the power on reset value of that hw control signal
+>>asserted? If that's true then we should be ok to force it into hw
+>>control mode by default.
+>>
+>
+>The hw control bit is set by default. Instead its turned 'off'
+>with the reset value. So it has to not
+>be turned 'on' at some point
+>to put the gdsc in hw control if required. This bit is part of the
+>gdscr register. So i did not quite understand the reason for the
+>glitch here ?
+>
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 8ef44a2a..42f42aa 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -137,8 +137,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
- 	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Set CK_OUT_EN bit of DLL_CONFIG register to 1. */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			| CORE_CK_OUT_EN), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config |= CORE_CK_OUT_EN;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Wait until CK_OUT_EN bit of DLL_CONFIG register becomes '1' */
- 	rc = msm_dll_poll_ck_out_en(host, 1);
-@@ -305,6 +306,7 @@ static int msm_init_cm_dll(struct sdhci_host *host)
- 	struct mmc_host *mmc = host->mmc;
- 	int wait_cnt = 50;
- 	unsigned long flags;
-+	u32 config = 0;
- 
- 	spin_lock_irqsave(&host->lock, flags);
- 
-@@ -313,33 +315,40 @@ static int msm_init_cm_dll(struct sdhci_host *host)
- 	 * tuning is in progress. Keeping PWRSAVE ON may
- 	 * turn off the clock.
- 	 */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC)
--			& ~CORE_CLK_PWRSAVE), host->ioaddr + CORE_VENDOR_SPEC);
-+	config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+	config &= ~CORE_CLK_PWRSAVE;
-+	writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
- 
- 	/* Write 1 to DLL_RST bit of DLL_CONFIG register */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			| CORE_DLL_RST), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config |= CORE_DLL_RST;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Write 1 to DLL_PDN bit of DLL_CONFIG register */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			| CORE_DLL_PDN), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config |= CORE_DLL_PDN;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 	msm_cm_dll_set_freq(host);
- 
- 	/* Write 0 to DLL_RST bit of DLL_CONFIG register */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			& ~CORE_DLL_RST), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config &= ~CORE_DLL_RST;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Write 0 to DLL_PDN bit of DLL_CONFIG register */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			& ~CORE_DLL_PDN), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config &= ~CORE_DLL_PDN;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Set DLL_EN bit to 1. */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			| CORE_DLL_EN), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config |= CORE_DLL_EN;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Set CK_OUT_EN bit to 1. */
--	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
--			| CORE_CK_OUT_EN), host->ioaddr + CORE_DLL_CONFIG);
-+	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+	config |= CORE_CK_OUT_EN;
-+	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
- 
- 	/* Wait until DLL_LOCK bit of DLL_STATUS register becomes '1' */
- 	while (!(readl_relaxed(host->ioaddr + CORE_DLL_STATUS) &
-@@ -536,7 +545,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	struct resource *core_memres;
- 	int ret;
- 	u16 host_version, core_minor;
--	u32 core_version, caps;
-+	u32 core_version, config;
- 	u8 core_major;
- 
- 	host = sdhci_pltfm_init(pdev, &sdhci_msm_pdata, sizeof(*msm_host));
-@@ -605,8 +614,9 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Reset the core and Enable SDHC mode */
--	writel_relaxed(readl_relaxed(msm_host->core_mem + CORE_POWER) |
--		       CORE_SW_RST, msm_host->core_mem + CORE_POWER);
-+	config = readl_relaxed(msm_host->core_mem + CORE_POWER);
-+	config |= CORE_SW_RST;
-+	writel_relaxed(config, msm_host->core_mem + CORE_POWER);
- 
- 	/* SW reset can take upto 10HCLK + 15MCLK cycles. (min 40us) */
- 	usleep_range(1000, 5000);
-@@ -636,9 +646,9 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	 * controller versions and must be explicitly enabled.
- 	 */
- 	if (core_major >= 1 && core_minor != 0x11 && core_minor != 0x12) {
--		caps = readl_relaxed(host->ioaddr + SDHCI_CAPABILITIES);
--		caps |= SDHCI_CAN_VDD_300 | SDHCI_CAN_DO_8BIT;
--		writel_relaxed(caps, host->ioaddr +
-+		config = readl_relaxed(host->ioaddr + SDHCI_CAPABILITIES);
-+		config |= SDHCI_CAN_VDD_300 | SDHCI_CAN_DO_8BIT;
-+		writel_relaxed(config, host->ioaddr +
- 			       CORE_VENDOR_SPEC_CAPABILITIES0);
- 	}
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+typo above, i meant it has to be turned 'on' at some point
+if required.
 
+Regards,
+ Sricharan
