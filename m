@@ -1,56 +1,75 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 15:22:08 -0700
+Date: Tue, 1 Nov 2016 18:27:51 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 10/11] clk: Add clk_hw_get_clk() helper API to be used
- by clk providers
-Message-ID: <20161102222208.GT16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
+	galak@codeaurora.org, pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org, varada@codeaurora.org,
+	sricharan@codeaurora.org, architt@codeaurora.org,
+	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 6/7] clk: qcom: ipq4019: changed the frequency value
+ for ddr pll
+Message-ID: <20161102012751.GF16026@codeaurora.org>
+References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+ <1474460512-31994-7-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1474460512-31994-7-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Rajendra Nayak wrote:
-> Add a helper API that will allow clk providers to turn their clk_hw
-> structures into struct clk pointer.
-> 
+On 09/21, Abhishek Sahu wrote:
+> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+> index b2decd5..a2809db 100644
+> --- a/drivers/clk/qcom/gcc-ipq4019.c
+> +++ b/drivers/clk/qcom/gcc-ipq4019.c
+> @@ -546,7 +546,7 @@ static const struct freq_tbl ftbl_gcc_sdcc1_apps_clk[] = {
+>  	F(25000000,  P_FEPLL500, 1,  1, 20),
+>  	F(50000000,  P_FEPLL500, 1,  1, 10),
+>  	F(100000000, P_FEPLL500, 1,  1, 5),
+> -	F(190000000, P_DDRPLL,   1,  0, 0),
+> +	F(192000000, P_DDRPLL,   1,  0, 0),
 
-Did I suggest this?
+Change from 193 to 190 to 192.... please do it once.
 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/clk.c            | 6 ++++++
->  include/linux/clk-provider.h | 1 +
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939..a084132 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -186,6 +186,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_get_name);
+>  	{ }
+>  };
 >  
-> +struct clk *clk_hw_get_clk(const struct clk_hw *hw)
-> +{
-> +	return hw->clk;
+> @@ -567,18 +567,18 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
+>  static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+>  	F(48000000,  P_XO,         1, 0, 0),
+>  	F(200000000, P_FEPLL200,   1, 0, 0),
+> -	F(380000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(409000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(444000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(484000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(384000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(413000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(448000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(488000000, P_DDRPLLAPSS, 1, 0, 0),
+>  	F(500000000, P_FEPLL500,   1, 0, 0),
+> -	F(507000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(532000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(560000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(592000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(666000000, P_DDRPLLAPSS, 1, 0, 0),
+> -	F(710000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(512000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(537000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(565000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(597000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(632000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(672000000, P_DDRPLLAPSS, 1, 0, 0),
+> +	F(716000000, P_DDRPLLAPSS, 1, 0, 0),
 
-I'd prefer we actually went through all the work and actually
-allocated another clk structure here. We can add another string
-or two for the dev_id and con_id too for debug/accouting
-purposes.
+Didn't this patch series introduce table updates already? Why
+can't this patch be squashed with that one?
 
-The hw->clk is sort of a remnant of the clk_core introduction. I
-can't recall the exact plan (i.e. I should write it down
-somewhere once I do) but I think we want to get rid of hw->clk
-and have everyone use clk_hw_get_clk() instead. Then for
-traversals from the clk_hw pointer to a clk pointer are very
-clear.
+>  	{ }
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
