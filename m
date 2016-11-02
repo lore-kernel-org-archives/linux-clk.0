@@ -1,53 +1,80 @@
-Return-Path: <Chris.Paterson2@renesas.com>
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
-Date: Wed, 23 Nov 2016 08:39:51 +0000
-Message-ID: <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
- <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
- <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
-In-Reply-To: <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 2 Nov 2016 13:59:11 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
+Message-ID: <20161102205910.GQ25787@tuxbot>
+References: <20161019132816.31073-4-georgi.djakov@linaro.org>
+ <20161028015438.GG16026@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161028015438.GG16026@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tDQo+
-IFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0gT24gQmVoYWxmIE9mIEdlZXJ0
-IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAyMyBOb3ZlbWJlciAyMDE2IDA4OjA2DQo+IFRvOiBDaHJp
-cyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiBDYzogR2VlcnQgVXl0
-dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IE1pY2hhZWwgVHVycXVldHRlDQo+
-IDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZCA8c2JveWRAY29kZWF1cm9y
-YS5vcmc+Ow0KPiBMaW51eC1SZW5lc2FzIDxsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5v
-cmc+OyBsaW51eC1jbGsgPGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnPjsgUmFtZXNoIFNo
-YW5tdWdhc3VuZGFyYW0NCj4gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29t
-Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvM10gY2xrOiByZW5lc2FzOiByOGE3Nzk2OiBBZGQg
-Q0FOIHBlcmlwaGVyYWwgY2xvY2sNCj4gDQo+IEhpIENocmlzLA0KPiANCj4gT24gV2VkLCBOb3Yg
-MjMsIDIwMTYgYXQgOTowMyBBTSwgR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC0NCj4g
-bTY4ay5vcmc+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgTm92IDIyLCAyMDE2IGF0IDI6NDYgUE0sIENo
-cmlzIFBhdGVyc29uDQo+ID4gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4gd3JvdGU6DQo+
-ID4+IFNpZ25lZC1vZmYtYnk6IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtDQo+ID4+IDxyYW1lc2gu
-c2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCj4gPj4gU2lnbmVkLW9mZi1ieTogQ2hy
-aXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4gDQo+IEJUVywgYXMg
-YWxsIHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMgd2VyZSBTaWduZWQtb2ZmLWJ5IFJhbWVzaCBmaXJz
-dCwgZG9lcyB0aGF0DQo+IG1lYW4gaGUncyB0aGUgYXV0aG9yLCBhbmQgeW91IHNob3VsZCBoYXZl
-IGFkZGVkIGhpcyBGcm9tOiBsaW5lLCB0b28/DQoNClRlY2huaWNhbGx5IEkgYXV0aG9yZWQgdGhl
-c2UgcGF0Y2hlcywgYnV0IHRoZXkgYXJlIGRpcmVjdCBwb3J0cyBmcm9tIFJhbWVzaCdzIHI4YTc3
-OTUgcGF0Y2hlcyBbMV1bMl1bM10uDQoNClsxXSAxMWM2ZmI3IGNsazogc2htb2JpbGU6IHI4YTc3
-OTU6IEFkZCBDQU4gcGVyaXBoZXJhbCBjbG9jaw0KWzJdIDdlMDBkNjMxIGNsazogc2htb2JpbGU6
-IHI4YTc3OTU6IEFkZCBDQU5GRCBjbG9jaw0KWzNdIGEwODBjOGMgY2xrOiBzaG1vYmlsZTogcjhh
-Nzc5NTogQWRkIENBTiBGRCBwZXJpcGhlcmFsIGNsb2NrDQoNCkFwb2xvZ2llcyBmb3Igbm90IG1h
-a2luZyB0aGlzIGNsZWFyIGluIHRoZSBjb3ZlciBsZXR0ZXIuDQoNCktpbmQgcmVnYXJkcywgQ2hy
-aXMNCg0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAg
-ICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90
-cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC0NCj4gbTY4ay5vcmcNCj4gDQo+
-IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
-bXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJ
-IGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+On Thu 27 Oct 18:54 PDT 2016, Stephen Boyd wrote:
+
+> On 10/19, Georgi Djakov wrote:
+> > Add a driver for the A53 Clock Controller. It is a hardware block that
+> > implements a combined mux and half integer divider functionality. It can
+> > choose between a fixed-rate clock or the dedicated A53 PLL. The source
+> > and the divider can be set both at the same time.
+> > 
+> > This is required for enabling CPU frequency scaling on platforms like
+> > MSM8916.
+> > 
+> 
+> Please Cc DT reviewers.
+> 
+> > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> > ---
+> >  .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
+> >  drivers/clk/qcom/Kconfig                           |   8 ++
+> >  drivers/clk/qcom/Makefile                          |   1 +
+> >  drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
+> >  4 files changed, 186 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> >  create mode 100644 drivers/clk/qcom/a53cc.c
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > new file mode 100644
+> > index 000000000000..a025f062f177
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > @@ -0,0 +1,22 @@
+> > +Qualcomm A53 CPU Clock Controller Binding
+> > +------------------------------------------------
+> > +The A53 CPU Clock Controller is hardware, which provides a combined
+> > +mux and divider functionality for the CPU clocks. It can choose between
+> > +a fixed rate clock and the dedicated A53 PLL.
+> > +
+> > +Required properties :
+> > +- compatible : shall contain:
+> > +
+> > +			"qcom,a53cc"
+> > +
+> > +- reg : shall contain base register location and length
+> > +	of the APCS region
+> > +- #clock-cells : shall contain 1
+> > +
+> > +Example:
+> > +
+> > +	apcs: syscon@b011000 {
+> > +		compatible = "qcom,a53cc", "syscon";
+> 
+> Why is it a syscon? Is that part used?
+> 
+
+I use the register at offset 8 for interrupting the other subsystems, so
+this must be available as something I can poke.
+
+Which makes me think that this should be described as a "simple-mfd" and
+"syscon" with the a53cc node as a child - grabbing the regmap of the
+syscon parent, rather then ioremapping the same region again.
+
+Regards,
+Bjorn
