@@ -1,105 +1,41 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:56095 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932223AbcK1KRY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Nov 2016 05:17:24 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Markus Mayer <code@mmayer.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Power Management List <linux-pm@vger.kernel.org>,
-        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Markus Mayer <mmayer@broadcom.com>, linux-clk@vger.kernel.org,
-        Device Tree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: fwd, Re: [PATCH v3] cpufreq: brcmstb-cpufreq: CPUfreq driver for older Broadcom STB SoCs
-Date: Mon, 28 Nov 2016 11:16:48 +0100
-Message-ID: <5336918.eLmd7pA3eN@wuerfel>
-In-Reply-To: <20161122213245.17955-1-code@mmayer.net>
-References: <20161122213245.17955-1-code@mmayer.net>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34101 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751673AbcKBJZe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 05:25:34 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20161101201225.14810-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se> <20161101201225.14810-3-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 10:25:33 +0100
+Message-ID: <CAMuHMdWYicCK3mZ8_-SPCF7ieZZyY6BpNOriPpHO+ugAosHACg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r8a7796: Add VIN clocks
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-[resending my mail, this time with devicetree, linux-clk, and linux-arm-kernel
-on cc]
+On Tue, Nov 1, 2016 at 9:12 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-On Tuesday, November 22, 2016 1:32:45 PM CET Markus Mayer wrote:
-> From: Markus Mayer <mmayer@broadcom.com>
-> 
-> This CPUfreq driver provides basic frequency scaling for older Broadcom
-> STB SoCs that do not use AVS firmware with DVFS support. There is no
-> support for voltage scaling.
-> 
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This causes multiple build errors in linux-next, please fix asap or
-drop the patch again. My feeling is that it's probably too late to
-fix it for v4.10, but that's up to Viresh and Rafael of course.
+Gr{oetje,eeting}s,
 
-> +#define BRCMSTB_CPUFREQ_PREFIX	"brcmstb"
-> +#define BRCMSTB_CPUFREQ_NAME	BRCMSTB_CPUFREQ_PREFIX "-cpufreq"
-> +
-> +/* We search for these compatible strings. */
-> +#define BRCMSTB_DT_CPU_CLK_CTRL	"brcm,brcmstb-cpu-clk-div"
-> +#define BRCMSTB_DT_MEMC_DDR	"brcm,brcmstb-memc-ddr"
-> +#define BRCM_AVS_CPU_DATA	"brcm,avs-cpu-data-mem"
-> +
-> +/* We also need a few clocks in device tree. These are node names. */
-> +#define BRCMSTB_CLK_MDIV_CH0	"cpu_mdiv_ch0"
-> +#define BRCMSTB_CLK_NDIV_INT	"cpu_ndiv_int"
-> +#define BRCMSTB_CLK_SW_SCB	"sw_scb"
+                        Geert
 
-Not critical but the use of those macros obfuscates the DT interfaces
-here and made it harder to analyse what was going on.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Also, a couple of them are lacking a DT binding.
-
-> +static int get_frequencies(const struct cpufreq_policy *policy,
-> +			   unsigned int *vco_freq, unsigned int *cpu_freq,
-> +			   unsigned int *scb_freq)
-> +{
-> +	struct clk *cpu_ndiv_int, *sw_scb;
-> +
-> +	cpu_ndiv_int = __clk_lookup(BRCMSTB_CLK_NDIV_INT);
-> +	if (!cpu_ndiv_int)
-> +		return -ENODEV;
-> +
-> +	sw_scb = __clk_lookup(BRCMSTB_CLK_SW_SCB);
-> +	if (!sw_scb)
-> +		return -ENODEV;
-> +
-> +	/* return frequencies in kHz */
-> +	*vco_freq = clk_get_rate(cpu_ndiv_int) / 1000;
-> +	*cpu_freq = clk_get_rate(policy->clk) / 1000;
-> +	*scb_freq = clk_get_rate(sw_scb) / 1000;
-> +
-> +	return 0;
-> +}
-
-You really can't do this: 
-
-../drivers/cpufreq/brcmstb-cpufreq.c: In function 'get_frequencies':
-../drivers/cpufreq/brcmstb-cpufreq.c:71:17: error: implicit declaration of function '__clk_lookup';did you mean 'key_lookup'? [-Werror=implicit-function-declaration]
-  cpu_ndiv_int = __clk_lookup(BRCMSTB_CLK_NDIV_INT);
-                 ^~~~~~~~~~~~
-
-__clk_lookup is an internal API for the clk providers.
-
-In particular, relying on undocumented internal names of the
-clk provider in a device driver is inappropriate.
-
-> +static const struct of_device_id brcmstb_cpufreq_match[] = {
-> +	{ .compatible = BRCMSTB_DT_CPU_CLK_CTRL },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(platform, brcmstb_cpufreq_match);
-
-This is a simple typo, also causing the build to fail:
-
-    FATAL: drivers/cpufreq/brcmstb-cpufreq: sizeof(struct platform_device_id)=24 is not a modulo of the size of section __mod_platform__<identifier>_device_table=392.
-
-	Arnd
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
