@@ -1,107 +1,60 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 3 Nov 2016 11:28:34 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
-Message-ID: <20161103182834.GR25787@tuxbot>
-References: <20161019132816.31073-4-georgi.djakov@linaro.org>
- <20161028015438.GG16026@codeaurora.org>
- <20161102205910.GQ25787@tuxbot>
- <20161102225520.GW16026@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 15:26:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] clk: pxa: transfer CPU clock setting from
+ pxa2xx-cpufreq
+Message-ID: <20161102222658.GU16026@codeaurora.org>
+References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+ <1477225170-19019-6-git-send-email-robert.jarzmik@free.fr>
+ <20161102005637.GV16026@codeaurora.org>
+ <87y411zxua.fsf@belgarion.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161102225520.GW16026@codeaurora.org>
+In-Reply-To: <87y411zxua.fsf@belgarion.home>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed 02 Nov 15:55 PDT 2016, Stephen Boyd wrote:
-
-> On 11/02, Bjorn Andersson wrote:
-> > On Thu 27 Oct 18:54 PDT 2016, Stephen Boyd wrote:
-> > 
-> > > On 10/19, Georgi Djakov wrote:
-> > > > Add a driver for the A53 Clock Controller. It is a hardware block that
-> > > > implements a combined mux and half integer divider functionality. It can
-> > > > choose between a fixed-rate clock or the dedicated A53 PLL. The source
-> > > > and the divider can be set both at the same time.
-> > > > 
-> > > > This is required for enabling CPU frequency scaling on platforms like
-> > > > MSM8916.
-> > > > 
-> > > 
-> > > Please Cc DT reviewers.
-> > > 
-> > > > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> > > > ---
-> > > >  .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
-> > > >  drivers/clk/qcom/Kconfig                           |   8 ++
-> > > >  drivers/clk/qcom/Makefile                          |   1 +
-> > > >  drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
-> > > >  4 files changed, 186 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> > > >  create mode 100644 drivers/clk/qcom/a53cc.c
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> > > > new file mode 100644
-> > > > index 000000000000..a025f062f177
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> > > > @@ -0,0 +1,22 @@
-> > > > +Qualcomm A53 CPU Clock Controller Binding
-> > > > +------------------------------------------------
-> > > > +The A53 CPU Clock Controller is hardware, which provides a combined
-> > > > +mux and divider functionality for the CPU clocks. It can choose between
-> > > > +a fixed rate clock and the dedicated A53 PLL.
-> > > > +
-> > > > +Required properties :
-> > > > +- compatible : shall contain:
-> > > > +
-> > > > +			"qcom,a53cc"
-> > > > +
-> > > > +- reg : shall contain base register location and length
-> > > > +	of the APCS region
-> > > > +- #clock-cells : shall contain 1
-> > > > +
-> > > > +Example:
-> > > > +
-> > > > +	apcs: syscon@b011000 {
-> > > > +		compatible = "qcom,a53cc", "syscon";
-> > > 
-> > > Why is it a syscon? Is that part used?
-> > > 
-> > 
-> > I use the register at offset 8 for interrupting the other subsystems, so
-> > this must be available as something I can poke.
-> > 
-> > Which makes me think that this should be described as a "simple-mfd" and
-> > "syscon" with the a53cc node as a child - grabbing the regmap of the
-> > syscon parent, rather then ioremapping the same region again.
-> > 
+On 11/02, Robert Jarzmik wrote:
+> Stephen Boyd <sboyd@codeaurora.org> writes:
 > 
-> That's sort of a question for DT reviewers. The register space
-> certainly seems like a free for all with a tilt toward power
-> management of the CPU, similar to how this was done on Krait
-> based designs.
+> > On 10/23, Robert Jarzmik wrote:
+> >> diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+> >> index 29cee9e8d4d9..7184819b7415 100644
+> >> --- a/drivers/clk/pxa/clk-pxa.c
+> >> +++ b/drivers/clk/pxa/clk-pxa.c
+> >> +void pxa2xx_core_turbo_switch(bool on)
+> >> +{
+> >> +	unsigned long flags;
+> >> +	unsigned int unused, clkcfg;
+> >> +
+> >> +	local_irq_save(flags);
+> >> +
+> >> +	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+> >
+> > \t is odd style, but I guess this is copied from somewhere?
+> Yeah ... and yes, that \t is indeed ugly now I look at it. A space could be more
+> welcome ...
+> 
+> > Should it be volatile? Or is it ok for the clkcfg value to be
+> > cached here?
+> 
+> I don't see how it could be cached ... The asm statement produces a result used
+> afterwards, I don't think the compiler can optimize that out. I would have
+> understood if this was in a loop, but here I don't see.
+> 
+> Note that I'm not reluctant to add it, I just want to check which optimization
+> case we're talking about to see if I'm missing something.
 > 
 
-Right. But this kind of mashup blocks was the reason why simple-mfd was
-put in place.
+I'm a bit rusty on asm volatile semantics but I seem to recall
+that a non-volatile asm statement can be combined/merged,
+reordered, etc. by the compiler. I suppose if this was in the
+cpufreq driver already then changing it in this patch is not a
+good idea. If anything, a follow up patch if we determine it's
+actually a bug.
 
-> I wonder why we didn't make up some provider/consumer binding for
-> the "kicking" feature used by SMD/RPM code. Then this could be a
-> clock provider and a "kick" provider (haha #kick-cells) and the
-> usage of syscon/regmap wouldn't be mandatory.
-> 
-
-I did consider doing that, but had enough dependencies to put in place
-as it was.
-
-I'm in favour of us inventing a kicker API and it's found outside out
-use cases as well (e.g. virtio/rpmsg).
-
-Regards,
-Bjorn
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
