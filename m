@@ -1,44 +1,27 @@
-Return-Path: <sricharan@codeaurora.org>
-From: "Sricharan" <sricharan@codeaurora.org>
-To: "'Rajendra Nayak'" <rnayak@codeaurora.org>,
-	"'Stephen Boyd'" <sboyd@codeaurora.org>
-Cc: <mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<stanimir.varbanov@linaro.org>
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org> <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org> <20161104201836.GE16026@codeaurora.org> <58201597.6010207@codeaurora.org> <20161108223336.GK16026@codeaurora.org> <000301d23aaa$3f5dd110$be197330$@codeaurora.org> <5823DC3E.2060106@codeaurora.org>
-In-Reply-To: <5823DC3E.2060106@codeaurora.org>
-Subject: RE: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
-Date: Thu, 10 Nov 2016 08:58:13 +0530
-Message-ID: <001701d23b02$7bf7daa0$73e78fe0$@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 14:51:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v3 02/11] clk: qcom: Add support to initialize alpha plls
+Message-ID: <20161102215141.GN16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-3-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475138152-859-3-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rajendra,
->
->>>
->>> The proper sequence sounds like it should be:
->>>
->>> 	1. Enable GDSC for main domain
->>> 	2. Enable clocks for main domain (video_{core,maxi,ahb,axi}_clk)
->>> 	3. Write the two registers to assert hw signal for subdomains
->>> 	4. Enable GDSCs for two subdomains
->>> 	5. Enable clocks for subdomains (video_subcore{0,1}_clk)
->>>
->[]..
->
->>
->> So the above is the sequence which is actually carried out on the
->> firmware side. The same can be done in host as well.
->
->By the 'above sequence is done on firmware side', I hope you don;t mean *all* 5 steps.
->I guess you mean only step 3 is done by firmware?
->
+On 09/29, Rajendra Nayak wrote:
+> Add a function to do initial configuration of the alpha plls
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-Yes, only step 3.
+Applied to clk-next
 
-Regards,
- Sricharan
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
