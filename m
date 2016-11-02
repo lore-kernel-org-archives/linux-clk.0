@@ -1,59 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43532 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752851AbcKUGcJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:32:09 -0500
-Subject: Re: [PATCH v8 05/16] dt-bindings: sdhci-msm: Add xo property
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20161116191335.GH25626@codeaurora.org>
- <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
- <20161117230352.GO25626@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, andy.gross@linaro.org,
-        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <f0051303-a18f-9f9c-5ed6-3d4ade5cbe74@codeaurora.org>
-Date: Mon, 21 Nov 2016 12:01:59 +0530
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 17:38:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	kernel-janitors@vger.kernel.org,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/15] clk: tegra: dfll: improve function-level
+ documentation
+Message-ID: <20161102003852.GN16026@codeaurora.org>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-In-Reply-To: <20161117230352.GO25626@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/01, Julia Lawall wrote:
+> Adjust variables to correspond to the names used in the parameter list of
+> the function.  Move the struct device * variable up to the place where it
+> appears in the parameter list.
+> 
+> Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
 
-
-On 11/18/2016 4:33 AM, Stephen Boyd wrote:
-> On 11/17, Ritesh Harjani wrote:
->> Add "xo" property which is tcxo clock.
->>
->> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> index 485483a..4e61086 100644
->> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> @@ -17,6 +17,7 @@ Required properties:
->>  	"iface" - Main peripheral bus clock (PCLK/HCLK - AHB Bus clock) (required)
->>  	"core"	- SDC MMC clock (MCLK) (required)
->>  	"bus"	- SDCC bus voter clock (optional)
->> +	"xo" - TCXO clock (optional)
->
-> Seems everything else is tabbed before the dash. Otherwise,
-Sure.
->
-> Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-Thanks.
->
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
