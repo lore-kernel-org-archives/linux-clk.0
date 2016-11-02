@@ -1,68 +1,98 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v7 3/3] clk: qcom: Add A53 clock driver
-To: Rob Herring <robh@kernel.org>
-References: <20161031145526.5023-1-georgi.djakov@linaro.org>
- <20161031145526.5023-4-georgi.djakov@linaro.org>
- <20161109182440.hjiv725vpsh5dctd@rob-hp-laptop>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, mark.rutland@arm.com,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Message-ID: <13eb175c-0f1d-4cd6-4d1a-7b952be9a6b2@linaro.org>
-Date: Mon, 14 Nov 2016 18:15:46 +0200
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+ <3797605.lKJkRScdp8@wasted.cogentembedded.com>
+ <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <3ec05522-108c-64df-de6b-1329c78ce9e0@cogentembedded.com>
+Date: Wed, 2 Nov 2016 16:30:21 +0300
 MIME-Version: 1.0
-In-Reply-To: <20161109182440.hjiv725vpsh5dctd@rob-hp-laptop>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/09/2016 08:24 PM, Rob Herring wrote:
-> On Mon, Oct 31, 2016 at 04:55:26PM +0200, Georgi Djakov wrote:
->> Add a driver for the A53 Clock Controller. It is a hardware block that
->> implements a combined mux and half integer divider functionality. It can
->> choose between a fixed-rate clock or the dedicated A53 PLL. The source
->> and the divider can be set both at the same time.
+Hello.
+
+On 11/02/2016 02:08 PM, Geert Uytterhoeven wrote:
+
+>> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+>> and Software Reset support code, using the CPG/MSSR driver core.
 >>
->> This is required for enabling CPU frequency scaling on platforms like
->> MSM8916.
+>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+>> <geert+renesas@glider.be>.
 >>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
 >> ---
->>  .../devicetree/bindings/clock/qcom,a53cc.txt       |  23 ++++
->>  drivers/clk/qcom/Kconfig                           |   8 ++
->>  drivers/clk/qcom/Makefile                          |   1 +
->>  drivers/clk/qcom/a53cc.c                           | 152 +++++++++++++++++++++
->>  4 files changed, 184 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
->>  create mode 100644 drivers/clk/qcom/a53cc.c
+>> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
 >>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
->> new file mode 100644
->> index 000000000000..82d1634a2713
+>> Changes in version 2:
+>> - added support  for non-existing PLL0CR;
+>> - removed the function reading the mode pins;
+>> - added/used the #define's for PLL0CR.STC;
+>> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
+>> - removed rcar_gen2_read_modemr();
+>> - added Geert's tag.
+>>
+>>  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
+>>  2 files changed, 411 insertions(+)
+>>
+>> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
+>> ===================================================================
 >> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
->> @@ -0,0 +1,23 @@
->> +Qualcomm A53 CPU Clock Controller Binding
->> +------------------------------------------------
->> +The A53 CPU Clock Controller is hardware, which provides a combined
->> +mux and divider functionality for the CPU clocks. It can choose between
->> +a fixed rate clock and the dedicated A53 PLL. This hardware block is used
->> +on platforms such as msm8916.
+>> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
+>> @@ -0,0 +1,369 @@
+>
+>> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+>> +                                              const struct cpg_core_clk *core,
+>> +                                              const struct cpg_mssr_info *info,
+>> +                                              struct clk **clks,
+>> +                                              void __iomem *base)
+>> +{
+>
+>> +       case CLK_TYPE_GEN2_PLL0:
+>> +               /*
+>> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
+>
+> ... and V2H.
+
+    Indeed. But at least on E2 PLL0CR.STC can be read...
+
+>> +                * Register the PLL0 clock as a fixed factor clock for now as
+>> +                * there's  no generic multiplier clock implementation and we
+>> +                * currently have no need to change the multiplier value.
+>> +                */
+>> +               mult = cpg_pll_config->pll0_mult;
+>> +               if (mult) {
+>> +                       /* PLL0 is VCO/3 on R-Car E2 */
+>
+> ... and V2H.
+
+    No, it's still VCO/2 on V2H, according to the manual. Perhaps I'll have to 
+store the PLL0 divisor separately (and maybe even instead of the PLL0 multiplier).
+
+>> +                       div  = 3;
+>> +               } else  {
+>> +                       u32 pll0cr = readl(base + CPG_PLL0CR);
 >> +
->> +Required properties :
->> +- compatible : shall contain:
->> +
->> +			"qcom,a53cc-msm8916"
+>> +                       mult = ((pll0cr & CPG_PLL0CR_STC_MASK) >>
+>> +                               CPG_PLL0CR_STC_SHIFT) + 1;
+>> +               }
 >
-> Same comment on the ordering. With that, for the binding:
+> Looks OK to me. I assume you've verified the Z2 clock frequency in
+> /sys/kernel/debug/clk/clk_summary?
+
+    Not yet. :-/
+
+> Gr{oetje,eeting}s,
 >
-> Acked-by: Rob Herring <robh@kernel.org>
->
+>                         Geert
 
-Thanks for reviewing, Rob. I am also going to make this a child node
-as discussed here [1]. Please let me know if you have any comments.
-
-[1]. https://lkml.org/lkml/2016/11/11/387
-
-Thanks,
-Georgi
+MBR, Sergei
