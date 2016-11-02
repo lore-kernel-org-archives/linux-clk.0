@@ -1,183 +1,206 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:31606 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941035AbcKOH3M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2016 02:29:12 -0500
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <arnd@arndb.de>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <wenpan@hisilicon.com>, <howell.yang@hisilicon.com>,
-        <xuejiancheng@hisilicon.com>, <hermit.wangheming@hisilicon.com>,
-        <elder@linaro.org>, <bin.chen@linaro.org>
-Subject: [PATCH] reset: hisilicon: add a polarity cell for reset line specifier
-Date: Tue, 15 Nov 2016 15:09:54 +0800
-Message-ID: <1479193794-18350-1-git-send-email-xuejiancheng@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v6 4/4] arm64: dts: add Pine64 support
+Date: Wed,  2 Nov 2016 22:50:38 +0100
+Message-Id: <45ddd059d22233c3e07852f4f71ee7ad7ed48542.1478123413.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
+References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
+References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a polarity cell for reset line specifier. If the reset line
-is asserted when the register bit is 1, the polarity is
-normal. Otherwise, it is inverted.
+From: Andre Przywara <andre.przywara@arm.com>
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+The Pine64 is a cost-efficient development board based on the
+Allwinner A64 SoC.
+There are three models: the basic version with Fast Ethernet and
+512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+feature Gigabit Ethernet and additional connectors for touchscreens
+and a camera. Or as my son put it: "Those are smaller and these are
+missing." ;-)
+The two Pine64+ models just differ in the amount of DRAM
+(1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+patches the DT accordingly we just need to provide one DT for the
+Pine64+.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Maxime: Removed the common DTSI and include directly the pine64 DTS]
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../devicetree/bindings/clock/hisi-crg.txt         | 11 ++++---
- arch/arm/boot/dts/hi3519.dtsi                      |  2 +-
- drivers/clk/hisilicon/reset.c                      | 36 ++++++++++++++++------
- 3 files changed, 33 insertions(+), 16 deletions(-)
+ arch/arm64/boot/dts/Makefile                             |  1 +-
+ arch/arm64/boot/dts/allwinner/Makefile                   |  5 +-
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts | 50 ++++++-
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts      | 74 +++++++++-
+ 4 files changed, 130 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
 
-diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
-index e3919b6..fcbb4f3 100644
---- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
-+++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
-@@ -25,19 +25,20 @@ to specify the clock which they consume.
- 
- All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
- 
--- #reset-cells: should be 2.
-+- #reset-cells: should be 3.
- 
- A reset signal can be controlled by writing a bit register in the CRG module.
--The reset specifier consists of two cells. The first cell represents the
-+The reset specifier consists of three cells. The first cell represents the
- register offset relative to the base address. The second cell represents the
--bit index in the register.
-+bit index in the register. The third cell represents the polarity of the reset
-+line (0 for normal, 1 for inverted).
- 
- Example: CRG nodes
- CRG: clock-reset-controller@12010000 {
- 	compatible = "hisilicon,hi3519-crg";
- 	reg = <0x12010000 0x10000>;
- 	#clock-cells = <1>;
--	#reset-cells = <2>;
-+	#reset-cells = <3>;
- };
- 
- Example: consumer nodes
-@@ -45,5 +46,5 @@ i2c0: i2c@12110000 {
- 	compatible = "hisilicon,hi3519-i2c";
- 	reg = <0x12110000 0x1000>;
- 	clocks = <&CRG HI3519_I2C0_RST>;
--	resets = <&CRG 0xe4 0>;
-+	resets = <&CRG 0xe4 0 0>;
- };
-diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
-index 5729ecf..b7cb182 100644
---- a/arch/arm/boot/dts/hi3519.dtsi
-+++ b/arch/arm/boot/dts/hi3519.dtsi
-@@ -50,7 +50,7 @@
- 	crg: clock-reset-controller@12010000 {
- 		compatible = "hisilicon,hi3519-crg";
- 		#clock-cells = <1>;
--		#reset-cells = <2>;
-+		#reset-cells = <3>;
- 		reg = <0x12010000 0x10000>;
- 	};
- 
-diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-index 2a5015c..c0ab0b6 100644
---- a/drivers/clk/hisilicon/reset.c
-+++ b/drivers/clk/hisilicon/reset.c
-@@ -17,6 +17,7 @@
-  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/io.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-@@ -25,9 +26,11 @@
- #include <linux/spinlock.h>
- #include "reset.h"
- 
--#define	HISI_RESET_BIT_MASK	0x1f
--#define	HISI_RESET_OFFSET_SHIFT	8
--#define	HISI_RESET_OFFSET_MASK	0xffff00
-+#define HISI_RESET_POLARITY_MASK	BIT(0)
-+#define HISI_RESET_BIT_SHIFT	1
-+#define HISI_RESET_BIT_MASK	GENMASK(6, 1)
-+#define HISI_RESET_OFFSET_SHIFT	8
-+#define HISI_RESET_OFFSET_MASK	GENMASK(23, 8)
- 
- struct hisi_reset_controller {
- 	spinlock_t	lock;
-@@ -44,12 +47,15 @@ static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
- {
- 	u32 offset;
- 	u8 bit;
-+	bool polarity;
- 
- 	offset = (reset_spec->args[0] << HISI_RESET_OFFSET_SHIFT)
- 		& HISI_RESET_OFFSET_MASK;
--	bit = reset_spec->args[1] & HISI_RESET_BIT_MASK;
-+	bit = (reset_spec->args[1] << HISI_RESET_BIT_SHIFT)
-+		& HISI_RESET_BIT_MASK;
-+	polarity = reset_spec->args[2] & HISI_RESET_POLARITY_MASK;
- 
--	return (offset | bit);
-+	return (offset | bit | polarity);
- }
- 
- static int hisi_reset_assert(struct reset_controller_dev *rcdev,
-@@ -59,14 +65,19 @@ static int hisi_reset_assert(struct reset_controller_dev *rcdev,
- 	unsigned long flags;
- 	u32 offset, reg;
- 	u8 bit;
-+	bool polarity;
- 
- 	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
--	bit = id & HISI_RESET_BIT_MASK;
-+	bit = (id & HISI_RESET_BIT_MASK) >> HISI_RESET_BIT_SHIFT;
-+	polarity = id & HISI_RESET_POLARITY_MASK;
- 
- 	spin_lock_irqsave(&rstc->lock, flags);
- 
- 	reg = readl(rstc->membase + offset);
--	writel(reg | BIT(bit), rstc->membase + offset);
-+	if (polarity)
-+		writel(reg & ~BIT(bit), rstc->membase + offset);
-+	else
-+		writel(reg | BIT(bit), rstc->membase + offset);
- 
- 	spin_unlock_irqrestore(&rstc->lock, flags);
- 
-@@ -80,14 +91,19 @@ static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
- 	unsigned long flags;
- 	u32 offset, reg;
- 	u8 bit;
-+	bool polarity;
- 
- 	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
--	bit = id & HISI_RESET_BIT_MASK;
-+	bit = (id & HISI_RESET_BIT_MASK) >> HISI_RESET_BIT_SHIFT;
-+	polarity = id & HISI_RESET_POLARITY_MASK;
- 
- 	spin_lock_irqsave(&rstc->lock, flags);
- 
- 	reg = readl(rstc->membase + offset);
--	writel(reg & ~BIT(bit), rstc->membase + offset);
-+	if (polarity)
-+		writel(reg | BIT(bit), rstc->membase + offset);
-+	else
-+		writel(reg & ~BIT(bit), rstc->membase + offset);
- 
- 	spin_unlock_irqrestore(&rstc->lock, flags);
- 
-@@ -118,7 +134,7 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
- 	rstc->rcdev.owner = THIS_MODULE;
- 	rstc->rcdev.ops = &hisi_reset_ops;
- 	rstc->rcdev.of_node = pdev->dev.of_node;
--	rstc->rcdev.of_reset_n_cells = 2;
-+	rstc->rcdev.of_reset_n_cells = 3;
- 	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
- 	reset_controller_register(&rstc->rcdev);
- 
+diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+index 6684f97c2722..080232b0270e 100644
+--- a/arch/arm64/boot/dts/Makefile
++++ b/arch/arm64/boot/dts/Makefile
+@@ -1,4 +1,5 @@
+ dts-dirs += al
++dts-dirs += allwinner
+ dts-dirs += altera
+ dts-dirs += amd
+ dts-dirs += amlogic
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+new file mode 100644
+index 000000000000..1e29a5ae8282
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -0,0 +1,5 @@
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
++
++always		:= $(dtb-y)
++subdir-y	:= $(dts-dirs)
++clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+new file mode 100644
+index 000000000000..790d14daaa6a
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (c) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "sun50i-a64-pine64.dts"
++
++/ {
++	model = "Pine64+";
++	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
++
++	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+new file mode 100644
+index 000000000000..9f127b3d0e33
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -0,0 +1,74 @@
++/*
++ * Copyright (c) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++#include "sun50i-a64.dtsi"
++
++/ {
++	model = "Pine64";
++	compatible = "pine64,pine64", "allwinner,sun50i-a64";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++	status = "okay";
++};
++
++&i2c1_pins {
++	allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++};
 -- 
-1.9.1
-
+git-series 0.8.11
