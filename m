@@ -1,41 +1,93 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] clk: cdce925: Fix limit check
-Date: Fri, 11 Nov 2016 22:49:05 +0100
-Message-Id: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <3797605.lKJkRScdp8@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <3797605.lKJkRScdp8@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 12:08:15 +0100
+Message-ID: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-It is likely that instead of '1>64', 'q>64' was expected.
+Hi Sergei,
 
-Moreover, according to datasheet,
-   http://www.ti.com/lit/ds/symlink/cdce925.pdf
-   SCAS847I - JULY 2007 - REVISED OCTOBER 2016
-PLL settings limits are: 16 <= q <= 63
-So change the upper limit check from 64 to 63.
+On Thu, Oct 27, 2016 at 9:53 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+> and Software Reset support code, using the CPG/MSSR driver core.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> ---
+> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+>
+> Changes in version 2:
+> - added support  for non-existing PLL0CR;
+> - removed the function reading the mode pins;
+> - added/used the #define's for PLL0CR.STC;
+> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
+> - removed rcar_gen2_read_modemr();
+> - added Geert's tag.
+>
+>  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
+>  2 files changed, 411 insertions(+)
+>
+> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
+> ===================================================================
+> --- /dev/null
+> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
+> @@ -0,0 +1,369 @@
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/clk-cdce925.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+> +                                              const struct cpg_core_clk *core,
+> +                                              const struct cpg_mssr_info *info,
+> +                                              struct clk **clks,
+> +                                              void __iomem *base)
+> +{
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index b8459c14a1b7..f793b2d9238c 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -216,7 +216,7 @@ static int cdce925_pll_prepare(struct clk_hw *hw)
- 		nn = n * BIT(p);
- 		/* q = int(nn/m) */
- 		q = nn / m;
--		if ((q < 16) || (1 > 64)) {
-+		if ((q < 16) || (q > 63)) {
- 			pr_debug("%s invalid q=%d\n", __func__, q);
- 			return -EINVAL;
- 		}
--- 
-2.9.3
+> +       case CLK_TYPE_GEN2_PLL0:
+> +               /*
+> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
+
+... and V2H.
+
+> +                * Register the PLL0 clock as a fixed factor clock for now as
+> +                * there's  no generic multiplier clock implementation and we
+> +                * currently have no need to change the multiplier value.
+> +                */
+> +               mult = cpg_pll_config->pll0_mult;
+> +               if (mult) {
+> +                       /* PLL0 is VCO/3 on R-Car E2 */
+
+... and V2H.
+
+> +                       div  = 3;
+> +               } else  {
+> +                       u32 pll0cr = readl(base + CPG_PLL0CR);
+> +
+> +                       mult = ((pll0cr & CPG_PLL0CR_STC_MASK) >>
+> +                               CPG_PLL0CR_STC_SHIFT) + 1;
+> +               }
+
+Looks OK to me. I assume you've verified the Z2 clock frequency in
+/sys/kernel/debug/clk/clk_summary?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
