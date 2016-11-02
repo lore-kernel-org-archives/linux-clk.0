@@ -1,83 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46016 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753239AbcKUGiq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:38:46 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v9 07/16] mmc: sdhci-msm: Add get_min_clock() and get_max_clock() callback
-Date: Mon, 21 Nov 2016 12:07:17 +0530
-Message-Id: <1479710246-26676-8-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 18:26:02 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
+	galak@codeaurora.org, pradeepb@codeaurora.org,
+	mmcclint@codeaurora.org, varada@codeaurora.org,
+	sricharan@codeaurora.org, architt@codeaurora.org,
+	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] clk: qcom: ipq4019: corrected sdcc frequency and
+ parent name
+Message-ID: <20161102012602.GE16026@codeaurora.org>
+References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+ <1474460512-31994-6-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474460512-31994-6-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This add get_min_clock() and get_max_clock() callback
-for sdhci-msm. sdhci-msm min/max clocks may be different
-hence implement these callbacks.
+On 09/21, Abhishek Sahu wrote:
+> 1. The parent for sdcc clock is sdccpll so corrected the same
+>    in its parent map.
+> 2. The frequency value was wrong so changed to correct
+>    frequency.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gcc-ipq4019.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+> index 160e0cf..b2decd5 100644
+> --- a/drivers/clk/qcom/gcc-ipq4019.c
+> +++ b/drivers/clk/qcom/gcc-ipq4019.c
+> @@ -120,7 +120,7 @@ static struct parent_map gcc_xo_sdcc1_500_map[] = {
+>  
+>  static const char * const gcc_xo_sdcc1_500[] = {
+>  	"xo",
+> -	"ddrpll",
+> +	"ddrpllsdcc",
+>  	"fepll500",
+>  };
+>  
+> @@ -540,13 +540,13 @@ static struct clk_branch gcc_gp3_clk = {
+>  };
+>  
+>  static const struct freq_tbl ftbl_gcc_sdcc1_apps_clk[] = {
+> -	F(144000,    P_XO,			1,  3, 240),
+> -	F(400000,    P_XO,			1,  1, 0),
+> -	F(20000000,  P_FEPLL500,		1,  1, 25),
+> -	F(25000000,  P_FEPLL500,		1,  1, 20),
+> -	F(50000000,  P_FEPLL500,		1,  1, 10),
+> -	F(100000000, P_FEPLL500,		1,  1, 5),
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+None of these changed? Please leave them alone then.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index fc093b8..aaeaf47 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -68,6 +68,8 @@
- 
- #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
- 
-+#define SDHCI_MSM_MIN_CLOCK	400000
-+
- #define CDR_SELEXT_SHIFT	20
- #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
- #define CMUX_SHIFT_PHASE_SHIFT	24
-@@ -556,6 +558,19 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	return clk_round_rate(msm_host->clk, ULONG_MAX);
-+}
-+
-+static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
-+{
-+	return SDHCI_MSM_MIN_CLOCK;
-+}
-+
- static const struct of_device_id sdhci_msm_dt_match[] = {
- 	{ .compatible = "qcom,sdhci-msm-v4" },
- 	{},
-@@ -567,6 +582,8 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	.platform_execute_tuning = sdhci_msm_execute_tuning,
- 	.reset = sdhci_reset,
- 	.set_clock = sdhci_set_clock,
-+	.get_min_clock = sdhci_msm_get_min_clock,
-+	.get_max_clock = sdhci_msm_get_max_clock,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
- 	.voltage_switch = sdhci_msm_voltage_switch,
+> -	F(193000000, P_DDRPLL,		1,  0, 0),
+> +	F(144000,    P_XO,       1,  3, 240),
+> +	F(400000,    P_XO,       1,  1, 0),
+> +	F(20000000,  P_FEPLL500, 1,  1, 25),
+> +	F(25000000,  P_FEPLL500, 1,  1, 20),
+> +	F(50000000,  P_FEPLL500, 1,  1, 10),
+> +	F(100000000, P_FEPLL500, 1,  1, 5),
+> +	F(190000000, P_DDRPLL,   1,  0, 0),
+
+And tab out this one appropriately so that it lines up. Then the
+diff is very clear.
+
+>  	{ }
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
