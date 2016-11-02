@@ -1,38 +1,27 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 17:25:22 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robdclark@gmail.com, jcrouse@codeaurora.org
+Subject: Re: [PATCH 2/2] clk: qcom: mmcc-8996: Add gpu gdscs
+Message-ID: <20161102002519.GE16026@codeaurora.org>
+References: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
+ <1476956287-13749-3-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20161124021056.GJ6095@codeaurora.org>
-References: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
- <1477503088-26508-2-git-send-email-yamada.masahiro@socionext.com>
- <20161124000503.GE6095@codeaurora.org> <CAK7LNAQ6XeSHd7DbvD1jWeMfOqk8+R27Q-fNDWtXxpRd=OFgjA@mail.gmail.com>
- <20161124021056.GJ6095@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 25 Nov 2016 20:55:30 +0900
-Message-ID: <CAK7LNASJ7nA7rmJdmF_1xei7qG+3CTd-8UgJoPtAzcvZ0N7ckw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: uniphier: add clock data for cpufreq
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1476956287-13749-3-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 10/20, Rajendra Nayak wrote:
+> Add gpu gdsc data for msm8996
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-
-2016-11-24 11:10 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-
->> If I drop 32bit SoC things, and send v2 only for 64bit SoCs,
->> is that acceptable for 4.10-rc1?
->
-> Sure. That sounds fine for now. I'll reply to your other thread
-> with a plan of attack on how to do the framework changes. I think
-> we need to do those regardless of the outcome of your
-> investigation.
-
-I posted v2 yesterday.
-
+Applied to clk-next
 
 -- 
-Best Regards
-Masahiro Yamada
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
