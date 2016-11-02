@@ -1,97 +1,93 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 15:55:20 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <ray.jui@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>
-Subject: [PATCH] clk: bcm: Make COMMON_CLK_IPROC into a library
-Date: Wed, 23 Nov 2016 14:41:59 -0800
-Message-Id: <20161123224159.9988-1-sboyd@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
+Message-ID: <20161102225520.GW16026@codeaurora.org>
+References: <20161019132816.31073-4-georgi.djakov@linaro.org>
+ <20161028015438.GG16026@codeaurora.org>
+ <20161102205910.GQ25787@tuxbot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161102205910.GQ25787@tuxbot>
 List-ID: <linux-clk.vger.kernel.org>
 
-The broadcom clk driver Kconfig file selects and depends on the
-COMMON_CLK_IPROC config for different SoC specific drivers. Let's
-simplify this by always selecting the COMMON_CLK_IPROC config,
-turning it into a set of library code. We still want to retain
-the SoC specific options, so we leave those in place. Since we're
-here we also drop COMMON_CLK dependency because that's implicitly
-handled by including this file in drivers/clk/Kconfig in the
-right place and also make CLK_BCM_KONA default to y on the
-architecture it exists for instead of plain default y.
+On 11/02, Bjorn Andersson wrote:
+> On Thu 27 Oct 18:54 PDT 2016, Stephen Boyd wrote:
+> 
+> > On 10/19, Georgi Djakov wrote:
+> > > Add a driver for the A53 Clock Controller. It is a hardware block that
+> > > implements a combined mux and half integer divider functionality. It can
+> > > choose between a fixed-rate clock or the dedicated A53 PLL. The source
+> > > and the divider can be set both at the same time.
+> > > 
+> > > This is required for enabling CPU frequency scaling on platforms like
+> > > MSM8916.
+> > > 
+> > 
+> > Please Cc DT reviewers.
+> > 
+> > > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> > > ---
+> > >  .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
+> > >  drivers/clk/qcom/Kconfig                           |   8 ++
+> > >  drivers/clk/qcom/Makefile                          |   1 +
+> > >  drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
+> > >  4 files changed, 186 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > >  create mode 100644 drivers/clk/qcom/a53cc.c
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > > new file mode 100644
+> > > index 000000000000..a025f062f177
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > > @@ -0,0 +1,22 @@
+> > > +Qualcomm A53 CPU Clock Controller Binding
+> > > +------------------------------------------------
+> > > +The A53 CPU Clock Controller is hardware, which provides a combined
+> > > +mux and divider functionality for the CPU clocks. It can choose between
+> > > +a fixed rate clock and the dedicated A53 PLL.
+> > > +
+> > > +Required properties :
+> > > +- compatible : shall contain:
+> > > +
+> > > +			"qcom,a53cc"
+> > > +
+> > > +- reg : shall contain base register location and length
+> > > +	of the APCS region
+> > > +- #clock-cells : shall contain 1
+> > > +
+> > > +Example:
+> > > +
+> > > +	apcs: syscon@b011000 {
+> > > +		compatible = "qcom,a53cc", "syscon";
+> > 
+> > Why is it a syscon? Is that part used?
+> > 
+> 
+> I use the register at offset 8 for interrupting the other subsystems, so
+> this must be available as something I can poke.
+> 
+> Which makes me think that this should be described as a "simple-mfd" and
+> "syscon" with the a53cc node as a child - grabbing the regmap of the
+> syscon parent, rather then ioremapping the same region again.
+> 
 
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <ray.jui@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/bcm/Kconfig | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+That's sort of a question for DT reviewers. The register space
+certainly seems like a free for all with a tilt toward power
+management of the CPU, similar to how this was done on Krait
+based designs.
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index e3eed5a78404..b5ae5311b0a2 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -1,7 +1,6 @@
- config CLK_BCM_63XX
- 	bool "Broadcom BCM63xx clock support"
- 	depends on ARCH_BCM_63XX || COMPILE_TEST
--	depends on COMMON_CLK
- 	select COMMON_CLK_IPROC
- 	default ARCH_BCM_63XX
- 	help
-@@ -11,27 +10,22 @@ config CLK_BCM_63XX
- config CLK_BCM_KONA
- 	bool "Broadcom Kona CCU clock support"
- 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
--	depends on COMMON_CLK
--	default y
-+	default ARCH_BCM_MOBILE
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  using "Kona" style clock control units, including those
- 	  in the BCM281xx and BCM21664 families.
- 
- config COMMON_CLK_IPROC
--	bool "Broadcom iProc clock support"
--	depends on ARCH_BCM_IPROC || ARCH_BCM_63XX || COMPILE_TEST
--	depends on COMMON_CLK
--	default ARCH_BCM_IPROC
-+	bool
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  based on the iProc architecture
- 
--if COMMON_CLK_IPROC
--
- config CLK_BCM_CYGNUS
- 	bool "Broadcom Cygnus clock support"
- 	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
-+	select COMMON_CLK_IPROC
- 	default ARCH_BCM_CYGNUS
- 	help
- 	  Enable common clock framework support for the Broadcom Cygnus SoC
-@@ -39,6 +33,7 @@ config CLK_BCM_CYGNUS
- config CLK_BCM_NSP
- 	bool "Broadcom Northstar/Northstar Plus clock support"
- 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
-+	select COMMON_CLK_IPROC
- 	default ARCH_BCM_5301X || ARCH_BCM_NSP
- 	help
- 	  Enable common clock framework support for the Broadcom Northstar and
-@@ -47,8 +42,7 @@ config CLK_BCM_NSP
- config CLK_BCM_NS2
- 	bool "Broadcom Northstar 2 clock support"
- 	depends on ARCH_BCM_IPROC || COMPILE_TEST
-+	select COMMON_CLK_IPROC
- 	default ARCH_BCM_IPROC
- 	help
- 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
--
--endif
+I wonder why we didn't make up some provider/consumer binding for
+the "kicking" feature used by SMD/RPM code. Then this could be a
+clock provider and a "kick" provider (haha #kick-cells) and the
+usage of syscon/regmap wouldn't be mandatory.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
