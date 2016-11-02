@@ -1,24 +1,26 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Nov 2016 11:57:39 -0800
+Date: Tue, 1 Nov 2016 17:56:45 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michael.scott@linaro.org
-Subject: Re: [PATCH v2 1/2] clk: qcom: clk-smd-rpm: Fix clk_hw references
-Message-ID: <20161123195739.GF25626@codeaurora.org>
-References: <20161123145249.14912-1-georgi.djakov@linaro.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] clk: pxa: core pll is not affected by t bit
+Message-ID: <20161102005645.GX16026@codeaurora.org>
+References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
+ <1477225170-19019-3-git-send-email-robert.jarzmik@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161123145249.14912-1-georgi.djakov@linaro.org>
+In-Reply-To: <1477225170-19019-3-git-send-email-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/23, Georgi Djakov wrote:
-> Fix the clk_hw references to the actual clocks and add a xlate function
-> to return the hw pointers from the already existing static array.
+On 10/23, Robert Jarzmik wrote:
+> The t bit of clkfcfg doesn't affect the core pll clock, but it makes core
+> clock select between core pll clock and core run clock.
 > 
-> Reported-by: Michael Scott <michael.scott@linaro.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> As such remove it from the core pll rate reporting function, while it
+> remains in clk_pxa27x_core_get_parent().
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 > ---
 
 Applied to clk-next
