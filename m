@@ -1,32 +1,28 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: pxa: Use __iomem properly and staticize lock variable
-References: <20161108224756.25842-1-sboyd@codeaurora.org>
-Date: Wed, 09 Nov 2016 21:18:03 +0100
-In-Reply-To: <20161108224756.25842-1-sboyd@codeaurora.org> (Stephen Boyd's
-	message of "Tue, 8 Nov 2016 14:47:56 -0800")
-Message-ID: <87shr0v24k.fsf@belgarion.home>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 14:51:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v3 05/11] clk: qcom: Add .is_enabled ops for clk-alpha-pll
+Message-ID: <20161102215158.GQ16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-6-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475138152-859-6-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+On 09/29, Rajendra Nayak wrote:
+> This would be useful in subsequent patches when the .set_rate operation
+> would need to identify if the PLL is actually enabled
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-> This function is passed an __iomem pointer but we use a u32
-> pointer instead which makes checkers like spare complain.
-> Furthermore, "lock" is a pretty poor variable name for a string
-> that will go into lockdep reports and the symbol isn't marked
-> static. Cleanup all this.
->
-> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Most certainly.
+Applied to clk-next
 
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-
-Cheers.
-
---
-Robert
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
