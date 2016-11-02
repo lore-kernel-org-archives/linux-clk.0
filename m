@@ -1,108 +1,208 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH v6 4/4] arm64: dts: add Pine64 support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>
+References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
+ <45ddd059d22233c3e07852f4f71ee7ad7ed48542.1478123413.git-series.maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <83b8ff39-91f0-4e5c-61a5-e21f31c909ff@arm.com>
+Date: Wed, 2 Nov 2016 22:05:09 +0000
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <2398984.AXNDaupAxO@wasted.cogentembedded.com>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <2398984.AXNDaupAxO@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Nov 2016 13:50:29 +0100
-Message-ID: <CAMuHMdUGhOhrWYJhFWGQbXNa62zAtoo_rq2dr-w0o_HEnQv60Q@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <45ddd059d22233c3e07852f4f71ee7ad7ed48542.1478123413.git-series.maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
-
-On Tue, Nov 8, 2016 at 10:17 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
-> and Software Reset support code, using the CPG/MSSR driver core.
->
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
+On 02/11/16 21:50, Maxime Ripard wrote:
+> From: Andre Przywara <andre.przywara@arm.com>
+> 
+> The Pine64 is a cost-efficient development board based on the
+> Allwinner A64 SoC.
+> There are three models: the basic version with Fast Ethernet and
+> 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
+> feature Gigabit Ethernet and additional connectors for touchscreens
+> and a camera. Or as my son put it: "Those are smaller and these are
+> missing." ;-)
+> The two Pine64+ models just differ in the amount of DRAM
+> (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
+> patches the DT accordingly we just need to provide one DT for the
+> Pine64+.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> [Maxime: Removed the common DTSI and include directly the pine64 DTS]
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
-> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
->
-> Changes in version 4:
-> - added a static variable for the PLL0 divisor and a parameter of the same kind
->   to rcar_gen2_cpg_init(), used that  variable in rcar_gen2_cpg_clk_register().
-
-Thanks, I've verified correct operation by using your r8a7743 driver on
-r8a7791/koelsch, and comparing /sys/kernel/debug/clk/clk_summary.
-
-> Changes in version 3:
-> - removed  the divisor logic from the PLL0 related code;
-> - also mentioned R-Car V2H as not having the PLL0CR register.
->
-> Changes in version 2:
-> - added support  for non-existing PLL0CR;
-> - removed the function reading the mode pins;
-> - added/used the #define's for PLL0CR.STC;
-> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
-> - removed rcar_gen2_read_modemr();
-> - added Geert's tag.
->
->  drivers/clk/renesas/rcar-gen2-cpg.c |  370 ++++++++++++++++++++++++++++++++++++
->  drivers/clk/renesas/rcar-gen2-cpg.h |   43 ++++
->  2 files changed, 413 insertions(+)
->
-> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
-> ===================================================================
+>  arch/arm64/boot/dts/Makefile                             |  1 +-
+>  arch/arm64/boot/dts/allwinner/Makefile                   |  5 +-
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts | 50 ++++++-
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts      | 74 +++++++++-
+>  4 files changed, 130 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> 
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 6684f97c2722..080232b0270e 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -1,4 +1,5 @@
+>  dts-dirs += al
+> +dts-dirs += allwinner
+>  dts-dirs += altera
+>  dts-dirs += amd
+>  dts-dirs += amlogic
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> new file mode 100644
+> index 000000000000..1e29a5ae8282
 > --- /dev/null
-> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
-
-> +static u32 cpg_mode __initdata;
-
-cpg_mode is never set.
-
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -0,0 +1,5 @@
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
 > +
-> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
-> +                                              const struct cpg_core_clk *core,
-> +                                              const struct cpg_mssr_info *info,
-> +                                              struct clk **clks,
-> +                                              void __iomem *base)
-> +{
+> +always		:= $(dtb-y)
+> +subdir-y	:= $(dts-dirs)
+> +clean-files	:= *.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+> new file mode 100644
+> index 000000000000..790d14daaa6a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+> @@ -0,0 +1,50 @@
+> +/*
+> + * Copyright (c) 2016 ARM Ltd.
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This library is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This library is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include "sun50i-a64-pine64.dts"
+> +
+> +/ {
+> +	model = "Pine64+";
+> +	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
+> +
+> +	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
+> +};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> new file mode 100644
+> index 000000000000..9f127b3d0e33
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> @@ -0,0 +1,74 @@
+> +/*
+> + * Copyright (c) 2016 ARM Ltd.
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This library is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This library is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sun50i-a64.dtsi"
+> +
+> +/ {
+> +	model = "Pine64";
+> +	compatible = "pine64,pine64", "allwinner,sun50i-a64";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_pins_a>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c1_pins>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c1_pins {
+> +	allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
 
-> +       switch (core->type) {
+which should translate to:
+	bias-pull-up;
+in the generic binding, right?
 
-> +       case CLK_TYPE_GEN2_LB:
-> +               div = cpg_mode & BIT(18) ? 36 : 24;
-
-Hence div may be incorrect here (it wasn't for me)...
-
-> +       case CLK_TYPE_GEN2_QSPI:
-> +               div = (cpg_mode & (BIT(3) | BIT(2) | BIT(1))) == BIT(2) ?
-> +                     8 : 10;
-
-... and here (it was for me).
-
-> +int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
-> +                             unsigned int pll0_div)
-
-I'll add a "u32 mode" parameter here, and pass it from
-r8a774[35]_cpg_mssr_init().
-
-> +{
-> +       cpg_pll_config = config;
-> +       cpg_pll0_div = pll0_div;
-
-cpg_mode = mode;
-
-No need to resend, fixing it up myself.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Andre.
