@@ -1,57 +1,30 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 14:51:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v3 03/11] clk: qcom: handle alpha PLLs with 16bit alpha
+ val registers
+Message-ID: <20161102215146.GO16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-4-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdW8V2v7na1c4B=w2qzN=qVF0QUA3fcqaUXdTEVB20JREg@mail.gmail.com>
-References: <1477033358-7934-1-git-send-email-geert@linux-m68k.org>
- <20161031092223.GW1041@n2100.armlinux.org.uk> <CAMuHMdW8V2v7na1c4B=w2qzN=qVF0QUA3fcqaUXdTEVB20JREg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 Nov 2016 12:35:05 +0100
-Message-ID: <CAMuHMdXE89a1-qzH5Se-w1L2bLknTae7jPQ07q5Zw_nKt7RLPA@mail.gmail.com>
-Subject: Re: [PATCH v3] clkdev: Detect errors in clk_hw_register_clkdev() for
- mass registration
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1475138152-859-4-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 10:31 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Mon, Oct 31, 2016 at 10:22 AM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
->> On Fri, Oct 21, 2016 at 09:02:38AM +0200, Geert Uytterhoeven wrote:
->>> Unlike clk_register_clkdev(), clk_hw_register_clkdev() doesn't check for
->>> passed error objects from a previous registration call. Hence the caller
->>> of clk_hw_register_*() has to check for errors before calling
->>> clk_hw_register_clkdev*().
->>>
->>> Make clk_hw_register_clkdev() more similar to clk_register_clkdev() by
->>> adding this error check, removing the burden from callers that do mass
->>> registration.
->>>
->>> Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
->>> Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
->>> Fixes: 44ce9a9ae977736f ("MIPS: TXx9: Convert to Common Clock Framework")
->>> Fixes: f48d947a162dfa9d ("clk: clps711x: Migrate to clk_hw based OF and registration APIs")
->>> Fixes: b4626a7f489238a5 ("CLK: Add Loongson1C clock support")
->>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->>
->> Please put this in the patch system, thanks.
->
-> Done. I hope it went through, the "new" README predates git-send-email.
+On 09/29, Rajendra Nayak wrote:
+> Some alpha PLLs have support for only a 16bit programable Alpha Value
+> (as against the default 40bits). Add a flag to handle the 16bit alpha
+> registers
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-Still no evidence of the patch having arrived...
-Tried the web interface instead, patch is now 8631/1.
+Applied to clk-next
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
