@@ -1,194 +1,63 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:45476 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbcKUGiY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:38:24 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v9 04/16] ARM: dts: Add xo to sdhc clock node on qcom platforms
-Date: Mon, 21 Nov 2016 12:07:14 +0530
-Message-Id: <1479710246-26676-5-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34094 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754253AbcKBOnQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 10:43:16 -0400
+MIME-Version: 1.0
+In-Reply-To: <20161101174808.GU16026@codeaurora.org>
+References: <1477848637-5151-1-git-send-email-akinobu.mita@gmail.com>
+ <20161031181509.GS16026@codeaurora.org> <CAC5umyiVcV_KEL+g=mRL-mGQfJrCU5XrEVNzX=CFFXWNuTMBGQ@mail.gmail.com>
+ <20161101174808.GU16026@codeaurora.org>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Date: Wed, 2 Nov 2016 23:42:54 +0900
+Message-ID: <CAC5umyj+NO7tXEfT4YEGAo6-CRfxufLHPSXQVmCdJjHDYgZiSg@mail.gmail.com>
+Subject: Re: [PATCH] clk: cdce925: add support for CDCE913, CDCE937, and CDCE949
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Michael Turquette <mturquette@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add xo entry to sdhc clock node on all qcom platforms.
+2016-11-02 2:48 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 11/01, Akinobu Mita wrote:
+>> 2016-11-01 3:15 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> > On 10/31, Akinobu Mita wrote:
+>> >> @@ -728,13 +780,19 @@ static int cdce925_probe(struct i2c_client *client,
+>> >>  }
+>> >>
+>> >>  static const struct i2c_device_id cdce925_id[] = {
+>> >> -     { "cdce925", 0 },
+>> >> +     { "cdce913", CDCE913 },
+>> >> +     { "cdce925", CDCE925 },
+>> >> +     { "cdce937", CDCE937 },
+>> >> +     { "cdce949", CDCE949 },
+>> >>       { }
+>> >>  };
+>> >>  MODULE_DEVICE_TABLE(i2c, cdce925_id);
+>> >>
+>> >>  static const struct of_device_id clk_cdce925_of_match[] = {
+>> >> +     { .compatible = "ti,cdce913" },
+>> >>       { .compatible = "ti,cdce925" },
+>> >> +     { .compatible = "ti,cdce937" },
+>> >> +     { .compatible = "ti,cdce949" },
+>> >
+>> > Doesn't this need to be updated to point to the correct enum
+>> > values?
+>>
+>> I think it isn't needed. Because the data field in struct of_device_id
+>> for this driver is not used even if the device is registered from
+>> device tree.  But the driver_data in i2c_device_id is used instead.
+>
+> Ok. Have you tested this driver with DT or platform data? Do you
+> prefix the compatible string with "ti," in the DT case?
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
----
- arch/arm/boot/dts/qcom-apq8084.dtsi   | 16 ++++++++++------
- arch/arm/boot/dts/qcom-msm8974.dtsi   | 16 ++++++++++------
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
- arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
- 4 files changed, 31 insertions(+), 20 deletions(-)
+I have tested with DT with compatible = "ti,cdce937" and checked that
+correct i2c_device_id is passed by the caller of cdce925_probe().
 
-diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
-index 39eb7a4..80d4886 100644
---- a/arch/arm/boot/dts/qcom-apq8084.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
-@@ -182,13 +182,13 @@
- 	};
- 
- 	clocks {
--		xo_board {
-+		xo_board: xo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
- 		};
- 
--		sleep_clk {
-+		sleep_clk: sleep_clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32768>;
-@@ -416,8 +416,10 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 123 0>, <0 138 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
-+				 <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&xo_board>;
-+			clock-names = "core", "iface", "xo";
- 			status = "disabled";
- 		};
- 
-@@ -427,8 +429,10 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 125 0>, <0 221 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
-+				 <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&xo_board>;
-+			clock-names = "core", "iface", "xo";
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index d210947..49d579f 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -220,13 +220,13 @@
- 	};
- 
- 	clocks {
--		xo_board {
-+		xo_board: xo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
- 		};
- 
--		sleep_clk {
-+		sleep_clk: sleep_clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32768>;
-@@ -558,8 +558,10 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 123 0>, <0 138 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
-+				 <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&xo_board>;
-+			clock-names = "core", "iface", "xo";
- 			status = "disabled";
- 		};
- 
-@@ -569,8 +571,10 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 125 0>, <0 221 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
-+				 <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&xo_board>;
-+			clock-names = "core", "iface", "xo";
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 466ca57..bd78f0c 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -512,8 +512,9 @@
- 			interrupts = <0 123 0>, <0 138 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
- 			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
--				 <&gcc GCC_SDCC1_AHB_CLK>;
--			clock-names = "core", "iface";
-+				 <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&xo_board>;
-+			clock-names = "core", "iface", "xo";
- 			bus-width = <8>;
- 			non-removable;
- 			status = "disabled";
-@@ -527,8 +528,9 @@
- 			interrupts = <0 125 0>, <0 221 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
- 			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
--				 <&gcc GCC_SDCC2_AHB_CLK>;
--			clock-names = "core", "iface";
-+				 <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&xo_board>;
-+			clock-names = "core", "iface", "xo";
- 			bus-width = <4>;
- 			status = "disabled";
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 338f82a..699f073 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -192,14 +192,14 @@
- 	};
- 
- 	clocks {
--		xo_board {
-+		xo_board: xo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
- 			clock-output-names = "xo_board";
- 		};
- 
--		sleep_clk {
-+		sleep_clk: sleep_clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32764>;
-@@ -347,9 +347,10 @@
- 			 interrupts = <0 125 0>, <0 221 0>;
- 			 interrupt-names = "hc_irq", "pwr_irq";
- 
--			 clock-names = "iface", "core";
-+			 clock-names = "iface", "core", "xo";
- 			 clocks = <&gcc GCC_SDCC2_AHB_CLK>,
--			 <&gcc GCC_SDCC2_APPS_CLK>;
-+			 <&gcc GCC_SDCC2_APPS_CLK>,
-+			 <&xo_board>;
- 			 bus-width = <4>;
- 		 };
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+According to of_i2c_register_device() in drivers/i2c/i2c-core.c,
+the manufacturer prefix like "ti," is stripped from i2c_client->name by
+of_modalias_node().  So i2c_match_id() can find correct i2c_device_id
+entry and ->probe() is called with it.
