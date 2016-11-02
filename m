@@ -1,65 +1,57 @@
-Return-Path: <dubepankaj1980@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 2 Nov 2016 10:59:44 -0700
+From: 'Stephen Boyd' <sboyd@codeaurora.org>
+To: Sricharan <sricharan@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rnayak@codeaurora.org, stanimir.varbanov@linaro.org
+Subject: Re: [PATCH 1/3] clk: qcom: gdsc: Add support for gdscs with HW
+ control
+Message-ID: <20161102175944.GI16026@codeaurora.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+ <1477304297-5248-2-git-send-email-sricharan@codeaurora.org>
+ <20161102001834.GB16026@codeaurora.org>
+ <003c01d234d5$731b19c0$59514d40$@codeaurora.org>
 MIME-Version: 1.0
-Sender: dubepankaj1980@gmail.com
-In-Reply-To: <63750c2f-35cb-91ab-276b-c788f51081cb@osg.samsung.com>
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com> <63750c2f-35cb-91ab-276b-c788f51081cb@osg.samsung.com>
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Date: Mon, 7 Nov 2016 22:50:58 +0530
-Message-ID: <CAGcde9EkEsvJ2kBpNvd+bEZj0nbpgmFu1zBe+RQz+Kij9WxHMA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-	"thomas.ab@samsung.com" <thomas.ab@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, myungjoo.ham@samsung.com, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <003c01d234d5$731b19c0$59514d40$@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Javier,
+On 11/02, Sricharan wrote:
+> Hi Stephen,
+> 
+> >On 10/24, Sricharan R wrote:
+> >> @@ -164,6 +171,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+> >>  	 */
+> >>  	udelay(1);
+> >>
+> >> +	/* Turn on HW trigger mode if supported */
+> >> +	if (sc->flags & HW_CTRL)
+> >> +		gdsc_hwctrl(sc, true);
+> >> +
+> >
+> >It sounds like this will cause glitches if the hardware isn't
+> >asserting their hw control bit by default? This has me concerned
+> >that we can't just throw the hw control enable part into here,
+> >because that bit doesn't live in the clock controller, instead it
+> >lives in the hw block that is powered by the power domain?
+> >
+> >Or does the power on reset value of that hw control signal
+> >asserted? If that's true then we should be ok to force it into hw
+> >control mode by default.
+> >
+> 
+> The hw control bit is set by default. Instead its turned 'off'
+> with the reset value. So it has to not 
+> be turned 'on' at some point
+> to put the gdsc in hw control if required. This bit is part of the
+> gdscr register. So i did not quite understand the reason for the
+> glitch here ?
 
-On 7 November 2016 at 20:31, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> Hello Pankaj,
->
-> On 11/07/2016 07:09 AM, Pankaj Dubey wrote:
->> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
->> accurate low frequency clock for MAX8997 internal circuit as well as
->> external circuit. This patch adds support for these two clocks.
->>
->> CC: Michael Turquette <mturquette@baylibre.com>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: devicetree@vger.kernel.org
->> CC: linux-clk@vger.kernel.org
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->
-> What kernel version are you basing this on? The Maxim common clock code
+I mean the reset value of the hw control signal inside the device
+that is inside the GDSC power domain. For example, the hw control
+bit inside the video core.
 
-This patch series, I have prepared on Krzysztof's for-next which is 4.9-rc1,
-
-> is going away for v4.9 and instead the clk-max77686 driver supports both
-> 77686 and 77802 clocks. See commit 8ad313fe4e00 ("clk: max77686: Combine
-> Maxim max77686 and max77802 driver").
->
-> Since the 8997 clock IP looks very similar to 77802 AFAICT, you should
-> also extend the clk-max77686 driver to have 8997 support.
->
-
-I was not aware of this change. I will check this and if I can
-reuse/extend max77686 for 8997 I will do it.
-
-Thanks,
-Pankaj Dubey
-
-> Best regards,
-> --
-> Javier Martinez Canillas
-> Open Source Group
-> Samsung Research America
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
