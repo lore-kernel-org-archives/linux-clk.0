@@ -1,64 +1,86 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 9 Nov 2016 12:24:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] clk: qcom: Add A53 PLL support
-Message-ID: <20161109182436.yd5d6kpwtl4miyqf@rob-hp-laptop>
-References: <20161031145526.5023-1-georgi.djakov@linaro.org>
- <20161031145526.5023-2-georgi.djakov@linaro.org>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+ <3797605.lKJkRScdp8@wasted.cogentembedded.com>
+ <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+ <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <cb5ebfa8-f9c7-e211-aded-1dc65291a31a@cogentembedded.com>
+Date: Wed, 2 Nov 2016 21:11:20 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161031145526.5023-2-georgi.djakov@linaro.org>
+In-Reply-To: <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 04:55:24PM +0200, Georgi Djakov wrote:
-> Add support for the PLL, which generates the higher range of CPU
-> frequencies on MSM8916 platforms.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,a53pll.txt      | 20 +++++
->  drivers/clk/qcom/Kconfig                           |  9 +++
->  drivers/clk/qcom/Makefile                          |  1 +
->  drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
->  4 files changed, 124 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->  create mode 100644 drivers/clk/qcom/a53-pll.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-> new file mode 100644
-> index 000000000000..6a8c03bfbcb5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-> @@ -0,0 +1,20 @@
-> +MSM8916 A53 PLL Binding
-> +---------------
-> +The A53 PLL on MSM8916 platforms is the main CPU PLL used for frequencies
-> +above 1GHz.
-> +
-> +Required properties :
-> +- compatible : Shall contain only one of the following:
-> +
-> +		"qcom,a53pll-msm8916"
+On 11/02/2016 02:38 PM, Geert Uytterhoeven wrote:
 
-Generally, the ordering is <vendor>,<soc>-<block>.
+>>> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+>>> and Software Reset support code, using the CPG/MSSR driver core.
+>>>
+>>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+>>> <geert+renesas@glider.be>.
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>> ---
+>>> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+>>>
+>>> Changes in version 2:
+>>> - added support  for non-existing PLL0CR;
+>>> - removed the function reading the mode pins;
+>>> - added/used the #define's for PLL0CR.STC;
+>>> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
+>>> - removed rcar_gen2_read_modemr();
+>>> - added Geert's tag.
+>>>
+>>>  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
+>>>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
+>>>  2 files changed, 411 insertions(+)
+>>>
+>>> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
+>>> ===================================================================
+>>> --- /dev/null
+>>> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
+>>> @@ -0,0 +1,369 @@
+>>
+>>> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+>>> +                                              const struct cpg_core_clk *core,
+>>> +                                              const struct cpg_mssr_info *info,
+>>> +                                              struct clk **clks,
+>>> +                                              void __iomem *base)
+>>> +{
+>>
+>>> +       case CLK_TYPE_GEN2_PLL0:
+>>> +               /*
+>>> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
+>>
+>> ... and V2H.
+>>
+>>> +                * Register the PLL0 clock as a fixed factor clock for now as
+>>> +                * there's  no generic multiplier clock implementation and we
+>>> +                * currently have no need to change the multiplier value.
+>>> +                */
+>>> +               mult = cpg_pll_config->pll0_mult;
+>>> +               if (mult) {
+>>> +                       /* PLL0 is VCO/3 on R-Car E2 */
+>>
+>> ... and V2H.
+>>
+>>> +                       div  = 3;
+>
+> After seeing the r8a7745 driver, I think it would be better to use a divider
+> value of 1 here (dropping the need for this branch), and handle the /3 in the
+> SoC-specific driver.
+> This would make it more similar to the other SoCs here (div = 1 in the else
+> branch below), and to similar clocks in the SoC-specific driver
+> (e.g. DEF_FIXED("zg", ..., 3, 1) in r8a7743-cpg-mssr.c).
 
-> +
-> +- reg : shall contain base register location and length
-> +- #clock-cells : must be set to <0>
-> +
-> +Example:
-> +
-> +	a53pll: a53pll@b016000 {
+    We'll then have to lie about the PLL0 output freq? I don't like it...
 
-clock@...
-
-> +		compatible = "qcom,a53pll-msm8916";
-> +		reg = <0x0b016000 0x40>;
-> +		#clock-cells = <0>;
-> +	};
+MBR, Sergei
