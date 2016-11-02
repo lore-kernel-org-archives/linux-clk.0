@@ -1,48 +1,41 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 15 Nov 2016 10:57:12 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX clock updates for 4.10
-Message-ID: <20161115025711.GU3310@dragon>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34323 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751064AbcKBJXt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 05:23:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161101201225.14810-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se> <20161101201225.14810-2-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 10:23:48 +0100
+Message-ID: <CAMuHMdV9pgrZy4x7Mnnzh+qb_qrJ8_qdf9qvM2guxVa=cyWoBg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: r8a7796: Add CSI2 clocks
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+On Tue, Nov 1, 2016 at 9:12 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-are available in the git repository at:
+Gr{oetje,eeting}s,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.10
+                        Geert
 
-for you to fetch changes up to 73cd5e53caba2425f5b73ad0950544d1168ad27b:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-  clk: imx: clk-imx6ul: add clk support for imx6ull (2016-11-15 08:55:36 +0800)
-
-----------------------------------------------------------------
-i.MX clock updates for 4.10:
- - A patch series to fix the long standing issue with glitchy parent
-   mux of ldb_di_clk, which can hang up LVDS display when ipu_di_clk
-   is sourced from ldb_di_clk.
- - A patch to add imx6ull clock support on top of imx6ul clock driver.
-
-----------------------------------------------------------------
-Bai Ping (1):
-      clk: imx: clk-imx6ul: add clk support for imx6ull
-
-Fabio Estevam (1):
-      clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK
-
-Philipp Zabel (2):
-      clk: imx6: Mask mmdc_ch1 handshake for periph2_sel and mmdc_ch1_axi_podf
-      clk: imx6: Make the LDB_DI0 and LDB_DI1 clocks read-only
-
- drivers/clk/imx/clk-imx6q.c              | 283 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
- drivers/clk/imx/clk-imx6ul.c             |  72 ++++++++++++++++++++++++++++++++++-------
- drivers/clk/imx/clk.h                    |   8 +++++
- include/dt-bindings/clock/imx6ul-clock.h |  15 ++++++++-
- 4 files changed, 356 insertions(+), 22 deletions(-)
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
