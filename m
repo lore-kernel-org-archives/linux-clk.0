@@ -1,83 +1,34 @@
-Return-Path: <oss@buserror.net>
-Message-ID: <1479279262.21746.40.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: yuantian.tang@nxp.com, mturquette@baylibre.com
-Cc: sboyd@codeaurora.org, linux-kernel@vger.kernel.org, scott.wood@nxp.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Wed, 16 Nov 2016 00:54:22 -0600
-In-Reply-To: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
-References: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH] clk: qoriq: added ls1012a clock configuration
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Nov 2016 17:37:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	sebastian.hesselbarth@gmail.com, andrew@lunn.ch,
+	jason@lakedaemon.net, thomas.petazzoni@free-electrons.com,
+	gregory.clement@free-electrons.com, nadavh@marvell.com,
+	alior@marvell.com, tn@semihalf.com, jaz@semihalf.com
+Subject: Re: [PATCH v4 1/1] clk: mvebu: migrate CP110 system controller to
+ clk_hw API and registration
+Message-ID: <20161102003750.GL16026@codeaurora.org>
+References: <1474789673-3837-1-git-send-email-mw@semihalf.com>
+ <1474789673-3837-2-git-send-email-mw@semihalf.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474789673-3837-2-git-send-email-mw@semihalf.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2016-11-16 at 13:58 +0800, yuantian.tang@nxp.com wrote:
-> From: Tang Yuantian <Yuantian.Tang@nxp.com>
+On 09/25, Marcin Wojtas wrote:
+> Now that we have clk_hw based provider APIs to register clks, we
+> can get rid of struct clk pointers while registering clks in Armada
+> CP110 system controller driver. This commit introduces new
+> API and registration for all clocks in CP110 HW blocks.
 > 
-> Added ls1012a clock configuation information.
-
-Do we really need the same line in the changelog twice?
-
-> 
-> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
 > ---
->  drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-> index 1bece0f..563d874 100644
-> --- a/drivers/clk/clk-qoriq.c
-> +++ b/drivers/clk/clk-qoriq.c
-> @@ -202,6 +202,14 @@ static const struct clockgen_muxinfo ls1021a_cmux = {
->  	}
->  };
->  
-> +static const struct clockgen_muxinfo ls1012a_cmux = {
-> +	{
-> +		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
-> +		{},
-> +		[2] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
-> +	}
-> +};
-> +
 
-Based on the "ls1021a_cmux" in the context it looks like this patch is
-intended to apply on top of https://patchwork.kernel.org/patch/8923541/ but I
-don't see any mention of that.
+Applied to clk-next
 
->  static const struct clockgen_muxinfo t1040_cmux = {
->  	{
->  		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
-> @@ -482,6 +490,16 @@ static const struct clockgen_chipinfo chipinfo[] = {
->  		.pll_mask = 0x03,
->  	},
->  	{
-> +		.compat = "fsl,ls1012a-clockgen",
-> +		.cmux_groups = {
-> +			&ls1012a_cmux
-> +		},
-> +		.cmux_to_group = {
-> +			0, -1
-> +		},
-> +		.pll_mask = 0x03,
-> +	},
-> +	{
->  		.compat = "fsl,ls1043a-clockgen",
->  		.init_periph = t2080_init_periph,
->  		.cmux_groups = {
-> @@ -1284,6 +1302,7 @@ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-
-> 2.0", clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen",
-> clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen",
-> clockgen_init);
->  CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen",
-> clockgen_init);
-> +CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen",
-> clockgen_init);
-
-Please keep these lists of chips sorted (or as close as you can in the case of
-the cmux structs which already have some sorting issues).
-
--Scott
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
