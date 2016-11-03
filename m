@@ -1,132 +1,95 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Nov 2016 14:21:22 -0800
+Date: Thu, 3 Nov 2016 12:48:38 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
-Message-ID: <20161114203426.GN5177@codeaurora.org>
-References: <20161019132816.31073-4-georgi.djakov@linaro.org>
- <20161028015438.GG16026@codeaurora.org>
- <20161102205910.GQ25787@tuxbot>
- <20161102225520.GW16026@codeaurora.org>
- <20161103182834.GR25787@tuxbot>
- <549f87fe-7be9-14b4-8e34-86f7f8dad94e@linaro.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v3 06/11] clk: qcom: Fix .set_rate to handle alpha PLLs
+ w/wo dynamic update
+Message-ID: <20161103194838.GY16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-7-git-send-email-rnayak@codeaurora.org>
+ <20161102215445.GR16026@codeaurora.org>
+ <581AF517.2040907@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <549f87fe-7be9-14b4-8e34-86f7f8dad94e@linaro.org>
+In-Reply-To: <581AF517.2040907@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/11, Georgi Djakov wrote:
-> On 11/03/2016 08:28 PM, Bjorn Andersson wrote:
-> >On Wed 02 Nov 15:55 PDT 2016, Stephen Boyd wrote:
-> >
-> >>On 11/02, Bjorn Andersson wrote:
-> >>>On Thu 27 Oct 18:54 PDT 2016, Stephen Boyd wrote:
-> >>>
-> >>>>On 10/19, Georgi Djakov wrote:
-> >>>>>Add a driver for the A53 Clock Controller. It is a hardware block that
-> >>>>>implements a combined mux and half integer divider functionality. It can
-> >>>>>choose between a fixed-rate clock or the dedicated A53 PLL. The source
-> >>>>>and the divider can be set both at the same time.
-> >>>>>
-> >>>>>This is required for enabling CPU frequency scaling on platforms like
-> >>>>>MSM8916.
-> >>>>>
-> >>>>
-> >>>>Please Cc DT reviewers.
-> >>>>
-> >>>>>Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> >>>>>---
-> >>>>> .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
-> >>>>> drivers/clk/qcom/Kconfig                           |   8 ++
-> >>>>> drivers/clk/qcom/Makefile                          |   1 +
-> >>>>> drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
-> >>>>> 4 files changed, 186 insertions(+)
-> >>>>> create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> >>>>> create mode 100644 drivers/clk/qcom/a53cc.c
-> >>>>>
-> >>>>>diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> >>>>>new file mode 100644
-> >>>>>index 000000000000..a025f062f177
-> >>>>>--- /dev/null
-> >>>>>+++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> >>>>>@@ -0,0 +1,22 @@
-> >>>>>+Qualcomm A53 CPU Clock Controller Binding
-> >>>>>+------------------------------------------------
-> >>>>>+The A53 CPU Clock Controller is hardware, which provides a combined
-> >>>>>+mux and divider functionality for the CPU clocks. It can choose between
-> >>>>>+a fixed rate clock and the dedicated A53 PLL.
-> >>>>>+
-> >>>>>+Required properties :
-> >>>>>+- compatible : shall contain:
-> >>>>>+
-> >>>>>+			"qcom,a53cc"
-> >>>>>+
-> >>>>>+- reg : shall contain base register location and length
-> >>>>>+	of the APCS region
-> >>>>>+- #clock-cells : shall contain 1
-> >>>>>+
-> >>>>>+Example:
-> >>>>>+
-> >>>>>+	apcs: syscon@b011000 {
-> >>>>>+		compatible = "qcom,a53cc", "syscon";
-> >>>>
-> >>>>Why is it a syscon? Is that part used?
-> >>>>
-> >>>
-> >>>I use the register at offset 8 for interrupting the other subsystems, so
-> >>>this must be available as something I can poke.
-> >>>
-> >>>Which makes me think that this should be described as a "simple-mfd" and
-> >>>"syscon" with the a53cc node as a child - grabbing the regmap of the
-> >>>syscon parent, rather then ioremapping the same region again.
-> >>>
+On 11/03, Rajendra Nayak wrote:
+> 
+> 
+> On 11/03/2016 03:24 AM, Stephen Boyd wrote:
+> > On 09/29, Rajendra Nayak wrote:
+> >> Alpha PLLs which do not support dynamic update feature
+> >> need to be explicitly disabled before a rate change.
+> >> The ones which do support dynamic update do so within a
+> >> single vco range, so add a min/max freq check for such
+> >> PLLs so they fall in the vco range.
 > >>
-> >>That's sort of a question for DT reviewers. The register space
-> >>certainly seems like a free for all with a tilt toward power
-> >>management of the CPU, similar to how this was done on Krait
-> >>based designs.
+> >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > 
+> > Is Taniya the author?
+> 
+> ah, yes, I seem to have messed up the authorship in v3, will fix.
+> 
+> > 
+> >> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> >> ---
+> >>  drivers/clk/qcom/clk-alpha-pll.c | 49 +++++++++++++++++++++++++++++++++-------
+> >>  drivers/clk/qcom/clk-alpha-pll.h |  3 +++
+> >>  2 files changed, 44 insertions(+), 8 deletions(-)
 > >>
-> >
-> >Right. But this kind of mashup blocks was the reason why simple-mfd was
-> >put in place.
-> >
+> >> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> >> index 89c7fdb..6f90a86 100644
+> >> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> >> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> >> @@ -382,16 +382,41 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> >>  static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> >>  				  unsigned long prate)
+> >>  {
+> >> +	bool enabled;
+> >>  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> >>  	const struct pll_vco *vco;
+> >>  	u32 l, off = pll->offset;
+> >>  	u64 a;
+> >>  
+> >>  	rate = alpha_pll_round_rate(rate, prate, &l, &a);
+> >> -	vco = alpha_pll_find_vco(pll, rate);
+> >> -	if (!vco) {
+> >> -		pr_err("alpha pll not in a valid vco range\n");
+> >> -		return -EINVAL;
+> >> +	enabled = clk_hw_is_enabled(hw);
+> >> +
+> >> +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
+> >> +		/*
+> >> +		 * PLLs which support dynamic updates support one single
+> >> +		 * vco range, between min_rate and max_rate supported
+> >> +		 */
+> >> +		if (rate < pll->min_rate || rate > pll->max_rate) {
+> >> +			pr_err("alpha pll rate outside supported min/max range\n");
+> >> +			return -EINVAL;
+> >> +		}
+> >> +	} else {
+> >> +		/*
+> >> +		 * All alpha PLLs which do not support dynamic update,
+> >> +		 * should be disabled before a vco update.
+> >> +		 */
+> >> +		if (enabled)
+> >> +			hw->init->ops->disable(hw);
+> > 
+> > Please just call the function directly instead of going through
+> > the init structure.
 > 
-> Ok, thanks for the comments. Then i will make it look like this:
+> But we now have 2 different versions of disable based on clk_ops,
+> clk_alpha_pll_disable and clk_alpha_pll_hwfsm_disable.
 > 
-> 	apcs: syscon@b011000 {
-> 		compatible = "syscon", "simple-mfd";
-> 		reg = <0x0b011000 0x1000>;
-> 
-> 		a53mux: clock {
-> 			compatible = "qcom,msm8916-a53cc";
-> 			#clock-cells = <1>;
-> 		};
-> 	};
-> 
-> Thanks,
-> Georgi
-> 
-> >>I wonder why we didn't make up some provider/consumer binding for
-> >>the "kicking" feature used by SMD/RPM code. Then this could be a
-> >>clock provider and a "kick" provider (haha #kick-cells) and the
-> >>usage of syscon/regmap wouldn't be mandatory.
-> >>
-> >
-> >I did consider doing that, but had enough dependencies to put in place
-> >as it was.
-> >
-> >I'm in favour of us inventing a kicker API and it's found outside out
-> >use cases as well (e.g. virtio/rpmsg).
-> >
 
-I'd rather we did this kicker API as well. That way we don't need
-to make a syscon and a simple-mfd to get software to work
-properly. Don't other silicon vendors need a kicker API as well?
-How are they kicking remote processors in other places? GPIOs?
+So have two set_rate ops that call a common function that takes a
+function pointer pair of enable/disable ops to call? Or have a
+flag to know which one to call? Either way, don't use the init
+structure after registration time please.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
