@@ -1,317 +1,340 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:58978 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbcKPIud (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 03:50:33 -0500
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH v3 2/3] clk: rockchip: add dt-binding header for rk1108
-Date: Wed, 16 Nov 2016 16:49:22 +0800
-Message-Id: <1479286163-34789-2-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 6/6] bus: Add support for Tegra Generic Memory
+ Interface
+To: Mirza Krak <mirza.krak@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+ <1477576872-2665-7-git-send-email-mirza.krak@gmail.com>
+ <3cdf7281-840f-1aa0-5a57-fe58501165f4@nvidia.com>
+ <CALw8SCVu+-h_yhOa7uDuyFBPVvhwjD64S+-MDeYN8EZsGHpXyw@mail.gmail.com>
+CC: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <1a68a2fa-d4b7-7c94-6777-4fb58bed747f@nvidia.com>
+Date: Thu, 3 Nov 2016 13:50:56 +0000
+MIME-Version: 1.0
+In-Reply-To: <CALw8SCVu+-h_yhOa7uDuyFBPVvhwjD64S+-MDeYN8EZsGHpXyw@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the dt-bindings header for the rk1108, that gets shared
-between the clock controller and the clock references in the dts.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+On 03/11/16 13:08, Mirza Krak wrote:
+> 2016-11-03 11:51 GMT+01:00 Jon Hunter <jonathanh@nvidia.com>:
+>>
+>> On 27/10/16 15:01, Mirza Krak wrote:
+>>>
+>>> From: Mirza Krak <mirza.krak@gmail.com>
+>>>
+>>> The Generic Memory Interface bus can be used to connect high-speed
+>>> devices such as NOR flash, FPGAs, DSPs...
+>>>
+>>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+>>> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+>>> ---
+>>>
+>>> Changes in v2:
+>>>  - Fixed some checkpatch errors
+>>>  - Re-ordered probe to get rid of local variables
+>>>  - Moved of_platform_default_populate call to the end of probe
+>>>  - Use the timing and configuration properties from the child device
+>>>  - Added warning if more then 1 child device exist
+>>>
+>>> Changes in v3:
+>>>  - added helper function to disable the controller which is used in remove
+>>> and
+>>>  on error.
+>>>  - Added logic to parse CS# from "ranges" property with fallback to "reg"
+>>>  property
+>>>
+>>>  drivers/bus/Kconfig     |   8 ++
+>>>  drivers/bus/Makefile    |   1 +
+>>>  drivers/bus/tegra-gmi.c | 267
+>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 276 insertions(+)
+>>>  create mode 100644 drivers/bus/tegra-gmi.c
+>>>
+>>> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+>>> index 4ed7d26..2e75a7f 100644
+>>> --- a/drivers/bus/Kconfig
+>>> +++ b/drivers/bus/Kconfig
+>>> @@ -141,6 +141,14 @@ config TEGRA_ACONNECT
+>>>           Driver for the Tegra ACONNECT bus which is used to interface
+>>> with
+>>>           the devices inside the Audio Processing Engine (APE) for
+>>> Tegra210.
+>>>
+>>> +config TEGRA_GMI
+>>> +       tristate "Tegra Generic Memory Interface bus driver"
+>>> +       depends on ARCH_TEGRA
+>>> +       help
+>>> +         Driver for the Tegra Generic Memory Interface bus which can be
+>>> used
+>>> +         to attach devices such as NOR, UART, FPGA and more.
+>>> +
+>>> +
+>>
+>>
+>> Nit-pick ... only one additional line above is needed to be consistent with
+>> the rest of the file.
+>
+> Will fix that.
+>
+>>
+>>
+>>>  config UNIPHIER_SYSTEM_BUS
+>>>         tristate "UniPhier System Bus driver"
+>>>         depends on ARCH_UNIPHIER && OF
+>>> diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+>>> index ac84cc4..34e2bab 100644
+>>> --- a/drivers/bus/Makefile
+>>> +++ b/drivers/bus/Makefile
+>>> @@ -18,5 +18,6 @@ obj-$(CONFIG_OMAP_OCP2SCP)    += omap-ocp2scp.o
+>>>  obj-$(CONFIG_SUNXI_RSB)                += sunxi-rsb.o
+>>>  obj-$(CONFIG_SIMPLE_PM_BUS)    += simple-pm-bus.o
+>>>  obj-$(CONFIG_TEGRA_ACONNECT)   += tegra-aconnect.o
+>>> +obj-$(CONFIG_TEGRA_GMI)                += tegra-gmi.o
+>>>  obj-$(CONFIG_UNIPHIER_SYSTEM_BUS)      += uniphier-system-bus.o
+>>>  obj-$(CONFIG_VEXPRESS_CONFIG)  += vexpress-config.o
+>>> diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
+>>> new file mode 100644
+>>> index 0000000..dd9623e
+>>> --- /dev/null
+>>> +++ b/drivers/bus/tegra-gmi.c
+>>> @@ -0,0 +1,267 @@
+>>> +/*
+>>> + * Driver for NVIDIA Generic Memory Interface
+>>> + *
+>>> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
+>>> + *
+>>> + * This file is licensed under the terms of the GNU General Public
+>>> + * License version 2. This program is licensed "as is" without any
+>>> + * warranty of any kind, whether express or implied.
+>>> + */
+>>> +#include <linux/clk.h>
+>>> +#include <linux/delay.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of_device.h>
+>>> +#include <linux/reset.h>
+>>> +
+>>> +#define TEGRA_GMI_CONFIG               0x00
+>>> +#define TEGRA_GMI_CONFIG_GO            BIT(31)
+>>> +#define TEGRA_GMI_BUS_WIDTH_32BIT      BIT(30)
+>>> +#define TEGRA_GMI_MUX_MODE             BIT(28)
+>>> +#define TEGRA_GMI_RDY_BEFORE_DATA      BIT(24)
+>>> +#define TEGRA_GMI_RDY_ACTIVE_HIGH      BIT(23)
+>>> +#define TEGRA_GMI_ADV_ACTIVE_HIGH      BIT(22)
+>>> +#define TEGRA_GMI_OE_ACTIVE_HIGH       BIT(21)
+>>> +#define TEGRA_GMI_CS_ACTIVE_HIGH       BIT(20)
+>>> +#define TEGRA_GMI_CS_SELECT(x)         ((x & 0x7) << 4)
+>>> +
+>>> +#define TEGRA_GMI_TIMING0              0x10
+>>> +#define TEGRA_GMI_MUXED_WIDTH(x)       ((x & 0xf) << 12)
+>>> +#define TEGRA_GMI_HOLD_WIDTH(x)                ((x & 0xf) << 8)
+>>> +#define TEGRA_GMI_ADV_WIDTH(x)         ((x & 0xf) << 4)
+>>> +#define TEGRA_GMI_CE_WIDTH(x)          (x & 0xf)
+>>> +
+>>> +#define TEGRA_GMI_TIMING1              0x14
+>>> +#define TEGRA_GMI_WE_WIDTH(x)          ((x & 0xff) << 16)
+>>> +#define TEGRA_GMI_OE_WIDTH(x)          ((x & 0xff) << 8)
+>>> +#define TEGRA_GMI_WAIT_WIDTH(x)                (x & 0xff)
+>>> +
+>>> +struct tegra_gmi_priv {
+>>> +       void __iomem *base;
+>>> +       struct reset_control *rst;
+>>> +       struct clk *clk;
+>>> +
+>>> +       u32 snor_config;
+>>> +       u32 snor_timing0;
+>>> +       u32 snor_timing1;
+>>> +};
+>>> +
+>>> +static void tegra_gmi_disable(struct tegra_gmi_priv *priv)
+>>> +{
+>>> +       u32 config;
+>>> +
+>>> +       /* stop GMI operation */
+>>> +       config = readl(priv->base + TEGRA_GMI_CONFIG);
+>>> +       config &= ~TEGRA_GMI_CONFIG_GO;
+>>> +       writel(config, priv->base + TEGRA_GMI_CONFIG);
+>>> +
+>>> +       reset_control_assert(priv->rst);
+>>> +       clk_disable_unprepare(priv->clk);
+>>> +}
+>>> +
+>>> +static void tegra_gmi_init(struct device *dev, struct tegra_gmi_priv
+>>> *priv)
+>>> +{
+>>> +       writel(priv->snor_timing0, priv->base + TEGRA_GMI_TIMING0);
+>>> +       writel(priv->snor_timing1, priv->base + TEGRA_GMI_TIMING1);
+>>> +
+>>> +       priv->snor_config |= TEGRA_GMI_CONFIG_GO;
+>>> +       writel(priv->snor_config, priv->base + TEGRA_GMI_CONFIG);
+>>> +}
+>>> +
+>>> +static int tegra_gmi_parse_dt(struct device *dev, struct tegra_gmi_priv
+>>> *priv)
+>>> +{
+>>> +       struct device_node *child =
+>>> of_get_next_available_child(dev->of_node,
+>>> +               NULL);
+>>> +       u32 property, ranges[4];
+>>> +       int ret;
+>>> +
+>>> +       if (!child) {
+>>> +               dev_warn(dev, "no child nodes found\n");
+>>> +               return 0;
+>>
+>>
+>> Don't we want to return an error here? Otherwise, we will call
+>> tegra_gmi_init() with an invalid configuration.
+>
+> True, we probably want that. My thought was that we might accept a
+> tegra-gmi node without any child nodes and just print a warning. But
+> since it is the child node that holds the bus configuration it makes
+> sense to fail probe due to no child nodes.
 
----
+I was wondering that too, but given that we then program and enable the 
+GMI I think it is best to just fail for now.
 
-Changes in v3:
-- rename PLL name and advance the clk id to save some space
+>>
+>>
+>>> +       }
+>>> +
+>>> +       /*
+>>> +        * We currently only support one child device due to lack of
+>>> +        * chip-select address decoding. Which means that we only have one
+>>> +        * chip-select line from the GMI controller.
+>>> +        */
+>>> +       if (of_get_child_count(dev->of_node) > 1)
+>>> +               dev_warn(dev, "only one child device is supported.");
+>>> +
+>>> +       if (of_property_read_bool(child, "nvidia,snor-data-width-32bit"))
+>>> +               priv->snor_config |= TEGRA_GMI_BUS_WIDTH_32BIT;
+>>> +
+>>> +       if (of_property_read_bool(child, "nvidia,snor-mux-mode"))
+>>> +               priv->snor_config |= TEGRA_GMI_MUX_MODE;
+>>> +
+>>> +       if (of_property_read_bool(child,
+>>> "nvidia,snor-rdy-active-before-data"))
+>>> +               priv->snor_config |= TEGRA_GMI_RDY_BEFORE_DATA;
+>>> +
+>>> +       if (of_property_read_bool(child, "nvidia,snor-rdy-inv"))
+>>> +               priv->snor_config |= TEGRA_GMI_RDY_ACTIVE_HIGH;
+>>> +
+>>> +       if (of_property_read_bool(child, "nvidia,snor-adv-inv"))
+>>> +               priv->snor_config |= TEGRA_GMI_ADV_ACTIVE_HIGH;
+>>> +
+>>> +       if (of_property_read_bool(child, "nvidia,snor-oe-inv"))
+>>> +               priv->snor_config |= TEGRA_GMI_OE_ACTIVE_HIGH;
+>>> +
+>>> +       if (of_property_read_bool(child, "nvidia,snor-cs-inv"))
+>>> +               priv->snor_config |= TEGRA_GMI_CS_ACTIVE_HIGH;
+>>> +
+>>> +       /* Decode the CS# */
+>>> +       ret = of_property_read_u32_array(child, "ranges", ranges, 4);
+>>> +       if (ret < 0) {
+>>> +               /* Invalid binding */
+>>> +               if (ret == -EOVERFLOW) {
+>>> +                       dev_err(dev, "invalid ranges length\n");
+>>> +                       goto error_cs_decode;
+>>> +               }
+>>> +
+>>> +               /*
+>>> +                * If we reach here it means that the child node has an
+>>> empty
+>>> +                * ranges or it does not exist at all. Attempt to decode
+>>> the
+>>> +                * CS# from the reg property instead.
+>>> +                */
+>>> +               ret = of_property_read_u32(child, "reg", &property);
+>>> +               if (ret < 0) {
+>>> +                       dev_err(dev, "no reg property found\n");
+>>> +                       goto error_cs_decode;
+>>> +               }
+>>> +       } else {
+>>> +               property = ranges[1];
+>>> +       }
+>>> +
+>>> +       priv->snor_config |= TEGRA_GMI_CS_SELECT(property);
+>>
+>>
+>> Should we make sure the CS is a valid value before setting?
+>
+> The TEGRA_GMI_CS_SELECT(x) macro will truncate any erroneous CS value.
+> But yeah we could do a sanity check instead and return an error if it
+> is invalid.
+>
+>>
+>>
+>>> +
+>>> +       /* The default values that are provided below are reset values */
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-muxed-width",
+>>> &property))
+>>> +               priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(1);
+>>> +
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-hold-width",
+>>> &property))
+>>> +               priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(1);
+>>> +
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-adv-width",
+>>> &property))
+>>> +               priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(1);
+>>> +
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-ce-width",
+>>> &property))
+>>> +               priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(4);
+>>> +
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-we-width",
+>>> &property))
+>>> +               priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(1);
+>>> +
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-oe-width",
+>>> &property))
+>>> +               priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(1);
+>>> +
+>>> +       if (!of_property_read_u32(child, "nvidia,snor-wait-width",
+>>> &property))
+>>> +               priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(property);
+>>> +       else
+>>> +               priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(3);
+>>> +
+>>> +error_cs_decode:
+>>> +       if (ret < 0)
+>>> +               dev_err(dev, "failed to decode chip-select number\n");
+>>
+>>
+>> Nit do we need another error message here? Can we add the "failed to decode
+>> CS" part the earlier message?
+>
+> Does it make sense to drop the two earlier messages instead and keep this one?
 
-Changes in v2:
-- split dt-binding header from clk driver
+I think it is nice to have specific errors so we know where it failed. 
+You could just drop the above and when you add the test for making sure 
+the CS is valid add another error message for that. Not a big deal 
+either way. So I will leave to you to decide.
 
- include/dt-bindings/clock/rk1108-cru.h | 269 +++++++++++++++++++++++++++++++++
- 1 file changed, 269 insertions(+)
- create mode 100644 include/dt-bindings/clock/rk1108-cru.h
+Cheers
+Jon
 
-diff --git a/include/dt-bindings/clock/rk1108-cru.h b/include/dt-bindings/clock/rk1108-cru.h
-new file mode 100644
-index 0000000..b28abb0
---- /dev/null
-+++ b/include/dt-bindings/clock/rk1108-cru.h
-@@ -0,0 +1,269 @@
-+/*
-+ * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
-+ * Author: Shawn Lin <shawn.lin@rock-chips.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK1108_H
-+#define _DT_BINDINGS_CLK_ROCKCHIP_RK1108_H
-+
-+/* pll id */
-+#define PLL_APLL			0
-+#define PLL_DPLL			1
-+#define PLL_GPLL			2
-+#define ARMCLK				3
-+
-+/* sclk gates (special clocks) */
-+#define SCLK_SPI0			65
-+#define SCLK_NANDC			67
-+#define SCLK_SDMMC			68
-+#define SCLK_SDIO			69
-+#define SCLK_EMMC			71
-+#define SCLK_UART0			72
-+#define SCLK_UART1			73
-+#define SCLK_UART2			74
-+#define SCLK_I2S0			75
-+#define SCLK_I2S1			76
-+#define SCLK_I2S2			77
-+#define SCLK_TIMER0			78
-+#define SCLK_TIMER1			79
-+#define SCLK_SFC			80
-+#define SCLK_SDMMC_DRV			81
-+#define SCLK_SDIO_DRV			82
-+#define SCLK_EMMC_DRV			83
-+#define SCLK_SDMMC_SAMPLE		84
-+#define SCLK_SDIO_SAMPLE		85
-+#define SCLK_EMMC_SAMPLE		86
-+
-+/* aclk gates */
-+#define ACLK_DMAC			192
-+#define ACLK_PRE			193
-+#define ACLK_CORE			194
-+#define ACLK_ENMCORE			195
-+
-+/* pclk gates */
-+#define PCLK_GPIO1			256
-+#define PCLK_GPIO2			257
-+#define PCLK_GPIO3			258
-+#define PCLK_GRF			259
-+#define PCLK_I2C1			260
-+#define PCLK_I2C2			261
-+#define PCLK_I2C3			262
-+#define PCLK_SPI			263
-+#define PCLK_SFC			264
-+#define PCLK_UART0			265
-+#define PCLK_UART1			266
-+#define PCLK_UART2			267
-+#define PCLK_TSADC			268
-+#define PCLK_PWM			269
-+#define PCLK_TIMER			270
-+#define PCLK_PERI			271
-+
-+/* hclk gates */
-+#define HCLK_I2S0_8CH			320
-+#define HCLK_I2S1_8CH			321
-+#define HCLK_I2S2_2CH			322
-+#define HCLK_NANDC			323
-+#define HCLK_SDMMC			324
-+#define HCLK_SDIO			325
-+#define HCLK_EMMC			326
-+#define HCLK_PERI			327
-+#define HCLK_SFC			328
-+
-+#define CLK_NR_CLKS			(HCLK_SFC + 1)
-+
-+/* reset id */
-+#define SRST_CORE_PO_AD		0
-+#define SRST_CORE_AD			1
-+#define SRST_L2_AD			2
-+#define SRST_CPU_NIU_AD		3
-+#define SRST_CORE_PO			4
-+#define SRST_CORE			5
-+#define SRST_L2			6
-+#define SRST_CORE_DBG			8
-+#define PRST_DBG			9
-+#define RST_DAP			10
-+#define PRST_DBG_NIU			11
-+#define ARST_STRC_SYS_AD		15
-+
-+#define SRST_DDRPHY_CLKDIV		16
-+#define SRST_DDRPHY			17
-+#define PRST_DDRPHY			18
-+#define PRST_HDMIPHY			19
-+#define PRST_VDACPHY			20
-+#define PRST_VADCPHY			21
-+#define PRST_MIPI_CSI_PHY		22
-+#define PRST_MIPI_DSI_PHY		23
-+#define PRST_ACODEC			24
-+#define ARST_BUS_NIU			25
-+#define PRST_TOP_NIU			26
-+#define ARST_INTMEM			27
-+#define HRST_ROM			28
-+#define ARST_DMAC			29
-+#define SRST_MSCH_NIU			30
-+#define PRST_MSCH_NIU			31
-+
-+#define PRST_DDRUPCTL			32
-+#define NRST_DDRUPCTL			33
-+#define PRST_DDRMON			34
-+#define HRST_I2S0_8CH			35
-+#define MRST_I2S0_8CH			36
-+#define HRST_I2S1_2CH			37
-+#define MRST_IS21_2CH			38
-+#define HRST_I2S2_2CH			39
-+#define MRST_I2S2_2CH			40
-+#define HRST_CRYPTO			41
-+#define SRST_CRYPTO			42
-+#define PRST_SPI			43
-+#define SRST_SPI			44
-+#define PRST_UART0			45
-+#define PRST_UART1			46
-+#define PRST_UART2			47
-+
-+#define SRST_UART0			48
-+#define SRST_UART1			49
-+#define SRST_UART2			50
-+#define PRST_I2C1			51
-+#define PRST_I2C2			52
-+#define PRST_I2C3			53
-+#define SRST_I2C1			54
-+#define SRST_I2C2			55
-+#define SRST_I2C3			56
-+#define PRST_PWM1			58
-+#define SRST_PWM1			60
-+#define PRST_WDT			61
-+#define PRST_GPIO1			62
-+#define PRST_GPIO2			63
-+
-+#define PRST_GPIO3			64
-+#define PRST_GRF			65
-+#define PRST_EFUSE			66
-+#define PRST_EFUSE512			67
-+#define PRST_TIMER0			68
-+#define SRST_TIMER0			69
-+#define SRST_TIMER1			70
-+#define PRST_TSADC			71
-+#define SRST_TSADC			72
-+#define PRST_SARADC			73
-+#define SRST_SARADC			74
-+#define HRST_SYSBUS			75
-+#define PRST_USBGRF			76
-+
-+#define ARST_PERIPH_NIU		80
-+#define HRST_PERIPH_NIU		81
-+#define PRST_PERIPH_NIU		82
-+#define HRST_PERIPH			83
-+#define HRST_SDMMC			84
-+#define HRST_SDIO			85
-+#define HRST_EMMC			86
-+#define HRST_NANDC			87
-+#define NRST_NANDC			88
-+#define HRST_SFC			89
-+#define SRST_SFC			90
-+#define ARST_GMAC			91
-+#define HRST_OTG			92
-+#define SRST_OTG			93
-+#define SRST_OTG_ADP			94
-+#define HRST_HOST0			95
-+
-+#define HRST_HOST0_AUX			96
-+#define HRST_HOST0_ARB			97
-+#define SRST_HOST0_EHCIPHY		98
-+#define SRST_HOST0_UTMI		99
-+#define SRST_USBPOR			100
-+#define SRST_UTMI0			101
-+#define SRST_UTMI1			102
-+
-+#define ARST_VIO0_NIU			102
-+#define ARST_VIO1_NIU			103
-+#define HRST_VIO_NIU			104
-+#define PRST_VIO_NIU			105
-+#define ARST_VOP			106
-+#define HRST_VOP			107
-+#define DRST_VOP			108
-+#define ARST_IEP			109
-+#define HRST_IEP			110
-+#define ARST_RGA			111
-+#define HRST_RGA			112
-+#define SRST_RGA			113
-+#define PRST_CVBS			114
-+#define PRST_HDMI			115
-+#define SRST_HDMI			116
-+#define PRST_MIPI_DSI			117
-+
-+#define ARST_ISP_NIU			118
-+#define HRST_ISP_NIU			119
-+#define HRST_ISP			120
-+#define SRST_ISP			121
-+#define ARST_VIP0			122
-+#define HRST_VIP0			123
-+#define PRST_VIP0			124
-+#define ARST_VIP1			125
-+#define HRST_VIP1			126
-+#define PRST_VIP1			127
-+#define ARST_VIP2			128
-+#define HRST_VIP2			129
-+#define PRST_VIP2			120
-+#define ARST_VIP3			121
-+#define HRST_VIP3			122
-+#define PRST_VIP4			123
-+
-+#define PRST_CIF1TO4			124
-+#define SRST_CVBS_CLK			125
-+#define HRST_CVBS			126
-+
-+#define ARST_VPU_NIU			140
-+#define HRST_VPU_NIU			141
-+#define ARST_VPU			142
-+#define HRST_VPU			143
-+#define ARST_RKVDEC_NIU		144
-+#define HRST_RKVDEC_NIU		145
-+#define ARST_RKVDEC			146
-+#define HRST_RKVDEC			147
-+#define SRST_RKVDEC_CABAC		148
-+#define SRST_RKVDEC_CORE		149
-+#define ARST_RKVENC_NIU		150
-+#define HRST_RKVENC_NIU		151
-+#define ARST_RKVENC			152
-+#define HRST_RKVENC			153
-+#define SRST_RKVENC_CORE		154
-+
-+#define SRST_DSP_CORE			156
-+#define SRST_DSP_SYS			157
-+#define SRST_DSP_GLOBAL		158
-+#define SRST_DSP_OECM			159
-+#define PRST_DSP_IOP_NIU		160
-+#define ARST_DSP_EPP_NIU		161
-+#define ARST_DSP_EDP_NIU		162
-+#define PRST_DSP_DBG_NIU		163
-+#define PRST_DSP_CFG_NIU		164
-+#define PRST_DSP_GRF			165
-+#define PRST_DSP_MAILBOX		166
-+#define PRST_DSP_INTC			167
-+#define PRST_DSP_PFM_MON		169
-+#define SRST_DSP_PFM_MON		170
-+#define ARST_DSP_EDAP_NIU		171
-+
-+#define SRST_PMU			172
-+#define SRST_PMU_I2C0			173
-+#define PRST_PMU_I2C0			174
-+#define PRST_PMU_GPIO0			175
-+#define PRST_PMU_INTMEM		176
-+#define PRST_PMU_PWM0			177
-+#define SRST_PMU_PWM0			178
-+#define PRST_PMU_GRF			179
-+#define SRST_PMU_NIU			180
-+#define SRST_PMU_PVTM			181
-+#define ARST_DSP_EDP_PERF		184
-+#define ARST_DSP_EPP_PERF		185
-+
-+#endif /* _DT_BINDINGS_CLK_ROCKCHIP_RK1108_H */
 -- 
-1.9.1
-
-
+nvpublic
