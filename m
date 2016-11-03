@@ -1,54 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42020 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941072AbcKNGCI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:08 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org, andy.gross@linaro.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v7 07/14] mmc: sdhci-msm: Enable few quirks
-Date: Mon, 14 Nov 2016 11:30:41 +0530
-Message-Id: <1479103248-9491-8-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 3 Nov 2016 12:46:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tdas@codeaurora.org
+Subject: Re: [PATCH v3 10/11] clk: Add clk_hw_get_clk() helper API to be used
+ by clk providers
+Message-ID: <20161103194613.GX16026@codeaurora.org>
+References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
+ <1475138152-859-11-git-send-email-rnayak@codeaurora.org>
+ <20161102222208.GT16026@codeaurora.org>
+ <581AF698.2030906@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <581AF698.2030906@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-sdhc-msm controller needs this SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN
-& SDHCI_QUIRK2_PRESET_VALUE_BROKEN to be set. Hence setting it.
+On 11/03, Rajendra Nayak wrote:
+> 
+> 
+> On 11/03/2016 03:52 AM, Stephen Boyd wrote:
+> > On 09/29, Rajendra Nayak wrote:
+> >> Add a helper API that will allow clk providers to turn their clk_hw
+> >> structures into struct clk pointer.
+> >>
+> > 
+> > Did I suggest this?
+> 
+> I did this back when you suggested we store clk_hw's for all
+> clocks associated with a gdsc instead of extracting them from
+> the clients device tree node.
+> 
+> > 
+> >> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> >> ---
+> >>  drivers/clk/clk.c            | 6 ++++++
+> >>  include/linux/clk-provider.h | 1 +
+> >>  2 files changed, 7 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> >> index 820a939..a084132 100644
+> >> --- a/drivers/clk/clk.c
+> >> +++ b/drivers/clk/clk.c
+> >> @@ -186,6 +186,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(clk_hw_get_name);
+> >>  
+> >> +struct clk *clk_hw_get_clk(const struct clk_hw *hw)
+> >> +{
+> >> +	return hw->clk;
+> > 
+> > I'd prefer we actually went through all the work and actually
+> > allocated another clk structure here. We can add another string
+> > or two for the dev_id and con_id too for debug/accouting
+> > purposes.
+> 
+> I don't quite get the part of allocating another clk structure,
+> can you please elaborate?
+> 
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+With "per-user" clks we want to have accounting for all the
+struct clk consumers of a particular clk_hw instance. Given that
+this function lets someone get a clk pointer from a clk_hw
+structure, we want to make it follow the same "per-user"
+accounting that we already have for each time the call is made.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index f63ffb0..268424c 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -598,7 +598,9 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
- static const struct sdhci_pltfm_data sdhci_msm_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
- 		  SDHCI_QUIRK_NO_CARD_NO_RESET |
--		  SDHCI_QUIRK_SINGLE_POWER_WRITE,
-+		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
-+		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops = &sdhci_msm_ops,
- };
- 
+Also, we want to make sure callers call clk_put() on the clk when
+they're done with it. If we don't allocate a new one here that
+clk_put() will destroy the one we allocate and assign during
+registration time.
+
+So I'm saying we want a wrapper to __clk_create_clk() for clk
+providers to use to generate a clk pointer if needed.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
