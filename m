@@ -1,70 +1,64 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.10 (take one)
-Date: Mon,  7 Nov 2016 16:34:28 +0100
-Message-Id: <1478532868-5508-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <andy.yan@rock-chips.com>
+From: Andy Yan <andy.yan@rock-chips.com>
+To: heiko@sntech.de
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	shawn.lin@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	briannorris@chromium.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-gpio@vger.kernel.org,
+	linux@armlinux.org.uk,
+	linux-arm-kernel@lists.infradead.org,
+	ulf.hansson@linaro.org,
+	linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	elaine.zhang@rock-chips.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 0/6] Add basic support for support for Rockchip RK1108 SOC
+Date: Thu,  3 Nov 2016 20:26:15 +0800
+Message-Id: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
+It is designed for varies application scenario such as car DVR, sports
+DV, secure camera and UAV camera.
+This patch series add basic support for it, which can boot a board with
+initramfs into shell.
+More new feathers will come soon.
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
-are available in the git repository at:
+Andy Yan (4):
+  pinctrl: rockchip: add support for rk1108
+  ARM: dts: add basic support for Rockchip RK1108 SOC
+  ARM: add low level debug uart for rk1108
+  ARM: dts: rockchip: add rockchip RK1108 Evaluation board
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag1
+Shawn Lin (2):
+  dt-bindings: rockchip-dw-mshc: add RK1108 dw-mshc description
+  clk: rockchip: add clock controller for rk1108
 
-for you to fetch changes up to dbdcc4f996df280eb2758095b4774ea62da8a2a7:
+ Documentation/devicetree/bindings/arm/rockchip.txt |   3 +
+ .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   1 +
+ arch/arm/Kconfig.debug                             |  30 ++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/rk1108-evb.dts                   |  69 +++
+ arch/arm/boot/dts/rk1108.dtsi                      | 420 +++++++++++++++++++
+ arch/arm/mach-rockchip/rockchip.c                  |   1 +
+ drivers/clk/rockchip/Makefile                      |   1 +
+ drivers/clk/rockchip/clk-rk1108.c                  | 463 +++++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |  14 +
+ drivers/pinctrl/pinctrl-rockchip.c                 |  27 +-
+ include/dt-bindings/clock/rk1108-cru.h             | 308 ++++++++++++++
+ 12 files changed, 1337 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/rk1108-evb.dts
+ create mode 100644 arch/arm/boot/dts/rk1108.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk1108.c
+ create mode 100644 include/dt-bindings/clock/rk1108-cru.h
 
-  clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.10 (take one)
-
-  - SYS-DMAC, (H)SCIF, I2C, DRIF, and graphics related clocks for R-Car
-    M3-W,
-  - Minor fixes and cleanups.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      clk: renesas: cpg-mssr: Always use readl()/writel()
-      clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
-      clk: renesas: cpg-mssr: Fix inverted debug check
-      clk: renesas: cpg-mssr: Remove bogus commas from error messages
-
-Laurent Pinchart (3):
-      clk: renesas: r8a7796: Add FCP clocks
-      clk: renesas: r8a7796: Add VSP clocks
-      clk: renesas: r8a7796: Add DU and LVDS clocks
-
-Ramesh Shanmugasundaram (1):
-      clk: renesas: r8a7796: Add DRIF clock
-
-Ulrich Hecht (4):
-      clk: renesas: r8a7796: Add SYS-DMAC clocks
-      clk: renesas: r8a7796: Add SCIF clocks
-      clk: renesas: r8a7796: Add HSCIF clocks
-      clk: renesas: r8a7796: Add I2C clocks
-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 45 ++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c    | 14 +++++------
- drivers/clk/renesas/renesas-cpg-mssr.c | 17 ++++++-------
- 3 files changed, 60 insertions(+), 16 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+2.7.4
