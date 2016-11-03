@@ -1,75 +1,73 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 7 Nov 2016 13:56:32 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, jonathanh@nvidia.com, gnurou@gmail.com,
-	linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V4 5/6] ARM: tegra: Add Tegra20 GMI support
-Message-ID: <20161107125632.GB12559@ulmo.ba.sec>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-6-git-send-email-mirza.krak@gmail.com>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <68855ca8-a74f-7c76-342f-de0aeec51ca1@st.com>
+Date: Thu, 3 Nov 2016 09:52:38 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
-In-Reply-To: <1478507405-13204-6-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Gabriel,
 
---eJnRUKwClWJh1Khz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/14/2016 11:18 AM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>
+> v2:
+>  - rename compatible property "st,stm32f46xx-rcc" into "st,stm32f469-rcc"
+>  - cosmetic: remove bad copy/paste
+>
+> This patch-set introduce RTC and QSPI clocks for STM32F4 socs
+> RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
+>
+> example to use rtc clock:
+>
+> 		rtc: rtc@40002800 {
+> 			compatible = "st,stm32-rtc";
+> 			reg = <0x40002800 0x400>;
+> 			...
+> 			clocks = <&rcc 1 CLK_RTC>;
+>
+> 			assigned-clocks =  <&rcc 1 CLK_RTC>;
+> 			assigned-clock-parents = <&rcc 1 CLK_LSE>;
+> 			...
+> 		};
+>
+> Gabriel Fernandez (6):
+>   clk: stm32f4: Add LSI & LSE clocks
+>   ARM: dts: stm32f429: add LSI and LSE clocks
+>   arm: stmf32: Enable SYSCON
+>   clk: stm32f4: Add RTC clock
+>   clk: stm32f469: Add QSPI clock
+>   ARM: dts: stm32f429: Add QSPI clock
 
-On Mon, Nov 07, 2016 at 09:30:04AM +0100, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
->=20
-> Add a device node for the GMI controller found on Tegra20.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->=20
-> Changes in v2:
-> - added address-cells, size-cells and ranges properties
->=20
-> Changes in v3:
-> - fixed range address which is not the same as Tegra30.
->=20
-> Changes in v4:
-> - removed extra newline and a initial space in resets property.
->=20
->  arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+You sent a V3 without DT patches. Should I take DT patches from this V2 
+patchset ?
 
-Applied, thanks.
+Regards
+Alex
 
-Thierry
 
---eJnRUKwClWJh1Khz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYIHoAAAoJEN0jrNd/PrOhc8QQAK6tFzXNyqCxyRMID3n3cb3f
-8YZ9iFsW7XWxIdf/sbdNbSOi9og9SblhnUsBCfofjVEbKdUZsNty+fDV6Pr+oUGO
-EPDt32ON6VqApoWR0WoBlN2CTe3KO+PQ4ovUHqeg0wPcYf7+W6slUalhZofiZUDf
-i6+lXxWAiiikdHjhUAUoQ5dJAN3H+UUrNRv5nx/p4scIUVJfzXY9kF+I6jmNjILG
-hhjqEHNygsTA3g5u+2sgZgUJCmUttZsjJ/cOOd7Vzf2G/T2Z5P9TFjL9Nzz7OXo7
-vF6Rm1dQKeKIttsOUMhc3CgNTtm28uVdlT7Sn3TYCoYsUH2bLJWq239JFhKO7GVg
-VR4AyinQvKdYJyerS+73UJcMQHPxvFVWUfNW0AmriTVIRncTvJ3JZPfAPk/0YZH7
-wwQ9K6U8zuUUCjNaSTR6rzA2xP05LViazv9jpUOF1IG1MPqPcFDqseCZQNEn9/BP
-VfRZWdB+IJ+0Vw6wIxZ/Z4UQYwAJqnJHTgYLf8B3cg05Wam9owbVy33EnSCy/uan
-QhzQQ4JDgi0QRPTYi6vNZUGkm1rVh7ETBNRec/pkYBkwxoq1oaCtclISAjrfYHFO
-QMC/X0aRZTnfiHbyjPWElDo0Z4Oduan7DVtWzQYk/u5U7X2X2IfUcsGVR1N3mfO4
-ZCDPZMHYM9r5YSZuKsxD
-=14qE
------END PGP SIGNATURE-----
-
---eJnRUKwClWJh1Khz--
+>
+>  .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
+>  arch/arm/boot/dts/stm32f429.dtsi                   |  18 +
+>  arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
+>  arch/arm/configs/stm32_defconfig                   |   1 +
+>  drivers/clk/clk-stm32f4.c                          | 442 ++++++++++++++++++++-
+>  5 files changed, 447 insertions(+), 22 deletions(-)
+>
