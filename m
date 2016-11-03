@@ -1,81 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60962 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbcKGL0I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:26:08 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v6 06/14] mmc: sdhci-msm: Add get_min_clock() and get_max_clock() callback
-Date: Mon,  7 Nov 2016 16:54:29 +0530
-Message-Id: <1478517877-23733-7-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <stephan@soliotek.com>
+From: =?UTF-8?q?St=C3=A9phan=20Rafin?= <stephan@soliotek.com>
+To: emilio@elopez.com.ar
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?St=C3=A9phan=20Rafin?= <stephan@soliotek.com>
+Subject: [PATCH] clk: sunxi: Fix M factor computation for APB1
+Date: Fri,  4 Nov 2016 00:53:56 +0100
+Message-Id: <1478217236-12831-1-git-send-email-stephan@soliotek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This add get_min_clock() and get_max_clock() callback
-for sdhci-msm. sdhci-msm min/max clocks may be different
-hence implement these callbacks.
+commit cfa636886033 ("clk: sunxi: factors: Consolidate get_factors
+parameters into a struct") introduced a regression for m factor
+computation in sun4i_get_apb1_factors function.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+The old code reassigned the "parent_rate" parameter to the targeted
+divisor value and was buggy for the returned frequency but not for the
+computed factors. Now, returned frequency is good but m factor is
+incorrectly computed (its max value 31 is always set resulting in a
+significantly slower frequency than the requested one...)
+
+This patch simply restores the original proper computation for m while
+keeping the good changes for returned rate.
+
+Signed-off-by: Stéphan Rafin <stephan@soliotek.com>
 ---
- drivers/mmc/host/sdhci-msm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/clk/sunxi/clk-sunxi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 32b0b79..66ca444 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -68,6 +68,7 @@
- #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 838b22a..f2c9274 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -373,7 +373,7 @@ static void sun4i_get_apb1_factors(struct factors_request *req)
+ 	else
+ 		calcp = 3;
  
- #define TCXO_FREQ		19200000
-+#define SDHCI_MSM_MIN_CLOCK	400000
+-	calcm = (req->parent_rate >> calcp) - 1;
++	calcm = (div >> calcp) - 1;
  
- #define CDR_SELEXT_SHIFT	20
- #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
-@@ -559,6 +560,19 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	return clk_round_rate(msm_host->clk, ULONG_MAX);
-+}
-+
-+static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
-+{
-+	return SDHCI_MSM_MIN_CLOCK;
-+}
-+
- static const struct of_device_id sdhci_msm_dt_match[] = {
- 	{ .compatible = "qcom,sdhci-msm-v4" },
- 	{},
-@@ -570,6 +584,8 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	.platform_execute_tuning = sdhci_msm_execute_tuning,
- 	.reset = sdhci_reset,
- 	.set_clock = sdhci_set_clock,
-+	.get_min_clock = sdhci_msm_get_min_clock,
-+	.get_max_clock = sdhci_msm_get_max_clock,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
- 	.voltage_switch = sdhci_msm_voltage_switch,
+ 	req->rate = (req->parent_rate >> calcp) / (calcm + 1);
+ 	req->m = calcm;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+2.6.6
