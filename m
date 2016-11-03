@@ -1,46 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:59424
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751634AbcKYNXA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Nov 2016 08:23:00 -0500
-Subject: Re: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with
- platform device PM
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <dce8ffa9-7392-774c-c3b9-791aa5a2ffb0@osg.samsung.com>
-Date: Fri, 25 Nov 2016 10:12:09 -0300
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 3 Nov 2016 09:15:01 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v6 1/4] clk: sunxi-ng: Add A64 clocks
+Message-ID: <20161103081501.vvnfoezubsgvnlbk@lukather>
+References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
+ <fb266cd536fce7fc7800189f3aa0f8cd73d75ec3.1478123413.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v676Ddz1wmRwDGwTd8gGH5AJJBkyAe-WyvZ=D+2OKoRb4w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4uwydchqx5r6bafk"
+In-Reply-To: <CAGb2v676Ddz1wmRwDGwTd8gGH5AJJBkyAe-WyvZ=D+2OKoRb4w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Marek,
 
-On 11/25/2016 06:39 AM, Marek Szyprowski wrote:
-> Exynos AUDSS clock driver has beem already converted to platform driver, so
+--4uwydchqx5r6bafk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-s/beem/been
+On Thu, Nov 03, 2016 at 09:52:26AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Nov 3, 2016 at 5:50 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Add the A64 CCU clocks set.
+> >
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> I thought I acked this one...
+>=20
+> Skimming through it again, I think you would want to add CLK_SET_PARENT_R=
+ATE
+> to the hdmi and mipi dsi module clocks.
+>=20
+> Otherwise,
+>=20
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-> remove the dependency on the syscore ops - the last remaining non-platform
-> driver feature. Platform device's system sleep PM provides all needed
-> infrastructure for replacing syscore-based PM, so do it now.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+I added the flags, and applied, thanks!
 
-The patch looks good to me.
+Maxime
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--4uwydchqx5r6bafk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYGvIBAAoJEBx+YmzsjxAgwocQAKBIC/0wakVzUpTNcJYNj8Lc
+tLzMqlw+PDHdSFa7wRjjBpdyLJUdfXO2IsaqOlE8Vtv5+CS9pyAtZLNd+62EOJCB
+s73jS7C0Xx+BuF4fEL5D2pWojTPwk3h3D/WcxIo4Gixg6vN9vMobJ1GNQhawjJnu
+86SzVXi3A6TyAnewsGKvYHEG5j/pCkWlKiwA+vvOdBVv8oer2dqsK0M4WZVCte2C
+VeRzr1wBL+bRSkon/Y/7nAQrFQJwvZ/HUp93H/5/rezHfphqI6WnJ/LjdYHwZTWV
+npyhbkcXSneVjvy2W7BYjfBgCLQDcUWNDwiPLyOMnaTFmd4wRyGTF8nOvkjKOvdU
+qa4sN0CIMP1eLIUgaknHdyLF5cOx9mrXsFXfm7IPvqFcl0zaQt89qt8knD4OrRdf
+1gNPHl8Qvej+ljGg57upNZdjZ0vjOv3F97vgMwnYrmJ6zhn1JiHw4C136KNGinND
+OmfykwZ7bNPqC8RImCFZtC9vdG3QegJ5ylRaZGgGbtKhDBGDk/attNfwtuz6sVcc
+ZGGmQuw11Fyh7pqfi8EZe4NSksCqmzyp6A1qpNnbLLtJAI+amovpPVmAjx9An6Nd
+Gt66XUsVwtYdxroo/CibIWVPL58WnXjgJJ7R4w4OsOzJlTBCD5/fy7VEzplc52di
+KKcWMA+ZTkU1x5kn4zqc
+=J/jD
+-----END PGP SIGNATURE-----
+
+--4uwydchqx5r6bafk--
