@@ -1,75 +1,69 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	stable@vger.kernel.org
-In-Reply-To: <20161117164954.62658-1-icenowy@aosc.xyz>
-References: <20161117164954.62658-1-icenowy@aosc.xyz>
-Subject: Re: [PATCH] clk: sunxi-ng: enable so-said LDOs for A33 SoC's pll-mipi clock
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 4/6] ARM: tegra: Add Tegra30 GMI support
+To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+ <1477576872-2665-5-git-send-email-mirza.krak@gmail.com>
+CC: <gnurou@gmail.com>, <linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>,
+	<pgaikwad@nvidia.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d1c2fe5d-fb20-459a-2f85-95df8fb777a2@nvidia.com>
+Date: Thu, 3 Nov 2016 10:15:57 +0000
 MIME-Version: 1.0
-Message-Id: <194651479745774@web24g.yandex.ru>
-Date: Tue, 22 Nov 2016 00:29:34 +0800
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1477576872-2665-5-git-send-email-mirza.krak@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
-
-18.11.2016, 00:50, "Icenowy Zheng" <icenowy@aosc.xyz>:
-> In the user manual of A33 SoC, the bit 22 and 23 of pll-mipi control
-> register is called "LDO{1,2}_EN", and according to the BSP source code
-> from Allwinner [1], the LDOs are enabled during the clock's enabling
-> process.
+On 27/10/16 15:01, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
 >
-> The clock failed to generate output if the two LDOs are not enabled.
+> Add a device node for the GMI controller found on Tegra30.
 >
-> Add the two bits to the clock's gate bits, so that the LDOs are enabled
-> when the PLL is enabled.
->
-> [1] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/drivers/clk/sunxi/clk-sun8iw5.c#L429
->
-> Fixes: d05c748bd730 ("clk: sunxi-ng: Add A33 CCU support")
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-I forgot to mention that this patch should also apply to 4.9.
-
-As A33 support is added, the problem will appear with some LCD panels.
-
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
 > ---
-> Dear Chen-Yu:
-> As you said, the two bits are also present in the CCU of A23 and A31.
-> Could you please check whether the PLL works on the two SoCs?
-> I remembered you mentioned you failed to make TCON enabled on A23.
-> On A31, you may hack the parent of tcon-ch0 to force the tcon clock to
-> use pll-mipi as parent, in order to check whether the pll works.
 >
-> However, I didn't found the code that enables the LDOs in the BSP A23/31
-> sources, so you must test them to ensure whether the code is needed for
-> these SoCs.
+> Changes in v2:
+> - added address-cells, size-cells and ranges properties
 >
-> Regards,
-> Icenowy
->  drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v3:
+> - no changes
 >
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-> index 96b40ca..9bd1f78 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-> @@ -131,7 +131,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
->                                      8, 4, /* N */
->                                      4, 2, /* K */
->                                      0, 4, /* M */
-> - BIT(31), /* gate */
-> + BIT(31) | BIT(23) | BIT(22), /* gate */
->                                      BIT(28), /* lock */
->                                      CLK_SET_RATE_UNGATE);
+>  arch/arm/boot/dts/tegra30.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 >
-> --
-> 2.10.1
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index 5030065..bbb1c00 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -439,6 +439,19 @@
+>  		status = "disabled";
+>  	};
+>
+> +	gmi@70009000 {
+> +		compatible = "nvidia,tegra30-gmi";
+> +		reg = <0x70009000 0x1000>;
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0x48000000 0x7ffffff>;
+> +		clocks = <&tegra_car TEGRA30_CLK_NOR>;
+> +		clock-names = "gmi";
+> +		resets = <&tegra_car 42>;
+> +		reset-names = "gmi";
+> +		status = "disabled";
+> +	};
+> +
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
