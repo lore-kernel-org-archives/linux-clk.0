@@ -1,61 +1,107 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 1/3] clk: keystone: Fix an error checking
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 3 Nov 2016 11:28:34 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 To: Stephen Boyd <sboyd@codeaurora.org>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
- <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
- <20161102002228.GC16026@codeaurora.org>
-Cc: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org,
- mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <d2009738-ec07-8cad-10b3-4318f20b69b3@wanadoo.fr>
-Date: Fri, 4 Nov 2016 06:43:59 +0100
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
+Message-ID: <20161103182834.GR25787@tuxbot>
+References: <20161019132816.31073-4-georgi.djakov@linaro.org>
+ <20161028015438.GG16026@codeaurora.org>
+ <20161102205910.GQ25787@tuxbot>
+ <20161102225520.GW16026@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20161102002228.GC16026@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161102225520.GW16026@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 02/11/2016 à 01:22, Stephen Boyd a écrit :
-> On 10/24, Christophe JAILLET wrote:
->> clk_register_pll() can return ERR_PTR(-ENOMEM) so checking the return value
->> against NULL only is not correct.
-> The code just doesn't propagate the error up to the caller.
-> Instead the caller treats NULL as an error and non-NULL as valid.
-> If the callee detects an error it hides it and returns NULL.
+On Wed 02 Nov 15:55 PDT 2016, Stephen Boyd wrote:
 
-Could you please clarify?
-I thought that your point was that 'clk_register_pll()' was returning 
-NULL when 'clk_register()' was returning an error.
-The proposed patch fixes it and now 'clk_register_pll()' returns:
-    - either  ERR_PTR(-ENOMEM) if zkalloc fails
-    - or clk if 'clk_register()' fails. In this case it is an error pointer
-    - or a valid, non NULL, pointer in case of success
+> On 11/02, Bjorn Andersson wrote:
+> > On Thu 27 Oct 18:54 PDT 2016, Stephen Boyd wrote:
+> > 
+> > > On 10/19, Georgi Djakov wrote:
+> > > > Add a driver for the A53 Clock Controller. It is a hardware block that
+> > > > implements a combined mux and half integer divider functionality. It can
+> > > > choose between a fixed-rate clock or the dedicated A53 PLL. The source
+> > > > and the divider can be set both at the same time.
+> > > > 
+> > > > This is required for enabling CPU frequency scaling on platforms like
+> > > > MSM8916.
+> > > > 
+> > > 
+> > > Please Cc DT reviewers.
+> > > 
+> > > > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> > > > ---
+> > > >  .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
+> > > >  drivers/clk/qcom/Kconfig                           |   8 ++
+> > > >  drivers/clk/qcom/Makefile                          |   1 +
+> > > >  drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
+> > > >  4 files changed, 186 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > > >  create mode 100644 drivers/clk/qcom/a53cc.c
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > > > new file mode 100644
+> > > > index 000000000000..a025f062f177
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+> > > > @@ -0,0 +1,22 @@
+> > > > +Qualcomm A53 CPU Clock Controller Binding
+> > > > +------------------------------------------------
+> > > > +The A53 CPU Clock Controller is hardware, which provides a combined
+> > > > +mux and divider functionality for the CPU clocks. It can choose between
+> > > > +a fixed rate clock and the dedicated A53 PLL.
+> > > > +
+> > > > +Required properties :
+> > > > +- compatible : shall contain:
+> > > > +
+> > > > +			"qcom,a53cc"
+> > > > +
+> > > > +- reg : shall contain base register location and length
+> > > > +	of the APCS region
+> > > > +- #clock-cells : shall contain 1
+> > > > +
+> > > > +Example:
+> > > > +
+> > > > +	apcs: syscon@b011000 {
+> > > > +		compatible = "qcom,a53cc", "syscon";
+> > > 
+> > > Why is it a syscon? Is that part used?
+> > > 
+> > 
+> > I use the register at offset 8 for interrupting the other subsystems, so
+> > this must be available as something I can poke.
+> > 
+> > Which makes me think that this should be described as a "simple-mfd" and
+> > "syscon" with the a53cc node as a child - grabbing the regmap of the
+> > syscon parent, rather then ioremapping the same region again.
+> > 
+> 
+> That's sort of a question for DT reviewers. The register space
+> certainly seems like a free for all with a tilt toward power
+> management of the CPU, similar to how this was done on Krait
+> based designs.
+> 
 
-The caller, '_of_pll_clk_init()' has also been updated to test the 
-return value using IS_ERR.
+Right. But this kind of mashup blocks was the reason why simple-mfd was
+put in place.
 
+> I wonder why we didn't make up some provider/consumer binding for
+> the "kicking" feature used by SMD/RPM code. Then this could be a
+> clock provider and a "kick" provider (haha #kick-cells) and the
+> usage of syscon/regmap wouldn't be mandatory.
+> 
 
-So, which caller/callee do you refer to?
-Would you like '_of_pll_clk_init()' to also propagate the error?
+I did consider doing that, but had enough dependencies to put in place
+as it was.
 
-Or is it the phrasing of the log entry which is not clear enough and 
-should be updated?
+I'm in favour of us inventing a kicker API and it's found outside out
+use cases as well (e.g. virtio/rpmsg).
 
->
->> In order to fix it, update clk_register_pll() to always return an error
->> pointer in case of error and check the return value with IS_ERR.
->>
->> While at it, also fix a tab vs space in the surrounding code.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Un-compiled and un-tested.
-> Please at least compile test patches.
-Agreed, and I usually do.
-But in this particular case, I don't have the build environment to do it.
-
-I preferred to report what looks like a (small) bug to me and clearly 
-state that I didn't even compile-tested it rather than just ignoring it.
-Hoping that this approach, in such a case, is acceptable.
-
-CJ
+Regards,
+Bjorn
