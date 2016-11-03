@@ -1,76 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55610 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751948AbcKQLnI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2016 06:43:08 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGS00F0DB7SS840@mailout3.w1.samsung.com> for
- linux-clk@vger.kernel.org; Thu, 17 Nov 2016 11:43:04 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] clk/samsung: exynos5433: Fix parent clocks for FSYS block
-Date: Thu, 17 Nov 2016 12:42:52 +0100
-Message-id: <1479382973-10500-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161117114303eucas1p2a3ea6259bdf816b13aa06b1ab0cf3181@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <581AF4CE.4050000@codeaurora.org>
+Date: Thu, 03 Nov 2016 13:56:54 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tdas@codeaurora.org,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/7] clk: qcom: Mark a few branch clocks with BRANCH_HALT_DELAY
+References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org> <1476876523-27378-2-git-send-email-rnayak@codeaurora.org> <20161102203950.GK16026@codeaurora.org>
+In-Reply-To: <20161102203950.GK16026@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The proper parent clock for FSYS block is "aclk_fsys_200" according to
-the Exynos5433 reference manual.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- Documentation/devicetree/bindings/clock/exynos5433-clock.txt | 6 +++---
- drivers/clk/samsung/clk-exynos5433.c                         | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+On 11/03/2016 02:09 AM, Stephen Boyd wrote:
+> On 10/19, Rajendra Nayak wrote:
+>> We seem to have a few branch clocks within gcc for msm8996 which do
+>> have a valid halt bit but can't be used to check branch enable/disable
+>> status as they rely on external clocks in some cases and in some 
+>> others only toggle during an ongoing bus transaction.
+>> Mark these with BRANCH_HALT_DELAY, so we just add a delay instead.
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+> 
+> Srini tells me that if the pcie pipe clocks are enabled after the
+> phy is powered up things work fine and the halt bit checks work.
+> So I don't think we need this patch. Probably the drivers are
+> enabling all their clocks at probe instead of understanding that
+> the phy is outputting a clock that goes into gcc to be gated and
+> then back out into their controller and/or phy.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index 63379b04e052..ffff67a0e9cd 100644
---- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -79,7 +79,7 @@ Required Properties:
- 	Input clocks for fsys clock controller:
- 		- oscclk
- 		- sclk_ufs_mphy
--		- div_aclk_fsys_200
-+		- aclk_fsys_200
- 		- sclk_pcie_100_fsys
- 		- sclk_ufsunipro_fsys
- 		- sclk_mmc2_fsys
-@@ -235,7 +235,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 
- 		clock-names = "oscclk",
- 			"sclk_ufs_mphy",
--			"div_aclk_fsys_200",
-+			"aclk_fsys_200",
- 			"sclk_pcie_100_fsys",
- 			"sclk_ufsunipro_fsys",
- 			"sclk_mmc2_fsys",
-@@ -245,7 +245,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 			"sclk_usbdrd30_fsys";
- 		clocks = <&xxti>,
- 		       <&cmu_cpif CLK_SCLK_UFS_MPHY>,
--		       <&cmu_top CLK_DIV_ACLK_FSYS_200>,
-+		       <&cmu_top CLK_ACLK_FSYS_200>,
- 		       <&cmu_top CLK_SCLK_PCIE_100_FSYS>,
- 		       <&cmu_top CLK_SCLK_UFSUNIPRO_FSYS>,
- 		       <&cmu_top CLK_SCLK_MMC2_FSYS>,
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index cdf6ba3e5577..218a94f90e37 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1934,7 +1934,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
- 
- /* list of all parent clock list */
- PNAME(mout_sclk_ufs_mphy_user_p)	= { "oscclk", "sclk_ufs_mphy", };
--PNAME(mout_aclk_fsys_200_user_p)	= { "oscclk", "div_aclk_fsys_200", };
-+PNAME(mout_aclk_fsys_200_user_p)	= { "oscclk", "aclk_fsys_200", };
- PNAME(mout_sclk_pcie_100_user_p)	= { "oscclk", "sclk_pcie_100_fsys",};
- PNAME(mout_sclk_ufsunipro_user_p)	= { "oscclk", "sclk_ufsunipro_fsys",};
- PNAME(mout_sclk_mmc2_user_p)		= { "oscclk", "sclk_mmc2_fsys", };
+Sure, I will take a look to see if the usb and ufs clocks show the
+same behavior, in which case we won't need this patch.
+
+> 
+> Also, note that these clocks have parents that should be
+> populated by the phys, but so far we haven't done that. That
+> should be fixed as well.
+> 
+
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
