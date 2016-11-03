@@ -1,107 +1,45 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH] phy: rockchip-inno-usb2: correct 480MHz output clock
- stable time
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-References: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
- <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com>
- <9eeb3d84-f850-4b76-ce6a-67cc92d6de3b@rock-chips.com>
- <2283070.Hkeafucara@diego>
-Cc: Doug Anderson <dianders@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Wang <frank.wang@rock-chips.com>,
-        =?UTF-8?B?6buE5rab?= <huangtao@rock-chips.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-From: wlf <wulf@rock-chips.com>
-Message-ID: <e6d038f6-c324-fc06-5cf1-e03d6ec6d4e3@rock-chips.com>
-Date: Fri, 11 Nov 2016 11:23:49 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 3 Nov 2016 13:34:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rnayak@codeaurora.org, stanimir.varbanov@linaro.org
+Subject: Re: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus
+ core0/1 clks
+Message-ID: <20161103203418.GA16026@codeaurora.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+ <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <2283070.Hkeafucara@diego>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko，
+On 10/24, Sricharan R wrote:
+> With the venus subcore0/1 gdscs(powerdomains) in
+> hw controlled mode, the clock controller does not handle
+> the status bit for the clocks in that domain. So avoid
+> checking for the status bit of those clocks by setting the
+> BRANCH_HALT_DELAY flag. This avoids the WARN_ONs which
+> otherwise occurs when enabling/disabling those clocks.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 
-在 2016年11月10日 17:21, Heiko Stübner 写道:
-> Am Donnerstag, 10. November 2016, 10:54:49 schrieb wlf:
->> Hi Doug,
->>
->> 在 2016年11月10日 04:54, Doug Anderson 写道:
->>> Hi,
->>>
->>> On Mon, Nov 7, 2016 at 5:00 AM, William Wu <wulf@rock-chips.com> wrote:
->>>> We found that the system crashed due to 480MHz output clock of
->>>> USB2 PHY was unstable after clock had been enabled by gpu module.
->>>>
->>>> Theoretically, 1 millisecond is a critical value for 480MHz
->>>> output clock stable time, so we try to change the delay time
->>>> to 1.2 millisecond to avoid this issue.
->>>>
->>>> Signed-off-by: William Wu <wulf@rock-chips.com>
->>>> ---
->>>>
->>>>    drivers/phy/phy-rockchip-inno-usb2.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/phy/phy-rockchip-inno-usb2.c
->>>> b/drivers/phy/phy-rockchip-inno-usb2.c index ecfd7d1..8f2d2b6 100644
->>>> --- a/drivers/phy/phy-rockchip-inno-usb2.c
->>>> +++ b/drivers/phy/phy-rockchip-inno-usb2.c
->>>> @@ -267,7 +267,7 @@ static int rockchip_usb2phy_clk480m_enable(struct
->>>> clk_hw *hw)>>
->>>>                           return ret;
->>>>                   
->>>>                   /* waitting for the clk become stable */
->>>>
->>>> -               mdelay(1);
->>>> +               udelay(1200);
->>> Several people who have seen this patch have expressed concern that a
->>> 1.2 ms delay is pretty long for something that's supposed to be
->>> "atomic" like a clk_enable().  Consider that someone might call
->>> clk_enable() while interrupts are disabled and that a 1.2 ms interrupt
->>> latency is not so great.
->>>
->>> It seems like this clock should be moved to be enabled in "prepare"
->>> and the "enable" should be a no-op.  This is a functionality change,
->>> but I don't think there are any real users for this clock at the
->>> moment so it should be fine.
->>>
->>> (of course, the 1 ms latency that existed before this patch was still
->>> pretty bad, but ...)
->> Thanks a lot for your suggestion.
->> I agree with you.  clk_enable() will call spin_lock_irqsave() to disable
->> interrupt, and we add
->> more than 1ms in clk_enable may cause big latency.
->>
->> And according to clk_prepare() description:
->>    In a simple case, clk_prepare can be used instead of clk_enable to
->> ungate a clk if the
->>    operation may sleep.  One example is a clk which is accessed over I2c.
->>
->> So maybe we can remove the clock to clk_prepare.
->>
->> Hi Heiko, Frank,
->>          What  do you think of it?
-> moving to clk_prepare sounds sensible. That way you can switch from delay to
-> sleep functions as well.
-Thanks very much.
-I will try to update a new patch.
+A better design would be to check if the associated GDSC is in hw
+control mode and then skip the checks because the clocks are no
+longer under the control of the registers. I presume we only
+enable the clocks here to turn on parent clocks which don't turn
+on/off automatically, i.e. the PLL.
 
-Best regards,
-          Wulf
+Given that hw control is a static decision I guess that is an
+over-engineered solution though? The problem is that this seems
+brittle because we have to keep two things in sync, the branches
+and the gdsc. So I guess this is ok, but it deserves a comment
+like "GDSC is in HW control" so we know what's going on. Also the
+commit text could be more explicit that clocks within the gdsc
+power domain don't work when the gdsc is off, and with hw control
+of a gdsc we can't tell when the gdsc may be off or on.
 
->
->
-> Heiko
->
->
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
