@@ -1,49 +1,87 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <5823DC3E.2060106@codeaurora.org>
-Date: Thu, 10 Nov 2016 08:02:30 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <68855ca8-a74f-7c76-342f-de0aeec51ca1@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <d4a5cc5f-c91b-dc52-d7a1-7f579792382c@st.com>
+Date: Thu, 3 Nov 2016 09:57:16 +0100
 MIME-Version: 1.0
-To: Sricharan <sricharan@codeaurora.org>,
- 'Stephen Boyd' <sboyd@codeaurora.org>
-CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stanimir.varbanov@linaro.org
-Subject: Re: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus
- core0/1 clks
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org> <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org> <20161104201836.GE16026@codeaurora.org> <58201597.6010207@codeaurora.org> <20161108223336.GK16026@codeaurora.org> <000301d23aaa$3f5dd110$be197330$@codeaurora.org>
-In-Reply-To: <000301d23aaa$3f5dd110$be197330$@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <68855ca8-a74f-7c76-342f-de0aeec51ca1@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Alexandre,
 
-[]..
 
+On 11/03/2016 09:52 AM, Alexandre Torgue wrote:
+> Hi Gabriel,
+>
+> On 10/14/2016 11:18 AM, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 >>
->> The proper sequence sounds like it should be:
+>> v2:
+>>  - rename compatible property "st,stm32f46xx-rcc" into 
+>> "st,stm32f469-rcc"
+>>  - cosmetic: remove bad copy/paste
 >>
->> 	1. Enable GDSC for main domain
->> 	2. Enable clocks for main domain (video_{core,maxi,ahb,axi}_clk)
->> 	3. Write the two registers to assert hw signal for subdomains
->> 	4. Enable GDSCs for two subdomains
->> 	5. Enable clocks for subdomains (video_subcore{0,1}_clk)
+>> This patch-set introduce RTC and QSPI clocks for STM32F4 socs
+>> RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
 >>
-[]..
+>> example to use rtc clock:
+>>
+>>         rtc: rtc@40002800 {
+>>             compatible = "st,stm32-rtc";
+>>             reg = <0x40002800 0x400>;
+>>             ...
+>>             clocks = <&rcc 1 CLK_RTC>;
+>>
+>>             assigned-clocks =  <&rcc 1 CLK_RTC>;
+>>             assigned-clock-parents = <&rcc 1 CLK_LSE>;
+>>             ...
+>>         };
+>>
+>> Gabriel Fernandez (6):
+>>   clk: stm32f4: Add LSI & LSE clocks
+>>   ARM: dts: stm32f429: add LSI and LSE clocks
+>>   arm: stmf32: Enable SYSCON
+>>   clk: stm32f4: Add RTC clock
+>>   clk: stm32f469: Add QSPI clock
+>>   ARM: dts: stm32f429: Add QSPI clock
+>
+> You sent a V3 without DT patches. Should I take DT patches from this 
+> V2 patchset ?
+>
+> Regards
+> Alex
+>
+Yes, no problem
 
-> 
-> So the above is the sequence which is actually carried out on the
-> firmware side. The same can be done in host as well.
+Thanks !
 
-By the 'above sequence is done on firmware side', I hope you don;t mean *all* 5 steps.
-I guess you mean only step 3 is done by firmware?
+BR.
 
-> The clocks stuck issue indeed is not there with this. But with the
-> above sequence we need to add a step to do inverse of STEP3
-> above (ie write the registers to de-assert hw_signal), to keep
-> the subdomains in off, till firmware uses it. So the above sequence
-> helps to avoid masking the halt check, although the host really
-> does not wants to use these clocks, except setting it up for the
-> firmware.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Gabriel
+>
+>>
+>>  .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
+>>  arch/arm/boot/dts/stm32f429.dtsi                   |  18 +
+>>  arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
+>>  arch/arm/configs/stm32_defconfig                   |   1 +
+>>  drivers/clk/clk-stm32f4.c                          | 442 
+>> ++++++++++++++++++++-
+>>  5 files changed, 447 insertions(+), 22 deletions(-)
+>>
