@@ -1,105 +1,72 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.scott@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v2 1/2] clk: qcom: clk-smd-rpm: Fix clk_hw references
-Date: Wed, 23 Nov 2016 16:52:48 +0200
-Message-Id: <20161123145249.14912-1-georgi.djakov@linaro.org>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 6/6] ARM: dts: stm32f429: Add QSPI clock
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>
+References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
+ <1476436699-21879-7-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <25482d71-4d19-997c-656a-75fbe1f43131@st.com>
+Date: Thu, 3 Nov 2016 17:45:05 +0100
+MIME-Version: 1.0
+In-Reply-To: <1476436699-21879-7-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix the clk_hw references to the actual clocks and add a xlate function
-to return the hw pointers from the already existing static array.
+Hi Gabriel,
 
-Reported-by: Michael Scott <michael.scott@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 36 ++++++++++++++++++++++--------------
- 1 file changed, 22 insertions(+), 14 deletions(-)
+On 10/14/2016 11:18 AM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>
+> This patch adds the QSPI clock for stm32f469 discovery board.
+>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+>  arch/arm/boot/dts/stm32f469-disco.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+> index e911af8..4052023 100644
+> --- a/arch/arm/boot/dts/stm32f469-disco.dts
+> +++ b/arch/arm/boot/dts/stm32f469-disco.dts
+> @@ -66,6 +66,10 @@
+>  	};
+>  };
+>
+> +&rcc {
+> +	compatible = "st,stm32f469-rcc", "st,stm32-rcc";
+> +};
+> +
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index a27013dbc0aa..07e2cc6ed781 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -148,8 +148,8 @@ struct clk_smd_rpm_req {
- 
- struct rpm_cc {
- 	struct qcom_rpm *rpm;
--	struct clk_hw_onecell_data data;
--	struct clk_hw *hws[];
-+	struct clk_smd_rpm **clks;
-+	size_t num_clks;
- };
- 
- struct rpm_smd_clk_desc {
-@@ -468,11 +468,23 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- };
- MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
- 
-+static struct clk_hw *qcom_smdrpm_clk_hw_get(struct of_phandle_args *clkspec,
-+					     void *data)
-+{
-+	struct rpm_cc *rcc = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= rcc->num_clks) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return rcc->clks[idx] ? &rcc->clks[idx]->hw : ERR_PTR(-ENOENT);
-+}
-+
- static int rpm_smd_clk_probe(struct platform_device *pdev)
- {
--	struct clk_hw **hws;
- 	struct rpm_cc *rcc;
--	struct clk_hw_onecell_data *data;
- 	int ret;
- 	size_t num_clks, i;
- 	struct qcom_smd_rpm *rpm;
-@@ -492,14 +504,12 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 	rpm_smd_clks = desc->clks;
- 	num_clks = desc->num_clks;
- 
--	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
--			   GFP_KERNEL);
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
- 	if (!rcc)
- 		return -ENOMEM;
- 
--	hws = rcc->hws;
--	data = &rcc->data;
--	data->num = num_clks;
-+	rcc->clks = rpm_smd_clks;
-+	rcc->num_clks = num_clks;
- 
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rpm_smd_clks[i])
-@@ -517,18 +527,16 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 		goto err;
- 
- 	for (i = 0; i < num_clks; i++) {
--		if (!rpm_smd_clks[i]) {
--			data->hws[i] = ERR_PTR(-ENOENT);
-+		if (!rpm_smd_clks[i])
- 			continue;
--		}
- 
- 		ret = devm_clk_hw_register(&pdev->dev, &rpm_smd_clks[i]->hw);
- 		if (ret)
- 			goto err;
- 	}
- 
--	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
--				     data);
-+	ret = of_clk_add_hw_provider(pdev->dev.of_node, qcom_smdrpm_clk_hw_get,
-+				     rcc);
- 	if (ret)
- 		goto err;
- 
+With this patch, stm32f469-disco doesn't boot if clk drivers patch are 
+not applied.
+Can you please send a new version to keep compatibility with older clk 
+driver.
+
+&rcc {
+ > +	compatible = "st,stm32f469-rcc", "st,stm32-rcc";
+-> compatible = "st,stm32f469-rcc", "st,stm32f42xx-rcc", "st,stm32-rcc";
+ > +};
+ > +
+I will take it in next pull request round.
+
+
+Regards
+Alex
+
+
+>  &clk_hse {
+>  	clock-frequency = <8000000>;
+>  };
+>
