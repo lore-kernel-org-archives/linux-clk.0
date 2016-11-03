@@ -1,43 +1,77 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 30 Nov 2016 14:47:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v2 1/9] clk: stm32f4: Update DT bindings documentation
-Message-ID: <20161130204713.bu6ig3z6n6dx47z7@rob-hp-laptop>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
- <1479998749-20358-2-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, horms+renesas@verge.net.au
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+Date: Fri, 04 Nov 2016 00:09:28 +0300
+Message-ID: <1764252.Q3lPMOJFSH@wasted.cogentembedded.com>
+In-Reply-To: <9992368.desJvZIsUT@wasted.cogentembedded.com>
+References: <9992368.desJvZIsUT@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479998749-20358-2-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 24, 2016 at 03:45:41PM +0100, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Creation of dt include file for specific stm32f4 clocks.
-> These specific clocks are not derived from system clock (SYSCLOCK)
-> We should use index 1 to use these clocks in DT.
-> e.g. <&rcc 1 CLK_LSI>
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  .../devicetree/bindings/clock/st,stm32-rcc.txt     |  8 ++++++
->  drivers/clk/clk-stm32f4.c                          |  9 +++++--
->  include/dt-bindings/clock/stm32f4-clock.h          | 31 ++++++++++++++++++++++
->  3 files changed, 46 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
+Add macros usable by  the device tree sources to reference the R8A7745 CPG
+clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+of the RZ/G Series User's Manual.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+---
+Changes in version 2:
+- added Geert's tag.
+
+ include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+
+Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7745 CPG Core Clocks */
++#define R8A7745_CLK_Z2		0
++#define R8A7745_CLK_ZG		1
++#define R8A7745_CLK_ZTR		2
++#define R8A7745_CLK_ZTRD2	3
++#define R8A7745_CLK_ZT		4
++#define R8A7745_CLK_ZX		5
++#define R8A7745_CLK_ZS		6
++#define R8A7745_CLK_HP		7
++#define R8A7745_CLK_B		9
++#define R8A7745_CLK_LB		10
++#define R8A7745_CLK_P		11
++#define R8A7745_CLK_CL		12
++#define R8A7745_CLK_CP		13
++#define R8A7745_CLK_M2		14
++#define R8A7745_CLK_ZB3		16
++#define R8A7745_CLK_ZB3D2	17
++#define R8A7745_CLK_DDR		18
++#define R8A7745_CLK_SDH		19
++#define R8A7745_CLK_SD0		20
++#define R8A7745_CLK_SD2		21
++#define R8A7745_CLK_SD3		22
++#define R8A7745_CLK_MMC0	23
++#define R8A7745_CLK_MP		24
++#define R8A7745_CLK_QSPI	25
++#define R8A7745_CLK_ACP		26
++#define R8A7745_CLK_RCAN	27
++#define R8A7745_CLK_R		28
++#define R8A7745_CLK_OSC		29
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
