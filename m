@@ -1,109 +1,47 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 29 Nov 2016 13:26:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Rob Herring <robh@kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-	Linux-ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4] clkdev: add devm_of_clk_get()
-Message-ID: <20161129212600.GH6095@codeaurora.org>
-References: <87zikjw08i.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: elaine.zhang@rock-chips.com, mturquette@baylibre.com, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] ARM: dts: add basic support for Rockchip RK1108 SOC
+Date: Fri, 04 Nov 2016 09:07:11 +0100
+Message-ID: <18728215.xtkCC4d9TF@phil>
+In-Reply-To: <1478176848-12132-1-git-send-email-andy.yan@rock-chips.com>
+References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com> <1478176848-12132-1-git-send-email-andy.yan@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87zikjw08i.wl%kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/29, Kuninori Morimoto wrote:
+Am Donnerstag, 3. November 2016, 20:40:48 CET schrieb Andy Yan:
+> RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
+> It is designed for varies application scenario such as car DVR, sports
+> DV, secure camera and UAV camera.
 > 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> This patch add basic support for it with DMAC / UART / CRU / pinctrl
+> enabled.
 > 
-> Current Linux has of_clk_get(), but doesn't have devm_of_clk_get().
-> This patch adds it. It is implemeted in clk-devres.c to share
-> devm_clk_release().
-
-Please add an explanation of why we want this sort of API. The
-example you gave for audio sound card is useful. We're not going
-to remember 5 months from now why we did something, so we should
-put that here instead of digging through mailing list archives.
-
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
 > 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>  arch/arm/boot/dts/rk1108.dtsi     | 420
+> ++++++++++++++++++++++++++++++++++++++ arch/arm/mach-rockchip/rockchip.c | 
+>  1 +
+>  2 files changed, 421 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/rk1108.dtsi
 > 
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 8f57154..2449b25 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -53,3 +53,24 @@ void devm_clk_put(struct device *dev, struct clk *clk)
->  	WARN_ON(ret);
->  }
->  EXPORT_SYMBOL(devm_clk_put);
-> +
-> +struct clk *devm_of_clk_get(struct device *dev,
-> +			    struct device_node *np, int index)
+> diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
+> new file mode 100644
+> index 0000000..9dccfea
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/rk1108.dtsi
 
-Please call this devm_get_clk_from_child() instead. Also, replace
-the index argument with a string called con_id. Then call
-of_clk_get_by_name() instead of of_clk_get().
+[...]
 
-> +{
-> +	struct clk **ptr, *clk;
-> +
-> +	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	clk = of_clk_get(np, index);
-> +	if (!IS_ERR(clk)) {
-> +		*ptr = clk;
-> +		devres_add(dev, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-> +
-> +	return clk;
-> +}
-> +EXPORT_SYMBOL(devm_of_clk_get);
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 123c027..7f50c5f 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -17,8 +17,9 @@
->  #include <linux/notifier.h>
->  
->  struct device;
-> -
->  struct clk;
-> +struct device_node;
-> +struct of_phandle_args;
->  
->  /**
->   * DOC: clk notifier callback types
-> @@ -249,6 +250,21 @@ static inline void clk_unprepare(struct clk *clk)
->  struct clk *devm_clk_get(struct device *dev, const char *id);
->  
->  /**
-> + * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+> +	pinctrl: pinctrl {
+> +		compatible = "rockchip,rk1108-pinctrl";
+> +		rockchip,grf = <&grf>;
 
-That doesn't even match the name of the function.
+missing rockchip,pmu phandle for gpio0 iomuxes and also syscon declaration for 
+said pmugrf syscon in this file.
 
-> + * @dev: device for clock "consumer"
-> + * @np: pointer to clock consumer node
-> + * @index: clock index
-> + *
-> + * This function parses the clocks, and uses them to look up the
-> + * struct clk from the registered list of clock providers by using
-> + * @np and @index.
-> + *
-> + * The clock will automatically be freed when the device is unbound
-> + * from the bus.
-> + */
-> +struct clk *devm_of_clk_get(struct device *dev, struct device_node *np, int index);
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Heiko
