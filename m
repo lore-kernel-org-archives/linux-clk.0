@@ -1,59 +1,57 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.137]:33605 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754187AbcKDAdx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Nov 2016 20:33:53 -0400
+Subject: Re: [PATCH] clk: rockchip: fix some clocks' name to be more standard
+ style
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+References: <1478070296-23080-1-git-send-email-jay.xu@rock-chips.com>
+ <763cad68-a068-9a4b-e26d-2c459c2d4808@rock-chips.com>
+ <44798035.VNVnDcOLnj@diego>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+        huangtao@rock-chips.com, zhangqing@rock-chips.com,
+        zhengxing@rock-chips.com, linux-kernel@vger.kernel.org,
+        lintao@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: "jay.xu" <jay.xu@rock-chips.com>
+Message-ID: <33f1004e-bbc8-5074-3e67-38cd98d3915c@rock-chips.com>
+Date: Fri, 4 Nov 2016 08:33:15 +0800
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <4179265.sjm4z2joGl@wasted.cogentembedded.com>
-References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com> <4179265.sjm4z2joGl@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Nov 2016 13:53:13 +0100
-Message-ID: <CAMuHMdW-K97-oDUXDGyftnR54Pv0CRUvq2Mp0jU+gT3kQZFs3w@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: add R8A7745 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <44798035.VNVnDcOLnj@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 8, 2016 at 10:25 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
+Hi Heiko and Shawn:
+
+ok, I agree with you, and the root fix seems to fix it in the TRM first.
+I'll feedback to TRM makers.
+
+Thanks.
+
+On 2016年11月03日 22:32, Heiko Stübner wrote:
+> Am Donnerstag, 3. November 2016, 16:52:48 schrieb Shawn Lin:
+>> On 2016/11/2 15:04, Jianqun Xu wrote:
+>>> Fix aclk_emmcgrf to aclk_emmc_grf, and fix aclk_emmccore to be
+>>> aclk_emmc_core.
+>>
+>> What is the standard style should be?
+>>
+>> TRM uses aclk_emmccore but not aclk_emmc_core, so should it be more
+>> standrad to keep it as-is?
 >
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
+> I tend to agree with Shawn. While it looks like the missing "_" is some sort
+> of mistake, we should strive to follow TRM naming, so grepping so it becomes
+> easier to look for informations in these things in the TRM.
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Same reason for naming our regulators and pinctrl after the names used in
+> device schematics, if available.
 >
-> ---
-> This patch  is against the 'clk-next' branch of CLK group's 'linux.git' repo
-> plus the R8A7743 clock driver patch. It depends on the common R-Car gen2 (and
-> RZ/G) support just posted.
 >
-> Changes in version 4:
-> - changed the Z2 clock's divisor to 1;
-> - passed  the PLL0 divisor to rcar_gen2_cpg_init();
-> - renamed the ACP clock to CPEX;
-> - removed the thermal module clock.
+> Heiko
+>
+>
+>
 
-Thanks!
-
-Will queue with the following trivial changes:
-  - pass cpg_mode to rcar_gen2_cpg_init(),
-  - sort clock names in DT bindings,
-  - reformat tables for easier comparison with other clock drivers.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
