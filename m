@@ -1,135 +1,69 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>
-Subject: [PATCH v15 0/4] Add clock support for Mediatek MT2701
-Date: Fri, 4 Nov 2016 15:43:04 +0800
-Message-ID: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 4 Nov 2016 08:49:40 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?iso-8859-1?Q?St=E9phan?= Rafin <stephan@soliotek.com>
+Cc: emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@codeaurora.org,
+	wens@csie.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: Fix M factor computation for APB1
+Message-ID: <20161104074940.ak46ghzoa3o3xcie@lukather>
+References: <1478217236-12831-1-git-send-email-stephan@soliotek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hduxgfhvdeiveyfy"
+In-Reply-To: <1478217236-12831-1-git-send-email-stephan@soliotek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is based on v4.9-rc1, add clock and reset controller support
-for Mediatek MT2701.
 
-changes since v14:
-- Correct commit messages of dts.
-- Refine style of init/probe functions.
-- Get reg addresses from platform_get_resouce() and devm_ioremap_resource().
-- Minor coding style changes.
+--hduxgfhvdeiveyfy
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-changes since v13:
-- Rebase to v4.9-rc1.
+On Fri, Nov 04, 2016 at 12:53:56AM +0100, St=E9phan Rafin wrote:
+> commit cfa636886033 ("clk: sunxi: factors: Consolidate get_factors
+> parameters into a struct") introduced a regression for m factor
+> computation in sun4i_get_apb1_factors function.
+>=20
+> The old code reassigned the "parent_rate" parameter to the targeted
+> divisor value and was buggy for the returned frequency but not for the
+> computed factors. Now, returned frequency is good but m factor is
+> incorrectly computed (its max value 31 is always set resulting in a
+> significantly slower frequency than the requested one...)
+>=20
+> This patch simply restores the original proper computation for m while
+> keeping the good changes for returned rate.
+>=20
+> Signed-off-by: St=E9phan Rafin <stephan@soliotek.com>
 
-changes since v12:
-- Rebase to clk-next.
-- Use CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE().
-- Use dev_* and devm_* APIs instead of pr_* and ioremap().
-- Refine init functions. Share error messages in common probe().
-- Fix null pointer checking for clk_data.
+Applied (added a Fixes tag), thanks
 
-changes since v11:
-- Rebase to clk-next.
-- Return error code from probe() if clock registration fail.
+Maxime
 
-changes since v10:
-- Remove COMMON_CLK dependency from clk/mediatek/Kconfig.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-changes since v9:
-- Rebase to v4.8-rc1.
-- Drop a fix patch of parent clock initial state. It will be replaced by a new
-  patch from Mike/Stephen.
-- Replace clk.h with clk-provider.h.
-- Correct register settings of clocks.
+--hduxgfhvdeiveyfy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-changes since v8:
-- Rebase to v4.7-rc1.
-- Include mt2701-resets.h in mt2701.dtsi.
-- Remove an unused property from apmixedsys DT node.
+-----BEGIN PGP SIGNATURE-----
 
-changes since v7:
-- Rebase to clk-next.
-- Implement subsystem clocks in seperated files.
-- Replace critical clock enabling with CLK_IS_CRITICAL flag.
-- Reduce most clock registrations in CLK_OF_DECLARE().
-- Remove __init and __initconst from most init fucntions and data,
-  and replace driver registration with platform_driver_register().
-- Replace some common function or variable names with unique names.
-- Use real clock for UARTs.
+iQIcBAEBCAAGBQJYHD2UAAoJEBx+YmzsjxAggBIP/A6dbJVxtx6GOcZoQacBLZwt
+Bf39nDDeHAwAYhDbb5a84RDFW10pzO+UEweyTA5DUm4OfAUPB3k+9ahknJXQU38r
+FAqPU44vs+sktrwHzrxqBiULTE9cxQHeqWAygpj5QPWGOIyODH9sykzoWVz76fei
+Bo2gvcHja0t5nEN98dHbf6uEXRxqi5QamkmB+U7hZNl//GrivYWI0IMtPUZMWFz0
+yvUGHcEDPL904Cz12UO+47iXaR7Loe6VyQ99Do/SqlQeiQtRlSsJmhMzOS+WHUs4
+GOQngsZVrEOPaOsIKkFjFqcEnDQKuUE5WaW+dboWALlGyndPloj+amRDdSpAPuRV
+57QSvww/pH6OpE89di7U0hAn7Jjr75Wv+B/6uSt9xZJmPV6W2WsCG2V3Bk/MlOJp
+axAdmpOTJDm/wb/I3i65KrmDqVFDdiSUcSC+Ldgq9QxXDs+en393Ck8YyIFvtnOM
+snIB1qBvIsSqQokSfewB8i1u0x/h+LL00UhiGqLLRIpZ2xS6d86fE8O+bgUKu5N/
+6WNZroCbKr+1btTkXMjEYi0sChKt+ahsSecezqiVrSkbYO4kFWIBSj7OEo3wtYTx
+ZV6ALNapTrb9CCTJ9ALGTju5cAQlE7/4ueUZNe89Mwtr2zofnhXNHbWD0ajA9v7d
+VDZKfy7m5/KmijA6DCTL
+=Sity
+-----END PGP SIGNATURE-----
 
-changes since v6:
-- Rebase to v4.6-rc1.
-- Register subsystem clocks in probe() instead of CLK_OF_DECLARE().
-- Add clocks that referred by subsystem clocks.
-- Fix clk_data size of apmixedsys.
-- Add config options for each subsystem clock provider.
-
-changes since v5:
-- Rebase to v4.5-rc1 and [1].
-- Enable critical clocks for MT2701
-- Refine dt-binding documents, add reset controller support for hifsys.
-
-changes since v4:
-- Rebase to v4.5-rc1.
-- Remove CLK_SET_RATE_PARENT from divider flags.
-- Add img_jpgdec_smi clock.
-- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
-
-changes since v3:
-- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
-
-changes since v2:
-- Fix ethsys definition.
-- Replace read-modify-write with regmap_update_bits() in clock operations.
-- Move mt2701-resets.h to include/dt-bindings/reset/.
-- Add hifsys reset patch from John Crispin.
-
-changes since v1:
-- Document MT2701 compatible strings.
-
-[1] https://patchwork.kernel.org/patch/8147901/
-
-Erin Lo (1):
-  arm: dts: mt2701: Use real clock for UARTs
-
-James Liao (1):
-  arm: dts: mt2701: Add clock controller device nodes
-
-Shunli Wang (2):
-  clk: mediatek: Add MT2701 clock support
-  reset: mediatek: Add MT2701 reset driver
-
- arch/arm/boot/dts/mt2701.dtsi          |   50 +-
- drivers/clk/mediatek/Kconfig           |   43 ++
- drivers/clk/mediatek/Makefile          |    7 +
- drivers/clk/mediatek/clk-gate.c        |   52 ++
- drivers/clk/mediatek/clk-gate.h        |    2 +
- drivers/clk/mediatek/clk-mt2701-bdp.c  |  138 +++++
- drivers/clk/mediatek/clk-mt2701-eth.c  |   80 +++
- drivers/clk/mediatek/clk-mt2701-hif.c  |   81 +++
- drivers/clk/mediatek/clk-mt2701-img.c  |   80 +++
- drivers/clk/mediatek/clk-mt2701-mm.c   |  123 ++++
- drivers/clk/mediatek/clk-mt2701-vdec.c |   91 +++
- drivers/clk/mediatek/clk-mt2701.c      | 1035 ++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c         |   40 ++
- drivers/clk/mediatek/clk-mtk.h         |   41 +-
- drivers/clk/mediatek/clk-pll.c         |    1 +
- 15 files changed, 1854 insertions(+), 10 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-mt2701-bdp.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-eth.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-hif.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt2701.c
-
---
-1.9.1
+--hduxgfhvdeiveyfy--
