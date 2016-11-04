@@ -1,67 +1,62 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V4 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Date: Mon,  7 Nov 2016 09:30:00 +0100
-Message-Id: <1478507405-13204-2-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 4 Nov 2016 13:33:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Aleksandr Frid <afrid@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 09/10] clk: tegra: make clk-tegra124-dfll-fcpu explicitly
+ non-modular
+Message-ID: <20161104203313.GI16026@codeaurora.org>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-10-paul.gortmaker@windriver.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160704211220.5685-10-paul.gortmaker@windriver.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+On 07/04, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> arch/arm/mach-tegra/Kconfig:config ARCH_TEGRA_124_SOC
+> arch/arm/mach-tegra/Kconfig:    bool "Enable support for Tegra124 family"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_init translates to device_initcall in the non-modular
+> case, the init ordering remains unchanged with this commit.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tags etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Aleksandr Frid <afrid@nvidia.com>
+> Cc: Paul Walmsley <pwalmsley@nvidia.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
 
-Add TEGRA20_CLK_NOR to init table and set default rate to 92 MHz which
-is max rate.
+Applied to clk-next
 
-The maximum rate value of 92 MHz is pulled from the downstream L4T
-kernel.
-
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
----
-
-Changes in v2:
-- no changes
-
-Changes in v3:
-- Added comment in commit message where I got the maximum rates from.
-
-Changes in V4:
-- no changes
-
- drivers/clk/tegra/clk-tegra20.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cb..13d3b5a 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-+	{ TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 92000000, 0 },
- 	{ TEGRA20_CLK_SBC1, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC2, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
---
-2.1.4
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
