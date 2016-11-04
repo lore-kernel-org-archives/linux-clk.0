@@ -1,76 +1,51 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 3 Nov 2016 09:15:01 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH v6 1/4] clk: sunxi-ng: Add A64 clocks
-Message-ID: <20161103081501.vvnfoezubsgvnlbk@lukather>
-References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
- <fb266cd536fce7fc7800189f3aa0f8cd73d75ec3.1478123413.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v676Ddz1wmRwDGwTd8gGH5AJJBkyAe-WyvZ=D+2OKoRb4w@mail.gmail.com>
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Stephen Boyd'" <sboyd@codeaurora.org>
+Cc: <mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<rnayak@codeaurora.org>,
+	<stanimir.varbanov@linaro.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org>
+In-Reply-To: <20161103203418.GA16026@codeaurora.org>
+Subject: RE: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
+Date: Fri, 4 Nov 2016 14:39:01 +0530
+Message-ID: <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4uwydchqx5r6bafk"
-In-Reply-To: <CAGb2v676Ddz1wmRwDGwTd8gGH5AJJBkyAe-WyvZ=D+2OKoRb4w@mail.gmail.com>
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
+>
+>A better design would be to check if the associated GDSC is in hw
+>control mode and then skip the checks because the clocks are no
+>longer under the control of the registers. I presume we only
+>enable the clocks here to turn on parent clocks which don't turn
+>on/off automatically, i.e. the PLL.
+>
+I was thinking clocks in the powerdomain still needs to be turned
+on explicitly, these are branch clocks, irrespective of the PLLs.
+Putting the gdsc in hw_ctrl, only makes the polling on their status
+invalid. Anyways would be good to be aligned on this.
 
---4uwydchqx5r6bafk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>Given that hw control is a static decision I guess that is an
+>over-engineered solution though? The problem is that this seems
+>brittle because we have to keep two things in sync, the branches
+>and the gdsc. So I guess this is ok, but it deserves a comment
+>like "GDSC is in HW control" so we know what's going on. Also the
+>commit text could be more explicit that clocks within the gdsc
+>power domain don't work when the gdsc is off, and with hw control
+>of a gdsc we can't tell when the gdsc may be off or on.
+>
 
-On Thu, Nov 03, 2016 at 09:52:26AM +0800, Chen-Yu Tsai wrote:
-> On Thu, Nov 3, 2016 at 5:50 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Add the A64 CCU clocks set.
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->=20
-> I thought I acked this one...
->=20
-> Skimming through it again, I think you would want to add CLK_SET_PARENT_R=
-ATE
-> to the hdmi and mipi dsi module clocks.
->=20
-> Otherwise,
->=20
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+ok, i will reword the commit log better as above.
 
-I added the flags, and applied, thanks!
+So i understand its ok to continue with this way of checking ?
+since we are always having a static association which never changes,
+than introducing additional fields in the clk_branch which can
+get the status of the gdsc.
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---4uwydchqx5r6bafk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYGvIBAAoJEBx+YmzsjxAgwocQAKBIC/0wakVzUpTNcJYNj8Lc
-tLzMqlw+PDHdSFa7wRjjBpdyLJUdfXO2IsaqOlE8Vtv5+CS9pyAtZLNd+62EOJCB
-s73jS7C0Xx+BuF4fEL5D2pWojTPwk3h3D/WcxIo4Gixg6vN9vMobJ1GNQhawjJnu
-86SzVXi3A6TyAnewsGKvYHEG5j/pCkWlKiwA+vvOdBVv8oer2dqsK0M4WZVCte2C
-VeRzr1wBL+bRSkon/Y/7nAQrFQJwvZ/HUp93H/5/rezHfphqI6WnJ/LjdYHwZTWV
-npyhbkcXSneVjvy2W7BYjfBgCLQDcUWNDwiPLyOMnaTFmd4wRyGTF8nOvkjKOvdU
-qa4sN0CIMP1eLIUgaknHdyLF5cOx9mrXsFXfm7IPvqFcl0zaQt89qt8knD4OrRdf
-1gNPHl8Qvej+ljGg57upNZdjZ0vjOv3F97vgMwnYrmJ6zhn1JiHw4C136KNGinND
-OmfykwZ7bNPqC8RImCFZtC9vdG3QegJ5ylRaZGgGbtKhDBGDk/attNfwtuz6sVcc
-ZGGmQuw11Fyh7pqfi8EZe4NSksCqmzyp6A1qpNnbLLtJAI+amovpPVmAjx9An6Nd
-Gt66XUsVwtYdxroo/CibIWVPL58WnXjgJJ7R4w4OsOzJlTBCD5/fy7VEzplc52di
-KKcWMA+ZTkU1x5kn4zqc
-=J/jD
------END PGP SIGNATURE-----
-
---4uwydchqx5r6bafk--
+Regards,
+ Sricharan
