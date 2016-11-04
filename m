@@ -1,77 +1,97 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v3 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-Date: Sun, 06 Nov 2016 01:31:31 +0300
-Message-ID: <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
-In-Reply-To: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
-References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Shunli Wang
+	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v15 2/4] reset: mediatek: Add MT2701 reset driver
+Date: Fri, 4 Nov 2016 15:43:06 +0800
+Message-ID: <1478245388-1412-3-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add macros usable by  the device tree sources to reference the R8A7745 CPG
-clocks  by index. The data comes from the  table 7.2c in the revision 0.50
-of the RZ/G Series User's Manual.
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+In infrasys and perifsys, there are many reset
+control bits for kinds of modules. These bits are
+used as actual reset controllers to be registered
+into kernel's generic reset controller framework.
 
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
-Changes in version 2:
-- added Geert's tag.
+ drivers/clk/mediatek/clk-mt2701-hif.c |  8 ++++++--
+ drivers/clk/mediatek/clk-mt2701.c     | 12 ++++++++++--
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
- include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
+diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
+index 452581c..18f3723 100644
+--- a/drivers/clk/mediatek/clk-mt2701-hif.c
++++ b/drivers/clk/mediatek/clk-mt2701-hif.c
+@@ -58,12 +58,16 @@ static int clk_mt2701_hif_probe(struct platform_device *pdev)
+ 						clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+-	if (r)
++	if (r) {
+ 		dev_err(&pdev->dev,
+ 			"could not register clock provider: %s: %d\n",
+ 			pdev->name, r);
++		return r;
++	}
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++	mtk_register_reset_controller(node, 1, 0x34);
+ 
+-	return r;
++	return 0;
+ }
+ 
+ static struct platform_driver clk_mt2701_hif_drv = {
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 6d2f82f..6f26e6a 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -787,8 +787,12 @@ static int mtk_infrasys_init(struct platform_device *pdev)
+ 						infra_clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, infra_clk_data);
++	if (r)
++		return r;
+ 
+-	return r;
++	mtk_register_reset_controller(node, 2, 0x30);
 +
-+/* r8a7745 CPG Core Clocks */
-+#define R8A7745_CLK_Z2		0
-+#define R8A7745_CLK_ZG		1
-+#define R8A7745_CLK_ZTR		2
-+#define R8A7745_CLK_ZTRD2	3
-+#define R8A7745_CLK_ZT		4
-+#define R8A7745_CLK_ZX		5
-+#define R8A7745_CLK_ZS		6
-+#define R8A7745_CLK_HP		7
-+#define R8A7745_CLK_B		9
-+#define R8A7745_CLK_LB		10
-+#define R8A7745_CLK_P		11
-+#define R8A7745_CLK_CL		12
-+#define R8A7745_CLK_CP		13
-+#define R8A7745_CLK_M2		14
-+#define R8A7745_CLK_ZB3		16
-+#define R8A7745_CLK_ZB3D2	17
-+#define R8A7745_CLK_DDR		18
-+#define R8A7745_CLK_SDH		19
-+#define R8A7745_CLK_SD0		20
-+#define R8A7745_CLK_SD2		21
-+#define R8A7745_CLK_SD3		22
-+#define R8A7745_CLK_MMC0	23
-+#define R8A7745_CLK_MP		24
-+#define R8A7745_CLK_QSPI	25
-+#define R8A7745_CLK_ACP		26
-+#define R8A7745_CLK_RCAN	27
-+#define R8A7745_CLK_R		28
-+#define R8A7745_CLK_OSC		29
++	return 0;
+ }
+ 
+ static const struct mtk_gate_regs peri0_cg_regs = {
+@@ -906,8 +910,12 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 			&mt2701_clk_lock, clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	if (r)
++		return r;
+ 
+-	return r;
++	mtk_register_reset_controller(node, 2, 0x0);
 +
-+#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
++	return 0;
+ }
+ 
+ #define MT8590_PLL_FMAX		(2000 * MHZ)
+-- 
+1.9.1
