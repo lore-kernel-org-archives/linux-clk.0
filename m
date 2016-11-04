@@ -1,29 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Nov 2016 17:25:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robdclark@gmail.com, jcrouse@codeaurora.org
-Subject: Re: [PATCH 1/2] clk: qcom: Handle the clamp_io assert/deassert
- sequence
-Message-ID: <20161102002516.GD16026@codeaurora.org>
-References: <1476956287-13749-1-git-send-email-rnayak@codeaurora.org>
- <1476956287-13749-2-git-send-email-rnayak@codeaurora.org>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Erin Lo
+	<erin.lo@mediatek.com>
+Subject: [PATCH v15 4/4] arm: dts: mt2701: Use real clock for UARTs
+Date: Fri, 4 Nov 2016 15:43:08 +0800
+Message-ID: <1478245388-1412-5-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476956287-13749-2-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/20, Rajendra Nayak wrote:
-> Add a flag to mark gdscs which need to support the clamp deassert/assert
-> before and after the gdsc enable/disable
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+We used to use a fixed rate clock for the UARTs. Now that we have clock
+support we can associate the correct clocks to the UARTs and drop the
+26MHz fixed rate UART clock.
 
-Applied to clk-next
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index c9a8dbf..7eab6f4 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -73,12 +73,6 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	uart_clk: dummy26m {
+-		compatible = "fixed-clock";
+-		clock-frequency = <26000000>;
+-		#clock-cells = <0>;
+-	};
+-
+ 	clk26m: oscillator@0 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -186,7 +180,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -195,7 +190,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -204,7 +200,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -213,7 +210,8 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&uart_clk>;
++		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
