@@ -1,32 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 11 Nov 2016 16:04:36 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, bin.chen@linaro.org, elder@linaro.org,
-	hermit.wangheming@hisilicon.com, yanhaifeng@hisilicon.com,
-	wenpan@hisilicon.com, howell.yang@hisilicon.com
-Subject: Re: [PATCH 1/2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
-Message-ID: <20161112000436.GF5177@codeaurora.org>
-References: <1477721618-10809-1-git-send-email-xuejiancheng@hisilicon.com>
- <1477721618-10809-2-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <erin.lo@mediatek.com>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, James Liao
+	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+Subject: [PATCH v15 3/4] arm: dts: mt2701: Add clock controller device nodes
+Date: Fri, 4 Nov 2016 15:43:07 +0800
+Message-ID: <1478245388-1412-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477721618-10809-2-git-send-email-xuejiancheng@hisilicon.com>
+Content-Type: text/plain
+Return-Path: erin.lo@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/29, Jiancheng Xue wrote:
-> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
-> Generator) module generates clock and reset signals used
-> by other module blocks on SoC.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+From: James Liao <jamesjj.liao@mediatek.com>
 
-Applied to clk-hisi and merged into clk-next
+Add clock controller nodes for MT2701, include topckgen, infracfg,
+pericfg and apmixedsys. This patch also add two oscillators that
+provide clocks for MT2701.
 
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 18596a2..c9a8dbf 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -12,8 +12,10 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <dt-bindings/clock/mt2701-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/mt2701-resets.h>
+ #include "skeleton64.dtsi"
+ #include "mt2701-pinfunc.h"
+ 
+@@ -77,6 +79,20 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
++	rtc32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000>;
++		clock-output-names = "rtc32k";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupt-parent = <&gic>;
+@@ -104,6 +120,26 @@
+ 		reg = <0 0x10005000 0 0x1000>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2701-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2701-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2701-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
+ 	watchdog: watchdog@10007000 {
+ 		compatible = "mediatek,mt2701-wdt",
+ 			     "mediatek,mt6589-wdt";
+@@ -128,6 +164,12 @@
+ 		reg = <0 0x10200100 0 0x1c>;
+ 	};
+ 
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2701-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	gic: interrupt-controller@10211000 {
+ 		compatible = "arm,cortex-a7-gic";
+ 		interrupt-controller;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
