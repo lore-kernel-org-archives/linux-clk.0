@@ -1,63 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35195 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbcKWFAp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2016 00:00:45 -0500
-Received: by mail-oi0-f42.google.com with SMTP id b126so2707633oia.2
-        for <linux-clk@vger.kernel.org>; Tue, 22 Nov 2016 21:00:45 -0800 (PST)
-Date: Tue, 22 Nov 2016 23:00:38 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Ritesh Harjani <riteshh@codeaurora.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        David Griego <david.griego@linaro.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Pramod Gurav <pramod.gurav@linaro.org>, jeremymc@redhat.com
-Subject: Re: [PATCH v9 00/16] mmc: sdhci-msm: Add clk-rates, DDR, HS400
- support
-Message-ID: <20161123050038.GD16531@hector.attlocal.net>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
- <CAPDyKFrRbf0+G5K=-jsaevAGbTqhTAss2zJv3QdiyCrv0BG-zA@mail.gmail.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A7745 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
+ <5012234.NZmvoVqhq0@wasted.cogentembedded.com>
+ <CAMuHMdUD_U5YqOnWv3Oo8P_Oxbh=qMP9wAtJmEgt-2eW4y3XqQ@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ Simon Horman <horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <34a88248-72db-e526-d6e7-30ac2009415b@cogentembedded.com>
+Date: Sun, 6 Nov 2016 00:25:15 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAPDyKFrRbf0+G5K=-jsaevAGbTqhTAss2zJv3QdiyCrv0BG-zA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdUD_U5YqOnWv3Oo8P_Oxbh=qMP9wAtJmEgt-2eW4y3XqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 21, 2016 at 11:06:13AM +0100, Ulf Hansson wrote:
-> On 21 November 2016 at 07:37, Ritesh Harjani <riteshh@codeaurora.org> wrote:
-> > Hi,
-> >
-> > This is v9 version of the patch series which adds support for MSM8996.
-> > Adds HS400 driver support as well.
-> > These are tested on internal msm8996 & db410c HW.
-> >
-> > The patch series is ready. Do we think we can apply these
-> > patches for next now?
-> 
-> I guess the DTS changes can be picked up by Andy, so they can go via arm-soc?
+On 11/02/2016 06:47 PM, Geert Uytterhoeven wrote:
 
-Yeah I'll pick up the DTS change and the Documentation change.
+>> Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
+>> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+>> (and RZ/G) code.
+>>
+>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+>> <geert+renesas@glider.be>.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Thanks a lot for your patch!
+>
+>> --- /dev/null
+>> +++ linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
+>> @@ -0,0 +1,261 @@
+[...]
+>> +static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+>
+>> +       DEF_MOD("fdp1-1",         118,  R8A7745_CLK_ZS),
+>
+> FDP1-1 does not exist on RZ/G1E.
 
-> 
-> Then, does the mmc changes depend on the clock changes? If so, I can
-> pick them as well, but then I need an ack from Stephen....
-> 
-> Kind regards
-> Uffe
+    Sorry, I somehow forgot about this one... will respin!
 
-Andy
+MBR, Sergei
