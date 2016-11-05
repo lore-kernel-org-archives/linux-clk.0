@@ -1,105 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60981 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753144AbcKYJkQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Nov 2016 04:40:16 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with platform
- device PM
-Date: Fri, 25 Nov 2016 10:39:54 +0100
-Message-id: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+Date: Sun, 06 Nov 2016 01:31:31 +0300
+Message-ID: <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
+In-Reply-To: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos AUDSS clock driver has beem already converted to platform driver, so
-remove the dependency on the syscore ops - the last remaining non-platform
-driver feature. Platform device's system sleep PM provides all needed
-infrastructure for replacing syscore-based PM, so do it now.
+Add macros usable by  the device tree sources to reference the R8A7745 CPG
+clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+of the RZ/G Series User's Manual.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/clk/samsung/clk-exynos-audss.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+Changes in version 2:
+- added Geert's tag.
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 17e68a724945..cb7df358a27d 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -44,7 +44,7 @@
- 	{ ASS_CLK_GATE, 0 },
- };
- 
--static int exynos_audss_clk_suspend(void)
-+static int exynos_audss_clk_suspend(struct device *dev)
- {
- 	int i;
- 
-@@ -54,18 +54,15 @@ static int exynos_audss_clk_suspend(void)
- 	return 0;
- }
- 
--static void exynos_audss_clk_resume(void)
-+static int exynos_audss_clk_resume(struct device *dev)
- {
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(reg_save); i++)
- 		writel(reg_save[i][1], reg_base + reg_save[i][0]);
--}
- 
--static struct syscore_ops exynos_audss_clk_syscore_ops = {
--	.suspend	= exynos_audss_clk_suspend,
--	.resume		= exynos_audss_clk_resume,
--};
-+	return 0;
-+}
- #endif /* CONFIG_PM_SLEEP */
- 
- struct exynos_audss_clk_drvdata {
-@@ -251,9 +248,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		goto unregister;
- 	}
- 
--#ifdef CONFIG_PM_SLEEP
--	register_syscore_ops(&exynos_audss_clk_syscore_ops);
--#endif
- 	return 0;
- 
- unregister:
-@@ -267,10 +261,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 
- static int exynos_audss_clk_remove(struct platform_device *pdev)
- {
--#ifdef CONFIG_PM_SLEEP
--	unregister_syscore_ops(&exynos_audss_clk_syscore_ops);
--#endif
--
- 	of_clk_del_provider(pdev->dev.of_node);
- 
- 	exynos_audss_clk_teardown();
-@@ -281,10 +271,16 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct dev_pm_ops exynos_audss_clk_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_audss_clk_suspend,
-+				     exynos_audss_clk_resume)
-+};
+ include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+
+Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
 +
- static struct platform_driver exynos_audss_clk_driver = {
- 	.driver	= {
- 		.name = "exynos-audss-clk",
- 		.of_match_table = exynos_audss_clk_of_match,
-+		.pm = &exynos_audss_clk_pm_ops,
- 	},
- 	.probe = exynos_audss_clk_probe,
- 	.remove = exynos_audss_clk_remove,
--- 
-1.9.1
-
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7745 CPG Core Clocks */
++#define R8A7745_CLK_Z2		0
++#define R8A7745_CLK_ZG		1
++#define R8A7745_CLK_ZTR		2
++#define R8A7745_CLK_ZTRD2	3
++#define R8A7745_CLK_ZT		4
++#define R8A7745_CLK_ZX		5
++#define R8A7745_CLK_ZS		6
++#define R8A7745_CLK_HP		7
++#define R8A7745_CLK_B		9
++#define R8A7745_CLK_LB		10
++#define R8A7745_CLK_P		11
++#define R8A7745_CLK_CL		12
++#define R8A7745_CLK_CP		13
++#define R8A7745_CLK_M2		14
++#define R8A7745_CLK_ZB3		16
++#define R8A7745_CLK_ZB3D2	17
++#define R8A7745_CLK_DDR		18
++#define R8A7745_CLK_SDH		19
++#define R8A7745_CLK_SD0		20
++#define R8A7745_CLK_SD2		21
++#define R8A7745_CLK_SD3		22
++#define R8A7745_CLK_MMC0	23
++#define R8A7745_CLK_MP		24
++#define R8A7745_CLK_QSPI	25
++#define R8A7745_CLK_ACP		26
++#define R8A7745_CLK_RCAN	27
++#define R8A7745_CLK_R		28
++#define R8A7745_CLK_OSC		29
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
