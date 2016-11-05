@@ -1,95 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33756 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751297AbcKGL1s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:27:48 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v6 12/14] mmc: sdhci-msm: Save the calculated tuning phase
-Date: Mon,  7 Nov 2016 16:54:35 +0530
-Message-Id: <1478517877-23733-13-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jianqun Xu <jay.xu@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, huangtao@rock-chips.com, zhangqing@rock-chips.com, zhengxing@rock-chips.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, lintao@rock-chips.com
+Subject: Re: [PATCH] clk: rockchip: remove more CLK_IGNORE_UNUSED for rk3399 clocktree
+Date: Sat, 05 Nov 2016 23:14:46 +0100
+Message-ID: <1554357.c2SylEul2r@phil>
+In-Reply-To: <1478144333-13436-1-git-send-email-jay.xu@rock-chips.com>
+References: <1478144333-13436-1-git-send-email-jay.xu@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Save the tuning phase once the tuning is performed.
-This phase value will be used while calibrating DLL
-for HS400 mode.
+Am Donnerstag, 3. November 2016, 11:38:53 CET schrieb Jianqun Xu:
+> Optimize rk3399 clocktree by removing CLK_IGNORE_UNUSED of some clocks.
+> 
+> clocks will managered by usb:
+> - clk_usbphy0_480m_src
+> - clk_usbphy1_480m_src
+> - clk_usbphy_480m
+> 
+> clocks will be managered by pvtm:
+> - clk_pvtm_core_l
+> - clk_pvtm_core_b
+> - clk_pvtm_ddr
+> 
+> clocks will be managered by dfi:
+> - pclk_ddr_mon
+> - clk_dfimon0_timer
+> - clk_dfimon1_timer
+> - aclk_dcf
+> - pclk_dcf
+> 
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
----
- drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I gave this a test on a rk3399-gru device and was still able to boot 
+sucessfully. So I've applied the patch to my clk-branch for 4.10
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 2561c41..6431bb8 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -74,6 +74,7 @@
- 
- #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
- 
-+#define INVALID_TUNING_PHASE	-1
- #define TCXO_FREQ		19200000
- #define SDHCI_MSM_MIN_CLOCK	400000
- #define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
-@@ -95,6 +96,7 @@ struct sdhci_msm_host {
- 	bool use_14lpp_dll_reset;
- 	bool tuning_done;
- 	bool calibration_done;
-+	u8 saved_tuning_phase;
- };
- 
- /* Platform specific tuning */
-@@ -134,6 +136,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
- 	u32 config;
- 	struct mmc_host *mmc = host->mmc;
- 
-+	if (phase > 0xf)
-+		return -EINVAL;
-+
- 	spin_lock_irqsave(&host->lock, flags);
- 
- 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-@@ -431,6 +436,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	int rc;
- 	struct mmc_host *mmc = host->mmc;
- 	struct mmc_ios ios = host->mmc->ios;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 
- 	/*
- 	 * Tuning is required for SDR104, HS200 and HS400 cards and
-@@ -455,6 +462,7 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
- 		if (rc)
- 			return rc;
- 
-+		msm_host->saved_tuning_phase = phase;
- 		rc = mmc_send_tuning(mmc, opcode, NULL);
- 		if (!rc) {
- 			/* Tuning is successful at this tuning point */
-@@ -826,6 +834,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 
- 	sdhci_get_of_property(pdev);
- 
-+	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
-+
- 	/* Setup SDCC bus voter clock. */
- 	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
- 	if (!IS_ERR(msm_host->bus_clk)) {
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+Thanks
+Heiko
