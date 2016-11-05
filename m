@@ -1,31 +1,24 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 10 Nov 2016 16:48:18 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v9 2/3] clk: qcom: Add support for RPM Clocks
-Message-ID: <20161111004818.GB5177@codeaurora.org>
-References: <20161102155658.32203-1-georgi.djakov@linaro.org>
- <20161102155658.32203-3-georgi.djakov@linaro.org>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 0/2] Renesas R8A7745 CPG/MSSR clock support
+Date: Sun, 06 Nov 2016 01:28:57 +0300
+Message-ID: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161102155658.32203-3-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/02, Georgi Djakov wrote:
-> This adds initial support for clocks controlled by the Resource
-> Power Manager (RPM) processor on some Qualcomm SoCs, which use
-> the qcom_rpm driver to communicate with RPM.
-> Such platforms are apq8064 and msm8960.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
+Hello.
 
-Applied to clk-qcom-rpm and merged into clk-next
+   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
+depend on the common R-Car Gen2 support patch. As the DT patches in the
+R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
+it might make sense to merge this patch to the 'renesas.git' repo as well...
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+[1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+[2/2] clk: renesas: cpg-mssr: add R8A7745 support
+
+MBR, Sergei
