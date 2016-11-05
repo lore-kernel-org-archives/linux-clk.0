@@ -1,142 +1,89 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH 4/6] clk: stm32f4: Add I2S clock
-To: Daniel Thompson <daniel.thompson@linaro.org>,
-        Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre
-	<nico@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, <andrea.merello@gmail.com>
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
- <1478523943-23142-5-git-send-email-gabriel.fernandez@st.com>
- <08ad0f8c-bcdf-4835-9f07-167e129604bd@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <f219c575-21c2-385f-1aee-7ccc4715028e@st.com>
-Date: Tue, 8 Nov 2016 17:26:57 +0100
+Return-Path: <shawnguo@kernel.org>
+Date: Sat, 5 Nov 2016 17:05:07 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Peter Chen <peter.chen@nxp.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, robh+dt@kernel.org,
+	fabio.estevam@nxp.com, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org, Bai Ping <ping.bai@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 3/3] clk: imx: clk-imx6ul: add clk support for imx6ull
+Message-ID: <20161105090506.GH5597@dragon>
+References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
+ <1477969343-19887-4-git-send-email-peter.chen@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <08ad0f8c-bcdf-4835-9f07-167e129604bd@linaro.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1477969343-19887-4-git-send-email-peter.chen@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Nov 01, 2016 at 11:02:23AM +0800, Peter Chen wrote:
+> From: Bai Ping <ping.bai@nxp.com>
+> 
+> imx6ull is the derived SoC from imx6ul
+> 
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6ul.c             | 74 +++++++++++++++++++++++++++-----
+>  include/dt-bindings/clock/imx6ul-clock.h | 15 ++++++-
+>  2 files changed, 77 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index d1d7787..ceb99a7 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -64,6 +64,11 @@ static const char *perclk_sels[] = { "ipg", "osc", };
+>  static const char *lcdif_sels[] = { "lcdif_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
+>  static const char *csi_sels[] = { "osc", "pll2_pfd2_396m", "pll3_120m", "pll3_pfd1_540m", };
+>  static const char *sim_sels[] = { "sim_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
+> +/* epdc_pre_sels, epdc_sels, esai_sels only exists on i.MX6ULL */
+> +static const char *epdc_pre_sels[] = { "pll2_bus", "pll3_usb_otg", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd2_508m", };
+> +static const char *esai_sels[] = { "pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg", };
+> +static const char *epdc_sels[] = { "epdc_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
+> +
 
+The new line is not needed.  There is already one below.
 
-On 11/07/2016 03:14 PM, Daniel Thompson wrote:
-> On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> This patch introduces I2S clock for stm32f4 soc.
->> The I2S clock could be derived from an external clock or from pll-i2s
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>  drivers/clk/clk-stm32f4.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
->> index 5fa5d51..b7cb359 100644
->> --- a/drivers/clk/clk-stm32f4.c
->> +++ b/drivers/clk/clk-stm32f4.c
->> @@ -216,6 +216,7 @@ enum {
->>      SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC,
->>      PLL_VCO_I2S, PLL_VCO_SAI,
->>      CLK_LCD,
->> +    CLK_I2S,
->
-> Sorry, this has just clicked and it applies to most of the other 
-> patches, but adding things to this list effectively extends the clock 
-> bindings (i.e. the list of valid "other" clocks access with a primary 
-> index of 1).
->
-> This list if a list of "arbitrary" constants by which DT periphericals 
-> can be linked to specific clocks.
->
-> So...
->
->  1)  If a clock is introduced here we should update the clock binding
->      documentations.
->
->  2)  If no peripheral can connect to the clock (because it is internal
->      to the clock gen logic and peripherals must connect to the gated
->      version) it should not be included in this enum.
->
->  3)  I failed to mention this when the four undocumented clocks
->      (LSI, LSE, HSE_RTC and RTC) were added.
->
->  4)  I *should* have added a comment explaining the above to the code.
->
->
-ok i agree
+>  
+>  static struct clk *clks[IMX6UL_CLK_END];
+>  static struct clk_onecell_data clk_data;
 
->>      END_PRIMARY_CLK
->>  };
->>
->> @@ -967,6 +968,8 @@ static struct clk_hw *stm32_register_cclk(struct 
->> device *dev, const char *name,
->>
->>  static const char *sdmux_parents[2] = { "pll48", "sys" };
->>
->> +static const char *i2s_parents[2] = { "plli2s-r", NULL };
->> +
->>  struct stm32f4_clk_data {
->>      const struct stm32f4_gate_data *gates_data;
->>      const u64 *gates_map;
->> @@ -1005,7 +1008,7 @@ struct stm32f4_clk_data {
->>
->>  static void __init stm32f4_rcc_init(struct device_node *np)
->>  {
->> -    const char *hse_clk;
->> +    const char *hse_clk, *i2s_in_clk;
->>      int n;
->>      const struct of_device_id *match;
->>      const struct stm32f4_clk_data *data;
->> @@ -1038,6 +1041,7 @@ static void __init stm32f4_rcc_init(struct 
->> device_node *np)
->>      stm32f4_gate_map = data->gates_map;
->>
->>      hse_clk = of_clk_get_parent_name(np, 0);
->> +    i2s_in_clk = of_clk_get_parent_name(np, 1);
->
-> Again this looks like a change to the DT bindings.
->
-ok
+<snip>
 
-> Also does the code work if i2s_in_clk is NULL or as you hoping to get 
-> away with a not-backwards compatible change?
->
->
-yes it works if i2s_in_clk is NULL.
+> diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+> index fd8aee8..563fd5b 100644
+> --- a/include/dt-bindings/clock/imx6ul-clock.h
+> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+> @@ -236,6 +236,19 @@
+>  #define IMX6UL_CLK_PLL3_120M		223
+>  #define IMX6UL_CLK_KPP			224
+>  
+> -#define IMX6UL_CLK_END			225
+> +/* For i.MX6ULL */
+> +#define IMX6UL_CLK_ESAI_PRED		225
+> +#define IMX6UL_CLK_ESAI_PODF		226
+> +#define IMX6UL_CLK_ESAI_EXTAL		227
+> +#define IMX6UL_CLK_ESAI_MEM		228
+> +#define IMX6UL_CLK_ESAI_IPG		229
+> +#define IMX6UL_CLK_DCP_CLK		230
+> +#define IMX6UL_CLK_EPDC_PRE_SEL		231
+> +#define IMX6UL_CLK_EPDC_SEL		232
+> +#define IMX6UL_CLK_EPDC_PODF		233
+> +#define IMX6UL_CLK_EPDC_ACLK		234
+> +#define IMX6UL_CLK_EPDC_PIX		235
+> +#define IMX6UL_CLK_ESAI_SEL		236
 
-BR
-Gabriel
+Can we have these imx6ull only clocks named after IMX6ULL_xxx?
 
-> Daniel.
->
->
->>
->>      clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
->>              16000000, 160000);
->> @@ -1053,6 +1057,12 @@ static void __init stm32f4_rcc_init(struct 
->> device_node *np)
->>      clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll(pllsrc,
->>              &data->pll_data[2], &stm32f4_clk_lock);
->>
->> +    i2s_parents[1] = i2s_in_clk;
->> +
->> +    clks[CLK_I2S] =    clk_hw_register_mux_table(NULL, "i2s",
->> +                i2s_parents, ARRAY_SIZE(i2s_parents), 0,
->> +                base + STM32F4_RCC_CFGR, 23, 1, 0, NULL,
->> +                &stm32f4_clk_lock);
->>      sys_parents[1] = hse_clk;
->>      clk_register_mux_table(
->>          NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
->>
->
+Shawn
+
+> +#define IMX6UL_CLK_END			237
+>  
+>  #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+> -- 
+> 2.7.4
+> 
