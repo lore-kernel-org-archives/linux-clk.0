@@ -1,50 +1,113 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:53813 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757134AbcKXQZA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Nov 2016 11:25:00 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: cpg_mstp: build for R8A774{3,5}
-Date: Thu, 24 Nov 2016 17:24:31 +0100
-Message-Id: <20161124162448.3761610-1-arnd@arndb.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH 2/2] clk: sunxi-ng: fix up PLL_CPUX adjusting for A23/A33
+To: Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20161106172932.39478-1-icenowy@aosc.xyz>
+ <20161106172932.39478-2-icenowy@aosc.xyz>
+Cc: Jorik Jonker <jorik@kippendief.biz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Message-ID: <138cc32f-4c0a-2731-9517-d67be7103cca@free-electrons.com>
+Date: Sun, 6 Nov 2016 19:04:48 +0100
+MIME-Version: 1.0
+In-Reply-To: <20161106172932.39478-2-icenowy@aosc.xyz>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-We get a link failure on R8A7745 and R8A7743 when the other platforms
-are disabled and nothing selects the clk-rcar-gen2 driver:
+Hi Icenowy,
 
-drivers/clk/renesas/clk-rcar-gen2.o: In function `rcar_gen2_cpg_clocks_init':
-clk-rcar-gen2.c:(.init.text+0x39c): undefined reference to `cpg_mstp_add_clk_domain'
+This patch (2/2) should be before the first one.
 
-This adds another 'select' statement to get them to build as well.
+The first patch allows adjusting of the PLL and the second fixes a
+problem with the adjustment of the PLL.
 
-Fixes: 9127d54bb894 ("clk: renesas: cpg-mssr: Add R8A7745 support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/renesas/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+You should fix the problem before allowing the adjustment of the PLL.
+That way, if someone builds the kernel between your two patches, the
+kernel is supposed to be working.
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 2586dfa0026b..4ebd9d3d24b7 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -10,6 +10,8 @@ config CLK_RENESAS_CPG_MSTP
- 	default y if ARCH_R7S72100
- 	default y if ARCH_R8A73A4
- 	default y if ARCH_R8A7740
-+	default y if ARCH_R8A7743
-+	default y if ARCH_R8A7745
- 	default y if ARCH_R8A7778
- 	default y if ARCH_R8A7779
- 	default y if ARCH_R8A7790
+Tested in correct order on A33.
+
+Thanks!
+
+Quentin
+
+On 06/11/2016 18:29, Icenowy Zheng wrote:
+> When adjusting PLL_CPUX on A23/A33, the PLL is driven too high, and the
+> system stucks.
+> 
+> Add a notifier to avoid this situation.
+> 
+> The code is ported from ccu-sun6i-a31.c.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+> Patch 4.9-rc too.
+>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 10 ++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 10 ++++++++++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+> index 44c4775..41a8594 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+> @@ -709,6 +709,13 @@ static const struct sunxi_ccu_desc sun8i_a23_ccu_desc = {
+>  	.num_resets	= ARRAY_SIZE(sun8i_a23_ccu_resets),
+>  };
+>  
+> +static struct ccu_mux_nb sun8i_a23_cpu_nb = {
+> +	.common		= &cpux_clk.common,
+> +	.cm		= &cpux_clk.mux,
+> +	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
+> +	.bypass_index	= 1, /* index of 24 MHz oscillator */
+> +};
+> +
+>  static void __init sun8i_a23_ccu_setup(struct device_node *node)
+>  {
+>  	void __iomem *reg;
+> @@ -732,6 +739,9 @@ static void __init sun8i_a23_ccu_setup(struct device_node *node)
+>  	writel(val, reg + SUN8I_A23_PLL_MIPI_REG);
+>  
+>  	sunxi_ccu_probe(node, reg, &sun8i_a23_ccu_desc);
+> +
+> +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+> +				  &sun8i_a23_cpu_nb);
+>  }
+>  CLK_OF_DECLARE(sun8i_a23_ccu, "allwinner,sun8i-a23-ccu",
+>  	       sun8i_a23_ccu_setup);
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+> index 59cfdc8..3efbb6e 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+> @@ -752,6 +752,13 @@ static const struct sunxi_ccu_desc sun8i_a33_ccu_desc = {
+>  	.num_resets	= ARRAY_SIZE(sun8i_a33_ccu_resets),
+>  };
+>  
+> +static struct ccu_mux_nb sun8i_a33_cpu_nb = {
+> +	.common		= &cpux_clk.common,
+> +	.cm		= &cpux_clk.mux,
+> +	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
+> +	.bypass_index	= 1, /* index of 24 MHz oscillator */
+> +};
+> +
+>  static void __init sun8i_a33_ccu_setup(struct device_node *node)
+>  {
+>  	void __iomem *reg;
+> @@ -775,6 +782,9 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
+>  	writel(val, reg + SUN8I_A33_PLL_MIPI_REG);
+>  
+>  	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
+> +
+> +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+> +				  &sun8i_a33_cpu_nb);
+>  }
+>  CLK_OF_DECLARE(sun8i_a33_ccu, "allwinner,sun8i-a33-ccu",
+>  	       sun8i_a33_ccu_setup);
+> 
+
 -- 
-2.9.0
-
+Quentin Schulz, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
