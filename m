@@ -1,86 +1,92 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
- <3797605.lKJkRScdp8@wasted.cogentembedded.com>
- <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
- <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <cb5ebfa8-f9c7-e211-aded-1dc65291a31a@cogentembedded.com>
-Date: Wed, 2 Nov 2016 21:11:20 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: Jorik Jonker <jorik@kippendief.biz>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH 2/2] clk: sunxi-ng: fix up PLL_CPUX adjusting for A23/A33
+Date: Mon,  7 Nov 2016 01:29:32 +0800
+Message-Id: <20161106172932.39478-2-icenowy@aosc.xyz>
+In-Reply-To: <20161106172932.39478-1-icenowy@aosc.xyz>
+References: <20161106172932.39478-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/02/2016 02:38 PM, Geert Uytterhoeven wrote:
+When adjusting PLL_CPUX on A23/A33, the PLL is driven too high, and the
+system stucks.
 
->>> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
->>> and Software Reset support code, using the CPG/MSSR driver core.
->>>
->>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
->>> <geert+renesas@glider.be>.
->>>
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>
->>> ---
->>> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
->>>
->>> Changes in version 2:
->>> - added support  for non-existing PLL0CR;
->>> - removed the function reading the mode pins;
->>> - added/used the #define's for PLL0CR.STC;
->>> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
->>> - removed rcar_gen2_read_modemr();
->>> - added Geert's tag.
->>>
->>>  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
->>>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
->>>  2 files changed, 411 insertions(+)
->>>
->>> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
->>> ===================================================================
->>> --- /dev/null
->>> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
->>> @@ -0,0 +1,369 @@
->>
->>> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
->>> +                                              const struct cpg_core_clk *core,
->>> +                                              const struct cpg_mssr_info *info,
->>> +                                              struct clk **clks,
->>> +                                              void __iomem *base)
->>> +{
->>
->>> +       case CLK_TYPE_GEN2_PLL0:
->>> +               /*
->>> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
->>
->> ... and V2H.
->>
->>> +                * Register the PLL0 clock as a fixed factor clock for now as
->>> +                * there's  no generic multiplier clock implementation and we
->>> +                * currently have no need to change the multiplier value.
->>> +                */
->>> +               mult = cpg_pll_config->pll0_mult;
->>> +               if (mult) {
->>> +                       /* PLL0 is VCO/3 on R-Car E2 */
->>
->> ... and V2H.
->>
->>> +                       div  = 3;
->
-> After seeing the r8a7745 driver, I think it would be better to use a divider
-> value of 1 here (dropping the need for this branch), and handle the /3 in the
-> SoC-specific driver.
-> This would make it more similar to the other SoCs here (div = 1 in the else
-> branch below), and to similar clocks in the SoC-specific driver
-> (e.g. DEF_FIXED("zg", ..., 3, 1) in r8a7743-cpg-mssr.c).
+Add a notifier to avoid this situation.
 
-    We'll then have to lie about the PLL0 output freq? I don't like it...
+The code is ported from ccu-sun6i-a31.c.
 
-MBR, Sergei
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Patch 4.9-rc too.
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 10 ++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 10 ++++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index 44c4775..41a8594 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -709,6 +709,13 @@ static const struct sunxi_ccu_desc sun8i_a23_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun8i_a23_ccu_resets),
+ };
+ 
++static struct ccu_mux_nb sun8i_a23_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static void __init sun8i_a23_ccu_setup(struct device_node *node)
+ {
+ 	void __iomem *reg;
+@@ -732,6 +739,9 @@ static void __init sun8i_a23_ccu_setup(struct device_node *node)
+ 	writel(val, reg + SUN8I_A23_PLL_MIPI_REG);
+ 
+ 	sunxi_ccu_probe(node, reg, &sun8i_a23_ccu_desc);
++
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun8i_a23_cpu_nb);
+ }
+ CLK_OF_DECLARE(sun8i_a23_ccu, "allwinner,sun8i-a23-ccu",
+ 	       sun8i_a23_ccu_setup);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 59cfdc8..3efbb6e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -752,6 +752,13 @@ static const struct sunxi_ccu_desc sun8i_a33_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun8i_a33_ccu_resets),
+ };
+ 
++static struct ccu_mux_nb sun8i_a33_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static void __init sun8i_a33_ccu_setup(struct device_node *node)
+ {
+ 	void __iomem *reg;
+@@ -775,6 +782,9 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
+ 	writel(val, reg + SUN8I_A33_PLL_MIPI_REG);
+ 
+ 	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
++
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun8i_a33_cpu_nb);
+ }
+ CLK_OF_DECLARE(sun8i_a33_ccu, "allwinner,sun8i-a33-ccu",
+ 	       sun8i_a33_ccu_setup);
+-- 
+2.10.1
