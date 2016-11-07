@@ -1,91 +1,65 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.scott@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH 2/2] clk: qcom: clk-rpm: Fix clk_hw_onecell_data references
-Date: Mon, 21 Nov 2016 16:04:50 +0200
-Message-Id: <20161121140450.12353-2-georgi.djakov@linaro.org>
-In-Reply-To: <20161121140450.12353-1-georgi.djakov@linaro.org>
-References: <20161121140450.12353-1-georgi.djakov@linaro.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH 6/6] arm: dts: stm32f4: Add external I2S clock
+Date: Mon, 7 Nov 2016 14:05:43 +0100
+Message-ID: <1478523943-23142-7-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk_hw_onecell_data struct is missing references to the
-actual clocks. Fix this.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Reported-by: Michael Scott <michael.scott@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+This patch adds an external I2S clock in the DT.
+The I2S clock could be derived from an external I2S clock or by I2S pll.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/qcom/clk-rpm.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/stm32f429.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index 1950a9572624..5dbed3b1546a 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -127,8 +127,7 @@ struct clk_rpm {
- 
- struct rpm_cc {
- 	struct qcom_rpm *rpm;
--	struct clk_hw_onecell_data data;
--	struct clk_hw *hws[];
-+	struct clk_hw_onecell_data *data;
- };
- 
- struct rpm_clk_desc {
-@@ -393,9 +392,7 @@ MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
- 
- static int rpm_clk_probe(struct platform_device *pdev)
- {
--	struct clk_hw **hws;
- 	struct rpm_cc *rcc;
--	struct clk_hw_onecell_data *data;
- 	int ret;
- 	size_t num_clks, i;
- 	struct qcom_rpm *rpm;
-@@ -415,14 +412,13 @@ static int rpm_clk_probe(struct platform_device *pdev)
- 	rpm_clks = desc->clks;
- 	num_clks = desc->num_clks;
- 
--	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
--			   GFP_KERNEL);
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
- 	if (!rcc)
- 		return -ENOMEM;
- 
--	hws = rcc->hws;
--	data = &rcc->data;
--	data->num = num_clks;
-+	rcc->data = devm_kzalloc(&pdev->dev, sizeof(*rcc->data) + num_clks *
-+				 sizeof(*rcc->data->hws), GFP_KERNEL);
-+	rcc->data->num = num_clks;
- 
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rpm_clks[i])
-@@ -437,17 +433,19 @@ static int rpm_clk_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rpm_clks[i]) {
--			data->hws[i] = ERR_PTR(-ENOENT);
-+			rcc->data->hws[i] = ERR_PTR(-ENOENT);
- 			continue;
- 		}
- 
- 		ret = devm_clk_hw_register(&pdev->dev, &rpm_clks[i]->hw);
- 		if (ret)
- 			goto err;
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index 2700449..14da6ce 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -68,6 +68,12 @@
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <32000>;
+ 		};
 +
-+		rcc->data->hws[i] = &rpm_clks[i]->hw;
- 	}
++		clk_i2s_ckin: i2s-ckin {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <0>;
++		};
+ 	};
  
- 	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
--				     data);
-+				     rcc->data);
- 	if (ret)
- 		goto err;
+ 	soc {
+@@ -356,7 +362,7 @@
+ 			#clock-cells = <2>;
+ 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 			reg = <0x40023800 0x400>;
+-			clocks = <&clk_hse>;
++			clocks = <&clk_hse>, <&clk_i2s_ckin>;
+ 			st,syscfg = <&pwrcfg>;
+ 		};
  
+-- 
+1.9.1
