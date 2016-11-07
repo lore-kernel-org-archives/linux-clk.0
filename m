@@ -1,70 +1,84 @@
-Return-Path: <Xiaolong.Zhang@spreadtrum.com>
-Date: Sat, 12 Nov 2016 13:19:08 +0800
-From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <orson.zhai@spreadtrum.com>,
-        <baolin.wang@spreadtrum.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ben.li@spreadtrum.com>
-Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
- fixed-factor clocks
-Message-ID: <20161112051907.GA8514@spreadtrum.com>
-References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
- <20161020230103.GD26139@codeaurora.org>
- <20161022081448.GB32560@spreadtrum.com>
- <20161025204008.GE26139@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH 2/6] clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
+Date: Mon, 7 Nov 2016 14:05:39 +0100
+Message-ID: <1478523943-23142-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <20161025204008.GE26139@codeaurora.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 二, 10月 25, 2016 at 08:40:08下午 +0000, Stephen Boyd wrote:
-> On 10/22, Xiaolong Zhang wrote:
-> > On 四, 10月 20, 2016 at 04:01:03下午 -0700, Stephen Boyd wrote:
-> > > On 10/11, Orson Zhai wrote:
-> > > > From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> > > > 
-> > > > When common kernel setups fixed clock, of_clk_provider will be registerred.
-> > > > But there is no clkdev being registerred at the same time. This will make
-> > > > it difficult to get the clock by using clk_get(NULL, con_id).
-> > > > 
-> > > > Add clkdev register for fixed-rate and fixed-factor clock and ignore
-> > > > the error if any.
-> > > > 
-> > > > Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-> > > > Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
-> > > > ---
-> > > 
-> > > Why are we using clkdev lookups for clks populated from DT?
-> > > Shouldn't we be able to point to them from the consumers that
-> > > would also be in DT? I'm a little lost.
-> > > 
-> > The clk_get interface allows the first argument as NULL. We just assure
-> > consumers can get the clock from DT or by clock name.
-> 
-> Ok. The first argument to clk_get() really shouldn't be NULL. It
-> should be the device pointer for the device that is associated
-> with the clk you want to get. The clock name (second argument to
-> clk_get()) should be device specific and not some globally unique
-> identifier. It seems that you're using the clk_get() API
-> incorrectly.
->
-Sorry for late reply.
-There are two paths in clk_get:
-a) dev is not NULL, the calling procedure is as following
-clk_get(dev, con_id)
---->of_clk_get_by_name(dev->of_node, con_id)
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-b) dev is NULL, the calling procedure is as following
-clk_dev(NULL, con_id)
---->clk_get_sys(NULL, con_id)
-    --->clk_find(NULL, con_id)
+In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
+from pll-sai-p.
 
-I just cann't understand why you say the first argument shouldn't
-be NULL. Is there other consideration in CCF?
+The SDIO clock could be also derived from 48Mhz or from sys clock.
 
-Thanks
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-Xiaolong Zhang
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 7641acd..dda15bc 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -199,7 +199,7 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
+-	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
++	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"sdmux" },
+ 	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
+@@ -940,6 +940,10 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 	"no-clock", "lse", "lsi", "hse-rtc"
+ };
+ 
++static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
++
++static const char *sdmux_parents[2] = { "pll48", "sys" };
++
+ struct stm32f4_clk_data {
+ 	const struct stm32f4_gate_data *gates_data;
+ 	const u64 *gates_map;
+@@ -1109,6 +1113,18 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		goto fail;
+ 	}
+ 
++	if (of_device_is_compatible(np, "st,stm32f469-rcc")) {
++		clk_hw_register_mux_table(NULL, "pll48",
++				pll48_parents, ARRAY_SIZE(pll48_parents), 0,
++				base + STM32F4_RCC_DCKCFGR, 27, 1, 0, NULL,
++				&stm32f4_clk_lock);
++
++		clk_hw_register_mux_table(NULL, "sdmux",
++				sdmux_parents, ARRAY_SIZE(sdmux_parents), 0,
++				base + STM32F4_RCC_DCKCFGR, 28, 1, 0, NULL,
++				&stm32f4_clk_lock);
++	}
++
+ 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+ 	return;
+ fail:
+-- 
+1.9.1
