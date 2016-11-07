@@ -1,80 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36111 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751020AbcKRD4W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2016 22:56:22 -0500
-Received: by mail-oi0-f47.google.com with SMTP id v84so76617236oie.3
-        for <linux-clk@vger.kernel.org>; Thu, 17 Nov 2016 19:56:22 -0800 (PST)
-Date: Thu, 17 Nov 2016 21:56:19 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com
-Subject: Re: [PATCH v8 04/16] ARM: dts: Add xo to sdhc clock node on qcom
- platforms
-Message-ID: <20161118035619.GA6400@hector>
-References: <1479312052-22396-5-git-send-email-riteshh@codeaurora.org>
- <1479343419-29326-1-git-send-email-riteshh@codeaurora.org>
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 4/6] clk: stm32f4: Add I2S clock
+To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, andrea.merello@gmail.com
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+ <1478523943-23142-5-git-send-email-gabriel.fernandez@st.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, kernel@stlinux.com,
+ ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Message-ID: <08ad0f8c-bcdf-4835-9f07-167e129604bd@linaro.org>
+Date: Mon, 7 Nov 2016 14:14:55 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479343419-29326-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1478523943-23142-5-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 17, 2016 at 06:13:39AM +0530, Ritesh Harjani wrote:
-> Add xo entry to sdhc clock node on all qcom platforms.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>
+> This patch introduces I2S clock for stm32f4 soc.
+> The I2S clock could be derived from an external clock or from pll-i2s
+>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 > ---
->  arch/arm/boot/dts/qcom-apq8084.dtsi   | 16 ++++++++++------
->  arch/arm/boot/dts/qcom-msm8974.dtsi   | 16 ++++++++++------
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
->  arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
->  4 files changed, 31 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
-> index 39eb7a4..f756cbb 100644
-> --- a/arch/arm/boot/dts/qcom-apq8084.dtsi
-> +++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
-> @@ -182,13 +182,13 @@
->  	};
->  
->  	clocks {
-> -		xo_board {
-> +		xo_board: xo_board {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
->  			clock-frequency = <19200000>;
->  		};
->  
-> -		sleep_clk {
-> +		sleep_clk: sleep_clk {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
->  			clock-frequency = <32768>;
-> @@ -416,8 +416,10 @@
->  			reg-names = "hc_mem", "core_mem";
->  			interrupts = <0 123 0>, <0 138 0>;
->  			interrupt-names = "hc_irq", "pwr_irq";
-> -			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
-> -			clock-names = "core", "iface";
-> +			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
-> +				 <&gcc GCC_SDCC1_AHB_CLK>,
-> +				 <&xo_board 0>;
+>  drivers/clk/clk-stm32f4.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index 5fa5d51..b7cb359 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -216,6 +216,7 @@ enum {
+>  	SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC,
+>  	PLL_VCO_I2S, PLL_VCO_SAI,
+>  	CLK_LCD,
+> +	CLK_I2S,
 
-With clock-cells = <0>, this should be <&xo_board>
+Sorry, this has just clicked and it applies to most of the other 
+patches, but adding things to this list effectively extends the clock 
+bindings (i.e. the list of valid "other" clocks access with a primary 
+index of 1).
 
-Somehow this passes the dtc compiler.  But it is still incorrect.  Please fix
-all instances of this to use the correct number of cells in the xo_board
-references.
+This list if a list of "arbitrary" constants by which DT periphericals 
+can be linked to specific clocks.
+
+So...
+
+  1)  If a clock is introduced here we should update the clock binding
+      documentations.
+
+  2)  If no peripheral can connect to the clock (because it is internal
+      to the clock gen logic and peripherals must connect to the gated
+      version) it should not be included in this enum.
+
+  3)  I failed to mention this when the four undocumented clocks
+      (LSI, LSE, HSE_RTC and RTC) were added.
+
+  4)  I *should* have added a comment explaining the above to the code.
 
 
-Andy
+>  	END_PRIMARY_CLK
+>  };
+>
+> @@ -967,6 +968,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+>
+>  static const char *sdmux_parents[2] = { "pll48", "sys" };
+>
+> +static const char *i2s_parents[2] = { "plli2s-r", NULL };
+> +
+>  struct stm32f4_clk_data {
+>  	const struct stm32f4_gate_data *gates_data;
+>  	const u64 *gates_map;
+> @@ -1005,7 +1008,7 @@ struct stm32f4_clk_data {
+>
+>  static void __init stm32f4_rcc_init(struct device_node *np)
+>  {
+> -	const char *hse_clk;
+> +	const char *hse_clk, *i2s_in_clk;
+>  	int n;
+>  	const struct of_device_id *match;
+>  	const struct stm32f4_clk_data *data;
+> @@ -1038,6 +1041,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+>  	stm32f4_gate_map = data->gates_map;
+>
+>  	hse_clk = of_clk_get_parent_name(np, 0);
+> +	i2s_in_clk = of_clk_get_parent_name(np, 1);
+
+Again this looks like a change to the DT bindings.
+
+Also does the code work if i2s_in_clk is NULL or as you hoping to get 
+away with a not-backwards compatible change?
+
+
+Daniel.
+
+
+>
+>  	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+>  			16000000, 160000);
+> @@ -1053,6 +1057,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+>  	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll(pllsrc,
+>  			&data->pll_data[2], &stm32f4_clk_lock);
+>
+> +	i2s_parents[1] = i2s_in_clk;
+> +
+> +	clks[CLK_I2S] =	clk_hw_register_mux_table(NULL, "i2s",
+> +				i2s_parents, ARRAY_SIZE(i2s_parents), 0,
+> +				base + STM32F4_RCC_CFGR, 23, 1, 0, NULL,
+> +				&stm32f4_clk_lock);
+>  	sys_parents[1] = hse_clk;
+>  	clk_register_mux_table(
+>  	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
+>
