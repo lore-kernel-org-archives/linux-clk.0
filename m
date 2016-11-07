@@ -1,35 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Nov 2016 16:41:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rnayak@codeaurora.org, stanimir.varbanov@linaro.org
-Subject: Re: [PATCH V2 1/2] clk: qcom: gdsc: Add support for gdscs with HW
- control
-Message-ID: <20161124004156.GG6095@codeaurora.org>
-References: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
- <1479472107-18472-2-git-send-email-sricharan@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479472107-18472-2-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:38986 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750912AbcKGLeh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:34:37 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v6 10/14] arm64: dts: qcom: msm8916: Add ddr support to sdhc1
+Date: Mon,  7 Nov 2016 16:54:33 +0530
+Message-Id: <1478517877-23733-11-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/18, Sricharan R wrote:
-> From: Rajendra Nayak <rnayak@codeaurora.org>
-> 
-> Some GDSCs might support a HW control mode, where in the power
-> domain (gdsc) is brought in and out of low power state (while
-> unsued) without any SW assistance, saving power.
-> Such GDSCs can be configured in a HW control mode when powered on
-> until they are explicitly requested to be powered off by software.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
+This adds mmc-ddr-1_8v support to DT for sdhc1 of msm8916.
 
-Applied to clk-next
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 466ca57..ed15e87 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -514,6 +514,7 @@
+ 			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
+ 				 <&gcc GCC_SDCC1_AHB_CLK>;
+ 			clock-names = "core", "iface";
++			mmc-ddr-1_8v;
+ 			bus-width = <8>;
+ 			non-removable;
+ 			status = "disabled";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
