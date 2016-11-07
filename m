@@ -1,44 +1,103 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 8 Nov 2016 16:01:20 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com, ms.chen@mediatek.com,
-	robert.chou@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
-	James Liao <jamesjj.liao@mediatek.com>
-Subject: Re: [PATCH v15 2/4] reset: mediatek: Add MT2701 reset driver
-Message-ID: <20161109000120.GQ16026@codeaurora.org>
-References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
- <1478245388-1412-3-git-send-email-erin.lo@mediatek.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH 2/6] clk: stm32f4: SDIO & 48Mhz clock management for
+ STM32F469 board
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre
+	<nico@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, <andrea.merello@gmail.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+ <1478523943-23142-3-git-send-email-gabriel.fernandez@st.com>
+ <45a332b6-5170-9ae3-8d5e-c5f827c3edea@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <5954f521-91ea-b415-99e9-8a73abb88bcb@st.com>
+Date: Mon, 7 Nov 2016 15:06:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1478245388-1412-3-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <45a332b6-5170-9ae3-8d5e-c5f827c3edea@linaro.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/04, Erin Lo wrote:
-> From: Shunli Wang <shunli.wang@mediatek.com>
-> 
-> In infrasys and perifsys, there are many reset
-> control bits for kinds of modules. These bits are
-> used as actual reset controllers to be registered
-> into kernel's generic reset controller framework.
-> 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> Tested-by: John Crispin <blogic@openwrt.org>
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
+Hi Daniel,
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 11/07/2016 02:55 PM, Daniel Thompson wrote:
+> On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
+>> from pll-sai-p.
+>>
+>> The SDIO clock could be also derived from 48Mhz or from sys clock.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>  drivers/clk/clk-stm32f4.c | 18 +++++++++++++++++-
+>>  1 file changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+>> index 7641acd..dda15bc 100644
+>> --- a/drivers/clk/clk-stm32f4.c
+>> +++ b/drivers/clk/clk-stm32f4.c
+>> @@ -199,7 +199,7 @@ struct stm32f4_gate_data {
+>>      { STM32F4_RCC_APB2ENR,  8,    "adc1",        "apb2_div" },
+>>      { STM32F4_RCC_APB2ENR,  9,    "adc2",        "apb2_div" },
+>>      { STM32F4_RCC_APB2ENR, 10,    "adc3",        "apb2_div" },
+>> -    { STM32F4_RCC_APB2ENR, 11,    "sdio",        "pll48" },
+>> +    { STM32F4_RCC_APB2ENR, 11,    "sdio",        "sdmux" },
+>
+> I'm confused. How do the "sdmux" clock come to exist on STM32F429?
+>
+"sdmux" only exist on STM32F469 (struct stm32f4_gate_data stm32f469_gates[])
+
+BR
+
+Gabriel
+>
+>>      { STM32F4_RCC_APB2ENR, 12, "spi1",        "apb2_div" },
+>>      { STM32F4_RCC_APB2ENR, 13,    "spi4",        "apb2_div" },
+>>      { STM32F4_RCC_APB2ENR, 14,    "syscfg",    "apb2_div" },
+>> @@ -940,6 +940,10 @@ static struct clk_hw *stm32_register_cclk(struct 
+>> device *dev, const char *name,
+>>      "no-clock", "lse", "lsi", "hse-rtc"
+>>  };
+>>
+>> +static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
+>> +
+>> +static const char *sdmux_parents[2] = { "pll48", "sys" };
+>> +
+>>  struct stm32f4_clk_data {
+>>      const struct stm32f4_gate_data *gates_data;
+>>      const u64 *gates_map;
+>> @@ -1109,6 +1113,18 @@ static void __init stm32f4_rcc_init(struct 
+>> device_node *np)
+>>          goto fail;
+>>      }
+>>
+>> +    if (of_device_is_compatible(np, "st,stm32f469-rcc")) {
+>> +        clk_hw_register_mux_table(NULL, "pll48",
+>> +                pll48_parents, ARRAY_SIZE(pll48_parents), 0,
+>> +                base + STM32F4_RCC_DCKCFGR, 27, 1, 0, NULL,
+>> +                &stm32f4_clk_lock);
+>> +
+>> +        clk_hw_register_mux_table(NULL, "sdmux",
+>> +                sdmux_parents, ARRAY_SIZE(sdmux_parents), 0,
+>> +                base + STM32F4_RCC_DCKCFGR, 28, 1, 0, NULL,
+>> +                &stm32f4_clk_lock);
+>> +    }
+>> +
+>>      of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+>>      return;
+>>  fail:
+>>
+>
