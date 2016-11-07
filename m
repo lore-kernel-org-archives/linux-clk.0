@@ -1,62 +1,39 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	varada@codeaurora.org,
-	pradeepb@codeaurora.org,
-	snlakshm@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 5/6] clk: qcom: ipq4019: Add all the frequencies for apss cpu
-Date: Fri, 25 Nov 2016 21:11:32 +0530
-Message-Id: <1480088493-4590-6-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
-References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding
+ documentation
+To: Pankaj Dubey <pankaj.dubey@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
+Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com,
+ myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <a390e669-eb08-9844-809e-2075088dc4c2@osg.samsung.com>
+Date: Mon, 7 Nov 2016 11:47:03 -0300
+MIME-Version: 1.0
+In-Reply-To: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The APSS CPU clock does not contain all the frequencies in its
-frequency table so this patch adds the same.
+Hello Pankaj,
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq4019.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+On 11/07/2016 07:09 AM, Pankaj Dubey wrote:
+> Add Device Tree binding documentation for the clocks
+> outputs in the Maxim-8997 Power Management IC.
+> 
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: devicetree@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 320750c..eeafca2 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -569,10 +569,20 @@ struct clk_fepll {
- };
- 
- static const struct freq_tbl ftbl_gcc_apps_clk[] = {
--	F(48000000, P_XO,	   1, 0, 0),
-+	F(48000000,  P_XO,         1, 0, 0),
- 	F(200000000, P_FEPLL200,   1, 0, 0),
-+	F(384000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(413000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(448000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(488000000, P_DDRPLLAPSS, 1, 0, 0),
- 	F(500000000, P_FEPLL500,   1, 0, 0),
--	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(512000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(537000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(565000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(597000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(632000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(672000000, P_DDRPLLAPSS, 1, 0, 0),
-+	F(716000000, P_DDRPLLAPSS, 1, 0, 0),
- 	{ }
- };
- 
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
