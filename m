@@ -1,36 +1,95 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 17 Nov 2016 15:07:01 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms@verge.net.au>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
-Message-ID: <20161117230701.GR25626@codeaurora.org>
-References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33756 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbcKGL1s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:27:48 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v6 12/14] mmc: sdhci-msm: Save the calculated tuning phase
+Date: Mon,  7 Nov 2016 16:54:35 +0530
+Message-Id: <1478517877-23733-13-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/07, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
-> 
->   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
-> 
-> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
+Save the tuning phase once the tuning is performed.
+This phase value will be used while calibrating DLL
+for HS400 mode.
 
-Ok. Pulled into clk-next. I'm a little wary here as I haven't
-seen any indication from arm-soc maintainers (not Simon) that
-they'll take this cross tree merge. I guess we'll see how it
-goes.
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 2561c41..6431bb8 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -74,6 +74,7 @@
+ 
+ #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+ 
++#define INVALID_TUNING_PHASE	-1
+ #define TCXO_FREQ		19200000
+ #define SDHCI_MSM_MIN_CLOCK	400000
+ #define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
+@@ -95,6 +96,7 @@ struct sdhci_msm_host {
+ 	bool use_14lpp_dll_reset;
+ 	bool tuning_done;
+ 	bool calibration_done;
++	u8 saved_tuning_phase;
+ };
+ 
+ /* Platform specific tuning */
+@@ -134,6 +136,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
+ 	u32 config;
+ 	struct mmc_host *mmc = host->mmc;
+ 
++	if (phase > 0xf)
++		return -EINVAL;
++
+ 	spin_lock_irqsave(&host->lock, flags);
+ 
+ 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
+@@ -431,6 +436,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	int rc;
+ 	struct mmc_host *mmc = host->mmc;
+ 	struct mmc_ios ios = host->mmc->ios;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 
+ 	/*
+ 	 * Tuning is required for SDR104, HS200 and HS400 cards and
+@@ -455,6 +462,7 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 		if (rc)
+ 			return rc;
+ 
++		msm_host->saved_tuning_phase = phase;
+ 		rc = mmc_send_tuning(mmc, opcode, NULL);
+ 		if (!rc) {
+ 			/* Tuning is successful at this tuning point */
+@@ -826,6 +834,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 
+ 	sdhci_get_of_property(pdev);
+ 
++	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
++
+ 	/* Setup SDCC bus voter clock. */
+ 	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
+ 	if (!IS_ERR(msm_host->bus_clk)) {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
