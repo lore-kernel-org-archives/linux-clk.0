@@ -1,87 +1,60 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 5/6] ARM: tegra: Add Tegra20 GMI support
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
- <1477576872-2665-6-git-send-email-mirza.krak@gmail.com>
-CC: <gnurou@gmail.com>, <linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d8ab8a32-8019-45e6-59b1-8914937e1705@nvidia.com>
-Date: Thu, 3 Nov 2016 10:29:14 +0000
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1477576872-2665-6-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdVcCwbXRCVy50k=tm=PKi3F3nnyq8UMjdq71k7Yd1tBtA@mail.gmail.com>
+References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com> <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
+ <CAMuHMdVcCwbXRCVy50k=tm=PKi3F3nnyq8UMjdq71k7Yd1tBtA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 19:41:19 +0100
+Message-ID: <CAMuHMdWKK0Zb8K_fs2G+CGQeGsb3MkAURHAhXb6QWvDO2PYTCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 27/10/16 15:01, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+On Mon, Nov 7, 2016 at 9:34 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Sat, Nov 5, 2016 at 11:31 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+>> Add macros usable by  the device tree sources to reference the R8A7745 CPG
+>> clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+>> of the RZ/G Series User's Manual.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> ---
+>> Changes in version 2:
+>> - added Geert's tag.
+>>
+>>  include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
+>>  1 file changed, 44 insertions(+)
+>>
+>> Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+>> ===================================================================
+>> --- /dev/null
+>> +++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
 >
-> Add a device node for the GMI controller found on Tegra20.
+>> +#define R8A7745_CLK_ACP                26
 >
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> ---
->
-> Changes in v2:
-> - added address-cells, size-cells and ranges properties
->
-> Changes in v3:
-> - fixed range address which is not the same as Tegra30.
->
->  arch/arm/boot/dts/tegra20.dtsi | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index 2207c08..b22cddb 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -1,4 +1,4 @@
-> -#include <dt-bindings/clock/tegra20-car.h>
-> +include <dt-bindings/clock/tegra20-car.h>
+> This clock is called CPEX instead of ACP in rev. 1.00 of the RZ/G Series User's
+> Manual: Hardware.
 
-After fixing up this, can you also ...
+Applied with s/ACP/CPEX/, and included in second clk-renesas-for-v4.10
+pull request.
 
->  #include <dt-bindings/gpio/tegra-gpio.h>
->  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> @@ -376,6 +376,20 @@
->  		status = "disabled";
->  	};
->
-> +
+Gr{oetje,eeting}s,
 
-Drop this additional line?
+                        Geert
 
-> +	gmi@70009000 {
-> +		compatible = "nvidia,tegra20-gmi";
-> +		reg = <0x70009000 0x1000>;
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0xd0000000 0xfffffff>;
-> +		clocks = <&tegra_car TEGRA20_CLK_NOR>;
-> +		clock-names = "gmi";
-> +		resets = < &tegra_car 42>;
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Get rid of this additional space?
-
-> +		reset-names = "gmi";
-> +		status = "disabled";
-> +	};
-> +
-
-Otherwise ...
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
