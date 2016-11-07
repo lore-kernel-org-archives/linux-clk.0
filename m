@@ -1,39 +1,80 @@
-Return-Path: <icenowy@aosc.xyz>
-Message-Id: <20161107173135.Ux5KXCv5@smtp1h.mail.yandex.net>
-Date: Mon, 07 Nov 2016 17:36:03 +0800
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: Fix CPUX clock for the A23/A33
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel
- <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Jorik Jonker
- <jorik@kippendief.biz>, Stephen Boyd <sboyd@codeaurora.org>, Quentin Schulz
- <quentin.schulz@free-electrons.com>, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH 5/6] clk: stm32f4: Add SAI clocks
+Date: Mon, 7 Nov 2016 14:05:42 +0100
+Message-ID: <1478523943-23142-6-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-CjIwMTblubQxMeaciDfml6UgMTU6NTTkuo4gTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBm
-cmVlLWVsZWN0cm9ucy5jb20+5YaZ6YGT77yaCj4KPiBIaSwgCj4KPiBPbiBNb24sIE5vdiAwNywg
-MjAxNiBhdCAwMToyOTozMUFNICswODAwLCBJY2Vub3d5IFpoZW5nIHdyb3RlOiAKPiA+IFRoZSBD
-UFVYIGNsb2NrIG9mIEEyMy8zMyBDQ1UgZHJpdmVyIGZvcmdvdCB0byBhZGQgQ0xLX1NFVF9SQVRF
-X1BBUkVOVCAKPiA+IGZsYWcsIHdoaWNoIG1ha2VzIGl0cyBmcmVxdWVuY3kgZmFpbCB0byBjaGFu
-Z2UgKGFzIHBhcnQgb2YgY3B1IHRoZXJtYWwgCj4gPiB0aHJvdHRsZSkuIAo+ID4gCj4gPiBGaXgg
-aXQgYnkgYWRkIHRoaXMgZmxhZy4gCj4KPiBZb3VyIGNvbW1pdCB0aXRsZSBhbmQgbG9nIGNvdWxk
-IGJlIGJldHRlci4gCj4KPiBUaGUgdGl0bGUgdXN1YWxseSBpcyBtb3JlIGFib3V0IHdoYXQgaXMg
-ZG9uZSBpbiB0aGUgcGF0Y2ggaXRzZWxmLCAKPiBzb21ldGhpbmcgbGlrZSAiY2xrOiBzdW54aS1u
-ZzogQWxsb3cgdG8gY2hhbmdlIHRoZSBwYXJlbnQgcmF0ZSBmb3IgdGhlIAo+IENQVSBjbG9ja3Mi
-IGluIHRoaXMgY2FzZS4gCgpJJ20gYSBjbG9jayBuZXdiaWUgYW5kIGhhdmUganVzdCBzdGFydGVk
-IHRvIGV4cGxvcmUgdGhlIHN1YnN5c3RlbS4uLiBTb3JyeSBidXQgSSB3aWxsIGRvIGJldHRlciBp
-biB2MiA6LSkKCj4KPiBBbmQgeW91ciBjb21taXQgbG9nIHNob3VsZCBleHBsYWluIHdoeSBpdCBp
-cyBhbiBpc3N1ZS4gWW91cnMgaXMgZXZlbiAKPiB3cm9uZyBoZXJlLCB3ZSBjb3VsZCBkZWZpbml0
-ZWx5IGNoYW5nZSB0aGUgcmF0ZSBvZiB0aGVzZSBjbG9ja3MgCj4gYWxyZWFkeS4gVGhlIG9ubHkg
-dGhpbmcgdGhhdCB3YXMgbm90IGFsbG93ZWQgd2FzIHRvIGNoYW5nZSB0aGUgcmF0ZSBvZiAKPiBp
-dHMgcGFyZW50cywgd2hpY2ggaXMgd2hhdCB0aGlzIHBhdGNoIGZpeGVzLiAKPgo+ID4gU2lnbmVk
-LW9mZi1ieTogSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4gCj4gPiAtLS0gCj4gPiBQ
-YXRjaCA0LjktcmMgdG9vLiAKPgo+IEkgZG9uJ3Qgc2VlIHdoeSBpdCBzaG91bGQgYmUgcGFydCBv
-ZiA0LjkuIE5vIG9uZSB1c2VzIHRoYXQgY29kZSBpbiA0LjkuIAoKSXQgY2FuIGJlIHRyaWdnZXJl
-ZCBieSBhIG1vZGlmaWVkIGR0IGluIDQuOSwgYnkgYWRkIG9wZXJhdGluZyBwb2ludHMuCgo+Cj4g
-VGhhbmtzISAKPiBNYXhpbWUgCj4KPiAtLSAKPiBNYXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9u
-cyAKPiBFbWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVyaW5nIAo+IGh0dHA6Ly9mcmVl
-LWVsZWN0cm9ucy5jb20gCg==
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+
+This patch introduces SAI clocks for stm32f4 socs.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index b7cb359..c305659 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -217,6 +217,7 @@ enum {
+ 	PLL_VCO_I2S, PLL_VCO_SAI,
+ 	CLK_LCD,
+ 	CLK_I2S,
++	CLK_SAI1, CLK_SAI2,
+ 	END_PRIMARY_CLK
+ };
+ 
+@@ -970,6 +971,9 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 
+ static const char *i2s_parents[2] = { "plli2s-r", NULL };
+ 
++static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
++	"no-clock" };
++
+ struct stm32f4_clk_data {
+ 	const struct stm32f4_gate_data *gates_data;
+ 	const u64 *gates_map;
+@@ -1063,6 +1067,19 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 				i2s_parents, ARRAY_SIZE(i2s_parents), 0,
+ 				base + STM32F4_RCC_CFGR, 23, 1, 0, NULL,
+ 				&stm32f4_clk_lock);
++
++	sai_parents[2] = i2s_in_clk;
++
++	clks[CLK_SAI1] = clk_hw_register_mux_table(NULL, "sai1-clk",
++			sai_parents, ARRAY_SIZE(sai_parents), 0,
++			base + STM32F4_RCC_DCKCFGR, 20, 1, 0, NULL,
++			&stm32f4_clk_lock);
++
++	clks[CLK_SAI2] = clk_hw_register_mux_table(NULL, "sai2-clk",
++			sai_parents, ARRAY_SIZE(sai_parents), 0,
++			base + STM32F4_RCC_DCKCFGR, 22, 1, 0, NULL,
++			&stm32f4_clk_lock);
++
+ 	sys_parents[1] = hse_clk;
+ 	clk_register_mux_table(
+ 	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
+-- 
+1.9.1
