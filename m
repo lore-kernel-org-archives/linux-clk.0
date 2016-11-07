@@ -1,107 +1,62 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Mon, 28 Nov 2016 10:10:36 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-	Linux-ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3] clkdev: add devm_of_clk_get()
-Message-ID: <20161128101036.GS14217@n2100.armlinux.org.uk>
-References: <87vav89chw.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87vav89chw.wl%kuninori.morimoto.gx@renesas.com>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
+References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com> <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 11:09:22 +0100
+Message-ID: <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] clk: renesas: cpg-mssr: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 28, 2016 at 09:32:51AM +0000, Kuninori Morimoto wrote:
-> 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> Current Linux has of_clk_get(), but doesn't have devm_of_clk_get().
-> This patch adds it.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Hi Sergei,
+
+On Wed, Nov 2, 2016 at 10:59 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
 > ---
-> v2 -> v3
-> 
->  - implement in clk-devres.c, and reused existing devm_clk_release()
-> 
->  drivers/clk/clk-devres.c | 21 +++++++++++++++++++++
->  include/linux/clk.h      |  7 +++++++
->  2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 8f57154..2449b25 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -53,3 +53,24 @@ void devm_clk_put(struct device *dev, struct clk *clk)
->  	WARN_ON(ret);
->  }
->  EXPORT_SYMBOL(devm_clk_put);
-> +
-> +struct clk *devm_of_clk_get(struct device *dev,
-> +			    struct device_node *np, int index)
-> +{
-> +	struct clk **ptr, *clk;
-> +
-> +	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	clk = of_clk_get(np, index);
-> +	if (!IS_ERR(clk)) {
-> +		*ptr = clk;
-> +		devres_add(dev, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-> +
-> +	return clk;
-> +}
-> +EXPORT_SYMBOL(devm_of_clk_get);
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 123c027..1b713db 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -506,6 +506,8 @@ static inline void clk_disable_unprepare(struct clk *clk)
->  
->  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
->  struct clk *of_clk_get(struct device_node *np, int index);
-> +struct clk *devm_of_clk_get(struct device *dev,
-> +			    struct device_node *np, int index);
+> Changes in version 5:
+> - describe the Z clock as PLL0/VCO divided by 2.
 
-No need for this to be within the ifdef.
+Why did you do that?
 
->  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
->  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
->  #else
-> @@ -513,6 +515,11 @@ static inline struct clk *of_clk_get(struct device_node *np, int index)
->  {
->  	return ERR_PTR(-ENOENT);
->  }
-> +static inline struct clk *devm_of_clk_get(struct device *dev,
-> +			    struct device_node *np, int index)
-> +{
-> +	return ERR_PTR(-ENOENT);
-> +}
+> --- /dev/null
+> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
+> @@ -0,0 +1,270 @@
 
-and so no need for this either.  In any case, this will cause !OF ||
-!COMMON_CLK builds to fail because this definition will conflict with
-that in clk-devres.c
+> +       DEF_FIXED("z",     R8A7743_CLK_Z,       CLK_PLL0,           2, 1),
 
->  static inline struct clk *of_clk_get_by_name(struct device_node *np,
->  					     const char *name)
->  {
-> -- 
-> 1.9.1
-> 
+FTR, previous version had
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+       DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,     CLK_PLL0),
+
+which made the "z" clock configurable.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
