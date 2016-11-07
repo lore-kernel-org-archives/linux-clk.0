@@ -1,49 +1,81 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:31975 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751081AbcKNBYh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Nov 2016 20:24:37 -0500
-Subject: Re: [PATCH 2/2] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1477721618-10809-1-git-send-email-xuejiancheng@hisilicon.com>
- <1477721618-10809-3-git-send-email-xuejiancheng@hisilicon.com>
- <20161112000415.GE5177@codeaurora.org>
-CC: <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <bin.chen@linaro.org>, <elder@linaro.org>,
-        <hermit.wangheming@hisilicon.com>, <yanhaifeng@hisilicon.com>,
-        <wenpan@hisilicon.com>, <howell.yang@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <0c3b49a4-f58c-253a-fd87-ab52b0b26010@hisilicon.com>
-Date: Mon, 14 Nov 2016 09:24:17 +0800
-MIME-Version: 1.0
-In-Reply-To: <20161112000415.GE5177@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Received: from smtp.codeaurora.org ([198.145.29.96]:60962 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbcKGL0I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:26:08 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v6 06/14] mmc: sdhci-msm: Add get_min_clock() and get_max_clock() callback
+Date: Mon,  7 Nov 2016 16:54:29 +0530
+Message-Id: <1478517877-23733-7-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+This add get_min_clock() and get_max_clock() callback
+for sdhci-msm. sdhci-msm min/max clocks may be different
+hence implement these callbacks.
 
-On 2016/11/12 8:04, Stephen Boyd wrote:
-> On 10/29, Jiancheng Xue wrote:
-> 
-> Should be a From: Pan Wen here?
-> 
->> Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
->> Generator) module generates clock and reset signals used
->> by other module blocks on SoC.
->>
->> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
-> 
-> And you should have signed it off? Care to resend or state that
-> this is incorrectly attributed to you instead of Pan Wen?
-> 
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ drivers/mmc/host/sdhci-msm.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Pan Wen is the main author of this patch. I just made some small modification
-with agreement from him. Do I need to resend this patch if it's better to add my
-signed-off?
-
-Thanks,
-Jiancheng
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 32b0b79..66ca444 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -68,6 +68,7 @@
+ #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+ 
+ #define TCXO_FREQ		19200000
++#define SDHCI_MSM_MIN_CLOCK	400000
+ 
+ #define CDR_SELEXT_SHIFT	20
+ #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
+@@ -559,6 +560,19 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++
++	return clk_round_rate(msm_host->clk, ULONG_MAX);
++}
++
++static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
++{
++	return SDHCI_MSM_MIN_CLOCK;
++}
++
+ static const struct of_device_id sdhci_msm_dt_match[] = {
+ 	{ .compatible = "qcom,sdhci-msm-v4" },
+ 	{},
+@@ -570,6 +584,8 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
+ 	.platform_execute_tuning = sdhci_msm_execute_tuning,
+ 	.reset = sdhci_reset,
+ 	.set_clock = sdhci_set_clock,
++	.get_min_clock = sdhci_msm_get_min_clock,
++	.get_max_clock = sdhci_msm_get_max_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
+ 	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
+ 	.voltage_switch = sdhci_msm_voltage_switch,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
 
