@@ -1,49 +1,65 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Nov 2016 12:03:59 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, bin.chen@linaro.org, elder@linaro.org,
-	hermit.wangheming@hisilicon.com, yanhaifeng@hisilicon.com,
-	wenpan@hisilicon.com, howell.yang@hisilicon.com
-Subject: Re: [PATCH 2/2] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
-Message-ID: <20161114200359.GM5177@codeaurora.org>
-References: <1477721618-10809-1-git-send-email-xuejiancheng@hisilicon.com>
- <1477721618-10809-3-git-send-email-xuejiancheng@hisilicon.com>
- <20161112000415.GE5177@codeaurora.org>
- <0c3b49a4-f58c-253a-fd87-ab52b0b26010@hisilicon.com>
+Return-Path: <dubepankaj1980@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0c3b49a4-f58c-253a-fd87-ab52b0b26010@hisilicon.com>
+Sender: dubepankaj1980@gmail.com
+In-Reply-To: <63750c2f-35cb-91ab-276b-c788f51081cb@osg.samsung.com>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com> <63750c2f-35cb-91ab-276b-c788f51081cb@osg.samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Date: Mon, 7 Nov 2016 22:50:58 +0530
+Message-ID: <CAGcde9EkEsvJ2kBpNvd+bEZj0nbpgmFu1zBe+RQz+Kij9WxHMA@mail.gmail.com>
+Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+	"thomas.ab@samsung.com" <thomas.ab@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, myungjoo.ham@samsung.com, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/14, Jiancheng Xue wrote:
-> Hi Stephen,
-> 
-> On 2016/11/12 8:04, Stephen Boyd wrote:
-> > On 10/29, Jiancheng Xue wrote:
-> > 
-> > Should be a From: Pan Wen here?
-> > 
-> >> Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
-> >> Generator) module generates clock and reset signals used
-> >> by other module blocks on SoC.
-> >>
-> >> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
-> > 
-> > And you should have signed it off? Care to resend or state that
-> > this is incorrectly attributed to you instead of Pan Wen?
-> > 
-> 
-> Pan Wen is the main author of this patch. I just made some small modification
-> with agreement from him. Do I need to resend this patch if it's better to add my
-> signed-off?
-> 
+Hi Javier,
 
-Sure I'll apply the resent one. But you should also make sure to
-retain Pan Wen's authorship. I'll go do that when applying it.
+On 7 November 2016 at 20:31, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> Hello Pankaj,
+>
+> On 11/07/2016 07:09 AM, Pankaj Dubey wrote:
+>> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
+>> accurate low frequency clock for MAX8997 internal circuit as well as
+>> external circuit. This patch adds support for these two clocks.
+>>
+>> CC: Michael Turquette <mturquette@baylibre.com>
+>> CC: Rob Herring <robh+dt@kernel.org>
+>> CC: devicetree@vger.kernel.org
+>> CC: linux-clk@vger.kernel.org
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>
+> What kernel version are you basing this on? The Maxim common clock code
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+This patch series, I have prepared on Krzysztof's for-next which is 4.9-rc1,
+
+> is going away for v4.9 and instead the clk-max77686 driver supports both
+> 77686 and 77802 clocks. See commit 8ad313fe4e00 ("clk: max77686: Combine
+> Maxim max77686 and max77802 driver").
+>
+> Since the 8997 clock IP looks very similar to 77802 AFAICT, you should
+> also extend the clk-max77686 driver to have 8997 support.
+>
+
+I was not aware of this change. I will check this and if I can
+reuse/extend max77686 for 8997 I will do it.
+
+Thanks,
+Pankaj Dubey
+
+> Best regards,
+> --
+> Javier Martinez Canillas
+> Open Source Group
+> Samsung Research America
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
