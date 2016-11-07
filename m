@@ -1,53 +1,45 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
+To: Pankaj Dubey <pankaj.dubey@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com,
+ myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Message-ID: <63750c2f-35cb-91ab-276b-c788f51081cb@osg.samsung.com>
+Date: Mon, 7 Nov 2016 12:01:29 -0300
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20161110233556.GN16026@codeaurora.org>
-References: <1478532868-5508-1-git-send-email-geert+renesas@glider.be> <20161110233556.GN16026@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Nov 2016 09:56:52 +0100
-Message-ID: <CAMuHMdU96gQGO7wDAThyFHRwjR0o-4sChrrmTBRNh1F1SAR=yQ@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take one)
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hello Pankaj,
 
-On Fri, Nov 11, 2016 at 12:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 11/07, Geert Uytterhoeven wrote:
->> clk: renesas: Updates for v4.10 (take one)
->>
->>   - SYS-DMAC, (H)SCIF, I2C, DRIF, and graphics related clocks for R-Car
->>     M3-W,
->>   - Minor fixes and cleanups.
->>
->> Thanks for pulling!
->> ----------------------------------------------------------------
->> Geert Uytterhoeven (4):
->>       clk: renesas: cpg-mssr: Always use readl()/writel()
->>       clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
->>       clk: renesas: cpg-mssr: Fix inverted debug check
->
-> Hm.. I already applied this one to clk-next. If you're going to
-> apply patches can you please indicate if they've been picked up
-> and/or not send them To: Mike and I, please?
+On 11/07/2016 07:09 AM, Pankaj Dubey wrote:
+> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
+> accurate low frequency clock for MAX8997 internal circuit as well as
+> external circuit. This patch adds support for these two clocks.
+> 
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: devicetree@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
 
-Sorry, I'll be more clear in the future.
+What kernel version are you basing this on? The Maxim common clock code
+is going away for v4.9 and instead the clk-max77686 driver supports both
+77686 and 77802 clocks. See commit 8ad313fe4e00 ("clk: max77686: Combine
+Maxim max77686 and max77802 driver").
 
-I believe this is not a blocker for pulling, is it?
+Since the 8997 clock IP looks very similar to 77802 AFAICT, you should
+also extend the clk-max77686 driver to have 8997 support.
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
