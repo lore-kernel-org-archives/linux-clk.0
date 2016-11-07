@@ -1,63 +1,64 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH] clk: sunxi-ng: enable so-said LDOs for A33 SoC's pll-mipi clock
-Date: Fri, 18 Nov 2016 00:49:54 +0800
-Message-Id: <20161117164954.62658-1-icenowy@aosc.xyz>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v5 2/2] clk: renesas: cpg-mssr: add R8A7743 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
+ <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
+ <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ Simon Horman <horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <d6c20d8f-3406-bba7-62f9-2f409f8da44a@cogentembedded.com>
+Date: Mon, 7 Nov 2016 13:35:09 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-In the user manual of A33 SoC, the bit 22 and 23 of pll-mipi control
-register is called "LDO{1,2}_EN", and according to the BSP source code
-from Allwinner [1], the LDOs are enabled during the clock's enabling
-process.
+Hello.
 
-The clock failed to generate output if the two LDOs are not enabled.
+On 11/7/2016 1:09 PM, Geert Uytterhoeven wrote:
 
-Add the two bits to the clock's gate bits, so that the LDOs are enabled
-when the PLL is enabled.
+>> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+>> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+>> (and RZ/G) code.
+>>
+>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+>> <geert+renesas@glider.be>.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> ---
+>> Changes in version 5:
+>> - describe the Z clock as PLL0/VCO divided by 2.
+>
+> Why did you do that?
 
-[1] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/drivers/clk/sunxi/clk-sun8iw5.c#L429
+    I did it because I removed the divisor-by-2 from PLL0.
 
-Fixes: d05c748bd730 ("clk: sunxi-ng: Add A33 CCU support")
+>> --- /dev/null
+>> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
+>> @@ -0,0 +1,270 @@
+>
+>> +       DEF_FIXED("z",     R8A7743_CLK_Z,       CLK_PLL0,           2, 1),
+>
+> FTR, previous version had
+>
+>        DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,     CLK_PLL0),
+>
+> which made the "z" clock configurable.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Dear Chen-Yu:
-As you said, the two bits are also present in the CCU of A23 and A31.
-Could you please check whether the PLL works on the two SoCs?
-I remembered you mentioned you failed to make TCON enabled on A23.
-On A31, you may hack the parent of tcon-ch0 to force the tcon clock to
-use pll-mipi as parent, in order to check whether the pll works.
+     I see your point -- I should have included the divisor-by-2 into the 
+common R-Car gen2 driver code instead...
 
-However, I didn't found the code that enables the LDOs in the BSP A23/31
-sources, so you must test them to ensure whether the code is needed for
-these SoCs.
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
-Regards,
-Icenowy
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 96b40ca..9bd1f78 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -131,7 +131,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
- 				    8, 4,		/* N */
- 				    4, 2,		/* K */
- 				    0, 4,		/* M */
--				    BIT(31),		/* gate */
-+				    BIT(31) | BIT(23) | BIT(22), /* gate */
- 				    BIT(28),		/* lock */
- 				    CLK_SET_RATE_UNGATE);
- 
--- 
-2.10.1
+MBR, Sergei
