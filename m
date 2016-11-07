@@ -1,67 +1,95 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V4 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
-Date: Mon,  7 Nov 2016 09:30:01 +0100
-Message-Id: <1478507405-13204-3-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <pankaj.dubey@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
+ thomas.ab@samsung.com, myungjoo.ham@samsung.com,
+ Pankaj Dubey <pankaj.dubey@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding documentation
+Date: Mon, 07 Nov 2016 15:39:32 +0530
+Message-id: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
+In-reply-to: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+Add Device Tree binding documentation for the clocks
+outputs in the Maxim-8997 Power Management IC.
 
-Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
-is max rate.
-
-The maximum rate value of 127 MHz is pulled from the downstream L4T
-kernel.
-
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>
+CC: devicetree@vger.kernel.org
+CC: linux-clk@vger.kernel.org
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
+ .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
+ .../bindings/regulator/max8997-regulator.txt       |  3 ++
+ 2 files changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
 
-Changes in v2:
-- no changes
-
-Changes in v3:
-- Added comment in commit message where I got the maximum rates from.
-
-Changes in V4:
-- no changes
-
- drivers/clk/tegra/clk-tegra30.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 8e2db5e..67f1677 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1252,6 +1252,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
-+	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 127000000, 0 },
- 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
---
-2.1.4
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+new file mode 100644
+index 0000000..d2e2a74
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+@@ -0,0 +1,44 @@
++Binding for Maxim MAX8997 32k clock generator block
++
++This is a part of device tree bindings of MAX8997 multi-function device.
++More information can be found in bindings/regulator/max8997-regulator.txt file.
++
++The MAX8997 contains two 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C.
++
++Following properties should be presend in main device node of the MFD chip.
++
++Required properties:
++
++- #clock-cells: from common clock binding; shall be set to 1.
++
++Optional properties:
++- clock-output-names: From common clock binding.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. Following indices are allowed:
++    - 0: 32khz_ap clock,
++    - 1: 32khz_cp clock,
++
++Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
++header and can be used in device tree sources.
++
++Example: Node of the MFD chip
++
++	max8997: max8997_pmic@66 {
++		compatible = "maxim,max8997-pmic";
++		reg = <0x66>;
++		interrupt-parent = <&gpx0>;
++		interrupts = <4 0>, <3 0>;
++		#clock-cells = <1>;
++		/* ... */
++	};
++
++Example: Clock consumer node
++
++	foo@0 {
++		compatible = "bar,foo";
++		/* ... */
++		clocks = <&max8997 MAX8997_CLK_AP>;
++		clock-names = "my-clock";
++	};
+diff --git a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
+index 5c186a7..af1f9c0 100644
+--- a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
+@@ -6,6 +6,9 @@ interfaced to the host controller using a i2c interface. Each sub-block is
+ addressed by the host system using different i2c slave address. This document
+ describes the bindings for 'pmic' sub-block of max8997.
+ 
++Binding for the built-in 32k clock generator block is defined separately
++in bindings/clk/maxim,max8997.txt file
++
+ Required properties:
+ - compatible: Should be "maxim,max8997-pmic".
+ - reg: Specifies the i2c slave address of the pmic block. It should be 0x66.
+-- 
+2.7.4
