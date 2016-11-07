@@ -1,88 +1,129 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-Subject: Re: [PATCH 3/6] clk: stm32f4: Add post divisor for I2S & SAI PLLs and
- Add lcd-tft clock
-To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, andrea.merello@gmail.com
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
- <1478523943-23142-4-git-send-email-gabriel.fernandez@st.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, kernel@stlinux.com,
- ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <860ce6a2-066f-2b44-3cf5-2d73720ed588@linaro.org>
-Date: Mon, 7 Nov 2016 13:58:40 +0000
-MIME-Version: 1.0
-In-Reply-To: <1478523943-23142-4-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.10 (take two)
+Date: Mon,  7 Nov 2016 16:35:04 +0100
+Message-Id: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> This patch adds post dividers of I2S & SAI PLLs.
-> These dividers are managed by a dedicated register (RCC_DCKCFGR).
-> The PLL should be off before a set rate.
-> This patch also introduces the lcd-tft clock.
->
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  drivers/clk/clk-stm32f4.c | 27 +++++++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index dda15bc..5fa5d51 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -215,6 +215,7 @@ struct stm32f4_gate_data {
->  enum {
->  	SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC,
->  	PLL_VCO_I2S, PLL_VCO_SAI,
-> +	CLK_LCD,
->  	END_PRIMARY_CLK
->  };
->
-> @@ -599,6 +600,9 @@ static struct clk_hw *clk_register_pll_div(const char *name,
->  static const struct clk_div_table pll_divp_table[] = {
->  	{ 0, 2 }, { 1, 4 }, { 2, 6 }, { 3, 8 },
->  };
-> +static const struct clk_div_table pll_lcd_div_table[] = {
-> +	{ 0, 2 }, { 1, 4 }, { 2, 8 }, { 3, 16 },
-> +};
->
->  /*
->   * Decode current PLL state and (statically) model the state we inherit from
-> @@ -659,16 +663,35 @@ static struct clk_hw *stm32f4_rcc_register_pll(const char *pllsrc,
->  		clk_register_pll_div(data->p_name, data->vco_name, 0, reg,
->  				16, 2, 0, pll_divp_table, pll_hw, lock);
->
-> -	if (data->q_name)
-> +	if (data->q_name) {
->  		clk_register_pll_div(data->q_name, data->vco_name, 0, reg,
->  				24, 4, CLK_DIVIDER_ONE_BASED, NULL,
->  				pll_hw, lock);
->
-> -	if (data->r_name)
-> +		if (data->pll_num == PLL_I2S)
-> +			clk_register_pll_div("plli2s-q-div", data->q_name,
-> +				0, base + STM32F4_RCC_DCKCFGR,
-> +				0, 5, 0, NULL, pll_hw, &stm32f4_clk_lock);
-> +
-> +		if (data->pll_num == PLL_SAI)
-> +			clk_register_pll_div("pllsai-q-div", data->q_name,
-> +				0, base + STM32F4_RCC_DCKCFGR,
-> +				8, 5, 0, NULL, pll_hw, &stm32f4_clk_lock);
-> +	}
+	Hi Mike, Stephen,
 
-Shouldn't this be in the config structures?
+The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
 
-It seems very odd to me to allow the config structures to control 
-whether we take the branch or not and then add these hard coded hacks.
+  clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
 
+are available in the git repository at:
 
-Daniel.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
+
+for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
+
+  Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10 (2016-11-07 15:15:33 +0100)
+
+----------------------------------------------------------------
+
+clk: renesas: Updates for v4.10 (take two)
+
+  - Add R-Car RST driver for obtaining mode pin state, and move the
+    related functionality from platform code to DT,
+  - Add r8a7743 and r8a7745 CPG Core Clock Definitions.
+
+After this:
+  - Simon can pull from
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git rcar-rst
+
+    and queue up more cleanups in platform code, which depend on the
+    clock drivers using the RST driver,
+
+  - Simon can pull from
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git zg-clock-defs
+
+    and queue up the RZ/G1M and RZ/G1E DTS files, which depend on the
+    CPG Core Clock Definitions.
+
+  - I can queue up the RZ/G1M and RZ/G1E clock drivers, which depend on
+    both.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (25):
+      reset: Add renesas,rst DT bindings
+      soc: renesas: Add R-Car RST driver
+      ARM: dts: r8a7778: Add device node for RESET/WDT module
+      ARM: dts: r8a7779: Add device node for RESET/WDT module
+      ARM: dts: r8a7790: Add device node for RST module
+      ARM: dts: r8a7791: Add device node for RST module
+      ARM: dts: r8a7792: Add device node for RST module
+      ARM: dts: r8a7793: Add device node for RST module
+      ARM: dts: r8a7794: Add device node for RST module
+      arm64: renesas: r8a7795 dtsi: Add device node for RST module
+      arm64: renesas: r8a7796 dtsi: Add device node for RST module
+      clk: renesas: r8a7778: Obtain mode pin values using R-Car RST driver
+      clk: renesas: r8a7779: Obtain mode pin values from R-Car RST driver
+      clk: renesas: rcar-gen2: Obtain mode pin values using RST driver
+      clk: renesas: r8a7795: Obtain mode pin values from R-Car RST driver
+      clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
+      clk: renesas: rcar-gen3-cpg: Remove obsolete rcar_gen3_read_mode_pins()
+      ARM: shmobile: r8a7778: Stop passing mode pins state to clock driver
+      ARM: shmobile: r8a7779: Stop passing mode pins state to clock driver
+      ARM: shmobile: rcar-gen2: Stop passing mode pins state to clock driver
+      clk: renesas: r8a7778: Remove obsolete r8a7778_clocks_init()
+      clk: renesas: r8a7779: Remove obsolete r8a7779_clocks_init()
+      clk: renesas: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
+      Merge branch 'rcar-rst' into clk-renesas-for-v4.10
+      Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10
+
+Sergei Shtylyov (2):
+      clk: renesas: Add r8a7743 CPG Core Clock Definitions
+      clk: renesas: Add r8a7745 CPG Core Clock Definitions
+
+ .../devicetree/bindings/reset/renesas,rst.txt      | 37 +++++++++
+ arch/arm/boot/dts/r8a7778.dtsi                     |  5 ++
+ arch/arm/boot/dts/r8a7779.dtsi                     |  5 ++
+ arch/arm/boot/dts/r8a7790.dtsi                     |  5 ++
+ arch/arm/boot/dts/r8a7791.dtsi                     |  5 ++
+ arch/arm/boot/dts/r8a7792.dtsi                     |  5 ++
+ arch/arm/boot/dts/r8a7793.dtsi                     |  5 ++
+ arch/arm/boot/dts/r8a7794.dtsi                     |  5 ++
+ arch/arm/mach-shmobile/setup-r8a7778.c             | 15 ----
+ arch/arm/mach-shmobile/setup-r8a7779.c             | 27 -------
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |  5 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  5 ++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  5 ++
+ drivers/clk/renesas/clk-r8a7778.c                  | 26 +++---
+ drivers/clk/renesas/clk-r8a7779.c                  | 18 ++---
+ drivers/clk/renesas/clk-rcar-gen2.c                | 32 ++++++--
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |  8 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  8 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c                | 17 ----
+ drivers/clk/renesas/rcar-gen3-cpg.h                |  1 -
+ drivers/soc/renesas/Makefile                       |  5 ++
+ drivers/soc/renesas/rcar-rst.c                     | 92 ++++++++++++++++++++++
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h       | 43 ++++++++++
+ include/dt-bindings/clock/r8a7745-cpg-mssr.h       | 44 +++++++++++
+ include/linux/clk/renesas.h                        |  4 -
+ include/linux/soc/renesas/rcar-rst.h               |  6 ++
+ 26 files changed, 333 insertions(+), 100 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
+ create mode 100644 drivers/soc/renesas/rcar-rst.c
+ create mode 100644 include/dt-bindings/clock/r8a7743-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a7745-cpg-mssr.h
+ create mode 100644 include/linux/soc/renesas/rcar-rst.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
