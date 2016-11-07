@@ -1,68 +1,375 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57377 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751800AbcKIJSn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Nov 2016 04:18:43 -0500
-Date: Wed, 9 Nov 2016 10:18:33 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>
-Subject: Re: [v16, 0/7] Fix eSDHC host version register bug
-Message-ID: <20161109091832.GC1807@katana>
-References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uh9ZiVrAOUUm9fzH"
-In-Reply-To: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V4 6/6] bus: Add support for Tegra Generic Memory Interface
+Date: Mon,  7 Nov 2016 09:30:05 +0100
+Message-Id: <1478507405-13204-7-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Mirza Krak <mirza.krak@gmail.com>
 
---uh9ZiVrAOUUm9fzH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The Generic Memory Interface bus can be used to connect high-speed
+devices such as NOR flash, FPGAs, DSPs...
 
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+---
 
-Can you please update your CC list? There is nothing i2c related in this
-patch series, so you could drop the i2c-list.
+Changes in v2:
+ - Fixed some checkpatch errors
+ - Re-ordered probe to get rid of local variables
+ - Moved of_platform_default_populate call to the end of probe
+ - Use the timing and configuration properties from the child device
+ - Added warning if more then 1 child device exist
 
+Changes in v3:
+ - added helper function to disable the controller which is used in remove and
+ on error.
+ - Added logic to parse CS# from "ranges" property with fallback to "reg"
+ property
 
---uh9ZiVrAOUUm9fzH
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v4:
+- added sanity check of chip-select property (fail if invalid)
+- adjusted for device tree binding property name changes
+- fail probe if there are no child nodes
+- removed superfluous error message
+- removed superfluous newline in Kconfig
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+ drivers/bus/Kconfig     |   7 ++
+ drivers/bus/Makefile    |   1 +
+ drivers/bus/tegra-gmi.c | 275 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 283 insertions(+)
+ create mode 100644 drivers/bus/tegra-gmi.c
 
-iQIcBAEBAgAGBQJYIunoAAoJEBQN5MwUoCm2JCAP/0clLR2IchSWDZ0rRwfbLcAL
-aKM/ckNIlHdPmOCq/KnJcPpGux4l6J+WkODLGpCJSMJzI0/WwjPIcNGITaapo7Ue
-U0NlY49zQ6scE9OMwsCwW22Ao5sArOi+6PAZSjmXYMN2+a+k+AnnWc+mmVmHZ9Y4
-lWVeksXVm4Lg2xEtq84ceXOpatb/4KE3M3iOKgcg+9T+Fro+/NnTjf+AkuF9Xkay
-jNqGoOdeIzD2WvrjCRD7+ApBfZZyz/Za89cGtkTvK69QqON6HB6xiesDF/YbPoz3
-UYn91ab+/teyAvoN5kDHaRcEQT2L47rQPY2hh26eCV4pyepp+23sAZ9nMakYOZRl
-rV7/ZBUh6GvyUSxDW8ud/G/O52wbdSObyBjj+qUhCQ5LjtHgcaSZwg8/Brml7YsS
-NO205lIMOsjGiB+vs9N1QhApga6Rcamb3RgIeg3un6gHCFsqnG3xEyeEDhYNNzia
-AIa+xhQ/8MAps3yjGQDp3rDJ+kxzn1qHfsEBCkOEloGsDlKt1L8R9t/05/dYwJGd
-7aKyLlhCXMGbdgzKxPcWNCiKm/UP+pZns4ABDJA8Gi9xkkEJrcr87IQ070M8N4if
-gMRmGS8Q4Yr7MXLC44C2+aStjQWk/058IuKXV/oGHvrj3Buh+IKBl4GazD2tECj5
-gmp4R7RKlYgaZUklTDQT
-=Bmj3
------END PGP SIGNATURE-----
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index 4ed7d26..a9ebc4c 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -141,6 +141,13 @@ config TEGRA_ACONNECT
+ 	  Driver for the Tegra ACONNECT bus which is used to interface with
+ 	  the devices inside the Audio Processing Engine (APE) for Tegra210.
 
---uh9ZiVrAOUUm9fzH--
++config TEGRA_GMI
++	tristate "Tegra Generic Memory Interface bus driver"
++	depends on ARCH_TEGRA
++	help
++	  Driver for the Tegra Generic Memory Interface bus which can be used
++	  to attach devices such as NOR, UART, FPGA and more.
++
+ config UNIPHIER_SYSTEM_BUS
+ 	tristate "UniPhier System Bus driver"
+ 	depends on ARCH_UNIPHIER && OF
+diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+index ac84cc4..34e2bab 100644
+--- a/drivers/bus/Makefile
++++ b/drivers/bus/Makefile
+@@ -18,5 +18,6 @@ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
+ obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
+ obj-$(CONFIG_SIMPLE_PM_BUS)	+= simple-pm-bus.o
+ obj-$(CONFIG_TEGRA_ACONNECT)	+= tegra-aconnect.o
++obj-$(CONFIG_TEGRA_GMI)		+= tegra-gmi.o
+ obj-$(CONFIG_UNIPHIER_SYSTEM_BUS)	+= uniphier-system-bus.o
+ obj-$(CONFIG_VEXPRESS_CONFIG)	+= vexpress-config.o
+diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
+new file mode 100644
+index 0000000..687e212
+--- /dev/null
++++ b/drivers/bus/tegra-gmi.c
+@@ -0,0 +1,275 @@
++/*
++ * Driver for NVIDIA Generic Memory Interface
++ *
++ * Copyright (C) 2016 Host Mobility AB. All rights reserved.
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/reset.h>
++
++#define TEGRA_GMI_CONFIG		0x00
++#define TEGRA_GMI_CONFIG_GO		BIT(31)
++#define TEGRA_GMI_BUS_WIDTH_32BIT	BIT(30)
++#define TEGRA_GMI_MUX_MODE		BIT(28)
++#define TEGRA_GMI_RDY_BEFORE_DATA	BIT(24)
++#define TEGRA_GMI_RDY_ACTIVE_HIGH	BIT(23)
++#define TEGRA_GMI_ADV_ACTIVE_HIGH	BIT(22)
++#define TEGRA_GMI_OE_ACTIVE_HIGH	BIT(21)
++#define TEGRA_GMI_CS_ACTIVE_HIGH	BIT(20)
++#define TEGRA_GMI_CS_SELECT(x)		((x & 0x7) << 4)
++
++#define TEGRA_GMI_TIMING0		0x10
++#define TEGRA_GMI_MUXED_WIDTH(x)	((x & 0xf) << 12)
++#define TEGRA_GMI_HOLD_WIDTH(x)		((x & 0xf) << 8)
++#define TEGRA_GMI_ADV_WIDTH(x)		((x & 0xf) << 4)
++#define TEGRA_GMI_CE_WIDTH(x)		(x & 0xf)
++
++#define TEGRA_GMI_TIMING1		0x14
++#define TEGRA_GMI_WE_WIDTH(x)		((x & 0xff) << 16)
++#define TEGRA_GMI_OE_WIDTH(x)		((x & 0xff) << 8)
++#define TEGRA_GMI_WAIT_WIDTH(x)		(x & 0xff)
++
++#define TEGRA_GMI_MAX_CHIP_SELECT	8
++
++struct tegra_gmi_priv {
++	void __iomem *base;
++	struct reset_control *rst;
++	struct clk *clk;
++
++	u32 snor_config;
++	u32 snor_timing0;
++	u32 snor_timing1;
++};
++
++static void tegra_gmi_disable(struct tegra_gmi_priv *priv)
++{
++	u32 config;
++
++	/* stop GMI operation */
++	config = readl(priv->base + TEGRA_GMI_CONFIG);
++	config &= ~TEGRA_GMI_CONFIG_GO;
++	writel(config, priv->base + TEGRA_GMI_CONFIG);
++
++	reset_control_assert(priv->rst);
++	clk_disable_unprepare(priv->clk);
++}
++
++static void tegra_gmi_init(struct device *dev, struct tegra_gmi_priv *priv)
++{
++	writel(priv->snor_timing0, priv->base + TEGRA_GMI_TIMING0);
++	writel(priv->snor_timing1, priv->base + TEGRA_GMI_TIMING1);
++
++	priv->snor_config |= TEGRA_GMI_CONFIG_GO;
++	writel(priv->snor_config, priv->base + TEGRA_GMI_CONFIG);
++}
++
++static int tegra_gmi_parse_dt(struct device *dev, struct tegra_gmi_priv *priv)
++{
++	struct device_node *child = of_get_next_available_child(dev->of_node,
++		NULL);
++	u32 property, ranges[4];
++	int ret;
++
++	if (!child) {
++		dev_err(dev, "no child nodes found\n");
++		return -ENODEV;
++	}
++
++	/*
++	 * We currently only support one child device due to lack of
++	 * chip-select address decoding. Which means that we only have one
++	 * chip-select line from the GMI controller.
++	 */
++	if (of_get_child_count(dev->of_node) > 1)
++		dev_warn(dev, "only one child device is supported.");
++
++	if (of_property_read_bool(child, "nvidia,snor-data-width-32bit"))
++		priv->snor_config |= TEGRA_GMI_BUS_WIDTH_32BIT;
++
++	if (of_property_read_bool(child, "nvidia,snor-mux-mode"))
++		priv->snor_config |= TEGRA_GMI_MUX_MODE;
++
++	if (of_property_read_bool(child, "nvidia,snor-rdy-active-before-data"))
++		priv->snor_config |= TEGRA_GMI_RDY_BEFORE_DATA;
++
++	if (of_property_read_bool(child, "nvidia,snor-rdy-active-high"))
++		priv->snor_config |= TEGRA_GMI_RDY_ACTIVE_HIGH;
++
++	if (of_property_read_bool(child, "nvidia,snor-adv-active-high"))
++		priv->snor_config |= TEGRA_GMI_ADV_ACTIVE_HIGH;
++
++	if (of_property_read_bool(child, "nvidia,snor-oe-active-high"))
++		priv->snor_config |= TEGRA_GMI_OE_ACTIVE_HIGH;
++
++	if (of_property_read_bool(child, "nvidia,snor-cs-active-high"))
++		priv->snor_config |= TEGRA_GMI_CS_ACTIVE_HIGH;
++
++	/* Decode the CS# */
++	ret = of_property_read_u32_array(child, "ranges", ranges, 4);
++	if (ret < 0) {
++		/* Invalid binding */
++		if (ret == -EOVERFLOW) {
++			dev_err(dev,
++				"failed to decode CS: invalid ranges length\n");
++			goto error_cs;
++		}
++
++		/*
++		 * If we reach here it means that the child node has an empty
++		 * ranges or it does not exist at all. Attempt to decode the
++		 * CS# from the reg property instead.
++		 */
++		ret = of_property_read_u32(child, "reg", &property);
++		if (ret < 0) {
++			dev_err(dev,
++				"failed to decode CS: no reg property found\n");
++			goto error_cs;
++		}
++	} else {
++		property = ranges[1];
++	}
++
++	/* Valid chip selects are CS0-CS7 */
++	if (property >= TEGRA_GMI_MAX_CHIP_SELECT) {
++		dev_err(dev, "invalid chip select: %d", property);
++		ret = -EINVAL;
++		goto error_cs;
++	}
++
++	priv->snor_config |= TEGRA_GMI_CS_SELECT(property);
++
++	/* The default values that are provided below are reset values */
++	if (!of_property_read_u32(child, "nvidia,snor-muxed-width", &property))
++		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(property);
++	else
++		priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(1);
++
++	if (!of_property_read_u32(child, "nvidia,snor-hold-width", &property))
++		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(property);
++	else
++		priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(1);
++
++	if (!of_property_read_u32(child, "nvidia,snor-adv-width", &property))
++		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(property);
++	else
++		priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(1);
++
++	if (!of_property_read_u32(child, "nvidia,snor-ce-width", &property))
++		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(property);
++	else
++		priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(4);
++
++	if (!of_property_read_u32(child, "nvidia,snor-we-width", &property))
++		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(property);
++	else
++		priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(1);
++
++	if (!of_property_read_u32(child, "nvidia,snor-oe-width", &property))
++		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(property);
++	else
++		priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(1);
++
++	if (!of_property_read_u32(child, "nvidia,snor-wait-width", &property))
++		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(property);
++	else
++		priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(3);
++
++error_cs:
++	of_node_put(child);
++	return ret;
++}
++
++static int tegra_gmi_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++	struct tegra_gmi_priv *priv;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	priv->clk = devm_clk_get(dev, "gmi");
++	if (IS_ERR(priv->clk)) {
++		dev_err(dev, "can not get clock\n");
++		return PTR_ERR(priv->clk);
++	}
++
++	priv->rst = devm_reset_control_get(dev, "gmi");
++	if (IS_ERR(priv->rst)) {
++		dev_err(dev, "can not get reset\n");
++		return PTR_ERR(priv->rst);
++	}
++
++	ret = tegra_gmi_parse_dt(dev, priv);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(priv->clk);
++	if (ret) {
++		dev_err(dev, "fail to enable clock.\n");
++		return ret;
++	}
++
++	reset_control_assert(priv->rst);
++	udelay(2);
++	reset_control_deassert(priv->rst);
++
++	tegra_gmi_init(dev, priv);
++
++	ret = of_platform_default_populate(dev->of_node, NULL, dev);
++	if (ret < 0) {
++		dev_err(dev, "fail to create devices.\n");
++		tegra_gmi_disable(priv);
++		return ret;
++	}
++
++	dev_set_drvdata(dev, priv);
++
++	return 0;
++}
++
++static int tegra_gmi_remove(struct platform_device *pdev)
++{
++	struct tegra_gmi_priv *priv = dev_get_drvdata(&pdev->dev);
++
++	of_platform_depopulate(&pdev->dev);
++
++	tegra_gmi_disable(priv);
++
++	return 0;
++}
++
++static const struct of_device_id tegra_gmi_id_table[] = {
++	{ .compatible = "nvidia,tegra20-gmi", },
++	{ .compatible = "nvidia,tegra30-gmi", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, tegra_gmi_id_table);
++
++static struct platform_driver tegra_gmi_driver = {
++	.probe = tegra_gmi_probe,
++	.remove = tegra_gmi_remove,
++	.driver = {
++		.name		= "tegra-gmi",
++		.of_match_table	= tegra_gmi_id_table,
++	},
++};
++module_platform_driver(tegra_gmi_driver);
++
++MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
++MODULE_DESCRIPTION("NVIDIA Tegra GMI Bus Driver");
++MODULE_LICENSE("GPL v2");
+--
+2.1.4
