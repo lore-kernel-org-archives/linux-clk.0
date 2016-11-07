@@ -1,28 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 14:51:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 05/11] clk: qcom: Add .is_enabled ops for clk-alpha-pll
-Message-ID: <20161102215158.GQ16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-6-git-send-email-rnayak@codeaurora.org>
+Return-Path: <radoslaw.pietrzyk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475138152-859-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com> <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
+From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Date: Mon, 7 Nov 2016 15:57:05 +0100
+Message-ID: <CAFvLkMQxvo=2Ak033n2XkPgdDfU5DLCMF7dj487QFB0e7WceCQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
+To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	Daniel Thompson <daniel.thompson@linaro.org>, Andrea Merello <andrea.merello@gmail.com>,
+	devicetree@vger.kernel.org, amelie.delaunay@st.com, kernel@stlinux.com,
+	olivier.bideau@st.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Rajendra Nayak wrote:
-> This would be useful in subsequent patches when the .set_rate operation
-> would need to identify if the PLL is actually enabled
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+> +static struct clk_hw *clk_register_pll_div(const char *name,
+> +               const char *parent_name, unsigned long flags,
+> +               void __iomem *reg, u8 shift, u8 width,
+> +               u8 clk_divider_flags, const struct clk_div_table *table,
+> +               struct clk_hw *pll_hw, spinlock_t *lock)
+> +{
+> +       struct stm32f4_pll_div *pll_div;
+> +       struct clk_hw *hw;
+> +       struct clk_init_data init;
+> +       int ret;
+> +
+> +       /* allocate the divider */
+> +       pll_div = kzalloc(sizeof(*pll_div), GFP_KERNEL);
+> +       if (!pll_div)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = name;
+> +       init.ops = &stm32f4_pll_div_ops;
+> +       init.flags = flags;
+Maybe it's worth to have CLK_SET_RATE_PARENT here and the VCO clock
+should have CLK_SET_RATE_GATE flag and we can get rid of custom
+divider ops.
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> -static void stm32f4_rcc_register_pll(const char *hse_clk, const char *hsi_clk)
+> +
+> +static struct clk_hw *stm32f4_rcc_register_pll(const char *pllsrc,
+> +               const struct stm32f4_pll_data *data,  spinlock_t *lock)
+>  {
+> -       unsigned long pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
+> +       struct stm32f4_pll *pll;
+> +       struct clk_init_data init = { NULL };
+> +       void __iomem *reg;
+> +       struct clk_hw *pll_hw;
+> +       int ret;
+> +
+> +       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+> +       if (!pll)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = data->vco_name;
+> +       init.ops = &stm32f4_pll_gate_ops;
+> +       init.flags = CLK_IGNORE_UNUSED;
+CLK_SET_RATE_GATE here
+
+Moreover why not having VCO as a composite clock from gate and mult ?
+
+According to docs SAI VCO (don't know about I2S ) must be within
+certain range so clk_set_rate_range should be somewhere.
