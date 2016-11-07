@@ -1,89 +1,179 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:59181 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750912AbcKHPsP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2016 10:48:15 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: "Y.B. Lu" <yangbo.lu@nxp.com>
-Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "X.B. Xie" <xiaobo.xie@nxp.com>,
-        "M.H. Lian" <minghuan.lian@nxp.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Kumar Gala <galak@codeaurora.org>
-Subject: Re: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Date: Tue, 08 Nov 2016 16:47:00 +0100
-Message-ID: <2774358.lRZpWbmlT7@wuerfel>
-In-Reply-To: <DB6PR0401MB25366BC8FF59C68E2823245EF8A60@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com> <1543282.vWjeo4ynTa@wuerfel> <DB6PR0401MB25366BC8FF59C68E2823245EF8A60@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pankaj.dubey@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
+ thomas.ab@samsung.com, myungjoo.ham@samsung.com,
+ Pankaj Dubey <pankaj.dubey@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
+Date: Mon, 07 Nov 2016 15:39:33 +0530
+Message-id: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+In-reply-to: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, November 8, 2016 6:49:51 AM CET Y.B. Lu wrote:
-> Hi Arnd,
-> 
-> 
-> > -----Original Message-----
-> > From: Arnd Bergmann [mailto:arnd@arndb.de]
-> > Sent: Tuesday, November 08, 2016 5:20 AM
-> > To: Y.B. Lu
-> > Cc: linuxppc-dev@lists.ozlabs.org; linux-mmc@vger.kernel.org;
-> > ulf.hansson@linaro.org; Scott Wood; Mark Rutland; Greg Kroah-Hartman; X.B.
-> > Xie; M.H. Lian; linux-i2c@vger.kernel.org; linux-clk@vger.kernel.org;
-> > Qiang Zhao; Russell King; Bhupesh Sharma; Joerg Roedel; Claudiu Manoil;
-> > devicetree@vger.kernel.org; Rob Herring; Santosh Shilimkar; linux-arm-
-> > kernel@lists.infradead.org; netdev@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; Leo Li; iommu@lists.linux-foundation.org; Kumar
-> > Gala
-> > Subject: Re: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-> > 
-> > On Monday, October 31, 2016 9:35:33 AM CET Y.B. Lu wrote:
-> > > >
-> > > > I don't see any of the contents of this header referenced by the soc
-> > > > driver any more. I think you can just drop this patch.
-> > > >
-> > >
-> > > [Lu Yangbo-B47093] This header file was included by guts.c.
-> > > The guts driver used macro SVR_MAJ/SVR_MIN for calculation.
-> > >
-> > > This header file was for powerpc arch before. And this patch is to
-> > > made it as common header file for both ARM and PPC.
-> > > Sooner or later this is needed.
-> > 
-> > Let's discuss it once we actually need the header then, ok?
-> 
-> [Lu Yangbo-B47093] As I said, this header file was included by guts.c in patch 4.
+The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
+accurate low frequency clock for MAX8997 internal circuit as well as
+external circuit. This patch adds support for these two clocks.
 
-Ah sorry, I misread your earlier reply, thinking you meant a potential
-future patch.
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>
+CC: devicetree@vger.kernel.org
+CC: linux-clk@vger.kernel.org
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ drivers/clk/Kconfig                       | 10 ++++
+ drivers/clk/Makefile                      |  1 +
+ drivers/clk/clk-max8997.c                 | 76 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/maxim,max8997.h | 23 ++++++++++
+ 4 files changed, 110 insertions(+)
+ create mode 100644 drivers/clk/clk-max8997.c
+ create mode 100644 include/dt-bindings/clock/maxim,max8997.h
 
-> The guts driver used macro SVR_MAJ/SVR_MIN for calculation which were
-> defined in this header file.
-> Did you suggest we dropped this patch and just calculated them in driver?
-
-That is probably nicer here: there is not that much value in sharing
-the two one-line macro definitions, and the driver already hardcodes
-the numeric per-chip IDs that make up most of the header file.
-
-	Arnd
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e2d9bd7..5339cbe 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -48,6 +48,16 @@ config COMMON_CLK_MAX77802
+ 	---help---
+ 	  This driver supports Maxim 77802 crystal oscillator clock.
+ 
++config COMMON_CLK_MAX8997
++	tristate "Clock driver for Maxim 8997 MFD"
++	depends on MFD_MAX8997
++	select COMMON_CLK_MAX_GEN
++	---help---
++	  This driver supports Maxim 8997 crystal oscillator clock.
++	  The 32.768kHz crystal oscillator clock provides an accurate
++	  low frequency clock for MAX8997 internal circuit as well as
++	  external circuit.
++
+ config COMMON_CLK_RK808
+ 	tristate "Clock driver for RK808/RK818"
+ 	depends on MFD_RK808
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3b6f9cf..1cfa9ab 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_MACH_LOONGSON32)		+= clk-ls1x.o
+ obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_COMMON_CLK_MAX77802)	+= clk-max77802.o
++obj-$(CONFIG_COMMON_CLK_MAX8997)	+= clk-max8997.o
+ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+diff --git a/drivers/clk/clk-max8997.c b/drivers/clk/clk-max8997.c
+new file mode 100644
+index 0000000..9158354
+--- /dev/null
++++ b/drivers/clk/clk-max8997.c
+@@ -0,0 +1,76 @@
++/*
++ * clk-max8997.c - Clock driver for Maxim 8997
++ *
++ * Copyright (C) 2016 Samsung Electornics
++ * Pankaj Dubey <pankaj.dubey@samsung.com>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/max8997.h>
++#include <linux/mfd/max8997-private.h>
++#include <linux/clk-provider.h>
++#include <linux/mutex.h>
++#include <linux/clkdev.h>
++
++#include <dt-bindings/clock/maxim,max8997.h>
++#include "clk-max-gen.h"
++
++static struct clk_init_data max8997_clks_init[MAX8997_CLKS_NUM] = {
++	[MAX8997_CLK_AP] = {
++		.name = "32khz_ap",
++		.ops = &max_gen_clk_ops,
++	},
++	[MAX8997_CLK_CP] = {
++		.name = "32khz_cp",
++		.ops = &max_gen_clk_ops,
++	},
++};
++
++static int max8997_clk_probe(struct platform_device *pdev)
++{
++	struct max8997_dev *iodev = dev_get_drvdata(pdev->dev.parent);
++
++	return max_gen_clk_probe(pdev, iodev->regmap, MAX8997_REG_MAINCON1,
++				 max8997_clks_init, MAX8997_CLKS_NUM);
++}
++
++static int max8997_clk_remove(struct platform_device *pdev)
++{
++	return max_gen_clk_remove(pdev, MAX8997_CLKS_NUM);
++}
++
++static const struct platform_device_id max8997_clk_id[] = {
++	{ "max8997-clk", 0},
++	{ },
++};
++MODULE_DEVICE_TABLE(platform, max8997_clk_id);
++
++static struct platform_driver max8997_clk_driver = {
++	.driver = {
++		.name  = "max8997-clk",
++	},
++	.probe = max8997_clk_probe,
++	.remove = max8997_clk_remove,
++	.id_table = max8997_clk_id,
++};
++
++module_platform_driver(max8997_clk_driver);
++
++MODULE_DESCRIPTION("MAXIM 8997 Clock Driver");
++MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
++MODULE_LICENSE("GPL");
+diff --git a/include/dt-bindings/clock/maxim,max8997.h b/include/dt-bindings/clock/maxim,max8997.h
+new file mode 100644
+index 0000000..f2dd972
+--- /dev/null
++++ b/include/dt-bindings/clock/maxim,max8997.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *	Author: Pankaj Dubey <pankaj.dubey@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants clocks for the Maxim 8997 PMIC.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_MAXIM_MAX8997_CLOCK_H
++#define _DT_BINDINGS_CLOCK_MAXIM_MAX8997_CLOCK_H
++
++/* Fixed rate clocks. */
++
++#define MAX8997_CLK_AP		0
++#define MAX8997_CLK_CP		1
++
++/* Total number of clocks. */
++#define MAX8997_CLKS_NUM		(MAX8997_CLK_CP + 1)
++
++#endif /* _DT_BINDINGS_CLOCK_MAXIM_MAX8997_CLOCK_H */
+-- 
+2.7.4
