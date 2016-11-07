@@ -1,74 +1,88 @@
-Return-Path: <codekipper@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH 1/6] clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469
+ boards
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre
+	<nico@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, <andrea.merello@gmail.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+ <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
+ <d60df94d-8f42-12eb-af55-2fc839c126bc@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <42c31c00-3b0b-b1e7-46c1-0c849b14dae2@st.com>
+Date: Mon, 7 Nov 2016 15:05:46 +0100
 MIME-Version: 1.0
-In-Reply-To: <20161111100558.14629-2-wens@csie.org>
-References: <20161111100558.14629-1-wens@csie.org> <20161111100558.14629-2-wens@csie.org>
-From: Code Kipper <codekipper@gmail.com>
-Date: Fri, 11 Nov 2016 11:10:44 +0100
-Message-ID: <CAEKpxBkseMg2JvP7rrm2qFSCTsn60JyzoWFNFDrWNFDHkMuQtg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: sun8i-h3: Set
- CLK_SET_RATE_PARENT for audio module clocks
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <d60df94d-8f42-12eb-af55-2fc839c126bc@linaro.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11 November 2016 at 11:05, Chen-Yu Tsai <wens@csie.org> wrote:
-> The audio module clocks are supposed to be set according to the sample
-> rate of the audio stream. The audio PLL provides the clock signal for
-> thees module clocks, and only it is freely tunable.
-nick! these
-CK
+Hi Daniel,
+
+Thanks for reviewing.
+
+
+On 11/07/2016 02:53 PM, Daniel Thompson wrote:
+> On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> This patch introduces PLL_I2S and PLL_SAI.
+>> Vco clock of these PLLs can be modify by DT (only n multiplicator,
+>> m divider is still fixed by the boot-loader).
+>> Each PLL has 3 dividers. PLL should be off when we modify the rate.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>  drivers/clk/clk-stm32f4.c | 371 
+>> ++++++++++++++++++++++++++++++++++++++++++++--
+>>  1 file changed, 359 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+>> index c2661e2..7641acd 100644
+>> --- a/drivers/clk/clk-stm32f4.c
+>> +++ b/drivers/clk/clk-stm32f4.c
+>> @@ -28,6 +28,7 @@
+> > ...
+>> +static const struct clk_div_table pll_divp_table[] = {
+>> +    { 0, 2 }, { 1, 4 }, { 2, 6 }, { 3, 8 },
+>> +};
+>> +
+>>  /*
+>>   * Decode current PLL state and (statically) model the state we 
+>> inherit from
+>>   * the bootloader.
+>>   */
 >
-> Set CLK_SET_RATE_PARENT for the audio module clocks so their users can
-> properly tune the clock rate.
+> This comment isn't right. For a start the model is no longer static.
 >
-> Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+you're right, i will suppress it.
+
 >
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> index 4d70590f05e3..21c427d86f28 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> @@ -394,16 +394,16 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
->  static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
->                                             "pll-audio-2x", "pll-audio" };
->  static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
-> -                              0x0b0, 16, 2, BIT(31), 0);
-> +                              0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+>> @@ -615,18 +944,24 @@ struct stm32f4_clk_data {
+>>      const struct stm32f4_gate_data *gates_data;
+>>      const u64 *gates_map;
+>>      int gates_num;
+>> +    const struct stm32f4_pll_data *pll_data;
+>> +    int pll_num;
 >
->  static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
-> -                              0x0b4, 16, 2, BIT(31), 0);
-> +                              0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+> pll_num is unused.
 >
->  static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s_parents,
-> -                              0x0b8, 16, 2, BIT(31), 0);
-> +                              0x0b8, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ok
+
+BR
+
+Gabriel
+
 >
->  static SUNXI_CCU_M_WITH_GATE(spdif_clk, "spdif", "pll-audio",
-> -                            0x0c0, 0, 4, BIT(31), 0);
-> +                            0x0c0, 0, 4, BIT(31), CLK_SET_RATE_PARENT);
->
->  static SUNXI_CCU_GATE(usb_phy0_clk,    "usb-phy0",     "osc24M",
->                       0x0cc, BIT(8), 0);
-> @@ -466,7 +466,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
->                              0x13c, 16, 3, BIT(31), 0);
->
->  static SUNXI_CCU_GATE(ac_dig_clk,      "ac-dig",       "pll-audio",
-> -                     0x140, BIT(31), 0);
-> +                     0x140, BIT(31), CLK_SET_RATE_PARENT);
->  static SUNXI_CCU_GATE(avs_clk,         "avs",          "osc24M",
->                       0x144, BIT(31), 0);
->
-> --
-> 2.10.2
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+> Daniel.
