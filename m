@@ -1,87 +1,42 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@hostmobility.com>
-Subject: [PATCH V4 0/6] Add support for Tegra GMI bus controller
-Date: Mon,  7 Nov 2016 09:29:59 +0100
-Message-Id: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Mon, 7 Nov 2016 19:41:58 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
+	thomas.ab@samsung.com, myungjoo.ham@samsung.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
+Message-ID: <20161107174158.GB4865@kozik-lap>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@hostmobility.com>
+On Mon, Nov 07, 2016 at 03:39:33PM +0530, Pankaj Dubey wrote:
+> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
+> accurate low frequency clock for MAX8997 internal circuit as well as
+> external circuit. This patch adds support for these two clocks.
+> 
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: devicetree@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/clk/Kconfig                       | 10 ++++
+>  drivers/clk/Makefile                      |  1 +
+>  drivers/clk/clk-max8997.c                 | 76 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/maxim,max8997.h | 23 ++++++++++
 
-Hi.
+You need to split the dt-bindings header into separate one so others
+could pull it.  Please also mention the dependencies between patches in
+cover letter, because it does not look like it could be applied as is.
 
-This patch series adds support for the Tegra GMI bus controller.
-
-I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
-carrier board which has multiple CAN controllers (SJA1000) connected to the
-GMI bus.
-
-I have re-based on top of latest tegra/for-next in V4. Also see individual
-patches for changes in V4.
-
-Hopefully this will be the last round.
-
-See below links for previous discussions.
-
-Comments on RFC:
-https://marc.info/?l=linux-clk&m=146893557629903&w=2
-https://marc.info/?l=linux-tegra&m=146893541829801&w=2
-https://marc.info/?l=linux-tegra&m=146893542429814&w=2
-
-Comments on V1:
-https://marc.info/?l=linux-arm-kernel&m=147051551821122&w=2
-https://marc.info/?l=linux-arm-kernel&m=147051553121150&w=2
-https://marc.info/?l=linux-arm-kernel&m=147194856600627&w=2
-https://marc.info/?l=linux-arm-kernel&m=147072742432211&w=2
-
-Comments on V2:
-https://marc.info/?l=devicetree&m=147522253920226&w=2
-https://marc.info/?l=linux-tegra&m=147204588027687&w=2
-https://marc.info/?l=linux-tegra&m=147204588027687&w=2
-https://marc.info/?l=devicetree&m=147256931318922&w=2
-
-Comments on V3:
-https://marc.info/?l=linux-tegra&m=147789181607782&w=2
-https://marc.info/?l=linux-tegra&m=147816818203104&w=2
-https://marc.info/?l=linux-tegra&m=147816897003332&w=2
-https://marc.info/?l=linux-tegra&m=147818119107204&w=2
-
-Mirza Krak (6):
-  clk: tegra: add TEGRA20_CLK_NOR to init table
-  clk: tegra: add TEGRA30_CLK_NOR to init table
-  dt/bindings: Add bindings for Tegra GMI controller
-  ARM: tegra: Add Tegra30 GMI support
-  ARM: tegra: Add Tegra20 GMI support
-  bus: Add support for Tegra Generic Memory Interface
-
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 ++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |  13 +
- arch/arm/boot/dts/tegra30.dtsi                     |  13 +
- drivers/bus/Kconfig                                |   7 +
- drivers/bus/Makefile                               |   1 +
- drivers/bus/tegra-gmi.c                            | 275 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra20.c                    |   1 +
- drivers/clk/tegra/clk-tegra30.c                    |   1 +
- 8 files changed, 443 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
- create mode 100644 drivers/bus/tegra-gmi.c
-
---
-2.1.4
+Best regards,
+Krzysztof
