@@ -1,93 +1,76 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>, Scott Wood
- <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [v16, 6/7] base: soc: Check for NULL SoC device attributes
-Date: Wed, 9 Nov 2016 11:14:11 +0800
-Message-ID: <1478661252-42439-7-git-send-email-yangbo.lu@nxp.com>
-In-Reply-To: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
-References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 7 Nov 2016 08:56:03 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Jorik Jonker <jorik@kippendief.biz>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/2] clk: sunxi-ng: fix up PLL_CPUX adjusting for A23/A33
+Message-ID: <20161107075603.zad2kgzvh5lr7zeh@lukather>
+References: <20161106172932.39478-1-icenowy@aosc.xyz>
+ <20161106172932.39478-2-icenowy@aosc.xyz>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Xiaobo Xie <xiaobo.xie@nxp.com>, Minghuan Lian <minghuan.lian@nxp.com>,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- Qiang Zhao <qiang.zhao@nxp.com>, Russell King <linux@arm.linux.org.uk>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
- Jochen Friedrich <jochen@scram.de>,
- Claudiu Manoil <claudiu.manoil@freescale.com>, devicetree@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Leo Li <leoyang.li@nxp.com>, iommu@lists.linux-foundation.org,
- Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="angc55eusjv7x2mw"
+In-Reply-To: <20161106172932.39478-2-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If soc_device_match() is used to check the value of a specific
-attribute that is not present for the current SoC, the kernel crashes
-with a NULL pointer dereference.
+--angc55eusjv7x2mw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by explicitly checking for the absence of a needed property,
-and considering this a non-match.
+Hi,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-Changes for v16:
-	- Added this patch
----
- drivers/base/soc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Same remark for the commit title.
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 0c5cf87..0e701e2 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -167,19 +167,23 @@ static int soc_device_match_one(struct device *dev, void *arg)
- 	const struct soc_device_attribute *match = arg;
- 
- 	if (match->machine &&
--	    !glob_match(match->machine, soc_dev->attr->machine))
-+	    (!soc_dev->attr->machine ||
-+	     !glob_match(match->machine, soc_dev->attr->machine)))
- 		return 0;
- 
- 	if (match->family &&
--	    !glob_match(match->family, soc_dev->attr->family))
-+	    (!soc_dev->attr->family ||
-+	     !glob_match(match->family, soc_dev->attr->family)))
- 		return 0;
- 
- 	if (match->revision &&
--	    !glob_match(match->revision, soc_dev->attr->revision))
-+	    (!soc_dev->attr->revision ||
-+	     !glob_match(match->revision, soc_dev->attr->revision)))
- 		return 0;
- 
- 	if (match->soc_id &&
--	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
-+	    (!soc_dev->attr->soc_id ||
-+	     !glob_match(match->soc_id, soc_dev->attr->soc_id)))
- 		return 0;
- 
- 	return 1;
--- 
-2.1.0.27.g96db324
+On Mon, Nov 07, 2016 at 01:29:32AM +0800, Icenowy Zheng wrote:
+> When adjusting PLL_CPUX on A23/A33, the PLL is driven too high, and the
+> system stucks.
+>=20
+> Add a notifier to avoid this situation.
+>=20
+> The code is ported from ccu-sun6i-a31.c.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+> Patch 4.9-rc too.
+>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 10 ++++++++++
 
+Have you checked that it was also needed on A23? Not all SoCs are in
+this situation.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--angc55eusjv7x2mw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYIDOTAAoJEBx+YmzsjxAgCrQP/iiUI8BNi0IPlajRev5VcUpT
+oKBPgvykq1ulAHQuQq14uRfsgkG+i2QjACU4t8xqTvd7/rKPjgGIqf2kHfZsSC1q
+6NYhVx2PZaBy0S4vWl3Hpx272TZjKwaqVTQMOeBG/Yf0CzHCSTJf8mPOGzj5u9R7
+5E5EWxy2COhox1tSV119tvsbAM6wNSu3E40pbZpisvAGNbs4S0oN+qsQ0n4LFvk0
+B2FvXCIzUnuCya00mEUKk9+DmJqyhPlSWrJezoELPOIq08fHWSRBk7pUiLOKlhBB
+k9fjC+tvpKV0iNu1M48zQA3siJpZf+7nA2izV86quMdwJ2gicQKiwHToSjclNhh9
+EMpgvKrb9SYYXsegedBYhe50LDY8WHPlxR53B2EnntCxKkB9fEY0YsOmOKOTJb/Q
+RyTcJXI9J7AYUd1DLwe6XR8g2+n9ohzRYTqU/xT71O3vv4Wc8S2YJkkrUCiGqgBQ
+rwzuY0LB5pwEmu1tI2L3zIPSsqKnD6JayituZS4jlv720S3PkTuLpDK6/VDXFOM8
+TzNErG6Lfr1OhTL/xHXETCE1tR9fFTPmcUVfLlor0PbYY18ND0nYNWB7Oq9TcRmg
+6Uxn1fCMDyvr9DIQCRnKgjlK5O7ZDKc42FKiP203onahkZz7peaQzx2urxdnIndB
+RxRlDCYfCNcEtJSQ1hYH
+=aT1+
+-----END PGP SIGNATURE-----
+
+--angc55eusjv7x2mw--
