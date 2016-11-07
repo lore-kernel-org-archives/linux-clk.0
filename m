@@ -1,58 +1,188 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Nov 2016 18:40:42 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
-Message-ID: <20161115024042.GV5177@codeaurora.org>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
- <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
- <20160831224049.GK12510@codeaurora.org>
- <20161112120231.GB23848@leoy-linaro>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161112120231.GB23848@leoy-linaro>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60356 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752362AbcKGLZq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:25:46 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+Subject: [PATCH v6 03/14] clk: qcom: Move all sdcc rcgs to use clk_rcg2_floor_ops
+Date: Mon,  7 Nov 2016 16:54:26 +0530
+Message-Id: <1478517877-23733-4-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/12, Leo Yan wrote:
-> Hi Stephen,
-> 
-> On Wed, Aug 31, 2016 at 03:40:49PM -0700, Stephen Boyd wrote:
-> > On 08/31, Leo Yan wrote:
-> > > In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
-> > > default, as result stub clock driver has not been registered and
-> > > CPUFreq driver cannot work.
-> > > 
-> > > This patch is to enable stub clock driver in config for ARCH_HISI.
-> > > 
-> > > Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > > ---
-> > 
-> > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> We found this patch is missed mainline kernel. So could you help pick
-> it? Or do you need me resend this patch?
-> 
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Sure I can fish it out and apply it.
+The sdcc driver for msm8996/msm8916/msm8974 and apq8084
+expects a clk_set_rate() on the sdcc rcg clk to set
+a floor value of supported clk rate closest to the requested
+rate, by looking up the frequency table.
+So move all the sdcc rcgs on all these platforms to use the
+newly introduced clk_rcg2_floor_ops
 
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-apq8084.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8916.c | 4 ++--
+ drivers/clk/qcom/gcc-msm8974.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8996.c | 8 ++++----
+ 4 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+index 070037a..486d961 100644
+--- a/drivers/clk/qcom/gcc-apq8084.c
++++ b/drivers/clk/qcom/gcc-apq8084.c
+@@ -1142,7 +1142,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1156,7 +1156,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1170,7 +1170,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1184,7 +1184,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 5c4e193..628e6ca 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1107,7 +1107,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1132,7 +1132,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index 0091520..348e30d 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -872,7 +872,7 @@ enum {
+ 	.name = "sdcc1_apps_clk_src",
+ 	.parent_names = gcc_xo_gpll0,
+ 	.num_parents = 2,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_floor_ops,
+ };
+ 
+ static struct clk_rcg2 sdcc1_apps_clk_src = {
+@@ -894,7 +894,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -908,7 +908,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -922,7 +922,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index fe03e6f..5adb163 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -460,7 +460,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4_gpll0_early_div,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -497,7 +497,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -511,7 +511,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -535,7 +535,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
