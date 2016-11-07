@@ -1,28 +1,67 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 16 Nov 2016 07:36:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: smd-rpm: Add msm8974 clocks
-Message-ID: <20161116133607.p6w4qodal2rfoous@rob-hp-laptop>
-References: <1479192844-1281-1-git-send-email-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479192844-1281-1-git-send-email-bjorn.andersson@linaro.org>
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V4 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
+Date: Mon,  7 Nov 2016 09:30:01 +0100
+Message-Id: <1478507405-13204-3-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 14, 2016 at 10:54:04PM -0800, Bjorn Andersson wrote:
-> This adds all RPM based clocks for msm8974 except cxo and gfx3d_clk_src.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
->  drivers/clk/qcom/clk-smd-rpm.c                     | 71 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmcc.h             | 40 +++++++++++-
->  3 files changed, 110 insertions(+), 2 deletions(-)
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
+is max rate.
+
+The maximum rate value of 127 MHz is pulled from the downstream L4T
+kernel.
+
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
+
+Changes in v2:
+- no changes
+
+Changes in v3:
+- Added comment in commit message where I got the maximum rates from.
+
+Changes in V4:
+- no changes
+
+ drivers/clk/tegra/clk-tegra30.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 8e2db5e..67f1677 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1252,6 +1252,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
++	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 127000000, 0 },
+ 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
+--
+2.1.4
