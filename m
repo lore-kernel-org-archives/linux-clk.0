@@ -1,47 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35740 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbcKNUBQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 15:01:16 -0500
-Date: Mon, 14 Nov 2016 12:01:15 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        andy.gross@linaro.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-Subject: Re: [PATCH v7 04/14] ARM: dts: Add xo_clock to sdhc nodes on qcom
- platforms
-Message-ID: <20161114200115.GL5177@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
- <1479103248-9491-5-git-send-email-riteshh@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479103248-9491-5-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mirza.krak@gmail.com>
+Return-Path: <mirza.krak@gmail.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+To: swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: gnurou@gmail.com,
+	linux@armlinux.org.uk,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V4 5/6] ARM: tegra: Add Tegra20 GMI support
+Date: Mon,  7 Nov 2016 09:30:04 +0100
+Message-Id: <1478507405-13204-6-git-send-email-mirza.krak@gmail.com>
+In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/14, Ritesh Harjani wrote:
-> Add xo_clock to sdhc clock node on all qcom platforms.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-> ---
->  arch/arm/boot/dts/qcom-apq8084.dtsi   | 14 ++++++++------
->  arch/arm/boot/dts/qcom-msm8974.dtsi   | 14 ++++++++------
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
->  arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
->  4 files changed, 27 insertions(+), 20 deletions(-)
-> 
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Is there an update to
-Documentation/devicetree/bindings/mmc/sdhci-msm.txt as well?
+Add a device node for the GMI controller found on Tegra20.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
+
+Changes in v2:
+- added address-cells, size-cells and ranges properties
+
+Changes in v3:
+- fixed range address which is not the same as Tegra30.
+
+Changes in v4:
+- removed extra newline and a initial space in resets property.
+
+ arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 2207c08..e880750 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -376,6 +376,19 @@
+ 		status = "disabled";
+ 	};
+
++	gmi@70009000 {
++		compatible = "nvidia,tegra20-gmi";
++		reg = <0x70009000 0x1000>;
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges = <0 0 0xd0000000 0xfffffff>;
++		clocks = <&tegra_car TEGRA20_CLK_NOR>;
++		clock-names = "gmi";
++		resets = <&tegra_car 42>;
++		reset-names = "gmi";
++		status = "disabled";
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
+--
+2.1.4
