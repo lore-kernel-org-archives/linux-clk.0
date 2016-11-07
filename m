@@ -1,85 +1,77 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43964 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:38988 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934182AbcKNGED (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:04:03 -0500
-Subject: Re: [PATCH v6 05/14] mmc: sdhci-msm: Update DLL reset sequence
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-6-git-send-email-riteshh@codeaurora.org>
- <20161108230622.GN16026@codeaurora.org>
- <10d66d21-eebd-45a3-6fb7-72117d860142@codeaurora.org>
- <20161109204304.GT16026@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        with ESMTP id S1751296AbcKGLeh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:34:37 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
         adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         david.brown@linaro.org, andy.gross@linaro.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
         alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
         Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
         kdorfman@codeaurora.org, david.griego@linaro.org,
         stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <a2032294-640b-41fa-8e9a-5a4f759ca2eb@codeaurora.org>
-Date: Mon, 14 Nov 2016 11:33:50 +0530
-MIME-Version: 1.0
-In-Reply-To: <20161109204304.GT16026@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        rnayak@codeaurora.org, pramod.gurav@linaro.org,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v6 09/14] mmc: sdhci-msm: Add clock changes for DDR mode.
+Date: Mon,  7 Nov 2016 16:54:32 +0530
+Message-Id: <1478517877-23733-10-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+SDHC MSM controller need 2x clock for MCLK at GCC.
+Hence make required changes to have 2x clock for
+DDR timing modes.
 
-On 11/10/2016 2:13 AM, Stephen Boyd wrote:
-> On 11/09, Ritesh Harjani wrote:
->> Hi Stephen,
->>
->> On 11/9/2016 4:36 AM, Stephen Boyd wrote:
->>> On 11/07, Ritesh Harjani wrote:
->>>>
->>>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->>>> index 42f42aa..32b0b79 100644
->>>> --- a/drivers/mmc/host/sdhci-msm.c
->>>> +++ b/drivers/mmc/host/sdhci-msm.c
->>>> @@ -58,11 +58,17 @@
->>>> #define CORE_DLL_CONFIG		0x100
->>>> #define CORE_DLL_STATUS		0x108
->>>>
->>>> +#define CORE_DLL_CONFIG_2	0x1b4
->>>> +#define CORE_FLL_CYCLE_CNT	BIT(18)
->>>> +#define CORE_DLL_CLOCK_DISABLE	BIT(21)
->>>> +
->>>> #define CORE_VENDOR_SPEC	0x10c
->>>> #define CORE_CLK_PWRSAVE	BIT(1)
->>>>
->>>> #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
->>>>
->>>> +#define TCXO_FREQ		19200000
->>>
->>> TCXO_FREQ could change based on the board. For example, IPQ has
->>> it as 25 MHz.
->> Actually not sure of the proper way on how to get this freq in driver
->> today. We may use xo_board clock but, it is not available for all boards
->> except 8996/8916 I guess.
->>
->> Also, there is no sdhc for IPQ board and for all other boards
->> TCXO_FREQ is same where sdhci-msm driver is used. For that purpose
->> this was defined here for sdhci-msm driver.
->>
->> Do you think in that case we should keep it this way for now and
->> later change if a need arise to change the TCXO_FREQ ?
->
-> We've added xo_board (or cxo_board/pxo_board) to all the qcom
-> platforms upstream, so there should always be something to
-> reference in the dts and call clk_get_rate() on. So I would add
-> it to the binding as another clock and then use that instead of
-> hardcoding the value. That's much more flexible in case this
-> changes in the future.
->
-Sure, I have addressed this in v7 as per your above comment.
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ drivers/mmc/host/sdhci-msm.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index ff0915b..220567c 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -633,6 +633,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++	struct mmc_ios curr_ios = host->mmc->ios;
+ 	int rc;
+ 
+ 	if (!clock) {
+@@ -641,11 +642,23 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	}
+ 
+ 	spin_unlock_irq(&host->lock);
++	/*
++	 * The SDHC requires internal clock frequency to be double the
++	 * actual clock that will be set for DDR mode. The controller
++	 * uses the faster clock(100/400MHz) for some of its parts and
++	 * send the actual required clock (50/200MHz) to the card.
++	 */
++	if ((curr_ios.timing == MMC_TIMING_UHS_DDR50) ||
++	    (curr_ios.timing == MMC_TIMING_MMC_DDR52) ||
++	    (curr_ios.timing == MMC_TIMING_MMC_HS400))
++		clock *= 2;
++
+ 	if (clock != msm_host->clk_rate) {
+ 		rc = clk_set_rate(msm_host->clk, clock);
+ 		if (rc) {
+-			pr_err("%s: Failed to set clock at rate %u\n",
+-			       mmc_hostname(host->mmc), clock);
++			pr_err("%s: Failed to set clock at rate %u at timing %d\n",
++			       mmc_hostname(host->mmc), clock,
++			       curr_ios.timing);
+ 			spin_lock_irq(&host->lock);
+ 			goto out;
+ 		}
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
