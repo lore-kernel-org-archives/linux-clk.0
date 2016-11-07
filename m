@@ -1,49 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Nov 2016 18:35:27 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take one)
-Message-ID: <20161115023527.GT5177@codeaurora.org>
-References: <1478532868-5508-1-git-send-email-geert+renesas@glider.be>
- <20161110233556.GN16026@codeaurora.org>
- <CAMuHMdU96gQGO7wDAThyFHRwjR0o-4sChrrmTBRNh1F1SAR=yQ@mail.gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 7 Nov 2016 12:49:37 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: swarren@wwwdotorg.org, jonathanh@nvidia.com, gnurou@gmail.com,
+	linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] bus: Add support for Tegra Generic Memory
+ Interface
+Message-ID: <20161107114937.GD28616@ulmo.ba.sec>
+References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+ <1478507405-13204-7-git-send-email-mirza.krak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdU96gQGO7wDAThyFHRwjR0o-4sChrrmTBRNh1F1SAR=yQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9dgjiU4MmWPVapMU"
+In-Reply-To: <1478507405-13204-7-git-send-email-mirza.krak@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/14, Geert Uytterhoeven wrote:
-> Hi Stephen,
-> 
-> On Fri, Nov 11, 2016 at 12:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 11/07, Geert Uytterhoeven wrote:
-> >> clk: renesas: Updates for v4.10 (take one)
-> >>
-> >>   - SYS-DMAC, (H)SCIF, I2C, DRIF, and graphics related clocks for R-Car
-> >>     M3-W,
-> >>   - Minor fixes and cleanups.
-> >>
-> >> Thanks for pulling!
-> >> ----------------------------------------------------------------
-> >> Geert Uytterhoeven (4):
-> >>       clk: renesas: cpg-mssr: Always use readl()/writel()
-> >>       clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
-> >>       clk: renesas: cpg-mssr: Fix inverted debug check
-> >
-> > Hm.. I already applied this one to clk-next. If you're going to
-> > apply patches can you please indicate if they've been picked up
-> > and/or not send them To: Mike and I, please?
-> 
-> Sorry, I'll be more clear in the future.
-> 
-> I believe this is not a blocker for pulling, is it?
 
-No I guess not. Pulled into clk-next.
+--9dgjiU4MmWPVapMU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Mon, Nov 07, 2016 at 09:30:05AM +0100, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak@gmail.com>
+>=20
+> The Generic Memory Interface bus can be used to connect high-speed
+> devices such as NOR flash, FPGAs, DSPs...
+>=20
+> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+> ---
+>=20
+> Changes in v2:
+>  - Fixed some checkpatch errors
+>  - Re-ordered probe to get rid of local variables
+>  - Moved of_platform_default_populate call to the end of probe
+>  - Use the timing and configuration properties from the child device
+>  - Added warning if more then 1 child device exist
+>=20
+> Changes in v3:
+>  - added helper function to disable the controller which is used in remov=
+e and
+>  on error.
+>  - Added logic to parse CS# from "ranges" property with fallback to "reg"
+>  property
+>=20
+> Changes in v4:
+> - added sanity check of chip-select property (fail if invalid)
+> - adjusted for device tree binding property name changes
+> - fail probe if there are no child nodes
+> - removed superfluous error message
+> - removed superfluous newline in Kconfig
+>=20
+>  drivers/bus/Kconfig     |   7 ++
+>  drivers/bus/Makefile    |   1 +
+>  drivers/bus/tegra-gmi.c | 275 ++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 283 insertions(+)
+>  create mode 100644 drivers/bus/tegra-gmi.c
+
+Applied with a bit of code reshuffling to make things more symmetric as
+well as a couple of pedantic cleanups because I couldn't resist.
+
+Thanks,
+Thierry
+
+--9dgjiU4MmWPVapMU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJYIGpOAAoJEN0jrNd/PrOhXXQP/Rqjl3rQapa2nVOHkGCCi+bM
+kWf/lHmMIeW6wY9n26Nv6ZWoOKIO22hxZmH0zztBwx8HZ8ysJkUEdTVw3lbYaLHr
+fRTVkqFa4ikG2yqZgOgGZkgRdTp7zaYWKGL32HLJI/61V/oqMLzqZV5X5fjBOsqT
+zqAVtRIy+KZc6ZLZ34f+tElcDhgmbdRrxlOngw5HgV1GBL9P5kU/xH5njqk0beaq
+tjHGHWYYqv4v0tvcx/X+ScEcr7ISKIJrvUvllIHGgZCx2T56kAliMvZbA/cVVJjC
+7tHBJZ6VRKP5hnPsHMHpw7u3i1v/pRnZffrY7AL93hgOv6Y7iVnmNH9gk11/lpcV
+W3AQUCph62tQqSAwtrDkrIlkBJwU3TA2TPHBmdr5QXGYOcMYUY6ONYj0UG5orVLZ
+nJhw8keVjp4Tp04WTg9wnJ7+KdzOI4xONHf8rs76Gt9JI/ufpTIk2SnrRLXQr0L0
+wUPJjP3l1XyzKgbfGzQRH2TXYw5LXp2qoPWbHNQ8SGGKzSHSkr3Pc+XtL5VucCS4
+E5HOu5uHDsRRxs1k/C9bLKWqfxpX7rEfkHg3z2CRh/zLg5Ngl5iVd1ymL1xtQpBw
+m0mNRFJLel/ogrPP60TrVauStg7jQujWEy4e82PNrNV7Q5viOaEaKK6dtRk9Hl1E
+b/a79oEOJDy1QJ3eR1vP
+=JhXv
+-----END PGP SIGNATURE-----
+
+--9dgjiU4MmWPVapMU--
