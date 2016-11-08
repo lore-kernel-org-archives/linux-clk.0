@@ -1,30 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 14:51:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 03/11] clk: qcom: handle alpha PLLs with 16bit alpha
- val registers
-Message-ID: <20161102215146.GO16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-4-git-send-email-rnayak@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475138152-859-4-git-send-email-rnayak@codeaurora.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1478593430-23102-1-git-send-email-rnayak@codeaurora.org>
+References: <1478593430-23102-1-git-send-email-rnayak@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Nov 2016 10:36:46 +0100
+Message-ID: <CAMuHMdW6-oRJ4CKbUeXOixvKFOZ3vf8pGhCH87rOx1KuE8bdGQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: Free struct clk allocated during clk_hw_register()
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Rajendra Nayak wrote:
-> Some alpha PLLs have support for only a 16bit programable Alpha Value
-> (as against the default 40bits). Add a flag to handle the 16bit alpha
-> registers
-> 
+Hi Rajendra,
+
+On Tue, Nov 8, 2016 at 9:23 AM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+> With clk_hw_register() API we hide the struct clk from the caller
+> and return an int error code instead, so the caller (clk provider)
+> is not expected to use hw->clk on return.
+
+That's correct, in case of failure.
+
+> Free the memory, and mark hw->clk as NULL before returning.
+>
 > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
+>  drivers/clk/clk.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0fb39fe..f81e4aa 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2628,7 +2628,15 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>   */
+>  int clk_hw_register(struct device *dev, struct clk_hw *hw)
+>  {
+> -       return PTR_ERR_OR_ZERO(clk_register(dev, hw));
+> +       struct clk *c;
+> +
+> +       c = clk_register(dev, hw);
+> +       if (IS_ERR(c))
+> +               return PTR_ERR(c);
+> +
+> +       __clk_free_clk(c);
+> +       hw->clk = NULL;
 
-Applied to clk-next
+This is the success path, not the failure path (on failure, clk_register()
+has already freed the struct clk).
+Why do you free the struct clk in case of success?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+What am I missing?
+
+> +       return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_register);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
