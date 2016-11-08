@@ -1,98 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0040.outbound.protection.outlook.com ([104.47.37.40]:29696
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751091AbcKID1Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Nov 2016 22:27:16 -0500
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
-CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v16, 0/7] Fix eSDHC host version register bug
-Date: Wed, 9 Nov 2016 11:14:05 +0800
-Message-ID: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 8 Nov 2016 19:45:12 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: Fix CPUX clock for the A23/A33
+Message-ID: <20161108184512.jlln3xyvege6jcnb@lukather>
+References: <20161107173135.Ux5KXCv5@smtp1h.mail.yandex.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3w7tbgn6ftlie325"
+In-Reply-To: <20161107173135.Ux5KXCv5@smtp1h.mail.yandex.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
-eSDHC controller. To match the SoC version and revision, 15 previous version
-patchsets had tried many methods but all of them were rejected by reviewers.
-Such as
-	- dts compatible method
-	- syscon method
-	- ifdef PPC method
-	- GUTS driver getting SVR method
-Anrd suggested a soc_device_match method in v10, and this is the only available
-method left now. This v11 patchset introduces the soc_device_match interface in
-soc driver.
 
-The first four patches of Yangbo are to add the GUTS driver. This is used to
-register a soc device which contain soc version and revision information.
-The other three patches introduce the soc_device_match method in soc driver
-and apply it on esdhc driver to fix this bug.
+--3w7tbgn6ftlie325
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-Changes for v15:
-	- Dropped patch 'dt: bindings: update Freescale DCFG compatible'
-	  since the work had been done by below patch on ShawnGuo's linux tree.
-	  'dt-bindings: fsl: add LS1043A/LS1046A/LS2080A compatible for SCFG
-	   and DCFG'
-	- Fixed error code issue in guts driver
-Changes for v16:
-	- Dropped patch 'powerpc/fsl: move mpc85xx.h to include/linux/fsl'
-	- Added a bug-fix patch from Geert
----
+On Mon, Nov 07, 2016 at 05:36:03PM +0800, Icenowy Zheng wrote:
+> > And your commit log should explain why it is an issue. Yours is even=20
+> > wrong here, we could definitely change the rate of these clocks=20
+> > already. The only thing that was not allowed was to change the rate of=
+=20
+> > its parents, which is what this patch fixes.=20
+> >
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>=20
+> > > ---=20
+> > > Patch 4.9-rc too.=20
+> >
+> > I don't see why it should be part of 4.9. No one uses that code in 4.9.=
+=20
+>=20
+> It can be triggered by a modified dt in 4.9, by add operating points.
 
-Arnd Bergmann (1):
-  base: soc: introduce soc_device_match() interface
+Still, there's no reason to fix something that is not used by anyone,
+it can definitely wait until the next release. Linus also said that he
+didn't want patches like that last week.
 
-Geert Uytterhoeven (1):
-  base: soc: Check for NULL SoC device attributes
+Maxime
 
-Yangbo Lu (5):
-  ARM64: dts: ls2080a: add device configuration node
-  dt: bindings: move guts devicetree doc out of powerpc directory
-  soc: fsl: add GUTS driver for QorIQ platforms
-  MAINTAINERS: add entry for Freescale SoC drivers
-  mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
- .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
- MAINTAINERS                                        |  11 +-
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
- drivers/base/Kconfig                               |   1 +
- drivers/base/soc.c                                 |  70 ++++++
- drivers/mmc/host/Kconfig                           |   1 +
- drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
- drivers/soc/Kconfig                                |   3 +-
- drivers/soc/fsl/Kconfig                            |  18 ++
- drivers/soc/fsl/Makefile                           |   1 +
- drivers/soc/fsl/guts.c                             | 236 +++++++++++++++++++++
- include/linux/fsl/guts.h                           | 125 ++++++-----
- include/linux/sys_soc.h                            |   3 +
- 13 files changed, 447 insertions(+), 51 deletions(-)
- rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
- create mode 100644 drivers/soc/fsl/Kconfig
- create mode 100644 drivers/soc/fsl/guts.c
+--3w7tbgn6ftlie325
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.1.0.27.g96db324
+-----BEGIN PGP SIGNATURE-----
 
+iQIcBAEBCAAGBQJYIh04AAoJEBx+YmzsjxAgUK8P/RehGnf4pZGpxzBR24LjMPVV
+SqcbhKMupCJ34P4EiJwjQTyDKvxBBMgFzc+D5ftAK6kG3M5Qi/oYApVUNCjysj4i
+vVgDBHvd19OXM2zHn+ZU1AJCs7yB3KtcawIvtKQJKvVh9YzvxAo/1YAK8ZqscaFe
+9zMc57GQ74uy1Q5+n44ksB1FN4MJrmL8PmC6oDQWdEsPX/MjbOATLhKEmhlma6Fp
+tvo1LHEdonO2Es9KbHI+cQ9evtVTKK3ztv8IIgLgMgi0hXWQBJlUafnPYn8lX3xI
+SaBi0+Dd2wcZvu8CH/HdowEoG+EbRDiX7mgrwFIiiXHYA78pbakf6h4bavCAetOF
+F2FIkWDlHCMSS7llTB9eeHY2o/Bl/aNum8xTvmhTbm/GvkI/Waug5a+nQIXKfUFM
+dFB0/3DjU7uVc5k4aKV8YvjiXL3X0QvLJ4+BZ8rghZ6WydJrkj+YlyQidJyyXhCc
+24t2YtPQw3SOcuI5VbTqLELTkzzDO5cDhWZGpKSzg2dU85BnTrGMJvb+P0pM0REF
+vDwyycUVxeOkMXT+fcsUcpXtY+IeGo6re5cNBt6VV1DNRlMrsoVflUjWN0i9y7tn
+aeicVi3zu9iqN/JPdPLM9M+KG3pL1rrp1QaaR7aVijRyeDi7wmh5VAqL/NgS+AqT
+8ChEUpnMmgOw8GsWMRm+
+=ag8B
+-----END PGP SIGNATURE-----
+
+--3w7tbgn6ftlie325--
