@@ -1,43 +1,142 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
- <1477576872-2665-2-git-send-email-mirza.krak@gmail.com>
-CC: <gnurou@gmail.com>, <linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <df12a1f0-316d-64a4-54fe-f7559742eeca@nvidia.com>
-Date: Thu, 3 Nov 2016 10:06:27 +0000
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH 4/6] clk: stm32f4: Add I2S clock
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre
+	<nico@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, <andrea.merello@gmail.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+ <1478523943-23142-5-git-send-email-gabriel.fernandez@st.com>
+ <08ad0f8c-bcdf-4835-9f07-167e129604bd@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <f219c575-21c2-385f-1aee-7ccc4715028e@st.com>
+Date: Tue, 8 Nov 2016 17:26:57 +0100
 MIME-Version: 1.0
-In-Reply-To: <1477576872-2665-2-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
+In-Reply-To: <08ad0f8c-bcdf-4835-9f07-167e129604bd@linaro.org>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mirza,
 
-On 27/10/16 15:01, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+
+On 11/07/2016 03:14 PM, Daniel Thompson wrote:
+> On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> This patch introduces I2S clock for stm32f4 soc.
+>> The I2S clock could be derived from an external clock or from pll-i2s
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>  drivers/clk/clk-stm32f4.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+>> index 5fa5d51..b7cb359 100644
+>> --- a/drivers/clk/clk-stm32f4.c
+>> +++ b/drivers/clk/clk-stm32f4.c
+>> @@ -216,6 +216,7 @@ enum {
+>>      SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC,
+>>      PLL_VCO_I2S, PLL_VCO_SAI,
+>>      CLK_LCD,
+>> +    CLK_I2S,
 >
-> Add TEGRA20_CLK_NOR to init table and set default rate to 92 MHz which
-> is max rate.
+> Sorry, this has just clicked and it applies to most of the other 
+> patches, but adding things to this list effectively extends the clock 
+> bindings (i.e. the list of valid "other" clocks access with a primary 
+> index of 1).
 >
-> The maximum rate value of 92 MHz is pulled from the downstream L4T
-> kernel.
+> This list if a list of "arbitrary" constants by which DT periphericals 
+> can be linked to specific clocks.
+>
+> So...
+>
+>  1)  If a clock is introduced here we should update the clock binding
+>      documentations.
+>
+>  2)  If no peripheral can connect to the clock (because it is internal
+>      to the clock gen logic and peripherals must connect to the gated
+>      version) it should not be included in this enum.
+>
+>  3)  I failed to mention this when the four undocumented clocks
+>      (LSI, LSE, HSE_RTC and RTC) were added.
+>
+>  4)  I *should* have added a comment explaining the above to the code.
+>
+>
+ok i agree
 
-Thanks for adding this. I assume that this is from an L4T r16 release 
-with a v3.1 kernel. I had a quick poke through the kernel sources for 
-v3.1 but was unable to see where this is set. Obviously v3.1 did not 
-have CCF and so everything seems to be in the arch/arm/mach-tegra 
-directory for setting up clocks. Can you point me to the appropriate 
-sources so I can ACK this?
+>>      END_PRIMARY_CLK
+>>  };
+>>
+>> @@ -967,6 +968,8 @@ static struct clk_hw *stm32_register_cclk(struct 
+>> device *dev, const char *name,
+>>
+>>  static const char *sdmux_parents[2] = { "pll48", "sys" };
+>>
+>> +static const char *i2s_parents[2] = { "plli2s-r", NULL };
+>> +
+>>  struct stm32f4_clk_data {
+>>      const struct stm32f4_gate_data *gates_data;
+>>      const u64 *gates_map;
+>> @@ -1005,7 +1008,7 @@ struct stm32f4_clk_data {
+>>
+>>  static void __init stm32f4_rcc_init(struct device_node *np)
+>>  {
+>> -    const char *hse_clk;
+>> +    const char *hse_clk, *i2s_in_clk;
+>>      int n;
+>>      const struct of_device_id *match;
+>>      const struct stm32f4_clk_data *data;
+>> @@ -1038,6 +1041,7 @@ static void __init stm32f4_rcc_init(struct 
+>> device_node *np)
+>>      stm32f4_gate_map = data->gates_map;
+>>
+>>      hse_clk = of_clk_get_parent_name(np, 0);
+>> +    i2s_in_clk = of_clk_get_parent_name(np, 1);
+>
+> Again this looks like a change to the DT bindings.
+>
+ok
 
-Cheers
-Jon
+> Also does the code work if i2s_in_clk is NULL or as you hoping to get 
+> away with a not-backwards compatible change?
+>
+>
+yes it works if i2s_in_clk is NULL.
 
--- 
-nvpublic
+BR
+Gabriel
+
+> Daniel.
+>
+>
+>>
+>>      clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+>>              16000000, 160000);
+>> @@ -1053,6 +1057,12 @@ static void __init stm32f4_rcc_init(struct 
+>> device_node *np)
+>>      clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll(pllsrc,
+>>              &data->pll_data[2], &stm32f4_clk_lock);
+>>
+>> +    i2s_parents[1] = i2s_in_clk;
+>> +
+>> +    clks[CLK_I2S] =    clk_hw_register_mux_table(NULL, "i2s",
+>> +                i2s_parents, ARRAY_SIZE(i2s_parents), 0,
+>> +                base + STM32F4_RCC_CFGR, 23, 1, 0, NULL,
+>> +                &stm32f4_clk_lock);
+>>      sys_parents[1] = hse_clk;
+>>      clk_register_mux_table(
+>>          NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
+>>
+>
