@@ -1,189 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41244 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbcKNGBo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:01:44 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org, andy.gross@linaro.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v7 04/14] ARM: dts: Add xo_clock to sdhc nodes on qcom platforms
-Date: Mon, 14 Nov 2016 11:30:38 +0530
-Message-Id: <1479103248-9491-5-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
+	<peter.chen@nxp.com>
+Subject: [PATCH v2 2/3] ARM: imx: mach-imx6ul: add imx6ull support
+Date: Tue, 8 Nov 2016 13:56:53 +0800
+Message-ID: <1478584614-12054-3-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
+References: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
+Return-Path: peter.chen@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add xo_clock to sdhc clock node on all qcom platforms.
+imx6ull is derived SoC from imx6ul.
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
 ---
- arch/arm/boot/dts/qcom-apq8084.dtsi   | 14 ++++++++------
- arch/arm/boot/dts/qcom-msm8974.dtsi   | 14 ++++++++------
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
- arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
- 4 files changed, 27 insertions(+), 20 deletions(-)
+ arch/arm/mach-imx/mach-imx6ul.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
-index 39eb7a4..d421ef3 100644
---- a/arch/arm/boot/dts/qcom-apq8084.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
-@@ -182,13 +182,13 @@
- 	};
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 58a2b88..6cb8a22 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -89,6 +89,7 @@ static void __init imx6ul_init_late(void)
  
- 	clocks {
--		xo_board {
-+		xo_board: xo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
- 		};
- 
--		sleep_clk {
-+		sleep_clk: sleep_clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32768>;
-@@ -416,8 +416,9 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 123 0>, <0 138 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&xo_board 0>;
-+			clock-names = "core", "iface", "xo_clock";
- 			status = "disabled";
- 		};
- 
-@@ -427,8 +428,9 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 125 0>, <0 221 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&xo_board 0>;
-+			clock-names = "core", "iface", "xo_clock";
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index d210947..bec0ebc 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -220,13 +220,13 @@
- 	};
- 
- 	clocks {
--		xo_board {
-+		xo_board: xo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
- 		};
- 
--		sleep_clk {
-+		sleep_clk: sleep_clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32768>;
-@@ -558,8 +558,9 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 123 0>, <0 138 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&xo_board 0>;
-+			clock-names = "core", "iface", "xo_clock";
- 			status = "disabled";
- 		};
- 
-@@ -569,8 +570,9 @@
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 125 0>, <0 221 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
--			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&xo_board 0>;
-+			clock-names = "core", "iface", "xo_clock";
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 466ca57..6265822 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -512,8 +512,9 @@
- 			interrupts = <0 123 0>, <0 138 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
- 			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
--				 <&gcc GCC_SDCC1_AHB_CLK>;
--			clock-names = "core", "iface";
-+				 <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&xo_board 0>;
-+			clock-names = "core", "iface", "xo_clock";
- 			bus-width = <8>;
- 			non-removable;
- 			status = "disabled";
-@@ -527,8 +528,9 @@
- 			interrupts = <0 125 0>, <0 221 0>;
- 			interrupt-names = "hc_irq", "pwr_irq";
- 			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
--				 <&gcc GCC_SDCC2_AHB_CLK>;
--			clock-names = "core", "iface";
-+				 <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&xo_board 0>;
-+			clock-names = "core", "iface", "xo_clock";
- 			bus-width = <4>;
- 			status = "disabled";
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 338f82a..73178fd 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -192,14 +192,14 @@
- 	};
- 
- 	clocks {
--		xo_board {
-+		xo_board: xo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
- 			clock-output-names = "xo_board";
- 		};
- 
--		sleep_clk {
-+		sleep_clk: sleep_clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32764>;
-@@ -347,9 +347,10 @@
- 			 interrupts = <0 125 0>, <0 221 0>;
- 			 interrupt-names = "hc_irq", "pwr_irq";
- 
--			 clock-names = "iface", "core";
-+			 clock-names = "iface", "core", "xo_clock";
- 			 clocks = <&gcc GCC_SDCC2_AHB_CLK>,
--			 <&gcc GCC_SDCC2_APPS_CLK>;
-+			 <&gcc GCC_SDCC2_APPS_CLK>,
-+			 <&xo_board 0>;
- 			 bus-width = <4>;
- 		 };
+ static const char * const imx6ul_dt_compat[] __initconst = {
+ 	"fsl,imx6ul",
++	"fsl,imx6ull",
+ 	NULL,
+ };
  
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+2.7.4
