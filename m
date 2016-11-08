@@ -1,66 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 25 Nov 2016 07:35:46 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: megous@megous.com
-Cc: dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
-Message-ID: <20161125063546.n3s3dpxdi6ashjtq@lukather>
-References: <20161125002852.18097-1-megous@megous.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="les5wtydnwypwiwv"
-In-Reply-To: <20161125002852.18097-1-megous@megous.com>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH] clk: pxa: Use __iomem properly and staticize lock variable
+Date: Tue,  8 Nov 2016 14:47:56 -0800
+Message-Id: <20161108224756.25842-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This function is passed an __iomem pointer but we use a u32
+pointer instead which makes checkers like spare complain.
+Furthermore, "lock" is a pretty poor variable name for a string
+that will go into lockdep reports and the symbol isn't marked
+static. Cleanup all this.
 
---les5wtydnwypwiwv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/pxa/clk-pxa.c | 7 ++++---
+ drivers/clk/pxa/clk-pxa.h | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-On Fri, Nov 25, 2016 at 01:28:47AM +0100, megous@megous.com wrote:
-> From: Ondrej Jirman <megous@megous.com>
->=20
-> When adjusting PLL_CPUX on H3, the PLL is temporarily driven
-> too high, and the system becomes unstable (oopses or hangs).
->=20
-> Add a notifier to avoid this situation by temporarily switching
-> to a known stable 24 MHz oscillator.
->=20
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> Tested-by: Lutz Sammer <johns98@gmx.net>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---les5wtydnwypwiwv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYN9u+AAoJEBx+YmzsjxAgWgIP/2bmarhjizHyNpWPB+iEOC18
-iXNdiubaPWF3tpc5Z0VaR2XOshxT4m7r89p5ICVxYcuhmuU72//vPgOD8xzgE+Wp
-6U6Qy6WTcDu/paFCRR/gpQ2wY89vLHkbkosp5KtBhXg5M4riF/zPPDiDzIWHWOhy
-sEhB1hyFVJBGTrbV4bvDPN0+6XxvhNfOiwOc3uDlVLWUQQQjt9iFC/CVLWQPK592
-h76pMIuZZgWz/O2pwPvfeA1izmagkadQQ2vwhcOwPgEudBEHmw71KkG8MySTnlNI
-xI+BRaTuDfELxFNvyrj9NVLAqbJmwmpIbbrBHo0bkhtQJbLuwir4VJF6Ydwiot5p
-23FMGaCgwLAnNsK9jROx480XnUv6tXY+MU4KWzomdTCTG7JK5hbhcW5PDCveRCiJ
-OTmd2o9T87uiURx05lTcwOoLQ4b/g2CiHOS1j0paRl/APH8uOENd+EP/nUf1Tx+z
-neGywvnCuyNmJgJRvGSBbJqxKupVpUKRrR+9xgXZTmIVd1gqRqOvj/7hnv0KQV+K
-BGDUo8yb5aplKGKNt77oMsWvyWw+VPRfpHI5JvrSOebdmpeH7IkZQUgbjXH4T9sd
-XyPgukHmcfZHA3G3IrWN24JlvsdAk2Dl10ux+fwIIXRsmv6ZKl9Vc7d8jnTOUZ5p
-6kePpNvrsxRZ87nrufpm
-=byEW
------END PGP SIGNATURE-----
-
---les5wtydnwypwiwv--
+diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+index 50fb9d0ea58d..29fc71617bad 100644
+--- a/drivers/clk/pxa/clk-pxa.c
++++ b/drivers/clk/pxa/clk-pxa.c
+@@ -38,7 +38,7 @@
+ #define MDREFR_DB2_MASK	(MDREFR_K2DB2 | MDREFR_K1DB2)
+ #define MDREFR_DRI_MASK	0xFFF
+ 
+-DEFINE_SPINLOCK(lock);
++static DEFINE_SPINLOCK(pxa_clk_lock);
+ 
+ static struct clk *pxa_clocks[CLK_MAX];
+ static struct clk_onecell_data onecell_data = {
+@@ -109,7 +109,7 @@ int __init clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks)
+ 		pxa_clk->lp = clks[i].lp;
+ 		pxa_clk->hp = clks[i].hp;
+ 		pxa_clk->gate = clks[i].gate;
+-		pxa_clk->gate.lock = &lock;
++		pxa_clk->gate.lock = &pxa_clk_lock;
+ 		clk = clk_register_composite(NULL, clks[i].name,
+ 					     clks[i].parent_names, 2,
+ 					     &pxa_clk->hw, &cken_mux_ops,
+@@ -155,7 +155,8 @@ void pxa2xx_core_turbo_switch(bool on)
+ }
+ 
+ void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
+-			u32 (*mdrefr_dri)(unsigned int), u32 *mdrefr, u32 *cccr)
++			u32 (*mdrefr_dri)(unsigned int), void __iomem *mdrefr,
++			void __iomem *cccr)
+ {
+ 	unsigned int clkcfg = freq->clkcfg;
+ 	unsigned int unused, preset_mdrefr, postset_mdrefr;
+diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
+index 58abfa816d53..2b90c5917b32 100644
+--- a/drivers/clk/pxa/clk-pxa.h
++++ b/drivers/clk/pxa/clk-pxa.h
+@@ -155,8 +155,8 @@ void clk_pxa_dt_common_init(struct device_node *np);
+ 
+ void pxa2xx_core_turbo_switch(bool on);
+ void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
+-			u32 (*mdrefr_dri)(unsigned int), u32 *mdrefr,
+-			u32 *cccr);
++			u32 (*mdrefr_dri)(unsigned int), void __iomem *mdrefr,
++			void __iomem *cccr);
+ int pxa2xx_determine_rate(struct clk_rate_request *req,
+ 			  struct pxa2xx_freq *freqs,  int nb_freqs);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
