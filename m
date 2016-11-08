@@ -1,128 +1,41 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Nov 2016 12:18:19 -0800
+Date: Tue, 8 Nov 2016 14:42:59 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: bcm: Fix unmet Kconfig dependencies for CLK_BCM_63XX
-Message-ID: <20161123201819.GI25626@codeaurora.org>
-References: <20161122174329.11592-1-f.fainelli@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: pxa mark dummy helper as 'inline'
+Message-ID: <20161108224259.GL16026@codeaurora.org>
+References: <20161108144950.3472058-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161122174329.11592-1-f.fainelli@gmail.com>
+In-Reply-To: <20161108144950.3472058-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/22, Florian Fainelli wrote:
-> With commit f4e871509959 ("clk: iproc: Make clocks visible options"),
-> COMMON_CLK_IPROC gained a dependency on ARCH_BCM_IPROC, yet CLK_BCM_63XX
-> also selects that option, this causes the following Kconfig warning:
+On 11/08, Arnd Bergmann wrote:
+> The dummy_clk_set_parent function is marked as 'static' but is
+> no longer referenced from the pxa25x clk driver after the last use
+> of the RATE_RO_OPS() macro is gone from this file, causing a
+> harmless build warning:
 > 
-> warning: (CLK_BCM_63XX) selects COMMON_CLK_IPROC which has unmet direct
-> dependencies ((ARCH_BCM_IPROC || COMPILE_TEST) && COMMON_CLK)
+> In file included from drivers/clk/pxa/clk-pxa25x.c:24:0:
+> drivers/clk/pxa/clk-pxa.h:146:12: error: 'dummy_clk_set_parent' defined but not used [-Werror=unused-function]
 > 
-> Fix this by adding proper depends/default for COMMON_CLK_IPROC
+> This marks the functon as 'inline', which lets the compiler simply
+> drop it when it gets referenced.
 > 
-> Fixes: f4e871509959 ("clk: iproc: Make clocks visible options")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Fixes: 9fe694295098 ("clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq")
+
+I hope I don't rewrite clk-next history... I need some sort of
+magic git pre-commit hook that rewrites fixes tags if the hash
+changes.
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/clk/bcm/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index f21e9b7afd1a..80de9fc2e833 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -20,9 +20,9 @@ config CLK_BCM_KONA
->  
->  config COMMON_CLK_IPROC
->  	bool "Broadcom iProc clock support"
-> -	depends on ARCH_BCM_IPROC || COMPILE_TEST
-> +	depends on ARCH_BCM_IPROC || ARCH_BCM_63XX || COMPILE_TEST
->  	depends on COMMON_CLK
-> -	default ARCH_BCM_IPROC
-> +	default ARCH_BCM_IPROC || ARCH_BCM_63XX
->  	help
->  	  Enable common clock framework support for Broadcom SoCs
->  	  based on the iProc architecture
 
-It's confusing that CLK_BCM_63XX selects COMMON_CLK_IPROC and the
-other drivers don't. Also, why are we now defaulting IPROC to be
-true when ARCH_BCM_63XX is there? It will be selected anyway by
-the clk driver on that machine so what's the point?
+Applied to clk-next
 
-I'd prefer we handled this one way instead of two. Given that
-COMMON_CLK_IPROC is a symbol for what looks like a library it
-seems that it needs to be a hidden option that gets selected by
-the other three options for the machine specific drivers.
-
-I'd like to drop the default ARCH_BCM_63XX part of your patch,
-merge that for 4.9 and apply this on top for 4.10. Agreed?
-
-----8<----
-
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index f21e9b7afd1a..b5ae5311b0a2 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -1,7 +1,6 @@
- config CLK_BCM_63XX
- 	bool "Broadcom BCM63xx clock support"
- 	depends on ARCH_BCM_63XX || COMPILE_TEST
--	depends on COMMON_CLK
- 	select COMMON_CLK_IPROC
- 	default ARCH_BCM_63XX
- 	help
-@@ -11,27 +10,22 @@ config CLK_BCM_63XX
- config CLK_BCM_KONA
- 	bool "Broadcom Kona CCU clock support"
- 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
--	depends on COMMON_CLK
--	default y
-+	default ARCH_BCM_MOBILE
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  using "Kona" style clock control units, including those
- 	  in the BCM281xx and BCM21664 families.
- 
- config COMMON_CLK_IPROC
--	bool "Broadcom iProc clock support"
--	depends on ARCH_BCM_IPROC || COMPILE_TEST
--	depends on COMMON_CLK
--	default ARCH_BCM_IPROC
-+	bool
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  based on the iProc architecture
- 
--if COMMON_CLK_IPROC
--
- config CLK_BCM_CYGNUS
- 	bool "Broadcom Cygnus clock support"
- 	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
-+	select COMMON_CLK_IPROC
- 	default ARCH_BCM_CYGNUS
- 	help
- 	  Enable common clock framework support for the Broadcom Cygnus SoC
-@@ -39,6 +33,7 @@ config CLK_BCM_CYGNUS
- config CLK_BCM_NSP
- 	bool "Broadcom Northstar/Northstar Plus clock support"
- 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
-+	select COMMON_CLK_IPROC
- 	default ARCH_BCM_5301X || ARCH_BCM_NSP
- 	help
- 	  Enable common clock framework support for the Broadcom Northstar and
-@@ -47,8 +42,7 @@ config CLK_BCM_NSP
- config CLK_BCM_NS2
- 	bool "Broadcom Northstar 2 clock support"
- 	depends on ARCH_BCM_IPROC || COMPILE_TEST
-+	select COMMON_CLK_IPROC
- 	default ARCH_BCM_IPROC
- 	help
- 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
--
--endif
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
