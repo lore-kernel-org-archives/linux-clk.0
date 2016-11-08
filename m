@@ -1,42 +1,80 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Mon, 7 Nov 2016 19:41:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
-	thomas.ab@samsung.com, myungjoo.ham@samsung.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
-Message-ID: <20161107174158.GB4865@kozik-lap>
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49282 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbcKHDkw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 22:40:52 -0500
+Message-ID: <58214862.8080604@codeaurora.org>
+Date: Tue, 08 Nov 2016 09:07:06 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, adrian.hunter@intel.com,
+        shawn.lin@rock-chips.com, sboyd@codeaurora.org
+CC: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org
+Subject: Re: [PATCH v6 01/14] clk: Add clk_hw_get_clk() helper API to be used
+ by clk providers
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org> <1478517877-23733-2-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1478517877-23733-2-git-send-email-riteshh@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 07, 2016 at 03:39:33PM +0530, Pankaj Dubey wrote:
-> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
-> accurate low frequency clock for MAX8997 internal circuit as well as
-> external circuit. This patch adds support for these two clocks.
+
+
+On 11/07/2016 04:54 PM, Ritesh Harjani wrote:
+> From: Rajendra Nayak <rnayak@codeaurora.org>
 > 
-> CC: Michael Turquette <mturquette@baylibre.com>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: devicetree@vger.kernel.org
-> CC: linux-clk@vger.kernel.org
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Add a helper API that will allow clk providers to turn their clk_hw
+> structures into struct clk pointer.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+
+Please drop this patch, it isn't needed here anyway, besides
+it needs to be reworked as already discussed.
+
 > ---
->  drivers/clk/Kconfig                       | 10 ++++
->  drivers/clk/Makefile                      |  1 +
->  drivers/clk/clk-max8997.c                 | 76 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/maxim,max8997.h | 23 ++++++++++
+>  drivers/clk/clk.c            | 6 ++++++
+>  include/linux/clk-provider.h | 1 +
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0fb39fe..52ef035 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -186,6 +186,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_get_name);
+>  
+> +struct clk *clk_hw_get_clk(const struct clk_hw *hw)
+> +{
+> +	return hw->clk;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_get_clk);
+> +
+>  struct clk_hw *__clk_get_hw(struct clk *clk)
+>  {
+>  	return !clk ? NULL : clk->core->hw;
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index af59638..37022a9 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -729,6 +729,7 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+>  /* helper functions */
+>  const char *__clk_get_name(const struct clk *clk);
+>  const char *clk_hw_get_name(const struct clk_hw *hw);
+> +struct clk *clk_hw_get_clk(const struct clk_hw *hw);
+>  struct clk_hw *__clk_get_hw(struct clk *clk);
+>  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+>  struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+> 
 
-You need to split the dt-bindings header into separate one so others
-could pull it.  Please also mention the dependencies between patches in
-cover letter, because it does not look like it could be applied as is.
-
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
