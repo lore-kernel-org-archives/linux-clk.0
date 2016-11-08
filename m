@@ -1,263 +1,390 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:38998 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbcKGLeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:34:37 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v6 11/14] mmc: sdhci-msm: Add HS400 platform support
-Date: Mon,  7 Nov 2016 16:54:34 +0530
-Message-Id: <1478517877-23733-12-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v4] clk: renesas: cpg-mssr: add R8A7745 support
+Date: Wed, 09 Nov 2016 00:25:08 +0300
+Message-ID: <4179265.sjm4z2joGl@wasted.cogentembedded.com>
+In-Reply-To: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
+Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+(and RZ/G) code.
 
-The following msm platform specific changes are added to support HS400.
-- Allow tuning for HS400 mode.
-- Configure HS400 timing mode using the VENDOR_SPECIFIC_FUNC register.
+Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+<geert+renesas@glider.be>.
 
-Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/mmc/host/sdhci-msm.c | 127 +++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 117 insertions(+), 10 deletions(-)
+This patch  is against the 'clk-next' branch of CLK group's 'linux.git' repo
+plus the R8A7743 clock driver patch. It depends on the common R-Car gen2 (and
+RZ/G) support just posted.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 220567c..2561c41 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -31,6 +31,7 @@
- #define HC_MODE_EN		0x1
- #define CORE_POWER		0x0
- #define CORE_SW_RST		BIT(7)
-+#define FF_CLK_SW_RST_DIS	BIT(13)
+Changes in version 4:
+- changed the Z2 clock's divisor to 1;
+- passed  the PLL0 divisor to rcar_gen2_cpg_init();
+- renamed the ACP clock to CPEX;
+- removed the thermal module clock.
+
+Changes in version 3:
+- removed the FDP1-1 module clock;
+- added Geert's tag.
+
+Changes in version 2:
+- changed the Z2 clock's divisor to 3.
+
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
+ drivers/clk/renesas/Kconfig                                  |    1 
+ drivers/clk/renesas/Makefile                                 |    1 
+ drivers/clk/renesas/r8a7745-cpg-mssr.c                       |  259 +++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
+ drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
+ 6 files changed, 271 insertions(+), 2 deletions(-)
+
+Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+===================================================================
+--- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -14,6 +14,7 @@ They provide the following functionaliti
+ Required Properties:
+   - compatible: Must be one of:
+       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
++      - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
  
- #define CORE_PWRCTL_STATUS	0xdc
- #define CORE_PWRCTL_MASK	0xe0
-@@ -64,11 +65,18 @@
+@@ -23,8 +24,8 @@ Required Properties:
+   - clocks: References to external parent clocks, one entry for each entry in
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+-      - "extal" (r8a7743, r8a7795, r8a7796)
+-      - "usb_extal" (r8a7743)
++      - "extal" (r8a7743, r8a7745, r8a7795, r8a7796)
++      - "usb_extal" (r8a7743, r8a7745)
+       - "extalr" (r8a7795, r8a7796)
  
- #define CORE_VENDOR_SPEC	0x10c
- #define CORE_CLK_PWRSAVE	BIT(1)
-+#define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
-+#define CORE_HC_MCLK_SEL_HS400	(3 << 8)
-+#define CORE_HC_MCLK_SEL_MASK	(3 << 8)
-+#define CORE_HC_SELECT_IN_EN	BIT(18)
-+#define CORE_HC_SELECT_IN_HS400	(6 << 19)
-+#define CORE_HC_SELECT_IN_MASK	(7 << 19)
+   - #clock-cells: Must be 2
+Index: linux/drivers/clk/renesas/Kconfig
+===================================================================
+--- linux.orig/drivers/clk/renesas/Kconfig
++++ linux/drivers/clk/renesas/Kconfig
+@@ -1,6 +1,7 @@
+ config CLK_RENESAS_CPG_MSSR
+ 	bool
+ 	default y if ARCH_R8A7743
++	default y if ARCH_R8A7745
+ 	default y if ARCH_R8A7795
+ 	default y if ARCH_R8A7796
  
- #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
- 
- #define TCXO_FREQ		19200000
- #define SDHCI_MSM_MIN_CLOCK	400000
-+#define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
- 
- #define CDR_SELEXT_SHIFT	20
- #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
-@@ -85,6 +93,8 @@ struct sdhci_msm_host {
- 	unsigned long clk_rate;
- 	struct mmc_host *mmc;
- 	bool use_14lpp_dll_reset;
-+	bool tuning_done;
-+	bool calibration_done;
+Index: linux/drivers/clk/renesas/Makefile
+===================================================================
+--- linux.orig/drivers/clk/renesas/Makefile
++++ linux/drivers/clk/renesas/Makefile
+@@ -3,6 +3,7 @@ obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7743)		+= r8a7743-cpg-mssr.o rcar-gen2-cpg.o
++obj-$(CONFIG_ARCH_R8A7745)		+= r8a7745-cpg-mssr.o rcar-gen2-cpg.o
+ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+Index: linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
+===================================================================
+--- /dev/null
++++ linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -0,0 +1,259 @@
++/*
++ * r8a7745 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published
++ * by the Free Software Foundation; of the License.
++ */
++
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/soc/renesas/rcar-rst.h>
++
++#include <dt-bindings/clock/r8a7745-cpg-mssr.h>
++
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen2-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R8A7745_CLK_OSC,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++	CLK_USB_EXTAL,
++
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL0,
++	CLK_PLL1,
++	CLK_PLL3,
++	CLK_PLL1_DIV2,
++
++	/* Module Clocks */
++	MOD_CLK_BASE
++};
++
++static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",	CLK_EXTAL),
++	DEF_INPUT("usb_extal",	CLK_USB_EXTAL),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",	CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
++	DEF_BASE(".pll0",	CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
++	DEF_BASE(".pll1",	CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
++	DEF_BASE(".pll3",	CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
++
++	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
++
++	/* Core Clock Outputs */
++	DEF_BASE("lb",	 R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
++	DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
++	DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
++	DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
++	DEF_BASE("rcan", R8A7745_CLK_RCAN, CLK_TYPE_GEN2_RCAN, CLK_USB_EXTAL),
++
++	DEF_FIXED("z2",     R8A7745_CLK_Z2,    CLK_PLL0,	  1, 1),
++	DEF_FIXED("zg",     R8A7745_CLK_ZG,    CLK_PLL1,          6, 1),
++	DEF_FIXED("zx",     R8A7745_CLK_ZX,    CLK_PLL1,          3, 1),
++	DEF_FIXED("zs",     R8A7745_CLK_ZS,    CLK_PLL1,          6, 1),
++	DEF_FIXED("hp",     R8A7745_CLK_HP,    CLK_PLL1,         12, 1),
++	DEF_FIXED("b",      R8A7745_CLK_B,     CLK_PLL1,         12, 1),
++	DEF_FIXED("p",      R8A7745_CLK_P,     CLK_PLL1,         24, 1),
++	DEF_FIXED("cl",     R8A7745_CLK_CL,    CLK_PLL1,         48, 1),
++	DEF_FIXED("cp",     R8A7745_CLK_CP,    CLK_PLL1,         48, 1),
++	DEF_FIXED("m2",     R8A7745_CLK_M2,    CLK_PLL1,          8, 1),
++	DEF_FIXED("zb3",    R8A7745_CLK_ZB3,   CLK_PLL3,          4, 1),
++	DEF_FIXED("zb3d2",  R8A7745_CLK_ZB3D2, CLK_PLL3,          8, 1),
++	DEF_FIXED("ddr",    R8A7745_CLK_DDR,   CLK_PLL3,          8, 1),
++	DEF_FIXED("mp",     R8A7745_CLK_MP,    CLK_PLL1_DIV2,    15, 1),
++	DEF_FIXED("cpex",   R8A7745_CLK_CPEX,  CLK_EXTAL,         2, 1),
++	DEF_FIXED("r",      R8A7745_CLK_R,     CLK_PLL1,      49152, 1),
++	DEF_FIXED("osc",    R8A7745_CLK_OSC,   CLK_PLL1,      12288, 1),
++
++	DEF_DIV6P1("sd2",   R8A7745_CLK_SD2,   CLK_PLL1_DIV2, 0x078),
++	DEF_DIV6P1("sd3",   R8A7745_CLK_SD3,   CLK_PLL1_DIV2, 0x26c),
++	DEF_DIV6P1("mmc0",  R8A7745_CLK_MMC0,  CLK_PLL1_DIV2, 0x240),
++};
++
++static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
++	DEF_MOD("msiof0",	    0,	R8A7745_CLK_MP),
++	DEF_MOD("vcp0",		  101,	R8A7745_CLK_ZS),
++	DEF_MOD("vpc0",		  103,	R8A7745_CLK_ZS),
++	DEF_MOD("tmu1",		  111,	R8A7745_CLK_P),
++	DEF_MOD("3dg",		  112,	R8A7745_CLK_ZG),
++	DEF_MOD("2d-dmac",	  115,	R8A7745_CLK_ZS),
++	DEF_MOD("fdp1-0",	  119,	R8A7745_CLK_ZS),
++	DEF_MOD("tmu3",		  121,	R8A7745_CLK_P),
++	DEF_MOD("tmu2",		  122,	R8A7745_CLK_P),
++	DEF_MOD("cmt0",		  124,	R8A7745_CLK_R),
++	DEF_MOD("tmu0",		  125,	R8A7745_CLK_CP),
++	DEF_MOD("vsp1du0",	  128,	R8A7745_CLK_ZS),
++	DEF_MOD("vsp1-sy",	  131,	R8A7745_CLK_ZS),
++	DEF_MOD("scifa2",	  202,	R8A7745_CLK_MP),
++	DEF_MOD("scifa1",	  203,	R8A7745_CLK_MP),
++	DEF_MOD("scifa0",	  204,	R8A7745_CLK_MP),
++	DEF_MOD("msiof2",	  205,	R8A7745_CLK_MP),
++	DEF_MOD("scifb0",	  206,	R8A7745_CLK_MP),
++	DEF_MOD("scifb1",	  207,	R8A7745_CLK_MP),
++	DEF_MOD("msiof1",	  208,	R8A7745_CLK_MP),
++	DEF_MOD("scifb2",	  216,	R8A7745_CLK_MP),
++	DEF_MOD("sys-dmac1",	  218,	R8A7745_CLK_ZS),
++	DEF_MOD("sys-dmac0",	  219,	R8A7745_CLK_ZS),
++	DEF_MOD("tpu0",		  304,	R8A7745_CLK_CP),
++	DEF_MOD("sdhi3",	  311,	R8A7745_CLK_SD3),
++	DEF_MOD("sdhi2",	  312,	R8A7745_CLK_SD2),
++	DEF_MOD("sdhi0",	  314,	R8A7745_CLK_SD0),
++	DEF_MOD("mmcif0",	  315,	R8A7745_CLK_MMC0),
++	DEF_MOD("iic0",		  318,	R8A7745_CLK_HP),
++	DEF_MOD("iic1",		  323,	R8A7745_CLK_HP),
++	DEF_MOD("cmt1",		  329,	R8A7745_CLK_R),
++	DEF_MOD("usbhs-dmac0",	  330,	R8A7745_CLK_HP),
++	DEF_MOD("usbhs-dmac1",	  331,	R8A7745_CLK_HP),
++	DEF_MOD("irqc",		  407,	R8A7745_CLK_CP),
++	DEF_MOD("intc-sys",	  408,	R8A7745_CLK_ZS),
++	DEF_MOD("audio-dmac0",	  502,	R8A7745_CLK_HP),
++	DEF_MOD("pwm",		  523,	R8A7745_CLK_P),
++	DEF_MOD("usb-ehci",	  703,	R8A7745_CLK_MP),
++	DEF_MOD("usbhs",	  704,	R8A7745_CLK_HP),
++	DEF_MOD("hscif2",	  713,	R8A7745_CLK_ZS),
++	DEF_MOD("scif5",	  714,	R8A7745_CLK_P),
++	DEF_MOD("scif4",	  715,	R8A7745_CLK_P),
++	DEF_MOD("hscif1",	  716,	R8A7745_CLK_ZS),
++	DEF_MOD("hscif0",	  717,	R8A7745_CLK_ZS),
++	DEF_MOD("scif3",	  718,	R8A7745_CLK_P),
++	DEF_MOD("scif2",	  719,	R8A7745_CLK_P),
++	DEF_MOD("scif1",	  720,	R8A7745_CLK_P),
++	DEF_MOD("scif0",	  721,	R8A7745_CLK_P),
++	DEF_MOD("du0",		  724,	R8A7745_CLK_ZX),
++	DEF_MOD("ipmmu-sgx",	  800,	R8A7745_CLK_ZX),
++	DEF_MOD("vin1",		  810,	R8A7745_CLK_ZG),
++	DEF_MOD("vin0",		  811,	R8A7745_CLK_ZG),
++	DEF_MOD("etheravb",	  812,	R8A7745_CLK_HP),
++	DEF_MOD("ether",	  813,	R8A7745_CLK_P),
++	DEF_MOD("gpio6",	  905,	R8A7745_CLK_CP),
++	DEF_MOD("gpio5",	  907,	R8A7745_CLK_CP),
++	DEF_MOD("gpio4",	  908,	R8A7745_CLK_CP),
++	DEF_MOD("gpio3",	  909,	R8A7745_CLK_CP),
++	DEF_MOD("gpio2",	  910,	R8A7745_CLK_CP),
++	DEF_MOD("gpio1",	  911,	R8A7745_CLK_CP),
++	DEF_MOD("gpio0",	  912,	R8A7745_CLK_CP),
++	DEF_MOD("can1",		  915,	R8A7745_CLK_P),
++	DEF_MOD("can0",		  916,	R8A7745_CLK_P),
++	DEF_MOD("qspi_mod",	  917,	R8A7745_CLK_QSPI),
++	DEF_MOD("i2c5",		  925,	R8A7745_CLK_HP),
++	DEF_MOD("i2c4",		  927,	R8A7745_CLK_HP),
++	DEF_MOD("i2c3",		  928,	R8A7745_CLK_HP),
++	DEF_MOD("i2c2",		  929,	R8A7745_CLK_HP),
++	DEF_MOD("i2c1",		  930,	R8A7745_CLK_HP),
++	DEF_MOD("i2c0",		  931,	R8A7745_CLK_HP),
++	DEF_MOD("ssi-all",	 1005,	R8A7745_CLK_P),
++	DEF_MOD("ssi9",		 1006,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi8",		 1007,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi7",		 1008,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi6",		 1009,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi5",		 1010,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi4",		 1011,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi3",		 1012,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi2",		 1013,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi1",		 1014,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi0",		 1015,	MOD_CLK_ID(1005)),
++	DEF_MOD("scu-all",	 1017,	R8A7745_CLK_P),
++	DEF_MOD("scu-dvc1",	 1018,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-dvc0",	 1019,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu1-mix1", 1020,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu0-mix0", 1021,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src9",	 1022,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src8",	 1023,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src7",	 1024,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src6",	 1025,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src5",	 1026,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src4",	 1027,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src3",	 1028,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src2",	 1029,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src1",	 1030,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src0",	 1031,	MOD_CLK_ID(1017)),
++	DEF_MOD("scifa3",	 1106,	R8A7745_CLK_MP),
++	DEF_MOD("scifa4",	 1107,	R8A7745_CLK_MP),
++	DEF_MOD("scifa5",	 1108,	R8A7745_CLK_MP),
++};
++
++static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
++};
++
++/*
++ * CPG Clock Data
++ */
++
++/*
++ *    MD	EXTAL		PLL0	PLL1	PLL3
++ * 14 13 19	(MHz)		*1	*2
++ *---------------------------------------------------
++ * 0  0  0	15		x200/3	x208/2	x106
++ * 0  0  1	15		x200/3	x208/2	x88
++ * 0  1  0	20		x150/3	x156/2	x80
++ * 0  1  1	20		x150/3	x156/2	x66
++ * 1  0  0	26 / 2		x230/3	x240/2	x122
++ * 1  0  1	26 / 2		x230/3	x240/2	x102
++ * 1  1  0	30 / 2		x200/3	x208/2	x106
++ * 1  1  1	30 / 2		x200/3	x208/2	x88
++ *
++ * *1 :	Table 7.5b indicates VCO output (PLL0 = VCO/3)
++ * *2 :	Table 7.5b indicates VCO output (PLL1 = VCO/2)
++ */
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
++					 (((md) & BIT(13)) >> 12) | \
++					 (((md) & BIT(19)) >> 19))
++
++static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
++	/* EXTAL div	PLL1 mult	PLL3 mult	PLL0 mult */
++	{ 1,		208,		106,		200	},
++	{ 1,		208,		88,		200	},
++	{ 1,		156,		80,		150	},
++	{ 1,		156,		66,		150	},
++	{ 2,		240,		122,		230	},
++	{ 2,		240,		102,		230	},
++	{ 2,		208,		106,		200	},
++	{ 2,		208,		88,		200	},
++};
++
++static int __init r8a7745_cpg_mssr_init(struct device *dev)
++{
++	const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
++	u32 cpg_mode;
++	int error;
++
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
++
++	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
++
++	return rcar_gen2_cpg_init(cpg_pll_config, 3);
++}
++
++const struct cpg_mssr_info r8a7745_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r8a7745_core_clks,
++	.num_core_clks = ARRAY_SIZE(r8a7745_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r8a7745_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r8a7745_mod_clks),
++	.num_hw_mod_clks = 12 * 32,
++
++	/* Critical Module Clocks */
++	.crit_mod_clks = r8a7745_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r8a7745_crit_mod_clks),
++
++	/* Callbacks */
++	.init = r8a7745_cpg_mssr_init,
++	.cpg_clk_register = rcar_gen2_cpg_clk_register,
++};
+Index: linux/drivers/clk/renesas/renesas-cpg-mssr.c
+===================================================================
+--- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.c
++++ linux/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -509,6 +509,12 @@ static const struct of_device_id cpg_mss
+ 		.data = &r8a7743_cpg_mssr_info,
+ 	},
+ #endif
++#ifdef CONFIG_ARCH_R8A7745
++	{
++		.compatible = "renesas,r8a7745-cpg-mssr",
++		.data = &r8a7745_cpg_mssr_info,
++	},
++#endif
+ #ifdef CONFIG_ARCH_R8A7795
+ 	{
+ 		.compatible = "renesas,r8a7795-cpg-mssr",
+Index: linux/drivers/clk/renesas/renesas-cpg-mssr.h
+===================================================================
+--- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.h
++++ linux/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -131,6 +131,7 @@ struct cpg_mssr_info {
  };
  
- /* Platform specific tuning */
-@@ -173,8 +183,8 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
-  * Find out the greatest range of consecuitive selected
-  * DLL clock output phases that can be used as sampling
-  * setting for SD3.0 UHS-I card read operation (in SDR104
-- * timing mode) or for eMMC4.5 card read operation (in HS200
-- * timing mode).
-+ * timing mode) or for eMMC4.5 card read operation (in
-+ * HS400/HS200 timing mode).
-  * Select the 3/4 of the range and configure the DLL with the
-  * selected DLL clock output phase.
-  */
-@@ -426,9 +436,10 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	 * Tuning is required for SDR104, HS200 and HS400 cards and
- 	 * if clock frequency is greater than 100MHz in these modes.
- 	 */
--	if (host->clock <= 100 * 1000 * 1000 ||
--	    !((ios.timing == MMC_TIMING_MMC_HS200) ||
--	      (ios.timing == MMC_TIMING_UHS_SDR104)))
-+	if (host->clock <= CORE_FREQ_100MHZ ||
-+	    !(ios.timing == MMC_TIMING_MMC_HS400 ||
-+	    ios.timing == MMC_TIMING_MMC_HS200 ||
-+	    ios.timing == MMC_TIMING_UHS_SDR104))
- 		return 0;
- 
- retry:
-@@ -479,6 +490,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
- 		rc = -EIO;
- 	}
- 
-+	if (!rc)
-+		msm_host->tuning_done = true;
- 	return rc;
- }
- 
-@@ -486,7 +499,10 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
- 					unsigned int uhs)
- {
- 	struct mmc_host *mmc = host->mmc;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 	u16 ctrl_2;
-+	u32 config;
- 
- 	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
- 	/* Select Bus Speed Mode for host */
-@@ -501,6 +517,7 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
- 	case MMC_TIMING_UHS_SDR50:
- 		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
- 		break;
-+	case MMC_TIMING_MMC_HS400:
- 	case MMC_TIMING_MMC_HS200:
- 	case MMC_TIMING_UHS_SDR104:
- 		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
-@@ -517,11 +534,31 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
- 	 * provide feedback clock, the mode selection can be any value less
- 	 * than 3'b011 in bits [2:0] of HOST CONTROL2 register.
- 	 */
--	if (host->clock <= 100000000 &&
--	    (uhs == MMC_TIMING_MMC_HS400 ||
--	     uhs == MMC_TIMING_MMC_HS200 ||
--	     uhs == MMC_TIMING_UHS_SDR104))
--		ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
-+	if (host->clock <= CORE_FREQ_100MHZ) {
-+		if ((uhs == MMC_TIMING_MMC_HS400) ||
-+		    (uhs == MMC_TIMING_MMC_HS200) ||
-+		    (uhs == MMC_TIMING_UHS_SDR104))
-+			ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
-+		/*
-+		 * Make sure DLL is disabled when not required
-+		 *
-+		 * Write 1 to DLL_RST bit of DLL_CONFIG register
-+		 */
-+		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+		config |= CORE_DLL_RST;
-+		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
-+
-+		/* Write 1 to DLL_PDN bit of DLL_CONFIG register */
-+		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-+		config |= CORE_DLL_PDN;
-+		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
-+
-+		/*
-+		 * The DLL needs to be restored and CDCLP533 recalibrated
-+		 * when the clock frequency is set back to 400MHz.
-+		 */
-+		msm_host->calibration_done = false;
-+	}
- 
- 	dev_dbg(mmc_dev(mmc), "%s: clock=%u uhs=%u ctrl_2=0x%x\n",
- 		mmc_hostname(host->mmc), host->clock, uhs, ctrl_2);
-@@ -634,6 +671,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 	struct mmc_ios curr_ios = host->mmc->ios;
-+	u32 config;
- 	int rc;
- 
- 	if (!clock) {
-@@ -652,6 +690,70 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
- 	    (curr_ios.timing == MMC_TIMING_MMC_DDR52) ||
- 	    (curr_ios.timing == MMC_TIMING_MMC_HS400))
- 		clock *= 2;
-+	/*
-+	 * In general all timing modes are controlled via UHS mode select in
-+	 * Host Control2 register. eMMC specific HS200/HS400 doesn't have
-+	 * their respective modes defined here, hence we use these values.
-+	 *
-+	 * HS200 - SDR104 (Since they both are equivalent in functionality)
-+	 * HS400 - This involves multiple configurations
-+	 *		Initially SDR104 - when tuning is required as HS200
-+	 *		Then when switching to DDR @ 400MHz (HS400) we use
-+	 *		the vendor specific HC_SELECT_IN to control the mode.
-+	 *
-+	 * In addition to controlling the modes we also need to select the
-+	 * correct input clock for DLL depending on the mode.
-+	 *
-+	 * HS400 - divided clock (free running MCLK/2)
-+	 * All other modes - default (free running MCLK)
-+	 */
-+	if (curr_ios.timing == MMC_TIMING_MMC_HS400) {
-+		/* Select the divided clock (free running MCLK/2) */
-+		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+		config &= ~CORE_HC_MCLK_SEL_MASK;
-+		config |= CORE_HC_MCLK_SEL_HS400;
-+
-+		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+		/*
-+		 * Select HS400 mode using the HC_SELECT_IN from VENDOR SPEC
-+		 * register
-+		 */
-+		if (msm_host->tuning_done && !msm_host->calibration_done) {
-+			/*
-+			 * Write 0x6 to HC_SELECT_IN and 1 to HC_SELECT_IN_EN
-+			 * field in VENDOR_SPEC_FUNC
-+			 */
-+			config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+			config |= CORE_HC_SELECT_IN_HS400;
-+			config |= CORE_HC_SELECT_IN_EN;
-+			writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+		}
-+	} else {
-+		/* Select the default clock (free running MCLK) */
-+		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+		config &= ~CORE_HC_MCLK_SEL_MASK;
-+		config |= CORE_HC_MCLK_SEL_DFLT;
-+		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+
-+		/*
-+		 * Disable HC_SELECT_IN to be able to use the UHS mode select
-+		 * configuration from Host Control2 register for all other
-+		 * modes.
-+		 *
-+		 * Write 0 to HC_SELECT_IN and HC_SELECT_IN_EN field
-+		 * in VENDOR_SPEC_FUNC
-+		 */
-+		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+		config &= ~CORE_HC_SELECT_IN_EN;
-+		config &= ~CORE_HC_SELECT_IN_MASK;
-+		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+	}
-+
-+	/*
-+	 * Make sure above writes impacting free running MCLK are completed
-+	 * before changing the clk_rate at GCC.
-+	 */
-+	wmb();
- 
- 	if (clock != msm_host->clk_rate) {
- 		rc = clk_set_rate(msm_host->clk, clock);
-@@ -790,6 +892,11 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	/* Set HC_MODE_EN bit in HC_MODE register */
- 	writel_relaxed(HC_MODE_EN, (msm_host->core_mem + CORE_HC_MODE));
- 
-+	/* Set FF_CLK_SW_RST_DIS bit in HC_MODE register */
-+	config = readl_relaxed(msm_host->core_mem + CORE_HC_MODE);
-+	config |= FF_CLK_SW_RST_DIS;
-+	writel_relaxed(config, msm_host->core_mem + CORE_HC_MODE);
-+
- 	host_version = readw_relaxed((host->ioaddr + SDHCI_HOST_VERSION));
- 	dev_dbg(&pdev->dev, "Host Version: 0x%x Vendor Version 0x%x\n",
- 		host_version, ((host_version & SDHCI_VENDOR_VER_MASK) >>
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+ extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
++extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+ #endif
