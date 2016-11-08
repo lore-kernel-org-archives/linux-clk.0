@@ -1,61 +1,58 @@
-Return-Path: <sricharan@codeaurora.org>
-From: "Sricharan" <sricharan@codeaurora.org>
-To: "'Stephen Boyd'" <sboyd@codeaurora.org>
-Cc: "'Rajendra Nayak'" <rnayak@codeaurora.org>,
-	<mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<stanimir.varbanov@linaro.org>
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org> <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org> <20161104201836.GE16026@codeaurora.org> <58201597.6010207@codeaurora.org> <20161108223336.GK16026@codeaurora.org> <000301d23aaa$3f5dd110$be197330$@codeaurora.org> <20161110233001.GM16026@codeaurora.org>
-In-Reply-To: <20161110233001.GM16026@codeaurora.org>
-Subject: RE: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
-Date: Mon, 14 Nov 2016 09:21:24 +0530
-Message-ID: <01be01d23e2a$628f4230$27adc690$@codeaurora.org>
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Jacky Bai <ping.bai@nxp.com>, Peng Fan
+	<peng.fan@nxp.com>
+Subject: RE: [PATCH 3/3] clk: imx: clk-imx6ul: add clk support for imx6ull
+Date: Tue, 8 Nov 2016 03:44:37 +0000
+Message-ID: <HE1PR04MB1450B9A947E90F1E17DABB118BA60@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
+ <1477969343-19887-4-git-send-email-peter.chen@nxp.com>
+ <20161105090506.GH5597@dragon>
+In-Reply-To: <20161105090506.GH5597@dragon>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Thanks, Shawn. All comments will be adopted in v2.
 
+Peter
+
+>> +"pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg",
+>> +}; static const char *epdc_sels[] =3D { "epdc_podf", "ipp_di0",
+>> +"ipp_di1", "ldb_di0", "ldb_di1", };
+>> +
+>
+>The new line is not needed.  There is already one below.
+>
 >>
->> So the above is the sequence which is actually carried out on the
->> firmware side. The same can be done in host as well.
->> The clocks stuck issue indeed is not there with this.
+>>  static struct clk *clks[IMX6UL_CLK_END];  static struct
+>> clk_onecell_data clk_data;
 >
->Great! We've finally connected on what the actual problem is.
+=20
+>> -#define IMX6UL_CLK_END			225
+>> +/* For i.MX6ULL */
+>> +#define IMX6UL_CLK_ESAI_PRED		225
+>> +#define IMX6UL_CLK_ESAI_PODF		226
+>> +#define IMX6UL_CLK_ESAI_EXTAL		227
+>> +#define IMX6UL_CLK_ESAI_MEM		228
+>> +#define IMX6UL_CLK_ESAI_IPG		229
+>> +#define IMX6UL_CLK_DCP_CLK		230
+>> +#define IMX6UL_CLK_EPDC_PRE_SEL		231
+>> +#define IMX6UL_CLK_EPDC_SEL		232
+>> +#define IMX6UL_CLK_EPDC_PODF		233
+>> +#define IMX6UL_CLK_EPDC_ACLK		234
+>> +#define IMX6UL_CLK_EPDC_PIX		235
+>> +#define IMX6UL_CLK_ESAI_SEL		236
 >
->> But with the above sequence we need to add a step to do inverse
->> of STEP3 above (ie write the registers to de-assert hw_signal),
->> to keep the subdomains in off, till firmware uses it. So the
->> above sequence helps to avoid masking the halt check, although
->> the host really does not wants to use these clocks, except
->> setting it up for the firmware.
->>
+>Can we have these imx6ull only clocks named after IMX6ULL_xxx?
 >
->Right, but knowing that the clocks failed to turn on in the first
->place is much safer than silently ignoring the failure.
->Otherwise, we could hand over control to the firmware, and the
->firmware would fail to operate the hardware, and we're stuck with
->debugging the firmware now. That sounds quite painful to figure
->out.
->
-
-Right, i already debugged this sort of a scenario which was quite
-paintful sometime back :)
-
->If we properly toggle the video hw bits in coordination with
->firmware and turn on/off the clocks with the GDSC ON, then
->debugging is made simpler. The point is, we don't want to lose
->robustness by silencing halt checks. The semantics of
->clk_enable() means the clock is running, and that won't be true
->here unless we ensure the GDSC is enabled.
->
-
-ok, which means with this approach, this patch can be dropped and
-the other bits needs to be added to the video driver. I will follow that
-up with Stanimir in his video driver patches.
-
-Regards,
- Sricharan
+>Shawn
+=20
