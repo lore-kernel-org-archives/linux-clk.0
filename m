@@ -1,41 +1,76 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, Fabio Estevam
-	<fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 2/3] ARM: imx: mach-imx6ul: add imx6ull support
-Date: Tue, 1 Nov 2016 10:44:36 +0000
-Message-ID: <HE1PR04MB1450456D09E01C3F308D25AB8BA10@HE1PR04MB1450.eurprd04.prod.outlook.com>
-References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
- <1477969343-19887-3-git-send-email-peter.chen@nxp.com>
- <CAOMZO5AsF8s9Ff2NHQ+j2_xSBNEzGY6bGLK-kgvx-aST+K2PNQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5AsF8s9Ff2NHQ+j2_xSBNEzGY6bGLK-kgvx-aST+K2PNQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from up.free-electrons.com ([163.172.77.33]:53287 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752028AbcKHRXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2016 12:23:35 -0500
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 1/10] clk: sunxi-ng: multiplier: Add fractionnal support
+Date: Tue,  8 Nov 2016 18:23:05 +0100
+Message-Id: <b3d3436c03e0597de205f674061892dbc9498a7e.1478625788.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-IA0KPg0KPk9uIFR1ZSwgTm92IDEsIDIwMTYgYXQgMTowMiBBTSwgUGV0ZXIgQ2hlbiA8cGV0ZXIu
-Y2hlbkBueHAuY29tPiB3cm90ZToNCj4+IGlteDZ1bGwgaXMgZGVyaXZlZCBTb0MgZnJvbSBpbXg2
-dWwuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgQ2hlbiA8cGV0ZXIuY2hlbkBueHAuY29t
-Pg0KPj4gLS0tDQo+PiAgYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2dWwuYyB8IDMgKystDQo+
-PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPj4NCj4+
-IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLWlteC9tYWNoLWlteDZ1bC5jDQo+PiBiL2FyY2gv
-YXJtL21hY2gtaW14L21hY2gtaW14NnVsLmMgaW5kZXggNThhMmI4OC4uMGIyNDYzMCAxMDA2NDQN
-Cj4+IC0tLSBhL2FyY2gvYXJtL21hY2gtaW14L21hY2gtaW14NnVsLmMNCj4+ICsrKyBiL2FyY2gv
-YXJtL21hY2gtaW14L21hY2gtaW14NnVsLmMNCj4+IEBAIC04OSwxMCArODksMTEgQEAgc3RhdGlj
-IHZvaWQgX19pbml0IGlteDZ1bF9pbml0X2xhdGUodm9pZCkNCj4+DQo+PiAgc3RhdGljIGNvbnN0
-IGNoYXIgKiBjb25zdCBpbXg2dWxfZHRfY29tcGF0W10gX19pbml0Y29uc3QgPSB7DQo+PiAgICAg
-ICAgICJmc2wsaW14NnVsIiwNCj4+ICsgICAgICAgImZzbCxpbXg2dWxsIiwNCj4+ICAgICAgICAg
-TlVMTCwNCj4+ICB9Ow0KPj4NCj4+IC1EVF9NQUNISU5FX1NUQVJUKElNWDZVTCwgIkZyZWVzY2Fs
-ZSBpLk1YNiBVbHRyYWxpdGUgKERldmljZSBUcmVlKSIpDQo+PiArRFRfTUFDSElORV9TVEFSVChJ
-TVg2VUwsICJGcmVlc2NhbGUgaS5NWDYgVWx0cmFMaXRlIChEZXZpY2UgVHJlZSkiKQ0KPg0KPklz
-IHRoaXMgY2hhbmdlIHJlYWxseSBuZWVkZWQ/DQoNClRoaXMgY2hhbmdlIGRvZXMgbm90IGJlIHJl
-bGF0ZWQgd2l0aCBpbXg2dWxsIHN1cHBvcnQsIGJ1dCBhbHNvIGEgbmVlZGVkIGNoYW5nZSBzaW5j
-ZQ0KdGhlIGZvcm1hbCBuYW1lIGlzIGNhcGl0YWwgbGV0dGVyICJMIiwgaWYgeW91IGFyZSBjb25j
-ZXJuZWQgd2l0aCB0aGF0LCBJIGNhbiBkZWxldGUgdGhpcw0KY2hhbmdlLg0KDQpQZXRlcg0K
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_mult.c | 8 ++++++++
+ drivers/clk/sunxi-ng/ccu_mult.h | 2 ++
+ 2 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 678b6cb49f01..826302464650 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -75,6 +75,9 @@ static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
+ 	unsigned long val;
+ 	u32 reg;
+ 
++	if (ccu_frac_helper_is_enabled(&cm->common, &cm->frac))
++		return ccu_frac_helper_read_rate(&cm->common, &cm->frac);
++
+ 	reg = readl(cm->common.base + cm->common.reg);
+ 	val = reg >> cm->mult.shift;
+ 	val &= (1 << cm->mult.width) - 1;
+@@ -102,6 +105,11 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	u32 reg;
+ 
++	if (ccu_frac_helper_has_rate(&cm->common, &cm->frac, rate))
++		return ccu_frac_helper_set_rate(&cm->common, &cm->frac, rate);
++	else
++		ccu_frac_helper_disable(&cm->common, &cm->frac);
++
+ 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+ 						&parent_rate);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index c1a2134bdc71..bd2e38b5a32a 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -2,6 +2,7 @@
+ #define _CCU_MULT_H_
+ 
+ #include "ccu_common.h"
++#include "ccu_frac.h"
+ #include "ccu_mux.h"
+ 
+ struct ccu_mult_internal {
+@@ -23,6 +24,7 @@ struct ccu_mult_internal {
+ struct ccu_mult {
+ 	u32			enable;
+ 
++	struct ccu_frac_internal	frac;
+ 	struct ccu_mult_internal	mult;
+ 	struct ccu_mux_internal	mux;
+ 	struct ccu_common	common;
+-- 
+git-series 0.8.11
