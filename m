@@ -1,57 +1,100 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: "Y.T. Tang" <yuantian.tang@nxp.com>
-To: Scott Wood <scott.wood@nxp.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>
-CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3] clk: qoriq: added ls1012a clock configuration
-Date: Fri, 25 Nov 2016 03:32:38 +0000
-Message-ID: <DB6PR0402MB2837A0811DDF5A5DC9E82EF7F0890@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1479955015-37514-1-git-send-email-yuantian.tang@nxp.com>
- <DB5PR0401MB1928925ACE6E6E066961C64A91B60@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-In-Reply-To: <DB5PR0401MB1928925ACE6E6E066961C64A91B60@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH 1/6] clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469
+ boards
+To: =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+ <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
+ <CAFvLkMQxvo=2Ak033n2XkPgdDfU5DLCMF7dj487QFB0e7WceCQ@mail.gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Andrea Merello
+	<andrea.merello@gmail.com>,
+        <devicetree@vger.kernel.org>, <amelie.delaunay@st.com>,
+        <kernel@stlinux.com>, <olivier.bideau@st.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <ludovic.barre@st.com>, <linux-arm-kernel@lists.infradead.org>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <ebadfacf-73fb-01a6-791a-324daad5e695@st.com>
+Date: Tue, 8 Nov 2016 09:35:58 +0100
 MIME-Version: 1.0
+In-Reply-To: <CAFvLkMQxvo=2Ak033n2XkPgdDfU5DLCMF7dj487QFB0e7WceCQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Scott,
+Hi Radosław
 
-> -----Original Message-----
-> From: Scott Wood
-> Sent: Thursday, November 24, 2016 4:21 PM
-> To: Y.T. Tang <yuantian.tang@nxp.com>; mturquette@baylibre.com
-> Cc: sboyd@codeaurora.org; linux-clk@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH v3] clk: qoriq: added ls1012a clock configuration
->=20
-> On 11/23/2016 08:50 PM, yuantian.tang@nxp.com wrote:
-> > From: Tang Yuantian <Yuantian.Tang@nxp.com>
-> >
-> > Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
-> > ---
-> > v3:
-> >   - rebased to latest kernel and re-sorted the code
-> [snip]
-> > @@ -1316,6 +1334,7 @@ CLK_OF_DECLARE(qoriq_clockgen_2,
-> > "fsl,qoriq-clockgen-2.0", clockgen_init);
-> > CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen",
-> > clockgen_init);  CLK_OF_DECLARE(qoriq_clockgen_ls1043a,
-> > "fsl,ls1043a-clockgen", clockgen_init);
-> > CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen",
-> > clockgen_init);
-> > +CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen",
-> > +clockgen_init);
-> >  CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen",
-> > clockgen_init);
->=20
-> You need a better sorting algorithm. :-P
->=20
-I don't think so. This time, each code snip goes right after ls1046a.
-The sorting 'algorithm' is best ever. :)
+Many thanks for reviewing.
 
-Regards,
-Yuantian
-=20
-> -Scott
+On 11/07/2016 03:57 PM, Radosław Pietrzyk wrote:
+>> +static struct clk_hw *clk_register_pll_div(const char *name,
+>> +               const char *parent_name, unsigned long flags,
+>> +               void __iomem *reg, u8 shift, u8 width,
+>> +               u8 clk_divider_flags, const struct clk_div_table *table,
+>> +               struct clk_hw *pll_hw, spinlock_t *lock)
+>> +{
+>> +       struct stm32f4_pll_div *pll_div;
+>> +       struct clk_hw *hw;
+>> +       struct clk_init_data init;
+>> +       int ret;
+>> +
+>> +       /* allocate the divider */
+>> +       pll_div = kzalloc(sizeof(*pll_div), GFP_KERNEL);
+>> +       if (!pll_div)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = name;
+>> +       init.ops = &stm32f4_pll_div_ops;
+>> +       init.flags = flags;
+> Maybe it's worth to have CLK_SET_RATE_PARENT here and the VCO clock
+> should have CLK_SET_RATE_GATE flag and we can get rid of custom
+> divider ops.
+I don't want to offer the possibility to change the vco clock through 
+the divisor of the pll (only by a boot-loader or by DT).
+
+e.g. if i make a set rate on lcd-tft clock, i don't want to change the 
+SAI frequencies.
+
+I used same structure for internal divisors of the pll (p, q, r) and for 
+post divisors (plli2s-q-div, pllsai-q-div & pllsai-r-div).
+That why the CLK_SET_RATE_PARENT flag is transmit by parameter.
+
+These divisors are similar because we have to switch off the pll before 
+changing the rate.
+
+>
+>
+>> -static void stm32f4_rcc_register_pll(const char *hse_clk, const char *hsi_clk)
+>> +
+>> +static struct clk_hw *stm32f4_rcc_register_pll(const char *pllsrc,
+>> +               const struct stm32f4_pll_data *data,  spinlock_t *lock)
+>>   {
+>> -       unsigned long pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
+>> +       struct stm32f4_pll *pll;
+>> +       struct clk_init_data init = { NULL };
+>> +       void __iomem *reg;
+>> +       struct clk_hw *pll_hw;
+>> +       int ret;
+>> +
+>> +       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+>> +       if (!pll)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = data->vco_name;
+>> +       init.ops = &stm32f4_pll_gate_ops;
+>> +       init.flags = CLK_IGNORE_UNUSED;
+> CLK_SET_RATE_GATE here
+>
+> Moreover why not having VCO as a composite clock from gate and mult ?
+Yes, that sounds a good idea.
+
+> According to docs SAI VCO (don't know about I2S ) must be within
+> certain range so clk_set_rate_range should be somewhere.
