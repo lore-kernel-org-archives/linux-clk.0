@@ -1,35 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Nov 2016 14:25:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: bcm: Fix unmet Kconfig dependencies for CLK_BCM_63XX
-Message-ID: <20161123222508.GA6095@codeaurora.org>
-References: <20161122174329.11592-1-f.fainelli@gmail.com>
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
+	<peter.chen@nxp.com>
+Subject: [PATCH v2 0/3] imx: add imx6ull support
+Date: Tue, 8 Nov 2016 13:56:51 +0800
+Message-ID: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
+Return-Path: peter.chen@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161122174329.11592-1-f.fainelli@gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/22, Florian Fainelli wrote:
-> With commit f4e871509959 ("clk: iproc: Make clocks visible options"),
-> COMMON_CLK_IPROC gained a dependency on ARCH_BCM_IPROC, yet CLK_BCM_63XX
-> also selects that option, this causes the following Kconfig warning:
-> 
-> warning: (CLK_BCM_63XX) selects COMMON_CLK_IPROC which has unmet direct
-> dependencies ((ARCH_BCM_IPROC || COMPILE_TEST) && COMMON_CLK)
-> 
-> Fix this by adding proper depends/default for COMMON_CLK_IPROC
-> 
-> Fixes: f4e871509959 ("clk: iproc: Make clocks visible options")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
+Hi Shawn,
 
-Applied to fixes with the default part dropped
+In this series, it adds support for imx6ull SoC which is a derived SoC
+from imx6ul, and imx6ull is pin-to-pin compatible with imx6ul, the
+basic functions are tested at imx6ull 14x14 evk, and imx6ul 14x14 evk
+is tested too to avoid regression.
+
+Changes for v2:
+- Keep imx6ul.dtsi unchanging, and using GPL/X11 dual license
+  for new dts file. [Patch 1/3]
+- Using IMX6ULL prefix for both imx6ull dedicated pin and clock name.
+  [Patch 1/3, 3/3]
+- Delete useless changes for patch 2/3.
+- Delete blank line for patch 3/3.
+- Using assigned-clocks for imx6ull 14x14 evk. [Patch 1/3, 3/3]
+
+
+Bai Ping (1):
+  clk: imx: clk-imx6ul: add clk support for imx6ull
+
+Peter Chen (2):
+  ARM: imx6ull: add imx6ull support
+  ARM: imx: mach-imx6ul: add imx6ull support
+
+ arch/arm/boot/dts/Makefile               |   3 +-
+ arch/arm/boot/dts/imx6u-14x14-evk.dtsi   | 487 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ul-14x14-evk.dts   | 479 +-----------------------------
+ arch/arm/boot/dts/imx6ull-14x14-evk.dts  |  55 ++++
+ arch/arm/boot/dts/imx6ull-pinfunc.h      |  56 ++++
+ arch/arm/boot/dts/imx6ull.dtsi           |  43 +++
+ arch/arm/mach-imx/mach-imx6ul.c          |   1 +
+ drivers/clk/imx/clk-imx6ul.c             |  72 ++++-
+ include/dt-bindings/clock/imx6ul-clock.h |  15 +-
+ 9 files changed, 720 insertions(+), 491 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6u-14x14-evk.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6ull-14x14-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx6ull-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imx6ull.dtsi
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
