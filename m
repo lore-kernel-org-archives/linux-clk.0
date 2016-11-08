@@ -1,35 +1,72 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, rocky.hao@rock-chips.com, huangtao@rock-chips.com, xxx@rock-chips.com, jay.xu@rock-chips.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: validity should be checked prior to clock rate change
-Date: Tue, 08 Nov 2016 14:26:54 +0100
-Message-ID: <1924809.LJTn50YVYo@diego>
-In-Reply-To: <1478596214-761-1-git-send-email-zhangqing@rock-chips.com>
-References: <1478596214-761-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:36578 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751934AbcKHXID (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Nov 2016 18:08:03 -0500
+Date: Tue, 8 Nov 2016 15:07:24 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+Subject: Re: [PATCH v6 04/14] mmc: sdhci-msm: Change poor style writel/readl
+ of registers
+Message-ID: <20161108230724.GO16026@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+ <1478517877-23733-5-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1478517877-23733-5-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
+On 11/07, Ritesh Harjani wrote:
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 8ef44a2a..42f42aa 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -137,8 +137,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
+>  	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+>  
+>  	/* Set CK_OUT_EN bit of DLL_CONFIG register to 1. */
+> -	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
+> -			| CORE_CK_OUT_EN), host->ioaddr + CORE_DLL_CONFIG);
+> +	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
+> +	config |= CORE_CK_OUT_EN;
+> +	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+>  
+>  	/* Wait until CK_OUT_EN bit of DLL_CONFIG register becomes '1' */
+>  	rc = msm_dll_poll_ck_out_en(host, 1);
+> @@ -305,6 +306,7 @@ static int msm_init_cm_dll(struct sdhci_host *host)
+>  	struct mmc_host *mmc = host->mmc;
+>  	int wait_cnt = 50;
+>  	unsigned long flags;
+> +	u32 config = 0;
 
-Am Dienstag, 8. November 2016, 17:10:14 schrieb Elaine Zhang:
-> If validity is not checked prior to clock rate change, clk_set_rate(
-> cpu_clk, unsupported_rate) will return success, but the real clock rate
-> change operation is prohibited in post clock change event. Alough post
-> clock change event will report error due to unsupported clock rate is
-> set, but this error message is ignored by clock framework.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Rocky Hao <rocky.hao@rock-chips.com>
+It needs to be initialized?
 
-looks good and thanks for catching this. Just a bureaucracy-question regarding 
-the Signed-off-by lines, before I can apply the patch as I don't really know 
-how Rocky fits into the picture.
+>  
+>  	spin_lock_irqsave(&host->lock, flags);
+>  
+> @@ -313,33 +315,40 @@ static int msm_init_cm_dll(struct sdhci_host *host)
+>  	 * tuning is in progress. Keeping PWRSAVE ON may
+>  	 * turn off the clock.
+>  	 */
+> -	writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC)
+> -			& ~CORE_CLK_PWRSAVE), host->ioaddr + CORE_VENDOR_SPEC);
+> +	config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
 
-I.e. was he the original patch author (the we should change the from) or a 
-reviewer/tester for the fixed issue?
+It's written here unconditionally though?
 
+> +	config &= ~CORE_CLK_PWRSAVE;
 
-Thanks
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
