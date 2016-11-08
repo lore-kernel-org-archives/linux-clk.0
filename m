@@ -1,29 +1,53 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, rocky.hao@rock-chips.com, huangtao@rock-chips.com, xxx@rock-chips.com, jay.xu@rock-chips.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: validity should be checked prior to clock rate change
-Date: Mon, 14 Nov 2016 17:41:05 +0100
-Message-ID: <8521074.U32oiGVMPt@phil>
-In-Reply-To: <1478596214-761-1-git-send-email-zhangqing@rock-chips.com>
-References: <1478596214-761-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <b49017@lvd4224.freescale.com>
+From: Abhimanyu Saini <abhimanyu.saini@nxp.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <scott.wood@nxp.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Abhimanyu Saini <abhimanyu.saini@nxp.com>, Priyanka Jain
+	<priyanka.jain@nxp.com>, Ashish Kumar <ashish.kumar@nxp.com>
+Subject: [PATCH] drivers: clk: qoriq: Add ls2088a key to clk OF match table
+Date: Tue, 8 Nov 2016 14:25:15 +0530
+Message-ID: <1478595315-441-1-git-send-email-abhimanyu.saini@nxp.com>
+Return-Path: b49017@lvd4224.freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 8. November 2016, 17:10:14 CET schrieb Elaine Zhang:
-> If validity is not checked prior to clock rate change, clk_set_rate(
-> cpu_clk, unsupported_rate) will return success, but the real clock rate
-> change operation is prohibited in post clock change event. Alough post
-> clock change event will report error due to unsupported clock rate is
-> set, but this error message is ignored by clock framework.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Rocky Hao <rocky.hao@rock-chips.com>
+Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
+Signed-off-by: Abhimanyu Saini <abhimanyu.saini@nxp.com>
+---
+ drivers/clk/clk-qoriq.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-after Elaine clarified that the line mentioning Rocky was actually a tested-by, 
-applied to my clock branch
-
-
-Thanks
-Heiko
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 20b1055..472e146 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -500,6 +500,17 @@ static void __init t4240_init_periph(struct clockgen *cg)
+ 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+ 	},
+ 	{
++		.compat = "fsl,ls2088a-clockgen",
++		.cmux_groups = {
++			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
++		},
++		.cmux_to_group = {
++			0, 0, 1, 1, -1
++		},
++		.pll_mask = 0x37,
++		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
++	},
++	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p2041_init_periph,
+@@ -1273,6 +1284,7 @@ static void __init clockgen_init(struct device_node *np)
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls2088a, "fsl,ls2088a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
+-- 
+1.9.1
