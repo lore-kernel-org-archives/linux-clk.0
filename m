@@ -1,101 +1,88 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 3/6] clk: stm32f4: Add post divisor for I2S & SAI PLLs and Add lcd-tft clock
-Date: Mon, 7 Nov 2016 14:05:40 +0100
-Message-ID: <1478523943-23142-4-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <radoslaw.pietrzyk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <0368d067-461d-2edb-5561-9717934e0dde@st.com>
+References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+ <1478523943-23142-2-git-send-email-gabriel.fernandez@st.com>
+ <CAFvLkMQxvo=2Ak033n2XkPgdDfU5DLCMF7dj487QFB0e7WceCQ@mail.gmail.com>
+ <ebadfacf-73fb-01a6-791a-324daad5e695@st.com> <CAFvLkMSwwyoi8Vb_-+6dViB8PaBRUoCZYBcrzDjgX9EJnv_mvQ@mail.gmail.com>
+ <0368d067-461d-2edb-5561-9717934e0dde@st.com>
+From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Date: Wed, 9 Nov 2016 09:10:25 +0100
+Message-ID: <CAFvLkMSUg8=nYY9Zm2Q4ZW=GqUaczK_TA5b5jjb45vYyhoVLZA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
+To: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	Daniel Thompson <daniel.thompson@linaro.org>, Andrea Merello <andrea.merello@gmail.com>,
+	devicetree@vger.kernel.org, amelie.delaunay@st.com, kernel@stlinux.com,
+	olivier.bideau@st.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+I would expect that VCO clock will force recalculation for all its
+children if I am not mistaken.
 
-This patch adds post dividers of I2S & SAI PLLs.
-These dividers are managed by a dedicated register (RCC_DCKCFGR).
-The PLL should be off before a set rate.
-This patch also introduces the lcd-tft clock.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index dda15bc..5fa5d51 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -215,6 +215,7 @@ struct stm32f4_gate_data {
- enum {
- 	SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC,
- 	PLL_VCO_I2S, PLL_VCO_SAI,
-+	CLK_LCD,
- 	END_PRIMARY_CLK
- };
- 
-@@ -599,6 +600,9 @@ static struct clk_hw *clk_register_pll_div(const char *name,
- static const struct clk_div_table pll_divp_table[] = {
- 	{ 0, 2 }, { 1, 4 }, { 2, 6 }, { 3, 8 },
- };
-+static const struct clk_div_table pll_lcd_div_table[] = {
-+	{ 0, 2 }, { 1, 4 }, { 2, 8 }, { 3, 16 },
-+};
- 
- /*
-  * Decode current PLL state and (statically) model the state we inherit from
-@@ -659,16 +663,35 @@ static struct clk_hw *stm32f4_rcc_register_pll(const char *pllsrc,
- 		clk_register_pll_div(data->p_name, data->vco_name, 0, reg,
- 				16, 2, 0, pll_divp_table, pll_hw, lock);
- 
--	if (data->q_name)
-+	if (data->q_name) {
- 		clk_register_pll_div(data->q_name, data->vco_name, 0, reg,
- 				24, 4, CLK_DIVIDER_ONE_BASED, NULL,
- 				pll_hw, lock);
- 
--	if (data->r_name)
-+		if (data->pll_num == PLL_I2S)
-+			clk_register_pll_div("plli2s-q-div", data->q_name,
-+				0, base + STM32F4_RCC_DCKCFGR,
-+				0, 5, 0, NULL, pll_hw, &stm32f4_clk_lock);
-+
-+		if (data->pll_num == PLL_SAI)
-+			clk_register_pll_div("pllsai-q-div", data->q_name,
-+				0, base + STM32F4_RCC_DCKCFGR,
-+				8, 5, 0, NULL, pll_hw, &stm32f4_clk_lock);
-+	}
-+
-+	if (data->r_name) {
- 		clk_register_pll_div(data->r_name, data->vco_name, 0, reg,
- 				28, 3, CLK_DIVIDER_ONE_BASED, NULL,  pll_hw,
- 				lock);
- 
-+		if (data->pll_num == PLL_SAI)
-+			clks[CLK_LCD] = clk_register_pll_div("lcd-tft",
-+					data->r_name, CLK_SET_RATE_PARENT,
-+					base + STM32F4_RCC_DCKCFGR, 16, 2, 0,
-+					pll_lcd_div_table, pll_hw,
-+					&stm32f4_clk_lock);
-+	}
-+
- 	return pll_hw;
- }
- 
--- 
-1.9.1
+2016-11-08 17:19 GMT+01:00 Gabriel Fernandez <gabriel.fernandez@st.com>:
+> On 11/08/2016 09:52 AM, Rados=C5=82aw Pietrzyk wrote:
+>>
+>> 2016-11-08 9:35 GMT+01:00 Gabriel Fernandez <gabriel.fernandez@st.com>:
+>>>
+>>> Hi Rados=C5=82aw
+>>>
+>>> Many thanks for reviewing.
+>>>
+>>> On 11/07/2016 03:57 PM, Rados=C5=82aw Pietrzyk wrote:
+>>>>>
+>>>>> +static struct clk_hw *clk_register_pll_div(const char *name,
+>>>>> +               const char *parent_name, unsigned long flags,
+>>>>> +               void __iomem *reg, u8 shift, u8 width,
+>>>>> +               u8 clk_divider_flags, const struct clk_div_table
+>>>>> *table,
+>>>>> +               struct clk_hw *pll_hw, spinlock_t *lock)
+>>>>> +{
+>>>>> +       struct stm32f4_pll_div *pll_div;
+>>>>> +       struct clk_hw *hw;
+>>>>> +       struct clk_init_data init;
+>>>>> +       int ret;
+>>>>> +
+>>>>> +       /* allocate the divider */
+>>>>> +       pll_div =3D kzalloc(sizeof(*pll_div), GFP_KERNEL);
+>>>>> +       if (!pll_div)
+>>>>> +               return ERR_PTR(-ENOMEM);
+>>>>> +
+>>>>> +       init.name =3D name;
+>>>>> +       init.ops =3D &stm32f4_pll_div_ops;
+>>>>> +       init.flags =3D flags;
+>>>>
+>>>> Maybe it's worth to have CLK_SET_RATE_PARENT here and the VCO clock
+>>>> should have CLK_SET_RATE_GATE flag and we can get rid of custom
+>>>> divider ops.
+>>>
+>>> I don't want to offer the possibility to change the vco clock through t=
+he
+>>> divisor of the pll (only by a boot-loader or by DT).
+>>>
+>>> e.g. if i make a set rate on lcd-tft clock, i don't want to change the
+>>> SAI
+>>> frequencies.
+>>>
+>>> I used same structure for internal divisors of the pll (p, q, r) and fo=
+r
+>>> post divisors (plli2s-q-div, pllsai-q-div & pllsai-r-div).
+>>> That why the CLK_SET_RATE_PARENT flag is transmit by parameter.
+>>>
+>>> These divisors are similar because we have to switch off the pll before
+>>> changing the rate.
+>>>
+>> But changing pll and lcd dividers only may not be enough for getting
+>> very specific pixelclocks and that might require changing the VCO
+>> frequency itself. The rest of the SAI tree should be recalculated
+>> then.
+>
+> I agree but it seems to be too much complicated to recalculate all PLL
+> divisors if we change the vco clock.
+> You mean to use Clock notifier callback ?
