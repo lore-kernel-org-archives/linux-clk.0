@@ -1,84 +1,39 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH] reset: hisilicon: add a polarity cell for reset line
- specifier
-To: Philipp Zabel <p.zabel@pengutronix.de>
-References: <1479193794-18350-1-git-send-email-xuejiancheng@hisilicon.com>
- <1479206594.2456.24.camel@pengutronix.de>
- <db839cba-a105-fa8e-8633-c98999cd7316@hisilicon.com>
- <03bb74da-6b24-ee4c-307d-3b3f10ac2f7a@hisilicon.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <arnd@arndb.de>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <wenpan@hisilicon.com>, <howell.yang@hisilicon.com>,
-        <hermit.wangheming@hisilicon.com>, <elder@linaro.org>,
-        <bin.chen@linaro.org>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <2281ff0d-2883-a78c-6106-f913da24581f@hisilicon.com>
-Date: Fri, 25 Nov 2016 11:45:08 +0800
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: pxa: fix pxa2xx_determine_rate return
+References: <20161108144950.3472058-1-arnd@arndb.de>
+	<20161108144950.3472058-2-arnd@arndb.de>
+	<87k2cdyhnu.fsf@belgarion.home> <2012366.hMim84DLbv@wuerfel>
+Date: Wed, 09 Nov 2016 08:31:37 +0100
+In-Reply-To: <2012366.hMim84DLbv@wuerfel> (Arnd Bergmann's message of "Tue, 08
+	Nov 2016 23:22:40 +0100")
+Message-ID: <871sylw1ly.fsf@belgarion.home>
 MIME-Version: 1.0
-In-Reply-To: <03bb74da-6b24-ee4c-307d-3b3f10ac2f7a@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Arnd Bergmann <arnd@arndb.de> writes:
 
-On 2016/11/21 10:58, Jiancheng Xue wrote:
-> Hi Philipp,
-> 
->> On 2016/11/15 18:43, Philipp Zabel wrote:
->>> Hi Jiancheng,
->>>
->>> Am Dienstag, den 15.11.2016, 15:09 +0800 schrieb Jiancheng Xue:
->>>> Add a polarity cell for reset line specifier. If the reset line
->>>> is asserted when the register bit is 1, the polarity is
->>>> normal. Otherwise, it is inverted.
->>>>
->>>> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
->>>> ---
->> Thank you very much for replying so soon.
->>
->> Please allow me to decribe the reason why this patch exists first.
->> All bits in the reset controller were designed to be active-high.
->> But in a recent chip only one bit was implemented to be active-low :(
->>
->>>>  .../devicetree/bindings/clock/hisi-crg.txt         | 11 ++++---
->>>>  arch/arm/boot/dts/hi3519.dtsi                      |  2 +-
->>>>  drivers/clk/hisilicon/reset.c                      | 36 ++++++++++++++++------
->>>>  3 files changed, 33 insertions(+), 16 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
->>>> index e3919b6..fcbb4f3 100644
->>>> --- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
->>>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
->>>> @@ -25,19 +25,20 @@ to specify the clock which they consume.
->>>>  
->>>>  All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
->>>>  
->>>> -- #reset-cells: should be 2.
->>>> +- #reset-cells: should be 3.
->>>>  
->>>>  A reset signal can be controlled by writing a bit register in the CRG module.
->>>> -The reset specifier consists of two cells. The first cell represents the
->>>> +The reset specifier consists of three cells. The first cell represents the
->>>>  register offset relative to the base address. The second cell represents the
->>>> -bit index in the register.
->>>> +bit index in the register. The third cell represents the polarity of the reset
->>>> +line (0 for normal, 1 for inverted).
->>>
-> #reset-cells: Should be 2 if compatilbe string is "hisilicon,hi3519-crg". Should be 3 otherwise.
-> 	      A reset signal can be controlled by writing a bit register in the CRG module.
-> 	      The reset specifier consists of two or three cells. The first cell represents the
-> 	      register offset relative to the base address. The second cell represents the
-> 	      bit index in the register.The third cell represents the polarity of the reset
-> 	      line (0 for active-high, 1 for active-low).
-> 
-> If I change the binding like this, can it be accepted?
-> 
-Hi Philipp,
+> On Tuesday, November 8, 2016 7:01:57 PM CET Robert Jarzmik wrote:
+>> Arnd Bergmann <arnd@arndb.de> writes:
+>> If a non-exact match is found, either by closest_below or closest_above, rate is
+>> set (rate = freqs[closest_xxx].cpll). And a couple of lines later after the
+>> if/else, req->rate = rate is set as well, so I don't think this part of the
+>> commit message is accurate.
+>
+> It is only set if rate is zero, and that normally is not the case here:
+>
+>        if (!rate)
+>                req->rate = rate;
+Ah ok, that's where the bug was lurking, if should have been "if (rate)".
 
-Could you give me more suggestions about this?  If you really don't like changing the
-reset-cells like this, I can modify the patch according to your suggestions.
-Thank you.
+But anyway, after comparing the end result of your code and mine, I find yours
+more maintainable, especially the replacement of 'ret = 0'.
 
-Regards,
-Jiancheng
+So let's proceed, thanks for finding this one out.
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+
+--
+Robert
