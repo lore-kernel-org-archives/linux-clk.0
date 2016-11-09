@@ -1,90 +1,31 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v15 4/4] arm: dts: mt2701: Use real clock for UARTs
-Date: Fri, 4 Nov 2016 15:43:08 +0800
-Message-ID: <1478245388-1412-5-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
-References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 9 Nov 2016 12:43:31 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH] clk: pxa: Use __iomem properly and staticize lock
+ variable
+Message-ID: <20161109204331.GU16026@codeaurora.org>
+References: <20161108224756.25842-1-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161108224756.25842-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We used to use a fixed rate clock for the UARTs. Now that we have clock
-support we can associate the correct clocks to the UARTs and drop the
-26MHz fixed rate UART clock.
+On 11/08, Stephen Boyd wrote:
+> This function is passed an __iomem pointer but we use a u32
+> pointer instead which makes checkers like spare complain.
+> Furthermore, "lock" is a pretty poor variable name for a string
+> that will go into lockdep reports and the symbol isn't marked
+> static. Cleanup all this.
+> 
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Applied to clk-next
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index c9a8dbf..7eab6f4 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -73,12 +73,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	uart_clk: dummy26m {
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--		#clock-cells = <0>;
--	};
--
- 	clk26m: oscillator@0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -186,7 +180,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -195,7 +190,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -204,7 +200,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -213,7 +210,8 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&uart_clk>;
-+		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- };
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
