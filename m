@@ -1,47 +1,75 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: elaine.zhang@rock-chips.com, mturquette@baylibre.com, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] ARM: dts: add basic support for Rockchip RK1108 SOC
-Date: Fri, 04 Nov 2016 09:07:11 +0100
-Message-ID: <18728215.xtkCC4d9TF@phil>
-In-Reply-To: <1478176848-12132-1-git-send-email-andy.yan@rock-chips.com>
-References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com> <1478176848-12132-1-git-send-email-andy.yan@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:37661 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754218AbcKIUyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 15:54:20 -0500
+Received: by mail-wm0-f50.google.com with SMTP id t79so324540770wmt.0
+        for <linux-clk@vger.kernel.org>; Wed, 09 Nov 2016 12:54:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
+References: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
+From: Doug Anderson <dianders@google.com>
+Date: Wed, 9 Nov 2016 12:54:18 -0800
+Message-ID: <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com>
+Subject: Re: [PATCH] phy: rockchip-inno-usb2: correct 480MHz output clock
+ stable time
+To: William Wu <wulf@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        =?UTF-8?B?6buE5rab?= <huangtao@rock-chips.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 3. November 2016, 20:40:48 CET schrieb Andy Yan:
-> RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
-> It is designed for varies application scenario such as car DVR, sports
-> DV, secure camera and UAV camera.
-> 
-> This patch add basic support for it with DMAC / UART / CRU / pinctrl
-> enabled.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Hi,
+
+On Mon, Nov 7, 2016 at 5:00 AM, William Wu <wulf@rock-chips.com> wrote:
+> We found that the system crashed due to 480MHz output clock of
+> USB2 PHY was unstable after clock had been enabled by gpu module.
+>
+> Theoretically, 1 millisecond is a critical value for 480MHz
+> output clock stable time, so we try to change the delay time
+> to 1.2 millisecond to avoid this issue.
+>
+> Signed-off-by: William Wu <wulf@rock-chips.com>
 > ---
-> 
->  arch/arm/boot/dts/rk1108.dtsi     | 420
-> ++++++++++++++++++++++++++++++++++++++ arch/arm/mach-rockchip/rockchip.c | 
->  1 +
->  2 files changed, 421 insertions(+)
->  create mode 100644 arch/arm/boot/dts/rk1108.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
-> new file mode 100644
-> index 0000000..9dccfea
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/rk1108.dtsi
+>  drivers/phy/phy-rockchip-inno-usb2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/phy-rockchip-inno-usb2.c b/drivers/phy/phy-rockchip-inno-usb2.c
+> index ecfd7d1..8f2d2b6 100644
+> --- a/drivers/phy/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/phy-rockchip-inno-usb2.c
+> @@ -267,7 +267,7 @@ static int rockchip_usb2phy_clk480m_enable(struct clk_hw *hw)
+>                         return ret;
+>
+>                 /* waitting for the clk become stable */
+> -               mdelay(1);
+> +               udelay(1200);
 
-[...]
+Several people who have seen this patch have expressed concern that a
+1.2 ms delay is pretty long for something that's supposed to be
+"atomic" like a clk_enable().  Consider that someone might call
+clk_enable() while interrupts are disabled and that a 1.2 ms interrupt
+latency is not so great.
 
-> +	pinctrl: pinctrl {
-> +		compatible = "rockchip,rk1108-pinctrl";
-> +		rockchip,grf = <&grf>;
+It seems like this clock should be moved to be enabled in "prepare"
+and the "enable" should be a no-op.  This is a functionality change,
+but I don't think there are any real users for this clock at the
+moment so it should be fine.
 
-missing rockchip,pmu phandle for gpio0 iomuxes and also syscon declaration for 
-said pmugrf syscon in this file.
+(of course, the 1 ms latency that existed before this patch was still
+pretty bad, but ...)
 
-
-Heiko
+-Doug
