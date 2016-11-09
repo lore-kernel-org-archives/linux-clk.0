@@ -1,79 +1,47 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 7 Nov 2016 12:35:50 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, jonathanh@nvidia.com, gnurou@gmail.com,
-	linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V4 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Message-ID: <20161107113550.GC28616@ulmo.ba.sec>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-4-git-send-email-mirza.krak@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 9 Nov 2016 12:26:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 1/3] clk: qcom: Add support for SMD-RPM Clocks
+Message-ID: <20161109182646.isqpfbiyxjrjqzdp@rob-hp-laptop>
+References: <20161102155658.32203-1-georgi.djakov@linaro.org>
+ <20161102155658.32203-2-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
-In-Reply-To: <1478507405-13204-4-git-send-email-mirza.krak@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161102155658.32203-2-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-
---da4uJneut+ArUgXk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Nov 07, 2016 at 09:30:02AM +0100, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
->=20
-> Document the devicetree bindings for the Generic Memory Interface (GMI)
-> bus driver found on Tegra SOCs.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> Acked-by: Rob Herring <robh@kernel.org>
+On Wed, Nov 02, 2016 at 05:56:56PM +0200, Georgi Djakov wrote:
+> This adds initial support for clocks controlled by the Resource
+> Power Manager (RPM) processor on some Qualcomm SoCs, which use
+> the qcom_smd_rpm driver to communicate with RPM.
+> Such platforms are msm8916, apq8084 and msm8974.
+> 
+> The RPM is a dedicated hardware engine for managing the shared
+> SoC resources in order to keep the lowest power profile. It
+> communicates with other hardware subsystems via shared memory
+> and accepts clock requests, aggregates the requests and turns
+> the clocks on/off or scales them on demand.
+> 
+> This driver is based on the codeaurora.org driver:
+> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
->=20
-> Changes in v2:
-> - Updated examples and some information based on comments from Jon Hunter.
->=20
-> Changes in v3:
-> - Updates ranges description based on comments from Rob Herring
->=20
-> Changes in v4:
-> - renamed snor-*-inv to snor-*-active-high
->=20
->  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++=
-++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-=
-gmi.txt
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  36 ++
 
-Applied, thanks.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thierry
-
---da4uJneut+ArUgXk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYIGcVAAoJEN0jrNd/PrOhBG4QAL0sJdwZ5hzHm6MWNgdZ+ag3
-IDTa+cLb7jlrZVfScaIZwXPjUUN2WZjvGfG/tZtjUdD2Mx9gww3Y9FCl+Y+/yCsr
-TrGBxq3PJuE+9U/s7H0523gTPfv2g73F/FpU+sS4qj3NhEApKCKchVaOOvSP8plM
-4SY23s+APHxIS9z8w97dtSvxW75nltpS0U1o2dQ9E4DzMLzi7KMlbmVBua8l+vgW
-RC1q7cxD2HkwXTf/1lAI2R+6jmw/S2etSj0vfdvwut0vRLiPtiXeQuZM1zneG8/X
-vaXUh5PEyENoRLRrxmphm2KPMAUN1lNfH91kdct9tyWTBz/EZNWLlSyuQrUSLAIf
-Uh7dcy4P1StTUrEKCPfgUptxt7az7U+m4ULqadTUvEeKSkO6qaJldNA2hoDCqfHF
-QwkVDrOBYvGxXIc55hxYkHJeL6xArkVYZaSArHc4OWQm/kUExropgnO4EDBAP5JZ
-ZlqtKOhiAqyuyEY4szoXbuRnG/TiX0ShUqkNmaBLp2V0HeD8WIYHr2xlKIFFBd1M
-OV8UJ2Ei0/z7Z3bQm5z9O67YTu9Fm72Ce5VEoquaHs1gpHMyMCJVKmjNKjGXp++m
-wNgpEMiGtwtI2/k37Idrfa4uv7CHtNpnlI+rNlj7jfOZwpYjuf1gzSlMBPYYhoeT
-KoU51P1wCUiJI2EwPH+9
-=A1pV
------END PGP SIGNATURE-----
-
---da4uJneut+ArUgXk--
+>  drivers/clk/qcom/Kconfig                           |  16 +
+>  drivers/clk/qcom/Makefile                          |   1 +
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 571 +++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,rpmcc.h             |  45 ++
+>  5 files changed, 669 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>  create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+>  create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
