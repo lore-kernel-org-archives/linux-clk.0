@@ -1,79 +1,78 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 2 Nov 2016 09:37:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-Message-ID: <20161102083731.GB30742@verge.net.au>
-References: <20161021154737.3803065-1-arnd@arndb.de>
- <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
- <3808786.t4RxxDciQu@wuerfel>
- <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
- <CAMuHMdXRjgETtjBHHu2mHt9iEfe_rL5fpD-pgPH9MWniOFubQQ@mail.gmail.com>
- <20161031095214.GA2335@verge.net.au>
- <CAMuHMdVHmRcN0Tc1mWpeU5CCzqZY+naj-eU6hfiTe=tRD9XjNg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:51214 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752675AbcKIUnG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 15:43:06 -0500
+Date: Wed, 9 Nov 2016 12:43:04 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+Subject: Re: [PATCH v6 05/14] mmc: sdhci-msm: Update DLL reset sequence
+Message-ID: <20161109204304.GT16026@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+ <1478517877-23733-6-git-send-email-riteshh@codeaurora.org>
+ <20161108230622.GN16026@codeaurora.org>
+ <10d66d21-eebd-45a3-6fb7-72117d860142@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdVHmRcN0Tc1mWpeU5CCzqZY+naj-eU6hfiTe=tRD9XjNg@mail.gmail.com>
+In-Reply-To: <10d66d21-eebd-45a3-6fb7-72117d860142@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 02, 2016 at 09:14:02AM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
+On 11/09, Ritesh Harjani wrote:
+> Hi Stephen,
 > 
-> On Mon, Oct 31, 2016 at 10:52 AM, Simon Horman <horms@verge.net.au> wrote:
-> > From: Simon Horman <horms+renesas@verge.net.au>
-> > Subject: [PATCH] ARM: shmobile: only call rcar_gen2_clocks_init() if present
+> On 11/9/2016 4:36 AM, Stephen Boyd wrote:
+> >On 11/07, Ritesh Harjani wrote:
+> >>
+> >>diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> >>index 42f42aa..32b0b79 100644
+> >>--- a/drivers/mmc/host/sdhci-msm.c
+> >>+++ b/drivers/mmc/host/sdhci-msm.c
+> >>@@ -58,11 +58,17 @@
+> >> #define CORE_DLL_CONFIG		0x100
+> >> #define CORE_DLL_STATUS		0x108
+> >>
+> >>+#define CORE_DLL_CONFIG_2	0x1b4
+> >>+#define CORE_FLL_CYCLE_CNT	BIT(18)
+> >>+#define CORE_DLL_CLOCK_DISABLE	BIT(21)
+> >>+
+> >> #define CORE_VENDOR_SPEC	0x10c
+> >> #define CORE_CLK_PWRSAVE	BIT(1)
+> >>
+> >> #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+> >>
+> >>+#define TCXO_FREQ		19200000
 > >
-> > The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
-> > driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
-> > process to get all the required pieces in place is somewhat complex it
-> > seems useful to try to disentangle dependencies where possible.
-> >
-> > The approach here is to temporarily disable calling rcar_gen2_clocks_init()
-> > if no R-Car Gen2 SoC are configured and thus the symbol will not be
-> > present.
-> >
-> > Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > ---
-> >
-> > The current likely path to removing need for this is for
-> > "[PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining mode
-> > pin state" to be accepted. In particular patch 20 removes the call to
-> > rcar_gen2_clocks_init() in rcar_gen2_timer_init().
-> > ---
-> >  arch/arm/mach-shmobile/setup-rcar-gen2.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> > index 875bcb8c1026..657262556dc4 100644
-> > --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> > +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> > @@ -131,7 +131,13 @@ void __init rcar_gen2_timer_init(void)
-> >         iounmap(base);
-> >  #endif /* CONFIG_ARM_ARCH_TIMER */
-> >
-> > -       rcar_gen2_clocks_init(mode);
-> > +       if (IS_ENABLED(CONFIG_ARCH_R8A7790) ||
-> > +           IS_ENABLED(CONFIG_ARCH_R8A7791) ||
-> > +           IS_ENABLED(CONFIG_ARCH_R8A7792) ||
-> > +           IS_ENABLED(CONFIG_ARCH_R8A7793) ||
-> > +           IS_ENABLED(CONFIG_ARCH_R8A7794))
-> > +               rcar_gen2_clocks_init(mode);
+> >TCXO_FREQ could change based on the board. For example, IPQ has
+> >it as 25 MHz.
+> Actually not sure of the proper way on how to get this freq in driver
+> today. We may use xo_board clock but, it is not available for all boards
+> except 8996/8916 I guess.
 > 
-> Upon second thought (triggered bySergei conflict notification), this needs
-> an else clause:
+> Also, there is no sdhc for IPQ board and for all other boards
+> TCXO_FREQ is same where sdhci-msm driver is used. For that purpose
+> this was defined here for sdhci-msm driver.
 > 
->         else
->                 of_clk_init(NULL);
+> Do you think in that case we should keep it this way for now and
+> later change if a need arise to change the TCXO_FREQ ?
 
-Thanks, I will add that.
+We've added xo_board (or cxo_board/pxo_board) to all the qcom
+platforms upstream, so there should always be something to
+reference in the dts and call clk_get_rate() on. So I would add
+it to the binding as another clock and then use that instead of
+hardcoding the value. That's much more flexible in case this
+changes in the future.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
