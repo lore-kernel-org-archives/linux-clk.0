@@ -1,45 +1,41 @@
-Return-Path: <jay.xu@rock-chips.com>
-From: Jianqun Xu <jay.xu@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de,
-	tomeu.vizoso@collabora.com
-Cc: linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	zhengxing@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH] clk: rockchip: rk3399: fix copy-paste error
-Date: Wed, 16 Nov 2016 08:07:15 +0800
-Message-Id: <1479254835-6858-1-git-send-email-jay.xu@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 8 Nov 2016 16:01:17 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com, ms.chen@mediatek.com,
+	robert.chou@mediatek.com, Shunli Wang <shunli.wang@mediatek.com>,
+	James Liao <jamesjj.liao@mediatek.com>
+Subject: Re: [PATCH v15 1/4] clk: mediatek: Add MT2701 clock support
+Message-ID: <20161109000117.GP16026@codeaurora.org>
+References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+ <1478245388-1412-2-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1478245388-1412-2-git-send-email-erin.lo@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix RK3368_CLKSEL_CON to RK3399_CLKSEL_CON for rk3399 clock
-driver.
+On 11/04, Erin Lo wrote:
+> From: Shunli Wang <shunli.wang@mediatek.com>
+> 
+> Add MT2701 clock support, include topckgen, apmixedsys,
+> infracfg, pericfg and subsystem clocks.
+> 
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> Tested-by: John Crispin <blogic@openwrt.org>
+> ---
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 2c7cba7..2bde6cd 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1382,8 +1382,8 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	/* clk_test */
- 	/* clk_test_pre is controlled by CRU_MISC_CON[3] */
- 	COMPOSITE_NOMUX(0, "clk_test", "clk_test_pre", CLK_IGNORE_UNUSED,
--			RK3368_CLKSEL_CON(58), 0, 5, DFLAGS,
--			RK3368_CLKGATE_CON(13), 11, GFLAGS),
-+			RK3399_CLKSEL_CON(58), 0, 5, DFLAGS,
-+			RK3399_CLKSEL_CON(13), 11, GFLAGS),
- 
- 	/* ddrc */
- 	GATE(0, "clk_ddrc_lpll_src", "lpll", 0, RK3399_CLKGATE_CON(3),
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
