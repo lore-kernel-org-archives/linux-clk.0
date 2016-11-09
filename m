@@ -1,115 +1,165 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
- <3797605.lKJkRScdp8@wasted.cogentembedded.com>
- <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
- <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
- <cb5ebfa8-f9c7-e211-aded-1dc65291a31a@cogentembedded.com>
- <CAMuHMdV-9HsW+Twpaeah62e4-aGeiLAY8eoNsXDxCYwDECPOng@mail.gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8a7b0c7f-e96b-aadf-2b91-aba02d1b72c7@cogentembedded.com>
-Date: Wed, 2 Nov 2016 21:26:09 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:39412 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751498AbcKILxP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 06:53:15 -0500
+Subject: Re: [PATCH v6 02/14] clk: qcom: Add rcg ops to return floor value
+ closest to the requested rate
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
+ <1478517877-23733-3-git-send-email-riteshh@codeaurora.org>
+ <20161108230217.GM16026@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+From: Ritesh Harjani <riteshh@codeaurora.org>
+Message-ID: <723dd8bd-c13c-ebd1-f391-2d9f7d56a852@codeaurora.org>
+Date: Wed, 9 Nov 2016 17:23:04 +0530
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV-9HsW+Twpaeah62e4-aGeiLAY8eoNsXDxCYwDECPOng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20161108230217.GM16026@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/02/2016 09:19 PM, Geert Uytterhoeven wrote:
+Hi Stephen,
 
->>>>> Changes in version 2:
->>>>> - added support  for non-existing PLL0CR;
->>>>> - removed the function reading the mode pins;
->>>>> - added/used the #define's for PLL0CR.STC;
->>>>> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
->>>>> - removed rcar_gen2_read_modemr();
->>>>> - added Geert's tag.
->>>>>
->>>>>  drivers/clk/renesas/rcar-gen2-cpg.c |  369
->>>>> ++++++++++++++++++++++++++++++++++++
->>>>>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
->>>>>  2 files changed, 411 insertions(+)
->>>>>
->>>>> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
->>>>> ===================================================================
->>>>> --- /dev/null
->>>>> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
->>>>> @@ -0,0 +1,369 @@
->>>>
->>>>
->>>>> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
->>>>> +                                              const struct cpg_core_clk
->>>>> *core,
->>>>> +                                              const struct
->>>>> cpg_mssr_info *info,
->>>>> +                                              struct clk **clks,
->>>>> +                                              void __iomem *base)
->>>>> +{
->>>>
->>>>
->>>>> +       case CLK_TYPE_GEN2_PLL0:
->>>>> +               /*
->>>>> +                * PLL0  is a configurable multiplier clock except on
->>>>> R-Car E2.
->>>>
->>>>
->>>> ... and V2H.
->>>>
->>>>> +                * Register the PLL0 clock as a fixed factor clock for
->>>>> now as
->>>>> +                * there's  no generic multiplier clock implementation
->>>>> and we
->>>>> +                * currently have no need to change the multiplier
->>>>> value.
->>>>> +                */
->>>>> +               mult = cpg_pll_config->pll0_mult;
->>>>> +               if (mult) {
->>>>> +                       /* PLL0 is VCO/3 on R-Car E2 */
->>>>
->>>>
->>>> ... and V2H.
->>>>
->>>>> +                       div  = 3;
->>>
->>>
->>> After seeing the r8a7745 driver, I think it would be better to use a
->>> divider
->>> value of 1 here (dropping the need for this branch), and handle the /3 in
->>> the
->>> SoC-specific driver.
->>> This would make it more similar to the other SoCs here (div = 1 in the
->>> else
->>> branch below), and to similar clocks in the SoC-specific driver
->>> (e.g. DEF_FIXED("zg", ..., 3, 1) in r8a7743-cpg-mssr.c).
+Thanks for the review.
+
+On 11/9/2016 4:32 AM, Stephen Boyd wrote:
+> On 11/07, Ritesh Harjani wrote:
+>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+>> index b904c33..1b3e8d2 100644
+>> --- a/drivers/clk/qcom/clk-rcg.h
+>> +++ b/drivers/clk/qcom/clk-rcg.h
+>> @@ -173,6 +173,7 @@ struct clk_rcg2 {
+>>  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
 >>
->>    We'll then have to lie about the PLL0 output freq? I don't like it...
+>>  extern const struct clk_ops clk_rcg2_ops;
+>> +extern const struct clk_ops clk_rcg2_floor_ops;
+>>  extern const struct clk_ops clk_rcg2_shared_ops;
+>>  extern const struct clk_ops clk_edp_pixel_ops;
+>>  extern const struct clk_ops clk_byte_ops;
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index a071bba..04433a6 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -47,6 +47,11 @@
+>>  #define N_REG			0xc
+>>  #define D_REG			0x10
+>>
+>> +enum {
+>> +	FLOOR,
+>> +	CEIL,
+>> +};
 >
-> Do we? The divisor is not part of PLL0. The datasheet says:
->
->   - For V2H/E2:
->     "PLL circuit 0 multiplies EXTAL or EXTAL/2 clock."
->   - For the other SoCs:
->     "PLL circuit 0 multiplies EXTAL or EXTAL/2 clock. The
-> multiplication ratio is set by the PLL0CR."
->
-> Division is done _after_ PLL0, using the SYS-CPU clock divider.
->
->  - For e.g. E2:
->    "The SYS-CPU clock divider 1 divides PLL0 output clock. This
-> divider generates the AP-System core clocks (Z2φ)."
->
-> AFAIU, this SYS-CPU clock divider is "/3" on E2.
+> Give it a name.
+Yes, sure. I will keep it as freq_policy.
 
-    The figures 7.1* picture it the other way: PLL0/VCO*1/3 is the output of 
-PLL0, according to them. Quite the same way as PLL1 freq gets divided by 2 
-before being output. Maybe they're wrong tho...
-
-> Gr{oetje,eeting}s,
 >
->                         Geert
+>> +
+>>  static int clk_rcg2_is_enabled(struct clk_hw *hw)
+>>  {
+>>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> @@ -176,15 +181,25 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+>>  	return calc_rate(parent_rate, m, n, mode, hid_div);
+>>  }
+>>
+>> -static int _freq_tbl_determine_rate(struct clk_hw *hw,
+>> -		const struct freq_tbl *f, struct clk_rate_request *req)
+>> +static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+>> +				    struct clk_rate_request *req, bool match)
+>
+> Use the enum please. Also name it something besides match.
+> policy?
+Sure. (freq_policy)
 
-MBR, Sergei
+>
+>>  {
+>>  	unsigned long clk_flags, rate = req->rate;
+>>  	struct clk_hw *p;
+>>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>>  	int index;
+>>
+>> -	f = qcom_find_freq(f, rate);
+>> +	switch (match) {
+>> +	case FLOOR:
+>> +		f = qcom_find_freq_floor(f, rate);
+>> +		break;
+>> +	case CEIL:
+>> +		f = qcom_find_freq(f, rate);
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	};
+>> +
+>>  	if (!f)
+>>  		return -EINVAL;
+>>
+>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>> index fffcbaf..cf6b87f 100644
+>> --- a/drivers/clk/qcom/common.c
+>> +++ b/drivers/clk/qcom/common.c
+>> @@ -46,6 +46,32 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
+>>  }
+>>  EXPORT_SYMBOL_GPL(qcom_find_freq);
+>>
+>> +const
+>> +struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+>
+> We can't put const and struct on the same line?
+Ok sure.
+
+>
+>> +				      unsigned long rate)
+>> +{
+>> +	int size = 0;
+>> +
+>> +	if (!f)
+>> +		return NULL;
+>> +
+>> +	/*
+>> +	 * The freq table has entries in the ascending order of frequencies
+>> +	 * To find the floor for a given frequency, we need to do a reverse
+>> +	 * lookup of the table
+>> +	 */
+>> +	for (; f->freq; f++, size++)
+>> +		;
+>> +
+>> +	for (f--; size; f--, size--)
+>> +		if (rate >= f->freq)
+>> +			return f;
+>
+> I don't understand why we can't do this while iterating through
+> the table. We shouldn't need to size up the frequency table first.
+>
+> 	const struct freq_tbl *best = NULL;
+>
+> 	for ( ; f->freq; f++) {
+> 		if (rate >= f->freq)
+> 			best = f->freq;
+> 		else
+> 			break;
+> 	}
+> 	
+> 	return best;
+>
+Yes, will do above change.
+
+>> +
+>> +	/* could not find any rates lower than *rate* */
+>
+>> +	return NULL;
+>> +}
+>> +EXPORT_SYMBOL_GPL(qcom_find_freq_floor);
+>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
