@@ -1,70 +1,114 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: <yuantian.tang@nxp.com>
-To: <mturquette@baylibre.com>
-CC: <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <scott.wood@nxp.com>,
-	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
-	<Yuantian.Tang@nxp.com>, Tang Yuantian <yuantian.tang@nxp.com>
-Subject: [PATCH] clk: qoriq: added ls1012a clock configuration
-Date: Wed, 16 Nov 2016 13:58:20 +0800
-Message-ID: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
-Return-Path: yuantian.tang@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:36828 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754446AbcKIS1u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 13:27:50 -0500
+Received: by mail-wm0-f54.google.com with SMTP id p190so325223080wmp.1
+        for <linux-clk@vger.kernel.org>; Wed, 09 Nov 2016 10:27:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Nov 2016 19:27:47 +0100
+Message-ID: <CAPDyKFrcAN_pqgtGaUanfB2zh97zGcL23m5VDtJ3g==NJeRrfA@mail.gmail.com>
+Subject: Re: [v16, 0/7] Fix eSDHC host version register bug
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
+        Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tang Yuantian <Yuantian.Tang@nxp.com>
+- i2c-list
 
-Added ls1012a clock configuation information.
+On 9 November 2016 at 04:14, Yangbo Lu <yangbo.lu@nxp.com> wrote:
+> This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
+> eSDHC controller. To match the SoC version and revision, 15 previous version
+> patchsets had tried many methods but all of them were rejected by reviewers.
+> Such as
+>         - dts compatible method
+>         - syscon method
+>         - ifdef PPC method
+>         - GUTS driver getting SVR method
+> Anrd suggested a soc_device_match method in v10, and this is the only available
+> method left now. This v11 patchset introduces the soc_device_match interface in
+> soc driver.
+>
+> The first four patches of Yangbo are to add the GUTS driver. This is used to
+> register a soc device which contain soc version and revision information.
+> The other three patches introduce the soc_device_match method in soc driver
+> and apply it on esdhc driver to fix this bug.
+>
+> ---
+> Changes for v15:
+>         - Dropped patch 'dt: bindings: update Freescale DCFG compatible'
+>           since the work had been done by below patch on ShawnGuo's linux tree.
+>           'dt-bindings: fsl: add LS1043A/LS1046A/LS2080A compatible for SCFG
+>            and DCFG'
+>         - Fixed error code issue in guts driver
+> Changes for v16:
+>         - Dropped patch 'powerpc/fsl: move mpc85xx.h to include/linux/fsl'
+>         - Added a bug-fix patch from Geert
+> ---
+>
+> Arnd Bergmann (1):
+>   base: soc: introduce soc_device_match() interface
+>
+> Geert Uytterhoeven (1):
+>   base: soc: Check for NULL SoC device attributes
+>
+> Yangbo Lu (5):
+>   ARM64: dts: ls2080a: add device configuration node
+>   dt: bindings: move guts devicetree doc out of powerpc directory
+>   soc: fsl: add GUTS driver for QorIQ platforms
+>   MAINTAINERS: add entry for Freescale SoC drivers
+>   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+>
+>  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
+>  MAINTAINERS                                        |  11 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
+>  drivers/base/Kconfig                               |   1 +
+>  drivers/base/soc.c                                 |  70 ++++++
+>  drivers/mmc/host/Kconfig                           |   1 +
+>  drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
+>  drivers/soc/Kconfig                                |   3 +-
+>  drivers/soc/fsl/Kconfig                            |  18 ++
+>  drivers/soc/fsl/Makefile                           |   1 +
+>  drivers/soc/fsl/guts.c                             | 236 +++++++++++++++++++++
+>  include/linux/fsl/guts.h                           | 125 ++++++-----
+>  include/linux/sys_soc.h                            |   3 +
+>  13 files changed, 447 insertions(+), 51 deletions(-)
+>  rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
+>  create mode 100644 drivers/soc/fsl/Kconfig
+>  create mode 100644 drivers/soc/fsl/guts.c
+>
+> --
+> 2.1.0.27.g96db324
+>
 
-Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
----
- drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Thanks, applied on my mmc tree for next!
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 1bece0f..563d874 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -202,6 +202,14 @@ static const struct clockgen_muxinfo ls1021a_cmux = {
- 	}
- };
- 
-+static const struct clockgen_muxinfo ls1012a_cmux = {
-+	{
-+		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
-+		{},
-+		[2] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
-+	}
-+};
-+
- static const struct clockgen_muxinfo t1040_cmux = {
- 	{
- 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
-@@ -482,6 +490,16 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.pll_mask = 0x03,
- 	},
- 	{
-+		.compat = "fsl,ls1012a-clockgen",
-+		.cmux_groups = {
-+			&ls1012a_cmux
-+		},
-+		.cmux_to_group = {
-+			0, -1
-+		},
-+		.pll_mask = 0x03,
-+	},
-+	{
- 		.compat = "fsl,ls1043a-clockgen",
- 		.init_periph = t2080_init_periph,
- 		.cmux_groups = {
-@@ -1284,6 +1302,7 @@ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
--- 
-2.1.0.27.g96db324
+I noticed that some DT compatibles weren't documented, according to
+checkpatch. Please fix that asap!
+
+Kind regards
+Ulf Hansson
