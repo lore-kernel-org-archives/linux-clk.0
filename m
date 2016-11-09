@@ -1,124 +1,209 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.130]:35892 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751918AbcKCDjR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 23:39:17 -0400
-From: Jianqun Xu <jay.xu@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de,
-        huangtao@rock-chips.com, zhangqing@rock-chips.com,
-        zhengxing@rock-chips.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        lintao@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH] clk: rockchip: remove more CLK_IGNORE_UNUSED for rk3399 clocktree
-Date: Thu,  3 Nov 2016 11:38:53 +0800
-Message-Id: <1478144333-13436-1-git-send-email-jay.xu@rock-chips.com>
+Received: from mail-sn1nam02on0045.outbound.protection.outlook.com ([104.47.36.45]:51893
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932217AbcKID14 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Nov 2016 22:27:56 -0500
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>
+CC: <linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
+        Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v16, 5/7] base: soc: introduce soc_device_match() interface
+Date: Wed, 9 Nov 2016 11:14:10 +0800
+Message-ID: <1478661252-42439-6-git-send-email-yangbo.lu@nxp.com>
+In-Reply-To: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Optimize rk3399 clocktree by removing CLK_IGNORE_UNUSED of some clocks.
+From: Arnd Bergmann <arnd@arndb.de>
 
-clocks will managered by usb:
-- clk_usbphy0_480m_src
-- clk_usbphy1_480m_src
-- clk_usbphy_480m
+We keep running into cases where device drivers want to know the exact
+version of the a SoC they are currently running on. In the past, this has
+usually been done through a vendor specific API that can be called by a
+driver, or by directly accessing some kind of version register that is
+not part of the device itself but that belongs to a global register area
+of the chip.
 
-clocks will be managered by pvtm:
-- clk_pvtm_core_l
-- clk_pvtm_core_b
-- clk_pvtm_ddr
+Common reasons for doing this include:
 
-clocks will be managered by dfi:
-- pclk_ddr_mon
-- clk_dfimon0_timer
-- clk_dfimon1_timer
-- aclk_dcf
-- pclk_dcf
+- A machine is not using devicetree or similar for passing data about
+  on-chip devices, but just announces their presence using boot-time
+  platform devices, and the machine code itself does not care about the
+  revision.
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+- There is existing firmware or boot loaders with existing DT binaries
+  with generic compatible strings that do not identify the particular
+  revision of each device, but the driver knows which SoC revisions
+  include which part.
+
+- A prerelease version of a chip has some quirks and we are using the same
+  version of the bootloader and the DT blob on both the prerelease and the
+  final version. An update of the DT binding seems inappropriate because
+  that would involve maintaining multiple copies of the dts and/or
+  bootloader.
+
+This patch introduces the soc_device_match() interface that is meant to
+work like of_match_node() but instead of identifying the version of a
+device, it identifies the SoC itself using a vendor-agnostic interface.
+
+Unlike of_match_node(), we do not do an exact string compare but instead
+use glob_match() to allow wildcards in strings.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/rockchip/clk-rk3399.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+Changes for v11:
+	- Added this patch for soc match
+Changes for v12:
+	- Corrected the author
+	- Rewrited soc_device_match with while loop
+Changes for v13:
+	- Added ack from Greg
+Changes for v14:
+	- None
+Changes for v15:
+	- None
+Changes for v16:
+	- None
+---
+ drivers/base/Kconfig    |  1 +
+ drivers/base/soc.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sys_soc.h |  3 +++
+ 3 files changed, 70 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index b3df2c6..fc29f99 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -410,11 +410,11 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index d02e7c0..2abea87 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -237,6 +237,7 @@ config GENERIC_CPU_AUTOPROBE
  
--	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", CLK_IGNORE_UNUSED,
-+	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", 0,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
--	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", CLK_IGNORE_UNUSED,
-+	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", 0,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
--	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, CLK_IGNORE_UNUSED,
-+	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, 0,
- 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
+ config SOC_BUS
+ 	bool
++	select GLOB
  
- 	MUX(0, "upll", mux_pll_src_24m_usbphy480m_p, 0,
-@@ -498,7 +498,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(14), 10, GFLAGS),
- 	GATE(ACLK_GIC_ADB400_CORE_L_2_GIC, "aclk_core_adb400_core_l_2_gic", "armclkl", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(14), 11, GFLAGS),
--	GATE(SCLK_PVTM_CORE_L, "clk_pvtm_core_l", "xin24m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_PVTM_CORE_L, "clk_pvtm_core_l", "xin24m", 0,
- 			RK3399_CLKGATE_CON(0), 7, GFLAGS),
+ source "drivers/base/regmap/Kconfig"
  
- 	/* big core */
-@@ -539,7 +539,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(0, "pclk_dbg_cxcs_pd_core_b", "pclk_dbg_core_b", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(14), 2, GFLAGS),
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index b63f23e..0c5cf87 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -13,6 +13,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/err.h>
++#include <linux/glob.h>
  
--	GATE(SCLK_PVTM_CORE_B, "clk_pvtm_core_b", "xin24m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_PVTM_CORE_B, "clk_pvtm_core_b", "xin24m", 0,
- 			RK3399_CLKGATE_CON(1), 7, GFLAGS),
+ static DEFINE_IDA(soc_ida);
  
- 	/* gmac */
-@@ -675,18 +675,18 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+@@ -159,3 +160,68 @@ static int __init soc_bus_register(void)
+ 	return bus_register(&soc_bus_type);
+ }
+ core_initcall(soc_bus_register);
++
++static int soc_device_match_one(struct device *dev, void *arg)
++{
++	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	const struct soc_device_attribute *match = arg;
++
++	if (match->machine &&
++	    !glob_match(match->machine, soc_dev->attr->machine))
++		return 0;
++
++	if (match->family &&
++	    !glob_match(match->family, soc_dev->attr->family))
++		return 0;
++
++	if (match->revision &&
++	    !glob_match(match->revision, soc_dev->attr->revision))
++		return 0;
++
++	if (match->soc_id &&
++	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
++		return 0;
++
++	return 1;
++}
++
++/*
++ * soc_device_match - identify the SoC in the machine
++ * @matches: zero-terminated array of possible matches
++ *
++ * returns the first matching entry of the argument array, or NULL
++ * if none of them match.
++ *
++ * This function is meant as a helper in place of of_match_node()
++ * in cases where either no device tree is available or the information
++ * in a device node is insufficient to identify a particular variant
++ * by its compatible strings or other properties. For new devices,
++ * the DT binding should always provide unique compatible strings
++ * that allow the use of of_match_node() instead.
++ *
++ * The calling function can use the .data entry of the
++ * soc_device_attribute to pass a structure or function pointer for
++ * each entry.
++ */
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches)
++{
++	int ret = 0;
++
++	if (!matches)
++		return NULL;
++
++	while (!ret) {
++		if (!(matches->machine || matches->family ||
++		      matches->revision || matches->soc_id))
++			break;
++		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
++				       soc_device_match_one);
++		if (!ret)
++			matches++;
++		else
++			return matches;
++	}
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(soc_device_match);
+diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
+index 2739ccb..9f5eb06 100644
+--- a/include/linux/sys_soc.h
++++ b/include/linux/sys_soc.h
+@@ -13,6 +13,7 @@ struct soc_device_attribute {
+ 	const char *family;
+ 	const char *revision;
+ 	const char *soc_id;
++	const void *data;
+ };
  
- 	GATE(PCLK_CENTER_MAIN_NOC, "pclk_center_main_noc", "pclk_ddr", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(18), 10, GFLAGS),
--	GATE(PCLK_DDR_MON, "pclk_ddr_mon", "pclk_ddr", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_DDR_MON, "pclk_ddr_mon", "pclk_ddr", 0,
- 			RK3399_CLKGATE_CON(18), 12, GFLAGS),
- 	GATE(PCLK_CIC, "pclk_cic", "pclk_ddr", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(18), 15, GFLAGS),
- 	GATE(PCLK_DDR_SGRF, "pclk_ddr_sgrf", "pclk_ddr", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(19), 2, GFLAGS),
+ /**
+@@ -34,4 +35,6 @@ void soc_device_unregister(struct soc_device *soc_dev);
+  */
+ struct device *soc_device_to_device(struct soc_device *soc);
  
--	GATE(SCLK_PVTM_DDR, "clk_pvtm_ddr", "xin24m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_PVTM_DDR, "clk_pvtm_ddr", "xin24m", 0,
- 			RK3399_CLKGATE_CON(4), 11, GFLAGS),
--	GATE(SCLK_DFIMON0_TIMER, "clk_dfimon0_timer", "xin24m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_DFIMON0_TIMER, "clk_dfimon0_timer", "xin24m", 0,
- 			RK3399_CLKGATE_CON(3), 5, GFLAGS),
--	GATE(SCLK_DFIMON1_TIMER, "clk_dfimon1_timer", "xin24m", CLK_IGNORE_UNUSED,
-+	GATE(SCLK_DFIMON1_TIMER, "clk_dfimon1_timer", "xin24m", 0,
- 			RK3399_CLKGATE_CON(3), 6, GFLAGS),
- 
- 	/* cci */
-@@ -966,7 +966,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(SCLK_INTMEM3, "clk_intmem3", "aclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(23), 5, GFLAGS),
- 	GATE(SCLK_INTMEM4, "clk_intmem4", "aclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(23), 6, GFLAGS),
- 	GATE(SCLK_INTMEM5, "clk_intmem5", "aclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(23), 7, GFLAGS),
--	GATE(ACLK_DCF, "aclk_dcf", "aclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(23), 8, GFLAGS),
-+	GATE(ACLK_DCF, "aclk_dcf", "aclk_perilp0", 0, RK3399_CLKGATE_CON(23), 8, GFLAGS),
- 	GATE(ACLK_DMAC0_PERILP, "aclk_dmac0_perilp", "aclk_perilp0", 0, RK3399_CLKGATE_CON(25), 5, GFLAGS),
- 	GATE(ACLK_DMAC1_PERILP, "aclk_dmac1_perilp", "aclk_perilp0", 0, RK3399_CLKGATE_CON(25), 6, GFLAGS),
- 	GATE(ACLK_PERILP0_NOC, "aclk_perilp0_noc", "aclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(25), 7, GFLAGS),
-@@ -980,7 +980,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(HCLK_PERILP0_NOC, "hclk_perilp0_noc", "hclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(25), 8, GFLAGS),
- 
- 	/* pclk_perilp0 gates */
--	GATE(PCLK_DCF, "pclk_dcf", "pclk_perilp0", CLK_IGNORE_UNUSED, RK3399_CLKGATE_CON(23), 9, GFLAGS),
-+	GATE(PCLK_DCF, "pclk_dcf", "pclk_perilp0", 0, RK3399_CLKGATE_CON(23), 9, GFLAGS),
- 
- 	/* crypto */
- 	COMPOSITE(SCLK_CRYPTO0, "clk_crypto0", mux_pll_src_cpll_gpll_ppll_p, 0,
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches);
+ #endif /* __SOC_BUS_H */
 -- 
-1.9.1
-
+2.1.0.27.g96db324
 
