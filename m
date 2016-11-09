@@ -1,65 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:32998 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934277AbcKNPoo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 10:44:44 -0500
-Received: by mail-wm0-f49.google.com with SMTP id c184so14555649wmd.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 Nov 2016 07:44:21 -0800 (PST)
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v15 4/4] arm: dts: mt2701: Use real clock for UARTs
+To: Erin Lo <erin.lo@mediatek.com>, Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
+References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+ <1478245388-1412-5-git-send-email-erin.lo@mediatek.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
+ Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, srv_heupstream@mediatek.com,
+ ms.chen@mediatek.com, robert.chou@mediatek.com
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <eece3eba-fd24-ad96-ca20-c08403894b00@gmail.com>
+Date: Wed, 9 Nov 2016 18:20:21 +0100
 MIME-Version: 1.0
-In-Reply-To: <201611142112.EdLY7cAN%fengguang.wu@intel.com>
-References: <1479103248-9491-12-git-send-email-riteshh@codeaurora.org> <201611142112.EdLY7cAN%fengguang.wu@intel.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 14 Nov 2016 16:44:19 +0100
-Message-ID: <CAPDyKFoUiGgXhLtW9-+iAxdV6sy4+wgQfW8P5+VwsqHc3QwkqA@mail.gmail.com>
-Subject: Re: [PATCH v7 11/14] mmc: sdhci-msm: Add HS400 platform support
-To: kbuild test robot <lkp@intel.com>
-Cc: Ritesh Harjani <riteshh@codeaurora.org>,
-        "kbuild-all@01.org" <kbuild-all@01.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, david.brown@linaro.org,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        "kdorfman@codeaurora.org" <kdorfman@codeaurora.org>,
-        David Griego <david.griego@linaro.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Pramod Gurav <pramod.gurav@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1478245388-1412-5-git-send-email-erin.lo@mediatek.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 14 November 2016 at 14:53, kbuild test robot <lkp@intel.com> wrote:
-> Hi Venkat,
+
+On 11/04/2016 08:43 AM, Erin Lo wrote:
+> We used to use a fixed rate clock for the UARTs. Now that we have clock
+> support we can associate the correct clocks to the UARTs and drop the
+> 26MHz fixed rate UART clock.
 >
-> [auto build test ERROR on ulf.hansson-mmc/next]
-> [also build test ERROR on v4.9-rc5]
-> [cannot apply to next-20161114]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 
-Here we go...
+Applied, thanks.
 
+> ---
+>  arch/arm/boot/dts/mt2701.dtsi | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
 >
-> url:    https://github.com/0day-ci/linux/commits/Ritesh-Harjani/mmc-sdhci-msm-Add-clk-rates-DDR-HS400-support/20161114-142815
-> base:   https://git.linaro.org/people/ulf.hansson/mmc next
-
-This above is the old tree, here's the new:
-git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
-
-Could you please update the path in the build system?
-
-[...]
-
-Kind regards
-Ulf Hansson
+> diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+> index c9a8dbf..7eab6f4 100644
+> --- a/arch/arm/boot/dts/mt2701.dtsi
+> +++ b/arch/arm/boot/dts/mt2701.dtsi
+> @@ -73,12 +73,6 @@
+>  		#clock-cells = <0>;
+>  	};
+>
+> -	uart_clk: dummy26m {
+> -		compatible = "fixed-clock";
+> -		clock-frequency = <26000000>;
+> -		#clock-cells = <0>;
+> -	};
+> -
+>  	clk26m: oscillator@0 {
+>  		compatible = "fixed-clock";
+>  		#clock-cells = <0>;
+> @@ -186,7 +180,8 @@
+>  			     "mediatek,mt6577-uart";
+>  		reg = <0 0x11002000 0 0x400>;
+>  		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>;
+> -		clocks = <&uart_clk>;
+> +		clocks = <&pericfg CLK_PERI_UART0_SEL>, <&pericfg CLK_PERI_UART0>;
+> +		clock-names = "baud", "bus";
+>  		status = "disabled";
+>  	};
+>
+> @@ -195,7 +190,8 @@
+>  			     "mediatek,mt6577-uart";
+>  		reg = <0 0x11003000 0 0x400>;
+>  		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+> -		clocks = <&uart_clk>;
+> +		clocks = <&pericfg CLK_PERI_UART1_SEL>, <&pericfg CLK_PERI_UART1>;
+> +		clock-names = "baud", "bus";
+>  		status = "disabled";
+>  	};
+>
+> @@ -204,7 +200,8 @@
+>  			     "mediatek,mt6577-uart";
+>  		reg = <0 0x11004000 0 0x400>;
+>  		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_LOW>;
+> -		clocks = <&uart_clk>;
+> +		clocks = <&pericfg CLK_PERI_UART2_SEL>, <&pericfg CLK_PERI_UART2>;
+> +		clock-names = "baud", "bus";
+>  		status = "disabled";
+>  	};
+>
+> @@ -213,7 +210,8 @@
+>  			     "mediatek,mt6577-uart";
+>  		reg = <0 0x11005000 0 0x400>;
+>  		interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_LOW>;
+> -		clocks = <&uart_clk>;
+> +		clocks = <&pericfg CLK_PERI_UART3_SEL>, <&pericfg CLK_PERI_UART3>;
+> +		clock-names = "baud", "bus";
+>  		status = "disabled";
+>  	};
+>  };
+>
