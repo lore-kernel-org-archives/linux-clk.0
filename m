@@ -1,40 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Nov 2016 18:29:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
-	galak@codeaurora.org, pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org, varada@codeaurora.org,
-	sricharan@codeaurora.org, architt@codeaurora.org,
-	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] clk: qcom: ipq4019: changed i2c freq table
-Message-ID: <20161102012939.GG16026@codeaurora.org>
-References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
- <1474460512-31994-8-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:57377 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751800AbcKIJSn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 9 Nov 2016 04:18:43 -0500
+Date: Wed, 9 Nov 2016 10:18:33 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
+        Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>
+Subject: Re: [v16, 0/7] Fix eSDHC host version register bug
+Message-ID: <20161109091832.GC1807@katana>
+References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474460512-31994-8-git-send-email-absahu@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uh9ZiVrAOUUm9fzH"
+In-Reply-To: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21, Abhishek Sahu wrote:
-> The current I2C freq table uses MND values which is not
-> applicable for I2C since its RCG does not have MND
-> counter. This patch updates the freq table for 19.05
-> MHz clk frequency with FEPLL_200 parent.
 
-That's concerning given that we read the registers, but I guess
-it works out?
+--uh9ZiVrAOUUm9fzH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
 
-Applied to clk-next
+Can you please update your CC list? There is nothing i2c related in this
+patch series, so you could drop the i2c-list.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+--uh9ZiVrAOUUm9fzH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYIunoAAoJEBQN5MwUoCm2JCAP/0clLR2IchSWDZ0rRwfbLcAL
+aKM/ckNIlHdPmOCq/KnJcPpGux4l6J+WkODLGpCJSMJzI0/WwjPIcNGITaapo7Ue
+U0NlY49zQ6scE9OMwsCwW22Ao5sArOi+6PAZSjmXYMN2+a+k+AnnWc+mmVmHZ9Y4
+lWVeksXVm4Lg2xEtq84ceXOpatb/4KE3M3iOKgcg+9T+Fro+/NnTjf+AkuF9Xkay
+jNqGoOdeIzD2WvrjCRD7+ApBfZZyz/Za89cGtkTvK69QqON6HB6xiesDF/YbPoz3
+UYn91ab+/teyAvoN5kDHaRcEQT2L47rQPY2hh26eCV4pyepp+23sAZ9nMakYOZRl
+rV7/ZBUh6GvyUSxDW8ud/G/O52wbdSObyBjj+qUhCQ5LjtHgcaSZwg8/Brml7YsS
+NO205lIMOsjGiB+vs9N1QhApga6Rcamb3RgIeg3un6gHCFsqnG3xEyeEDhYNNzia
+AIa+xhQ/8MAps3yjGQDp3rDJ+kxzn1qHfsEBCkOEloGsDlKt1L8R9t/05/dYwJGd
+7aKyLlhCXMGbdgzKxPcWNCiKm/UP+pZns4ABDJA8Gi9xkkEJrcr87IQ070M8N4if
+gMRmGS8Q4Yr7MXLC44C2+aStjQWk/058IuKXV/oGHvrj3Buh+IKBl4GazD2tECj5
+gmp4R7RKlYgaZUklTDQT
+=Bmj3
+-----END PGP SIGNATURE-----
+
+--uh9ZiVrAOUUm9fzH--
