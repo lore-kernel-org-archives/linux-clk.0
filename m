@@ -1,93 +1,47 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 10 Nov 2016 23:53:51 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: question about clk_get_parent
+Message-ID: <20161110235350.GC1041@n2100.armlinux.org.uk>
+References: <alpine.DEB.2.20.1611102149500.1970@hadrien>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <3797605.lKJkRScdp8@wasted.cogentembedded.com>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <3797605.lKJkRScdp8@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 12:08:15 +0100
-Message-ID: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <alpine.DEB.2.20.1611102149500.1970@hadrien>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+On Thu, Nov 10, 2016 at 09:55:16PM +0100, Julia Lawall wrote:
+> As far as I can see in the various definitions of clk_get_parent, they all
+> return either NULL or a value stored in a structure field.  But the
+> documentation with the prototype in includ/linux/clk.h says that it
+> returns a valid IS_ERR() condition containing errno.  Are ERR_PTR values
+> stored in the structure fields?
 
-On Thu, Oct 27, 2016 at 9:53 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
-> and Software Reset support code, using the CPG/MSSR driver core.
->
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> ---
-> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
->
-> Changes in version 2:
-> - added support  for non-existing PLL0CR;
-> - removed the function reading the mode pins;
-> - added/used the #define's for PLL0CR.STC;
-> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
-> - removed rcar_gen2_read_modemr();
-> - added Geert's tag.
->
->  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
->  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
->  2 files changed, 411 insertions(+)
->
-> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
-> ===================================================================
-> --- /dev/null
-> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
-> @@ -0,0 +1,369 @@
+The API documentation (in clk.h) is correct.  The API (from the user
+perspective) considers invalid clocks to be the set of pointers for
+which IS_ERR() is true.
 
-> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
-> +                                              const struct cpg_core_clk *core,
-> +                                              const struct cpg_mssr_info *info,
-> +                                              struct clk **clks,
-> +                                              void __iomem *base)
-> +{
+By implication, valid clocks are those for which IS_ERR() returns
+false.
 
-> +       case CLK_TYPE_GEN2_PLL0:
-> +               /*
-> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
+Hence, in order for clk_get_parent() to indicate an error, it has to
+return a pointer value which corresponds with IS_ERR() being true.
 
-... and V2H.
+The question over the NULL clock pointer is left to the implementation
+to decide whether it's an error or not as far as the API design goes,
+but practically everyone treats it as "there is no clock" which is
+entirely reasonable.
 
-> +                * Register the PLL0 clock as a fixed factor clock for now as
-> +                * there's  no generic multiplier clock implementation and we
-> +                * currently have no need to change the multiplier value.
-> +                */
-> +               mult = cpg_pll_config->pll0_mult;
-> +               if (mult) {
-> +                       /* PLL0 is VCO/3 on R-Car E2 */
+Also, remember from the clk API design point of view, users of the
+API should never dereference the clk pointer, it is a cookie as far
+as users should be concerned. (The clk structure was not available to
+drivers in the early days.)  Only clk implementations and clk drivers
+should dereference, and these should not dereference anything but
+their own clocks.
 
-... and V2H.
-
-> +                       div  = 3;
-> +               } else  {
-> +                       u32 pll0cr = readl(base + CPG_PLL0CR);
-> +
-> +                       mult = ((pll0cr & CPG_PLL0CR_STC_MASK) >>
-> +                               CPG_PLL0CR_STC_SHIFT) + 1;
-> +               }
-
-Looks OK to me. I assume you've verified the Z2 clock frequency in
-/sys/kernel/debug/clk/clk_summary?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
