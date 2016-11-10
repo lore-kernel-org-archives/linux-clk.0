@@ -1,41 +1,163 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: Scott Wood <oss@buserror.net>, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: RE: [v16, 0/7] Fix eSDHC host version register bug
+Date: Thu, 10 Nov 2016 04:11:10 +0000
+Message-ID: <DB6PR0401MB25369DEFDDDED2A96851259EF8B80@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+ <CAPDyKFrcAN_pqgtGaUanfB2zh97zGcL23m5VDtJ3g==NJeRrfA@mail.gmail.com>
+ <1478750114.21746.4.camel@buserror.net>
 MIME-Version: 1.0
-In-Reply-To: <1477969343-19887-3-git-send-email-peter.chen@nxp.com>
-References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com> <1477969343-19887-3-git-send-email-peter.chen@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 1 Nov 2016 08:29:56 -0200
-Message-ID: <CAOMZO5AsF8s9Ff2NHQ+j2_xSBNEzGY6bGLK-kgvx-aST+K2PNQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ARM: imx: mach-imx6ul: add imx6ull support
-To: Peter Chen <peter.chen@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
+ linux-clk <linux-clk@vger.kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen
+ Friedrich <jochen@scram.de>, Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ linux-mmc <linux-mmc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 1, 2016 at 1:02 AM, Peter Chen <peter.chen@nxp.com> wrote:
-> imx6ull is derived SoC from imx6ul.
->
-> Signed-off-by: Peter Chen <peter.chen@nxp.com>
-> ---
->  arch/arm/mach-imx/mach-imx6ul.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
-> index 58a2b88..0b24630 100644
-> --- a/arch/arm/mach-imx/mach-imx6ul.c
-> +++ b/arch/arm/mach-imx/mach-imx6ul.c
-> @@ -89,10 +89,11 @@ static void __init imx6ul_init_late(void)
->
->  static const char * const imx6ul_dt_compat[] __initconst = {
->         "fsl,imx6ul",
-> +       "fsl,imx6ull",
->         NULL,
->  };
->
-> -DT_MACHINE_START(IMX6UL, "Freescale i.MX6 Ultralite (Device Tree)")
-> +DT_MACHINE_START(IMX6UL, "Freescale i.MX6 UltraLite (Device Tree)")
-
-Is this change really needed?
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBZLkIuIEx1DQo+IFNlbnQ6IFRo
+dXJzZGF5LCBOb3ZlbWJlciAxMCwgMjAxNiAxMjowNiBQTQ0KPiBUbzogJ1Njb3R0IFdvb2QnOyBV
+bGYgSGFuc3Nvbg0KPiBDYzogbGludXgtbW1jOyBBcm5kIEJlcmdtYW5uOyBsaW51eHBwYy1kZXZA
+bGlzdHMub3psYWJzLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LWNsazsgaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7DQo+IG5l
+dGRldkB2Z2VyLmtlcm5lbC5vcmc7IEdyZWcgS3JvYWgtSGFydG1hbjsgTWFyayBSdXRsYW5kOyBS
+b2IgSGVycmluZzsNCj4gUnVzc2VsbCBLaW5nOyBKb2NoZW4gRnJpZWRyaWNoOyBKb2VyZyBSb2Vk
+ZWw7IENsYXVkaXUgTWFub2lsOyBCaHVwZXNoDQo+IFNoYXJtYTsgUWlhbmcgWmhhbzsgS3VtYXIg
+R2FsYTsgTGVvIExpOyBYLkIuIFhpZTsgTS5ILiBMaWFuDQo+IFN1YmplY3Q6IFJFOiBbdjE2LCAw
+LzddIEZpeCBlU0RIQyBob3N0IHZlcnNpb24gcmVnaXN0ZXIgYnVnDQo+IA0KPiA+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogbGludXgtbW1jLW93bmVyQHZnZXIua2VybmVs
+Lm9yZyBbbWFpbHRvOmxpbnV4LW1tYy0NCj4gPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJl
+aGFsZiBPZiBTY290dCBXb29kDQo+ID4gU2VudDogVGh1cnNkYXksIE5vdmVtYmVyIDEwLCAyMDE2
+IDExOjU1IEFNDQo+ID4gVG86IFVsZiBIYW5zc29uOyBZLkIuIEx1DQo+ID4gQ2M6IGxpbnV4LW1t
+YzsgQXJuZCBCZXJnbWFubjsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc7DQo+ID4gZGV2
+aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFk
+Lm9yZzsNCj4gPiBsaW51eC0ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrOw0KPiA+
+IGlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3Jn
+OyBHcmVnDQo+ID4gS3JvYWgtSGFydG1hbjsgTWFyayBSdXRsYW5kOyBSb2IgSGVycmluZzsgUnVz
+c2VsbCBLaW5nOyBKb2NoZW4NCj4gPiBGcmllZHJpY2g7IEpvZXJnIFJvZWRlbDsgQ2xhdWRpdSBN
+YW5vaWw7IEJodXBlc2ggU2hhcm1hOyBRaWFuZyBaaGFvOw0KPiA+IEt1bWFyIEdhbGE7IExlbyBM
+aTsgWC5CLiBYaWU7IE0uSC4gTGlhbg0KPiA+IFN1YmplY3Q6IFJlOiBbdjE2LCAwLzddIEZpeCBl
+U0RIQyBob3N0IHZlcnNpb24gcmVnaXN0ZXIgYnVnDQo+ID4NCj4gPiBPbiBXZWQsIDIwMTYtMTEt
+MDkgYXQgMTk6MjcgKzAxMDAsIFVsZiBIYW5zc29uIHdyb3RlOg0KPiA+ID4gLSBpMmMtbGlzdA0K
+PiA+ID4NCj4gPiA+IE9uIDkgTm92ZW1iZXIgMjAxNiBhdCAwNDoxNCwgWWFuZ2JvIEx1IDx5YW5n
+Ym8ubHVAbnhwLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IFRoaXMgcGF0Y2hzZXQgaXMg
+dXNlZCB0byBmaXggYSBob3N0IHZlcnNpb24gcmVnaXN0ZXIgYnVnIGluIHRoZQ0KPiA+ID4gPiBU
+NDI0MC0NCj4gPiA+ID4gUjEuMC1SMi4wDQo+ID4gPiA+IGVTREhDIGNvbnRyb2xsZXIuIFRvIG1h
+dGNoIHRoZSBTb0MgdmVyc2lvbiBhbmQgcmV2aXNpb24sIDE1DQo+ID4gPiA+IHByZXZpb3VzIHZl
+cnNpb24gcGF0Y2hzZXRzIGhhZCB0cmllZCBtYW55IG1ldGhvZHMgYnV0IGFsbCBvZiB0aGVtDQo+
+ID4gPiA+IHdlcmUgcmVqZWN0ZWQgYnkgcmV2aWV3ZXJzLg0KPiA+ID4gPiBTdWNoIGFzDQo+ID4g
+PiA+IMKgwqDCoMKgwqDCoMKgwqAtIGR0cyBjb21wYXRpYmxlIG1ldGhvZA0KPiA+ID4gPiDCoMKg
+wqDCoMKgwqDCoMKgLSBzeXNjb24gbWV0aG9kDQo+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqAtIGlm
+ZGVmIFBQQyBtZXRob2QNCj4gPiA+ID4gwqDCoMKgwqDCoMKgwqDCoC0gR1VUUyBkcml2ZXIgZ2V0
+dGluZyBTVlIgbWV0aG9kIEFucmQgc3VnZ2VzdGVkIGENCj4gPiA+ID4gc29jX2RldmljZV9tYXRj
+aCBtZXRob2QgaW4gdjEwLCBhbmQgdGhpcyBpcyB0aGUgb25seSBhdmFpbGFibGUNCj4gPiA+ID4g
+bWV0aG9kIGxlZnQgbm93LiBUaGlzIHYxMSBwYXRjaHNldCBpbnRyb2R1Y2VzIHRoZSBzb2NfZGV2
+aWNlX21hdGNoDQo+ID4gPiA+IGludGVyZmFjZSBpbiBzb2MgZHJpdmVyLg0KPiA+ID4gPg0KPiA+
+ID4gPiBUaGUgZmlyc3QgZm91ciBwYXRjaGVzIG9mIFlhbmdibyBhcmUgdG8gYWRkIHRoZSBHVVRT
+IGRyaXZlci4gVGhpcw0KPiA+ID4gPiBpcyB1c2VkIHRvIHJlZ2lzdGVyIGEgc29jIGRldmljZSB3
+aGljaCBjb250YWluIHNvYyB2ZXJzaW9uIGFuZA0KPiA+ID4gPiByZXZpc2lvbiBpbmZvcm1hdGlv
+bi4NCj4gPiA+ID4gVGhlIG90aGVyIHRocmVlIHBhdGNoZXMgaW50cm9kdWNlIHRoZSBzb2NfZGV2
+aWNlX21hdGNoIG1ldGhvZCBpbg0KPiA+ID4gPiBzb2MgZHJpdmVyIGFuZCBhcHBseSBpdCBvbiBl
+c2RoYyBkcml2ZXIgdG8gZml4IHRoaXMgYnVnLg0KPiA+ID4gPg0KPiA+ID4gPiAtLS0NCj4gPiA+
+ID4gQ2hhbmdlcyBmb3IgdjE1Og0KPiA+ID4gPiDCoMKgwqDCoMKgwqDCoMKgLSBEcm9wcGVkIHBh
+dGNoICdkdDogYmluZGluZ3M6IHVwZGF0ZSBGcmVlc2NhbGUgRENGRw0KPiA+IGNvbXBhdGlibGUn
+DQo+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgc2luY2UgdGhlIHdvcmsgaGFkIGJlZW4gZG9u
+ZSBieSBiZWxvdyBwYXRjaCBvbg0KPiA+ID4gPiBTaGF3bkd1bydzIGxpbnV4IHRyZWUuDQo+ID4g
+PiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgJ2R0LWJpbmRpbmdzOiBmc2w6IGFkZCBMUzEwNDNBL0xT
+MTA0NkEvTFMyMDgwQQ0KPiA+ID4gPiBjb21wYXRpYmxlIGZvciBTQ0ZHDQo+ID4gPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqBhbmQgRENGRycNCj4gPiA+ID4gwqDCoMKgwqDCoMKgwqDCoC0gRml4
+ZWQgZXJyb3IgY29kZSBpc3N1ZSBpbiBndXRzIGRyaXZlciBDaGFuZ2VzIGZvciB2MTY6DQo+ID4g
+PiA+IMKgwqDCoMKgwqDCoMKgwqAtIERyb3BwZWQgcGF0Y2ggJ3Bvd2VycGMvZnNsOiBtb3ZlIG1w
+Yzg1eHguaCB0bw0KPiA+IGluY2x1ZGUvbGludXgvZnNsJw0KPiA+ID4gPiDCoMKgwqDCoMKgwqDC
+oMKgLSBBZGRlZCBhIGJ1Zy1maXggcGF0Y2ggZnJvbSBHZWVydA0KPiA+ID4gPiAtLS0NCj4gPiA+
+ID4NCj4gPiA+ID4gQXJuZCBCZXJnbWFubiAoMSk6DQo+ID4gPiA+IMKgIGJhc2U6IHNvYzogaW50
+cm9kdWNlIHNvY19kZXZpY2VfbWF0Y2goKSBpbnRlcmZhY2UNCj4gPiA+ID4NCj4gPiA+ID4gR2Vl
+cnQgVXl0dGVyaG9ldmVuICgxKToNCj4gPiA+ID4gwqAgYmFzZTogc29jOiBDaGVjayBmb3IgTlVM
+TCBTb0MgZGV2aWNlIGF0dHJpYnV0ZXMNCj4gPiA+ID4NCj4gPiA+ID4gWWFuZ2JvIEx1ICg1KToN
+Cj4gPiA+ID4gwqAgQVJNNjQ6IGR0czogbHMyMDgwYTogYWRkIGRldmljZSBjb25maWd1cmF0aW9u
+IG5vZGUNCj4gPiA+ID4gwqAgZHQ6IGJpbmRpbmdzOiBtb3ZlIGd1dHMgZGV2aWNldHJlZSBkb2Mg
+b3V0IG9mIHBvd2VycGMgZGlyZWN0b3J5DQo+ID4gPiA+IMKgIHNvYzogZnNsOiBhZGQgR1VUUyBk
+cml2ZXIgZm9yIFFvcklRIHBsYXRmb3Jtcw0KPiA+ID4gPiDCoCBNQUlOVEFJTkVSUzogYWRkIGVu
+dHJ5IGZvciBGcmVlc2NhbGUgU29DIGRyaXZlcnMNCj4gPiA+ID4gwqAgbW1jOiBzZGhjaS1vZi1l
+c2RoYzogZml4IGhvc3QgdmVyc2lvbiBmb3IgVDQyNDAtUjEuMC1SMi4wDQo+ID4gPiA+DQo+ID4g
+PiA+IMKgLi4uL2JpbmRpbmdzL3twb3dlcnBjID0+IHNvY30vZnNsL2d1dHMudHh0wqDCoMKgwqDC
+oMKgwqDCoMKgfMKgwqDCoDMgKw0KPiA+ID4gPiDCoE1BSU5UQUlORVJTwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqB8wqDCoDExICstDQo+ID4gPiA+IMKgYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2Nh
+bGUvZnNsLWxzMjA4MGEuZHRzacKgwqDCoMKgwqB8wqDCoMKgNiArDQo+ID4gPiA+IMKgZHJpdmVy
+cy9iYXNlL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqAxICsNCj4gPiA+ID4gwqBkcml2ZXJzL2Jhc2Uvc29j
+LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqB8wqDCoDcwICsrKysrKw0KPiA+ID4gPiDCoGRyaXZlcnMvbW1jL2hvc3QvS2Nv
+bmZpZ8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oHzCoMKgwqAxICsNCj4gPiA+ID4gwqBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLW9mLWVzZGhjLmPC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoDIwICsrDQo+ID4gPiA+IMKg
+ZHJpdmVycy9zb2MvS2NvbmZpZ8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoMKgMyArLQ0KPiA+ID4gPiDCoGRyaXZlcnMv
+c29jL2ZzbC9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqB8wqDCoDE4ICsrDQo+ID4gPiA+IMKgZHJpdmVycy9zb2MvZnNsL01ha2Vm
+aWxlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+fMKgwqDCoDEgKw0KPiA+ID4gPiDCoGRyaXZlcnMvc29jL2ZzbC9ndXRzLmPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfCAyMzYNCj4gPiA+
+ID4gKysrKysrKysrKysrKysrKysrKysrDQo+ID4gPiA+IMKgaW5jbHVkZS9saW51eC9mc2wvZ3V0
+cy5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+fCAxMjUNCj4gPiA+ID4gKysrKysrLS0tLS0NCj4gPiA+ID4gwqBpbmNsdWRlL2xpbnV4L3N5c19z
+b2MuaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgfMKgwqDCoDMgKw0KPiA+ID4gPiDCoDEzIGZpbGVzIGNoYW5nZWQsIDQ0NyBpbnNlcnRpb25z
+KCspLCA1MSBkZWxldGlvbnMoLSkNCj4gPiA+ID4gwqByZW5hbWUgRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL3twb3dlcnBjID0+DQo+ID4gPiA+IHNvY30vZnNsL2d1dHMudHh0DQo+
+ID4gPiA+ICg5MSUpDQo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL2Zz
+bC9LY29uZmlnDQo+ID4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL2ZzbC9n
+dXRzLmMNCj4gPiA+ID4NCj4gPiA+ID4gLS0NCj4gPiA+ID4gMi4xLjAuMjcuZzk2ZGIzMjQNCj4g
+PiA+ID4NCj4gPiA+IFRoYW5rcywgYXBwbGllZCBvbiBteSBtbWMgdHJlZSBmb3IgbmV4dCENCj4g
+PiA+DQo+ID4gPiBJIG5vdGljZWQgdGhhdCBzb21lIERUIGNvbXBhdGlibGVzIHdlcmVuJ3QgZG9j
+dW1lbnRlZCwgYWNjb3JkaW5nIHRvDQo+ID4gPiBjaGVja3BhdGNoLiBQbGVhc2UgZml4IHRoYXQg
+YXNhcCENCj4gPg0KPiA+IFRoZXkgYXJlIGRvY3VtZW50ZWQsIGluIGZzbC9ndXRzLnR4dCAodGhl
+IGZpbGUgbW92ZWQgaW4gcGF0Y2ggMi83KToNCj4gPiA+IMKgLSBjb21wYXRpYmxlIDogU2hvdWxk
+IGRlZmluZSB0aGUgY29tcGF0aWJsZSBkZXZpY2UgdHlwZSBmb3INCj4gPiA+IMKgwqDCoGdsb2Jh
+bC11dGlsaXRpZXMuDQo+ID4gPiDCoMKgwqBQb3NzaWJsZSBjb21wYXRpYmxlczoNCj4gPiA+IMKg
+wqDCoMKgwqDCoMKgwqAiZnNsLHFvcmlxLWRldmljZS1jb25maWctMS4wIg0KPiA+ID4gwqDCoMKg
+wqDCoMKgwqDCoCJmc2wscW9yaXEtZGV2aWNlLWNvbmZpZy0yLjAiDQo+ID4gPiDCoMKgwqDCoMKg
+wqDCoMKgImZzbCw8Y2hpcD4tZGV2aWNlLWNvbmZpZyINCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqAi
+ZnNsLDxjaGlwPi1ndXRzIg0KPiA+DQo+ID4gQ2hlY2twYXRjaCBkb2Vzbid0IHVuZGVyc3RhbmQg
+Y29tcGF0aWJsZXMgZGVmaW5lZCBpbiBzdWNoIGEgd2F5Lg0KPiANCj4gW0x1IFlhbmdiby1CNDcw
+OTNdIFlvdSdyZSByaWdodCwgU2NvdHQuIEkgZHJvcHBlZCBEVCBwYXRjaCAnZHQ6IGJpbmRpbmdz
+Og0KPiB1cGRhdGUgRnJlZXNjYWxlIERDRkcgY29tcGF0aWJsZSAnDQo+IHdoaWNoIGZpeGVkIHVu
+LWRvYyBpc3N1ZSBzaW5jZSBTaGFvaHVpIGhhZCBkb25lIHRoaXMgb24gU2hhd24gR3VvJ3MgdHJl
+ZS4NCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvc2hhd25n
+dW8vbGludXguZ2l0L2NvbW1pdC8/aA0KPiA9aW14L2R0NjQmaWQ9OTgxMDM0YTJiZmNhZmY1Yzk1
+ZGFmZGUyNGQ3YWJmZTdmOTAyNWMxOQ0KPiANCj4gVGhhbmtzLg0KDQpbTHUgWWFuZ2JvLUI0NzA5
+M10gQm90aCAnZnNsLDxjaGlwPi1ndXRzJyBhbmQgJ2ZzbCw8Y2hpcD4tZGNmZycgd291bGQgaGF2
+ZSBubyB1bi1kb2MgaXNzdWUgYWZ0ZXIgU2hhb2h1aSdzIHBhdGNoIGFyZSBwdWxsZWQgOikNCg0K
+PiANCj4gPg0KPiA+IC1TY290dA0KPiA+DQo+ID4gLS0NCj4gPiBUbyB1bnN1YnNjcmliZSBmcm9t
+IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtbW1jIg0KPiA+IGlu
+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnIE1vcmUg
+bWFqb3Jkb21vDQo+ID4gaW5mbyBhdCBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1p
+bmZvLmh0bWwNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
+cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
+bnV4LWFybS1rZXJuZWwK
