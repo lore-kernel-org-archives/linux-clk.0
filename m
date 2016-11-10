@@ -1,49 +1,49 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rnayak@codeaurora.org,
-	stanimir.varbanov@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 2/2] clk: qcom: Put venus core0/1 gdscs to hw control mode
-Date: Fri, 18 Nov 2016 17:39:29 +0530
-Message-Id: <1479470969-15976-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1479470969-15976-1-git-send-email-sricharan@codeaurora.org>
-References: <1479470969-15976-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:53910 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935131AbcKJXpR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Nov 2016 18:45:17 -0500
+Date: Thu, 10 Nov 2016 15:45:15 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: Bastian =?iso-8859-1?Q?K=F6cher?= <mail@kchr.de>,
+        kbuild-all@01.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jeremy McNicoll <jeremymc@redhat.com>
+Subject: Re: [clk:clk-qcom-8994 2/2] include/linux/module.h:213:1: error:
+ expected ',' or ';' before 'extern'
+Message-ID: <20161110234515.GO16026@codeaurora.org>
+References: <201611110732.1ceuZvsr%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <201611110732.1ceuZvsr%fengguang.wu@intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The venus video ip's internal core blocks are under the
-control of the firmware and their powerdomains needs to be
-'ON' only when used by the firmware. So putting it into
-hw controlled mode lets this to happen, otherwise the firmware
-hangs checking for this.
+On 11/11, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-qcom-8994
+> head:   cc800227108710c8f02255e61659b956b041eec3
+> commit: cc800227108710c8f02255e61659b956b041eec3 [2/2] clk: qcom: Add support for msm8994 global clock controller
+> config: i386-allmodconfig (attached as .config)
+> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+> reproduce:
+>         git checkout cc800227108710c8f02255e61659b956b041eec3
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+>    In file included from drivers/clk/qcom/gcc-msm8994.c:20:0:
+> >> include/linux/module.h:213:1: error: expected ',' or ';' before 'extern'
+>     extern const typeof(name) __mod_##type##__##name##_device_table  \
+>     ^
+> >> drivers/clk/qcom/gcc-msm8994.c:2265:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+>     MODULE_DEVICE_TABLE(of, gcc_msm8994_match_table);
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8996.c | 2 ++
- 1 file changed, 2 insertions(+)
+Urgh that's sad. Too bad MODULE_DEVICE_TABLE doesn't have
+something in it in the !MODULE case to cause compilation problems
+like this to come out. I'll go fix this up.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index ca97e11..41aabe3 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -2945,6 +2945,7 @@ enum {
- 		.name = "venus_core0",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = HW_CTRL,
- };
- 
- static struct gdsc venus_core1_gdsc = {
-@@ -2955,6 +2956,7 @@ enum {
- 		.name = "venus_core1",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = HW_CTRL,
- };
- 
- static struct gdsc camss_gdsc = {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
