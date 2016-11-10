@@ -1,97 +1,44 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Shunli Wang
-	<shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Erin Lo
-	<erin.lo@mediatek.com>
-Subject: [PATCH v15 2/4] reset: mediatek: Add MT2701 reset driver
-Date: Fri, 4 Nov 2016 15:43:06 +0800
-Message-ID: <1478245388-1412-3-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
-References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Rajendra Nayak'" <rnayak@codeaurora.org>,
+	"'Stephen Boyd'" <sboyd@codeaurora.org>
+Cc: <mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<stanimir.varbanov@linaro.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org> <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org> <20161104201836.GE16026@codeaurora.org> <58201597.6010207@codeaurora.org> <20161108223336.GK16026@codeaurora.org> <000301d23aaa$3f5dd110$be197330$@codeaurora.org> <5823DC3E.2060106@codeaurora.org>
+In-Reply-To: <5823DC3E.2060106@codeaurora.org>
+Subject: RE: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
+Date: Thu, 10 Nov 2016 08:58:13 +0530
+Message-ID: <001701d23b02$7bf7daa0$73e78fe0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+Hi Rajendra,
+>
+>>>
+>>> The proper sequence sounds like it should be:
+>>>
+>>> 	1. Enable GDSC for main domain
+>>> 	2. Enable clocks for main domain (video_{core,maxi,ahb,axi}_clk)
+>>> 	3. Write the two registers to assert hw signal for subdomains
+>>> 	4. Enable GDSCs for two subdomains
+>>> 	5. Enable clocks for subdomains (video_subcore{0,1}_clk)
+>>>
+>[]..
+>
+>>
+>> So the above is the sequence which is actually carried out on the
+>> firmware side. The same can be done in host as well.
+>
+>By the 'above sequence is done on firmware side', I hope you don;t mean *all* 5 steps.
+>I guess you mean only step 3 is done by firmware?
+>
 
-In infrasys and perifsys, there are many reset
-control bits for kinds of modules. These bits are
-used as actual reset controllers to be registered
-into kernel's generic reset controller framework.
+Yes, only step 3.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/mediatek/clk-mt2701-hif.c |  8 ++++++--
- drivers/clk/mediatek/clk-mt2701.c     | 12 ++++++++++--
- 2 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-index 452581c..18f3723 100644
---- a/drivers/clk/mediatek/clk-mt2701-hif.c
-+++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-@@ -58,12 +58,16 @@ static int clk_mt2701_hif_probe(struct platform_device *pdev)
- 						clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
--	if (r)
-+	if (r) {
- 		dev_err(&pdev->dev,
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
-+		return r;
-+	}
-+
-+	mtk_register_reset_controller(node, 1, 0x34);
- 
--	return r;
-+	return 0;
- }
- 
- static struct platform_driver clk_mt2701_hif_drv = {
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 6d2f82f..6f26e6a 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -787,8 +787,12 @@ static int mtk_infrasys_init(struct platform_device *pdev)
- 						infra_clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, infra_clk_data);
-+	if (r)
-+		return r;
- 
--	return r;
-+	mtk_register_reset_controller(node, 2, 0x30);
-+
-+	return 0;
- }
- 
- static const struct mtk_gate_regs peri0_cg_regs = {
-@@ -906,8 +910,12 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 			&mt2701_clk_lock, clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		return r;
- 
--	return r;
-+	mtk_register_reset_controller(node, 2, 0x0);
-+
-+	return 0;
- }
- 
- #define MT8590_PLL_FMAX		(2000 * MHZ)
--- 
-1.9.1
+Regards,
+ Sricharan
