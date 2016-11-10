@@ -1,88 +1,59 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
-Date: Mon, 14 Nov 2016 05:59:01 +0000
-Message-ID: <HE1PR04MB14509BFD0CBA838BC1EA7D598BBC0@HE1PR04MB1450.eurprd04.prod.outlook.com>
-References: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
- <1478584614-12054-2-git-send-email-peter.chen@nxp.com>
- <20161114054833.GG3310@dragon>
-In-Reply-To: <20161114054833.GG3310@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <2376126.1sNxSm4GUB@wasted.cogentembedded.com>
+References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com> <2376126.1sNxSm4GUB@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Nov 2016 13:52:28 +0100
+Message-ID: <CAMuHMdX5Mhra9N6bsDi7RX8arJNpnJ90NuUpbTPg3McYFHWQpg@mail.gmail.com>
+Subject: Re: [PATCH v6] clk: renesas: cpg-mssr: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Sergei,
 
-
-Best regards,
-Peter Chen
-
-
->-----Original Message-----
->From: Shawn Guo [mailto:shawnguo@kernel.org]
->Sent: Monday, November 14, 2016 1:49 PM
->To: Peter Chen <peter.chen@nxp.com>
->Cc: sboyd@codeaurora.org; mturquette@baylibre.com; linux-arm-
->kernel@lists.infradead.org; kernel@pengutronix.de; devicetree@vger.kernel.=
-org;
->robh+dt@kernel.org; Fabio Estevam <fabio.estevam@nxp.com>;
->mark.rutland@arm.com; linux-clk@vger.kernel.org
->Subject: Re: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
+On Tue, Nov 8, 2016 at 10:21 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
 >
->On Tue, Nov 08, 2016 at 01:56:52PM +0800, Peter Chen wrote:
->> It is the 10th processor in the well-known imx6 series, and derived
->> from imx6ul but cost optimized. The more information about imx6ull can
->> be found at:
->>
->> http://www.nxp.com/products/microcontrollers-and-processors/
->> arm-processors/i.mx-applications-processors/i.mx-6-processors
->> /i.mx6qp/i.mx-6ull-single-core-processor-with-arm-cortex-a7-core
->> :i.MX6ULL
->>
->> In this patch, for SoC part, the imx6ull.dtsi includes imx6ul.dtsi;
->> for board part (imx6ul/imx6ull 14x14 evk), it has a common board file
->> imx6u-14x14-evk.dtsi, and this file is included by both
->> imx6ul-14x14-evk.dts and imx6ull-14x14-evk.dts.
->>
->> Signed-off-by: Peter Chen <peter.chen@nxp.com>
->> ---
->>  arch/arm/boot/dts/Makefile              |   3 +-
->>  arch/arm/boot/dts/imx6u-14x14-evk.dtsi  | 487
->> ++++++++++++++++++++++++++++++++
->> arch/arm/boot/dts/imx6ul-14x14-evk.dts  | 479
->> +------------------------------
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
 >
->What's the real change between imx6u-14x14-evk.dtsi and imx6ul-14x14-evk.d=
-ts?
->Instead of renaming the file, I would like to have imx6ull-14x14-evk.dts i=
-nclude
->imx6ul-14x14-evk.dts directly, if we can work out the difference within im=
-x6ull-
->14x14-evk.dts.
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
+> ---
+> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+> It depends on the common R-Car gen2 (and RZ/G) support just posted.
+>
+> Changes in version 6:
+> - passed the PLL0 divisor to rcar_gen2_cpg_init();
+> - undid  the version 5 changes.
 
-The main difference is compatible string, I can't include two compatible st=
-rings in one dts file,
-the dts build will fail for that.
+Thanks!
 
-imx6ull-14x14-evk.dts=20
-/ {
-        model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
-        compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
-};
+Will queue with the following trivial changes:
+  - pass cpg_mode to rcar_gen2_cpg_init(),
+  - sort clock names in DT bindings,
+  - reformat tables for easier comparison with other clock drivers.
 
-imx6ul-14x14-evk.dts=20
-/ {
-        model =3D "Freescale i.MX6 UltraLite 14x14 EVK Board";
-        compatible =3D "fsl,imx6ul-14x14-evk", "fsl,imx6ul";
-};
+Gr{oetje,eeting}s,
 
-Peter
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
