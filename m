@@ -1,60 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41920 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbcKPSy6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 13:54:58 -0500
-Date: Wed, 16 Nov 2016 10:54:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stephen.boyd@linaro.org, linux-clk@vger.kernel.org
-Subject: Re: [bug report] clk: berlin: Migrate to clk_hw based registration
- and OF APIs
-Message-ID: <20161116185456.GF25626@codeaurora.org>
-References: <20161116140701.GA20563@mwanda>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <5823DC3E.2060106@codeaurora.org>
+Date: Thu, 10 Nov 2016 08:02:30 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161116140701.GA20563@mwanda>
-Sender: linux-clk-owner@vger.kernel.org
+To: Sricharan <sricharan@codeaurora.org>,
+ 'Stephen Boyd' <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stanimir.varbanov@linaro.org
+Subject: Re: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus
+ core0/1 clks
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org> <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org> <20161104201836.GE16026@codeaurora.org> <58201597.6010207@codeaurora.org> <20161108223336.GK16026@codeaurora.org> <000301d23aaa$3f5dd110$be197330$@codeaurora.org>
+In-Reply-To: <000301d23aaa$3f5dd110$be197330$@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/16, Dan Carpenter wrote:
-> Hello Stephen Boyd,
-> 
-> The patch f6475e298297: "clk: berlin: Migrate to clk_hw based
-> registration and OF APIs" from Aug 16, 2016, leads to the following
-> static checker warning:
-> 
-> 	drivers/clk/berlin/bg2.c:688 berlin2_clock_setup()
-> 	warn: did you mean to pass the address of 'clk_data'
-> 
-> drivers/clk/berlin/bg2.c
->    674          hws[CLKID_TWD] =
->    675                  clk_hw_register_fixed_factor(NULL, "twd", "cpu", 0, 1, 3);
->    676  
->    677          /* check for errors on leaf clocks */
->    678          for (n = 0; n < MAX_CLKS; n++) {
->    679                  if (!IS_ERR(hws[n]))
->    680                          continue;
->    681  
->    682                  pr_err("%s: Unable to register leaf clock %d\n",
->    683                         np->full_name, n);
->    684                  goto bg2_fail;
->    685          }
->    686  
->    687          /* register clk-provider */
->    688          of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data);
->                                                                   ^^^^^^^^^
-> Pretty sure this was overlooked when we switched to allocating this
-> with kmalloc().  Should just be passing clk_data.  Same for the
-> following warnings as well:
-> 
-> drivers/clk/berlin/bg2q.c:385 berlin2q_clock_setup() warn: did you mean to pass the address of 'clk_data'
-> drivers/clk/clk-efm32gg.c:85 efm32gg_cmu_init() warn: did you mean to pass the address of 'clk_data'
 
-Thanks! I guess there are new checks in smatch that have been
-introduced lately to find these problems? I'll go fix all these
-up now and add a Reported-by appropriately.
+[]..
+
+>>
+>> The proper sequence sounds like it should be:
+>>
+>> 	1. Enable GDSC for main domain
+>> 	2. Enable clocks for main domain (video_{core,maxi,ahb,axi}_clk)
+>> 	3. Write the two registers to assert hw signal for subdomains
+>> 	4. Enable GDSCs for two subdomains
+>> 	5. Enable clocks for subdomains (video_subcore{0,1}_clk)
+>>
+[]..
+
+> 
+> So the above is the sequence which is actually carried out on the
+> firmware side. The same can be done in host as well.
+
+By the 'above sequence is done on firmware side', I hope you don;t mean *all* 5 steps.
+I guess you mean only step 3 is done by firmware?
+
+> The clocks stuck issue indeed is not there with this. But with the
+> above sequence we need to add a step to do inverse of STEP3
+> above (ie write the registers to de-assert hw_signal), to keep
+> the subdomains in off, till firmware uses it. So the above sequence
+> helps to avoid masking the halt check, although the host really
+> does not wants to use these clocks, except setting it up for the
+> firmware.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+hosted by The Linux Foundation
