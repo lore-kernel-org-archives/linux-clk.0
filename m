@@ -1,55 +1,98 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46192 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753239AbcKUGix (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:38:53 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v9 08/16] mmc: sdhci-msm: Enable few quirks
-Date: Mon, 21 Nov 2016 12:07:18 +0530
-Message-Id: <1479710246-26676-9-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+Received: from regular1.263xmail.com ([211.150.99.131]:38735 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753021AbcKJCy7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 21:54:59 -0500
+Subject: Re: [PATCH] phy: rockchip-inno-usb2: correct 480MHz output clock
+ stable time
+To: Doug Anderson <dianders@google.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+References: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
+ <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        =?UTF-8?B?6buE5rab?= <huangtao@rock-chips.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+From: wlf <wulf@rock-chips.com>
+Message-ID: <9eeb3d84-f850-4b76-ce6a-67cc92d6de3b@rock-chips.com>
+Date: Thu, 10 Nov 2016 10:54:49 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-sdhc-msm controller needs this SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN
-& SDHCI_QUIRK2_PRESET_VALUE_BROKEN to be set. Hence setting it.
+Hi Doug,
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+在 2016年11月10日 04:54, Doug Anderson 写道:
+> Hi,
+>
+> On Mon, Nov 7, 2016 at 5:00 AM, William Wu <wulf@rock-chips.com> wrote:
+>> We found that the system crashed due to 480MHz output clock of
+>> USB2 PHY was unstable after clock had been enabled by gpu module.
+>>
+>> Theoretically, 1 millisecond is a critical value for 480MHz
+>> output clock stable time, so we try to change the delay time
+>> to 1.2 millisecond to avoid this issue.
+>>
+>> Signed-off-by: William Wu <wulf@rock-chips.com>
+>> ---
+>>   drivers/phy/phy-rockchip-inno-usb2.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/phy/phy-rockchip-inno-usb2.c b/drivers/phy/phy-rockchip-inno-usb2.c
+>> index ecfd7d1..8f2d2b6 100644
+>> --- a/drivers/phy/phy-rockchip-inno-usb2.c
+>> +++ b/drivers/phy/phy-rockchip-inno-usb2.c
+>> @@ -267,7 +267,7 @@ static int rockchip_usb2phy_clk480m_enable(struct clk_hw *hw)
+>>                          return ret;
+>>
+>>                  /* waitting for the clk become stable */
+>> -               mdelay(1);
+>> +               udelay(1200);
+> Several people who have seen this patch have expressed concern that a
+> 1.2 ms delay is pretty long for something that's supposed to be
+> "atomic" like a clk_enable().  Consider that someone might call
+> clk_enable() while interrupts are disabled and that a 1.2 ms interrupt
+> latency is not so great.
+>
+> It seems like this clock should be moved to be enabled in "prepare"
+> and the "enable" should be a no-op.  This is a functionality change,
+> but I don't think there are any real users for this clock at the
+> moment so it should be fine.
+>
+> (of course, the 1 ms latency that existed before this patch was still
+> pretty bad, but ...)
+Thanks a lot for your suggestion.
+I agree with you.  clk_enable() will call spin_lock_irqsave() to disable 
+interrupt, and we add
+more than 1ms in clk_enable may cause big latency.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index aaeaf47..15a8b8e 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -592,7 +592,9 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
- static const struct sdhci_pltfm_data sdhci_msm_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
- 		  SDHCI_QUIRK_NO_CARD_NO_RESET |
--		  SDHCI_QUIRK_SINGLE_POWER_WRITE,
-+		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
-+		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops = &sdhci_msm_ops,
- };
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+And according to clk_prepare() description:
+  In a simple case, clk_prepare can be used instead of clk_enable to 
+ungate a clk if the
+  operation may sleep.  One example is a clk which is accessed over I2c.
+
+So maybe we can remove the clock to clk_prepare.
+
+Hi Heiko, Frank,
+        What  do you think of it?
+
+Best regards,
+         wulf
+>
+> -Doug
+>
+>
+>
+
 
