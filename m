@@ -1,213 +1,184 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <8fbb8e05d73282fb5e7d33f8faffbeaccf63aeae.1478625788.git-series.maxime.ripard@free-electrons.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
- <8fbb8e05d73282fb5e7d33f8faffbeaccf63aeae.1478625788.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 13 Nov 2016 12:29:25 +0800
-Message-ID: <CAGb2v67jsFMqBL9ncYtfhd67Vwj77cv9Rk2_YbG+Ld1Rd+fjbg@mail.gmail.com>
-Subject: Re: [PATCH 4/10] clk: sunxi-ng: Add clocks and resets indices for sun5i
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1478755050.21746.8.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: "Y.B. Lu" <yangbo.lu@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jochen Friedrich <jochen@scram.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
+        "X.B. Xie" <xiaobo.xie@nxp.com>,
+        "M.H. Lian" <minghuan.lian@nxp.com>
+Date: Wed, 09 Nov 2016 23:17:30 -0600
+In-Reply-To: <DB6PR0401MB25369DEFDDDED2A96851259EF8B80@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+         <CAPDyKFrcAN_pqgtGaUanfB2zh97zGcL23m5VDtJ3g==NJeRrfA@mail.gmail.com>
+         <1478750114.21746.4.camel@buserror.net>
+          <DB6PR0401MB25369DEFDDDED2A96851259EF8B80@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [v16, 0/7] Fix eSDHC host version register bug
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 9, 2016 at 1:23 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The SoCs part of the sun5i family share the DTs, so we need consistant
-> indices in order to still share the DTs.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  include/dt-bindings/clock/sun5i-ccu.h | 126 +++++++++++++++++++++++++++-
->  include/dt-bindings/reset/sun5i-ccu.h |  32 +++++++-
->  2 files changed, 158 insertions(+), 0 deletions(-)
->  create mode 100644 include/dt-bindings/clock/sun5i-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun5i-ccu.h
->
-> diff --git a/include/dt-bindings/clock/sun5i-ccu.h b/include/dt-bindings/clock/sun5i-ccu.h
-> new file mode 100644
-> index 000000000000..32735b2cf29c
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sun5i-ccu.h
-> @@ -0,0 +1,126 @@
-> +/*
-> + * Copyright 2016 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_SUN5I_H_
-> +#define _CCU_SUN5I_H_
-> +
-> +#define CLK_HOSC               1
-> +#define CLK_OSC3M              2
+On Thu, 2016-11-10 at 04:11 +0000, Y.B. Lu wrote:
+> > 
+> > -----Original Message-----
+> > From: Y.B. Lu
+> > Sent: Thursday, November 10, 2016 12:06 PM
+> > To: 'Scott Wood'; Ulf Hansson
+> > Cc: linux-mmc; Arnd Bergmann; linuxppc-dev@lists.ozlabs.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; linux-clk; iommu@lists.linux-foundation.org;
+> > netdev@vger.kernel.org; Greg Kroah-Hartman; Mark Rutland; Rob Herring;
+> > Russell King; Jochen Friedrich; Joerg Roedel; Claudiu Manoil; Bhupesh
+> > Sharma; Qiang Zhao; Kumar Gala; Leo Li; X.B. Xie; M.H. Lian
+> > Subject: RE: [v16, 0/7] Fix eSDHC host version register bug
+> > 
+> > > 
+> > > -----Original Message-----
+> > > From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
+> > > owner@vger.kernel.org] On Behalf Of Scott Wood
+> > > Sent: Thursday, November 10, 2016 11:55 AM
+> > > To: Ulf Hansson; Y.B. Lu
+> > > Cc: linux-mmc; Arnd Bergmann; linuxppc-dev@lists.ozlabs.org;
+> > > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > > linux- kernel@vger.kernel.org; linux-clk;
+> > > iommu@lists.linux-foundation.org; netdev@vger.kernel.org; Greg
+> > > Kroah-Hartman; Mark Rutland; Rob Herring; Russell King; Jochen
+> > > Friedrich; Joerg Roedel; Claudiu Manoil; Bhupesh Sharma; Qiang Zhao;
+> > > Kumar Gala; Leo Li; X.B. Xie; M.H. Lian
+> > > Subject: Re: [v16, 0/7] Fix eSDHC host version register bug
+> > > 
+> > > On Wed, 2016-11-09 at 19:27 +0100, Ulf Hansson wrote:
+> > > > 
+> > > > - i2c-list
+> > > > 
+> > > > On 9 November 2016 at 04:14, Yangbo Lu <yangbo.lu@nxp.com> wrote:
+> > > > > 
+> > > > > 
+> > > > > This patchset is used to fix a host version register bug in the
+> > > > > T4240-
+> > > > > R1.0-R2.0
+> > > > > eSDHC controller. To match the SoC version and revision, 15
+> > > > > previous version patchsets had tried many methods but all of them
+> > > > > were rejected by reviewers.
+> > > > > Such as
+> > > > >         - dts compatible method
+> > > > >         - syscon method
+> > > > >         - ifdef PPC method
+> > > > >         - GUTS driver getting SVR method Anrd suggested a
+> > > > > soc_device_match method in v10, and this is the only available
+> > > > > method left now. This v11 patchset introduces the soc_device_match
+> > > > > interface in soc driver.
+> > > > > 
+> > > > > The first four patches of Yangbo are to add the GUTS driver. This
+> > > > > is used to register a soc device which contain soc version and
+> > > > > revision information.
+> > > > > The other three patches introduce the soc_device_match method in
+> > > > > soc driver and apply it on esdhc driver to fix this bug.
+> > > > > 
+> > > > > ---
+> > > > > Changes for v15:
+> > > > >         - Dropped patch 'dt: bindings: update Freescale DCFG
+> > > compatible'
+> > > > 
+> > > > > 
+> > > > >           since the work had been done by below patch on
+> > > > > ShawnGuo's linux tree.
+> > > > >           'dt-bindings: fsl: add LS1043A/LS1046A/LS2080A
+> > > > > compatible for SCFG
+> > > > >            and DCFG'
+> > > > >         - Fixed error code issue in guts driver Changes for v16:
+> > > > >         - Dropped patch 'powerpc/fsl: move mpc85xx.h to
+> > > include/linux/fsl'
+> > > > 
+> > > > > 
+> > > > >         - Added a bug-fix patch from Geert
+> > > > > ---
+> > > > > 
+> > > > > Arnd Bergmann (1):
+> > > > >   base: soc: introduce soc_device_match() interface
+> > > > > 
+> > > > > Geert Uytterhoeven (1):
+> > > > >   base: soc: Check for NULL SoC device attributes
+> > > > > 
+> > > > > Yangbo Lu (5):
+> > > > >   ARM64: dts: ls2080a: add device configuration node
+> > > > >   dt: bindings: move guts devicetree doc out of powerpc directory
+> > > > >   soc: fsl: add GUTS driver for QorIQ platforms
+> > > > >   MAINTAINERS: add entry for Freescale SoC drivers
+> > > > >   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
+> > > > > 
+> > > > >  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
+> > > > >  MAINTAINERS                                        |  11 +-
+> > > > >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
+> > > > >  drivers/base/Kconfig                               |   1 +
+> > > > >  drivers/base/soc.c                                 |  70 ++++++
+> > > > >  drivers/mmc/host/Kconfig                           |   1 +
+> > > > >  drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
+> > > > >  drivers/soc/Kconfig                                |   3 +-
+> > > > >  drivers/soc/fsl/Kconfig                            |  18 ++
+> > > > >  drivers/soc/fsl/Makefile                           |   1 +
+> > > > >  drivers/soc/fsl/guts.c                             | 236
+> > > > > +++++++++++++++++++++
+> > > > >  include/linux/fsl/guts.h                           | 125
+> > > > > ++++++-----
+> > > > >  include/linux/sys_soc.h                            |   3 +
+> > > > >  13 files changed, 447 insertions(+), 51 deletions(-)
+> > > > >  rename Documentation/devicetree/bindings/{powerpc =>
+> > > > > soc}/fsl/guts.txt
+> > > > > (91%)
+> > > > >  create mode 100644 drivers/soc/fsl/Kconfig
+> > > > >  create mode 100644 drivers/soc/fsl/guts.c
+> > > > > 
+> > > > > --
+> > > > > 2.1.0.27.g96db324
+> > > > > 
+> > > > Thanks, applied on my mmc tree for next!
+> > > > 
+> > > > I noticed that some DT compatibles weren't documented, according to
+> > > > checkpatch. Please fix that asap!
+> > > They are documented, in fsl/guts.txt (the file moved in patch 2/7):
+> > > > 
+> > > >  - compatible : Should define the compatible device type for
+> > > >    global-utilities.
+> > > >    Possible compatibles:
+> > > >         "fsl,qoriq-device-config-1.0"
+> > > >         "fsl,qoriq-device-config-2.0"
+> > > >         "fsl,<chip>-device-config"
+> > > >         "fsl,<chip>-guts"
+> > > Checkpatch doesn't understand compatibles defined in such a way.
+> > [Lu Yangbo-B47093] You're right, Scott. I dropped DT patch 'dt: bindings:
+> > update Freescale DCFG compatible '
+> > which fixed un-doc issue since Shaohui had done this on Shawn Guo's tree.
+> > https://git.kernel.org/cgit/linux/kernel/git/shawnguo/linux.git/commit/?h
+> > =imx/dt64&id=981034a2bfcaff5c95dafde24d7abfe7f9025c19
+> > 
+> > Thanks.
+> [Lu Yangbo-B47093] Both 'fsl,<chip>-guts' and 'fsl,<chip>-dcfg' would have
+> no un-doc issue after Shaohui's patch are pulled :)
 
-We don't need this one. The clock diagram shows the video PLLs' input
-as OSC24M. This means there's a fixed /8 pre-divider at the input.
+I don't follow.  The link above points to a patch that addresses -dcfg and
+-scfg, not -device-config or -guts -- and it also doesn't do it in a manner
+that checkpatch will understand.
 
-> +#define CLK_PLL_CORE           3
-> +#define CLK_PLL_AUDIO_BASE     4
-> +#define CLK_PLL_AUDIO          5
-> +#define CLK_PLL_AUDIO_2X       6
-> +#define CLK_PLL_AUDIO_4X       7
-> +#define CLK_PLL_AUDIO_8X       8
-> +#define CLK_PLL_VIDEO0         9
-> +#define CLK_PLL_VIDEO0_2X      10
-> +#define CLK_PLL_VE             11
-> +#define CLK_PLL_DDR_BASE       12
-> +#define CLK_PLL_DDR            13
-> +#define CLK_PLL_DDR_OTHER      14
-> +#define CLK_PLL_PERIPH         15
-> +#define CLK_PLL_VIDEO1         16
-> +#define CLK_PLL_VIDEO1_2X      17
-> +#define CLK_OSC24M             18
-> +#define CLK_CPU                        19
-> +#define CLK_AXI                        20
-> +#define CLK_AHB                        21
-> +#define CLK_APB0               22
-> +#define CLK_APB1               23
-> +#define CLK_DRAM_AXI           24
-> +#define CLK_AHB_OTG            25
-> +#define CLK_AHB_EHCI           26
-> +#define CLK_AHB_OHCI           27
-> +#define CLK_AHB_SS             28
-> +#define CLK_AHB_DMA            29
-> +#define CLK_AHB_BIST           30
-> +#define CLK_AHB_MMC0           31
-> +#define CLK_AHB_MMC1           32
-> +#define CLK_AHB_MMC2           33
-> +#define CLK_AHB_NAND           34
-> +#define CLK_AHB_SDRAM          35
-> +#define CLK_AHB_EMAC           36
-> +#define CLK_AHB_TS             37
-> +#define CLK_AHB_SPI0           38
-> +#define CLK_AHB_SPI1           39
-> +#define CLK_AHB_SPI2           40
-> +#define CLK_AHB_GPS            41
-> +#define CLK_AHB_HSTIMER                42
-> +#define CLK_AHB_VE             43
-> +#define CLK_AHB_TVE            44
-> +#define CLK_AHB_LCD            45
-> +#define CLK_AHB_CSI            46
-> +#define CLK_AHB_HDMI           47
-> +#define CLK_AHB_DE_BE          48
-> +#define CLK_AHB_DE_FE          49
-> +#define CLK_AHB_IEP            50
-> +#define CLK_AHB_GPU            51
-> +#define CLK_APB0_CODEC         52
-> +#define CLK_APB0_SPDIF         53
-> +#define CLK_APB0_I2S           54
-> +#define CLK_APB0_PIO           55
-> +#define CLK_APB0_IR            56
-> +#define CLK_APB0_KEYPAD                57
-> +#define CLK_APB1_I2C0          58
-> +#define CLK_APB1_I2C1          59
-> +#define CLK_APB1_I2C2          60
-> +#define CLK_APB1_UART0         61
-> +#define CLK_APB1_UART1         62
-> +#define CLK_APB1_UART2         63
-> +#define CLK_APB1_UART3         64
-> +#define CLK_NAND               65
-> +#define CLK_MMC0               66
-> +#define CLK_MMC1               67
-> +#define CLK_MMC2               68
-> +#define CLK_TS                 69
-> +#define CLK_SS                 70
-> +#define CLK_CE                 71
+In any case, I wouldn't call this an "un-doc issue" -- it is documented -- but
+rather a checkpatch-friendliness issue.
 
-You use 'SS' for the AHB gate. Since the manual uses 'SS',
-can we stick to that.
-
-> +#define CLK_SPI0               72
-> +#define CLK_SPI1               73
-> +#define CLK_SPI2               74
-> +#define CLK_IR                 75
-> +#define CLK_I2S                        76
-> +#define CLK_SPDIF              77
-> +#define CLK_KEYPAD             78
-> +#define CLK_USB_OHCI           79
-> +#define CLK_USB_PHY0           80
-> +#define CLK_USB_PHY1           81
-> +#define CLK_GPS                        82
-> +#define CLK_DRAM_VE            83
-> +#define CLK_DRAM_CSI           84
-> +#define CLK_DRAM_TS            85
-> +#define CLK_DRAM_TVE           86
-> +#define CLK_DRAM_DE_FE         87
-> +#define CLK_DRAM_DE_BE         88
-> +#define CLK_DRAM_ACE           89
-> +#define CLK_DRAM_IEP           90
-> +#define CLK_DE_BE              91
-> +#define CLK_DE_FE              92
-> +#define CLK_TCON_CH0           93
-> +#define CLK_TCON_CH1_SCLK      94
-> +#define CLK_TCON_CH1           95
-> +#define CLK_CSI                        96
-> +#define CLK_VE                 97
-> +#define CLK_CODEC              98
-> +#define CLK_AVS                        99
-> +#define CLK_HDMI               100
-> +#define CLK_GPU                        101
-> +#define CLK_MBUS               102
-> +#define CLK_IEP                        103
-> +
-> +#define CLK_NUMBER             (CLK_IEP + 1)
-> +
-> +#endif /* _CCU_SUN5I_H_ */
-> diff --git a/include/dt-bindings/reset/sun5i-ccu.h b/include/dt-bindings/reset/sun5i-ccu.h
-> new file mode 100644
-> index 000000000000..c2b9726b5026
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/sun5i-ccu.h
-> @@ -0,0 +1,32 @@
-> +/*
-> + * Copyright 2016 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _RST_SUN5I_H_
-> +#define _RST_SUN5I_H_
-> +
-> +#define RST_USB_PHY0   0
-> +#define RST_USB_PHY1   1
-> +#define RST_GPS                2
-> +#define RST_DE_BE      3
-> +#define RST_DE_FE      4
-> +#define RST_TVE                5
-> +#define RST_LCD                6
-> +#define RST_CSI                7
-> +#define RST_VE         8
-> +#define RST_GPU                9
-> +#define RST_IEP                10
-> +
-> +#endif /* _RST_SUN5I_H_ */
-> --
-> git-series 0.8.11
-
-The rest looks good.
-
-ChenYu
+-Scott
