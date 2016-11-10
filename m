@@ -1,49 +1,146 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54602 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752679AbcKQAwZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 19:52:25 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v8 12/16] arm64: dts: qcom: msm8916: Add ddr support to sdhc1
-Date: Thu, 17 Nov 2016 06:22:08 +0530
-Message-Id: <1479343928-31493-1-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479312052-22396-13-git-send-email-riteshh@codeaurora.org>
-References: <1479312052-22396-13-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: "Y.B. Lu" <yangbo.lu@nxp.com>
+To: Scott Wood <oss@buserror.net>, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: RE: [v16, 0/7] Fix eSDHC host version register bug
+Date: Thu, 10 Nov 2016 04:06:05 +0000
+Message-ID: <DB6PR0401MB25364DB523031CB267FC8CEFF8B80@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
+ <CAPDyKFrcAN_pqgtGaUanfB2zh97zGcL23m5VDtJ3g==NJeRrfA@mail.gmail.com>
+ <1478750114.21746.4.camel@buserror.net>
+In-Reply-To: <1478750114.21746.4.camel@buserror.net>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "X.B. Xie" <xiaobo.xie@nxp.com>, "M.H. Lian" <minghuan.lian@nxp.com>,
+ linux-clk <linux-clk@vger.kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Russell King <linux@arm.linux.org.uk>,
+ Bhupesh Sharma <bhupesh.sharma@freescale.com>, Joerg Roedel <joro@8bytes.org>,
+ Jochen
+ Friedrich <jochen@scram.de>, Claudiu Manoil <claudiu.manoil@freescale.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ linux-mmc <linux-mmc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Leo Li <leoyang.li@nxp.com>,
+ "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds mmc-ddr-1_8v support to DT for sdhc1 of msm8916.
-
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 7bce1b3..1be5cd4 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -515,6 +515,7 @@
- 				 <&gcc GCC_SDCC1_AHB_CLK>,
- 				 <&xo_board 0>;
- 			clock-names = "core", "iface", "xo";
-+			mmc-ddr-1_8v;
- 			bus-width = <8>;
- 			non-removable;
- 			status = "disabled";
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1tbWMtb3duZXJAdmdl
+ci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtbW1jLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmdd
+IE9uIEJlaGFsZiBPZiBTY290dCBXb29kDQo+IFNlbnQ6IFRodXJzZGF5LCBOb3ZlbWJlciAxMCwg
+MjAxNiAxMTo1NSBBTQ0KPiBUbzogVWxmIEhhbnNzb247IFkuQi4gTHUNCj4gQ2M6IGxpbnV4LW1t
+YzsgQXJuZCBCZXJnbWFubjsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc7DQo+IGRldmlj
+ZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1jbGs7IGlvbW11QGxp
+c3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnOw0KPiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBHcmVn
+IEtyb2FoLUhhcnRtYW47IE1hcmsgUnV0bGFuZDsgUm9iIEhlcnJpbmc7DQo+IFJ1c3NlbGwgS2lu
+ZzsgSm9jaGVuIEZyaWVkcmljaDsgSm9lcmcgUm9lZGVsOyBDbGF1ZGl1IE1hbm9pbDsgQmh1cGVz
+aA0KPiBTaGFybWE7IFFpYW5nIFpoYW87IEt1bWFyIEdhbGE7IExlbyBMaTsgWC5CLiBYaWU7IE0u
+SC4gTGlhbg0KPiBTdWJqZWN0OiBSZTogW3YxNiwgMC83XSBGaXggZVNESEMgaG9zdCB2ZXJzaW9u
+IHJlZ2lzdGVyIGJ1Zw0KPiANCj4gT24gV2VkLCAyMDE2LTExLTA5IGF0IDE5OjI3ICswMTAwLCBV
+bGYgSGFuc3NvbiB3cm90ZToNCj4gPiAtIGkyYy1saXN0DQo+ID4NCj4gPiBPbiA5IE5vdmVtYmVy
+IDIwMTYgYXQgMDQ6MTQsIFlhbmdibyBMdSA8eWFuZ2JvLmx1QG54cC5jb20+IHdyb3RlOg0KPiA+
+ID4NCj4gPiA+IFRoaXMgcGF0Y2hzZXQgaXMgdXNlZCB0byBmaXggYSBob3N0IHZlcnNpb24gcmVn
+aXN0ZXIgYnVnIGluIHRoZQ0KPiA+ID4gVDQyNDAtDQo+ID4gPiBSMS4wLVIyLjANCj4gPiA+IGVT
+REhDIGNvbnRyb2xsZXIuIFRvIG1hdGNoIHRoZSBTb0MgdmVyc2lvbiBhbmQgcmV2aXNpb24sIDE1
+IHByZXZpb3VzDQo+ID4gPiB2ZXJzaW9uIHBhdGNoc2V0cyBoYWQgdHJpZWQgbWFueSBtZXRob2Rz
+IGJ1dCBhbGwgb2YgdGhlbSB3ZXJlDQo+ID4gPiByZWplY3RlZCBieSByZXZpZXdlcnMuDQo+ID4g
+PiBTdWNoIGFzDQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgLSBkdHMgY29tcGF0aWJsZSBtZXRob2QN
+Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqAtIHN5c2NvbiBtZXRob2QNCj4gPiA+IMKgwqDCoMKgwqDC
+oMKgwqAtIGlmZGVmIFBQQyBtZXRob2QNCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqAtIEdVVFMgZHJp
+dmVyIGdldHRpbmcgU1ZSIG1ldGhvZCBBbnJkIHN1Z2dlc3RlZCBhDQo+ID4gPiBzb2NfZGV2aWNl
+X21hdGNoIG1ldGhvZCBpbiB2MTAsIGFuZCB0aGlzIGlzIHRoZSBvbmx5IGF2YWlsYWJsZQ0KPiA+
+ID4gbWV0aG9kIGxlZnQgbm93LiBUaGlzIHYxMSBwYXRjaHNldCBpbnRyb2R1Y2VzIHRoZSBzb2Nf
+ZGV2aWNlX21hdGNoDQo+ID4gPiBpbnRlcmZhY2UgaW4gc29jIGRyaXZlci4NCj4gPiA+DQo+ID4g
+PiBUaGUgZmlyc3QgZm91ciBwYXRjaGVzIG9mIFlhbmdibyBhcmUgdG8gYWRkIHRoZSBHVVRTIGRy
+aXZlci4gVGhpcyBpcw0KPiA+ID4gdXNlZCB0byByZWdpc3RlciBhIHNvYyBkZXZpY2Ugd2hpY2gg
+Y29udGFpbiBzb2MgdmVyc2lvbiBhbmQgcmV2aXNpb24NCj4gPiA+IGluZm9ybWF0aW9uLg0KPiA+
+ID4gVGhlIG90aGVyIHRocmVlIHBhdGNoZXMgaW50cm9kdWNlIHRoZSBzb2NfZGV2aWNlX21hdGNo
+IG1ldGhvZCBpbiBzb2MNCj4gPiA+IGRyaXZlciBhbmQgYXBwbHkgaXQgb24gZXNkaGMgZHJpdmVy
+IHRvIGZpeCB0aGlzIGJ1Zy4NCj4gPiA+DQo+ID4gPiAtLS0NCj4gPiA+IENoYW5nZXMgZm9yIHYx
+NToNCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqAtIERyb3BwZWQgcGF0Y2ggJ2R0OiBiaW5kaW5nczog
+dXBkYXRlIEZyZWVzY2FsZSBEQ0ZHDQo+IGNvbXBhdGlibGUnDQo+ID4gPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHNpbmNlIHRoZSB3b3JrIGhhZCBiZWVuIGRvbmUgYnkgYmVsb3cgcGF0Y2ggb24gU2hh
+d25HdW8ncw0KPiA+ID4gbGludXggdHJlZS4NCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgJ2R0
+LWJpbmRpbmdzOiBmc2w6IGFkZCBMUzEwNDNBL0xTMTA0NkEvTFMyMDgwQSBjb21wYXRpYmxlDQo+
+ID4gPiBmb3IgU0NGRw0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGFuZCBEQ0ZHJw0KPiA+
+ID4gwqDCoMKgwqDCoMKgwqDCoC0gRml4ZWQgZXJyb3IgY29kZSBpc3N1ZSBpbiBndXRzIGRyaXZl
+ciBDaGFuZ2VzIGZvciB2MTY6DQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgLSBEcm9wcGVkIHBhdGNo
+ICdwb3dlcnBjL2ZzbDogbW92ZSBtcGM4NXh4LmggdG8NCj4gaW5jbHVkZS9saW51eC9mc2wnDQo+
+ID4gPiDCoMKgwqDCoMKgwqDCoMKgLSBBZGRlZCBhIGJ1Zy1maXggcGF0Y2ggZnJvbSBHZWVydA0K
+PiA+ID4gLS0tDQo+ID4gPg0KPiA+ID4gQXJuZCBCZXJnbWFubiAoMSk6DQo+ID4gPiDCoCBiYXNl
+OiBzb2M6IGludHJvZHVjZSBzb2NfZGV2aWNlX21hdGNoKCkgaW50ZXJmYWNlDQo+ID4gPg0KPiA+
+ID4gR2VlcnQgVXl0dGVyaG9ldmVuICgxKToNCj4gPiA+IMKgIGJhc2U6IHNvYzogQ2hlY2sgZm9y
+IE5VTEwgU29DIGRldmljZSBhdHRyaWJ1dGVzDQo+ID4gPg0KPiA+ID4gWWFuZ2JvIEx1ICg1KToN
+Cj4gPiA+IMKgIEFSTTY0OiBkdHM6IGxzMjA4MGE6IGFkZCBkZXZpY2UgY29uZmlndXJhdGlvbiBu
+b2RlDQo+ID4gPiDCoCBkdDogYmluZGluZ3M6IG1vdmUgZ3V0cyBkZXZpY2V0cmVlIGRvYyBvdXQg
+b2YgcG93ZXJwYyBkaXJlY3RvcnkNCj4gPiA+IMKgIHNvYzogZnNsOiBhZGQgR1VUUyBkcml2ZXIg
+Zm9yIFFvcklRIHBsYXRmb3Jtcw0KPiA+ID4gwqAgTUFJTlRBSU5FUlM6IGFkZCBlbnRyeSBmb3Ig
+RnJlZXNjYWxlIFNvQyBkcml2ZXJzDQo+ID4gPiDCoCBtbWM6IHNkaGNpLW9mLWVzZGhjOiBmaXgg
+aG9zdCB2ZXJzaW9uIGZvciBUNDI0MC1SMS4wLVIyLjANCj4gPiA+DQo+ID4gPiDCoC4uLi9iaW5k
+aW5ncy97cG93ZXJwYyA9PiBzb2N9L2ZzbC9ndXRzLnR4dMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKg
+wqAzICsNCj4gPiA+IMKgTUFJTlRBSU5FUlPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgMTEg
+Ky0NCj4gPiA+IMKgYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMjA4MGEuZHRz
+acKgwqDCoMKgwqB8wqDCoMKgNiArDQo+ID4gPiDCoGRyaXZlcnMvYmFzZS9LY29uZmlnwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8
+wqDCoMKgMSArDQo+ID4gPiDCoGRyaXZlcnMvYmFzZS9zb2MuY8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgNzAgKysr
+KysrDQo+ID4gPiDCoGRyaXZlcnMvbW1jL2hvc3QvS2NvbmZpZ8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqAxICsNCj4gPiA+IMKgZHJp
+dmVycy9tbWMvaG9zdC9zZGhjaS1vZi1lc2RoYy5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgfMKgwqAyMCArKw0KPiA+ID4gwqBkcml2ZXJzL3NvYy9LY29uZmlnwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzC
+oMKgwqAzICstDQo+ID4gPiDCoGRyaXZlcnMvc29jL2ZzbC9LY29uZmlnwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoDE4ICsrDQo+ID4g
+PiDCoGRyaXZlcnMvc29jL2ZzbC9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqAxICsNCj4gPiA+IMKgZHJpdmVycy9zb2Mv
+ZnNsL2d1dHMuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqB8IDIzNg0KPiA+ID4gKysrKysrKysrKysrKysrKysrKysrDQo+ID4gPiDCoGlu
+Y2x1ZGUvbGludXgvZnNsL2d1dHMuaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoHwgMTI1DQo+ID4gPiArKysrKystLS0tLQ0KPiA+ID4gwqBpbmNs
+dWRlL2xpbnV4L3N5c19zb2MuaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgfMKgwqDCoDMgKw0KPiA+ID4gwqAxMyBmaWxlcyBjaGFuZ2VkLCA0
+NDcgaW5zZXJ0aW9ucygrKSwgNTEgZGVsZXRpb25zKC0pDQo+ID4gPiDCoHJlbmFtZSBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mve3Bvd2VycGMgPT4NCj4gPiA+IHNvY30vZnNsL2d1
+dHMudHh0DQo+ID4gPiAoOTElKQ0KPiA+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9z
+b2MvZnNsL0tjb25maWcNCj4gPiA+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL2Zz
+bC9ndXRzLmMNCj4gPiA+DQo+ID4gPiAtLQ0KPiA+ID4gMi4xLjAuMjcuZzk2ZGIzMjQNCj4gPiA+
+DQo+ID4gVGhhbmtzLCBhcHBsaWVkIG9uIG15IG1tYyB0cmVlIGZvciBuZXh0IQ0KPiA+DQo+ID4g
+SSBub3RpY2VkIHRoYXQgc29tZSBEVCBjb21wYXRpYmxlcyB3ZXJlbid0IGRvY3VtZW50ZWQsIGFj
+Y29yZGluZyB0bw0KPiA+IGNoZWNrcGF0Y2guIFBsZWFzZSBmaXggdGhhdCBhc2FwIQ0KPiANCj4g
+VGhleSBhcmUgZG9jdW1lbnRlZCwgaW4gZnNsL2d1dHMudHh0ICh0aGUgZmlsZSBtb3ZlZCBpbiBw
+YXRjaCAyLzcpOg0KPiA+IMKgLSBjb21wYXRpYmxlIDogU2hvdWxkIGRlZmluZSB0aGUgY29tcGF0
+aWJsZSBkZXZpY2UgdHlwZSBmb3INCj4gPiDCoMKgwqBnbG9iYWwtdXRpbGl0aWVzLg0KPiA+IMKg
+wqDCoFBvc3NpYmxlIGNvbXBhdGlibGVzOg0KPiA+IMKgwqDCoMKgwqDCoMKgwqAiZnNsLHFvcmlx
+LWRldmljZS1jb25maWctMS4wIg0KPiA+IMKgwqDCoMKgwqDCoMKgwqAiZnNsLHFvcmlxLWRldmlj
+ZS1jb25maWctMi4wIg0KPiA+IMKgwqDCoMKgwqDCoMKgwqAiZnNsLDxjaGlwPi1kZXZpY2UtY29u
+ZmlnIg0KPiA+IMKgwqDCoMKgwqDCoMKgwqAiZnNsLDxjaGlwPi1ndXRzIg0KPiANCj4gQ2hlY2tw
+YXRjaCBkb2Vzbid0IHVuZGVyc3RhbmQgY29tcGF0aWJsZXMgZGVmaW5lZCBpbiBzdWNoIGEgd2F5
+Lg0KDQpbTHUgWWFuZ2JvLUI0NzA5M10gWW91J3JlIHJpZ2h0LCBTY290dC4gSSBkcm9wcGVkIERU
+IHBhdGNoICdkdDogYmluZGluZ3M6IHVwZGF0ZSBGcmVlc2NhbGUgRENGRyBjb21wYXRpYmxlICcN
+CndoaWNoIGZpeGVkIHVuLWRvYyBpc3N1ZSBzaW5jZSBTaGFvaHVpIGhhZCBkb25lIHRoaXMgb24g
+U2hhd24gR3VvJ3MgdHJlZS4NCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJu
+ZWwvZ2l0L3NoYXduZ3VvL2xpbnV4LmdpdC9jb21taXQvP2g9aW14L2R0NjQmaWQ9OTgxMDM0YTJi
+ZmNhZmY1Yzk1ZGFmZGUyNGQ3YWJmZTdmOTAyNWMxOQ0KDQpUaGFua3MuDQoNCj4gDQo+IC1TY290
+dA0KPiANCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxp
+bmUgInVuc3Vic2NyaWJlIGxpbnV4LW1tYyIgaW4NCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
+IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcgTW9yZSBtYWpvcmRvbW8gaW5mbyBhdA0KPiBodHRw
+Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwNCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBs
+aXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
+cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
