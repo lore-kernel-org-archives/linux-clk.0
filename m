@@ -1,72 +1,59 @@
-Return-Path: <rui.zhang@intel.com>
-Message-ID: <1479212695.2224.12.camel@intel.com>
-Subject: Re: [PATCH 2/3] thermal: hisilicon: fix for dependency
-From: Zhang Rui <rui.zhang@intel.com>
-To: Leo Yan <leo.yan@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
-  Will Deacon <will.deacon@arm.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Eduardo
- Valentin <edubezval@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Simon Horman
- <horms+renesas@verge.net.au>, Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Reding <treding@nvidia.com>, Riku Voipio <riku.voipio@linaro.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,  Rob Herring
- <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, Guodong Xu
-	 <guodong.xu@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
-Date: Tue, 15 Nov 2016 20:24:55 +0800
-In-Reply-To: <20161112120534.GC23848@leoy-linaro>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
-	 <1472633417-9330-3-git-send-email-leo.yan@linaro.org>
-	 <20161112120534.GC23848@leoy-linaro>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <4179265.sjm4z2joGl@wasted.cogentembedded.com>
+References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com> <4179265.sjm4z2joGl@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Nov 2016 13:53:13 +0100
+Message-ID: <CAMuHMdW-K97-oDUXDGyftnR54Pv0CRUvq2Mp0jU+gT3kQZFs3w@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: add R8A7745 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2016-11-12 at 20:05 +0800, Leo Yan wrote:
-> Hi Rui, Eduardo,
-> 
-> On Wed, Aug 31, 2016 at 04:50:16PM +0800, Leo Yan wrote:
-> > 
-> > The thermal driver is standalone driver which is used to enable
-> > thermal sensors, so it can be used with any cooling device and
-> > should not bind with CPU cooling device driver.
-> > 
-> > This original patch is suggested by Amit Kucheria; so it's to
-> > polish the dependency in Kconfig, and remove the dependency with
-> > CPU_THERMAL.
-> Could you help review this patch? Or need me resend this patch? Sorry
-> I have not tracked this patches well before, this is one missed
-> patch for 96board Hikey.
-> 
-as it still applies cleanly, the patch is queued for 4.10.
+On Tue, Nov 8, 2016 at 10:25 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> ---
+> This patch  is against the 'clk-next' branch of CLK group's 'linux.git' repo
+> plus the R8A7743 clock driver patch. It depends on the common R-Car gen2 (and
+> RZ/G) support just posted.
+>
+> Changes in version 4:
+> - changed the Z2 clock's divisor to 1;
+> - passed  the PLL0 divisor to rcar_gen2_cpg_init();
+> - renamed the ACP clock to CPEX;
+> - removed the thermal module clock.
 
-thanks,
-rui
-> Thanks,
-> Leo Yan
-> 
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  drivers/thermal/Kconfig | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > index 2d702ca..91ebab3 100644
-> > --- a/drivers/thermal/Kconfig
-> > +++ b/drivers/thermal/Kconfig
-> > @@ -177,8 +177,10 @@ config THERMAL_EMULATION
-> >  
-> >  config HISI_THERMAL
-> >  	tristate "Hisilicon thermal driver"
-> > -	depends on (ARCH_HISI && CPU_THERMAL && OF) ||
-> > COMPILE_TEST
-> > +	depends on ARCH_HISI || COMPILE_TEST
-> >  	depends on HAS_IOMEM
-> > +	depends on OF
-> > +	default y
-> >  	help
-> >  	  Enable this to plug hisilicon's thermal sensor driver
-> > into the Linux
-> >  	  thermal framework. cpufreq is used as the cooling device
-> > to throttle
+Thanks!
+
+Will queue with the following trivial changes:
+  - pass cpg_mode to rcar_gen2_cpg_init(),
+  - sort clock names in DT bindings,
+  - reformat tables for easier comparison with other clock drivers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
