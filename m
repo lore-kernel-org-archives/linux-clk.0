@@ -1,59 +1,98 @@
-Return-Path: <sricharan@codeaurora.org>
-From: "Sricharan" <sricharan@codeaurora.org>
-To: "'Stanimir Varbanov'" <svarbanov@mm-sol.com>,
-	<sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<rnayak@codeaurora.org>,
-	<stanimir.varbanov@linaro.org>
-References: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org> <8257df0e-0cae-edbf-e845-e31fb50b7ba7@mm-sol.com>
-In-Reply-To: <8257df0e-0cae-edbf-e845-e31fb50b7ba7@mm-sol.com>
-Subject: RE: [PATCH V2 0/2] clk: qcom: gdsc: Add support for gdscs with HW control
-Date: Fri, 18 Nov 2016 23:40:50 +0530
-Message-ID: <000101d241c7$1c5f2320$551d6960$@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:53688 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753880AbcKJJWP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Nov 2016 04:22:15 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: wlf <wulf@rock-chips.com>
+Cc: Doug Anderson <dianders@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        =?utf-8?B?6buE5rab?= <huangtao@rock-chips.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] phy: rockchip-inno-usb2: correct 480MHz output clock stable time
+Date: Thu, 10 Nov 2016 10:21:51 +0100
+Message-ID: <2283070.Hkeafucara@diego>
+In-Reply-To: <9eeb3d84-f850-4b76-ce6a-67cc92d6de3b@rock-chips.com>
+References: <1478523658-9400-1-git-send-email-wulf@rock-chips.com> <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com> <9eeb3d84-f850-4b76-ce6a-67cc92d6de3b@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stan,
+Am Donnerstag, 10. November 2016, 10:54:49 schrieb wlf:
+> Hi Doug,
+> 
+> 在 2016年11月10日 04:54, Doug Anderson 写道:
+> > Hi,
+> > 
+> > On Mon, Nov 7, 2016 at 5:00 AM, William Wu <wulf@rock-chips.com> wrote:
+> >> We found that the system crashed due to 480MHz output clock of
+> >> USB2 PHY was unstable after clock had been enabled by gpu module.
+> >> 
+> >> Theoretically, 1 millisecond is a critical value for 480MHz
+> >> output clock stable time, so we try to change the delay time
+> >> to 1.2 millisecond to avoid this issue.
+> >> 
+> >> Signed-off-by: William Wu <wulf@rock-chips.com>
+> >> ---
+> >> 
+> >>   drivers/phy/phy-rockchip-inno-usb2.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >> 
+> >> diff --git a/drivers/phy/phy-rockchip-inno-usb2.c
+> >> b/drivers/phy/phy-rockchip-inno-usb2.c index ecfd7d1..8f2d2b6 100644
+> >> --- a/drivers/phy/phy-rockchip-inno-usb2.c
+> >> +++ b/drivers/phy/phy-rockchip-inno-usb2.c
+> >> @@ -267,7 +267,7 @@ static int rockchip_usb2phy_clk480m_enable(struct
+> >> clk_hw *hw)>> 
+> >>                          return ret;
+> >>                  
+> >>                  /* waitting for the clk become stable */
+> >> 
+> >> -               mdelay(1);
+> >> +               udelay(1200);
+> > 
+> > Several people who have seen this patch have expressed concern that a
+> > 1.2 ms delay is pretty long for something that's supposed to be
+> > "atomic" like a clk_enable().  Consider that someone might call
+> > clk_enable() while interrupts are disabled and that a 1.2 ms interrupt
+> > latency is not so great.
+> > 
+> > It seems like this clock should be moved to be enabled in "prepare"
+> > and the "enable" should be a no-op.  This is a functionality change,
+> > but I don't think there are any real users for this clock at the
+> > moment so it should be fine.
+> > 
+> > (of course, the 1 ms latency that existed before this patch was still
+> > pretty bad, but ...)
+> 
+> Thanks a lot for your suggestion.
+> I agree with you.  clk_enable() will call spin_lock_irqsave() to disable
+> interrupt, and we add
+> more than 1ms in clk_enable may cause big latency.
+> 
+> And according to clk_prepare() description:
+>   In a simple case, clk_prepare can be used instead of clk_enable to
+> ungate a clk if the
+>   operation may sleep.  One example is a clk which is accessed over I2c.
+> 
+> So maybe we can remove the clock to clk_prepare.
+> 
+> Hi Heiko, Frank,
+>         What  do you think of it?
 
->Hi,
->
->On 11/18/2016 02:28 PM, Sricharan R wrote:
->> This series adds support for gdscs(powerdomains) that can be configured
->> in hw controlled mode. So they are turned 'ON' based on needs dynamically,
->> helping to save power. Also updated the venus video ip's gdsc/clock
->> data to put them in hw control.
->>
->> V2:
->>  Dropped patch#3 [1] as it was concluded that the patch was effectively
->>  masking the fact the clocks were not getting turned on when the gdsc
->>  is put in hwctrl. With some change in sequence from venus core, masking
->>  is not needed and so patch needs to handled in venus driver.
->
->Which sequence should be changed in venus driver?
->
-Ya wanted to discuss this with you on the venus thread, but let me put it here.
+moving to clk_prepare sounds sensible. That way you can switch from delay to 
+sleep functions as well.
 
-So while enabling the hw control bit for the venus subcores 0/1 gdscs and turning
-on the subcore 0/1 clks, we saw that unless the
-VENUS_WRAPPER_VENUS0_MMCC_VDEC_VCODEC_POWER_CONTROL
-register is programmed to '0'(reset value is 1), the subcores domain/
-clocks do not turn on. So this means that the,
 
-1) venus driver should turn on all clocks except the subcore clocks.
-2) Program VENUS_WRAPPER_VENUS0_MMCC_VDEC_VCODEC_POWER_CONTROL to
-    '0' to turn on sub domains.
-3) Turn on subcore clocks (cbc) and verify their running status using clk_enable
-4) Program VENUS_WRAPPER_VENUS0_MMCC_VDEC_VCODEC_POWER_CONTROL to
-     '1' again to turn off subdomain/clocks and let the firmware turn it on when required.
-
-Note that in my previous patch set, i was skipping the check to verify the subcore clocks
-'running status' previously, assuming that it can't be done while the gdsc is in hwctrl, but
-that was not right.
-
-Regards,
- Sricharan
+Heiko
