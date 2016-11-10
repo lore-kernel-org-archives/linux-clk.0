@@ -1,41 +1,28 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH V4 6/6] bus: Add support for Tegra Generic Memory
- Interface
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-7-git-send-email-mirza.krak@gmail.com>
-CC: <gnurou@gmail.com>, <linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <79d74277-7de5-edf8-1ee1-14261ef03791@nvidia.com>
-Date: Mon, 7 Nov 2016 11:13:37 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 10 Nov 2016 14:07:17 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: ipq806x: Fix board clk rates
+Message-ID: <20161110220717.GG16026@codeaurora.org>
+References: <20161110011337.25707-1-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1478507405-13204-7-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161110011337.25707-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 07/11/16 08:30, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+On 11/09, Stephen Boyd wrote:
+> The clocks on these boards run at 25 MHz, not 19.2 and 27 like
+> other platforms. Unfortunately I copy/pasted from other similar
+> SoCs but forgot this one is different. Fix it.
 > 
-> The Generic Memory Interface bus can be used to connect high-speed
-> devices such as NOR flash, FPGAs, DSPs...
-> 
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+> Fixes: a085f877a882 ("clk: qcom: Move cxo/pxo/xo into dt files")
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Thanks for the update.
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
+Applied to clk-next
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
