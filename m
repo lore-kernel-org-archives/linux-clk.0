@@ -1,67 +1,56 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	varada@codeaurora.org,
-	pradeepb@codeaurora.org,
-	snlakshm@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 0/6] Patches for QCOM IPQ4019 clock driver
-Date: Fri, 25 Nov 2016 21:11:27 +0530
-Message-Id: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 10 Nov 2016 15:30:01 -0800
+From: 'Stephen Boyd' <sboyd@codeaurora.org>
+To: Sricharan <sricharan@codeaurora.org>
+Cc: 'Rajendra Nayak' <rnayak@codeaurora.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stanimir.varbanov@linaro.org
+Subject: Re: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus
+ core0/1 clks
+Message-ID: <20161110233001.GM16026@codeaurora.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
+ <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
+ <20161103203418.GA16026@codeaurora.org>
+ <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org>
+ <20161104201836.GE16026@codeaurora.org>
+ <58201597.6010207@codeaurora.org>
+ <20161108223336.GK16026@codeaurora.org>
+ <000301d23aaa$3f5dd110$be197330$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <000301d23aaa$3f5dd110$be197330$@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches are related to Qualcomm IPQ4019 GCC (Global Clock
-Controller) driver code mainly adding the nodes for clock marked
-as fixed in current IPQ4019 clock driver and support for multiple
-CPU frequencies.
+On 11/09, Sricharan wrote:
+> 
+> So the above is the sequence which is actually carried out on the
+> firmware side. The same can be done in host as well.
+> The clocks stuck issue indeed is not there with this.
 
-[V4]
+Great! We've finally connected on what the actual problem is.
 
-   1. Addressed the review comments given in v3 patches.
-   2. Removed the intermediate VCO clocks and make VCO as
-      part of final divider clock.
-   3. Changed some variable and structure names.
-   4. Removed intermediate frequency change patch and merged
-      in the main patch itself.
-   5. Added the APSS CPU frequency change notifier patch
-   6. Removed i2c node frequency table which is already reviewed.
+> But with the above sequence we need to add a step to do inverse
+> of STEP3 above (ie write the registers to de-assert hw_signal),
+> to keep the subdomains in off, till firmware uses it. So the
+> above sequence helps to avoid masking the halt check, although
+> the host really does not wants to use these clocks, except
+> setting it up for the firmware.
+> 
 
-[V3]
+Right, but knowing that the clocks failed to turn on in the first
+place is much safer than silently ignoring the failure.
+Otherwise, we could hand over control to the firmware, and the
+firmware would fail to operate the hardware, and we're stuck with
+debugging the firmware now. That sounds quite painful to figure
+out.
 
-   1. Addressed the review comments given in v2 patches.
-   2. Replaced the do_div with normal division.
-   3. Marked the PCNOC node as critical.
-   4. Modified the frequency values for the recent change done
-      in IPQ4019 bootloader.
-   5. Changed the i2c node frequency table for 19.05 MHz clock.
-
-[V2]
-
-   1. Removed the fixed clock references and add the same as clock nodes
-   with recalc_rate operation.
-
-Abhishek Sahu (6):
-  clk: qcom: ipq4019: remove fixed clocks and add pll clocks
-  clk: qcom: ipq4019: Add the apss cpu pll divider clock node
-  clk: qcom: ipq4019: Add the nodes for pcnoc
-  clk: qcom: ipq4019: correct sdcc frequency and parent name
-  clk: qcom: ipq4019: Add all the frequencies for apss cpu
-  clk: qcom: ipq4019: Add the cpu clock frequency change notifier
-
- drivers/clk/qcom/gcc-ipq4019.c               | 484 ++++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-ipq4019.h |  11 +
- 2 files changed, 481 insertions(+), 14 deletions(-)
+If we properly toggle the video hw bits in coordination with
+firmware and turn on/off the clocks with the GDSC ON, then
+debugging is made simpler. The point is, we don't want to lose
+robustness by silencing halt checks. The semantics of
+clk_enable() means the clock is running, and that won't be true
+here unless we ensure the GDSC is enabled.
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
