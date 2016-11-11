@@ -1,75 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37661 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754218AbcKIUyU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 15:54:20 -0500
-Received: by mail-wm0-f50.google.com with SMTP id t79so324540770wmt.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Nov 2016 12:54:19 -0800 (PST)
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 11 Nov 2016 21:48:20 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] clk: sunxi-ng: sun8i-h3: Set CLK_SET_RATE_PARENT for
+ audio module clocks
+Message-ID: <20161111204820.sowe7jj7i3lsltuf@lukather>
+References: <20161111100558.14629-1-wens@csie.org>
+ <20161111100558.14629-2-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
-References: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
-From: Doug Anderson <dianders@google.com>
-Date: Wed, 9 Nov 2016 12:54:18 -0800
-Message-ID: <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com>
-Subject: Re: [PATCH] phy: rockchip-inno-usb2: correct 480MHz output clock
- stable time
-To: William Wu <wulf@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Wang <frank.wang@rock-chips.com>,
-        =?UTF-8?B?6buE5rab?= <huangtao@rock-chips.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="chzqfikgkafzatlx"
+In-Reply-To: <20161111100558.14629-2-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On Mon, Nov 7, 2016 at 5:00 AM, William Wu <wulf@rock-chips.com> wrote:
-> We found that the system crashed due to 480MHz output clock of
-> USB2 PHY was unstable after clock had been enabled by gpu module.
->
-> Theoretically, 1 millisecond is a critical value for 480MHz
-> output clock stable time, so we try to change the delay time
-> to 1.2 millisecond to avoid this issue.
->
-> Signed-off-by: William Wu <wulf@rock-chips.com>
-> ---
->  drivers/phy/phy-rockchip-inno-usb2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/phy/phy-rockchip-inno-usb2.c b/drivers/phy/phy-rockchip-inno-usb2.c
-> index ecfd7d1..8f2d2b6 100644
-> --- a/drivers/phy/phy-rockchip-inno-usb2.c
-> +++ b/drivers/phy/phy-rockchip-inno-usb2.c
-> @@ -267,7 +267,7 @@ static int rockchip_usb2phy_clk480m_enable(struct clk_hw *hw)
->                         return ret;
->
->                 /* waitting for the clk become stable */
-> -               mdelay(1);
-> +               udelay(1200);
+--chzqfikgkafzatlx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Several people who have seen this patch have expressed concern that a
-1.2 ms delay is pretty long for something that's supposed to be
-"atomic" like a clk_enable().  Consider that someone might call
-clk_enable() while interrupts are disabled and that a 1.2 ms interrupt
-latency is not so great.
+On Fri, Nov 11, 2016 at 06:05:58PM +0800, Chen-Yu Tsai wrote:
+> The audio module clocks are supposed to be set according to the sample
+> rate of the audio stream. The audio PLL provides the clock signal for
+> thees module clocks, and only it is freely tunable.
+>=20
+> Set CLK_SET_RATE_PARENT for the audio module clocks so their users can
+> properly tune the clock rate.
+>=20
+> Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-It seems like this clock should be moved to be enabled in "prepare"
-and the "enable" should be a no-op.  This is a functionality change,
-but I don't think there are any real users for this clock at the
-moment so it should be fine.
+Fixed the typo and applied, thanks!
+Maxime
 
-(of course, the 1 ms latency that existed before this patch was still
-pretty bad, but ...)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
--Doug
+--chzqfikgkafzatlx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYJi6KAAoJEBx+YmzsjxAgO0gP/i36qlnozlgbDz8rAUUzj/QE
+pJalLoB+S8WlYXNYlWj9158MIGTKq89srzmEggiJI7gK2aqmu1Us/UGGqv3vXc2h
++avdyC8FhkYI7/4Sej41lmDXW2T75ixnDcH5Cw3LQr22LpNDcAW1P1nqVD5nIQpn
+k4PJO9Wbe3GojLTsADa1iGfSekUNeY3VboCbykUckLa6wEJFjMmoBNsnXiIHVf1Q
+3X/jVs5Ac/viLGWn8bzRWqdQ/sfvq3/mXQnmb/DBdVpEf1+W3HGwhc2GFWzYv6ZI
+Nj7jcqvX4rMwAOd6urROrgXXt3VnAM95YFSW6leV7d1v+Zs5pAPPCR5nX85z77BZ
+RIx1yOtm3EoBrElLSfMRQTqYNOyiTntOzgWvEG9ssBflaviJuxQze+sHwYj0n7Y8
+8cSbF/Mum9HAUGvga9/TpvZ0LnvqiDcUPPm/SO11xiwYpzy26as92yGLSG6ZDPJy
+CLHR2S7D7o/L6OHEAIhZndET9iVmVWjeA3/rzOpeIeI2wWiyqLjC7DWDqa8n3cpJ
+tjRgdLbV9MSLxjyoQx17DCJBi3O4eAF1JK4Ec5bT9SeNU+I3g28t20u20xQ2WMTI
+LrUdQeixAe0VTTIvLea19t346AcW3NzmkIufQ6JeYwPhqbJliwU6oKyDDZR8oLLr
+y3l2IHR5aDgSL7/sTTwS
+=cfJ8
+-----END PGP SIGNATURE-----
+
+--chzqfikgkafzatlx--
