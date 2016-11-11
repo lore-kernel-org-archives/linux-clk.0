@@ -1,72 +1,107 @@
-Return-Path: <absahu@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] phy: rockchip-inno-usb2: correct 480MHz output clock
+ stable time
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+References: <1478523658-9400-1-git-send-email-wulf@rock-chips.com>
+ <CAD=FV=VC15_QAs7+DOoqCeWrU6-qqnUku2SSPFLOvLanu8xL3g@mail.gmail.com>
+ <9eeb3d84-f850-4b76-ce6a-67cc92d6de3b@rock-chips.com>
+ <2283070.Hkeafucara@diego>
+Cc: Doug Anderson <dianders@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        =?UTF-8?B?6buE5rab?= <huangtao@rock-chips.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+From: wlf <wulf@rock-chips.com>
+Message-ID: <e6d038f6-c324-fc06-5cf1-e03d6ec6d4e3@rock-chips.com>
+Date: Fri, 11 Nov 2016 11:23:49 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Thu, 24 Nov 2016 18:16:02 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
- pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
- mturquette@baylibre.com, galak@codeaurora.org, pradeepb@codeaurora.org,
- mmcclint@codeaurora.org, varada@codeaurora.org, sricharan@codeaurora.org,
- architt@codeaurora.org, ntelkar@codeaurora.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] clk: qcom: ipq4019: Added all the frequencies for
- apps cpu
-In-Reply-To: <20161102012450.GD16026@codeaurora.org>
-References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
- <1474460512-31994-5-git-send-email-absahu@codeaurora.org>
- <20161102012450.GD16026@codeaurora.org>
-Message-ID: <356199897fb2022342a76bc872b703d5@codeaurora.org>
+In-Reply-To: <2283070.Hkeafucara@diego>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-11-02 06:54, Stephen Boyd wrote:
-> On 09/21, Abhishek Sahu wrote:
->> The APPS CPU clock does not contain all the frequencies in its
->> frequency table so this patch adds the same.
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->>  drivers/clk/qcom/gcc-ipq4019.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/clk/qcom/gcc-ipq4019.c 
->> b/drivers/clk/qcom/gcc-ipq4019.c
->> index 211c68c..160e0cf 100644
->> --- a/drivers/clk/qcom/gcc-ipq4019.c
->> +++ b/drivers/clk/qcom/gcc-ipq4019.c
->> @@ -565,10 +565,20 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
->>  };
->> 
->>  static const struct freq_tbl ftbl_gcc_apps_clk[] = {
->> -	F(48000000, P_XO,	   1, 0, 0),
->> +	F(48000000,  P_XO,         1, 0, 0),
->>  	F(200000000, P_FEPLL200,   1, 0, 0),
->> +	F(380000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(409000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(444000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(484000000, P_DDRPLLAPSS, 1, 0, 0),
->>  	F(500000000, P_FEPLL500,   1, 0, 0),
->> +	F(507000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(532000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(560000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(592000000, P_DDRPLLAPSS, 1, 0, 0),
->>  	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(666000000, P_DDRPLLAPSS, 1, 0, 0),
->> +	F(710000000, P_DDRPLLAPSS, 1, 0, 0),
->>  	{ }
->>  };
-> 
-> Can't we have the determine_rate callback know the speeds of the
-> "fixed" PLLs and use those first if the rate hits exactly? And
-> then if that doesn't happen go try ddrpllapps and set the rate on
-> it? I'm hoping we can get rid of this frequency table.
-This clock is being registered with QCOM clk_rcg2 operations which
-already has determine_rate callback based on this frequency table.
-Currently all the frequencies are being generated without HID
-divider but in future, we can have some frequency which will use
-dividers also.
--- 
-Abhishek Sahu
+Hi Heiko，
+
+在 2016年11月10日 17:21, Heiko Stübner 写道:
+> Am Donnerstag, 10. November 2016, 10:54:49 schrieb wlf:
+>> Hi Doug,
+>>
+>> 在 2016年11月10日 04:54, Doug Anderson 写道:
+>>> Hi,
+>>>
+>>> On Mon, Nov 7, 2016 at 5:00 AM, William Wu <wulf@rock-chips.com> wrote:
+>>>> We found that the system crashed due to 480MHz output clock of
+>>>> USB2 PHY was unstable after clock had been enabled by gpu module.
+>>>>
+>>>> Theoretically, 1 millisecond is a critical value for 480MHz
+>>>> output clock stable time, so we try to change the delay time
+>>>> to 1.2 millisecond to avoid this issue.
+>>>>
+>>>> Signed-off-by: William Wu <wulf@rock-chips.com>
+>>>> ---
+>>>>
+>>>>    drivers/phy/phy-rockchip-inno-usb2.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/phy/phy-rockchip-inno-usb2.c
+>>>> b/drivers/phy/phy-rockchip-inno-usb2.c index ecfd7d1..8f2d2b6 100644
+>>>> --- a/drivers/phy/phy-rockchip-inno-usb2.c
+>>>> +++ b/drivers/phy/phy-rockchip-inno-usb2.c
+>>>> @@ -267,7 +267,7 @@ static int rockchip_usb2phy_clk480m_enable(struct
+>>>> clk_hw *hw)>>
+>>>>                           return ret;
+>>>>                   
+>>>>                   /* waitting for the clk become stable */
+>>>>
+>>>> -               mdelay(1);
+>>>> +               udelay(1200);
+>>> Several people who have seen this patch have expressed concern that a
+>>> 1.2 ms delay is pretty long for something that's supposed to be
+>>> "atomic" like a clk_enable().  Consider that someone might call
+>>> clk_enable() while interrupts are disabled and that a 1.2 ms interrupt
+>>> latency is not so great.
+>>>
+>>> It seems like this clock should be moved to be enabled in "prepare"
+>>> and the "enable" should be a no-op.  This is a functionality change,
+>>> but I don't think there are any real users for this clock at the
+>>> moment so it should be fine.
+>>>
+>>> (of course, the 1 ms latency that existed before this patch was still
+>>> pretty bad, but ...)
+>> Thanks a lot for your suggestion.
+>> I agree with you.  clk_enable() will call spin_lock_irqsave() to disable
+>> interrupt, and we add
+>> more than 1ms in clk_enable may cause big latency.
+>>
+>> And according to clk_prepare() description:
+>>    In a simple case, clk_prepare can be used instead of clk_enable to
+>> ungate a clk if the
+>>    operation may sleep.  One example is a clk which is accessed over I2c.
+>>
+>> So maybe we can remove the clock to clk_prepare.
+>>
+>> Hi Heiko, Frank,
+>>          What  do you think of it?
+> moving to clk_prepare sounds sensible. That way you can switch from delay to
+> sleep functions as well.
+Thanks very much.
+I will try to update a new patch.
+
+Best regards,
+          Wulf
+
+>
+>
+> Heiko
+>
+>
+>
