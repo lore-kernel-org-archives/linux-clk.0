@@ -1,70 +1,40 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 10 Nov 2016 16:48:30 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 1/3] clk: qcom: Add support for SMD-RPM Clocks
+Message-ID: <20161111004830.GC5177@codeaurora.org>
+References: <20161102155658.32203-1-georgi.djakov@linaro.org>
+ <20161102155658.32203-2-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1478593430-23102-1-git-send-email-rnayak@codeaurora.org>
-References: <1478593430-23102-1-git-send-email-rnayak@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Nov 2016 10:36:46 +0100
-Message-ID: <CAMuHMdW6-oRJ4CKbUeXOixvKFOZ3vf8pGhCH87rOx1KuE8bdGQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: Free struct clk allocated during clk_hw_register()
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161102155658.32203-2-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rajendra,
-
-On Tue, Nov 8, 2016 at 9:23 AM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> With clk_hw_register() API we hide the struct clk from the caller
-> and return an int error code instead, so the caller (clk provider)
-> is not expected to use hw->clk on return.
-
-That's correct, in case of failure.
-
-> Free the memory, and mark hw->clk as NULL before returning.
->
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+On 11/02, Georgi Djakov wrote:
+> This adds initial support for clocks controlled by the Resource
+> Power Manager (RPM) processor on some Qualcomm SoCs, which use
+> the qcom_smd_rpm driver to communicate with RPM.
+> Such platforms are msm8916, apq8084 and msm8974.
+> 
+> The RPM is a dedicated hardware engine for managing the shared
+> SoC resources in order to keep the lowest power profile. It
+> communicates with other hardware subsystems via shared memory
+> and accepts clock requests, aggregates the requests and turns
+> the clocks on/off or scales them on demand.
+> 
+> This driver is based on the codeaurora.org driver:
+> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
->  drivers/clk/clk.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0fb39fe..f81e4aa 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2628,7 +2628,15 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->   */
->  int clk_hw_register(struct device *dev, struct clk_hw *hw)
->  {
-> -       return PTR_ERR_OR_ZERO(clk_register(dev, hw));
-> +       struct clk *c;
-> +
-> +       c = clk_register(dev, hw);
-> +       if (IS_ERR(c))
-> +               return PTR_ERR(c);
-> +
-> +       __clk_free_clk(c);
-> +       hw->clk = NULL;
 
-This is the success path, not the failure path (on failure, clk_register()
-has already freed the struct clk).
-Why do you free the struct clk in case of success?
+Applied to clk-qcom-rpm and merged into clk-next
 
-What am I missing?
-
-> +       return 0;
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_register);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
