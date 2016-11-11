@@ -1,53 +1,41 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
-	<fabio.estevam@nxp.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
-Date: Mon, 14 Nov 2016 06:35:43 +0000
-Message-ID: <HE1PR04MB1450297765B98A84BB81AB428BBC0@HE1PR04MB1450.eurprd04.prod.outlook.com>
-References: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
- <1478584614-12054-2-git-send-email-peter.chen@nxp.com>
- <20161114054833.GG3310@dragon>
- <HE1PR04MB14509BFD0CBA838BC1EA7D598BBC0@HE1PR04MB1450.eurprd04.prod.outlook.com>
- <20161114061311.GA14956@dragon>
-In-Reply-To: <20161114061311.GA14956@dragon>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] clk: cdce925: Fix limit check
+Date: Fri, 11 Nov 2016 22:49:05 +0100
+Message-Id: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-=20
->On Mon, Nov 14, 2016 at 05:59:01AM +0000, Peter Chen wrote:
->> The main difference is compatible string, I can't include two
->> compatible strings in one dts file, the dts build will fail for that.
->>
->> imx6ull-14x14-evk.dts
->> / {
->>         model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
->>         compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull"; };
->>
->> imx6ul-14x14-evk.dts
->> / {
->>         model =3D "Freescale i.MX6 UltraLite 14x14 EVK Board";
->>         compatible =3D "fsl,imx6ul-14x14-evk", "fsl,imx6ul"; };
->
->I created imx6ull-14x14-evk.dts like below, and DTC seems happy with it.
->
->#include "imx6ul-14x14-evk.dts"
->
->/ {
->        model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
->        compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull"; };
->
+It is likely that instead of '1>64', 'q>64' was expected.
 
-Thanks for trying it, the problem why my dtc building fail is I have two
-" /dts-v1/;" at dts file (one is from imx6ul-14x14-evk.dts) . I will follow=
- your suggestion.
+Moreover, according to datasheet,
+   http://www.ti.com/lit/ds/symlink/cdce925.pdf
+   SCAS847I - JULY 2007 - REVISED OCTOBER 2016
+PLL settings limits are: 16 <= q <= 63
+So change the upper limit check from 64 to 63.
 
-Peter
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/clk-cdce925.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index b8459c14a1b7..f793b2d9238c 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -216,7 +216,7 @@ static int cdce925_pll_prepare(struct clk_hw *hw)
+ 		nn = n * BIT(p);
+ 		/* q = int(nn/m) */
+ 		q = nn / m;
+-		if ((q < 16) || (1 > 64)) {
++		if ((q < 16) || (q > 63)) {
+ 			pr_debug("%s invalid q=%d\n", __func__, q);
+ 			return -EINVAL;
+ 		}
+-- 
+2.9.3
