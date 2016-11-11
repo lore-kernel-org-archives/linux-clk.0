@@ -1,40 +1,30 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Nov 2016 18:39:54 -0800
+Date: Thu, 10 Nov 2016 16:48:05 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
+To: Georgi Djakov <georgi.djakov@linaro.org>
 Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] rockchip clock changes for 4.10
-Message-ID: <20161115023954.GU5177@codeaurora.org>
-References: <2643672.7kkyv0VVfm@phil>
+	devicetree@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 3/3] clk: qcom: Always add factor clock for xo clocks
+Message-ID: <20161111004805.GA5177@codeaurora.org>
+References: <20161102155658.32203-1-georgi.djakov@linaro.org>
+ <20161102155658.32203-4-georgi.djakov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2643672.7kkyv0VVfm@phil>
+In-Reply-To: <20161102155658.32203-4-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/12, Heiko Stuebner wrote:
-> Hi Mike, Stephen,
+On 11/02, Georgi Djakov wrote:
+> Currently the RPM/RPM-SMD clock drivers do not register the xo clocks,
+> so we should always add factor clock. When we later add xo clocks support
+> into the drivers, we should update this function to skip registration.
+> By doing so we avoid any DT dependencies.
 > 
-> please find below a pull request for rockchip-related clock changes for 4.10.
-> Nothing really big stands out this time, so if it looks ok please pull.
-> 
-> 
-> Thanks
-> Heiko
-> 
-> 
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.10-rockchip-clk1
-> 
-> for you to fetch changes up to bf92384b6d729b22916ba832b4a225ca196e98ba:
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
 
-Thanks. Pulled.
-
+Applied to clk-qcom-rpm and merged into clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
