@@ -1,40 +1,74 @@
-Return-Path: <horms@verge.net.au>
-Date: Fri, 18 Nov 2016 10:58:37 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
-Message-ID: <20161118095837.GB22664@verge.net.au>
-References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
- <20161117230701.GR25626@codeaurora.org>
- <20161118095537.GA22664@verge.net.au>
+Return-Path: <codekipper@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161118095537.GA22664@verge.net.au>
+In-Reply-To: <20161111100558.14629-2-wens@csie.org>
+References: <20161111100558.14629-1-wens@csie.org> <20161111100558.14629-2-wens@csie.org>
+From: Code Kipper <codekipper@gmail.com>
+Date: Fri, 11 Nov 2016 11:10:44 +0100
+Message-ID: <CAEKpxBkseMg2JvP7rrm2qFSCTsn60JyzoWFNFDrWNFDHkMuQtg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: sun8i-h3: Set
+ CLK_SET_RATE_PARENT for audio module clocks
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 18, 2016 at 10:55:37AM +0100, Simon Horman wrote:
-> On Thu, Nov 17, 2016 at 03:07:01PM -0800, Stephen Boyd wrote:
-> > On 11/07, Geert Uytterhoeven wrote:
-> > > 	Hi Mike, Stephen,
-> > > 
-> > > The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
-> > > 
-> > >   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
-> > > 
-> > > for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
-> > 
-> > Ok. Pulled into clk-next. I'm a little wary here as I haven't
-> > seen any indication from arm-soc maintainers (not Simon) that
-> > they'll take this cross tree merge. I guess we'll see how it
-> > goes.
-> 
-> Thanks. It looks like it has been accepted by the ARM SoC maintainers.
-
-Oopps, I spoke too soon.
+On 11 November 2016 at 11:05, Chen-Yu Tsai <wens@csie.org> wrote:
+> The audio module clocks are supposed to be set according to the sample
+> rate of the audio stream. The audio PLL provides the clock signal for
+> thees module clocks, and only it is freely tunable.
+nick! these
+CK
+>
+> Set CLK_SET_RATE_PARENT for the audio module clocks so their users can
+> properly tune the clock rate.
+>
+> Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> index 4d70590f05e3..21c427d86f28 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> @@ -394,16 +394,16 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
+>  static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
+>                                             "pll-audio-2x", "pll-audio" };
+>  static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
+> -                              0x0b0, 16, 2, BIT(31), 0);
+> +                              0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
+> -                              0x0b4, 16, 2, BIT(31), 0);
+> +                              0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s_parents,
+> -                              0x0b8, 16, 2, BIT(31), 0);
+> +                              0x0b8, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_M_WITH_GATE(spdif_clk, "spdif", "pll-audio",
+> -                            0x0c0, 0, 4, BIT(31), 0);
+> +                            0x0c0, 0, 4, BIT(31), CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_GATE(usb_phy0_clk,    "usb-phy0",     "osc24M",
+>                       0x0cc, BIT(8), 0);
+> @@ -466,7 +466,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+>                              0x13c, 16, 3, BIT(31), 0);
+>
+>  static SUNXI_CCU_GATE(ac_dig_clk,      "ac-dig",       "pll-audio",
+> -                     0x140, BIT(31), 0);
+> +                     0x140, BIT(31), CLK_SET_RATE_PARENT);
+>  static SUNXI_CCU_GATE(avs_clk,         "avs",          "osc24M",
+>                       0x144, BIT(31), 0);
+>
+> --
+> 2.10.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
