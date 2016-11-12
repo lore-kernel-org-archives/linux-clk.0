@@ -1,59 +1,31 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 15:26:58 -0700
+Date: Fri, 11 Nov 2016 16:04:36 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] clk: pxa: transfer CPU clock setting from
- pxa2xx-cpufreq
-Message-ID: <20161102222658.GU16026@codeaurora.org>
-References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
- <1477225170-19019-6-git-send-email-robert.jarzmik@free.fr>
- <20161102005637.GV16026@codeaurora.org>
- <87y411zxua.fsf@belgarion.home>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, bin.chen@linaro.org, elder@linaro.org,
+	hermit.wangheming@hisilicon.com, yanhaifeng@hisilicon.com,
+	wenpan@hisilicon.com, howell.yang@hisilicon.com
+Subject: Re: [PATCH 1/2] clk: hisilicon: add CRG driver for Hi3798CV200 SoC
+Message-ID: <20161112000436.GF5177@codeaurora.org>
+References: <1477721618-10809-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1477721618-10809-2-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87y411zxua.fsf@belgarion.home>
+In-Reply-To: <1477721618-10809-2-git-send-email-xuejiancheng@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/02, Robert Jarzmik wrote:
-> Stephen Boyd <sboyd@codeaurora.org> writes:
+On 10/29, Jiancheng Xue wrote:
+> Add CRG driver for Hi3798CV200 SoC. CRG(Clock and Reset
+> Generator) module generates clock and reset signals used
+> by other module blocks on SoC.
 > 
-> > On 10/23, Robert Jarzmik wrote:
-> >> diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-> >> index 29cee9e8d4d9..7184819b7415 100644
-> >> --- a/drivers/clk/pxa/clk-pxa.c
-> >> +++ b/drivers/clk/pxa/clk-pxa.c
-> >> +void pxa2xx_core_turbo_switch(bool on)
-> >> +{
-> >> +	unsigned long flags;
-> >> +	unsigned int unused, clkcfg;
-> >> +
-> >> +	local_irq_save(flags);
-> >> +
-> >> +	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-> >
-> > \t is odd style, but I guess this is copied from somewhere?
-> Yeah ... and yes, that \t is indeed ugly now I look at it. A space could be more
-> welcome ...
-> 
-> > Should it be volatile? Or is it ok for the clkcfg value to be
-> > cached here?
-> 
-> I don't see how it could be cached ... The asm statement produces a result used
-> afterwards, I don't think the compiler can optimize that out. I would have
-> understood if this was in a loop, but here I don't see.
-> 
-> Note that I'm not reluctant to add it, I just want to check which optimization
-> case we're talking about to see if I'm missing something.
-> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-I'm a bit rusty on asm volatile semantics but I seem to recall
-that a non-volatile asm statement can be combined/merged,
-reordered, etc. by the compiler. I suppose if this was in the
-cpufreq driver already then changing it in this patch is not a
-good idea. If anything, a follow up patch if we determine it's
-actually a bug.
+Applied to clk-hisi and merged into clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
