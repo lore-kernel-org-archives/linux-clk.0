@@ -1,232 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46704 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753140AbcKPQB6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:01:58 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v8 02/16] clk: qcom: Move all sdcc rcgs to use clk_rcg2_floor_ops
-Date: Wed, 16 Nov 2016 21:30:38 +0530
-Message-Id: <1479312052-22396-3-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
-References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.9-rc5
+Date: Fri, 11 Nov 2016 17:06:23 -0800
+Message-Id: <20161112010623.28849-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+The following changes since commit 91bbc174d45c347aa7aedb2215cc7d2013c06c1f:
 
-The sdcc driver for msm8996/msm8916/msm8974/msm8994 and apq8084
-expects a clk_set_rate() on the sdcc rcg clk to set
-a floor value of supported clk rate closest to the requested
-rate, by looking up the frequency table.
-So move all the sdcc rcgs on all these platforms to use the
-newly introduced clk_rcg2_floor_ops
+  clk: at91: Fix a return value in case of error (2016-10-20 16:37:56 -0700)
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
----
- drivers/clk/qcom/gcc-apq8084.c | 8 ++++----
- drivers/clk/qcom/gcc-msm8916.c | 4 ++--
- drivers/clk/qcom/gcc-msm8974.c | 8 ++++----
- drivers/clk/qcom/gcc-msm8994.c | 8 ++++----
- drivers/clk/qcom/gcc-msm8996.c | 8 ++++----
- 5 files changed, 18 insertions(+), 18 deletions(-)
+are available in the git repository at:
 
-diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
-index 070037a..486d961 100644
---- a/drivers/clk/qcom/gcc-apq8084.c
-+++ b/drivers/clk/qcom/gcc-apq8084.c
-@@ -1142,7 +1142,7 @@ enum {
- 		.name = "sdcc1_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0_gpll4,
- 		.num_parents = 3,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -1156,7 +1156,7 @@ enum {
- 		.name = "sdcc2_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -1170,7 +1170,7 @@ enum {
- 		.name = "sdcc3_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -1184,7 +1184,7 @@ enum {
- 		.name = "sdcc4_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 5c4e193..628e6ca 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1107,7 +1107,7 @@ enum {
- 		.name = "sdcc1_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -1132,7 +1132,7 @@ enum {
- 		.name = "sdcc2_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 0091520..348e30d 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -872,7 +872,7 @@ enum {
- 	.name = "sdcc1_apps_clk_src",
- 	.parent_names = gcc_xo_gpll0,
- 	.num_parents = 2,
--	.ops = &clk_rcg2_ops,
-+	.ops = &clk_rcg2_floor_ops,
- };
- 
- static struct clk_rcg2 sdcc1_apps_clk_src = {
-@@ -894,7 +894,7 @@ enum {
- 		.name = "sdcc2_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -908,7 +908,7 @@ enum {
- 		.name = "sdcc3_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -922,7 +922,7 @@ enum {
- 		.name = "sdcc4_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index 84093c1..8afd830 100644
---- a/drivers/clk/qcom/gcc-msm8994.c
-+++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -912,7 +912,7 @@ enum {
- 		.name = "sdcc1_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0_gpll4,
- 		.num_parents = 3,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -938,7 +938,7 @@ enum {
- 		.name = "sdcc2_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -953,7 +953,7 @@ enum {
- 		.name = "sdcc3_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -968,7 +968,7 @@ enum {
- 		.name = "sdcc4_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index e22bbc2..4b1fc17 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -460,7 +460,7 @@ enum {
- 		.name = "sdcc1_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0_gpll4_gpll0_early_div,
- 		.num_parents = 4,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -505,7 +505,7 @@ enum {
- 		.name = "sdcc2_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0_gpll4,
- 		.num_parents = 3,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -519,7 +519,7 @@ enum {
- 		.name = "sdcc3_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0_gpll4,
- 		.num_parents = 3,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -543,7 +543,7 @@ enum {
- 		.name = "sdcc4_apps_clk_src",
- 		.parent_names = gcc_xo_gpll0,
- 		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 10f2bfb092e3b49000526c02cfe8b2abbbdbb752:
+
+  clk: mmp: pxa910: fix return value check in pxa910_clk_init() (2016-11-01 17:41:20 -0700)
+
+----------------------------------------------------------------
+The typical collection of minor bug fixes in clk drivers. We don't have
+anything in the core framework here, just driver fixes. There's a boot fix for
+Samsung devices and a safety measure for qoriq to prevent CPUs from running too
+fast. There's also a fix for i.MX6Q to properly handle audio clock rates. We
+also have some "that's obviously wrong" fixes like bad NULL pointer checks in
+the MPP driver and a poor usage of __pa in the xgene clk driver that are fixed
+here.
+
+----------------------------------------------------------------
+Emil Lundmark (1):
+      clk: imx: fix integer overflow in AV PLL round rate
+
+Laura Abbott (1):
+      clk: xgene: Don't call __pa on ioremaped address
+
+Marek Szyprowski (1):
+      clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization method for CLKOUT
+
+Scott Wood (1):
+      clk: qoriq: Don't allow CPU clocks higher than starting value
+
+Shawn Lin (1):
+      clk: rockchip: don't return NULL when failing to register ddrclk branch
+
+Stephen Boyd (1):
+      Merge tag 'v4.9-rockchip-clkfixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
+
+Wei Yongjun (3):
+      clk: mmp: mmp2: fix return value check in mmp2_clk_init()
+      clk: mmp: pxa168: fix return value check in pxa168_clk_init()
+      clk: mmp: pxa910: fix return value check in pxa910_clk_init()
+
+ drivers/clk/clk-qoriq.c                 | 13 ++++++++-----
+ drivers/clk/clk-xgene.c                 | 10 ++++------
+ drivers/clk/imx/clk-pllv3.c             |  8 ++++++--
+ drivers/clk/mmp/clk-of-mmp2.c           |  2 +-
+ drivers/clk/mmp/clk-of-pxa168.c         |  2 +-
+ drivers/clk/mmp/clk-of-pxa910.c         |  4 ++--
+ drivers/clk/rockchip/clk-ddr.c          |  5 +----
+ drivers/clk/samsung/clk-exynos-clkout.c | 22 ++++++++++++++--------
+ 8 files changed, 37 insertions(+), 29 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
