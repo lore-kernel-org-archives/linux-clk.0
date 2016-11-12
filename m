@@ -1,59 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:51172 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751522AbcKPOIF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 09:08:05 -0500
-Date: Wed, 16 Nov 2016 17:07:02 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: stephen.boyd@linaro.org
-Cc: linux-clk@vger.kernel.org
-Subject: [bug report] clk: berlin: Migrate to clk_hw based registration and
- OF APIs
-Message-ID: <20161116140701.GA20563@mwanda>
+Return-Path: <jacobchen110@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com>
+References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com>
+From: =?UTF-8?B?6ZmI6LGq?= <jacobchen110@gmail.com>
+Date: Sun, 13 Nov 2016 00:02:20 +0800
+Message-ID: <CAFLEztT+mCNqxKnaHYKYwKPPwiBH9fxJEcKAzio6oV0oW81eGw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Add basic support for support for Rockchip RK1108 SOC
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, robh+dt@kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>, linux-clk@vger.kernel.org,
+	briannorris@chromium.org, linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-gpio@vger.kernel.org, linux@armlinux.org.uk,
+	linux-arm-kernel@lists.infradead.org, ulf.hansson@linaro.org,
+	linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+	elaine.zhang@rock-chips.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen Boyd,
+patches 1-5 on rk1108-cvr-v10 board.
+Tested-by: Jacob Chen <jacob2.chen@rock-chips.com>
 
-The patch f6475e298297: "clk: berlin: Migrate to clk_hw based
-registration and OF APIs" from Aug 16, 2016, leads to the following
-static checker warning:
-
-	drivers/clk/berlin/bg2.c:688 berlin2_clock_setup()
-	warn: did you mean to pass the address of 'clk_data'
-
-drivers/clk/berlin/bg2.c
-   674          hws[CLKID_TWD] =
-   675                  clk_hw_register_fixed_factor(NULL, "twd", "cpu", 0, 1, 3);
-   676  
-   677          /* check for errors on leaf clocks */
-   678          for (n = 0; n < MAX_CLKS; n++) {
-   679                  if (!IS_ERR(hws[n]))
-   680                          continue;
-   681  
-   682                  pr_err("%s: Unable to register leaf clock %d\n",
-   683                         np->full_name, n);
-   684                  goto bg2_fail;
-   685          }
-   686  
-   687          /* register clk-provider */
-   688          of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data);
-                                                                  ^^^^^^^^^
-Pretty sure this was overlooked when we switched to allocating this
-with kmalloc().  Should just be passing clk_data.  Same for the
-following warnings as well:
-
-drivers/clk/berlin/bg2q.c:385 berlin2q_clock_setup() warn: did you mean to pass the address of 'clk_data'
-drivers/clk/clk-efm32gg.c:85 efm32gg_cmu_init() warn: did you mean to pass the address of 'clk_data'
-
-   689  
-   690          return;
-   691  
-   692  bg2_fail:
-   693          iounmap(gbase);
-   694  }
-
-regards,
-dan carpenter
+2016-11-03 20:26 GMT+08:00 Andy Yan <andy.yan@rock-chips.com>:
+>
+> RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
+> It is designed for varies application scenario such as car DVR, sports
+> DV, secure camera and UAV camera.
+> This patch series add basic support for it, which can boot a board with
+> initramfs into shell.
+> More new feathers will come soon.
+>
+>
+> Andy Yan (4):
+>   pinctrl: rockchip: add support for rk1108
+>   ARM: dts: add basic support for Rockchip RK1108 SOC
+>   ARM: add low level debug uart for rk1108
+>   ARM: dts: rockchip: add rockchip RK1108 Evaluation board
+>
+> Shawn Lin (2):
+>   dt-bindings: rockchip-dw-mshc: add RK1108 dw-mshc description
+>   clk: rockchip: add clock controller for rk1108
+>
+>  Documentation/devicetree/bindings/arm/rockchip.txt |   3 +
+>  .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   1 +
+>  arch/arm/Kconfig.debug                             |  30 ++
+>  arch/arm/boot/dts/Makefile                         |   1 +
+>  arch/arm/boot/dts/rk1108-evb.dts                   |  69 +++
+>  arch/arm/boot/dts/rk1108.dtsi                      | 420 +++++++++++++++++++
+>  arch/arm/mach-rockchip/rockchip.c                  |   1 +
+>  drivers/clk/rockchip/Makefile                      |   1 +
+>  drivers/clk/rockchip/clk-rk1108.c                  | 463 +++++++++++++++++++++
+>  drivers/clk/rockchip/clk.h                         |  14 +
+>  drivers/pinctrl/pinctrl-rockchip.c                 |  27 +-
+>  include/dt-bindings/clock/rk1108-cru.h             | 308 ++++++++++++++
+>  12 files changed, 1337 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/rk1108-evb.dts
+>  create mode 100644 arch/arm/boot/dts/rk1108.dtsi
+>  create mode 100644 drivers/clk/rockchip/clk-rk1108.c
+>  create mode 100644 include/dt-bindings/clock/rk1108-cru.h
+>
+> --
+> 2.7.4
+>
+>
