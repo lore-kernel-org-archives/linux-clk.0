@@ -1,55 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 4 Nov 2016 13:35:15 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 10/10] clk: ti: make clk-dra7-atl explicitly non-modular
-Message-ID: <20161104203515.GJ16026@codeaurora.org>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-11-paul.gortmaker@windriver.com>
+Return-Path: <Xiaolong.Zhang@spreadtrum.com>
+Date: Sat, 12 Nov 2016 13:19:08 +0800
+From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <mturquette@baylibre.com>, <orson.zhai@spreadtrum.com>,
+        <baolin.wang@spreadtrum.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ben.li@spreadtrum.com>
+Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
+ fixed-factor clocks
+Message-ID: <20161112051907.GA8514@spreadtrum.com>
+References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+ <20161020230103.GD26139@codeaurora.org>
+ <20161022081448.GB32560@spreadtrum.com>
+ <20161025204008.GE26139@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160704211220.5685-11-paul.gortmaker@windriver.com>
+Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20161025204008.GE26139@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/04, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
+On 二, 10月 25, 2016 at 08:40:08下午 +0000, Stephen Boyd wrote:
+> On 10/22, Xiaolong Zhang wrote:
+> > On 四, 10月 20, 2016 at 04:01:03下午 -0700, Stephen Boyd wrote:
+> > > On 10/11, Orson Zhai wrote:
+> > > > From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+> > > > 
+> > > > When common kernel setups fixed clock, of_clk_provider will be registerred.
+> > > > But there is no clkdev being registerred at the same time. This will make
+> > > > it difficult to get the clock by using clk_get(NULL, con_id).
+> > > > 
+> > > > Add clkdev register for fixed-rate and fixed-factor clock and ignore
+> > > > the error if any.
+> > > > 
+> > > > Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+> > > > Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
+> > > > ---
+> > > 
+> > > Why are we using clkdev lookups for clks populated from DT?
+> > > Shouldn't we be able to point to them from the consumers that
+> > > would also be in DT? I'm a little lost.
+> > > 
+> > The clk_get interface allows the first argument as NULL. We just assure
+> > consumers can get the clock from DT or by clock name.
 > 
-> arch/arm/mach-omap2/Kconfig:config SOC_DRA7XX
-> arch/arm/mach-omap2/Kconfig:    bool "TI DRA7XX"
-> 
-> ...meaning that it currently is not being built as a module by anyone.
-> 
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
-> 
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
-> 
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
-> 
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> We also delete the MODULE_LICENSE tags etc. since all that information
-> is already contained at the top of the file in the comments.
-> 
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
+> Ok. The first argument to clk_get() really shouldn't be NULL. It
+> should be the device pointer for the device that is associated
+> with the clk you want to get. The clock name (second argument to
+> clk_get()) should be device specific and not some globally unique
+> identifier. It seems that you're using the clk_get() API
+> incorrectly.
+>
+Sorry for late reply.
+There are two paths in clk_get:
+a) dev is not NULL, the calling procedure is as following
+clk_get(dev, con_id)
+--->of_clk_get_by_name(dev->of_node, con_id)
 
-Applied to clk-next
+b) dev is NULL, the calling procedure is as following
+clk_dev(NULL, con_id)
+--->clk_get_sys(NULL, con_id)
+    --->clk_find(NULL, con_id)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I just cann't understand why you say the first argument shouldn't
+be NULL. Is there other consideration in CCF?
+
+Thanks
+
+Xiaolong Zhang
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
