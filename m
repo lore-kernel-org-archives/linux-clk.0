@@ -1,53 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47100 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751966AbcKQXDz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2016 18:03:55 -0500
-Date: Thu, 17 Nov 2016 15:03:52 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, andy.gross@linaro.org,
-        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com
-Subject: Re: [PATCH v8 05/16] dt-bindings: sdhci-msm: Add xo property
-Message-ID: <20161117230352.GO25626@codeaurora.org>
-References: <20161116191335.GH25626@codeaurora.org>
- <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
+	<fabio.estevam@nxp.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
+Date: Mon, 14 Nov 2016 06:35:43 +0000
+Message-ID: <HE1PR04MB1450297765B98A84BB81AB428BBC0@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
+ <1478584614-12054-2-git-send-email-peter.chen@nxp.com>
+ <20161114054833.GG3310@dragon>
+ <HE1PR04MB14509BFD0CBA838BC1EA7D598BBC0@HE1PR04MB1450.eurprd04.prod.outlook.com>
+ <20161114061311.GA14956@dragon>
+In-Reply-To: <20161114061311.GA14956@dragon>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/17, Ritesh Harjani wrote:
-> Add "xo" property which is tcxo clock.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index 485483a..4e61086 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -17,6 +17,7 @@ Required properties:
->  	"iface" - Main peripheral bus clock (PCLK/HCLK - AHB Bus clock) (required)
->  	"core"	- SDC MMC clock (MCLK) (required)
->  	"bus"	- SDCC bus voter clock (optional)
-> +	"xo" - TCXO clock (optional)
+=20
+>On Mon, Nov 14, 2016 at 05:59:01AM +0000, Peter Chen wrote:
+>> The main difference is compatible string, I can't include two
+>> compatible strings in one dts file, the dts build will fail for that.
+>>
+>> imx6ull-14x14-evk.dts
+>> / {
+>>         model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
+>>         compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull"; };
+>>
+>> imx6ul-14x14-evk.dts
+>> / {
+>>         model =3D "Freescale i.MX6 UltraLite 14x14 EVK Board";
+>>         compatible =3D "fsl,imx6ul-14x14-evk", "fsl,imx6ul"; };
+>
+>I created imx6ull-14x14-evk.dts like below, and DTC seems happy with it.
+>
+>#include "imx6ul-14x14-evk.dts"
+>
+>/ {
+>        model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
+>        compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull"; };
+>
 
-Seems everything else is tabbed before the dash. Otherwise,
+Thanks for trying it, the problem why my dtc building fail is I have two
+" /dts-v1/;" at dts file (one is from imx6ul-14x14-evk.dts) . I will follow=
+ your suggestion.
 
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Peter
