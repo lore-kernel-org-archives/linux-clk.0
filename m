@@ -1,758 +1,450 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v9 1/3] clk: qcom: Add support for SMD-RPM Clocks
-Date: Wed,  2 Nov 2016 17:56:56 +0200
-Message-Id: <20161102155658.32203-2-georgi.djakov@linaro.org>
-In-Reply-To: <20161102155658.32203-1-georgi.djakov@linaro.org>
-References: <20161102155658.32203-1-georgi.djakov@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <yanhaifeng@hisilicon.com>, <wenpan@hisilicon.com>,
+        <howell.yang@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <qinxiaojun@huawei.com>
+Subject: [RESEND 2/2] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
+Date: Mon, 14 Nov 2016 10:49:54 +0800
+Message-ID: <1479091794-1145-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds initial support for clocks controlled by the Resource
-Power Manager (RPM) processor on some Qualcomm SoCs, which use
-the qcom_smd_rpm driver to communicate with RPM.
-Such platforms are msm8916, apq8084 and msm8974.
+Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
+Generator) module generates clock and reset signals used
+by other module blocks on SoC.
 
-The RPM is a dedicated hardware engine for managing the shared
-SoC resources in order to keep the lowest power profile. It
-communicates with other hardware subsystems via shared memory
-and accepts clock requests, aggregates the requests and turns
-the clocks on/off or scales them on demand.
-
-This driver is based on the codeaurora.org driver:
-https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |  36 ++
- drivers/clk/qcom/Kconfig                           |  16 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 571 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             |  45 ++
- 5 files changed, 669 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
- create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
+ drivers/clk/hisilicon/Kconfig                 |   8 +
+ drivers/clk/hisilicon/Makefile                |   1 +
+ drivers/clk/hisilicon/crg-hi3516cv300.c       | 330 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/hi3516cv300-clock.h |  48 ++++
+ 4 files changed, 387 insertions(+)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3516cv300.c
+ create mode 100644 include/dt-bindings/clock/hi3516cv300-clock.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-new file mode 100644
-index 000000000000..e3e13226d798
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -0,0 +1,36 @@
-+Qualcomm RPM Clock Controller Binding
-+------------------------------------------------
-+The RPM is a dedicated hardware engine for managing the shared
-+SoC resources in order to keep the lowest power profile. It
-+communicates with other hardware subsystems via shared memory
-+and accepts clock requests, aggregates the requests and turns
-+the clocks on/off or scales them on demand.
-+
-+Required properties :
-+- compatible : shall contain only one of the following. The generic
-+               compatible "qcom,rpmcc" should be also included.
-+
-+			"qcom,rpmcc-msm8916", "qcom,rpmcc"
-+
-+- #clock-cells : shall contain 1
-+
-+Example:
-+	smd {
-+		compatible = "qcom,smd";
-+
-+		rpm {
-+			interrupts = <0 168 1>;
-+			qcom,ipc = <&apcs 8 0>;
-+			qcom,smd-edge = <15>;
-+
-+			rpm_requests {
-+				compatible = "qcom,rpm-msm8916";
-+				qcom,smd-channels = "rpm_requests";
-+
-+				rpmcc: clock-controller {
-+					compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
-+					#clock-cells = <1>;
-+				};
-+			};
-+		};
-+	};
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 0146d3c2547f..b537c59dcfe6 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -2,6 +2,9 @@ config QCOM_GDSC
- 	bool
- 	select PM_GENERIC_DOMAINS if PM
- 
-+config QCOM_RPMCC
-+	bool
-+
- config COMMON_CLK_QCOM
- 	tristate "Support for Qualcomm's clock controllers"
- 	depends on OF
-@@ -9,6 +12,19 @@ config COMMON_CLK_QCOM
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
- 
-+config QCOM_CLK_SMD_RPM
-+	tristate "RPM over SMD based Clock Controller"
-+	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
-+	select QCOM_RPMCC
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index c41b6d2..f80773b 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -1,3 +1,11 @@
++config COMMON_CLK_HI3516CV300
++	tristate "HI3516CV300 Clock Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	select RESET_HISI
++	default ARCH_HISI
 +	help
-+	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-+	  managing the shared SoC resources in order to keep the lowest power
-+	  profile. It communicates with other hardware subsystems via shared
-+	  memory and accepts clock requests, aggregates the requests and turns
-+	  the clocks on/off or scales them on demand.
-+	  Say Y if you want to support the clocks exposed by the RPM on
-+	  platforms such as apq8016, apq8084, msm8974 etc.
++	  Build the clock driver for hi3516cv300.
 +
- config APQ_GCC_8084
- 	tristate "APQ8084 Global Clock Controller"
- 	select QCOM_GDSC
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 1fb1f5476cb0..0dd72e56b7e4 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -29,3 +29,4 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+ config COMMON_CLK_HI3519
+ 	tristate "Hi3519 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 5819891..4eec5e5 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -7,6 +7,7 @@ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
++obj-$(CONFIG_COMMON_CLK_HI3516CV300)	+= crg-hi3516cv300.o
+ obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+ obj-$(CONFIG_COMMON_CLK_HI3798CV200)	+= crg-hi3798cv200.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+diff --git a/drivers/clk/hisilicon/crg-hi3516cv300.c b/drivers/clk/hisilicon/crg-hi3516cv300.c
 new file mode 100644
-index 000000000000..8aba9ab2ccfd
+index 0000000..2007123
 --- /dev/null
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -0,0 +1,571 @@
++++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
+@@ -0,0 +1,330 @@
 +/*
-+ * Copyright (c) 2016, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ * Hi3516CV300 Clock and Reset Generator Driver
 + *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
++ * Copyright (c) 2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
++#include <dt-bindings/clock/hi3516cv300-clock.h>
 +#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
 +#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
 +#include <linux/of_device.h>
 +#include <linux/platform_device.h>
-+#include <linux/soc/qcom/smd-rpm.h>
++#include "clk.h"
++#include "crg.h"
++#include "reset.h"
 +
-+#include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/mfd/qcom-rpm.h>
++/* hi3516CV300 core CRG */
++#define HI3516CV300_INNER_CLK_OFFSET	64
++#define HI3516CV300_FIXED_3M		65
++#define HI3516CV300_FIXED_6M		66
++#define HI3516CV300_FIXED_24M		67
++#define HI3516CV300_FIXED_49P5		68
++#define HI3516CV300_FIXED_50M		69
++#define HI3516CV300_FIXED_83P3M		70
++#define HI3516CV300_FIXED_99M		71
++#define HI3516CV300_FIXED_100M		72
++#define HI3516CV300_FIXED_148P5M	73
++#define HI3516CV300_FIXED_198M		74
++#define HI3516CV300_FIXED_297M		75
++#define HI3516CV300_UART_MUX		76
++#define HI3516CV300_FMC_MUX		77
++#define HI3516CV300_MMC0_MUX		78
++#define HI3516CV300_MMC1_MUX		79
++#define HI3516CV300_MMC2_MUX		80
++#define HI3516CV300_MMC3_MUX		81
++#define HI3516CV300_PWM_MUX		82
++#define HI3516CV300_CRG_NR_CLKS		128
 +
-+#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
-+#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
-+#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
-+#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
-+#define QCOM_RPM_SMD_KEY_STATE				0x54415453
-+#define QCOM_RPM_SCALING_ENABLE_ID			0x2
-+
-+#define __DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id, stat_id,  \
-+			     key)					      \
-+	static struct clk_smd_rpm _platform##_##_active;		      \
-+	static struct clk_smd_rpm _platform##_##_name = {		      \
-+		.rpm_res_type = (type),					      \
-+		.rpm_clk_id = (r_id),					      \
-+		.rpm_status_id = (stat_id),				      \
-+		.rpm_key = (key),					      \
-+		.peer = &_platform##_##_active,				      \
-+		.rate = INT_MAX,					      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_smd_rpm_ops,			      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "xo_board" },       \
-+			.num_parents = 1,				      \
-+		},							      \
-+	};								      \
-+	static struct clk_smd_rpm _platform##_##_active = {		      \
-+		.rpm_res_type = (type),					      \
-+		.rpm_clk_id = (r_id),					      \
-+		.rpm_status_id = (stat_id),				      \
-+		.active_only = true,					      \
-+		.rpm_key = (key),					      \
-+		.peer = &_platform##_##_name,				      \
-+		.rate = INT_MAX,					      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_smd_rpm_ops,			      \
-+			.name = #_active,				      \
-+			.parent_names = (const char *[]){ "xo_board" },	      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
-+
-+#define __DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id,    \
-+				    stat_id, r, key)			      \
-+	static struct clk_smd_rpm _platform##_##_active;		      \
-+	static struct clk_smd_rpm _platform##_##_name = {		      \
-+		.rpm_res_type = (type),					      \
-+		.rpm_clk_id = (r_id),					      \
-+		.rpm_status_id = (stat_id),				      \
-+		.rpm_key = (key),					      \
-+		.branch = true,						      \
-+		.peer = &_platform##_##_active,				      \
-+		.rate = (r),						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_smd_rpm_branch_ops,			      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "xo_board" },	      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	};								      \
-+	static struct clk_smd_rpm _platform##_##_active = {		      \
-+		.rpm_res_type = (type),					      \
-+		.rpm_clk_id = (r_id),					      \
-+		.rpm_status_id = (stat_id),				      \
-+		.active_only = true,					      \
-+		.rpm_key = (key),					      \
-+		.branch = true,						      \
-+		.peer = &_platform##_##_name,				      \
-+		.rate = (r),						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_smd_rpm_branch_ops,			      \
-+			.name = #_active,				      \
-+			.parent_names = (const char *[]){ "xo_board" },	      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
-+
-+#define DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id)	      \
-+		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
-+		0, QCOM_RPM_SMD_KEY_RATE)
-+
-+#define DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type, r_id, r)   \
-+		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active, type,  \
-+		r_id, 0, r, QCOM_RPM_SMD_KEY_ENABLE)
-+
-+#define DEFINE_CLK_SMD_RPM_QDSS(_platform, _name, _active, type, r_id)	      \
-+		__DEFINE_CLK_SMD_RPM(_platform, _name, _active, type, r_id,   \
-+		0, QCOM_RPM_SMD_KEY_STATE)
-+
-+#define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_id)	      \
-+		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
-+		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
-+		QCOM_RPM_KEY_SOFTWARE_ENABLE)
-+
-+#define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _active, r_id) \
-+		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
-+		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
-+		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
-+
-+#define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
-+
-+struct clk_smd_rpm {
-+	const int rpm_res_type;
-+	const int rpm_key;
-+	const int rpm_clk_id;
-+	const int rpm_status_id;
-+	const bool active_only;
-+	bool enabled;
-+	bool branch;
-+	struct clk_smd_rpm *peer;
-+	struct clk_hw hw;
-+	unsigned long rate;
-+	struct qcom_smd_rpm *rpm;
++static const struct hisi_fixed_rate_clock hi3516cv300_fixed_rate_clks[] = {
++	{ HI3516CV300_FIXED_3M, "3m", NULL, 0, 3000000, },
++	{ HI3516CV300_FIXED_6M, "6m", NULL, 0, 6000000, },
++	{ HI3516CV300_FIXED_24M, "24m", NULL, 0, 24000000, },
++	{ HI3516CV300_FIXED_49P5, "49.5m", NULL, 0, 49500000, },
++	{ HI3516CV300_FIXED_50M, "50m", NULL, 0, 50000000, },
++	{ HI3516CV300_FIXED_83P3M, "83.3m", NULL, 0, 83300000, },
++	{ HI3516CV300_FIXED_99M, "99m", NULL, 0, 99000000, },
++	{ HI3516CV300_FIXED_100M, "100m", NULL, 0, 100000000, },
++	{ HI3516CV300_FIXED_148P5M, "148.5m", NULL, 0, 148500000, },
++	{ HI3516CV300_FIXED_198M, "198m", NULL, 0, 198000000, },
++	{ HI3516CV300_FIXED_297M, "297m", NULL, 0, 297000000, },
++	{ HI3516CV300_APB_CLK, "apb", NULL, 0, 50000000, },
 +};
 +
-+struct clk_smd_rpm_req {
-+	__le32 key;
-+	__le32 nbytes;
-+	__le32 value;
++static const char *const uart_mux_p[] = {"24m", "6m"};
++static const char *const fmc_mux_p[] = {
++	"24m", "83.3m", "148.5m", "198m", "297m"
++};
++static const char *const mmc_mux_p[] = {"49.5m"};
++static const char *const mmc2_mux_p[] = {"99m", "49.5m"};
++static const char *const pwm_mux_p[] = {"3m", "50m", "24m", "24m"};
++
++static u32 uart_mux_table[] = {0, 1};
++static u32 fmc_mux_table[] = {0, 1, 2, 3, 4};
++static u32 mmc_mux_table[] = {0};
++static u32 mmc2_mux_table[] = {0, 2};
++static u32 pwm_mux_table[] = {0, 1, 2, 3};
++
++static const struct hisi_mux_clock hi3516cv300_mux_clks[] = {
++	{ HI3516CV300_UART_MUX, "uart_mux", uart_mux_p, ARRAY_SIZE(uart_mux_p),
++		CLK_SET_RATE_PARENT, 0xe4, 19, 1, 0, uart_mux_table, },
++	{ HI3516CV300_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
++	{ HI3516CV300_MMC0_MUX, "mmc0_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc4, 4, 2, 0, mmc_mux_table, },
++	{ HI3516CV300_MMC1_MUX, "mmc1_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc4, 12, 2, 0, mmc_mux_table, },
++	{ HI3516CV300_MMC2_MUX, "mmc2_mux", mmc2_mux_p, ARRAY_SIZE(mmc2_mux_p),
++		CLK_SET_RATE_PARENT, 0xc4, 20, 2, 0, mmc2_mux_table, },
++	{ HI3516CV300_MMC3_MUX, "mmc3_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc8, 4, 2, 0, mmc_mux_table, },
++	{ HI3516CV300_PWM_MUX, "pwm_mux", pwm_mux_p, ARRAY_SIZE(pwm_mux_p),
++		CLK_SET_RATE_PARENT, 0x38, 2, 2, 0, pwm_mux_table, },
 +};
 +
-+struct rpm_cc {
-+	struct qcom_rpm *rpm;
-+	struct clk_hw_onecell_data data;
-+	struct clk_hw *hws[];
++static const struct hisi_gate_clock hi3516cv300_gate_clks[] = {
++
++	{ HI3516CV300_UART0_CLK, "clk_uart0", "uart_mux", CLK_SET_RATE_PARENT,
++		0xe4, 15, 0, },
++	{ HI3516CV300_UART1_CLK, "clk_uart1", "uart_mux", CLK_SET_RATE_PARENT,
++		0xe4, 16, 0, },
++	{ HI3516CV300_UART2_CLK, "clk_uart2", "uart_mux", CLK_SET_RATE_PARENT,
++		0xe4, 17, 0, },
++
++	{ HI3516CV300_SPI0_CLK, "clk_spi0", "100m", CLK_SET_RATE_PARENT,
++		0xe4, 13, 0, },
++	{ HI3516CV300_SPI1_CLK, "clk_spi1", "100m", CLK_SET_RATE_PARENT,
++		0xe4, 14, 0, },
++
++	{ HI3516CV300_FMC_CLK, "clk_fmc", "fmc_mux", CLK_SET_RATE_PARENT,
++		0xc0, 1, 0, },
++	{ HI3516CV300_MMC0_CLK, "clk_mmc0", "mmc0_mux", CLK_SET_RATE_PARENT,
++		0xc4, 1, 0, },
++	{ HI3516CV300_MMC1_CLK, "clk_mmc1", "mmc1_mux", CLK_SET_RATE_PARENT,
++		0xc4, 9, 0, },
++	{ HI3516CV300_MMC2_CLK, "clk_mmc2", "mmc2_mux", CLK_SET_RATE_PARENT,
++		0xc4, 17, 0, },
++	{ HI3516CV300_MMC3_CLK, "clk_mmc3", "mmc3_mux", CLK_SET_RATE_PARENT,
++		0xc8, 1, 0, },
++
++	{ HI3516CV300_ETH_CLK, "clk_eth", NULL, 0, 0xec, 1, 0, },
++
++	{ HI3516CV300_DMAC_CLK, "clk_dmac", NULL, 0, 0xd8, 5, 0, },
++	{ HI3516CV300_PWM_CLK, "clk_pwm", "pwm_mux", CLK_SET_RATE_PARENT,
++		0x38, 1, 0, },
++
++	{ HI3516CV300_USB2_BUS_CLK, "clk_usb2_bus", NULL, 0, 0xb8, 0, 0, },
++	{ HI3516CV300_USB2_OHCI48M_CLK, "clk_usb2_ohci48m", NULL, 0,
++		0xb8, 1, 0, },
++	{ HI3516CV300_USB2_OHCI12M_CLK, "clk_usb2_ohci12m", NULL, 0,
++		0xb8, 2, 0, },
++	{ HI3516CV300_USB2_OTG_UTMI_CLK, "clk_usb2_otg_utmi", NULL, 0,
++		0xb8, 3, 0, },
++	{ HI3516CV300_USB2_HST_PHY_CLK, "clk_usb2_hst_phy", NULL, 0,
++		0xb8, 4, 0, },
++	{ HI3516CV300_USB2_UTMI0_CLK, "clk_usb2_utmi0", NULL, 0, 0xb8, 5, 0, },
++	{ HI3516CV300_USB2_PHY_CLK, "clk_usb2_phy", NULL, 0, 0xb8, 7, 0, },
 +};
 +
-+struct rpm_smd_clk_desc {
-+	struct clk_smd_rpm **clks;
-+	size_t num_clks;
-+};
-+
-+static DEFINE_MUTEX(rpm_smd_clk_lock);
-+
-+static int clk_smd_rpm_handoff(struct clk_smd_rpm *r)
++static struct hisi_clock_data *hi3516cv300_clk_register(
++		struct platform_device *pdev)
 +{
-+	int ret;
-+	struct clk_smd_rpm_req req = {
-+		.key = cpu_to_le32(r->rpm_key),
-+		.nbytes = cpu_to_le32(sizeof(u32)),
-+		.value = cpu_to_le32(INT_MAX),
-+	};
-+
-+	ret = qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
-+				 r->rpm_res_type, r->rpm_clk_id, &req,
-+				 sizeof(req));
-+	if (ret)
-+		return ret;
-+	ret = qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_SLEEP_STATE,
-+				 r->rpm_res_type, r->rpm_clk_id, &req,
-+				 sizeof(req));
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int clk_smd_rpm_set_rate_active(struct clk_smd_rpm *r,
-+				       unsigned long rate)
-+{
-+	struct clk_smd_rpm_req req = {
-+		.key = cpu_to_le32(r->rpm_key),
-+		.nbytes = cpu_to_le32(sizeof(u32)),
-+		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
-+	};
-+
-+	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
-+				  r->rpm_res_type, r->rpm_clk_id, &req,
-+				  sizeof(req));
-+}
-+
-+static int clk_smd_rpm_set_rate_sleep(struct clk_smd_rpm *r,
-+				      unsigned long rate)
-+{
-+	struct clk_smd_rpm_req req = {
-+		.key = cpu_to_le32(r->rpm_key),
-+		.nbytes = cpu_to_le32(sizeof(u32)),
-+		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
-+	};
-+
-+	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_SLEEP_STATE,
-+				  r->rpm_res_type, r->rpm_clk_id, &req,
-+				  sizeof(req));
-+}
-+
-+static void to_active_sleep(struct clk_smd_rpm *r, unsigned long rate,
-+			    unsigned long *active, unsigned long *sleep)
-+{
-+	*active = rate;
-+
-+	/*
-+	 * Active-only clocks don't care what the rate is during sleep. So,
-+	 * they vote for zero.
-+	 */
-+	if (r->active_only)
-+		*sleep = 0;
-+	else
-+		*sleep = *active;
-+}
-+
-+static int clk_smd_rpm_prepare(struct clk_hw *hw)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+	struct clk_smd_rpm *peer = r->peer;
-+	unsigned long this_rate = 0, this_sleep_rate = 0;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	unsigned long active_rate, sleep_rate;
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_smd_clk_lock);
-+
-+	/* Don't send requests to the RPM if the rate has not been set. */
-+	if (!r->rate)
-+		goto out;
-+
-+	to_active_sleep(r, r->rate, &this_rate, &this_sleep_rate);
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate,
-+				&peer_rate, &peer_sleep_rate);
-+
-+	active_rate = max(this_rate, peer_rate);
-+
-+	if (r->branch)
-+		active_rate = !!active_rate;
-+
-+	ret = clk_smd_rpm_set_rate_active(r, active_rate);
-+	if (ret)
-+		goto out;
-+
-+	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
-+	if (r->branch)
-+		sleep_rate = !!sleep_rate;
-+
-+	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
-+	if (ret)
-+		/* Undo the active set vote and restore it */
-+		ret = clk_smd_rpm_set_rate_active(r, peer_rate);
-+
-+out:
-+	if (!ret)
-+		r->enabled = true;
-+
-+	mutex_unlock(&rpm_smd_clk_lock);
-+
-+	return ret;
-+}
-+
-+static void clk_smd_rpm_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+	struct clk_smd_rpm *peer = r->peer;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	unsigned long active_rate, sleep_rate;
++	struct hisi_clock_data *clk_data;
 +	int ret;
 +
-+	mutex_lock(&rpm_smd_clk_lock);
++	clk_data = hisi_clk_alloc(pdev, HI3516CV300_CRG_NR_CLKS);
++	if (!clk_data)
++		return ERR_PTR(-ENOMEM);
 +
-+	if (!r->rate)
-+		goto out;
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate, &peer_rate,
-+				&peer_sleep_rate);
-+
-+	active_rate = r->branch ? !!peer_rate : peer_rate;
-+	ret = clk_smd_rpm_set_rate_active(r, active_rate);
++	ret = hisi_clk_register_fixed_rate(hi3516cv300_fixed_rate_clks,
++			ARRAY_SIZE(hi3516cv300_fixed_rate_clks), clk_data);
 +	if (ret)
-+		goto out;
++		return ERR_PTR(ret);
 +
-+	sleep_rate = r->branch ? !!peer_sleep_rate : peer_sleep_rate;
-+	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
++	ret = hisi_clk_register_mux(hi3516cv300_mux_clks,
++			ARRAY_SIZE(hi3516cv300_mux_clks), clk_data);
 +	if (ret)
-+		goto out;
++		goto unregister_fixed_rate;
 +
-+	r->enabled = false;
++	ret = hisi_clk_register_gate(hi3516cv300_gate_clks,
++			ARRAY_SIZE(hi3516cv300_gate_clks), clk_data);
++	if (ret)
++		goto unregister_mux;
 +
-+out:
-+	mutex_unlock(&rpm_smd_clk_lock);
++	ret = of_clk_add_provider(pdev->dev.of_node,
++			of_clk_src_onecell_get, &clk_data->clk_data);
++	if (ret)
++		goto unregister_gate;
++
++	return clk_data;
++
++unregister_gate:
++	hisi_clk_unregister_gate(hi3516cv300_gate_clks,
++				ARRAY_SIZE(hi3516cv300_gate_clks), clk_data);
++unregister_mux:
++	hisi_clk_unregister_mux(hi3516cv300_mux_clks,
++			ARRAY_SIZE(hi3516cv300_mux_clks), clk_data);
++unregister_fixed_rate:
++	hisi_clk_unregister_fixed_rate(hi3516cv300_fixed_rate_clks,
++			ARRAY_SIZE(hi3516cv300_fixed_rate_clks), clk_data);
++	return ERR_PTR(ret);
 +}
 +
-+static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
++static void hi3516cv300_clk_unregister(struct platform_device *pdev)
 +{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+	struct clk_smd_rpm *peer = r->peer;
-+	unsigned long active_rate, sleep_rate;
-+	unsigned long this_rate = 0, this_sleep_rate = 0;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	int ret = 0;
++	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
 +
-+	mutex_lock(&rpm_smd_clk_lock);
++	of_clk_del_provider(pdev->dev.of_node);
 +
-+	if (!r->enabled)
-+		goto out;
-+
-+	to_active_sleep(r, rate, &this_rate, &this_sleep_rate);
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate,
-+				&peer_rate, &peer_sleep_rate);
-+
-+	active_rate = max(this_rate, peer_rate);
-+	ret = clk_smd_rpm_set_rate_active(r, active_rate);
-+	if (ret)
-+		goto out;
-+
-+	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
-+	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
-+	if (ret)
-+		goto out;
-+
-+	r->rate = rate;
-+
-+out:
-+	mutex_unlock(&rpm_smd_clk_lock);
-+
-+	return ret;
++	hisi_clk_unregister_gate(hi3516cv300_gate_clks,
++			ARRAY_SIZE(hi3516cv300_gate_clks), crg->clk_data);
++	hisi_clk_unregister_mux(hi3516cv300_mux_clks,
++			ARRAY_SIZE(hi3516cv300_mux_clks), crg->clk_data);
++	hisi_clk_unregister_fixed_rate(hi3516cv300_fixed_rate_clks,
++			ARRAY_SIZE(hi3516cv300_fixed_rate_clks), crg->clk_data);
 +}
 +
-+static long clk_smd_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long *parent_rate)
-+{
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate is requested.
-+	 */
-+	return rate;
-+}
++static const struct hisi_crg_funcs hi3516cv300_crg_funcs = {
++	.register_clks = hi3516cv300_clk_register,
++	.unregister_clks = hi3516cv300_clk_unregister,
++};
 +
-+static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
++/* hi3516CV300 sysctrl CRG */
++#define HI3516CV300_SYSCTRL_NR_CLKS 16
 +
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate was set.
-+	 */
-+	return r->rate;
-+}
++static const char *wdt_mux_p[] __initconst = { "3m", "apb" };
++static u32 wdt_mux_table[] = {0, 1};
 +
-+static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
++static const struct hisi_mux_clock hi3516cv300_sysctrl_mux_clks[] = {
++	{ HI3516CV300_WDT_CLK, "wdt", wdt_mux_p, ARRAY_SIZE(wdt_mux_p),
++		CLK_SET_RATE_PARENT, 0x0, 23, 1, 0, wdt_mux_table, },
++};
++
++static struct hisi_clock_data *hi3516cv300_sysctrl_clk_register(
++		struct platform_device *pdev)
 +{
++	struct hisi_clock_data *clk_data;
 +	int ret;
-+	struct clk_smd_rpm_req req = {
-+		.key = cpu_to_le32(QCOM_RPM_SMD_KEY_ENABLE),
-+		.nbytes = cpu_to_le32(sizeof(u32)),
-+		.value = cpu_to_le32(1),
-+	};
 +
-+	ret = qcom_rpm_smd_write(rpm, QCOM_SMD_RPM_SLEEP_STATE,
-+				 QCOM_SMD_RPM_MISC_CLK,
-+				 QCOM_RPM_SCALING_ENABLE_ID, &req, sizeof(req));
-+	if (ret) {
-+		pr_err("RPM clock scaling (sleep set) not enabled!\n");
-+		return ret;
-+	}
++	clk_data = hisi_clk_alloc(pdev, HI3516CV300_SYSCTRL_NR_CLKS);
++	if (!clk_data)
++		return ERR_PTR(-ENOMEM);
 +
-+	ret = qcom_rpm_smd_write(rpm, QCOM_SMD_RPM_ACTIVE_STATE,
-+				 QCOM_SMD_RPM_MISC_CLK,
-+				 QCOM_RPM_SCALING_ENABLE_ID, &req, sizeof(req));
-+	if (ret) {
-+		pr_err("RPM clock scaling (active set) not enabled!\n");
-+		return ret;
-+	}
++	ret = hisi_clk_register_mux(hi3516cv300_sysctrl_mux_clks,
++			ARRAY_SIZE(hi3516cv300_sysctrl_mux_clks), clk_data);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+	pr_debug("%s: RPM clock scaling is enabled\n", __func__);
-+	return 0;
++
++	ret = of_clk_add_provider(pdev->dev.of_node,
++			of_clk_src_onecell_get, &clk_data->clk_data);
++	if (ret)
++		goto unregister_mux;
++
++	return clk_data;
++
++unregister_mux:
++	hisi_clk_unregister_mux(hi3516cv300_sysctrl_mux_clks,
++			ARRAY_SIZE(hi3516cv300_sysctrl_mux_clks), clk_data);
++	return ERR_PTR(ret);
 +}
 +
-+static const struct clk_ops clk_smd_rpm_ops = {
-+	.prepare	= clk_smd_rpm_prepare,
-+	.unprepare	= clk_smd_rpm_unprepare,
-+	.set_rate	= clk_smd_rpm_set_rate,
-+	.round_rate	= clk_smd_rpm_round_rate,
-+	.recalc_rate	= clk_smd_rpm_recalc_rate,
++static void hi3516cv300_sysctrl_clk_unregister(struct platform_device *pdev)
++{
++	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++
++	hisi_clk_unregister_mux(hi3516cv300_sysctrl_mux_clks,
++			ARRAY_SIZE(hi3516cv300_sysctrl_mux_clks),
++			crg->clk_data);
++}
++
++static const struct hisi_crg_funcs hi3516cv300_sysctrl_funcs = {
++	.register_clks = hi3516cv300_sysctrl_clk_register,
++	.unregister_clks = hi3516cv300_sysctrl_clk_unregister,
 +};
 +
-+static const struct clk_ops clk_smd_rpm_branch_ops = {
-+	.prepare	= clk_smd_rpm_prepare,
-+	.unprepare	= clk_smd_rpm_unprepare,
-+	.round_rate	= clk_smd_rpm_round_rate,
-+	.recalc_rate	= clk_smd_rpm_recalc_rate,
-+};
-+
-+/* msm8916 */
-+DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8916, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8916, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8916, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk1, bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk2, bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, rf_clk2, rf_clk2_a, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk1_pin, bb_clk1_a_pin, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk2_pin, bb_clk2_a_pin, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk1_pin, rf_clk1_a_pin, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk2_pin, rf_clk2_a_pin, 5);
-+
-+static struct clk_smd_rpm *msm8916_clks[] = {
-+	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK]		= &msm8916_bimc_a_clk,
-+	[RPM_SMD_QDSS_CLK]		= &msm8916_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &msm8916_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &msm8916_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &msm8916_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2]		= &msm8916_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A]		= &msm8916_bb_clk2_a,
-+	[RPM_SMD_RF_CLK1]		= &msm8916_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A]		= &msm8916_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2]		= &msm8916_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A]		= &msm8916_rf_clk2_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &msm8916_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8916_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN]		= &msm8916_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN]		= &msm8916_bb_clk2_a_pin,
-+	[RPM_SMD_RF_CLK1_PIN]		= &msm8916_rf_clk1_pin,
-+	[RPM_SMD_RF_CLK1_A_PIN]		= &msm8916_rf_clk1_a_pin,
-+	[RPM_SMD_RF_CLK2_PIN]		= &msm8916_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN]		= &msm8916_rf_clk2_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8916 = {
-+	.clks = msm8916_clks,
-+	.num_clks = ARRAY_SIZE(msm8916_clks),
-+};
-+
-+static const struct of_device_id rpm_smd_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
++static const struct of_device_id hi3516cv300_crg_match_table[] = {
++	{
++		.compatible = "hisilicon,hi3516cv300-crg",
++		.data = &hi3516cv300_crg_funcs
++	},
++	{
++		.compatible = "hisilicon,hi3516cv300-sysctrl",
++		.data = &hi3516cv300_sysctrl_funcs
++	},
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
++MODULE_DEVICE_TABLE(of, hi3516cv300_crg_match_table);
 +
-+static int rpm_smd_clk_probe(struct platform_device *pdev)
++static int hi3516cv300_crg_probe(struct platform_device *pdev)
 +{
-+	struct clk_hw **hws;
-+	struct rpm_cc *rcc;
-+	struct clk_hw_onecell_data *data;
-+	int ret;
-+	size_t num_clks, i;
-+	struct qcom_smd_rpm *rpm;
-+	struct clk_smd_rpm **rpm_smd_clks;
-+	const struct rpm_smd_clk_desc *desc;
++	struct hisi_crg_dev *crg;
 +
-+	rpm = dev_get_drvdata(pdev->dev.parent);
-+	if (!rpm) {
-+		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
-+		return -ENODEV;
-+	}
-+
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	rpm_smd_clks = desc->clks;
-+	num_clks = desc->num_clks;
-+
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
-+			   GFP_KERNEL);
-+	if (!rcc)
++	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
++	if (!crg)
 +		return -ENOMEM;
 +
-+	hws = rcc->hws;
-+	data = &rcc->data;
-+	data->num = num_clks;
++	crg->funcs = of_device_get_match_data(&pdev->dev);
++	if (!crg->funcs)
++		return -ENOENT;
 +
-+	for (i = 0; i < num_clks; i++) {
-+		if (!rpm_smd_clks[i]) {
-+			continue;
-+		}
++	crg->rstc = hisi_reset_init(pdev);
++	if (!crg->rstc)
++		return -ENOMEM;
 +
-+		rpm_smd_clks[i]->rpm = rpm;
-+
-+		ret = clk_smd_rpm_handoff(rpm_smd_clks[i]);
-+		if (ret)
-+			goto err;
++	crg->clk_data = crg->funcs->register_clks(pdev);
++	if (IS_ERR(crg->clk_data)) {
++		hisi_reset_exit(crg->rstc);
++		return PTR_ERR(crg->clk_data);
 +	}
 +
-+	ret = clk_smd_rpm_enable_scaling(rpm);
-+	if (ret)
-+		goto err;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		if (!rpm_smd_clks[i]) {
-+			data->hws[i] = ERR_PTR(-ENOENT);
-+			continue;
-+		}
-+
-+		ret = devm_clk_hw_register(&pdev->dev, &rpm_smd_clks[i]->hw);
-+		if (ret)
-+			goto err;
-+	}
-+
-+	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
-+				     data);
-+	if (ret)
-+		goto err;
-+
++	platform_set_drvdata(pdev, crg);
 +	return 0;
-+err:
-+	dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
-+	return ret;
 +}
 +
-+static int rpm_smd_clk_remove(struct platform_device *pdev)
++static int hi3516cv300_crg_remove(struct platform_device *pdev)
 +{
-+	of_clk_del_provider(pdev->dev.of_node);
++	struct hisi_crg_dev *crg = platform_get_drvdata(pdev);
++
++	hisi_reset_exit(crg->rstc);
++	crg->funcs->unregister_clks(pdev);
 +	return 0;
 +}
 +
-+static struct platform_driver rpm_smd_clk_driver = {
-+	.driver = {
-+		.name = "qcom-clk-smd-rpm",
-+		.of_match_table = rpm_smd_clk_match_table,
++static struct platform_driver hi3516cv300_crg_driver = {
++	.probe          = hi3516cv300_crg_probe,
++	.remove		= hi3516cv300_crg_remove,
++	.driver         = {
++		.name   = "hi3516cv300-crg",
++		.of_match_table = hi3516cv300_crg_match_table,
 +	},
-+	.probe = rpm_smd_clk_probe,
-+	.remove = rpm_smd_clk_remove,
 +};
 +
-+static int __init rpm_smd_clk_init(void)
++static int __init hi3516cv300_crg_init(void)
 +{
-+	return platform_driver_register(&rpm_smd_clk_driver);
++	return platform_driver_register(&hi3516cv300_crg_driver);
 +}
-+core_initcall(rpm_smd_clk_init);
++core_initcall(hi3516cv300_crg_init);
 +
-+static void __exit rpm_smd_clk_exit(void)
++static void __exit hi3516cv300_crg_exit(void)
 +{
-+	platform_driver_unregister(&rpm_smd_clk_driver);
++	platform_driver_unregister(&hi3516cv300_crg_driver);
 +}
-+module_exit(rpm_smd_clk_exit);
++module_exit(hi3516cv300_crg_exit);
 +
-+MODULE_DESCRIPTION("Qualcomm RPM over SMD Clock Controller Driver");
 +MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-clk-smd-rpm");
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
++MODULE_DESCRIPTION("HiSilicon Hi3516CV300 CRG Driver");
+diff --git a/include/dt-bindings/clock/hi3516cv300-clock.h b/include/dt-bindings/clock/hi3516cv300-clock.h
 new file mode 100644
-index 000000000000..9fae52dfe35a
+index 0000000..5ba51b8
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -0,0 +1,45 @@
++++ b/include/dt-bindings/clock/hi3516cv300-clock.h
+@@ -0,0 +1,48 @@
 +/*
-+ * Copyright 2015 Linaro Limited
++ * Copyright (c) 2016 HiSilicon Technologies Co., Ltd.
 + *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_MSM_RPMCC_H
-+#define _DT_BINDINGS_CLK_MSM_RPMCC_H
++#ifndef __DTS_HI3516CV300_CLOCK_H
++#define __DTS_HI3516CV300_CLOCK_H
 +
-+/* msm8916 */
-+#define RPM_SMD_XO_CLK_SRC				0
-+#define RPM_SMD_XO_A_CLK_SRC			1
-+#define RPM_SMD_PCNOC_CLK				2
-+#define RPM_SMD_PCNOC_A_CLK				3
-+#define RPM_SMD_SNOC_CLK				4
-+#define RPM_SMD_SNOC_A_CLK				5
-+#define RPM_SMD_BIMC_CLK				6
-+#define RPM_SMD_BIMC_A_CLK				7
-+#define RPM_SMD_QDSS_CLK				8
-+#define RPM_SMD_QDSS_A_CLK				9
-+#define RPM_SMD_BB_CLK1				10
-+#define RPM_SMD_BB_CLK1_A				11
-+#define RPM_SMD_BB_CLK2				12
-+#define RPM_SMD_BB_CLK2_A				13
-+#define RPM_SMD_RF_CLK1				14
-+#define RPM_SMD_RF_CLK1_A				15
-+#define RPM_SMD_RF_CLK2				16
-+#define RPM_SMD_RF_CLK2_A				17
-+#define RPM_SMD_BB_CLK1_PIN				18
-+#define RPM_SMD_BB_CLK1_A_PIN			19
-+#define RPM_SMD_BB_CLK2_PIN				20
-+#define RPM_SMD_BB_CLK2_A_PIN			21
-+#define RPM_SMD_RF_CLK1_PIN				22
-+#define RPM_SMD_RF_CLK1_A_PIN			23
-+#define RPM_SMD_RF_CLK2_PIN				24
-+#define RPM_SMD_RF_CLK2_A_PIN			25
++/* hi3516CV300 core CRG */
++#define HI3516CV300_APB_CLK		0
++#define HI3516CV300_UART0_CLK		1
++#define HI3516CV300_UART1_CLK		2
++#define HI3516CV300_UART2_CLK		3
++#define HI3516CV300_SPI0_CLK		4
++#define HI3516CV300_SPI1_CLK		5
++#define HI3516CV300_FMC_CLK		6
++#define HI3516CV300_MMC0_CLK		7
++#define HI3516CV300_MMC1_CLK		8
++#define HI3516CV300_MMC2_CLK		9
++#define HI3516CV300_MMC3_CLK		10
++#define HI3516CV300_ETH_CLK		11
++#define HI3516CV300_ETH_MACIF_CLK	12
++#define HI3516CV300_DMAC_CLK		13
++#define HI3516CV300_PWM_CLK		14
++#define HI3516CV300_USB2_BUS_CLK	15
++#define HI3516CV300_USB2_OHCI48M_CLK	16
++#define HI3516CV300_USB2_OHCI12M_CLK	17
++#define HI3516CV300_USB2_OTG_UTMI_CLK	18
++#define HI3516CV300_USB2_HST_PHY_CLK	19
++#define HI3516CV300_USB2_UTMI0_CLK	20
++#define HI3516CV300_USB2_PHY_CLK	21
 +
-+#endif
++/* hi3516CV300 sysctrl CRG */
++#define HI3516CV300_WDT_CLK		1
++
++#endif	/* __DTS_HI3516CV300_CLOCK_H */
+-- 
+1.9.1
