@@ -1,123 +1,262 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-To: Rob Herring <robh@kernel.org>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-2-git-send-email-t-kristo@ti.com>
- <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
- <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
- <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
-CC: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <0fe81866-8bfd-f3a7-d808-9cb23841f504@ti.com>
-Date: Mon, 21 Nov 2016 10:14:28 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43156 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934182AbcKNGCl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:41 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org, andy.gross@linaro.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
+        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
+        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v7 11/14] mmc: sdhci-msm: Add HS400 platform support
+Date: Mon, 14 Nov 2016 11:30:45 +0530
+Message-Id: <1479103248-9491-12-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18/11/16 19:20, Rob Herring wrote:
-> On Mon, Oct 31, 2016 at 7:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
->> On 30/10/16 22:41, Rob Herring wrote:
->>>
->>> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
->>>>
->>>> Add a clock implementation, TI SCI clock, that will hook to the common
->>>> clock framework, and allow each clock to be controlled via TI SCI
->>>> protocol.
->>>>
->>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>> ---
->>>>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37
->>>> ++++++++++++++++++++++
->>>>  MAINTAINERS                                        |  1 +
->>>>  2 files changed, 38 insertions(+)
->>>>  create mode 100644
->>>> Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>> b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>> new file mode 100644
->>>> index 0000000..bfc3ca4
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>> @@ -0,0 +1,37 @@
->>>> +Texas Instruments TI-SCI Clocks
->>>> +===============================
->>>> +
->>>> +All clocks on Texas Instruments' SoCs that contain a System Controller,
->>>> +are only controlled by this entity. Communication between a host
->>>> processor
->>>> +running an OS and the System Controller happens through a protocol known
->>>> +as TI-SCI[1]. This clock implementation plugs into the common clock
->>>> +framework and makes use of the TI-SCI protocol on clock API requests.
->>>> +
->>>> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
->>>> +
->>>> +Required properties:
->>>> +-------------------
->>>> +- compatible: Must be "ti,k2g-sci-clk"
->>>> +- #clock-cells: Shall be 2.
->>>> +  In clock consumers, this cell represents the device ID and clock ID
->>>> +  exposed by the PM firmware. The assignments can be found in the header
->>>> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
->>>> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
->>>> +  is the SoC involved, for example 'k2g'.
->>>> +
->>>> +Examples:
->>>> +--------
->>>> +
->>>> +pmmc: pmmc {
->>>> +       compatible = "ti,k2g-sci";
->>>> +
->>>> +       k2g_clks: k2g_clks {
->>>
->>>
->>> Use "clocks" for node name instead.
->>>
->>>> +               compatible = "ti,k2g-sci-clk";
->>>
->>>
->>> I'm starting to think all these child nodes for SCI are pointless. Is
->>> there any reason why the parent node can't be the clock provider (along
->>> with all the other providers it acks as)?
->>
->>
->> I believe the only reason to keep them separate is to have kernel side of
->> things modular. If we have separate nodes, the drivers can be probed
->> separately.
->>
->> If not, we need to build one huge blob with all the features in it, so the
->> main driver can probe everything in one go, with annoying back-and-forth
->> callbacks in place (assuming we still want to keep stuff somehow modular.)
->
-> Since when is DT the only way to create a device? The main driver can
-> create devices for all the sub-functions like clocks. This is the same
-> as MFDs which have been done both ways.
+From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 
-Yes obviously this can be done, my main point was that it will require 
-building some sort of infra within the driver to handle this. With 
-separate nodes, none of this is going to be needed. Also, we will lose 
-any kind of configurability via DT if we don't have separate nodes; now 
-we can select the available clocks / genpds via the compatible string of 
-the clocks/genpd nodes themselves (this isn't clearly evident as of now 
-as we only support a grand total of one device, which is k2g-evm.) 
-Otherwise we need to probe against the main node and add a separate 
-compatible string for every device, and carry this information to the 
-sibling devices also somehow. It is just so much simpler if we can just 
-keep separate nodes for them.
+The following msm platform specific changes are added to support HS400.
+- Allow tuning for HS400 mode.
+- Configure HS400 timing mode using the VENDOR_SPECIFIC_FUNC register.
 
-Also, plenty of things are doing this kind of stuff already in 
-DT/kernel, having a parent node in place and sub-functions added 
-separately for ease of use, with apparently no visible point for having 
-the nodes within the DT.
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 127 +++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 117 insertions(+), 10 deletions(-)
 
--Tero
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 41a4ea7..7618bad 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -31,6 +31,7 @@
+ #define HC_MODE_EN		0x1
+ #define CORE_POWER		0x0
+ #define CORE_SW_RST		BIT(7)
++#define FF_CLK_SW_RST_DIS	BIT(13)
+ 
+ #define CORE_PWRCTL_STATUS	0xdc
+ #define CORE_PWRCTL_MASK	0xe0
+@@ -64,10 +65,17 @@
+ 
+ #define CORE_VENDOR_SPEC	0x10c
+ #define CORE_CLK_PWRSAVE	BIT(1)
++#define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
++#define CORE_HC_MCLK_SEL_HS400	(3 << 8)
++#define CORE_HC_MCLK_SEL_MASK	(3 << 8)
++#define CORE_HC_SELECT_IN_EN	BIT(18)
++#define CORE_HC_SELECT_IN_HS400	(6 << 19)
++#define CORE_HC_SELECT_IN_MASK	(7 << 19)
+ 
+ #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+ 
+ #define SDHCI_MSM_MIN_CLOCK	400000
++#define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
+ 
+ #define CDR_SELEXT_SHIFT	20
+ #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
+@@ -85,6 +93,8 @@ struct sdhci_msm_host {
+ 	unsigned long clk_rate;
+ 	struct mmc_host *mmc;
+ 	bool use_14lpp_dll_reset;
++	bool tuning_done;
++	bool calibration_done;
+ };
+ 
+ /* Platform specific tuning */
+@@ -173,8 +183,8 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
+  * Find out the greatest range of consecuitive selected
+  * DLL clock output phases that can be used as sampling
+  * setting for SD3.0 UHS-I card read operation (in SDR104
+- * timing mode) or for eMMC4.5 card read operation (in HS200
+- * timing mode).
++ * timing mode) or for eMMC4.5 card read operation (in
++ * HS400/HS200 timing mode).
+  * Select the 3/4 of the range and configure the DLL with the
+  * selected DLL clock output phase.
+  */
+@@ -430,9 +440,10 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	 * Tuning is required for SDR104, HS200 and HS400 cards and
+ 	 * if clock frequency is greater than 100MHz in these modes.
+ 	 */
+-	if (host->clock <= 100 * 1000 * 1000 ||
+-	    !((ios.timing == MMC_TIMING_MMC_HS200) ||
+-	      (ios.timing == MMC_TIMING_UHS_SDR104)))
++	if (host->clock <= CORE_FREQ_100MHZ ||
++	    !(ios.timing == MMC_TIMING_MMC_HS400 ||
++	    ios.timing == MMC_TIMING_MMC_HS200 ||
++	    ios.timing == MMC_TIMING_UHS_SDR104))
+ 		return 0;
+ 
+ retry:
+@@ -483,6 +494,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 		rc = -EIO;
+ 	}
+ 
++	if (!rc)
++		msm_host->tuning_done = true;
+ 	return rc;
+ }
+ 
+@@ -490,7 +503,10 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
+ 					unsigned int uhs)
+ {
+ 	struct mmc_host *mmc = host->mmc;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 	u16 ctrl_2;
++	u32 config;
+ 
+ 	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+ 	/* Select Bus Speed Mode for host */
+@@ -505,6 +521,7 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
+ 	case MMC_TIMING_UHS_SDR50:
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
+ 		break;
++	case MMC_TIMING_MMC_HS400:
+ 	case MMC_TIMING_MMC_HS200:
+ 	case MMC_TIMING_UHS_SDR104:
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+@@ -521,11 +538,31 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
+ 	 * provide feedback clock, the mode selection can be any value less
+ 	 * than 3'b011 in bits [2:0] of HOST CONTROL2 register.
+ 	 */
+-	if (host->clock <= 100000000 &&
+-	    (uhs == MMC_TIMING_MMC_HS400 ||
+-	     uhs == MMC_TIMING_MMC_HS200 ||
+-	     uhs == MMC_TIMING_UHS_SDR104))
+-		ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
++	if (host->clock <= CORE_FREQ_100MHZ) {
++		if ((uhs == MMC_TIMING_MMC_HS400) ||
++		    (uhs == MMC_TIMING_MMC_HS200) ||
++		    (uhs == MMC_TIMING_UHS_SDR104))
++			ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
++		/*
++		 * Make sure DLL is disabled when not required
++		 *
++		 * Write 1 to DLL_RST bit of DLL_CONFIG register
++		 */
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
++		config |= CORE_DLL_RST;
++		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
++
++		/* Write 1 to DLL_PDN bit of DLL_CONFIG register */
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
++		config |= CORE_DLL_PDN;
++		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
++
++		/*
++		 * The DLL needs to be restored and CDCLP533 recalibrated
++		 * when the clock frequency is set back to 400MHz.
++		 */
++		msm_host->calibration_done = false;
++	}
+ 
+ 	dev_dbg(mmc_dev(mmc), "%s: clock=%u uhs=%u ctrl_2=0x%x\n",
+ 		mmc_hostname(host->mmc), host->clock, uhs, ctrl_2);
+@@ -638,6 +675,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 	struct mmc_ios curr_ios = host->mmc->ios;
++	u32 config;
+ 	int rc;
+ 
+ 	if (!clock) {
+@@ -656,6 +694,70 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	    (curr_ios.timing == MMC_TIMING_MMC_DDR52) ||
+ 	    (curr_ios.timing == MMC_TIMING_MMC_HS400))
+ 		clock *= 2;
++	/*
++	 * In general all timing modes are controlled via UHS mode select in
++	 * Host Control2 register. eMMC specific HS200/HS400 doesn't have
++	 * their respective modes defined here, hence we use these values.
++	 *
++	 * HS200 - SDR104 (Since they both are equivalent in functionality)
++	 * HS400 - This involves multiple configurations
++	 *		Initially SDR104 - when tuning is required as HS200
++	 *		Then when switching to DDR @ 400MHz (HS400) we use
++	 *		the vendor specific HC_SELECT_IN to control the mode.
++	 *
++	 * In addition to controlling the modes we also need to select the
++	 * correct input clock for DLL depending on the mode.
++	 *
++	 * HS400 - divided clock (free running MCLK/2)
++	 * All other modes - default (free running MCLK)
++	 */
++	if (curr_ios.timing == MMC_TIMING_MMC_HS400) {
++		/* Select the divided clock (free running MCLK/2) */
++		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
++		config &= ~CORE_HC_MCLK_SEL_MASK;
++		config |= CORE_HC_MCLK_SEL_HS400;
++
++		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
++		/*
++		 * Select HS400 mode using the HC_SELECT_IN from VENDOR SPEC
++		 * register
++		 */
++		if (msm_host->tuning_done && !msm_host->calibration_done) {
++			/*
++			 * Write 0x6 to HC_SELECT_IN and 1 to HC_SELECT_IN_EN
++			 * field in VENDOR_SPEC_FUNC
++			 */
++			config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
++			config |= CORE_HC_SELECT_IN_HS400;
++			config |= CORE_HC_SELECT_IN_EN;
++			writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
++		}
++	} else {
++		/* Select the default clock (free running MCLK) */
++		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
++		config &= ~CORE_HC_MCLK_SEL_MASK;
++		config |= CORE_HC_MCLK_SEL_DFLT;
++		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
++
++		/*
++		 * Disable HC_SELECT_IN to be able to use the UHS mode select
++		 * configuration from Host Control2 register for all other
++		 * modes.
++		 *
++		 * Write 0 to HC_SELECT_IN and HC_SELECT_IN_EN field
++		 * in VENDOR_SPEC_FUNC
++		 */
++		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
++		config &= ~CORE_HC_SELECT_IN_EN;
++		config &= ~CORE_HC_SELECT_IN_MASK;
++		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
++	}
++
++	/*
++	 * Make sure above writes impacting free running MCLK are completed
++	 * before changing the clk_rate at GCC.
++	 */
++	wmb();
+ 
+ 	if (clock != msm_host->clk_rate) {
+ 		rc = clk_set_rate(msm_host->clk, clock);
+@@ -804,6 +906,11 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	/* Set HC_MODE_EN bit in HC_MODE register */
+ 	writel_relaxed(HC_MODE_EN, (msm_host->core_mem + CORE_HC_MODE));
+ 
++	/* Set FF_CLK_SW_RST_DIS bit in HC_MODE register */
++	config = readl_relaxed(msm_host->core_mem + CORE_HC_MODE);
++	config |= FF_CLK_SW_RST_DIS;
++	writel_relaxed(config, msm_host->core_mem + CORE_HC_MODE);
++
+ 	host_version = readw_relaxed((host->ioaddr + SDHCI_HOST_VERSION));
+ 	dev_dbg(&pdev->dev, "Host Version: 0x%x Vendor Version 0x%x\n",
+ 		host_version, ((host_version & SDHCI_VENDOR_VER_MASK) >>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
