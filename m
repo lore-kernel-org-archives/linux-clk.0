@@ -1,43 +1,152 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Wed, 9 Nov 2016 14:58:39 +0100
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Jiri Kosina <trivial@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>
-Subject: Re: [PATCH] clk: gate: fix coding style
-Message-ID: <20161109135839.xx4xghlj6svg3zaz@pengutronix.de>
-References: <20161109110046.9594-1-u.kleine-koenig@pengutronix.de>
- <CAK7LNARSfBBFffOyRa03hGqfJ+7gSHe-A+Efm9oM1sOdgLL-Ag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CAK7LNARSfBBFffOyRa03hGqfJ+7gSHe-A+Efm9oM1sOdgLL-Ag@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42334 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941072AbcKNGCR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:17 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org, andy.gross@linaro.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
+        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
+        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v7 08/14] mmc: sdhci-msm: Implement set_clock callback for sdhci-msm
+Date: Mon, 14 Nov 2016 11:30:42 +0530
+Message-Id: <1479103248-9491-9-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+sdhci-msm controller may have different clk-rates for each
+bus speed mode. Thus implement set_clock callback for
+sdhci-msm driver.
 
-On Wed, Nov 09, 2016 at 08:25:22PM +0900, Masahiro Yamada wrote:
-> 2016-11-09 20:00 GMT+09:00 Uwe Kleine-König <u.kleine-koenig@pengutronix.de>:
-> >         init.flags = flags | CLK_IS_BASIC;
-> > -       init.parent_names = (parent_name ? &parent_name: NULL);
-> > +       init.parent_names = (parent_name ? &parent_name : NULL);
-> >         init.num_parents = (parent_name ? 1 : 0);
-> 
-> Do we need the parentheses?
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 87 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 86 insertions(+), 1 deletion(-)
 
-	init.num_parents = parent_name ? 1 : 0;
-
-has the same semantics. I didn't remove the parentheses because they
-might make it easier to understand what happens if you don't have the
-operator precedence table at hand. But actually I don't care. If they
-should be dropped and nobody else volunteers, I can resend with the
-parentheses removed.
-
-Best regards,
-Uwe
-
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 268424c..b96a4a7 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -82,6 +82,7 @@ struct sdhci_msm_host {
+ 	struct clk *pclk;	/* SDHC peripheral bus clock */
+ 	struct clk *bus_clk;	/* SDHC bus voter clock */
+ 	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
++	unsigned long clk_rate;
+ 	struct mmc_host *mmc;
+ 	bool use_14lpp_dll_reset;
+ };
+@@ -577,6 +578,90 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+ 	return SDHCI_MSM_MIN_CLOCK;
+ }
+ 
++/**
++ * __sdhci_msm_set_clock - sdhci_msm clock control.
++ *
++ * Description:
++ * Implement MSM version of sdhci_set_clock.
++ * This is required since MSM controller does not
++ * use internal divider and instead directly control
++ * the GCC clock as per HW recommendation.
++ **/
++void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	u16 clk;
++	unsigned long timeout;
++
++	/*
++	 * Keep actual_clock as zero -
++	 * - since there is no divider used so no need of having actual_clock.
++	 * - MSM controller uses SDCLK for data timeout calculation. If
++	 *   actual_clock is zero, host->clock is taken for calculation.
++	 */
++	host->mmc->actual_clock = 0;
++
++	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
++
++	if (clock == 0)
++		return;
++
++	/*
++	 * MSM controller do not use clock divider.
++	 * Thus read SDHCI_CLOCK_CONTROL and only enable
++	 * clock with no divider value programmed.
++	 */
++	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++
++	clk |= SDHCI_CLOCK_INT_EN;
++	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++
++	/* Wait max 20 ms */
++	timeout = 20;
++	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
++		& SDHCI_CLOCK_INT_STABLE)) {
++		if (timeout == 0) {
++			pr_err("%s: Internal clock never stabilised\n",
++			       mmc_hostname(host->mmc));
++			return;
++		}
++		timeout--;
++		mdelay(1);
++	}
++
++	clk |= SDHCI_CLOCK_CARD_EN;
++	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++}
++
++/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
++static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++	int rc;
++
++	if (!clock) {
++		msm_host->clk_rate = clock;
++		goto out;
++	}
++
++	spin_unlock_irq(&host->lock);
++	if (clock != msm_host->clk_rate) {
++		rc = clk_set_rate(msm_host->clk, clock);
++		if (rc) {
++			pr_err("%s: Failed to set clock at rate %u\n",
++			       mmc_hostname(host->mmc), clock);
++			spin_lock_irq(&host->lock);
++			goto out;
++		}
++		msm_host->clk_rate = clock;
++		pr_debug("%s: Setting clock at rate %lu\n",
++			 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
++	}
++	spin_lock_irq(&host->lock);
++out:
++	__sdhci_msm_set_clock(host, clock);
++}
++
+ static const struct of_device_id sdhci_msm_dt_match[] = {
+ 	{ .compatible = "qcom,sdhci-msm-v4" },
+ 	{},
+@@ -587,7 +672,7 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+ static const struct sdhci_ops sdhci_msm_ops = {
+ 	.platform_execute_tuning = sdhci_msm_execute_tuning,
+ 	.reset = sdhci_reset,
+-	.set_clock = sdhci_set_clock,
++	.set_clock = sdhci_msm_set_clock,
+ 	.get_min_clock = sdhci_msm_get_min_clock,
+ 	.get_max_clock = sdhci_msm_get_max_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
