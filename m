@@ -1,35 +1,68 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: pxa mark dummy helper as 'inline'
-References: <20161108144950.3472058-1-arnd@arndb.de>
-Date: Tue, 08 Nov 2016 18:50:44 +0100
-In-Reply-To: <20161108144950.3472058-1-arnd@arndb.de> (Arnd Bergmann's message
-	of "Tue, 8 Nov 2016 15:49:30 +0100")
-Message-ID: <87oa1pyi6j.fsf@belgarion.home>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v7 3/3] clk: qcom: Add A53 clock driver
+To: Rob Herring <robh@kernel.org>
+References: <20161031145526.5023-1-georgi.djakov@linaro.org>
+ <20161031145526.5023-4-georgi.djakov@linaro.org>
+ <20161109182440.hjiv725vpsh5dctd@rob-hp-laptop>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, mark.rutland@arm.com,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Message-ID: <13eb175c-0f1d-4cd6-4d1a-7b952be9a6b2@linaro.org>
+Date: Mon, 14 Nov 2016 18:15:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20161109182440.hjiv725vpsh5dctd@rob-hp-laptop>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Arnd Bergmann <arnd@arndb.de> writes:
-
-> The dummy_clk_set_parent function is marked as 'static' but is
-> no longer referenced from the pxa25x clk driver after the last use
-> of the RATE_RO_OPS() macro is gone from this file, causing a
-> harmless build warning:
+On 11/09/2016 08:24 PM, Rob Herring wrote:
+> On Mon, Oct 31, 2016 at 04:55:26PM +0200, Georgi Djakov wrote:
+>> Add a driver for the A53 Clock Controller. It is a hardware block that
+>> implements a combined mux and half integer divider functionality. It can
+>> choose between a fixed-rate clock or the dedicated A53 PLL. The source
+>> and the divider can be set both at the same time.
+>>
+>> This is required for enabling CPU frequency scaling on platforms like
+>> MSM8916.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+>>  .../devicetree/bindings/clock/qcom,a53cc.txt       |  23 ++++
+>>  drivers/clk/qcom/Kconfig                           |   8 ++
+>>  drivers/clk/qcom/Makefile                          |   1 +
+>>  drivers/clk/qcom/a53cc.c                           | 152 +++++++++++++++++++++
+>>  4 files changed, 184 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+>>  create mode 100644 drivers/clk/qcom/a53cc.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+>> new file mode 100644
+>> index 000000000000..82d1634a2713
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+>> @@ -0,0 +1,23 @@
+>> +Qualcomm A53 CPU Clock Controller Binding
+>> +------------------------------------------------
+>> +The A53 CPU Clock Controller is hardware, which provides a combined
+>> +mux and divider functionality for the CPU clocks. It can choose between
+>> +a fixed rate clock and the dedicated A53 PLL. This hardware block is used
+>> +on platforms such as msm8916.
+>> +
+>> +Required properties :
+>> +- compatible : shall contain:
+>> +
+>> +			"qcom,a53cc-msm8916"
 >
-> In file included from drivers/clk/pxa/clk-pxa25x.c:24:0:
-> drivers/clk/pxa/clk-pxa.h:146:12: error: 'dummy_clk_set_parent' defined but not used [-Werror=unused-function]
+> Same comment on the ordering. With that, for the binding:
 >
-> This marks the functon as 'inline', which lets the compiler simply
-> drop it when it gets referenced.
+> Acked-by: Rob Herring <robh@kernel.org>
 >
-> Fixes: 9fe694295098 ("clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Cheers.
+Thanks for reviewing, Rob. I am also going to make this a child node
+as discussed here [1]. Please let me know if you have any comments.
 
---
-Robert
+[1]. https://lkml.org/lkml/2016/11/11/387
+
+Thanks,
+Georgi
