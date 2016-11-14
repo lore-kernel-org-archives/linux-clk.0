@@ -1,109 +1,51 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v2 6/9] clk: stm32f4: Add SAI clocks
-Date: Thu, 24 Nov 2016 15:45:46 +0100
-Message-ID: <1479998749-20358-7-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:34910 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbcKNT7a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 14:59:30 -0500
+Date: Mon, 14 Nov 2016 11:59:28 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        andy.gross@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+Subject: Re: [PATCH v7 13/14] mmc: sdhci-msm: Add calibration tuning for
+ CDCLP533 circuit
+Message-ID: <20161114195928.GK5177@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-14-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479103248-9491-14-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 11/14, Ritesh Harjani wrote:
+> @@ -575,6 +729,15 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
+>  	dev_dbg(mmc_dev(mmc), "%s: clock=%u uhs=%u ctrl_2=0x%x\n",
+>  		mmc_hostname(host->mmc), host->clock, uhs, ctrl_2);
+>  	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+> +
+> +	spin_unlock_irq(&host->lock);
+> +	/* CDCLP533 HW calibration is only required for HS400 mode*/
+> +	if (host->clock > CORE_FREQ_100MHZ &&
+> +	    msm_host->tuning_done && !msm_host->calibration_done &&
+> +	    (mmc->ios.timing == MMC_TIMING_MMC_HS400))
 
-This patch introduces SAI clocks for stm32f4 socs.
+Drop useless parenthesis.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- Documentation/devicetree/bindings/clock/st,stm32-rcc.txt |  2 ++
- drivers/clk/clk-stm32f4.c                                | 16 ++++++++++++++++
- include/dt-bindings/clock/stm32f4-clock.h                |  4 +++-
- 3 files changed, 21 insertions(+), 1 deletion(-)
+> +		if (!sdhci_msm_cdclp533_calibration(host))
+> +			msm_host->calibration_done = true;
+> +	spin_lock_irq(&host->lock);
+>  }
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-index 8c1ca68..8f93740 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-+++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-@@ -79,6 +79,8 @@ The secondary index is bound with the following magic numbers:
- 	7	PLL_VCO_SAI	(vco frequency of SAI pll)
- 	8	CLK_LCD		(LCD-TFT)
- 	9	CLK_I2S		(I2S clocks)
-+	10	CLK_SAI1	(audio clocks)
-+	11	CLK_SAI2
- 
- Example:
- 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 3063b30..02339d1 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -937,6 +937,9 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- static const char *i2s_parents[2] = { "plli2s-r", NULL };
- 
-+static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
-+	"no-clock" };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -977,6 +980,18 @@ struct stm32f4_clk_data {
- 		NO_GATE, 0,
- 		CLK_SET_RATE_PARENT
- 	},
-+	{
-+		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 20, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 22, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
- };
- 
- static const struct stm32f4_clk_data stm32f429_clk_data = {
-@@ -1109,6 +1124,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	i2s_in_clk = of_clk_get_parent_name(np, 1);
- 
- 	i2s_parents[1] = i2s_in_clk;
-+	sai_parents[2] = i2s_in_clk;
- 
- 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
- 			16000000, 160000);
-diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
-index b129ab9..5431f00 100644
---- a/include/dt-bindings/clock/stm32f4-clock.h
-+++ b/include/dt-bindings/clock/stm32f4-clock.h
-@@ -29,7 +29,9 @@
- #define PLL_VCO_SAI		7
- #define CLK_LCD			8
- #define CLK_I2S			9
-+#define CLK_SAI1		10
-+#define CLK_SAI2		11
- 
--#define END_PRIMARY_CLK		10
-+#define END_PRIMARY_CLK		12
- 
- #endif
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
