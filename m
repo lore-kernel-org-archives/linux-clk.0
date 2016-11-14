@@ -1,184 +1,228 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Nov 2016 17:56:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] clk: pxa: transfer CPU clock setting from
- pxa2xx-cpufreq
-Message-ID: <20161102005637.GV16026@codeaurora.org>
-References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
- <1477225170-19019-6-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
+	<peter.chen@nxp.com>
+Subject: [PATCH v3 1/3] ARM: imx6ull: add imx6ull support
+Date: Mon, 14 Nov 2016 15:04:20 +0800
+Message-ID: <1479107062-15365-2-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1479107062-15365-1-git-send-email-peter.chen@nxp.com>
+References: <1479107062-15365-1-git-send-email-peter.chen@nxp.com>
+Return-Path: peter.chen@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477225170-19019-6-git-send-email-robert.jarzmik@free.fr>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/23, Robert Jarzmik wrote:
-> diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-> index 29cee9e8d4d9..7184819b7415 100644
-> --- a/drivers/clk/pxa/clk-pxa.c
-> +++ b/drivers/clk/pxa/clk-pxa.c
-> @@ -15,9 +15,18 @@
->  #include <linux/clkdev.h>
->  #include <linux/of.h>
->  
-> +#include <mach/pxa2xx-regs.h>
-> +#include <mach/smemc.h>
+It is the 10th processor in the well-known imx6 series, and derived
+from imx6ul but cost optimized. The more information about imx6ull
+can be found at:
 
-This is unfortunate. It makes compile testing the drivers
-harder. Can this be fixed in the future?
+http://www.nxp.com/products/microcontrollers-and-processors/
+arm-processors/i.mx-applications-processors/i.mx-6-processors
+/i.mx6qp/i.mx-6ull-single-core-processor-with-arm-cortex-a7-core
+:i.MX6ULL
 
-> +
->  #include <dt-bindings/clock/pxa-clock.h>
->  #include "clk-pxa.h"
->  
-> +#define KHz 1000
-> +#define MHz (1000 * 1000)
-> +
-> +#define MDREFR_DB2_MASK		(MDREFR_K2DB2 | MDREFR_K1DB2)
-> +#define MDREFR_DRI_MASK		0xFFF
-> +
->  DEFINE_SPINLOCK(lock);
->  
->  static struct clk *pxa_clocks[CLK_MAX];
-> @@ -106,3 +115,122 @@ void __init clk_pxa_dt_common_init(struct device_node *np)
->  {
->  	of_clk_add_provider(np, of_clk_src_onecell_get, &onecell_data);
->  }
-> +
-> +void pxa2xx_core_turbo_switch(bool on)
-> +{
-> +	unsigned long flags;
-> +	unsigned int unused, clkcfg;
-> +
-> +	local_irq_save(flags);
-> +
-> +	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
+imx6ul.dtsi is the SoC common stuff for both imx6ul and imx6ull;
+imx6ul-14x14-evk.dts is the board common stuff for both imx6ul
+and imx6ull 14x14 evk. In this patch, for SoC part, the
+imx6ull.dtsi includes imx6ul.dtsi; for board part, imx6ull-14x14-evk.dts
+includes imx6ul-14x14-evk.dts.
 
-\t is odd style, but I guess this is copied from somewhere?
-Should it be volatile? Or is it ok for the clkcfg value to be
-cached here?
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ arch/arm/boot/dts/Makefile              |  3 +-
+ arch/arm/boot/dts/imx6ull-14x14-evk.dts | 52 ++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ull-pinfunc.h     | 56 +++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ull.dtsi          | 43 +++++++++++++++++++++++++
+ 4 files changed, 153 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6ull-14x14-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx6ull-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imx6ull.dtsi
 
-> +	clkcfg &= ~CLKCFG_TURBO & ~CLKCFG_HALFTURBO;
-> +	if (on)
-> +		clkcfg |= CLKCFG_TURBO;
-> +	clkcfg |= CLKCFG_FCS;
-> +
-> +	asm volatile(
-> +	"	b	2f\n"
-> +	"	.align	5\n"
-> +	"1:	mcr	p14, 0, %1, c6, c0, 0\n"
-> +	"	b	3f\n"
-> +	"2:	b	1b\n"
-> +	"3:	nop\n"
-> +		: "=&r" (unused)
-> +		: "r" (clkcfg)
-> +		: );
-> +
-> +	local_irq_restore(flags);
-> +}
-> +
-> +void pxa2xx_cpll_change(struct pxa2xx_freq *freq,
-> +			u32 (*mdrefr_dri)(unsigned int))
-> +{
-> +	unsigned int clkcfg = freq->clkcfg;
-> +	unsigned int unused, preset_mdrefr, postset_mdrefr;
-> +	unsigned long flags;
-> +
-> +	local_irq_save(flags);
-> +
-> +	/* Calculate the next MDREFR.  If we're slowing down the SDRAM clock
-> +	 * we need to preset the smaller DRI before the change.	 If we're
-> +	 * speeding up we need to set the larger DRI value after the change.
-> +	 */
-> +	preset_mdrefr = postset_mdrefr = __raw_readl(MDREFR);
-> +	if ((preset_mdrefr & MDREFR_DRI_MASK) > mdrefr_dri(freq->membus_khz)) {
-> +		preset_mdrefr = (preset_mdrefr & ~MDREFR_DRI_MASK);
-> +		preset_mdrefr |= mdrefr_dri(freq->membus_khz);
-> +	}
-> +	postset_mdrefr =
-> +		(postset_mdrefr & ~MDREFR_DRI_MASK) |
-> +		mdrefr_dri(freq->membus_khz);
-> +
-> +	/* If we're dividing the memory clock by two for the SDRAM clock, this
-> +	 * must be set prior to the change.  Clearing the divide must be done
-> +	 * after the change.
-> +	 */
-> +	if (freq->div2) {
-> +		preset_mdrefr  |= MDREFR_DB2_MASK;
-> +		postset_mdrefr |= MDREFR_DB2_MASK;
-> +	} else {
-> +		postset_mdrefr &= ~MDREFR_DB2_MASK;
-> +	}
-> +
-> +	/* Set new the CCCR and prepare CLKCFG */
-> +	writel(freq->cccr, CCCR);
-> +
-> +	asm volatile(
-> +	"	ldr	r4, [%1]\n"
-> +	"	b	2f\n"
-> +	"	.align	5\n"
-> +	"1:	str	%3, [%1]		/* preset the MDREFR */\n"
-> +	"	mcr	p14, 0, %2, c6, c0, 0	/* set CLKCFG[FCS] */\n"
-> +	"	str	%4, [%1]		/* postset the MDREFR */\n"
-> +	"	b	3f\n"
-> +	"2:	b	1b\n"
-> +	"3:	nop\n"
-> +	     : "=&r" (unused)
-> +	     : "r" (MDREFR), "r" (clkcfg), "r" (preset_mdrefr),
-> +	       "r" (postset_mdrefr)
-> +	     : "r4", "r5");
-> +
-> +	local_irq_restore(flags);
-> +}
-> +
-> diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-> index 6a3009eec830..20fd87b36560 100644
-> --- a/drivers/clk/pxa/clk-pxa25x.c
-> +++ b/drivers/clk/pxa/clk-pxa25x.c
-> @@ -18,6 +18,7 @@
->  #include <linux/io.h>
->  #include <linux/of.h>
->  #include <mach/pxa2xx-regs.h>
-> +#include <mach/smemc.h>
-
-I guess things aren't getting any worse here for mach includes...
-
-> @@ -48,6 +60,34 @@ static const char * const get_freq_khz[] = {
->  	"core", "run", "cpll", "memory"
->  };
->  
-> +static int get_sdram_rows(void)
-> +{
-> +	static int sdram_rows;
-> +	unsigned int drac2 = 0, drac0 = 0;
-> +	u32 mdcnfg;
-> +
-> +	if (sdram_rows)
-> +		return sdram_rows;
-> +
-> +	mdcnfg = __raw_readl(MDCNFG);
-
-Perhaps it should be readl_relaxed() instead? __raw_readl()
-doesn't byte-swap for endianess so it's usually wrong.
-
-> @@ -217,25 +321,6 @@ static void __init pxa27x_register_plls(void)
->  	clk_register_fixed_factor(NULL, "ppll_312mhz", "osc_13mhz", 0, 24, 1);
->  }
->  
-> -static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
-> -					      unsigned long parent_rate)
-> -{
-> -	unsigned long clkcfg;
-> -	unsigned int ht, osc_forced;
-> -	unsigned long ccsr = readl(CCSR);
-> -
-> -	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
-> -	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-
-Aha, found it.
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index befcd26..3d6e199 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -423,7 +423,8 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
+ 	imx6ul-pico-hobbit.dtb \
+ 	imx6ul-tx6ul-0010.dtb \
+ 	imx6ul-tx6ul-0011.dtb \
+-	imx6ul-tx6ul-mainboard.dtb
++	imx6ul-tx6ul-mainboard.dtb \
++	imx6ull-14x14-evk.dtb
+ dtb-$(CONFIG_SOC_IMX7D) += \
+ 	imx7d-cl-som-imx7.dtb \
+ 	imx7d-colibri-eval-v3.dtb \
+diff --git a/arch/arm/boot/dts/imx6ull-14x14-evk.dts b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+new file mode 100644
+index 0000000..db5bc07
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+@@ -0,0 +1,52 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License
++ *     version 2 as published by the Free Software Foundation.
++ *
++ *     This file is distributed in the hope that it will be useful
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "imx6ul-14x14-evk.dts"
++
++/ {
++	model = "Freescale i.MX6 UlltraLite 14x14 EVK Board";
++	compatible = "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
++};
++
++&clks {
++	assigned-clocks = <&clks IMX6UL_CLK_PLL3_PFD2>;
++	assigned-clock-rates = <320000000>;
++};
+diff --git a/arch/arm/boot/dts/imx6ull-pinfunc.h b/arch/arm/boot/dts/imx6ull-pinfunc.h
+new file mode 100644
+index 0000000..580b5c3
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ull-pinfunc.h
+@@ -0,0 +1,56 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __DTS_IMX6ULL_PINFUNC_H
++#define __DTS_IMX6ULL_PINFUNC_H
++
++#include "imx6ul-pinfunc.h"
++/*
++ * The pin function ID is a tuple of
++ * <mux_reg conf_reg input_reg mux_mode input_val>
++ */
++#define MX6ULL_PAD_ENET2_RX_DATA0__EPDC_SDDO08                    0x00E4 0x0370 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_RX_DATA1__EPDC_SDDO09                    0x00E8 0x0374 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_RX_EN__EPDC_SDDO10                       0x00EC 0x0378 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_TX_DATA0__EPDC_SDDO11                    0x00F0 0x037C 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_TX_DATA1__EPDC_SDDO12                    0x00F4 0x0380 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_TX_EN__EPDC_SDDO13                       0x00F8 0x0384 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_TX_CLK__EPDC_SDDO14                      0x00FC 0x0388 0x0000 0x9 0x0
++#define MX6ULL_PAD_ENET2_RX_ER__EPDC_SDDO15                       0x0100 0x038C 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_CLK__EPDC_SDCLK                            0x0104 0x0390 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_ENABLE__EPDC_SDLE                          0x0108 0x0394 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_HSYNC__EPDC_SDOE                           0x010C 0x0398 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_VSYNC__EPDC_SDCE0                          0x0110 0x039C 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_RESET__EPDC_GDOE                           0x0114 0x03A0 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA00__EPDC_SDDO00                        0x0118 0x03A4 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA01__EPDC_SDDO01                        0x011C 0x03A8 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA02__EPDC_SDDO02                        0x0120 0x03AC 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA03__EPDC_SDDO03                        0x0124 0x03B0 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA04__EPDC_SDDO04                        0x0128 0x03B4 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA05__EPDC_SDDO05                        0x012C 0x03B8 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA06__EPDC_SDDO06                        0x0130 0x03BC 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA07__EPDC_SDDO07                        0x0134 0x03C0 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA14__EPDC_SDSHR                         0x0150 0x03DC 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA15__EPDC_GDRL                          0x0154 0x03E0 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA16__EPDC_GDCLK                         0x0158 0x03E4 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA17__EPDC_GDSP                          0x015C 0x03E8 0x0000 0x9 0x0
++#define MX6ULL_PAD_LCD_DATA21__EPDC_SDCE1                         0x016C 0x03F8 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_MCLK__ESAI_TX3_RX2                          0x01D4 0x0460 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_PIXCLK__ESAI_TX2_RX3                        0x01D8 0x0464 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_VSYNC__ESAI_TX4_RX1                         0x01DC 0x0468 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_HSYNC__ESAI_TX1                             0x01E0 0x046C 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA00__ESAI_TX_HF_CLK                      0x01E4 0x0470 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA01__ESAI_RX_HF_CLK                      0x01E8 0x0474 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA02__ESAI_RX_FS                          0x01EC 0x0478 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA03__ESAI_RX_CLK                         0x01F0 0x047C 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA04__ESAI_TX_FS                          0x01F4 0x0480 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA05__ESAI_TX_CLK                         0x01F8 0x0484 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA06__ESAI_TX5_RX0                        0x01FC 0x0488 0x0000 0x9 0x0
++#define MX6ULL_PAD_CSI_DATA07__ESAI_T0                             0x0200 0x048C 0x0000 0x9 0x0
++
++#endif /* __DTS_IMX6ULL_PINFUNC_H */
+diff --git a/arch/arm/boot/dts/imx6ull.dtsi b/arch/arm/boot/dts/imx6ull.dtsi
+new file mode 100644
+index 0000000..dee8ab8
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ull.dtsi
+@@ -0,0 +1,43 @@
++/*
++ * Copyright 2016 Freescale Semiconductor, Inc.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License
++ *     version 2 as published by the Free Software Foundation.
++ *
++ *     This file is distributed in the hope that it will be useful
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "imx6ul.dtsi"
++#include "imx6ull-pinfunc.h"
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
