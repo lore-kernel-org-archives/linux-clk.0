@@ -1,34 +1,75 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 14 Nov 2016 10:15:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
+	thomas.ab@samsung.com, myungjoo.ham@samsung.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding
+ documentation
+Message-ID: <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
-References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com> <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Nov 2016 09:03:08 +0100
-Message-ID: <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+On Mon, Nov 07, 2016 at 03:39:32PM +0530, Pankaj Dubey wrote:
+> Add Device Tree binding documentation for the clocks
+> outputs in the Maxim-8997 Power Management IC.
+> 
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: devicetree@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
+>  .../bindings/regulator/max8997-regulator.txt       |  3 ++
+>  2 files changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+> new file mode 100644
+> index 0000000..d2e2a74
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+> @@ -0,0 +1,44 @@
+> +Binding for Maxim MAX8997 32k clock generator block
+> +
+> +This is a part of device tree bindings of MAX8997 multi-function device.
+> +More information can be found in bindings/regulator/max8997-regulator.txt file.
+> +
+> +The MAX8997 contains two 32.768khz clock outputs that can be controlled
+> +(gated/ungated) over I2C.
+> +
+> +Following properties should be presend in main device node of the MFD chip.
+> +
+> +Required properties:
+> +
+> +- #clock-cells: from common clock binding; shall be set to 1.
+> +
+> +Optional properties:
+> +- clock-output-names: From common clock binding.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume. Following indices are allowed:
+> +    - 0: 32khz_ap clock,
+> +    - 1: 32khz_cp clock,
+> +
+> +Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
+> +header and can be used in device tree sources.
+> +
+> +Example: Node of the MFD chip
+> +
+> +	max8997: max8997_pmic@66 {
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+pmic@66 {
 
-Gr{oetje,eeting}s,
+With that:
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Rob Herring <robh@kernel.org>
