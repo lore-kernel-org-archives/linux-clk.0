@@ -1,48 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.135]:32803 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753558AbcKBHFT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 03:05:19 -0400
-From: Jianqun Xu <jay.xu@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de,
-        huangtao@rock-chips.com, zhangqing@rock-chips.com,
-        zhengxing@rock-chips.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        lintao@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH] clk: rockchip: fix some clocks' name to be more standard style
-Date: Wed,  2 Nov 2016 15:04:56 +0800
-Message-Id: <1478070296-23080-1-git-send-email-jay.xu@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 14 Nov 2016 13:48:34 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Peter Chen <peter.chen@nxp.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, robh+dt@kernel.org,
+	fabio.estevam@nxp.com, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
+Message-ID: <20161114054833.GG3310@dragon>
+References: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
+ <1478584614-12054-2-git-send-email-peter.chen@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1478584614-12054-2-git-send-email-peter.chen@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix aclk_emmcgrf to aclk_emmc_grf, and fix aclk_emmccore to be
-aclk_emmc_core.
+On Tue, Nov 08, 2016 at 01:56:52PM +0800, Peter Chen wrote:
+> It is the 10th processor in the well-known imx6 series, and derived
+> from imx6ul but cost optimized. The more information about imx6ull
+> can be found at:
+> 
+> http://www.nxp.com/products/microcontrollers-and-processors/
+> arm-processors/i.mx-applications-processors/i.mx-6-processors
+> /i.mx6qp/i.mx-6ull-single-core-processor-with-arm-cortex-a7-core
+> :i.MX6ULL
+> 
+> In this patch, for SoC part, the imx6ull.dtsi includes imx6ul.dtsi;
+> for board part (imx6ul/imx6ull 14x14 evk), it has a common board
+> file imx6u-14x14-evk.dtsi, and this file is included by both
+> imx6ul-14x14-evk.dts and imx6ull-14x14-evk.dts.
+> 
+> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+> ---
+>  arch/arm/boot/dts/Makefile              |   3 +-
+>  arch/arm/boot/dts/imx6u-14x14-evk.dtsi  | 487 ++++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/imx6ul-14x14-evk.dts  | 479 +------------------------------
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+What's the real change between imx6u-14x14-evk.dtsi and
+imx6ul-14x14-evk.dts?  Instead of renaming the file, I would like to
+have imx6ull-14x14-evk.dts include imx6ul-14x14-evk.dts directly, if we
+can work out the difference within imx6ull-14x14-evk.dts.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 2c7cba7..b3df2c6 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -935,11 +935,11 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(6), 13, GFLAGS),
- 	COMPOSITE_NOGATE(ACLK_EMMC, "aclk_emmc", mux_aclk_emmc_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(21), 7, 1, MFLAGS, 0, 5, DFLAGS),
--	GATE(ACLK_EMMC_CORE, "aclk_emmccore", "aclk_emmc", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_EMMC_CORE, "aclk_emmc_core", "aclk_emmc", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(32), 8, GFLAGS),
- 	GATE(ACLK_EMMC_NOC, "aclk_emmc_noc", "aclk_emmc", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(32), 9, GFLAGS),
--	GATE(ACLK_EMMC_GRF, "aclk_emmcgrf", "aclk_emmc", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_EMMC_GRF, "aclk_emmc_grf", "aclk_emmc", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(32), 10, GFLAGS),
- 
- 	/* perilp0 */
--- 
-1.9.1
+Shawn
 
-
+>  arch/arm/boot/dts/imx6ull-14x14-evk.dts |  55 ++++
+>  arch/arm/boot/dts/imx6ull-pinfunc.h     |  56 ++++
+>  arch/arm/boot/dts/imx6ull.dtsi          |  43 +++
+>  6 files changed, 644 insertions(+), 479 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/imx6u-14x14-evk.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ull-14x14-evk.dts
+>  create mode 100644 arch/arm/boot/dts/imx6ull-pinfunc.h
+>  create mode 100644 arch/arm/boot/dts/imx6ull.dtsi
