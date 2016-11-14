@@ -1,137 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:38722 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752007AbcKROUA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 18 Nov 2016 09:20:00 -0500
-Subject: Re: [PATCH v8 10/16] mmc: sdhci-msm: Implement set_clock callback for
- sdhci-msm
-To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
- <1479312052-22396-11-git-send-email-riteshh@codeaurora.org>
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <e34e5767-7557-d68c-6ab7-862991d17b6c@intel.com>
-Date: Fri, 18 Nov 2016 16:14:58 +0200
+Return-Path: <vinod.koul@intel.com>
+Date: Mon, 14 Nov 2016 10:24:48 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: "maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"moinejf@free.fr" <moinejf@free.fr>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"alexandre.belloni@free-electrons.com" <alexandre.belloni@free-electrons.com>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"tiwai@suse.com" <tiwai@suse.com>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"mylene.josserand@free-electrons.com" <mylene.josserand@free-electrons.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"perex@perex.cz" <perex@perex.cz>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
+Message-ID: <20161114045448.GQ3000@localhost>
+References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
+ <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
+ <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
+ <20161004165553.GS5228@lukather>
+ <20161023183107.5b75b6aad62853378713299f@free.fr>
+ <20161027175154.v4kuhyvm3r5n6tdo@lukather>
+ <CAGb2v67SSZF6XL-HXv83nuwTKpJc53h8gsrb2r2V98LNZBzqEA@mail.gmail.com>
+ <1477922460.2837.5.camel@intel.com>
+ <CAGb2v65yR9NOff+VDA0cBj3UenGpdYUfnYfesnmzP8AN4uw4Tw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1479312052-22396-11-git-send-email-riteshh@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAGb2v65yR9NOff+VDA0cBj3UenGpdYUfnYfesnmzP8AN4uw4Tw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16/11/16 18:00, Ritesh Harjani wrote:
-> sdhci-msm controller may have different clk-rates for each
-> bus speed mode. Thus implement set_clock callback for
-> sdhci-msm driver.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Tue, Nov 01, 2016 at 10:55:13PM +0800, Chen-Yu Tsai wrote:
 
-Yes my Ack stands.
-
-> ---
->  drivers/mmc/host/sdhci-msm.c | 66 +++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 65 insertions(+), 1 deletion(-)
+> >>  * @src_maxburst: the maximum number of words (note: words, as in
+> >>  * units of the src_addr_width member, not bytes) that can be sent
+> >>  * in one burst to the device. Typically something like half the
+> >>  * FIFO depth on I/O peripherals so you don't overflow it. This
+> >>  * may or may not be applicable on memory sources.
+> >>  * @dst_maxburst: same as src_maxburst but for destination target
+> >>  * mutatis mutandis.
+> >>
+> >> The DMA engine driver should be free to select whatever burst size
+> >> that doesn't exceed this. So for max_burst = 4, the driver can select
+> >> burst = 4 for controllers that do support it, or burst = 1 for those
+> >> that don't, and do more bursts.
+> >
+> > Nope, the client configures these parameters and dmaengine driver
+> > validates and programs
 > 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 45ead68..6d02fc2 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -84,6 +84,7 @@ struct sdhci_msm_host {
->  	struct clk *pclk;	/* SDHC peripheral bus clock */
->  	struct clk *bus_clk;	/* SDHC bus voter clock */
->  	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
-> +	unsigned long clk_rate;
->  	struct mmc_host *mmc;
->  	bool use_14lpp_dll_reset;
->  };
-> @@ -571,6 +572,69 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
->  	return SDHCI_MSM_MIN_CLOCK;
->  }
->  
-> +/**
-> + * __sdhci_msm_set_clock - sdhci_msm clock control.
-> + *
-> + * Description:
-> + * MSM controller does not use internal divider and
-> + * instead directly control the GCC clock as per
-> + * HW recommendation.
-> + **/
-> +void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
-> +{
-> +	u16 clk;
-> +	/*
-> +	 * Keep actual_clock as zero -
-> +	 * - since there is no divider used so no need of having actual_clock.
-> +	 * - MSM controller uses SDCLK for data timeout calculation. If
-> +	 *   actual_clock is zero, host->clock is taken for calculation.
-> +	 */
-> +	host->mmc->actual_clock = 0;
-> +
-> +	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-> +
-> +	if (clock == 0)
-> +		return;
-> +
-> +	/*
-> +	 * MSM controller do not use clock divider.
-> +	 * Thus read SDHCI_CLOCK_CONTROL and only enable
-> +	 * clock with no divider value programmed.
-> +	 */
-> +	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-> +	sdhci_enable_clock(host, clk);
-> +}
-> +
-> +/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
-> +static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +	int rc;
-> +
-> +	if (!clock) {
-> +		msm_host->clk_rate = clock;
-> +		goto out;
-> +	}
-> +
-> +	spin_unlock_irq(&host->lock);
-> +
-> +	rc = clk_set_rate(msm_host->clk, clock);
-> +	if (rc) {
-> +		pr_err("%s: Failed to set clock at rate %u\n",
-> +		       mmc_hostname(host->mmc), clock);
-> +		goto out_lock;
-> +	}
-> +	msm_host->clk_rate = clock;
-> +	pr_debug("%s: Setting clock at rate %lu\n",
-> +		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
-> +
-> +out_lock:
-> +	spin_lock_irq(&host->lock);
-> +out:
-> +	__sdhci_msm_set_clock(host, clock);
-> +}
-> +
->  static const struct of_device_id sdhci_msm_dt_match[] = {
->  	{ .compatible = "qcom,sdhci-msm-v4" },
->  	{},
-> @@ -581,7 +645,7 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
->  static const struct sdhci_ops sdhci_msm_ops = {
->  	.platform_execute_tuning = sdhci_msm_execute_tuning,
->  	.reset = sdhci_reset,
-> -	.set_clock = sdhci_set_clock,
-> +	.set_clock = sdhci_msm_set_clock,
->  	.get_min_clock = sdhci_msm_get_min_clock,
->  	.get_max_clock = sdhci_msm_get_max_clock,
->  	.set_bus_width = sdhci_set_bus_width,
-> 
+> Shouldn't we just name it "burst_size" then if it's meant to be what
+> the client specifically asks for?
 
+Well if for some reason we program lesser than than max it would work
+technically. But a larger burst wont work at all, so thats why maxburst is
+significant.
+
+> My understanding is that the client configures its own parameters,
+> such as the trigger level for the DRQ, like raise DRQ when level < 1/4
+> FIFO depth, request maxburst = 1/4 or 1/2 FIFO depth, so as not to
+> overrun the FIFO. When the DRQ is raised, the DMA engine will do a
+> burst, and after the burst the DRQ would be low again, so the DMA
+> engine will wait. So the DMA engine driver should be free to
+> program the actual burst size to something less than maxburst, shouldn't
+> it?
+
+Yup but not more that max..
+
+> >> This also means we can increase max_burst for the audio codec, as
+> >> the FIFO is 64 samples deep for stereo, or 128 samples for mono.
+> >
+> > Beware that higher bursts means chance of underrun of FIFO. This value
+> > is selected with consideration of power and performance required. Lazy
+> > allocation would be half of FIFO size..
+> 
+> You mean underrun if its the source right? So the client setting maxburst
+> should take the DRQ trigger level into account for this.
+
+Yes
+
+-- 
+~Vinod
