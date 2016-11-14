@@ -1,30 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 9 Nov 2016 12:43:31 -0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:34190 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbcKNT5w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 14:57:52 -0500
+Date: Mon, 14 Nov 2016 11:57:49 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH] clk: pxa: Use __iomem properly and staticize lock
- variable
-Message-ID: <20161109204331.GU16026@codeaurora.org>
-References: <20161108224756.25842-1-sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        andy.gross@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org,
+        Krishna Konda <kkonda@codeaurora.org>
+Subject: Re: [PATCH v7 14/14] sdhci: sdhci-msm: update dll configuration
+Message-ID: <20161114195749.GJ5177@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-15-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161108224756.25842-1-sboyd@codeaurora.org>
+In-Reply-To: <1479103248-9491-15-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/08, Stephen Boyd wrote:
-> This function is passed an __iomem pointer but we use a u32
-> pointer instead which makes checkers like spare complain.
-> Furthermore, "lock" is a pretty poor variable name for a string
-> that will go into lockdep reports and the symbol isn't marked
-> static. Cleanup all this.
-> 
-> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+On 11/14, Ritesh Harjani wrote:
+> @@ -903,7 +998,33 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>  			config |= CORE_HC_SELECT_IN_EN;
+>  			writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
+>  		}
+> +		if (!msm_host->clk_rate && !msm_host->use_cdclp533) {
+> +			/*
+> +			 * Poll on DLL_LOCK or DDR_DLL_LOCK bits in
+> +			 * CORE_DLL_STATUS to be set.  This should get set
+> +			 * within 15 us at 200 MHz.
+> +			 */
+> +			rc = readl_relaxed_poll_timeout(host->ioaddr +
+> +							CORE_DLL_STATUS,
+> +							dll_lock,
+> +							(dll_lock &
+> +							(CORE_DLL_LOCK |
+> +							CORE_DDR_DLL_LOCK)), 10,
+> +							1000);
+> +			if (rc == -ETIMEDOUT)
+> +				pr_err("%s: Unable to get DLL_LOCK/DDR_DLL_LOCK, dll_status: 0x%08x\n",
+> +				       mmc_hostname(host->mmc), dll_lock);
+> +		}
+>  	} else {
+> +		if (!msm_host->use_cdclp533) {
+> +			/* set CORE_PWRSAVE_DLL bit in CORE_VENDOR_SPEC3 */
 
-Applied to clk-next
+These types of comments are totally useless. The code says
+exactly what is being done, and the comment is actually wrong in
+this case. Please remove all these "set/clear bit X in register
+Y" comments.
+
+> +			config = readl_relaxed(host->ioaddr +
+> +					CORE_VENDOR_SPEC3);
+> +			config &= ~CORE_PWRSAVE_DLL;
+> +			writel_relaxed(config, host->ioaddr +
+> +					CORE_VENDOR_SPEC3);
+> +		}
+> +
+>  		/* Select the default clock (free running MCLK) */
+>  		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
+>  		config &= ~CORE_HC_MCLK_SEL_MASK;
+> @@ -1100,6 +1221,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>  		msm_host->use_14lpp_dll_reset = true;
+>  
+>  	/*
+> +	 * SDCC 5 controller with major version 1, minor version 0x34 and later
+> +	 * with HS 400 mode support will use CM DLL instead of CDC LP 533 DLL.
+> +	 */
+> +	if ((core_major == 1) && (core_minor < 0x34))
+
+Drop useless parenthesis please.
+
+> +		msm_host->use_cdclp533 = true;
+> +
+> +	/*
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
