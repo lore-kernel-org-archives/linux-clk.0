@@ -1,85 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46694 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752149AbcKUGjP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:39:15 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v9 11/16] mmc: sdhci-msm: Add clock changes for DDR mode.
-Date: Mon, 21 Nov 2016 12:07:21 +0530
-Message-Id: <1479710246-26676-12-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
+Date: Mon, 14 Nov 2016 05:59:01 +0000
+Message-ID: <HE1PR04MB14509BFD0CBA838BC1EA7D598BBC0@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
+ <1478584614-12054-2-git-send-email-peter.chen@nxp.com>
+ <20161114054833.GG3310@dragon>
+In-Reply-To: <20161114054833.GG3310@dragon>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-SDHC MSM controller need 2x clock for MCLK at GCC.
-Hence make required changes to have 2x clock for
-DDR timing modes.
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 00759ef..c50cee8 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -610,6 +610,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	struct mmc_ios curr_ios = host->mmc->ios;
- 	int rc;
- 
- 	if (!clock) {
-@@ -618,16 +619,28 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
- 	}
- 
- 	spin_unlock_irq(&host->lock);
-+	/*
-+	 * The SDHC requires internal clock frequency to be double the
-+	 * actual clock that will be set for DDR mode. The controller
-+	 * uses the faster clock(100/400MHz) for some of its parts and
-+	 * send the actual required clock (50/200MHz) to the card.
-+	 */
-+	if (curr_ios.timing == MMC_TIMING_UHS_DDR50 ||
-+	    curr_ios.timing == MMC_TIMING_MMC_DDR52 ||
-+	    curr_ios.timing == MMC_TIMING_MMC_HS400)
-+		clock *= 2;
- 
- 	rc = clk_set_rate(msm_host->clk, clock);
- 	if (rc) {
--		pr_err("%s: Failed to set clock at rate %u\n",
--		       mmc_hostname(host->mmc), clock);
-+		pr_err("%s: Failed to set clock at rate %u at timing %d\n",
-+		       mmc_hostname(host->mmc), clock,
-+		       curr_ios.timing);
- 		goto out_lock;
- 	}
- 	msm_host->clk_rate = clock;
--	pr_debug("%s: Setting clock at rate %lu\n",
--		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
-+	pr_debug("%s: Setting clock at rate %lu at timing %d\n",
-+		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk),
-+		 curr_ios.timing);
- 
- out_lock:
- 	spin_lock_irq(&host->lock);
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+Best regards,
+Peter Chen
 
+
+>-----Original Message-----
+>From: Shawn Guo [mailto:shawnguo@kernel.org]
+>Sent: Monday, November 14, 2016 1:49 PM
+>To: Peter Chen <peter.chen@nxp.com>
+>Cc: sboyd@codeaurora.org; mturquette@baylibre.com; linux-arm-
+>kernel@lists.infradead.org; kernel@pengutronix.de; devicetree@vger.kernel.=
+org;
+>robh+dt@kernel.org; Fabio Estevam <fabio.estevam@nxp.com>;
+>mark.rutland@arm.com; linux-clk@vger.kernel.org
+>Subject: Re: [PATCH v2 1/3] ARM: imx6ull: add imx6ull support
+>
+>On Tue, Nov 08, 2016 at 01:56:52PM +0800, Peter Chen wrote:
+>> It is the 10th processor in the well-known imx6 series, and derived
+>> from imx6ul but cost optimized. The more information about imx6ull can
+>> be found at:
+>>
+>> http://www.nxp.com/products/microcontrollers-and-processors/
+>> arm-processors/i.mx-applications-processors/i.mx-6-processors
+>> /i.mx6qp/i.mx-6ull-single-core-processor-with-arm-cortex-a7-core
+>> :i.MX6ULL
+>>
+>> In this patch, for SoC part, the imx6ull.dtsi includes imx6ul.dtsi;
+>> for board part (imx6ul/imx6ull 14x14 evk), it has a common board file
+>> imx6u-14x14-evk.dtsi, and this file is included by both
+>> imx6ul-14x14-evk.dts and imx6ull-14x14-evk.dts.
+>>
+>> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+>> ---
+>>  arch/arm/boot/dts/Makefile              |   3 +-
+>>  arch/arm/boot/dts/imx6u-14x14-evk.dtsi  | 487
+>> ++++++++++++++++++++++++++++++++
+>> arch/arm/boot/dts/imx6ul-14x14-evk.dts  | 479
+>> +------------------------------
+>
+>What's the real change between imx6u-14x14-evk.dtsi and imx6ul-14x14-evk.d=
+ts?
+>Instead of renaming the file, I would like to have imx6ull-14x14-evk.dts i=
+nclude
+>imx6ul-14x14-evk.dts directly, if we can work out the difference within im=
+x6ull-
+>14x14-evk.dts.
+>
+
+The main difference is compatible string, I can't include two compatible st=
+rings in one dts file,
+the dts build will fail for that.
+
+imx6ull-14x14-evk.dts=20
+/ {
+        model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
+        compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
+};
+
+imx6ul-14x14-evk.dts=20
+/ {
+        model =3D "Freescale i.MX6 UltraLite 14x14 EVK Board";
+        compatible =3D "fsl,imx6ul-14x14-evk", "fsl,imx6ul";
+};
+
+Peter
