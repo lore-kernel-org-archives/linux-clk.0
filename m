@@ -1,79 +1,47 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
-To: Wei Xu <xuwei5@hisilicon.com>
-References: <20161017120705.3726-1-wenpan@hisilicon.com>
- <20161017120705.3726-2-wenpan@hisilicon.com> <5893354.6MrIxqzRoI@wuerfel>
- <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
- <582C2785.2010804@hisilicon.com>
-CC: wenpan <wenpan@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
-        "Marty
- Plummer" <netz.kernel@gmail.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <howell.yang@hisilicon.com>,
-        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <kevin.lixu@hisilicon.com>, <qinxiaojun@huawei.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <114569cb-79ab-a46d-8582-6169f182a32c@hisilicon.com>
-Date: Thu, 17 Nov 2016 11:03:42 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:35740 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbcKNUBQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 15:01:16 -0500
+Date: Mon, 14 Nov 2016 12:01:15 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        andy.gross@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+Subject: Re: [PATCH v7 04/14] ARM: dts: Add xo_clock to sdhc nodes on qcom
+ platforms
+Message-ID: <20161114200115.GL5177@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-5-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <582C2785.2010804@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479103248-9491-5-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Wei，
-
-On 2016/11/16 17:31, Wei Xu wrote:
-> Hi Pan,
+On 11/14, Ritesh Harjani wrote:
+> Add xo_clock to sdhc clock node on all qcom platforms.
 > 
-> On 2016/11/16 8:56, wenpan wrote:
->> Hi Marty，
->> Does this confict with your patch？ If not，I hope this could be merged first.  Besides could you tell me the link to your related patch?
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> ---
+>  arch/arm/boot/dts/qcom-apq8084.dtsi   | 14 ++++++++------
+>  arch/arm/boot/dts/qcom-msm8974.dtsi   | 14 ++++++++------
+>  arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
+>  4 files changed, 27 insertions(+), 20 deletions(-)
 > 
-> This is the link: https://patchwork.kernel.org/patch/9334743/
-> 
 
-Thank you for offering this.If I want to give some comments on Marty's patch,
-what should I do?
+Is there an update to
+Documentation/devicetree/bindings/mmc/sdhci-msm.txt as well?
 
-For Marty's patch, I think there's no need to add specific config item ARCH_HIxxxx
-for every chipset. Some existing chipsets depend on ARCH_HISI directly like Hi3519
-and Hi3798CV200. If some options like ARM_GIC is removed from ARCH_HISI, this kind
-of chipsets will must choose other place to select it. I suggest we should keep selecting
-ARM_GIC under ARCH_HISI as Pan's patch do.
-
-The code may be like this:
-
-config ARCH_HISI
- 	bool "Hisilicon SoC Support"
--	depends on ARCH_MULTI_V7
-+	depends on ARCH_MULTI_V5 || ARCH_MULTI_V6 || ARCH_MULTI_V7
- 	select ARM_AMBA
--	select ARM_GIC
-+	select ARM_GIC if ARCH_MULTI_V7
-+	select ARM_VIC if ARCH_MULTI_V5 || depends on ARCH_MULTI_V6
- 	select ARM_TIMER_SP804
- 	select POWER_RESET
- 	select POWER_RESET_HISI
- 	select POWER_SUPPLY
-
-What's your opinion?
-
-Best Regards,
-Jiancheng
-
->> On 2016/10/17 21:48, Arnd Bergmann wrote:
->>> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
->>>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
->>>>
->>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
->>>>
->>>
->>> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
->>> patches for Hi3520, which I think is closely related to this one.
->>> Please try to work together so the patches don't conflict. It should
->>> be fairly straightforward since you are basically doing the same
->>> change here.
->>>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
