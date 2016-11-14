@@ -1,30 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Nov 2016 17:56:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] clk: pxa: export core clocks
-Message-ID: <20161102005651.GZ16026@codeaurora.org>
-References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
- <1477225170-19019-5-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
+	<peter.chen@nxp.com>
+Subject: [PATCH v3 2/3] ARM: imx: mach-imx6ul: add imx6ull support
+Date: Mon, 14 Nov 2016 15:04:21 +0800
+Message-ID: <1479107062-15365-3-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1479107062-15365-1-git-send-email-peter.chen@nxp.com>
+References: <1479107062-15365-1-git-send-email-peter.chen@nxp.com>
+Return-Path: peter.chen@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477225170-19019-5-git-send-email-robert.jarzmik@free.fr>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/23, Robert Jarzmik wrote:
-> pxaxxx_get_clk_frequency_khz() needs several clocks to be available
-> through clk_get(), ie. the cpu clocks, system bus clock and memory
-> clocks.
-> 
-> Add the missing clkdev so that their rate can be acquired.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
+imx6ull is derived SoC from imx6ul.
 
-Applied to clk-next
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ arch/arm/mach-imx/mach-imx6ul.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 58a2b88..6cb8a22 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -89,6 +89,7 @@ static void __init imx6ul_init_late(void)
+ 
+ static const char * const imx6ul_dt_compat[] __initconst = {
+ 	"fsl,imx6ul",
++	"fsl,imx6ull",
+ 	NULL,
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
