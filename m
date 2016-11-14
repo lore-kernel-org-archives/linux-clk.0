@@ -1,64 +1,56 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v2 0/9] STM32F4 missing clocks
-Date: Thu, 24 Nov 2016 15:45:40 +0100
-Message-ID: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
+	<peter.chen@nxp.com>
+Subject: [PATCH v3 0/3] imx: add imx6ull support
+Date: Mon, 14 Nov 2016 15:04:19 +0800
+Message-ID: <1479107062-15365-1-git-send-email-peter.chen@nxp.com>
+Return-Path: peter.chen@nxp.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hi Shawn,
 
-v2:
- - Put post divider in config structure
- - Rework patch-set
-    - add update dt binding documentation
-    - add clock definition file
- - Use composite for pll vco clocks
- - For auxiliary clock, allow the possiblity to enable peripheral
-   clocks at same time (sugested by radek)
- - Add vco_in clock (entry frequency for all pll) to simplify the code and clarify clock tree
- - Fix missing end of divider tables
+In this series, it adds support for imx6ull SoC which is a derived SoC
+from imx6ul, and imx6ull is pin-to-pin compatible with imx6ul, the
+basic functions are tested at imx6ull 14x14 evk, and imx6ul 14x14 evk
+is tested too to avoid regression.
 
-This patch-set adds:
- - I2S & SAI PLLs
- - SDIO & 48 Mhz clocks
- - LCD-TFT clock
- - I2S & SAI clocks
+Changes for v3:
+- Keep imx6ul-14x14-evk.dts unchanging, and let imx6ull-14x14-evk.dts
+  include it. [Patch 1/3]
 
-Gabriel Fernandez (9):
-  clk: stm32f4: Update DT bindings documentation
-  clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
-  clk: stm32f4: Add post divisor for I2S & SAI PLLs
-  clk: stm32f4: Add lcd-tft clock
-  clk: stm32f4: Add I2S clock
-  clk: stm32f4: Add SAI clocks
-  clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
-  arm: dts: stm32f4: Add external I2S clock
-  arm: dts: stm32f4: Include auxiliary stm32f4 clock definition
+Changes for v2:
+- Keep imx6ul.dtsi unchanging, and using GPL/X11 dual license
+  for new dts file. [Patch 1/3]
+- Using IMX6ULL prefix for both imx6ull dedicated pin and clock name.
+  [Patch 1/3, 3/3]
+- Delete useless changes for patch 2/3.
+- Delete blank line for patch 3/3.
+- Using assigned-clocks for imx6ull 14x14 evk. [Patch 1/3, 3/3]
 
- .../devicetree/bindings/clock/st,stm32-rcc.txt     |  15 +
- arch/arm/boot/dts/stm32f429.dtsi                   |   9 +-
- drivers/clk/clk-stm32f4.c                          | 585 ++++++++++++++++++++-
- include/dt-bindings/clock/stm32f4-clock.h          |  37 ++
- 4 files changed, 626 insertions(+), 20 deletions(-)
- create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
+Bai Ping (1):
+  clk: imx: clk-imx6ul: add clk support for imx6ull
+
+Peter Chen (2):
+  ARM: imx6ull: add imx6ull support
+  ARM: imx: mach-imx6ul: add imx6ull support
+
+ arch/arm/boot/dts/Makefile               |  3 +-
+ arch/arm/boot/dts/imx6ull-14x14-evk.dts  | 52 +++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ull-pinfunc.h      | 56 +++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ull.dtsi           | 43 +++++++++++++++++++
+ arch/arm/mach-imx/mach-imx6ul.c          |  1 +
+ drivers/clk/imx/clk-imx6ul.c             | 72 +++++++++++++++++++++++++++-----
+ include/dt-bindings/clock/imx6ul-clock.h | 15 ++++++-
+ 7 files changed, 229 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6ull-14x14-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx6ull-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imx6ull.dtsi
 
 -- 
-1.9.1
+2.7.4
