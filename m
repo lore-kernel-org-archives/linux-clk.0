@@ -1,57 +1,56 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	varada@codeaurora.org,
-	pradeepb@codeaurora.org,
-	snlakshm@codeaurora.org,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 4/6] clk: qcom: ipq4019: correct sdcc frequency and parent name
-Date: Fri, 25 Nov 2016 21:11:31 +0530
-Message-Id: <1480088493-4590-5-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
-References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+	tdas@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v4 3/3] clk: qcom: mmcc-8996: Add capability flags for some alpha PLLs
+Date: Mon, 14 Nov 2016 16:30:40 +0530
+Message-Id: <1479121240-20922-4-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1479121240-20922-1-git-send-email-rnayak@codeaurora.org>
+References: <1479121240-20922-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-1. The parent for sdcc clock is sdccpll.
-2. The frequency value was wrong so modified the same.
+Flag alpha PLLs which support fsmmode, dynamic update and the ones
+with latched input interface.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/clk/qcom/gcc-ipq4019.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/mmcc-msm8996.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 40187ae..320750c 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -124,7 +124,7 @@ struct clk_fepll {
- 
- static const char * const gcc_xo_sdcc1_500[] = {
- 	"xo",
--	"ddrpll",
-+	"ddrpllsdcc",
- 	"fepll500",
- };
- 
-@@ -550,7 +550,7 @@ struct clk_fepll {
- 	F(25000000,  P_FEPLL500,		1,  1, 20),
- 	F(50000000,  P_FEPLL500,		1,  1, 10),
- 	F(100000000, P_FEPLL500,		1,  1, 5),
--	F(193000000, P_DDRPLL,		1,  0, 0),
-+	F(192000000, P_DDRPLL,			1,  0, 0),
- 	{ }
- };
- 
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index f77206f..c6122e1 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -269,6 +269,7 @@ enum {
+ 	.offset = 0x0,
+ 	.vco_table = mmpll_p_vco,
+ 	.num_vco = ARRAY_SIZE(mmpll_p_vco),
++	.flags = SUPPORTS_FSM_MODE,
+ 	.clkr = {
+ 		.enable_reg = 0x100,
+ 		.enable_mask = BIT(0),
+@@ -297,6 +298,7 @@ enum {
+ 	.offset = 0x30,
+ 	.vco_table = mmpll_p_vco,
+ 	.num_vco = ARRAY_SIZE(mmpll_p_vco),
++	.flags = SUPPORTS_FSM_MODE,
+ 	.clkr = {
+ 		.enable_reg = 0x100,
+ 		.enable_mask = BIT(1),
+@@ -445,6 +447,8 @@ enum {
+ 	.offset = 0x4200,
+ 	.vco_table = mmpll_t_vco,
+ 	.num_vco = ARRAY_SIZE(mmpll_t_vco),
++	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_LATCHED_INPUT,
++	.latch_ack_bit = 29,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "mmpll9_early",
+ 		.parent_names = (const char *[]){ "xo" },
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
