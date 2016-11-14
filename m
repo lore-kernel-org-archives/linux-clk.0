@@ -1,122 +1,61 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v2 7/9] clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
-Date: Thu, 24 Nov 2016 15:45:47 +0100
-Message-ID: <1479998749-20358-8-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Stephen Boyd'" <sboyd@codeaurora.org>
+Cc: "'Rajendra Nayak'" <rnayak@codeaurora.org>,
+	<mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<stanimir.varbanov@linaro.org>
+References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-4-git-send-email-sricharan@codeaurora.org> <20161103203418.GA16026@codeaurora.org> <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org> <20161104201836.GE16026@codeaurora.org> <58201597.6010207@codeaurora.org> <20161108223336.GK16026@codeaurora.org> <000301d23aaa$3f5dd110$be197330$@codeaurora.org> <20161110233001.GM16026@codeaurora.org>
+In-Reply-To: <20161110233001.GM16026@codeaurora.org>
+Subject: RE: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus core0/1 clks
+Date: Mon, 14 Nov 2016 09:21:24 +0530
+Message-ID: <01be01d23e2a$628f4230$27adc690$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hi Stephen,
 
-In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
-from pll-sai-p.
+>>
+>> So the above is the sequence which is actually carried out on the
+>> firmware side. The same can be done in host as well.
+>> The clocks stuck issue indeed is not there with this.
+>
+>Great! We've finally connected on what the actual problem is.
+>
+>> But with the above sequence we need to add a step to do inverse
+>> of STEP3 above (ie write the registers to de-assert hw_signal),
+>> to keep the subdomains in off, till firmware uses it. So the
+>> above sequence helps to avoid masking the halt check, although
+>> the host really does not wants to use these clocks, except
+>> setting it up for the firmware.
+>>
+>
+>Right, but knowing that the clocks failed to turn on in the first
+>place is much safer than silently ignoring the failure.
+>Otherwise, we could hand over control to the firmware, and the
+>firmware would fail to operate the hardware, and we're stuck with
+>debugging the firmware now. That sounds quite painful to figure
+>out.
+>
 
-The SDIO clock could be also derived from 48Mhz or from sys clock.
+Right, i already debugged this sort of a scenario which was quite
+paintful sometime back :)
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
+>If we properly toggle the video hw bits in coordination with
+>firmware and turn on/off the clocks with the GDSC ON, then
+>debugging is made simpler. The point is, we don't want to lose
+>robustness by silencing halt checks. The semantics of
+>clk_enable() means the clock is running, and that won't be true
+>here unless we ensure the GDSC is enabled.
+>
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 02339d1..161449d 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -206,7 +206,7 @@ struct stm32f4_gate_data {
- 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
--	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
-+	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"sdmux" },
- 	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
-@@ -940,6 +940,10 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
- 	"no-clock" };
- 
-+static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
-+
-+static const char *sdmux_parents[2] = { "pll48", "sys" };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -994,6 +998,45 @@ struct stm32f4_clk_data {
- 	},
- };
- 
-+static const struct stm32_aux_clk stm32f469_aux_clk[] = {
-+	{
-+		CLK_LCD, "lcd-tft", lcd_parent, ARRAY_SIZE(lcd_parent),
-+		NO_MUX, 0, 0,
-+		STM32F4_RCC_APB2ENR, 26,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
-+		STM32F4_RCC_CFGR, 23, 1,
-+		NO_GATE, 0,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 20, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 22, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		NO_IDX, "pll48", pll48_parents, ARRAY_SIZE(pll48_parents),
-+		STM32F4_RCC_DCKCFGR, 27, 1,
-+		NO_GATE, 0,
-+		0
-+	},
-+	{
-+		NO_IDX, "sdmux", sdmux_parents, ARRAY_SIZE(sdmux_parents),
-+		STM32F4_RCC_DCKCFGR, 28, 1,
-+		NO_GATE, 0,
-+		0
-+	},
-+};
-+
- static const struct stm32f4_clk_data stm32f429_clk_data = {
- 	.gates_data	= stm32f429_gates,
- 	.gates_map	= stm32f42xx_gate_map,
-@@ -1008,8 +1051,8 @@ struct stm32f4_clk_data {
- 	.gates_map	= stm32f46xx_gate_map,
- 	.gates_num	= ARRAY_SIZE(stm32f469_gates),
- 	.pll_data	= stm32f469_pll,
--	.aux_clk	= stm32f429_aux_clk,
--	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
-+	.aux_clk	= stm32f469_aux_clk,
-+	.aux_clk_num	= ARRAY_SIZE(stm32f469_aux_clk),
- };
- 
- static const struct of_device_id stm32f4_of_match[] = {
--- 
-1.9.1
+ok, which means with this approach, this patch can be dropped and
+the other bits needs to be added to the video driver. I will follow that
+up with Stanimir in his video driver patches.
+
+Regards,
+ Sricharan
