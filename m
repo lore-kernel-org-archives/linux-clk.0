@@ -1,96 +1,82 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54286 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:41768 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbcKOEXi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 23:23:38 -0500
-Subject: Re: [PATCH v7 14/14] sdhci: sdhci-msm: update dll configuration
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
- <1479103248-9491-15-git-send-email-riteshh@codeaurora.org>
- <20161114195749.GJ5177@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        andy.gross@linaro.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Krishna Konda <kkonda@codeaurora.org>
+        with ESMTP id S941072AbcKNGCA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:00 -0500
 From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <a182baf9-4ec5-8491-0385-94f37999f854@codeaurora.org>
-Date: Tue, 15 Nov 2016 09:53:27 +0530
-MIME-Version: 1.0
-In-Reply-To: <20161114195749.GJ5177@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        sboyd@codeaurora.org, andy.gross@linaro.org
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
+        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
+        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v7 06/14] mmc: sdhci-msm: Add get_min_clock() and get_max_clock() callback
+Date: Mon, 14 Nov 2016 11:30:40 +0530
+Message-Id: <1479103248-9491-7-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This add get_min_clock() and get_max_clock() callback
+for sdhci-msm. sdhci-msm min/max clocks may be different
+hence implement these callbacks.
 
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-On 11/15/2016 1:27 AM, Stephen Boyd wrote:
-> On 11/14, Ritesh Harjani wrote:
->> @@ -903,7 +998,33 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->>  			config |= CORE_HC_SELECT_IN_EN;
->>  			writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
->>  		}
->> +		if (!msm_host->clk_rate && !msm_host->use_cdclp533) {
->> +			/*
->> +			 * Poll on DLL_LOCK or DDR_DLL_LOCK bits in
->> +			 * CORE_DLL_STATUS to be set.  This should get set
->> +			 * within 15 us at 200 MHz.
->> +			 */
->> +			rc = readl_relaxed_poll_timeout(host->ioaddr +
->> +							CORE_DLL_STATUS,
->> +							dll_lock,
->> +							(dll_lock &
->> +							(CORE_DLL_LOCK |
->> +							CORE_DDR_DLL_LOCK)), 10,
->> +							1000);
->> +			if (rc == -ETIMEDOUT)
->> +				pr_err("%s: Unable to get DLL_LOCK/DDR_DLL_LOCK, dll_status: 0x%08x\n",
->> +				       mmc_hostname(host->mmc), dll_lock);
->> +		}
->>  	} else {
->> +		if (!msm_host->use_cdclp533) {
->> +			/* set CORE_PWRSAVE_DLL bit in CORE_VENDOR_SPEC3 */
->
-> These types of comments are totally useless. The code says
-> exactly what is being done, and the comment is actually wrong in
-> this case. Please remove all these "set/clear bit X in register
-> Y" comments.
-Ok, done.
-
->
->> +			config = readl_relaxed(host->ioaddr +
->> +					CORE_VENDOR_SPEC3);
->> +			config &= ~CORE_PWRSAVE_DLL;
->> +			writel_relaxed(config, host->ioaddr +
->> +					CORE_VENDOR_SPEC3);
->> +		}
->> +
->>  		/* Select the default clock (free running MCLK) */
->>  		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
->>  		config &= ~CORE_HC_MCLK_SEL_MASK;
->> @@ -1100,6 +1221,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>  		msm_host->use_14lpp_dll_reset = true;
->>
->>  	/*
->> +	 * SDCC 5 controller with major version 1, minor version 0x34 and later
->> +	 * with HS 400 mode support will use CM DLL instead of CDC LP 533 DLL.
->> +	 */
->> +	if ((core_major == 1) && (core_minor < 0x34))
->
-> Drop useless parenthesis please.
-Done.
->
->> +		msm_host->use_cdclp533 = true;
->> +
->> +	/*
->
-
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 643956e..f63ffb0 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -67,6 +67,8 @@
+ 
+ #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+ 
++#define SDHCI_MSM_MIN_CLOCK	400000
++
+ #define CDR_SELEXT_SHIFT	20
+ #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
+ #define CMUX_SHIFT_PHASE_SHIFT	24
+@@ -562,6 +564,19 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++
++	return clk_round_rate(msm_host->clk, ULONG_MAX);
++}
++
++static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
++{
++	return SDHCI_MSM_MIN_CLOCK;
++}
++
+ static const struct of_device_id sdhci_msm_dt_match[] = {
+ 	{ .compatible = "qcom,sdhci-msm-v4" },
+ 	{},
+@@ -573,6 +588,8 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
+ 	.platform_execute_tuning = sdhci_msm_execute_tuning,
+ 	.reset = sdhci_reset,
+ 	.set_clock = sdhci_set_clock,
++	.get_min_clock = sdhci_msm_get_min_clock,
++	.get_max_clock = sdhci_msm_get_max_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
+ 	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
+ 	.voltage_switch = sdhci_msm_voltage_switch,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
