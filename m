@@ -1,52 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:45548 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753471AbcKUGia (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:38:30 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v9 05/16] dt-bindings: sdhci-msm: Add xo value
-Date: Mon, 21 Nov 2016 12:07:15 +0530
-Message-Id: <1479710246-26676-6-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 14 Nov 2016 18:39:54 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] rockchip clock changes for 4.10
+Message-ID: <20161115023954.GU5177@codeaurora.org>
+References: <2643672.7kkyv0VVfm@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2643672.7kkyv0VVfm@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "xo" value which is tcxo clock to sdhci-msm
-DT binding properties.
+On 11/12, Heiko Stuebner wrote:
+> Hi Mike, Stephen,
+> 
+> please find below a pull request for rockchip-related clock changes for 4.10.
+> Nothing really big stands out this time, so if it looks ok please pull.
+> 
+> 
+> Thanks
+> Heiko
+> 
+> 
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> 
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.10-rockchip-clk1
+> 
+> for you to fetch changes up to bf92384b6d729b22916ba832b4a225ca196e98ba:
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
- 1 file changed, 1 insertion(+)
+Thanks. Pulled.
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-index 485483a..0576264 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-@@ -17,6 +17,7 @@ Required properties:
- 	"iface" - Main peripheral bus clock (PCLK/HCLK - AHB Bus clock) (required)
- 	"core"	- SDC MMC clock (MCLK) (required)
- 	"bus"	- SDCC bus voter clock (optional)
-+	"xo"	- TCXO clock (optional)
- 
- Example:
- 
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
