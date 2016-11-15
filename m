@@ -1,82 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41768 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941072AbcKNGCA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:00 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org, andy.gross@linaro.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v7 06/14] mmc: sdhci-msm: Add get_min_clock() and get_max_clock() callback
-Date: Mon, 14 Nov 2016 11:30:40 +0530
-Message-Id: <1479103248-9491-7-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Tue, 15 Nov 2016 10:43:02 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
+Message-ID: <20161115024302.GB24408@leoy-linaro>
+References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+ <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
+ <20161115024100.GW5177@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161115024100.GW5177@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This add get_min_clock() and get_max_clock() callback
-for sdhci-msm. sdhci-msm min/max clocks may be different
-hence implement these callbacks.
+On Mon, Nov 14, 2016 at 06:41:00PM -0800, Stephen Boyd wrote:
+> On 08/31, Leo Yan wrote:
+> > In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
+> > default, as result stub clock driver has not been registered and
+> > CPUFreq driver cannot work.
+> > 
+> > This patch is to enable stub clock driver in config for ARCH_HISI.
+> > 
+> > Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> 
+> Applied to clk-next
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Thanks :)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 643956e..f63ffb0 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -67,6 +67,8 @@
- 
- #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
- 
-+#define SDHCI_MSM_MIN_CLOCK	400000
-+
- #define CDR_SELEXT_SHIFT	20
- #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
- #define CMUX_SHIFT_PHASE_SHIFT	24
-@@ -562,6 +564,19 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	return clk_round_rate(msm_host->clk, ULONG_MAX);
-+}
-+
-+static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
-+{
-+	return SDHCI_MSM_MIN_CLOCK;
-+}
-+
- static const struct of_device_id sdhci_msm_dt_match[] = {
- 	{ .compatible = "qcom,sdhci-msm-v4" },
- 	{},
-@@ -573,6 +588,8 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	.platform_execute_tuning = sdhci_msm_execute_tuning,
- 	.reset = sdhci_reset,
- 	.set_clock = sdhci_set_clock,
-+	.get_min_clock = sdhci_msm_get_min_clock,
-+	.get_max_clock = sdhci_msm_get_max_clock,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
- 	.voltage_switch = sdhci_msm_voltage_switch,
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
