@@ -1,133 +1,71 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36802 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752007AbcKRKGj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2016 05:06:39 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH RESEND] clk/samsung: exynos5433: mark some clocks as critical
-Date: Fri, 18 Nov 2016 11:04:18 +0100
-Message-id: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60870 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbcKOT13 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2016 14:27:29 -0500
+Date: Tue, 15 Nov 2016 11:27:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
+        andy.gross@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+Subject: Re: [PATCH v7 08/14] mmc: sdhci-msm: Implement set_clock callback
+ for sdhci-msm
+Message-ID: <20161115192727.GD25626@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-9-git-send-email-riteshh@codeaurora.org>
+ <20161114193004.GI5177@codeaurora.org>
+ <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some parent clocks of the Exynos5433 CMUs must be always enabled to access
-any register in the given CMU or devices connected to it. For the time
-being, until a proper solution based on runtime PM is applied, mark those
-clocks as critical (instead of ignore unused) to prevent disabling them.
+On 11/15, Ritesh Harjani wrote:
+> On 11/15/2016 1:07 AM, Stephen Boyd wrote:
+> >On 11/14, Ritesh Harjani wrote:
+> >
+> >>+}
+> >>+
+> >>+/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
+> >>+static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+> >>+{
+> >>+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> >>+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> >>+	int rc;
+> >>+
+> >>+	if (!clock) {
+> >>+		msm_host->clk_rate = clock;
+> >>+		goto out;
+> >>+	}
+> >>+
+> >>+	spin_unlock_irq(&host->lock);
+> >>+	if (clock != msm_host->clk_rate) {
+> >
+> >Why do we need to check here? Can't we call clk_set_rate()
+> >Unconditionally?
+> Since it may so happen that above layers may call for ->set_clock
+> function with same requested clock more than once, hence we cache
+> the host->clock here.
+> Also, since requested clock (host->clock) can be say 400Mhz but the
+> actual pltfm supported clock would be say 384MHz.
 
-Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-Resend reason: corrected reported by tag.
----
- drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+clk_set_rate() detects the same rate being set even after it
+internally rounds the rate. We're not going to touch the clk
+hardware if 400 is requested once but 384 is what's set and then
+400 is requested again. Caching the rate here in the driver can
+lead to problems too if the driver is out of sync with the clk
+hardware state, so it's best to avoid doing anything fancy here
+and just let the framework handle duplicates.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index a8bb60b1f804..f096bd7df40c 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -543,7 +543,7 @@
- static const struct samsung_gate_clock top_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_TOP */
- 	GATE(CLK_ACLK_G3D_400, "aclk_g3d_400", "div_aclk_g3d_400",
--			ENABLE_ACLK_TOP, 30, 0, 0),
-+			ENABLE_ACLK_TOP, 30, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_IMEM_SSX_266, "aclk_imem_ssx_266",
- 			"div_aclk_imem_sssx_266", ENABLE_ACLK_TOP,
- 			29, CLK_IGNORE_UNUSED, 0),
-@@ -555,25 +555,25 @@
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_IMEM_200, "aclk_imem_200", "div_aclk_imem_266",
- 			ENABLE_ACLK_TOP, 24,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_IMEM_266, "aclk_imem_266", "div_aclk_imem_200",
- 			ENABLE_ACLK_TOP, 23,
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_PERIC_66, "aclk_peric_66", "div_aclk_peric_66_b",
- 			ENABLE_ACLK_TOP, 22,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_PERIS_66, "aclk_peris_66", "div_aclk_peris_66_b",
- 			ENABLE_ACLK_TOP, 21,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_MSCL_400, "aclk_mscl_400", "div_aclk_mscl_400",
- 			ENABLE_ACLK_TOP, 19,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_FSYS_200, "aclk_fsys_200", "div_aclk_fsys_200",
- 			ENABLE_ACLK_TOP, 18,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_GSCL_111, "aclk_gscl_111", "div_aclk_gscl_111",
- 			ENABLE_ACLK_TOP, 15,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
- 			ENABLE_ACLK_TOP, 14,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -582,7 +582,7 @@
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
- 			ENABLE_ACLK_TOP, 12,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
- 			ENABLE_ACLK_TOP, 11,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -591,7 +591,7 @@
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
- 			ENABLE_ACLK_TOP, 9,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
- 			ENABLE_ACLK_TOP, 8,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -600,19 +600,19 @@
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
- 			ENABLE_ACLK_TOP, 6,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_HEVC_400, "aclk_hevc_400", "div_aclk_hevc_400",
- 			ENABLE_ACLK_TOP, 5,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_MFC_400, "aclk_mfc_400", "div_aclk_mfc_400",
- 			ENABLE_ACLK_TOP, 3,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_G2D_266, "aclk_g2d_266", "div_aclk_g2d_266",
- 			ENABLE_ACLK_TOP, 2,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_G2D_400, "aclk_g2d_400", "div_aclk_g2d_400",
- 			ENABLE_ACLK_TOP, 0,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 
- 	/* ENABLE_SCLK_TOP_MSCL */
- 	GATE(CLK_SCLK_JPEG_MSCL, "sclk_jpeg_mscl", "div_sclk_jpeg",
-@@ -1385,7 +1385,7 @@ static void __init exynos5433_cmu_cpif_init(struct device_node *np)
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_DISP_333, "aclk_disp_333", "div_aclk_disp_333",
- 			ENABLE_ACLK_MIF3, 1,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_CPIF_200, "aclk_cpif_200", "div_aclk_cpif_200",
- 			ENABLE_ACLK_MIF3, 0,
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
