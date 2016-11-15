@@ -1,63 +1,56 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38546 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933391AbcKWIcN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2016 03:32:13 -0500
-Received: by mail-wm0-f48.google.com with SMTP id f82so12002760wmf.1
-        for <linux-clk@vger.kernel.org>; Wed, 23 Nov 2016 00:32:12 -0800 (PST)
+Received: from mx1.redhat.com ([209.132.183.28]:50990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752852AbcKOAGi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 14 Nov 2016 19:06:38 -0500
+Subject: Re: [PATCH v7 02/14] clk: qcom: Move all sdcc rcgs to use
+ clk_rcg2_floor_ops
+To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, adrian.hunter@intel.com,
+        shawn.lin@rock-chips.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-3-git-send-email-riteshh@codeaurora.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
+        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
+        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org
+From: Jeremy McNicoll <jmcnicol@redhat.com>
+Message-ID: <c17ee2b7-0f4a-c310-f8b8-ec48daf57da0@redhat.com>
+Date: Mon, 14 Nov 2016 16:06:35 -0800
 MIME-Version: 1.0
-In-Reply-To: <20161123050038.GD16531@hector.attlocal.net>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
- <CAPDyKFrRbf0+G5K=-jsaevAGbTqhTAss2zJv3QdiyCrv0BG-zA@mail.gmail.com> <20161123050038.GD16531@hector.attlocal.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 23 Nov 2016 09:32:10 +0100
-Message-ID: <CAPDyKFrSFwBv-uA4Ov_1a2wxpiGZFBDN5wKGn+r63Y9H-UcLYQ@mail.gmail.com>
-Subject: Re: [PATCH v9 00/16] mmc: sdhci-msm: Add clk-rates, DDR, HS400 support
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Ritesh Harjani <riteshh@codeaurora.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Alex Lemberg <alex.lemberg@sandisk.com>,
-        Mateusz Nowak <mateusz.nowak@intel.com>,
-        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        David Griego <david.griego@linaro.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Pramod Gurav <pramod.gurav@linaro.org>, jeremymc@redhat.com
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1479103248-9491-3-git-send-email-riteshh@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23 November 2016 at 06:00, Andy Gross <andy.gross@linaro.org> wrote:
-> On Mon, Nov 21, 2016 at 11:06:13AM +0100, Ulf Hansson wrote:
->> On 21 November 2016 at 07:37, Ritesh Harjani <riteshh@codeaurora.org> wrote:
->> > Hi,
->> >
->> > This is v9 version of the patch series which adds support for MSM8996.
->> > Adds HS400 driver support as well.
->> > These are tested on internal msm8996 & db410c HW.
->> >
->> > The patch series is ready. Do we think we can apply these
->> > patches for next now?
->>
->> I guess the DTS changes can be picked up by Andy, so they can go via arm-soc?
+On 2016-11-13 10:00 PM, Ritesh Harjani wrote:
+> From: Rajendra Nayak <rnayak@codeaurora.org>
 >
-> Yeah I'll pick up the DTS change and the Documentation change.
+> The sdcc driver for msm8996/msm8916/msm8974 and apq8084
+> expects a clk_set_rate() on the sdcc rcg clk to set
+> a floor value of supported clk rate closest to the requested
+> rate, by looking up the frequency table.
+> So move all the sdcc rcgs on all these platforms to use the
+> newly introduced clk_rcg2_floor_ops
+>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gcc-apq8084.c | 8 ++++----
+>  drivers/clk/qcom/gcc-msm8916.c | 4 ++--
+>  drivers/clk/qcom/gcc-msm8974.c | 8 ++++----
+>  drivers/clk/qcom/gcc-msm8996.c | 8 ++++----
 
-Andy, I would rather like to pick the DT Documentation change via my
-mmc tree. Just because I normally do that.
+Can you please include the same changes for gcc-msm8994.c as it should 
+be in sboyd's tree?
 
-This one:
-[PATCH v9 05/16] dt-bindings: sdhci-msm: Add xo value
+If not I will send a patch directly, either way works for me.
 
-Kind regards
-Uffe
+
+-jeremy
+
