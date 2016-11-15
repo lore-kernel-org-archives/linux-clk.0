@@ -1,87 +1,46 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 0/6] STM32F4 Add RTC & QSPI clocks
-To: Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>
-References: <1476436699-21879-1-git-send-email-gabriel.fernandez@st.com>
- <68855ca8-a74f-7c76-342f-de0aeec51ca1@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <d4a5cc5f-c91b-dc52-d7a1-7f579792382c@st.com>
-Date: Thu, 3 Nov 2016 09:57:16 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 14 Nov 2016 18:41:00 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
+Message-ID: <20161115024100.GW5177@codeaurora.org>
+References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+ <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <68855ca8-a74f-7c76-342f-de0aeec51ca1@st.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexandre,
+On 08/31, Leo Yan wrote:
+> In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
+> default, as result stub clock driver has not been registered and
+> CPUFreq driver cannot work.
+> 
+> This patch is to enable stub clock driver in config for ARCH_HISI.
+> 
+> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
 
+Applied to clk-next
 
-On 11/03/2016 09:52 AM, Alexandre Torgue wrote:
-> Hi Gabriel,
->
-> On 10/14/2016 11:18 AM, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> v2:
->>  - rename compatible property "st,stm32f46xx-rcc" into 
->> "st,stm32f469-rcc"
->>  - cosmetic: remove bad copy/paste
->>
->> This patch-set introduce RTC and QSPI clocks for STM32F4 socs
->> RTC clock has 3 parents clock oscillators (lsi/lse/hse_rtc)
->>
->> example to use rtc clock:
->>
->>         rtc: rtc@40002800 {
->>             compatible = "st,stm32-rtc";
->>             reg = <0x40002800 0x400>;
->>             ...
->>             clocks = <&rcc 1 CLK_RTC>;
->>
->>             assigned-clocks =  <&rcc 1 CLK_RTC>;
->>             assigned-clock-parents = <&rcc 1 CLK_LSE>;
->>             ...
->>         };
->>
->> Gabriel Fernandez (6):
->>   clk: stm32f4: Add LSI & LSE clocks
->>   ARM: dts: stm32f429: add LSI and LSE clocks
->>   arm: stmf32: Enable SYSCON
->>   clk: stm32f4: Add RTC clock
->>   clk: stm32f469: Add QSPI clock
->>   ARM: dts: stm32f429: Add QSPI clock
->
-> You sent a V3 without DT patches. Should I take DT patches from this 
-> V2 patchset ?
->
-> Regards
-> Alex
->
-Yes, no problem
-
-Thanks !
-
-BR.
-
-Gabriel
->
->>
->>  .../devicetree/bindings/clock/st,stm32-rcc.txt     |   4 +-
->>  arch/arm/boot/dts/stm32f429.dtsi                   |  18 +
->>  arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
->>  arch/arm/configs/stm32_defconfig                   |   1 +
->>  drivers/clk/clk-stm32f4.c                          | 442 
->> ++++++++++++++++++++-
->>  5 files changed, 447 insertions(+), 22 deletions(-)
->>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
