@@ -1,81 +1,66 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:43648 "EHLO mga06.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:48245 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933001AbcKHMZy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Nov 2016 07:25:54 -0500
-Subject: Re: [PATCH v6 09/14] mmc: sdhci-msm: Add clock changes for DDR mode.
-To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-10-git-send-email-riteshh@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <1a3a30ee-a0f0-25a0-1e3a-9097ee3012df@intel.com>
-Date: Tue, 8 Nov 2016 14:20:45 +0200
+        id S1752852AbcKOAyA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 14 Nov 2016 19:54:00 -0500
+Date: Tue, 15 Nov 2016 08:53:50 +0800
+From: Fengguang Wu <lkp@intel.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ritesh Harjani <riteshh@codeaurora.org>,
+        "kbuild-all@01.org" <kbuild-all@01.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, david.brown@linaro.org,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        "kdorfman@codeaurora.org" <kdorfman@codeaurora.org>,
+        David Griego <david.griego@linaro.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Pramod Gurav <pramod.gurav@linaro.org>
+Subject: Re: [PATCH v7 11/14] mmc: sdhci-msm: Add HS400 platform support
+Message-ID: <20161115005350.s657okf2jifdwj6d@wfg-t540p.sh.intel.com>
+References: <1479103248-9491-12-git-send-email-riteshh@codeaurora.org>
+ <201611142112.EdLY7cAN%fengguang.wu@intel.com>
+ <CAPDyKFoUiGgXhLtW9-+iAxdV6sy4+wgQfW8P5+VwsqHc3QwkqA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1478517877-23733-10-git-send-email-riteshh@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <CAPDyKFoUiGgXhLtW9-+iAxdV6sy4+wgQfW8P5+VwsqHc3QwkqA@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:24, Ritesh Harjani wrote:
-> SDHC MSM controller need 2x clock for MCLK at GCC.
-> Hence make required changes to have 2x clock for
-> DDR timing modes.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+On Mon, Nov 14, 2016 at 04:44:19PM +0100, Ulf Hansson wrote:
+>Hi,
+>
+>On 14 November 2016 at 14:53, kbuild test robot <lkp@intel.com> wrote:
+>> Hi Venkat,
+>>
+>> [auto build test ERROR on ulf.hansson-mmc/next]
+>> [also build test ERROR on v4.9-rc5]
+>> [cannot apply to next-20161114]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+>Here we go...
+>
+>>
+>> url:    https://github.com/0day-ci/linux/commits/Ritesh-Harjani/mmc-sdhci-msm-Add-clk-rates-DDR-HS400-support/20161114-142815
+>> base:   https://git.linaro.org/people/ulf.hansson/mmc next
+>
+>This above is the old tree, here's the new:
+>git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
+>
+>Could you please update the path in the build system?
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+OK, done.
 
-> ---
->  drivers/mmc/host/sdhci-msm.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index ff0915b..220567c 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -633,6 +633,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +	struct mmc_ios curr_ios = host->mmc->ios;
->  	int rc;
->  
->  	if (!clock) {
-> @@ -641,11 +642,23 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->  	}
->  
->  	spin_unlock_irq(&host->lock);
-> +	/*
-> +	 * The SDHC requires internal clock frequency to be double the
-> +	 * actual clock that will be set for DDR mode. The controller
-> +	 * uses the faster clock(100/400MHz) for some of its parts and
-> +	 * send the actual required clock (50/200MHz) to the card.
-> +	 */
-> +	if ((curr_ios.timing == MMC_TIMING_UHS_DDR50) ||
-> +	    (curr_ios.timing == MMC_TIMING_MMC_DDR52) ||
-> +	    (curr_ios.timing == MMC_TIMING_MMC_HS400))
-> +		clock *= 2;
-> +
->  	if (clock != msm_host->clk_rate) {
->  		rc = clk_set_rate(msm_host->clk, clock);
->  		if (rc) {
-> -			pr_err("%s: Failed to set clock at rate %u\n",
-> -			       mmc_hostname(host->mmc), clock);
-> +			pr_err("%s: Failed to set clock at rate %u at timing %d\n",
-> +			       mmc_hostname(host->mmc), clock,
-> +			       curr_ios.timing);
->  			spin_lock_irq(&host->lock);
->  			goto out;
->  		}
-> 
-
+Regards,
+Fengguang
