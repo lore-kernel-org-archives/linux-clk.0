@@ -1,72 +1,96 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:54286 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbcKOEXi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 23:23:38 -0500
+Subject: Re: [PATCH v7 14/14] sdhci: sdhci-msm: update dll configuration
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-15-git-send-email-riteshh@codeaurora.org>
+ <20161114195749.GJ5177@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
+        andy.gross@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org,
+        Krishna Konda <kkonda@codeaurora.org>
+From: Ritesh Harjani <riteshh@codeaurora.org>
+Message-ID: <a182baf9-4ec5-8491-0385-94f37999f854@codeaurora.org>
+Date: Tue, 15 Nov 2016 09:53:27 +0530
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <4419870.yM1Fh9cWBP@wasted.cogentembedded.com>
-References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com> <4419870.yM1Fh9cWBP@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Nov 2016 09:41:31 +0100
-Message-ID: <CAMuHMdVbEP+pB6Bi1WmXy9MZREa30RiLZiZ0p+8YxYvuMUDj4g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: renesas: cpg-mssr: add R8A7745 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20161114195749.GJ5177@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
 
-On Sat, Nov 5, 2016 at 11:34 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
+
+On 11/15/2016 1:27 AM, Stephen Boyd wrote:
+> On 11/14, Ritesh Harjani wrote:
+>> @@ -903,7 +998,33 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>>  			config |= CORE_HC_SELECT_IN_EN;
+>>  			writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
+>>  		}
+>> +		if (!msm_host->clk_rate && !msm_host->use_cdclp533) {
+>> +			/*
+>> +			 * Poll on DLL_LOCK or DDR_DLL_LOCK bits in
+>> +			 * CORE_DLL_STATUS to be set.  This should get set
+>> +			 * within 15 us at 200 MHz.
+>> +			 */
+>> +			rc = readl_relaxed_poll_timeout(host->ioaddr +
+>> +							CORE_DLL_STATUS,
+>> +							dll_lock,
+>> +							(dll_lock &
+>> +							(CORE_DLL_LOCK |
+>> +							CORE_DDR_DLL_LOCK)), 10,
+>> +							1000);
+>> +			if (rc == -ETIMEDOUT)
+>> +				pr_err("%s: Unable to get DLL_LOCK/DDR_DLL_LOCK, dll_status: 0x%08x\n",
+>> +				       mmc_hostname(host->mmc), dll_lock);
+>> +		}
+>>  	} else {
+>> +		if (!msm_host->use_cdclp533) {
+>> +			/* set CORE_PWRSAVE_DLL bit in CORE_VENDOR_SPEC3 */
 >
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
+> These types of comments are totally useless. The code says
+> exactly what is being done, and the comment is actually wrong in
+> this case. Please remove all these "set/clear bit X in register
+> Y" comments.
+Ok, done.
+
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> +			config = readl_relaxed(host->ioaddr +
+>> +					CORE_VENDOR_SPEC3);
+>> +			config &= ~CORE_PWRSAVE_DLL;
+>> +			writel_relaxed(config, host->ioaddr +
+>> +					CORE_VENDOR_SPEC3);
+>> +		}
+>> +
+>>  		/* Select the default clock (free running MCLK) */
+>>  		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
+>>  		config &= ~CORE_HC_MCLK_SEL_MASK;
+>> @@ -1100,6 +1221,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>>  		msm_host->use_14lpp_dll_reset = true;
+>>
+>>  	/*
+>> +	 * SDCC 5 controller with major version 1, minor version 0x34 and later
+>> +	 * with HS 400 mode support will use CM DLL instead of CDC LP 533 DLL.
+>> +	 */
+>> +	if ((core_major == 1) && (core_minor < 0x34))
 >
-> ---
-> Changes in version 3:
-> - removed the FDP1-1 module clock;
-> - added Geert's tag.
+> Drop useless parenthesis please.
+Done.
 >
-> Changes in version 2:
-> - changed the Z2 clock's divisor to 3.
+>> +		msm_host->use_cdclp533 = true;
+>> +
+>> +	/*
+>
 
-> --- /dev/null
-> +++ linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
-> @@ -0,0 +1,260 @@
-
-> +static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
-
-> +       /* Core Clock Outputs */
-
-> +       DEF_FIXED("acp",    R8A7745_CLK_ACP,   CLK_EXTAL,         2, 1),
-
-This clock is called CPEX instead of ACP in rev. 1.00 of the RZ/G Series User's
-Manual: Hardware.
-
-> +};
-> +
-> +static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
-
-> +       DEF_MOD("thermal",        522,  CLK_EXTAL),
-
-RZ/G1E does not have the thermal sensor (confirmed by rev. 1.00).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
