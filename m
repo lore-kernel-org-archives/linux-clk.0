@@ -1,31 +1,57 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 14:51:52 -0700
+Date: Mon, 14 Nov 2016 18:40:42 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 04/11] clk: qcom: Enable FSM mode for votable alpha
- PLLs
-Message-ID: <20161102215152.GP16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-5-git-send-email-rnayak@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
+Message-ID: <20161115024042.GV5177@codeaurora.org>
+References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+ <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
+ <20160831224049.GK12510@codeaurora.org>
+ <20161112120231.GB23848@leoy-linaro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475138152-859-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <20161112120231.GB23848@leoy-linaro>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Rajendra Nayak wrote:
-> The votable alpha PLLs need to have the fsm mode enabled as part
-> of the initialization. The sequence seems to be the same as used
-> by clk-pll, so move the function which does this into a common
-> place and reuse it for the clk-alpha-pll
+On 11/12, Leo Yan wrote:
+> Hi Stephen,
 > 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+> On Wed, Aug 31, 2016 at 03:40:49PM -0700, Stephen Boyd wrote:
+> > On 08/31, Leo Yan wrote:
+> > > In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
+> > > default, as result stub clock driver has not been registered and
+> > > CPUFreq driver cannot work.
+> > > 
+> > > This patch is to enable stub clock driver in config for ARCH_HISI.
+> > > 
+> > > Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > > ---
+> > 
+> > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> We found this patch is missed mainline kernel. So could you help pick
+> it? Or do you need me resend this patch?
+> 
 
-Applied to clk-next
+Sure I can fish it out and apply it.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
